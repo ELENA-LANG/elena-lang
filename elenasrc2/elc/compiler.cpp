@@ -5891,7 +5891,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    if (isStatic) {
       _writer.declareStaticSymbol(scope.tape, scope.reference);
 
-      _writer.loadPrimitive(scope.tape, scope.moduleScope->module->mapReference(STATIC_SYNC));
+      _writer.loadPrimitive(scope.tape, scope.reference | mskLockVariable);
       _writer.pushObject(scope.tape, ObjectInfo(okAccumulator));
       _writer.tryLock(scope.tape);
       _writer.declareTry(scope.tape);

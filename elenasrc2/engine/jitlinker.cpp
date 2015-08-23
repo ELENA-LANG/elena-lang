@@ -150,8 +150,13 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 
 void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask)
 {
+   return calculateVAddress(writer, mask, VA_ALIGNMENT);
+}
+
+void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask, int alignment)
+{
    // align the section
-   _compiler->alignCode(writer, VA_ALIGNMENT, test(mask, mskCodeRef));
+   _compiler->alignCode(writer, alignment, test(mask, mskCodeRef));
 
    // virtual address - real address in the memory of nonvirtual mode, or section relative address
    return _virtualMode ? (void*)(writer->Position() | mask) : writer->Address();
@@ -331,19 +336,20 @@ void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo
    return vaddress;
 }
 
-//void* JITLinker :: resolveNativeVariable(const wchar16_t*  reference)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskDataRef);
-//   MemoryWriter writer(image);
-//
-//   _compiler->allocateVariable(writer);
-//
-//   void* vaddress = calculateVAddress(&writer, mskDataRef);
-//   _loader->mapReference(reference, vaddress, mskDataRef);
-//
-//   return vaddress;
-//}
+void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskDataRef);
+   MemoryWriter writer(image);
+
+   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
+
+   _compiler->allocateVariable(writer);
+
+   _loader->mapReference(reference, vaddress, mask);
+
+   return vaddress;
+}
 
 void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo)
 {
@@ -874,9 +880,10 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         //case mskSymbolLoaderRef:
 //         //   vaddress = resolveLoader(reference);
 //         //   break;
-//         case mskNativeVariable:
-//            vaddress = resolveNativeVariable(reference);
-//            break;
+         case mskNativeVariable:
+         case mskLockVariable:
+            vaddress = resolveNativeVariable(reference, mask);
+            break;
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)

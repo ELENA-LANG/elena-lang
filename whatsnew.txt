@@ -10,6 +10,9 @@
 [ELENA]
 [+] new project template : guix
 
+[IDE]
+[-] issue #75 fixed : call stack window is not properly refreshed
+
 ******************************************************************************
                              What's New in 1.9.22
 ******************************************************************************

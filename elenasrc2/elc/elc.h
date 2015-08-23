@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0013
+#define ELC_REVISION_NUMBER             0x0001
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -70,7 +70,6 @@
 #define ELC_PROJECT_ENTRY           "entry"
 #define ELC_TARGET                  "executable"
 #define ELC_MG_SIZE                 "mgsize"
-#define ELC_GC_OBJSIZE              "objsize"
 //#define ELC_HEAP_COMMIT             "heapcommit"
 //#define ELC_HEAP_RESERV             "heapresrv"
 ////#define ELC_YG_IMAGEBASE            "imagebase"

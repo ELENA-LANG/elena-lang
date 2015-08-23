@@ -1,0 +1,8 @@
+Package:elena-lang
+Version:1.9.23
+Section:custom
+Priority: optional
+Maintainer: Alex Rakov <arakov@yandex.ru>
+Architecture: i386
+Depends: libc6 (>= 2.1)
+Description: ELENA is a general-purpose, object-oriented, polymorphic language with late binding. It features message dispatching / manipulation, dynamic object mutation, a script engine / interpreter and group object support. Package includes command-line compiler,elena lib30 api,samples

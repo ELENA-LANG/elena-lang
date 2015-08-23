@@ -30,6 +30,7 @@ public:
 private:
    Project* _project;
    void*    _entryPoint;
+   size_t   _objectHeaderSize;
 
    ident_t _literal;
    ident_t _character;

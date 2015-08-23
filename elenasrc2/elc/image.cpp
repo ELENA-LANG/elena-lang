@@ -25,6 +25,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    : Image(true)
 {
    _project = project;
+   _objectHeaderSize = compiler->getObjectHeaderSize();
 
    // load default forwards
    _literal = project->resolveForward(WSTR_FORWARD);
@@ -151,7 +152,7 @@ size_t ExecutableImage :: getLinkerConstant(int id)
       case lnThreadCount:
          return _project->IntSetting(opThreadMax);
       case lnObjectSize:
-         return _project->IntSetting(opGCObjectSize);
+         return _objectHeaderSize;
       default:
          return 0;
    }

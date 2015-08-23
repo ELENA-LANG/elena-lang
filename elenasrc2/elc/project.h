@@ -45,7 +45,6 @@ enum ProjectSetting
    opSectionAlignment      = 0x0021,
    opFileAlignment         = 0x0022,
    opGCMGSize              = 0x0024,
-   opGCObjectSize          = 0x0025,
    opSizeOfStackReserv     = 0x0026,
    opSizeOfStackCommit     = 0x0027,
    opSizeOfHeapReserv      = 0x0028,

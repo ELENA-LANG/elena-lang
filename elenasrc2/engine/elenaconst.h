@@ -12,8 +12,8 @@
 namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
-   #define ENGINE_MAJOR_VERSION     0x0008            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x000A
+   #define ENGINE_MAJOR_VERSION     0x0009            // ELENA Engine version
+   #define ENGINE_MINOR_VERSION     0x0000
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -151,6 +151,7 @@ namespace _ELENA_
       mskPreloadRelCodeRef   = 0x2C000000,
       mskPreloadDataRef      = 0xAC000000,
       mskNativeVariable      = 0xAD000000,
+      mskLockVariable        = 0xAE000000,   // HOTFIX : used to fool trylock opcode, adding virtual offset
 
       mskInternalRef         = 0x13000000,   // internal code
       mskInternalRelRef      = 0x33000000,   // internal code
@@ -331,10 +332,10 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.8."       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "VM.ELENA.8."    // the ELENAVM client
+   #define ELENA_SIGNITURE          "ELENA.9."       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "VM.ELENA.9."    // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.8.09"     // the module version
+   #define MODULE_SIGNATURE         "ELENA.9.01"     // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.4"
 
   // --- ELENA core module names ---
@@ -488,7 +489,6 @@ namespace _ELENA_
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
    #define PACKAGE_KEY              "$elena'@package"                // The project namespace
-   #define STATIC_SYNC              "$elena@static"
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor

@@ -258,8 +258,6 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
       return config.getSetting(PROJECT_CATEGORY, ELC_NAMESPACE);
    case _ELENA_::opGCMGSize:
       return config.getSetting(LINKER_CATEGORY, ELC_MG_SIZE);
-   case _ELENA_::opGCObjectSize:
-      return config.getSetting(LINKER_CATEGORY, ELC_GC_OBJSIZE);
    case _ELENA_::opGCYGSize:
       return config.getSetting(LINKER_CATEGORY, ELC_YG_SIZE);
 //   case _ELENA_::opSizeOfStackReserv:

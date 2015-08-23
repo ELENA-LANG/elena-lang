@@ -72,12 +72,12 @@ define page_mask        0FFFFFFF0h
 define page_ceil               1Bh
 
 // Object header fields
-define elObjectOffset    000Ch
-define elSizeOffset      000Ch
-define elCountOffset     0008h
-define elVMTOffset       0004h 
-define elVMTFlagOffset   0008h
-define elVMTSizeOffset   000Ch
+define elObjectOffset        0010h
+define elSizeOffset          000Ch
+define elCountOffset         0008h
+define elVMTOffset           0004h 
+define elVMTFlagOffset       0008h
+define elVMTSizeOffset       000Ch
 
 define subj_mask         80FFFFF0h
 

@@ -15,6 +15,7 @@ using namespace _ELENA_;
 
 // --- ELENA Object constants ---
 const int gcPageSize       = 0x0010;           // a heap page size constant
+const int elObjectOffset   = 0x0010;           // object header / offset constant
 
 // --- ELENA CORE built-in routines
 #define GC_ALLOC	           0x10001
@@ -1323,11 +1324,26 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
 //   this->prevFSPOffs = 0;
 }
 
+void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
+{
+   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
+   if (reference & mskAnyRef == mskLockVariable) {
+      disp += compiler->getObjectHeaderSize();
+   }
+
+   helper->writeReference(writer, reference, disp, module);
+}
+
 // --- x86JITCompiler ---
 
 x86JITCompiler :: x86JITCompiler(bool debugMode)
 {
    _debugMode = debugMode;
+}
+
+size_t x86JITCompiler :: getObjectHeaderSize() const
+{
+   return elObjectOffset;
 }
 
 bool x86JITCompiler :: isWithDebugInfo() const
@@ -1372,10 +1388,6 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    MemoryWriter rdataWriter(rdata);
    MemoryWriter sdataWriter(sdata);
    MemoryWriter codeWriter(code);
-
-   // declare sync dummy object
-   dataWriter.writeBytes(0, helper.getLinkerConstant(lnObjectSize));
-   loader->mapReference(STATIC_SYNC, (void*)(dataWriter.Position() | mskDataRef), (ref_t)mskDataRef);
 
    x86JITScope dataScope(NULL, &dataWriter, &helper, this);
    for (int i = 0 ; i < coreVariableNumber ; i++) {

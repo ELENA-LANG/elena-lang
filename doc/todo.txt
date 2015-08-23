@@ -2,11 +2,12 @@
 In development:
 ------                                                                                         
 
+              xdev - general implementation
+                       * object header should be similar both in core and corex, remove option
+                       * reimplementing stack safe static symbols, issue #150
+                       
               fdev - upndown
                        * move to corex
-
-             xdev - linux
-                       * create debian package
 
              idev - linux
                        * redirect output to the window

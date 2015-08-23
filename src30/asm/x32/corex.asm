@@ -92,7 +92,6 @@ define elSyncOffset          0010h
 define elSizeOffset          000Ch
 define elCountOffset         0008h
 define elVMTOffset           0004h 
-
 define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 

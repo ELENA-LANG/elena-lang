@@ -208,7 +208,6 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 
    // load linker settings
    loadHexOption(config, opGCMGSize);
-   loadIntOption(config, opGCObjectSize);
    loadHexOption(config, opGCYGSize);
    loadIntOption(config, opPlatform);
 

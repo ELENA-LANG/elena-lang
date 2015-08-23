@@ -124,7 +124,7 @@ class JITLinker
 
    ref_t resolveMessage(_Module* module, ref_t reference);
 
-//   void* resolveNativeVariable(const wchar16_t*  reference);
+   void* resolveNativeVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
@@ -150,6 +150,7 @@ public:
       return _loader->getTargetSection((size_t)mskStatRef)->Length() >> 2;
    }
 
+   void* calculateVAddress(MemoryWriter* writer, int mask, int alignment);
    void* calculateVAddress(MemoryWriter* writer, int mask);
 
    ref_t parseMessage(ident_t reference);

@@ -43,6 +43,8 @@ public:
 class _JITCompiler
 {
 public:
+   virtual size_t getObjectHeaderSize() const = 0;
+
    virtual bool isWithDebugInfo() const = 0;
 
    virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader) = 0;

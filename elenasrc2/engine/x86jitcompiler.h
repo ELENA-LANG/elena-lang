@@ -36,10 +36,7 @@ struct x86JITScope
    // byte code command argument
    int            argument;
 
-   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
-   {
-      helper->writeReference(writer, reference, disp, module);
-   }
+   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
 
    ref_t resolveMessage(ref_t reference)
    {
@@ -166,6 +163,7 @@ protected:
 
 public:
    virtual bool isWithDebugInfo() const;
+   virtual size_t getObjectHeaderSize() const;
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
 

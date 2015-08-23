@@ -634,7 +634,7 @@ void ByteCodeWriter :: loadStatic(CommandTape& tape, ref_t reference)
 
 void ByteCodeWriter :: loadPrimitive(CommandTape& tape, ref_t reference)
 {
-   tape.write(bcACopyR, reference | mskDataRef);
+   tape.write(bcACopyR, reference);
 }
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, ObjectInfo object)
