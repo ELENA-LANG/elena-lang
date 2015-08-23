@@ -1327,7 +1327,7 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
 void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
 {
    // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
-   if (reference & mskAnyRef == mskLockVariable) {
+   if ((reference & mskAnyRef) == mskLockVariable) {
       disp += compiler->getObjectHeaderSize();
    }
 
