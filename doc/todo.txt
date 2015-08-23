@@ -2,7 +2,6 @@
 In development:
 ------                                                                                         
               xdev - general implementation
-                       * fix pi sample
                        * reimplementing stack safe static symbols, issue #150
                        
               fdev - upndown
@@ -11,6 +10,9 @@ In development:
              idev - linux
                        * redirect output to the window
                        * output window
+
+              xdev - general implementation
+                       * fix graph sample
 
 ------                                 
 Pipeline:

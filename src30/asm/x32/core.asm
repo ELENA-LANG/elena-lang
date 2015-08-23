@@ -120,7 +120,7 @@ procedure %GC_ALLOC
   add  esi, eax
   cmp  esi, edx
   jae  short labYGCollect
-  mov  [eax], ebx
+  mov  [eax+4], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], esi
   lea  eax, [eax + elObjectOffset]
   ret
