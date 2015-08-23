@@ -551,7 +551,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleX) {
+      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleX) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker;

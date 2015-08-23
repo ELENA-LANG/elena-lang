@@ -10,6 +10,9 @@
 [ELENA]
 [+] new project template : guix
 
+[ELC]
+[-] issue #150 fixed
+
 [IDE]
 [-] issue #75 fixed : call stack window is not properly refreshed
 

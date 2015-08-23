@@ -1,9 +1,8 @@
 ------                                 
 In development:
 ------                                                                                         
-
               xdev - general implementation
-                       * object header should be similar both in core and corex, remove option
+                       * fix pi sample
                        * reimplementing stack safe static symbols, issue #150
                        
               fdev - upndown

@@ -11,27 +11,13 @@
 #define extensions'math.
 #define extensions'text.
 
-#symbol cast1 =
-{
-    eval : n
-    [
-        console writeLine:"cast 1":n.
-    ]
-}.
-
-#symbol cast2 =
-{
-    eval : n
-    [
-        console writeLine:"cast 2":n.
-    ]
-}.
-
 #symbol XTester =
 {
     test            
     [
-        CastOver new &args:cast1:cast2 eval:1.
+        #var s := emptyWideLiteralValue.
+        
+        #var r := console readLine.
     ]
 }.
         

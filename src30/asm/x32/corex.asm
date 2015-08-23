@@ -84,7 +84,7 @@ define page_size               10h
 define page_size_order          4h
 define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
-define page_ceil               1Bh
+define page_ceil               1Fh
 
 // Object header fields
 define elObjectOffset        0010h

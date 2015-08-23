@@ -69,7 +69,7 @@ define page_size               10h
 define page_size_order          4h
 define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
-define page_ceil               1Bh
+define page_ceil               1Fh
 
 // Object header fields
 define elObjectOffset        0010h
@@ -531,11 +531,11 @@ labYGCheck:
   push ecx
 
   // ; copy object size
-  mov  [ebp], edi
+  mov  [ebp+4], edi
 
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 8], ecx
+  mov  [ebp + 0Ch], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
@@ -658,11 +658,11 @@ labYGPromMinBegin:
   push ecx
 
   // ; copy object size
-  mov  [ebp], edi
+  mov  [ebp+4], edi
 
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 8], ecx
+  mov  [ebp + 0Ch], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
