@@ -95,6 +95,8 @@ define elVMTOffset           0004h
 define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 
+define elPageSizeOffset      0004h //  ; = elObjectOffset - elSizeOffset
+
 define subj_mask         80FFFFF0h
 
 // --- System Core Preloaded Routines --
@@ -145,7 +147,7 @@ labWait:
   add  esi, eax
   cmp  esi, edx
   jae  short labYGCollect
-  mov  [eax+4], ebx
+  mov  [eax + elPageSizeOffset], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], esi
   
   // ; GCXT: clear sync field
@@ -434,7 +436,7 @@ labCollectFrame:
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  [eax], ebx
+  mov  [eax + elPageSizeOffset], ebx
   add  ebx, eax
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ebx
   lea  edi, [eax + elObjectOffset]
@@ -487,7 +489,7 @@ labMGCollectFrame:
 
   // ; skip the permanent part
 labMGSkipNext:
-  mov  ecx, [esi]
+  mov  ecx, [esi + elPageSizeOffset]
   test ecx, ecx
   jns  short labMGSkipEnd
   mov  eax, esi
@@ -512,7 +514,7 @@ labMGCompactNext:
   jae  short labMGCompactEnd
 
 labMGCompactNext2:
-  mov  ecx, [esi]
+  mov  ecx, [esi + elPageSizeOffset]
   test ecx, ecx
   jns  short labMGCompactNext
   mov  eax, ebp
@@ -552,7 +554,7 @@ labYGPromNext:
   cmp  esi, edx
   jae  short labYGPromEnd
 labYGPromNext2:
-  mov  ecx, [esi]
+  mov  ecx, [esi + elPageSizeOffset]
   test ecx, ecx
   jns  short labYGPromNext
   mov  eax, ebp
@@ -623,7 +625,7 @@ labClearWBar:
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  [eax], ebx
+  mov  [eax + elPageSizeOffset], ebx
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
   add  ebx, eax
   cmp  ebx, edx
@@ -697,7 +699,7 @@ labYGCheck:
 
   // ; === GCXT: Copy Object Header ===
   // ; copy object size
-  mov  [ebp+4], edi
+  mov  [ebp + elPageSizeOffset], edi
 
   // ; copy sync field
   mov  ecx, [eax - elSyncOffset]
@@ -925,9 +927,9 @@ labYGPromMinContinue:
   // ; bad luck, the referred object cannot be promoted
   // ; we have to mark in WB card
   push ecx
-  mov  ecx, [esp+8]
   // ; get the promoted object (the referree object) address
-  mov  ecx, [ecx]
+  mov  ecx, [esp+8]
+  mov  ecx, [ecx + elPageSizeOffset] 
   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
   shr  ecx, page_size_order
   add  ecx, [data : %CORE_GC_TABLE + gc_header]
