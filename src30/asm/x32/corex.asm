@@ -330,7 +330,8 @@ labYGNextFrame:
   jz   labWBEnd                                        // ; skip if it is zero
   mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
   shr  ebx, page_size_order
-  lea  edi, [edi + elObjectOffset]
+  lea  esi, [esi + 1]
+  // ; lea  edi, [edi + elObjectOffset]
 
 labWBNext:
   cmp  [esi], 0
