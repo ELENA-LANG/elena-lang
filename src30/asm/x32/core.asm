@@ -752,9 +752,9 @@ labYGPromMinContinue:
   // ; bad luck, the referred object cannot be promoted
   // ; we have to mark in WB card
   push ecx
-  // ; get the promoted object (the referree object) address
   mov  ecx, [esp+8]
-  mov  ecx, [ecx + elPageSizeOffset]
+  // ; get the promoted object (the referree object) address
+  mov  ecx, [ecx]
   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
   shr  ecx, page_size_order
   add  ecx, [data : %CORE_GC_TABLE + gc_header]

@@ -2,17 +2,14 @@
 In development:
 ------                                                                                         
               xdev - general implementation
-                       * reimplementing stack safe static symbols, issue #150
-                       
+                       * fix graph sample
+
               fdev - upndown
                        * move to corex
 
              idev - linux
                        * redirect output to the window
                        * output window
-
-              xdev - general implementation
-                       * fix graph sample
 
 ------                                 
 Pipeline:
