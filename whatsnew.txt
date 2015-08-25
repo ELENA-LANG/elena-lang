@@ -8,6 +8,7 @@
 ******************************************************************************
 
 [ELENA]
+[!] binary incompatible due to major change in the heap structure
 [+] new project template : guix
 
 [ELC]

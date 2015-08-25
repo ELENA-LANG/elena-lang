@@ -1873,9 +1873,9 @@ inline % 1Dh
   mov  esp, [ebx + tls_catch_level]  
   mov  ebp, [ebx + tls_catch_frame]
   pop  edx
-  mov  [ebx + tls_catch_frame], edx
-  pop  edx
   mov  [ebx + tls_catch_level], edx
+  pop  edx
+  mov  [ebx + tls_catch_frame], edx
   pop  edx
   mov  [ebx + tls_catch_addr], edx
   
