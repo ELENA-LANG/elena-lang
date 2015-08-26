@@ -1,11 +1,8 @@
 ------                                 
 In development:
 ------                                                                                         
-              xdev - general implementation
-                       * fix graph sample
-
               fdev - upndown
-                       * move to corex
+                       * start server / connect to server
 
              idev - linux
                        * redirect output to the window
