@@ -1,5 +1,6 @@
 ﻿[project]
 executable=pi2.exe
+arguments=10
 namespace=pi2
 template=console
 debuginfo=-1
