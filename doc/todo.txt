@@ -1,6 +1,14 @@
 ------                                 
 In development:
 ------                                                                                         
+              xdev - general implementation
+                       * implement issue #145                       
+                         - if the method is embeddable and the variable is allocated and returned
+
+
+
+
+
               fdev - upndown
                        * start server / connect to server
 
@@ -8,10 +16,16 @@ In development:
                        * redirect output to the window
                        * output window
 
+              sdev - rosetta code samples
+                       * linux : migrate two rosetta samples to linux
+                       * 9 bil names
+                       * 99 Bottles of Beer
+
 ------                                 
 Pipeline:
 ------                                                                                         
               xdev - general implementation
+                       * reimplement embeddable constructor
                        * implementing 2.0.0 issues
                        * vm console should use startUp symbol
                        * variable: no need to store nil if the variable statement has initializing part
@@ -272,11 +286,8 @@ Pipeline:
                        * optimize TextBuffer.indexOf&index&char&vint
                        * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
                        * linux : review console operation, optimize the code
-
+                       
               sdev - rosetta code samples
-                       * linux : migrate two rosetta samples to linux
-                       * 9 bil names
-                       * 99 Bottles of Beer
                        * implement
                        * migrate to linux
       
