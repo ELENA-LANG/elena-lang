@@ -49,6 +49,8 @@
     ]
 
     #method click []
+    
+    #method change []
 
     #method open
     [
@@ -373,6 +375,13 @@
 
 #class BaseEdit :: BaseWinControl
 {
+    #field(type:func1)theChanged.
+    
+    #method set &onChange:aFunction
+    [
+        theChanged := aFunction func1.
+    ]
+    
     #method wide = $self caption wide.
           
     #method literal = $self caption literal.
@@ -399,6 +408,12 @@
             ? [ Styles := Styles || WS_TABSTOP. ].
             
         aRetVal << (aRetVal || Styles).
+    ]
+    
+    #method change 
+    [
+        ($nil != theChanged)
+            ? [ theChanged eval:$self. ].
     ]
 }
 
@@ -1086,6 +1101,15 @@
             ? [ aControl click. ].
         
         $super onclick &hwnd:aHandle &vint:aResult.
+    ]
+    
+    #method onchange &hwnd:aHandle &vint:aResult
+    [
+        #var aControl := theOwner retrieve &hwnd:aHandle.
+        ($nil != aControl)
+            ? [ aControl change. ].
+        
+        $super onchange &hwnd:aHandle &vint:aResult.
     ]
 }
 

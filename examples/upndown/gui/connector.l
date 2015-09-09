@@ -199,7 +199,7 @@
         Label2
             set &x:263 &y:20 
             set &width:95 &height:20
-            set &caption: "Your log-in:".
+            set &caption: "Your Password:".
 
 		// txtUserName
         txtUserName
@@ -345,6 +345,9 @@
         rbgConnectType set &onIndexChanged: 
             args [ $self $onConnectTypeChange:(rbgConnectType selected_index). ].
 
+        txtUserName set &onChange:
+            args [ $self $onUserNameChange. ].
+
 //        (SecondPlayer, ThirdPlayer, FourthPlayer)~egroupevents +=
 //        { 
 //            onChange'eval [ self $onPlayerSelect. ] 
@@ -388,6 +391,13 @@
         SecondPlayer items append:aPlayer &as:(aPlayer Name).
         ThirdPlayer items append:aPlayer &as:(aPlayer Name).
         FourthPlayer items append:aPlayer &as:(aPlayer Name).
+    ]
+    
+    #method $onUserNameChange
+    [
+        #var f := txtUserName length == 0.
+
+        cmdSearch set &enabled:f.        
     ]
 
 //    #method $onPlayerSelect 

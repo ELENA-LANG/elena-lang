@@ -541,7 +541,8 @@ int main()
       }
 
       // Linking..
-      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32Console) {
+      int platform = project.IntSetting(_ELENA_::opPlatform);
+      if (platform == _ELENA_::ptWin32Console) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker;
@@ -551,7 +552,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32ConsoleX) {
+      else if (platform == _ELENA_::ptWin32ConsoleX) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker;
@@ -562,7 +563,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMWin32Console) {
+      else if (platform == _ELENA_::ptVMWin32Console) {
          print(ELC_LINKING);
 
          _ELENA_::VirtualMachineClientImage image(
@@ -573,7 +574,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32GUI) {
+      else if (platform == _ELENA_::ptWin32GUI) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker;
@@ -583,7 +584,7 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptWin32GUIX) {
+      else if (platform == _ELENA_::ptWin32GUIX) {
          print(ELC_LINKING);
 
          _ELENA_::Linker linker;
@@ -592,6 +593,9 @@ int main()
          linker.run(project, image, helper.tls_directory);
 
          print(ELC_SUCCESSFUL_LINKING);
+      }
+      else if (platform == _ELENA_::ptLibrary) {
+         // no linking for the library
       }
       else print(ELC_UNKNOWN_PLATFORM);
    }

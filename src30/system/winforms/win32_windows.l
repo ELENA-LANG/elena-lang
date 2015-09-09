@@ -38,6 +38,11 @@
         aResult << 0.
     ]
     
+    #method(stacksafe) onchange &hwnd:aControl &vint:aResult
+    [
+        aResult << 0.
+    ]
+    
     #method(stacksafe) onmenu &int:aCode &vint:aResult
     [
         aResult << 0.
@@ -110,14 +115,19 @@
         $self onpaint &hwnd:anHWND &vint:aRetVal.
     ]
     
-    #method(stacksafe) wm_command &hwnd:anHWND &int:aMessage &int:aCode &hwnd:aControl &vint:aRetVal
+    #method(stacksafe) wm_command &hwnd:anHWND &int:aMessage &int:wParam &hwnd:aControl &vint:aRetVal
     [
         (aControl == 0)
-            ? [ $self onmenu &int:aCode &vint:aRetVal. ^ $self. ].
+            ? [ $self onmenu &int:wParam &vint:aRetVal. ^ $self. ].
 
-        // !! note low word may contains the control ID, so only high word should be checked
-        (aCode == 0)
-            ? [ $self onclick &hwnd:aControl &vint:aRetVal. ].
+        #var(type:int)aCommand.
+        wParam shift &int:16 &vint:aCommand.
+
+        (aCommand == BN_CLICKED)
+            ? [ $self onclick &hwnd:aControl &vint:aRetVal. ^ $self. ].
+
+        (aCommand == EN_CHANGE)
+            ? [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
     ]
 
     #method(stacksafe) eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal

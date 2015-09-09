@@ -48,6 +48,15 @@
         $super onclick &hwnd:aHandle &vint:aResult.
     ]
     
+    #method onchange &hwnd:aHandle &vint:aResult
+    [
+        #var aControl := theOwner retrieve &hwnd:aHandle.
+        ($nil != aControl)
+            ? [ aControl change. ].
+        
+        $super onchange &hwnd:aHandle &vint:aResult.
+    ]
+    
     #method onmenu &int:aCode &vint:aResult    
     [
         #var anItem := theOwner retrieveMenu &int:aCode.
@@ -160,6 +169,15 @@
             ? [ aControl click. ].
         
         $super onclick &hwnd:aHandle &vint:aResult.
+    ]
+    
+    #method onchange &hwnd:aHandle &vint:aResult
+    [
+        #var aControl := theOwner retrieve &hwnd:aHandle.
+        ($nil != aControl)
+            ? [ aControl change. ].
+        
+        $super onchange &hwnd:aHandle &vint:aResult.
     ]
 }
 

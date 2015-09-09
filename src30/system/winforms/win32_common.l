@@ -65,9 +65,10 @@
 
 #symbol(const,type:int)CB_ADDSTRING     = 0143h.
 
-//// --- Notifications ---
-//#symbol(const,type:int)BN_CLICKED       = 0.
-//
+// --- Notifications ---
+#symbol(const,type:int)BN_CLICKED       = 0000h.
+#symbol(const,type:int)EN_CHANGE        = 0300h.
+
 //#symbol(const,type:int)SW_SHOW          = 5.
 
 // --- Window Color Constants

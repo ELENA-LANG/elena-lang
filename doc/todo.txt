@@ -5,10 +5,6 @@ In development:
                        * implement issue #145                       
                          - if the method is embeddable and the variable is allocated and returned
 
-
-
-
-
               fdev - upndown
                        * start server / connect to server
 
