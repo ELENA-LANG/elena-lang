@@ -3099,15 +3099,17 @@ inline % 0A5h
 end
 
 // ; hook label (ecx - offset)
+// ; NOTE : hook calling should be the first opcode
 
 inline % 0A6h
+
+  call code : %HOOK
 
   // ; GCXT: get current thread frame
   mov  ebx, [data : %CORE_TLS_INDEX]
   mov  edx, fs:[2Ch]
   mov  ebx, [edx+ebx*4]
 
-  call code : %HOOK
   push [ebx + tls_catch_addr]
   push [ebx + tls_catch_frame]
   push [ebx + tls_catch_level]  

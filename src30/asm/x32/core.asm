@@ -2640,10 +2640,12 @@ inline % 0A5h
 end
 
 // ; hook label (ecx - offset)
+// ; NOTE : hook calling should be the first opcode
 
 inline % 0A6h
 
   call code : %HOOK
+
   push [data : %CORE_EXCEPTION_TABLE]
   push [data : %CORE_EXCEPTION_TABLE + 4]
   push [data : %CORE_EXCEPTION_TABLE + 8]
