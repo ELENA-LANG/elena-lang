@@ -395,7 +395,7 @@
     
     #method $onUserNameChange
     [
-        #var f := txtUserName length == 0.
+        #var f := txtUserName value is &nonempty.
 
         cmdSearch set &enabled:f.        
     ]

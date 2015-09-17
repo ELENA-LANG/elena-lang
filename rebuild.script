@@ -1,3 +1,9 @@
+sudo mkdir /usr/share/elena/
+sudo mkdir /etc/elena/
+
+sudo cp bin/elc.config /etc/elena/elc.config
+sudo cp -a bin/templates /etc/elena/templates
+
 bin/elog dat/og/rules.txt
 sudo cp dat/og/rules.dat /usr/share/elena
 

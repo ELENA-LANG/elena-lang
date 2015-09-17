@@ -40,6 +40,9 @@
     #method is &empty
         = self length == 0.
         
+    #method is &nonempty
+        = self length != 0.
+        
     /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
     #method safeEqual : anObject
         = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self.
