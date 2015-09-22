@@ -34,6 +34,9 @@
 
     #method(stacksafe) retrieve &hwnd:aHandle
     [
+        ($nil == theHandle)
+            ? [ ^ $nil. ].
+            
         (theHandle == aHandle)
             ? [ ^ $self. ].
             

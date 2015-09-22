@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------                                                                                         
+              adev - forms'basewincontrol
+                       * theHandle may be $nil
+
               xdev - general implementation
                        * implement issue #145                       
                          - if the method is embeddable and the variable is allocated and returned
