@@ -9,17 +9,12 @@
     #field btmRandom.
     #field txtNumber.
     
-    // Contains the number as showed in TextBox
-    #field number.
-    
     #constructor new
     [        
         form := SDIDialog new.
         btmIncrement := Button new.
         btmRandom    := Button new.
         txtNumber    := Edit new.
-        
-        number := 0.
         
         form controls 
                 += btmIncrement
@@ -32,7 +27,7 @@
         
         txtNumber set &x:7 &y:7.
         txtNumber set &width:140 &height:25.
-        txtNumber set &caption:(number literal).
+        txtNumber set &caption:"0".
         
         btmIncrement set &x:7 &y:35.
         btmIncrement set &width:140 &height:25.
@@ -49,20 +44,21 @@
     
     #method $onButtonIncrementClick
     [
+        #var number := txtNumber value toInt.
+        
         number := number + 1.   
-        $self changeTextBoxValue.
+        $self $changeTextBoxValue:number.
     ]
     
     #method $onButtonRandomClick
     [
         (messageDialog open &caption:"Inf" &question:"Really reset to random value?")?
         [
-            number := randomGenerator eval:99999999.
-            $self changeTextBoxValue.
+            $self $changeTextBoxValue:(randomGenerator eval:99999999).
         ].
     ]
     
-    #method changeTextBoxValue
+    #method $changeTextBoxValue : number
     [
         txtNumber set &caption:(number literal).
     ]

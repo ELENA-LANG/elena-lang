@@ -26,3 +26,5 @@
 ..\..\bin\elc -ccalendar\calendar.prj
 ..\..\bin\elc -cdoors\doors.prj
 ..\..\bin\elc -ctwentyfour\twentyfour.prj
+..\..\bin\elc -csimple_windowed_app\simple_windowed_app.prj
+..\..\bin\elc -cgui_component_interaction\gui_component_interaction.prj

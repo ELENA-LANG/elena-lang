@@ -602,6 +602,14 @@ md examples\rosetta\twentyfour
 copy %1\examples\rosetta\twentyfour\*.l examples\rosetta\twentyfour
 copy %1\examples\rosetta\twentyfour\*.prj examples\rosetta\twentyfour
 
+md examples\rosetta\simple_windowed_app
+copy %1\examples\rosetta\simple_windowed_app\*.l examples\rosetta\simple_windowed_app
+copy %1\examples\rosetta\simple_windowed_app\*.prj examples\rosetta\simple_windowed_app
+
+md examples\rosetta\gui_component_interaction
+copy %1\examples\rosetta\gui_component_interaction\*.l examples\rosetta\gui_component_interaction
+copy %1\examples\rosetta\gui_component_interaction\*.prj examples\rosetta\gui_component_interaction
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
