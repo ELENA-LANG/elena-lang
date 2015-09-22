@@ -11,22 +11,26 @@
 
 #symbol messageBox =
 {
-    open &handle:aParent &caption:aCaption &value:aMessage &int:aFlags
+    #method(stacksafe) open &handle:parent &caption:caption &value:message &int:flags
     [
-        system'external'USER32 MessageBoxW
-            &handle:aParent
-            &wide:(aMessage wide)
-            &wide:(aCaption wide)
-            &int:aFlags.
+        #var(type:int)retVal := system'external'USER32 MessageBoxW
+            &handle:parent
+            &wide:(message wide)
+            &wide:(caption wide)
+            &int:flags.
+            
+        ^ IntNumber new &int:retVal.
     ]
     
-    open &caption:aCaption &value:aMessage &int:aFlags
+    #method(stacksafe) open &caption:caption &value:message &int:flags
     [
-        system'external'USER32 MessageBoxW
+        #var(type:int)retVal := system'external'USER32 MessageBoxW
             &int:0
-            &wide:(aMessage wide)
-            &wide:(aCaption wide)
-            &int:aFlags.
+            &wide:(message wide)
+            &wide:(caption wide)
+            &int:flags.
+            
+        ^ IntNumber new &int:retVal.
     ]
 }.
 

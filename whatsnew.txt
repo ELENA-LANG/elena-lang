@@ -17,6 +17,10 @@
 [IDE]
 [-] issue #75 fixed : call stack window is not properly refreshed
 
+[Samples]
+[+] rosetta code sample : simple windowed app
+[+] rosetta code sample : gui component interaction
+
 ******************************************************************************
                              What's New in 1.9.22
 ******************************************************************************

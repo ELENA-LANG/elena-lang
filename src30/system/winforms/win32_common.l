@@ -90,5 +90,26 @@
 
 // --- message box flags ---
 #symbol(const,type:int)MB_ICONWARNING     = 00000030h.
-#symbol(const,type:int)MB_ICONINFORMATION = 00000040h.
 #symbol(const,type:int)MB_ICONEXCLAMATION = 00000030h.
+#symbol(const,type:int)MB_ICONINFORMATION = 00000040h.
+#symbol(const,type:int)MB_ICONASTERISK    = 00000040h.
+#symbol(const,type:int)MB_ICONQUESTION    = 00000020h.
+#symbol(const,type:int)MB_ICONSTOP        = 00000010h.
+#symbol(const,type:int)MB_ICONERROR       = 00000010h.
+#symbol(const,type:int)MB_ICONHAND        = 00000010h.
+
+// --- message box buttons ---
+#symbol(const,type:int)MB_ABORTRETRYIGNORE  = 00000002h.
+#symbol(const,type:int)MB_CANCELTRYCONTINUE = 00000006h.
+//#symbol(const,type:int)MB_HELP              = 00000003h.
+#symbol(const,type:int)MB_OK                = 00000000h.
+#symbol(const,type:int)MB_OKCANCEL          = 00000001h.
+#symbol(const,type:int)MB_RETRYCANCEL       = 00000005h.
+#symbol(const,type:int)MB_YESNO             = 00000004h.
+#symbol(const,type:int)MB_YESNOCANCEL       = 00000003h.
+
+#symbol(const,type:int)IDNO                 = 7.
+#symbol(const,type:int)IDOK                 = 1.
+#symbol(const,type:int)IDRETRY              = 4.
+#symbol(const,type:int)IDTRYAGAIN           = 10.
+#symbol(const,type:int)IDYES                = 6.

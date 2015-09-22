@@ -57,7 +57,7 @@
     ]    
 }
 
-// --- MessageBox ---
+// --- messageDialog ---
 
 #symbol messageDialog =
 {
@@ -75,4 +75,11 @@
     [
         messageBox open &caption:aCaption &value:aText &int:MB_ICONWARNING.
     ]    
+    
+    open &caption:aCaption &question:aText
+    [
+        #var result := messageBox open &caption:aCaption &value:aText &int:(MB_ICONQUESTION || MB_YESNO).
+        
+        ^ result == IDYES.
+    ]
 }.
