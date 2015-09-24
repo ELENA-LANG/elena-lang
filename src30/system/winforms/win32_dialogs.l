@@ -11,7 +11,7 @@
 
 #symbol messageBox =
 {
-    #method(stacksafe) open &handle:parent &caption:caption &value:message &int:flags
+    #method(stacksafe) open &hwnd:parent &caption:caption &value:message &int:flags
     [
         #var(type:int)retVal := system'external'USER32 MessageBoxW
             &handle:parent
@@ -25,7 +25,7 @@
     #method(stacksafe) open &caption:caption &value:message &int:flags
     [
         #var(type:int)retVal := system'external'USER32 MessageBoxW
-            &int:0
+            &handle:('program mainWindow hwnd)
             &wide:(message wide)
             &wide:(caption wide)
             &int:flags.

@@ -20,6 +20,8 @@
         theMainWindow := 'mainWindow new.
     ]
     
+    #method mainWindow = theMainWindow.
+    
     #method start
     [
         #var(type:win_msg)aMsg.
