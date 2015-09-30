@@ -1009,7 +1009,7 @@
         #loop (anEnd != -1) ?
         [
             aTarget 
-                append &literal::(aLiteral Substring &int:aStart &int:(anEnd - aStart))
+                append &literal:(aLiteral Substring &int:aStart &int:(anEnd - aStart))
                 append &literal:aReplacer.
             
             aStart := anEnd + aReplaceeLen.

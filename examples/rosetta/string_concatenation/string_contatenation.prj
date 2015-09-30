@@ -1,0 +1,13 @@
+[project]
+executable=strconcatatenation.exe
+namespace=strconca
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+main.l
+
+[forwards]
+'program=strconca'program
+
