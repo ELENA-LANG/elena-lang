@@ -26,3 +26,10 @@
 ..\..\bin\elc -ccalendar\calendar.prj
 ..\..\bin\elc -cdoors\doors.prj
 ..\..\bin\elc -ctwentyfour\twentyfour.prj
+..\..\bin\elc -cstring_append\string_append.prj
+..\..\bin\elc -cstring_case\string_case.prj
+..\..\bin\elc -cstring_comparison\string_comparison
+..\..\bin\elc -cstring_concatenation\string_contatenation.prj
+..\..\bin\elc -cstring_interpolation\string_interpolation.prj
+..\..\bin\elc -cstring_matching\string_matching.prj
+..\..\bin\elc -cstring_prepend\string_prepend.prj
