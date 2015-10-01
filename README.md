@@ -69,6 +69,7 @@ Get started!
 * [Add a variable to a class instance at run-time](http://elenalang.blogspot.de/2013/10/elena-20-tutorial-add-variable-to-class.html)
 * [Literal as an array of characters ](http://elenalang.blogspot.de/2015/04/tutorial-literal-as-array-of-characters.html)
 * [ELENA 2.x: messages, types, dispatching...](http://elenalang.blogspot.de/2015/02/elena-2x-messages-types-dispatching.html)
+* [Stack allocated variables in ELENA](http://elenalang.blogspot.de/2015/08/stack-allocated-variables-in-elena.html)
 
 Contribute!
 ---

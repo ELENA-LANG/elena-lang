@@ -1,0 +1,25 @@
+#import system.
+#import extensions.
+
+#symbol program =
+[
+    #var s := "abcd".
+    
+    console writeLine:s:" starts with ab: ":(s startingWith:"ab" literal).
+    console writeLine:s:" starts with cd: ":(s startingWith:"cd" literal).
+    
+    console writeLine:s:" ends with ab: ":(s endingWith:"ab" literal).
+    console writeLine:s:" ends with cd: ":(s endingWith:"cd" literal).
+    
+    console writeLine:s:" contains ab: ":(s containing:"ab" literal).
+    console writeLine:s:" contains bc: ":(s containing:"bc" literal).
+    console writeLine:s:" contains cd: ":(s containing:"cd" literal).
+    console writeLine:s:" contains az: ":(s containing:"az" literal).
+    
+    console writeLine:s:" index of az: ":(s indexOf:"az" &at:0 literal).
+    console writeLine:s:" index of cd: ":(s indexOf:"cd" &at:0 literal).
+    console writeLine:s:" index of bc: ":(s indexOf:"bc" &at:0 literal).
+    console writeLine:s:" index of ab: ":(s indexOf:"ab" &at:0 literal).
+    
+    console readChar.
+].

@@ -53,7 +53,7 @@
         #loop (len > 0)?
         [
             #var(type:int)s_len := 32.
-            (s_len < len)
+            (s_len > len)
                 ? [ s_len := len. ].
             
             #var(type:shortarray,size:32)src_tmp.
@@ -95,7 +95,7 @@
         [
             #var(type:shortarray,size:32)src_tmp.
             #var(type:int)src_len := 32.
-            (len < src_len)
+            (src_len > len)
                 ? [ src_len := len. ].
             
             #var(type:shortarray,size:32)dst_tmp.
@@ -129,7 +129,7 @@
         [
             #var(type:shortarray,size:32)src_tmp.
             #var(type:int)src_len := 32.
-            (len < src_len)
+            (src_len > len)
                 ? [ src_len := len. ].
             
             #var(type:shortarray,size:32)dst_tmp.

@@ -602,13 +602,33 @@ md examples\rosetta\twentyfour
 copy %1\examples\rosetta\twentyfour\*.l examples\rosetta\twentyfour
 copy %1\examples\rosetta\twentyfour\*.prj examples\rosetta\twentyfour
 
-md examples\rosetta\simple_windowed_app
-copy %1\examples\rosetta\simple_windowed_app\*.l examples\rosetta\simple_windowed_app
-copy %1\examples\rosetta\simple_windowed_app\*.prj examples\rosetta\simple_windowed_app
+md examples\rosetta\string_append
+copy %1\examples\rosetta\string_append\*.l examples\rosetta\string_append
+copy %1\examples\rosetta\string_append\*.prj examples\rosetta\string_append
 
-md examples\rosetta\gui_component_interaction
-copy %1\examples\rosetta\gui_component_interaction\*.l examples\rosetta\gui_component_interaction
-copy %1\examples\rosetta\gui_component_interaction\*.prj examples\rosetta\gui_component_interaction
+md examples\rosetta\string_case
+copy %1\examples\rosetta\string_case\*.l examples\rosetta\string_case
+copy %1\examples\rosetta\string_case\*.prj examples\rosetta\string_case
+
+md examples\rosetta\string_comparison
+copy %1\examples\rosetta\string_comparison\*.l examples\rosetta\string_comparison
+copy %1\examples\rosetta\string_comparison\*.prj examples\rosetta\string_comparison
+
+md examples\rosetta\string_concatenation
+copy %1\examples\rosetta\string_concatenation\*.l examples\rosetta\string_concatenation
+copy %1\examples\rosetta\string_concatenation\*.prj examples\rosetta\string_concatenation
+
+md examples\rosetta\string_interpolation
+copy %1\examples\rosetta\string_interpolation\*.l examples\rosetta\string_interpolation
+copy %1\examples\rosetta\string_interpolation\*.prj examples\rosetta\string_interpolation
+
+md examples\rosetta\string_matching
+copy %1\examples\rosetta\string_matching\*.l examples\rosetta\string_matching
+copy %1\examples\rosetta\string_matching\*.prj examples\rosetta\string_matching
+
+md examples\rosetta\string_prepend
+copy %1\examples\rosetta\string_prepend\*.l examples\rosetta\string_prepend
+copy %1\examples\rosetta\string_prepend\*.prj examples\rosetta\string_prepend
 
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj

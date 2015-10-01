@@ -1,0 +1,13 @@
+[project]
+executable=sa.exe
+namespace=strappend
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+main.l
+
+[forwards]
+'program=strappend'program
+
