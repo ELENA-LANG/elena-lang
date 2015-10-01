@@ -1,6 +1,4 @@
 #import system.
-#define extensions.
-#define extensions'routines.
 
 #symbol program =
 [
