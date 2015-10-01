@@ -15,11 +15,7 @@
 {
     test            
     [
-    #var(type:intarray)x := IntArray new:32768.
-    //#var x := system'Array new &length:32768. // <- Work
-    #var cnt := 0.
-    #loop (cnt < 32768) ?
-        [ x@cnt := 0. cnt := cnt + 1. ].     ]
+    ]        
 }.
         
 #symbol XTest =
