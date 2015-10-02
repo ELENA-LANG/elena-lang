@@ -10,7 +10,7 @@
 #define compilerH
 
 #include "project.h"
-//#include "parser.h"
+#include "parser.h"
 #include "bcwriter.h"
 
 namespace _ELENA_
@@ -109,11 +109,11 @@ protected:
 //   typedef Map<ref_t, ref_t>              SubjectMap;
 //   typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-//
-//   // - ModuleScope -
-//   struct ModuleScope
-//   {
-//      Project*       project;
+
+   // - ModuleScope -
+   struct ModuleScope
+   {
+      Project*       project;
 //      _Module*       module;
 //      _Module*       debugModule;
 //
@@ -257,10 +257,10 @@ protected:
 //
 //      int getClassFlags(ref_t reference);
 //      ref_t getClassClassReference(ref_t reference);
-//
-//      ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
-//   };
-//
+
+      ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
+   };
+
 //   // - Scope -
 //   struct Scope
 //   {
@@ -670,10 +670,10 @@ protected:
 //         paramUnboxing = false;
 //      }
 //   };
-//
+
 //   ByteCodeWriter _writer;
-//   Parser         _parser;
-//
+   Parser         _parser;
+
 //   MessageMap     _verbs;                            // list of verbs
 //   MessageMap     _operators;                        // list of operators
 ////   MessageMap       _obsolete;                       // list of obsolete messages
@@ -777,7 +777,7 @@ protected:
 //
 //   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-//   ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileExpression(DNode node/*, CodeScope& scope, int mode*/);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
@@ -839,20 +839,20 @@ protected:
 //   void compileClassImplementation(DNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
-//   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
+   void compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNode hints*/);
+   void compileSymbolImplementation(DNode node/*, SymbolScope& scope, DNode hints, bool isStatic*/);
 //   void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
 //   void compileForward(DNode node, ModuleScope& scope, DNode hints);
 //   void compileType(DNode& member, ModuleScope& scope, DNode hints);
-//
-//   void compileDeclarations(DNode member, ModuleScope& scope);
-//   void compileImplementations(DNode member, ModuleScope& scope);
+
+   void compileDeclarations(DNode member, ModuleScope& scope);
+   void compileImplementations(DNode member, ModuleScope& scope);
 //   void compileIncludeSection(DNode& node, ModuleScope& scope);
-//
-//   virtual void compileModule(DNode node, ModuleScope& scope);
-//
-//   void compile(ident_t source, MemoryDump* buffer, ModuleScope& scope);
-//
+
+   virtual void compileModule(DNode node, ModuleScope& scope);
+
+   void compile(ident_t source, MemoryDump* buffer, ModuleScope& scope);
+
 //   bool validate(Project& project, _Module* module, int reference);
 //   void validateUnresolved(Unresolveds& unresolveds, Project& project);
 

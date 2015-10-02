@@ -9,7 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compiler.h"
-//#include "errors.h"
+#include "errors.h"
 //#include <errno.h>
 
 using namespace _ELENA_;
@@ -311,13 +311,13 @@ using namespace _ELENA_;
 //   }
 //   else return false;
 //}
-//
-//// --- Compiler::ModuleScope ---
-//
-//Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
+
+// --- Compiler::ModuleScope ---
+
+Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/)
 //   : constantHints((ref_t)-1), extensions(NULL, freeobj)
-//{
-//   this->project = project;
+{
+   this->project = project;
 //   this->sourcePath = sourcePath;
 //   this->module = module;
 //   this->debugModule = debugModule;
@@ -346,8 +346,8 @@ using namespace _ELENA_;
 //
 //   loadTypes(module);
 //   loadExtensions(TerminalInfo(), module);
-//}
-//
+}
+
 //ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)
 //{
 //   if (paramCount == 0) {
@@ -1571,7 +1571,7 @@ using namespace _ELENA_;
 // --- Compiler ---
 
 Compiler :: Compiler(StreamReader* syntax)
-//   : _parser(syntax), _verbs(0)
+   : _parser(syntax)//, _verbs(0)
 {
 //   ByteCodeCompiler::loadVerbs(_verbs);
 //   ByteCodeCompiler::loadOperators(_operators);
@@ -4077,9 +4077,9 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //   return ObjectInfo(okAccumulator, 0, 0, subj);
 //}
-//
-//ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
-//{
+
+/*ObjectInfo*/void Compiler :: compileExpression(DNode node/*, CodeScope& scope, int mode*/)
+{
 //   DNode member = node.firstChild();
 //
 //   ObjectInfo objectInfo;
@@ -4097,8 +4097,8 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   }
 //
 //   return objectInfo;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
 //{   
 //   // if primitive data operation can be used
@@ -5754,9 +5754,9 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   // create byte code sections
 //   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 //}
-//
-//void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints)
-//{
+
+void Compiler :: compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNode hints*/)
+{
 //   bool singleton = false;
 //
 //   scope.compileHints(hints);
@@ -5827,14 +5827,14 @@ void Compiler :: loadRules(StreamReader* optimization)
 //      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
 //      info.save(&metaWriter);
 //   }
-//}
-//
-//void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
-//{
+}
+
+void Compiler :: compileSymbolImplementation(DNode node/*, SymbolScope& scope, DNode hints, bool isStatic*/)
+{
 //   scope.compileHints(hints);
 //
 //   ObjectInfo retVal;
-//   DNode expression = node.firstChild();
+   DNode expression = node.firstChild();
 //   // if it is a singleton
 //   if (isSingleStatement(expression)) {
 //      DNode classNode = expression.firstChild().firstChild();
@@ -5908,7 +5908,7 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 //      openDebugExpression(codeScope);
-//      retVal = compileExpression(expression, codeScope, 0);
+      /*retVal = */compileExpression(expression/*, codeScope, 0*/);
 //      endDebugExpression(codeScope);
 //   }
 //   _writer.loadObject(*codeScope.tape, retVal);
@@ -6032,8 +6032,8 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //   // create byte code sections
 //   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
-//
+}
+
 //void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hints)
 //{
 //   if (hints != nsNone)
@@ -6098,15 +6098,15 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   if (weak)
 //      scope.saveType(typeRef, 0, internalType);
 //}
-//
-//void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
-//{
-//   while (member != nsNone) {
+
+void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
+{
+   while (member != nsNone) {
 //      DNode hints = skipHints(member);
 //
 //      TerminalInfo name = member.Terminal();
-//
-//      switch (member) {
+
+      switch (member) {
 //         case nsType:
 //            compileType(member, scope, hints);
 //            break;
@@ -6132,9 +6132,9 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //            break;
 //         }
-//         case nsSymbol:
-//         case nsStatic:
-//         {
+         case nsSymbol:
+         case nsStatic:
+         {
 //            ref_t reference = scope.mapTerminal(name);
 //
 //            // check for duplicate declaration
@@ -6144,22 +6144,22 @@ void Compiler :: loadRules(StreamReader* optimization)
 //            scope.module->mapSection(reference | mskSymbolRef, false);
 //
 //            SymbolScope symbolScope(&scope, reference);
-//            compileSymbolDeclaration(member, symbolScope, hints);
-//            break;
-//         }
-//      }
-//      member = member.nextNode();
-//   }
-//}
-//
-//void Compiler::compileImplementations(DNode member, ModuleScope& scope)
-//{
-//   while (member != nsNone) {
+            compileSymbolDeclaration(member/*, symbolScope, hints*/);
+            break;
+         }
+      }
+      member = member.nextNode();
+   }
+}
+
+void Compiler::compileImplementations(DNode member, ModuleScope& scope)
+{
+   while (member != nsNone) {
 //      DNode hints = skipHints(member);
-//
+
 //      TerminalInfo name = member.Terminal();
-//
-//      switch (member) {
+
+      switch (member) {
 //         case nsClass:
 //         {
 //            ref_t reference = scope.mapTerminal(name);
@@ -6178,20 +6178,20 @@ void Compiler :: loadRules(StreamReader* optimization)
 //            }
 //            break;
 //         }
-//         case nsSymbol:
-//         case nsStatic:
-//         {
+         case nsSymbol:
+         case nsStatic:
+         {
 //            ref_t reference = scope.mapTerminal(name);
 //
 //            SymbolScope symbolScope(&scope, reference);
-//            compileSymbolImplementation(member, symbolScope, hints, (member == nsStatic));
-//            break;
-//         }
-//      }
-//      member = member.nextNode();
-//   }
-//}
-//
+            compileSymbolImplementation(member/*, symbolScope, hints, (member == nsStatic)*/);
+            break;
+         }
+      }
+      member = member.nextNode();
+   }
+}
+
 //void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
 //{
 //   while (member != nsNone) {
@@ -6219,20 +6219,20 @@ void Compiler :: loadRules(StreamReader* optimization)
 //      member = member.nextNode();
 //   }
 //}
-//
-//void Compiler :: compileModule(DNode node, ModuleScope& scope)
-//{
-//   DNode member = node.firstChild();
-//
+
+void Compiler :: compileModule(DNode node, ModuleScope& scope)
+{
+   DNode member = node.firstChild();
+
 //   compileIncludeSection(member, scope);
-//
-//   // first pass - declaration
-//   compileDeclarations(member, scope);
-//
-//   // second pass - implementation
-//   compileImplementations(member, scope);
-//}
-//
+
+   // first pass - declaration
+   compileDeclarations(member, scope);
+
+   // second pass - implementation
+   compileImplementations(member, scope);
+}
+
 //bool Compiler :: validate(Project& project, _Module* module, int reference)
 //{
 //   int   mask = reference & mskAnyRef;
@@ -6253,42 +6253,42 @@ void Compiler :: loadRules(StreamReader* optimization)
 //      }
 //   }
 //}
-//
-//void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
-//{
-//   Path path;
-//   Path::loadPath(path, source);
-//
-//   // parse
-//   TextFileReader sourceFile(path, scope.project->getDefaultEncoding(), true);
-//   if (!sourceFile.isOpened())
-//      scope.project->raiseError(errInvalidFile, source);
-//
-//   buffer->clear();
-//   MemoryWriter bufWriter(buffer);
-//   DerivationWriter writer(&bufWriter);
-//   _parser.parse(&sourceFile, &writer, scope.project->getTabSize());
-//
-//   // compile
-//   MemoryReader bufReader(buffer);
-//   DerivationReader reader(&bufReader);
-//
-//   compileModule(reader.readRoot(), scope);
-//}
+
+void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
+{
+   Path path;
+   Path::loadPath(path, source);
+
+   // parse
+   TextFileReader sourceFile(path, scope.project->getDefaultEncoding(), true);
+   if (!sourceFile.isOpened())
+      scope.project->raiseError(errInvalidFile, source);
+
+   buffer->clear();
+   MemoryWriter bufWriter(buffer);
+   DerivationWriter writer(&bufWriter);
+   _parser.parse(&sourceFile, &writer, scope.project->getTabSize());
+
+   // compile
+   MemoryReader bufReader(buffer);
+   DerivationReader reader(&bufReader);
+
+   compileModule(reader.readRoot(), scope);
+}
 
 bool Compiler :: run(Project& project)
 {
 //   bool withDebugInfo = project.BoolSetting(opDebugMode);
 //   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
-//
-//   MemoryDump  buffer;                // temporal derivation buffer
+
+   MemoryDump  buffer;                // temporal derivation buffer
 //   Unresolveds unresolveds(Unresolved(), NULL);
 //
 //   Path modulePath;
 //   ReferenceNs name(project.StrSetting(opNamespace));
 //   int rootLength = name.Length();
-//   for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
-//      try {
+   for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
+      try {
 //         // build module namespace
 //         Path::loadSubPath(modulePath, it.key());
 //         name.truncate(rootLength);
@@ -6303,33 +6303,33 @@ bool Compiler :: run(Project& project)
 //
 //            modules.add(name, info);
 //         }
-//
-//         ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
+
+         ModuleScope scope(&project/*, it.key(), info.codeModule, info.debugModule, &unresolveds*/);
 //         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
-//
-//         project.printInfo("%s", it.key());
-//
-//         // compile source
-//         compile(*it, &buffer, scope);
-//      }
-//      catch (LineTooLong& e)
-//      {
-//         project.raiseError(errLineTooLong, it.key(), e.row, 1);
-//      }
-//      catch (InvalidChar& e)
-//      {
-//         size_t destLength = 6;
-//
-//         String<ident_c, 6> symbol;
-//         StringHelper::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
-//
-//         project.raiseError(errInvalidChar, it.key(), e.row, e.column, symbol);
-//      }
-//      catch (SyntaxError& e)
-//      {
-//         project.raiseError(e.error, it.key(), e.row, e.column, e.token);
-//      }
-//   }
+
+         project.printInfo("%s", it.key());
+
+         // compile source
+         compile(*it, &buffer, scope);
+      }
+      catch (LineTooLong& e)
+      {
+         project.raiseError(errLineTooLong, it.key(), e.row, 1);
+      }
+      catch (InvalidChar& e)
+      {
+         size_t destLength = 6;
+
+         String<ident_c, 6> symbol;
+         StringHelper::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+
+         project.raiseError(errInvalidChar, it.key(), e.row, e.column, symbol);
+      }
+      catch (SyntaxError& e)
+      {
+         project.raiseError(e.error, it.key(), e.row, e.column, e.token);
+      }
+   }
 //
 //   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
 //   while (!it.Eof()) {
