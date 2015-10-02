@@ -1,15 +1,12 @@
 ------                                 
 In development:
 ------                                                                                         
-              adev - forms'basewincontrol
-                       * theHandle may be $nil
+              fdev - upndown
+                       * start server / connect to server
 
               xdev - general implementation
                        * implement issue #145                       
                          - if the method is embeddable and the variable is allocated and returned
-
-              fdev - upndown
-                       * start server / connect to server
 
              idev - linux
                        * redirect output to the window
