@@ -90,6 +90,7 @@
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2015 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
+#define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."
 #define ELC_LINKING                 "Linking..."
 #define ELC_SUCCESSFUL_COMPILATION  "Successfully compiled\n"
@@ -98,6 +99,15 @@
 #define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
 #define ELC_UNKNOWN_PLATFORM        "Unsupported platform\n"
 #define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
+
+#define ELC_WIN32CONSOLE            "win32 console"
+#define ELC_WIN32CONSOLEX           "win32 console x"
+#define ELC_WIN32VMCONSOLEX         "win32 vm client console"
+#define ELC_WIN32GUI                "win32 GUI"
+#define ELC_WIN32GUIX               "win32 GUI x"
+#define ELC_LINUX32CONSOLE          "linux i386 console"
+#define ELC_LIBRARY                 "library"
+#define ELC_UNKNOWN                 "unknown"
 
 // --- ELC error messages ---
 #define ELC_ERR_INVALID_OPTION	   "elc: error 401: Invalid command line parameter '%c'\n"
@@ -122,6 +132,7 @@ class Project : public _ELENA_::Project
 
 public:
    _ELENA_::Path appPath;
+   _ELENA_::IdentifierString projectName;
 
    _ELENA_::_JITCompiler* createJITCompiler();
 

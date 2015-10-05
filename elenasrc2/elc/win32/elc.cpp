@@ -444,6 +444,8 @@ void _ELC_::Project :: setOption(const wchar_t* value)
          break;
       case ELC_PRM_CONFIG:
       {
+         projectName.copy(valueName + 1);
+
          loadConfig(value + 1);
 
          _ELENA_::Path projectPath;
@@ -480,6 +482,29 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 
 // --- Main function ---
 
+const char* showPlatform(int platform)
+{
+   if (platform == _ELENA_::ptWin32Console) {
+      return ELC_WIN32CONSOLE;
+   }
+   else if (platform == _ELENA_::ptWin32ConsoleX) {
+      return ELC_WIN32CONSOLEX;
+   }
+   else if (platform == _ELENA_::ptVMWin32Console) {
+      return ELC_WIN32VMCONSOLEX;
+   }
+   else if (platform == _ELENA_::ptWin32GUI) {
+      return ELC_WIN32GUI;
+   }
+   else if (platform == _ELENA_::ptWin32GUIX) {
+      return ELC_WIN32GUIX;
+   }
+   else if (platform == _ELENA_::ptLibrary) {
+      return ELC_LIBRARY;
+   }
+   else print(ELC_UNKNOWN);
+}
+
 int main()
 {
    int argc;
@@ -512,6 +537,11 @@ int main()
       }
       project.initLoader();
 
+      int platform = project.IntSetting(_ELENA_::opPlatform);
+
+      // Greetings
+      print(ELC_STARTING, (_ELENA_::ident_t)project.projectName, showPlatform(platform));
+
       // Cleaning up
       print("Cleaning up...");
       project.cleanUp();
@@ -541,7 +571,6 @@ int main()
       }
 
       // Linking..
-      int platform = project.IntSetting(_ELENA_::opPlatform);
       if (platform == _ELENA_::ptWin32Console) {
          print(ELC_LINKING);
 
