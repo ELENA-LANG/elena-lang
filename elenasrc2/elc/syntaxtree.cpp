@@ -11,3 +11,17 @@
 #include "syntaxtree.h"
 
 using namespace _ELENA_;
+
+// --- SyntaxWriter ---
+
+void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
+{
+   // writer node
+   _writer->writeDWord(type);
+   _writer->writeDWord(argument);
+}
+
+void SyntaxWriter :: closeNode()
+{
+   _writer->writeDWord(-1);
+}
