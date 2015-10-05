@@ -37,6 +37,16 @@ public:
    {
       newNode(type, 0);
    }
+   void appendNode(LexicalType type, ref_t argument)
+   {
+      newNode(type, argument);
+      closeNode();
+   }
+   void appendNode(LexicalType type)
+   {
+      newNode(type);
+      closeNode();
+   }
 
    void closeNode();
 

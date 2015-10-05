@@ -2102,6 +2102,7 @@ void Compiler :: loadRules(StreamReader* optimization)
          break;
       case okSymbol:
          scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
+         scope.writer->appendNode(lxSymbol);
          break;
 //      //case okExternal:
 //      //   // external call cannot be used inside symbol
@@ -2158,9 +2159,9 @@ void Compiler :: loadRules(StreamReader* optimization)
 //         break;
       default:
          scope.writer->newNode(lxObject);
-
-         /*result = */compileTerminal(objectNode, scope/*, mode*/);
+         /*result = */compileTerminal(objectNode, scope/*, mode*/);         
    }
+   scope.writer->closeNode();
 
 //   return result;
 }
