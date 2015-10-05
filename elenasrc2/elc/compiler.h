@@ -11,6 +11,7 @@
 
 #include "project.h"
 #include "parser.h"
+#include "syntaxtree.h"
 #include "bcwriter.h"
 
 namespace _ELENA_
@@ -19,7 +20,7 @@ namespace _ELENA_
 // --- Compiler class ---
 class Compiler
 {
-protected:
+public:
 //   struct Parameter
 //   {
 //      int        offset;
@@ -81,43 +82,142 @@ protected:
 //      tpStackSafe  = 0x10,
 //      tpEmbeddable = 0x20,
 //   };
-//
-//   struct Unresolved
-//   {
-//      ident_t    fileName;
-//      ref_t      reference;
-//      _Module*   module;
-//      size_t     row;
-//      size_t     col;           // virtual column
-//
-//      Unresolved()
-//      {
-//         reference = 0;
-//      }
-//      Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
-//      {
-//         this->fileName = fileName;
-//         this->reference = reference;
-//         this->module = module;
-//         this->row = row;
-//         this->col = col;
-//      }
-//   };
-//
+
+   struct Unresolved
+   {
+      ident_t    fileName;
+      ref_t      reference;
+      _Module*   module;
+      size_t     row;
+      size_t     col;           // virtual column
+
+      Unresolved()
+      {
+         reference = 0;
+      }
+      Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
+      {
+         this->fileName = fileName;
+         this->reference = reference;
+         this->module = module;
+         this->row = row;
+         this->col = col;
+      }
+   };
+
 //   typedef Map<ident_t, ref_t, false>     ForwardMap;
 //   typedef Map<ident_t, Parameter, false> LocalMap;
 //   typedef Map<ref_t, ref_t>              SubjectMap;
-//   typedef List<Unresolved>               Unresolveds;
+   typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
+   enum ObjectKind
+   {
+      okUnknown = 0,
+   
+      okSymbol,                       // param - reference
+   //   okConstantSymbol,               // param - reference, extraparam - class reference
+   //   okConstantClass,                // param - reference, extraparam - class reference
+   //   okLiteralConstant,              // param - reference 
+   //   okCharConstant,                 // param - reference
+   //   okIntConstant,                  // param - reference 
+   //   okLongConstant,                 // param - reference 
+   //   okRealConstant,                 // param - reference 
+   //   okMessageConstant,              // param - reference 
+   //   okSignatureConstant,            // param - reference 
+   //   okVerbConstant,                 // param - reference 
+   //
+   //   okIndexAccumulator,
+   //   okExtraRegister,
+   //   okAccumulator,
+   //   okBase,
+   //   okAccField,                     // param - field offset
+   //
+   //   okField,                        // param - field offset
+   //   okFieldAddress,                 // param - field offset
+   //   okOuter,                        // param - field offset
+   //   okOuterField,                   // param - field offset, extraparam - outer field offset
+   //   okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
+   //   okParam,                        // param - parameter offset
+   //   okSubject,                      // param - parameter offset
+   //   okSubjectDispatcher,
+   //   okThisParam,                    // param - parameter offset
+   //   okNil,
+   //   okSuper,
+   //   okLocalAddress,                  // param - local offset, extraparam - class reference
+   //   okParams,                        // param - local offset
+   //   okBlockLocal,                    // param - local offset
+   //   okCurrent,                       // param - stack offset
+   //
+   //   okRole,
+   //   okConstantRole,                 // param - role reference
+   //
+   //   okExternal,
+   //   okInternal,
+   //
+   //   okIdle
+   };
+   
+   struct ObjectInfo
+   {
+      ObjectKind kind;
+      ref_t      param;
+   //   ref_t      extraparam;
+   //   ref_t      type;
+   
+      ObjectInfo()
+      {
+         this->kind = okUnknown;
+         this->param = 0;
+   //      this->extraparam = 0;
+   //      this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind)
+      {
+         this->kind = kind;
+         this->param = 0;
+   //      this->extraparam = 0;
+   //      this->type = 0;
+      }
+   //   ObjectInfo(ObjectKind kind, ObjectInfo copy)
+   //   {
+   //      this->kind = kind;
+   //      this->param = copy.param;
+   //      this->extraparam = copy.extraparam;
+   //      this->type = copy.type;
+   //   }
+      ObjectInfo(ObjectKind kind, ref_t param)
+      {
+         this->kind = kind;
+         this->param = param;
+   //      this->extraparam = 0;
+   //      this->type = 0;
+      }
+   //   ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+   //   {
+   //      this->kind = kind;
+   //      this->param = param;
+   //      this->extraparam = extraparam;
+   //      this->type = 0;
+   //   }
+   //   ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
+   //   {
+   //      this->kind = kind;
+   //      this->param = param;
+   //      this->extraparam = extraparam;
+   //      this->type = type;
+   //   }
+   };
+
+private:
    // - ModuleScope -
    struct ModuleScope
    {
       Project*       project;
-//      _Module*       module;
+      _Module*       module;
 //      _Module*       debugModule;
-//
-//      ident_t        sourcePath;
+
+      ident_t        sourcePath;
 //      ref_t          sourcePathRef;
 //
 //      // default namespaces
@@ -148,19 +248,19 @@ protected:
 //      ref_t signatureReference;
 //
 //      ref_t boolType;
-//
-//      // warning mapiing
-//      bool warnOnUnresolved;
-//      bool warnOnWeakUnresolved;
-////      bool warnOnAnonymousSignature;
-//
-//      // list of references to the current module which should be checked after the project is compiled
-//      Unresolveds* forwardsUnresolved;
-//
-//      ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      ref_t mapReference(ident_t reference, bool existing = false);
-//
+
+      // warning mapiing
+      bool warnOnUnresolved;
+      bool warnOnWeakUnresolved;
+//      bool warnOnAnonymousSignature;
+
+      // list of references to the current module which should be checked after the project is compiled
+      Unresolveds* forwardsUnresolved;
+
+      ObjectInfo mapObject(TerminalInfo identifier);
+
+      ref_t mapReference(ident_t reference, bool existing = false);
+
 //      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 //
 //      bool defineForward(ident_t forward, ident_t referenceName, bool constant)
@@ -185,10 +285,10 @@ protected:
 //      {
 //         constantHints.add(reference, classReference);
 //      }
-//
-//      void raiseError(const char* message, TerminalInfo terminal);
-//      void raiseWarning(int level, const char* message, TerminalInfo terminal);
-//
+
+      void raiseError(const char* message, TerminalInfo terminal);
+      void raiseWarning(int level, const char* message, TerminalInfo terminal);
+
 //      bool checkReference(ident_t referenceName);
 //
 //      ref_t resolveIdentifier(ident_t name);
@@ -203,11 +303,11 @@ protected:
 //         IdentifierString wsName(name);
 //         return module->mapSubject(wsName, false);
 //      }
-//
-//      ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
-//
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
-//
+
+      ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
+
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+
 //      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 //
@@ -247,8 +347,8 @@ protected:
 //
 //      void saveType(ref_t type_ref, ref_t classReference, bool internalType);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
-//
-//      void validateReference(TerminalInfo terminal, ref_t reference);
+
+      void validateReference(TerminalInfo terminal, ref_t reference);
 ////      void validateForwards();
 //
 //      ref_t getBaseFunctionClass(int paramCount);
@@ -258,62 +358,62 @@ protected:
 //      int getClassFlags(ref_t reference);
 //      ref_t getClassClassReference(ref_t reference);
 
-      ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
+      ModuleScope(Project* project, ident_t sourcePath, _Module* module/*, _Module* debugModule*/, Unresolveds* forwardsUnresolved);
    };
 
-//   // - Scope -
-//   struct Scope
-//   {
-//      enum ScopeLevel
-//      {
-//         slClass,
-//         slSymbol,
-//         slMethod,
-//         slCode,
-//         slOwnerClass
-//      };
-//
-//      ModuleScope* moduleScope;
-//      Scope*       parent;
-//
-//      void raiseError(const char* message, TerminalInfo terminal)
-//      {
-//         moduleScope->raiseError(message, terminal);
-//      }
-//
-//      void raiseWarning(int level, const char* message, TerminalInfo terminal)
-//      {
-//         moduleScope->raiseWarning(level, message, terminal);
-//      }
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier)
-//      {
-//         if (parent) {
-//            return parent->mapObject(identifier);
-//         }
-//         else return moduleScope->mapObject(identifier);
-//      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (parent) {
-//            return parent->getScope(level);
-//         }
-//         else return NULL;
-//      }
-//
-//      Scope(ModuleScope* moduleScope)
-//      {
-//         this->parent = NULL;
-//         this->moduleScope = moduleScope;
-//      }
-//      Scope(Scope* parent)
-//      {
-//         this->parent = parent;
-//         this->moduleScope = parent->moduleScope;
-//      }
-//   };
-//
+   // - Scope -
+   struct Scope
+   {
+      enum ScopeLevel
+      {
+         slClass,
+         slSymbol,
+         slMethod,
+         slCode,
+         slOwnerClass
+      };
+
+      ModuleScope* moduleScope;
+      Scope*       parent;
+
+      void raiseError(const char* message, TerminalInfo terminal)
+      {
+         moduleScope->raiseError(message, terminal);
+      }
+
+      void raiseWarning(int level, const char* message, TerminalInfo terminal)
+      {
+         moduleScope->raiseWarning(level, message, terminal);
+      }
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier)
+      {
+         if (parent) {
+            return parent->mapObject(identifier);
+         }
+         else return moduleScope->mapObject(identifier);
+      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (parent) {
+            return parent->getScope(level);
+         }
+         else return NULL;
+      }
+
+      Scope(ModuleScope* moduleScope)
+      {
+         this->parent = NULL;
+         this->moduleScope = moduleScope;
+      }
+      Scope(Scope* parent)
+      {
+         this->parent = parent;
+         this->moduleScope = parent->moduleScope;
+      }
+   };
+
 //   // - SourceScope -
 //   struct SourceScope : public Scope
 //   {
@@ -351,28 +451,30 @@ protected:
 //
 //      ClassScope(ModuleScope* parent, ref_t reference);
 //   };
-//
-//   // - SymbolScope -
-//   struct SymbolScope : public SourceScope
-//   {
+
+   // - SymbolScope -
+   struct SymbolScope : public /*Source*/Scope
+   {
+      SyntaxWriter writer;
+
 //      bool  constant;
 //      ref_t typeRef;
 //
 //      void compileHints(DNode hints);
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slSymbol) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      SymbolScope(ModuleScope* parent, ref_t reference);
-//   };
-//
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slSymbol) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      SymbolScope(ModuleScope* parent, StreamWriter* dumpWriter/*, ref_t reference*/);
+   };
+
 //   // - MethodScope -
 //   struct MethodScope : public Scope
 //   {
@@ -417,10 +519,11 @@ protected:
 //
 //      ActionScope(ClassScope* parent);
 //   };
-//
-//   // - CodeScope -
-//   struct CodeScope : public Scope
-//   {
+
+   // - CodeScope -
+   struct CodeScope : public Scope
+   {
+      SyntaxWriter* writer;
 //      CommandTape* tape;
 //
 //      // scope local variables
@@ -462,17 +565,17 @@ protected:
 //      {
 //         reserved = saved;
 //      }
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slCode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      int getMessageID()
 //      {
 //         MethodScope* scope = (MethodScope*)getScope(slMethod);
@@ -518,12 +621,12 @@ protected:
 ////      ref_t getObjectType(ObjectInfo object);
 //
 //      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
-//
-//      CodeScope(SourceScope* parent);
+
+      CodeScope(SymbolScope* parent);
 //      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
-//   };
-//
+   };
+
 //   // - InlineClassScope -
 //
 //   struct InlineClassScope : public ClassScope
@@ -752,9 +855,9 @@ protected:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 //
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-//   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
-//
+   /*ObjectInfo*/void compileTerminal(DNode node, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo*/void compileObject(DNode objectNode, CodeScope& scope/*, int mode*/);
+
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //
@@ -777,7 +880,7 @@ protected:
 //
 //   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   /*ObjectInfo*/void compileExpression(DNode node/*, CodeScope& scope, int mode*/);
+   /*ObjectInfo*/void compileExpression(DNode node, CodeScope& scope/*, int mode*/);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
@@ -840,7 +943,7 @@ protected:
 //   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNode hints*/);
-   void compileSymbolImplementation(DNode node/*, SymbolScope& scope, DNode hints, bool isStatic*/);
+   void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
 //   void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
 //   void compileForward(DNode node, ModuleScope& scope, DNode hints);
 //   void compileType(DNode& member, ModuleScope& scope, DNode hints);
@@ -853,8 +956,8 @@ protected:
 
    void compile(ident_t source, MemoryDump* buffer, ModuleScope& scope);
 
-//   bool validate(Project& project, _Module* module, int reference);
-//   void validateUnresolved(Unresolveds& unresolveds, Project& project);
+   bool validate(Project& project, _Module* module, int reference);
+   void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
 public:
 ////   void setOptFlag(int flag)

@@ -33,6 +33,11 @@ class SyntaxWriter
 
 public:
    void newNode(LexicalType type, ref_t argument);
+   void newNode(LexicalType type)
+   {
+      newNode(type, 0);
+   }
+
    void closeNode();
 
    SyntaxWriter(StreamWriter* writer)

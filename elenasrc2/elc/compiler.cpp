@@ -33,7 +33,10 @@ using namespace _ELENA_;
 //#define HINT_EXTERNAL_CALL    0x00010000
 //
 //#define HINT_SELFEXTENDING    0x00040000     // !! do we need it?
-//
+
+typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
+typedef Compiler::ObjectKind ObjectKind;
+
 //// --- Auxiliary routines ---
 //
 //inline bool isCollection(DNode node)
@@ -314,20 +317,20 @@ using namespace _ELENA_;
 
 // --- Compiler::ModuleScope ---
 
-Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/)
+Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module/*, _Module* debugModule*/, Unresolveds* forwardsUnresolved)
 //   : constantHints((ref_t)-1), extensions(NULL, freeobj)
 {
    this->project = project;
-//   this->sourcePath = sourcePath;
-//   this->module = module;
+   this->sourcePath = sourcePath;
+   this->module = module;
 //   this->debugModule = debugModule;
-//
-//   this->forwardsUnresolved = forwardsUnresolved;
+
+   this->forwardsUnresolved = forwardsUnresolved;
 //   this->sourcePathRef = 0;
-//
-//   warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
-//   warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
-//
+
+   warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
+   warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
+
 //   // cache the frequently used references
 //   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
 //   intReference = mapReference(project->resolveForward(INT_FORWARD));
@@ -376,9 +379,9 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //{
 //   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
 //}
-//
-//ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
-//{
+
+ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
+{
 //   if (identifier==tsReference) {
 //      return mapReferenceInfo(identifier, false);
 //   }
@@ -388,12 +391,12 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //      }
 //      else return defineObjectInfo(mapTerminal(identifier, true), true);
 //   }
-//   else if (identifier==tsIdentifier) {
-//      return defineObjectInfo(mapTerminal(identifier, true), true);
-//   }
-//   else return ObjectInfo();
-//}
-//
+   /*else */if (identifier==tsIdentifier) {
+      return defineObjectInfo(mapTerminal(identifier, true), true);
+   }
+   else return ObjectInfo();
+}
+
 //ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
 //{
 //   List<ident_t>::Iterator it = defaultNs.start();
@@ -487,29 +490,29 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //
 //   return typeRef;
 //}
-//
-//ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
-//{
-//   if (terminal == tsIdentifier) {
+
+ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
+{
+   if (terminal == tsIdentifier) {
 //      ref_t reference = forwards.get(terminal);
 //      if (reference == 0) {
-//         if (!existing) {
-//            ReferenceNs name(module->Name(), terminal);
-//
-//            return module->mapReference(name);
-//         }
+         if (!existing) {
+            ReferenceNs name(module->Name(), terminal);
+
+            return module->mapReference(name);
+         }
 //         else return resolveIdentifier(terminal);
 //      }
 //      else return reference;
-//   }
+   }
 //   else if (terminal == tsPrivate) {
 //      ReferenceNs name(module->Name(), terminal);
 //
 //      return mapReference(name, existing);
 //   }
-//   else return mapReference(terminal, existing);
-//}
-//
+   else return mapReference(terminal, existing);
+}
+
 //bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
 //{
 //   ref_t moduleRef = 0;
@@ -520,13 +523,13 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //
 //   return module->mapReference(referenceName, true) != 0;
 //}
-//
-//ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool checkState)
-//{
-//   // if reference is zero the symbol is unknown
-//   if (reference == 0) {
-//      return ObjectInfo();
-//   }
+
+ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool checkState)
+{
+   // if reference is zero the symbol is unknown
+   if (reference == 0) {
+      return ObjectInfo();
+   }
 //   // check if symbol should be treated like constant one
 //   else if (constantHints.exist(reference)) {
 //      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
@@ -563,33 +566,33 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //         }
 //      }
 //   }
-//
-//   // otherwise it is a normal one
-//   return ObjectInfo(okSymbol, reference);
-//}
-//
-//ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
-//{
-//   if (emptystr(referenceName))
-//      return 0;
-//
-//   ref_t reference = 0;
-//   if (!isWeakReference(referenceName)) {
-//      if (existing) {
-//         // check if the reference does exist
-//         ref_t moduleRef = 0;
-//         _Module* argModule = project->resolveModule(referenceName, moduleRef);
-//
-//         if (argModule != NULL && moduleRef != 0)
-//            reference = module->mapReference(referenceName);
-//      }
-//      else reference = module->mapReference(referenceName, existing);
-//   }
-//   else reference = module->mapReference(referenceName, existing);
-//
-//   return reference;
-//}
-//
+
+   // otherwise it is a normal one
+   return ObjectInfo(okSymbol, reference);
+}
+
+ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
+{
+   if (emptystr(referenceName))
+      return 0;
+
+   ref_t reference = 0;
+   if (!isWeakReference(referenceName)) {
+      if (existing) {
+         // check if the reference does exist
+         ref_t moduleRef = 0;
+         _Module* argModule = project->resolveModule(referenceName, moduleRef);
+
+         if (argModule != NULL && moduleRef != 0)
+            reference = module->mapReference(referenceName);
+      }
+      else reference = module->mapReference(referenceName, existing);
+   }
+   else reference = module->mapReference(referenceName, existing);
+
+   return reference;
+}
+
 //ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 //{
 //   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
@@ -786,41 +789,41 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //
 //   return tpUnknown;
 //}
-//
-//void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t reference)
-//{
-//   // check if the reference may be resolved
-//   bool found = false;
-//
-//   if (warnOnUnresolved && (warnOnWeakUnresolved || !isWeakReference(terminal))) {
-//      int   mask = reference & mskAnyRef;
-//      reference &= ~mskAnyRef;
-//
-//      ref_t    ref = 0;
-//      _Module* refModule = project->resolveModule(module->resolveReference(reference), ref, true);
-//
-//      if (refModule != NULL) {
-//         found = (refModule->mapSection(ref | mask, true)!=NULL);
-//      }
-//      if (!found) {
-//         if (!refModule || refModule == module) {
-//            forwardsUnresolved->add(Unresolved(sourcePath, reference | mask, module, terminal.Row(), terminal.Col()));
-//         }
-//         else raiseWarning(1, wrnUnresovableLink, terminal);
-//      }
-//   }
-//}
-//
-//void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo terminal)
-//{
-//   project->raiseError(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
-//}
-//
-//void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
-//{
-//   project->raiseWarning(level, message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
-//}
-//
+
+void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t reference)
+{
+   // check if the reference may be resolved
+   bool found = false;
+
+   if (warnOnUnresolved && (warnOnWeakUnresolved || !isWeakReference(terminal))) {
+      int   mask = reference & mskAnyRef;
+      reference &= ~mskAnyRef;
+
+      ref_t    ref = 0;
+      _Module* refModule = project->resolveModule(module->resolveReference(reference), ref, true);
+
+      if (refModule != NULL) {
+         found = (refModule->mapSection(ref | mask, true)!=NULL);
+      }
+      if (!found) {
+         if (!refModule || refModule == module) {
+            forwardsUnresolved->add(Unresolved(sourcePath, reference | mask, module, terminal.Row(), terminal.Col()));
+         }
+         else raiseWarning(1, wrnUnresovableLink, terminal);
+      }
+   }
+}
+
+void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo terminal)
+{
+   project->raiseError(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+}
+
+void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
+{
+   project->raiseWarning(level, message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+}
+
 //void Compiler::ModuleScope :: compileForwardHints(DNode hints, bool& constant)
 //{
 //   constant = false;
@@ -939,16 +942,17 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //{
 //   this->reference = reference;
 //}
-//
-//// --- Compiler::SymbolScope ---
-//
-//Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
+
+// --- Compiler::SymbolScope ---
+
+Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, StreamWriter* dumpWriter/*, ref_t reference*/)
+   : writer(dumpWriter), Scope(parent)
 //   : SourceScope(parent, reference)
-//{
+{
 //   typeRef = 0;
 //   constant = false;
-//}
-//
+}
+
 //void Compiler::SymbolScope :: compileHints(DNode hints)
 //{
 //   while (hints == nsHint) {
@@ -970,15 +974,15 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //      hints = hints.nextNode();
 //   }
 //}
-//
-//ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
-//{
-//   /*if (StringHelper::compare(identifier, param) || ConstIdentifier::compare(identifier, PARAM_VAR)) {
-//      return ObjectInfo(otLocal, -1);
-//   }
-//   else */return Scope::mapObject(identifier);
-//}
-//
+
+ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
+{
+   /*if (StringHelper::compare(identifier, param) || ConstIdentifier::compare(identifier, PARAM_VAR)) {
+      return ObjectInfo(otLocal, -1);
+   }
+   else */return Scope::mapObject(identifier);
+}
+
 //// --- Compiler::ClassScope ---
 //
 //Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
@@ -1385,17 +1389,19 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //   }
 //   else return MethodScope::mapObject(identifier);
 //}
-//
-//// --- Compiler::CodeScope ---
-//
-//Compiler::CodeScope :: CodeScope(SourceScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
+
+// --- Compiler::CodeScope ---
+
+Compiler::CodeScope :: CodeScope(SymbolScope* parent)
+   : Scope(parent)//, locals(Parameter(0))
+{
+   this->writer = &parent->writer;
+
 //   this->tape = &parent->tape;
 //   this->level = 0;
 //   this->saved = this->reserved = 0;
-//}
-//
+}
+
 ////Compiler::CodeScope :: CodeScope(MethodScope* parent, CodeType type)
 ////   : Scope(parent)
 ////{
@@ -1410,7 +1416,7 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //   this->level = 0;
 //   this->saved = this->reserved = 0;
 //}
-//
+
 //Compiler::CodeScope :: CodeScope(CodeScope* parent)
 //   : Scope(parent), locals(Parameter(0))
 //{
@@ -1419,9 +1425,9 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //   this->saved = parent->saved;
 //   this->reserved = parent->reserved;
 //}
-//
-//ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
-//{
+
+ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
+{
 //   Parameter local = locals.get(identifier);
 //   if (local.offset) {
 //      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
@@ -1432,9 +1438,9 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //      }
 //      else return ObjectInfo(okLocal, local.offset, 0, local.sign_ref);
 //   }
-//   else return Scope::mapObject(identifier);
-//}
-//
+   /*else */return Scope::mapObject(identifier);
+}
+
 //void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference)
 //{
 //   while (hints == nsHint) {
@@ -2025,12 +2031,12 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   }
 //   else scope.raiseError(errDuplicatedLocal, node.Terminal());
 //}
-//
-//ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
-//{
-//   TerminalInfo terminal = node.Terminal();
-//
-//   ObjectInfo object;
+
+/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, CodeScope& scope/*, int mode*/)
+{
+   TerminalInfo terminal = node.Terminal();
+
+   ObjectInfo object;
 //   if (terminal==tsLiteral) {
 //      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
 //   }
@@ -2086,17 +2092,17 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
 //   }
-//   else if (!emptystr(terminal)) {
-//      object = scope.mapObject(terminal);
-//   }
-//
-//   switch (object.kind) {
-//      case okUnknown:
-//         scope.raiseError(errUnknownObject, terminal);
-//         break;
-//      case okSymbol:
-//         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-//         break;
+   /*else*/ if (!emptystr(terminal)) {
+      object = scope.mapObject(terminal);
+   }
+
+   switch (object.kind) {
+      case okUnknown:
+         scope.raiseError(errUnknownObject, terminal);
+         break;
+      case okSymbol:
+         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
+         break;
 //      //case okExternal:
 //      //   // external call cannot be used inside symbol
 //      //   if (test(mode, HINT_ROOT))
@@ -2106,18 +2112,18 @@ void Compiler :: loadRules(StreamReader* optimization)
 //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
 //            scope.raiseError(errInvalidOperation, node.Terminal());
 //         break;
-//   }
-//
+   }
+
 //   return object;
-//}
-//
-//ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
-//{
+}
+
+/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, CodeScope& scope/*, int mode*/)
+{
 //   ObjectInfo result;
-//
-//   DNode member = objectNode.firstChild();
-//   switch (member)
-//   {
+
+   DNode member = objectNode.firstChild();
+   switch (member)
+   {
 //      //case nsRetStatement:
 //      case nsNestedClass:
 //         if (objectNode.Terminal() != nsNone) {
@@ -2150,13 +2156,15 @@ void Compiler :: loadRules(StreamReader* optimization)
 //      case nsMessageReference:
 //         result = compileMessageReference(member, scope);
 //         break;
-//      default:
-//         result = compileTerminal(objectNode, scope, mode);
-//   }
-//
+      default:
+         scope.writer->newNode(lxObject);
+
+         /*result = */compileTerminal(objectNode, scope/*, mode*/);
+   }
+
 //   return result;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 //{
 //   DNode arg = node.firstChild();
@@ -4078,14 +4086,16 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   return ObjectInfo(okAccumulator, 0, 0, subj);
 //}
 
-/*ObjectInfo*/void Compiler :: compileExpression(DNode node/*, CodeScope& scope, int mode*/)
+/*ObjectInfo*/void Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mode*/)
 {
-//   DNode member = node.firstChild();
-//
-//   ObjectInfo objectInfo;
-//   if (member==nsObject) {
-//      objectInfo = compileObject(member, scope, mode);
-//   }
+   scope.writer->newNode(lxExpression);
+
+   DNode member = node.firstChild();
+
+   //ObjectInfo objectInfo;
+   if (member==nsObject) {
+      /*objectInfo =*/ compileObject(member, scope/*, mode*/);
+   }
 //   if (member != nsNone) {
 //      if (findSymbol(member, nsCatchMessageOperation)) {
 //         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
@@ -5829,7 +5839,7 @@ void Compiler :: compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNod
 //   }
 }
 
-void Compiler :: compileSymbolImplementation(DNode node/*, SymbolScope& scope, DNode hints, bool isStatic*/)
+void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/)
 {
 //   scope.compileHints(hints);
 //
@@ -5901,14 +5911,14 @@ void Compiler :: compileSymbolImplementation(DNode node/*, SymbolScope& scope, D
 //      _writer.jumpIfNotEqual(scope.tape, 0, true);
 //   }
 //   else _writer.declareSymbol(scope.tape, scope.reference);
-//
-//   CodeScope codeScope(&scope);
+
+   CodeScope codeScope(&scope);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
 //
 //      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 //      openDebugExpression(codeScope);
-      /*retVal = */compileExpression(expression/*, codeScope, 0*/);
+      /*retVal = */compileExpression(expression, codeScope/*, 0*/);
 //      endDebugExpression(codeScope);
 //   }
 //   _writer.loadObject(*codeScope.tape, retVal);
@@ -6154,6 +6164,8 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 
 void Compiler::compileImplementations(DNode member, ModuleScope& scope)
 {
+   MemoryDump dump;
+
    while (member != nsNone) {
 //      DNode hints = skipHints(member);
 
@@ -6181,10 +6193,12 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
          case nsSymbol:
          case nsStatic:
          {
+            MemoryWriter writer(&dump, 0);
+
 //            ref_t reference = scope.mapTerminal(name);
 //
-//            SymbolScope symbolScope(&scope, reference);
-            compileSymbolImplementation(member/*, symbolScope, hints, (member == nsStatic)*/);
+            SymbolScope symbolScope(&scope, &writer/*, reference*/);
+            compileSymbolImplementation(member, symbolScope/*, hints, (member == nsStatic)*/);
             break;
          }
       }
@@ -6233,26 +6247,26 @@ void Compiler :: compileModule(DNode node, ModuleScope& scope)
    compileImplementations(member, scope);
 }
 
-//bool Compiler :: validate(Project& project, _Module* module, int reference)
-//{
-//   int   mask = reference & mskAnyRef;
-//   ref_t extReference = 0;
-//   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
-//   _Module* extModule = project.resolveModule(refName, extReference, true);
-//
-//   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
-//}
-//
-//void Compiler :: validateUnresolved(Unresolveds& unresolveds, Project& project)
-//{
-//   for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
-//      if (!validate(project, (*it).module, (*it).reference)) {
-//         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
-//
-//         project.raiseWarning(1, wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
-//      }
-//   }
-//}
+bool Compiler :: validate(Project& project, _Module* module, int reference)
+{
+   int   mask = reference & mskAnyRef;
+   ref_t extReference = 0;
+   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
+   _Module* extModule = project.resolveModule(refName, extReference, true);
+
+   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
+}
+
+void Compiler :: validateUnresolved(Unresolveds& unresolveds, Project& project)
+{
+   for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
+      if (!validate(project, (*it).module, (*it).reference)) {
+         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
+
+         project.raiseWarning(1, wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
+      }
+   }
+}
 
 void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
 {
@@ -6279,32 +6293,32 @@ void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
 bool Compiler :: run(Project& project)
 {
 //   bool withDebugInfo = project.BoolSetting(opDebugMode);
-//   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
+   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
 
    MemoryDump  buffer;                // temporal derivation buffer
-//   Unresolveds unresolveds(Unresolved(), NULL);
-//
-//   Path modulePath;
-//   ReferenceNs name(project.StrSetting(opNamespace));
-//   int rootLength = name.Length();
+   Unresolveds unresolveds(Unresolved(), NULL);
+
+   Path modulePath;
+   ReferenceNs name(project.StrSetting(opNamespace));
+   int rootLength = name.Length();
    for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
       try {
-//         // build module namespace
-//         Path::loadSubPath(modulePath, it.key());
-//         name.truncate(rootLength);
-//         name.pathToName(modulePath);
-//
-//         // create or update module
-//         ModuleInfo info = modules.get(name);
-//         if (info.codeModule == NULL) {
-//            info.codeModule = project.createModule(name);
+         // build module namespace
+         Path::loadSubPath(modulePath, it.key());
+         name.truncate(rootLength);
+         name.pathToName(modulePath);
+
+         // create or update module
+         ModuleInfo info = modules.get(name);
+         if (info.codeModule == NULL) {
+            info.codeModule = project.createModule(name);
 //            if (withDebugInfo)
 //               info.debugModule = project.createDebugModule(name);
-//
-//            modules.add(name, info);
-//         }
 
-         ModuleScope scope(&project/*, it.key(), info.codeModule, info.debugModule, &unresolveds*/);
+            modules.add(name, info);
+         }
+
+         ModuleScope scope(&project, it.key(), info.codeModule/*, info.debugModule*/, &unresolveds);
 //         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
          project.printInfo("%s", it.key());
@@ -6330,21 +6344,21 @@ bool Compiler :: run(Project& project)
          project.raiseError(e.error, it.key(), e.row, e.column, e.token);
       }
    }
-//
-//   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
-//   while (!it.Eof()) {
-//      ModuleInfo info = *it;
-//
-//      project.saveModule(info.codeModule, "nl");
-//
-//      if (info.debugModule)
-//         project.saveModule(info.debugModule, "dnl");
-//
-//      it++;
-//   }
-//
-//   // validate the unresolved forward refereces if unresolved reference warning is enabled
-//   validateUnresolved(unresolveds, project);
+
+   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
+   while (!it.Eof()) {
+      ModuleInfo info = *it;
+
+      project.saveModule(info.codeModule, "nl");
+
+      //if (info.debugModule)
+      //   project.saveModule(info.debugModule, "dnl");
+
+      it++;
+   }
+
+   // validate the unresolved forward refereces if unresolved reference warning is enabled
+   validateUnresolved(unresolveds, project);
 
    return !project.HasWarnings();
 }
