@@ -344,9 +344,9 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 //   falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
 //
 //   boolType = module->mapSubject(project->resolveForward(BOOL_FORWARD), false);
-//
-//   defaultNs.add(module->Name());
-//
+
+   defaultNs.add(module->Name());
+
 //   loadTypes(module);
 //   loadExtensions(TerminalInfo(), module);
 }
@@ -426,70 +426,70 @@ ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
 //
 //   return module->mapSubject(fullName, false);
 //}
-//
-//ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal)
-//{
-//   ident_t identifier = NULL;
-//   if (terminal.symbol == tsIdentifier || terminal.symbol == tsPrivate) {
-//      identifier = terminal.value;
-//   }
-//   else raiseError(errInvalidSubject, terminal);
-//
-//   ref_t subj_ref = types.get(identifier);
-//   if (subj_ref != 0)
-//      return subj_ref;
-//
-//   IdentifierString fullName(identifier);
-//   fullName.append('$');
-//
-//   size_t tail = fullName.Length();
-//   List<ident_t>::Iterator it = defaultNs.start();
-//   while (!it.Eof()) {
-//      fullName.truncate(tail);
-//
-//      // if it is a sytem root
-//      if (StringHelper::compare(*it, STANDARD_MODULE)) {
-//      }
-//      else if (StringHelper::compare(*it, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
-//         fullName.append(*it + STANDARD_MODULE_LEN + 1);
-//      }
-//      else fullName.append(*it);
-//
-//      subj_ref = module->mapSubject(fullName, true);
-//      if (subj_ref && typeHints.exist(subj_ref)) {
-//         types.add(terminal, subj_ref);
-//
-//         return subj_ref;
-//      }
-//      it++;
-//   }
-//
-//   return 0;
-//}
-//
-//ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output)
-//{
-//   // add a namespace for the private message
-//   if (terminal.symbol == tsPrivate) {
-//      output.append(project->StrSetting(opNamespace));
-//      output.append(terminal.value);
-//
-//      return 0;
-//   }
-//
-//   ref_t typeRef = mapType(terminal);
-//   if (typeRef != 0) {
-//      output.append(module->resolveSubject(typeRef));
-//   }
-//   else if (terminal.symbol != tsReference){
-//      typeRef = module->mapSubject(terminal, false);
-//
-//      output.append(terminal.value);
-//   }
-//   else raiseError(errInvalidSubject, terminal);
-//
-//   return typeRef;
-//}
+
+ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal)
+{
+   ident_t identifier = NULL;
+   if (terminal.symbol == tsIdentifier || terminal.symbol == tsPrivate) {
+      identifier = terminal.value;
+   }
+   else raiseError(errInvalidSubject, terminal);
+
+   ref_t subj_ref = types.get(identifier);
+   if (subj_ref != 0)
+      return subj_ref;
+
+   IdentifierString fullName(identifier);
+   fullName.append('$');
+
+   size_t tail = fullName.Length();
+   List<ident_t>::Iterator it = defaultNs.start();
+   while (!it.Eof()) {
+      fullName.truncate(tail);
+
+      // if it is a sytem root
+      if (StringHelper::compare(*it, STANDARD_MODULE)) {
+      }
+      else if (StringHelper::compare(*it, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
+         fullName.append(*it + STANDARD_MODULE_LEN + 1);
+      }
+      else fullName.append(*it);
+
+      subj_ref = module->mapSubject(fullName, true);
+      if (subj_ref && typeHints.exist(subj_ref)) {
+         types.add(terminal, subj_ref);
+
+         return subj_ref;
+      }
+      it++;
+   }
+
+   return 0;
+}
+
+ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output)
+{
+   // add a namespace for the private message
+   if (terminal.symbol == tsPrivate) {
+      output.append(project->StrSetting(opNamespace));
+      output.append(terminal.value);
+
+      return 0;
+   }
+
+   ref_t typeRef = mapType(terminal);
+   if (typeRef != 0) {
+      output.append(module->resolveSubject(typeRef));
+   }
+   else if (terminal.symbol != tsReference){
+      typeRef = module->mapSubject(terminal, false);
+
+      output.append(terminal.value);
+   }
+   else raiseError(errInvalidSubject, terminal);
+
+   return typeRef;
+}
 
 ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
 {
@@ -1577,9 +1577,9 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 // --- Compiler ---
 
 Compiler :: Compiler(StreamReader* syntax)
-   : _parser(syntax)//, _verbs(0)
+   : _parser(syntax), _verbs(0)
 {
-//   ByteCodeCompiler::loadVerbs(_verbs);
+   ByteCodeCompiler::loadVerbs(_verbs);
 //   ByteCodeCompiler::loadOperators(_operators);
 }
 
@@ -2436,81 +2436,81 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //   return ObjectInfo(okAccumulator, field.extraparam, 0, type);
 //}
-//
-//ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, MessageScope& callStack)
-//{
+
+ref_t Compiler :: mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/)
+{
 //   callStack.directOrder = true;
-//
-//   bool   first = true;
-//   ref_t  verb_id = 0;
-//   int    paramCount = 0;
-//   DNode  arg;
-//
-//   IdentifierString signature;
-//   TerminalInfo     verb = node.Terminal();
-//   // check if it is a short-cut eval message
-//   if (node == nsMessageParameter) {
-//      arg = node;
-//
-//      verb_id = EVAL_MESSAGE_ID;
-//   }
-//   else {
-//      arg = node.firstChild();
-//
-//      verb_id = _verbs.get(verb.value);
-//      if (verb_id == 0) {
-//         size_t id = scope.moduleScope->mapSubject(verb, signature);
-//
-//         // if followed by argument list - it is EVAL verb
-//         if (arg != nsNone) {
-//            // HOT FIX : strong types cannot be used as a custom verb with a parameter
-//            if (scope.moduleScope->typeHints.exist(id))
-//               scope.raiseError(errStrongTypeNotAllowed, verb);
-//
-//            verb_id = EVAL_MESSAGE_ID;
-//
-//            first = false;
-//         }
-//         // otherwise it is GET message
-//         else verb_id = GET_MESSAGE_ID;
-//      }
-//   }
-//
-//   // if message has generic argument list
-//   while (arg == nsMessageParameter) {
+
+   bool   first = true;
+   ref_t  verb_id = 0;
+   int    paramCount = 0;
+   DNode  arg;
+
+   IdentifierString signature;
+   TerminalInfo     verb = node.Terminal();
+   // check if it is a short-cut eval message
+   if (node == nsMessageParameter) {
+      arg = node;
+
+      verb_id = EVAL_MESSAGE_ID;
+   }
+   else {
+      arg = node.firstChild();
+
+      verb_id = _verbs.get(verb.value);
+      if (verb_id == 0) {
+         size_t id = scope.moduleScope->mapSubject(verb, signature);
+
+         // if followed by argument list - it is EVAL verb
+         if (arg != nsNone) {
+            // HOT FIX : strong types cannot be used as a custom verb with a parameter
+            if (scope.moduleScope->typeHints.exist(id))
+               scope.raiseError(errStrongTypeNotAllowed, verb);
+
+            verb_id = EVAL_MESSAGE_ID;
+
+            first = false;
+         }
+         // otherwise it is GET message
+         else verb_id = GET_MESSAGE_ID;
+      }
+   }
+
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
 //      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-//
-//      paramCount++;
-//
+
+      paramCount++;
+
 //      if (arg.firstChild().firstChild() != nsNone)
 //         callStack.directOrder = false;
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   // if message has named argument list
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
-//
-//      arg = arg.nextNode();
-//
-//      // skip an argument
-//      if (arg == nsMessageParameter) {
-//         // if it is an open argument list
+
+      arg = arg.nextNode();
+   }
+
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      // skip an argument
+      if (arg == nsMessageParameter) {
+         // if it is an open argument list
 //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
 //            // if a generic argument is used with an open argument list
 //            callStack.directOrder = false;
-//
-//            // check if argument list should be unboxed
+
+            // check if argument list should be unboxed
 //            DNode param = arg.firstChild();
-//
+
 //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
 //               // add argument list to be unboxed
 //               callStack.oargUnboxing = true;
@@ -2532,29 +2532,29 @@ void Compiler :: loadRules(StreamReader* optimization)
 //         }
 //         else {
 //            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
-//            paramCount++;
-//
-//            if (paramCount >= OPEN_ARG_COUNT)
-//               scope.raiseError(errTooManyParameters, verb);
-//
+            paramCount++;
+
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, verb);
+
 //            if (arg.firstChild().firstChild() != nsNone)
 //               callStack.directOrder = false;
-//
-//            arg = arg.nextNode();
+
+            arg = arg.nextNode();
 //         }
-//      }
-//   }
-//
-//   // if signature is presented
-//   ref_t sign_id = 0;
-//   if (!emptystr(signature)) {
-//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//   }
-//
-//   // create a message id
-//   return encodeMessage(sign_id, verb_id, paramCount);
-//}
-//
+      }
+   }
+
+   // if signature is presented
+   ref_t sign_id = 0;
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
+
+   // create a message id
+   return encodeMessage(sign_id, verb_id, paramCount);
+}
+
 //ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 //{
 //   // check typed extension if the type available
@@ -3164,9 +3164,9 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   if (callStack.level > 0)
 //      _writer.releaseObject(*scope.tape, callStack.level);
 //}
-//
-//void Compiler :: compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe)
-//{
+
+void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack, */CodeScope& scope/*, bool stacksafe*/)
+{
 //   size_t count = callStack.parameters.Count();
 //
 //   ByteCodeIterator bm = scope.tape->end();
@@ -3187,6 +3187,10 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   if (!callStack.directOrder)
 //      _writer.declareArgumentList(*scope.tape, count);
 //
+   DNode param = node.firstChild();
+   while (param != nsNone) {
+      compileObject(param, scope);
+
 //   for (size_t i = 0; i < count; i++) {
 //      MessageScope::ParamInfo param = callStack.parameters.get(callStack.directOrder ? (count - i - 1) : i);
 //
@@ -3248,11 +3252,11 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //      // save changes to call stack
 //      *(callStack.parameters.getIt(callStack.directOrder ? (count - i - 1) : i)) = param;
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo target, int messageRef, int mode)
-//{
+   }
+}
+
+/*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, ObjectInfo target, */int messageRef/*, int mode*/)
+{
 //   ObjectInfo retVal(okAccumulator);
 //
 //   int signRef = getSignature(messageRef);
@@ -3304,7 +3308,7 @@ void Compiler :: loadRules(StreamReader* optimization)
 //         compileMessageParameters(callStack, scope, false);
 //      }
 //   }
-//   else compileMessageParameters(callStack, scope, test(methodHint, tpStackSafe));
+   /*else */compileMessageParameters(node, /*callStack, */scope/*, test(methodHint, tpStackSafe)*/);
 //
 //   // otherwise load target
 //   if (target.kind == okConstantRole) {
@@ -3364,7 +3368,8 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //      _writer.callMethod(*scope.tape, 0, paramCount);
 //   }
-//
+   scope.writer->appendNode(lxMessage);
+
 //   if (callStack.paramUnboxing)
 //      unboxCallstack(scope, callStack);
 //
@@ -3393,8 +3398,8 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   }
 //
 //   return retVal;
-//}
-//
+}
+
 //void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
 //{
 //   // it should be removed from the stack
@@ -3404,16 +3409,16 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   }
 //   else _writer.releaseObject(*scope.tape, spaceToRelease);
 //}
-//
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
-//{
+
+/*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/)
+{
 //   MessageScope callStack;
 //
 //   // put the target
 //   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // HOTFIX : passing node for raiseWarning / raiseError
-//
-//   ref_t messageRef = mapMessage(node, scope, callStack);
-//
+
+   ref_t messageRef = mapMessage(node, scope/*, callStack*/);
+
 //   ref_t extensionRef = mapExtension(scope, messageRef, object);
 //
 //   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
@@ -3427,9 +3432,9 @@ void Compiler :: loadRules(StreamReader* optimization)
 //         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
 //      }
 //   }
-//
-//   ObjectInfo retVal = compileMessage(node, scope, callStack, object, messageRef, 0);
-//
+
+   /*ObjectInfo retVal = */compileMessage(node, scope, /*callStack, object, */messageRef/*, 0*/);
+
 //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
 //   if (spaceToRelease != 0) {
 //      // if open argument list is used
@@ -3437,14 +3442,14 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   }
 //
 //   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
-//{
+}
+
+/*ObjectInfo */void Compiler :: compileOperations(DNode node, CodeScope& scope/*, ObjectInfo object, int mode*/)
+{
 //   ObjectInfo currentObject = object;
-//
-//   DNode member = node.nextNode();
-//
+
+   DNode member = node.nextNode();
+
 //   if (object.kind == okExternal) {
 //      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
 //      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
@@ -3472,16 +3477,16 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //      mode &= ~HINT_ALT;
 //   }
-//
-//   while (member != nsNone) {
-//      //_writer.declareBlock(*scope.tape);
-//
+
+   while (member != nsNone) {
+      //_writer.declareBlock(*scope.tape);
+
 //      if (member == nsExtension) {
 //         currentObject = compileExtension(member, scope, currentObject, mode);
 //      }
-//      else if (member==nsMessageOperation) {
-//         currentObject = compileMessage(member, scope, currentObject);
-//      }
+      /*else */if (member==nsMessageOperation) {
+         /*currentObject = */compileMessage(member, scope/*, currentObject*/);
+      }
 //      else if (member==nsMessageParameter) {
 //         currentObject = compileMessage(member, scope, currentObject);
 //
@@ -3519,10 +3524,10 @@ void Compiler :: loadRules(StreamReader* optimization)
 //      }
 //
 //      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//      member = member.nextNode();
-//   }
-//
+
+      member = member.nextNode();
+   }
+
 //   if (catchMode) {
 //      _writer.endCatch(*scope.tape);
 //   }
@@ -3531,8 +3536,8 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   }
 //
 //   return currentObject;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -4097,15 +4102,17 @@ void Compiler :: loadRules(StreamReader* optimization)
    if (member==nsObject) {
       /*objectInfo =*/ compileObject(member, scope/*, mode*/);
    }
-//   if (member != nsNone) {
+   if (member != nsNone) {
 //      if (findSymbol(member, nsCatchMessageOperation)) {
 //         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
 //      }
 //      else if (findSymbol(member, nsAltMessageOperation)) {
 //         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
 //      }
-//      else objectInfo = compileOperations(member, scope, objectInfo, mode);
-//   }
+      /*else objectInfo = */compileOperations(member, scope/*, objectInfo, mode*/);
+   }
+
+   scope.writer->closeNode();
 //
 //   return objectInfo;
 }

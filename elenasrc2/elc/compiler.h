@@ -105,9 +105,9 @@ public:
       }
    };
 
-//   typedef Map<ident_t, ref_t, false>     ForwardMap;
+   typedef Map<ident_t, ref_t, false>     ForwardMap;
 //   typedef Map<ident_t, Parameter, false> LocalMap;
-//   typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef Map<ref_t, ref_t>              SubjectMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
@@ -219,9 +219,9 @@ private:
 
       ident_t        sourcePath;
 //      ref_t          sourcePathRef;
-//
-//      // default namespaces
-//      List<ident_t> defaultNs;
+
+      // default namespaces
+      List<ident_t> defaultNs;
 //      ForwardMap    forwards;       // forward declarations
 //
 //      // symbol hints
@@ -230,11 +230,11 @@ private:
 //      // extensions
 //      SubjectMap        extensionHints; 
 //      ExtensionMap      extensions;
-//
-//      // type hints
-//      ForwardMap        types;
-//      SubjectMap        typeHints;
-//
+
+      // type hints
+      ForwardMap        types;
+      SubjectMap        typeHints;
+
 //      // cached references
 //      ref_t superReference;
 //      ref_t intReference;
@@ -294,15 +294,15 @@ private:
 //      ref_t resolveIdentifier(ident_t name);
 //
 //      ref_t mapNewType(ident_t terminal);
-//
-//      ref_t mapType(TerminalInfo terminal);
-//
-//      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
-//      ref_t mapSubject(ident_t name)
-//      {
-//         IdentifierString wsName(name);
-//         return module->mapSubject(wsName, false);
-//      }
+
+      ref_t mapType(TerminalInfo terminal);
+
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
+      ref_t mapSubject(ident_t name)
+      {
+         IdentifierString wsName(name);
+         return module->mapSubject(wsName, false);
+      }
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
@@ -777,7 +777,7 @@ private:
 //   ByteCodeWriter _writer;
    Parser         _parser;
 
-//   MessageMap     _verbs;                            // list of verbs
+   MessageMap     _verbs;                            // list of verbs
 //   MessageMap     _operators;                        // list of operators
 ////   MessageMap       _obsolete;                       // list of obsolete messages
 //
@@ -831,8 +831,8 @@ private:
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
 //   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, bool& unboxing, int mode = 0);
 //   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
-//
-//   ref_t mapMessage(DNode node, CodeScope& scope, MessageScope& callStack);
+
+   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
 //   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
 //   {
 //      MessageScope callStack;
@@ -873,12 +873,12 @@ private:
 //
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
+   /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/);
+   /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, ObjectInfo object, */int messageRef/*, int mode*/);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
-//   void compileMessageParameters(MessageScope& callStack, CodeScope& scope, bool stacksafe);
-//
-//   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
+   void compileMessageParameters(DNode node, /*MessageScope& callStack, */CodeScope& scope/*, bool stacksafe*/);
+
+   /*ObjectInfo*/void compileOperations(DNode node, CodeScope& scope/*, ObjectInfo target, int mode*/);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    /*ObjectInfo*/void compileExpression(DNode node, CodeScope& scope/*, int mode*/);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
