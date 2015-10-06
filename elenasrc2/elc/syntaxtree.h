@@ -29,7 +29,7 @@ enum LexicalType
 
 class SyntaxWriter
 {
-   StreamWriter* _writer;
+   MemoryWriter _writer;
 
 public:
    void newNode(LexicalType type, ref_t argument);
@@ -50,9 +50,9 @@ public:
 
    void closeNode();
 
-   SyntaxWriter(StreamWriter* writer)
+   SyntaxWriter(_Memory* dump)
+      : _writer(dump)
    {
-      _writer = writer;
    }
 };
 
@@ -64,24 +64,35 @@ public:
    // --- Node ---
    class Node
    {
+      friend class SyntaxReader;
+
+      SyntaxReader* reader;
+      size_t        position;
+
+      Node(SyntaxReader* reader, size_t position, LexicalType type, ref_t argument);
+
    public:
-      LexicalType type;
-      ref_t       argument;
+      LexicalType   type;
+      ref_t         argument;
 
       Node()
       {
          type = lxNone;
          argument = 0;
+
+         reader = NULL;
       }
    };
 
 private:
-   StreamReader* _reader;
+   MemoryReader _reader;
 
 public:
-   SyntaxReader(StreamReader* reader)
-   {
-      _reader = reader;
+   Node Root();
+
+   SyntaxReader(_Memory* dump)
+      : _reader(dump)
+   {      
    }
 };
 

@@ -11,7 +11,6 @@
 
 #include "project.h"
 #include "parser.h"
-#include "syntaxtree.h"
 #include "bcwriter.h"
 
 namespace _ELENA_
@@ -455,7 +454,7 @@ private:
    // - SymbolScope -
    struct SymbolScope : public /*Source*/Scope
    {
-      SyntaxWriter writer;
+      ref_t        reference;
 
 //      bool  constant;
 //      ref_t typeRef;
@@ -472,7 +471,7 @@ private:
          else return Scope::getScope(level);
       }
 
-      SymbolScope(ModuleScope* parent, StreamWriter* dumpWriter/*, ref_t reference*/);
+      SymbolScope(ModuleScope* parent, ref_t reference);
    };
 
 //   // - MethodScope -
@@ -622,7 +621,7 @@ private:
 //
 //      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
-      CodeScope(SymbolScope* parent);
+      CodeScope(SymbolScope* parent, SyntaxWriter* writer);
 //      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
    };
@@ -774,7 +773,7 @@ private:
 //      }
 //   };
 
-//   ByteCodeWriter _writer;
+   ByteCodeWriter _writer;
    Parser         _parser;
 
    MessageMap     _verbs;                            // list of verbs

@@ -1,17 +1,17 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA byte code compiler class implementation.
-////
-////                                              (C)2005-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "bcwriter.h"
+//		This file contains ELENA byte code compiler class implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2015, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "bcwriter.h"
+
+using namespace _ELENA_;
+
 //// --- Auxiliary declareVariable ---
 //
 //void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
@@ -67,13 +67,13 @@
 //   }
 //   else return 0;
 //}
-//
-//void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeType scope*/)
-//{
-//   // symbol-begin:
-//   tape.write(blBegin, bsSymbol, reference);
-//}
-//
+
+void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeType scope*/)
+{
+   // symbol-begin:
+   tape.write(blBegin, bsSymbol, reference);
+}
+
 //void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference)
 //{
 //   // symbol-begin:
@@ -2512,3 +2512,8 @@
 //   tape.setLabel();
 //   tape.write(bcALoadSI, 1);
 //}
+
+void ByteCodeWriter :: translateExpression(CommandTape& tape, SyntaxReader::Node root)
+{
+
+}

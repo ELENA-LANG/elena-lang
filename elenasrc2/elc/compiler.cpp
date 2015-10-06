@@ -945,10 +945,11 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, Termi
 
 // --- Compiler::SymbolScope ---
 
-Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, StreamWriter* dumpWriter/*, ref_t reference*/)
-   : writer(dumpWriter), Scope(parent)
+Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
+   : Scope(parent)
 //   : SourceScope(parent, reference)
 {
+   this->reference = reference;
 //   typeRef = 0;
 //   constant = false;
 }
@@ -1392,12 +1393,11 @@ ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
 
 // --- Compiler::CodeScope ---
 
-Compiler::CodeScope :: CodeScope(SymbolScope* parent)
+Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
    : Scope(parent)//, locals(Parameter(0))
 {
-   this->writer = &parent->writer;
+   this->writer = writer;
 
-//   this->tape = &parent->tape;
 //   this->level = 0;
 //   this->saved = this->reserved = 0;
 }
@@ -6044,7 +6044,10 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //   }
 //   else _writer.declareSymbol(scope.tape, scope.reference);
 
-   CodeScope codeScope(&scope);
+   MemoryDump   dump;
+
+   SyntaxWriter writer(&dump);
+   CodeScope codeScope(&scope, &writer);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
 //
@@ -6169,11 +6172,19 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //
 //   _writer.endSymbol(scope.tape);
 //
+
+   CommandTape tape;
+   SyntaxReader reader(&dump);
+
+   _writer.declareSymbol(tape, scope.reference);
+   _writer.translateExpression(tape, reader.Root());
+   //_writer.endSymbol(tape);
+
 //   // optimize
-//   optimizeTape(scope.tape);
+//   optimizeTape(tape);
 //
 //   // create byte code sections
-//   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)
@@ -6296,12 +6307,10 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 
 void Compiler::compileImplementations(DNode member, ModuleScope& scope)
 {
-   MemoryDump dump;
-
    while (member != nsNone) {
 //      DNode hints = skipHints(member);
 
-//      TerminalInfo name = member.Terminal();
+      TerminalInfo name = member.Terminal();
 
       switch (member) {
 //         case nsClass:
@@ -6325,11 +6334,9 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
          case nsSymbol:
          case nsStatic:
          {
-            MemoryWriter writer(&dump, 0);
+            ref_t reference = scope.mapTerminal(name);
 
-//            ref_t reference = scope.mapTerminal(name);
-//
-            SymbolScope symbolScope(&scope, &writer/*, reference*/);
+            SymbolScope symbolScope(&scope, reference);
             compileSymbolImplementation(member, symbolScope/*, hints, (member == nsStatic)*/);
             break;
          }

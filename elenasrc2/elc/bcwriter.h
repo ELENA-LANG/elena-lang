@@ -10,13 +10,14 @@
 #define bcwriterH 1
 
 #include "bytecode.h"
+#include "syntaxtree.h"
 
 namespace _ELENA_
 {
-//
-//// --- ByteCodeWriter class ---
-//class ByteCodeWriter
-//{
+
+// --- ByteCodeWriter class ---
+class ByteCodeWriter
+{
 //   struct Scope
 //   {
 //      ref_t         sourceRef;
@@ -67,13 +68,13 @@ namespace _ELENA_
 //   void compileSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 ////   void writeClassHandler(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
 //   void compileClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
-//
-//public:
+
+public:
 //   ref_t writeSourcePath(_Module* debugModule, ident_t path);
 //   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 //
 //   void declareClass(CommandTape& tape, ref_t reference);
-//   void declareSymbol(CommandTape& tape, ref_t reference);
+   void declareSymbol(CommandTape& tape, ref_t reference);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void declareIdleMethod(CommandTape& tape, ref_t message);
 //   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
@@ -217,9 +218,10 @@ namespace _ELENA_
 //   //void doLiteralOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
 //   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void translateExpression(CommandTape& tape, SyntaxReader::Node root);
 //
 //   void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
-//};
+};
 
 } // _ELENA_
 
