@@ -24,6 +24,7 @@ void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 void SyntaxWriter :: closeNode()
 {
    _writer.writeDWord(-1);
+   _writer.writeDWord(0);
 }
 
 // --- SyntaxReader::Node ---
@@ -39,12 +40,47 @@ SyntaxReader::Node :: Node(SyntaxReader* reader, size_t position, LexicalType ty
 
 // --- SyntaxReader ---
 
-SyntaxReader::Node SyntaxReader::Root()
+SyntaxReader::Node SyntaxReader :: read()
+{
+   int type = _reader.getDWord();
+   ref_t arg = _reader.getDWord();
+
+   if (type == -1) {
+      return Node();
+   }
+   else return Node(this, _reader.Position(), (LexicalType)type, arg);
+}
+
+SyntaxReader::Node SyntaxReader :: readRoot()
 {
    _reader.seek(0);
 
-   LexicalType type = (LexicalType)_reader.getDWord();
-   ref_t arg = _reader.getDWord();
+   return read();
+}
 
-   return Node(this, _reader.Position(), type, arg);
+SyntaxReader::Node SyntaxReader :: readFirstNode(size_t position)
+{
+   _reader.seek(position);
+
+   return read();
+}
+
+SyntaxReader::Node SyntaxReader :: readNextNode(size_t position)
+{
+   _reader.seek(position);
+
+   int level = 1;
+
+   do {
+      int type = _reader.getDWord();
+      ref_t arg = _reader.getDWord();
+
+      if (type == -1) {
+         level--;
+      }
+      else level++;
+
+   } while (level > 0);
+
+   return read();   
 }

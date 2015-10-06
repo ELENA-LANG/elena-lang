@@ -12,6 +12,8 @@
 
 using namespace _ELENA_;
 
+typedef SyntaxReader::Node SNode;
+
 //// --- Auxiliary declareVariable ---
 //
 //void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
@@ -473,32 +475,6 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeT
 //         tape.write(bcNext, baCurrentLabel);
 //         tape.releaseLabel();
 //         break;
-//   }
-//}
-//
-//inline ref_t defineConstantMask(ObjectKind type)
-//{
-//   switch(type) {
-//      case okConstantClass:
-//         return mskVMTRef;
-//      case okLiteralConstant:
-//         return mskLiteralRef;
-//      case okCharConstant:
-//         return mskCharRef;
-//      case okIntConstant:
-//         return mskInt32Ref;
-//      case okLongConstant:
-//         return mskInt64Ref;
-//      case okRealConstant:
-//         return mskRealRef;
-//      case okMessageConstant:
-//         return mskMessage;
-//      case okSignatureConstant:
-//         return mskSignature;
-//      case okVerbConstant:
-//         return mskVerb;
-//      default:
-//         return mskConstantRef;
 //   }
 //}
 //
@@ -2513,7 +2489,126 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeT
 //   tape.write(bcALoadSI, 1);
 //}
 
-void ByteCodeWriter :: translateExpression(CommandTape& tape, SyntaxReader::Node root)
+inline SNode getChild(SNode node, size_t index)
 {
+   SNode current = node.firstChild();
 
+   while (index > 0 && current != lxNone) {
+      current = current.nextNode();
+
+      index--;
+   }
+
+   return current;
+}
+
+inline SNode findChild(SNode node, LexicalType type)
+{
+   SNode current = node.firstChild();
+
+   while (current != lxNone && current != type) {
+      current = current.nextNode();
+   }
+
+   return current;
+}
+
+inline size_t countChildren(SNode node)
+{
+   size_t counter = 0;
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      current = current.nextNode();
+
+      counter++;
+   }
+
+   return counter;
+}
+
+inline ref_t defineConstantMask(LexicalType type)
+{
+   switch(type) {
+      //case okConstantClass:
+      //   return mskVMTRef;
+      case lxConstantString:
+         return mskLiteralRef;
+      //case okCharConstant:
+      //   return mskCharRef;
+      //case okIntConstant:
+      //   return mskInt32Ref;
+      //case okLongConstant:
+      //   return mskInt64Ref;
+      //case okRealConstant:
+      //   return mskRealRef;
+      //case okMessageConstant:
+      //   return mskMessage;
+      //case okSignatureConstant:
+      //   return mskSignature;
+      //case okVerbConstant:
+      //   return mskVerb;
+      //default:
+      //   return mskConstantRef;
+   }
+}
+
+void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
+{
+   LexicalType type = node.type;
+   ref_t argument = node.argument;
+   switch (type)
+   {
+      case lxSymbol:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         tape.write(bcPushA);
+         break;
+      case lxConstantString:
+         // pushr reference
+         tape.write(bcPushR, argument | defineConstantMask(type));
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
+{
+   bool directMode = true;
+
+   // verify if parameters can be saved directly
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.firstChild() == lxExpression) {
+         directMode = false;
+
+         break;
+      }
+
+      current = current.nextNode();
+   }
+
+   // save the parameters
+   size_t counter = countChildren(node);
+   size_t index = 0;
+   while (index < counter) {
+      current = getChild(node, directMode ? counter - index - 1 : index);
+      if (current == lxObject) {
+         pushObject(tape, current.firstChild());
+      }
+
+      index++;
+   }
+
+   SNode callNode = findChild(node, lxCall).firstChild();
+   if (callNode == lxMessage) {
+      // copym message
+      // aloadsi 0
+      // acallvi offs
+
+      tape.write(bcCopyM, callNode.argument);
+      tape.write(bcALoadSI, 0);
+      tape.write(bcACallVI, 0);
+      tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+   }
 }

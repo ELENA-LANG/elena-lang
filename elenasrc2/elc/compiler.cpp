@@ -2103,7 +2103,7 @@ void Compiler :: loadRules(StreamReader* optimization)
             break;
          case okSymbol:
             scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-            scope.writer->appendNode(lxSymbol);
+            scope.writer->appendNode(lxSymbol, object.param);
             break;
          //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -3532,7 +3532,7 @@ void Compiler :: loadRules(StreamReader* optimization)
 
    scope.writer->newNode(lxCall);
 
-   scope.writer->appendNode(lxMessage);
+   scope.writer->appendNode(lxMessage, messageRef);
 
    scope.writer->closeNode();
 
@@ -6177,7 +6177,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    SyntaxReader reader(&dump);
 
    _writer.declareSymbol(tape, scope.reference);
-   _writer.translateExpression(tape, reader.Root());
+   _writer.translateExpression(tape, reader.readRoot());
    //_writer.endSymbol(tape);
 
 //   // optimize

@@ -218,7 +218,10 @@ public:
 //   //void doLiteralOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
 //   void doIntArrayOperation(CommandTape& tape, int operator_id);
-   void translateExpression(CommandTape& tape, SyntaxReader::Node root);
+
+   void pushObject(CommandTape& tape, SyntaxReader::Node node);
+
+   void translateExpression(CommandTape& tape, SyntaxReader::Node node);
 //
 //   void compile(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };

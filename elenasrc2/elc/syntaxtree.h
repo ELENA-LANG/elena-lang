@@ -75,6 +75,25 @@ public:
       LexicalType   type;
       ref_t         argument;
 
+      bool operator == (LexicalType type)
+      {
+         return this->type == type;
+      }
+      bool operator != (LexicalType type)
+      {
+         return this->type != type;
+      }
+
+      Node firstChild() const
+      {
+         return reader->readFirstNode(position);
+      }
+
+      Node nextNode() const
+      {
+         return reader->readNextNode(position);
+      }
+
       Node()
       {
          type = lxNone;
@@ -87,8 +106,12 @@ public:
 private:
    MemoryReader _reader;
 
+   Node read();
+
 public:
-   Node Root();
+   Node readRoot();
+   Node readFirstNode(size_t position);
+   Node readNextNode(size_t position);
 
    SyntaxReader(_Memory* dump)
       : _reader(dump)
