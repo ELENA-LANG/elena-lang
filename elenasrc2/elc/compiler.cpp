@@ -397,20 +397,20 @@ ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
    else return ObjectInfo();
 }
 
-//ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
-//{
-//   List<ident_t>::Iterator it = defaultNs.start();
-//   while (!it.Eof()) {
-//      ReferenceNs name(*it, identifier);
-//
-//      if (checkReference(name))
-//         return module->mapReference(name);
-//
-//      it++;
-//   }
-//   return 0;
-//}
-//
+ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
+{
+   List<ident_t>::Iterator it = defaultNs.start();
+   while (!it.Eof()) {
+      ReferenceNs name(*it, identifier);
+
+      if (checkReference(name))
+         return module->mapReference(name);
+
+      it++;
+   }
+   return 0;
+}
+
 //ref_t Compiler::ModuleScope :: mapNewType(ident_t terminal)
 //{
 //   IdentifierString fullName(terminal);
@@ -501,7 +501,7 @@ ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
 
             return module->mapReference(name);
          }
-//         else return resolveIdentifier(terminal);
+         else return resolveIdentifier(terminal);
 //      }
 //      else return reference;
    }
@@ -513,16 +513,16 @@ ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
    else return mapReference(terminal, existing);
 }
 
-//bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
-//{
-//   ref_t moduleRef = 0;
-//   _Module* module = project->resolveModule(referenceName, moduleRef, true);
-//
-//   if (module == NULL || moduleRef == 0)
-//      return false;
-//
-//   return module->mapReference(referenceName, true) != 0;
-//}
+bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
+{
+   ref_t moduleRef = 0;
+   _Module* module = project->resolveModule(referenceName, moduleRef, true);
+
+   if (module == NULL || moduleRef == 0)
+      return false;
+
+   return module->mapReference(referenceName, true) != 0;
+}
 
 ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool checkState)
 {
@@ -2037,9 +2037,11 @@ void Compiler :: loadRules(StreamReader* optimization)
    TerminalInfo terminal = node.Terminal();
 
    ObjectInfo object;
-//   if (terminal==tsLiteral) {
-//      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
-//   }
+   if (terminal==tsLiteral) {
+      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
+
+      scope.writer->appendNode(lxConstantString);
+   }
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
 //   }
@@ -2092,27 +2094,27 @@ void Compiler :: loadRules(StreamReader* optimization)
 //
 //      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
 //   }
-   /*else*/ if (!emptystr(terminal)) {
+   else if (!emptystr(terminal)) {
       object = scope.mapObject(terminal);
-   }
 
-   switch (object.kind) {
-      case okUnknown:
-         scope.raiseError(errUnknownObject, terminal);
-         break;
-      case okSymbol:
-         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-         scope.writer->appendNode(lxSymbol);
-         break;
-//      //case okExternal:
-//      //   // external call cannot be used inside symbol
-//      //   if (test(mode, HINT_ROOT))
-//      //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
-//      //   break;
-//      case okInternal:
-//         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
-//            scope.raiseError(errInvalidOperation, node.Terminal());
-//         break;
+      switch (object.kind) {
+         case okUnknown:
+            scope.raiseError(errUnknownObject, terminal);
+            break;
+         case okSymbol:
+            scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
+            scope.writer->appendNode(lxSymbol);
+            break;
+         //      //case okExternal:
+         //      //   // external call cannot be used inside symbol
+         //      //   if (test(mode, HINT_ROOT))
+         //      //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
+         //      //   break;
+         //      case okInternal:
+         //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
+         //            scope.raiseError(errInvalidOperation, node.Terminal());
+         //         break;
+      }
    }
 
 //   return object;
@@ -2437,123 +2439,123 @@ void Compiler :: loadRules(StreamReader* optimization)
 //   return ObjectInfo(okAccumulator, field.extraparam, 0, type);
 //}
 
-ref_t Compiler :: mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/)
-{
-//   callStack.directOrder = true;
-
-   bool   first = true;
-   ref_t  verb_id = 0;
-   int    paramCount = 0;
-   DNode  arg;
-
-   IdentifierString signature;
-   TerminalInfo     verb = node.Terminal();
-   // check if it is a short-cut eval message
-   if (node == nsMessageParameter) {
-      arg = node;
-
-      verb_id = EVAL_MESSAGE_ID;
-   }
-   else {
-      arg = node.firstChild();
-
-      verb_id = _verbs.get(verb.value);
-      if (verb_id == 0) {
-         size_t id = scope.moduleScope->mapSubject(verb, signature);
-
-         // if followed by argument list - it is EVAL verb
-         if (arg != nsNone) {
-            // HOT FIX : strong types cannot be used as a custom verb with a parameter
-            if (scope.moduleScope->typeHints.exist(id))
-               scope.raiseError(errStrongTypeNotAllowed, verb);
-
-            verb_id = EVAL_MESSAGE_ID;
-
-            first = false;
-         }
-         // otherwise it is GET message
-         else verb_id = GET_MESSAGE_ID;
-      }
-   }
-
-   // if message has generic argument list
-   while (arg == nsMessageParameter) {
-//      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-
-      paramCount++;
-
-//      if (arg.firstChild().firstChild() != nsNone)
-//         callStack.directOrder = false;
-
-      arg = arg.nextNode();
-   }
-
-   // if message has named argument list
-   while (arg == nsSubjectArg) {
-      TerminalInfo subject = arg.Terminal();
-
-      if (!first) {
-         signature.append('&');
-      }
-      else first = false;
-
-      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
-
-      arg = arg.nextNode();
-
-      // skip an argument
-      if (arg == nsMessageParameter) {
-         // if it is an open argument list
-//         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//            // if a generic argument is used with an open argument list
-//            callStack.directOrder = false;
-
-            // check if argument list should be unboxed
-//            DNode param = arg.firstChild();
-
-//            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-//               // add argument list to be unboxed
-//               callStack.oargUnboxing = true;
-//               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-//            }
-//            else {
-//               while (arg != nsNone) {
-//                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+//ref_t Compiler :: mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/)
+//{
+////   callStack.directOrder = true;
 //
-//                  arg = arg.nextNode();
-//               }
+//   bool   first = true;
+//   ref_t  verb_id = 0;
+//   int    paramCount = 0;
+//   DNode  arg;
 //
-//               // terminator
-//               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-//            }
-//            paramCount += OPEN_ARG_COUNT;
-//            if (paramCount > 0x0F)
-//               scope.raiseError(errNotApplicable, subject);
+//   IdentifierString signature;
+//   TerminalInfo     verb = node.Terminal();
+//   // check if it is a short-cut eval message
+//   if (node == nsMessageParameter) {
+//      arg = node;
+//
+//      verb_id = EVAL_MESSAGE_ID;
+//   }
+//   else {
+//      arg = node.firstChild();
+//
+//      verb_id = _verbs.get(verb.value);
+//      if (verb_id == 0) {
+//         size_t id = scope.moduleScope->mapSubject(verb, signature);
+//
+//         // if followed by argument list - it is EVAL verb
+//         if (arg != nsNone) {
+//            // HOT FIX : strong types cannot be used as a custom verb with a parameter
+//            if (scope.moduleScope->typeHints.exist(id))
+//               scope.raiseError(errStrongTypeNotAllowed, verb);
+//
+//            verb_id = EVAL_MESSAGE_ID;
+//
+//            first = false;
 //         }
-//         else {
-//            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
-            paramCount++;
-
-            if (paramCount >= OPEN_ARG_COUNT)
-               scope.raiseError(errTooManyParameters, verb);
-
-//            if (arg.firstChild().firstChild() != nsNone)
-//               callStack.directOrder = false;
-
-            arg = arg.nextNode();
-//         }
-      }
-   }
-
-   // if signature is presented
-   ref_t sign_id = 0;
-   if (!emptystr(signature)) {
-      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-   }
-
-   // create a message id
-   return encodeMessage(sign_id, verb_id, paramCount);
-}
+//         // otherwise it is GET message
+//         else verb_id = GET_MESSAGE_ID;
+//      }
+//   }
+//
+//   // if message has generic argument list
+//   while (arg == nsMessageParameter) {
+////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+//
+//      paramCount++;
+//
+////      if (arg.firstChild().firstChild() != nsNone)
+////         callStack.directOrder = false;
+//
+//      arg = arg.nextNode();
+//   }
+//
+//   // if message has named argument list
+//   while (arg == nsSubjectArg) {
+//      TerminalInfo subject = arg.Terminal();
+//
+//      if (!first) {
+//         signature.append('&');
+//      }
+//      else first = false;
+//
+//      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+//
+//      arg = arg.nextNode();
+//
+//      // skip an argument
+//      if (arg == nsMessageParameter) {
+//         // if it is an open argument list
+////         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+////            // if a generic argument is used with an open argument list
+////            callStack.directOrder = false;
+//
+//            // check if argument list should be unboxed
+////            DNode param = arg.firstChild();
+//
+////            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+////               // add argument list to be unboxed
+////               callStack.oargUnboxing = true;
+////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+////            }
+////            else {
+////               while (arg != nsNone) {
+////                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+////
+////                  arg = arg.nextNode();
+////               }
+////
+////               // terminator
+////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+////            }
+////            paramCount += OPEN_ARG_COUNT;
+////            if (paramCount > 0x0F)
+////               scope.raiseError(errNotApplicable, subject);
+////         }
+////         else {
+////            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
+//            paramCount++;
+//
+//            if (paramCount >= OPEN_ARG_COUNT)
+//               scope.raiseError(errTooManyParameters, verb);
+//
+////            if (arg.firstChild().firstChild() != nsNone)
+////               callStack.directOrder = false;
+//
+//            arg = arg.nextNode();
+////         }
+//      }
+//   }
+//
+//   // if signature is presented
+//   ref_t sign_id = 0;
+//   if (!emptystr(signature)) {
+//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+//   }
+//
+//   // create a message id
+//   return encodeMessage(sign_id, verb_id, paramCount);
+//}
 
 //ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 //{
@@ -3165,8 +3167,8 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope/*, MessageScope& callS
 //      _writer.releaseObject(*scope.tape, callStack.level);
 //}
 
-void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack, */CodeScope& scope/*, bool stacksafe*/)
-{
+//void Compiler :: compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe)
+//{
 //   size_t count = callStack.parameters.Count();
 //
 //   ByteCodeIterator bm = scope.tape->end();
@@ -3187,9 +3189,9 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 //   if (!callStack.directOrder)
 //      _writer.declareArgumentList(*scope.tape, count);
 //
-   DNode param = node.firstChild();
-   while (param != nsNone) {
-      compileObject(param, scope);
+//   DNode param = node.firstChild();
+//   while (param != nsNone) {
+//      compileObject(param, scope);
 
 //   for (size_t i = 0; i < count; i++) {
 //      MessageScope::ParamInfo param = callStack.parameters.get(callStack.directOrder ? (count - i - 1) : i);
@@ -3252,11 +3254,11 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 //
 //      // save changes to call stack
 //      *(callStack.parameters.getIt(callStack.directOrder ? (count - i - 1) : i)) = param;
-   }
-}
+//   }
+//}
 
-/*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, ObjectInfo target, */int messageRef/*, int mode*/)
-{
+//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo target, int messageRef, int mode)
+//{
 //   ObjectInfo retVal(okAccumulator);
 //
 //   int signRef = getSignature(messageRef);
@@ -3308,7 +3310,7 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 //         compileMessageParameters(callStack, scope, false);
 //      }
 //   }
-   /*else */compileMessageParameters(node, /*callStack, */scope/*, test(methodHint, tpStackSafe)*/);
+//   else compileMessageParameters(node, callStack, scope, test(methodHint, tpStackSafe));
 //
 //   // otherwise load target
 //   if (target.kind == okConstantRole) {
@@ -3368,7 +3370,7 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 //
 //      _writer.callMethod(*scope.tape, 0, paramCount);
 //   }
-   scope.writer->appendNode(lxMessage);
+//   scope.writer->appendNode(lxMessage);
 
 //   if (callStack.paramUnboxing)
 //      unboxCallstack(scope, callStack);
@@ -3398,7 +3400,7 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 //   }
 //
 //   return retVal;
-}
+//}
 
 //void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
 //{
@@ -3412,12 +3414,134 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 
 /*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/)
 {
+   bool   first = true;
+   ref_t  verb_id = 0;
+   int    paramCount = 0;
+   DNode  arg;
+   
+   IdentifierString signature;
+   TerminalInfo     verb = node.Terminal();
+   // check if it is a short-cut eval message
+   if (node == nsMessageParameter) {
+      arg = node;
+
+      verb_id = EVAL_MESSAGE_ID;
+   }
+   else {
+      arg = node.firstChild();
+   
+      verb_id = _verbs.get(verb.value);
+      if (verb_id == 0) {
+         size_t id = scope.moduleScope->mapSubject(verb, signature);
+   
+         // if followed by argument list - it is EVAL verb
+         if (arg != nsNone) {
+            // HOT FIX : strong types cannot be used as a custom verb with a parameter
+            if (scope.moduleScope->typeHints.exist(id))
+               scope.raiseError(errStrongTypeNotAllowed, verb);
+   
+            verb_id = EVAL_MESSAGE_ID;
+   
+            first = false;
+         }
+         // otherwise it is GET message
+         else verb_id = GET_MESSAGE_ID;
+      }
+   }
+   
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      compileObject(arg.firstChild(), scope/*, 0*/);
+   ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+   //
+      paramCount++;
+   //
+   ////      if (arg.firstChild().firstChild() != nsNone)
+   ////         callStack.directOrder = false;
+   
+      arg = arg.nextNode();
+   }
+   
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      // skip an argument
+      if (arg == nsMessageParameter) {
+   //         // if it is an open argument list
+   ////         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+   ////            // if a generic argument is used with an open argument list
+   ////            callStack.directOrder = false;
+   //
+   //            // check if argument list should be unboxed
+   ////            DNode param = arg.firstChild();
+   //
+   ////            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+   ////               // add argument list to be unboxed
+   ////               callStack.oargUnboxing = true;
+   ////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+   ////            }
+   ////            else {
+   ////               while (arg != nsNone) {
+   ////                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+   ////
+   ////                  arg = arg.nextNode();
+   ////               }
+   ////
+   ////               // terminator
+   ////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+   ////            }
+   ////            paramCount += OPEN_ARG_COUNT;
+   ////            if (paramCount > 0x0F)
+   ////               scope.raiseError(errNotApplicable, subject);
+   ////         }
+   ////         else {
+   ////            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
+         paramCount++;
+   
+
+
+         if (paramCount >= OPEN_ARG_COUNT)
+            scope.raiseError(errTooManyParameters, verb);
+   
+   ////            if (arg.firstChild().firstChild() != nsNone)
+   ////               callStack.directOrder = false;
+   
+               arg = arg.nextNode();
+   //         }
+      }
+   }
+   
+   // if signature is presented
+   ref_t sign_id = 0;
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
+   
+   // create a message id
+   ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
+
+   scope.writer->newNode(lxCall);
+
+   scope.writer->appendNode(lxMessage);
+
+   scope.writer->closeNode();
+
 //   MessageScope callStack;
 //
 //   // put the target
 //   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // HOTFIX : passing node for raiseWarning / raiseError
 
-   ref_t messageRef = mapMessage(node, scope/*, callStack*/);
+   //ref_t messageRef = mapMessage(node, scope/*, callStack*/);
 
 //   ref_t extensionRef = mapExtension(scope, messageRef, object);
 //
@@ -3433,7 +3557,7 @@ void Compiler :: compileMessageParameters(DNode node, /*MessageScope& callStack,
 //      }
 //   }
 
-   /*ObjectInfo retVal = */compileMessage(node, scope, /*callStack, object, */messageRef/*, 0*/);
+//   ObjectInfo retVal = compileMessage(node, scope, /*callStack, object, */messageRef/*, 0*/);
 
 //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
 //   if (spaceToRelease != 0) {
@@ -6052,30 +6176,30 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hints)
-//{
+void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)
+{
 //   if (hints != nsNone)
 //      scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
-//
-//   TerminalInfo ns = node.Terminal();
-//
-//   // check if the module exists
-//   _Module* module = scope.project->loadModule(ns, true);
-//   if (!module)
-//      scope.raiseWarning(1, wrnUnknownModule, ns);
-//
-//   ident_t value = retrieve(scope.defaultNs.start(), ns, NULL);
-//   if (value == NULL) {
-//      scope.defaultNs.add(ns.value);
-//
+
+   TerminalInfo ns = node.Terminal();
+
+   // check if the module exists
+   _Module* module = scope.project->loadModule(ns, true);
+   if (!module)
+      scope.raiseWarning(1, wrnUnknownModule, ns);
+
+   ident_t value = retrieve(scope.defaultNs.start(), ns, NULL);
+   if (value == NULL) {
+      scope.defaultNs.add(ns.value);
+
 //      // load types
 //      scope.loadTypes(module);
 //
 //      // load extensions
 //      scope.loadExtensions(ns, module);
-//   }
-//}
-//
+   }
+}
+
 //void Compiler :: compileForward(DNode node, ModuleScope& scope, DNode hints)
 //{
 //   bool constant = false;
@@ -6214,39 +6338,39 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
    }
 }
 
-//void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
-//{
-//   while (member != nsNone) {
-//      DNode hints = skipHints(member);
-//
-//      switch (member) {
-//         case nsInclude:
+void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
+{
+   while (member != nsNone) {
+      //DNode hints = skipHints(member);
+
+      switch (member) {
+         case nsInclude:
 //            if (member.firstChild() == nsForward) {
 //               compileForward(member, scope, hints);
 //            }
-//            // NOTE: obsolete, used for backward compatibility
-//            //       should be removed in 2.1.x
-//            else compileIncludeModule(member, scope, hints);
-//            break;
-//         case nsImport:
-//            compileIncludeModule(member, scope, hints);
-//            break;
-//         default:
+            // NOTE: obsolete, used for backward compatibility
+            //       should be removed in 2.1.x
+            /*else */compileIncludeModule(member, scope/*, hints*/);
+            break;
+         case nsImport:
+            compileIncludeModule(member, scope/*, hints*/);
+            break;
+         default:
 //            // due to current syntax we need to reset hints back, otherwise they will be skipped
 //            if (hints != nsNone)
 //               member = hints;
-//
-//            return;
-//      }
-//      member = member.nextNode();
-//   }
-//}
+
+            return;
+      }
+      member = member.nextNode();
+   }
+}
 
 void Compiler :: compileModule(DNode node, ModuleScope& scope)
 {
    DNode member = node.firstChild();
 
-//   compileIncludeSection(member, scope);
+   compileIncludeSection(member, scope);
 
    // first pass - declaration
    compileDeclarations(member, scope);

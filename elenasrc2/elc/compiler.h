@@ -118,7 +118,7 @@ public:
       okSymbol,                       // param - reference
    //   okConstantSymbol,               // param - reference, extraparam - class reference
    //   okConstantClass,                // param - reference, extraparam - class reference
-   //   okLiteralConstant,              // param - reference 
+      okLiteralConstant,              // param - reference 
    //   okCharConstant,                 // param - reference
    //   okIntConstant,                  // param - reference 
    //   okLongConstant,                 // param - reference 
@@ -289,10 +289,10 @@ private:
       void raiseError(const char* message, TerminalInfo terminal);
       void raiseWarning(int level, const char* message, TerminalInfo terminal);
 
-//      bool checkReference(ident_t referenceName);
-//
-//      ref_t resolveIdentifier(ident_t name);
-//
+      bool checkReference(ident_t referenceName);
+
+      ref_t resolveIdentifier(ident_t name);
+
 //      ref_t mapNewType(ident_t terminal);
 
       ref_t mapType(TerminalInfo terminal);
@@ -832,7 +832,7 @@ private:
 //   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, bool& unboxing, int mode = 0);
 //   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
-   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
+//   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
 //   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
 //   {
 //      MessageScope callStack;
@@ -874,9 +874,9 @@ private:
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //
    /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/);
-   /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, ObjectInfo object, */int messageRef/*, int mode*/);
+   //ObjectInfovoid compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
-   void compileMessageParameters(DNode node, /*MessageScope& callStack, */CodeScope& scope/*, bool stacksafe*/);
+//   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
    /*ObjectInfo*/void compileOperations(DNode node, CodeScope& scope/*, ObjectInfo target, int mode*/);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
@@ -944,13 +944,13 @@ private:
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNode hints*/);
    void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
-//   void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
+   void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
 //   void compileForward(DNode node, ModuleScope& scope, DNode hints);
 //   void compileType(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(DNode member, ModuleScope& scope);
    void compileImplementations(DNode member, ModuleScope& scope);
-//   void compileIncludeSection(DNode& node, ModuleScope& scope);
+   void compileIncludeSection(DNode& node, ModuleScope& scope);
 
    virtual void compileModule(DNode node, ModuleScope& scope);
 

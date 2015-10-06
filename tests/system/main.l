@@ -1,5 +1,4 @@
-//#define system.
-//
+#define system.
 
 #symbol program = console writeLine:"Test".
 

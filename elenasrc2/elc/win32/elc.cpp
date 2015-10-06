@@ -502,7 +502,7 @@ const char* showPlatform(int platform)
    else if (platform == _ELENA_::ptLibrary) {
       return ELC_LIBRARY;
    }
-   else print(ELC_UNKNOWN);
+   else return ELC_UNKNOWN;
 }
 
 int main()
