@@ -57,18 +57,18 @@ public:
 //         else this->sign_ref = ref;
 //      }
 //   };
-//
-//   // InheritResult
-//   enum InheritResult
-//   {
-//      irNone = 0,
-//      irSuccessfull,
-//      irUnsuccessfull,
-//      irSealed,
-//      irInvalid,
-//      irObsolete
-//   };
-//
+
+   // InheritResult
+   enum InheritResult
+   {
+      irNone = 0,
+      irSuccessfull,
+      irUnsuccessfull,
+      irSealed,
+      irInvalid,
+      irObsolete
+   };
+
 //   enum MethodHint
 //   {
 //      tpMask       = 0x0F,
@@ -234,8 +234,8 @@ private:
       ForwardMap        types;
       SubjectMap        typeHints;
 
-//      // cached references
-//      ref_t superReference;
+      // cached references
+      ref_t superReference;
 //      ref_t intReference;
 //      ref_t longReference;
 //      ref_t realReference;
@@ -307,7 +307,7 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 //
 //      int defineStructSize(ref_t classReference, bool& variable);
@@ -422,34 +422,35 @@ private:
 ////      SourceScope(Scope* parent);
 //      SourceScope(ModuleScope* parent, ref_t reference);
 //   };
-//
-//   // - ClassScope -
-//   struct ClassScope : public SourceScope
-//   {
-//      ClassInfo info;
-//
+
+   // - ClassScope -
+   struct ClassScope : public /*Source*/Scope
+   {
+      ref_t     reference;
+      ClassInfo info;
+
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
 //
 //      void compileClassHints(DNode hints);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass || level == slOwnerClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      void save()
-//      {
-//         // save class meta data
-//         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
-//         info.save(&metaWriter);
-//      }
-//
-//      ClassScope(ModuleScope* parent, ref_t reference);
-//   };
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass || level == slOwnerClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      void save()
+      {
+         // save class meta data
+         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+         info.save(&metaWriter);
+      }
+
+      ClassScope(ModuleScope* parent, ref_t reference);
+   };
 
    // - SymbolScope -
    struct SymbolScope : public /*Source*/Scope
@@ -814,16 +815,16 @@ private:
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 //
 //   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
-//
-//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-//
+
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+
 //   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
 //
 //   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo& target, size_t type_ref, bool& enforced, bool& boxed, bool& unboxing);
-//
-//   void compileParentDeclaration(DNode node, ClassScope& scope);
-//   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
-//
+
+   void compileParentDeclaration(DNode node, ClassScope& scope);
+   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
+
 //   ObjectInfo saveObject(CodeScope& scope, ObjectInfo& object, int offset);
 //   ObjectInfo loadObject(CodeScope& scope, ObjectInfo& object, bool& unboxing);
 //
@@ -916,7 +917,7 @@ private:
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 //   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
 //   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
-//
+
 //   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
 //   void compileSingletonClass(DNode member, ClassScope& scope);
 //
@@ -941,10 +942,10 @@ private:
 //   void compileVMT(DNode member, ClassScope& scope);
 //
 //   void compileFieldDeclarations(DNode& member, ClassScope& scope);
-//   void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
-//   void compileClassImplementation(DNode node, ClassScope& scope);
-//   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassDeclaration(DNode node, ClassScope& scope/*, DNode hints*/);
+   void compileClassImplementation(DNode node, ClassScope& scope);
+   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNode hints*/);
    void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);

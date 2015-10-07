@@ -71,50 +71,50 @@ typedef Compiler::ObjectKind ObjectKind;
 //{
 //   return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
 //}
-//
-//inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   ref_t verbId = 0;
-//   ref_t signRef = 0;
-//   int paramCount = 0;
-//
-//   decodeMessage(exportRef, signRef, verbId, paramCount);
-//
-//   // if it is generic message
-//   if (signRef == 0) {
-//      return exportRef;
-//   }
-//
-//   // otherwise signature and custom verb should be imported
-//   if (signRef != 0) {
-//      ident_t subject = exporter->resolveSubject(signRef);
-//
-//      signRef = importer->mapSubject(subject, false);
-//   }
-//   return encodeMessage(signRef, verbId, paramCount);
-//}
-//
-//inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   // otherwise signature and custom verb should be imported
-//   if (exportRef != 0) {
-//      ident_t subject = exporter->resolveSubject(exportRef);
-//
-//      exportRef = importer->mapSubject(subject, false);
-//   }
-//   return exportRef;
-//}
-//
-//inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   if (exportRef) {
-//      ident_t reference = exporter->resolveReference(exportRef);
-//
-//      return importer->mapReference(reference);
-//   }
-//   else return 0;
-//}
-//
+
+inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   ref_t verbId = 0;
+   ref_t signRef = 0;
+   int paramCount = 0;
+
+   decodeMessage(exportRef, signRef, verbId, paramCount);
+
+   // if it is generic message
+   if (signRef == 0) {
+      return exportRef;
+   }
+
+   // otherwise signature and custom verb should be imported
+   if (signRef != 0) {
+      ident_t subject = exporter->resolveSubject(signRef);
+
+      signRef = importer->mapSubject(subject, false);
+   }
+   return encodeMessage(signRef, verbId, paramCount);
+}
+
+inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   // otherwise signature and custom verb should be imported
+   if (exportRef != 0) {
+      ident_t subject = exporter->resolveSubject(exportRef);
+
+      exportRef = importer->mapSubject(subject, false);
+   }
+   return exportRef;
+}
+
+inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (exportRef) {
+      ident_t reference = exporter->resolveReference(exportRef);
+
+      return importer->mapReference(reference);
+   }
+   else return 0;
+}
+
 //inline void findUninqueName(_Module* module, ReferenceNs& name)
 //{
 //   size_t pos = getlength(name);
@@ -152,29 +152,29 @@ typedef Compiler::ObjectKind ObjectKind;
 //   }
 //   return counter;
 //}
-//
-//inline bool findSymbol(DNode node, Symbol symbol)
+
+inline bool findSymbol(DNode node, Symbol symbol)
+{
+   while (node != nsNone) {
+      if (node==symbol)
+         return true;
+
+      node = node.nextNode();
+   }
+   return false;
+}
+
+//inline bool findSymbol(DNode node, Symbol symbol1, Symbol symbol2)
 //{
 //   while (node != nsNone) {
-//      if (node==symbol)
+//      if (node==symbol1 || node==symbol2)
 //         return true;
 //
 //      node = node.nextNode();
 //   }
 //   return false;
 //}
-//
-////inline bool findSymbol(DNode node, Symbol symbol1, Symbol symbol2)
-////{
-////   while (node != nsNone) {
-////      if (node==symbol1 || node==symbol2)
-////         return true;
-////
-////      node = node.nextNode();
-////   }
-////   return false;
-////}
-//
+
 //inline DNode goToSymbol(DNode node, Symbol symbol)
 //{
 //   while (node != nsNone) {
@@ -332,8 +332,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
    warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
 
-//   // cache the frequently used references
-//   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
+   // cache the frequently used references
+   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
 //   intReference = mapReference(project->resolveForward(INT_FORWARD));
 //   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
@@ -610,82 +610,82 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 //      return defineObjectInfo(referenceID);
 //   }
 //}
-//
-//ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
-//{
-//   _Module* argModule;
-//
-//   if (emptystr(vmtName))
-//      return 0;
-//
-//   // load class meta data
-//   ref_t moduleRef = 0;
-//   argModule = project->resolveModule(vmtName, moduleRef);
-//
-//   if (argModule == NULL || moduleRef == 0)
-//      return 0;
-//
-//   // load argument VMT meta data
-//   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-//   if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
-//      return 0;
-//
-//   MemoryReader reader(metaData);
-//
-//   if (!headerOnly && argModule != module) {
-//      ClassInfo copy;
-//      copy.load(&reader, headerOnly);
-//
-//      info.header = copy.header;
-//      info.classClassRef = copy.classClassRef;
-//      info.extensionTypeRef = copy.extensionTypeRef;
-//
-//      // import method references and mark them as inherited
-//      ClassInfo::MethodMap::Iterator it = copy.methods.start();
-//      while (!it.Eof()) {
-//         info.methods.add(importMessage(argModule, it.key(), module), false);
-//
-//         it++;
-//      }
-//
-//      info.fields.add(copy.fields);
-//
-//      // import field types
-//      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-//      while (!type_it.Eof()) {
-//         info.fieldTypes.add(type_it.key(), importSubject(argModule, *type_it, module));
-//
-//         type_it++;
-//      }
-//
-//      // import method types
-//      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
-//      while (!mtype_it.Eof()) {
-//         MethodInfo methInfo = *mtype_it;
-//         methInfo.typeRef = importSubject(argModule, methInfo.typeRef, module);
-//
-//         info.methodHints.add(
-//            importMessage(argModule, mtype_it.key(), module), methInfo);
-//
-//         mtype_it++;
-//      }
-//   }
-//   else info.load(&reader, headerOnly);
-//
-//   if (argModule != module) {
-//      // import class class reference
-//      if (info.classClassRef != 0)
-//         info.classClassRef = importReference(argModule, info.classClassRef, module);
-//
-//      // import reference
-//      importReference(argModule, moduleRef, module);
-//
-//      // import parent reference
-//      info.header.parentRef = importReference(argModule, info.header.parentRef, module);
-//   }
-//   return moduleRef;
-//}
-//
+
+ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
+{
+   _Module* argModule;
+
+   if (emptystr(vmtName))
+      return 0;
+
+   // load class meta data
+   ref_t moduleRef = 0;
+   argModule = project->resolveModule(vmtName, moduleRef);
+
+   if (argModule == NULL || moduleRef == 0)
+      return 0;
+
+   // load argument VMT meta data
+   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
+      return 0;
+
+   MemoryReader reader(metaData);
+
+   if (!headerOnly && argModule != module) {
+      ClassInfo copy;
+      copy.load(&reader, headerOnly);
+
+      info.header = copy.header;
+      info.classClassRef = copy.classClassRef;
+      info.extensionTypeRef = copy.extensionTypeRef;
+
+      // import method references and mark them as inherited
+      ClassInfo::MethodMap::Iterator it = copy.methods.start();
+      while (!it.Eof()) {
+         info.methods.add(importMessage(argModule, it.key(), module), false);
+
+         it++;
+      }
+
+      info.fields.add(copy.fields);
+
+      // import field types
+      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+      while (!type_it.Eof()) {
+         info.fieldTypes.add(type_it.key(), importSubject(argModule, *type_it, module));
+
+         type_it++;
+      }
+
+      // import method types
+      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
+      while (!mtype_it.Eof()) {
+         MethodInfo methInfo = *mtype_it;
+         methInfo.typeRef = importSubject(argModule, methInfo.typeRef, module);
+
+         info.methodHints.add(
+            importMessage(argModule, mtype_it.key(), module), methInfo);
+
+         mtype_it++;
+      }
+   }
+   else info.load(&reader, headerOnly);
+
+   if (argModule != module) {
+      // import class class reference
+      if (info.classClassRef != 0)
+         info.classClassRef = importReference(argModule, info.classClassRef, module);
+
+      // import reference
+      importReference(argModule, moduleRef, module);
+
+      // import parent reference
+      info.header.parentRef = importReference(argModule, info.header.parentRef, module);
+   }
+   return moduleRef;
+}
+
 //ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
 //{
 //   if (emptystr(symbol))
@@ -985,19 +985,21 @@ ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
    else */return Scope::mapObject(identifier);
 }
 
-//// --- Compiler::ClassScope ---
-//
-//Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
-//   info.header.parentRef =   moduleScope->superReference;
-//   info.header.flags = elStandartVMT;
-//   info.header.count = 0;
-//   info.size = 0;
-//   info.classClassRef = 0;
-//   info.extensionTypeRef = 0;
-//}
-//
+// --- Compiler::ClassScope ---
+
+Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
+   : Scope(parent)
+{
+   this->reference = reference;
+
+   info.header.parentRef =   moduleScope->superReference;
+   info.header.flags = elStandartVMT;
+   info.header.count = 0;
+   info.size = 0;
+   info.classClassRef = 0;
+   info.extensionTypeRef = 0;
+}
+
 //ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 //{
 //   if (StringHelper::compare(identifier, SUPER_VAR)) {
@@ -1702,133 +1704,133 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      it++;
 //   }
 //}
-//
-//Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   size_t flagCopy = scope.info.header.flags;
-//   size_t classClassCopy = scope.info.classClassRef;
-//
-//   // get module reference
-//   ref_t moduleRef = 0;
-//   _Module* module = moduleScope->project->resolveModule(moduleScope->module->resolveReference(parentRef), moduleRef);
-//
-//   if (module == NULL || moduleRef == 0)
-//      return irUnsuccessfull;
-//
-//   // load parent meta data
-//   _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
-//   if (metaData != NULL) {
-//      MemoryReader reader(metaData);
-//      // import references if we inheriting class from another module
-//      if (moduleScope->module != module) {
-//         ClassInfo copy;
-//         copy.load(&reader);
-//
-//         scope.info.header = copy.header;
-//         scope.info.size = copy.size;
-//
-//         // import method references and mark them as inherited
-//         ClassInfo::MethodMap::Iterator it = copy.methods.start();
-//         while (!it.Eof()) {
-//            scope.info.methods.add(importMessage(module, it.key(), moduleScope->module), false);
-//
-//            it++;
-//         }
-//
-//         scope.info.fields.add(copy.fields);
-//
-//         // import field types
-//         ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-//         while (!type_it.Eof()) {
-//            scope.info.fieldTypes.add(type_it.key(), importSubject(module, *type_it, moduleScope->module));
-//
-//            type_it++;
-//         }
-//
-//         // import method types
-//         ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
-//         while (!mtype_it.Eof()) {
-//            MethodInfo methHint = *mtype_it;
-//            methHint.typeRef = importSubject(module, methHint.typeRef, moduleScope->module);
-//
-//            scope.info.methodHints.add(
-//               importMessage(module, mtype_it.key(), moduleScope->module),
-//               methHint);
-//
-//            mtype_it++;
-//         }
-//      }
-//      else {
-//         scope.info.load(&reader);
-//
-//         // mark all methods as inherited
-//         ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
-//         while (!it.Eof()) {
-//            (*it) = false;
-//
-//            it++;
-//         }
-//      }
-//
-//      if (!ignoreSealed && test(scope.info.header.flags, elSealed))
-//         return irSealed;
-//
-//      // restore parent and flags
-//      scope.info.header.parentRef = parentRef;
-//      scope.info.classClassRef = classClassCopy;
-//      scope.info.header.flags |= flagCopy;
-//
-//      return irSuccessfull;
-//   }
-//   else return irUnsuccessfull;
-//}
-//
-//void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
-//{
-//   // base class system'object must not to have a parent
-//   ref_t parentRef = scope.info.header.parentRef;
-//   if (scope.info.header.parentRef == scope.reference) {
-//      if (node.Terminal() != nsNone)
-//         scope.raiseError(errInvalidSyntax, node.Terminal());
-//
-//      parentRef = 0;
-//   }
-//   // if the class has an implicit parent
-//   else if (node.Terminal() != nsNone) {
-//      TerminalInfo identifier = node.Terminal();
-//      if (identifier == tsIdentifier || identifier == tsPrivate) {
-//         parentRef = scope.moduleScope->mapTerminal(node.Terminal(), true);
-//      }
-//      else parentRef = scope.moduleScope->mapReference(identifier);
-//
-//      if (parentRef == 0)
-//         scope.raiseError(errUnknownClass, node.Terminal());
-//   }
-//   InheritResult res = compileParentDeclaration(parentRef, scope);
-//   //if (res == irObsolete) {
-//   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
-//   //}
-//   if (res == irInvalid) {
-//      scope.raiseError(errInvalidParent, node.Terminal());
-//   }
-//   if (res == irSealed) {
-//      scope.raiseError(errSealedParent, node.Terminal());
-//   }
-//   else if (res == irUnsuccessfull)
-//      scope.raiseError(node != nsNone ? errUnknownClass : errUnknownBaseClass, node.Terminal());
-//}
-//
-//Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed)
-//{
-//   scope.info.header.parentRef = parentRef;
-//   if (scope.info.header.parentRef != 0) {
-//      return inheritClass(scope, scope.info.header.parentRef, ignoreSealed);
-//   }
-//   else return irSuccessfull;
-//}
-//
+
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   size_t flagCopy = scope.info.header.flags;
+   size_t classClassCopy = scope.info.classClassRef;
+
+   // get module reference
+   ref_t moduleRef = 0;
+   _Module* module = moduleScope->project->resolveModule(moduleScope->module->resolveReference(parentRef), moduleRef);
+
+   if (module == NULL || moduleRef == 0)
+      return irUnsuccessfull;
+
+   // load parent meta data
+   _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData != NULL) {
+      MemoryReader reader(metaData);
+      // import references if we inheriting class from another module
+      if (moduleScope->module != module) {
+         ClassInfo copy;
+         copy.load(&reader);
+
+         scope.info.header = copy.header;
+         scope.info.size = copy.size;
+
+         // import method references and mark them as inherited
+         ClassInfo::MethodMap::Iterator it = copy.methods.start();
+         while (!it.Eof()) {
+            scope.info.methods.add(importMessage(module, it.key(), moduleScope->module), false);
+
+            it++;
+         }
+
+         scope.info.fields.add(copy.fields);
+
+         // import field types
+         ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+         while (!type_it.Eof()) {
+            scope.info.fieldTypes.add(type_it.key(), importSubject(module, *type_it, moduleScope->module));
+
+            type_it++;
+         }
+
+         // import method types
+         ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
+         while (!mtype_it.Eof()) {
+            MethodInfo methHint = *mtype_it;
+            methHint.typeRef = importSubject(module, methHint.typeRef, moduleScope->module);
+
+            scope.info.methodHints.add(
+               importMessage(module, mtype_it.key(), moduleScope->module),
+               methHint);
+
+            mtype_it++;
+         }
+      }
+      else {
+         scope.info.load(&reader);
+
+         // mark all methods as inherited
+         ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
+         while (!it.Eof()) {
+            (*it) = false;
+
+            it++;
+         }
+      }
+
+      if (!ignoreSealed && test(scope.info.header.flags, elSealed))
+         return irSealed;
+
+      // restore parent and flags
+      scope.info.header.parentRef = parentRef;
+      scope.info.classClassRef = classClassCopy;
+      scope.info.header.flags |= flagCopy;
+
+      return irSuccessfull;
+   }
+   else return irUnsuccessfull;
+}
+
+void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
+{
+   // base class system'object must not to have a parent
+   ref_t parentRef = scope.info.header.parentRef;
+   if (scope.info.header.parentRef == scope.reference) {
+      if (node.Terminal() != nsNone)
+         scope.raiseError(errInvalidSyntax, node.Terminal());
+
+      parentRef = 0;
+   }
+   // if the class has an implicit parent
+   else if (node.Terminal() != nsNone) {
+      TerminalInfo identifier = node.Terminal();
+      if (identifier == tsIdentifier || identifier == tsPrivate) {
+         parentRef = scope.moduleScope->mapTerminal(node.Terminal(), true);
+      }
+      else parentRef = scope.moduleScope->mapReference(identifier);
+
+      if (parentRef == 0)
+         scope.raiseError(errUnknownClass, node.Terminal());
+   }
+   InheritResult res = compileParentDeclaration(parentRef, scope);
+   //if (res == irObsolete) {
+   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
+   //}
+   if (res == irInvalid) {
+      scope.raiseError(errInvalidParent, node.Terminal());
+   }
+   if (res == irSealed) {
+      scope.raiseError(errSealedParent, node.Terminal());
+   }
+   else if (res == irUnsuccessfull)
+      scope.raiseError(node != nsNone ? errUnknownClass : errUnknownBaseClass, node.Terminal());
+}
+
+Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed)
+{
+   scope.info.header.parentRef = parentRef;
+   if (scope.info.header.parentRef != 0) {
+      return inheritClass(scope, scope.info.header.parentRef, ignoreSealed);
+   }
+   else return irSuccessfull;
+}
+
 //void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
 //{
 //   _writer.declareSwitchBlock(*scope.tape);
@@ -5699,49 +5701,51 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   // create byte code sections
 //   _writer.compile(symbolScope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 //}
-//
-//void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
-//   // if no construtors are defined inherits the parent one
-//   if (!findSymbol(node.firstChild(), nsConstructor)) {
-//      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
-//      classClassParentName.append(CLASSCLASS_POSTFIX);
-//
-//      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-//   }
-//
-//   InheritResult res = inheritClass(classClassScope, classClassScope.info.header.parentRef, false);
-//   //if (res == irObsolete) {
-//   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
-//   //}
-//   if (res == irInvalid) {
-//      classClassScope.raiseError(errInvalidParent, node.Terminal());
-//   }
-//   else if (res == irSealed) {
-//      classClassScope.raiseError(errSealedParent, node.Terminal());
-//   }
-//   else if (res == irUnsuccessfull)
-//      classClassScope.raiseError(node != nsNone ? errUnknownClass : errUnknownBaseClass, node.Terminal());
-//
-//   // class class is always stateless
-//   classClassScope.info.header.flags |= elStateless;
-//
-//   DNode member = node.firstChild();
-//   declareVMT(member, classClassScope, nsConstructor, false);
-//
-//   // add virtual constructor
-//   MethodScope defaultScope(&classClassScope);
-//   defaultScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
-//   defaultScope.include();
-//
-//   // save declaration
-//   classClassScope.save();
-//}
-//
-//void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
-//   _writer.declareClass(classClassScope.tape, classClassScope.reference);
-//
+
+void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
+   //// if no construtors are defined inherits the parent one
+   //if (!findSymbol(node.firstChild(), nsConstructor)) {
+   //   IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
+   //   classClassParentName.append(CLASSCLASS_POSTFIX);
+
+   //   classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   //}
+
+   InheritResult res = inheritClass(classClassScope, classClassScope.info.header.parentRef, false);
+   //if (res == irObsolete) {
+   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
+   //}
+   if (res == irInvalid) {
+      classClassScope.raiseError(errInvalidParent, node.Terminal());
+   }
+   else if (res == irSealed) {
+      classClassScope.raiseError(errSealedParent, node.Terminal());
+   }
+   else if (res == irUnsuccessfull)
+      classClassScope.raiseError(node != nsNone ? errUnknownClass : errUnknownBaseClass, node.Terminal());
+
+   // class class is always stateless
+   classClassScope.info.header.flags |= elStateless;
+
+   DNode member = node.firstChild();
+   //declareVMT(member, classClassScope, nsConstructor, false);
+
+   //// add virtual constructor
+   //MethodScope defaultScope(&classClassScope);
+   //defaultScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
+   //defaultScope.include();
+
+   // save declaration
+   classClassScope.save();
+}
+
+void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
+   CommandTape tape;
+
+   _writer.declareClass(tape, classClassScope.reference);
+
 //   DNode member = node.firstChild();
 //   while (member != nsNone) {
 //      DNode hints = skipHints(member);
@@ -5766,16 +5770,16 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      compileDynamicDefaultConstructor(methodScope, classClassScope);
 //   }
 //   else compileDefaultConstructor(methodScope, classClassScope);
-//
-//   _writer.endClass(classClassScope.tape);
-//
-//   // optimize
-//   optimizeTape(classClassScope.tape);
-//
-//   // create byte code sections
-//   _writer.compile(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
-//}
-//
+
+   _writer.endClass(tape);
+
+   // optimize
+   optimizeTape(tape);
+
+   // create byte code sections
+   _writer.save(tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
+}
+
 //void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
 //{
 //   while (member != nsNone) {
@@ -5811,60 +5815,62 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      member = member.nextNode();
 //   }
 //}
-//
-//void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
-//{
-//   DNode member = node.firstChild();
-//   if (member==nsBaseClass) {
-//      compileParentDeclaration(member, scope);
-//
-//      member = member.nextNode();
-//   }
-//   else compileParentDeclaration(DNode(), scope);
-//
-//   int flagCopy = scope.info.header.flags;
-//   scope.compileClassHints(hints);
-//
-//   compileFieldDeclarations(member, scope);
-//
+
+void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope/*, DNode hints*/)
+{
+   DNode member = node.firstChild();
+   if (member==nsBaseClass) {
+      compileParentDeclaration(member, scope);
+
+      member = member.nextNode();
+   }
+   else compileParentDeclaration(DNode(), scope);
+
+   int flagCopy = scope.info.header.flags;
+   //scope.compileClassHints(hints);
+
+   //compileFieldDeclarations(member, scope);
+
 //   declareVMT(member, scope, nsMethod, test(flagCopy, elClosed));
-//
-//   // if it is a role
-//   if (test(scope.info.header.flags, elRole)) {
-//      // class is its own class class
-//      scope.info.classClassRef = scope.reference;
-//   }
-//   else {
-//      // define class class name
-//      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
-//      classClassName.append(CLASSCLASS_POSTFIX);
-//
-//      scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
-//   }
-//
-//   // save declaration
-//   scope.save();
-//}
-//
-//void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
-//{
-//   _writer.declareClass(scope.tape, scope.reference);
-//
+
+   // if it is a role
+   if (test(scope.info.header.flags, elRole)) {
+      // class is its own class class
+      scope.info.classClassRef = scope.reference;
+   }
+   else {
+      // define class class name
+      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
+      classClassName.append(CLASSCLASS_POSTFIX);
+
+      scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
+   }
+
+   // save declaration
+   scope.save();
+}
+
+void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
+{
+   CommandTape tape;
+
+   _writer.declareClass(tape, scope.reference);
+
 //   DNode member = node.firstChild();
 //   compileVMT(member, scope);
-//
-//   _writer.endClass(scope.tape);
-//
+
+   _writer.endClass(tape);
+
 //   // compile explicit symbol
 //   compileSymbolCode(scope);
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
-//
+
+   // optimize
+   optimizeTape(tape);
+
+   // create byte code sections
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
 //void Compiler :: declareSingletonClass(DNode node, ClassScope& scope, bool closed)
 //{
 //   // nested class is sealed if it has no parent
@@ -6265,46 +6271,46 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 {
    while (member != nsNone) {
 //      DNode hints = skipHints(member);
-//
-//      TerminalInfo name = member.Terminal();
+
+      TerminalInfo name = member.Terminal();
 
       switch (member) {
 //         case nsType:
 //            compileType(member, scope, hints);
 //            break;
-//         case nsClass:
-//         {
-//            ref_t reference = scope.mapTerminal(name);
-//
-//            // check for duplicate declaration
-//            if (scope.module->mapSection(reference | mskSymbolRef, true))
-//               scope.raiseError(errDuplicatedSymbol, name);
-//
-//            scope.module->mapSection(reference | mskSymbolRef, false);
-//
-//            // compile class
-//            ClassScope classScope(&scope, reference);
-//            compileClassDeclaration(member, classScope, hints);
-//
-//            // compile class class if it available
-//            if (classScope.info.classClassRef != classScope.reference) {
-//               ClassScope classClassScope(&scope, classScope.info.classClassRef);
-//               compileClassClassDeclaration(member, classClassScope, classScope);
-//            }
-//
-//            break;
-//         }
+         case nsClass:
+         {
+            ref_t reference = scope.mapTerminal(name);
+
+            // check for duplicate declaration
+            if (scope.module->mapSection(reference | mskSymbolRef, true))
+               scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(reference | mskSymbolRef, false);
+
+            // compile class
+            ClassScope classScope(&scope, reference);
+            compileClassDeclaration(member, classScope/*, hints*/);
+
+            // compile class class if it available
+            if (classScope.info.classClassRef != classScope.reference) {
+               ClassScope classClassScope(&scope, classScope.info.classClassRef);
+               compileClassClassDeclaration(member, classClassScope, classScope);
+            }
+
+            break;
+         }
          case nsSymbol:
          case nsStatic:
          {
-//            ref_t reference = scope.mapTerminal(name);
-//
-//            // check for duplicate declaration
-//            if (scope.module->mapSection(reference | mskSymbolRef, true))
-//               scope.raiseError(errDuplicatedSymbol, name);
-//
-//            scope.module->mapSection(reference | mskSymbolRef, false);
-//
+            ref_t reference = scope.mapTerminal(name);
+
+            // check for duplicate declaration
+            if (scope.module->mapSection(reference | mskSymbolRef, true))
+               scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(reference | mskSymbolRef, false);
+
 //            SymbolScope symbolScope(&scope, reference);
             compileSymbolDeclaration(member/*, symbolScope, hints*/);
             break;
@@ -6322,24 +6328,24 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
       TerminalInfo name = member.Terminal();
 
       switch (member) {
-//         case nsClass:
-//         {
-//            ref_t reference = scope.mapTerminal(name);
-//
-//            // compile class
-//            ClassScope classScope(&scope, reference);
-//            scope.loadClassInfo(classScope.info, scope.module->resolveReference(reference), false);
-//            compileClassImplementation(member, classScope);
-//
-//            // compile class class if it available
-//            if (classScope.info.classClassRef != classScope.reference) {
-//               ClassScope classClassScope(&scope, classScope.info.classClassRef);
-//               scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
-//
-//               compileClassClassImplementation(member, classClassScope, classScope);
-//            }
-//            break;
-//         }
+         case nsClass:
+         {
+            ref_t reference = scope.mapTerminal(name);
+
+            // compile class
+            ClassScope classScope(&scope, reference);
+            scope.loadClassInfo(classScope.info, scope.module->resolveReference(reference), false);
+            compileClassImplementation(member, classScope);
+
+            // compile class class if it available
+            if (classScope.info.classClassRef != classScope.reference) {
+               ClassScope classClassScope(&scope, classScope.info.classClassRef);
+               scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
+
+               compileClassClassImplementation(member, classClassScope, classScope);
+            }
+            break;
+         }
          case nsSymbol:
          case nsStatic:
          {

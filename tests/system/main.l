@@ -1,6 +1,6 @@
 #define system.
 
-#symbol program = console writeLine:"Test".
+#symbol program = /*console writeLine:"Test"*/Object.
 
 //// --- Main ---
 //

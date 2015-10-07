@@ -89,13 +89,13 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeT
 //   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
 //   tape.write(bcElseR, baCurrentLabel, 0);
 //}
-//
-//void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
-//{
-//   // class-begin:
-//	tape.write(blBegin, bsClass, reference);
-//}
-//
+
+void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
+{
+   // class-begin:
+	tape.write(blBegin, bsClass, reference);
+}
+
 //void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
 //{
 //   // method-begin:
@@ -1278,12 +1278,12 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
 //
 //   tape.write(blEnd, bsMethod);
 //}
-//
-//void ByteCodeWriter :: endClass(CommandTape& tape)
-//{
-//   // end:
-//   tape.write(blEnd, bsClass);
-//}
+
+void ByteCodeWriter :: endClass(CommandTape& tape)
+{
+   // end:
+   tape.write(blEnd, bsClass);
+}
 
 void ByteCodeWriter :: endSymbol(CommandTape& tape)
 {

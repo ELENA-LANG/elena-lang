@@ -72,8 +72,8 @@ class ByteCodeWriter
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
 //   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
-//
-//   void declareClass(CommandTape& tape, ref_t reference);
+
+   void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void declareIdleMethod(CommandTape& tape, ref_t message);
@@ -191,7 +191,7 @@ public:
 //   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
-//   void endClass(CommandTape& tape);
+   void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
