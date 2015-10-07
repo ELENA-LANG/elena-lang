@@ -510,7 +510,7 @@ namespace _ELENA_
    #define BOOL_FORWARD             "'$bool"
    #define SUBJ_FORWARD             "'$sign"
 
-   #define STARTUP_CLASS            "'program"
+   #define STARTUP_CLASS            "'startUp"
 
 } // _ELENA_
 
