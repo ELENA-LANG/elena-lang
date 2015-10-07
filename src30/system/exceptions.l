@@ -46,12 +46,12 @@
 //        ^ aCallStackText.
 //    ]
 //}
-//
-//// --- Exception ---
-//
-///// A basic exception
-//#class Exception
-//{
+
+// --- Exception ---
+
+/// A basic exception
+#class Exception
+{
 //    #field(type:literal) theMessage.
 //    #field(type:subject) theError.
 //    #field theCallStack.
@@ -94,8 +94,8 @@
 //    
 //    /// Returns the message
 //    #method message = theMessage.
-//}
-//
+}
+
 //// --- FormatException ---
 //
 //#class FormatException :: Exception
@@ -162,15 +162,16 @@
 //    #constructor new:aMessage
 //        <= %new &literal:(aMessage literal) &subject: %InvalidOperationError.
 //}
-//// --- MethodNotFound ---
-//
-//#class MethodNotFoundException :: Exception
-//{
+
+// --- MethodNotFound ---
+
+#class MethodNotFoundException :: Exception
+{
 //    /// Creates the exception
 //    #constructor new
 //        <= %new &literal:"Method not found" &subject: %MethodNotFoundError.
-//}
-//
+}
+
 //// --- MethodNotSupported ---
 //
 //#class NotSupportedException :: Exception

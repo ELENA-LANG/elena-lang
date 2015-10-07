@@ -309,30 +309,30 @@ private:
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
-//
-//      int defineStructSize(ref_t classReference, bool& variable);
-//      int defineStructSize(ref_t classReference)
-//      {
-//         bool dummy = false;
-//
-//         return defineStructSize(classReference, dummy);
-//      }
-//
-//      int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
-//      int defineTypeSize(ref_t type_ref)
-//      {
-//         ref_t dummy1;
-//         bool dummy2;
-//
-//         return defineTypeSize(type_ref, dummy1, dummy2);
-//      }
-//      int defineTypeSize(ref_t type_ref, ref_t& class_ref)
-//      {
-//         bool dummy2;
-//
-//         return defineTypeSize(type_ref, class_ref, dummy2);
-//      }
-//
+
+      int defineStructSize(ref_t classReference, bool& variable);
+      int defineStructSize(ref_t classReference)
+      {
+         bool dummy = false;
+
+         return defineStructSize(classReference, dummy);
+      }
+
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
+      int defineTypeSize(ref_t type_ref)
+      {
+         ref_t dummy1;
+         bool dummy2;
+
+         return defineTypeSize(type_ref, dummy1, dummy2);
+      }
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref)
+      {
+         bool dummy2;
+
+         return defineTypeSize(type_ref, class_ref, dummy2);
+      }
+
 //      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
 //      int checkMethod(ref_t reference, ref_t message)
 //      {
@@ -430,7 +430,7 @@ private:
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
-//      void compileClassHints(DNode hints);
+      void compileClassHints(DNode hints);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -809,8 +809,8 @@ private:
 //
 //   ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
-//
-//   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
+
+   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
@@ -935,10 +935,10 @@ private:
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, InlineClassScope& scope);
 
-   void compileVMT(DNode member, ClassScope& scope, CommandTape& tape);
+   void compileVMT(DNode member, ClassScope& scope);
 
 //   void compileFieldDeclarations(DNode& member, ClassScope& scope);
-   void compileClassDeclaration(DNode node, ClassScope& scope/*, DNode hints*/);
+   void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
    void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
@@ -958,6 +958,8 @@ private:
 
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
+
+   void saveSyntaxTree(CodeScope& scope, MemoryDump& dump);
 
 public:
 ////   void setOptFlag(int flag)

@@ -76,7 +76,7 @@ public:
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
-//   void declareIdleMethod(CommandTape& tape, ref_t message);
+   void declareIdleMethod(CommandTape& tape, ref_t message);
 //   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
@@ -190,7 +190,7 @@ public:
 //   void endExternalBlock(CommandTape& tape);
 //   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
-//   void endIdleMethod(CommandTape& tape);
+   void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);

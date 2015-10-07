@@ -96,12 +96,12 @@ void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 	tape.write(blBegin, bsClass, reference);
 }
 
-//void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
-//{
-//   // method-begin:
-//   tape.write(blBegin, bsMethod, message);
-//}
-//
+void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
+{
+   // method-begin:
+   tape.write(blBegin, bsMethod, message);
+}
+
 //void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
 //{
 //   // method-begin:
@@ -1271,13 +1271,13 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
 //
 //   tape.write(blEnd, bsMethod);
 //}
-//
-//void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
-//{
-//   // end
-//
-//   tape.write(blEnd, bsMethod);
-//}
+
+void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
+{
+   // end
+
+   tape.write(blEnd, bsMethod);
+}
 
 void ByteCodeWriter :: endClass(CommandTape& tape)
 {

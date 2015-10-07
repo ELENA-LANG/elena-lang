@@ -25,12 +25,12 @@
 //    /// Dispatches incoming messages and redirects to the target
 //    #method => system'internal'handle_verb.
 //}
-//
-//// --- Message ---
-//
-///// A dynamic message extender
-//#class(sealed,message) Message
-//{
+
+// --- Message ---
+
+/// A dynamic message extender
+#class(sealed,message) Message
+{
 //    /// Loads a message
 //    #constructor(stacksafe) new &mssg:aMessage
 //        => system'internal'int_copy.
@@ -40,11 +40,11 @@
 //                        
 //    #method subject
 //        => system'internal'mssg_getsubj.
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    #method => system'internal'handle_message.
-//}
-//
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    #method => system'internal'handle_message.
+}
+
 //// --- Signature ---
 //
 ///// A dynamic signature extender

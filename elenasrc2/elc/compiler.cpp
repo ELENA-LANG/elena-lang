@@ -127,20 +127,20 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
 //      ref = module->mapReference(name, true);
 //   } while (ref != 0);
 //}
-//
-//// skip the hints and return the first hint node or none
-//inline DNode skipHints(DNode& node)
-//{
-//   DNode hints;
-//   if (node == nsHint)
-//      hints = node;
-//
-//   while (node == nsHint)
-//      node = node.nextNode();
-//
-//   return hints;
-//}
-//
+
+// skip the hints and return the first hint node or none
+inline DNode skipHints(DNode& node)
+{
+   DNode hints;
+   if (node == nsHint)
+      hints = node;
+
+   while (node == nsHint)
+      node = node.nextNode();
+
+   return hints;
+}
+
 //inline int countSymbol(DNode node, Symbol symbol)
 //{
 //   int counter = 0;
@@ -217,19 +217,19 @@ inline bool findSymbol(DNode node, Symbol symbol)
 //
 //   return false;
 //}
-//
-//inline bool isImportRedirect(DNode node)
-//{
-//   if (node.firstChild() == nsNone) {
-//      TerminalInfo terminal = node.Terminal();
-//      if (terminal.symbol == tsReference) {
-//         if (StringHelper::compare(terminal.value, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && terminal.value[strlen(INTERNAL_MODULE)]=='\'')
-//            return true;
-//      }
-//   }
-//   return false;
-//}
-//
+
+inline bool isImportRedirect(DNode node)
+{
+   if (node.firstChild() == nsNone) {
+      TerminalInfo terminal = node.Terminal();
+      if (terminal.symbol == tsReference) {
+         if (StringHelper::compare(terminal.value, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && terminal.value[strlen(INTERNAL_MODULE)]=='\'')
+            return true;
+      }
+   }
+   return false;
+}
+
 //inline bool isLocal(ObjectInfo info)
 //{
 //   switch (info.kind) {
@@ -713,34 +713,34 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
 //   }
 //   return moduleRef;
 //}
-//
-//int Compiler::ModuleScope::defineStructSize(ref_t classReference, bool& variable)
-//{
-//   ClassInfo classInfo;
-//   if(loadClassInfo(classInfo, module->resolveReference(classReference), true) == 0)
-//      return 0;
-//
-//   if (test(classInfo.header.flags, elStructureRole) && test(classInfo.header.flags, elEmbeddable)) {
-//      variable = !test(classInfo.header.flags, elReadOnlyRole);
-//
-//      return classInfo.size;
-//   }
-//
-//   return 0;
-//}
-//
-//int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReference, bool& variable)
-//{
-//   if (type_ref == 0)
-//      return 0;
-//
-//   classReference = typeHints.get(type_ref);
-//   if (classReference != 0) {
-//      return defineStructSize(classReference, variable);
-//   }
-//   else return 0;
-//}
-//
+
+int Compiler::ModuleScope::defineStructSize(ref_t classReference, bool& variable)
+{
+   ClassInfo classInfo;
+   if(loadClassInfo(classInfo, module->resolveReference(classReference), true) == 0)
+      return 0;
+
+   if (test(classInfo.header.flags, elStructureRole) && test(classInfo.header.flags, elEmbeddable)) {
+      variable = !test(classInfo.header.flags, elReadOnlyRole);
+
+      return classInfo.size;
+   }
+
+   return 0;
+}
+
+int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReference, bool& variable)
+{
+   if (type_ref == 0)
+      return 0;
+
+   classReference = typeHints.get(type_ref);
+   if (classReference != 0) {
+      return defineStructSize(classReference, variable);
+   }
+   else return 0;
+}
+
 //int Compiler::ModuleScope :: getClassFlags(ref_t reference)
 //{
 //   if (reference == 0)
@@ -1031,201 +1031,201 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 //   }
 }
 
-//void Compiler::ClassScope :: compileClassHints(DNode hints)
-//{
-//   // define class flags
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      if (StringHelper::compare(terminal, HINT_GROUP)) {
-//         info.header.flags |= elGroup;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_MESSAGE)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.size = 4;
-//         info.header.flags |= elDebugDWORD;
-//
-//         info.header.flags |= (elStructureRole | elMessage | elEmbeddable);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.size = 4;
-//         info.header.flags |= elDebugReference;
-//
-//         info.header.flags |= (elStructureRole | elSymbol);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_SIGNATURE)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.size = 4;
-//         info.header.flags |= elDebugSubject;
-//
-//         info.header.flags |= (elStructureRole | elSignature | elEmbeddable);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
-//         info.header.flags |= elExtension;
-//         info.header.flags |= elSealed;      // extension should be sealed
-//         DNode value = hints.select(nsHintValue);
-//         if (value != nsNone) {
-//            info.extensionTypeRef = moduleScope->mapType(value.Terminal());
-//            if (info.extensionTypeRef == 0)
-//               raiseError(errUnknownSubject, value.Terminal());
-//         }
-//      }
-//      else if (StringHelper::compare(terminal, HINT_SEALED)) {
-//         info.header.flags |= elSealed;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_CONSTANT)) {
-//         info.header.flags |= elReadOnlyRole;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_LIMITED)) {
-//         info.header.flags |= elClosed;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_STRUCT)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.header.flags |= elStructureRole;
-//
-//         DNode option = hints.select(nsHintValue);
-//         if (option != nsNone) {
-//            if (StringHelper::compare(option.Terminal(), HINT_EMBEDDABLE)) {
-//               info.header.flags |= elEmbeddable;
-//            }
-//            else raiseError(wrnInvalidHint, terminal);
-//         }
-//      }
-//      else if (StringHelper::compare(terminal, HINT_INTEGER_NUMBER)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
-//         if (sizeValue.symbol == tsInteger) {
-//            info.size = StringHelper::strToInt(sizeValue.value);
-//            // !! HOTFIX : allow only 1,2,4 or 8
-//            if (info.size == 1 || info.size == 2 || info.size == 4) {
-//               info.header.flags |= elDebugDWORD;
-//            }
-//            else if (info.size == 8) {
-//               info.header.flags |= elDebugQWORD;
-//            }
-//            else raiseError(wrnInvalidHint, terminal);
-//
-//            info.header.flags |= elReadOnlyRole;
-//         }
-//         else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//         info.header.flags |= (elEmbeddable | elStructureRole);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_FLOAT_NUMBER)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
-//         if (sizeValue.symbol == tsInteger) {
-//            info.size = StringHelper::strToInt(sizeValue.value);
-//            // !! HOTFIX : allow only 8
-//            if (info.size == 8) {
-//               info.header.flags |= elDebugReal64;
-//            }
-//            else raiseError(wrnInvalidHint, terminal);
-//
-//            info.header.flags |= elReadOnlyRole;
-//         }
-//         else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//         info.header.flags |= (elEmbeddable | elStructureRole);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_POINTER)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.size = 4;
-//         info.header.flags |= elDebugPTR;
-//         info.header.flags |= (elEmbeddable | elStructureRole);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_BINARY)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
-//         if (sizeValue.symbol == tsInteger) {
-//            info.size = -StringHelper::strToInt(sizeValue.value);
-//            if (info.size == -1) {
-//               info.header.flags |= elDebugBytes;
-//            }
-//            else if (info.size == -2) {
-//               info.header.flags |= elDebugShorts;
-//            }
-//            else if (info.size == -4) {
-//               info.header.flags |= elDebugIntegers;
-//            }
-//            else raiseError(wrnInvalidHint, terminal);
-//         }
-//         else if (sizeValue.symbol == tsIdentifier) {
-//            DNode value = hints.select(nsHintValue);
-//            size_t type = moduleScope->mapType(value.Terminal());
-//            if (type == 0)
-//               raiseError(errUnknownSubject, value.Terminal());
-//
-//            info.fieldTypes.add(-1, type);
-//            info.size = -moduleScope->defineTypeSize(type);
-//            if (info.size == -4) {
-//               info.header.flags |= elDebugIntegers;
-//            }
-//            else if ((int)info.size > 0)
-//               raiseError(wrnInvalidHint, value.Terminal());
-//         }
-//         else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//         info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_XDYNAMIC) || StringHelper::compare(terminal, HINT_DYNAMIC)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.header.flags |= elDynamicRole;
-//         info.header.flags |= elDebugArray;
-//         if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
-//            DNode value = hints.select(nsHintValue);
-//            if (value != nsNone) {
-//               size_t type = moduleScope->mapType(value.Terminal());
-//               if (type == 0)
-//                  raiseError(errUnknownSubject, value.Terminal());
-//
-//               info.fieldTypes.add(-1, type);
-//            }
-//         }
-//      }
-//      else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
-//         info.header.flags |= elNonStructureRole;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_STRING)) {
-//         info.header.flags |= elDebugLiteral;
-//         info.header.flags |= elStructureRole;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
-//         info.header.flags |= elDebugWideLiteral;
-//         info.header.flags |= elStructureRole;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_VARIABLE)) {
-//         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
-//            raiseError(wrnInvalidHint, terminal);
-//
-//         info.header.flags |= elWrapper;
-//      }
-//      else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//      hints = hints.nextNode();
-//   }
-//
-//}
-//
+void Compiler::ClassScope :: compileClassHints(DNode hints)
+{
+   // define class flags
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_GROUP)) {
+         info.header.flags |= elGroup;
+      }
+      else if (StringHelper::compare(terminal, HINT_MESSAGE)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 4;
+         info.header.flags |= elDebugDWORD;
+
+         info.header.flags |= (elStructureRole | elMessage | elEmbeddable);
+      }
+      else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 4;
+         info.header.flags |= elDebugReference;
+
+         info.header.flags |= (elStructureRole | elSymbol);
+      }
+      else if (StringHelper::compare(terminal, HINT_SIGNATURE)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 4;
+         info.header.flags |= elDebugSubject;
+
+         info.header.flags |= (elStructureRole | elSignature | elEmbeddable);
+      }
+      else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
+         info.header.flags |= elExtension;
+         info.header.flags |= elSealed;      // extension should be sealed
+         DNode value = hints.select(nsHintValue);
+         if (value != nsNone) {
+            info.extensionTypeRef = moduleScope->mapType(value.Terminal());
+            if (info.extensionTypeRef == 0)
+               raiseError(errUnknownSubject, value.Terminal());
+         }
+      }
+      else if (StringHelper::compare(terminal, HINT_SEALED)) {
+         info.header.flags |= elSealed;
+      }
+      else if (StringHelper::compare(terminal, HINT_CONSTANT)) {
+         info.header.flags |= elReadOnlyRole;
+      }
+      else if (StringHelper::compare(terminal, HINT_LIMITED)) {
+         info.header.flags |= elClosed;
+      }
+      else if (StringHelper::compare(terminal, HINT_STRUCT)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.header.flags |= elStructureRole;
+
+         DNode option = hints.select(nsHintValue);
+         if (option != nsNone) {
+            if (StringHelper::compare(option.Terminal(), HINT_EMBEDDABLE)) {
+               info.header.flags |= elEmbeddable;
+            }
+            else raiseError(wrnInvalidHint, terminal);
+         }
+      }
+      else if (StringHelper::compare(terminal, HINT_INTEGER_NUMBER)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
+         if (sizeValue.symbol == tsInteger) {
+            info.size = StringHelper::strToInt(sizeValue.value);
+            // !! HOTFIX : allow only 1,2,4 or 8
+            if (info.size == 1 || info.size == 2 || info.size == 4) {
+               info.header.flags |= elDebugDWORD;
+            }
+            else if (info.size == 8) {
+               info.header.flags |= elDebugQWORD;
+            }
+            else raiseError(wrnInvalidHint, terminal);
+
+            info.header.flags |= elReadOnlyRole;
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+
+         info.header.flags |= (elEmbeddable | elStructureRole);
+      }
+      else if (StringHelper::compare(terminal, HINT_FLOAT_NUMBER)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
+         if (sizeValue.symbol == tsInteger) {
+            info.size = StringHelper::strToInt(sizeValue.value);
+            // !! HOTFIX : allow only 8
+            if (info.size == 8) {
+               info.header.flags |= elDebugReal64;
+            }
+            else raiseError(wrnInvalidHint, terminal);
+
+            info.header.flags |= elReadOnlyRole;
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+
+         info.header.flags |= (elEmbeddable | elStructureRole);
+      }
+      else if (StringHelper::compare(terminal, HINT_POINTER)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 4;
+         info.header.flags |= elDebugPTR;
+         info.header.flags |= (elEmbeddable | elStructureRole);
+      }
+      else if (StringHelper::compare(terminal, HINT_BINARY)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
+            raiseError(wrnInvalidHint, terminal);
+
+         TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
+         if (sizeValue.symbol == tsInteger) {
+            info.size = -StringHelper::strToInt(sizeValue.value);
+            if (info.size == -1) {
+               info.header.flags |= elDebugBytes;
+            }
+            else if (info.size == -2) {
+               info.header.flags |= elDebugShorts;
+            }
+            else if (info.size == -4) {
+               info.header.flags |= elDebugIntegers;
+            }
+            else raiseError(wrnInvalidHint, terminal);
+         }
+         else if (sizeValue.symbol == tsIdentifier) {
+            DNode value = hints.select(nsHintValue);
+            size_t type = moduleScope->mapType(value.Terminal());
+            if (type == 0)
+               raiseError(errUnknownSubject, value.Terminal());
+
+            info.fieldTypes.add(-1, type);
+            info.size = -moduleScope->defineTypeSize(type);
+            if (info.size == -4) {
+               info.header.flags |= elDebugIntegers;
+            }
+            else if ((int)info.size > 0)
+               raiseError(wrnInvalidHint, value.Terminal());
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+
+         info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
+      }
+      else if (StringHelper::compare(terminal, HINT_XDYNAMIC) || StringHelper::compare(terminal, HINT_DYNAMIC)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.header.flags |= elDynamicRole;
+         info.header.flags |= elDebugArray;
+         if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
+            DNode value = hints.select(nsHintValue);
+            if (value != nsNone) {
+               size_t type = moduleScope->mapType(value.Terminal());
+               if (type == 0)
+                  raiseError(errUnknownSubject, value.Terminal());
+
+               info.fieldTypes.add(-1, type);
+            }
+         }
+      }
+      else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
+         info.header.flags |= elNonStructureRole;
+      }
+      else if (StringHelper::compare(terminal, HINT_STRING)) {
+         info.header.flags |= elDebugLiteral;
+         info.header.flags |= elStructureRole;
+      }
+      else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
+         info.header.flags |= elDebugWideLiteral;
+         info.header.flags |= elStructureRole;
+      }
+      else if (StringHelper::compare(terminal, HINT_VARIABLE)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.header.flags |= elWrapper;
+      }
+      else raiseWarning(1, wrnUnknownHint, terminal);
+
+      hints = hints.nextNode();
+   }
+
+}
+
 //void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& type)
 //{
 //   type = 0;
@@ -1675,31 +1675,31 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //   _writer.declareMessageInfo(*tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
 //}
-//
-//void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t referenceProperName)
-//{
-//   ReferenceNs fullName(scope.project->resolveForward(IMPORT_FORWARD), referenceProperName + strlen(INTERNAL_MODULE) + 1);
-//
-//   ByteCodeIterator it = tape->end();
-//
-//   ref_t reference = 0;
-//   _Module* api = scope.project->resolveModule(fullName, reference);
-//
-//   _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
-//   if (section == NULL) {
-//      scope.raiseError(errInvalidLink, node.Terminal());
-//   }
-//   else tape->import(section, true);
-//
-//   // goes to the first imported command
-//   it++;
-//
-//   // import references
-//   while (!it.Eof()) {
-//      CommandTape::import(*it, api, scope.module);
-//      it++;
-//   }
-//}
+
+void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t referenceProperName)
+{
+   ReferenceNs fullName(scope.project->resolveForward(IMPORT_FORWARD), referenceProperName + strlen(INTERNAL_MODULE) + 1);
+
+   ByteCodeIterator it = tape->end();
+
+   ref_t reference = 0;
+   _Module* api = scope.project->resolveModule(fullName, reference);
+
+   _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
+   if (section == NULL) {
+      scope.raiseError(errInvalidLink, node.Terminal());
+   }
+   else tape->import(section, true);
+
+   // goes to the first imported command
+   it++;
+
+   // import references
+   while (!it.Eof()) {
+      CommandTape::import(*it, api, scope.module);
+      it++;
+   }
+}
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
 {
@@ -5030,9 +5030,11 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
    
    CodeScope codeScope(&scope);
 
-//   if (isImportRedirect(node)) {
-//      importCode(node, *scope.moduleScope, codeScope.tape, node.Terminal());
-//   }
+   _writer.declareIdleMethod(*codeScope.tape, scope.message);
+
+   if (isImportRedirect(node)) {
+      importCode(node, *scope.moduleScope, codeScope.tape, node.Terminal());
+   }
 //   else {
 //      _writer.doGenericHandler(*codeScope.tape);
 //
@@ -5076,10 +5078,8 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 //         _writer.resendResolvedMethod(*codeScope.tape, scope.moduleScope->superReference, encodeVerb(DISPATCH_MESSAGE_ID));
 //      }
 //   }
-//
-//   _writer.declareIdleMethod(*codeScope.tape, scope.message);
-//
-//   _writer.endIdleMethod(*codeScope.tape);
+
+   _writer.endIdleMethod(*codeScope.tape);
 }
 
 //void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
@@ -5542,7 +5542,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 //   _writer.endIdleMethod(*codeScope.tape);
 //}
 
-void Compiler :: compileVMT(DNode member, ClassScope& scope, CommandTape& tape)
+void Compiler :: compileVMT(DNode member, ClassScope& scope)
 {
    while (member != nsNone) {
 //      DNode hints = skipHints(member);
@@ -5814,7 +5814,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
    }
 }
 
-void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope/*, DNode hints*/)
+void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
 {
    DNode member = node.firstChild();
    if (member==nsBaseClass) {
@@ -5825,7 +5825,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope/*, DNode 
    else compileParentDeclaration(DNode(), scope);
 
    int flagCopy = scope.info.header.flags;
-   //scope.compileClassHints(hints);
+   scope.compileClassHints(hints);
 
    //compileFieldDeclarations(member, scope);
 
@@ -5848,25 +5848,23 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope/*, DNode 
    scope.save();
 }
 
-void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
+void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
-   CommandTape tape;
-
-   _writer.declareClass(tape, scope.reference);
+   _writer.declareClass(scope.tape, scope.reference);
 
    DNode member = node.firstChild();
-   compileVMT(member, scope, tape);
+   compileVMT(member, scope);
 
-   _writer.endClass(tape);
+   _writer.endClass(scope.tape);
 
    // compile explicit symbol
    compileSymbolCode(scope);
 
    // optimize
-   optimizeTape(tape);
+   optimizeTape(scope.tape);
 
    // create byte code sections
-   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
 //void Compiler :: declareSingletonClass(DNode node, ClassScope& scope, bool closed)
@@ -6185,11 +6183,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //
 //   _writer.endSymbol(scope.tape);
 //
-
-   SyntaxReader reader(&dump);
-
    _writer.declareSymbol(scope.tape, scope.reference);
-   _writer.translateExpression(scope.tape, reader.readRoot());
+   saveSyntaxTree(codeScope, dump);
    _writer.endSymbol(scope.tape);
 
    // optimize
@@ -6197,6 +6192,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
    // create byte code sections
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
+void Compiler :: saveSyntaxTree(CodeScope& scope, MemoryDump& dump)
+{
+   SyntaxReader reader(&dump);
+
+   _writer.translateExpression(*scope.tape, reader.readRoot());
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)
@@ -6267,7 +6269,7 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hi
 void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 {
    while (member != nsNone) {
-//      DNode hints = skipHints(member);
+      DNode hints = skipHints(member);
 
       TerminalInfo name = member.Terminal();
 
@@ -6287,7 +6289,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 
             // compile class
             ClassScope classScope(&scope, reference);
-            compileClassDeclaration(member, classScope/*, hints*/);
+            compileClassDeclaration(member, classScope, hints);
 
             // compile class class if it available
             if (classScope.info.classClassRef != classScope.reference) {
