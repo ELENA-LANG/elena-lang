@@ -2535,8 +2535,8 @@ inline size_t countChildren(SNode node)
 inline ref_t defineConstantMask(LexicalType type)
 {
    switch(type) {
-      //case okConstantClass:
-      //   return mskVMTRef;
+      case lxConstantClass:
+         return mskVMTRef;
       case lxConstantString:
          return mskLiteralRef;
       //case okCharConstant:
@@ -2581,6 +2581,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
          tape.write(bcPushA);
          break;
       case lxConstantString:
+      case lxConstantClass:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -2589,24 +2590,28 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
    }
 }
 
+void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
+{
+   switch (type)
+   {
+   case lxSymbol:
+      tape.write(bcCallR, argument | mskSymbolRef);
+      break;
+   case lxConstantString:
+   case lxConstantClass:
+      // pushr reference
+      tape.write(bcACopyR, argument | defineConstantMask(type));
+      break;
+   default:
+      break;
+   }
+}
+
 void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
 {
    translateBreakpoint(tape, findChild(node, lxBreakpoint));
 
-   LexicalType type = node.type;
-   ref_t argument = node.argument;
-   switch (type)
-   {
-      case lxSymbol:
-         tape.write(bcCallR, argument | mskSymbolRef);
-         break;
-      case lxConstantString:
-         // pushr reference
-         tape.write(bcALoadR, argument | defineConstantMask(type));
-         break;
-      default:
-         break;
-   }
+   loadObject(tape, node.type, node.argument);
 }
 
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)

@@ -413,24 +413,23 @@ private:
       }
    };
 
-//   // - SourceScope -
-//   struct SourceScope : public Scope
-//   {
-//      CommandTape    tape;
-//      ref_t          reference;
-//
-////      SourceScope(Scope* parent);
-//      SourceScope(ModuleScope* parent, ref_t reference);
-//   };
+   // - SourceScope -
+   struct SourceScope : public Scope
+   {
+      CommandTape    tape;
+      ref_t          reference;
+
+//      SourceScope(Scope* parent);
+      SourceScope(ModuleScope* parent, ref_t reference);
+   };
 
    // - ClassScope -
-   struct ClassScope : public /*Source*/Scope
+   struct ClassScope : public SourceScope
    {
-      ref_t     reference;
       ClassInfo info;
 
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
 //      void compileClassHints(DNode hints);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
 
@@ -453,10 +452,8 @@ private:
    };
 
    // - SymbolScope -
-   struct SymbolScope : public /*Source*/Scope
+   struct SymbolScope : public SourceScope
    {
-      ref_t        reference;
-
 //      bool  constant;
 //      ref_t typeRef;
 //
@@ -475,10 +472,10 @@ private:
       SymbolScope(ModuleScope* parent, ref_t reference);
    };
 
-//   // - MethodScope -
-//   struct MethodScope : public Scope
-//   {
-//      ref_t     message;
+   // - MethodScope -
+   struct MethodScope : public Scope
+   {
+      ref_t     message;
 //      LocalMap  parameters;
 //      int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 //      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
@@ -486,15 +483,15 @@ private:
 //      bool      stackSafe;
 //
 //      int compileHints(DNode hints);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slMethod) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slMethod) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      void setClassFlag(int flag)
 //      {
 //         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
@@ -504,14 +501,14 @@ private:
 //      {
 //         return ((ClassScope*)parent)->info.header.flags;
 //      }
-//
-//      bool include();
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      MethodScope(ClassScope* parent);
-//   };
-//
+
+      bool include();
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      MethodScope(ClassScope* parent);
+   };
+
 //   // - ActionScope -
 //   struct ActionScope : public MethodScope
 //   {
@@ -523,8 +520,7 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-      SyntaxWriter* writer;
-//      CommandTape* tape;
+      CommandTape* tape;
 //
 //      // scope local variables
 //      LocalMap     locals;
@@ -622,8 +618,8 @@ private:
 //
 //      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
-      CodeScope(SymbolScope* parent, SyntaxWriter* writer);
-//      CodeScope(MethodScope* parent);
+      CodeScope(SymbolScope* parent);
+      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
    };
 
@@ -792,14 +788,14 @@ private:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
+   void recordDebugStep(SyntaxWriter& writer, TerminalInfo terminal, int stepType)
    {
       if (terminal != nsNone) {
-         scope.writer->newNode(lxBreakpoint, stepType);
-         scope.writer->appendNode(lxBPRow, terminal.row);
-         scope.writer->appendNode(lxBPCol, terminal.disp);
-         scope.writer->appendNode(lxBPLength, terminal.length);
-         scope.writer->closeNode();
+         writer.newNode(lxBreakpoint, stepType);
+         writer.appendNode(lxBPRow, terminal.row);
+         writer.appendNode(lxBPCol, terminal.disp);
+         writer.appendNode(lxBPLength, terminal.length);
+         writer.closeNode();
       }
    }
 //   void openDebugExpression(CodeScope& scope)
@@ -859,8 +855,8 @@ private:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 //
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   /*ObjectInfo*/void compileTerminal(DNode node, CodeScope& scope, int mode);
-   /*ObjectInfo*/void compileObject(DNode objectNode, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileTerminal(DNode node, SyntaxWriter& writer, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileObject(DNode objectNode, SyntaxWriter& writer, CodeScope& scope, int mode);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
@@ -877,14 +873,14 @@ private:
 //
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //
-   /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/);
+   /*ObjectInfo*/void compileMessage(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo object*/);
    //ObjectInfovoid compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
 //   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
-   /*ObjectInfo*/void compileOperations(DNode node, CodeScope& scope/*, ObjectInfo target, int mode*/);
+   /*ObjectInfo*/void compileOperations(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo target, int mode*/);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   /*ObjectInfo*/void compileExpression(DNode node, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo*/void compileExpression(DNode node, SyntaxWriter& writer, CodeScope& scope/*, int mode*/);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
@@ -916,7 +912,7 @@ private:
 //   void declareArgumentList(DNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 //   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
-//   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
+   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
 //   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
 //   void compileSingletonClass(DNode member, ClassScope& scope);
@@ -928,19 +924,19 @@ private:
 //
 //   void compileActionMethod(DNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
-//   void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
+   void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
 //   void compileMethod(DNode node, MethodScope& scope, int mode);
 //   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, bool embeddable);
-//
-//   void compileSymbolCode(ClassScope& scope);
-//
+
+   void compileSymbolCode(ClassScope& scope);
+
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, InlineClassScope& scope);
-//
-//   void compileVMT(DNode member, ClassScope& scope);
-//
+
+   void compileVMT(DNode member, ClassScope& scope, CommandTape& tape);
+
 //   void compileFieldDeclarations(DNode& member, ClassScope& scope);
    void compileClassDeclaration(DNode node, ClassScope& scope/*, DNode hints*/);
    void compileClassImplementation(DNode node, ClassScope& scope);

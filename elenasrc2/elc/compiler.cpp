@@ -929,28 +929,26 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, Termi
 //   }
 //   else return false;
 //}
-//
-//// --- Compiler::SourceScope ---
-//
-////Compiler::SourceScope :: SourceScope(Scope* parent)
-////   : Scope(parent)
-////{
-////   this->reference = 0;
-////}
-//
-//Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
-//   : Scope(moduleScope)
+
+// --- Compiler::SourceScope ---
+
+//Compiler::SourceScope :: SourceScope(Scope* parent)
+//   : Scope(parent)
 //{
-//   this->reference = reference;
+//   this->reference = 0;
 //}
+
+Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
+   : Scope(moduleScope)
+{
+   this->reference = reference;
+}
 
 // --- Compiler::SymbolScope ---
 
 Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
-   : Scope(parent)
-//   : SourceScope(parent, reference)
+   : SourceScope(parent, reference)
 {
-   this->reference = reference;
 //   typeRef = 0;
 //   constant = false;
 }
@@ -988,10 +986,8 @@ ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
 // --- Compiler::ClassScope ---
 
 Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
-   : Scope(parent)
+   : SourceScope(parent, reference)
 {
-   this->reference = reference;
-
    info.header.parentRef =   moduleScope->superReference;
    info.header.flags = elStandartVMT;
    info.header.count = 0;
@@ -1000,8 +996,8 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.extensionTypeRef = 0;
 }
 
-//ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
-//{
+ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
+{
 //   if (StringHelper::compare(identifier, SUPER_VAR)) {
 //      return ObjectInfo(okSuper, info.header.parentRef);
 //   }
@@ -1027,14 +1023,14 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 //         else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
 //      }
 //      else {
-//         if (identifier.symbol == tsReference && StringHelper::compare(identifier.value, moduleScope->module->resolveReference(this->reference))) {
-//            return ObjectInfo(okConstantClass, this->reference, info.classClassRef);
-//         }
-//         else return Scope::mapObject(identifier);
+         //if (identifier.symbol == tsReference && StringHelper::compare(identifier.value, moduleScope->module->resolveReference(this->reference))) {
+         //   return ObjectInfo(okConstantClass, this->reference, info.classClassRef);
+         //}
+         /*else */return Scope::mapObject(identifier);
 //      }
 //   }
-//}
-//
+}
+
 //void Compiler::ClassScope :: compileClassHints(DNode hints)
 //{
 //   // define class flags
@@ -1272,39 +1268,39 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 //      hints = hints.nextNode();
 //   }
 //}
-//
-//// --- Compiler::MetodScope ---
-//
-//Compiler::MethodScope :: MethodScope(ClassScope* parent)
-//   : Scope(parent), parameters(Parameter())
-//{
-//   this->message = 0;
+
+// --- Compiler::MetodScope ---
+
+Compiler::MethodScope :: MethodScope(ClassScope* parent)
+   : Scope(parent)//, parameters(Parameter())
+{
+   this->message = 0;
 //   this->reserved = 0;
 //   this->rootToFree = 1;
 //   this->withOpenArg = false;
 //   this->stackSafe = false;
-//}
-//
-//bool Compiler::MethodScope :: include()
-//{
-//   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-//
-//   // check if the method is inhreited and update vmt size accordingly
-//   ClassInfo::MethodMap::Iterator it = classScope->info.methods.getIt(message);
-//   if (it.Eof()) {
-//      classScope->info.methods.add(message, true);
-//
-//      return true;
-//   }
-//   else {
-//      (*it) = true;
-//
-//      return false;
-//   }
-//}
-//
-//ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
-//{
+}
+
+bool Compiler::MethodScope :: include()
+{
+   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+
+   // check if the method is inhreited and update vmt size accordingly
+   ClassInfo::MethodMap::Iterator it = classScope->info.methods.getIt(message);
+   if (it.Eof()) {
+      classScope->info.methods.add(message, true);
+
+      return true;
+   }
+   else {
+      (*it) = true;
+
+      return false;
+   }
+}
+
+ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
+{
 //   if (StringHelper::compare(identifier, THIS_VAR)) {
 //      return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
 //   }
@@ -1325,13 +1321,13 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 //         else return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.sign_ref);
 //      }
 //      else {
-//         ObjectInfo retVal = Scope::mapObject(identifier);
-//
-//         return retVal;
+         ObjectInfo retVal = Scope::mapObject(identifier);
+
+         return retVal;
 //      }
 //   }
-//}
-//
+}
+
 //int Compiler::MethodScope :: compileHints(DNode hints)
 //{
 //   int mode = 0;
@@ -1396,29 +1392,29 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 
 // --- Compiler::CodeScope ---
 
-Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
+Compiler::CodeScope :: CodeScope(SymbolScope* parent)
    : Scope(parent)//, locals(Parameter(0))
 {
-   this->writer = writer;
+   this->tape = &parent->tape;
 
 //   this->level = 0;
 //   this->saved = this->reserved = 0;
 }
 
-////Compiler::CodeScope :: CodeScope(MethodScope* parent, CodeType type)
-////   : Scope(parent)
-////{
-////   this->tape = &((ClassScope*)parent->getScope(slClass))->tape;
-////   this->level = 0;
-////}
-//
-//Compiler::CodeScope :: CodeScope(MethodScope* parent)
-//   : Scope(parent), locals(Parameter(0))
+//Compiler::CodeScope :: CodeScope(MethodScope* parent, CodeType type)
+//   : Scope(parent)
 //{
 //   this->tape = &((ClassScope*)parent->getScope(slClass))->tape;
 //   this->level = 0;
-//   this->saved = this->reserved = 0;
 //}
+
+Compiler::CodeScope :: CodeScope(MethodScope* parent)
+   : Scope(parent)//, locals(Parameter(0))
+{
+   this->tape = &((ClassScope*)parent->getScope(slClass))->tape;
+   //this->level = 0;
+   //this->saved = this->reserved = 0;
+}
 
 //Compiler::CodeScope :: CodeScope(CodeScope* parent)
 //   : Scope(parent), locals(Parameter(0))
@@ -2035,7 +2031,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else scope.raiseError(errDuplicatedLocal, node.Terminal());
 //}
 
-/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
+/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, SyntaxWriter& writer, CodeScope& scope, int mode)
 {
    TerminalInfo terminal = node.Terminal();
 
@@ -2043,7 +2039,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    if (terminal==tsLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
 
-      scope.writer->newNode(lxConstantString, object.param);
+      writer.newNode(lxConstantString, object.param);
    }
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
@@ -2106,7 +2102,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
             break;
          case okSymbol:
             scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-            scope.writer->newNode(lxSymbol, object.param);
+            writer.newNode(lxSymbol, object.param);
             break;
          //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -2122,14 +2118,14 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 
 
    if (test(mode, HINT_DEBUGSTEP))
-      recordDebugStep(scope, terminal, dsStep);
+      recordDebugStep(writer, terminal, dsStep);
 
-   scope.writer->closeNode();
+   writer.closeNode();
 
 //   return object;
 }
 
-/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
+/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, SyntaxWriter& writer, CodeScope& scope, int mode)
 {
 //   ObjectInfo result;
 
@@ -2169,10 +2165,10 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //         result = compileMessageReference(member, scope);
 //         break;
       default:
-         scope.writer->newNode(lxObject);
-         /*result = */compileTerminal(objectNode, scope, mode);
+         writer.newNode(lxObject);
+         /*result = */compileTerminal(objectNode, writer, scope, mode);
    }
-   scope.writer->closeNode();
+   writer.closeNode();
 
 //   return result;
 }
@@ -3421,7 +3417,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else _writer.releaseObject(*scope.tape, spaceToRelease);
 //}
 
-/*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/)
+/*ObjectInfo*/void Compiler :: compileMessage(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo object*/)
 {
    bool   first = true;
    ref_t  verb_id = 0;
@@ -3460,7 +3456,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      compileObject(arg.firstChild(), scope, 0);
+      compileObject(arg.firstChild(), writer, scope, 0);
    ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
    //
       paramCount++;
@@ -3539,13 +3535,13 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    // create a message id
    ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
 
-   scope.writer->newNode(lxCall);
+   writer.newNode(lxCall);
 
-   scope.writer->newNode(lxMessage, messageRef);
-   recordDebugStep(scope, verb, dsStep);
-   scope.writer->closeNode();
+   writer.newNode(lxMessage, messageRef);
+   recordDebugStep(writer, verb, dsStep);
+   writer.closeNode();
 
-   scope.writer->closeNode();
+   writer.closeNode();
 
 //   MessageScope callStack;
 //
@@ -3579,7 +3575,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   return retVal;
 }
 
-/*ObjectInfo */void Compiler :: compileOperations(DNode node, CodeScope& scope/*, ObjectInfo object, int mode*/)
+/*ObjectInfo */void Compiler :: compileOperations(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo object, int mode*/)
 {
 //   ObjectInfo currentObject = object;
 
@@ -3620,7 +3616,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //         currentObject = compileExtension(member, scope, currentObject, mode);
 //      }
       /*else */if (member==nsMessageOperation) {
-         /*currentObject = */compileMessage(member, scope/*, currentObject*/);
+         /*currentObject = */compileMessage(member, writer, scope/*, currentObject*/);
       }
 //      else if (member==nsMessageParameter) {
 //         currentObject = compileMessage(member, scope, currentObject);
@@ -4227,15 +4223,15 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   return ObjectInfo(okAccumulator, 0, 0, subj);
 //}
 
-/*ObjectInfo*/void Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileExpression(DNode node, SyntaxWriter& writer, CodeScope& scope/*, int mode*/)
 {
-   scope.writer->newNode(lxExpression);
+   writer.newNode(lxExpression);
 
    DNode member = node.firstChild();
 
    //ObjectInfo objectInfo;
    if (member==nsObject) {
-      /*objectInfo =*/ compileObject(member, scope, HINT_DEBUGSTEP/*| mode*/);
+      /*objectInfo =*/ compileObject(member, writer, scope, HINT_DEBUGSTEP/*| mode*/);
    }
    if (member != nsNone) {
 //      if (findSymbol(member, nsCatchMessageOperation)) {
@@ -4244,10 +4240,10 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //      else if (findSymbol(member, nsAltMessageOperation)) {
 //         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
 //      }
-      /*else objectInfo = */compileOperations(member, scope/*, objectInfo, mode*/);
+      /*else objectInfo = */compileOperations(member, writer, scope/*, objectInfo, mode*/);
    }
 
-   scope.writer->closeNode();
+   writer.closeNode();
 //
 //   return objectInfo;
 }
@@ -5026,16 +5022,14 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //
 //   scope.message = encodeMessage(sign_id, verb_id, paramCount);
 //}
-//
-//void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods)
-//{
-//   // check if the method is inhreited and update vmt size accordingly
-//   scope.include();
-//
-//   CodeScope codeScope(&scope);
-//
-//   _writer.declareIdleMethod(*codeScope.tape, scope.message);
-//
+
+void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods)
+{
+   // check if the method is inhreited and update vmt size accordingly
+   scope.include();
+   
+   CodeScope codeScope(&scope);
+
 //   if (isImportRedirect(node)) {
 //      importCode(node, *scope.moduleScope, codeScope.tape, node.Terminal());
 //   }
@@ -5083,9 +5077,11 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //      }
 //   }
 //
-//   _writer.endIdleMethod(*codeScope.tape);
-//}
+//   _writer.declareIdleMethod(*codeScope.tape, scope.message);
 //
+//   _writer.endIdleMethod(*codeScope.tape);
+}
+
 //void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
 //{
 //   // check if the method is inhreited and update vmt size accordingly
@@ -5545,27 +5541,27 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //
 //   _writer.endIdleMethod(*codeScope.tape);
 //}
-//
-//void Compiler :: compileVMT(DNode member, ClassScope& scope)
-//{
-//   while (member != nsNone) {
+
+void Compiler :: compileVMT(DNode member, ClassScope& scope, CommandTape& tape)
+{
+   while (member != nsNone) {
 //      DNode hints = skipHints(member);
-//
-//      switch(member) {
-//         case nsMethod:
-//         {
-//            MethodScope methodScope(&scope);
-//
-//            // if it is a dispatch handler
-//            if (member.firstChild() == nsDispatchHandler) {
-//               if (test(scope.info.header.flags, elRole))
-//                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-//
-//               methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
+
+      switch(member) {
+         case nsMethod:
+         {
+            MethodScope methodScope(&scope);
+
+            // if it is a dispatch handler
+            if (member.firstChild() == nsDispatchHandler) {
+               if (test(scope.info.header.flags, elRole))
+                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+
+               methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 //               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
-//
-//               compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
-//            }
+
+               compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
+            }
 //            // if it is a normal method
 //            else {
 //               declareArgumentList(member, methodScope);
@@ -5573,8 +5569,8 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //
 //               compileMethod(member, methodScope, methodScope.compileHints(hints));
 //            }
-//            break;
-//         }
+            break;
+         }
 //         case nsDefaultGeneric:
 //         {
 //            MethodScope methodScope(&scope);
@@ -5589,19 +5585,19 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //            compileMethod(member, methodScope, HINT_GENERIC_METH);
 //            break;
 //         }
-//      }
-//      member = member.nextNode();
-//   }
-//
-//   // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (test(scope.info.header.flags, elWithGenerics) && scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), false)) {
-//      MethodScope methodScope(&scope);
-//      methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-//
-//      compileDispatcher(DNode(), methodScope, true);
-//   }
-//}
-//
+      }
+      member = member.nextNode();
+   }
+
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (test(scope.info.header.flags, elWithGenerics) && scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), false)) {
+      MethodScope methodScope(&scope);
+      methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
+
+      compileDispatcher(DNode(), methodScope, true);
+   }
+}
+
 //void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 //{
 //   while (member != nsNone) {
@@ -5688,19 +5684,21 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //      }
 //   }
 //}
-//
-//void Compiler :: compileSymbolCode(ClassScope& scope)
-//{
-//   // creates implicit symbol
-//   SymbolScope symbolScope(scope.moduleScope, scope.reference);
-//
-//   _writer.declareSymbol(symbolScope.tape, symbolScope.reference);
-//   _writer.loadObject(symbolScope.tape, ObjectInfo(okConstantClass, scope.reference));
-//   _writer.endSymbol(symbolScope.tape);
-//
-//   // create byte code sections
-//   _writer.compile(symbolScope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
+
+void Compiler :: compileSymbolCode(ClassScope& scope)
+{
+   CommandTape tape;
+
+   // creates implicit symbol
+   SymbolScope symbolScope(scope.moduleScope, scope.reference);
+
+   _writer.declareSymbol(tape, symbolScope.reference);
+   _writer.loadObject(tape, lxConstantClass, scope.reference);
+   _writer.endSymbol(tape);
+
+   // create byte code sections
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
 
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
@@ -5780,17 +5778,17 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    _writer.save(tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
-//{
-//   while (member != nsNone) {
+void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
+{
+   while (member != nsNone) {
 //      DNode hints = skipHints(member);
-//
-//      if (member == methodSymbol || member == nsDefaultGeneric) {
-//         MethodScope methodScope(&scope);
-//
-//         if (member.firstChild() == nsDispatchHandler) {
-//            methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-//         }
+
+      if (member == methodSymbol || member == nsDefaultGeneric) {
+         MethodScope methodScope(&scope);
+
+         if (member.firstChild() == nsDispatchHandler) {
+            methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
+         }
 //         else if (member == nsDefaultGeneric) {
 //            declareArgumentList(member, methodScope);
 //
@@ -5803,18 +5801,18 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 //         else declareArgumentList(member, methodScope);
 //
 //         methodScope.compileHints(hints);
-//
-//         // check if there is no duplicate method
-//         if (scope.info.methods.exist(methodScope.message, true))
-//            scope.raiseError(errDuplicatedMethod, member.Terminal());
-//
-//         if (methodScope.include() && closed)
-//            scope.raiseError(errClosedParent, member.Terminal());
-//
-//      }
-//      member = member.nextNode();
-//   }
-//}
+
+         // check if there is no duplicate method
+         if (scope.info.methods.exist(methodScope.message, true))
+            scope.raiseError(errDuplicatedMethod, member.Terminal());
+
+         if (methodScope.include() && closed)
+            scope.raiseError(errClosedParent, member.Terminal());
+
+      }
+      member = member.nextNode();
+   }
+}
 
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope/*, DNode hints*/)
 {
@@ -5831,7 +5829,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope/*, DNode 
 
    //compileFieldDeclarations(member, scope);
 
-//   declareVMT(member, scope, nsMethod, test(flagCopy, elClosed));
+   declareVMT(member, scope, nsMethod, test(flagCopy, elClosed));
 
    // if it is a role
    if (test(scope.info.header.flags, elRole)) {
@@ -5856,13 +5854,13 @@ void Compiler::compileClassImplementation(DNode node, ClassScope& scope)
 
    _writer.declareClass(tape, scope.reference);
 
-//   DNode member = node.firstChild();
-//   compileVMT(member, scope);
+   DNode member = node.firstChild();
+   compileVMT(member, scope, tape);
 
    _writer.endClass(tape);
 
-//   // compile explicit symbol
-//   compileSymbolCode(scope);
+   // compile explicit symbol
+   compileSymbolCode(scope);
 
    // optimize
    optimizeTape(tape);
@@ -6062,13 +6060,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    MemoryDump   dump;
 
    SyntaxWriter writer(&dump);
-   CodeScope codeScope(&scope, &writer);
+   CodeScope codeScope(&scope);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
 //
 //      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 //      openDebugExpression(codeScope);
-      /*retVal = */compileExpression(expression, codeScope/*, 0*/);
+      /*retVal = */compileExpression(expression, writer, codeScope/*, 0*/);
 //      endDebugExpression(codeScope);
 //   }
 //   _writer.loadObject(*codeScope.tape, retVal);
@@ -6188,18 +6186,17 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //   _writer.endSymbol(scope.tape);
 //
 
-   CommandTape tape;
    SyntaxReader reader(&dump);
 
-   _writer.declareSymbol(tape, scope.reference);
-   _writer.translateExpression(tape, reader.readRoot());
-   _writer.endSymbol(tape);
+   _writer.declareSymbol(scope.tape, scope.reference);
+   _writer.translateExpression(scope.tape, reader.readRoot());
+   _writer.endSymbol(scope.tape);
 
    // optimize
-   optimizeTape(tape);
+   optimizeTape(scope.tape);
 
    // create byte code sections
-   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)

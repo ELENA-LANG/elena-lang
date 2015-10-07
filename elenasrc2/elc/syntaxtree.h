@@ -21,6 +21,7 @@ enum LexicalType
    lxObject,
    lxSymbol,
    lxConstantString,
+   lxConstantClass,
    lxCall,
    lxMessage,
 

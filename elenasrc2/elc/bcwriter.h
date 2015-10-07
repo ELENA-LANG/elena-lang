@@ -222,6 +222,8 @@ public:
    void translateBreakpoint(CommandTape& tape, SyntaxReader::Node node);
 
    void pushObject(CommandTape& tape, SyntaxReader::Node node);
+
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument);
    void loadObject(CommandTape& tape, SyntaxReader::Node node);
 
    void translateCallExpression(CommandTape& tape, SyntaxReader::Node node);
