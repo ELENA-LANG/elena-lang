@@ -214,10 +214,10 @@ private:
    {
       Project*       project;
       _Module*       module;
-//      _Module*       debugModule;
+      _Module*       debugModule;
 
       ident_t        sourcePath;
-//      ref_t          sourcePathRef;
+      ref_t          sourcePathRef;
 
       // default namespaces
       List<ident_t> defaultNs;
@@ -357,7 +357,7 @@ private:
 //      int getClassFlags(ref_t reference);
 //      ref_t getClassClassReference(ref_t reference);
 
-      ModuleScope(Project* project, ident_t sourcePath, _Module* module/*, _Module* debugModule*/, Unresolveds* forwardsUnresolved);
+      ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
 
    // - Scope -
@@ -785,12 +785,12 @@ private:
    // optimization rules
    TransformTape _rules;
 
-//   // optmimization routines
-//   bool applyRules(CommandTape& tape);
-//   bool optimizeIdleBreakpoints(CommandTape& tape);
-//   bool optimizeJumps(CommandTape& tape);
-//   void optimizeTape(CommandTape& tape);
-//
+   // optmimization routines
+   bool applyRules(CommandTape& tape);
+   bool optimizeIdleBreakpoints(CommandTape& tape);
+   bool optimizeJumps(CommandTape& tape);
+   void optimizeTape(CommandTape& tape);
+
 //   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
 //   {
 //      if (terminal != nsNone) {

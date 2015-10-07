@@ -317,16 +317,16 @@ typedef Compiler::ObjectKind ObjectKind;
 
 // --- Compiler::ModuleScope ---
 
-Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module/*, _Module* debugModule*/, Unresolveds* forwardsUnresolved)
+Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
 //   : constantHints((ref_t)-1), extensions(NULL, freeobj)
 {
    this->project = project;
    this->sourcePath = sourcePath;
    this->module = module;
-//   this->debugModule = debugModule;
+   this->debugModule = debugModule;
 
    this->forwardsUnresolved = forwardsUnresolved;
-//   this->sourcePathRef = 0;
+   this->sourcePathRef = 0;
 
    warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
    warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
@@ -1588,51 +1588,51 @@ void Compiler :: loadRules(StreamReader* optimization)
    _rules.load(optimization);
 }
 
-//bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
-//{
-//   return CommandTape::optimizeIdleBreakpoints(tape);
-//}
-//
-//bool Compiler :: optimizeJumps(CommandTape& tape)
-//{
-//   //if (!test(_optFlag, optJumps))
-//   //   return false;
-//
-//   return CommandTape::optimizeJumps(tape);
-//}
-//
-//bool Compiler :: applyRules(CommandTape& tape)
-//{
-//   if (!_rules.loaded)
-//      return false;
-//
-//   if (_rules.apply(tape)) {
-//      while (_rules.apply(tape));
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//void Compiler :: optimizeTape(CommandTape& tape)
-//{
-//   // HOTFIX : remove all breakpoints which follows jumps
-//   while (optimizeIdleBreakpoints(tape));
-//
-//   // optimize unused and idle jumps
-//   while (optimizeJumps(tape));
-//
-//   // optimize the code
-//   bool modified = false;
-//   while (applyRules(tape)) {
-//      modified = true;
-//   }
-//
-//   if (modified) {
-//      optimizeTape(tape);
-//   }
-//}
-//
+bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
+{
+   return CommandTape::optimizeIdleBreakpoints(tape);
+}
+
+bool Compiler :: optimizeJumps(CommandTape& tape)
+{
+   //if (!test(_optFlag, optJumps))
+   //   return false;
+
+   return CommandTape::optimizeJumps(tape);
+}
+
+bool Compiler :: applyRules(CommandTape& tape)
+{
+   if (!_rules.loaded)
+      return false;
+
+   if (_rules.apply(tape)) {
+      while (_rules.apply(tape));
+
+      return true;
+   }
+   else return false;
+}
+
+void Compiler :: optimizeTape(CommandTape& tape)
+{
+   // HOTFIX : remove all breakpoints which follows jumps
+   while (optimizeIdleBreakpoints(tape));
+
+   // optimize unused and idle jumps
+   while (optimizeJumps(tape));
+
+   // optimize the code
+   bool modified = false;
+   while (applyRules(tape)) {
+      modified = true;
+   }
+
+   if (modified) {
+      optimizeTape(tape);
+   }
+}
+
 //ref_t Compiler :: mapNestedExpression(CodeScope& scope)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -6178,13 +6178,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
    _writer.declareSymbol(tape, scope.reference);
    _writer.translateExpression(tape, reader.readRoot());
-   //_writer.endSymbol(tape);
+   _writer.endSymbol(tape);
 
-//   // optimize
-//   optimizeTape(tape);
-//
-//   // create byte code sections
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   // optimize
+   optimizeTape(tape);
+
+   // create byte code sections
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)
@@ -6431,7 +6431,7 @@ void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
 
 bool Compiler :: run(Project& project)
 {
-//   bool withDebugInfo = project.BoolSetting(opDebugMode);
+   bool withDebugInfo = project.BoolSetting(opDebugMode);
    Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
 
    MemoryDump  buffer;                // temporal derivation buffer
@@ -6451,14 +6451,14 @@ bool Compiler :: run(Project& project)
          ModuleInfo info = modules.get(name);
          if (info.codeModule == NULL) {
             info.codeModule = project.createModule(name);
-//            if (withDebugInfo)
-//               info.debugModule = project.createDebugModule(name);
+            if (withDebugInfo)
+               info.debugModule = project.createDebugModule(name);
 
             modules.add(name, info);
          }
 
-         ModuleScope scope(&project, it.key(), info.codeModule/*, info.debugModule*/, &unresolveds);
-//         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
+         ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
+         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
          project.printInfo("%s", it.key());
 
@@ -6490,8 +6490,8 @@ bool Compiler :: run(Project& project)
 
       project.saveModule(info.codeModule, "nl");
 
-      //if (info.debugModule)
-      //   project.saveModule(info.debugModule, "dnl");
+      if (info.debugModule)
+         project.saveModule(info.debugModule, "dnl");
 
       it++;
    }
