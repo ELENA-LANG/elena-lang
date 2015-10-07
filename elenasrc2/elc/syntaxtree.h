@@ -23,6 +23,11 @@ enum LexicalType
    lxConstantString,
    lxCall,
    lxMessage,
+
+   lxBreakpoint,
+   lxBPCol,
+   lxBPRow,
+   lxBPLength,
 };
 
 // --- SyntaxWriter ---

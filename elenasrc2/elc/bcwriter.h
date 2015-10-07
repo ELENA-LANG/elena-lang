@@ -103,10 +103,10 @@ public:
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareSelfInfo(CommandTape& tape, int level);
 //   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
-//   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
+   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
 //   void removeLastBreakpoint(CommandTape& tape);
 //   void declareStatement(CommandTape& tape);
-//   void declareBlock(CommandTape& tape);
+   void declareBlock(CommandTape& tape);
 //
 //   void tryEmbeddable(CommandTape& tape);
 //   void endEmbeddable(CommandTape& tape);
@@ -218,6 +218,8 @@ public:
 //   //void doLiteralOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
 //   void doIntArrayOperation(CommandTape& tape, int operator_id);
+
+   void translateBreakpoint(CommandTape& tape, SyntaxReader::Node node);
 
    void pushObject(CommandTape& tape, SyntaxReader::Node node);
    void loadObject(CommandTape& tape, SyntaxReader::Node node);

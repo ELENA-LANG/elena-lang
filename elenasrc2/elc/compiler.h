@@ -791,12 +791,16 @@ private:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-//   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
-//   {
-//      if (terminal != nsNone) {
-//         _writer.declareBreakpoint(*scope.tape, terminal.row, terminal.disp, terminal.length, stepType);
-//      }
-//   }
+   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
+   {
+      if (terminal != nsNone) {
+         scope.writer->newNode(lxBreakpoint, stepType);
+         scope.writer->appendNode(lxBPRow, terminal.row);
+         scope.writer->appendNode(lxBPCol, terminal.disp);
+         scope.writer->appendNode(lxBPLength, terminal.length);
+         scope.writer->closeNode();
+      }
+   }
 //   void openDebugExpression(CodeScope& scope)
 //   {
 //      _writer.declareBlock(*scope.tape);
@@ -854,8 +858,8 @@ private:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 //
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   /*ObjectInfo*/void compileTerminal(DNode node, CodeScope& scope/*, int mode*/);
-   /*ObjectInfo*/void compileObject(DNode objectNode, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo*/void compileTerminal(DNode node, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileObject(DNode objectNode, CodeScope& scope, int mode);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);

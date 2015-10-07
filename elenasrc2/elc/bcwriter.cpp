@@ -181,15 +181,15 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeT
 //{
 //   tape.write(bdMessage, 0, nameRef);
 //}
-//
-//void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
-//{
-//   tape.write(bcBreakpoint);
-//
-//   tape.write(bdBreakpoint, stepType, row);
-//   tape.write(bdBreakcoord, disp, length);
-//}
-//
+
+void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
+{
+   tape.write(bcBreakpoint);
+
+   tape.write(bdBreakpoint, stepType, row);
+   tape.write(bdBreakcoord, disp, length);
+}
+
 //void ByteCodeWriter :: removeLastBreakpoint(CommandTape& tape)
 //{
 //   ByteCodeIterator it = tape.end();
@@ -205,12 +205,12 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeT
 //{
 //   tape.write(blStatement);
 //}
-//
-//void ByteCodeWriter :: declareBlock(CommandTape& tape)
-//{
-//   tape.write(blBlock);
-//}
-//
+
+void ByteCodeWriter :: declareBlock(CommandTape& tape)
+{
+   tape.write(blBlock);
+}
+
 //void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
 //{
 //   // { pushn 0 } n
@@ -2558,8 +2558,20 @@ inline ref_t defineConstantMask(LexicalType type)
    }
 }
 
+void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SyntaxReader::Node node)
+{
+   if (node == lxBreakpoint) {
+      declareBreakpoint(tape, 
+         findChild(node, lxBPRow).argument, 
+         findChild(node, lxBPCol).argument, 
+         findChild(node, lxBPLength).argument, node.argument);
+   }
+}
+
 void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
 {
+   translateBreakpoint(tape, findChild(node, lxBreakpoint));
+
    LexicalType type = node.type;
    ref_t argument = node.argument;
    switch (type)
@@ -2579,19 +2591,21 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
 {
+   translateBreakpoint(tape, findChild(node, lxBreakpoint));
+
    LexicalType type = node.type;
    ref_t argument = node.argument;
    switch (type)
    {
-   case lxSymbol:
-      tape.write(bcCallR, argument | mskSymbolRef);
-      break;
-   case lxConstantString:
-      // pushr reference
-      tape.write(bcALoadR, argument | defineConstantMask(type));
-      break;
-   default:
-      break;
+      case lxSymbol:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         break;
+      case lxConstantString:
+         // pushr reference
+         tape.write(bcALoadR, argument | defineConstantMask(type));
+         break;
+      default:
+         break;
    }
 }
 
@@ -2625,6 +2639,9 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 
    SNode callNode = findChild(node, lxCall).firstChild();
    if (callNode == lxMessage) {
+      translateBreakpoint(tape, findChild(callNode, lxBreakpoint));
+      declareBlock(tape);
+
       // copym message
       // aloadsi 0
       // acallvi offs
@@ -2633,6 +2650,8 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       tape.write(bcALoadSI, 0);
       tape.write(bcACallVI, 0);
       tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
    }
 }
 
@@ -2646,8 +2665,10 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 {
+   declareBlock(tape);
    if (existNode(node, lxCall)) {
       translateCallExpression(tape, node);
    }
    else translateObjectExpression(tape, node);
+   declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 }

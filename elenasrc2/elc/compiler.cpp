@@ -14,9 +14,10 @@
 
 using namespace _ELENA_;
 
-//// --- Hint constants ---
+// --- Hint constants ---
 //#define HINT_MASK             0xFFFF0000
-//
+
+#define HINT_DEBUGSTEP        0x80000000
 //#define HINT_INLINE           0x40000000
 //#define HINT_LOOP             0x20000000
 //#define HINT_TRY              0x10000000
@@ -2032,7 +2033,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   else scope.raiseError(errDuplicatedLocal, node.Terminal());
 //}
 
-/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 {
    TerminalInfo terminal = node.Terminal();
 
@@ -2040,7 +2041,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
    if (terminal==tsLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
 
-      scope.writer->appendNode(lxConstantString);
+      scope.writer->newNode(lxConstantString, object.param);
    }
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
@@ -2103,7 +2104,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
             break;
          case okSymbol:
             scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-            scope.writer->appendNode(lxSymbol, object.param);
+            scope.writer->newNode(lxSymbol, object.param);
             break;
          //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -2117,10 +2118,16 @@ void Compiler :: optimizeTape(CommandTape& tape)
       }
    }
 
+
+   if (test(mode, HINT_DEBUGSTEP))
+      recordDebugStep(scope, terminal, dsStep);
+
+   scope.writer->closeNode();
+
 //   return object;
 }
 
-/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
 {
 //   ObjectInfo result;
 
@@ -2161,7 +2168,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //         break;
       default:
          scope.writer->newNode(lxObject);
-         /*result = */compileTerminal(objectNode, scope/*, mode*/);         
+         /*result = */compileTerminal(objectNode, scope, mode);
    }
    scope.writer->closeNode();
 
@@ -3451,7 +3458,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
    
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      compileObject(arg.firstChild(), scope/*, 0*/);
+      compileObject(arg.firstChild(), scope, 0);
    ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
    //
       paramCount++;
@@ -3516,7 +3523,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
    ////            if (arg.firstChild().firstChild() != nsNone)
    ////               callStack.directOrder = false;
    
-               arg = arg.nextNode();
+         arg = arg.nextNode();
    //         }
       }
    }
@@ -3532,7 +3539,9 @@ void Compiler :: optimizeTape(CommandTape& tape)
 
    scope.writer->newNode(lxCall);
 
-   scope.writer->appendNode(lxMessage, messageRef);
+   scope.writer->newNode(lxMessage, messageRef);
+   recordDebugStep(scope, verb, dsStep);
+   scope.writer->closeNode();
 
    scope.writer->closeNode();
 
@@ -4224,7 +4233,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
 
    //ObjectInfo objectInfo;
    if (member==nsObject) {
-      /*objectInfo =*/ compileObject(member, scope/*, mode*/);
+      /*objectInfo =*/ compileObject(member, scope, HINT_DEBUGSTEP/*| mode*/);
    }
    if (member != nsNone) {
 //      if (findSymbol(member, nsCatchMessageOperation)) {
