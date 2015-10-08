@@ -20,43 +20,43 @@ namespace _ELENA_
 class Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int        offset;
+   struct Parameter
+   {
+      int        offset;
 //      bool       stackAllocated;
-//      union {
-//         ref_t   sign_ref;   // if not stack allocated - contains type reference
+  //    union {
+         ref_t   sign_ref;   // if not stack allocated - contains type reference
 //         ref_t   class_ref;  // if stack allocated - contains class reference
 //      };
-//
-//      Parameter()
-//      {
-//         offset = -1;
-//         sign_ref = 0;
-//         stackAllocated = false;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
-//         this->sign_ref = 0;
-//         stackAllocated = false;
-//      }
-//      Parameter(int offset, ref_t sign_ref)
-//      {
-//         this->offset = offset;
-//         this->sign_ref = sign_ref;
-//         stackAllocated = false;
-//      }
-//      Parameter(int offset, ref_t ref, bool stackAllocated)
-//      {
-//         this->offset = offset;
-//         this->stackAllocated = stackAllocated;
-//         if (stackAllocated) {
-//            this->class_ref = ref;
-//         }
-//         else this->sign_ref = ref;
-//      }
-//   };
+
+      Parameter()
+      {
+         offset = -1;
+         sign_ref = 0;
+         //stackAllocated = false;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
+         this->sign_ref = 0;
+         //stackAllocated = false;
+      }
+      Parameter(int offset, ref_t sign_ref)
+      {
+         this->offset = offset;
+         this->sign_ref = sign_ref;
+      //   stackAllocated = false;
+      }
+      //Parameter(int offset, ref_t ref, bool stackAllocated)
+      //{
+      //   this->offset = offset;
+      //   this->stackAllocated = stackAllocated;
+      //   if (stackAllocated) {
+      //      this->class_ref = ref;
+      //   }
+      //   else this->sign_ref = ref;
+      //}
+   };
 
    // InheritResult
    enum InheritResult
@@ -105,7 +105,7 @@ public:
    };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
-//   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -137,7 +137,7 @@ public:
    //   okOuter,                        // param - field offset
    //   okOuterField,                   // param - field offset, extraparam - outer field offset
    //   okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
-   //   okParam,                        // param - parameter offset
+      okParam,                        // param - parameter offset
    //   okSubject,                      // param - parameter offset
    //   okSubjectDispatcher,
    //   okThisParam,                    // param - parameter offset
@@ -476,8 +476,8 @@ private:
    struct MethodScope : public Scope
    {
       ref_t     message;
-//      LocalMap  parameters;
-//      int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+      LocalMap  parameters;
+      int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 //      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool      withOpenArg;
 //      bool      stackSafe;
@@ -524,8 +524,8 @@ private:
 //
 //      // scope local variables
 //      LocalMap     locals;
-//      int          level;
-//
+      int          level;
+
 //      // scope stack allocation
 //      int          reserved;  // allocated for the current statement
 //      int          saved;     // permanently allocated
@@ -814,8 +814,8 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-//   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
-//
+   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
+
 //   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo& target, size_t type_ref, bool& enforced, bool& boxed, bool& unboxing);
 
    void compileParentDeclaration(DNode node, ClassScope& scope);
@@ -906,10 +906,10 @@ private:
 //   void compileConstructorDispatchExpression(DNode node, CodeScope& scope);
 //   void compileResendExpression(DNode node, CodeScope& scope);
 //   void compileDispatchExpression(DNode node, CodeScope& scope);
-//
-//   ObjectInfo compileCode(DNode node, CodeScope& scope);
-//
-//   void declareArgumentList(DNode node, MethodScope& scope);
+
+   /*ObjectInfo*/void compileCode(DNode node, CodeScope& scope);
+
+   void declareArgumentList(DNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 //   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
@@ -926,9 +926,9 @@ private:
 //   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
 //   void compileMethod(DNode node, MethodScope& scope, int mode);
-//   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
+   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
-//   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, bool embeddable);
+   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/);
 
    void compileSymbolCode(ClassScope& scope);
 

@@ -71,13 +71,13 @@ class ByteCodeWriter
 
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
-//   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
+   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
    void declareIdleMethod(CommandTape& tape, ref_t message);
-//   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
@@ -93,16 +93,16 @@ public:
 //   void declareAlt(CommandTape& tape);
 //   void declarePrimitiveCatch(CommandTape& tape);
 //
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
+   void declareSelfInfo(CommandTape& tape, int level);
+   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
 //   void removeLastBreakpoint(CommandTape& tape);
 //   void declareStatement(CommandTape& tape);
@@ -110,14 +110,14 @@ public:
 //
 //   void tryEmbeddable(CommandTape& tape);
 //   void endEmbeddable(CommandTape& tape);
-//
-//   void newFrame(CommandTape& tape);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
+
+   void newFrame(CommandTape& tape);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
 //   void newDynamicWStructure(CommandTape& tape);
 //   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
 //   void newDynamicObject(CommandTape& tape);
 //
@@ -128,11 +128,12 @@ public:
 //   void saveObject(CommandTape& tape, ObjectInfo object);
 //   void popObject(CommandTape& tape, ObjectInfo object);
 //   void exchange(CommandTape& tape, ObjectInfo object);
-//
+
 //   void loadBase(CommandTape& tape, ObjectInfo object);
-//   void initBase(CommandTape& tape, int fieldCount);
+   void initBase(CommandTape& tape, int fieldCount);
+   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
-//
+
 //   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
 //   void unboxArgList(CommandTape& tape);
@@ -188,8 +189,8 @@ public:
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape);
-//   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
-//   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
+   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
@@ -221,9 +222,10 @@ public:
 
    void translateBreakpoint(CommandTape& tape, SyntaxReader::Node node);
 
-   void pushObject(CommandTape& tape, SyntaxReader::Node node);
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
-   void loadObject(CommandTape& tape, LexicalType type, ref_t argument);
+   void pushObject(CommandTape& tape, SyntaxReader::Node node);
    void loadObject(CommandTape& tape, SyntaxReader::Node node);
 
    void translateCallExpression(CommandTape& tape, SyntaxReader::Node node);

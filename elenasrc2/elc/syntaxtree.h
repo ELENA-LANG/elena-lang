@@ -20,8 +20,10 @@ enum LexicalType
    lxExpression,
    lxObject,
    lxSymbol,
+   lxParam,
    lxConstantString,
    lxConstantClass,
+   lxNil,
    lxCall,
    lxMessage,
 
@@ -38,6 +40,11 @@ class SyntaxWriter
    MemoryWriter _writer;
 
 public:
+   void clear()
+   {
+      _writer.seek(0);
+   }
+
    void newNode(LexicalType type, ref_t argument);
    void newNode(LexicalType type)
    {
