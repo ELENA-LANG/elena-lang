@@ -454,6 +454,8 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
+      MemoryDump syntaxTree;
+
 //      bool  constant;
 //      ref_t typeRef;
 //
@@ -475,9 +477,11 @@ private:
    // - MethodScope -
    struct MethodScope : public Scope
    {
-      ref_t     message;
-      LocalMap  parameters;
-      int       reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+      MemoryDump   syntaxTree;
+
+      ref_t        message;
+      LocalMap     parameters;
+      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 //      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool      withOpenArg;
 //      bool      stackSafe;
@@ -520,8 +524,8 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-      CommandTape* tape;
-//
+      SyntaxWriter* writer;
+
 //      // scope local variables
 //      LocalMap     locals;
       int          level;
@@ -618,8 +622,8 @@ private:
 //
 //      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
-      CodeScope(SymbolScope* parent);
-      CodeScope(MethodScope* parent);
+      CodeScope(SymbolScope* parent, SyntaxWriter* writer);
+      CodeScope(MethodScope* parent, SyntaxWriter* writer);
 //      CodeScope(CodeScope* parent);
    };
 
@@ -787,15 +791,15 @@ private:
    bool optimizeIdleBreakpoints(CommandTape& tape);
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
-
-   void recordDebugStep(SyntaxWriter& writer, TerminalInfo terminal, int stepType)
+   
+   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
    {
       if (terminal != nsNone) {
-         writer.newNode(lxBreakpoint, stepType);
-         writer.appendNode(lxBPRow, terminal.row);
-         writer.appendNode(lxBPCol, terminal.disp);
-         writer.appendNode(lxBPLength, terminal.length);
-         writer.closeNode();
+         scope.writer->newNode(lxBreakpoint, stepType);
+         scope.writer->appendNode(lxBPRow, terminal.row);
+         scope.writer->appendNode(lxBPCol, terminal.disp);
+         scope.writer->appendNode(lxBPLength, terminal.length);
+         scope.writer->closeNode();
       }
    }
 //   void openDebugExpression(CodeScope& scope)
@@ -855,8 +859,8 @@ private:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 //
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   /*ObjectInfo*/void compileTerminal(DNode node, SyntaxWriter& writer, CodeScope& scope, int mode);
-   /*ObjectInfo*/void compileObject(DNode objectNode, SyntaxWriter& writer, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileTerminal(DNode node, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileObject(DNode objectNode, CodeScope& scope, int mode);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
@@ -873,14 +877,14 @@ private:
 //
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //
-   /*ObjectInfo*/void compileMessage(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo object*/);
+   /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/);
    //ObjectInfovoid compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
 //   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
-   /*ObjectInfo*/void compileOperations(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo target, int mode*/);
+   /*ObjectInfo*/void compileOperations(DNode node, CodeScope& scope/*, ObjectInfo target, int mode*/);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   /*ObjectInfo*/void compileExpression(DNode node, SyntaxWriter& writer, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo*/void compileExpression(DNode node, CodeScope& scope/*, int mode*/);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
@@ -959,7 +963,7 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
-   void saveSyntaxTree(CodeScope& scope, MemoryDump& dump);
+   void saveSyntaxTree(CommandTape& tape, MemoryDump& dump);
 
 public:
 ////   void setOptFlag(int flag)

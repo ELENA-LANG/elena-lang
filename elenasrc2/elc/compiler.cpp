@@ -1392,11 +1392,10 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
 // --- Compiler::CodeScope ---
 
-Compiler::CodeScope :: CodeScope(SymbolScope* parent)
+Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
    : Scope(parent)//, locals(Parameter(0))
 {
-   this->tape = &parent->tape;
-
+   this->writer = writer;
    this->level = 0;
 //   this->saved = this->reserved = 0;
 }
@@ -1408,10 +1407,10 @@ Compiler::CodeScope :: CodeScope(SymbolScope* parent)
 //   this->level = 0;
 //}
 
-Compiler::CodeScope :: CodeScope(MethodScope* parent)
+Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
    : Scope(parent)//, locals(Parameter(0))
 {
-   this->tape = &((ClassScope*)parent->getScope(slClass))->tape;
+   this->writer = writer;
    this->level = 0;
    //this->saved = this->reserved = 0;
 }
@@ -2031,7 +2030,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else scope.raiseError(errDuplicatedLocal, node.Terminal());
 //}
 
-/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, SyntaxWriter& writer, CodeScope& scope, int mode)
+/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 {
    TerminalInfo terminal = node.Terminal();
 
@@ -2039,7 +2038,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    if (terminal==tsLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
 
-      writer.newNode(lxConstantString, object.param);
+      scope.writer->newNode(lxConstantString, object.param);
    }
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
@@ -2102,7 +2101,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
             break;
          case okSymbol:
             scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-            writer.newNode(lxSymbol, object.param);
+            scope.writer->newNode(lxSymbol, object.param);
             break;
          //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -2118,14 +2117,14 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 
 
    if (test(mode, HINT_DEBUGSTEP))
-      recordDebugStep(writer, terminal, dsStep);
+      recordDebugStep(scope, terminal, dsStep);
 
-   writer.closeNode();
+   scope.writer->closeNode();
 
 //   return object;
 }
 
-/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, SyntaxWriter& writer, CodeScope& scope, int mode)
+/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
 {
 //   ObjectInfo result;
 
@@ -2165,10 +2164,10 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //         result = compileMessageReference(member, scope);
 //         break;
       default:
-         writer.newNode(lxObject);
-         /*result = */compileTerminal(objectNode, writer, scope, mode);
+         scope.writer->newNode(lxObject);
+         /*result = */compileTerminal(objectNode, scope, mode);
    }
-   writer.closeNode();
+   scope.writer->closeNode();
 
 //   return result;
 }
@@ -3417,7 +3416,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else _writer.releaseObject(*scope.tape, spaceToRelease);
 //}
 
-/*ObjectInfo*/void Compiler :: compileMessage(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo object*/)
+/*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/)
 {
    bool   first = true;
    ref_t  verb_id = 0;
@@ -3456,7 +3455,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      compileObject(arg.firstChild(), writer, scope, 0);
+      compileObject(arg.firstChild(), scope, 0);
    ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
    //
       paramCount++;
@@ -3535,13 +3534,13 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    // create a message id
    ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
 
-   writer.newNode(lxCall);
+   scope.writer->newNode(lxCall);
 
-   writer.newNode(lxMessage, messageRef);
-   recordDebugStep(writer, verb, dsStep);
-   writer.closeNode();
+   scope.writer->newNode(lxMessage, messageRef);
+   recordDebugStep(scope, verb, dsStep);
+   scope.writer->closeNode();
 
-   writer.closeNode();
+   scope.writer->closeNode();
 
 //   MessageScope callStack;
 //
@@ -3575,7 +3574,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   return retVal;
 }
 
-/*ObjectInfo */void Compiler :: compileOperations(DNode node, SyntaxWriter& writer, CodeScope& scope/*, ObjectInfo object, int mode*/)
+/*ObjectInfo */void Compiler :: compileOperations(DNode node, CodeScope& scope/*, ObjectInfo object, int mode*/)
 {
 //   ObjectInfo currentObject = object;
 
@@ -3616,7 +3615,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //         currentObject = compileExtension(member, scope, currentObject, mode);
 //      }
       /*else */if (member==nsMessageOperation) {
-         /*currentObject = */compileMessage(member, writer, scope/*, currentObject*/);
+         /*currentObject = */compileMessage(member, scope/*, currentObject*/);
       }
 //      else if (member==nsMessageParameter) {
 //         currentObject = compileMessage(member, scope, currentObject);
@@ -4223,15 +4222,15 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   return ObjectInfo(okAccumulator, 0, 0, subj);
 //}
 
-/*ObjectInfo*/void Compiler :: compileExpression(DNode node, SyntaxWriter& writer, CodeScope& scope/*, int mode*/)
+/*ObjectInfo*/void Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mode*/)
 {
-   writer.newNode(lxExpression);
+   scope.writer->newNode(lxExpression);
 
    DNode member = node.firstChild();
 
    //ObjectInfo objectInfo;
    if (member==nsObject) {
-      /*objectInfo =*/ compileObject(member, writer, scope, HINT_DEBUGSTEP/*| mode*/);
+      /*objectInfo =*/ compileObject(member, scope, HINT_DEBUGSTEP/*| mode*/);
    }
    if (member != nsNone) {
 //      if (findSymbol(member, nsCatchMessageOperation)) {
@@ -4240,10 +4239,10 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //      else if (findSymbol(member, nsAltMessageOperation)) {
 //         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
 //      }
-      /*else objectInfo = */compileOperations(member, writer, scope/*, objectInfo, mode*/);
+      /*else objectInfo = */compileOperations(member, scope/*, objectInfo, mode*/);
    }
 
-   writer.closeNode();
+   scope.writer->closeNode();
 //
 //   return objectInfo;
 }
@@ -4458,9 +4457,6 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 {
 //   ObjectInfo retVal;
 
-   MemoryDump   dump;
-   SyntaxWriter writer(&dump);
-
    bool needVirtualEnd = true;
    DNode statement = node.firstChild();
 
@@ -4469,9 +4465,6 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
       statement= statement.nextNode();
 
    while (statement != nsNone) {
-      dump.clear();
-      writer.clear();
-
 //      DNode hints = skipHints(statement);
 
       //_writer.declareStatement(*scope.tape);
@@ -4516,18 +4509,16 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //            break;
          case nsCodeEnd:
             needVirtualEnd = false;
-            recordDebugStep(writer, statement.Terminal(), dsEOP);
+            recordDebugStep(scope, statement.Terminal(), dsEOP);
             break;
       }
-      saveSyntaxTree(scope, dump);
-
 //      scope.freeSpace();
 
       statement = statement.nextNode();
    }
 
-   if (needVirtualEnd)
-      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   //if (needVirtualEnd)
+   //   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
 //   return retVal;
 }
@@ -5033,15 +5024,17 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
 void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods)
 {
+   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
    
-   CodeScope codeScope(&scope);
+   CodeScope codeScope(&scope, NULL);
 
-   _writer.declareIdleMethod(*codeScope.tape, scope.message);
+   _writer.declareIdleMethod(*tape, scope.message);
 
    if (isImportRedirect(node)) {
-      importCode(node, *scope.moduleScope, codeScope.tape, node.Terminal());
+      importCode(node, *scope.moduleScope, tape, node.Terminal());
    }
 //   else {
 //      _writer.doGenericHandler(*codeScope.tape);
@@ -5087,7 +5080,7 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 //      }
 //   }
 
-   _writer.endIdleMethod(*codeScope.tape);
+   _writer.endIdleMethod(*tape);
 }
 
 //void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
@@ -5394,68 +5387,70 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 
 void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/)
 {
-   CodeScope codeScope(&scope);
-
-   // HOTFIX: constructor is declared in class class but should be executed if the class instance
-   codeScope.tape = &classClassScope.tape;
-
-   DNode body = node.select(nsSubCode);
-//   DNode resendBody = node.select(nsResendExpression);
-//   DNode dispatchBody = node.select(nsDispatchExpression);
-
-   _writer.declareMethod(*codeScope.tape, scope.message, false, false);
-
-   bool withFrame = false;
-
-//   // if the constructor is embeddable
-//   // check if acc is zero than skip the default / resend code
-//   if (embeddable)
-//      _writer.tryEmbeddable(*codeScope.tape);
+//   SyntaxWriter writer(&scope.syntaxTree);
 //
-//   if (resendBody != nsNone) {
-//      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
+//   CodeScope codeScope(&scope);
 //
-//      // HOT FIX : raise an error if the frame was open
-//      if (withFrame && embeddable)
-//         scope.raiseError(errIllegalConstructor, node.Terminal());
-//   }
-//   // if no redirect statement - call virtual constructor implicitly
-//   else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
-//      // HOTFIX: -1 indicates the stack is not cconsumed by the constructor
-//      _writer.callMethod(*codeScope.tape, 1, -1);
-//   }
-//   // if it is a dynamic object implicit constructor call is not possible
-//   else if (dispatchBody == nsNone)
-//      scope.raiseError(errIllegalConstructor, node.Terminal());
+//   // HOTFIX: constructor is declared in class class but should be executed if the class instance
+//   codeScope.tape = &classClassScope.tape;
 //
-//   if (embeddable)
-//      _writer.endEmbeddable(*codeScope.tape);
+//   DNode body = node.select(nsSubCode);
+////   DNode resendBody = node.select(nsResendExpression);
+////   DNode dispatchBody = node.select(nsDispatchExpression);
 //
-//   if (dispatchBody != nsNone) {
-//      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
-//      _writer.endIdleMethod(*codeScope.tape);
-//      // NOTE : import code already contains quit command, so do not call "endMethod"
-//      return;
-//   }
-//   else if (body != nsNone) {
-      if (!withFrame) {
-         withFrame = true;
+//   _writer.declareMethod(classClassScope.tape, scope.message, false, false);
+//
+//   bool withFrame = false;
+//
+////   // if the constructor is embeddable
+////   // check if acc is zero than skip the default / resend code
+////   if (embeddable)
+////      _writer.tryEmbeddable(*codeScope.tape);
+////
+////   if (resendBody != nsNone) {
+////      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
+////
+////      // HOT FIX : raise an error if the frame was open
+////      if (withFrame && embeddable)
+////         scope.raiseError(errIllegalConstructor, node.Terminal());
+////   }
+////   // if no redirect statement - call virtual constructor implicitly
+////   else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
+////      // HOTFIX: -1 indicates the stack is not cconsumed by the constructor
+////      _writer.callMethod(*codeScope.tape, 1, -1);
+////   }
+////   // if it is a dynamic object implicit constructor call is not possible
+////   else if (dispatchBody == nsNone)
+////      scope.raiseError(errIllegalConstructor, node.Terminal());
+////
+////   if (embeddable)
+////      _writer.endEmbeddable(*codeScope.tape);
+////
+////   if (dispatchBody != nsNone) {
+////      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
+////      _writer.endIdleMethod(*codeScope.tape);
+////      // NOTE : import code already contains quit command, so do not call "endMethod"
+////      return;
+////   }
+////   else if (body != nsNone) {
+//      if (!withFrame) {
+//         withFrame = true;
+//
+//         // new stack frame
+//         // stack already contains $self value
+//         _writer.newFrame(classClassScope.tape);
+//         codeScope.level++;
+//      }
+//      else _writer.saveObject(classClassScope.tape, lxParam, 1);
 
-         // new stack frame
-         // stack already contains $self value
-         _writer.newFrame(*codeScope.tape);
-         codeScope.level++;
-      }
-      else _writer.saveObject(*codeScope.tape, lxParam, 1);
+      declareParameterDebugInfo(scope, &classClassScope.tape, true, false);
 
-      declareParameterDebugInfo(scope, codeScope.tape, true, false);
-
-      compileCode(body, codeScope);
-
-      _writer.loadObject(*codeScope.tape, lxParam, 1);
-//   }
-
-   _writer.endMethod(*codeScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
+//      compileCode(body, codeScope);
+//
+//      _writer.loadObject(classClassScope.tape, lxParam, 1);
+////   }
+//
+//   _writer.endMethod(classClassScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
 }
 
 void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
@@ -5470,32 +5465,33 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& class
    }
    else (*it) = true;
 
-   CodeScope codeScope(&scope);
+   SyntaxWriter writer(&scope.syntaxTree);
+   CodeScope codeScope(&scope, &writer);
 
    // compile constructor hints
    //int mode = scope.compileHints(hints);
 
-   // HOTFIX: constructor is declared in class class but should be executed if the class instance
-   codeScope.tape = &classClassScope.tape;
+   //// HOTFIX: constructor is declared in class class but should be executed if the class instance
+   //codeScope.tape = &classClassScope.tape;
 
-   _writer.declareIdleMethod(*codeScope.tape, scope.message);
+   _writer.declareIdleMethod(classClassScope.tape, scope.message);
 
    if (test(classScope->info.header.flags, elStructureRole)) {
       if (!test(classScope->info.header.flags, elDynamicRole)) {
-         _writer.newStructure(*codeScope.tape, classScope->info.size, classScope->reference);
+         _writer.newStructure(classClassScope.tape, classScope->info.size, classScope->reference);
       }
    }
    else if (!test(classScope->info.header.flags, elDynamicRole)) {
-      _writer.newObject(*codeScope.tape, classScope->info.fields.Count(), classScope->reference);
+      _writer.newObject(classClassScope.tape, classScope->info.fields.Count(), classScope->reference);
       size_t fieldCount = classScope->info.fields.Count();
       if (fieldCount > 0) {
-         _writer.initObject(*codeScope.tape, fieldCount, lxNil);
+         _writer.initObject(classClassScope.tape, fieldCount, lxNil);
       }
    }
 
-   _writer.exitMethod(*codeScope.tape, 0, 0, false);
+   _writer.exitMethod(classClassScope.tape, 0, 0, false);
 
-   _writer.endIdleMethod(*codeScope.tape);
+   _writer.endIdleMethod(classClassScope.tape);
 }
 
 //void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
@@ -5745,9 +5741,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
 
 void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   CommandTape tape;
-
-   _writer.declareClass(tape, classClassScope.reference);
+   _writer.declareClass(classClassScope.tape, classClassScope.reference);
 
    DNode member = node.firstChild();
    while (member != nsNone) {
@@ -5774,13 +5768,13 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 //   }
    /*else */compileDefaultConstructor(methodScope, classClassScope);
 
-   _writer.endClass(tape);
+   _writer.endClass(classClassScope.tape);
 
    // optimize
-   optimizeTape(tape);
+   optimizeTape(classClassScope.tape);
 
    // create byte code sections
-   _writer.save(tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
+   _writer.save(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
@@ -6060,16 +6054,14 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //   }
 //   else _writer.declareSymbol(scope.tape, scope.reference);
 
-   MemoryDump   dump;
-
-   SyntaxWriter writer(&dump);
-   CodeScope codeScope(&scope);
+   SyntaxWriter writer(&scope.syntaxTree);
+   CodeScope codeScope(&scope, &writer);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
 //
 //      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 //      openDebugExpression(codeScope);
-      /*retVal = */compileExpression(expression, writer, codeScope/*, 0*/);
+      /*retVal = */compileExpression(expression, codeScope/*, 0*/);
 //      endDebugExpression(codeScope);
 //   }
 //   _writer.loadObject(*codeScope.tape, retVal);
@@ -6189,7 +6181,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //   _writer.endSymbol(scope.tape);
 //
    _writer.declareSymbol(scope.tape, scope.reference);
-   saveSyntaxTree(codeScope, dump);
+   saveSyntaxTree(scope.tape, scope.syntaxTree);
    _writer.endSymbol(scope.tape);
 
    // optimize
@@ -6199,11 +6191,11 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: saveSyntaxTree(CodeScope& scope, MemoryDump& dump)
+void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
 {
    SyntaxReader reader(&dump);
 
-   _writer.translateExpression(*scope.tape, reader.readRoot());
+   _writer.translateExpression(tape, reader.readRoot());
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)
