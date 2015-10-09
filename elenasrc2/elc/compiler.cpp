@@ -4517,8 +4517,9 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
       statement = statement.nextNode();
    }
 
-   //if (needVirtualEnd)
-   //   _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   if (needVirtualEnd) {
+      recordDebugVirtualStep(scope, dsVirtualEnd);
+   }
 
 //   return retVal;
 }
@@ -5387,70 +5388,79 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 
 void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/)
 {
-//   SyntaxWriter writer(&scope.syntaxTree);
-//
-//   CodeScope codeScope(&scope);
-//
+   SyntaxWriter writer(&scope.syntaxTree);
+
+   CodeScope codeScope(&scope, &writer);
+
 //   // HOTFIX: constructor is declared in class class but should be executed if the class instance
 //   codeScope.tape = &classClassScope.tape;
+
+   DNode body = node.select(nsSubCode);
+//   DNode resendBody = node.select(nsResendExpression);
+//   DNode dispatchBody = node.select(nsDispatchExpression);
+
+   _writer.declareMethod(classClassScope.tape, scope.message, false, false);
+
+   bool withFrame = false;
+
+//   // if the constructor is embeddable
+//   // check if acc is zero than skip the default / resend code
+//   if (embeddable)
+//      _writer.tryEmbeddable(*codeScope.tape);
 //
-//   DNode body = node.select(nsSubCode);
-////   DNode resendBody = node.select(nsResendExpression);
-////   DNode dispatchBody = node.select(nsDispatchExpression);
+//   if (resendBody != nsNone) {
+//      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
 //
-//   _writer.declareMethod(classClassScope.tape, scope.message, false, false);
+//      // HOT FIX : raise an error if the frame was open
+//      if (withFrame && embeddable)
+//         scope.raiseError(errIllegalConstructor, node.Terminal());
+//   }
+   // if no redirect statement - call virtual constructor implicitly
+   /*else */if (!test(codeScope.getClassFlags(), elDynamicRole)) {
+      // HOTFIX: -1 indicates the stack is not consumed by the constructor
+      _writer.callMethod(classClassScope.tape, 1, -1);
+   }
+//   // if it is a dynamic object implicit constructor call is not possible
+//   else if (dispatchBody == nsNone)
+//      scope.raiseError(errIllegalConstructor, node.Terminal());
 //
-//   bool withFrame = false;
+//   if (embeddable)
+//      _writer.endEmbeddable(*codeScope.tape);
 //
-////   // if the constructor is embeddable
-////   // check if acc is zero than skip the default / resend code
-////   if (embeddable)
-////      _writer.tryEmbeddable(*codeScope.tape);
-////
-////   if (resendBody != nsNone) {
-////      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
-////
-////      // HOT FIX : raise an error if the frame was open
-////      if (withFrame && embeddable)
-////         scope.raiseError(errIllegalConstructor, node.Terminal());
-////   }
-////   // if no redirect statement - call virtual constructor implicitly
-////   else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
-////      // HOTFIX: -1 indicates the stack is not cconsumed by the constructor
-////      _writer.callMethod(*codeScope.tape, 1, -1);
-////   }
-////   // if it is a dynamic object implicit constructor call is not possible
-////   else if (dispatchBody == nsNone)
-////      scope.raiseError(errIllegalConstructor, node.Terminal());
-////
-////   if (embeddable)
-////      _writer.endEmbeddable(*codeScope.tape);
-////
-////   if (dispatchBody != nsNone) {
-////      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
-////      _writer.endIdleMethod(*codeScope.tape);
-////      // NOTE : import code already contains quit command, so do not call "endMethod"
-////      return;
-////   }
-////   else if (body != nsNone) {
-//      if (!withFrame) {
-//         withFrame = true;
-//
-//         // new stack frame
-//         // stack already contains $self value
-//         _writer.newFrame(classClassScope.tape);
-//         codeScope.level++;
-//      }
-//      else _writer.saveObject(classClassScope.tape, lxParam, 1);
+//   if (dispatchBody != nsNone) {
+//      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
+//      _writer.endIdleMethod(*codeScope.tape);
+//      // NOTE : import code already contains quit command, so do not call "endMethod"
+//      return;
+//   }
+//   else if (body != nsNone) {
+      if (!withFrame) {
+         withFrame = true;
+
+         // new stack frame
+         // stack already contains $self value
+         _writer.newFrame(classClassScope.tape);
+         codeScope.level++;
+      }
+      else _writer.saveObject(classClassScope.tape, lxParam, 1);
 
       declareParameterDebugInfo(scope, &classClassScope.tape, true, false);
 
-//      compileCode(body, codeScope);
-//
-//      _writer.loadObject(classClassScope.tape, lxParam, 1);
-////   }
-//
-//   _writer.endMethod(classClassScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
+      codeScope.writer->newNode(lxRoot);
+
+      compileCode(body, codeScope);
+
+      codeScope.writer->newNode(lxObject);
+      codeScope.writer->appendNode(lxParam, 1);
+      codeScope.writer->closeNode();
+
+      codeScope.writer->closeNode();
+
+//   }
+
+   saveSyntaxTree(classClassScope.tape, scope.syntaxTree);
+
+   _writer.endMethod(classClassScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
 }
 
 void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
@@ -6056,6 +6066,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
    SyntaxWriter writer(&scope.syntaxTree);
    CodeScope codeScope(&scope, &writer);
+   writer.newNode(lxRoot);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
 //
@@ -6063,8 +6074,12 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //      openDebugExpression(codeScope);
       /*retVal = */compileExpression(expression, codeScope/*, 0*/);
 //      endDebugExpression(codeScope);
+
 //   }
 //   _writer.loadObject(*codeScope.tape, retVal);
+   recordDebugVirtualStep(codeScope, dsVirtualEnd);
+
+   writer.closeNode();
 //
 //   // create constant if required
 //   if (scope.constant) {
@@ -6194,8 +6209,25 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
 {
    SyntaxReader reader(&dump);
-
-   _writer.translateExpression(tape, reader.readRoot());
+   SyntaxReader::Node current = reader.readRoot().firstChild();
+   while (current != lxNone) {
+      LexicalType type = current.type;
+      switch (type)
+      {
+         case _ELENA_::lxExpression:
+            _writer.translateExpression(tape, current);
+            break;
+         case _ELENA_::lxObject:
+            _writer.translateObjectExpression(tape, current);
+            break;
+         case _ELENA_::lxBreakpoint:
+            _writer.translateBreakpoint(tape, current);
+            break;
+         default:
+            break;
+      }
+      current = current.nextNode();
+   }   
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)

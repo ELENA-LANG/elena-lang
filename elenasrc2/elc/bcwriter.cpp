@@ -102,23 +102,23 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
    tape.write(blBegin, bsMethod, message);
 }
 
-//void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
-//{
-//   // method-begin:
-//   //   { pope }?
-//   //   open
-//   //   pusha
-//   tape.write(blBegin, bsMethod, message);
-//
-//   if (withPresavedMessage)
-//      tape.write(bcPopE);
-//
-//   if (withNewFrame) {
-//      tape.write(bcOpen, 1);
-//      tape.write(bcPushA);
-//   }
-//   tape.newLabel();     // declare exit point
-//}
+void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
+{
+   // method-begin:
+   //   { pope }?
+   //   open
+   //   pusha
+   tape.write(blBegin, bsMethod, message);
+
+   if (withPresavedMessage)
+      tape.write(bcPopE);
+
+   if (withNewFrame) {
+      tape.write(bcOpen, 1);
+      tape.write(bcPushA);
+   }
+   tape.newLabel();     // declare exit point
+}
 
 //void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
 //{
@@ -355,22 +355,22 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
 ////
 ////   tape.write(bcUnhook);
 ////}
-////
-////void ByteCodeWriter :: declarePrimitiveCatch(CommandTape& tape)
-////{
-////   int labEnd = tape.newLabel();
-////
-////   // elsen 0 labEnd
-////   tape.write(bcElseN, labEnd, 0);
-////}
 //
-//void ByteCodeWriter :: newFrame(CommandTape& tape)
+//void ByteCodeWriter :: declarePrimitiveCatch(CommandTape& tape)
 //{
-//   //   open 1
-//   //   pusha
-//   tape.write(bcOpen, 1);
-//   tape.write(bcPushA);
+//   int labEnd = tape.newLabel();
+//
+//   // elsen 0 labEnd
+//   tape.write(bcElseN, labEnd, 0);
 //}
+
+void ByteCodeWriter :: newFrame(CommandTape& tape)
+{
+   //   open 1
+   //   pusha
+   tape.write(bcOpen, 1);
+   tape.write(bcPushA);
+}
 
 //void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
 //{
@@ -982,34 +982,34 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 ////   // copym message
 ////   tape.write(bcCopyM, message);
 ////}
-////
-////void ByteCodeWriter :: copy(CommandTape& tape)
-////{
-////   // copy
-////   tape.write(bcCopy);
-////}
-////
-////void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
-////{
-////   // setsubj subj
-////   tape.write(bcSetSubj, subject);
-////}
-////
-////void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
-////{
-////   // acallvi offs
-////
-////   tape.write(bcACallVI, vmtOffset);
-////   tape.write(bcFreeStack, 1 + paramCount);
-////}
-////
-////void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
-////{
-////   // acallvi 0
-////   tape.write(bcACallVI);
-////   tape.write(bcFreeStack, 1 + paramCount);
-////}
-////
+//
+//void ByteCodeWriter :: copy(CommandTape& tape)
+//{
+//   // copy
+//   tape.write(bcCopy);
+//}
+//
+//void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
+//{
+//   // setsubj subj
+//   tape.write(bcSetSubj, subject);
+//}
+
+void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
+{
+   // acallvi offs
+
+   tape.write(bcACallVI, vmtOffset);
+   tape.write(bcFreeStack, 1 + paramCount);
+}
+
+//void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
+//{
+//   // acallvi 0
+//   tape.write(bcACallVI);
+//   tape.write(bcFreeStack, 1 + paramCount);
+//}
+//
 ////void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
 ////{
 ////   // xjumprm r, m
@@ -1267,12 +1267,12 @@ void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bo
    else tape.write(bcQuit);
 }
 
-//void ByteCodeWriter :: endMethod(CommandTape& tape, int count, int reserved, bool withFrame)
-//{
-//   exitMethod(tape, count, reserved, withFrame);
-//
-//   tape.write(blEnd, bsMethod);
-//}
+void ByteCodeWriter :: endMethod(CommandTape& tape, int count, int reserved, bool withFrame)
+{
+   exitMethod(tape, count, reserved, withFrame);
+
+   tape.write(blEnd, bsMethod);
+}
 
 void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
 {
@@ -2555,8 +2555,8 @@ inline ref_t defineConstantMask(LexicalType type)
       //   return mskSignature;
       //case okVerbConstant:
       //   return mskVerb;
-      //default:
-      //   return mskConstantRef;
+      default:
+         return mskConstantRef;
    }
 }
 
@@ -2693,10 +2693,7 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
-   SNode expr = node.firstChild();
-   if (expr == lxObject) {
-      loadObject(tape, expr.firstChild());
-   }
+   loadObject(tape, node.firstChild());
 }
 
 void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
@@ -2705,6 +2702,15 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
    if (existNode(node, lxCall)) {
       translateCallExpression(tape, node);
    }
-   else translateObjectExpression(tape, node);
-   declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   else {
+      SNode root = node.firstChild();
+      switch (root.type)
+      {
+         case LexicalType::lxObject:
+            translateObjectExpression(tape, root);
+            break;
+         default:
+            break;
+      }
+   }
 }

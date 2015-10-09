@@ -589,21 +589,21 @@ private:
 //
 //         return scope ? scope->reference : 0;
 //      }
-//
-////      ref_t getClassParentRefId(bool ownerClass = true)
-////      {
-////         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-////
-////         return scope ? scope->info.header.parentRef : 0;
-////      }
-//
-//      ref_t getClassFlags(bool ownerClass = true)
+
+//      ref_t getClassParentRefId(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 //
-//         return scope ? scope->info.header.flags : 0;
+//         return scope ? scope->info.header.parentRef : 0;
 //      }
-//
+
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
+
 //      ref_t getExtensionType()
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(slClass);
@@ -802,7 +802,12 @@ private:
          scope.writer->closeNode();
       }
    }
-//   void openDebugExpression(CodeScope& scope)
+   void recordDebugVirtualStep(CodeScope& scope, int stepType)
+   {
+      scope.writer->newNode(lxBreakpoint, stepType);
+      scope.writer->closeNode();
+   }
+   //   void openDebugExpression(CodeScope& scope)
 //   {
 //      _writer.declareBlock(*scope.tape);
 //   }

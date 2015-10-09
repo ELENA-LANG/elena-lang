@@ -77,7 +77,7 @@ public:
    void declareSymbol(CommandTape& tape, ref_t reference);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
    void declareIdleMethod(CommandTape& tape, ref_t message);
-//   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
 ////   void declareExternalBlock(CommandTape& tape);
 ////   void excludeFrame(CommandTape& tape);
 ////   void declareVariable(CommandTape& tape, int value);
@@ -111,7 +111,7 @@ public:
 //   void tryEmbeddable(CommandTape& tape);
 //   void endEmbeddable(CommandTape& tape);
 
-//   void newFrame(CommandTape& tape);
+   void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
 //   void newDynamicWStructure(CommandTape& tape);
@@ -143,13 +143,13 @@ public:
 ////
 ////   void setMessage(CommandTape& tape, ref_t message);
 ////   void setSubject(CommandTape& tape, ref_t subject);
-////
-////   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-////   void callRoleMessage(CommandTape& tape, int paramCount);
-////   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-////   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-////   void typecast(CommandTape& tape);
-////
+
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+//   void callRoleMessage(CommandTape& tape, int paramCount);
+//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
+//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+//   void typecast(CommandTape& tape);
+//
 ////   void doGenericHandler(CommandTape& tape);
 ////   void resend(CommandTape& tape);
 ////   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
@@ -190,7 +190,7 @@ public:
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
-//   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
