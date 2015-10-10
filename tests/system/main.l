@@ -1,11 +1,9 @@
 #define system.
 
-#symbol program = /*console writeLine:"Test"*/Object.
+// --- Main ---
 
-//// --- Main ---
-//
-//#symbol program =
-//[   
+#symbol program =
+[   
 //    XTest eval.
 //
 //    console writeLine:"Starting...".
@@ -48,4 +46,4 @@
 //    ByRefTest eval.
 //    SuperTest eval.
 //    EmbedConstTest eval.
-//].
+].

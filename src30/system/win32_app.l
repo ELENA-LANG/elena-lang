@@ -28,13 +28,13 @@
     
     #method start
     [
-//        'program eval
-//            | on:
-//            {
-//                Abort = e [].
-//                
-//                ! = e [ console writeLine:(e literal). ].
-//            }.
+        'program eval
+/*            | on:
+            {
+                Abort = e [].
+                
+                ! = e [ console writeLine:(e literal). ].
+/*            }*/.
 //            
 //        $self $onStop:nil.
     ]

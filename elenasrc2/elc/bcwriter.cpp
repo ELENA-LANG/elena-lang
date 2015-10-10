@@ -2698,7 +2698,6 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 {
-   declareBlock(tape);
    if (existNode(node, lxCall)) {
       translateCallExpression(tape, node);
    }

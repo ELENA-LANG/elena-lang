@@ -260,8 +260,8 @@ private:
 
       ref_t mapReference(ident_t reference, bool existing = false);
 
-//      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
-//
+      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
+
 //      bool defineForward(ident_t forward, ident_t referenceName, bool constant)
 //      {
 //         ObjectInfo info = mapReferenceInfo(referenceName, false);
@@ -348,12 +348,12 @@ private:
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
-////      void validateForwards();
-//
-//      ref_t getBaseFunctionClass(int paramCount);
+//      void validateForwards();
+
+      ref_t getBaseFunctionClass(int paramCount);
 //      ref_t getBaseIndexFunctionClass(int paramCount);
-//      ref_t getBaseLazyExpressionClass();
-//
+      ref_t getBaseLazyExpressionClass();
+
 //      int getClassFlags(ref_t reference);
 //      ref_t getClassClassReference(ref_t reference);
 
@@ -500,11 +500,11 @@ private:
 //      {
 //         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
 //      }
-//
-//      int getClassFlag()
-//      {
-//         return ((ClassScope*)parent)->info.header.flags;
-//      }
+
+      int getClassFlag()
+      {
+         return ((ClassScope*)parent)->info.header.flags;
+      }
 
       bool include();
 
@@ -513,13 +513,13 @@ private:
       MethodScope(ClassScope* parent);
    };
 
-//   // - ActionScope -
-//   struct ActionScope : public MethodScope
-//   {
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      ActionScope(ClassScope* parent);
-//   };
+   // - ActionScope -
+   struct ActionScope : public MethodScope
+   {
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      ActionScope(ClassScope* parent);
+   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -807,15 +807,15 @@ private:
       scope.writer->newNode(lxBreakpoint, stepType);
       scope.writer->closeNode();
    }
-   //   void openDebugExpression(CodeScope& scope)
-//   {
-//      _writer.declareBlock(*scope.tape);
-//   }
-//   void endDebugExpression(CodeScope& scope)
-//   {
-//      _writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//   }
-//
+   void openDebugExpression(CommandTape& tape)
+   {
+      _writer.declareBlock(tape);
+   }
+   void endDebugExpression(CommandTape& tape)
+   {
+      _writer.declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   }
+
 //   ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
@@ -890,7 +890,7 @@ private:
    /*ObjectInfo*/void compileOperations(DNode node, CodeScope& scope/*, ObjectInfo target, int mode*/);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    /*ObjectInfo*/void compileExpression(DNode node, CodeScope& scope/*, int mode*/);
-//   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
+   /*ObjectInfo*/void compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
 //   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
@@ -919,20 +919,20 @@ private:
    /*ObjectInfo*/void compileCode(DNode node, CodeScope& scope);
 
    void declareArgumentList(DNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-//   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
+   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
+   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
-//   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
-//   void compileSingletonClass(DNode member, ClassScope& scope);
-//
-//   void declareSingletonAction(ClassScope& scope, ActionScope& methodScope);
-//
+   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
+   void compileSingletonClass(DNode member, ClassScope& scope);
+
+   void declareSingletonAction(ClassScope& scope, ActionScope& methodScope);
+
 //   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
 //   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function);
-//
-//   void compileActionMethod(DNode member, MethodScope& scope);
-//   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
+
+   void compileActionMethod(DNode member, MethodScope& scope);
+   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, MethodScope& scope/*, int mode*/);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
@@ -941,7 +941,7 @@ private:
 
    void compileSymbolCode(ClassScope& scope);
 
-//   void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
+   void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);
@@ -951,7 +951,7 @@ private:
    void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileSymbolDeclaration(DNode node/*, SymbolScope& scope, DNode hints*/);
+   void compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNode hints*/);
    void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
 //   void compileForward(DNode node, ModuleScope& scope, DNode hints);
