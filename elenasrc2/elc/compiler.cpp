@@ -1276,7 +1276,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 {
    this->message = 0;
    this->reserved = 0;
-//   this->rootToFree = 1;
+   this->rootToFree = 1;
 //   this->withOpenArg = false;
 //   this->stackSafe = false;
 }
@@ -5300,13 +5300,16 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 //   importCode(node, *codeScope.moduleScope, codeScope.tape, function);
 //   _writer.endIdleMethod(*codeScope.tape);
 //}
-//
-//void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
-//{
-//   int paramCount = getParamCount(scope.message);
-//
-//   CodeScope codeScope(&scope);
-//
+
+void Compiler :: compileMethod(DNode node, MethodScope& scope/*, int mode*/)
+{
+   int paramCount = getParamCount(scope.message);
+
+   SyntaxWriter writer(&scope.syntaxTree);
+   CodeScope codeScope(&scope, &writer);
+
+   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+
 //   // save extensions if any
 //   if (test(codeScope.getClassFlags(false), elExtension)) {
 //      codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
@@ -5327,29 +5330,31 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 //      else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
 //   }
 //   else {
-//      // new stack frame
-//      // stack already contains current $self reference
-//      // the original message should be restored if it is a generic method
-//      _writer.declareMethod(*codeScope.tape, scope.message, test(mode, HINT_GENERIC_METH));
-//      codeScope.level++;
-//      // declare the current subject for a generic method
-//      if (test(mode, HINT_GENERIC_METH)) {
-//         _writer.copySubject(*codeScope.tape);
-//         _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
-//         codeScope.level++;
-//         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
-//      }
-//
-//      declareParameterDebugInfo(scope, codeScope.tape, true, test(codeScope.getClassFlags(), elRole));
-//
-//      DNode body = node.select(nsSubCode);
-//      // if method body is a returning expression
-//      if (body==nsNone) {
-//         compileCode(node, codeScope);
-//      }
-//      // if method body is a set of statements
-//      else {
-//         ObjectInfo retVal = compileCode(body, codeScope);
+      // new stack frame
+      // stack already contains current $self reference
+      // the original message should be restored if it is a generic method
+      _writer.declareMethod(*tape, scope.message, /*test(mode, HINT_GENERIC_METH)*/false);
+      codeScope.level++;
+      //// declare the current subject for a generic method
+      //if (test(mode, HINT_GENERIC_METH)) {
+      //   _writer.copySubject(*codeScope.tape);
+      //   _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
+      //   codeScope.level++;
+      //   codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
+      //}
+
+      declareParameterDebugInfo(scope, tape, true, test(codeScope.getClassFlags(), elRole));
+
+      codeScope.writer->newNode(lxRoot);
+
+      DNode body = node.select(nsSubCode);
+      // if method body is a returning expression
+      if (body==nsNone) {
+         compileCode(node, codeScope);
+      }
+      // if method body is a set of statements
+      else {
+         /*ObjectInfo retVal = */compileCode(body, codeScope);
 //
 //         if(retVal.kind == okUnknown) {
 //            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
@@ -5365,26 +5370,30 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 //            if (boxed)
 //               scope.raiseWarning(4, wrnBoxingCheck, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
 //         }
-//      }
-//
-//      int stackToFree = paramCount + scope.rootToFree;
-//
+      }
+
+      codeScope.writer->closeNode();
+
+      int stackToFree = paramCount + scope.rootToFree;
+
+      saveSyntaxTree(*tape, scope.syntaxTree);
+
 //   //   if (scope.testMode(MethodScope::modLock)) {
 //   //      _writer.endSyncMethod(*codeScope.tape, -1);
 //   //   }
-//      _writer.endMethod(*codeScope.tape, stackToFree, scope.reserved);
+      _writer.endMethod(*tape, stackToFree, scope.reserved);
 //   }
+
+//   // critical section entry if sync hint declared
+//   if (scope.testMode(MethodScope::modLock)) {
+//      ownerScope->info.header.flags |= elWithLocker;
 //
-////   // critical section entry if sync hint declared
-////   if (scope.testMode(MethodScope::modLock)) {
-////      ownerScope->info.header.flags |= elWithLocker;
-////
-////      _writer.tryLock(*codeScope.tape, 1);
-////   }
-////   // safe point (no need in extra one because lock already has one safe point)
-////   else if (scope.testMode(MethodScope::modSafePoint))
-////      _writer.declareSafePoint(*codeScope.tape);
-//}
+//      _writer.tryLock(*codeScope.tape, 1);
+//   }
+//   // safe point (no need in extra one because lock already has one safe point)
+//   else if (scope.testMode(MethodScope::modSafePoint))
+//      _writer.declareSafePoint(*codeScope.tape);
+}
 
 void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/)
 {
@@ -5573,13 +5582,13 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
 
                compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
             }
-//            // if it is a normal method
-//            else {
-//               declareArgumentList(member, methodScope);
-//               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
-//
-//               compileMethod(member, methodScope, methodScope.compileHints(hints));
-//            }
+            // if it is a normal method
+            else {
+               declareArgumentList(member, methodScope);
+               //methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+
+               compileMethod(member, methodScope/*, methodScope.compileHints(hints)*/);
+            }
             break;
          }
 //         case nsDefaultGeneric:
@@ -5807,8 +5816,8 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
 //            // mark as having generic methods
 //            scope.info.header.flags |= elWithGenerics;
 //         }
-//         else declareArgumentList(member, methodScope);
-//
+         else declareArgumentList(member, methodScope);
+
 //         methodScope.compileHints(hints);
 
          // check if there is no duplicate method

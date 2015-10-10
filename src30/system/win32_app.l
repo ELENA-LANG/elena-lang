@@ -25,9 +25,9 @@
 //            ? [ theFinializeEvent := aHandle. ]
 //            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
 //    ]
-//    
-//    #method start
-//    [
+    
+    #method start
+    [
 //        'program eval
 //            | on:
 //            {
@@ -37,8 +37,8 @@
 //            }.
 //            
 //        $self $onStop:nil.
-//    ]
-//    
+    ]
+    
 //    #method $onStop : arg
 //    [
 //        ($nil == theFinializeEvent)

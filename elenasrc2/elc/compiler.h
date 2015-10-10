@@ -482,7 +482,7 @@ private:
       ref_t        message;
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
-//      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
+      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool      withOpenArg;
 //      bool      stackSafe;
 //
@@ -934,7 +934,7 @@ private:
 //   void compileActionMethod(DNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
-//   void compileMethod(DNode node, MethodScope& scope, int mode);
+   void compileMethod(DNode node, MethodScope& scope/*, int mode*/);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/);
