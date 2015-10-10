@@ -17,7 +17,7 @@ namespace _ELENA_
 enum LexicalType
 {
    lxNone = 0,
-   lxRoot,
+   lxCodeBlock,
    lxExpression,
    lxObject,
    lxSymbol,

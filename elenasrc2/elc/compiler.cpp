@@ -30,7 +30,7 @@ using namespace _ELENA_;
 //#define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 //#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 //#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
-//#define HINT_ACTION           0x00020000
+#define HINT_ACTION           0x00020000
 //#define HINT_EXTERNAL_CALL    0x00010000
 //
 //#define HINT_SELFEXTENDING    0x00040000     // !! do we need it?
@@ -115,18 +115,18 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
    else return 0;
 }
 
-//inline void findUninqueName(_Module* module, ReferenceNs& name)
-//{
-//   size_t pos = getlength(name);
-//   int   index = 0;
-//   ref_t ref = 0;
-//   do {
-//      name[pos] = 0;
-//      name.appendHex(index++);
-//
-//      ref = module->mapReference(name, true);
-//   } while (ref != 0);
-//}
+inline void findUninqueName(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name, true);
+   } while (ref != 0);
+}
 
 // skip the hints and return the first hint node or none
 inline DNode skipHints(DNode& node)
@@ -1484,16 +1484,16 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 ////   }
 ////   else return getType(object);
 ////}
-//
-//// --- Compiler::InlineClassScope ---
-//
-//Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
-//   : ClassScope(owner->moduleScope, reference), outers(Outer())
-//{
-//   this->parent = owner;
-//   info.header.flags |= elNestedClass;
-//}
-//
+
+// --- Compiler::InlineClassScope ---
+
+Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
+   : ClassScope(owner->moduleScope, reference)//, outers(Outer())
+{
+   this->parent = owner;
+   info.header.flags |= elNestedClass;
+}
+
 //Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 //{
 //   String<ident_c, 10> thisVar(THIS_VAR);
@@ -1631,17 +1631,17 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//ref_t Compiler :: mapNestedExpression(CodeScope& scope)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // otherwise auto generate the name
-//   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(moduleScope->module, name);
-//
-//   return moduleScope->module->mapReference(name);
-//}
+ref_t Compiler :: mapNestedExpression(CodeScope& scope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // otherwise auto generate the name
+   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
+
+   findUninqueName(moduleScope->module, name);
+
+   return moduleScope->module->mapReference(name);
+}
 
 void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
 {
@@ -2131,21 +2131,24 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    DNode member = objectNode.firstChild();
    switch (member)
    {
-//      //case nsRetStatement:
-//      case nsNestedClass:
-//         if (objectNode.Terminal() != nsNone) {
-//            result = compileNestedExpression(objectNode, scope, 0);
-//            break;
-//         }
-//      case nsSubCode:
-//      case nsSubjectArg:
-//      case nsMethodParameter:
-//         result = compileNestedExpression(member, scope, 0);
-//         break;
-//      case nsInlineExpression:
-//         result = compileNestedExpression(objectNode, scope, HINT_ACTION);
-//         break;
-//      case nsExpression:
+      //case nsRetStatement:
+      case nsNestedClass:
+         if (objectNode.Terminal() != nsNone) {
+            scope.writer->newNode(lxObject);
+            /*result = */compileNestedExpression(objectNode, scope, 0);
+            break;
+         }
+      case nsSubCode:
+      case nsSubjectArg:
+      case nsMethodParameter:
+         scope.writer->newNode(lxObject);
+         /*result = */compileNestedExpression(member, scope, 0);
+         break;
+      case nsInlineExpression:
+         scope.writer->newNode(lxObject);
+         /*result = */compileNestedExpression(objectNode, scope, HINT_ACTION);
+         break;
+      case nsExpression:
 //         if (isCollection(member)) {
 //            TerminalInfo parentInfo = objectNode.Terminal();
 //            // if the parent class is defined
@@ -2158,8 +2161,10 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //            }
 //            else result = compileCollection(member, scope, 0);
 //         }
-//         else result = compileExpression(member, scope, 0);
-//         break;
+         /*else result = */
+         scope.writer->newNode(lxExpression);
+         compileExpression(member, scope/*, 0*/);
+         break;
 //      case nsMessageReference:
 //         result = compileMessageReference(member, scope);
 //         break;
@@ -3860,137 +3865,137 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, boo
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
-//{
-//   _writer.declareClass(scope.tape, scope.reference);
-//
-//   DNode member = node.firstChild();
-//
-//   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
-//
-//   // nested class is sealed if it has no parent
-//   if (!test(scope.info.header.flags, elClosed))
-//      scope.info.header.flags |= elSealed;
-//
-//   compileVMT(member, scope);
-//
-//   _writer.endClass(scope.tape);
-//
-//   // stateless inline class
-//   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
-//      scope.info.header.flags |= elStateless;
-//   }
-//   else scope.info.header.flags &= ~elStateless;
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   scope.save();
-//   _writer.compile(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
-//
-//ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
-//{
-//   if (test(scope.info.header.flags, elStateless)) {
-//      // if it is a stateless class
-//      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-//   }
-//   else {
-//      bool dummy = false;
-//      bool dummy2 = false;
-//      int presaved = 0;
-//
-//      // unbox all typed variables
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
-//         if (checkIfBoxingRequired(ownerScope, info, mode)) {
-//            _writer.loadObject(*ownerScope.tape, info);
-//            boxObject(ownerScope, info, dummy, dummy2);
-//            _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
-//            presaved++;
-//         }
-//
-//         outer_it++;
-//      }
-//
-//      // dynamic binary symbol
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         _writer.newStructure(*ownerScope.tape, scope.info.size, scope.reference);
-//
-//         if (scope.outers.Count() > 0)
-//            scope.raiseError(errInvalidInlineClass, node.Terminal());
-//      }
-//      // dynamic normal symbol
-//      else _writer.newObject(*ownerScope.tape, scope.info.fields.Count(), scope.reference);
-//
-//      _writer.loadBase(*ownerScope.tape, ObjectInfo(okAccumulator));
-//
-//      outer_it = scope.outers.start();
-//      int toFree = 0;
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
-//         //NOTE: info should be either fields or locals
-//         if (info.kind == okOuterField) {
-//            _writer.loadObject(*ownerScope.tape, info);
-//            _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
-//         }
-//         else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
-//            if (checkIfBoxingRequired(ownerScope, info, mode)) {
-//               _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
-//               toFree++;
-//            }
-//            else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-//         }
-//         else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-//
-//         outer_it++;
-//      }
-//
-//      _writer.releaseObject(*ownerScope.tape, toFree);
-//      _writer.loadObject(*ownerScope.tape, ObjectInfo(okBase));
-//
-//      return ObjectInfo(okAccumulator, scope.reference);
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
-//{
-////   recordStep(ownerScope, node.Terminal(), dsStep);
-//
-//   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
-//
-//   // if it is an action code block
-//   if (node == nsSubCode) {
-//      compileAction(node, scope, DNode());
-//   }
-//   // if it is an action code block
-//   else if (node == nsMethodParameter || node == nsSubjectArg) {
-//      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
-//   }
-//   // if it is a shortcut action code block
-//   else if (node == nsObject && test(mode, HINT_ACTION)) {
-//      compileAction(node.firstChild(), scope, node);
-//   }
-//   // if it is inherited nested class
-//   else if (node.Terminal() != nsNone) {
-//	   // inherit parent
-//      compileParentDeclaration(node, scope);
-//
-//      compileNestedVMT(node.firstChild(), scope);
-//   }
-//   // if it is normal nested class
-//   else {
-//      compileParentDeclaration(DNode(), scope);
-//
-//      compileNestedVMT(node, scope);
-//   }
-//   return compileNestedExpression(node, ownerScope, scope, mode);
-//}
-//
+void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
+{
+   _writer.declareClass(scope.tape, scope.reference);
+
+   DNode member = node.firstChild();
+
+   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
+
+   // nested class is sealed if it has no parent
+   if (!test(scope.info.header.flags, elClosed))
+      scope.info.header.flags |= elSealed;
+
+   compileVMT(member, scope);
+
+   _writer.endClass(scope.tape);
+
+   // stateless inline class
+   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
+      scope.info.header.flags |= elStateless;
+   }
+   else scope.info.header.flags &= ~elStateless;
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   scope.save();
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
+/*ObjectInfo*/void Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+{
+   if (test(scope.info.header.flags, elStateless)) {
+      // if it is a stateless class
+      //return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+   }
+   else {
+      //bool dummy = false;
+      //bool dummy2 = false;
+      //int presaved = 0;
+
+      ////// unbox all typed variables
+      ////Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      ////while(!outer_it.Eof()) {
+      ////   ObjectInfo info = (*outer_it).outerObject;
+
+      ////   if (checkIfBoxingRequired(ownerScope, info, mode)) {
+      ////      _writer.loadObject(*ownerScope.tape, info);
+      ////      boxObject(ownerScope, info, dummy, dummy2);
+      ////      _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
+      ////      presaved++;
+      ////   }
+
+      ////   outer_it++;
+      ////}
+
+      //// dynamic binary symbol
+      //if (test(scope.info.header.flags, elStructureRole)) {
+      //   _writer.newStructure(*ownerScope.tape, scope.info.size, scope.reference);
+
+      //   if (scope.outers.Count() > 0)
+      //      scope.raiseError(errInvalidInlineClass, node.Terminal());
+      //}
+      //// dynamic normal symbol
+      //else _writer.newObject(*ownerScope.tape, scope.info.fields.Count(), scope.reference);
+
+      //_writer.loadBase(*ownerScope.tape, ObjectInfo(okAccumulator));
+
+      //outer_it = scope.outers.start();
+      //int toFree = 0;
+      //while(!outer_it.Eof()) {
+      //   ObjectInfo info = (*outer_it).outerObject;
+
+      //   //NOTE: info should be either fields or locals
+      //   if (info.kind == okOuterField) {
+      //      _writer.loadObject(*ownerScope.tape, info);
+      //      _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
+      //   }
+      //   else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
+      //      if (checkIfBoxingRequired(ownerScope, info, mode)) {
+      //         _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
+      //         toFree++;
+      //      }
+      //      else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+      //   }
+      //   else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+
+      //   outer_it++;
+      //}
+
+      //_writer.releaseObject(*ownerScope.tape, toFree);
+      //_writer.loadObject(*ownerScope.tape, ObjectInfo(okBase));
+
+      //return ObjectInfo(okAccumulator, scope.reference);
+   }
+}
+
+/*ObjectInfo*/void Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
+{
+//   recordStep(ownerScope, node.Terminal(), dsStep);
+
+   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
+
+   // if it is an action code block
+   if (node == nsSubCode) {
+      compileAction(node, scope, DNode());
+   }
+   // if it is an action code block
+   else if (node == nsMethodParameter || node == nsSubjectArg) {
+      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
+   }
+   // if it is a shortcut action code block
+   else if (node == nsObject && test(mode, HINT_ACTION)) {
+      compileAction(node.firstChild(), scope, node);
+   }
+   // if it is inherited nested class
+   else if (node.Terminal() != nsNone) {
+	   // inherit parent
+      compileParentDeclaration(node, scope);
+
+      compileNestedVMT(node.firstChild(), scope);
+   }
+   // if it is normal nested class
+   else {
+      compileParentDeclaration(DNode(), scope);
+
+      compileNestedVMT(node, scope);
+   }
+   /*return */compileNestedExpression(node, ownerScope, scope, mode);
+}
+
 //ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
 //{
 //   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
@@ -5102,6 +5107,8 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
 
    declareParameterDebugInfo(scope, tape, false, true);
 
+   writer.newNode(lxCodeBlock);
+
    if (isReturnExpression(node.firstChild())) {
       compileRetExpression(node.firstChild(), codeScope, 0);
    }
@@ -5110,6 +5117,8 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
       compileCode(node.firstChild(), codeScope);
    }
    else compileCode(node, codeScope);
+
+   writer.closeNode();
 
    saveSyntaxTree(*tape, scope.syntaxTree);
 
@@ -5134,7 +5143,9 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
 
    declareParameterDebugInfo(scope, tape, false, false);
 
+   writer.newNode(lxCodeBlock);
    compileRetExpression(node, codeScope, 0);
+   writer.closeNode();
 
    saveSyntaxTree(*tape, scope.syntaxTree);
 
@@ -5355,10 +5366,9 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, int mode*/)
 
       declareParameterDebugInfo(scope, tape, true, test(codeScope.getClassFlags(), elRole));
 
-      codeScope.writer->newNode(lxRoot);
-
       DNode body = node.select(nsSubCode);
       // if method body is a returning expression
+      writer.newNode(lxCodeBlock);
       if (body==nsNone) {
          compileCode(node, codeScope);
       }
@@ -5381,8 +5391,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, int mode*/)
 //               scope.raiseWarning(4, wrnBoxingCheck, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
 //         }
       }
-
-      codeScope.writer->closeNode();
+      writer.closeNode();
 
       int stackToFree = paramCount + scope.rootToFree;
 
@@ -5465,7 +5474,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
       declareParameterDebugInfo(scope, &classClassScope.tape, true, false);
 
-      codeScope.writer->newNode(lxRoot);
+      codeScope.writer->newNode(lxCodeBlock);
 
       compileCode(body, codeScope);
 
@@ -6085,7 +6094,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
    SyntaxWriter writer(&scope.syntaxTree);
    CodeScope codeScope(&scope, &writer);
-   writer.newNode(lxRoot);
+   writer.newNode(lxExpression);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
 //

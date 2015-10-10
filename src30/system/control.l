@@ -262,15 +262,15 @@
 //    /// Dispatches the verb to the target object with iterator subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &iterator:$self.
 //}
-//
-//// --- base functions ---
-//
-///// A base action
-//#class(limited)BaseFunction
-//{
-//    /// Executes the action
-//    #method eval []
-//    
+
+// --- base functions ---
+
+/// A base action
+#class(limited)BaseFunction
+{
+    /// Executes the action
+    #method eval []
+    
 //    /// Executes the action while the condition is true
 //    #method run &if:aBool
 //    [
@@ -303,8 +303,8 @@
 //    
 //    /// Dispatches the verb to the target with func subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func:$self.
-//}
-//
+}
+
 ///// A base function
 //#class(limited)BaseFunction1
 //{
