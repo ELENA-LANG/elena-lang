@@ -6021,7 +6021,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNod
 //   }
 }
 
-void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/)
+void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints*/, bool isStatic)
 {
 //   scope.compileHints(hints);
 //
@@ -6079,20 +6079,11 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
       }
    }
 
-//   // compile symbol into byte codes
-//   if (isStatic) {
-//      _writer.declareStaticSymbol(scope.tape, scope.reference);
-//
-//      _writer.loadPrimitive(scope.tape, scope.reference | mskLockVariable);
-//      _writer.pushObject(scope.tape, ObjectInfo(okAccumulator));
-//      _writer.tryLock(scope.tape);
-//      _writer.declareTry(scope.tape);
-//
-//      // check if the symbol was not created while in the lock
-//      _writer.loadStatic(scope.tape, scope.reference);
-//      _writer.jumpIfNotEqual(scope.tape, 0, true);
-//   }
-   /*else */_writer.declareSymbol(scope.tape, scope.reference);
+   // compile symbol into byte codes
+   if (isStatic) {
+      _writer.declareStaticSymbol(scope.tape, scope.reference);
+   }
+   else _writer.declareSymbol(scope.tape, scope.reference);
 
    SyntaxWriter writer(&scope.syntaxTree);
    CodeScope codeScope(&scope, &writer);
@@ -6194,29 +6185,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //      if (boxed)
 //         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 //   }
-//
-//   if (isStatic) {
-//      // finally block - should free the lock if the exception was thrown
-//      _writer.declareCatch(scope.tape);
-//
-//      _writer.loadBase(scope.tape, ObjectInfo(okAccumulator));
-//      _writer.popObject(scope.tape, ObjectInfo(okAccumulator));
-//      _writer.freeLock(scope.tape);
-//      _writer.loadObject(scope.tape, ObjectInfo(okBase));
-//
-//      _writer.throwCurrent(scope.tape);
-//
-//      _writer.endCatch(scope.tape);
-//
-//      _writer.loadBase(scope.tape, ObjectInfo(okAccumulator));
-//      _writer.popObject(scope.tape, ObjectInfo(okAccumulator));
-//      _writer.freeLock(scope.tape);
-//      _writer.loadObject(scope.tape, ObjectInfo(okBase));
-//
-//      // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
-//      _writer.exitStaticSymbol(scope.tape, scope.reference);
-//   }
-//
+
 //   TerminalInfo eop = node.lastNode().Terminal();
 ////   if (eop != nsNone) {
 ////      recordStep(codeScope, eop, dsVirtualEnd);
@@ -6226,7 +6195,11 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //   _writer.endSymbol(scope.tape);
 //
    saveSyntaxTree(scope.tape, scope.syntaxTree);
-   _writer.endSymbol(scope.tape);
+
+   if (isStatic) {
+      _writer.endStaticSymbol(scope.tape, scope.reference);
+   }
+   else _writer.endSymbol(scope.tape);
 
    // optimize
    optimizeTape(scope.tape);
@@ -6411,7 +6384,7 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
             ref_t reference = scope.mapTerminal(name);
 
             SymbolScope symbolScope(&scope, reference);
-            compileSymbolImplementation(member, symbolScope/*, hints, (member == nsStatic)*/);
+            compileSymbolImplementation(member, symbolScope/*, hints*/, (member == nsStatic));
             break;
          }
       }

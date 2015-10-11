@@ -1,4 +1,4 @@
-//#define system.
+#define system.
 //#define system'routines.
 //#define system'collections.
 //#define system'dynamic.
@@ -10,19 +10,19 @@
 //#define extensions.
 //#define extensions'math.
 //#define extensions'text.
-//
-//#symbol XTester =
-//{
-//    test            
-//    [
-//    ]        
-//}.
-//        
-//#symbol XTest =
-//[
-//    XTester test.
-//].
-//
+
+#symbol XTester =
+{
+    test            
+    [
+    ]        
+}.
+        
+#symbol XTest =
+[
+    XTester test.
+].
+
 //// --- OpenArgTest ---
 //
 //#symbol OpenArgTester =

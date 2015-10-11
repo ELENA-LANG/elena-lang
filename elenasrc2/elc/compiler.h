@@ -952,7 +952,7 @@ private:
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNode hints*/);
-   void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
+   void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints*/, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
 //   void compileForward(DNode node, ModuleScope& scope, DNode hints);
 //   void compileType(DNode& member, ModuleScope& scope, DNode hints);

@@ -4,8 +4,8 @@
 
 #symbol program =
 [   
-//    XTest eval.
-//
+    XTest eval.
+
 //    console writeLine:"Starting...".
 //
 //    ControlTest eval.

@@ -75,24 +75,24 @@ public:
 
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
-//   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
    void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
-////   void declareExternalBlock(CommandTape& tape);
-////   void excludeFrame(CommandTape& tape);
-////   void declareVariable(CommandTape& tape, int value);
-////   void declareArgumentList(CommandTape& tape, int count);
-////   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
-////   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
-////   void declareThenElseBlock(CommandTape& tape);
-////   void declareElseBlock(CommandTape& tape);
-////   void declareSwitchBlock(CommandTape& tape);
-////   void declareSwitchOption(CommandTape& tape);
-////   void declareTry(CommandTape& tape);
-////   void declareCatch(CommandTape& tape);
-////   void declareAlt(CommandTape& tape);
-////   void declarePrimitiveCatch(CommandTape& tape);
-//
+//   void declareExternalBlock(CommandTape& tape);
+//   void excludeFrame(CommandTape& tape);
+//   void declareVariable(CommandTape& tape, int value);
+//   void declareArgumentList(CommandTape& tape, int count);
+//   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
+//   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
+//   void declareThenElseBlock(CommandTape& tape);
+//   void declareElseBlock(CommandTape& tape);
+//   void declareSwitchBlock(CommandTape& tape);
+//   void declareSwitchOption(CommandTape& tape);
+   void declareTry(CommandTape& tape);
+   void declareCatch(CommandTape& tape);
+//   void declareAlt(CommandTape& tape);
+//   void declarePrimitiveCatch(CommandTape& tape);
+
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -155,34 +155,34 @@ public:
 ////   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
 ////   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 ////   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
-////
-//////   int declareLabel(CommandTape& tape);
-////   void jumpIfEqual(CommandTape& tape, ref_t ref);
-////   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
-//////   void jumpIfNotEqualN(CommandTape& tape, int value);
-////   void jump(CommandTape& tape, bool previousLabel = false);
-////
-////   void throwCurrent(CommandTape& tape);
-////
-////   void tryLock(CommandTape& tape);
-////   void freeLock(CommandTape& tape);
-////
-////   void gotoEnd(CommandTape& tape, PseudoArg label);
-////
-////   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-////   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-////
-////   void freeVirtualStack(CommandTape& tape, int count);
+
+//   int declareLabel(CommandTape& tape);
+   void jumpIfEqual(CommandTape& tape, ref_t ref);
+   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
+////   void jumpIfNotEqualN(CommandTape& tape, int value);
+//   void jump(CommandTape& tape, bool previousLabel = false);
 //
+//   void throwCurrent(CommandTape& tape);
+
+   void tryLock(CommandTape& tape);
+   void freeLock(CommandTape& tape);
+
+//   void gotoEnd(CommandTape& tape, PseudoArg label);
+//
+//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+//
+//   void freeVirtualStack(CommandTape& tape, int count);
+
 //   void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
 //   void updateStackAlloc(ByteCodeIterator it, int size);
 //
 //   ByteCodeIterator insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument);
 //
 //   void trimTape(ByteCodeIterator it, CommandTape& tape);
-//
-////   void setLabel(CommandTape& tape);
-//   void endCatch(CommandTape& tape);
+
+//   void setLabel(CommandTape& tape);
+   void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
 //   void endPrimitiveCatch(CommandTape& tape);
 //   void endThenBlock(CommandTape& tape, bool withStackContro = true);
@@ -194,6 +194,7 @@ public:
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
+   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
