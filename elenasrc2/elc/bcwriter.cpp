@@ -2584,6 +2584,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
          break;
       case lxConstantString:
       case lxConstantClass:
+      case lxConstantSymbol:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -2609,6 +2610,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       break;
    case lxConstantString:
    case lxConstantClass:
+   case lxConstantSymbol:
       // pushr reference
       tape.write(bcACopyR, argument | defineConstantMask(type));
       break;

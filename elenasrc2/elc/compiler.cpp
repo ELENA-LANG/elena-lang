@@ -3898,6 +3898,8 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 /*ObjectInfo*/void Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
 {
    if (test(scope.info.header.flags, elStateless)) {
+      ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
+
       // if it is a stateless class
       //return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
    }
