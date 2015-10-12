@@ -69,18 +69,18 @@ public:
       irObsolete
    };
 
-//   enum MethodHint
-//   {
-//      tpMask       = 0x0F,
-//
-//      tpUnknown    = 0x00,
-//      tpSealed     = 0x01,
-//      tpClosed     = 0x02,
-//      tpNormal     = 0x03,
-//      tpDispatcher = 0x04,
-//      tpStackSafe  = 0x10,
-//      tpEmbeddable = 0x20,
-//   };
+   enum MethodHint
+   {
+      tpMask       = 0x0F,
+
+      tpUnknown    = 0x00,
+      tpSealed     = 0x01,
+      tpClosed     = 0x02,
+      tpNormal     = 0x03,
+      tpDispatcher = 0x04,
+      tpStackSafe  = 0x10,
+      tpEmbeddable = 0x20,
+   };
 
    struct Unresolved
    {
@@ -136,7 +136,7 @@ public:
    //   okFieldAddress,                 // param - field offset
    //   okOuter,                        // param - field offset
    //   okOuterField,                   // param - field offset, extraparam - outer field offset
-   //   okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
+      okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
    //   okSubject,                      // param - parameter offset
    //   okSubjectDispatcher,
@@ -333,14 +333,14 @@ private:
          return defineTypeSize(type_ref, class_ref, dummy2);
       }
 
-//      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
-//      int checkMethod(ref_t reference, ref_t message)
-//      {
-//         bool dummy;
-//         ref_t dummyRef;
-//         return checkMethod(reference, message, dummy, dummyRef);
-//      }
-//
+      int checkMethod(ref_t reference, ref_t message, bool& found/*, ref_t& outputType*/);
+      int checkMethod(ref_t reference, ref_t message)
+      {
+         bool dummy;
+         //ref_t dummyRef;
+         return checkMethod(reference, message, dummy/*, dummyRef*/);
+      }
+
 //      void loadTypes(_Module* module);
 //      void loadExtensions(TerminalInfo terminal, _Module* module);
 //
@@ -458,7 +458,7 @@ private:
 
 //      bool  constant;
 //      ref_t typeRef;
-//
+
 //      void compileHints(DNode hints);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -484,9 +484,9 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool      withOpenArg;
-//      bool      stackSafe;
-//
-//      int compileHints(DNode hints);
+      bool      stackSafe;
+
+      int compileHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -496,10 +496,10 @@ private:
          else return parent->getScope(level);
       }
 
-//      void setClassFlag(int flag)
-//      {
-//         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
-//      }
+      void setClassFlag(int flag)
+      {
+         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
+      }
 
       int getClassFlag()
       {
@@ -526,8 +526,8 @@ private:
    {
       SyntaxWriter* writer;
 
-//      // scope local variables
-//      LocalMap     locals;
+      // scope local variables
+      LocalMap     locals;
       int          level;
 
 //      // scope stack allocation
@@ -540,12 +540,12 @@ private:
 //
 //         return level;
 //      }
-//
-//      void mapLocal(ident_t local, int level, ref_t type)
-//      {
-//         locals.add(local, Parameter(level, type));
-//      }
-//
+
+      void mapLocal(ident_t local, int level, ref_t type)
+      {
+         locals.add(local, Parameter(level, type));
+      }
+
 //      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
 //      {
 //         locals.add(local, Parameter(level, ref, stackAllocated));
@@ -879,9 +879,9 @@ private:
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 //
 //   ObjectInfo compileInlineOperation(CodeScope& scope, MessageScope& callStack, int messageRef, int mode);
-//
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
-//
+
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
@@ -934,7 +934,7 @@ private:
    void compileActionMethod(DNode member, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
-   void compileMethod(DNode node, MethodScope& scope/*, int mode*/);
+   void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/);

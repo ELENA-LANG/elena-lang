@@ -1021,95 +1021,95 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
 //   tape.write(bcACallVI);
 //   tape.write(bcFreeStack, 1 + paramCount);
 //}
+
+//void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+//{
+//   // xjumprm r, m
 //
-////void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-////{
-////   // xjumprm r, m
-////
-////   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
-////}
-////
-////void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
-////{
-////   // validate
-////   // xcallrm r, m
-////
-////   if(withValidattion)
-////      tape.write(bcValidate);
-////
-////   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
-////
-////   tape.write(bcFreeStack, 1 + getParamCount(message));
-////}
-////
-////void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-////{
-////   // xindexrm r, m
-////   // acallvd
-////
-////   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
-////   tape.write(bcACallVD);
-////
-////   tape.write(bcFreeStack, 1 + getParamCount(message));
-////}
-////
-////void ByteCodeWriter :: typecast(CommandTape& tape)
-////{
-////   //  pusha
-////   //  acallvi  0
-////
-////   tape.write(bcPushA);
-////   tape.write(bcACallVI, 0);
-////   tape.write(bcFreeStack, 1);
-////}
-////
-////void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
-////{
-////   // bsredirect
-////
-////   tape.write(bcBSRedirect);
-////}
-////
-////void ByteCodeWriter :: resend(CommandTape& tape)
-////{
-////   // ajumpvi 0
-////   tape.write(bcAJumpVI);
-////}
-////
-////void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatchIndex)
-////{
-////   switch (object.kind) {
-////      case okSymbol:
-////         tape.write(bcPushE);
-////         tape.write(bcCallR, object.param | mskSymbolRef);
-////         tape.write(bcPopE);
-////         break;
-////      case okConstantSymbol:
-////      case okConstantClass:
-////      case okLiteralConstant:
-////      case okCharConstant:
-////      case okIntConstant:
-////      case okLongConstant:
-////      case okRealConstant:
-////      case okMessageConstant:
-////      case okSignatureConstant:
-////      case okVerbConstant:
-//////      case okSymbolReference:
-////         // acccopyr r
-////         tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
-////         break;
-////      case okField:
-////         // bcopya
-////         // aloadbi
-////         tape.write(bcBCopyA);
-////         tape.write(bcALoadBI, object.param);
-////         break;
-////   }
-////
-////   // ajumpvi 0
-////   tape.write(bcAJumpVI, dispatchIndex);
-////}
+//   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
+//}
+
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   if(withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xindexrm r, m
+   // acallvd
+
+   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
+   tape.write(bcACallVD);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
+//void ByteCodeWriter :: typecast(CommandTape& tape)
+//{
+//   //  pusha
+//   //  acallvi  0
 //
+//   tape.write(bcPushA);
+//   tape.write(bcACallVI, 0);
+//   tape.write(bcFreeStack, 1);
+//}
+//
+//void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
+//{
+//   // bsredirect
+//
+//   tape.write(bcBSRedirect);
+//}
+//
+//void ByteCodeWriter :: resend(CommandTape& tape)
+//{
+//   // ajumpvi 0
+//   tape.write(bcAJumpVI);
+//}
+//
+//void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatchIndex)
+//{
+//   switch (object.kind) {
+//      case okSymbol:
+//         tape.write(bcPushE);
+//         tape.write(bcCallR, object.param | mskSymbolRef);
+//         tape.write(bcPopE);
+//         break;
+//      case okConstantSymbol:
+//      case okConstantClass:
+//      case okLiteralConstant:
+//      case okCharConstant:
+//      case okIntConstant:
+//      case okLongConstant:
+//      case okRealConstant:
+//      case okMessageConstant:
+//      case okSignatureConstant:
+//      case okVerbConstant:
+////      case okSymbolReference:
+//         // acccopyr r
+//         tape.write(bcACopyR, object.param | defineConstantMask(object.kind));
+//         break;
+//      case okField:
+//         // bcopya
+//         // aloadbi
+//         tape.write(bcBCopyA);
+//         tape.write(bcALoadBI, object.param);
+//         break;
+//   }
+//
+//   // ajumpvi 0
+//   tape.write(bcAJumpVI, dispatchIndex);
+//}
+
 //void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
 //{
 //   // callextr ref
@@ -2292,6 +2292,15 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //   tape.write(bcDCopySubj);
 //}
 //
+void ByteCodeWriter :: saveSubject(CommandTape& tape)
+{
+   // dcopysubj
+   // pushd
+
+   tape.write(bcDCopySubj);
+   tape.write(bcPushD);
+}
+
 //void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -2621,6 +2630,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
+      case lxLocal:
       case lxParam:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
@@ -2647,6 +2657,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       // pushr reference
       tape.write(bcACopyR, argument | defineConstantMask(type));
       break;
+   case lxLocal:
    case lxParam:
       // aloadfi index
       tape.write(bcALoadFI, argument, bpFrame);
@@ -2664,6 +2675,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
 {
    switch (type)
    {
+      case lxLocal:
       case lxParam:
          // asavefi index
          tape.write(bcASaveFI, argument, bpFrame);
@@ -2711,16 +2723,27 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    SNode callNode = findChild(node, lxCall).firstChild();
    if (callNode == lxMessage) {
       translateBreakpoint(tape, findChild(callNode, lxBreakpoint));
+
       declareBlock(tape);
 
-      // copym message
-      // aloadsi 0
-      // acallvi offs
+      SNode strongAttr = findChild(callNode, lxStrong);
+      SNode semiAttr = findChild(callNode, lxSemiStrong);
+      if (strongAttr != lxNone) {
+         callResolvedMethod(tape, strongAttr.argument, callNode.argument);
+      }
+      else if (semiAttr != lxNone) {
+         callVMTResolvedMethod(tape, strongAttr.argument, callNode.argument);
+      }
+      else {
+         // copym message
+         // aloadsi 0
+         // acallvi offs
 
-      tape.write(bcCopyM, callNode.argument);
-      tape.write(bcALoadSI, 0);
-      tape.write(bcACallVI, 0);
-      tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+         tape.write(bcCopyM, callNode.argument);
+         tape.write(bcALoadSI, 0);
+         tape.write(bcACallVI, 0);
+         tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+      }
 
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
    }

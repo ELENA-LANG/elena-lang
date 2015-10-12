@@ -22,12 +22,16 @@ enum LexicalType
    lxObject,
    lxSymbol,
    lxConstantSymbol,
+   lxLocal,
    lxParam,
    lxConstantString,
    lxConstantClass,
    lxNil,
    lxCall,
    lxMessage,
+
+   lxStrong,
+   lxSemiStrong,
 
    lxBreakpoint,
    lxBPCol,

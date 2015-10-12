@@ -27,7 +27,7 @@ using namespace _ELENA_;
 //#define HINT_INVERTED         0x02000000
 //#define HINT_EXTENSION_MODE   0x01000000
 //#define HINT_HEAP_MODE        0x00400000
-//#define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
+#define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
 //#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 //#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
 #define HINT_ACTION           0x00020000
@@ -764,32 +764,32 @@ int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReferenc
 //
 //   return classInfo.classClassRef;
 //}
-//
-//int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
-//{
-//   ClassInfo info;
-//   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
-//
-//   if (found) {
-//      bool methodFound = info.methods.exist(message);
-//
-//      if (methodFound) {
-//         MethodInfo methodInfo = info.methodHints.get(message);
-//
-//         outputType = methodInfo.typeRef;
-//
-//         if (test(info.header.flags, elSealed)) {
-//            return tpSealed | methodInfo.hint;
-//         }
-//         else if (test(info.header.flags, elClosed)) {
-//            return tpClosed | methodInfo.hint;
-//         }
-//         else return tpNormal | methodInfo.hint;
-//      }
-//   }
-//
-//   return tpUnknown;
-//}
+
+int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found/*, ref_t& outputType*/)
+{
+   ClassInfo info;
+   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
+
+   if (found) {
+      bool methodFound = info.methods.exist(message);
+
+      if (methodFound) {
+         MethodInfo methodInfo = info.methodHints.get(message);
+
+         //outputType = methodInfo.typeRef;
+
+         if (test(info.header.flags, elSealed)) {
+            return tpSealed | methodInfo.hint;
+         }
+         else if (test(info.header.flags, elClosed)) {
+            return tpClosed | methodInfo.hint;
+         }
+         else return tpNormal | methodInfo.hint;
+      }
+   }
+
+   return tpUnknown;
+}
 
 void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t reference)
 {
@@ -1278,7 +1278,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
 //   this->withOpenArg = false;
-//   this->stackSafe = false;
+   this->stackSafe = false;
 }
 
 bool Compiler::MethodScope :: include()
@@ -1328,51 +1328,51 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 //   }
 }
 
-//int Compiler::MethodScope :: compileHints(DNode hints)
-//{
-//   int mode = 0;
-//   int hint = 0;
-//   ref_t type = 0;
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//      if (StringHelper::compare(terminal, HINT_GENERIC)) {
-//         if (getSignature(message) != 0)
-//            raiseError(errInvalidHint, terminal);
-//
-//         message = overwriteSubject(message, moduleScope->mapSubject(GENERIC_PREFIX));
-//
-//         setClassFlag(elWithGenerics);
-//
-//         mode |= HINT_GENERIC_METH;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_TYPE)) {
-//         DNode value = hints.select(nsHintValue);
-//         TerminalInfo typeTerminal = value.Terminal();
-//
-//         type = moduleScope->mapType(typeTerminal);
-//         if (type == 0)
-//            raiseError(wrnInvalidHint, terminal);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
-//         hint |= tpStackSafe;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
-//         hint |= tpEmbeddable;
-//      }
-//      else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//      hints = hints.nextNode();
-//   }
-//
-//   if (type != 0 || hint != 0) {
-//      ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-//
-//      classScope->info.methodHints.exclude(message);
-//      classScope->info.methodHints.add(message, MethodInfo(type, hint));
-//   }
-//
-//   return mode;
-//}
+int Compiler::MethodScope :: compileHints(DNode hints)
+{
+   int mode = 0;
+   int hint = 0;
+   ref_t type = 0;
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      if (StringHelper::compare(terminal, HINT_GENERIC)) {
+         if (getSignature(message) != 0)
+            raiseError(errInvalidHint, terminal);
+
+         message = overwriteSubject(message, moduleScope->mapSubject(GENERIC_PREFIX));
+
+         setClassFlag(elWithGenerics);
+
+         mode |= HINT_GENERIC_METH;
+      }
+      //else if (StringHelper::compare(terminal, HINT_TYPE)) {
+      //   DNode value = hints.select(nsHintValue);
+      //   TerminalInfo typeTerminal = value.Terminal();
+
+      //   type = moduleScope->mapType(typeTerminal);
+      //   if (type == 0)
+      //      raiseError(wrnInvalidHint, terminal);
+      //}
+      else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
+         hint |= tpStackSafe;
+      }
+      else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
+         hint |= tpEmbeddable;
+      }
+      else raiseWarning(1, wrnUnknownHint, terminal);
+
+      hints = hints.nextNode();
+   }
+
+   if (type != 0 || hint != 0) {
+      ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+
+      classScope->info.methodHints.exclude(message);
+      classScope->info.methodHints.add(message, MethodInfo(type, hint));
+   }
+
+   return mode;
+}
 
 // --- Compiler::ActionScope ---
 
@@ -1393,7 +1393,7 @@ ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
-   : Scope(parent)//, locals(Parameter(0))
+   : Scope(parent), locals(Parameter(0))
 {
    this->writer = writer;
    this->level = 0;
@@ -1408,7 +1408,7 @@ Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
 //}
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
-   : Scope(parent)//, locals(Parameter(0))
+   : Scope(parent), locals(Parameter(0))
 {
    this->writer = writer;
    this->level = 0;
@@ -1426,17 +1426,17 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
 
 ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 {
-//   Parameter local = locals.get(identifier);
-//   if (local.offset) {
+   Parameter local = locals.get(identifier);
+   if (local.offset) {
 //      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
 //         return ObjectInfo(okSubject, local.offset);
 //      }
 //      else if (local.stackAllocated) {
 //         return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
 //      }
-//      else return ObjectInfo(okLocal, local.offset, 0, local.sign_ref);
-//   }
-   /*else */return Scope::mapObject(identifier);
+      /*else */return ObjectInfo(okLocal, local.offset, 0/*, local.sign_ref*/);
+   }
+   else return Scope::mapObject(identifier);
 }
 
 //void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference)
@@ -2108,6 +2108,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             break;
          case okConstantSymbol:
             scope.writer->newNode(lxConstantSymbol, object.param);
+            break;
+         case okLocal:
+            scope.writer->newNode(lxLocal, object.param);
             break;
             //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -3077,48 +3080,48 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //
 //   return retVal;
 //}
-//
-//ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
-//{
-//   // if static message is sent to a class class
-//   if (object.kind == okConstantClass) {
-//      return object.extraparam;
-//   }
-//   // if external role is provided
-//   else if (object.kind == okConstantRole) {
-//      return object.param;
-//   }
-//   else if (object.kind == okConstantSymbol) {
-//      if (object.extraparam != 0) {
-//         return object.extraparam;
-//      }
-//      else return object.param;
-//   }
-//   else if (object.kind == okAccumulator && object.param != 0) {
-//      return object.param;
-//   }
-//   else if (object.kind == okLocalAddress) {
-//      return object.extraparam;
-//   }
-//   // if message sent to the class parent
-//   else if (object.kind == okSuper) {
-//      return object.param;
-//   }
-//   // if message sent to the subject variable
-//   else if (object.kind == okSubject) {
-//      return scope.moduleScope->signatureReference;
-//   }
-//   // if message sent to the dispatcher
-//   else if (object.kind == okSubjectDispatcher) {
-//      return scope.moduleScope->signatureReference;
-//   }
-//   // if message sent to the $self
-//   else if (object.kind == okThisParam) {
-//      return scope.getClassRefId(false);
-//   }
-//   else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
-//}
-//
+
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
+{
+   // if static message is sent to a class class
+   if (object.kind == okConstantClass) {
+      return object.extraparam;
+   }
+   //// if external role is provided
+   //else if (object.kind == okConstantRole) {
+   //   return object.param;
+   //}
+   else if (object.kind == okConstantSymbol) {
+      if (object.extraparam != 0) {
+         return object.extraparam;
+      }
+      else return object.param;
+   }
+   else if (object.kind == okObject && object.param != 0) {
+      return object.param;
+   }
+   //else if (object.kind == okLocalAddress) {
+   //   return object.extraparam;
+   //}
+   // if message sent to the class parent
+   //else if (object.kind == okSuper) {
+   //   return object.param;
+   //}
+   // if message sent to the subject variable
+   //else if (object.kind == okSubject) {
+   //   return scope.moduleScope->signatureReference;
+   //}
+   // if message sent to the dispatcher
+   //else if (object.kind == okSubjectDispatcher) {
+   //   return scope.moduleScope->signatureReference;
+   //}
+   // if message sent to the $self
+   //else if (object.kind == okThisParam) {
+   //   return scope.getClassRefId(false);
+   //}
+   else return /*object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : */0;
+}
+
 //bool Compiler :: checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack)
 //{
 //   size_t count = callStack.parameters.Count();
@@ -3279,21 +3282,21 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
 //
 //   int signRef = getSignature(messageRef);
 //   int paramCount = getParamCount(messageRef);
-//
-//   // try to recognize the operation
-//   ref_t classReference = resolveObjectReference(scope, target);
-//   bool classFound = false;
-//   bool dispatchCall = false;
+
+   // try to recognize the operation
+   ref_t classReference = resolveObjectReference(scope, target);
+   bool classFound = false;
+   bool dispatchCall = false;
 //   bool varInitCall = test(mode, HINT_INITIALIZING);
-//   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
-//   int callType = methodHint & tpMask;
-//
-//   if (target.kind == okConstantClass) {
-//      retVal.param = target.param;
-//
-//      // constructors are always sealed
-//      callType = tpSealed;
-//   }
+   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound/*, retVal.type*/) : 0;
+   int callType = methodHint & tpMask;
+
+   if (target.kind == okConstantClass) {
+      retVal.param = target.param;
+
+      // constructors are always sealed
+      callType = tpSealed;
+   }
 //   else if (target.kind == okSuper) {
 //      // parent methods are always sealed
 //      callType = tpSealed;
@@ -3361,33 +3364,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
 //   recordDebugStep(scope, node.Terminal(), dsStep);
 //   openDebugExpression(scope);
 //
-//   // send message
-//   if (varInitCall) {
-//      // HOTFIX : put 0 into acc to signal the embeddable constructor 
-//      // that it is variable implicit initialization
-//      _writer.loadObject(*scope.tape, ObjectInfo(okNil));
-//
-//      _writer.callResolvedMethod(*scope.tape, classReference, messageRef, false);
-//   }
-//   else if (dispatchCall) {
-//      _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
-//   }
-//   else if (callType == tpClosed) {
-//      _writer.callVMTResolvedMethod(*scope.tape, classReference, messageRef);
-//   }
-//   else if (callType == tpSealed) {
-//      _writer.callResolvedMethod(*scope.tape, classReference, messageRef);
-//   }
-//   else {
-//      // if the class found and the message is not supported - warn the programmer and raise an exception
-//      if (classFound && callType == tpUnknown) {
-//         scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
-//      }
-//
-//      _writer.callMethod(*scope.tape, 0, paramCount);
-//   }
-//   scope.writer->appendNode(lxMessage);
-
 //   if (callStack.paramUnboxing)
 //      unboxCallstack(scope, callStack);
 //
@@ -3416,11 +3392,35 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
 //   }
 //
    scope.writer->newNode(lxCall);
-
    scope.writer->newNode(lxMessage, messageRef);
-   recordDebugStep(scope, node.Terminal(), dsStep);
-   scope.writer->closeNode();
 
+   recordDebugStep(scope, node.Terminal(), dsStep);
+
+   //   // send message
+   //   if (varInitCall) {
+   //      // HOTFIX : put 0 into acc to signal the embeddable constructor 
+   //      // that it is variable implicit initialization
+   //      _writer.loadObject(*scope.tape, ObjectInfo(okNil));
+   //
+   //      _writer.callResolvedMethod(*scope.tape, classReference, messageRef, false);
+   //   }
+   //   else if (dispatchCall) {
+   //      _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
+   //   }
+   /*else */if (callType == tpClosed) {
+      scope.writer->appendNode(lxSemiStrong, classReference);
+   }
+   else if (callType == tpSealed) {
+      scope.writer->appendNode(lxStrong, classReference);
+   }
+   else {
+      // if the class found and the message is not supported - warn the programmer and raise an exception
+      if (classFound && callType == tpUnknown) {
+         scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
+      }
+   }
+
+   scope.writer->closeNode();
    scope.writer->closeNode();
 
    return retVal;
@@ -5331,7 +5331,7 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
 //   _writer.endIdleMethod(*codeScope.tape);
 //}
 
-void Compiler :: compileMethod(DNode node, MethodScope& scope/*, int mode*/)
+void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 {
    int paramCount = getParamCount(scope.message);
 
@@ -5363,15 +5363,14 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, int mode*/)
       // new stack frame
       // stack already contains current $self reference
       // the original message should be restored if it is a generic method
-      _writer.declareMethod(*tape, scope.message, /*test(mode, HINT_GENERIC_METH)*/false);
+      _writer.declareMethod(*tape, scope.message, test(mode, HINT_GENERIC_METH));
       codeScope.level++;
-      //// declare the current subject for a generic method
-      //if (test(mode, HINT_GENERIC_METH)) {
-      //   _writer.copySubject(*codeScope.tape);
-      //   _writer.pushObject(*codeScope.tape, ObjectInfo(okIndexAccumulator));
-      //   codeScope.level++;
-      //   codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
-      //}
+      // declare the current subject for a generic method
+      if (test(mode, HINT_GENERIC_METH)) {
+         _writer.saveSubject(*tape);
+         codeScope.level++;
+         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
+      }
 
       declareParameterDebugInfo(scope, tape, true, test(codeScope.getClassFlags(), elRole));
 
@@ -5383,7 +5382,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope/*, int mode*/)
       }
       // if method body is a set of statements
       else {
-         /*ObjectInfo retVal = */compileCode(body, codeScope);
+         ObjectInfo retVal = compileCode(body, codeScope);
 //
 //         if(retVal.kind == okUnknown) {
 //            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
@@ -5593,7 +5592,7 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& class
 void Compiler :: compileVMT(DNode member, ClassScope& scope)
 {
    while (member != nsNone) {
-//      DNode hints = skipHints(member);
+      DNode hints = skipHints(member);
 
       switch(member) {
          case nsMethod:
@@ -5613,9 +5612,9 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             // if it is a normal method
             else {
                declareArgumentList(member, methodScope);
-               //methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
-               compileMethod(member, methodScope/*, methodScope.compileHints(hints)*/);
+               compileMethod(member, methodScope, methodScope.compileHints(hints));
             }
             break;
          }
@@ -5827,7 +5826,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
 {
    while (member != nsNone) {
-//      DNode hints = skipHints(member);
+      DNode hints = skipHints(member);
 
       if (member == methodSymbol || member == nsDefaultGeneric) {
          MethodScope methodScope(&scope);
@@ -5846,7 +5845,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
 //         }
          else declareArgumentList(member, methodScope);
 
-//         methodScope.compileHints(hints);
+         methodScope.compileHints(hints);
 
          // check if there is no duplicate method
          if (scope.info.methods.exist(methodScope.message, true))

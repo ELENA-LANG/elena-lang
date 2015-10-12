@@ -146,8 +146,8 @@ public:
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
 //   void callRoleMessage(CommandTape& tape, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void typecast(CommandTape& tape);
 //
 ////   void doGenericHandler(CommandTape& tape);
@@ -211,6 +211,7 @@ public:
 ////   void copyShort(CommandTape& tape, int offset);
 ////   void copyStructure(CommandTape& tape, int offset, int size);
 ////   void copySubject(CommandTape& tape);
+   void saveSubject(CommandTape& tape);
 ////   void loadSymbolReference(CommandTape& tape, ref_t reference);
 ////   void saveIntConstant(CommandTape& tape, int value);
 ////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
