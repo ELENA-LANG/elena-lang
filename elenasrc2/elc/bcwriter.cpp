@@ -1329,6 +1329,9 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
    // asaver static
    tape.write(bcASaveR, staticReference | mskStatSymbolRef);
    tape.setLabel();
+
+   // symbol-end:
+   tape.write(blEnd, bsSymbol);
 }
 
 void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* debug, ref_t sourceNameRef)

@@ -115,8 +115,8 @@ public:
       okUnknown = 0,
    
       okSymbol,                       // param - reference
-   //   okConstantSymbol,               // param - reference, extraparam - class reference
-   //   okConstantClass,                // param - reference, extraparam - class reference
+      okConstantSymbol,               // param - reference, extraparam - class reference
+      okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference 
    //   okCharConstant,                 // param - reference
    //   okIntConstant,                  // param - reference 
@@ -161,44 +161,44 @@ public:
    {
       ObjectKind kind;
       ref_t      param;
-   //   ref_t      extraparam;
+      ref_t      extraparam;
    //   ref_t      type;
    
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
-   //      this->extraparam = 0;
+         this->extraparam = 0;
    //      this->type = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
-   //      this->extraparam = 0;
+         this->extraparam = 0;
    //      this->type = 0;
       }
-   //   ObjectInfo(ObjectKind kind, ObjectInfo copy)
-   //   {
-   //      this->kind = kind;
-   //      this->param = copy.param;
-   //      this->extraparam = copy.extraparam;
+      ObjectInfo(ObjectKind kind, ObjectInfo copy)
+      {
+         this->kind = kind;
+         this->param = copy.param;
+         this->extraparam = copy.extraparam;
    //      this->type = copy.type;
-   //   }
+      }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
-   //      this->extraparam = 0;
+         this->extraparam = 0;
    //      this->type = 0;
       }
-   //   ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
-   //   {
-   //      this->kind = kind;
-   //      this->param = param;
-   //      this->extraparam = extraparam;
-   //      this->type = 0;
-   //   }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         //this->type = 0;
+      }
    //   ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
    //   {
    //      this->kind = kind;
@@ -221,8 +221,8 @@ private:
 
       // default namespaces
       List<ident_t> defaultNs;
-//      ForwardMap    forwards;       // forward declarations
-//
+      ForwardMap    forwards;       // forward declarations
+
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
 //

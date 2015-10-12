@@ -495,16 +495,16 @@ ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierStrin
 ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
 {
    if (terminal == tsIdentifier) {
-//      ref_t reference = forwards.get(terminal);
-//      if (reference == 0) {
+      ref_t reference = forwards.get(terminal);
+      if (reference == 0) {
          if (!existing) {
             ReferenceNs name(module->Name(), terminal);
 
             return module->mapReference(name);
          }
          else return resolveIdentifier(terminal);
-//      }
-//      else return reference;
+      }
+      else return reference;
    }
 //   else if (terminal == tsPrivate) {
 //      ReferenceNs name(module->Name(), terminal);
@@ -535,38 +535,38 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
 //   else if (constantHints.exist(reference)) {
 //      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
 //   }
-//   else if (checkState) {
-//      ClassInfo info;
-//      // check if the object can be treated like a constant object
-//      ref_t r = loadClassInfo(info, module->resolveReference(reference), true);
-//      if (r) {
-//         // if it is a stateless symbol
-//         if (test(info.header.flags, elStateless)) {
-//            return ObjectInfo(okConstantSymbol, reference, reference);
-//         }
-//         // if it is a normal class
-//         // then the symbol is reference to the class class
-//         else if (test(info.header.flags, elStandartVMT) && info.classClassRef != 0) {
-//            return ObjectInfo(okConstantClass, reference, info.classClassRef);
-//         }
-//      }
-//      else {
-//         // check if the object is typed expression
-//         SymbolExpressionInfo symbolInfo;
-//         // check if the object can be treated like a constant object
-//         r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
-//         if (r) {
-//            // if it is a constant
-//            if (symbolInfo.constant) {
-//               return ObjectInfo(okConstantSymbol, reference, typeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
-//            }
-//            // if it is a typed symbol
-//            else if (symbolInfo.expressionTypeRef != 0) {
-//               return ObjectInfo(okSymbol, reference, 0, symbolInfo.expressionTypeRef);
-//            }
-//         }
-//      }
-//   }
+   else if (checkState) {
+      ClassInfo info;
+      // check if the object can be treated like a constant object
+      ref_t r = loadClassInfo(info, module->resolveReference(reference), true);
+      if (r) {
+         // if it is a stateless symbol
+         if (test(info.header.flags, elStateless)) {
+            return ObjectInfo(okConstantSymbol, reference, reference);
+         }
+         // if it is a normal class
+         // then the symbol is reference to the class class
+         else if (test(info.header.flags, elStandartVMT) && info.classClassRef != 0) {
+            return ObjectInfo(okConstantClass, reference, info.classClassRef);
+         }
+      }
+      //else {
+      //   // check if the object is typed expression
+      //   SymbolExpressionInfo symbolInfo;
+      //   // check if the object can be treated like a constant object
+      //   r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
+      //   if (r) {
+      //      // if it is a constant
+      //      if (symbolInfo.constant) {
+      //         return ObjectInfo(okConstantSymbol, reference, typeHints.get(symbolInfo.expressionTypeRef), symbolInfo.expressionTypeRef);
+      //      }
+      //      // if it is a typed symbol
+      //      else if (symbolInfo.expressionTypeRef != 0) {
+      //         return ObjectInfo(okSymbol, reference, 0, symbolInfo.expressionTypeRef);
+      //      }
+      //   }
+      //}
+   }
 
    // otherwise it is a normal one
    return ObjectInfo(okSymbol, reference);
@@ -2103,7 +2103,13 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
             scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
             scope.writer->newNode(lxSymbol, object.param);
             break;
-         //      //case okExternal:
+         case okConstantClass:
+            scope.writer->newNode(lxConstantClass, object.param);
+            break;
+         case okConstantSymbol:
+            scope.writer->newNode(lxConstantSymbol, object.param);
+            break;
+            //      //case okExternal:
          //      //   // external call cannot be used inside symbol
          //      //   if (test(mode, HINT_ROOT))
          //      //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
