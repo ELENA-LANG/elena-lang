@@ -2030,7 +2030,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else scope.raiseError(errDuplicatedLocal, node.Terminal());
 //}
 
-/*ObjectInfo*/void Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 {
    TerminalInfo terminal = node.Terminal();
 
@@ -2127,12 +2127,12 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 
    scope.writer->closeNode();
 
-//   return object;
+   return object;
 }
 
-/*ObjectInfo*/void Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
 {
-//   ObjectInfo result;
+   ObjectInfo result;
 
    DNode member = objectNode.firstChild();
    switch (member)
@@ -2141,18 +2141,18 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
       case nsNestedClass:
          if (objectNode.Terminal() != nsNone) {
             scope.writer->newNode(lxObject);
-            /*result = */compileNestedExpression(objectNode, scope, 0);
+            result = compileNestedExpression(objectNode, scope, 0);
             break;
          }
       case nsSubCode:
       case nsSubjectArg:
       case nsMethodParameter:
          scope.writer->newNode(lxObject);
-         /*result = */compileNestedExpression(member, scope, 0);
+         result = compileNestedExpression(member, scope, 0);
          break;
       case nsInlineExpression:
          scope.writer->newNode(lxObject);
-         /*result = */compileNestedExpression(objectNode, scope, HINT_ACTION);
+         result = compileNestedExpression(objectNode, scope, HINT_ACTION);
          break;
       case nsExpression:
 //         if (isCollection(member)) {
@@ -2167,20 +2167,21 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //            }
 //            else result = compileCollection(member, scope, 0);
 //         }
-         /*else result = */
+         /*else {*/
          scope.writer->newNode(lxExpression);
-         compileExpression(member, scope/*, 0*/);
+         result = compileExpression(member, scope/*, 0*/);
+         /*}*/
          break;
 //      case nsMessageReference:
 //         result = compileMessageReference(member, scope);
 //         break;
       default:
          scope.writer->newNode(lxObject);
-         /*result = */compileTerminal(objectNode, scope, mode);
+         result = compileTerminal(objectNode, scope, mode);
    }
    scope.writer->closeNode();
 
-//   return result;
+   return result;
 }
 
 //ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
@@ -3272,9 +3273,9 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   }
 //}
 
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo target, int messageRef, int mode)
-//{
-//   ObjectInfo retVal(okAccumulator);
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo target, int messageRef, int mode)
+{
+   ObjectInfo retVal(okObject);
 //
 //   int signRef = getSignature(messageRef);
 //   int paramCount = getParamCount(messageRef);
@@ -3414,8 +3415,16 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //      retVal.kind = okIdle;
 //   }
 //
-//   return retVal;
-//}
+   scope.writer->newNode(lxCall);
+
+   scope.writer->newNode(lxMessage, messageRef);
+   recordDebugStep(scope, node.Terminal(), dsStep);
+   scope.writer->closeNode();
+
+   scope.writer->closeNode();
+
+   return retVal;
+}
 
 //void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
 //{
@@ -3427,7 +3436,7 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else _writer.releaseObject(*scope.tape, spaceToRelease);
 //}
 
-/*ObjectInfo*/void Compiler :: compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/)
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
 {
    bool   first = true;
    ref_t  verb_id = 0;
@@ -3545,14 +3554,6 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
    // create a message id
    ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
 
-   scope.writer->newNode(lxCall);
-
-   scope.writer->newNode(lxMessage, messageRef);
-   recordDebugStep(scope, verb, dsStep);
-   scope.writer->closeNode();
-
-   scope.writer->closeNode();
-
 //   MessageScope callStack;
 //
 //   // put the target
@@ -3574,20 +3575,20 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //      }
 //   }
 
-//   ObjectInfo retVal = compileMessage(node, scope, /*callStack, object, */messageRef/*, 0*/);
+   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
 
-//   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
+   //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
 //   if (spaceToRelease != 0) {
 //      // if open argument list is used
 //      releaseOpenArguments(scope, spaceToRelease);
 //   }
-//
-//   return retVal;
+
+   return retVal;
 }
 
-/*ObjectInfo */void Compiler :: compileOperations(DNode node, CodeScope& scope/*, ObjectInfo object, int mode*/)
+ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object/*, int mode*/)
 {
-//   ObjectInfo currentObject = object;
+   ObjectInfo currentObject = object;
 
    DNode member = node.nextNode();
 
@@ -3626,15 +3627,15 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //         currentObject = compileExtension(member, scope, currentObject, mode);
 //      }
       /*else */if (member==nsMessageOperation) {
-         /*currentObject = */compileMessage(member, scope/*, currentObject*/);
+         currentObject = compileMessage(member, scope, currentObject);
       }
-//      else if (member==nsMessageParameter) {
-//         currentObject = compileMessage(member, scope, currentObject);
-//
-//         // skip all except the last message parameter
-//         while (member.nextNode() == nsMessageParameter)
-//            member = member.nextNode();
-//      }
+      else if (member==nsMessageParameter) {
+         currentObject = compileMessage(member, scope, currentObject);
+
+         // skip all except the last message parameter
+         while (member.nextNode() == nsMessageParameter)
+            member = member.nextNode();
+      }
 //      else if (member == nsSwitching) {
 //         compileSwitch(member, scope, currentObject);
 //
@@ -3675,8 +3676,8 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else if (altMode) {
 //      _writer.endAlt(*scope.tape);
 //   }
-//
-//   return currentObject;
+
+   return currentObject;
 }
 
 //ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
@@ -3901,13 +3902,13 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-/*ObjectInfo*/void Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
 {
    if (test(scope.info.header.flags, elStateless)) {
       ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
 
       // if it is a stateless class
-      //return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
    }
    else {
       //bool dummy = false;
@@ -3966,11 +3967,11 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
       //_writer.releaseObject(*ownerScope.tape, toFree);
       //_writer.loadObject(*ownerScope.tape, ObjectInfo(okBase));
 
-      //return ObjectInfo(okAccumulator, scope.reference);
+      return ObjectInfo(okObject, scope.reference);
    }
 }
 
-/*ObjectInfo*/void Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
+ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
 {
 //   recordStep(ownerScope, node.Terminal(), dsStep);
 
@@ -4001,7 +4002,7 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 
       compileNestedVMT(node, scope);
    }
-   /*return */compileNestedExpression(node, ownerScope, scope, mode);
+   return compileNestedExpression(node, ownerScope, scope, mode);
 }
 
 //ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
@@ -4190,11 +4191,11 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 //   return object;
 //}
 
-/*ObjectInfo*/void Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
 {
 //   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-   /*ObjectInfo info = */compileExpression(node, scope/*, mode*/);
+   ObjectInfo info = compileExpression(node, scope/*, mode*/);
 
 //   _writer.loadObject(*scope.tape, info);
 //
@@ -4231,19 +4232,19 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 //   scope.freeSpace();
 //
 //   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//   return ObjectInfo(okAccumulator, 0, 0, subj);
+
+   return ObjectInfo(okObject, 0, 0/*, subj*/);
 }
 
-/*ObjectInfo*/void Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mode*/)
+ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mode*/)
 {
    scope.writer->newNode(lxExpression);
 
    DNode member = node.firstChild();
 
-   //ObjectInfo objectInfo;
+   ObjectInfo objectInfo;
    if (member==nsObject) {
-      /*objectInfo =*/ compileObject(member, scope, HINT_DEBUGSTEP/*| mode*/);
+      objectInfo = compileObject(member, scope, HINT_DEBUGSTEP/*| mode*/);
    }
    if (member != nsNone) {
 //      if (findSymbol(member, nsCatchMessageOperation)) {
@@ -4252,12 +4253,12 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 //      else if (findSymbol(member, nsAltMessageOperation)) {
 //         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
 //      }
-      /*else objectInfo = */compileOperations(member, scope/*, objectInfo, mode*/);
+      /*else */objectInfo = compileOperations(member, scope, objectInfo/*, mode*/);
    }
 
    scope.writer->closeNode();
-//
-//   return objectInfo;
+
+   return objectInfo;
 }
 
 //ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
@@ -4466,9 +4467,9 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
 //   _writer.endCatch(*scope.tape);
 //}
 
-/*ObjectInfo*/void Compiler :: compileCode(DNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 {
-//   ObjectInfo retVal;
+   ObjectInfo retVal;
 
    bool needVirtualEnd = true;
    DNode statement = node.firstChild();
@@ -4534,7 +4535,7 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
       recordDebugVirtualStep(scope, dsVirtualEnd);
    }
 
-//   return retVal;
+   return retVal;
 }
 
 //void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalScope& externalScope)
@@ -6030,8 +6031,8 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNod
 void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints*/, bool isStatic)
 {
 //   scope.compileHints(hints);
-//
-//   ObjectInfo retVal;
+
+   ObjectInfo retVal;
    DNode expression = node.firstChild();
    // if it is a singleton
    if (isSingleStatement(expression)) {
@@ -6048,10 +6049,10 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
          // if it is normal nested class
          else compileSingletonClass(classNode, classScope);
 
-         //if (test(classScope.info.header.flags, elStateless)) {
-            //// if it is a stateless singleton
-            //retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-         //}
+         if (test(classScope.info.header.flags, elStateless)) {
+            // if it is a stateless singleton
+            retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+         }
       }
       else if (classNode == nsSubCode) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -6061,7 +6062,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
          compileAction(classNode, classScope, DNode(), true);
 
-         //retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
       else if (classNode == nsInlineExpression) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -6071,7 +6072,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
          compileAction(classNode, classScope, expression.firstChild(), true);
 
-         //retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
       else if (classNode == nsSubjectArg || classNode == nsMethodParameter) {
          ModuleScope* moduleScope = scope.moduleScope;
@@ -6081,7 +6082,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
          compileAction(goToSymbol(classNode, nsInlineExpression), classScope, classNode, true);
 
-         //retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
    }
 
@@ -6099,7 +6100,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //
 //      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 //      openDebugExpression(codeScope);
-      /*retVal = */compileExpression(expression, codeScope/*, 0*/);
+      retVal = compileExpression(expression, codeScope/*, 0*/);
 //      endDebugExpression(codeScope);
 
 //   }

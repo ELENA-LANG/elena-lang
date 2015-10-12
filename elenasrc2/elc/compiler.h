@@ -114,6 +114,7 @@ public:
    {
       okUnknown = 0,
    
+      okObject,                       // param - class reference
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
@@ -128,7 +129,6 @@ public:
    //
    //   okIndexAccumulator,
    //   okExtraRegister,
-   //   okAccumulator,
    //   okBase,
    //   okAccField,                     // param - field offset
    //
@@ -856,16 +856,16 @@ private:
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
 //   void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
-   /*ObjectInfo*/void compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
-   /*ObjectInfo*/void compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
+   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 //
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 //
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   /*ObjectInfo*/void compileTerminal(DNode node, CodeScope& scope, int mode);
-   /*ObjectInfo*/void compileObject(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
@@ -882,15 +882,15 @@ private:
 //
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //
-   /*ObjectInfo*/void compileMessage(DNode node, CodeScope& scope/*, ObjectInfo object*/);
-   //ObjectInfovoid compileMessage(DNode node, CodeScope& scope, MessageScope& callStack, ObjectInfo object, int messageRef, int mode);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
 //   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
-   /*ObjectInfo*/void compileOperations(DNode node, CodeScope& scope/*, ObjectInfo target, int mode*/);
+   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target/*, int mode*/);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   /*ObjectInfo*/void compileExpression(DNode node, CodeScope& scope/*, int mode*/);
-   /*ObjectInfo*/void compileRetExpression(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExpression(DNode node, CodeScope& scope/*, int mode*/);
+   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
 //   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
@@ -916,7 +916,7 @@ private:
 //   void compileResendExpression(DNode node, CodeScope& scope);
 //   void compileDispatchExpression(DNode node, CodeScope& scope);
 
-   /*ObjectInfo*/void compileCode(DNode node, CodeScope& scope);
+   ObjectInfo compileCode(DNode node, CodeScope& scope);
 
    void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
