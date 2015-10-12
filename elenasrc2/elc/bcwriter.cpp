@@ -2732,7 +2732,7 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
          callResolvedMethod(tape, strongAttr.argument, callNode.argument);
       }
       else if (semiAttr != lxNone) {
-         callVMTResolvedMethod(tape, strongAttr.argument, callNode.argument);
+         callVMTResolvedMethod(tape, semiAttr.argument, callNode.argument);
       }
       else {
          // copym message
