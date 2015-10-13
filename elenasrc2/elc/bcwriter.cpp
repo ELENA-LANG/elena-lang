@@ -2726,6 +2726,8 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 
       declareBlock(tape);
 
+      tape.write(bcALoadSI);
+
       SNode strongAttr = findChild(callNode, lxStrong);
       SNode semiAttr = findChild(callNode, lxSemiStrong);
       if (strongAttr != lxNone) {
