@@ -2635,6 +2635,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
          break;
+      case lxCurrent:
+         // pushsi index
+         tape.write(bcPushSI, argument);
+         break;
       case lxNil:
          // pushn 0
          tape.write(bcPushN, 0);
@@ -2661,6 +2665,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
    case lxParam:
       // aloadfi index
       tape.write(bcALoadFI, argument, bpFrame);
+      break;
+   case lxCurrent:
+      // aloadsi index
+      tape.write(bcALoadSI, argument);
       break;
    case lxNil:
       // acopyr 0

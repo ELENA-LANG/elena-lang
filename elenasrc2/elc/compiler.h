@@ -887,9 +887,9 @@ private:
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
 //   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
 
-   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target/*, int mode*/);
+   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileExpression(DNode node, CodeScope& scope/*, int mode*/);
+   ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //

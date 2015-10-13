@@ -20,8 +20,8 @@ using namespace _ELENA_;
 #define HINT_DEBUGSTEP        0x80000000
 //#define HINT_INLINE           0x40000000
 //#define HINT_LOOP             0x20000000
-//#define HINT_TRY              0x10000000
-//#define HINT_ALT              0x12000000
+#define HINT_TRY              0x10000000
+#define HINT_ALT              0x12000000
 //#define HINT_CATCH            0x08000000
 //#define HINT_STACKSAFE_CALL   0x04000000
 //#define HINT_INVERTED         0x02000000
@@ -2172,7 +2172,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //         }
          /*else {*/
          scope.writer->newNode(lxExpression);
-         result = compileExpression(member, scope/*, 0*/);
+         result = compileExpression(member, scope, 0);
          /*}*/
          break;
 //      case nsMessageReference:
@@ -3586,7 +3586,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object/*, int mode*/)
+ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
 {
    ObjectInfo currentObject = object;
 
@@ -3644,21 +3644,30 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //      else if (member == nsAssigning) {
 //         currentObject = compileAssigningExpression(node, member, scope, currentObject);
 //      }
-//      else if (member == nsAltMessageOperation) {
+      else if (member == nsAltMessageOperation) {
+         scope.writer->newNode(lxAlternative);
+         scope.writer->appendNode(lxObject);
+
 //         if (!altMode) {
 //            _writer.declareAlt(*scope.tape);
 //            altMode = true;
 //         }
 //         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
-//         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator));
-//      }
-//      else if (member == nsCatchMessageOperation) {
-//         if (!catchMode) {
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->closeNode();
+      }
+      else if (member == nsCatchMessageOperation) {
+         scope.writer->newNode(lxCatch);
+         scope.writer->appendNode(lxObject);
+         //         if (!catchMode) {
 //            _writer.declareCatch(*scope.tape);
 //            catchMode = true;
 //         }
-//         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator));
-//      }
+         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator));
+
+         scope.writer->closeNode();
+      }
 //      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
 //         || member == nsL7Operation || member == nsL0Operation)
 //      {
@@ -4195,7 +4204,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 {
 //   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-   ObjectInfo info = compileExpression(node, scope/*, mode*/);
+   ObjectInfo info = compileExpression(node, scope, mode);
 
 //   _writer.loadObject(*scope.tape, info);
 //
@@ -4236,7 +4245,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    return ObjectInfo(okObject, 0, 0/*, subj*/);
 }
 
-ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mode*/)
+ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 {
    scope.writer->newNode(lxExpression);
 
@@ -4244,16 +4253,16 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope/*, int mod
 
    ObjectInfo objectInfo;
    if (member==nsObject) {
-      objectInfo = compileObject(member, scope, HINT_DEBUGSTEP/*| mode*/);
+      objectInfo = compileObject(member, scope, HINT_DEBUGSTEP | mode);
    }
    if (member != nsNone) {
-//      if (findSymbol(member, nsCatchMessageOperation)) {
-//         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
-//      }
-//      else if (findSymbol(member, nsAltMessageOperation)) {
-//         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
-//      }
-      /*else */objectInfo = compileOperations(member, scope, objectInfo/*, mode*/);
+      if (findSymbol(member, nsCatchMessageOperation)) {
+         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
+      }
+      else if (findSymbol(member, nsAltMessageOperation)) {
+         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
+      }
+      else objectInfo = compileOperations(member, scope, objectInfo, mode);
    }
 
    scope.writer->closeNode();
@@ -4487,7 +4496,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsExpression:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            openDebugExpression(scope);
-            compileExpression(statement, scope/*, 0*/);
+            compileExpression(statement, scope, 0);
 //            endDebugExpression(scope);
             break;
 //         case nsThrow:
@@ -6099,7 +6108,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //
 //      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 //      openDebugExpression(codeScope);
-      retVal = compileExpression(expression, codeScope/*, 0*/);
+      retVal = compileExpression(expression, codeScope, 0);
 //      endDebugExpression(codeScope);
 
 //   }

@@ -27,7 +27,12 @@ enum LexicalType
    lxConstantString,
    lxConstantClass,
    lxNil,
+   lxCurrent,
+
    lxCall,
+   lxAlternative,
+   lxCatch,
+
    lxMessage,
 
    lxStrong,
