@@ -2639,6 +2639,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushn 0
          tape.write(bcPushN, 0);
          break;
+      case lxResult:
+         // pusha
+         tape.write(bcPushA);
+         break;
       default:
          break;
    }
@@ -2780,6 +2784,7 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       current = getChild(node, directMode ? counter - index - 1 : index);
       if (current == lxObject) {
          translateObjectExpression(tape, current);
+         pushObject(tape, lxResult);
       }
 
       index++;
@@ -2794,8 +2799,8 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    // executing operations
    current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxMessage) {
-         translateCall(tape, current);
+      if (current == lxCall) {
+         translateCall(tape, current.firstChild());
       }
       else if (current == lxAlternative) {
          declareAlt(tape);

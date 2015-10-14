@@ -3646,7 +3646,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //      }
       else if (member == nsAltMessageOperation) {
          scope.writer->newNode(lxAlternative);
-         scope.writer->appendNode(lxObject);
+         scope.writer->appendNode(lxResult);
 
 //         if (!altMode) {
 //            _writer.declareAlt(*scope.tape);
@@ -3659,7 +3659,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       }
       else if (member == nsCatchMessageOperation) {
          scope.writer->newNode(lxCatch);
-         scope.writer->appendNode(lxObject);
          //         if (!catchMode) {
 //            _writer.declareCatch(*scope.tape);
 //            catchMode = true;
