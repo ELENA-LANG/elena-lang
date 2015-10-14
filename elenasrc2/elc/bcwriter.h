@@ -81,7 +81,7 @@ public:
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
-//   void declareArgumentList(CommandTape& tape, int count);
+   void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -90,7 +90,7 @@ public:
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
-//   void declareAlt(CommandTape& tape);
+   void declareAlt(CommandTape& tape);
 //   void declarePrimitiveCatch(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
@@ -183,7 +183,7 @@ public:
 
 //   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
-//   void endAlt(CommandTape& tape);
+   void endAlt(CommandTape& tape);
 //   void endPrimitiveCatch(CommandTape& tape);
 //   void endThenBlock(CommandTape& tape, bool withStackContro = true);
 //   void endLoop(CommandTape& tape);
@@ -224,12 +224,14 @@ public:
 
    void translateBreakpoint(CommandTape& tape, SyntaxReader::Node node);
 
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
    void pushObject(CommandTape& tape, SyntaxReader::Node node);
    void loadObject(CommandTape& tape, SyntaxReader::Node node);
 
+   void translateCall(CommandTape& tape, SyntaxReader::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxReader::Node node);
    void translateObjectExpression(CommandTape& tape, SyntaxReader::Node node);
    void translateExpression(CommandTape& tape, SyntaxReader::Node node);

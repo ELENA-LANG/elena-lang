@@ -3664,7 +3664,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //            _writer.declareCatch(*scope.tape);
 //            catchMode = true;
 //         }
-         currentObject = compileMessage(member, scope, ObjectInfo(okAccumulator));
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
 
          scope.writer->closeNode();
       }
@@ -4256,13 +4256,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
       objectInfo = compileObject(member, scope, HINT_DEBUGSTEP | mode);
    }
    if (member != nsNone) {
-      if (findSymbol(member, nsCatchMessageOperation)) {
-         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_TRY));
-      }
-      else if (findSymbol(member, nsAltMessageOperation)) {
-         objectInfo = compileOperations(member, scope, objectInfo, (mode | HINT_ALT));
-      }
-      else objectInfo = compileOperations(member, scope, objectInfo, mode);
+      objectInfo = compileOperations(member, scope, objectInfo, mode);
    }
 
    scope.writer->closeNode();

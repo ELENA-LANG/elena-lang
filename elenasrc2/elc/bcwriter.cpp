@@ -223,76 +223,76 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
    tape.write(blBlock);
 }
 
-////void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
+void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
+{
+   // { pushn 0 } n
+   for(int i = 0 ; i < count ; i++)
+      tape.write(bcPushN, 0);
+}
+
+//void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+//{
+//   // pushn  value
+//   tape.write(bcPushN, value);
+//}
+//
+////int ByteCodeWriter :: declareLabel(CommandTape& tape)
 ////{
-////   // { pushn 0 } n
-////   for(int i = 0 ; i < count ; i++)
-////      tape.write(bcPushN, 0);
-////}
-////
-////void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
-////{
-////   // pushn  value
-////   tape.write(bcPushN, value);
-////}
-////
-//////int ByteCodeWriter :: declareLabel(CommandTape& tape)
-//////{
-//////   return tape.newLabel();
-//////}
-////
-////int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
-////{
-////   // loop-begin
-////
-////   tape.newLabel();                 // declare loop start label
-////   tape.setLabel(true);
-////
-////   int end = tape.newLabel();       // declare loop end label
-////
-//////   // snop
-//////   if (threadFriendly)
-//////      tape.write(bcSNop);
-////
-////   return end;
-////}
-////
-////void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
-////{
-////   if (withStackControl)
-////      tape.write(blDeclare, bsBranch);  // mark branch-level
-////
-////   tape.newLabel();                  // declare then-end label
-////}
-////
-////void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
-////{
-////   tape.write(blDeclare, bsBranch);  // mark branch-level
-////   tape.newLabel();                  // declare end label
-////   tape.newLabel();                  // declare else label
-////}
-////
-////void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
-////{
-////   //   jump end
-////   // labElse
-////   tape.write(bcJump, baPreviousLabel);
-////   tape.setLabel();
-////
-////   tape.write(bcResetStack);
-////}
-////
-////void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
-////{
-////   tape.write(blDeclare, bsBranch);  // mark branch-level
-////   tape.newLabel();                  // declare end label
-////}
-////
-////void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
-////{
-////   tape.newLabel();                  // declare next option
+////   return tape.newLabel();
 ////}
 //
+//int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
+//{
+//   // loop-begin
+//
+//   tape.newLabel();                 // declare loop start label
+//   tape.setLabel(true);
+//
+//   int end = tape.newLabel();       // declare loop end label
+//
+////   // snop
+////   if (threadFriendly)
+////      tape.write(bcSNop);
+//
+//   return end;
+//}
+//
+//void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
+//{
+//   if (withStackControl)
+//      tape.write(blDeclare, bsBranch);  // mark branch-level
+//
+//   tape.newLabel();                  // declare then-end label
+//}
+//
+//void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
+//{
+//   tape.write(blDeclare, bsBranch);  // mark branch-level
+//   tape.newLabel();                  // declare end label
+//   tape.newLabel();                  // declare else label
+//}
+//
+//void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
+//{
+//   //   jump end
+//   // labElse
+//   tape.write(bcJump, baPreviousLabel);
+//   tape.setLabel();
+//
+//   tape.write(bcResetStack);
+//}
+//
+//void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
+//{
+//   tape.write(blDeclare, bsBranch);  // mark branch-level
+//   tape.newLabel();                  // declare end label
+//}
+//
+//void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
+//{
+//   tape.newLabel();                  // declare next option
+//}
+
 //void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
 //{
 //   tape.write(bcJump, baPreviousLabel);
@@ -353,20 +353,20 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
 
 //void ByteCodeWriter :: declarePrimitiveCatch(CommandTape& tape)
 //{
@@ -1207,15 +1207,15 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    tape.setLabel();
 }
 
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//   // pop
-//
-//   tape.setLabel();
-//   tape.write(bcPop);
-//}
-//
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+   // pop
+
+   tape.setLabel();
+   tape.write(bcPop);
+}
+
 //void ByteCodeWriter :: endPrimitiveCatch(CommandTape& tape)
 //{
 //   // labEnd
@@ -2612,12 +2612,8 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SyntaxReader::Node
    }
 }
 
-void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node)
+void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
 {
-   translateBreakpoint(tape, findChild(node, lxBreakpoint));
-
-   LexicalType type = node.type;
-   ref_t argument = node.argument;
    switch (type)
    {
       case lxSymbol:
@@ -2688,6 +2684,10 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // asavefi index
          tape.write(bcASaveFI, argument, bpFrame);
          break;
+      case lxCurrent:
+         // asavesi index
+         tape.write(bcASaveSI, argument);
+         break;
       default:
          break;
    }
@@ -2700,62 +2700,115 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
    loadObject(tape, node.type, node.argument);
 }
 
+void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
+{
+   translateBreakpoint(tape, findChild(node, lxBreakpoint));
+
+   pushObject(tape, node.type, node.argument);
+}
+
+void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callNode)
+{
+   translateBreakpoint(tape, findChild(callNode, lxBreakpoint));
+
+   declareBlock(tape);
+
+   tape.write(bcALoadSI);
+
+   SNode strongAttr = findChild(callNode, lxStrong);
+   SNode semiAttr = findChild(callNode, lxSemiStrong);
+   if (strongAttr != lxNone) {
+      callResolvedMethod(tape, strongAttr.argument, callNode.argument);
+   }
+   else if (semiAttr != lxNone) {
+      callVMTResolvedMethod(tape, semiAttr.argument, callNode.argument);
+   }
+   else {
+      // copym message
+      // aloadsi 0
+      // acallvi offs
+
+      tape.write(bcCopyM, callNode.argument);
+      tape.write(bcALoadSI, 0);
+      tape.write(bcACallVI, 0);
+      tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+   }
+
+   declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+}
+
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 {
    bool directMode = true;
+   bool tryMode = false;
+   bool altMode = false;
 
-   // verify if parameters can be saved directly
+   // analizing a sub tree
    SNode current = node.firstChild();
+   size_t paramCount = 0;
    while (current != lxNone) {
-      if (current.firstChild() == lxExpression) {
-         directMode = false;
+      if (current == lxObject) {
+         paramCount++;
 
-         break;
+         if(current.firstChild() == lxExpression)
+            directMode = false;
+      }
+      else if (current == lxCatch) {
+         tryMode = true;
+      }         
+      else if (current == lxAlternative) {
+         altMode = true;
       }
 
       current = current.nextNode();
    }
 
-   // save the parameters
+   if (altMode)
+      pushObject(tape, lxNil);
+
+   if (altMode || tryMode)
+      declareTry(tape);
+
+   // saving parameters
+   if (!directMode && paramCount > 0) {
+      declareArgumentList(tape, paramCount);
+   }
+
    size_t counter = countChildren(node);
    size_t index = 0;
    while (index < counter) {
       current = getChild(node, directMode ? counter - index - 1 : index);
       if (current == lxObject) {
-         pushObject(tape, current.firstChild());
+         translateObjectExpression(tape, current);
       }
 
       index++;
    }
 
-   SNode callNode = findChild(node, lxCall).firstChild();
-   if (callNode == lxMessage) {
-      translateBreakpoint(tape, findChild(callNode, lxBreakpoint));
+   // saving the target for alternative message
+   if (altMode) {
+      loadObject(tape, lxCurrent);
+      saveObject(tape, lxCurrent, paramCount);
+   }
 
-      declareBlock(tape);
-
-      tape.write(bcALoadSI);
-
-      SNode strongAttr = findChild(callNode, lxStrong);
-      SNode semiAttr = findChild(callNode, lxSemiStrong);
-      if (strongAttr != lxNone) {
-         callResolvedMethod(tape, strongAttr.argument, callNode.argument);
+   // executing operations
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxMessage) {
+         translateCall(tape, current);
       }
-      else if (semiAttr != lxNone) {
-         callVMTResolvedMethod(tape, semiAttr.argument, callNode.argument);
+      else if (current == lxAlternative) {
+         declareAlt(tape);
+         translateCallExpression(tape, current);
+         endAlt(tape);
       }
-      else {
-         // copym message
-         // aloadsi 0
-         // acallvi offs
-
-         tape.write(bcCopyM, callNode.argument);
-         tape.write(bcALoadSI, 0);
-         tape.write(bcACallVI, 0);
-         tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+      else if (current == lxCatch) {
+         declareCatch(tape);
+         translateCallExpression(tape, current);
+         endCatch(tape);
       }
 
-      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+      current = current.nextNode();
    }
 }
 
