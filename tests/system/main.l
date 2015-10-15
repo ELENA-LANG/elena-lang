@@ -6,9 +6,9 @@
 [   
     XTest eval.
 
-//    console writeLine:"Starting...".
-//
-//    ControlTest eval.
+    console writeLine:"Starting...".
+
+    ControlTest eval.
 //    ObjectTest eval.
 //    BooleanTest eval.
 //    IntegerTest eval.

@@ -386,12 +386,12 @@ ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
    if (identifier==tsReference) {
       return mapReferenceInfo(identifier, false);
    }
-//   else if (identifier==tsPrivate) {
-//      if (StringHelper::compare(identifier.value, NIL_VAR)) {
-//         return ObjectInfo(okNil);
-//      }
-//      else return defineObjectInfo(mapTerminal(identifier, true), true);
-//   }
+   else if (identifier==tsPrivate) {
+      /*if (StringHelper::compare(identifier.value, NIL_VAR)) {
+         return ObjectInfo(okNil);
+      }
+      else */return defineObjectInfo(mapTerminal(identifier, true), true);
+   }
    else if (identifier==tsIdentifier) {
       return defineObjectInfo(mapTerminal(identifier, true), true);
    }
@@ -506,11 +506,11 @@ ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
       }
       else return reference;
    }
-//   else if (terminal == tsPrivate) {
-//      ReferenceNs name(module->Name(), terminal);
-//
-//      return mapReference(name, existing);
-//   }
+   else if (terminal == tsPrivate) {
+      ReferenceNs name(module->Name(), terminal);
+
+      return mapReference(name, existing);
+   }
    else return mapReference(terminal, existing);
 }
 

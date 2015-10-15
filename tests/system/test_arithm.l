@@ -288,11 +288,11 @@
 //    console write:"(false != false) is " writeLine:(b2 != b2).
 //    console write:"(false != true) is " writeLine:(b2 != b1).
 //].
-//
-//// --- ControlTest ---
-//
-//#symbol ControlTest =
-//[
+
+// --- ControlTest ---
+
+#symbol ControlTest =
+[
 //    true ?
 //    [
 //        console writeLine:"? operator works!".
@@ -305,8 +305,8 @@
 //    ! [
 //        console writeLine:"?-! operator works!".
 //    ].
-//].
-//
+].
+
 //// --- IntArithmeticTest ---
 //
 //#symbol IntegerTest =
