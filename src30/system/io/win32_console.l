@@ -1,5 +1,5 @@
-//#import system.
-//
+#import system.
+
 //#subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
 //
 //#class(struct:embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
@@ -44,30 +44,30 @@
 //        aCoord write &short:x &short:y.
 //    ]
 //}
-//
-//// --- $ConsoleHandleFactory --
-//
-//#symbol $ConsoleHandleFactory =
-//{
-//    #method(type:handle) new &attributes:anAttributes
-//    [ 
-//        #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
-//        
-//        ^ Handle new &handle:aHandle.
-//    ]
-//}.
-//
-//// --- ConsoleWriter ---
-//
-//#class(struct:embeddable) $ConsoleWriter
-//{
-//    #field(type:handle) theHandle.
-//
-//    #constructor new &handle:aHandle
-//    [
+
+// --- $ConsoleHandleFactory --
+
+#symbol $ConsoleHandleFactory =
+{
+    #method(type:handle) new &attributes:anAttributes
+    [ 
+        //#var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
+        
+        //^ Handle new &handle:aHandle.
+    ]
+}.
+
+// --- ConsoleWriter ---
+
+#class(struct:embeddable) $ConsoleWriter
+{
+    #field(type:handle) theHandle.
+
+    #constructor new &handle:aHandle
+    [
 //        theHandle := aHandle.
-//    ]
-//
+    ]
+
 //    #method write &literal:aLiteral
 //    [
 //        $self write &wide:(aLiteral wide).
@@ -116,19 +116,19 @@
 //        system'external'KERNEL32 CloseHandle
 //            &handle:theHandle.
 //    ]
-//}
-//
-//// --- ConsoleReader ---
-//
-//#class(sealed,struct:embeddable) $ConsoleReader
-//{
-//    #field(type:handle) theHandle.
-//    
-//    #constructor new &handle:aHandle
-//    [
+}
+
+// --- ConsoleReader ---
+
+#class(sealed,struct:embeddable) $ConsoleReader
+{
+    #field(type:handle) theHandle.
+    
+    #constructor new &handle:aHandle
+    [
 //        theHandle := aHandle.
-//    ]
-//
+    ]
+
 //    #method(stacksafe) read &vchar:aChar
 //    [
 //        #var(type:bytearray,size:20)aDump.
@@ -249,10 +249,10 @@
 //        system'external'KERNEL32 CloseHandle
 //            &handle:theHandle.
 //    ]
-//}
-//
-//// --- Console Standard Symbols
-//
-//#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF5h).
-//
-//#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h).
+}
+
+// --- Console Standard Symbols
+
+#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF5h).
+
+#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h).

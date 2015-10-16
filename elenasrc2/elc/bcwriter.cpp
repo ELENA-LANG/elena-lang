@@ -2583,14 +2583,14 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskVMTRef;
       case lxConstantString:
          return mskLiteralRef;
-      //case okCharConstant:
-      //   return mskCharRef;
-      //case okIntConstant:
-      //   return mskInt32Ref;
-      //case okLongConstant:
-      //   return mskInt64Ref;
-      //case okRealConstant:
-      //   return mskRealRef;
+      case lxConstantChar:
+         return mskCharRef;
+      case lxConstantInt:
+         return mskInt32Ref;
+      case lxConstantLong:
+         return mskInt64Ref;
+      case lxConstantReal:
+         return mskRealRef;
       //case okMessageConstant:
       //   return mskMessage;
       //case okSignatureConstant:
@@ -2623,6 +2623,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantString:
       case lxConstantClass:
       case lxConstantSymbol:
+      case lxConstantChar:
+      case lxConstantInt:
+      case lxConstantLong:
+      case lxConstantReal:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -2634,6 +2638,16 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxCurrent:
          // pushsi index
          tape.write(bcPushSI, argument);
+         break;
+      case lxField:
+//      case okOuter:
+         // aloadfi 1
+         // pushai offset / pusha
+         tape.write(bcALoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcPushA);
+         }
+         else tape.write(bcPushAI, argument);
          break;
       case lxNil:
          // pushn 0
@@ -2652,30 +2666,44 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 {
    switch (type)
    {
-   case lxSymbol:
-      tape.write(bcCallR, argument | mskSymbolRef);
-      break;
-   case lxConstantString:
-   case lxConstantClass:
-   case lxConstantSymbol:
-      // pushr reference
-      tape.write(bcACopyR, argument | defineConstantMask(type));
-      break;
-   case lxLocal:
-   case lxParam:
-      // aloadfi index
-      tape.write(bcALoadFI, argument, bpFrame);
-      break;
-   case lxCurrent:
-      // aloadsi index
-      tape.write(bcALoadSI, argument);
-      break;
-   case lxNil:
-      // acopyr 0
-      tape.write(bcACopyR);
-      break;
-   default:
-      break;
+      case lxSymbol:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         break;
+      case lxConstantString:
+      case lxConstantClass:
+      case lxConstantSymbol:
+      case lxConstantChar:
+      case lxConstantInt:
+      case lxConstantLong:
+      case lxConstantReal:
+         // pushr reference
+         tape.write(bcACopyR, argument | defineConstantMask(type));
+         break;
+      case lxLocal:
+      case lxParam:
+         // aloadfi index
+         tape.write(bcALoadFI, argument, bpFrame);
+         break;
+      case lxCurrent:
+         // aloadsi index
+         tape.write(bcALoadSI, argument);
+         break;
+      case lxNil:
+         // acopyr 0
+         tape.write(bcACopyR);
+         break;
+      case lxField:
+//      case okOuter:
+         // aloadfi 1
+         // pushai offset / pusha
+         tape.write(bcALoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcPushA);
+         }
+         else tape.write(bcPushAI, argument);
+         break;
+      default:
+         break;
    }
 }
 
@@ -2784,7 +2812,10 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       current = getChild(node, directMode ? counter - index - 1 : index);
       if (current == lxObject) {
          translateObjectExpression(tape, current);
-         pushObject(tape, lxResult);
+         if (directMode) {
+            pushObject(tape, lxResult);
+         }
+         else saveObject(tape, lxCurrent, index);
       }
 
       index++;
@@ -2819,7 +2850,11 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
-   loadObject(tape, node.firstChild());
+   SNode object = node.firstChild();
+   if (object == lxExpression) {
+      translateExpression(tape, object);
+   }
+   else loadObject(tape, object);
 }
 
 void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)

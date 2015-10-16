@@ -1,5 +1,5 @@
-//// ==== ver 3.4.0 ===
-//
+// ==== ver 3.4.0 ===
+
 //// === basic logical types ===
 //#subject(class:system'BaseBoolValue) bool.
 // 
@@ -64,9 +64,9 @@
 //#subject(class:system'IndexFunction1)nfunc.
 //#subject(class:system'IndexFunction2)nnfunc.
 //#subject(class:system'IndexFunction3)n3func.
-//
-//// === system handles ===
-//#subject(class:Handle) handle.
+
+// === system handles ===
+#subject(class:Handle) handle.
 //#subject(class:system'RTPointer)rt_ptr.
 //#subject(class:system'UnsafePointer)dirty_ptr.
 //

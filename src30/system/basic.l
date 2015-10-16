@@ -15,11 +15,11 @@
 //    #method(type:bool) greater : anObject = anObject less:$self bool.
 }
 
-//// --- BaseNumber ---
-//
-///// A base numeric value
-//#class BaseNumber :: BaseValue
-//{
+// --- BaseNumber ---
+
+/// A base numeric value
+#class BaseNumber :: BaseValue
+{
 //    /// Adds the value
 //    #method add : anObject = anObject cast:%add &to:$self.
 //
@@ -31,13 +31,13 @@
 //
 //    /// Divides into the value
 //    #method divide : anObject = anObject cast:%divide &to:$self.
-//}
-//
-//// --- IntBaseNumber ---
-//
-///// A base integer value
-//#class IntBaseNumber :: BaseNumber
-//{
+}
+
+// --- IntBaseNumber ---
+
+/// A base integer value
+#class IntBaseNumber :: BaseNumber
+{
 //    /// Execute bitwise AND operation
 //    #method and : anObject = anObject cast:%and &to:$self.
 //    
@@ -57,13 +57,13 @@
 //        
 //    /// Returns the negated value        
 //    #method negative = 0 subtract:$self.
-//}
-//
-//// --- IntBaseVariable ---
-//
-///// A base integer variable
-//#class IntBaseVariable :: IntBaseNumber
-//{
+}
+
+// --- IntBaseVariable ---
+
+/// A base integer variable
+#class IntBaseVariable :: IntBaseNumber
+{
 //    /// Assigns the numeric value
 //    #method write : anOperand
 //    [
@@ -93,13 +93,13 @@
 //    [
 //        anOperand cast:%divideInto &to:$self.
 //    ]
-//}
-//
-//// --- BaseNumber ---
-//
-///// A base numeric variable
-//#class BaseVariable :: BaseNumber
-//{
+}
+
+// --- BaseNumber ---
+
+/// A base numeric variable
+#class BaseVariable :: BaseNumber
+{
 //    /// Assigns the value
 //    #method write : anOperand
 //    [
@@ -129,13 +129,13 @@
 //    [
 //        anOperand cast:%divideInto &to:$self.
 //    ]
-//}
-//
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//#class(sealed,integer:1) ByteNumber :: IntBaseNumber
-//{
+}
+
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+#class(sealed,integer:1) ByteNumber :: IntBaseNumber
+{
 //    /// Returns the minimal value (0)
 //    #constructor min
 //        => system'internal'byte_min.
@@ -374,13 +374,13 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
-//// --- ShortNumber ---
-//
-///// A signed 16 bit integer
-//#class(sealed,integer:2) ShortNumber :: IntBaseNumber
-//{
+}
+
+// --- ShortNumber ---
+
+/// A signed 16 bit integer
+#class(sealed,integer:2) ShortNumber :: IntBaseNumber
+{
 //    /// Returns the minimal value (-32768)
 //    #constructor min
 //        => system'internal'short_min.
@@ -630,13 +630,13 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
-//// --- IntNumber ---
-//
-///// A signed 32 bit integer
-//#class(sealed,integer:4) IntNumber :: IntBaseNumber
-//{
+}
+
+// --- IntNumber ---
+
+/// A signed 32 bit integer
+#class(sealed,integer:4) IntNumber :: IntBaseNumber
+{
 //    /// Creates the object with the minimal value
 //    #constructor min
 //        => system'internal'int_min.
@@ -900,13 +900,13 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
-//// --- longnumber ---
-//
-///// A signed 64 bit integer value
-//#class(sealed,integer:8) LongNumber :: IntBaseNumber
-//{
+}
+
+// --- longnumber ---
+
+/// A signed 64 bit integer value
+#class(sealed,integer:8) LongNumber :: IntBaseNumber
+{
 //    /// Returns the minimal value
 //    #constructor min
 //        => system'internal'long_min.
@@ -1164,13 +1164,13 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
-//// --- realNumber ---
-//
-///// A 64bit float numeric value
-//#class(sealed,floating:8) RealNumber :: BaseNumber
-//{
+}
+
+// --- realNumber ---
+
+/// A 64bit float numeric value
+#class(sealed,floating:8) RealNumber :: BaseNumber
+{
 //    /// Returns the minimal value
 //    #constructor min
 //        <= new &real: -1.7976931348623157e+308r.
@@ -1358,8 +1358,8 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
+}
+
 //// --- Byte ---
 //
 ///// A 8bit unsigned integer variable.

@@ -1,7 +1,7 @@
-//// --- Handler ---
-//
-//#class(sealed,integer:4) Handle
-//{
+// --- Handler ---
+
+#class(sealed,integer:4) Handle
+{
 //    #constructor(stacksafe) new &handle:aHandle
 //        => system'internal'int_copy.
 //
@@ -21,8 +21,8 @@
 //    
 //    /// Dispatches the verb to the target object with bytearray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &handle:$self.
-//}
-//
+}
+
 //// --- RTPointer ---
 //
 //#static rt_sync = Object new.

@@ -348,7 +348,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 
    defaultNs.add(module->Name());
 
-//   loadTypes(module);
+   loadTypes(module);
 //   loadExtensions(TerminalInfo(), module);
 }
 
@@ -412,21 +412,21 @@ ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
    return 0;
 }
 
-//ref_t Compiler::ModuleScope :: mapNewType(ident_t terminal)
-//{
-//   IdentifierString fullName(terminal);
-//   fullName.append('$');
-//
-//   ident_t ns = module->Name();
-//   if (StringHelper::compare(ns, STANDARD_MODULE)) {
-//   }
-//   else if (StringHelper::compare(ns, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
-//      fullName.append(ns + STANDARD_MODULE_LEN + 1);
-//   }
-//   else fullName.append(ns);
-//
-//   return module->mapSubject(fullName, false);
-//}
+ref_t Compiler::ModuleScope :: mapNewType(ident_t terminal)
+{
+   IdentifierString fullName(terminal);
+   fullName.append('$');
+
+   ident_t ns = module->Name();
+   if (StringHelper::compare(ns, STANDARD_MODULE)) {
+   }
+   else if (StringHelper::compare(ns, STANDARD_MODULE, STANDARD_MODULE_LEN)) {
+      fullName.append(ns + STANDARD_MODULE_LEN + 1);
+   }
+   else fullName.append(ns);
+
+   return module->mapSubject(fullName, false);
+}
 
 ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal)
 {
@@ -838,26 +838,26 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, Termi
 //      hints = hints.nextNode();
 //   }
 //}
-//
-//void Compiler::ModuleScope :: loadTypes(_Module* extModule)
-//{
-//   if (extModule) {
-//      ReferenceNs sectionName(extModule->Name(), TYPE_SECTION);
-//
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t subj_ref = importSubject(extModule, metaReader.getDWord(), module);
-//
-//            ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
-//
-//            typeHints.add(subj_ref, class_ref);
-//         }
-//      }
-//   }
-//}
-//
+
+void Compiler::ModuleScope :: loadTypes(_Module* extModule)
+{
+   if (extModule) {
+      ReferenceNs sectionName(extModule->Name(), TYPE_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t subj_ref = importSubject(extModule, metaReader.getDWord(), module);
+
+            ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
+
+            typeHints.add(subj_ref, class_ref);
+         }
+      }
+   }
+}
+
 //void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* extModule)
 //{
 //   if (extModule) {
@@ -888,21 +888,21 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, Termi
 //      }
 //   }
 //}
-//
-//void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference, bool internalType)
-//{
-//   if (!internalType) {
-//      ReferenceNs sectionName(module->Name(), TYPE_SECTION);
-//
-//      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//      metaWriter.writeDWord(type_ref);
-//      metaWriter.writeDWord(classReference);
-//   }
-//
-//   typeHints.add(type_ref, classReference, true);
-//}
-//
+
+void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference, bool internalType)
+{
+   if (!internalType) {
+      ReferenceNs sectionName(module->Name(), TYPE_SECTION);
+
+      MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      metaWriter.writeDWord(type_ref);
+      metaWriter.writeDWord(classReference);
+   }
+
+   typeHints.add(type_ref, classReference, true);
+}
+
 //bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
 //{
 //   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
@@ -1005,13 +1005,13 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 //      return ObjectInfo(okParam, (size_t)-1);
 //   }
 //   else {
-//      int reference = info.fields.get(identifier);
-//      if (reference != -1) {
-//         if (test(info.header.flags, elStructureRole)) {
-//            int offset = reference;
-//
-//            return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
-//         }
+      int reference = info.fields.get(identifier);
+      if (reference != -1) {
+         if (test(info.header.flags, elStructureRole)) {
+            int offset = reference;
+
+            return ObjectInfo(okFieldAddress, offset, 0/*, info.fieldTypes.get(offset)*/);
+         }
 ////         else if (test(info.header.flags, elDynamicRole)) {
 ////            int type = getClassType();
 ////            if (type == elDebugArray) {
@@ -1019,15 +1019,15 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 ////            }
 ////            else return ObjectInfo(okUnknown);
 ////         }
-//         // otherwise it is a normal field
-//         else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
-//      }
-//      else {
+         // otherwise it is a normal field
+         else return ObjectInfo(okField, reference, 0/*, info.fieldTypes.get(reference)*/);
+      }
+      else {
          //if (identifier.symbol == tsReference && StringHelper::compare(identifier.value, moduleScope->module->resolveReference(this->reference))) {
          //   return ObjectInfo(okConstantClass, this->reference, info.classClassRef);
          //}
          /*else */return Scope::mapObject(identifier);
-//      }
+      }
 //   }
 }
 
@@ -2040,58 +2040,68 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 
       scope.writer->newNode(lxConstantString, object.param);
    }
-//   else if (terminal==tsCharacter) {
-//      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
-//   }
-//   else if (terminal == tsInteger) {
-//      String<ident_c, 20> s(terminal.value, getlength(terminal.value));
-//
-//      long integer = s.toInt();
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // convert back to string as a decimal integer
-//      s.clear();
-//      s.appendHex(integer);
-//
-//      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
-//   }
-//   else if (terminal == tsLong) {
-//      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
-//      s.append(terminal.value, getlength(terminal.value) - 1);
-//
-//      long long integer = StringHelper::strToLongLong(s + 1, 10);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
-//   }
-//   else if (terminal == tsHexInteger) {
-//      String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
-//
-//      long integer = s.toULong(16);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // convert back to string as a decimal integer
-//      s.clear();
-//      s.appendHex(integer);
-//
-//      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
-//   }
-//   else if (terminal == tsReal) {
-//      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
-//      double number = StringHelper::strToDouble(s);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // HOT FIX : to support 0r constant
-//      if (s.Length() == 1) {
-//         s.append(".0");
-//      }
-//
-//      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+   else if (terminal==tsCharacter) {
+      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
+
+      scope.writer->newNode(lxConstantChar, object.param);
+   }
+   else if (terminal == tsInteger) {
+      String<ident_c, 20> s(terminal.value, getlength(terminal.value));
+
+      long integer = s.toInt();
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // convert back to string as a decimal integer
+      s.clear();
+      s.appendHex(integer);
+
+      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
+
+      scope.writer->newNode(lxConstantInt, object.param);
+   }
+   else if (terminal == tsLong) {
+      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
+      s.append(terminal.value, getlength(terminal.value) - 1);
+
+      long long integer = StringHelper::strToLongLong(s + 1, 10);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
+
+      scope.writer->newNode(lxConstantLong, object.param);
+   }
+   else if (terminal == tsHexInteger) {
+      String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
+
+      long integer = s.toULong(16);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // convert back to string as a decimal integer
+      s.clear();
+      s.appendHex(integer);
+
+      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
+
+      scope.writer->newNode(lxConstantInt, object.param);
+   }
+   else if (terminal == tsReal) {
+      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
+      double number = StringHelper::strToDouble(s);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // HOT FIX : to support 0r constant
+      if (s.Length() == 1) {
+         s.append(".0");
+      }
+
+      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
+
+      scope.writer->newNode(lxConstantReal, object.param);
+   }
    else if (!emptystr(terminal)) {
       object = scope.mapObject(terminal);
 
@@ -2111,6 +2121,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             break;
          case okLocal:
             scope.writer->newNode(lxLocal, object.param);
+            break;
+         case okField:
+            scope.writer->newNode(lxField, object.param);
             break;
             //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -2137,24 +2150,23 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 {
    ObjectInfo result;
 
+   scope.writer->newNode(lxObject);
+
    DNode member = objectNode.firstChild();
    switch (member)
    {
       //case nsRetStatement:
       case nsNestedClass:
-         if (objectNode.Terminal() != nsNone) {
-            scope.writer->newNode(lxObject);
+         if (objectNode.Terminal() != nsNone) {            
             result = compileNestedExpression(objectNode, scope, 0);
             break;
          }
       case nsSubCode:
       case nsSubjectArg:
       case nsMethodParameter:
-         scope.writer->newNode(lxObject);
-         result = compileNestedExpression(member, scope, 0);
+         result = compileNestedExpression(member, scope, 0);         
          break;
       case nsInlineExpression:
-         scope.writer->newNode(lxObject);
          result = compileNestedExpression(objectNode, scope, HINT_ACTION);
          break;
       case nsExpression:
@@ -2171,7 +2183,6 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //            else result = compileCollection(member, scope, 0);
 //         }
          /*else {*/
-         scope.writer->newNode(lxExpression);
          result = compileExpression(member, scope, 0);
          /*}*/
          break;
@@ -2179,9 +2190,9 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //         result = compileMessageReference(member, scope);
 //         break;
       default:
-         scope.writer->newNode(lxObject);
          result = compileTerminal(objectNode, scope, mode);
-   }
+   }   
+
    scope.writer->closeNode();
 
    return result;
@@ -3502,34 +3513,36 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       // skip an argument
       if (arg == nsMessageParameter) {
    //         // if it is an open argument list
-   ////         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-   ////            // if a generic argument is used with an open argument list
-   ////            callStack.directOrder = false;
+   //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+   //            // if a generic argument is used with an open argument list
+   //            callStack.directOrder = false;
+   
+               // check if argument list should be unboxed
+   //            DNode param = arg.firstChild();
+   
+   //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+   //               // add argument list to be unboxed
+   //               callStack.oargUnboxing = true;
+   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+   //            }
+   //            else {
+   //               while (arg != nsNone) {
+   //                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
    //
-   //            // check if argument list should be unboxed
-   ////            DNode param = arg.firstChild();
+   //                  arg = arg.nextNode();
+   //               }
    //
-   ////            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-   ////               // add argument list to be unboxed
-   ////               callStack.oargUnboxing = true;
-   ////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-   ////            }
-   ////            else {
-   ////               while (arg != nsNone) {
-   ////                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-   ////
-   ////                  arg = arg.nextNode();
-   ////               }
-   ////
-   ////               // terminator
-   ////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-   ////            }
-   ////            paramCount += OPEN_ARG_COUNT;
-   ////            if (paramCount > 0x0F)
-   ////               scope.raiseError(errNotApplicable, subject);
-   ////         }
-   ////         else {
-   ////            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
+   //               // terminator
+   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+   //            }
+   //            paramCount += OPEN_ARG_COUNT;
+   //            if (paramCount > 0x0F)
+   //               scope.raiseError(errNotApplicable, subject);
+   //         }
+   //         else {
+   //            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
+         compileObject(arg.firstChild(), scope, 0);
+
          paramCount++;
    
 
@@ -3537,8 +3550,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
          if (paramCount >= OPEN_ARG_COUNT)
             scope.raiseError(errTooManyParameters, verb);
    
-   ////            if (arg.firstChild().firstChild() != nsNone)
-   ////               callStack.directOrder = false;
+   //            if (arg.firstChild().firstChild() != nsNone)
+   //               callStack.directOrder = false;
    
          arg = arg.nextNode();
    //         }
@@ -6258,9 +6271,9 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hi
    if (value == NULL) {
       scope.defaultNs.add(ns.value);
 
-//      // load types
-//      scope.loadTypes(module);
-//
+      // load types
+      scope.loadTypes(module);
+
 //      // load extensions
 //      scope.loadExtensions(ns, module);
    }
@@ -6276,36 +6289,36 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hi
 //   if (!scope.defineForward(shortcut.value, node.firstChild().Terminal().value, constant))
 //      scope.raiseError(errDuplicatedDefinition, shortcut);
 //}
-//
-//void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
-//{
-//   bool internalType = member.Terminal().symbol == tsPrivate;
-//
-//   // map a full type name
-//   ref_t typeRef = scope.mapNewType(member.Terminal());
-//
-//   bool  weak = true;
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      if (StringHelper::compare(terminal, HINT_WRAPPER)) {
-//         weak = false;
-//
-//         TerminalInfo roleValue = hints.select(nsHintValue).Terminal();
-//         ref_t classRef = scope.mapTerminal(roleValue);
-//
-//         scope.validateReference(roleValue, classRef);
-//
-//         scope.saveType(typeRef, classRef, internalType);
-//      }
-//      else scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
-//
-//      hints = hints.nextNode();
-//   }
-//
-//   if (weak)
-//      scope.saveType(typeRef, 0, internalType);
-//}
+
+void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
+{
+   bool internalType = member.Terminal().symbol == tsPrivate;
+
+   // map a full type name
+   ref_t typeRef = scope.mapNewType(member.Terminal());
+
+   bool  weak = true;
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_WRAPPER)) {
+         weak = false;
+
+         TerminalInfo roleValue = hints.select(nsHintValue).Terminal();
+         ref_t classRef = scope.mapTerminal(roleValue);
+
+         scope.validateReference(roleValue, classRef);
+
+         scope.saveType(typeRef, classRef, internalType);
+      }
+      else scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
+
+      hints = hints.nextNode();
+   }
+
+   if (weak)
+      scope.saveType(typeRef, 0, internalType);
+}
 
 void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 {
@@ -6315,9 +6328,9 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
       TerminalInfo name = member.Terminal();
 
       switch (member) {
-//         case nsType:
-//            compileType(member, scope, hints);
-//            break;
+         case nsType:
+            compileType(member, scope, hints);
+            break;
          case nsClass:
          {
             ref_t reference = scope.mapTerminal(name);
@@ -6403,7 +6416,7 @@ void Compiler::compileImplementations(DNode member, ModuleScope& scope)
 void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
 {
    while (member != nsNone) {
-      //DNode hints = skipHints(member);
+      DNode hints = skipHints(member);
 
       switch (member) {
          case nsInclude:
@@ -6418,9 +6431,9 @@ void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
             compileIncludeModule(member, scope/*, hints*/);
             break;
          default:
-//            // due to current syntax we need to reset hints back, otherwise they will be skipped
-//            if (hints != nsNone)
-//               member = hints;
+            // due to current syntax we need to reset hints back, otherwise they will be skipped
+            if (hints != nsNone)
+               member = hints;
 
             return;
       }

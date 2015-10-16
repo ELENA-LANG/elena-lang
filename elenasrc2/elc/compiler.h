@@ -119,10 +119,10 @@ public:
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference 
-   //   okCharConstant,                 // param - reference
-   //   okIntConstant,                  // param - reference 
-   //   okLongConstant,                 // param - reference 
-   //   okRealConstant,                 // param - reference 
+      okCharConstant,                 // param - reference
+      okIntConstant,                  // param - reference 
+      okLongConstant,                 // param - reference 
+      okRealConstant,                 // param - reference 
    //   okMessageConstant,              // param - reference 
    //   okSignatureConstant,            // param - reference 
    //   okVerbConstant,                 // param - reference 
@@ -131,9 +131,9 @@ public:
    //   okExtraRegister,
    //   okBase,
    //   okAccField,                     // param - field offset
-   //
-   //   okField,                        // param - field offset
-   //   okFieldAddress,                 // param - field offset
+   
+      okField,                        // param - field offset
+      okFieldAddress,                 // param - field offset
    //   okOuter,                        // param - field offset
    //   okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
@@ -292,7 +292,7 @@ private:
 
       ref_t resolveIdentifier(ident_t name);
 
-//      ref_t mapNewType(ident_t terminal);
+      ref_t mapNewType(ident_t terminal);
 
       ref_t mapType(TerminalInfo terminal);
 
@@ -341,10 +341,10 @@ private:
          return checkMethod(reference, message, dummy/*, dummyRef*/);
       }
 
-//      void loadTypes(_Module* module);
+      void loadTypes(_Module* module);
 //      void loadExtensions(TerminalInfo terminal, _Module* module);
-//
-//      void saveType(ref_t type_ref, ref_t classReference, bool internalType);
+
+      void saveType(ref_t type_ref, ref_t classReference, bool internalType);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
@@ -955,7 +955,7 @@ private:
    void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints*/, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
 //   void compileForward(DNode node, ModuleScope& scope, DNode hints);
-//   void compileType(DNode& member, ModuleScope& scope, DNode hints);
+   void compileType(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(DNode member, ModuleScope& scope);
    void compileImplementations(DNode member, ModuleScope& scope);

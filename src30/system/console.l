@@ -10,8 +10,8 @@
     /// Creates a console
     #constructor new &reader:aReader &writer:aWriter
     [
-//        theWriter := aWriter.
-//        theReader := aReader.
+        theWriter := aWriter.
+        theReader := aReader.
 //        theNewLineConstant := 'newLine literal.
     ]
 
