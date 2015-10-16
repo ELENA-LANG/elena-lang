@@ -17,7 +17,6 @@ using namespace _ELENA_;
 // --- Hint constants ---
 //#define HINT_MASK             0xFFFF0000
 
-#define HINT_DEBUGSTEP        0x80000000
 //#define HINT_INLINE           0x40000000
 //#define HINT_LOOP             0x20000000
 #define HINT_TRY              0x10000000
@@ -2137,9 +2136,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       }
    }
 
-
-   if (test(mode, HINT_DEBUGSTEP))
-      recordDebugStep(scope, terminal, dsStep);
 
    scope.writer->closeNode();
 
@@ -4265,7 +4261,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
    ObjectInfo objectInfo;
    if (member==nsObject) {
-      objectInfo = compileObject(member, scope, HINT_DEBUGSTEP | mode);
+      objectInfo = compileObject(member, scope, mode);
    }
    if (member != nsNone) {
       objectInfo = compileOperations(member, scope, objectInfo, mode);
@@ -4500,10 +4496,10 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 
       switch(statement) {
          case nsExpression:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            openDebugExpression(scope);
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            scope.writer->newNode(lxDebugExpression);
             compileExpression(statement, scope, 0);
-//            endDebugExpression(scope);
+            scope.writer->closeNode();
             break;
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
@@ -6108,21 +6104,21 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
    SyntaxWriter writer(&scope.syntaxTree);
    CodeScope codeScope(&scope, &writer);
-   writer.newNode(lxExpression);
 //   if (retVal.kind == okUnknown) {
 //      // compile symbol body
-//
-//      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
-//      openDebugExpression(codeScope);
+
+      writer.newNode(lxExpression);
+      recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
+      writer.newNode(lxDebugExpression);
+
       retVal = compileExpression(expression, codeScope, 0);
-//      endDebugExpression(codeScope);
+
+      writer.closeNode();
+      writer.closeNode();
 
 //   }
 //   _writer.loadObject(*codeScope.tape, retVal);
-   recordDebugVirtualStep(codeScope, dsVirtualEnd);
 
-   writer.closeNode();
-//
 //   // create constant if required
 //   if (scope.constant) {
 //      // static symbol cannot be constant
@@ -6237,15 +6233,18 @@ void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
       LexicalType type = current.type;
       switch (type)
       {
-         case _ELENA_::lxExpression:
+         case lxDebugExpression:
             openDebugExpression(tape);
-            _writer.translateExpression(tape, current);
+            _writer.translateExpression(tape, current.firstChild());
             endDebugExpression(tape);
             break;
-         case _ELENA_::lxObject:
+         case lxExpression:
+            _writer.translateExpression(tape, current);
+            break;
+         case lxObject:
             _writer.translateObjectExpression(tape, current);
             break;
-         case _ELENA_::lxBreakpoint:
+         case lxBreakpoint:
             _writer.translateBreakpoint(tape, current);
             break;
          default:

@@ -17,6 +17,7 @@ namespace _ELENA_
 enum LexicalType
 {
    lxNone = 0,
+
    lxCodeBlock,
    lxExpression,
    lxObject,
@@ -44,6 +45,7 @@ enum LexicalType
    lxStrong,
    lxSemiStrong,
 
+   lxDebugExpression,
    lxBreakpoint,
    lxBPCol,
    lxBPRow,

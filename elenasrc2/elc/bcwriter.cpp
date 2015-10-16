@@ -2741,9 +2741,12 @@ void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callNode)
 {
-   translateBreakpoint(tape, findChild(callNode, lxBreakpoint));
+   SNode bpNode = findChild(callNode, lxBreakpoint);
+   if (bpNode != lxNone) {
+      translateBreakpoint(tape, bpNode);
 
-   declareBlock(tape);
+      declareBlock(tape);
+   }
 
    tape.write(bcALoadSI);
 
@@ -2766,7 +2769,8 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callN
       tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
    }
 
-   declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   if (bpNode != lxNone)
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 }
 
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
