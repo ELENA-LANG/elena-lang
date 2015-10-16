@@ -740,18 +740,18 @@ int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReferenc
    else return 0;
 }
 
-//int Compiler::ModuleScope :: getClassFlags(ref_t reference)
-//{
-//   if (reference == 0)
-//      return 0;
-//
-//   ClassInfo classInfo;
-//   if(loadClassInfo(classInfo, module->resolveReference(reference), true) == 0)
-//      return 0;
-//
-//   return classInfo.header.flags;
-//}
-//
+int Compiler::ModuleScope :: getClassFlags(ref_t reference)
+{
+   if (reference == 0)
+      return 0;
+
+   ClassInfo classInfo;
+   if(loadClassInfo(classInfo, module->resolveReference(reference), true) == 0)
+      return 0;
+
+   return classInfo.header.flags;
+}
+
 //ref_t Compiler::ModuleScope :: getClassClassReference(ref_t reference)
 //{
 //   if (reference == 0)
@@ -2120,6 +2120,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             break;
          case okLocal:
             scope.writer->newNode(lxLocal, object.param);
+            break;
+         case okParam:
+            scope.writer->newNode(lxParam, object.param);
             break;
          case okField:
             scope.writer->newNode(lxField, object.param);
@@ -3650,9 +3653,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //
 //         currentObject = ObjectInfo(okAccumulator);
 //      }
-//      else if (member == nsAssigning) {
-//         currentObject = compileAssigningExpression(node, member, scope, currentObject);
-//      }
+      else if (member == nsAssigning) {
+         currentObject = compileAssigningExpression(node, member, scope, currentObject);
+      }
       else if (member == nsAltMessageOperation) {
          scope.writer->newNode(lxAlternative);
          scope.writer->appendNode(lxResult);
@@ -4272,8 +4275,8 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
-//{   
+ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
+{   
 //   // if primitive data operation can be used
 //   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
 //      ObjectInfo info;
@@ -4313,7 +4316,27 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 //      }
 //   }
 //   else {
-//      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
+      scope.writer->newNode(lxAssigning);
+
+      if (target.kind == okLocal) {
+         scope.writer->appendNode(lxLocal, target.param);
+      }
+      else if (target.kind == okField) {
+         scope.writer->appendNode(lxField, target.param);
+      }
+      //if (target.kind == okLocal || target.kind == okField/* || object.kind == okOuterField*/) {
+         //      _writer.saveObject(*scope.tape, object);
+      //}
+      //else if ((target.kind == okOuter)) {
+      //   //      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
+      //   //      _writer.saveObject(*scope.tape, object);
+      //}
+      else if (target.kind == okUnknown) {
+         scope.raiseError(errUnknownObject, node.Terminal());
+      }
+      else scope.raiseError(errInvalidOperation, node.Terminal());
+
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
 //
 //      _writer.loadObject(*scope.tape, info);
 //
@@ -4327,13 +4350,14 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 //      compileTypecast(scope, info, target.type, mismatch, boxed, dummy);
 //      if (mismatch)
 //         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-//
+
+      scope.writer->closeNode();
 //      compileAssignment(node, scope, target);
 //   }
-//
-//   return ObjectInfo(okAccumulator);
-//}
-//
+
+   return ObjectInfo(okObject);
+}
+
 //ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodeMode)
 //{
 //   // execute the block if the condition
@@ -5656,41 +5680,41 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
    }
 }
 
-//void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
-//{
-//   while (member != nsNone) {
-//      DNode hints = skipHints(member);
-//
-//      if (member==nsField) {
-//         // a role cannot have fields
-//         if (test(scope.info.header.flags, elStateless))
-//            scope.raiseError(errIllegalField, member.Terminal());
-//
-//         // a class with a dynamic length structure must have no fields
-//         if (test(scope.info.header.flags, elDynamicRole))
-//            scope.raiseError(errIllegalField, member.Terminal());
-//
-//         if (scope.info.fields.exist(member.Terminal()))
-//            scope.raiseError(errDuplicatedField, member.Terminal());
-//
-//         int sizeValue = 0;
-//         ref_t typeRef = 0;
-//         scope.compileFieldHints(hints, sizeValue, typeRef);
-//
-//         // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-//         if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
-//            && test(scope.info.header.flags, elSealed) && sizeValue != 0 && scope.info.fields.Count() == 0)
-//         {
-//            scope.info.header.flags |= elStructureWrapper;
-//            scope.info.size = sizeValue;
-//
-//            if (sizeValue < 0) {
-//                scope.info.header.flags |= elDynamicRole;
-//            }
-//
-//            scope.info.fields.add(member.Terminal(), 0);
-//            scope.info.fieldTypes.add(0, typeRef);
-//         }
+void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
+{
+   while (member != nsNone) {
+      DNode hints = skipHints(member);
+
+      if (member==nsField) {
+         // a role cannot have fields
+         if (test(scope.info.header.flags, elStateless))
+            scope.raiseError(errIllegalField, member.Terminal());
+
+         // a class with a dynamic length structure must have no fields
+         if (test(scope.info.header.flags, elDynamicRole))
+            scope.raiseError(errIllegalField, member.Terminal());
+
+         if (scope.info.fields.exist(member.Terminal()))
+            scope.raiseError(errDuplicatedField, member.Terminal());
+
+         int sizeValue = 0;
+         ref_t typeRef = 0;
+         //scope.compileFieldHints(hints, sizeValue, typeRef);
+
+         //// if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+         //if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
+         //   && test(scope.info.header.flags, elSealed) && sizeValue != 0 && scope.info.fields.Count() == 0)
+         //{
+         //   scope.info.header.flags |= elStructureWrapper;
+         //   scope.info.size = sizeValue;
+
+         //   if (sizeValue < 0) {
+         //       scope.info.header.flags |= elDynamicRole;
+         //   }
+
+         //   scope.info.fields.add(member.Terminal(), 0);
+         //   scope.info.fieldTypes.add(0, typeRef);
+         //}
 //         // if it is a structure field
 //         else if (test(scope.info.header.flags, elStructureRole)) {
 //            if (sizeValue <= 0)
@@ -5707,41 +5731,41 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
 //         }
 //         // if it is a normal field
 //         else {
-//            scope.info.header.flags |= elNonStructureRole;
-//
-//            int offset = scope.info.fields.Count();
-//            scope.info.fields.add(member.Terminal(), offset);
-//
-//            if (typeRef != 0)
-//               scope.info.fieldTypes.add(offset, typeRef);
-//
-//            // byref variable may have only one field
-//            if (test(scope.info.header.flags, elWrapper)) {
-//               if (scope.info.fields.Count() > 1)
-//                  scope.raiseError(errIllegalField, member.Terminal());
-//            }
+            scope.info.header.flags |= elNonStructureRole;
+
+            int offset = scope.info.fields.Count();
+            scope.info.fields.add(member.Terminal(), offset);
+
+            if (typeRef != 0)
+               scope.info.fieldTypes.add(offset, typeRef);
+
+            // byref variable may have only one field
+            if (test(scope.info.header.flags, elWrapper)) {
+               if (scope.info.fields.Count() > 1)
+                  scope.raiseError(errIllegalField, member.Terminal());
+            }
 //         }
-//      }
-//      else {
-//         // due to current syntax we need to reset hints back, otherwise they will be skipped
-//         if (hints != nsNone)
-//            member = hints;
-//
-//         break;
-//      }
-//      member = member.nextNode();
-//   }
-//
-//   // mark the class as a wrapper if it is appropriate
-//   if (test(scope.info.header.flags, elStructureRole | elSealed | elEmbeddable) && (scope.info.fieldTypes.Count() == 1) && scope.info.size > 0) {
-//      int type = scope.info.header.flags & elDebugMask;
-//      int fieldType = scope.moduleScope->getClassFlags(scope.moduleScope->typeHints.get(*scope.info.fieldTypes.start())) & elDebugMask;
-//      if (type == 0 && fieldType != 0) {
-//         scope.info.header.flags |= elStructureWrapper;
-//         scope.info.header.flags |= fieldType;
-//      }
-//   }
-//}
+      }
+      else {
+         // due to current syntax we need to reset hints back, otherwise they will be skipped
+         if (hints != nsNone)
+            member = hints;
+
+         break;
+      }
+      member = member.nextNode();
+   }
+
+   // mark the class as a wrapper if it is appropriate
+   if (test(scope.info.header.flags, elStructureRole | elSealed | elEmbeddable) && (scope.info.fieldTypes.Count() == 1) && scope.info.size > 0) {
+      int type = scope.info.header.flags & elDebugMask;
+      int fieldType = scope.moduleScope->getClassFlags(scope.moduleScope->typeHints.get(*scope.info.fieldTypes.start())) & elDebugMask;
+      if (type == 0 && fieldType != 0) {
+         scope.info.header.flags |= elStructureWrapper;
+         scope.info.header.flags |= fieldType;
+      }
+   }
+}
 
 void Compiler :: compileSymbolCode(ClassScope& scope)
 {
@@ -5883,7 +5907,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    int flagCopy = scope.info.header.flags;
    scope.compileClassHints(hints);
 
-   //compileFieldDeclarations(member, scope);
+   compileFieldDeclarations(member, scope);
 
    declareVMT(member, scope, nsMethod, test(flagCopy, elClosed));
 

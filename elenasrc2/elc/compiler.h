@@ -354,7 +354,7 @@ private:
 //      ref_t getBaseIndexFunctionClass(int paramCount);
       ref_t getBaseLazyExpressionClass();
 
-//      int getClassFlags(ref_t reference);
+      int getClassFlags(ref_t reference);
 //      ref_t getClassClassReference(ref_t reference);
 
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
@@ -891,8 +891,8 @@ private:
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
-//
+   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
+
 //   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
 //
 //   void compileLoop(DNode node, CodeScope& scope);
@@ -946,7 +946,7 @@ private:
 
    void compileVMT(DNode member, ClassScope& scope);
 
-//   void compileFieldDeclarations(DNode& member, ClassScope& scope);
+   void compileFieldDeclarations(DNode& member, ClassScope& scope);
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
    void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);

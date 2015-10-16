@@ -2720,6 +2720,13 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // asavesi index
          tape.write(bcASaveSI, argument);
          break;
+      case lxField:
+      //case okOuter:
+         // bloadfi 1
+         // asavebi index
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcASaveBI, argument);
+         break;
       default:
          break;
    }
@@ -2771,6 +2778,19 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callN
 
    if (bpNode != lxNone)
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+}
+
+void ByteCodeWriter :: translateAssignExpression(CommandTape& tape, SyntaxReader::Node node)
+{
+   translateBreakpoint(tape, findChild(findChild(node, lxObject), lxBreakpoint));
+
+   SNode assignNode = findChild(node, lxAssigning);
+
+   SNode target = assignNode.firstChild();
+
+   translateExpression(tape, target.nextNode());
+
+   saveObject(tape, target.type, target.argument);
 }
 
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
@@ -2865,6 +2885,9 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 {
    if (existNode(node, lxCall)) {
       translateCallExpression(tape, node);
+   }
+   else if (existNode(node, lxAssigning)) {
+      translateAssignExpression(tape, node);
    }
    else {
       SNode root = node.firstChild();

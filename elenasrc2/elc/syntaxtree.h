@@ -39,6 +39,7 @@ enum LexicalType
    lxCall,
    lxAlternative,
    lxCatch,
+   lxAssigning,
 
    lxMessage,
 
