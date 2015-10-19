@@ -1433,7 +1433,7 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 //      else if (local.stackAllocated) {
 //         return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
 //      }
-      /*else */return ObjectInfo(okLocal, local.offset, 0/*, local.sign_ref*/);
+      /*else */return ObjectInfo(okLocal, local.offset, 0, local.sign_ref);
    }
    else return Scope::mapObject(identifier);
 }
@@ -4315,7 +4315,11 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 //   else {
       scope.writer->newNode(lxAssigning);
 
+      ref_t targetType = 0;
       if (target.kind == okLocal || target.kind == okField) {
+         if (target.type != 0) {
+            targetType = target.type;
+         }
       }
       //else if ((target.kind == okOuter)) {
       //   //      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
@@ -4326,9 +4330,18 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
 
+      if (targetType != 0)
+         scope.writer->newNode(lxExpression);
+
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
 
-//      _writer.loadObject(*scope.tape, info);
+      if (targetType != 0) {
+         scope.writer->appendNode(lxTypecast, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+
+         scope.writer->closeNode();
+      }
+
+      //      _writer.loadObject(*scope.tape, info);
 //
 //      bool boxed = false;
 //      bool dummy = false;
