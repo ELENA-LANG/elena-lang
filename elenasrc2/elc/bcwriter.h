@@ -232,8 +232,6 @@ public:
    void loadObject(CommandTape& tape, SyntaxReader::Node node);
 
    void translateCall(CommandTape& tape, SyntaxReader::Node node);
-   void translateAssignExpression(CommandTape& tape, SyntaxReader::Node node);
-   void translateCallExpression(CommandTape& tape, SyntaxReader::Node node);
    void translateObjectExpression(CommandTape& tape, SyntaxReader::Node node);
    void translateExpression(CommandTape& tape, SyntaxReader::Node node);
 

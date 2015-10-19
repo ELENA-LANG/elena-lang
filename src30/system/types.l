@@ -2,9 +2,9 @@
 
 //// === basic logical types ===
 //#subject(class:system'BaseBoolValue) bool.
-// 
-//// === basic primitive types ===
-//
+ 
+// === basic primitive types ===
+
 //#subject(class:system'KeyValue)     keyvalue.
 //
 //#subject(class:system'Variable)     ref.
@@ -27,8 +27,8 @@
 //#subject(class:system'Short)        vshort.
 //#subject(class:system'Char)         vchar.
 //#subject(class:system'MessageVar)   vmssg.
-//
-//// === basic dynamic types ===
+
+// === basic dynamic types ===
 //#subject(class:system'ByteArray)    bytearray.
 //#subject(class:system'ShortArray)   shortarray.
 //#subject(class:system'IntArray)     intarray.
@@ -40,8 +40,8 @@
 //#subject(class:system'OpenArgs)     params.
 //#subject(class:system'OpenArgs)     args.
 //#subject(class:system'MessageArray) mssgarray.
-//
-//#subject(class:system'LiteralValue) literal.
+
+#subject(class:system'LiteralValue) literal.
 //#subject(class:system'WideLiteralValue) wide.
 //
 //// === function types ===

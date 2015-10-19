@@ -2631,7 +2631,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-      case lxParam:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
          break;
@@ -2680,7 +2679,6 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-      case lxParam:
          // aloadfi index
          tape.write(bcALoadFI, argument, bpFrame);
          break;
@@ -2712,7 +2710,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    switch (type)
    {
       case lxLocal:
-      case lxParam:
+      //case lxParam:
          // asavefi index
          tape.write(bcASaveFI, argument, bpFrame);
          break;
@@ -2757,13 +2755,12 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callN
 
    tape.write(bcALoadSI);
 
-   SNode strongAttr = findChild(callNode, lxStrong);
-   SNode semiAttr = findChild(callNode, lxSemiStrong);
-   if (strongAttr != lxNone) {
-      callResolvedMethod(tape, strongAttr.argument, callNode.argument);
+   SNode target = findChild(callNode, lxTarget);
+   if (callNode == lxDirectCall) {
+      callResolvedMethod(tape, target.argument, callNode.argument);
    }
-   else if (semiAttr != lxNone) {
-      callVMTResolvedMethod(tape, semiAttr.argument, callNode.argument);
+   else if (callNode == lxSemiDirectCall) {
+      callVMTResolvedMethod(tape, target.argument, callNode.argument);
    }
    else {
       // copym message
@@ -2780,41 +2777,46 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callN
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 }
 
-void ByteCodeWriter :: translateAssignExpression(CommandTape& tape, SyntaxReader::Node node)
+void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
-   translateBreakpoint(tape, findChild(findChild(node, lxObject), lxBreakpoint));
-
-   SNode assignNode = findChild(node, lxAssigning);
-
-   SNode target = assignNode.firstChild();
-
-   translateExpression(tape, target.nextNode());
-
-   saveObject(tape, target.type, target.argument);
+   SNode object = node.firstChild();
+   if (object == lxExpression) {
+      translateExpression(tape, object);
+   }
+   else loadObject(tape, object);
 }
 
-void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
+void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 {
    bool directMode = true;
    bool tryMode = false;
    bool altMode = false;
+   bool assignMode = false;
+   bool reverseMode = false;
+
+   int paramCount = 0;
 
    // analizing a sub tree
    SNode current = node.firstChild();
-   size_t paramCount = 0;
    while (current != lxNone) {
-      if (current == lxObject) {
+      if (test(current.type, lxObjectMask)) {
          paramCount++;
-
-         if(current.firstChild() == lxExpression)
-            directMode = false;
+      }
+      else if (test(current.type, lxCallMask)) {
+         reverseMode = true;
       }
       else if (current == lxCatch) {
          tryMode = true;
-      }         
+      }
       else if (current == lxAlternative) {
          altMode = true;
       }
+      else if (current == lxAssigning) {
+         assignMode = true;
+      }
+
+      if (current == lxExpression) 
+         directMode = false;
 
       current = current.nextNode();
    }
@@ -2825,21 +2827,34 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    if (altMode || tryMode)
       declareTry(tape);
 
-   // saving parameters
-   if (!directMode && paramCount > 0) {
-      declareArgumentList(tape, paramCount);
+   // saving parameters in reverse order if required
+   if (reverseMode) {
+      if (!directMode && paramCount > 1)
+         declareArgumentList(tape, paramCount);
    }
+   else directMode = true;
 
    size_t counter = countChildren(node);
    size_t index = 0;
+   // skip the first node for assign mode
+   if (assignMode)
+      index++;
+
    while (index < counter) {
-      current = getChild(node, directMode ? counter - index - 1 : index);
-      if (current == lxObject) {
+      if (reverseMode) {
+         current = getChild(node, directMode ? counter - index - 1 : index);
+      }
+      else current = getChild(node, index);
+
+      if (test(current.type, lxObjectMask)) {
          translateObjectExpression(tape, current);
          if (directMode) {
             pushObject(tape, lxResult);
          }
          else saveObject(tape, lxCurrent, index);
+      }
+      else if (current == lxAlternative) {
+         translateObjectExpression(tape, current);
       }
 
       index++;
@@ -2854,50 +2869,23 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    // executing operations
    current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxCall) {
-         translateCall(tape, current.firstChild());
+      if (test(current.type, lxCallMask)) {
+         translateCall(tape, current);
       }
       else if (current == lxAlternative) {
          declareAlt(tape);
-         translateCallExpression(tape, current);
+         translateExpression(tape, current);
          endAlt(tape);
       }
       else if (current == lxCatch) {
          declareCatch(tape);
-         translateCallExpression(tape, current);
+         translateExpression(tape, current);
          endCatch(tape);
+      }
+      else if (assignMode && test(current.type, lxObjectMask)) {
+         saveObject(tape, current.type, current.argument);
       }
 
       current = current.nextNode();
-   }
-}
-
-void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
-{
-   SNode object = node.firstChild();
-   if (object == lxExpression) {
-      translateExpression(tape, object);
-   }
-   else loadObject(tape, object);
-}
-
-void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
-{
-   if (existNode(node, lxCall)) {
-      translateCallExpression(tape, node);
-   }
-   else if (existNode(node, lxAssigning)) {
-      translateAssignExpression(tape, node);
-   }
-   else {
-      SNode root = node.firstChild();
-      switch (root.type)
-      {
-         case LexicalType::lxObject:
-            translateObjectExpression(tape, root);
-            break;
-         default:
-            break;
-      }
    }
 }

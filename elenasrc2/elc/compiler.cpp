@@ -1019,7 +1019,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 ////            else return ObjectInfo(okUnknown);
 ////         }
          // otherwise it is a normal field
-         else return ObjectInfo(okField, reference, 0/*, info.fieldTypes.get(reference)*/);
+         else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
       }
       else {
          //if (identifier.symbol == tsReference && StringHelper::compare(identifier.value, moduleScope->module->resolveReference(this->reference))) {
@@ -1225,48 +1225,48 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
 }
 
-//void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& type)
-//{
-//   type = 0;
-//
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      if (StringHelper::compare(terminal, HINT_TYPE)) {
-//         DNode value = hints.select(nsHintValue);
-//         if (value!=nsNone && type == 0) {
-//            TerminalInfo typeTerminal = value.Terminal();
-//
-//            type = moduleScope->mapType(typeTerminal);
-//            if (type == 0)
-//               raiseError(errInvalidHint, terminal);
-//
-//            size = moduleScope->defineTypeSize(type);
-//         }
-//         else raiseWarning(1, wrnInvalidHint, terminal);
-//      }
-//      else if (StringHelper::compare(terminal, HINT_SIZE)) {
-//         if (size < 0) {
-//            TerminalInfo sizeValue = hints.firstChild().Terminal();
-//            if (size < 0 && sizeValue.symbol == tsInteger) {
-//               size = -size;
-//
-//               size = StringHelper::strToInt(sizeValue.value) * size;
-//            }
-//            else if (size < 0 && sizeValue.symbol == tsHexInteger) {
-//               size = -size;
-//
-//               size = StringHelper::strToLong(sizeValue.value, 16) * size;
-//            }
-//            else raiseWarning(1, wrnUnknownHint, terminal);
-//         }
-//         else raiseWarning(1, wrnUnknownHint, terminal);
-//      }
-//      else raiseWarning(1, wrnUnknownHint, terminal);
-//
-//      hints = hints.nextNode();
-//   }
-//}
+void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& type)
+{
+   type = 0;
+
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_TYPE)) {
+         DNode value = hints.select(nsHintValue);
+         if (value!=nsNone && type == 0) {
+            TerminalInfo typeTerminal = value.Terminal();
+
+            type = moduleScope->mapType(typeTerminal);
+            if (type == 0)
+               raiseError(errInvalidHint, terminal);
+
+            size = moduleScope->defineTypeSize(type);
+         }
+         else raiseWarning(1, wrnInvalidHint, terminal);
+      }
+      else if (StringHelper::compare(terminal, HINT_SIZE)) {
+         if (size < 0) {
+            TerminalInfo sizeValue = hints.firstChild().Terminal();
+            if (size < 0 && sizeValue.symbol == tsInteger) {
+               size = -size;
+
+               size = StringHelper::strToInt(sizeValue.value) * size;
+            }
+            else if (size < 0 && sizeValue.symbol == tsHexInteger) {
+               size = -size;
+
+               size = StringHelper::strToLong(sizeValue.value, 16) * size;
+            }
+            else raiseWarning(1, wrnUnknownHint, terminal);
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+      }
+      else raiseWarning(1, wrnUnknownHint, terminal);
+
+      hints = hints.nextNode();
+   }
+}
 
 // --- Compiler::MetodScope ---
 
@@ -2119,10 +2119,8 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             scope.writer->newNode(lxConstantSymbol, object.param);
             break;
          case okLocal:
-            scope.writer->newNode(lxLocal, object.param);
-            break;
          case okParam:
-            scope.writer->newNode(lxParam, object.param);
+            scope.writer->newNode(lxLocal, object.param);
             break;
          case okField:
             scope.writer->newNode(lxField, object.param);
@@ -2148,8 +2146,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
 {
    ObjectInfo result;
-
-   scope.writer->newNode(lxObject);
 
    DNode member = objectNode.firstChild();
    switch (member)
@@ -2191,8 +2187,6 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
       default:
          result = compileTerminal(objectNode, scope, mode);
    }   
-
-   scope.writer->closeNode();
 
    return result;
 }
@@ -3401,10 +3395,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
 //      retVal.kind = okIdle;
 //   }
 //
-   scope.writer->newNode(lxCall);
-   scope.writer->newNode(lxMessage, messageRef);
-
-   recordDebugStep(scope, node.Terminal(), dsStep);
+   
 
    //   // send message
    //   if (varInitCall) {
@@ -3418,19 +3409,25 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
    //      _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
    //   }
    /*else */if (callType == tpClosed) {
-      scope.writer->appendNode(lxSemiStrong, classReference);
+      scope.writer->newNode(lxSemiDirectCall, messageRef);
+
+      scope.writer->appendNode(lxTarget, classReference);
    }
    else if (callType == tpSealed) {
-      scope.writer->appendNode(lxStrong, classReference);
+      scope.writer->newNode(lxDirectCall, messageRef);
+
+      scope.writer->appendNode(lxTarget, classReference);
    }
    else {
+      scope.writer->newNode(lxCall, messageRef);
+
       // if the class found and the message is not supported - warn the programmer and raise an exception
       if (classFound && callType == tpUnknown) {
          scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
       }
    }
 
-   scope.writer->closeNode();
+   recordDebugStep(scope, node.Terminal(), dsStep);
    scope.writer->closeNode();
 
    return retVal;
@@ -4521,9 +4518,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
       switch(statement) {
          case nsExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            scope.writer->newNode(lxDebugExpression);
             compileExpression(statement, scope, 0);
-            scope.writer->closeNode();
             break;
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
@@ -5513,17 +5508,14 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
          _writer.newFrame(classClassScope.tape);
          codeScope.level++;
       }
-      else _writer.saveObject(classClassScope.tape, lxParam, 1);
+      else _writer.saveObject(classClassScope.tape, lxLocal, 1);
 
       declareParameterDebugInfo(scope, &classClassScope.tape, true, false);
 
       codeScope.writer->newNode(lxCodeBlock);
 
       compileCode(body, codeScope);
-
-      codeScope.writer->newNode(lxObject);
-      codeScope.writer->appendNode(lxParam, 1);
-      codeScope.writer->closeNode();
+      codeScope.writer->appendNode(lxLocal, 1);
 
       codeScope.writer->closeNode();
 
@@ -5699,7 +5691,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
 
          int sizeValue = 0;
          ref_t typeRef = 0;
-         //scope.compileFieldHints(hints, sizeValue, typeRef);
+         scope.compileFieldHints(hints, sizeValue, typeRef);
 
          //// if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
          //if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
@@ -6133,11 +6125,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
       writer.newNode(lxExpression);
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
-      writer.newNode(lxDebugExpression);
 
       retVal = compileExpression(expression, codeScope, 0);
 
-      writer.closeNode();
       writer.closeNode();
 
 //   }
@@ -6257,16 +6247,10 @@ void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
       LexicalType type = current.type;
       switch (type)
       {
-         case lxDebugExpression:
+         case lxExpression:
             openDebugExpression(tape);
             _writer.translateExpression(tape, current.firstChild());
             endDebugExpression(tape);
-            break;
-         case lxExpression:
-            _writer.translateExpression(tape, current);
-            break;
-         case lxObject:
-            _writer.translateObjectExpression(tape, current);
             break;
          case lxBreakpoint:
             _writer.translateBreakpoint(tape, current);

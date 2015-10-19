@@ -12,7 +12,7 @@
     [
         theWriter := aWriter.
         theReader := aReader.
-//        theNewLineConstant := 'newLine literal.
+        theNewLineConstant := 'newLine literal.
     ]
 
 //    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
