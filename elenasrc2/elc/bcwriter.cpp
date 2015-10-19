@@ -2692,13 +2692,13 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxField:
 //      case okOuter:
-         // aloadfi 1
-         // pushai offset / pusha
-         tape.write(bcALoadFI, 1, bpFrame);
+         // bloadfi 1
+         // aloadbi / acopyb
+         tape.write(bcBLoadFI, 1, bpFrame);
          if ((int)argument < 0) {
-            tape.write(bcPushA);
+            tape.write(bcACopyB);
          }
-         else tape.write(bcPushAI, argument);
+         else tape.write(bcALoadBI, argument);
          break;
       default:
          break;
@@ -2779,11 +2779,10 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callN
 
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
-   SNode object = node.firstChild();
-   if (object == lxExpression) {
-      translateExpression(tape, object);
+   if (node == lxExpression) {
+      translateExpression(tape, node);
    }
-   else loadObject(tape, object);
+   else loadObject(tape, node);
 }
 
 void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
@@ -2792,7 +2791,7 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
    bool tryMode = false;
    bool altMode = false;
    bool assignMode = false;
-   bool reverseMode = false;
+   bool callMode = false;
 
    int paramCount = 0;
 
@@ -2803,7 +2802,7 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
          paramCount++;
       }
       else if (test(current.type, lxCallMask)) {
-         reverseMode = true;
+         callMode = true;
       }
       else if (current == lxCatch) {
          tryMode = true;
@@ -2828,7 +2827,7 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
       declareTry(tape);
 
    // saving parameters in reverse order if required
-   if (reverseMode) {
+   if (callMode) {
       if (!directMode && paramCount > 1)
          declareArgumentList(tape, paramCount);
    }
@@ -2841,20 +2840,22 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
       index++;
 
    while (index < counter) {
-      if (reverseMode) {
+      if (callMode) {
          current = getChild(node, directMode ? counter - index - 1 : index);
       }
       else current = getChild(node, index);
 
       if (test(current.type, lxObjectMask)) {
          translateObjectExpression(tape, current);
-         if (directMode) {
-            pushObject(tape, lxResult);
+         if (callMode) {
+            if (directMode) {
+               pushObject(tape, lxResult);
+            }
+            else saveObject(tape, lxCurrent, index);
          }
-         else saveObject(tape, lxCurrent, index);
       }
-      else if (current == lxAlternative) {
-         translateObjectExpression(tape, current);
+      else if (current == lxAssigning) {
+         translateObjectExpression(tape, current.firstChild());
       }
 
       index++;

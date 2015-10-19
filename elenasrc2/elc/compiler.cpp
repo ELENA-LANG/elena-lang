@@ -4315,15 +4315,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 //   else {
       scope.writer->newNode(lxAssigning);
 
-      if (target.kind == okLocal) {
-         scope.writer->appendNode(lxLocal, target.param);
+      if (target.kind == okLocal || target.kind == okField) {
       }
-      else if (target.kind == okField) {
-         scope.writer->appendNode(lxField, target.param);
-      }
-      //if (target.kind == okLocal || target.kind == okField/* || object.kind == okOuterField*/) {
-         //      _writer.saveObject(*scope.tape, object);
-      //}
       //else if ((target.kind == okOuter)) {
       //   //      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
       //   //      _writer.saveObject(*scope.tape, object);
@@ -4334,7 +4327,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       else scope.raiseError(errInvalidOperation, node.Terminal());
 
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
-//
+
 //      _writer.loadObject(*scope.tape, info);
 //
 //      bool boxed = false;
@@ -5515,7 +5508,10 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       codeScope.writer->newNode(lxCodeBlock);
 
       compileCode(body, codeScope);
+
+      codeScope.writer->newNode(lxExpression);
       codeScope.writer->appendNode(lxLocal, 1);
+      codeScope.writer->closeNode();
 
       codeScope.writer->closeNode();
 
@@ -6249,7 +6245,7 @@ void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
       {
          case lxExpression:
             openDebugExpression(tape);
-            _writer.translateExpression(tape, current.firstChild());
+            _writer.translateExpression(tape, current);
             endDebugExpression(tape);
             break;
          case lxBreakpoint:
