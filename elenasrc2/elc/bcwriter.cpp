@@ -2546,20 +2546,9 @@ inline SNode getChild(SNode node, size_t index)
    return current;
 }
 
-inline SNode findChild(SNode node, LexicalType type)
-{
-   SNode current = node.firstChild();
-
-   while (current != lxNone && current != type) {
-      current = current.nextNode();
-   }
-
-   return current;
-}
-
 inline bool existNode(SNode node, LexicalType type)
 {
-   return findChild(node, type) == type;
+   return SyntaxReader::findChild(node, type) == type;
 }
 
 inline size_t countChildren(SNode node)
@@ -2606,9 +2595,9 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SyntaxReader::Node
 {
    if (node == lxBreakpoint) {
       declareBreakpoint(tape, 
-         findChild(node, lxBPRow).argument, 
-         findChild(node, lxBPCol).argument, 
-         findChild(node, lxBPLength).argument, node.argument);
+         SyntaxReader::findChild(node, lxRow).argument, 
+         SyntaxReader::findChild(node, lxCol).argument,
+         SyntaxReader::findChild(node, lxLength).argument, node.argument);
    }
 }
 
@@ -2732,21 +2721,21 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
 {
-   translateBreakpoint(tape, findChild(node, lxBreakpoint));
+   translateBreakpoint(tape, SyntaxReader::findChild(node, lxBreakpoint));
 
    loadObject(tape, node.type, node.argument);
 }
 
 void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
 {
-   translateBreakpoint(tape, findChild(node, lxBreakpoint));
+   translateBreakpoint(tape, SyntaxReader::findChild(node, lxBreakpoint));
 
    pushObject(tape, node.type, node.argument);
 }
 
 void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callNode)
 {
-   SNode bpNode = findChild(callNode, lxBreakpoint);
+   SNode bpNode = SyntaxReader::findChild(callNode, lxBreakpoint);
    if (bpNode != lxNone) {
       translateBreakpoint(tape, bpNode);
 
@@ -2755,7 +2744,7 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callN
 
    tape.write(bcALoadSI);
 
-   SNode target = findChild(callNode, lxTarget);
+   SNode target = SyntaxReader::findChild(callNode, lxTarget);
    if (callNode == lxDirectCall) {
       callResolvedMethod(tape, target.argument, callNode.argument);
    }
@@ -2893,9 +2882,4 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 
       current = current.nextNode();
    }
-}
-
-ref_t ByteCodeWriter :: findAttribute(SyntaxReader::Node node, LexicalType type)
-{
-   return findChild(node, type).argument;
 }

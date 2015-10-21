@@ -287,6 +287,7 @@ private:
 
       void raiseError(const char* message, TerminalInfo terminal);
       void raiseWarning(int level, const char* message, TerminalInfo terminal);
+      void raiseWarning(int level, const char* message, int row, int col);
 
       bool checkReference(ident_t referenceName);
 
@@ -796,9 +797,9 @@ private:
    {
       if (terminal != nsNone) {
          scope.writer->newNode(lxBreakpoint, stepType);
-         scope.writer->appendNode(lxBPRow, terminal.row);
-         scope.writer->appendNode(lxBPCol, terminal.disp);
-         scope.writer->appendNode(lxBPLength, terminal.length);
+         scope.writer->appendNode(lxRow, terminal.row);
+         scope.writer->appendNode(lxCol, terminal.disp);
+         scope.writer->appendNode(lxLength, terminal.length);
          scope.writer->closeNode();
       }
    }
@@ -968,11 +969,11 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
-   void optimizeTypecast(SyntaxReader::Node node, ref_t typeRef);
-   void optimizeSyntaxExpression(SyntaxReader::Node node);
-   void optimizeSyntaxTree(MemoryDump& dump);
+   void optimizeTypecast(ModuleScope& scope, SyntaxReader::Node node, ref_t typeRef);
+   void optimizeSyntaxExpression(ModuleScope& scope, SyntaxReader::Node node);
+   void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
 
-   void saveSyntaxTree(CommandTape& tape, MemoryDump& dump);
+   void saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDump& dump);
 
 public:
 ////   void setOptFlag(int flag)

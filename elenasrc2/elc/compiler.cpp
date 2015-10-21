@@ -315,6 +315,12 @@ inline bool isImportRedirect(DNode node)
 //   else return false;
 //}
 
+void appendCoordinate(SyntaxWriter* writer, TerminalInfo terminal)
+{
+   writer->appendNode(lxCol, terminal.Col());
+   writer->appendNode(lxRow, terminal.Row());
+}
+
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
@@ -822,6 +828,11 @@ void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo termi
 void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
 {
    project->raiseWarning(level, message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+}
+
+void Compiler::ModuleScope :: raiseWarning(int level, const char* message, int row, int col)
+{
+   project->raiseWarning(level, message, sourcePath, row, col, DEFAULT_STR);
 }
 
 //void Compiler::ModuleScope :: compileForwardHints(DNode hints, bool& constant)
@@ -4337,9 +4348,11 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
 
       if (targetType != 0) {
-         scope.writer->appendNode(lxTypecast, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+         scope.writer->newNode(lxTypecast, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+         appendCoordinate(scope.writer, node.FirstTerminal());
+         scope.writer->closeNode(); // typecast
 
-         scope.writer->closeNode();
+         scope.writer->closeNode(); // expression
       }
 
       //      _writer.loadObject(*scope.tape, info);
@@ -5166,7 +5179,7 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
 
    writer.closeNode();
 
-   saveSyntaxTree(*tape, scope.syntaxTree);
+   saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
 
    _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
 }
@@ -5193,7 +5206,7 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
    compileRetExpression(node, codeScope, 0);
    writer.closeNode();
 
-   saveSyntaxTree(*tape, scope.syntaxTree);
+   saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
 
    _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
 }
@@ -5440,7 +5453,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 
       int stackToFree = paramCount + scope.rootToFree;
 
-      saveSyntaxTree(*tape, scope.syntaxTree);
+      saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
 
 //   //   if (scope.testMode(MethodScope::modLock)) {
 //   //      _writer.endSyncMethod(*codeScope.tape, -1);
@@ -5531,7 +5544,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
 //   }
 
-   saveSyntaxTree(classClassScope.tape, scope.syntaxTree);
+   saveSyntaxTree(*scope.moduleScope, classClassScope.tape, scope.syntaxTree);
 
    _writer.endMethod(classClassScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
 }
@@ -6235,7 +6248,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //
 //   _writer.endSymbol(scope.tape);
 //
-   saveSyntaxTree(scope.tape, scope.syntaxTree);
+   saveSyntaxTree(*scope.moduleScope, scope.tape, scope.syntaxTree);
 
    if (isStatic) {
       _writer.endStaticSymbol(scope.tape, scope.reference);
@@ -6249,18 +6262,21 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: optimizeTypecast(SyntaxReader::Node node, ref_t typeRef)
+void Compiler :: optimizeTypecast(ModuleScope& scope, SyntaxReader::Node node, ref_t typeRef)
 {
    SyntaxReader::Node target = node.prevNode();
 
-   ref_t targetType = _writer.findAttribute(target, lxType);
+   ref_t targetType = SyntaxReader::findChild(target, lxType).argument;
 
    if (typeRef == targetType) {
       node = lxNone;
    }
+   else scope.raiseWarning(2, wrnTypeMismatch,
+      SyntaxReader::findChild(node, lxRow).argument,
+      SyntaxReader::findChild(node, lxCol).argument);
 }
 
-void Compiler :: optimizeSyntaxExpression(SyntaxReader::Node node)
+void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxReader::Node node)
 {
    SyntaxReader::Node current = node.firstChild();
    while (current != lxNone) {
@@ -6269,10 +6285,10 @@ void Compiler :: optimizeSyntaxExpression(SyntaxReader::Node node)
          case lxExpression:
          case lxReturning:
          case lxAssigning:
-            optimizeSyntaxExpression(current);
+            optimizeSyntaxExpression(scope, current);
             break;
          case lxTypecast:
-            optimizeTypecast(current, getSignature(current.argument));
+            optimizeTypecast(scope, current, getSignature(current.argument));
             break;
       }
 
@@ -6281,7 +6297,7 @@ void Compiler :: optimizeSyntaxExpression(SyntaxReader::Node node)
 
 }
 
-void Compiler :: optimizeSyntaxTree(MemoryDump& dump)
+void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
 {
    SyntaxReader reader(&dump);
    SyntaxReader::Node current = reader.readRoot().firstChild();
@@ -6290,7 +6306,7 @@ void Compiler :: optimizeSyntaxTree(MemoryDump& dump)
       {
          case lxExpression:
          case lxReturning:
-            optimizeSyntaxExpression(current);
+            optimizeSyntaxExpression(scope, current);
             break;
       }
          
@@ -6298,9 +6314,9 @@ void Compiler :: optimizeSyntaxTree(MemoryDump& dump)
    }
 }
 
-void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
+void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDump& dump)
 {
-   optimizeSyntaxTree(dump);
+   optimizeSyntaxTree(scope, dump);
 
    SyntaxReader reader(&dump);
    SyntaxReader::Node current = reader.readRoot().firstChild();

@@ -52,9 +52,9 @@ enum LexicalType
    lxType            = 0x802,
 
    lxBreakpoint      = 0x1001,
-   lxBPCol           = 0x1002,
-   lxBPRow           = 0x1003,
-   lxBPLength        = 0x1004,
+   lxCol             = 0x1002,
+   lxRow             = 0x1003,
+   lxLength          = 0x1004,
 };
 
 // --- SyntaxWriter ---
@@ -162,6 +162,18 @@ private:
    Node read();
 
 public:
+   static Node findChild(Node node, LexicalType type)
+   {
+      Node current = node.firstChild();
+
+      while (current != lxNone && current != type) {
+         current = current.nextNode();
+      }
+
+      return current;
+   }
+
+
    Node readRoot();
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
