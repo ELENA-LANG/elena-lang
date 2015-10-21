@@ -2826,10 +2826,13 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
    if (altMode || tryMode)
       declareTry(tape);
 
-   // saving parameters in reverse order if required
+   // allocate the place for the parameters if required
    if (callMode) {
-      if (!directMode && paramCount > 1)
+      if (!directMode && paramCount > 1) {
          declareArgumentList(tape, paramCount);
+      }
+      // if message has no arguments - direct mode is allowed
+      else directMode = true;
    }
    else directMode = true;
 
@@ -2841,6 +2844,7 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 
    while (index < counter) {
       if (callMode) {
+         // get parameters in reverse order if required
          current = getChild(node, directMode ? counter - index - 1 : index);
       }
       else current = getChild(node, index);
