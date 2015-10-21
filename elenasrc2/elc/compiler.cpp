@@ -6249,11 +6249,62 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
+void Compiler :: optimizeTypecast(SyntaxReader::Node node, ref_t typeRef)
+{
+   SyntaxReader::Node target = node.prevNode();
+
+   ref_t targetType = _writer.findAttribute(target, lxType);
+
+   if (typeRef == targetType) {
+      node = lxNone;
+   }
+}
+
+void Compiler :: optimizeSyntaxExpression(SyntaxReader::Node node)
+{
+   SyntaxReader::Node current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type)
+      {
+         case lxExpression:
+         case lxReturning:
+         case lxAssigning:
+            optimizeSyntaxExpression(current);
+            break;
+         case lxTypecast:
+            optimizeTypecast(current, getSignature(current.argument));
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+}
+
+void Compiler :: optimizeSyntaxTree(MemoryDump& dump)
 {
    SyntaxReader reader(&dump);
    SyntaxReader::Node current = reader.readRoot().firstChild();
    while (current != lxNone) {
+      switch (current.type)
+      {
+         case lxExpression:
+         case lxReturning:
+            optimizeSyntaxExpression(current);
+            break;
+      }
+         
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
+{
+   optimizeSyntaxTree(dump);
+
+   SyntaxReader reader(&dump);
+   SyntaxReader::Node current = reader.readRoot().firstChild();
+   while (current != lxNone) {      
       LexicalType type = current.type;
       switch (type)
       {

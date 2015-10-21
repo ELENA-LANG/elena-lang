@@ -968,6 +968,10 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
+   void optimizeTypecast(SyntaxReader::Node node, ref_t typeRef);
+   void optimizeSyntaxExpression(SyntaxReader::Node node);
+   void optimizeSyntaxTree(MemoryDump& dump);
+
    void saveSyntaxTree(CommandTape& tape, MemoryDump& dump);
 
 public:

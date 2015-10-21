@@ -235,6 +235,8 @@ public:
    void translateObjectExpression(CommandTape& tape, SyntaxReader::Node node);
    void translateExpression(CommandTape& tape, SyntaxReader::Node node);
 
+   ref_t findAttribute(SyntaxReader::Node node, LexicalType type);
+
    void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
 

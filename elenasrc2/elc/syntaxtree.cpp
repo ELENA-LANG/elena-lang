@@ -84,3 +84,31 @@ SyntaxReader::Node SyntaxReader :: readNextNode(size_t position)
 
    return read();   
 }
+
+
+SyntaxReader::Node SyntaxReader :: readPreviousNode(size_t position)
+{
+   position = position - 16;
+
+   int level = 0;
+   while (position > 7) {
+      _reader.seek(position);
+
+      int type = _reader.getDWord();
+      _reader.getDWord();
+
+      if (type != -1) {
+         level++;
+         if (level == 0) {
+            _reader.seek(position - 8);
+
+            return read();
+         }
+      }
+      else level--;
+
+      position -= 8;
+   }
+
+   return Node();
+}

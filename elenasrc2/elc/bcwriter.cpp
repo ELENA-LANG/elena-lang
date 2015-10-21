@@ -2894,3 +2894,8 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 }
+
+ref_t ByteCodeWriter :: findAttribute(SyntaxReader::Node node, LexicalType type)
+{
+   return findChild(node, type).argument;
+}

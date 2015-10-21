@@ -49,10 +49,12 @@ enum LexicalType
    lxReturning       = 0x404,
 
    lxTarget          = 0x801,
-   lxBreakpoint      = 0x802,
-   lxBPCol           = 0x803,
-   lxBPRow           = 0x804,
-   lxBPLength        = 0x805,
+   lxType            = 0x802,
+
+   lxBreakpoint      = 0x1001,
+   lxBPCol           = 0x1002,
+   lxBPRow           = 0x1003,
+   lxBPLength        = 0x1004,
 };
 
 // --- SyntaxWriter ---
@@ -119,6 +121,17 @@ public:
          return this->type != type;
       }
 
+      void operator = (LexicalType type)
+      {
+         this->type = type;
+
+         int prevPos = reader->_reader.Position();
+
+         reader->_reader.seek(position - 8);
+         *(int*)(reader->_reader.Address()) = (int)type;
+         reader->_reader.seek(prevPos);
+      }
+
       Node firstChild() const
       {
          return reader->readFirstNode(position);
@@ -127,6 +140,11 @@ public:
       Node nextNode() const
       {
          return reader->readNextNode(position);
+      }
+
+      Node prevNode() const
+      {
+         return reader->readPreviousNode(position);
       }
 
       Node()
@@ -147,6 +165,7 @@ public:
    Node readRoot();
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
+   Node readPreviousNode(size_t position);
 
    SyntaxReader(_Memory* dump)
       : _reader(dump)
