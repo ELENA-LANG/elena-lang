@@ -167,8 +167,8 @@ public:
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
 
-//   void gotoEnd(CommandTape& tape, PseudoArg label);
-//
+   void gotoEnd(CommandTape& tape, PseudoArg label);
+
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //

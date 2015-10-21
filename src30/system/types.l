@@ -29,7 +29,7 @@
 //#subject(class:system'MessageVar)   vmssg.
 
 // === basic dynamic types ===
-//#subject(class:system'ByteArray)    bytearray.
+#subject(class:system'ByteArray)    bytearray.
 //#subject(class:system'ShortArray)   shortarray.
 //#subject(class:system'IntArray)     intarray.
 //#subject(class:system'IntMatrix)    intmatrix.

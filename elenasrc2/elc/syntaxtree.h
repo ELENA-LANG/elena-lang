@@ -46,6 +46,7 @@ enum LexicalType
    lxAlternative     = 0x401,
    lxCatch           = 0x402,
    lxAssigning       = 0x403,
+   lxReturning       = 0x404,
 
    lxTarget          = 0x801,
    lxBreakpoint      = 0x802,

@@ -1300,16 +1300,16 @@ bool Compiler::MethodScope :: include()
 
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 {
-//   if (StringHelper::compare(identifier, THIS_VAR)) {
-//      return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
-//   }
+   if (StringHelper::compare(identifier, THIS_VAR)) {
+      return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
+   }
 //   else if (StringHelper::compare(identifier, SELF_VAR)) {
 //      ObjectInfo retVal = parent->mapObject(identifier);
 //      retVal.extraparam = stackSafe ? -1 : 0;
 //
 //      return retVal;
 //   }
-//   else {
+   else {
       Parameter param = parameters.get(identifier);
 
       int local = param.offset;
@@ -1324,7 +1324,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
          return retVal;
       }
-//   }
+   }
 }
 
 int Compiler::MethodScope :: compileHints(DNode hints)
@@ -2120,6 +2120,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             break;
          case okLocal:
          case okParam:
+         case okThisParam:
             scope.writer->newNode(lxLocal, object.param);
             break;
          case okField:
@@ -4541,18 +4542,18 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileLock(statement, scope);
 //            break;
-//         case nsRetStatement:
-//         {
-//            needVirtualEnd = false;
-//            recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
-//            openDebugExpression(scope);
-//            retVal = compileRetExpression(statement.firstChild(), scope, 0);
-//            endDebugExpression(scope);
+         case nsRetStatement:
+         {
+            needVirtualEnd = false;
+            recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
+
+            scope.writer->newNode(lxReturning);
+            retVal = compileRetExpression(statement.firstChild(), scope, 0);
+            scope.writer->closeNode();
 //            scope.freeSpace();
-//
-//            _writer.gotoEnd(*scope.tape, baFirstLabel);
-//            break;
-//         }
+
+            break;
+         }
 //         case nsVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileVariable(statement, scope, hints);
@@ -5702,36 +5703,36 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
          ref_t typeRef = 0;
          scope.compileFieldHints(hints, sizeValue, typeRef);
 
-         //// if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-         //if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
-         //   && test(scope.info.header.flags, elSealed) && sizeValue != 0 && scope.info.fields.Count() == 0)
-         //{
-         //   scope.info.header.flags |= elStructureWrapper;
-         //   scope.info.size = sizeValue;
+         // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+         if (test(scope.info.header.flags, elStructureRole) && !findSymbol(member.nextNode(), nsField)
+            && test(scope.info.header.flags, elSealed) && sizeValue != 0 && scope.info.fields.Count() == 0)
+         {
+            scope.info.header.flags |= elStructureWrapper;
+            scope.info.size = sizeValue;
 
-         //   if (sizeValue < 0) {
-         //       scope.info.header.flags |= elDynamicRole;
-         //   }
+            if (sizeValue < 0) {
+                scope.info.header.flags |= elDynamicRole;
+            }
 
-         //   scope.info.fields.add(member.Terminal(), 0);
-         //   scope.info.fieldTypes.add(0, typeRef);
-         //}
-//         // if it is a structure field
-//         else if (test(scope.info.header.flags, elStructureRole)) {
-//            if (sizeValue <= 0)
-//               scope.raiseError(errIllegalField, member.Terminal());
-//
-//            if (scope.info.size != 0 && scope.info.fields.Count() == 0)
-//               scope.raiseError(errIllegalField, member.Terminal());
-//
-//            int offset = scope.info.size;
-//            scope.info.size += sizeValue;
-//
-//            scope.info.fields.add(member.Terminal(), offset);
-//            scope.info.fieldTypes.add(offset, typeRef);
-//         }
-//         // if it is a normal field
-//         else {
+            scope.info.fields.add(member.Terminal(), 0);
+            scope.info.fieldTypes.add(0, typeRef);
+         }
+         // if it is a structure field
+         else if (test(scope.info.header.flags, elStructureRole)) {
+            if (sizeValue <= 0)
+               scope.raiseError(errIllegalField, member.Terminal());
+
+            if (scope.info.size != 0 && scope.info.fields.Count() == 0)
+               scope.raiseError(errIllegalField, member.Terminal());
+
+            int offset = scope.info.size;
+            scope.info.size += sizeValue;
+
+            scope.info.fields.add(member.Terminal(), offset);
+            scope.info.fieldTypes.add(offset, typeRef);
+         }
+         // if it is a normal field
+         else {
             scope.info.header.flags |= elNonStructureRole;
 
             int offset = scope.info.fields.Count();
@@ -5745,7 +5746,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, ClassScope& scope)
                if (scope.info.fields.Count() > 1)
                   scope.raiseError(errIllegalField, member.Terminal());
             }
-//         }
+         }
       }
       else {
          // due to current syntax we need to reset hints back, otherwise they will be skipped
@@ -6263,6 +6264,12 @@ void Compiler :: saveSyntaxTree(CommandTape& tape, MemoryDump& dump)
             break;
          case lxBreakpoint:
             _writer.translateBreakpoint(tape, current);
+            break;
+         case lxReturning:
+            openDebugExpression(tape);
+            _writer.translateExpression(tape, current);
+            endDebugExpression(tape);
+            _writer.gotoEnd(tape, baFirstLabel);
             break;
          default:
             break;

@@ -1,20 +1,20 @@
 // === basic memory classes ===
 
-//// --- BaseByteArray ---
-//
-///// A base byte array
-//#class(stringof:1) BaseByteArray
-//{
+// --- BaseByteArray ---
+
+/// A base byte array
+#class(stringof:1) BaseByteArray
+{
 //    /// Creates the byte array with the specified length
 //    #constructor(stacksafe) new &int:aLength
 //        => system'internal'bs_create.
-//}
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//#class(sealed) ByteArray :: BaseByteArray
-//{
+}
+
+// --- ByteArray ---
+
+/// A byte array
+#class(sealed) ByteArray :: BaseByteArray
+{
 //    /// Creates the byte array with the specified length
 //    #constructor(stacksafe) new &int:aLength
 //        => system'internal'bs_create.
@@ -180,8 +180,8 @@
 //    
 //    /// Dispatches the verb to the target object with bytearray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array
@@ -800,8 +800,8 @@
 /// A UTF-8 literal value
 #class(sealed,string) LiteralValue :: BaseValue
 {
-//    #field(type:bytearray)theValue.
-//
+    #field(type:bytearray)theValue.
+
 //    /// Creates the empty literal
 //    #constructor min
 //        => system'internal's_empty.
@@ -828,10 +828,10 @@
 //
 //    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
 //        => system'internal's_copybuf.
-//
-//    /// Returns itself
-//    #method literal = $self.
-//    
+
+    /// Returns itself
+    #method literal = $self.
+    
 //    /// Converts to UTF-16 literal
 //    #method wide = wideConvertor convert &literal:$self.
 //

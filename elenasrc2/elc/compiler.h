@@ -140,7 +140,7 @@ public:
       okParam,                        // param - parameter offset
    //   okSubject,                      // param - parameter offset
    //   okSubjectDispatcher,
-   //   okThisParam,                    // param - parameter offset
+      okThisParam,                    // param - parameter offset
    //   okNil,
    //   okSuper,
    //   okLocalAddress,                  // param - local offset, extraparam - class reference

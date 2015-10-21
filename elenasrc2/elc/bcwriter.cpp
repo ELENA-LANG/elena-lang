@@ -1148,13 +1148,13 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, boo
 //   // throw
 //   tape.write(bcThrow);
 //}
-//
-//void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
-//{
-//   // jump labEnd
-//   tape.write(bcJump, label);
-//}
-//
+
+void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+{
+   // jump labEnd
+   tape.write(bcJump, label);
+}
+
 //ByteCodeIterator ByteCodeWriter :: insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument)
 //{
 //   tape.insert(it, ByteCommand(command, argument));
