@@ -334,12 +334,12 @@ private:
          return defineTypeSize(type_ref, class_ref, dummy2);
       }
 
-      int checkMethod(ref_t reference, ref_t message, bool& found/*, ref_t& outputType*/);
+      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
       int checkMethod(ref_t reference, ref_t message)
       {
          bool dummy;
-         //ref_t dummyRef;
-         return checkMethod(reference, message, dummy/*, dummyRef*/);
+         ref_t dummyRef;
+         return checkMethod(reference, message, dummy, dummyRef);
       }
 
       void loadTypes(_Module* module);

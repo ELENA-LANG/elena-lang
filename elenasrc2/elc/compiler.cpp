@@ -770,7 +770,7 @@ int Compiler::ModuleScope :: getClassFlags(ref_t reference)
 //   return classInfo.classClassRef;
 //}
 
-int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found/*, ref_t& outputType*/)
+int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
 {
    ClassInfo info;
    found = loadClassInfo(info, module->resolveReference(reference)) != 0;
@@ -781,7 +781,7 @@ int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& f
       if (methodFound) {
          MethodInfo methodInfo = info.methodHints.get(message);
 
-         //outputType = methodInfo.typeRef;
+         outputType = methodInfo.typeRef;
 
          if (test(info.header.flags, elSealed)) {
             return tpSealed | methodInfo.hint;
@@ -1355,14 +1355,14 @@ int Compiler::MethodScope :: compileHints(DNode hints)
 
          mode |= HINT_GENERIC_METH;
       }
-      //else if (StringHelper::compare(terminal, HINT_TYPE)) {
-      //   DNode value = hints.select(nsHintValue);
-      //   TerminalInfo typeTerminal = value.Terminal();
+      else if (StringHelper::compare(terminal, HINT_TYPE)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo typeTerminal = value.Terminal();
 
-      //   type = moduleScope->mapType(typeTerminal);
-      //   if (type == 0)
-      //      raiseError(wrnInvalidHint, terminal);
-      //}
+         type = moduleScope->mapType(typeTerminal);
+         if (type == 0)
+            raiseError(wrnInvalidHint, terminal);
+      }
       else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
          hint |= tpStackSafe;
       }
@@ -3304,7 +3304,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
    bool classFound = false;
    bool dispatchCall = false;
 //   bool varInitCall = test(mode, HINT_INITIALIZING);
-   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound/*, retVal.type*/) : 0;
+   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
    int callType = methodHint & tpMask;
 
    if (target.kind == okConstantClass) {
@@ -3443,12 +3443,12 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
    scope.writer->closeNode();
 
    // the result of get&type message should be typed
-   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
-      if (scope.moduleScope->typeHints.exist(signRef)) {
-         retVal.type = signRef;
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->typeHints.exist(signRef)) {
+      retVal.type = signRef;
+   }
 
-         scope.writer->appendNode(lxType, retVal.type);
-      }
+   if (retVal.type != 0) {
+      scope.writer->appendNode(lxType, retVal.type);
    }
 
    return retVal;
