@@ -3295,9 +3295,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo target, int messageRef, int mode)
 {
    ObjectInfo retVal(okObject);
-//
-//   int signRef = getSignature(messageRef);
-//   int paramCount = getParamCount(messageRef);
+
+   int signRef = getSignature(messageRef);
+   int paramCount = getParamCount(messageRef);
 
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
@@ -3441,6 +3441,15 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
 
    recordDebugStep(scope, node.Terminal(), dsStep);
    scope.writer->closeNode();
+
+   // the result of get&type message should be typed
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+      if (scope.moduleScope->typeHints.exist(signRef)) {
+         retVal.type = signRef;
+
+         scope.writer->appendNode(lxType, retVal.type);
+      }
+   }
 
    return retVal;
 }

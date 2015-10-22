@@ -100,7 +100,7 @@ SyntaxReader::Node SyntaxReader :: readPreviousNode(size_t position)
       if (type != -1) {
          level++;
          if (level == 0) {
-            _reader.seek(position - 8);
+            _reader.seek(position);
 
             return read();
          }
