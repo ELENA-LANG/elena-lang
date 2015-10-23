@@ -577,13 +577,13 @@ private:
          else return parent->getScope(level);
       }
 
-//      int getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->message : 0;
-//      }
-//
+      int getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->message : 0;
+      }
+
 //      ref_t getClassRefId(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);

@@ -65,7 +65,7 @@
 
     #constructor new &handle:aHandle
     [
-//        theHandle := aHandle.
+        theHandle := aHandle.
     ]
 
 //    #method write &literal:aLiteral

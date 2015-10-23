@@ -1020,7 +1020,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
          if (test(info.header.flags, elStructureRole)) {
             int offset = reference;
 
-            return ObjectInfo(okFieldAddress, offset, 0/*, info.fieldTypes.get(offset)*/);
+            return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
          }
 ////         else if (test(info.header.flags, elDynamicRole)) {
 ////            int type = getClassType();
@@ -4231,23 +4231,34 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
 ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
 {
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   // type cast returning value if required
+   int paramCount;
+   ref_t verb, subj;
+   decodeMessage(scope.getMessageID(), subj, verb, paramCount);
+   if (verb == GET_MESSAGE_ID && paramCount == 0) {
+   }
+   else if (classScope->info.methodHints.exist(scope.getMessageID())) {
+      subj = classScope->info.methodHints.get(scope.getMessageID()).typeRef;
+   }
+   else subj = 0;
+
+   if (subj)
+      scope.writer->newNode(lxExpression);
 
    ObjectInfo info = compileExpression(node, scope, mode);
 
+   if (subj) {
+      scope.writer->newNode(lxTypecast, subj);
+      appendCoordinate(scope.writer, node.FirstTerminal());
+      scope.writer->closeNode();
+
+      scope.writer->closeNode();
+   }
+
 //   _writer.loadObject(*scope.tape, info);
-//
-//   // type cast returning value if required
-//   int paramCount;
-//   ref_t verb, subj;
-//   decodeMessage(scope.getMessageID(), subj, verb, paramCount);
-//   if (verb == GET_MESSAGE_ID && paramCount == 0) {
-//   }
-//   else if (classScope->info.methodHints.exist(scope.getMessageID())) {
-//      subj = classScope->info.methodHints.get(scope.getMessageID()).typeRef;
-//   }
-//   else subj = 0;
-//
+
 //   if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
 //      bool mismatch = false;
 //      bool boxed = false;
@@ -4271,7 +4282,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 //
 //   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
-   return ObjectInfo(okObject, 0, 0/*, subj*/);
+   return ObjectInfo(okObject, 0, 0, subj);
 }
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
@@ -4295,8 +4306,8 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
 {   
-//   // if primitive data operation can be used
-//   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
+   // if primitive data operation can be used
+   if (/*target.kind == okLocalAddress || */target.kind == okFieldAddress) {
 //      ObjectInfo info;
 //
 //      // check if embeddable constructor can me called
@@ -4332,8 +4343,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 //
 //         compileContentAssignment(node, scope, target, info);
 //      }
-//   }
-//   else {
+   }
+   else {
       scope.writer->newNode(lxAssigning);
 
       ref_t targetType = 0;
@@ -4379,7 +4390,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 
       scope.writer->closeNode();
 //      compileAssignment(node, scope, target);
-//   }
+   }
 
    return ObjectInfo(okObject);
 }
@@ -5442,21 +5453,33 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       // if method body is a set of statements
       else {
          ObjectInfo retVal = compileCode(body, codeScope);
-//
-//         if(retVal.kind == okUnknown) {
+
+         // if the method returns itself
+         if(retVal.kind == okUnknown) {
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+            ref_t typeHint = classScope->info.methodHints.get(scope.message).typeRef;
+
+            writer.newNode(lxExpression);
+            writer.appendNode(lxLocal, 1);
+            if (typeHint != 0) {
+               writer.newNode(lxTypecast, typeHint);
+               appendCoordinate(&writer, goToSymbol(body, nsCodeEnd).Terminal());
+               writer.closeNode();
+            }
+            writer.closeNode();
+
 //            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
 //
-//            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 //            bool mismatch = false;
 //            bool boxed = false;
 //            bool dummy = false;
 //            ObjectInfo acc(okAccumulator);
-//            compileTypecast(codeScope, acc, classScope->info.methodHints.get(scope.message).typeRef, mismatch, boxed, dummy);
+//            compileTypecast(codeScope, acc, , mismatch, boxed, dummy);
 //            if (mismatch)
 //               scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
 //            if (boxed)
 //               scope.raiseWarning(4, wrnBoxingCheck, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
-//         }
+         }
       }
       writer.closeNode();
 
