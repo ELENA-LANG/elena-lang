@@ -1591,6 +1591,17 @@ Compiler :: Compiler(StreamReader* syntax)
 //   ByteCodeCompiler::loadOperators(_operators);
 }
 
+void Compiler :: appendObjectInfo(CodeScope& scope, ObjectInfo object)
+{
+   if (object.type != 0) {
+      scope.writer->appendNode(lxType, object.type);
+   }
+   ref_t objectRef = resolveObjectReference(scope, object);
+   if (objectRef != 0) {
+      scope.writer->appendNode(lxTarget, objectRef);
+   }
+}
+
 void Compiler :: loadRules(StreamReader* optimization)
 {
    _rules.load(optimization);
@@ -2153,6 +2164,8 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          //         break;
       }
    }
+
+   appendObjectInfo(scope, object);
 
    scope.writer->closeNode();
 
@@ -3161,10 +3174,10 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    //   return scope.moduleScope->signatureReference;
    //}
    // if message sent to the $self
-   //else if (object.kind == okThisParam) {
-   //   return scope.getClassRefId(false);
-   //}
-   else return /*object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : */0;
+   else if (object.kind == okThisParam) {
+      return scope.getClassRefId(false);
+   }
+   else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
 }
 
 //bool Compiler :: checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack)
@@ -3474,10 +3487,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
    // the result of get&type message should be typed
    if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->typeHints.exist(signRef)) {
       retVal.type = signRef;
-   }
-
-   if (retVal.type != 0) {
-      scope.writer->appendNode(lxType, retVal.type);
    }
 
    return retVal;
@@ -4327,6 +4336,8 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    if (member != nsNone) {
       objectInfo = compileOperations(member, scope, objectInfo, mode);
    }
+
+   appendObjectInfo(scope, objectInfo);
 
    scope.writer->closeNode();
 
@@ -6338,23 +6349,176 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
 void Compiler :: optimizeBoxing(ModuleScope& scope, SyntaxReader::Node node)
 {
-   scope.raiseWarning(2, wrnBoxingCheck,
+   scope.raiseWarning(4, wrnBoxingCheck,
       SyntaxReader::findChild(node, lxRow).argument,
       SyntaxReader::findChild(node, lxCol).argument);
 }
 
-void Compiler :: optimizeTypecast(ModuleScope& scope, SyntaxReader::Node node, ref_t typeRef)
+void Compiler :: optimizeTypecast(ModuleScope& scope, SyntaxReader::Node node, ref_t targetType)
 {
-   SyntaxReader::Node target = node.prevNode();
+   SyntaxReader::Node attr = SyntaxReader::findChild(node.prevNode(), lxType, lxTarget);
 
-   ref_t targetType = SyntaxReader::findChild(target, lxType).argument;
+   ref_t sourceType = attr == lxType ? attr.argument : 0;
+   ref_t sourceRef = attr == lxTarget ? attr.argument : 0;
 
-   if (typeRef == targetType) {
+   //   ref_t source_type = object.type;
+   //   ref_t sourceClassReference = 0;
+   //   // define the object class
+   //   if (object.kind == okLocalAddress) {
+   //      sourceClassReference = object.extraparam;
+   //   }
+   //
+   //   if (source_type == 0) {
+   //      if (object.param != 0 && object.kind == okAccumulator) {
+   //         sourceClassReference = object.param;
+   //      }
+   //      else if (object.kind == okSubject) {
+   //         sourceClassReference = scope.moduleScope->signatureReference;
+   //      }
+   //   }
+   //
+   //   if (sourceClassReference == 0 && source_type != 0) {
+   //      sourceClassReference = scope.moduleScope->typeHints.get(source_type);
+   //   }
+   //
+   //   // if types misnatch - should be typecasted
+   //   if (target_type != source_type) {
+   //      if (moduleScope->typeHints.exist(target_type)) {
+   //         // overwrite the type only for strong types
+   //         object.type = target_type;
+   //
+   //         // typecast literal constant
+   //         if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
+   //            return object;
+   //         }
+   //
+   //         ref_t targetClassReference = moduleScope->typeHints.get(target_type);
+   //         ClassInfo targetInfo;
+   //         moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
+   //
+   //         ClassInfo sourceInfo;
+   //         if (sourceClassReference != 0)
+   //            moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(sourceClassReference), false);
+   //
+   //         // if the target is structure
+   //         if (test(targetInfo.header.flags, elStructureRole)) {
+   //            // typecast numeric constant
+   //            if (object.kind == okIntConstant && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+   //               return object;
+   //            }
+   //            else if (object.kind == okLongConstant && (targetInfo.header.flags & elDebugMask) == elDebugQWORD) {
+   //               return object;
+   //            }
+   //            else if (object.kind == okRealConstant && (targetInfo.header.flags & elDebugMask) == elDebugReal64) {
+   //               return object;
+   //            }
+   //            else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
+   //               return object;
+   //            }
+   //            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
+   //               return ObjectInfo(okAccumulator, 0, 0, target_type);
+   //            }
+   ////            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
+   ////               return ObjectInfo(okAccumulator, 0, target_type);
+   ////            }
+   //
+   //            // NOTE : compiler magic!
+   //            // if the source is structure
+   //            if (test(sourceInfo.header.flags, elStructureRole)) {
+   //               // if source is target wrapper (i.e. source is a target container)
+   //               // virtually copy the value into the stack allocated local
+   //               if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
+   //                  ObjectInfo primitive(okLocal, 0, 0, target_type);
+   //                  allocateStructure(scope, 0, primitive);
+   //
+   //                  compileContentAssignment(DNode(), scope, primitive, object);
+   //
+   //                  return primitive;
+   //               }
+   //               // if target is source wrapper (i.e. target is a source container)
+   //               // pass it directly
+   //               if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
+   //                  if (test(targetInfo.header.flags, elEmbeddable)) {
+   //
+   //                     return object;
+   //                  }
+   //               }
+   //            }
+   //         }
+   //
+   //         // pass $nil directly
+   //         if (object.kind == okNil)
+   //            return object;
+   //
+   //         // if source class inherites / is target class
+   //         while (sourceClassReference != 0) {
+   //            if (moduleScope->typeHints.exist(target_type, sourceClassReference))
+   //               return object;
+   //
+   //            sourceClassReference = sourceInfo.header.parentRef;
+   //
+   //            if (moduleScope->loadClassInfo(sourceInfo, moduleScope->module->resolveReference(sourceClassReference), true) == 0)
+   //               break;
+   //         }
+   //
+   //         // NOTE : compiler magic!
+   //         // if the target is generic wrapper (container) and the object is a local
+   //         if (object.kind == okLocal && test(targetInfo.header.flags, elWrapper)) {
+   //            // allocate a temporal object
+   //            _writer.newVariable(*scope.tape, targetClassReference, ObjectInfo(okAccumulator));
+   //            unboxing = true;
+   //
+   //            return ObjectInfo(okAccumulator, 0, 0, target_type);
+   //         }
+   //
+   //         // if type mismatch
+   //         // call typecast method
+   //         mismatch = true;
+   //
+   //         // the parameter should be boxed before
+   //         bool dummy = false;
+   //         boxObject(scope, object, boxed, dummy);
+   //
+   //         _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
+   //         _writer.typecast(*scope.tape);
+   //
+   //         return ObjectInfo(okAccumulator, 0, 0, target_type);
+   //      }
+   //   }
+   //
+   //   return object;
+
+   bool mismatch = true;
+   if (sourceType == targetType) {
+      mismatch = false;
+   }
+   else {
+      ClassInfo sourceInfo;
+      if (sourceRef != 0)
+         scope.loadClassInfo(sourceInfo, scope.module->resolveReference(sourceRef), false);
+
+      // if source class inherites / is target class
+      while (sourceRef != 0) {
+         if (scope.typeHints.exist(targetType, sourceRef)) {
+            mismatch = false;
+            break;
+         }
+
+         sourceRef = sourceInfo.header.parentRef;
+
+         if (scope.loadClassInfo(sourceInfo, scope.module->resolveReference(sourceRef), true) == 0)
+            break;
+      }
+   }
+
+   if (!mismatch) {
       node = lxNone;
    }
-   else scope.raiseWarning(2, wrnTypeMismatch,
-      SyntaxReader::findChild(node, lxRow).argument,
-      SyntaxReader::findChild(node, lxCol).argument);
+   else {
+      scope.raiseWarning(2, wrnTypeMismatch,
+         SyntaxReader::findChild(node, lxRow).argument,
+         SyntaxReader::findChild(node, lxCol).argument);
+   }
 }
 
 void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxReader::Node node)

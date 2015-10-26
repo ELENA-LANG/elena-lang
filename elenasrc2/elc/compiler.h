@@ -584,12 +584,12 @@ private:
          return scope ? scope->message : 0;
       }
 
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
 //      ref_t getClassParentRefId(bool ownerClass = true)
 //      {
@@ -817,6 +817,8 @@ private:
       _writer.declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
    }
 
+   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
+
    ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
@@ -862,9 +864,9 @@ private:
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-//
+
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
-//
+
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
