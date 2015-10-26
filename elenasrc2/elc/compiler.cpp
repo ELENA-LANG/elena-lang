@@ -6233,8 +6233,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
    SyntaxWriter writer(&scope.syntaxTree);
    CodeScope codeScope(&scope, &writer);
-//   if (retVal.kind == okUnknown) {
-//      // compile symbol body
+   if (retVal.kind == okUnknown) {
+      // compile symbol body
 
       writer.newNode(lxExpression);
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
@@ -6243,7 +6243,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
       writer.closeNode();
 
-//   }
+   }
 //   _writer.loadObject(*codeScope.tape, retVal);
 
 //   // create constant if required
