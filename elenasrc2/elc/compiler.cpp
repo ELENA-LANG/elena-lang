@@ -1011,10 +1011,10 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 //   if (StringHelper::compare(identifier, SUPER_VAR)) {
 //      return ObjectInfo(okSuper, info.header.parentRef);
 //   }
-//   else if (StringHelper::compare(identifier, SELF_VAR)) {
-//      return ObjectInfo(okParam, (size_t)-1);
-//   }
-//   else {
+   /*else */if (StringHelper::compare(identifier, SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
+   }
+   else {
       int reference = info.fields.get(identifier);
       if (reference != -1) {
          if (test(info.header.flags, elStructureRole)) {
@@ -1038,7 +1038,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
          //}
          /*else */return Scope::mapObject(identifier);
       }
-//   }
+   }
 }
 
 void Compiler::ClassScope :: compileClassHints(DNode hints)
@@ -1328,7 +1328,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
          /*if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
             return ObjectInfo(okParams, -1 - local, 0, param.sign_ref);
          }
-         else */return ObjectInfo(okParam, -1 - local/*, stackSafe ? -1 : 0, param.sign_ref*/);
+         else */return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.sign_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -1407,7 +1407,7 @@ Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
 {
    this->writer = writer;
    this->level = 0;
-//   this->saved = this->reserved = 0;
+   this->saved = this->reserved = 0;
 }
 
 //Compiler::CodeScope :: CodeScope(MethodScope* parent, CodeType type)
@@ -1422,7 +1422,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
 {
    this->writer = writer;
    this->level = 0;
-   //this->saved = this->reserved = 0;
+   this->saved = this->reserved = 0;
 }
 
 //Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -2133,9 +2133,14 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          case okParam:
          case okThisParam:
             scope.writer->newNode(lxLocal, object.param);
+            compileBoxing(node, scope, object);
             break;
          case okField:
             scope.writer->newNode(lxField, object.param);
+            break;
+         case okFieldAddress:
+            scope.writer->newNode(lxFieldAddress, object.param);
+            compileBoxing(node, scope, object);
             break;
             //      //case okExternal:
          //      //   // external call cannot be used inside symbol
@@ -2148,7 +2153,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          //         break;
       }
    }
-
 
    scope.writer->closeNode();
 
@@ -2347,7 +2351,32 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //   }
 //   else return false;
 //}
-//
+
+void Compiler :: compileBoxing(DNode node, CodeScope& scope, ObjectInfo object)
+{
+   ref_t classRef = 0;
+   if (object.type != 0) {
+      classRef = scope.moduleScope->typeHints.get(object.type);
+   }
+   else classRef = object.extraparam;
+   
+   int size = scope.moduleScope->defineStructSize(classRef);
+   if (size != 0) {
+      if (object.kind == okFieldAddress) {
+         scope.writer->newNode(lxBoxing, size);
+      }
+      else if (object.kind == okParam) {
+         scope.writer->newNode(lxCondBoxing, size);
+      }
+      else return;
+
+      scope.writer->appendNode(lxTarget, classRef);
+      appendCoordinate(scope.writer, node.FirstTerminal());
+
+      scope.writer->closeNode();
+   }
+}
+
 //ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing)
 //{
 //   unboxing = false;
@@ -2411,8 +2440,8 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //
 //   return object;
 //}
-//
-//ObjectInfo Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisParam, bool& unboxing, int mode)
+
+///*ObjectInfo*/void Compiler :: boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisParam, bool& unboxing, int mode*/)
 //{
 //   bool presavedAcc = thisParam.kind == okAccumulator;
 //
@@ -2450,7 +2479,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //      field = ObjectInfo(okAccumulator);
 //   }
 //   else {
-//      allocateStructure(scope, 0, field, presavedAcc);
+      //allocateStructure(scope, 0, field);
 //
 //      _writer.loadBase(*scope.tape, field);
 //      _writer.loadObject(*scope.tape, thisParam);
@@ -4250,7 +4279,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    ObjectInfo info = compileExpression(node, scope, mode);
 
    if (subj) {
-      scope.writer->newNode(lxTypecast, subj);
+      scope.writer->newNode(lxTypecast, encodeMessage(subj, GET_MESSAGE_ID, 0));
       appendCoordinate(scope.writer, node.FirstTerminal());
       scope.writer->closeNode();
 
@@ -4277,9 +4306,9 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 //      if (boxed)
 //         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
 //   }
-//
-//   scope.freeSpace();
-//
+
+   scope.freeSpace();
+
 //   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 
    return ObjectInfo(okObject, 0, 0, subj);
@@ -4341,7 +4370,18 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 //         bool dummy = false;
 //         loadObject(scope, info, dummy);
 //
+      scope.writer->newNode(lxAssigning, scope.moduleScope->defineTypeSize(target.type));
+      scope.writer->newNode(lxExpression);
+
 //         compileContentAssignment(node, scope, target, info);
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
+
+      scope.writer->newNode(lxTypecast, encodeMessage(target.type, GET_MESSAGE_ID, 0));
+      appendCoordinate(scope.writer, node.FirstTerminal());
+
+      scope.writer->closeNode();
+      scope.writer->closeNode();
+      scope.writer->closeNode();
 //      }
    }
    else {
@@ -4583,7 +4623,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             scope.writer->newNode(lxReturning);
             retVal = compileRetExpression(statement.firstChild(), scope, 0);
             scope.writer->closeNode();
-//            scope.freeSpace();
+            scope.freeSpace();
 
             break;
          }
@@ -4596,7 +4636,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             recordDebugStep(scope, statement.Terminal(), dsEOP);
             break;
       }
-//      scope.freeSpace();
+      scope.freeSpace();
 
       statement = statement.nextNode();
    }
@@ -4837,32 +4877,34 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //
 //   return ObjectInfo(okAccumulator);
 //}
-//
-//void Compiler :: reserveSpace(CodeScope& scope, int size)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // if it is not enough place to allocate
-//   if (methodScope->reserved < scope.reserved) {
-//      ByteCodeIterator allocStatement = scope.tape->find(bcOpen);
-//      // reserve place for stack allocated object
-//      (*allocStatement).argument += size;
-//
-//      // if stack was not allocated before
-//      // update method enter code
-//      if (methodScope->reserved == 0) {
-//         // to include new frame header
-//         (*allocStatement).argument += 2;
-//
-//         _writer.insertStackAlloc(allocStatement, *scope.tape, size);
-//      }
-//      // otherwise update the size
-//      else _writer.updateStackAlloc(allocStatement, size);
-//
-//      methodScope->reserved += size;
-//   }
-//}
-//
+
+void Compiler :: reserveSpace(CodeScope& scope, int size)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+
+   // if it is not enough place to allocate
+   // !! it should be refactored : code generation should start after the syntax tree is built
+   if (methodScope->reserved < scope.reserved) {
+      ByteCodeIterator allocStatement = tape->find(bcOpen);
+      // reserve place for stack allocated object
+      (*allocStatement).argument += size;
+
+      // if stack was not allocated before
+      // update method enter code
+      if (methodScope->reserved == 0) {
+         // to include new frame header
+         (*allocStatement).argument += 2;
+
+         _writer.insertStackAlloc(allocStatement, *tape, size);
+      }
+      // otherwise update the size
+      else _writer.updateStackAlloc(allocStatement, size);
+
+      methodScope->reserved += size;
+   }
+}
+
 //void Compiler :: allocateLocal(CodeScope& scope, ObjectInfo& exprOperand)
 //{
 //   exprOperand.kind = okLocalAddress;
@@ -4871,44 +4913,44 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //   // allocate
 //   reserveSpace(scope, 1);
 //}
-//
-//bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand, bool presavedAccumulator)
-//{
-//   bool bytearray = false;
-//   int size = 0;
-//   ref_t classReference = 0;
-//   if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
-//      classReference = exprOperand.param;
-//      size = scope.moduleScope->defineStructSize(classReference);
-//   }
-//   else if (exprOperand.kind == okIndexAccumulator && exprOperand.type == 0) {
-//      // typecast index to int if no type provided
-//      classReference = scope.moduleScope->intReference;
-//   }
-//   else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
-//
-//   if (size < 0) {
-//      bytearray = true;
-//
-//      // plus space for size
-//      size = ((dynamicSize + 3) >> 2) + 2;
-//   }
-//   else if (exprOperand.kind == okIndexAccumulator) {
-//      size = 1;
-//   }
-//   else if (size == 0) {
-//      return false;
-//   }
-//   else size = (size + 3) >> 2;
-//
-//   if (size > 0) {
+
+bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand/*, bool presavedAccumulator*/)
+{
+   bool bytearray = false;
+   int size = 0;
+   ref_t classReference = 0;
+   //if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
+   //   classReference = exprOperand.param;
+   //   size = scope.moduleScope->defineStructSize(classReference);
+   //}
+   //else if (exprOperand.kind == okIndexAccumulator && exprOperand.type == 0) {
+   //   // typecast index to int if no type provided
+   //   classReference = scope.moduleScope->intReference;
+   //}
+   /*else */size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
+
+   if (size < 0) {
+      bytearray = true;
+
+      // plus space for size
+      size = ((dynamicSize + 3) >> 2) + 2;
+   }
+   //else if (exprOperand.kind == okIndexAccumulator) {
+   //   size = 1;
+   //}
+   else if (size == 0) {
+      return false;
+   }
+   else size = (size + 3) >> 2;
+
+   if (size > 0) {
 //      exprOperand.kind = okLocalAddress;
 //      exprOperand.param = scope.newSpace(size);
 //      exprOperand.extraparam = classReference;
-//
-//      // allocate
-//      reserveSpace(scope, size);
-//
+
+      // allocate
+      reserveSpace(scope, size);
+
 //      // reserve place for byte array header if required
 //      if (bytearray) {
 //         if (presavedAccumulator)
@@ -4923,11 +4965,11 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //         exprOperand.param -= 2;
 //      }
 //
-//      return true;
-//   }
-//   else return false;
-//}
-//
+      return true;
+   }
+   else return false;
+}
+
 ////inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
 ////{
 ////   signature.append(module->resolveSubject(type));
@@ -5462,8 +5504,8 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
             writer.newNode(lxExpression);
             writer.appendNode(lxLocal, 1);
             if (typeHint != 0) {
-               writer.newNode(lxTypecast, typeHint);
-               appendCoordinate(&writer, goToSymbol(body, nsCodeEnd).Terminal());
+               writer.newNode(lxTypecast, encodeMessage(typeHint, GET_MESSAGE_ID, 0));
+               appendCoordinate(&writer, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
                writer.closeNode();
             }
             writer.closeNode();
@@ -6294,6 +6336,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: optimizeBoxing(ModuleScope& scope, SyntaxReader::Node node)
+{
+   scope.raiseWarning(2, wrnBoxingCheck,
+      SyntaxReader::findChild(node, lxRow).argument,
+      SyntaxReader::findChild(node, lxCol).argument);
+}
+
 void Compiler :: optimizeTypecast(ModuleScope& scope, SyntaxReader::Node node, ref_t typeRef)
 {
    SyntaxReader::Node target = node.prevNode();
@@ -6321,6 +6370,15 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxReader::Node
             break;
          case lxTypecast:
             optimizeTypecast(scope, current, getSignature(current.argument));
+            break;
+         case lxBoxing:
+         case lxCondBoxing:
+            optimizeBoxing(scope, current);
+            break;
+         default:
+            if (test(current.type, lxObjectMask) && current.nextNode() != lxAssigning) {
+               optimizeSyntaxExpression(scope, current);
+            }
             break;
       }
 

@@ -134,15 +134,15 @@ public:
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
 
-////   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-////   void boxArgList(CommandTape& tape, ref_t vmtReference);
-////   void unboxArgList(CommandTape& tape);
-////
-////   void releaseObject(CommandTape& tape, int count = 1);
-////   void releaseArgList(CommandTape& tape);
-////
-////   void setMessage(CommandTape& tape, ref_t message);
-////   void setSubject(CommandTape& tape, ref_t subject);
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+//   void boxArgList(CommandTape& tape, ref_t vmtReference);
+//   void unboxArgList(CommandTape& tape);
+//
+//   void releaseObject(CommandTape& tape, int count = 1);
+//   void releaseArgList(CommandTape& tape);
+//
+//   void setMessage(CommandTape& tape, ref_t message);
+//   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
 //   void callRoleMessage(CommandTape& tape, int paramCount);
@@ -174,9 +174,9 @@ public:
 //
 //   void freeVirtualStack(CommandTape& tape, int count);
 
-//   void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
-//   void updateStackAlloc(ByteCodeIterator it, int size);
-//
+   void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
+   void updateStackAlloc(ByteCodeIterator it, int size);
+
 //   ByteCodeIterator insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument);
 //
 //   void trimTape(ByteCodeIterator it, CommandTape& tape);
@@ -198,19 +198,19 @@ public:
 //   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//
-////   void copy(CommandTape& tape);
-////   void assignInt(CommandTape& tape, ObjectInfo target);
-////   void assignLong(CommandTape& tape, ObjectInfo target);
-////   void assignShort(CommandTape& tape, ObjectInfo target);
-////   void assignByte(CommandTape& tape, ObjectInfo target);
-////   void saveInt(CommandTape& tape, ObjectInfo target);
-////   void loadInt(CommandTape& tape, ObjectInfo target);
-////   void saveReal(CommandTape& tape, ObjectInfo target);
-////   void copyInt(CommandTape& tape, int offset);
-////   void copyShort(CommandTape& tape, int offset);
-////   void copyStructure(CommandTape& tape, int offset, int size);
-////   void copySubject(CommandTape& tape);
+
+//   void copy(CommandTape& tape);
+   void assignInt(CommandTape& tape, LexicalType target, int offset);
+   void assignLong(CommandTape& tape, LexicalType target, int offset);
+   void assignShort(CommandTape& tape, LexicalType target, int offset);
+   void assignByte(CommandTape& tape, LexicalType target, int offset);
+//   void saveInt(CommandTape& tape, ObjectInfo target);
+//   void loadInt(CommandTape& tape, ObjectInfo target);
+//   void saveReal(CommandTape& tape, ObjectInfo target);
+//   void copyInt(CommandTape& tape, int offset);
+//   void copyShort(CommandTape& tape, int offset);
+//   void copyStructure(CommandTape& tape, int offset, int size);
+//   void copySubject(CommandTape& tape);
    void saveSubject(CommandTape& tape);
 ////   void loadSymbolReference(CommandTape& tape, ref_t reference);
 ////   void saveIntConstant(CommandTape& tape, int value);
@@ -227,6 +227,8 @@ public:
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+
+   void copyObject(CommandTape& tape, LexicalType type, ref_t size, size_t offset);
 
    void pushObject(CommandTape& tape, SyntaxReader::Node node);
    void loadObject(CommandTape& tape, SyntaxReader::Node node);

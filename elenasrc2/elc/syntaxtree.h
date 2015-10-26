@@ -27,16 +27,17 @@ enum LexicalType
    lxSymbol          = 0x102,
    lxConstantSymbol  = 0x103,
    lxField           = 0x104,
-   lxLocal           = 0x105,
-   lxConstantString  = 0x106,
-   lxConstantChar    = 0x107,
-   lxConstantInt     = 0x108,
-   lxConstantLong    = 0x109,
-   lxConstantReal    = 0x10A,
-   lxConstantClass   = 0x10B,
-   lxNil             = 0x10C,
-   lxCurrent         = 0x10D,
-   lxResult          = 0x10E,
+   lxFieldAddress    = 0x105,
+   lxLocal           = 0x106,
+   lxConstantString  = 0x107,
+   lxConstantChar    = 0x108,
+   lxConstantInt     = 0x109,
+   lxConstantLong    = 0x10A,
+   lxConstantReal    = 0x10B,
+   lxConstantClass   = 0x10C,
+   lxNil             = 0x10D,
+   lxCurrent         = 0x10E,
+   lxResult          = 0x10F,
 
    lxSemiDirectCall  = 0x201,
    lxDirectCall      = 0x203,
@@ -45,8 +46,10 @@ enum LexicalType
 
    lxAlternative     = 0x401,
    lxCatch           = 0x402,
-   lxAssigning       = 0x403,
+   lxAssigning       = 0x403,    // if argument == 0 -> assign field, otherwise copy the memory block with specified size
    lxReturning       = 0x404,
+   lxBoxing          = 0x405,
+   lxCondBoxing      = 0x406,    // the same like boxing except checking if the reference is stack allocated
 
    lxTarget          = 0x801,
    lxType            = 0x802,
@@ -173,6 +176,19 @@ public:
       return current;
    }
 
+   static Node findChild(Node node, LexicalType type1, LexicalType type2)
+   {
+      Node current = node.firstChild();
+
+      while (current != lxNone && current != type1) {
+         if (current == type2)
+            return current;
+
+         current = current.nextNode();
+      }
+
+      return current;
+   }
 
    Node readRoot();
    Node readFirstNode(size_t position);

@@ -531,10 +531,10 @@ private:
       LocalMap     locals;
       int          level;
 
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
-//
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
+
 //      int newLocal()
 //      {
 //         level++;
@@ -551,21 +551,21 @@ private:
 //      {
 //         locals.add(local, Parameter(level, ref, stackAllocated));
 //      }
-//
-//      int newSpace(size_t size)
-//      {
-//         int retVal = reserved;
-//
-//         reserved += size;
-//
-//         // the offset should include frame header offset
-//         return -2 - retVal;
-//      }
-//
-//      void freeSpace()
-//      {
-//         reserved = saved;
-//      }
+
+      int newSpace(size_t size)
+      {
+         int retVal = reserved;
+
+         reserved += size;
+
+         // the offset should include frame header offset
+         return -2 - retVal;
+      }
+
+      void freeSpace()
+      {
+         reserved = saved;
+      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -839,7 +839,8 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, ObjectInfo object, int mode);
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
-//   ObjectInfo boxStructureField(CodeScope& scope, ObjectInfo field, ObjectInfo thisObject, bool& unboxing, int mode = 0);
+   ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
+   void compileBoxing(DNode node, CodeScope& scope, ObjectInfo object);
 //   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
@@ -903,9 +904,9 @@ private:
 //
 //   void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
 //   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
-//
-//   void reserveSpace(CodeScope& scope, int size);
-//   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand, bool presavedAccumulator = false);
+
+   void reserveSpace(CodeScope& scope, int size);
+   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
 //   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
 //
 //   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
@@ -969,6 +970,7 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
+   void optimizeBoxing(ModuleScope& scope, SyntaxReader::Node node);
    void optimizeTypecast(ModuleScope& scope, SyntaxReader::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxReader::Node node);
    void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
