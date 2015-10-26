@@ -151,9 +151,9 @@ public:
    //   okRole,
    //   okConstantRole,                 // param - role reference
    //
-   //   okExternal,
+      okExternal,
    //   okInternal,
-   //
+   
    //   okIdle
    };
    
@@ -903,8 +903,8 @@ private:
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
-//
-//   void compileExternalArguments(DNode node, CodeScope& scope, ExternalScope& externalScope);
+
+   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 //   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
 
    void reserveSpace(CodeScope& scope, int size);
@@ -912,7 +912,7 @@ private:
 //   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
 //
 //   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
-//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
+   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 //
 //   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);

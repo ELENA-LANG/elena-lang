@@ -43,6 +43,7 @@ enum LexicalType
    lxDirectCall      = 0x203,
    lxCall            = 0x204,
    lxTypecast        = 0x205,
+   lxExternalCall    = 0x206,
 
    lxAlternative     = 0x401,
    lxCatch           = 0x402,

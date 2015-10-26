@@ -601,19 +601,19 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 
 ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 {
-//   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
-//      return ObjectInfo(okExternal);
-//   }
+   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
+      return ObjectInfo(okExternal);
+   }
 //   else if (StringHelper::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)] == '\'') {
 //      ReferenceNs fullName(project->resolveForward(IMPORT_FORWARD), reference + strlen(INTERNAL_MODULE) + 1);
 //
 //      return ObjectInfo(okInternal, module->mapReference(fullName));
 //   }
-//   else {
+   else {
       ref_t referenceID = mapReference(reference, existing);
 
       return defineObjectInfo(referenceID);
-//   }
+   }
 }
 
 ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
@@ -2153,11 +2153,11 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             scope.writer->newNode(lxFieldAddress, object.param);
             compileBoxing(node, scope, object);
             break;
-            //      //case okExternal:
-         //      //   // external call cannot be used inside symbol
-         //      //   if (test(mode, HINT_ROOT))
-         //      //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
-         //      //   break;
+         //case okExternal:
+         //   // external call cannot be used inside symbol
+         //   if (test(mode, HINT_ROOT))
+         //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
+         //   break;
          //      case okInternal:
          //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
          //            scope.raiseError(errInvalidOperation, node.Terminal());
@@ -3660,23 +3660,23 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
    DNode member = node.nextNode();
 
-//   if (object.kind == okExternal) {
+   if (object.kind == okExternal) {
 //      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
-//      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
+      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
 //      if (test(mode, HINT_TRY)) {
 //         // skip error handling for the external operation
 //         mode &= ~HINT_TRY;
 //
 //         member = member.nextNode();
 //      }
-//      member = member.nextNode();
-//   }
+      member = member.nextNode();
+   }
 //   else if (object.kind == okInternal) {
 //      currentObject = compileInternalCall(member, scope, object);
 //
 //      member = member.nextNode();
 //   }
-//
+
 //   bool catchMode = false;
 //   bool altMode = false;
 //   if (test(mode, HINT_TRY)) {
@@ -4659,18 +4659,20 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
    return retVal;
 }
 
-//void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope, ExternalScope& externalScope)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//
+void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+
 //      ExternalScope::ParamInfo param;
 //      param.subject = moduleScope->mapType(terminal);
-//
-//      ref_t classReference = moduleScope->typeHints.get(param.subject);
-//      int flags = 0;
+      ref_t subject = moduleScope->mapType(terminal);
+      int size = 0;      
+
+      ref_t classReference = moduleScope->typeHints.get(/*param.*/subject);
+      int flags = 0;
 //      // HOTFIX: problem with using a strong type inside its wrapper
 //      if (scope.getClassRefId() == classReference) {
 //         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -4681,31 +4683,32 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //         flags = classScope->info.header.flags;
 //      }
 //      else {
-//         ClassInfo classInfo;
-//         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         if (classInfo.size == 0)
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         flags = classInfo.header.flags;
+         ClassInfo classInfo;
+         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         if (classInfo.size == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         flags = classInfo.header.flags;
 //      }
-//      // if it is an integer number pass it directly
-//      if ((flags & elDebugMask) == elDebugDWORD) {
-//         param.size = 4;
-//         if (!test(flags, elReadOnlyRole))
-//            param.out = true;
-//      }
-//      else if ((flags & elDebugMask) == elDebugPTR) {
-//         param.size = 4;
-//      }
-//      else if ((flags & elDebugMask) == elDebugReference) {
-//         param.size = -2;
-//      }
-//      else param.size = -1;
-//
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
+      // if it is an integer number pass it directly
+      if ((flags & elDebugMask) == elDebugDWORD) {
+         /*param.*/size = 4;
+         //if (!test(flags, elReadOnlyRole))
+         //   param.out = true;
+      }
+      else if ((flags & elDebugMask) == elDebugPTR) {
+         /*param.*/size = 4;
+      }
+      else if ((flags & elDebugMask) == elDebugReference) {
+         /*param.*/size = -2;
+      }
+      else /*param.*/size = -1;
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         ObjectInfo info = compileObject(arg.firstChild(), scope, /*HINT_EXTERNAL_CALL*/0);
 //         param.info = compileObject(arg.firstChild(), scope, HINT_EXTERNAL_CALL);
 //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
 //            param.info.extraparam = param.subject;
@@ -4740,15 +4743,15 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //            param.info.kind = okBlockLocal;
 //            param.info.param = ++externalScope.frameSize;
 //         }
-//
-//         arg = arg.nextNode();
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//
+
+         arg = arg.nextNode();
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+
 //      externalScope.operands.push(param);
-//   }
-//}
-//
+   }
+}
+
 //void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externalScope)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -4791,33 +4794,35 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //      out_it++;
 //   }
 //}
-//
-//ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
-//{
-//   ObjectInfo retVal(okIndexAccumulator);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   bool stdCall = false;
-//   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name(DLL_NAMESPACE);
-//   name.combine(dllName);
-//   name.append(".");
-//   name.append(node.Terminal());
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
+
+ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
+{
+   ObjectInfo retVal/*(okIndexAccumulator)*/;
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   bool stdCall = false;
+   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name(DLL_NAMESPACE);
+   name.combine(dllName);
+   name.append(".");
+   name.append(node.Terminal());
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
 //   // compile argument list
 //   ExternalScope externalScope;
 //
 //   _writer.declareExternalBlock(*scope.tape);
-//
-//   compileExternalArguments(node.firstChild(), scope, externalScope);
-//
+
+   compileExternalArguments(node.firstChild(), scope/*, externalScope*/);
+
+   scope.writer->appendNode(lxExternalCall, reference);
+
 //   // exclude stack if necessary
 //   _writer.excludeFrame(*scope.tape);
 //
@@ -4839,10 +4844,10 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //      compilePrimitiveCatch(node.nextNode(), scope);
 //
 //  _writer.endExternalBlock(*scope.tape);
-//
-//   return retVal;
-//}
-//
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
