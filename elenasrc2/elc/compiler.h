@@ -803,7 +803,7 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
    ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
-   void compileBoxing(DNode node, CodeScope& scope, ObjectInfo object);
+   void compileBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 //   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
@@ -829,6 +829,8 @@ private:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
+   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
+
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 

@@ -2051,6 +2051,53 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   else scope.raiseError(errDuplicatedLocal, node.Terminal());
 //}
 
+void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
+{
+   switch (object.kind) {
+      case okUnknown:
+         scope.raiseError(errUnknownObject, terminal);
+         break;
+      case okSymbol:
+         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
+         scope.writer->newNode(lxSymbol, object.param);
+         break;
+      case okConstantClass:
+         scope.writer->newNode(lxConstantClass, object.param);
+         break;
+      case okConstantSymbol:
+         scope.writer->newNode(lxConstantSymbol, object.param);
+         break;
+      case okLocal:
+      case okParam:
+      case okThisParam:
+         scope.writer->newNode(lxLocal, object.param);
+         compileBoxing(terminal, scope, object);
+         break;
+      case okField:
+         scope.writer->newNode(lxField, object.param);
+         break;
+      case okFieldAddress:
+         scope.writer->newNode(lxFieldAddress, object.param);
+         compileBoxing(terminal, scope, object);
+         break;
+      case okExternal:
+         //   // external call cannot be used inside symbol
+         //   if (test(mode, HINT_ROOT))
+         //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
+
+         // HOTFIX : external node will be declared later
+         return; 
+//      case okInternal:
+//         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
+//            scope.raiseError(errInvalidOperation, node.Terminal());
+//         break;
+   }
+
+   appendObjectInfo(scope, object);
+
+   scope.writer->closeNode();
+}
+
 ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 {
    TerminalInfo terminal = node.Terminal();
@@ -2126,48 +2173,8 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    else if (!emptystr(terminal)) {
       object = scope.mapObject(terminal);
 
-      switch (object.kind) {
-         case okUnknown:
-            scope.raiseError(errUnknownObject, terminal);
-            break;
-         case okSymbol:
-            scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-            scope.writer->newNode(lxSymbol, object.param);
-            break;
-         case okConstantClass:
-            scope.writer->newNode(lxConstantClass, object.param);
-            break;
-         case okConstantSymbol:
-            scope.writer->newNode(lxConstantSymbol, object.param);
-            break;
-         case okLocal:
-         case okParam:
-         case okThisParam:
-            scope.writer->newNode(lxLocal, object.param);
-            compileBoxing(node, scope, object);
-            break;
-         case okField:
-            scope.writer->newNode(lxField, object.param);
-            break;
-         case okFieldAddress:
-            scope.writer->newNode(lxFieldAddress, object.param);
-            compileBoxing(node, scope, object);
-            break;
-         case okExternal:
-         //   // external call cannot be used inside symbol
-         //   if (test(mode, HINT_ROOT))
-         //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
-            return object; // HOTFIX : external node will be declared later
-         //      case okInternal:
-         //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
-         //            scope.raiseError(errInvalidOperation, node.Terminal());
-         //         break;
-      }
+      writeTerminal(terminal, scope, object);
    }
-
-   appendObjectInfo(scope, object);
-
-   scope.writer->closeNode();
 
    return object;
 }
@@ -2365,7 +2372,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //   else return false;
 //}
 
-void Compiler :: compileBoxing(DNode node, CodeScope& scope, ObjectInfo object)
+void Compiler :: compileBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
 {
    ref_t classRef = 0;
    if (object.type != 0) {
@@ -2384,7 +2391,7 @@ void Compiler :: compileBoxing(DNode node, CodeScope& scope, ObjectInfo object)
       else return;
 
       scope.writer->appendNode(lxTarget, classRef);
-      appendCoordinate(scope.writer, node.FirstTerminal());
+      appendCoordinate(scope.writer, terminal);
 
       scope.writer->closeNode();
    }
@@ -6186,7 +6193,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    if (retVal.kind == okUnknown) {
       // compile symbol body
 
-      writer.newNode(lxExpression);
+      writer.newNode(lxReturning);
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 
       retVal = compileExpression(expression, codeScope, 0);
@@ -6194,6 +6201,14 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
       writer.closeNode();
 
    }
+   else {
+      writer.newNode(lxReturning);
+      writer.newNode(lxExpression);
+      writeTerminal(node.FirstTerminal(), codeScope, retVal);
+      writer.closeNode();
+      writer.closeNode();
+   }
+
 //   _writer.loadObject(*codeScope.tape, retVal);
 
 //   // create constant if required
