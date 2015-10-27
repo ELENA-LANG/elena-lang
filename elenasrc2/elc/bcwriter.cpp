@@ -2633,6 +2633,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          }
          else tape.write(bcPushAI, argument);
          break;
+      case lxBlockLocal:
+         // pushfi index
+         tape.write(bcPushFI, argument, bpBlock);
+         break;
       case lxNil:
          // pushn 0
          tape.write(bcPushN, 0);
@@ -2690,8 +2694,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          else tape.write(bcALoadBI, argument);
          break;
       case lxBlockLocal:
-         // pushfi index
-         tape.write(bcPushFI, argument, bpBlock);
+         // aloadfi n
+         tape.write(bcALoadFI, argument, bpBlock);
          break;
       default:
          break;
@@ -2770,14 +2774,16 @@ ref_t ByteCodeWriter :: translateExternalArguments(CommandTape& tape, SNode node
          //      //         if (param.size == -2 && param.info.kind == okInternal) {
          //      //         }
          //else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
-         if (object == lxConstantInt) {
-            // if direct pass is possible
-         }
+         //if (object == lxConstantInt) {
+         //   // if direct pass is possible
+         //}
          //         else if (param.size == 4 && param.info.kind == okFieldAddress && param.subject == param.info.type) {
          //            // if direct pass is possible
          //         }
-         else {
-            loadObject(tape, object);
+         //else {
+            translateObjectExpression(tape, object);
+            pushObject(tape, lxResult);
+
             //      //            bool mismatch = false;
             //      //            bool boxed = false;
             //      //            bool variable = false;
@@ -2797,7 +2803,7 @@ ref_t ByteCodeWriter :: translateExternalArguments(CommandTape& tape, SNode node
             //      //
             //      //            param.info.kind = okBlockLocal;
             param.offset = ++externalScope.frameSize;
-         }
+         //}
 
          if (arg == lxIntExtArgument) {
             param.size = 4;

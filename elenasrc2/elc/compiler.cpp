@@ -2153,11 +2153,11 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
             scope.writer->newNode(lxFieldAddress, object.param);
             compileBoxing(node, scope, object);
             break;
-         //case okExternal:
+         case okExternal:
          //   // external call cannot be used inside symbol
          //   if (test(mode, HINT_ROOT))
          //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
-         //   break;
+            return object; // HOTFIX : external node will be declared later
          //      case okInternal:
          //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
          //            scope.raiseError(errInvalidOperation, node.Terminal());
@@ -4708,7 +4708,16 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
+         scope.writer->newNode(lxExpression);
+
          ObjectInfo info = compileObject(arg.firstChild(), scope, /*HINT_EXTERNAL_CALL*/0);
+
+         scope.writer->newNode(lxTypecast, encodeMessage(subject, GET_MESSAGE_ID, 0));
+         appendCoordinate(scope.writer, arg.FirstTerminal());
+         scope.writer->closeNode();
+
+         scope.writer->closeNode();
+
 //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
 //            param.info.extraparam = param.subject;
 //         }
@@ -4774,7 +4783,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    compileExternalArguments(node.firstChild(), scope);
 
-   scope.writer->appendNode(lxExternalCall, reference);
+   scope.writer->appendNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
 
    scope.writer->closeNode();
 
