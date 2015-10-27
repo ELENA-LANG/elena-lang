@@ -132,17 +132,17 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool with
    tape.newLabel();     // declare exit point
 }
 
-//void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
-//{
-//   // exclude
-//   tape.write(blDeclare, bsBranch);
-//}
-//
-//void ByteCodeWriter :: excludeFrame(CommandTape& tape)
-//{
-//   tape.write(bcExclude);
-//   tape.write(bcAllocStack, 1);
-//}
+void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
+{
+   // exclude
+   tape.write(blDeclare, bsBranch);
+}
+
+void ByteCodeWriter :: excludeFrame(CommandTape& tape)
+{
+   tape.write(bcExclude);
+   tape.write(bcAllocStack, 1);
+}
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
@@ -541,10 +541,6 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 //      case okSuper:
 //         // pushfi 1
 //         tape.write(bcPushFI, 1, bpFrame);
-//         break;
-//      case okBlockLocal:
-//         // pushfi index
-//         tape.write(bcPushFI, object.param, bpBlock);
 //         break;
 //      case okCurrent:
 //         // pushsi index
@@ -961,17 +957,17 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
 //{
 //   tape.write(bcFreeStack, count);
 //}
-//
-//void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
-//{
-//   // popi n
-//   if (count == 1) {
-//      tape.write(bcPop);
-//   }
-//   else if (count > 1)
-//      tape.write(bcPopI, count);
-//}
-//
+
+void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
+{
+   // popi n
+   if (count == 1) {
+      tape.write(bcPop);
+   }
+   else if (count > 1)
+      tape.write(bcPopI, count);
+}
+
 //void ByteCodeWriter :: releaseArgList(CommandTape& tape)
 //{
 //   // bcopya
@@ -1110,11 +1106,11 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 //   tape.write(bcAJumpVI, dispatchIndex);
 //}
 
-//void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
-//{
-//   // callextr ref
-//   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
-//}
+void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
+{
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
+}
 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
 {
@@ -1250,12 +1246,12 @@ void ByteCodeWriter :: endAlt(CommandTape& tape)
 //   tape.setLabel();
 //   tape.releaseLabel();
 //}
-//
-//void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
-//{
-//   tape.write(bcSCopyF, bsBranch);
-//   tape.write(blEnd, bsBranch);
-//}
+
+void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
+{
+   tape.write(bcSCopyF, bsBranch);
+   tape.write(blEnd, bsBranch);
+}
 
 void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bool withFrame)
 {
@@ -2645,6 +2641,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pusha
          tape.write(bcPushA);
          break;
+      case lxResultField:
+         // pushai reference
+         tape.write(bcPushAI, argument);
+         break;
       default:
          break;
    }
@@ -2688,6 +2688,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
             tape.write(bcACopyB);
          }
          else tape.write(bcALoadBI, argument);
+         break;
+      case lxBlockLocal:
+         // pushfi index
+         tape.write(bcPushFI, argument, bpBlock);
          break;
       default:
          break;
@@ -2749,6 +2753,145 @@ void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
    pushObject(tape, node.type, node.argument);
 }
 
+ref_t ByteCodeWriter :: translateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope, bool& stdCall)
+{
+   ref_t functionRef = 0;
+
+   SNode arg = node.firstChild();
+   while (arg != lxNone) {
+      ExternalScope::ParamInfo param;
+
+      SNode object = arg.firstChild();
+      if (test(arg.type, lxObjectMask)) {
+         //      //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
+         //      //            param.info.extraparam = param.subject;
+         //      //         }
+         //      //
+         //      //         if (param.size == -2 && param.info.kind == okInternal) {
+         //      //         }
+         //else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
+         if (object == lxConstantInt) {
+            // if direct pass is possible
+         }
+         //         else if (param.size == 4 && param.info.kind == okFieldAddress && param.subject == param.info.type) {
+         //            // if direct pass is possible
+         //         }
+         else {
+            loadObject(tape, object);
+            //      //            bool mismatch = false;
+            //      //            bool boxed = false;
+            //      //            bool variable = false;
+            //      //
+            //      //            _writer.loadObject(*scope.tape, param.info);
+            //      //            if (param.info.kind == okFieldAddress) {
+            //      //               param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1), variable);
+            //      //            }
+            //      //
+            //      //            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed, variable);
+            //      //            if (mismatch)
+            //      //               scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
+            //      //            if (boxed)
+            //      //               scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
+            //      //
+            //      //            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+            //      //
+            //      //            param.info.kind = okBlockLocal;
+            param.offset = ++externalScope.frameSize;
+         }
+
+         if (arg == lxIntExtArgument) {
+            param.size = 4;
+         }
+
+         externalScope.operands.push(param);
+      }
+      else if (arg == lxExternalCall) {
+         functionRef = arg.argument;
+         stdCall = false;
+      }
+      else if (arg == lxStdExternalCall) {
+         functionRef = arg.argument;
+         stdCall = true;
+      }
+
+      arg = arg.nextNode();
+   }
+
+   return functionRef;
+}
+
+void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, ExternalScope& externalScope)
+{
+   // save function parameters
+   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
+   while (!out_it.Eof()) {
+//      // if it is output parameter
+//      if ((*out_it).out) {
+//         _writer.pushObject(*scope.tape, (*out_it).info);
+//      }
+//      else {
+         if ((*out_it).size == 4) {
+//            if ((*out_it).info.kind == okIntConstant) {
+//               int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
+//
+//               externalScope.frameSize++;
+//               _writer.declareVariable(*scope.tape, value);
+//            }
+//            else if ((*out_it).info.kind == okFieldAddress && (*out_it).subject == (*out_it).info.type) {
+//               _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+//               _writer.loadInt(*scope.tape, (*out_it).info);
+//               _writer.pushObject(*scope.tape, ObjectInfo(okIndexAccumulator));
+//            }
+//            else {
+            loadObject(tape, lxBlockLocal, (*out_it).offset);
+            pushObject(tape, lxResultField, 0);
+//            }
+//         }
+//         // if it is an internal reference
+//         else if ((*out_it).size == -2) {
+//            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
+//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+//         }
+//         else _writer.pushObject(*scope.tape, (*out_it).info);
+      }
+
+      out_it++;
+   }
+}
+
+void ByteCodeWriter :: translateExternalCall(CommandTape& tape, SNode node)
+{
+   // compile argument list
+   ExternalScope externalScope;
+   
+   declareExternalBlock(tape);
+
+   bool stdCall = false;
+   ref_t reference = translateExternalArguments(tape, node, externalScope, stdCall);
+
+   // exclude stack if necessary
+   excludeFrame(tape);
+
+   // save function parameters
+   saveExternalParameters(tape, externalScope);
+   
+   // call the function
+   callExternal(tape, reference, externalScope.frameSize);
+   
+   if (!stdCall)
+      releaseObject(tape, externalScope.operands.Count());
+   
+   //   //// indicate that the result is 0 or -1
+   //   //if (test(mode, HINT_LOOP))
+   //   //   retVal.extraparam = scope.moduleScope->intSubject;
+   //
+   //   // error handling should follow the function call immediately
+   //   if (test(mode, HINT_TRY))
+   //      compilePrimitiveCatch(node.nextNode(), scope);
+
+   endExternalBlock(tape);
+}
+
 void ByteCodeWriter :: translateCall(CommandTape& tape, SyntaxReader::Node callNode)
 {
    SNode bpNode = SyntaxReader::findChild(callNode, lxBreakpoint);
@@ -2786,6 +2929,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
    if (node == lxExpression) {
       translateExpression(tape, node);
+   }
+   else if (node == lxExtern) {
+      translateExternalCall(tape, node);
    }
    else loadObject(tape, node);
    

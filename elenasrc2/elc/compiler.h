@@ -666,45 +666,6 @@ private:
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
 
-//   struct ExternalScope
-//   {
-//      struct ParamInfo
-//      {
-//         bool       out;
-//         ref_t      subject;
-//         ObjectInfo info;
-//         int        size;
-//
-//         ParamInfo()
-//         {
-//            subject = 0;
-//            size = 0;
-//            out = false;
-//         }
-//      };
-//
-//      struct OutputInfo
-//      {
-//         int        subject;
-//         int        offset;
-//         ObjectInfo target;
-//
-//         OutputInfo()
-//         {
-//            offset = subject = 0;
-//         }
-//      };
-//
-//      int               frameSize;
-//      Stack<ParamInfo>  operands;
-//
-//      ExternalScope()
-//         : operands(ParamInfo())
-//      {
-//         frameSize = 0;
-//      }
-//   };
-//
 //   struct MessageScope
 //   {
 //      struct ParamInfo

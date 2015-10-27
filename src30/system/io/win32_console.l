@@ -51,7 +51,7 @@
 {
     #method(type:handle) new &attributes:anAttributes
     [ 
-        /*#var(type:handle)aHandle := *//*system'external'KERNEL32 GetStdHandle &int:(anAttributes int).*/
+        /*#var(type:handle)aHandle := */system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
         
         //^ Handle new &handle:aHandle.
     ]

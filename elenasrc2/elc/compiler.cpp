@@ -4666,12 +4666,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
    while (arg == nsSubjectArg) {
       TerminalInfo terminal = arg.Terminal();
 
-//      ExternalScope::ParamInfo param;
-//      param.subject = moduleScope->mapType(terminal);
       ref_t subject = moduleScope->mapType(terminal);
-      int size = 0;      
-
-      ref_t classReference = moduleScope->typeHints.get(/*param.*/subject);
+      ref_t classReference = moduleScope->typeHints.get(subject);
       int flags = 0;
 //      // HOTFIX: problem with using a strong type inside its wrapper
 //      if (scope.getClassRefId() == classReference) {
@@ -4692,24 +4688,27 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
          flags = classInfo.header.flags;
 //      }
+
+      LexicalType argType = lxNone;
       // if it is an integer number pass it directly
       if ((flags & elDebugMask) == elDebugDWORD) {
-         /*param.*/size = 4;
+         argType = lxIntExtArgument;
          //if (!test(flags, elReadOnlyRole))
          //   param.out = true;
       }
       else if ((flags & elDebugMask) == elDebugPTR) {
-         /*param.*/size = 4;
+         argType = lxIntExtArgument;
       }
-      else if ((flags & elDebugMask) == elDebugReference) {
-         /*param.*/size = -2;
-      }
-      else /*param.*/size = -1;
+      //else if ((flags & elDebugMask) == elDebugReference) {
+      //   size = -2;
+      //}
+      //else size = -1;
+
+      scope.writer->newNode(argType);
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
          ObjectInfo info = compileObject(arg.firstChild(), scope, /*HINT_EXTERNAL_CALL*/0);
-//         param.info = compileObject(arg.firstChild(), scope, HINT_EXTERNAL_CALL);
 //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
 //            param.info.extraparam = param.subject;
 //         }
@@ -4748,56 +4747,13 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       }
       else scope.raiseError(errInvalidOperation, terminal);
 
-//      externalScope.operands.push(param);
+      scope.writer->closeNode();
    }
 }
 
-//void Compiler :: saveExternalParameters(CodeScope& scope, ExternalScope& externalScope)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-////   ref_t actionType = moduleScope->getActionType();
-//
-//   // save function parameters
-//   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
-//   while (!out_it.Eof()) {
-//      // if it is output parameter
-//      if ((*out_it).out) {
-//         _writer.pushObject(*scope.tape, (*out_it).info);
-//      }
-//      else {
-//         if ((*out_it).size == 4) {
-//            if ((*out_it).info.kind == okIntConstant) {
-//               int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
-//
-//               externalScope.frameSize++;
-//               _writer.declareVariable(*scope.tape, value);
-//            }
-//            else if ((*out_it).info.kind == okFieldAddress && (*out_it).subject == (*out_it).info.type) {
-//               _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-//               _writer.loadInt(*scope.tape, (*out_it).info);
-//               _writer.pushObject(*scope.tape, ObjectInfo(okIndexAccumulator));
-//            }
-//            else {
-//               _writer.loadObject(*scope.tape, (*out_it).info);
-//               _writer.pushObject(*scope.tape, ObjectInfo(okAccField, 0));
-//            }
-//         }
-//         // if it is an internal reference
-//         else if ((*out_it).size == -2) {
-//            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
-//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//         }
-//         else _writer.pushObject(*scope.tape, (*out_it).info);
-//      }
-//
-//      out_it++;
-//   }
-//}
-
 ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
 {
-   ObjectInfo retVal/*(okIndexAccumulator)*/;
+   ObjectInfo retVal(okExternal);
 
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -4814,27 +4770,14 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    ref_t reference = moduleScope->module->mapReference(name);
 
-//   // compile argument list
-//   ExternalScope externalScope;
-//
-//   _writer.declareExternalBlock(*scope.tape);
+   scope.writer->newNode(lxExtern);
 
-   compileExternalArguments(node.firstChild(), scope/*, externalScope*/);
+   compileExternalArguments(node.firstChild(), scope);
 
    scope.writer->appendNode(lxExternalCall, reference);
 
-//   // exclude stack if necessary
-//   _writer.excludeFrame(*scope.tape);
-//
-//   // save function parameters
-//   saveExternalParameters(scope, externalScope);
-//
-//   // call the function
-//   _writer.callExternal(*scope.tape, reference, externalScope.frameSize);
-//
-//   if (!stdCall)
-//      _writer.releaseObject(*scope.tape, externalScope.operands.Count());
-//
+   scope.writer->closeNode();
+
 //   //// indicate that the result is 0 or -1
 //   //if (test(mode, HINT_LOOP))
 //   //   retVal.extraparam = scope.moduleScope->intSubject;
@@ -4842,8 +4785,6 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 //   // error handling should follow the function call immediately
 //   if (test(mode, HINT_TRY))
 //      compilePrimitiveCatch(node.nextNode(), scope);
-//
-//  _writer.endExternalBlock(*scope.tape);
 
    return retVal;
 }
@@ -6535,6 +6476,7 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxReader::Node
          case lxExpression:
          case lxReturning:
          case lxAssigning:
+         case lxExtern:
             optimizeSyntaxExpression(scope, current);
             break;
          case lxTypecast:
