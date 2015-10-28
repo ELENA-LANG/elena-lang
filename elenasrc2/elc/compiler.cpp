@@ -339,7 +339,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 
    // cache the frequently used references
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
-//   intReference = mapReference(project->resolveForward(INT_FORWARD));
+   intReference = mapReference(project->resolveForward(INT_FORWARD));
 //   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
 //   literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
@@ -1988,16 +1988,18 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //   }
 //   else scope.raiseError(errInvalidOperation, node.Terminal());
 //}
-//
-//void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
-//{
-//   if (!scope.locals.exist(node.Terminal())) {
-//      ref_t type = 0;
+
+void Compiler :: compileVariable(DNode node, CodeScope& scope/*, DNode hints*/)
+{
+   TerminalInfo terminal = node.Terminal();
+
+   if (!scope.locals.exist(terminal)) {
+      ref_t type = 0;
 //      ref_t classReference = 0;
 //      int size = 0;
 //      scope.compileLocalHints(hints, type, size, classReference);
-//
-//      ObjectInfo variable(okLocal, 0, 0, type);
+
+      ObjectInfo variable(okLocal, 0, 0, type);
 //      if (size > 0) {
 //         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
 //
@@ -2028,28 +2030,33 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 //         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), variable.param);
 //      }
 //      else {
-//         int level = scope.newLocal();
-//
-//         _writer.declareVariable(*scope.tape, 0);
-//         _writer.declareLocalInfo(*scope.tape, node.Terminal(), level);
-//
-//         variable.param = level;
+         int level = scope.newLocal();
+
+         scope.writer->newNode(lxVariable, 0);
+         scope.writer->appendNode(lxTerminal, (int)terminal.value);
+         scope.writer->appendNode(lxLevel, level);
+         scope.writer->closeNode();
+
+         variable.param = level;
 //      }
-//
-//      DNode assigning = node.firstChild();
-//      if (assigning == nsAssigning) {
-//         openDebugExpression(scope);
-//         compileAssigningExpression(node, assigning, scope, variable, size > 0 ? HINT_INITIALIZING : 0);         
-//         endDebugExpression(scope);
-//      }
-//
-//      if (variable.kind == okLocal) {
-//         scope.mapLocal(node.Terminal(), variable.param, type);
-//      }
+
+      DNode assigning = node.firstChild();
+      if (assigning == nsAssigning) {
+         scope.writer->newNode(lxExpression);
+         writeTerminal(terminal, scope, variable);
+
+         compileAssigningExpression(node, assigning, scope, variable, /*size > 0 ? HINT_INITIALIZING : */0);         
+
+         scope.writer->closeNode();
+      }
+
+      if (variable.kind == okLocal) {
+         scope.mapLocal(terminal, variable.param, type);
+      }
 //      else scope.mapLocal(node.Terminal(), variable.param, variable.extraparam, true);
-//   }
-//   else scope.raiseError(errDuplicatedLocal, node.Terminal());
-//}
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
+}
 
 void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
 {
@@ -2376,29 +2383,43 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //   else return false;
 //}
 
-void Compiler :: compileBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
+ObjectInfo Compiler :: compileBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
 {
-   ref_t classRef = 0;
-   if (object.type != 0) {
-      classRef = scope.moduleScope->typeHints.get(object.type);
-   }
-   else classRef = object.extraparam;
-   
-   int size = scope.moduleScope->defineStructSize(classRef);
-   if (size != 0) {
-      if (object.kind == okFieldAddress) {
-         scope.writer->newNode(lxBoxing, size);
-      }
-      else if (object.kind == okParam) {
-         scope.writer->newNode(lxCondBoxing, size);
-      }
-      else return;
+   if (object.kind == okExternal) {
+      allocateStructure(scope, 0, object);
 
-      scope.writer->appendNode(lxTarget, classRef);
+      scope.writer->newNode(lxBoxing, 4);
+
+      scope.writer->appendNode(lxTarget, object.extraparam);
       appendCoordinate(scope.writer, terminal);
 
       scope.writer->closeNode();
    }
+   else {
+      ref_t classRef = 0;
+      if (object.type != 0) {
+         classRef = scope.moduleScope->typeHints.get(object.type);
+      }
+      else classRef = object.extraparam;
+
+      int size = scope.moduleScope->defineStructSize(classRef);
+      if (size != 0) {
+         if (object.kind == okFieldAddress) {
+            scope.writer->newNode(lxBoxing, size);
+         }
+         else if (object.kind == okParam) {
+            scope.writer->newNode(lxCondBoxing, size);
+         }
+         else return object;
+
+         scope.writer->appendNode(lxTarget, classRef);
+         appendCoordinate(scope.writer, terminal);
+
+         scope.writer->closeNode();
+      }
+   }
+
+   return object;
 }
 
 //ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing)
@@ -3169,9 +3190,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else if (object.kind == okObject && object.param != 0) {
       return object.param;
    }
-   //else if (object.kind == okLocalAddress) {
-   //   return object.extraparam;
-   //}
+   else if (object.kind == okLocalAddress) {
+      return object.extraparam;
+   }
    // if message sent to the class parent
    //else if (object.kind == okSuper) {
    //   return object.param;
@@ -4342,7 +4363,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
 {   
    // if primitive data operation can be used
-   if (/*target.kind == okLocalAddress || */target.kind == okFieldAddress) {
+   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
 //      ObjectInfo info;
 //
 //      // check if embeddable constructor can me called
@@ -4633,10 +4654,10 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 
             break;
          }
-//         case nsVariable:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileVariable(statement, scope, hints);
-//            break;
+         case nsVariable:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileVariable(statement, scope/*, hints*/);
+            break;
          case nsCodeEnd:
             needVirtualEnd = false;
             recordDebugStep(scope, statement.Terminal(), dsEOP);
@@ -4780,6 +4801,8 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    scope.writer->appendNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
 
+   retVal = compileBoxing(node.FirstTerminal(), scope, retVal);
+
    scope.writer->closeNode();
 
 //   //// indicate that the result is 0 or -1
@@ -4884,11 +4907,11 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
    //   classReference = exprOperand.param;
    //   size = scope.moduleScope->defineStructSize(classReference);
    //}
-   //else if (exprOperand.kind == okIndexAccumulator && exprOperand.type == 0) {
-   //   // typecast index to int if no type provided
-   //   classReference = scope.moduleScope->intReference;
-   //}
-   /*else */size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
+   /*else */if (exprOperand.kind == okExternal && exprOperand.type == 0) {
+      // typecast index to int if no type provided
+      classReference = scope.moduleScope->intReference;
+   }
+   else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
 
    if (size < 0) {
       bytearray = true;
@@ -4896,18 +4919,18 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
       // plus space for size
       size = ((dynamicSize + 3) >> 2) + 2;
    }
-   //else if (exprOperand.kind == okIndexAccumulator) {
-   //   size = 1;
-   //}
+   else if (exprOperand.kind == okExternal) {
+      size = 1;
+   }
    else if (size == 0) {
       return false;
    }
    else size = (size + 3) >> 2;
 
    if (size > 0) {
-//      exprOperand.kind = okLocalAddress;
-//      exprOperand.param = scope.newSpace(size);
-//      exprOperand.extraparam = classReference;
+      exprOperand.kind = okLocalAddress;
+      exprOperand.param = scope.newSpace(size);
+      exprOperand.extraparam = classReference;
 
       // allocate
       reserveSpace(scope, size);
@@ -6551,6 +6574,12 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
             _writer.translateExpression(tape, current);
             endDebugExpression(tape);
             _writer.gotoEnd(tape, baFirstLabel);
+            break;
+         case lxVariable:
+            _writer.declareVariable(tape, current.argument);
+            _writer.declareLocalInfo(tape, 
+               (ident_t)SyntaxReader::findChild(current, lxTerminal).argument, 
+               SyntaxReader::findChild(current, lxLevel).argument);
             break;
          default:
             break;

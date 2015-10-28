@@ -56,14 +56,17 @@ enum LexicalType
    lxReturning       = 0x404,
    lxBoxing          = 0x405,
    lxCondBoxing      = 0x406,    // the same like boxing except checking if the reference is stack allocated
+   lxVariable        = 0x407,
 
    lxTarget          = 0x801,
    lxType            = 0x802,
+   lxLevel           = 0x803,
 
    lxBreakpoint      = 0x1001,
    lxCol             = 0x1002,
    lxRow             = 0x1003,
    lxLength          = 0x1004,
+   lxTerminal        = 0x1005,
 };
 
 // --- SyntaxWriter ---
@@ -205,6 +208,20 @@ public:
 
       while (current != lxNone && current != type1) {
          if (current == type2)
+            return current;
+
+         current = current.nextNode();
+      }
+
+      return current;
+   }
+
+   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3)
+   {
+      Node current = node.firstChild();
+
+      while (current != lxNone && current != type1) {
+         if (current == type2 || current == type3)
             return current;
 
          current = current.nextNode();

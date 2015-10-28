@@ -143,7 +143,7 @@ public:
       okThisParam,                    // param - parameter offset
    //   okNil,
    //   okSuper,
-   //   okLocalAddress,                  // param - local offset, extraparam - class reference
+      okLocalAddress,                  // param - local offset, extraparam - class reference
    //   okParams,                        // param - local offset
    //   okBlockLocal,                    // param - local offset
    //   okCurrent,                       // param - stack offset
@@ -236,7 +236,7 @@ private:
 
       // cached references
       ref_t superReference;
-//      ref_t intReference;
+      ref_t intReference;
 //      ref_t longReference;
 //      ref_t realReference;
 //      ref_t literalReference;
@@ -535,12 +535,12 @@ private:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
 
       void mapLocal(ident_t local, int level, ref_t type)
       {
@@ -803,7 +803,7 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
    ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
-   void compileBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
+   ObjectInfo compileBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 //   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
@@ -819,7 +819,7 @@ private:
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
 //   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
-//   void compileVariable(DNode node, CodeScope& scope, DNode hints);
+   void compileVariable(DNode node, CodeScope& scope/*, DNode hints*/);
 
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);

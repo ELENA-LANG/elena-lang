@@ -121,7 +121,7 @@ public:
    void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
-//   void declareVariable(CommandTape& tape, int value);
+   void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape, bool withStackControl = true);

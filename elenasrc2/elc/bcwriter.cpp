@@ -230,17 +230,17 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
       tape.write(bcPushN, 0);
 }
 
-//void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+{
+   // pushn  value
+   tape.write(bcPushN, value);
+}
+
+//int ByteCodeWriter :: declareLabel(CommandTape& tape)
 //{
-//   // pushn  value
-//   tape.write(bcPushN, value);
+//   return tape.newLabel();
 //}
-//
-////int ByteCodeWriter :: declareLabel(CommandTape& tape)
-////{
-////   return tape.newLabel();
-////}
-//
+
 //int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
 //{
 //   // loop-begin
