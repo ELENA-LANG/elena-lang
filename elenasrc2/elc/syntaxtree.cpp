@@ -14,6 +14,14 @@ using namespace _ELENA_;
 
 // --- SyntaxWriter ---
 
+void SyntaxWriter :: insert(LexicalType type, ref_t argument)
+{
+   size_t position = _bookmarks.peek();
+
+   _writer.insertDWord(position, type);
+   _writer.insertDWord(position + 4, argument);
+}
+
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 {
    // writer node

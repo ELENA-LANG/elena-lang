@@ -70,14 +70,31 @@ enum LexicalType
 
 class SyntaxWriter
 {
-   MemoryWriter _writer;
+   MemoryWriter  _writer;
+   Stack<size_t> _bookmarks;
 
 public:
+   void newBookmark()
+   {
+      _bookmarks.push(_writer.Position());
+   }
+
+   void removeBookmark()
+   {
+      _bookmarks.pop();
+   }
+
    void clear()
    {
       _writer.seek(0);
+      _bookmarks.clear();
    }
 
+   void insert(LexicalType type, ref_t argument);
+   void insert(LexicalType type)
+   {
+      insert(type, 0);
+   }
    void newNode(LexicalType type, ref_t argument);
    void newNode(LexicalType type)
    {

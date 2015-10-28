@@ -2067,6 +2067,21 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okConstantSymbol:
          scope.writer->newNode(lxConstantSymbol, object.param);
          break;
+      case okLiteralConstant:
+         scope.writer->newNode(lxConstantString, object.param);
+         break;
+      case okCharConstant:
+         scope.writer->newNode(lxConstantChar, object.param);
+         break;
+      case okIntConstant:
+         scope.writer->newNode(lxConstantInt, object.param);
+         break;
+      case okLongConstant:
+         scope.writer->newNode(lxConstantLong, object.param);
+         break;
+      case okRealConstant:
+         scope.writer->newNode(lxConstantReal, object.param);
+         break;
       case okLocal:
       case okParam:
       case okThisParam:
@@ -2105,13 +2120,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    ObjectInfo object;
    if (terminal==tsLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
-
-      scope.writer->newNode(lxConstantString, object.param);
    }
    else if (terminal==tsCharacter) {
       object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
-
-      scope.writer->newNode(lxConstantChar, object.param);
    }
    else if (terminal == tsInteger) {
       String<ident_c, 20> s(terminal.value, getlength(terminal.value));
@@ -2125,8 +2136,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       s.appendHex(integer);
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
-
-      scope.writer->newNode(lxConstantInt, object.param);
    }
    else if (terminal == tsLong) {
       String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
@@ -2137,8 +2146,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
          scope.raiseError(errInvalidIntNumber, terminal);
 
       object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
-
-      scope.writer->newNode(lxConstantLong, object.param);
    }
    else if (terminal == tsHexInteger) {
       String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
@@ -2152,8 +2159,6 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
       s.appendHex(integer);
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
-
-      scope.writer->newNode(lxConstantInt, object.param);
    }
    else if (terminal == tsReal) {
       String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
@@ -2170,11 +2175,10 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
 
       scope.writer->newNode(lxConstantReal, object.param);
    }
-   else if (!emptystr(terminal)) {
+   else if (!emptystr(terminal))
       object = scope.mapObject(terminal);
 
-      writeTerminal(terminal, scope, object);
-   }
+   writeTerminal(terminal, scope, object);
 
    return object;
 }
@@ -3684,81 +3688,63 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //      member = member.nextNode();
 //   }
 
-//   bool catchMode = false;
-//   bool altMode = false;
-//   if (test(mode, HINT_TRY)) {
-//      if (test(mode, HINT_ALT))
-//         _writer.pushObject(*scope.tape, currentObject);
-//
-//      _writer.declareTry(*scope.tape);
-//
-//      mode &= ~HINT_ALT;
-//   }
-
+   bool nextOperation = false;
    while (member != nsNone) {
-      //_writer.declareBlock(*scope.tape);
-
-//      if (member == nsExtension) {
-//         currentObject = compileExtension(member, scope, currentObject, mode);
-//      }
-      /*else */if (member==nsMessageOperation) {
-         currentObject = compileMessage(member, scope, currentObject);
-      }
-      else if (member==nsMessageParameter) {
-         currentObject = compileMessage(member, scope, currentObject);
-
-         // skip all except the last message parameter
-         while (member.nextNode() == nsMessageParameter)
-            member = member.nextNode();
-      }
-//      else if (member == nsSwitching) {
-//         compileSwitch(member, scope, currentObject);
-//
-//         currentObject = ObjectInfo(okAccumulator);
-//      }
-      else if (member == nsAssigning) {
+      if (member == nsAssigning) {
          currentObject = compileAssigningExpression(node, member, scope, currentObject);
       }
       else if (member == nsAltMessageOperation) {
          scope.writer->newNode(lxAlternative);
          scope.writer->appendNode(lxResult);
 
-//         if (!altMode) {
-//            _writer.declareAlt(*scope.tape);
-//            altMode = true;
-//         }
-//         _writer.loadObject(*scope.tape, ObjectInfo(okCurrent));
          currentObject = compileMessage(member, scope, ObjectInfo(okObject));
 
          scope.writer->closeNode();
       }
       else if (member == nsCatchMessageOperation) {
          scope.writer->newNode(lxCatch);
-         //         if (!catchMode) {
-//            _writer.declareCatch(*scope.tape);
-//            catchMode = true;
-//         }
+
          currentObject = compileMessage(member, scope, ObjectInfo(okObject));
 
          scope.writer->closeNode();
       }
-//      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
-//         || member == nsL7Operation || member == nsL0Operation)
-//      {
-//         currentObject = compileOperator(member, scope, currentObject, mode);
+      else {
+         if (nextOperation)
+            scope.writer->insert(lxExpression);
+
+         /*else */if (member == nsMessageOperation) {
+            currentObject = compileMessage(member, scope, currentObject);
+         }
+         else if (member == nsMessageParameter) {
+            currentObject = compileMessage(member, scope, currentObject);
+
+            // skip all except the last message parameter
+            while (member.nextNode() == nsMessageParameter)
+               member = member.nextNode();
+         }
+         //      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
+         //         || member == nsL7Operation || member == nsL0Operation)
+         //      {
+         //         currentObject = compileOperator(member, scope, currentObject, mode);
+         //      }
+
+         if (nextOperation) {
+            scope.writer->closeNode();
+         }
+         else nextOperation = true;
+      }
+
+//      if (member == nsExtension) {
+//         currentObject = compileExtension(member, scope, currentObject, mode);
 //      }
+//      else if (member == nsSwitching) {
+//         compileSwitch(member, scope, currentObject);
 //
-//      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+//         currentObject = ObjectInfo(okAccumulator);
+//      }
 
       member = member.nextNode();
    }
-
-//   if (catchMode) {
-//      _writer.endCatch(*scope.tape);
-//   }
-//   else if (altMode) {
-//      _writer.endAlt(*scope.tape);
-//   }
 
    return currentObject;
 }
@@ -4333,6 +4319,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 {
    scope.writer->newNode(lxExpression);
+   scope.writer->newBookmark();
 
    DNode member = node.firstChild();
 
@@ -4347,6 +4334,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    appendObjectInfo(scope, objectInfo);
 
    scope.writer->closeNode();
+   scope.writer->removeBookmark();
 
    return objectInfo;
 }
@@ -6193,16 +6181,17 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    if (retVal.kind == okUnknown) {
       // compile symbol body
 
-      writer.newNode(lxReturning);
+      // NOTE : top expression is required for propery translation
+      writer.newNode(lxExpression);
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 
       retVal = compileExpression(expression, codeScope, 0);
 
       writer.closeNode();
-
    }
    else {
-      writer.newNode(lxReturning);
+      // NOTE : top expression is required for propery translation
+      writer.newNode(lxExpression);
       writer.newNode(lxExpression);
       writeTerminal(node.FirstTerminal(), codeScope, retVal);
       writer.closeNode();
