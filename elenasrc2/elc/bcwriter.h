@@ -18,22 +18,22 @@ namespace _ELENA_
 // --- ByteCodeWriter class ---
 class ByteCodeWriter
 {
-//   struct Scope
-//   {
-//      ref_t         sourceRef;
-//      MemoryWriter* vmt;
-//      MemoryWriter* code;
-//      MemoryWriter* debug;
-//      MemoryWriter* debugStrings;
-//
-//      Scope()
-//      {
-//         vmt = code = NULL;
-//         debug = debugStrings = NULL;
-//         sourceRef = 0;
-//      }
-//   };
-//
+   struct Scope
+   {
+      ref_t         sourceRef;
+      MemoryWriter* vmt;
+      MemoryWriter* code;
+      MemoryWriter* debug;
+      MemoryWriter* debugStrings;
+
+      Scope()
+      {
+         vmt = code = NULL;
+         debug = debugStrings = NULL;
+         sourceRef = 0;
+      }
+   };
+
 //   struct ExternalScope
 //   {
 //      struct ParamInfo
@@ -74,49 +74,49 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   ByteCode peekNext(ByteCodeIterator it)
-//   {
-//      it++;
-//
-//      return (*it).code;
-//   }
-//
-//   ByteCode peekPrevious(ByteCodeIterator it)
-//   {
-//      it--;
-//
-//      return (*it).code;
-//   }
-//
-//   void writeNewStatement(MemoryWriter* debug);
-//   void writeNewBlock(MemoryWriter* debug);
-//   void writeSelf(Scope& scope, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
-//   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
-//   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
-//
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
-//   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
-//   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-//   void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
-//   void writeDebugInfoStopper(MemoryWriter* debug);
-//
-//   void writeProcedure(ByteCodeIterator& it, Scope& scope);
-//   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-////   void writeAction(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
-//   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
-////   void writeClassHandler(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
-//   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
+
+   ByteCode peekNext(ByteCodeIterator it)
+   {
+      it++;
+
+      return (*it).code;
+   }
+
+   ByteCode peekPrevious(ByteCodeIterator it)
+   {
+      it--;
+
+      return (*it).code;
+   }
+
+   void writeNewStatement(MemoryWriter* debug);
+   void writeNewBlock(MemoryWriter* debug);
+   void writeSelf(Scope& scope, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
+   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
+
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
+   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
+   void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
+   void writeDebugInfoStopper(MemoryWriter* debug);
+
+   void writeProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
+//   void writeAction(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
+//   void writeClassHandler(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
 //   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 //
-//   void declareClass(CommandTape& tape, ref_t reference);
-//   void declareSymbol(CommandTape& tape, ref_t reference);
-//   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void declareClass(CommandTape& tape, ref_t reference);
+   void declareSymbol(CommandTape& tape, ref_t reference);
+   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void declareIdleMethod(CommandTape& tape, ref_t message);
 //   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
@@ -129,8 +129,8 @@ public:
 ////   void declareElseBlock(CommandTape& tape);
 ////   void declareSwitchBlock(CommandTape& tape);
 ////   void declareSwitchOption(CommandTape& tape);
-//   void declareTry(CommandTape& tape);
-//   void declareCatch(CommandTape& tape);
+   void declareTry(CommandTape& tape);
+   void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
 ////   void declarePrimitiveCatch(CommandTape& tape);
 //
@@ -199,15 +199,15 @@ public:
 //
 ////   int declareLabel(CommandTape& tape);
 //   void jumpIfEqual(CommandTape& tape, ref_t ref);
-//   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
-//////   void jumpIfNotEqualN(CommandTape& tape, int value);
-////   void jump(CommandTape& tape, bool previousLabel = false);
-////
-////   void throwCurrent(CommandTape& tape);
+   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
+////   void jumpIfNotEqualN(CommandTape& tape, int value);
+//   void jump(CommandTape& tape, bool previousLabel = false);
 //
-//   void tryLock(CommandTape& tape);
-//   void freeLock(CommandTape& tape);
-//
+//   void throwCurrent(CommandTape& tape);
+
+   void tryLock(CommandTape& tape);
+   void freeLock(CommandTape& tape);
+
 //   void gotoEnd(CommandTape& tape, PseudoArg label);
 //
 ////   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
@@ -223,7 +223,7 @@ public:
 ////   void trimTape(ByteCodeIterator it, CommandTape& tape);
 //
 ////   void setLabel(CommandTape& tape);
-//   void endCatch(CommandTape& tape);
+   void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
 ////   void endPrimitiveCatch(CommandTape& tape);
 ////   void endThenBlock(CommandTape& tape, bool withStackContro = true);
@@ -233,9 +233,9 @@ public:
 //   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
-//   void endClass(CommandTape& tape);
-//   void endSymbol(CommandTape& tape);
-//   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void endClass(CommandTape& tape);
+   void endSymbol(CommandTape& tape);
+   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 ////   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
 ////   void endSwitchOption(CommandTape& tape);
 ////   void endSwitchBlock(CommandTape& tape);
@@ -281,8 +281,8 @@ public:
 //   void translateCall(CommandTape& tape, SyntaxReader::Node node);
 //   void translateObjectExpression(CommandTape& tape, SyntaxReader::Node node);
 //   void translateExpression(CommandTape& tape, SyntaxReader::Node node);
-//
-//   void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
+
+   void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
 
 } // _ELENA_

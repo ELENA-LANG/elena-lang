@@ -5895,8 +5895,8 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
 
 void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-//   _writer.declareClass(classClassScope.tape, classClassScope.reference);
-//
+   _writer.declareClass(classClassScope.tape, classClassScope.reference);
+
 //   DNode member = node.firstChild();
 //   while (member != nsNone) {
 //      DNode hints = skipHints(member);
@@ -5921,14 +5921,14 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 ////      compileDynamicDefaultConstructor(methodScope, classClassScope);
 ////   }
 //   /*else */compileDefaultConstructor(methodScope, classClassScope);
-//
-//   _writer.endClass(classClassScope.tape);
-//
-//   // optimize
-//   optimizeTape(classClassScope.tape);
-//
-//   // create byte code sections
-//   _writer.save(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
+
+   _writer.endClass(classClassScope.tape);
+
+   // optimize
+   optimizeTape(classClassScope.tape);
+
+   // create byte code sections
+   _writer.save(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed)
@@ -6003,21 +6003,21 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
-//   _writer.declareClass(scope.tape, scope.reference);
-//
+   _writer.declareClass(scope.tape, scope.reference);
+
 //   DNode member = node.firstChild();
 //   compileVMT(member, scope);
-//
-//   _writer.endClass(scope.tape);
-//
-//   // compile explicit symbol
-//   compileSymbolCode(scope);
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+
+   _writer.endClass(scope.tape);
+
+   //// compile explicit symbol
+   //compileSymbolCode(scope);
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: declareSingletonClass(DNode node, ClassScope& scope, bool closed)
@@ -6192,13 +6192,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 //         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
 //      }
 //   }
-//
-//   // compile symbol into byte codes
-//   if (isStatic) {
-//      _writer.declareStaticSymbol(scope.tape, scope.reference);
-//   }
-//   else _writer.declareSymbol(scope.tape, scope.reference);
-//
+
+   // compile symbol into byte codes
+   if (isStatic) {
+      _writer.declareStaticSymbol(scope.tape, scope.reference);
+   }
+   else _writer.declareSymbol(scope.tape, scope.reference);
+
 //   SyntaxWriter writer(&scope.syntaxTree);
 //   CodeScope codeScope(&scope, &writer);
 //   if (retVal.kind == okUnknown) {
@@ -6316,17 +6316,17 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 ////   _writer.endSymbol(scope.tape);
 ////
 //   saveSyntaxTree(*scope.moduleScope, scope.tape, scope.syntaxTree);
-//
-//   if (isStatic) {
-//      _writer.endStaticSymbol(scope.tape, scope.reference);
-//   }
-//   else _writer.endSymbol(scope.tape);
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+
+   if (isStatic) {
+      _writer.endStaticSymbol(scope.tape, scope.reference);
+   }
+   else _writer.endSymbol(scope.tape);
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
 //void Compiler :: optimizeBoxing(ModuleScope& scope, SyntaxReader::Node node)
