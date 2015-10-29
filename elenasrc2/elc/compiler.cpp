@@ -940,6 +940,24 @@ void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference, boo
 //   else return false;
 //}
 
+bool Compiler::ModuleScope::checkIfCompatible(ref_t typeRef, ref_t classRef)
+{
+   ClassInfo sourceInfo;
+
+   // if source class inherites / is target class
+   while (classRef != 0) {
+      if (loadClassInfo(sourceInfo, module->resolveReference(classRef), true) == 0)
+         break;
+
+      if (typeHints.exist(typeRef, classRef))
+         return true;
+
+      classRef = sourceInfo.header.parentRef;
+   }
+
+   return false;
+}
+
 // --- Compiler::SourceScope ---
 
 //Compiler::SourceScope :: SourceScope(Scope* parent)
@@ -4295,15 +4313,19 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    }
    else subj = 0;
 
-   if (subj) {
-      scope.writer->newNode(lxTypecasting, encodeMessage(subj, GET_MESSAGE_ID, 0));
-      appendCoordinate(scope.writer, node.FirstTerminal());
-   }
-      
+   scope.writer->newBookmark();
+
    ObjectInfo info = compileExpression(node, scope, mode);
 
-   if (subj)      
+   if (subj != 0 && info.kind != okThisParam || !scope.moduleScope->checkIfCompatible(subj, scope.getClassRefId())) {
+      scope.writer->insert(lxTypecasting, encodeMessage(subj, GET_MESSAGE_ID, 0));
+
+      appendCoordinate(scope.writer, node.FirstTerminal());
+
       scope.writer->closeNode();
+   }
+
+   scope.writer->removeBookmark();
 
 //   _writer.loadObject(*scope.tape, info);
 

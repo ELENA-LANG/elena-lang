@@ -358,6 +358,8 @@ private:
       int getClassFlags(ref_t reference);
 //      ref_t getClassClassReference(ref_t reference);
 
+      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
+
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
 
