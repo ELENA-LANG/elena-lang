@@ -112,13 +112,13 @@ class ByteCodeWriter
 
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
-//   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
-//
+   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
+
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
-//   void declareIdleMethod(CommandTape& tape, ref_t message);
-//   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
+   void declareIdleMethod(CommandTape& tape, ref_t message);
+   void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
@@ -133,8 +133,8 @@ public:
    void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
 ////   void declarePrimitiveCatch(CommandTape& tape);
-//
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -142,40 +142,40 @@ public:
 //   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 ////   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
-//   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
+   void declareSelfInfo(CommandTape& tape, int level);
+   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
+   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
 ////   void removeLastBreakpoint(CommandTape& tape);
 ////   void declareStatement(CommandTape& tape);
-//   void declareBlock(CommandTape& tape);
-////
-////   void tryEmbeddable(CommandTape& tape);
-////   void endEmbeddable(CommandTape& tape);
+   void declareBlock(CommandTape& tape);
 //
-//   void newFrame(CommandTape& tape);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
-////   void newDynamicStructure(CommandTape& tape, int itemSize);
-////   void newDynamicWStructure(CommandTape& tape);
-////   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-////   void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
-////   void newDynamicObject(CommandTape& tape);
-////
-//////   void loadPrimitive(CommandTape& tape, ref_t reference);
-//////   void loadStatic(CommandTape& tape, ref_t reference);
-//////   void loadObject(CommandTape& tape, ObjectInfo object);
-//////   void pushObject(CommandTape& tape, ObjectInfo object);
-//////   void saveObject(CommandTape& tape, ObjectInfo object);
-//////   void popObject(CommandTape& tape, ObjectInfo object);
-//////   void exchange(CommandTape& tape, ObjectInfo object);
-//
-////   void loadBase(CommandTape& tape, ObjectInfo object);
-//   void initBase(CommandTape& tape, int fieldCount);
-//   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-////   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
-//
-//   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+//   void tryEmbeddable(CommandTape& tape);
+//   void endEmbeddable(CommandTape& tape);
+
+   void newFrame(CommandTape& tape);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
+//   void newDynamicStructure(CommandTape& tape, int itemSize);
+//   void newDynamicWStructure(CommandTape& tape);
+//   void newDynamicNStructure(CommandTape& tape);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+//   void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
+//   void newDynamicObject(CommandTape& tape);
+
+//   void loadPrimitive(CommandTape& tape, ref_t reference);
+//   void loadStatic(CommandTape& tape, ref_t reference);
+//   void loadObject(CommandTape& tape, ObjectInfo object);
+//   void pushObject(CommandTape& tape, ObjectInfo object);
+//   void saveObject(CommandTape& tape, ObjectInfo object);
+//   void popObject(CommandTape& tape, ObjectInfo object);
+//   void exchange(CommandTape& tape, ObjectInfo object);
+
+//   void loadBase(CommandTape& tape, ObjectInfo object);
+   void initBase(CommandTape& tape, int fieldCount);
+   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
+//   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
+
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
 ////   void boxArgList(CommandTape& tape, ref_t vmtReference);
 ////   void unboxArgList(CommandTape& tape);
 ////
@@ -184,13 +184,13 @@ public:
 ////
 ////   void setMessage(CommandTape& tape, ref_t message);
 ////   void setSubject(CommandTape& tape, ref_t subject);
-//
-//   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-////   void callRoleMessage(CommandTape& tape, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-////   void typecast(CommandTape& tape);
-//
+
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+//   void callRoleMessage(CommandTape& tape, int paramCount);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+//   void typecast(CommandTape& tape);
+
 ////   void doGenericHandler(CommandTape& tape);
 ////   void resend(CommandTape& tape);
 ////   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
@@ -230,9 +230,9 @@ public:
 ////   void endLoop(CommandTape& tape);
 ////   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape);
-//   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
-//   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
-//   void endIdleMethod(CommandTape& tape);
+   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
+   void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
@@ -252,35 +252,38 @@ public:
 ////   void copyShort(CommandTape& tape, int offset);
 ////   void copyStructure(CommandTape& tape, int offset, int size);
 ////   void copySubject(CommandTape& tape);
-//   void saveSubject(CommandTape& tape);
-//////   void loadSymbolReference(CommandTape& tape, ref_t reference);
-//////   void saveIntConstant(CommandTape& tape, int value);
-//////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//////   void doIntOperation(CommandTape& tape, int operator_id);
-//////   void doLongOperation(CommandTape& tape, int operator_id);
-//////   void doRealOperation(CommandTape& tape, int operator_id);
-//////   //void doLiteralOperation(CommandTape& tape, int operator_id);
-//////   void doArrayOperation(CommandTape& tape, int operator_id);
-//////   void doIntArrayOperation(CommandTape& tape, int operator_id);
-//
-//   void translateBreakpoint(CommandTape& tape, SyntaxReader::Node node);
-//
-//   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
-//
+   void saveSubject(CommandTape& tape);
+//   void loadSymbolReference(CommandTape& tape, ref_t reference);
+//   void saveIntConstant(CommandTape& tape, int value);
+//   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+//   void doIntOperation(CommandTape& tape, int operator_id);
+//   void doLongOperation(CommandTape& tape, int operator_id);
+//   void doRealOperation(CommandTape& tape, int operator_id);
+//   //void doLiteralOperation(CommandTape& tape, int operator_id);
+//   void doArrayOperation(CommandTape& tape, int operator_id);
+//   void doIntArrayOperation(CommandTape& tape, int operator_id);
+
+   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
+
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+
 //   void saveExternalParameters(CommandTape& tape, ExternalScope& externalScope);
 //
 //   void copyObject(CommandTape& tape, LexicalType type, ref_t size, size_t offset);
-//
-//   void pushObject(CommandTape& tape, SyntaxReader::Node node);
-//   void loadObject(CommandTape& tape, SyntaxReader::Node node);
-//
+
+   void pushObject(CommandTape& tape, SyntaxTree::Node node);
+   void loadObject(CommandTape& tape, SyntaxTree::Node node);
+
 //   ref_t translateExternalArguments(CommandTape& tape, SyntaxReader::Node node, ExternalScope& externalScope, bool& stdCall);
 //   void translateExternalCall(CommandTape& tape, SyntaxReader::Node node);
-//   void translateCall(CommandTape& tape, SyntaxReader::Node node);
-//   void translateObjectExpression(CommandTape& tape, SyntaxReader::Node node);
-//   void translateExpression(CommandTape& tape, SyntaxReader::Node node);
+   void translateCall(CommandTape& tape, SyntaxTree::Node node);
+
+   void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateExpression(CommandTape& tape, SyntaxTree::Node node);
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
