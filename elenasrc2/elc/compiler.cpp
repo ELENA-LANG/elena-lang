@@ -2403,17 +2403,6 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 
 bool Compiler :: appendBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
 {
-//   if (object.kind == okExternal) {
-//      allocateStructure(scope, 0, object);
-//
-//      scope.writer->newNode(lxBoxing, 4);
-//
-//      scope.writer->appendNode(lxTarget, object.extraparam);
-//      appendCoordinate(scope.writer, terminal);
-//
-//      scope.writer->closeNode();
-//   }
-//   else {
    ref_t classRef = 0;
    if (object.type != 0) {
       classRef = scope.moduleScope->typeHints.get(object.type);
@@ -4810,13 +4799,18 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    ref_t reference = moduleScope->module->mapReference(name);
 
+   // save the operation result into temporal variable
+   scope.writer->newNode(lxAssigning, 4);
+
+   allocateStructure(scope, 0, retVal);
+   scope.writer->appendNode(lxLocalAddress, retVal.param);   
+
    scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
 
    compileExternalArguments(node.firstChild(), scope);
 
-   //retVal = compileBoxing(node.FirstTerminal(), scope, retVal);
-
    scope.writer->closeNode();
+   scope.writer->closeNode(); // lxAssigning
 
 //   //// indicate that the result is 0 or -1
 //   //if (test(mode, HINT_LOOP))
@@ -4829,178 +4823,178 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    return retVal;
 }
 
-////ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
-////{
-////   ModuleScope* moduleScope = scope.moduleScope;
-////
-////   // only eval message is allowed
-////   TerminalInfo     verb = node.Terminal();
-////   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
-////      scope.raiseError(errInvalidOperation, verb);
-////
-////   DNode arg = node.firstChild();
-////   int count = countSymbol(arg, nsMessageParameter);
-////   _writer.declareArgumentList(*scope.tape, count);
-////
-////   int index = 0;
-////   while (arg == nsSubjectArg) {
-////      TerminalInfo terminal = arg.Terminal();
-////      ref_t type = moduleScope->mapType(terminal);
-////
-////      arg = arg.nextNode();
-////      if (arg == nsMessageParameter) {
-////         ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
-////         _writer.loadObject(*scope.tape, info);
-////
-////         bool mismatch = false;
-////         bool boxed = false;
-////         bool dummy = false;
-////         compileTypecast(scope, info, type, mismatch, boxed, dummy);
-////         if (mismatch)
-////            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
-////         if (boxed)
-////            scope.raiseWarning(4, wrnBoxingCheck, arg.FirstTerminal());
-////
-////         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, index));
-////         index++;
-////      }
-////      else scope.raiseError(errInvalidOperation, terminal);
-////
-////      arg = arg.nextNode();
-////   }
-////
-////   _writer.loadObject(*scope.tape, routine);
-////   _writer.freeVirtualStack(*scope.tape, count);
-////
-////   return ObjectInfo(okAccumulator);
-////}
-//
-//void Compiler :: reserveSpace(CodeScope& scope, int size)
+//ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
 //{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+//   ModuleScope* moduleScope = scope.moduleScope;
 //
-//   // if it is not enough place to allocate
-//   // !! it should be refactored : code generation should start after the syntax tree is built
-//   if (methodScope->reserved < scope.reserved) {
-//      ByteCodeIterator allocStatement = tape->find(bcOpen);
-//      // reserve place for stack allocated object
-//      (*allocStatement).argument += size;
+//   // only eval message is allowed
+//   TerminalInfo     verb = node.Terminal();
+//   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
+//      scope.raiseError(errInvalidOperation, verb);
 //
-//      // if stack was not allocated before
-//      // update method enter code
-//      if (methodScope->reserved == 0) {
-//         // to include new frame header
-//         (*allocStatement).argument += 2;
+//   DNode arg = node.firstChild();
+//   int count = countSymbol(arg, nsMessageParameter);
+//   _writer.declareArgumentList(*scope.tape, count);
 //
-//         _writer.insertStackAlloc(allocStatement, *tape, size);
+//   int index = 0;
+//   while (arg == nsSubjectArg) {
+//      TerminalInfo terminal = arg.Terminal();
+//      ref_t type = moduleScope->mapType(terminal);
+//
+//      arg = arg.nextNode();
+//      if (arg == nsMessageParameter) {
+//         ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
+//         _writer.loadObject(*scope.tape, info);
+//
+//         bool mismatch = false;
+//         bool boxed = false;
+//         bool dummy = false;
+//         compileTypecast(scope, info, type, mismatch, boxed, dummy);
+//         if (mismatch)
+//            scope.raiseWarning(2, wrnTypeMismatch, arg.FirstTerminal());
+//         if (boxed)
+//            scope.raiseWarning(4, wrnBoxingCheck, arg.FirstTerminal());
+//
+//         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, index));
+//         index++;
 //      }
-//      // otherwise update the size
-//      else _writer.updateStackAlloc(allocStatement, size);
+//      else scope.raiseError(errInvalidOperation, terminal);
 //
-//      methodScope->reserved += size;
+//      arg = arg.nextNode();
 //   }
+//
+//   _writer.loadObject(*scope.tape, routine);
+//   _writer.freeVirtualStack(*scope.tape, count);
+//
+//   return ObjectInfo(okAccumulator);
 //}
-//
-////void Compiler :: allocateLocal(CodeScope& scope, ObjectInfo& exprOperand)
-////{
-////   exprOperand.kind = okLocalAddress;
-////   exprOperand.param = scope.newSpace(1);
-////
-////   // allocate
-////   reserveSpace(scope, 1);
-////}
-//
-//bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand/*, bool presavedAccumulator*/)
+
+void Compiler :: reserveSpace(CodeScope& scope, int size)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+
+   // if it is not enough place to allocate
+   // !! it should be refactored : code generation should start after the syntax tree is built
+   if (methodScope->reserved < scope.reserved) {
+      ByteCodeIterator allocStatement = tape->find(bcOpen);
+      // reserve place for stack allocated object
+      (*allocStatement).argument += size;
+
+      // if stack was not allocated before
+      // update method enter code
+      if (methodScope->reserved == 0) {
+         // to include new frame header
+         (*allocStatement).argument += 2;
+
+         _writer.insertStackAlloc(allocStatement, *tape, size);
+      }
+      // otherwise update the size
+      else _writer.updateStackAlloc(allocStatement, size);
+
+      methodScope->reserved += size;
+   }
+}
+
+//void Compiler :: allocateLocal(CodeScope& scope, ObjectInfo& exprOperand)
 //{
-//   bool bytearray = false;
-//   int size = 0;
-//   ref_t classReference = 0;
-//   //if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
-//   //   classReference = exprOperand.param;
-//   //   size = scope.moduleScope->defineStructSize(classReference);
-//   //}
-//   /*else */if (exprOperand.kind == okExternal && exprOperand.type == 0) {
-//      // typecast index to int if no type provided
-//      classReference = scope.moduleScope->intReference;
-//   }
-//   else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
+//   exprOperand.kind = okLocalAddress;
+//   exprOperand.param = scope.newSpace(1);
 //
-//   if (size < 0) {
-//      bytearray = true;
-//
-//      // plus space for size
-//      size = ((dynamicSize + 3) >> 2) + 2;
-//   }
-//   else if (exprOperand.kind == okExternal) {
-//      size = 1;
-//   }
-//   else if (size == 0) {
-//      return false;
-//   }
-//   else size = (size + 3) >> 2;
-//
-//   if (size > 0) {
-//      exprOperand.kind = okLocalAddress;
-//      exprOperand.param = scope.newSpace(size);
-//      exprOperand.extraparam = classReference;
-//
-//      // allocate
-//      reserveSpace(scope, size);
-//
-////      // reserve place for byte array header if required
-////      if (bytearray) {
-////         if (presavedAccumulator)
-////            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-////
-////         _writer.loadObject(*scope.tape, exprOperand);
-////         _writer.saveIntConstant(*scope.tape, -dynamicSize);
-////
-////         if (presavedAccumulator)
-////            _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-////
-////         exprOperand.param -= 2;
-////      }
-////
-//      return true;
-//   }
-//   else return false;
+//   // allocate
+//   reserveSpace(scope, 1);
 //}
+
+bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand/*, bool presavedAccumulator*/)
+{
+   bool bytearray = false;
+   int size = 0;
+   ref_t classReference = 0;
+   //if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
+   //   classReference = exprOperand.param;
+   //   size = scope.moduleScope->defineStructSize(classReference);
+   //}
+   /*else */if (exprOperand.kind == okExternal && exprOperand.type == 0) {
+      // typecast index to int if no type provided
+      classReference = scope.moduleScope->intReference;
+   }
+   else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
+
+   if (size < 0) {
+      bytearray = true;
+
+      // plus space for size
+      size = ((dynamicSize + 3) >> 2) + 2;
+   }
+   else if (exprOperand.kind == okExternal) {
+      size = 1;
+   }
+   else if (size == 0) {
+      return false;
+   }
+   else size = (size + 3) >> 2;
+
+   if (size > 0) {
+      exprOperand.kind = okLocalAddress;
+      exprOperand.param = scope.newSpace(size);
+      exprOperand.extraparam = classReference;
+
+      // allocate
+      reserveSpace(scope, size);
+
+//      // reserve place for byte array header if required
+//      if (bytearray) {
+//         if (presavedAccumulator)
+//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 //
-//////inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
-//////{
-//////   signature.append(module->resolveSubject(type));
-//////}
-////
-//////inline bool IsVarOperation(int operator_id)
-//////{
-//////   switch (operator_id) {
-//////      case WRITE_MESSAGE_ID:
-//////      case APPEND_MESSAGE_ID:
-//////      case REDUCE_MESSAGE_ID:
-//////      case SEPARATE_MESSAGE_ID:
-//////      case INCREASE_MESSAGE_ID:
-//////         return true;
-//////      default:
-//////         return false;
-//////   }
-//////}
-////
-////ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
+//         _writer.loadObject(*scope.tape, exprOperand);
+//         _writer.saveIntConstant(*scope.tape, -dynamicSize);
+//
+//         if (presavedAccumulator)
+//            _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+//
+//         exprOperand.param -= 2;
+//      }
+//
+      return true;
+   }
+   else return false;
+}
+
+////inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
 ////{
-////   _writer.declarePrimitiveCatch(*scope.tape);
-////
-////   size_t size = 0;
-////   ref_t message = mapMessage(node, scope, size);
-////   if (message == encodeMessage(0, RAISE_MESSAGE_ID, 1)) {
-////      compileThrow(node.firstChild().firstChild().firstChild(), scope, 0);
-////   }
-////   else scope.raiseError(errInvalidOperation, node.Terminal());
-////
-////   _writer.endPrimitiveCatch(*scope.tape);
-////
-////   return ObjectInfo(okIndexAccumulator);
+////   signature.append(module->resolveSubject(type));
 ////}
+//
+////inline bool IsVarOperation(int operator_id)
+////{
+////   switch (operator_id) {
+////      case WRITE_MESSAGE_ID:
+////      case APPEND_MESSAGE_ID:
+////      case REDUCE_MESSAGE_ID:
+////      case SEPARATE_MESSAGE_ID:
+////      case INCREASE_MESSAGE_ID:
+////         return true;
+////      default:
+////         return false;
+////   }
+////}
+//
+//ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
+//{
+//   _writer.declarePrimitiveCatch(*scope.tape);
+//
+//   size_t size = 0;
+//   ref_t message = mapMessage(node, scope, size);
+//   if (message == encodeMessage(0, RAISE_MESSAGE_ID, 1)) {
+//      compileThrow(node.firstChild().firstChild().firstChild(), scope, 0);
+//   }
+//   else scope.raiseError(errInvalidOperation, node.Terminal());
+//
+//   _writer.endPrimitiveCatch(*scope.tape);
+//
+//   return ObjectInfo(okIndexAccumulator);
+//}
 
 ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
 {

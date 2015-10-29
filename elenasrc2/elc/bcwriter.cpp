@@ -1172,24 +1172,24 @@ void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
 //   }
 //}
 
-//void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
-//{
-//   // exclude code should follow open command
-//   it++;
-//
-//   // reserve
-//
-//   tape.insert(it, ByteCommand(bcReserve, size));
-//}
-//
-//void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, int size)
-//{
-//   while (*it != bcReserve)  {
-//      it++;
-//   }
-//
-//   (*it).argument += size;
-//}
+void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
+{
+   // exclude code should follow open command
+   it++;
+
+   // reserve
+
+   tape.insert(it, ByteCommand(bcReserve, size));
+}
+
+void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, int size)
+{
+   while (*it != bcReserve)  {
+      it++;
+   }
+
+   (*it).argument += size;
+}
 
 //void ByteCodeWriter :: setLabel(CommandTape& tape)
 //{
@@ -1864,14 +1864,14 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
       writeDebugInfoStopper(scope.debug);
 }
 
-//void ByteCodeWriter :: saveInt(CommandTape& tape, ObjectInfo target)
-//{
-//   if (target.kind == okLocalAddress) {
-//      // bcopyf param
-//      // nsave
-//      tape.write(bcBCopyF, target.param);
-//      tape.write(bcNSave);
-//   }
+void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // nsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcNSave);
+   }
 //   else if (target.kind == okLocal) {
 //      // bloadfi param
 //      // nsave
@@ -1888,8 +1888,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //      tape.write(bcDCopy, target.param);
 //      tape.write(bcBWrite);
 //   }   
-//}
-//
+}
+
 //void ByteCodeWriter::saveReal(CommandTape& tape, ObjectInfo target)
 //{
 //   if (target.kind == okLocalAddress) {
@@ -3092,6 +3092,37 @@ void ByteCodeWriter :: translateBoxingExpression(CommandTape& tape, SNode node)
    boxObject(tape, node.argument, target.argument, node == lxBoxing);
 }
 
+void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target;
+   SNode source;
+
+   SNode child = node.firstChild();
+   while (child != lxNone) {
+      if (test(child.type, lxObjectMask)) {
+         if (target == lxNone) {
+            target = child;
+         }
+         else source = child;
+      }
+
+      child = child.nextNode();
+   }
+
+   translateObjectExpression(tape, source);
+
+   if (source == lxExternalCall || source == lxStdExternalCall) {
+      if (target == lxLocalAddress) {
+         if (node.argument == 4) {
+            saveInt(tape, target.type, target.argument);
+         }
+      }
+   }
+   else {
+
+   }
+}
+
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
    if (node == lxExpression) {
@@ -3108,6 +3139,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxBoxing) {
       translateBoxingExpression(tape, node);
+   }
+   else if (node == lxAssigning) {
+      translateAssigningExpression(tape, node);
    }
    else loadObject(tape, node);
 }

@@ -554,15 +554,15 @@ private:
 //         locals.add(local, Parameter(level, ref, stackAllocated));
 //      }
 
-//      int newSpace(size_t size)
-//      {
-//         int retVal = reserved;
-//
-//         reserved += size;
-//
-//         // the offset should include frame header offset
-//         return -2 - retVal;
-//      }
+      int newSpace(size_t size)
+      {
+         int retVal = reserved;
+
+         reserved += size;
+
+         // the offset should include frame header offset
+         return -2 - retVal;
+      }
 
       void freeSpace()
       {
@@ -872,18 +872,18 @@ private:
    void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 //   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
 
-//   void reserveSpace(CodeScope& scope, int size);
-//   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
-////   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
-////
-////   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
+   void reserveSpace(CodeScope& scope, int size);
+   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
+//   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
+//
+//   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-////   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
-////
-////   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-////   void compileConstructorDispatchExpression(DNode node, CodeScope& scope);
-////   void compileResendExpression(DNode node, CodeScope& scope);
-////   void compileDispatchExpression(DNode node, CodeScope& scope);
+//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
+//
+//   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+//   void compileConstructorDispatchExpression(DNode node, CodeScope& scope);
+//   void compileResendExpression(DNode node, CodeScope& scope);
+//   void compileDispatchExpression(DNode node, CodeScope& scope);
 
    ObjectInfo compileCode(DNode node, CodeScope& scope);
 

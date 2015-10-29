@@ -215,13 +215,13 @@ public:
 //
 //   void freeVirtualStack(CommandTape& tape, int count);
 
-//   void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
-//   void updateStackAlloc(ByteCodeIterator it, int size);
+   void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
+   void updateStackAlloc(ByteCodeIterator it, int size);
+
+//   ByteCodeIterator insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument);
 //
-////   ByteCodeIterator insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument);
-////
-////   void trimTape(ByteCodeIterator it, CommandTape& tape);
-//
+//   void trimTape(ByteCodeIterator it, CommandTape& tape);
+
 ////   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
@@ -245,13 +245,13 @@ public:
 //   void assignLong(CommandTape& tape, LexicalType target, int offset);
 //   void assignShort(CommandTape& tape, LexicalType target, int offset);
 //   void assignByte(CommandTape& tape, LexicalType target, int offset);
-////   void saveInt(CommandTape& tape, ObjectInfo target);
-////   void loadInt(CommandTape& tape, ObjectInfo target);
-////   void saveReal(CommandTape& tape, ObjectInfo target);
-////   void copyInt(CommandTape& tape, int offset);
-////   void copyShort(CommandTape& tape, int offset);
-////   void copyStructure(CommandTape& tape, int offset, int size);
-////   void copySubject(CommandTape& tape);
+   void saveInt(CommandTape& tape, LexicalType target, int argument);
+//   void loadInt(CommandTape& tape, ObjectInfo target);
+//   void saveReal(CommandTape& tape, ObjectInfo target);
+//   void copyInt(CommandTape& tape, int offset);
+//   void copyShort(CommandTape& tape, int offset);
+//   void copyStructure(CommandTape& tape, int offset, int size);
+//   void copySubject(CommandTape& tape);
    void saveSubject(CommandTape& tape);
 //   void loadSymbolReference(CommandTape& tape, ref_t reference);
 //   void saveIntConstant(CommandTape& tape, int value);
@@ -280,6 +280,7 @@ public:
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
