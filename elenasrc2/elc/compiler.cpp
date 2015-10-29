@@ -2092,8 +2092,10 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLocal:
       case okParam:
       case okThisParam:
-         appendBoxing(terminal, scope, object);
-         scope.writer->appendNode(lxLocal, object.param);         
+         if (appendBoxing(terminal, scope, object)) {
+            scope.writer->appendNode(lxLocal, object.param);
+         }
+         else scope.writer->newNode(lxLocal, object.param);         
          break;
       case okField:
          scope.writer->newNode(lxField, object.param);
@@ -3688,17 +3690,17 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
    DNode member = node.nextNode();
 
-//   if (object.kind == okExternal) {
-////      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
-//      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
-////      if (test(mode, HINT_TRY)) {
-////         // skip error handling for the external operation
-////         mode &= ~HINT_TRY;
-////
-////         member = member.nextNode();
-////      }
-//      member = member.nextNode();
-//   }
+   if (object.kind == okExternal) {
+//      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
+      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
+//      if (test(mode, HINT_TRY)) {
+//         // skip error handling for the external operation
+//         mode &= ~HINT_TRY;
+//
+//         member = member.nextNode();
+//      }
+      member = member.nextNode();
+   }
 ////   else if (object.kind == okInternal) {
 ////      currentObject = compileInternalCall(member, scope, object);
 ////
@@ -4293,15 +4295,15 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    }
    else subj = 0;
 
-   if (subj)
+   if (subj) {
       scope.writer->newNode(lxTypecasting, encodeMessage(subj, GET_MESSAGE_ID, 0));
-
+      appendCoordinate(scope.writer, node.FirstTerminal());
+   }
+      
    ObjectInfo info = compileExpression(node, scope, mode);
 
-   if (subj) {
-      appendCoordinate(scope.writer, node.FirstTerminal());
+   if (subj)      
       scope.writer->closeNode();
-   }
 
 //   _writer.loadObject(*scope.tape, info);
 
@@ -4669,147 +4671,142 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
    return retVal;
 }
 
-//void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
+void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+
+      ref_t subject = moduleScope->mapType(terminal);
+      ref_t classReference = moduleScope->typeHints.get(subject);
+      int flags = 0;
+//      // HOTFIX: problem with using a strong type inside its wrapper
+//      if (scope.getClassRefId() == classReference) {
+//         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 //
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//
-//      ref_t subject = moduleScope->mapType(terminal);
-//      ref_t classReference = moduleScope->typeHints.get(subject);
-//      int flags = 0;
-////      // HOTFIX: problem with using a strong type inside its wrapper
-////      if (scope.getClassRefId() == classReference) {
-////         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-////
-////         if (classScope->info.size == 0)
-////            scope.raiseError(errInvalidOperation, terminal);
-////
-////         flags = classScope->info.header.flags;
-////      }
-////      else {
-//         ClassInfo classInfo;
-//         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+//         if (classScope->info.size == 0)
 //            scope.raiseError(errInvalidOperation, terminal);
 //
-//         if (classInfo.size == 0)
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         flags = classInfo.header.flags;
-////      }
-//
-//      LexicalType argType = lxNone;
-//      // if it is an integer number pass it directly
-//      if ((flags & elDebugMask) == elDebugDWORD) {
-//         argType = lxIntExtArgument;
-//         //if (!test(flags, elReadOnlyRole))
-//         //   param.out = true;
+//         flags = classScope->info.header.flags;
 //      }
-//      else if ((flags & elDebugMask) == elDebugPTR) {
-//         argType = lxIntExtArgument;
+//      else {
+         ClassInfo classInfo;
+         if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         if (classInfo.size == 0)
+            scope.raiseError(errInvalidOperation, terminal);
+
+         flags = classInfo.header.flags;
 //      }
-//      //else if ((flags & elDebugMask) == elDebugReference) {
-//      //   size = -2;
-//      //}
-//      //else size = -1;
+
+      LexicalType argType = lxNone;
+      // if it is an integer number pass it directly
+      if ((flags & elDebugMask) == elDebugDWORD) {
+         argType = lxIntExtArgument;
+         //if (!test(flags, elReadOnlyRole))
+         //   param.out = true;
+      }
+      else if ((flags & elDebugMask) == elDebugPTR) {
+         argType = lxIntExtArgument;
+      }
+      //else if ((flags & elDebugMask) == elDebugReference) {
+      //   size = -2;
+      //}
+      //else size = -1;
+
+      scope.writer->newNode(argType);
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         scope.writer->newNode(lxTypecasting, encodeMessage(subject, GET_MESSAGE_ID, 0));
+         appendCoordinate(scope.writer, arg.FirstTerminal());
+
+         ObjectInfo info = compileObject(arg.firstChild(), scope, /*HINT_EXTERNAL_CALL*/0);
+
+         scope.writer->closeNode();
+
+//         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
+//            param.info.extraparam = param.subject;
+//         }
 //
-//      scope.writer->newNode(argType);
+//         if (param.size == -2 && param.info.kind == okInternal) {
+//         }
+//         else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
+//            // if direct pass is possible
+//         }
+//         else if (param.size == 4 && param.info.kind == okFieldAddress && param.subject == param.info.type) {
+//            // if direct pass is possible
+//         }
+//         else {
+//            bool mismatch = false;
+//            bool boxed = false;
+//            bool variable = false;
 //
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
-//         scope.writer->newNode(lxExpression);
+//            _writer.loadObject(*scope.tape, param.info);
+//            if (param.info.kind == okFieldAddress) {
+//               param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1), variable);
+//            }
 //
-//         ObjectInfo info = compileObject(arg.firstChild(), scope, /*HINT_EXTERNAL_CALL*/0);
+//            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed, variable);
+//            if (mismatch)
+//               scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
+//            if (boxed)
+//               scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
 //
-//         scope.writer->newNode(lxTypecast, encodeMessage(subject, GET_MESSAGE_ID, 0));
-//         appendCoordinate(scope.writer, arg.FirstTerminal());
-//         scope.writer->closeNode();
+//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 //
-//         scope.writer->closeNode();
+//            param.info.kind = okBlockLocal;
+//            param.info.param = ++externalScope.frameSize;
+//         }
+
+         arg = arg.nextNode();
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+
+      scope.writer->closeNode();
+   }
+}
+
+ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
+{
+   ObjectInfo retVal(okExternal);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   bool stdCall = false;
+   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name(DLL_NAMESPACE);
+   name.combine(dllName);
+   name.append(".");
+   name.append(node.Terminal());
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+   scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+
+   compileExternalArguments(node.firstChild(), scope);
+
+   //retVal = compileBoxing(node.FirstTerminal(), scope, retVal);
+
+   scope.writer->closeNode();
+
+//   //// indicate that the result is 0 or -1
+//   //if (test(mode, HINT_LOOP))
+//   //   retVal.extraparam = scope.moduleScope->intSubject;
 //
-////         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
-////            param.info.extraparam = param.subject;
-////         }
-////
-////         if (param.size == -2 && param.info.kind == okInternal) {
-////         }
-////         else if ((param.size == 4 && param.info.kind == okIntConstant)/* || (param.subject == intPtrType && param.info.kind == okSymbolReference)*/) {
-////            // if direct pass is possible
-////         }
-////         else if (param.size == 4 && param.info.kind == okFieldAddress && param.subject == param.info.type) {
-////            // if direct pass is possible
-////         }
-////         else {
-////            bool mismatch = false;
-////            bool boxed = false;
-////            bool variable = false;
-////
-////            _writer.loadObject(*scope.tape, param.info);
-////            if (param.info.kind == okFieldAddress) {
-////               param.info = boxStructureField(scope, param.info, ObjectInfo(okThisParam, 1), variable);
-////            }
-////
-////            param.info = compileTypecast(scope, param.info, param.subject, mismatch, boxed, variable);
-////            if (mismatch)
-////               scope.raiseWarning(2, wrnTypeMismatch, arg.firstChild().FirstTerminal());
-////            if (boxed)
-////               scope.raiseWarning(4, wrnBoxingCheck, arg.firstChild().FirstTerminal());
-////
-////            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-////
-////            param.info.kind = okBlockLocal;
-////            param.info.param = ++externalScope.frameSize;
-////         }
-//
-//         arg = arg.nextNode();
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//
-//      scope.writer->closeNode();
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
-//{
-//   ObjectInfo retVal(okExternal);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   bool stdCall = false;
-//   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name(DLL_NAMESPACE);
-//   name.combine(dllName);
-//   name.append(".");
-//   name.append(node.Terminal());
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
-//   scope.writer->newNode(lxExtern);
-//
-//   compileExternalArguments(node.firstChild(), scope);
-//
-//   scope.writer->appendNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-//
-//   retVal = compileBoxing(node.FirstTerminal(), scope, retVal);
-//
-//   scope.writer->closeNode();
-//
-////   //// indicate that the result is 0 or -1
-////   //if (test(mode, HINT_LOOP))
-////   //   retVal.extraparam = scope.moduleScope->intSubject;
-////
-////   // error handling should follow the function call immediately
-////   if (test(mode, HINT_TRY))
-////      compilePrimitiveCatch(node.nextNode(), scope);
-//
-//   return retVal;
-//}
-//
+//   // error handling should follow the function call immediately
+//   if (test(mode, HINT_TRY))
+//      compilePrimitiveCatch(node.nextNode(), scope);
+
+   return retVal;
+}
+
 ////ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
 ////{
 ////   ModuleScope* moduleScope = scope.moduleScope;
@@ -6503,24 +6500,20 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
    while (current != lxNone) {
       switch (current.type)
       {
-         case lxExpression:
-         //case lxReturning:
-         //case lxAssigning:
-         //case lxExtern:
-            optimizeSyntaxExpression(scope, current);
-            break;
          case lxTypecasting:
             optimizeTypecast(scope, current, getSignature(current.argument));
+            optimizeSyntaxExpression(scope, current);
             break;
          case lxBoxing:
          //case lxCondBoxing:
             optimizeBoxing(scope, current);
+            optimizeSyntaxExpression(scope, current);
             break;
-         //default:
-         //   if (test(current.type, lxObjectMask) && current.nextNode() != lxAssigning) {
-         //      optimizeSyntaxExpression(scope, current);
-         //   }
-         //   break;
+         default:
+            if (test(current.type, lxExpressionMask)/* && current.nextNode() != lxAssigning*/) {
+               optimizeSyntaxExpression(scope, current);
+            }
+            break;
       }
 
       current = current.nextNode();
@@ -6531,18 +6524,8 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
 void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
 {
    SyntaxTree reader(&dump);
-   SyntaxTree::Node current = reader.readRoot().firstChild();
-   while (current != lxNone) {
-      switch (current.type)
-      {
-         case lxExpression:
-         case lxReturning:
-            optimizeSyntaxExpression(scope, current);
-            break;
-      }
-         
-      current = current.nextNode();
-   }
+
+   optimizeSyntaxExpression(scope, reader.readRoot());
 }
 
 void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDump& dump)

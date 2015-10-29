@@ -33,6 +33,9 @@ enum LexicalType
    lxDirectCalling   = 0x305,
    lxSDirctCalling   = 0x306,
    lxReturning       = 0x307,
+   lxStdExternalCall = 0x308,
+   lxExternalCall    = 0x309,
+   lxIntExtArgument  = 0x30A,
 
    lxSymbol          = 0x101,
    lxConstantSymbol  = 0x102,
@@ -50,8 +53,6 @@ enum LexicalType
    lxCurrent         = 0x10E,
    lxResult          = 0x110,
    lxResultField     = 0x111,
-   //lxExtern          = 0x112,
-   //lxIntExtArgument  = 0x113,
 
    //lxExternalCall    = 0x206,
    //lxStdExternalCall = 0x207,

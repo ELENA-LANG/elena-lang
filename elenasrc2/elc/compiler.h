@@ -860,22 +860,22 @@ private:
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //
-////   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
-////
-////   void compileLoop(DNode node, CodeScope& scope);
-////   void compileThrow(DNode node, CodeScope& scope, int mode);
-////   void compileTry(DNode node, CodeScope& scope);
-////   void compileLock(DNode node, CodeScope& scope);
+//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
 //
-//   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
-////   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
-//
+//   void compileLoop(DNode node, CodeScope& scope);
+//   void compileThrow(DNode node, CodeScope& scope, int mode);
+//   void compileTry(DNode node, CodeScope& scope);
+//   void compileLock(DNode node, CodeScope& scope);
+
+   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+//   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);
+
 //   void reserveSpace(CodeScope& scope, int size);
 //   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
 ////   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
 ////
 ////   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
-//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
+   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 ////   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 ////
 ////   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);

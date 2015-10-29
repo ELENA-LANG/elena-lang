@@ -34,46 +34,46 @@ class ByteCodeWriter
       }
    };
 
-//   struct ExternalScope
-//   {
-//      struct ParamInfo
-//      {
-//   //         bool       out;
-//   //         ref_t      subject;
-//   //         ObjectInfo info;
-//         int size;
-//         int offset;
-//   //
-//         ParamInfo()
-//         {
-//   //            subject = 0;
-//            size = 0;
-//            offset = 0;
-//   //            out = false;
-//         }
-//      };
-//      //
-//      //      struct OutputInfo
-//      //      {
-//      //         int        subject;
-//      //         int        offset;
-//      //         ObjectInfo target;
-//      //
-//      //         OutputInfo()
-//      //         {
-//      //            offset = subject = 0;
-//      //         }
-//      //      };
-//      
-//      int               frameSize;
-//      Stack<ParamInfo>  operands;
-//   
-//      ExternalScope()
-//         : operands(ParamInfo())
-//      {
-//         frameSize = 0;
-//      }
-//   };
+   struct ExternalScope
+   {
+      struct ParamInfo
+      {
+   //         bool       out;
+   //         ref_t      subject;
+   //         ObjectInfo info;
+         int size;
+         int offset;
+   //
+         ParamInfo()
+         {
+   //            subject = 0;
+            size = 0;
+            offset = 0;
+   //            out = false;
+         }
+      };
+      //
+      //      struct OutputInfo
+      //      {
+      //         int        subject;
+      //         int        offset;
+      //         ObjectInfo target;
+      //
+      //         OutputInfo()
+      //         {
+      //            offset = subject = 0;
+      //         }
+      //      };
+      
+      int               frameSize;
+      Stack<ParamInfo>  operands;
+   
+      ExternalScope()
+         : operands(ParamInfo())
+      {
+         frameSize = 0;
+      }
+   };
 
    ByteCode peekNext(ByteCodeIterator it)
    {
@@ -119,8 +119,8 @@ public:
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
    void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
-//   void declareExternalBlock(CommandTape& tape);
-//   void excludeFrame(CommandTape& tape);
+   void declareExternalBlock(CommandTape& tape);
+   void excludeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
@@ -178,12 +178,12 @@ public:
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
 ////   void boxArgList(CommandTape& tape, ref_t vmtReference);
 ////   void unboxArgList(CommandTape& tape);
-////
-//   void releaseObject(CommandTape& tape, int count = 1);
-////   void releaseArgList(CommandTape& tape);
-////
-////   void setMessage(CommandTape& tape, ref_t message);
-////   void setSubject(CommandTape& tape, ref_t subject);
+//
+   void releaseObject(CommandTape& tape, int count = 1);
+//   void releaseArgList(CommandTape& tape);
+//
+//   void setMessage(CommandTape& tape, ref_t message);
+//   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
 //   void callRoleMessage(CommandTape& tape, int paramCount);
@@ -191,12 +191,12 @@ public:
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void typecast(CommandTape& tape);
 
-////   void doGenericHandler(CommandTape& tape);
-////   void resend(CommandTape& tape);
-////   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
-////   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-//   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
-//
+//   void doGenericHandler(CommandTape& tape);
+//   void resend(CommandTape& tape);
+//   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
+//   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
+
 ////   int declareLabel(CommandTape& tape);
 //   void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
@@ -225,11 +225,11 @@ public:
 ////   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
-////   void endPrimitiveCatch(CommandTape& tape);
-////   void endThenBlock(CommandTape& tape, bool withStackContro = true);
-////   void endLoop(CommandTape& tape);
-////   void endLoop(CommandTape& tape, ref_t comparingRef);
-//   void endExternalBlock(CommandTape& tape);
+//   void endPrimitiveCatch(CommandTape& tape);
+//   void endThenBlock(CommandTape& tape, bool withStackContro = true);
+//   void endLoop(CommandTape& tape);
+//   void endLoop(CommandTape& tape, ref_t comparingRef);
+   void endExternalBlock(CommandTape& tape);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
@@ -269,15 +269,15 @@ public:
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
-//   void saveExternalParameters(CommandTape& tape, ExternalScope& externalScope);
-//
+   void saveExternalParameters(CommandTape& tape, ExternalScope& externalScope);
+
 //   void copyObject(CommandTape& tape, LexicalType type, ref_t size, size_t offset);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
-//   ref_t translateExternalArguments(CommandTape& tape, SyntaxReader::Node node, ExternalScope& externalScope, bool& stdCall);
-//   void translateExternalCall(CommandTape& tape, SyntaxReader::Node node);
+   void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
+   void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
