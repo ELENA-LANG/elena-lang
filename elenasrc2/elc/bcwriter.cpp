@@ -223,75 +223,75 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
    tape.write(blBlock);
 }
 
-//void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
-//{
-//   // { pushn 0 } n
-//   for(int i = 0 ; i < count ; i++)
-//      tape.write(bcPushN, 0);
-//}
-//
+void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
+{
+   // { pushn 0 } n
+   for(int i = 0 ; i < count ; i++)
+      tape.write(bcPushN, 0);
+}
+
 //void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
 //{
 //   // pushn  value
 //   tape.write(bcPushN, value);
 //}
+
+//int ByteCodeWriter :: declareLabel(CommandTape& tape)
+//{
+//   return tape.newLabel();
+//}
+
+//int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
+//{
+//   // loop-begin
 //
-////int ByteCodeWriter :: declareLabel(CommandTape& tape)
-////{
-////   return tape.newLabel();
-////}
+//   tape.newLabel();                 // declare loop start label
+//   tape.setLabel(true);
 //
-////int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
-////{
-////   // loop-begin
-////
-////   tape.newLabel();                 // declare loop start label
-////   tape.setLabel(true);
-////
-////   int end = tape.newLabel();       // declare loop end label
-////
-//////   // snop
-//////   if (threadFriendly)
-//////      tape.write(bcSNop);
-////
-////   return end;
-////}
-////
-////void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
-////{
-////   if (withStackControl)
-////      tape.write(blDeclare, bsBranch);  // mark branch-level
-////
-////   tape.newLabel();                  // declare then-end label
-////}
-////
-////void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
-////{
-////   tape.write(blDeclare, bsBranch);  // mark branch-level
-////   tape.newLabel();                  // declare end label
-////   tape.newLabel();                  // declare else label
-////}
-////
-////void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
-////{
-////   //   jump end
-////   // labElse
-////   tape.write(bcJump, baPreviousLabel);
-////   tape.setLabel();
-////
-////   tape.write(bcResetStack);
-////}
-////
-////void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
-////{
-////   tape.write(blDeclare, bsBranch);  // mark branch-level
-////   tape.newLabel();                  // declare end label
-////}
-////
-////void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
-////{
-////   tape.newLabel();                  // declare next option
-////}
+//   int end = tape.newLabel();       // declare loop end label
+//
+////   // snop
+////   if (threadFriendly)
+////      tape.write(bcSNop);
+//
+//   return end;
+//}
+//
+//void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
+//{
+//   if (withStackControl)
+//      tape.write(blDeclare, bsBranch);  // mark branch-level
+//
+//   tape.newLabel();                  // declare then-end label
+//}
+//
+//void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
+//{
+//   tape.write(blDeclare, bsBranch);  // mark branch-level
+//   tape.newLabel();                  // declare end label
+//   tape.newLabel();                  // declare else label
+//}
+//
+//void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
+//{
+//   //   jump end
+//   // labElse
+//   tape.write(bcJump, baPreviousLabel);
+//   tape.setLabel();
+//
+//   tape.write(bcResetStack);
+//}
+//
+//void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
+//{
+//   tape.write(blDeclare, bsBranch);  // mark branch-level
+//   tape.newLabel();                  // declare end label
+//}
+//
+//void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
+//{
+//   tape.newLabel();                  // declare next option
+//}
 
 //void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
 //{
@@ -2976,11 +2976,6 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
 //
 //   // allocate the place for the parameters if required
 //   if (callMode) {
-//      if (!directMode && paramCount > 1) {
-//         declareArgumentList(tape, paramCount);
-//      }
-//      // if message has no arguments - direct mode is allowed
-//      else directMode = true;
 //   }
 //   else directMode = true;
 //
@@ -3065,6 +3060,12 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 
+   if (!directMode && paramCount > 1) {
+      declareArgumentList(tape, paramCount);
+   }
+   // if message has no arguments - direct mode is allowed
+   else directMode = true;
+
    size_t counter = countChildren(node);
    size_t index = 0;   
    while (index < counter) {
@@ -3106,7 +3107,7 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    if (node == lxExpression) {
       translateExpression(tape, node);
    }
-   else if (node == lxTypecasting) {
+   else if (node == lxTypecasting || node == lxCalling || node == lxDirectCalling || node == lxSDirctCalling) {
       translateCallExpression(tape, node);
    }
    else if (node == lxReturning) {

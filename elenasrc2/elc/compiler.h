@@ -769,14 +769,14 @@ private:
       scope.writer->newNode(lxBreakpoint, stepType);
       scope.writer->closeNode();
    }
-//   void openDebugExpression(CommandTape& tape)
-//   {
-//      _writer.declareBlock(tape);
-//   }
-//   void endDebugExpression(CommandTape& tape)
-//   {
-//      _writer.declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//   }
+   void openDebugExpression(CommandTape& tape)
+   {
+      _writer.declareBlock(tape);
+   }
+   void endDebugExpression(CommandTape& tape)
+   {
+      _writer.declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   }
 
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
 

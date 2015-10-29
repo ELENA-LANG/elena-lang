@@ -4615,10 +4615,12 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
       //_writer.declareStatement(*scope.tape);
 
       switch(statement) {
-//         case nsExpression:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileExpression(statement, scope, 0);
-//            break;
+         case nsExpression:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            scope.writer->newNode(lxExpression);
+            compileExpression(statement, scope, 0);
+            scope.writer->closeNode();
+            break;
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
 //            break;
@@ -6553,11 +6555,11 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
       LexicalType type = current.type;
       switch (type)
       {
-//         case lxExpression:
-//            openDebugExpression(tape);
-//            _writer.translateExpression(tape, current);
-//            endDebugExpression(tape);
-//            break;
+         case lxExpression:
+            openDebugExpression(tape);
+            _writer.translateExpression(tape, current);
+            endDebugExpression(tape);
+            break;
          case lxBreakpoint:
             _writer.translateBreakpoint(tape, current);
             break;
