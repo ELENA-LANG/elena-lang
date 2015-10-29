@@ -2209,26 +2209,26 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //      case nsInlineExpression:
 //         result = compileNestedExpression(objectNode, scope, HINT_ACTION);
 //         break;
-//      case nsExpression:
-////         if (isCollection(member)) {
-////            TerminalInfo parentInfo = objectNode.Terminal();
-////            // if the parent class is defined
-////            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
-////               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
-////               if (vmtReference == 0)
-////                  scope.raiseError(errUnknownObject, parentInfo);
-////
-////               result = compileCollection(member, scope, 0, vmtReference);
-////            }
-////            else result = compileCollection(member, scope, 0);
-////         }
-//         /*else {*/
-//         result = compileExpression(member, scope, 0);
-//         /*}*/
+      case nsExpression:
+//         if (isCollection(member)) {
+//            TerminalInfo parentInfo = objectNode.Terminal();
+//            // if the parent class is defined
+//            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
+//               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
+//               if (vmtReference == 0)
+//                  scope.raiseError(errUnknownObject, parentInfo);
+//
+//               result = compileCollection(member, scope, 0, vmtReference);
+//            }
+//            else result = compileCollection(member, scope, 0);
+//         }
+         /*else {*/
+         result = compileExpression(member, scope, 0);
+         /*}*/
+         break;
+//      case nsMessageReference:
+//         result = compileMessageReference(member, scope);
 //         break;
-////      case nsMessageReference:
-////         result = compileMessageReference(member, scope);
-////         break;
       default:
          result = compileTerminal(objectNode, scope, mode);
    }   
