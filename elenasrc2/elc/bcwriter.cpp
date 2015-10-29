@@ -1145,33 +1145,33 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, boo
 //   tape.write(bcThrow);
 //}
 
-//void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+{
+   // jump labEnd
+   tape.write(bcJump, label);
+}
+
+//ByteCodeIterator ByteCodeWriter :: insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument)
 //{
-//   // jump labEnd
-//   tape.write(bcJump, label);
+//   tape.insert(it, ByteCommand(command, argument));
+//
+//   it--;
+//
+//   return it;
 //}
 //
-////ByteCodeIterator ByteCodeWriter :: insertCommand(ByteCodeIterator it, CommandTape& tape, ByteCode command, int argument)
-////{
-////   tape.insert(it, ByteCommand(command, argument));
-////
-////   it--;
-////
-////   return it;
-////}
-////
-////void ByteCodeWriter :: trimTape(ByteCodeIterator it, CommandTape& tape)
-////{
-////   while (true) {
-////      ByteCodeIterator next = it;
-////      next++;
-////      if (!next.Eof()) {
-////         tape.tape.cut(next);
-////      }
-////      else break;
-////   }
-////}
-//
+//void ByteCodeWriter :: trimTape(ByteCodeIterator it, CommandTape& tape)
+//{
+//   while (true) {
+//      ByteCodeIterator next = it;
+//      next++;
+//      if (!next.Eof()) {
+//         tape.tape.cut(next);
+//      }
+//      else break;
+//   }
+//}
+
 //void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
 //{
 //   // exclude code should follow open command
@@ -3085,6 +3085,13 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    translateCall(tape, node);
 }
 
+void ByteCodeWriter::translateReturnExpression(CommandTape& tape, SNode node)
+{
+   translateExpression(tape, node);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
 void ByteCodeWriter :: translateBoxingExpression(CommandTape& tape, SNode node)
 {
    translateExpression(tape, node);
@@ -3101,6 +3108,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxTypecasting) {
       translateCallExpression(tape, node);
+   }
+   else if (node == lxReturning) {
+      translateReturnExpression(tape, node);
    }
    //   else if (node == lxExtern) {
    //      translateExternalCall(tape, node);

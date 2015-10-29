@@ -208,13 +208,13 @@ public:
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
 
-//   void gotoEnd(CommandTape& tape, PseudoArg label);
+   void gotoEnd(CommandTape& tape, PseudoArg label);
+
+//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
-////   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-////   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-////
-////   void freeVirtualStack(CommandTape& tape, int count);
-//
+//   void freeVirtualStack(CommandTape& tape, int count);
+
 //   void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
 //   void updateStackAlloc(ByteCodeIterator it, int size);
 //
@@ -280,6 +280,7 @@ public:
 //   void translateExternalCall(CommandTape& tape, SyntaxReader::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateObjectExpression(CommandTape& tape, SyntaxTree::Node node);

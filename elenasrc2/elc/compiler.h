@@ -334,13 +334,13 @@ private:
          return defineTypeSize(type_ref, class_ref, dummy2);
       }
 
-//      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
-//      int checkMethod(ref_t reference, ref_t message)
-//      {
-//         bool dummy;
-//         ref_t dummyRef;
-//         return checkMethod(reference, message, dummy, dummyRef);
-//      }
+      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
+      int checkMethod(ref_t reference, ref_t message)
+      {
+         bool dummy;
+         ref_t dummyRef;
+         return checkMethod(reference, message, dummy, dummyRef);
+      }
 
       void loadTypes(_Module* module);
 //      void loadExtensions(TerminalInfo terminal, _Module* module);
@@ -849,13 +849,13 @@ private:
 
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo object, int messageRef, int mode);
-////   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
-////   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
-//
-//   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
-////   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo object, int messageRef, int mode);
+//   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
+//   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
+
+   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
+//   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);

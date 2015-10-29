@@ -32,6 +32,7 @@ enum LexicalType
    lxCalling         = 0x304,
    lxDirectCalling   = 0x305,
    lxSDirctCalling   = 0x306,
+   lxReturning       = 0x307,
 
    lxSymbol          = 0x101,
    lxConstantSymbol  = 0x102,
@@ -52,16 +53,12 @@ enum LexicalType
    //lxExtern          = 0x112,
    //lxIntExtArgument  = 0x113,
 
-   //lxSemiDirectCall  = 0x201,
-   //lxDirectCall      = 0x203,
-   //lxCall            = 0x204,
    //lxExternalCall    = 0x206,
    //lxStdExternalCall = 0x207,
 
    //lxAlternative     = 0x401,
    //lxCatch           = 0x402,
    //lxAssigning       = 0x403,    // if argument == 0 -> assign field, otherwise copy the memory block with specified size
-   //lxReturning       = 0x404,
    //lxCondBoxing      = 0x406,    // the same like boxing except checking if the reference is stack allocated
    //lxVariable        = 0x407,
 

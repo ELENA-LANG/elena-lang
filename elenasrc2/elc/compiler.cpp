@@ -26,7 +26,7 @@ using namespace _ELENA_;
 ////#define HINT_INVERTED         0x02000000
 ////#define HINT_EXTENSION_MODE   0x01000000
 ////#define HINT_HEAP_MODE        0x00400000
-#define HINT_GENERIC_METH     0x00100000     // generic methodcompileRetExpression
+#define HINT_GENERIC_METH     0x00100000     // generic method
 ////#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 ////#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
 //#define HINT_ACTION           0x00020000
@@ -770,31 +770,31 @@ int Compiler::ModuleScope :: getClassFlags(ref_t reference)
 //   return classInfo.classClassRef;
 //}
 
-//int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
-//{
-//   ClassInfo info;
-//   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
-//
-//   if (found) {
-//      bool methodFound = info.methods.exist(message);
-//
-//      if (methodFound) {
-//         MethodInfo methodInfo = info.methodHints.get(message);
-//
-//         outputType = methodInfo.typeRef;
-//
-//         if (test(info.header.flags, elSealed)) {
-//            return tpSealed | methodInfo.hint;
-//         }
-//         else if (test(info.header.flags, elClosed)) {
-//            return tpClosed | methodInfo.hint;
-//         }
-//         else return tpNormal | methodInfo.hint;
-//      }
-//   }
-//
-//   return tpUnknown;
-//}
+int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
+{
+   ClassInfo info;
+   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
+
+   if (found) {
+      bool methodFound = info.methods.exist(message);
+
+      if (methodFound) {
+         MethodInfo methodInfo = info.methodHints.get(message);
+
+         outputType = methodInfo.typeRef;
+
+         if (test(info.header.flags, elSealed)) {
+            return tpSealed | methodInfo.hint;
+         }
+         else if (test(info.header.flags, elClosed)) {
+            return tpClosed | methodInfo.hint;
+         }
+         else return tpNormal | methodInfo.hint;
+      }
+   }
+
+   return tpUnknown;
+}
 
 void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t reference)
 {
@@ -3362,332 +3362,332 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //   }
 //}
 
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo target, int messageRef, int mode)
-//{
-//   ObjectInfo retVal(okObject);
-//
-//   int signRef = getSignature(messageRef);
-//   int paramCount = getParamCount(messageRef);
-//
-//   // try to recognize the operation
-//   ref_t classReference = resolveObjectReference(scope, target);
-//   bool classFound = false;
-//   bool dispatchCall = false;
-////   bool varInitCall = test(mode, HINT_INITIALIZING);
-//   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
-//   int callType = methodHint & tpMask;
-//
-//   if (target.kind == okConstantClass) {
-//      retVal.param = target.param;
-//
-//      // constructors are always sealed
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo target, int messageRef, int mode)
+{
+   ObjectInfo retVal(okObject);
+
+   int signRef = getSignature(messageRef);
+   int paramCount = getParamCount(messageRef);
+
+   // try to recognize the operation
+   ref_t classReference = resolveObjectReference(scope, target);
+   bool classFound = false;
+   bool dispatchCall = false;
+//   bool varInitCall = test(mode, HINT_INITIALIZING);
+   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
+   int callType = methodHint & tpMask;
+
+   if (target.kind == okConstantClass) {
+      retVal.param = target.param;
+
+      // constructors are always sealed
+      callType = tpSealed;
+   }
+//   else if (target.kind == okSuper) {
+//      // parent methods are always sealed
 //      callType = tpSealed;
 //   }
-////   else if (target.kind == okSuper) {
-////      // parent methods are always sealed
-////      callType = tpSealed;
-////   }
-////
-////   // save parameters
-////   if (test(mode, HINT_INLINE)) {
-////      // if it is an operator
-////      // try to implement the operation directly
-////      ByteCodeIterator bm = scope.tape->end();
-////
-////      compileMessageParameters(callStack, scope, true);
-////      ObjectInfo info = compileInlineOperation(scope, callStack, messageRef, mode);
-////      // if inline operation is not possible
-////      // generic message should be sent
-////      if (info.kind != okUnknown)
-////         return info;
-////
-////      // if stack allocated operands were used
-////      // bad lack - have to recompile once again
-////      // !! should be refactored!!
-////      if (info.kind == okUnknown && checkIfBoxingRequired(scope, callStack)) {
-////         _writer.trimTape(bm, *scope.tape);
-////
-////         // HOT FIX : to reimplement any sub expression
-////         for (int i = 1; i < callStack.parameters.Count(); i++) {
-////            (*callStack.parameters.getIt(i)).info.kind = okUnknown;
-////         }
-////
-////         compileMessageParameters(callStack, scope, false);
-////      }
-////   }
-////   else compileMessageParameters(node, callStack, scope, test(methodHint, tpStackSafe));
-////
-////   // otherwise load target
-////   if (target.kind == okConstantRole) {
-////      _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, target.param));
-////   }
-////   else if (target.kind == okRole) {
-////      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-////   }
-////   else if (target.kind == okSuper) {
-////      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
-////   }
-////   else if (target.kind == okSubject) {
-////      _writer.loadObject(*scope.tape, target);
-////   }
-////   else if (target.kind == okSubjectDispatcher) {
-////      dispatchCall = true;
-////
-////      _writer.loadObject(*scope.tape, target);
-////   }
-////   else if (classReference == scope.moduleScope->signatureReference) {
-////      dispatchCall = true;
-////
-////      _writer.loadObject(*scope.tape, target);
-////   }
-////   else if (test(mode, HINT_EXTENSION_MODE)) {
-////      _writer.loadObject(*scope.tape, target);
-////   }
-////   else _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
-////
-////   _writer.setMessage(*scope.tape, messageRef);
-////
-////   recordDebugStep(scope, node.Terminal(), dsStep);
-////   openDebugExpression(scope);
-////
-////   if (callStack.paramUnboxing)
-////      unboxCallstack(scope, callStack);
-////
-////   endDebugExpression(scope);
-////
-////   // the result of get&type message should be typed
-////   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
-////      if (scope.moduleScope->typeHints.exist(signRef)) {
-////         return ObjectInfo(okAccumulator, 0, 0, signRef);
-////      }
-////   }
-////   else if (test(mode, HINT_INVERTED)) {
-////      ModuleScope* moduleScope = scope.moduleScope;
-////
-////      bool mismatch = false;
-////      bool boxed = false;
-////      bool dummy = false;
-////      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed, dummy);
-////
-////      _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
-////
-////      retVal.extraparam = scope.moduleScope->boolType;
-////   }
-////   else if (varInitCall) {
-////      retVal.kind = okIdle;
-////   }
-////
-//   
 //
-//   //   // send message
-//   //   if (varInitCall) {
-//   //      // HOTFIX : put 0 into acc to signal the embeddable constructor 
-//   //      // that it is variable implicit initialization
-//   //      _writer.loadObject(*scope.tape, ObjectInfo(okNil));
-//   //
-//   //      _writer.callResolvedMethod(*scope.tape, classReference, messageRef, false);
-//   //   }
-//   //   else if (dispatchCall) {
-//   //      _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
-//   //   }
-//   /*else */if (callType == tpClosed) {
-//      scope.writer->newNode(lxSemiDirectCall, messageRef);
+//   // save parameters
+//   if (test(mode, HINT_INLINE)) {
+//      // if it is an operator
+//      // try to implement the operation directly
+//      ByteCodeIterator bm = scope.tape->end();
 //
-//      scope.writer->appendNode(lxTarget, classReference);
-//   }
-//   else if (callType == tpSealed) {
-//      scope.writer->newNode(lxDirectCall, messageRef);
+//      compileMessageParameters(callStack, scope, true);
+//      ObjectInfo info = compileInlineOperation(scope, callStack, messageRef, mode);
+//      // if inline operation is not possible
+//      // generic message should be sent
+//      if (info.kind != okUnknown)
+//         return info;
 //
-//      scope.writer->appendNode(lxTarget, classReference);
-//   }
-//   else {
-//      scope.writer->newNode(lxCall, messageRef);
+//      // if stack allocated operands were used
+//      // bad lack - have to recompile once again
+//      // !! should be refactored!!
+//      if (info.kind == okUnknown && checkIfBoxingRequired(scope, callStack)) {
+//         _writer.trimTape(bm, *scope.tape);
 //
-//      // if the class found and the message is not supported - warn the programmer and raise an exception
-//      if (classFound && callType == tpUnknown) {
-//         scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
+//         // HOT FIX : to reimplement any sub expression
+//         for (int i = 1; i < callStack.parameters.Count(); i++) {
+//            (*callStack.parameters.getIt(i)).info.kind = okUnknown;
+//         }
+//
+//         compileMessageParameters(callStack, scope, false);
 //      }
 //   }
+//   else compileMessageParameters(node, callStack, scope, test(methodHint, tpStackSafe));
+//
+//   // otherwise load target
+//   if (target.kind == okConstantRole) {
+//      _writer.loadObject(*scope.tape, ObjectInfo(okConstantSymbol, target.param));
+//   }
+//   else if (target.kind == okRole) {
+//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+//   }
+//   else if (target.kind == okSuper) {
+//      _writer.loadObject(*scope.tape, ObjectInfo(okThisParam, 1));
+//   }
+//   else if (target.kind == okSubject) {
+//      _writer.loadObject(*scope.tape, target);
+//   }
+//   else if (target.kind == okSubjectDispatcher) {
+//      dispatchCall = true;
+//
+//      _writer.loadObject(*scope.tape, target);
+//   }
+//   else if (classReference == scope.moduleScope->signatureReference) {
+//      dispatchCall = true;
+//
+//      _writer.loadObject(*scope.tape, target);
+//   }
+//   else if (test(mode, HINT_EXTENSION_MODE)) {
+//      _writer.loadObject(*scope.tape, target);
+//   }
+//   else _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, 0));
+//
+//   _writer.setMessage(*scope.tape, messageRef);
 //
 //   recordDebugStep(scope, node.Terminal(), dsStep);
-//   scope.writer->closeNode();
+//   openDebugExpression(scope);
+//
+//   if (callStack.paramUnboxing)
+//      unboxCallstack(scope, callStack);
+//
+//   endDebugExpression(scope);
 //
 //   // the result of get&type message should be typed
-//   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->typeHints.exist(signRef)) {
-//      retVal.type = signRef;
+//   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
+//      if (scope.moduleScope->typeHints.exist(signRef)) {
+//         return ObjectInfo(okAccumulator, 0, 0, signRef);
+//      }
+//   }
+//   else if (test(mode, HINT_INVERTED)) {
+//      ModuleScope* moduleScope = scope.moduleScope;
+//
+//      bool mismatch = false;
+//      bool boxed = false;
+//      bool dummy = false;
+//      compileTypecast(scope, retVal, scope.moduleScope->boolType, mismatch, boxed, dummy);
+//
+//      _writer.invertBool(*scope.tape, moduleScope->trueReference, moduleScope->falseReference);
+//
+//      retVal.extraparam = scope.moduleScope->boolType;
+//   }
+//   else if (varInitCall) {
+//      retVal.kind = okIdle;
 //   }
 //
-//   return retVal;
-//}
-//
-////void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
-////{
-////   // it should be removed from the stack
-////   if (spaceToRelease == (size_t)-1) {
-////      _writer.releaseArgList(*scope.tape);
-////      _writer.releaseObject(*scope.tape);
-////   }
-////   else _writer.releaseObject(*scope.tape, spaceToRelease);
-////}
-//
-//ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
+   
+
+   //   // send message
+   //   if (varInitCall) {
+   //      // HOTFIX : put 0 into acc to signal the embeddable constructor 
+   //      // that it is variable implicit initialization
+   //      _writer.loadObject(*scope.tape, ObjectInfo(okNil));
+   //
+   //      _writer.callResolvedMethod(*scope.tape, classReference, messageRef, false);
+   //   }
+   //   else if (dispatchCall) {
+   //      _writer.callResolvedMethod(*scope.tape, classReference, encodeVerb(DISPATCH_MESSAGE_ID));
+   //   }
+   /*else */if (callType == tpClosed) {
+      scope.writer->insert(lxSDirctCalling, messageRef);
+
+      scope.writer->appendNode(lxTarget, classReference);
+   }
+   else if (callType == tpSealed) {
+      scope.writer->insert(lxDirectCalling, messageRef);
+
+      scope.writer->appendNode(lxTarget, classReference);
+   }
+   else {
+      scope.writer->insert(lxCalling, messageRef);
+
+      // if the class found and the message is not supported - warn the programmer and raise an exception
+      if (classFound && callType == tpUnknown) {
+         scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
+      }
+   }
+
+   recordDebugStep(scope, node.Terminal(), dsStep);
+   scope.writer->closeNode();
+
+   // the result of get&type message should be typed
+   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->typeHints.exist(signRef)) {
+      retVal.type = signRef;
+   }
+
+   return retVal;
+}
+
+//void Compiler :: releaseOpenArguments(CodeScope& scope, size_t spaceToRelease)
 //{
-//   bool   first = true;
-//   ref_t  verb_id = 0;
-//   int    paramCount = 0;
-//   DNode  arg;
-//   
-//   IdentifierString signature;
-//   TerminalInfo     verb = node.Terminal();
-//   // check if it is a short-cut eval message
-//   if (node == nsMessageParameter) {
-//      arg = node;
-//
-//      verb_id = EVAL_MESSAGE_ID;
+//   // it should be removed from the stack
+//   if (spaceToRelease == (size_t)-1) {
+//      _writer.releaseArgList(*scope.tape);
+//      _writer.releaseObject(*scope.tape);
 //   }
-//   else {
-//      arg = node.firstChild();
-//   
-//      verb_id = _verbs.get(verb.value);
-//      if (verb_id == 0) {
-//         size_t id = scope.moduleScope->mapSubject(verb, signature);
-//   
-//         // if followed by argument list - it is EVAL verb
-//         if (arg != nsNone) {
-//            // HOT FIX : strong types cannot be used as a custom verb with a parameter
-//            if (scope.moduleScope->typeHints.exist(id))
-//               scope.raiseError(errStrongTypeNotAllowed, verb);
-//   
-//            verb_id = EVAL_MESSAGE_ID;
-//   
-//            first = false;
-//         }
-//         // otherwise it is GET message
-//         else verb_id = GET_MESSAGE_ID;
-//      }
-//   }
-//   
-//   // if message has generic argument list
-//   while (arg == nsMessageParameter) {
-//      compileObject(arg.firstChild(), scope, 0);
-//   ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-//   //
-//      paramCount++;
-//   //
-//   ////      if (arg.firstChild().firstChild() != nsNone)
-//   ////         callStack.directOrder = false;
-//   
-//      arg = arg.nextNode();
-//   }
-//   
-//   // if message has named argument list
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
-//
-//      arg = arg.nextNode();
-//
-//      // skip an argument
-//      if (arg == nsMessageParameter) {
-//   //         // if it is an open argument list
-//   //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//   //            // if a generic argument is used with an open argument list
-//   //            callStack.directOrder = false;
-//   
-//               // check if argument list should be unboxed
-//   //            DNode param = arg.firstChild();
-//   
-//   //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-//   //               // add argument list to be unboxed
-//   //               callStack.oargUnboxing = true;
-//   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-//   //            }
-//   //            else {
-//   //               while (arg != nsNone) {
-//   //                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-//   //
-//   //                  arg = arg.nextNode();
-//   //               }
-//   //
-//   //               // terminator
-//   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-//   //            }
-//   //            paramCount += OPEN_ARG_COUNT;
-//   //            if (paramCount > 0x0F)
-//   //               scope.raiseError(errNotApplicable, subject);
-//   //         }
-//   //         else {
-//   //            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
-//         compileObject(arg.firstChild(), scope, 0);
-//
-//         paramCount++;
-//   
-//
-//
-//         if (paramCount >= OPEN_ARG_COUNT)
-//            scope.raiseError(errTooManyParameters, verb);
-//   
-//   //            if (arg.firstChild().firstChild() != nsNone)
-//   //               callStack.directOrder = false;
-//   
-//         arg = arg.nextNode();
-//   //         }
-//      }
-//   }
-//   
-//   // if signature is presented
-//   ref_t sign_id = 0;
-//   if (!emptystr(signature)) {
-//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//   }
-//   
-//   // create a message id
-//   ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
-//
-////   MessageScope callStack;
-////
-////   // put the target
-////   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // HOTFIX : passing node for raiseWarning / raiseError
-//
-//   //ref_t messageRef = mapMessage(node, scope/*, callStack*/);
-//
-////   ref_t extensionRef = mapExtension(scope, messageRef, object);
-////
-////   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
-////   if (object.kind == okAccumulator) {
-////      callStack.directOrder = false;
-////   }
-////
-////   if (extensionRef != 0) {
-////      //HOTFIX: A proper method should have a precedence over an extension one
-////      if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
-////         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
-////      }
-////   }
-//
-//   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
-//
-//   //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
-////   if (spaceToRelease != 0) {
-////      // if open argument list is used
-////      releaseOpenArguments(scope, spaceToRelease);
-////   }
-//
-//   return retVal;
+//   else _writer.releaseObject(*scope.tape, spaceToRelease);
 //}
+
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
+{
+   bool   first = true;
+   ref_t  verb_id = 0;
+   int    paramCount = 0;
+   DNode  arg;
+   
+   IdentifierString signature;
+   TerminalInfo     verb = node.Terminal();
+   // check if it is a short-cut eval message
+   if (node == nsMessageParameter) {
+      arg = node;
+
+      verb_id = EVAL_MESSAGE_ID;
+   }
+   else {
+      arg = node.firstChild();
+   
+      verb_id = _verbs.get(verb.value);
+      if (verb_id == 0) {
+         size_t id = scope.moduleScope->mapSubject(verb, signature);
+   
+         // if followed by argument list - it is EVAL verb
+         if (arg != nsNone) {
+            // HOT FIX : strong types cannot be used as a custom verb with a parameter
+            if (scope.moduleScope->typeHints.exist(id))
+               scope.raiseError(errStrongTypeNotAllowed, verb);
+   
+            verb_id = EVAL_MESSAGE_ID;
+   
+            first = false;
+         }
+         // otherwise it is GET message
+         else verb_id = GET_MESSAGE_ID;
+      }
+   }
+   
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      compileObject(arg.firstChild(), scope, 0);
+   ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+   //
+      paramCount++;
+   //
+   ////      if (arg.firstChild().firstChild() != nsNone)
+   ////         callStack.directOrder = false;
+   
+      arg = arg.nextNode();
+   }
+   
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      // skip an argument
+      if (arg == nsMessageParameter) {
+   //         // if it is an open argument list
+   //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+   //            // if a generic argument is used with an open argument list
+   //            callStack.directOrder = false;
+   
+               // check if argument list should be unboxed
+   //            DNode param = arg.firstChild();
+   
+   //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+   //               // add argument list to be unboxed
+   //               callStack.oargUnboxing = true;
+   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+   //            }
+   //            else {
+   //               while (arg != nsNone) {
+   //                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+   //
+   //                  arg = arg.nextNode();
+   //               }
+   //
+   //               // terminator
+   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+   //            }
+   //            paramCount += OPEN_ARG_COUNT;
+   //            if (paramCount > 0x0F)
+   //               scope.raiseError(errNotApplicable, subject);
+   //         }
+   //         else {
+   //            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
+         compileObject(arg.firstChild(), scope, 0);
+
+         paramCount++;
+   
+
+
+         if (paramCount >= OPEN_ARG_COUNT)
+            scope.raiseError(errTooManyParameters, verb);
+   
+   //            if (arg.firstChild().firstChild() != nsNone)
+   //               callStack.directOrder = false;
+   
+         arg = arg.nextNode();
+   //         }
+      }
+   }
+   
+   // if signature is presented
+   ref_t sign_id = 0;
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
+   
+   // create a message id
+   ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
+
+//   MessageScope callStack;
 //
-//ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   ObjectInfo currentObject = object;
+//   // put the target
+//   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // HOTFIX : passing node for raiseWarning / raiseError
+
+   //ref_t messageRef = mapMessage(node, scope/*, callStack*/);
+
+//   ref_t extensionRef = mapExtension(scope, messageRef, object);
 //
-//   DNode member = node.nextNode();
+//   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
+//   if (object.kind == okAccumulator) {
+//      callStack.directOrder = false;
+//   }
 //
+//   if (extensionRef != 0) {
+//      //HOTFIX: A proper method should have a precedence over an extension one
+//      if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
+//         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+//      }
+//   }
+
+   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
+
+   //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
+//   if (spaceToRelease != 0) {
+//      // if open argument list is used
+//      releaseOpenArguments(scope, spaceToRelease);
+//   }
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   ObjectInfo currentObject = object;
+
+   DNode member = node.nextNode();
+
 //   if (object.kind == okExternal) {
 ////      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
 //      currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
@@ -3706,8 +3706,19 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 ////   }
 //
 //   bool nextOperation = false;
-//   while (member != nsNone) {
-//      if (member == nsAssigning) {
+   while (member != nsNone) {
+      /*else */if (member == nsMessageOperation) {
+         currentObject = compileMessage(member, scope, currentObject);
+      }
+      else if (member == nsMessageParameter) {
+         currentObject = compileMessage(member, scope, currentObject);
+      
+         // skip all except the last message parameter
+         while (member.nextNode() == nsMessageParameter)
+            member = member.nextNode();
+      }
+
+      //      if (member == nsAssigning) {
 //         currentObject = compileAssigningExpression(node, member, scope, currentObject);
 //      }
 //      else if (member == nsAltMessageOperation) {
@@ -3729,16 +3740,6 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //         if (nextOperation)
 //            scope.writer->insert(lxExpression);
 //
-//         /*else */if (member == nsMessageOperation) {
-//            currentObject = compileMessage(member, scope, currentObject);
-//         }
-//         else if (member == nsMessageParameter) {
-//            currentObject = compileMessage(member, scope, currentObject);
-//
-//            // skip all except the last message parameter
-//            while (member.nextNode() == nsMessageParameter)
-//               member = member.nextNode();
-//         }
 //         //      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
 //         //         || member == nsL7Operation || member == nsL0Operation)
 //         //      {
@@ -3759,13 +3760,13 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 ////
 ////         currentObject = ObjectInfo(okAccumulator);
 ////      }
-//
-//      member = member.nextNode();
-//   }
-//
-//   return currentObject;
-//}
-//
+
+      member = member.nextNode();
+   }
+
+   return currentObject;
+}
+
 ////ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
 ////{
 ////   ModuleScope* moduleScope = scope.moduleScope;
@@ -4340,10 +4341,10 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    if (member==nsObject) {
       objectInfo = compileObject(member, scope, mode);
    }
-//   if (member != nsNone) {
-//      objectInfo = compileOperations(member, scope, objectInfo, mode);
-//   }
-//
+   if (member != nsNone) {
+      objectInfo = compileOperations(member, scope, objectInfo, mode);
+   }
+
 //   appendObjectInfo(scope, objectInfo);
 //
    scope.writer->removeBookmark();
@@ -4618,33 +4619,33 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileExpression(statement, scope, 0);
 //            break;
-////         case nsThrow:
-////            compileThrow(statement, scope, 0);
-////            break;
-////         case nsLoop:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-////            compileLoop(statement, scope);
-////            break;
-////         case nsTry:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-////            compileTry(statement, scope);
-////            break;
-////         case nsLock:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-////            compileLock(statement, scope);
-////            break;
-//         case nsRetStatement:
-//         {
-//            needVirtualEnd = false;
-//            recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
-//
-//            scope.writer->newNode(lxReturning);
-//            retVal = compileRetExpression(statement.firstChild(), scope, 0);
-//            scope.writer->closeNode();
-//            scope.freeSpace();
-//
+//         case nsThrow:
+//            compileThrow(statement, scope, 0);
 //            break;
-//         }
+//         case nsLoop:
+//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//            compileLoop(statement, scope);
+//            break;
+//         case nsTry:
+//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//            compileTry(statement, scope);
+//            break;
+//         case nsLock:
+//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//            compileLock(statement, scope);
+//            break;
+         case nsRetStatement:
+         {
+            needVirtualEnd = false;
+            recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
+
+            scope.writer->newNode(lxReturning);
+            retVal = compileRetExpression(statement.firstChild(), scope, 0);
+            scope.writer->closeNode();
+            scope.freeSpace();
+
+            break;
+         }
 //         case nsVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileVariable(statement, scope/*, hints*/);
@@ -6533,7 +6534,7 @@ void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
       switch (current.type)
       {
          case lxExpression:
-//         case lxReturning:
+         case lxReturning:
             optimizeSyntaxExpression(scope, current);
             break;
       }
@@ -6564,7 +6565,6 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
 //            openDebugExpression(tape);
 //            _writer.translateExpression(tape, current);
 //            endDebugExpression(tape);
-//            _writer.gotoEnd(tape, baFirstLabel);
 //            break;
 //         case lxVariable:
 //            _writer.declareVariable(tape, current.argument);
