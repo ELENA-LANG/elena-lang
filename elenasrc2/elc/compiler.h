@@ -537,12 +537,12 @@ private:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
 
       void mapLocal(ident_t local, int level, ref_t type)
       {
@@ -805,7 +805,7 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
 //   ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
-   bool appendBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
+   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 //   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
@@ -821,8 +821,8 @@ private:
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
 //   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
-//   void compileVariable(DNode node, CodeScope& scope/*, DNode hints*/);
-//
+   void compileVariable(DNode node, CodeScope& scope/*, DNode hints*/);
+
 //   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
 //   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
@@ -831,7 +831,7 @@ private:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
+   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, bool boxing);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
@@ -860,8 +860,8 @@ private:
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
-//
+   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
+
 //   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
 //
 //   void compileLoop(DNode node, CodeScope& scope);

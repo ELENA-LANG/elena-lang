@@ -2006,78 +2006,81 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 ////   }
 ////   else scope.raiseError(errInvalidOperation, node.Terminal());
 ////}
-//
-//void Compiler :: compileVariable(DNode node, CodeScope& scope/*, DNode hints*/)
-//{
-//   TerminalInfo terminal = node.Terminal();
-//
-//   if (!scope.locals.exist(terminal)) {
-//      ref_t type = 0;
-////      ref_t classReference = 0;
-////      int size = 0;
-////      scope.compileLocalHints(hints, type, size, classReference);
-//
-//      ObjectInfo variable(okLocal, 0, 0, type);
-////      if (size > 0) {
-////         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
-////
-////         if (!allocateStructure(scope, size, variable))
-////            scope.raiseError(errInvalidOperation, node.Terminal());
-////
-////         // make the reservation permanent
-////         scope.saved = scope.reserved;
-////
-////         if (flags == elDebugDWORD) {
-////            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), variable.param, false);
-////         }
-////         else if (flags == elDebugQWORD) {
-////            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), variable.param, false);
-////         }
-////         else if (flags == elDebugReal64) {
-////            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), variable.param, false);
-////         }
-////         else if (flags == elDebugBytes) {
-////            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
-////         }
-////         else if (flags == elDebugShorts) {
-////            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
-////         }
-////         else if (flags == elDebugIntegers) {
-////            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
-////         }
-////         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), variable.param);
-////      }
-////      else {
-//         int level = scope.newLocal();
-//
-//         scope.writer->newNode(lxVariable, 0);
-//         scope.writer->appendNode(lxTerminal, (int)terminal.value);
-//         scope.writer->appendNode(lxLevel, level);
-//         scope.writer->closeNode();
-//
-//         variable.param = level;
-////      }
-//
-//      DNode assigning = node.firstChild();
-//      if (assigning == nsAssigning) {
-//         scope.writer->newNode(lxExpression);
-//         writeTerminal(terminal, scope, variable);
-//
-//         compileAssigningExpression(node, assigning, scope, variable, /*size > 0 ? HINT_INITIALIZING : */0);         
-//
-//         scope.writer->closeNode();
-//      }
-//
-//      if (variable.kind == okLocal) {
-//         scope.mapLocal(terminal, variable.param, type);
-//      }
-////      else scope.mapLocal(node.Terminal(), variable.param, variable.extraparam, true);
-//   }
-//   else scope.raiseError(errDuplicatedLocal, terminal);
-//}
 
-void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
+void Compiler :: compileVariable(DNode node, CodeScope& scope/*, DNode hints*/)
 {
+   TerminalInfo terminal = node.Terminal();
+
+   if (!scope.locals.exist(terminal)) {
+      ref_t type = 0;
+//      ref_t classReference = 0;
+//      int size = 0;
+//      scope.compileLocalHints(hints, type, size, classReference);
+
+      ObjectInfo variable(okLocal, 0, 0, type);
+//      if (size > 0) {
+//         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
+//
+//         if (!allocateStructure(scope, size, variable))
+//            scope.raiseError(errInvalidOperation, node.Terminal());
+//
+//         // make the reservation permanent
+//         scope.saved = scope.reserved;
+//
+//         if (flags == elDebugDWORD) {
+//            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), variable.param, false);
+//         }
+//         else if (flags == elDebugQWORD) {
+//            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), variable.param, false);
+//         }
+//         else if (flags == elDebugReal64) {
+//            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), variable.param, false);
+//         }
+//         else if (flags == elDebugBytes) {
+//            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
+//         }
+//         else if (flags == elDebugShorts) {
+//            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
+//         }
+//         else if (flags == elDebugIntegers) {
+//            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
+//         }
+//         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), variable.param);
+//      }
+//      else {
+         int level = scope.newLocal();
+//
+         scope.writer->newNode(lxVariable, 0);
+         scope.writer->appendNode(lxTerminal, (int)terminal.value);
+         scope.writer->appendNode(lxLevel, level);
+         scope.writer->closeNode();
+
+         variable.param = level;
+//      }
+
+      DNode assigning = node.firstChild();
+      if (assigning == nsAssigning) {
+         scope.writer->newNode(lxAssigning);
+         writeTerminal(terminal, scope, variable, false);
+
+         compileAssigningExpression(node, assigning, scope, variable, /*size > 0 ? HINT_INITIALIZING : */0);         
+
+         scope.writer->closeNode();
+      }
+
+      if (variable.kind == okLocal) {
+         scope.mapLocal(terminal, variable.param, type);
+      }
+//      else scope.mapLocal(node.Terminal(), variable.param, variable.extraparam, true);
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
+}
+
+void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, bool boxing)
+{
+   if (boxing)
+      scope.writer->newBookmark();
+
    switch (object.kind) {
       case okUnknown:
          scope.raiseError(errUnknownObject, terminal);
@@ -2110,24 +2113,26 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLocal:
       case okParam:
       case okThisParam:
-         if (appendBoxing(terminal, scope, object)) {
-            scope.writer->appendNode(lxLocal, object.param);
-         }
-         else scope.writer->newNode(lxLocal, object.param);         
+         scope.writer->newNode(lxLocal, object.param);
          break;
       case okField:
          scope.writer->newNode(lxField, object.param);
          break;
-      //case okFieldAddress:
-      //   appendBoxing(terminal, scope, object);
-      //   scope.writer->appendNode(lxFieldAddress, object.param);         
-      //   break;
+      case okLocalAddress:
+         scope.writer->newNode(lxLocalAddress, object.param);
+         break;
+      case okFieldAddress:
+         scope.writer->newNode(lxFieldAddress, object.param);
+         break;
       case okExternal:
          //   // external call cannot be used inside symbol
          //   if (test(mode, HINT_ROOT))
          //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
 
          // HOTFIX : external node will be declared later
+         if (boxing)
+            scope.writer->removeBookmark();
+
          return; 
 //      case okInternal:
 //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
@@ -2138,6 +2143,12 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
    appendObjectInfo(scope, object);
 
    scope.writer->closeNode();
+
+   if (boxing) {
+      writeBoxing(terminal, scope, object);
+
+      scope.writer->removeBookmark();
+   }
 }
 
 ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
@@ -2203,7 +2214,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    else if (!emptystr(terminal))
       object = scope.mapObject(terminal);
 
-   writeTerminal(terminal, scope, object);
+   writeTerminal(terminal, scope, object, true);
 
    return object;
 }
@@ -2401,7 +2412,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 ////   else return false;
 ////}
 
-bool Compiler :: appendBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
+bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
 {
    ref_t classRef = 0;
    if (object.type != 0) {
@@ -2412,7 +2423,7 @@ bool Compiler :: appendBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInf
    int size = scope.moduleScope->defineStructSize(classRef);
    if (size != 0) {
       if (object.kind == okFieldAddress ||object.kind == okLocalAddress) {
-         scope.writer->newNode(lxBoxing, size);
+         scope.writer->insert(lxBoxing, size);
       }
       //else if (object.kind == okParam) {
       //   scope.writer->newNode(lxCondBoxing, size);
@@ -2421,6 +2432,7 @@ bool Compiler :: appendBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInf
 
       scope.writer->appendNode(lxTarget, classRef);
       appendCoordinate(scope.writer, terminal);
+      scope.writer->closeNode();
 
       return true;
    }
@@ -4365,8 +4377,8 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
-//{   
+ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
+{   
 //   // if primitive data operation can be used
 //   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
 ////      ObjectInfo info;
@@ -4417,55 +4429,53 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 ////      }
 //   }
 //   else {
-//      scope.writer->newNode(lxAssigning);
+      ref_t targetType = 0;
+      if (target.kind == okLocal || target.kind == okField) {
+         if (target.type != 0) {
+            targetType = target.type;
+         }
+      }
+      //else if ((target.kind == okOuter)) {
+      //   //      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
+      //   //      _writer.saveObject(*scope.tape, object);
+      //}
+      else if (target.kind == okUnknown) {
+         scope.raiseError(errUnknownObject, node.Terminal());
+      }
+      else scope.raiseError(errInvalidOperation, node.Terminal());
+
+      if (targetType != 0)
+         scope.writer->newNode(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+
+      scope.writer->newBookmark();
+
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
+
+      writeBoxing(node.FirstTerminal(), scope, info);
+
+      scope.writer->removeBookmark();
+
+      if (targetType != 0) {
+         appendCoordinate(scope.writer, node.FirstTerminal());
+         scope.writer->closeNode(); // typecast
+      }
+
+      //      _writer.loadObject(*scope.tape, info);
 //
-//      ref_t targetType = 0;
-//      if (target.kind == okLocal || target.kind == okField) {
-//         if (target.type != 0) {
-//            targetType = target.type;
-//         }
-//      }
-//      //else if ((target.kind == okOuter)) {
-//      //   //      scope.raiseWarning(2, wrnOuterAssignment, node.Terminal());
-//      //   //      _writer.saveObject(*scope.tape, object);
-//      //}
-//      else if (target.kind == okUnknown) {
-//         scope.raiseError(errUnknownObject, node.Terminal());
-//      }
-//      else scope.raiseError(errInvalidOperation, node.Terminal());
+//      bool boxed = false;
+//      bool dummy = false;
+//      info = boxObject(scope, info, boxed, dummy);
+//      if (boxed)
+//         scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
 //
-//      if (targetType != 0)
-//         scope.writer->newNode(lxExpression);
-//
-//      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
-//
-//      if (targetType != 0) {
-//         scope.writer->newNode(lxTypecast, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-//         appendCoordinate(scope.writer, node.FirstTerminal());
-//         scope.writer->closeNode(); // typecast
-//
-//         scope.writer->closeNode(); // expression
-//      }
-//
-//      //      _writer.loadObject(*scope.tape, info);
-////
-////      bool boxed = false;
-////      bool dummy = false;
-////      info = boxObject(scope, info, boxed, dummy);
-////      if (boxed)
-////         scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
-////
-////      bool mismatch = false;
-////      compileTypecast(scope, info, target.type, mismatch, boxed, dummy);
-////      if (mismatch)
-////         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-//
-//      scope.writer->closeNode();
-////      compileAssignment(node, scope, target);
+//      bool mismatch = false;
+//      compileTypecast(scope, info, target.type, mismatch, boxed, dummy);
+//      if (mismatch)
+//         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
 //   }
-//
-//   return ObjectInfo(okObject);
-//}
+
+   return ObjectInfo(okObject);
+}
 
 //ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodeMode)
 //{
@@ -4661,10 +4671,10 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 
             break;
          }
-//         case nsVariable:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileVariable(statement, scope/*, hints*/);
-//            break;
+         case nsVariable:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileVariable(statement, scope/*, hints*/);
+            break;
          case nsCodeEnd:
             needVirtualEnd = false;
             recordDebugStep(scope, statement.Terminal(), dsEOP);
@@ -6222,11 +6232,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
 
       retVal = compileExpression(expression, codeScope, 0);
    }
-   else {
-//      writer.newNode(lxExpression);
-      writeTerminal(node.FirstTerminal(), codeScope, retVal);
-//      writer.closeNode();
-   }
+   else writeTerminal(node.FirstTerminal(), codeScope, retVal, true);
+
 //   _writer.loadObject(*codeScope.tape, retVal);
 
 //   // create constant if required
@@ -6567,15 +6574,15 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
 //            _writer.translateExpression(tape, current);
 //            endDebugExpression(tape);
 //            break;
-//         case lxVariable:
-//            _writer.declareVariable(tape, current.argument);
-//            _writer.declareLocalInfo(tape, 
-//               (ident_t)SyntaxReader::findChild(current, lxTerminal).argument, 
-//               SyntaxReader::findChild(current, lxLevel).argument);
-//            break;
+         case lxVariable:
+            _writer.declareVariable(tape, current.argument);
+            _writer.declareLocalInfo(tape, 
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument, 
+               SyntaxTree::findChild(current, lxLevel).argument);
+            break;
          default:
             _writer.translateObjectExpression(tape, current);
-//            break;
+            break;
       }
       current = current.nextNode();
    }   

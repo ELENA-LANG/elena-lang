@@ -41,7 +41,7 @@ enum LexicalType
    lxSymbol          = 0x101,
    lxConstantSymbol  = 0x102,
    lxField           = 0x103,
-   //lxFieldAddress    = 0x104,
+   lxFieldAddress    = 0x104,
    lxLocalAddress    = 0x105,
    lxLocal           = 0x106,
    lxBlockLocal      = 0x107,
@@ -63,17 +63,17 @@ enum LexicalType
    //lxCatch           = 0x402,
    //lxAssigning       = 0x403,    // if argument == 0 -> assign field, otherwise copy the memory block with specified size
    //lxCondBoxing      = 0x406,    // the same like boxing except checking if the reference is stack allocated
-   //lxVariable        = 0x407,
+   lxVariable        = 0x407,
 
    lxTarget          = 0x801,
    lxType            = 0x802,
-   //lxLevel           = 0x803,
 
    lxBreakpoint      = 0x1001,
    lxCol             = 0x1002,
    lxRow             = 0x1003,
    lxLength          = 0x1004,
-   //lxTerminal        = 0x1005,
+   lxTerminal        = 0x1005,
+   lxLevel           = 0x1006,
 };
 
 // --- SyntaxWriter ---

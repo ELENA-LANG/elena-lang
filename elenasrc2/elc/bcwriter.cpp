@@ -230,11 +230,11 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
       tape.write(bcPushN, 0);
 }
 
-//void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
-//{
-//   // pushn  value
-//   tape.write(bcPushN, value);
-//}
+void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+{
+   // pushn  value
+   tape.write(bcPushN, value);
+}
 
 //int ByteCodeWriter :: declareLabel(CommandTape& tape)
 //{
@@ -1871,6 +1871,8 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
       // nsave
       tape.write(bcBCopyF, argument);
       tape.write(bcNSave);
+
+      tape.write(bcACopyB);
    }
 //   else if (target.kind == okLocal) {
 //      // bloadfi param
@@ -3118,9 +3120,7 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
          }
       }
    }
-   else {
-
-   }
+   else saveObject(tape, target.type, target.argument);
 }
 
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
