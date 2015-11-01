@@ -4338,7 +4338,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack)
 {
    if (targetType != 0)
-      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+      scope.writer->newNode(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
    scope.writer->newBookmark();
 
@@ -4356,15 +4356,17 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
             objectInfo = compileOperations(member, scope, objectInfo, mode);
          }
       }
-      else objectInfo = compileObject(node, scope, targetType, mode, unboxingStack);
+      else objectInfo = compileObject(member, scope, targetType, mode, unboxingStack);
    }
    else objectInfo = compileObject(node, scope, targetType, mode, unboxingStack);
 
-   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, unboxingStack);
-
    appendObjectInfo(scope, objectInfo);
 
+   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, unboxingStack);
+
    if (targetType != 0) {
+      appendCoordinate(scope.writer, node.FirstTerminal());
+
       scope.writer->closeNode();
    }      
 
