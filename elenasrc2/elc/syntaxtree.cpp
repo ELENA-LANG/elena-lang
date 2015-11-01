@@ -14,9 +14,9 @@ using namespace _ELENA_;
 
 // --- SyntaxWriter ---
 
-void SyntaxWriter :: insert(LexicalType type, ref_t argument)
+void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {
-   size_t position = _bookmarks.peek();
+   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
 
    _writer.insertDWord(position, type);
    _writer.insertDWord(position + 4, argument);

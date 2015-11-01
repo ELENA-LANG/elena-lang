@@ -1426,6 +1426,7 @@ Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
    this->writer = writer;
    this->level = 0;
    this->saved = this->reserved = 0;
+   this->rootBookmark = -1;
 }
 
 //Compiler::CodeScope :: CodeScope(MethodScope* parent, CodeType type)
@@ -1433,6 +1434,7 @@ Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
 //{
 //   this->tape = &((ClassScope*)parent->getScope(slClass))->tape;
 //   this->level = 0;
+//   this->rootBookmark = -1;
 //}
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
@@ -1441,6 +1443,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
    this->writer = writer;
    this->level = 0;
    this->saved = this->reserved = 0;
+   this->rootBookmark = -1;
 }
 
 //Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -1450,6 +1453,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
 //   this->level = parent->level;
 //   this->saved = parent->saved;
 //   this->reserved = parent->reserved;
+//   this->rootBookmark = -1;
 //}
 
 ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
@@ -1459,60 +1463,60 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 //      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
 //         return ObjectInfo(okSubject, local.offset);
 //      }
-//      else if (local.stackAllocated) {
-//         return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
-//      }
-      /*else */return ObjectInfo(okLocal, local.offset, 0, local.sign_ref);
+      /*else */if (local.stackAllocated) {
+         return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
+      }
+      else return ObjectInfo(okLocal, local.offset, 0, local.sign_ref);
    }
    else return Scope::mapObject(identifier);
 }
 
-////void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference)
-////{
-////   while (hints == nsHint) {
-////      TerminalInfo terminal = hints.Terminal();
-////
-////      if (StringHelper::compare(terminal, HINT_TYPE)) {
-////         TerminalInfo typeValue = hints.firstChild().Terminal();
-////
-////         type = moduleScope->mapType(typeValue);
-////         if (!type)
-////            raiseError(errUnknownSubject, typeValue);
-////
-////         size = moduleScope->defineTypeSize(type, classReference);
-////      }
-////      else if (StringHelper::compare(terminal, HINT_SIZE)) {
-////         int itemSize = moduleScope->defineTypeSize(type);
-////
-////         TerminalInfo sizeValue = hints.firstChild().Terminal();
-////         if (itemSize < 0 && sizeValue.symbol == tsInteger) {
-////            itemSize = -itemSize;
-////
-////            size = StringHelper::strToInt(sizeValue.value) * itemSize;
-////         }
-////         else if (itemSize < 0 && sizeValue.symbol == tsHexInteger) {
-////            itemSize = -itemSize;
-////
-////            size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
-////         }
-////         else raiseWarning(1, wrnUnknownHint, terminal);
-////      }
-////      else raiseWarning(1, wrnUnknownHint, terminal);
-////
-////      hints = hints.nextNode();
-////   }
-////}
-////
-//////ref_t Compiler::CodeScope :: getObjectType(ObjectInfo object)
-//////{
-//////   if (object.kind == okOuterField) {
-//////      InlineClassScope* ownerScope = (InlineClassScope*)getScope(Scope::slClass);
-//////
-//////      return ownerScope->outerFieldTypes.get(object.extraparam);
-//////   }
-//////   else return getType(object);
-//////}
+void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference)
+{
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_TYPE)) {
+         TerminalInfo typeValue = hints.firstChild().Terminal();
+
+         type = moduleScope->mapType(typeValue);
+         if (!type)
+            raiseError(errUnknownSubject, typeValue);
+
+         size = moduleScope->defineTypeSize(type, classReference);
+      }
+      else if (StringHelper::compare(terminal, HINT_SIZE)) {
+         int itemSize = moduleScope->defineTypeSize(type);
+
+         TerminalInfo sizeValue = hints.firstChild().Terminal();
+         if (itemSize < 0 && sizeValue.symbol == tsInteger) {
+            itemSize = -itemSize;
+
+            size = StringHelper::strToInt(sizeValue.value) * itemSize;
+         }
+         else if (itemSize < 0 && sizeValue.symbol == tsHexInteger) {
+            itemSize = -itemSize;
+
+            size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
+         }
+         else raiseWarning(1, wrnUnknownHint, terminal);
+      }
+      else raiseWarning(1, wrnUnknownHint, terminal);
+
+      hints = hints.nextNode();
+   }
+}
+
+//ref_t Compiler::CodeScope :: getObjectType(ObjectInfo object)
+//{
+//   if (object.kind == okOuterField) {
+//      InlineClassScope* ownerScope = (InlineClassScope*)getScope(Scope::slClass);
 //
+//      return ownerScope->outerFieldTypes.get(object.extraparam);
+//   }
+//   else return getType(object);
+//}
+
 //// --- Compiler::InlineClassScope ---
 //
 //Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
@@ -2007,61 +2011,79 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 ////   else scope.raiseError(errInvalidOperation, node.Terminal());
 ////}
 
-void Compiler :: compileVariable(DNode node, CodeScope& scope/*, DNode hints*/)
+void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 {
    TerminalInfo terminal = node.Terminal();
 
    if (!scope.locals.exist(terminal)) {
       ref_t type = 0;
-//      ref_t classReference = 0;
-//      int size = 0;
-//      scope.compileLocalHints(hints, type, size, classReference);
+      ref_t classReference = 0;
+      int size = 0;
+      scope.compileLocalHints(hints, type, size, classReference);
 
       ObjectInfo variable(okLocal, 0, 0, type);
-//      if (size > 0) {
-//         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
-//
-//         if (!allocateStructure(scope, size, variable))
-//            scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//         // make the reservation permanent
-//         scope.saved = scope.reserved;
-//
-//         if (flags == elDebugDWORD) {
-//            _writer.declareLocalIntInfo(*scope.tape, node.Terminal(), variable.param, false);
-//         }
-//         else if (flags == elDebugQWORD) {
-//            _writer.declareLocalLongInfo(*scope.tape, node.Terminal(), variable.param, false);
-//         }
-//         else if (flags == elDebugReal64) {
-//            _writer.declareLocalRealInfo(*scope.tape, node.Terminal(), variable.param, false);
-//         }
-//         else if (flags == elDebugBytes) {
-//            _writer.declareLocalByteArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
-//         }
-//         else if (flags == elDebugShorts) {
-//            _writer.declareLocalShortArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
-//         }
-//         else if (flags == elDebugIntegers) {
-//            _writer.declareLocalIntArrayInfo(*scope.tape, node.Terminal(), variable.param, false);
-//         }
+      if (size > 0) {
+         int flags = scope.moduleScope->getClassFlags(classReference) & elDebugMask;
+
+         if (!allocateStructure(scope, size, variable))
+            scope.raiseError(errInvalidOperation, node.Terminal());
+
+         // make the reservation permanent
+         scope.saved = scope.reserved;
+
+         if (flags == elDebugDWORD) {
+            scope.writer->newNode(lxIntVariable, 0);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
+         else if (flags == elDebugQWORD) {
+            scope.writer->newNode(lxLongVariable, 0);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
+         else if (flags == elDebugReal64) {
+            scope.writer->newNode(lxReal64Variable, 0);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
+         else if (flags == elDebugBytes) {
+            scope.writer->newNode(lxBytesVariable, 0);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
+         else if (flags == elDebugShorts) {
+            scope.writer->newNode(lxShortsVariable, 0);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
+         else if (flags == elDebugIntegers) {
+            scope.writer->newNode(lxIntsVariable, 0);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
 //         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), variable.param);
-//      }
-//      else {
+      }
+      else {
          int level = scope.newLocal();
-//
+
          scope.writer->newNode(lxVariable, 0);
          scope.writer->appendNode(lxTerminal, (int)terminal.value);
          scope.writer->appendNode(lxLevel, level);
          scope.writer->closeNode();
 
          variable.param = level;
-//      }
+      }
 
       DNode assigning = node.firstChild();
       if (assigning == nsAssigning) {
-         scope.writer->newNode(lxAssigning);
-         writeTerminal(terminal, scope, variable, false);
+         scope.writer->newNode(lxAssigning, size);
+         writeTerminal(terminal, scope, variable);
 
          compileAssigningExpression(node, assigning, scope, variable, /*size > 0 ? HINT_INITIALIZING : */0);         
 
@@ -2071,16 +2093,13 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope/*, DNode hints*/)
       if (variable.kind == okLocal) {
          scope.mapLocal(terminal, variable.param, type);
       }
-//      else scope.mapLocal(node.Terminal(), variable.param, variable.extraparam, true);
+      else scope.mapLocal(node.Terminal(), variable.param, variable.extraparam, true);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
-void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, bool boxing)
+void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
 {
-   if (boxing)
-      scope.writer->newBookmark();
-
    switch (object.kind) {
       case okUnknown:
          scope.raiseError(errUnknownObject, terminal);
@@ -2130,9 +2149,6 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          //      scope.raiseError(errInvalidSymbolExpr, node.Terminal());
 
          // HOTFIX : external node will be declared later
-         if (boxing)
-            scope.writer->removeBookmark();
-
          return; 
 //      case okInternal:
 //         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
@@ -2140,15 +2156,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
 //         break;
    }
 
-   appendObjectInfo(scope, object);
-
    scope.writer->closeNode();
-
-   if (boxing) {
-      writeBoxing(terminal, scope, object);
-
-      scope.writer->removeBookmark();
-   }
 }
 
 ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
@@ -2214,12 +2222,12 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    else if (!emptystr(terminal))
       object = scope.mapObject(terminal);
 
-   writeTerminal(terminal, scope, object, true);
+   writeTerminal(terminal, scope, object);
 
    return object;
 }
 
-ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack)
 {
    ObjectInfo result;
 
@@ -2254,7 +2262,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //            else result = compileCollection(member, scope, 0);
 //         }
          /*else {*/
-         result = compileExpression(member, scope, 0);
+         result = compileExpression(member, scope, targetType, 0, unboxingStack);
          /*}*/
          break;
 //      case nsMessageReference:
@@ -2412,7 +2420,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 ////   else return false;
 ////}
 
-bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
+bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetRef, ObjectStack* unboxingStack)
 {
    ref_t classRef = 0;
    if (object.type != 0) {
@@ -2437,6 +2445,57 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       return true;
    }
    else return false;
+}
+
+void Compiler :: unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack)
+{
+   //   size_t count = callStack.parameters.Count();
+   //
+   //   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+   //   for (size_t i = 0; i < count; i++) {
+   //      MessageScope::ParamInfo param = callStack.parameters.get(i);
+   //
+   //      if (param.unboxing) {
+   //         if (param.level >= 0) {
+   //            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
+   //
+   //            int size = scope.moduleScope->defineStructSize(param.info.extraparam);
+   //            // if it is a stack allocated object
+   //            if (size != 0) {
+   //               _writer.loadBase(*scope.tape, param.info);
+   //
+   //               //!! for small objects (~4) use appropriate byte commands
+   //               _writer.copy(*scope.tape);
+   //            }
+   //            else {
+   //               _writer.loadObject(*scope.tape, ObjectInfo(okAccField));
+   //               _writer.saveObject(*scope.tape, param.info);
+   //            }
+   //         }
+   //
+   //         // if the object should be copied to the field
+   //         if (param.structOffset >= 0) {
+   //            int size = scope.moduleScope->defineTypeSize(param.info.type);
+   //            if (size == 4) {
+   //               _writer.assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+   //            }
+   //            else if (size == 2) {
+   //               _writer.assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+   //            }
+   //            else if (size == 1) {
+   //               _writer.assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+   //            }
+   //            else if (size == 8) {
+   //               _writer.assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+   //            }
+   //         }
+   //      }
+   //   }
+   //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+   //
+   //   if (callStack.level > 0)
+   //      _writer.releaseObject(*scope.tape, callStack.level);
+
 }
 
 ////ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing)
@@ -3245,52 +3304,6 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //
 //void Compiler :: unboxCallstack(CodeScope& scope, MessageScope& callStack)
 //{
-//   size_t count = callStack.parameters.Count();
-//
-//   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//   for (size_t i = 0; i < count; i++) {
-//      MessageScope::ParamInfo param = callStack.parameters.get(i);
-//
-//      if (param.unboxing) {
-//         if (param.level >= 0) {
-//            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
-//
-//            int size = scope.moduleScope->defineStructSize(param.info.extraparam);
-//            // if it is a stack allocated object
-//            if (size != 0) {
-//               _writer.loadBase(*scope.tape, param.info);
-//
-//               //!! for small objects (~4) use appropriate byte commands
-//               _writer.copy(*scope.tape);
-//            }
-//            else {
-//               _writer.loadObject(*scope.tape, ObjectInfo(okAccField));
-//               _writer.saveObject(*scope.tape, param.info);
-//            }
-//         }
-//
-//         // if the object should be copied to the field
-//         if (param.structOffset >= 0) {
-//            int size = scope.moduleScope->defineTypeSize(param.info.type);
-//            if (size == 4) {
-//               _writer.assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-//            }
-//            else if (size == 2) {
-//               _writer.assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-//            }
-//            else if (size == 1) {
-//               _writer.assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-//            }
-//            else if (size == 8) {
-//               _writer.assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-//            }
-//         }
-//      }
-//   }
-//   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//   if (callStack.level > 0)
-//      _writer.releaseObject(*scope.tape, callStack.level);
 //}
 
 //void Compiler :: compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe)
@@ -3588,9 +3601,12 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       }
    }
    
+   ObjectInfo dummy;
+   ObjectStack unboxingStack(dummy);
+
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      compileObject(arg.firstChild(), scope, 0);
+      compileExpression(arg.firstChild(), scope, 0, 0, &unboxingStack);
    ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
    //
       paramCount++;
@@ -3644,18 +3660,12 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    //               scope.raiseError(errNotApplicable, subject);
    //         }
    //         else {
-   //            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
-         compileObject(arg.firstChild(), scope, 0);
+         compileExpression(arg.firstChild(), scope, subjRef, 0, &unboxingStack);
 
          paramCount++;
-   
-
 
          if (paramCount >= OPEN_ARG_COUNT)
             scope.raiseError(errTooManyParameters, verb);
-   
-   //            if (arg.firstChild().firstChild() != nsNone)
-   //               callStack.directOrder = false;
    
          arg = arg.nextNode();
    //         }
@@ -3693,6 +3703,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 //   }
 
    ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
+
+   unboxCallstack(scope, &unboxingStack);
 
    //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
 //   if (spaceToRelease != 0) {
@@ -4314,40 +4326,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    }
    else subj = 0;
 
-   scope.writer->newBookmark();
-
-   ObjectInfo info = compileExpression(node, scope, mode);
-
-   if (subj != 0 && info.kind != okThisParam || !scope.moduleScope->checkIfCompatible(subj, scope.getClassRefId())) {
-      scope.writer->insert(lxTypecasting, encodeMessage(subj, GET_MESSAGE_ID, 0));
-
-      appendCoordinate(scope.writer, node.FirstTerminal());
-
-      scope.writer->closeNode();
-   }
-
-   scope.writer->removeBookmark();
-
-//   _writer.loadObject(*scope.tape, info);
-
-//   if (subj != 0 && scope.moduleScope->typeHints.get(subj) > 0) {
-//      bool mismatch = false;
-//      bool boxed = false;
-//      bool dummy = false;
-//      compileTypecast(scope, info, subj, mismatch, boxed, dummy);
-//      if (mismatch)
-//         scope.raiseWarning(2, wrnTypeMismatch, node.FirstTerminal());
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//   }
-//   else {
-//      // box object if required
-//      bool boxed = false;
-//      bool dummy = false;
-//      info = boxObject(scope, info, boxed, dummy);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//   }
+   ObjectInfo info = compileExpression(node, scope, subj, mode, NULL);
 
    scope.freeSpace();
 
@@ -4356,22 +4335,39 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    return ObjectInfo(okObject, 0, 0, subj);
 }
 
-ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack)
 {
+   if (targetType != 0)
+      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+
    scope.writer->newBookmark();
 
-   DNode member = node.firstChild();
-
    ObjectInfo objectInfo;
-   if (member==nsObject) {
-      objectInfo = compileObject(member, scope, mode);
-   }
-   if (member != nsNone) {
-      objectInfo = compileOperations(member, scope, objectInfo, mode);
-   }
+   if (node == nsExpression) {
+      DNode member = node.firstChild();
 
-//   appendObjectInfo(scope, objectInfo);
-//
+      if (member.nextNode() != nsNone) {
+         if (member == nsObject) {
+            objectInfo = compileObject(member, scope, 0, mode, NULL);
+
+            writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, NULL);
+         }
+         if (member != nsNone) {
+            objectInfo = compileOperations(member, scope, objectInfo, mode);
+         }
+      }
+      else objectInfo = compileObject(node, scope, targetType, mode, unboxingStack);
+   }
+   else objectInfo = compileObject(node, scope, targetType, mode, unboxingStack);
+
+   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, unboxingStack);
+
+   appendObjectInfo(scope, objectInfo);
+
+   if (targetType != 0) {
+      scope.writer->closeNode();
+   }      
+
    scope.writer->removeBookmark();
 
    return objectInfo;
@@ -4379,56 +4375,46 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
 {   
-//   // if primitive data operation can be used
-//   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
-////      ObjectInfo info;
-////
-////      // check if embeddable constructor can me called
-////      if (test(mode, HINT_INITIALIZING) && isSimpleExpression(assigning.firstChild().firstChild())) {
-////         DNode assignExpr = assigning.firstChild().firstChild();
-////
-////         ObjectInfo role = compileTerminal(assignExpr, scope, 0);
-////
-////         if (role.kind == okConstantClass && role.param == target.extraparam) {
-////            // try to call it
-////            info = compileExtensionMessage(assignExpr.nextNode(), scope, target, role, HINT_INITIALIZING);
-////         }
-////      }
-////
-////      if (info.kind == okUnknown) {
-////         // if it is an assignment operation (e.g. a := a + b <=> a += b)
-////         // excluding structure fields (except the first one)
-////         int assignMode = ((target.kind != okFieldAddress || target.param == 0) && isAssignOperation(node, assigning)) ? HINT_ASSIGN_MODE : 0;
-////
-////         info = compileExpression(assigning.firstChild(), scope, assignMode);
-////      }
-////
-////      if (info.kind == okIndexAccumulator) {
-////         // if it is a primitive operation
-////         compileContentAssignment(node, scope, target, info);
-////      }
-////      else if (info.kind == okIdle) {
-////         // if assigning was already done - do nothing
-////      }
-////      else {
-////         bool dummy = false;
-////         loadObject(scope, info, dummy);
-////
-//      scope.writer->newNode(lxAssigning, scope.moduleScope->defineTypeSize(target.type));
-//      scope.writer->newNode(lxExpression);
+   // if primitive data operation can be used
+   if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
+//      ObjectInfo info;
+//
+//      // check if embeddable constructor can me called
+//      if (test(mode, HINT_INITIALIZING) && isSimpleExpression(assigning.firstChild().firstChild())) {
+//         DNode assignExpr = assigning.firstChild().firstChild();
+//
+//         ObjectInfo role = compileTerminal(assignExpr, scope, 0);
+//
+//         if (role.kind == okConstantClass && role.param == target.extraparam) {
+//            // try to call it
+//            info = compileExtensionMessage(assignExpr.nextNode(), scope, target, role, HINT_INITIALIZING);
+//         }
+//      }
+//
+//      if (info.kind == okUnknown) {
+//         // if it is an assignment operation (e.g. a := a + b <=> a += b)
+//         // excluding structure fields (except the first one)
+//         int assignMode = ((target.kind != okFieldAddress || target.param == 0) && isAssignOperation(node, assigning)) ? HINT_ASSIGN_MODE : 0;
+//
+//         info = compileExpression(assigning.firstChild(), scope, assignMode);
+//      }
+//
+//      if (info.kind == okIndexAccumulator) {
+//         // if it is a primitive operation
+//         compileContentAssignment(node, scope, target, info);
+//      }
+//      else if (info.kind == okIdle) {
+//         // if assigning was already done - do nothing
+//      }
+//      else {
+//         bool dummy = false;
+//         loadObject(scope, info, dummy);
 //
 ////         compileContentAssignment(node, scope, target, info);
-//      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
-//
-//      scope.writer->newNode(lxTypecast, encodeMessage(target.type, GET_MESSAGE_ID, 0));
-//      appendCoordinate(scope.writer, node.FirstTerminal());
-//
-//      scope.writer->closeNode();
-//      scope.writer->closeNode();
-//      scope.writer->closeNode();
-////      }
-//   }
-//   else {
+
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, target.type, 0, NULL);
+   }
+   else {
       ref_t targetType = 0;
       if (target.kind == okLocal || target.kind == okField) {
          if (target.type != 0) {
@@ -4444,35 +4430,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
 
-      if (targetType != 0)
-         scope.writer->newNode(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-
-      scope.writer->newBookmark();
-
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, 0);
-
-      writeBoxing(node.FirstTerminal(), scope, info);
-
-      scope.writer->removeBookmark();
-
-      if (targetType != 0) {
-         appendCoordinate(scope.writer, node.FirstTerminal());
-         scope.writer->closeNode(); // typecast
-      }
-
-      //      _writer.loadObject(*scope.tape, info);
-//
-//      bool boxed = false;
-//      bool dummy = false;
-//      info = boxObject(scope, info, boxed, dummy);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, assigning.firstChild().FirstTerminal());
-//
-//      bool mismatch = false;
-//      compileTypecast(scope, info, target.type, mismatch, boxed, dummy);
-//      if (mismatch)
-//         scope.raiseWarning(2, wrnTypeMismatch, node.Terminal());
-//   }
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, targetType, 0, NULL);
+   }
 
    return ObjectInfo(okObject);
 }
@@ -4633,15 +4592,16 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
       statement= statement.nextNode();
 
    while (statement != nsNone) {
-//      DNode hints = skipHints(statement);
+      DNode hints = skipHints(statement);
 
       //_writer.declareStatement(*scope.tape);
+      scope.rootBookmark = scope.writer->newBookmark();
 
       switch(statement) {
          case nsExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             scope.writer->newNode(lxExpression);
-            compileExpression(statement, scope, 0);
+            compileExpression(statement, scope, 0, 0, NULL);
             scope.writer->closeNode();
             break;
 //         case nsThrow:
@@ -4673,13 +4633,16 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          }
          case nsVariable:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            compileVariable(statement, scope/*, hints*/);
+            compileVariable(statement, scope, hints);
             break;
          case nsCodeEnd:
             needVirtualEnd = false;
             recordDebugStep(scope, statement.Terminal(), dsEOP);
             break;
       }
+      scope.rootBookmark = -1;
+      scope.writer->removeBookmark();
+
       scope.freeSpace();
 
       statement = statement.nextNode();
@@ -4741,10 +4704,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
-         scope.writer->newNode(lxTypecasting, encodeMessage(subject, GET_MESSAGE_ID, 0));
-         appendCoordinate(scope.writer, arg.FirstTerminal());
-
-         ObjectInfo info = compileObject(arg.firstChild(), scope, /*HINT_EXTERNAL_CALL*/0);
+         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, /*HINT_EXTERNAL_CALL*/0, NULL);
 
          scope.writer->closeNode();
 
@@ -6230,9 +6190,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
       // compile symbol body, if it is not a singleton
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 
-      retVal = compileExpression(expression, codeScope, 0);
+      retVal = compileExpression(expression, codeScope, 0, 0, NULL);
    }
-   else writeTerminal(node.FirstTerminal(), codeScope, retVal, true);
+   else writeTerminal(node.FirstTerminal(), codeScope, retVal);
 
 //   _writer.loadObject(*codeScope.tape, retVal);
 
@@ -6579,6 +6539,36 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
             _writer.declareLocalInfo(tape, 
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument, 
                SyntaxTree::findChild(current, lxLevel).argument);
+            break;
+         case lxIntVariable:
+            _writer.declareLocalIntInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxLongVariable:
+            _writer.declareLocalLongInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxReal64Variable:
+            _writer.declareLocalRealInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxBytesVariable:
+            _writer.declareLocalByteArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxShortsVariable:
+            _writer.declareLocalShortArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxIntsVariable:
+            _writer.declareLocalIntArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
             break;
          default:
             _writer.translateObjectExpression(tape, current);

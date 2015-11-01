@@ -149,35 +149,35 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
    tape.write(bdLocal, (ref_t)localName, level);
 }
 
-//void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdLongLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdRealLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdByteArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
+void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdLongLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdRealLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdByteArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
 
 //void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
 //{
@@ -1951,49 +1951,49 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
 //   }
 //}
 
-//void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
-//{
-//   if (target == lxFieldAddress) {
-//
-//      if (offset == 0) {
-//         // bloadfi 1
-//         // ncopy
-//
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcNCopy);
-//      }
-//   //   else {
-//   //      // nload
-//   //      // ecopyd
-//   //      // bloadfi 1
-//   //      // dcopy target.param
-//   //      // bwrite
-//
-//   //      tape.write(bcNLoad);
-//   //      tape.write(bcECopyD);
-//   //      tape.write(bcBLoadFI, 1, bpFrame);
-//   //      tape.write(bcDCopy, target.param);
-//   //      tape.write(bcBWrite);
-//   //   }
-//   }
-//   //else if (target.kind == okLocal) {
-//   //   // bloadfi param
-//   //   // ncopy
-//   //   tape.write(bcBLoadFI, target.param, bpFrame);
-//   //   tape.write(bcNCopy);
-//   //}
-//   //else if (target.kind == okLocalAddress) {
-//   //   // bcopyf param
-//   //   // ncopy
-//   //   tape.write(bcBCopyF, target.param);
-//   //   tape.write(bcNCopy);
-//   //}
-//   //else if (target.kind == okBase) {
-//   //   // ncopy
-//   //   tape.write(bcNCopy);
-//   //}
-//}
-//
+void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
+{
+   if (target == lxFieldAddress) {
+
+      if (offset == 0) {
+         // bloadfi 1
+         // ncopy
+
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcNCopy);
+      }
+      else {
+         // nload
+         // ecopyd
+         // bloadfi 1
+         // dcopy target.param
+         // bwrite
+
+         tape.write(bcNLoad);
+         tape.write(bcECopyD);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcDCopy, offset);
+         tape.write(bcBWrite);
+      }
+   }
+   //else if (target.kind == okLocal) {
+   //   // bloadfi param
+   //   // ncopy
+   //   tape.write(bcBLoadFI, target.param, bpFrame);
+   //   tape.write(bcNCopy);
+   //}
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, offset);
+      tape.write(bcNCopy);
+   }
+   //else if (target.kind == okBase) {
+   //   // ncopy
+   //   tape.write(bcNCopy);
+   //}
+}
+
 //void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int offset)
 //{
 //   //if (target.kind == okFieldAddress) {
@@ -3096,6 +3096,8 @@ void ByteCodeWriter :: translateBoxingExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
 {
+   int size = node.argument;
+
    SNode target;
    SNode source;
 
@@ -3120,6 +3122,18 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
          }
       }
    }
+   else if (size == 4) {
+      assignInt(tape, target.type, target.argument);
+   }
+   ////         else if (size == 2) {
+   ////            _writer.assignShort(*scope.tape, variableInfo);
+   ////         }
+   ////         else if (size == 1) {
+   ////            _writer.assignByte(*scope.tape, variableInfo);
+   ////         }
+   ////         else if (size == 8) {
+   ////            _writer.assignLong(*scope.tape, variableInfo);
+   ////         }
    else saveObject(tape, target.type, target.argument);
 }
 

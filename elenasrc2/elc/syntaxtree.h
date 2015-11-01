@@ -20,6 +20,8 @@ enum LexicalType
    lxExpressionMask  = 0x200,
    //lxCallMask        = 0x200,
 
+   lxEnding          = -1,
+
    lxNone            = 0x000,
 
    lxRoot            = 0x001,
@@ -64,6 +66,12 @@ enum LexicalType
    //lxAssigning       = 0x403,    // if argument == 0 -> assign field, otherwise copy the memory block with specified size
    //lxCondBoxing      = 0x406,    // the same like boxing except checking if the reference is stack allocated
    lxVariable        = 0x407,
+   lxIntVariable     = 0x408,
+   lxLongVariable    = 0x409,
+   lxReal64Variable  = 0x40A,
+   lxBytesVariable   = 0x40B,
+   lxShortsVariable  = 0x40C,
+   lxIntsVariable    = 0x40D,
 
    lxTarget          = 0x801,
    lxType            = 0x802,
@@ -84,9 +92,11 @@ class SyntaxWriter
    Stack<size_t> _bookmarks;
 
 public:
-   void newBookmark()
+   int newBookmark()
    {
       _bookmarks.push(_writer.Position());
+
+      return _bookmarks.Count();
    }
 
    void removeBookmark()
@@ -100,11 +110,25 @@ public:
       _bookmarks.clear();
    }
 
-   void insert(LexicalType type, ref_t argument);
-   void insert(LexicalType type)
+   void insert(int position, LexicalType type, ref_t argument);
+   void insert(int position, LexicalType type)
    {
       insert(type, 0);
    }
+   void insert(LexicalType type, ref_t argument)
+   {
+      insert(0, type, argument);
+   }
+   void insert(LexicalType type)
+   {
+      insert(0, type, 0);
+   }
+   void insertChild(int position, LexicalType type, ref_t argument)
+   {
+      insert(position, type, argument);
+      insert(position + 8, lxEnding, 0);
+   }
+
    void newNode(LexicalType type, ref_t argument);
    void newNode(LexicalType type)
    {

@@ -135,13 +135,13 @@ public:
 ////   void declarePrimitiveCatch(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-////   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ref_t nameRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -241,7 +241,7 @@ public:
 ////   void endSwitchBlock(CommandTape& tape);
 //
 ////   void copy(CommandTape& tape);
-//   void assignInt(CommandTape& tape, LexicalType target, int offset);
+   void assignInt(CommandTape& tape, LexicalType target, int offset);
 //   void assignLong(CommandTape& tape, LexicalType target, int offset);
 //   void assignShort(CommandTape& tape, LexicalType target, int offset);
 //   void assignByte(CommandTape& tape, LexicalType target, int offset);

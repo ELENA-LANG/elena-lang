@@ -23,39 +23,39 @@ public:
    struct Parameter
    {
       int        offset;
-//      bool       stackAllocated;
-  //    union {
+      bool       stackAllocated;
+      union {
          ref_t   sign_ref;   // if not stack allocated - contains type reference
-//         ref_t   class_ref;  // if stack allocated - contains class reference
-//      };
+         ref_t   class_ref;  // if stack allocated - contains class reference
+      };
 
       Parameter()
       {
          offset = -1;
          sign_ref = 0;
-         //stackAllocated = false;
+         stackAllocated = false;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->sign_ref = 0;
-         //stackAllocated = false;
+         stackAllocated = false;
       }
       Parameter(int offset, ref_t sign_ref)
       {
          this->offset = offset;
          this->sign_ref = sign_ref;
-      //   stackAllocated = false;
+         stackAllocated = false;
       }
-      //Parameter(int offset, ref_t ref, bool stackAllocated)
-      //{
-      //   this->offset = offset;
-      //   this->stackAllocated = stackAllocated;
-      //   if (stackAllocated) {
-      //      this->class_ref = ref;
-      //   }
-      //   else this->sign_ref = ref;
-      //}
+      Parameter(int offset, ref_t ref, bool stackAllocated)
+      {
+         this->offset = offset;
+         this->stackAllocated = stackAllocated;
+         if (stackAllocated) {
+            this->class_ref = ref;
+         }
+         else this->sign_ref = ref;
+      }
    };
 
    // InheritResult
@@ -103,12 +103,6 @@ public:
          this->col = col;
       }
    };
-
-   typedef Map<ident_t, ref_t, false>     ForwardMap;
-   typedef Map<ident_t, Parameter, false> LocalMap;
-   typedef Map<ref_t, ref_t>              SubjectMap;
-   typedef List<Unresolved>               Unresolveds;
-//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
    enum ObjectKind
    {
@@ -207,6 +201,13 @@ public:
          this->type = type;
       }
    };
+
+   typedef Map<ident_t, ref_t, false>     ForwardMap;
+   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef List<Unresolved>               Unresolveds;
+   //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+   typedef Stack<ObjectInfo>              ObjectStack;
 
 private:
    // - ModuleScope -
@@ -528,6 +529,7 @@ private:
    struct CodeScope : public Scope
    {
       SyntaxWriter* writer;
+      int           rootBookmark;
 
       // scope local variables
       LocalMap     locals;
@@ -549,10 +551,10 @@ private:
          locals.add(local, Parameter(level, type));
       }
 
-//      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
-//      {
-//         locals.add(local, Parameter(level, ref, stackAllocated));
-//      }
+      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
+      {
+         locals.add(local, Parameter(level, ref, stackAllocated));
+      }
 
       int newSpace(size_t size)
       {
@@ -620,10 +622,10 @@ private:
 //
 //         return ownerScope->stackSafe;
 //      }
-//
-////      ref_t getObjectType(ObjectInfo object);
-//
-//      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
+
+//      ref_t getObjectType(ObjectInfo object);
+
+      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 
       CodeScope(SymbolScope* parent, SyntaxWriter* writer);
       CodeScope(MethodScope* parent, SyntaxWriter* writer);
@@ -805,8 +807,8 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
 //   ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
-   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
-//   void unboxCallstack(CodeScope& scope, MessageScope& callStack);
+   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetRef, ObjectStack* unboxingStack);
+   void unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
 //   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
@@ -821,7 +823,7 @@ private:
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
 //   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
-   void compileVariable(DNode node, CodeScope& scope/*, DNode hints*/);
+   void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
 //   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
 //   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
@@ -831,10 +833,10 @@ private:
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, bool boxing);
+   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
@@ -858,7 +860,7 @@ private:
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileExpression(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
