@@ -836,7 +836,7 @@ private:
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack);
+   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode, ObjectStack* unboxingStack);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);

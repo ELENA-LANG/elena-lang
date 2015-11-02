@@ -2227,7 +2227,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    return object;
 }
 
-ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack)
+ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode, ObjectStack* unboxingStack)
 {
    ObjectInfo result;
 
@@ -2262,7 +2262,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, ref_t t
 //            else result = compileCollection(member, scope, 0);
 //         }
          /*else {*/
-         result = compileExpression(member, scope, targetType, 0, unboxingStack);
+         result = compileExpression(member, scope, 0, 0, unboxingStack);
          /*}*/
          break;
 //      case nsMessageReference:
@@ -4348,7 +4348,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
       if (member.nextNode() != nsNone) {
          if (member == nsObject) {
-            objectInfo = compileObject(member, scope, 0, mode, NULL);
+            objectInfo = compileObject(member, scope, mode, NULL);
 
             writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, NULL);
          }
@@ -4356,9 +4356,9 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
             objectInfo = compileOperations(member, scope, objectInfo, mode);
          }
       }
-      else objectInfo = compileObject(member, scope, targetType, mode, unboxingStack);
+      else objectInfo = compileObject(member, scope, mode, unboxingStack);
    }
-   else objectInfo = compileObject(node, scope, targetType, mode, unboxingStack);
+   else objectInfo = compileObject(node, scope, mode, unboxingStack);
 
    appendObjectInfo(scope, objectInfo);
 
@@ -4707,8 +4707,6 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
          ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, /*HINT_EXTERNAL_CALL*/0, NULL);
-
-         scope.writer->closeNode();
 
 //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
 //            param.info.extraparam = param.subject;
