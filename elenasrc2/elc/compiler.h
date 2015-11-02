@@ -298,7 +298,7 @@ private:
 
       ref_t mapType(TerminalInfo terminal);
 
-      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool strongOnly = false);
       ref_t mapSubject(ident_t name)
       {
          IdentifierString wsName(name);

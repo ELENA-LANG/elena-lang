@@ -473,7 +473,7 @@ ref_t Compiler::ModuleScope :: mapType(TerminalInfo terminal)
    return 0;
 }
 
-ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output)
+ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output, bool strongOnly)
 {
    // add a namespace for the private message
    if (terminal.symbol == tsPrivate) {
@@ -494,7 +494,13 @@ ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierStrin
    }
    else raiseError(errInvalidSubject, terminal);
 
-   return typeRef;
+   if (strongOnly) {
+      if (typeHints.exist(typeRef)) {
+         return typeRef;
+      }
+      else return 0;
+   }
+   else return typeRef;
 }
 
 ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
@@ -3626,7 +3632,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       }
       else first = false;
 
-      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature, true);
 
       arg = arg.nextNode();
 
@@ -4315,18 +4321,41 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
+   bool typecasting = false;
+
    // type cast returning value if required
    int paramCount;
    ref_t verb, subj;
    decodeMessage(scope.getMessageID(), subj, verb, paramCount);
    if (verb == GET_MESSAGE_ID && paramCount == 0) {
+      // if the class is compatible with the type
+      // use alternative typecasting routine
+      if (scope.moduleScope->checkIfCompatible(subj, scope.getClassRefId())) {
+         scope.writer->newBookmark();
+         typecasting = true;
+
+         subj = 0;
+      }
    }
    else if (classScope->info.methodHints.exist(scope.getMessageID())) {
       subj = classScope->info.methodHints.get(scope.getMessageID()).typeRef;
    }
    else subj = 0;
 
+   // typecasting should be applied only for the strong type
+   if (!scope.moduleScope->typeHints.exist(subj)) {
+      subj = 0;
+   }
+
    ObjectInfo info = compileExpression(node, scope, subj, mode, NULL);
+
+   if (typecasting) {
+      // if the type class returns itself, no need to typecast the result
+      if (info.kind != okThisParam) {
+         scope.writer->insert(lxTypecasting, encodeMessage(subj, GET_MESSAGE_ID, 0));
+      }
+      scope.writer->removeBookmark();
+   }
 
    scope.freeSpace();
 
