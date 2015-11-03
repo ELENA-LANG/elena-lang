@@ -807,7 +807,7 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
 //   ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
-   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetRef, ObjectStack* unboxingStack);
+   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetTypeRef, ObjectStack* unboxingStack);
    void unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);

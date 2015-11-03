@@ -650,6 +650,7 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
       info.header = copy.header;
       info.classClassRef = copy.classClassRef;
       info.extensionTypeRef = copy.extensionTypeRef;
+      info.size = copy.size;
 
       // import method references and mark them as inherited
       ClassInfo::MethodMap::Iterator it = copy.methods.start();
@@ -2162,6 +2163,8 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
 //         break;
    }
 
+   appendObjectInfo(scope, object);
+
    scope.writer->closeNode();
 }
 
@@ -2426,24 +2429,54 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 ////   else return false;
 ////}
 
-bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetRef, ObjectStack* unboxingStack)
+bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetTypeRef, ObjectStack* unboxingStack)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
+
    ref_t classRef = 0;
    if (object.type != 0) {
-      classRef = scope.moduleScope->typeHints.get(object.type);
+      classRef = moduleScope->typeHints.get(object.type);
    }
    else classRef = object.extraparam;
 
-   int size = scope.moduleScope->defineStructSize(classRef);
-   if (size != 0) {
-      if (object.kind == okFieldAddress ||object.kind == okLocalAddress) {
-         scope.writer->insert(lxBoxing, size);
-      }
-      //else if (object.kind == okParam) {
-      //   scope.writer->newNode(lxCondBoxing, size);
-      //}
-      else return false;
+   int size = 0;
+   LexicalType boxing = lxNone;
+   if (targetTypeRef != 0) {
+      ref_t targetClassReference = moduleScope->typeHints.get(targetTypeRef);
+      ClassInfo targetInfo;
+      moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
 
+      ClassInfo sourceInfo;
+      if (classRef != 0)
+         moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(classRef), false);
+
+      size = sourceInfo.size;
+
+      // if the target is structure
+      if (test(targetInfo.header.flags, elStructureRole)) {
+         // NOTE : compiler magic!
+         // if the source is structure
+         if (test(sourceInfo.header.flags, elStructureRole)) {
+            // if target is source wrapper (i.e. target is a source container)
+            if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), classRef)) {
+               boxing = lxBoxing;
+
+               classRef = targetClassReference;
+            }
+         }
+      }
+   }
+   else size = scope.moduleScope->defineStructSize(classRef);
+
+   if (object.kind == okFieldAddress || object.kind == okLocalAddress) {
+      boxing = lxBoxing;
+   }
+   //else if (object.kind == okParam) {
+   //   scope.writer->newNode(lxCondBoxing, size);
+   //}
+
+   if (boxing != lxNone && size != 0) {
+      scope.writer->insert(boxing, size);
       scope.writer->appendNode(lxTarget, classRef);
       appendCoordinate(scope.writer, terminal);
       scope.writer->closeNode();
@@ -3549,13 +3582,16 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
       }
    }
 
-   recordDebugStep(scope, node.Terminal(), dsStep);
-   scope.writer->closeNode();
-
    // the result of get&type message should be typed
    if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->typeHints.exist(signRef)) {
       retVal.type = signRef;
    }
+
+   recordDebugStep(scope, node.Terminal(), dsStep);
+
+   appendObjectInfo(scope, retVal);
+
+   scope.writer->closeNode();
 
    return retVal;
 }
@@ -4388,8 +4424,6 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
       else objectInfo = compileObject(member, scope, mode, unboxingStack);
    }
    else objectInfo = compileObject(node, scope, mode, unboxingStack);
-
-   appendObjectInfo(scope, objectInfo);
 
    writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, unboxingStack);
 
