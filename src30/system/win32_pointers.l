@@ -4,9 +4,9 @@
 {
     #field(type:int)theHandle.
     
-//    #constructor(stacksafe) new &handle:aHandle
-//        => system'internal'int_copy.
-//
+    #constructor(stacksafe) new &handle:aHandle
+        => system'internal'int_copy.
+
 //    #constructor(stacksafe) new &int:aHandle
 //        => system'internal'int_copy.
 //

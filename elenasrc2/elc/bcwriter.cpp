@@ -2621,6 +2621,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
          break;
+      case lxLocalAddress:
+         // pushf n
+         tape.write(bcPushF, argument);
+         break;
       case lxCurrent:
          // pushsi index
          tape.write(bcPushSI, argument);
@@ -2698,6 +2702,12 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxBlockLocal:
          // aloadfi n
          tape.write(bcALoadFI, argument, bpBlock);
+         break;
+      case lxLocalAddress:
+//      case okSubject:
+//      case okSubjectDispatcher:
+         // acopyf n
+         tape.write(bcACopyF, argument);
          break;
       default:
          break;
