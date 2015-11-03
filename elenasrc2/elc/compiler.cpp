@@ -610,11 +610,11 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool exi
    if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
       return ObjectInfo(okExternal);
    }
-//   else if (StringHelper::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)] == '\'') {
-//      ReferenceNs fullName(project->resolveForward(IMPORT_FORWARD), reference + strlen(INTERNAL_MODULE) + 1);
-//
-//      return ObjectInfo(okInternal, module->mapReference(fullName));
-//   }
+   else if (StringHelper::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)] == '\'') {
+      ReferenceNs fullName(project->resolveForward(IMPORT_FORWARD), reference + strlen(INTERNAL_MODULE) + 1);
+
+      return ObjectInfo(okInternal, module->mapReference(fullName));
+   }
    else {
       ref_t referenceID = mapReference(reference, existing);
 
@@ -3782,7 +3782,25 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //
 //   bool nextOperation = false;
    while (member != nsNone) {
-      /*else */if (member == nsMessageOperation) {
+      if (member == nsAssigning) {
+         ref_t classReference = 0;
+         int size = 0;
+         if (object.kind == okLocalAddress) {
+            classReference = object.extraparam;
+
+            size = scope.moduleScope->defineStructSize(classReference);
+         }
+         else size = scope.moduleScope->defineTypeSize(object.type, classReference);
+
+         currentObject = compileAssigningExpression(node, member, scope, currentObject);
+
+         if (size >= 0) {
+            scope.writer->insert(lxAssigning, size);
+            scope.writer->closeNode();
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
+      }
+      else if (member == nsMessageOperation) {
          currentObject = compileMessage(member, scope, currentObject);
       }
       else if (member == nsMessageParameter) {
@@ -3793,9 +3811,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
             member = member.nextNode();
       }
 
-      //      if (member == nsAssigning) {
-//         currentObject = compileAssigningExpression(node, member, scope, currentObject);
-//      }
 //      else if (member == nsAltMessageOperation) {
 //         scope.writer->newNode(lxAlternative);
 //         scope.writer->appendNode(lxResult);
@@ -4415,7 +4430,9 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
          if (member == nsObject) {
             objectInfo = compileObject(member, scope, mode, NULL);
 
-            writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, NULL);
+            // skip boxing for assigning target
+            if (!findSymbol(member, nsAssigning))
+               writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, NULL);
          }
          if (member != nsNone) {
             objectInfo = compileOperations(member, scope, objectInfo, mode);
@@ -5409,15 +5426,18 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
 //   }
 //   else scope.raiseError(errUnknownMessage, node.Terminal());
 //}
-//
-//void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& scope)
-//{
-//   if (node.firstChild() == nsNone) {
-//      ObjectInfo info = scope.mapObject(node.Terminal());
-//      // if it is an internal routine
-//      if (info.kind == okInternal) {
-//         importCode(node, *scope.moduleScope, scope.tape, node.Terminal());
-//      }
+
+void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape)
+{
+   if (node.firstChild() == nsNone) {
+      ObjectInfo info = scope.mapObject(node.Terminal());
+      // if it is an internal routine
+      if (info.kind == okInternal) {
+         importCode(node, *scope.moduleScope, tape, node.Terminal());
+
+         // NOTE : import code already contains quit command, so do not call "endMethod"
+         _writer.endIdleMethod(*tape);
+      }
 //      // if it is a wrapper dispatching
 //      else if (info.kind == okLocal && info.param == 1 && info.type != 0 && test(scope.getClassFlags(), elStructureWrapper)) {
 //         // load a data class class
@@ -5431,10 +5451,10 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
 //         }
 //         else scope.raiseError(errInvalidOperation, node.Terminal());
 //      }
-//   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//}
-//
+   }
+   else scope.raiseError(errInvalidOperation, node.Terminal());
+}
+
 //void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
 //{
 //   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
@@ -5592,7 +5612,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
    DNode body = node.select(nsSubCode);
 //   DNode resendBody = node.select(nsResendExpression);
-//   DNode dispatchBody = node.select(nsDispatchExpression);
+   DNode dispatchBody = node.select(nsDispatchExpression);
 
    _writer.declareMethod(classClassScope.tape, scope.message, false, false);
 
@@ -5621,14 +5641,12 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 //
 //   if (embeddable)
 //      _writer.endEmbeddable(*codeScope.tape);
-//
-//   if (dispatchBody != nsNone) {
-//      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope);
-//      _writer.endIdleMethod(*codeScope.tape);
-//      // NOTE : import code already contains quit command, so do not call "endMethod"
-//      return;
-//   }
-//   else if (body != nsNone) {
+
+   if (dispatchBody != nsNone) {
+      compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope, &classClassScope.tape);
+      return;
+   }
+   else if (body != nsNone) {
       if (!withFrame) {
          withFrame = true;
 
@@ -5645,7 +5663,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
       codeScope.writer->appendNode(lxLocal, 1);
 
-//   }
+   }
 
    // NOTE : close root node
    writer.closeNode();
@@ -6587,6 +6605,12 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
          case lxExpression:
             openDebugExpression(tape);
             _writer.translateExpression(tape, current);
+            endDebugExpression(tape);
+            break;
+         case lxAssigning:
+         case lxReturning:
+            openDebugExpression(tape);
+            _writer.translateObjectExpression(tape, current);
             endDebugExpression(tape);
             break;
          case lxBreakpoint:

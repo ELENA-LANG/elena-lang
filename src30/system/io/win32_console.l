@@ -126,7 +126,7 @@
     
     #constructor new &handle:aHandle
     [
-//        theHandle := aHandle.
+        theHandle := aHandle.
     ]
 
 //    #method(stacksafe) read &vchar:aChar

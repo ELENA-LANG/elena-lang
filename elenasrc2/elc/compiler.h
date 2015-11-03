@@ -146,7 +146,7 @@ public:
    //   okConstantRole,                 // param - role reference
    //
       okExternal,
-   //   okInternal,
+      okInternal,
    
    //   okIdle
    };
@@ -883,7 +883,7 @@ private:
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 //
 //   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(DNode node, CodeScope& scope);
+   void compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 //   void compileResendExpression(DNode node, CodeScope& scope);
 //   void compileDispatchExpression(DNode node, CodeScope& scope);
 
