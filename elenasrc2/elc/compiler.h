@@ -900,7 +900,7 @@ private:
    void declareSingletonAction(ClassScope& scope, ActionScope& methodScope);
 
 //   void compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function);
-//   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function);
+   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function, CommandTape* tape);
 
    void compileActionMethod(DNode member, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, MethodScope& scope);

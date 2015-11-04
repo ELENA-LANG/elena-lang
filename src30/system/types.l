@@ -30,20 +30,20 @@
 
 // === basic dynamic types ===
 #subject(class:system'ByteArray)    bytearray.
-//#subject(class:system'ShortArray)   shortarray.
+#subject(class:system'ShortArray)   shortarray.
 //#subject(class:system'IntArray)     intarray.
 //#subject(class:system'IntMatrix)    intmatrix.
 //#subject(class:system'RealArray)    realarray.
 //#subject(class:system'RealMatrix)   realmatrix.
-//#subject(class:system'CharArray)    chararray.
+#subject(class:system'CharArray)    chararray.
 //#subject(class:system'Array)        array.
 //#subject(class:system'OpenArgs)     params.
 //#subject(class:system'OpenArgs)     args.
 //#subject(class:system'MessageArray) mssgarray.
 
 #subject(class:system'LiteralValue) literal.
-//#subject(class:system'WideLiteralValue) wide.
-//
+#subject(class:system'WideLiteralValue) wide.
+
 //// === function types ===
 //#subject(class:system'BaseFunction)  func.
 //#subject(class:system'BaseFunction1) func1.

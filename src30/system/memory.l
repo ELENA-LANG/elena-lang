@@ -30,10 +30,10 @@
 //    /// Creates the byte array copy
 //    #constructor(stacksafe) new &bytearray:anArray
 //        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
-//    
-//    /// Returns itself
-//    #method bytearray = $self.
-//
+    
+    /// Returns itself
+    #method bytearray = $self.
+
 //    /// Reads the array length to the output parameter
 //    #method(stacksafe) readLength &vint:aLength
 //        => system'internal'bs_getlen.
@@ -182,11 +182,11 @@
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &bytearray:$self.
 }
 
-//// --- ShortArray ---
-//
-///// A short integer array
-//#class(sealed,stringof:2) ShortArray
-//{
+// --- ShortArray ---
+
+/// A short integer array
+#class(sealed,stringof:2) ShortArray
+{
 //    /// Creates the short array with the specified length
 //    #constructor(stacksafe) new &int:aLength
 //        => system'internal'sa_create.
@@ -202,10 +202,10 @@
 //    /// Creates the short array copy
 //    #constructor new &shortarray:anArray
 //        <= new &int:0 &int:(anArray length int) &shortarray:anArray.
-//    
-//    /// Returns itself
-//    #method shortarray = $self.
-//
+    
+    /// Returns itself
+    #method shortarray = $self.
+
 //    /// Reads the array length to the output parameter
 //    #method(stacksafe) readLength &vint:aLength
 //        => system'internal'sa_getlen.
@@ -281,18 +281,18 @@
 //    
 //    /// Dispatches the verb to the target object with shortarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &shortarray:$self.
-//}
-//
-//// --- BaseIntArray ---
-//
-///// A base integer array
-//#class(stringof:4) BaseIntArray
-//{
+}
+
+// --- BaseIntArray ---
+
+/// A base integer array
+#class(stringof:4) BaseIntArray
+{
 //    /// Creates the integer array with the specified length
 //    #constructor(stacksafe) new &int : aLength
 //        => system'internal'ns_create.
-//}
-//
+}
+
 //// --- IntArray ---
 //
 ///// An array of integers
@@ -685,12 +685,12 @@
 //    /// Dispatches the verb to the target object with intarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realmatrix:$self.
 //}
-//
-//// --- CharArray ---
-//
-///// An array of unicode characters (UTF-32)
-//#class(sealed) CharArray :: BaseIntArray
-//{
+
+// --- CharArray ---
+
+/// An array of unicode characters (UTF-32)
+#class(sealed) CharArray :: BaseIntArray
+{
 //    /// Creates the new array with a specified length
 //    #constructor(stacksafe) new &int : aLength
 //        => system'internal'ns_create.
@@ -742,10 +742,10 @@
 //            i := i + 1.
 //        ].
 //    ]
-//        
-//    /// Returns itself
-//    #method chararray = $self.
-//
+        
+    /// Returns itself
+    #method chararray = $self.
+
 //    /// Copies a sub array to the provided one at the specified position
 //    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
 //        => system'internal'ns_read.
@@ -788,8 +788,8 @@
 //    
 //    /// Dispatches the verb to the target object with chararray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &chararray:$self.    
-//}
-//        
+}
+        
 //// --- emptyliteralvalue ---
 //
 ///// An empty literal value
@@ -832,9 +832,9 @@
     /// Returns itself
     #method literal = $self.
     
-//    /// Converts to UTF-16 literal
-//    #method wide = wideConvertor convert &literal:$self.
-//
+    /// Converts to UTF-16 literal
+    #method wide = wideConvertor convert &literal:$self.
+
 //    /// Compares the values
 //    #method(type:bool) equal &literal : aLiteral
 //        => system'internal's_equal.
@@ -1184,14 +1184,14 @@
 //
 ///// An empty wide literal value
 //#symbol(type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
-//
-//// --- WideLiteralValue ---
-//
-///// A UTF-18 literal value
-//#class(sealed,widestring) WideLiteralValue :: BaseValue
-//{
-//    #field(type:shortarray)theValue.
-//
+
+// --- WideLiteralValue ---
+
+/// A UTF-18 literal value
+#class(sealed,widestring) WideLiteralValue :: BaseValue
+{
+    #field(type:shortarray)theValue.
+
 //    /// Creates the empty literal
 //    #constructor min
 //        => system'internal'ws_empty.
@@ -1218,13 +1218,13 @@
 //
 //    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
 //        => system'internal'ws_copybuf.
-//
-//    /// Returns itself
-//    #method wide = $self.
-//
-//    /// Converts to UTF-8 literal
-//    #method literal = literalConvertor convert &wide:$self.
-//
+
+    /// Returns itself
+    #method wide = $self.
+
+    /// Converts to UTF-8 literal
+    #method literal = literalConvertor convert &wide:$self.
+
 //    /// Compares the values
 //    #method(type:bool) equal &wide : aLiteral
 //        => system'internal'ws_equal.
@@ -1411,8 +1411,8 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
+}
+
 //// --- WideString ---
 //
 ///// A wide literal variable. 

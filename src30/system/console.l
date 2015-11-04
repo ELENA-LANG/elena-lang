@@ -15,14 +15,14 @@
         theNewLineConstant := 'newLine literal.
     ]
 
-//    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
-//    #method writeLine : anObject
-//    [
-//        theWriter write &literal:(anObject literal).
-//        
-//        theWriter write &literal:theNewLineConstant.
-//    ]
-//
+    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+    #method writeLine : anObject
+    [
+        theWriter write &literal:(anObject literal).
+        
+        theWriter write &literal:theNewLineConstant.
+    ]
+
 //    /// Writes the specified literal value to the standard output stream.
 //    #method write : anObject
 //    [

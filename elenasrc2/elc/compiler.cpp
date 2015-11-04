@@ -5485,13 +5485,13 @@ void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& sco
 //
 //   compileImportCode(node, codeScope, message, function);
 //}
-//
-//void Compiler :: compileImportCode(DNode node, CodeScope& codeScope, ref_t message, ident_t function)
-//{
-//   _writer.declareIdleMethod(*codeScope.tape, message);
-//   importCode(node, *codeScope.moduleScope, codeScope.tape, function);
-//   _writer.endIdleMethod(*codeScope.tape);
-//}
+
+void Compiler :: compileImportCode(DNode node, CodeScope& codeScope, ref_t message, ident_t function, CommandTape* tape)
+{
+   _writer.declareIdleMethod(*tape, message);
+   importCode(node, *codeScope.moduleScope, tape, function);
+   _writer.endIdleMethod(*tape);
+}
 
 void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 {
@@ -5511,20 +5511,20 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 //   }
 //
 //   DNode resendBody = node.select(nsResendExpression);
-//   DNode dispatchBody = node.select(nsDispatchExpression);
-//
+   DNode dispatchBody = node.select(nsDispatchExpression);
+
 //   // check if it is a resend
 //   if (resendBody != nsNone) {
 //      compileResendExpression(resendBody.firstChild(), codeScope);
 //   }
-//   // check if it is a dispatch
-//   else if (dispatchBody != nsNone) {
-//      if (isImportRedirect(dispatchBody.firstChild())) {
-//         compileImportCode(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal());
-//      }
+   // check if it is a dispatch
+   /*else */if (dispatchBody != nsNone) {
+      if (isImportRedirect(dispatchBody.firstChild())) {
+         compileImportCode(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal(), tape);
+      }
 //      else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
-//   }
-//   else {
+   }
+   else {
       // new stack frame
       // stack already contains current $self reference
       // the original message should be restored if it is a generic method
@@ -5586,7 +5586,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 //   //      _writer.endSyncMethod(*codeScope.tape, -1);
 //   //   }
       _writer.endMethod(*tape, stackToFree, scope.reserved);
-//   }
+   }
 
 //   // critical section entry if sync hint declared
 //   if (scope.testMode(MethodScope::modLock)) {

@@ -3286,12 +3286,12 @@
 //    #method convert : anObject
 //        = anObject cast:%convert &to:$self.
 //}.
-//
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//#symbol literalConvertor =
-//{
+
+// --- literalConvertor ---
+
+/// A literal convertor
+#symbol literalConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    #method(type:literal,stacksafe) convert &char:aValue
 //        => system'internal's_copychar.
@@ -3331,25 +3331,25 @@
 //    /// Converts the parameter to the literal value
 //    #method(type:literal,stacksafe) convert &real:aNumber
 //        => system'internal's_copyreal.
-//
-//    /// Converts UTF-16 literal to UTF-8 one
-//    #method(type:literal,stacksafe) convert &wide:aLiteral
-//        => system'internal'str_copywstr.
-//
+
+    /// Converts UTF-16 literal to UTF-8 one
+    #method(type:literal,stacksafe) convert &wide:aLiteral
+        => system'internal'str_copywstr.
+
 //    /// Returns the literal presentation of the parameter
 //    #method(type:literal,stacksafe) convert : anObject
 //        = anObject literal.
-//
-//    /// Returns a parameter                
-//    #method(type:literal,stacksafe) convert &literal:aLiteral
-//        = aLiteral.
-//}.
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//#symbol wideConvertor =
-//{
+
+    /// Returns a parameter                
+    #method(type:literal,stacksafe) convert &literal:aLiteral
+        = aLiteral.
+}.
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+#symbol wideConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    #method(type:wide,stacksafe) convert &char:aValue
 //        => system'internal'ws_copychar.
@@ -3389,20 +3389,20 @@
 //    /// Converts the parameter to the literal value
 //    #method(type:wide,stacksafe) convert &real:aNumber
 //        => system'internal'ws_copyreal.
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    #method(type:wide,stacksafe) convert &literal:aLiteral
-//        => system'internal'wstr_copystr.
-//        
+
+    /// Converts UTF-8 literal to UTF-16e
+    #method(type:wide,stacksafe) convert &literal:aLiteral
+        => system'internal'wstr_copystr.
+        
 //    /// Returns the literal presentation of the parameter
 //    #method(type:wide,stacksafe) convert : anObject
 //        = anObject wide.
-//        
-//    /// Returns a parameter
-//    #method(type:wide,stacksafe) convert &wide:aLiteral
-//        = aLiteral.
-//}.
-//
+        
+    /// Returns a parameter
+    #method(type:wide,stacksafe) convert &wide:aLiteral
+        = aLiteral.
+}.
+
 //// --- realOpController ---
 //
 //#symbol realOpController =

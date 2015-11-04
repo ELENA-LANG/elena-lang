@@ -59,7 +59,7 @@
 
 // --- ConsoleWriter ---
 
-#class(struct:embeddable) $ConsoleWriter
+#class(sealed,struct:embeddable) $ConsoleWriter
 {
     #field(type:handle) theHandle.
 
@@ -68,11 +68,11 @@
         theHandle := aHandle.
     ]
 
-//    #method write &literal:aLiteral
-//    [
-//        $self write &wide:(aLiteral wide).
-//    ]
-//
+    #method write &literal:aLiteral
+    [
+        $self write &wide:(aLiteral wide).
+    ]
+
 //    #method write &wide : aLiteral
 //    [
 //        #var(type:int)aLength.
