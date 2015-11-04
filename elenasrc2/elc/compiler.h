@@ -784,6 +784,9 @@ private:
 
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
 
+   bool checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object);
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+
 //   ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
@@ -850,8 +853,6 @@ private:
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 //
 //   ObjectInfo compileInlineOperation(CodeScope& scope, MessageScope& callStack, int messageRef, int mode);
-
-   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo object, int messageRef, int mode);

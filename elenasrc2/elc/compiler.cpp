@@ -947,7 +947,7 @@ void Compiler::ModuleScope :: saveType(ref_t type_ref, ref_t classReference, boo
 //   else return false;
 //}
 
-bool Compiler::ModuleScope::checkIfCompatible(ref_t typeRef, ref_t classRef)
+bool Compiler::ModuleScope :: checkIfCompatible(ref_t typeRef, ref_t classRef)
 {
    ClassInfo sourceInfo;
 
@@ -1692,6 +1692,55 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //   return moduleScope->module->mapReference(name);
 //}
+
+bool Compiler :: checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object)
+{
+   if (object.type == typeRef) {
+      return true;
+   }
+   else return scope.moduleScope->checkIfCompatible(typeRef, resolveObjectReference(scope, object));
+}
+
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
+{
+   // if static message is sent to a class class
+   if (object.kind == okConstantClass) {
+      return object.extraparam;
+   }
+   //// if external role is provided
+   //else if (object.kind == okConstantRole) {
+   //   return object.param;
+   //}
+   else if (object.kind == okConstantSymbol) {
+      if (object.extraparam != 0) {
+         return object.extraparam;
+      }
+      else return object.param;
+   }
+   else if (object.kind == okObject && object.param != 0) {
+      return object.param;
+   }
+   else if (object.kind == okLocalAddress) {
+      return object.extraparam;
+   }
+   // if message sent to the class parent
+   //else if (object.kind == okSuper) {
+   //   return object.param;
+   //}
+   // if message sent to the subject variable
+   //else if (object.kind == okSubject) {
+   //   return scope.moduleScope->signatureReference;
+   //}
+   // if message sent to the dispatcher
+   //else if (object.kind == okSubjectDispatcher) {
+   //   return scope.moduleScope->signatureReference;
+   //}
+   // if message sent to the $self
+   else if (object.kind == okThisParam) {
+      return scope.getClassRefId(false);
+   }
+   else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
+}
 
 void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
 {
@@ -3286,47 +3335,6 @@ void Compiler :: unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack)
 //   return retVal;
 //}
 
-ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
-{
-   // if static message is sent to a class class
-   if (object.kind == okConstantClass) {
-      return object.extraparam;
-   }
-   //// if external role is provided
-   //else if (object.kind == okConstantRole) {
-   //   return object.param;
-   //}
-   else if (object.kind == okConstantSymbol) {
-      if (object.extraparam != 0) {
-         return object.extraparam;
-      }
-      else return object.param;
-   }
-   else if (object.kind == okObject && object.param != 0) {
-      return object.param;
-   }
-   else if (object.kind == okLocalAddress) {
-      return object.extraparam;
-   }
-   // if message sent to the class parent
-   //else if (object.kind == okSuper) {
-   //   return object.param;
-   //}
-   // if message sent to the subject variable
-   //else if (object.kind == okSubject) {
-   //   return scope.moduleScope->signatureReference;
-   //}
-   // if message sent to the dispatcher
-   //else if (object.kind == okSubjectDispatcher) {
-   //   return scope.moduleScope->signatureReference;
-   //}
-   // if message sent to the $self
-   else if (object.kind == okThisParam) {
-      return scope.getClassRefId(false);
-   }
-   else return object.type != 0 ? scope.moduleScope->typeHints.get(object.type) : 0;
-}
-
 //bool Compiler :: checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack)
 //{
 //   size_t count = callStack.parameters.Count();
@@ -4417,9 +4425,6 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack)
 {
-   if (targetType != 0)
-      scope.writer->newNode(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-
    scope.writer->newBookmark();
 
    ObjectInfo objectInfo;
@@ -4445,9 +4450,13 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, unboxingStack);
 
    if (targetType != 0) {
-      appendCoordinate(scope.writer, node.FirstTerminal());
+      if (!checkIfCompatible(scope, targetType, objectInfo)) {
+         scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
-      scope.writer->closeNode();
+         appendCoordinate(scope.writer, node.FirstTerminal());
+
+         scope.writer->closeNode();
+      }
    }      
 
    scope.writer->removeBookmark();
