@@ -2478,7 +2478,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 ////   else return false;
 ////}
 
-bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo object, ref_t targetTypeRef, ObjectStack* unboxingStack)
+bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, ObjectStack* unboxingStack)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -2511,6 +2511,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
                boxing = lxBoxing;
 
                classRef = targetClassReference;
+               object.type = targetTypeRef;
             }
          }
       }
