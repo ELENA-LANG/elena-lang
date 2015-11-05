@@ -940,6 +940,7 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);

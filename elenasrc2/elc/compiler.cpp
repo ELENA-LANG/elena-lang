@@ -6394,6 +6394,17 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
+{
+   // assigning (local address boxing) => assigning (local address expression)
+   if (node.argument != 0) {
+      SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing);
+      if (boxing != lxNone && boxing.argument == node.argument) {
+         boxing = lxExpression;
+      }
+   }
+}
+
 void Compiler :: optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node)
 {
    scope.raiseWarning(4, wrnBoxingCheck,
@@ -6574,6 +6585,10 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
    while (current != lxNone) {
       switch (current.type)
       {
+         case lxAssigning:
+            optimizeAssigning(scope, current);
+            optimizeSyntaxExpression(scope, current);
+            break;
          case lxTypecasting:
             optimizeTypecast(scope, current, getSignature(current.argument));
             optimizeSyntaxExpression(scope, current);
