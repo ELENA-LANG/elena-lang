@@ -3576,11 +3576,15 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, /*MessageSco
       scope.writer->insert(lxSDirctCalling, messageRef);
 
       scope.writer->appendNode(lxTarget, classReference);
+      if (test(methodHint, tpStackSafe))
+         scope.writer->appendNode(lxStacksafe);
    }
    else if (callType == tpSealed) {
       scope.writer->insert(lxDirectCalling, messageRef);
 
       scope.writer->appendNode(lxTarget, classReference);
+      if (test(methodHint, tpStackSafe))
+         scope.writer->appendNode(lxStacksafe);
    }
    else {
       scope.writer->insert(lxCalling, messageRef);
@@ -4023,8 +4027,8 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
          scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
    }
 
-   //// HOT FIX : mark action as stack safe if the hint was declared in the parent class
-   //methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+   // HOT FIX : mark action as stack safe if the hint was declared in the parent class
+   methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
    return lazyExpression;
 }
@@ -5786,7 +5790,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
                   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-//               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
 
                compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
             }
@@ -5978,8 +5982,8 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
 
          declareArgumentList(member, methodScope);
-         //int hint = classClassScope.info.methodHints.get(methodScope.message).hint;
-         //methodScope.stackSafe = test(hint, tpStackSafe);
+         int hint = classClassScope.info.methodHints.get(methodScope.message).hint;
+         methodScope.stackSafe = test(hint, tpStackSafe);
 
          compileConstructor(member, methodScope, classClassScope/*, test(hint, tpEmbeddable)*/);
       }
@@ -6394,6 +6398,23 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
+{
+   bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
+   if (stackSafe) {
+      SyntaxTree::Node member = node.firstChild();
+      while (member != lxNone) {
+         // if boxing used for direct stack safe call
+         // remove it
+         if (member == lxBoxing) {
+            member = lxExpression;
+         }
+
+         member = member.nextNode();
+      }
+   }
+}
+
 void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
 {
    // assigning (local address boxing) => assigning (local address expression)
@@ -6596,6 +6617,11 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
          case lxBoxing:
          //case lxCondBoxing:
             optimizeBoxing(scope, current);
+            optimizeSyntaxExpression(scope, current);
+            break;
+         case lxDirectCalling:
+         case lxSDirctCalling:
+            optimizeDirectCall(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
          default:

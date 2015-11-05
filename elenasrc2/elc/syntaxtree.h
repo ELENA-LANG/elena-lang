@@ -75,6 +75,7 @@ enum LexicalType
 
    lxTarget          = 0x801,
    lxType            = 0x802,
+   lxStacksafe       = 0x803,
 
    lxBreakpoint      = 0x1001,
    lxCol             = 0x1002,
@@ -259,6 +260,13 @@ public:
       }
 
       return current;
+   }
+
+   static bool existChild(Node node, LexicalType type)
+   {
+      Node child = findChild(node, type);
+
+      return child == type;
    }
 
    Node readRoot();

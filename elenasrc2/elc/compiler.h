@@ -942,6 +942,7 @@ private:
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
