@@ -1365,11 +1365,11 @@
 //
 //    #method(type:wide) Substring : aLength &at:anIndex
 //        <= Substring &int:(anIndex int) &int:(aLength int).
-//
-//    /// Reads the literal length into an output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'ws_getlen.
-//
+
+    /// Reads the literal length into an output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'ws_getlen.
+
 //    /// Returns the string length
 //    #method(stacksafe) length
 //    [

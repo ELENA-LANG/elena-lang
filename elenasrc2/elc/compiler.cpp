@@ -17,22 +17,23 @@ using namespace _ELENA_;
 // --- Hint constants ---
 //#define HINT_MASK             0xFFFF0000
 
-////#define HINT_INLINE           0x40000000
-////#define HINT_LOOP             0x20000000
+#define HINT_ROOT             0x80000000
+//#define HINT_INLINE           0x40000000
+//#define HINT_LOOP             0x20000000
 //#define HINT_TRY              0x10000000
 //#define HINT_ALT              0x12000000
-////#define HINT_CATCH            0x08000000
-////#define HINT_STACKSAFE_CALL   0x04000000
-////#define HINT_INVERTED         0x02000000
-////#define HINT_EXTENSION_MODE   0x01000000
-////#define HINT_HEAP_MODE        0x00400000
+//#define HINT_CATCH            0x08000000
+//#define HINT_STACKSAFE_CALL   0x04000000
+//#define HINT_INVERTED         0x02000000
+//#define HINT_EXTENSION_MODE   0x01000000
+//#define HINT_HEAP_MODE        0x00400000
 #define HINT_GENERIC_METH     0x00100000     // generic method
-////#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
-////#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
+//#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
+//#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
 //#define HINT_ACTION           0x00020000
-////#define HINT_EXTERNAL_CALL    0x00010000
-////
-////#define HINT_SELFEXTENDING    0x00040000     // !! do we need it?
+//#define HINT_EXTERNAL_CALL    0x00010000
+//
+//#define HINT_SELFEXTENDING    0x00040000     // !! do we need it?
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -1695,6 +1696,10 @@ void Compiler :: optimizeTape(CommandTape& tape)
 
 bool Compiler :: checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object)
 {
+   ////            if (object.kind == okIntConstant && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+   ////               return object;
+   ////            }
+
    if (object.type == typeRef) {
       return true;
    }
@@ -1722,6 +1727,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    }
    else if (object.kind == okLocalAddress) {
       return object.extraparam;
+   }
+   else if (object.kind == okIntConstant) {
+      return scope.moduleScope->intReference;
    }
    // if message sent to the class parent
    //else if (object.kind == okSuper) {
@@ -4697,7 +4705,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             scope.writer->newNode(lxExpression);
-            compileExpression(statement, scope, 0, 0, NULL);
+            compileExpression(statement, scope, 0, HINT_ROOT, NULL);
             scope.writer->closeNode();
             break;
 //         case nsThrow:
@@ -4791,6 +4799,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       else if ((flags & elDebugMask) == elDebugPTR) {
          argType = lxIntExtArgument;
       }
+      else argType = lxExtArgument;
       //else if ((flags & elDebugMask) == elDebugReference) {
       //   size = -2;
       //}
@@ -4800,7 +4809,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
-         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, /*HINT_EXTERNAL_CALL*/0, NULL);
+         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0, NULL);
 
 //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
 //            param.info.extraparam = param.subject;
@@ -4850,6 +4859,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    ModuleScope* moduleScope = scope.moduleScope;
 
+   bool rootMode = test(mode, HINT_ROOT);
    bool stdCall = false;
    ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
    // legacy : if dll is not mapped, use the name directly
@@ -4864,17 +4874,21 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    ref_t reference = moduleScope->module->mapReference(name);
 
    // save the operation result into temporal variable
-   scope.writer->newNode(lxAssigning, 4);
+   if (!rootMode) {
+      scope.writer->newNode(lxAssigning, 4);
 
-   allocateStructure(scope, 0, retVal);
-   scope.writer->appendNode(lxLocalAddress, retVal.param);   
+      allocateStructure(scope, 0, retVal);
+      scope.writer->appendNode(lxLocalAddress, retVal.param);
+   }
 
    scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
 
    compileExternalArguments(node.firstChild(), scope);
 
    scope.writer->closeNode();
-   scope.writer->closeNode(); // lxAssigning
+
+   if (!rootMode)
+      scope.writer->closeNode(); // lxAssigning
 
 //   //// indicate that the result is 0 or -1
 //   //if (test(mode, HINT_LOOP))
@@ -6398,6 +6412,26 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
+{
+   SyntaxTree::Node arg = node.firstChild();
+   while (arg != lxNone) {
+      if (arg == lxIntExtArgument) {
+         SyntaxTree::Node member = arg.firstChild();
+         while (member != lxNone) {
+            // if boxing used for external call
+            // remove it
+            if (member == lxBoxing) {
+               member = lxExpression;
+            }
+
+            member = member.nextNode();
+         }
+      }
+      arg = arg.nextNode();
+   }
+}
+
 void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
 {
    bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
@@ -6622,6 +6656,11 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
          case lxDirectCalling:
          case lxSDirctCalling:
             optimizeDirectCall(scope, current);
+            optimizeSyntaxExpression(scope, current);
+            break;
+         case lxStdExternalCall:
+         case lxExternalCall:
+            optimizeExtCall(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
          default:

@@ -1360,15 +1360,15 @@
 //    ]
 }
 
-//// --- Byte ---
-//
-///// A 8bit unsigned integer variable.
-/////
-///// It extends system'ByteNumber class
-//#class(sealed,struct:embeddable) Byte :: IntBaseVariable
-//{
-//    #field(type:byte)theValue.
-//   
+// --- Byte ---
+
+/// A 8bit unsigned integer variable.
+///
+/// It extends system'ByteNumber class
+#class(sealed,struct:embeddable) Byte :: IntBaseVariable
+{
+    #field(type:byte)theValue.
+   
 //    /// Creates an integer variable with default value (0) 
 //    #constructor new
 //    [
@@ -1497,17 +1497,17 @@
 //
 //    /// Expands a byte integer
 //    #method => theValue.    
-//}
-//
-//// --- Short ---
-//
-///// A 16bit signed integer variable.
-/////
-///// It extends system'ShortNumber class
-//#class(sealed,struct:embeddable) Short :: IntBaseVariable
-//{
-//    #field(type:short)theValue.
-//    
+}
+
+// --- Short ---
+
+/// A 16bit signed integer variable.
+///
+/// It extends system'ShortNumber class
+#class(sealed,struct:embeddable) Short :: IntBaseVariable
+{
+    #field(type:short)theValue.
+
 //    /// Creates an integer variable with default value (0) 
 //    #constructor new
 //    [
@@ -1669,15 +1669,15 @@
 //
 //    /// Expands a short integer
 //    #method => theValue.    
-//}
-//
-//// --- Integer ---
-//
-///// A 32bit signed integer variable. It extends system'IntNumber class
-//#class(sealed,struct:embeddable) Integer :: IntBaseVariable
-//{
-//    #field(type:int)theValue.
-//    
+}
+
+// --- Integer ---
+
+/// A 32bit signed integer variable. It extends system'IntNumber class
+#class(sealed,struct:embeddable) Integer :: IntBaseVariable
+{
+    #field(type:int)theValue.
+    
 //    /// Creates an integer variable with a default value (0)
 //    #constructor new
 //    [
@@ -1707,10 +1707,10 @@
 //    [
 //        theValue := aValue int.
 //    ]
-//    
-//    /// Returns itself
-//    #method vint = $self.
-//    
+    
+    /// Returns itself
+    #method vint = $self.
+
 //    /// Returns the integer value
 //    #method int = IntNumber new &int:theValue.
 //                                      
@@ -1870,17 +1870,17 @@
 //
 //    /// Expands a short integer
 //    #method => theValue.    
-//}
-//
-//// --- Long ---
-//
-///// A 64bit signed integer variable. 
-/////
-///// It extends system'LongNumber class
-//#class(sealed,struct:embeddable) Long :: IntBaseVariable
-//{
-//    #field(type:long)theValue.
-//    
+}
+
+// --- Long ---
+
+/// A 64bit signed integer variable. 
+///
+/// It extends system'LongNumber class
+#class(sealed,struct:embeddable) Long :: IntBaseVariable
+{
+    #field(type:long)theValue.
+    
 //    /// Creates a long integer variable with a default value (0)
 //    #constructor new
 //    [
@@ -2114,17 +2114,17 @@
 //
 //    /// Expands a long integer value    
 //    #method => theValue.    
-//}
-//
-//// --- Real ---
-//
-///// A 64bit real number variable. 
-/////
-///// It extends system'RealNumber class
-//#class(sealed,struct:embeddable) Real :: BaseVariable
-//{
-//    #field(type:real)theValue.
-//    
+}
+
+// --- Real ---
+
+/// A 64bit real number variable. 
+///
+/// It extends system'RealNumber class
+#class(sealed,struct:embeddable) Real :: BaseVariable
+{
+    #field(type:real)theValue.
+    
 //    /// Creates a real variable
 //    #constructor new
 //    [
@@ -2367,8 +2367,8 @@
 //    
 //    /// Expands a real value
 //    #method => theValue.
-//}
-//
+}
+
 //// --- CharValue ---
 //
 ///// An UTF-32 character symbol

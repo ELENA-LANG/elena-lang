@@ -2820,6 +2820,7 @@ void ByteCodeWriter :: translateExternalArguments(CommandTape& tape, SNode node,
          if (arg == lxIntExtArgument) {
             param.size = 4;
          }
+         else param.size = -1;
 
          externalScope.operands.push(param);
       }
@@ -2838,7 +2839,7 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, ExternalScope& e
 //         _writer.pushObject(*scope.tape, (*out_it).info);
 //      }
 //      else {
-         if ((*out_it).size == 4) {
+      if ((*out_it).size == 4) {
 //            if ((*out_it).info.kind == okIntConstant) {
 //               int value = StringHelper::strToULong(moduleScope->module->resolveConstant((*out_it).info.param), 16);
 //
@@ -2855,12 +2856,15 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, ExternalScope& e
             pushObject(tape, lxResultField, 0);
 //            }
 //         }
-//         // if it is an internal reference
-//         else if ((*out_it).size == -2) {
-//            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
-//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//         }
-//         else _writer.pushObject(*scope.tape, (*out_it).info);
+      }
+      //         // if it is an internal reference
+      //         else if ((*out_it).size == -2) {
+      //            _writer.loadSymbolReference(*scope.tape, (*out_it).info.param);
+      //            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+      //         }
+      else {
+         loadObject(tape, lxBlockLocal, (*out_it).offset);
+         pushObject(tape, lxResult);
       }
 
       out_it++;

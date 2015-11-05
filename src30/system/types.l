@@ -8,19 +8,19 @@
 //#subject(class:system'KeyValue)     keyvalue.
 //
 //#subject(class:system'Variable)     ref.
-//
-//#subject(class:system'ByteNumber)   byte.
-//#subject(class:system'ShortNumber)  short.
+
+#subject(class:system'ByteNumber)   byte.
+#subject(class:system'ShortNumber)  short.
 #subject(class:system'IntNumber)    int.
-//#subject(class:system'LongNumber)   long.
-//#subject(class:system'RealNumber)   real.
+#subject(class:system'LongNumber)   long.
+#subject(class:system'RealNumber)   real.
 //#subject(class:system'CharValue)    char.
 //#subject(class:system'Message)      mssg.
 //#subject(class:system'Verb)         verb.
 //#subject(class:system'Signature)    subject.
 //#subject(class:system'Symbol)       symbol_ref.
-//
-//#subject(class:system'Integer)      vint.
+
+#subject(class:system'Integer)      vint.
 //#subject(class:system'Long)         vlong.
 //#subject(class:system'Real)         vreal.
 //#subject(class:system'Byte)         vbyte.

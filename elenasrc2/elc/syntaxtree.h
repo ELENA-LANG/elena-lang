@@ -38,7 +38,8 @@ enum LexicalType
    lxStdExternalCall = 0x308,
    lxExternalCall    = 0x309,
    lxIntExtArgument  = 0x30A,
-   lxAssigning       = 0x30B,
+   lxExtArgument     = 0x30B,
+   lxAssigning       = 0x30C,
 
    lxSymbol          = 0x101,
    lxConstantSymbol  = 0x102,
