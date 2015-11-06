@@ -2700,11 +2700,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          else tape.write(bcALoadBI, argument);
          break;
       case lxFieldAddress:
-         // bloadfi 1
-         // aloadbi 0
+         // aloadfi 1
          if (argument == 0) {
-            tape.write(bcBLoadFI, 1, bpFrame);
-            tape.write(bcALoadBI, 0);
+            tape.write(bcALoadFI, 1, bpFrame);
          }
          break;
       case lxBlockLocal:
