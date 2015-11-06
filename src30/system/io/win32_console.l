@@ -79,11 +79,11 @@
         aLiteral readLength &vint:aLength.
 
         system'external'KERNEL32 WriteConsoleW
-            &handle  :  theHandle
-            &wide    :  aLiteral
-            &int     :  aLength
-            &int     :  0                       // !! temporally we do not use it
-            &int     :  0.             
+            &int  :  theHandle
+            &wide :  aLiteral
+            &int  :  aLength
+            &int  :  0                       // !! temporally we do not use it
+            &int  :  0.             
 
         // !!check the result of the operation
     ]

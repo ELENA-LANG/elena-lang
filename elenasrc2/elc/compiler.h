@@ -207,7 +207,6 @@ public:
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef List<Unresolved>               Unresolveds;
    //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-   typedef Stack<ObjectInfo>              ObjectStack;
 
 private:
    // - ModuleScope -
@@ -810,8 +809,7 @@ private:
 //   bool checkIfBoxingRequired(CodeScope& scope, MessageScope& callStack);
 //   ObjectInfo boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing);
 //   ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
-   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, ObjectStack* unboxingStack);
-   void unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack);
+   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef);
 
 //   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
 //   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
@@ -839,7 +837,7 @@ private:
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode, ObjectStack* unboxingStack);
+   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
 //   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
 //   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
@@ -861,7 +859,7 @@ private:
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack);
+   ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 

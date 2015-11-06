@@ -170,7 +170,7 @@ public:
 //   void popObject(CommandTape& tape, ObjectInfo object);
 //   void exchange(CommandTape& tape, ObjectInfo object);
 
-//   void loadBase(CommandTape& tape, ObjectInfo object);
+   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
@@ -270,6 +270,7 @@ public:
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
    void saveExternalParameters(CommandTape& tape, ExternalScope& externalScope);
+   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
 //   void copyObject(CommandTape& tape, LexicalType type, ref_t size, size_t offset);
 

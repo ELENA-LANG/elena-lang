@@ -77,6 +77,7 @@ enum LexicalType
    lxTarget          = 0x801,
    lxType            = 0x802,
    lxStacksafe       = 0x803,
+   lxTempLocal       = 0x804,
 
    lxBreakpoint      = 0x1001,
    lxCol             = 0x1002,
@@ -129,6 +130,11 @@ public:
    {
       insert(position, type, argument);
       insert(position + 8, lxEnding, 0);
+   }
+   void insertChild(LexicalType type, ref_t argument)
+   {      
+      insert(lxEnding, 0);
+      insert(type, argument);
    }
 
    void newNode(LexicalType type, ref_t argument);

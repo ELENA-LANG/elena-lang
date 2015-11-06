@@ -2293,7 +2293,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    return object;
 }
 
-ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode, ObjectStack* unboxingStack)
+ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mode)
 {
    ObjectInfo result;
 
@@ -2328,7 +2328,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //            else result = compileCollection(member, scope, 0);
 //         }
          /*else {*/
-         result = compileExpression(member, scope, 0, 0, unboxingStack);
+         result = compileExpression(member, scope, 0, 0);
          /*}*/
          break;
 //      case nsMessageReference:
@@ -2486,7 +2486,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 ////   else return false;
 ////}
 
-bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, ObjectStack* unboxingStack)
+bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -2496,18 +2496,17 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    }
    else classRef = object.extraparam;
 
-   int size = 0;
+   ClassInfo sourceInfo;
+   if (classRef != 0)
+      moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(classRef), false);
+
+   int size = sourceInfo.size;
+
    LexicalType boxing = lxNone;
    if (targetTypeRef != 0) {
       ref_t targetClassReference = moduleScope->typeHints.get(targetTypeRef);
       ClassInfo targetInfo;
       moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
-
-      ClassInfo sourceInfo;
-      if (classRef != 0)
-         moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(classRef), false);
-
-      size = sourceInfo.size;
 
       // if the target is structure
       if (test(targetInfo.header.flags, elStructureRole)) {
@@ -2524,10 +2523,15 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
          }
       }
    }
-   else size = scope.moduleScope->defineStructSize(classRef);
 
-   if (object.kind == okFieldAddress || object.kind == okLocalAddress) {
+   if (object.kind == okLocalAddress) {
       boxing = lxBoxing;
+   }
+   else if (object.kind == okFieldAddress && object.param > 0) {
+      allocateStructure(scope, 0, object);
+      scope.writer->insertChild(lxLocalAddress, object.param);
+      scope.writer->insert(lxAssigning, 4);
+      scope.writer->closeNode();
    }
    //else if (object.kind == okParam) {
    //   scope.writer->newNode(lxCondBoxing, size);
@@ -2537,6 +2541,13 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       scope.writer->insert(boxing, size);
       scope.writer->appendNode(lxTarget, classRef);
       appendCoordinate(scope.writer, terminal);
+
+      if (!test(sourceInfo.header.flags, elReadOnlyRole) && (object.kind == lxLocalAddress || object.kind == lxFieldAddress)) {
+         int level = scope.newLocal();
+         scope.writer->insertChild(scope.rootBookmark, lxVariable, 0);
+         scope.writer->appendNode(lxTempLocal, level);
+      }
+
       scope.writer->closeNode();
 
       return true;
@@ -2544,56 +2555,56 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    else return false;
 }
 
-void Compiler :: unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack)
-{
-   //   size_t count = callStack.parameters.Count();
-   //
-   //   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-   //   for (size_t i = 0; i < count; i++) {
-   //      MessageScope::ParamInfo param = callStack.parameters.get(i);
-   //
-   //      if (param.unboxing) {
-   //         if (param.level >= 0) {
-   //            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
-   //
-   //            int size = scope.moduleScope->defineStructSize(param.info.extraparam);
-   //            // if it is a stack allocated object
-   //            if (size != 0) {
-   //               _writer.loadBase(*scope.tape, param.info);
-   //
-   //               //!! for small objects (~4) use appropriate byte commands
-   //               _writer.copy(*scope.tape);
-   //            }
-   //            else {
-   //               _writer.loadObject(*scope.tape, ObjectInfo(okAccField));
-   //               _writer.saveObject(*scope.tape, param.info);
-   //            }
-   //         }
-   //
-   //         // if the object should be copied to the field
-   //         if (param.structOffset >= 0) {
-   //            int size = scope.moduleScope->defineTypeSize(param.info.type);
-   //            if (size == 4) {
-   //               _writer.assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-   //            }
-   //            else if (size == 2) {
-   //               _writer.assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-   //            }
-   //            else if (size == 1) {
-   //               _writer.assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-   //            }
-   //            else if (size == 8) {
-   //               _writer.assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-   //            }
-   //         }
-   //      }
-   //   }
-   //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-   //
-   //   if (callStack.level > 0)
-   //      _writer.releaseObject(*scope.tape, callStack.level);
-
-}
+//void Compiler :: unboxCallstack(CodeScope& scope, ObjectStack* unboxingStack)
+//{
+//   //   size_t count = callStack.parameters.Count();
+//   //
+//   //   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+//   //   for (size_t i = 0; i < count; i++) {
+//   //      MessageScope::ParamInfo param = callStack.parameters.get(i);
+//   //
+//   //      if (param.unboxing) {
+//   //         if (param.level >= 0) {
+//   //            _writer.loadObject(*scope.tape, ObjectInfo(okCurrent, param.level + 1));
+//   //
+//   //            int size = scope.moduleScope->defineStructSize(param.info.extraparam);
+//   //            // if it is a stack allocated object
+//   //            if (size != 0) {
+//   //               _writer.loadBase(*scope.tape, param.info);
+//   //
+//   //               //!! for small objects (~4) use appropriate byte commands
+//   //               _writer.copy(*scope.tape);
+//   //            }
+//   //            else {
+//   //               _writer.loadObject(*scope.tape, ObjectInfo(okAccField));
+//   //               _writer.saveObject(*scope.tape, param.info);
+//   //            }
+//   //         }
+//   //
+//   //         // if the object should be copied to the field
+//   //         if (param.structOffset >= 0) {
+//   //            int size = scope.moduleScope->defineTypeSize(param.info.type);
+//   //            if (size == 4) {
+//   //               _writer.assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+//   //            }
+//   //            else if (size == 2) {
+//   //               _writer.assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+//   //            }
+//   //            else if (size == 1) {
+//   //               _writer.assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+//   //            }
+//   //            else if (size == 8) {
+//   //               _writer.assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+//   //            }
+//   //         }
+//   //      }
+//   //   }
+//   //   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+//   //
+//   //   if (callStack.level > 0)
+//   //      _writer.releaseObject(*scope.tape, callStack.level);
+//
+//}
 
 ////ObjectInfo Compiler :: boxObject(CodeScope& scope, ObjectInfo object, bool& boxed, bool& unboxing)
 ////{
@@ -3665,11 +3676,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    }
    
    ObjectInfo dummy;
-   ObjectStack unboxingStack(dummy);
 
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      compileExpression(arg.firstChild(), scope, 0, 0, &unboxingStack);
+      compileExpression(arg.firstChild(), scope, 0, 0);
    ////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
    //
       paramCount++;
@@ -3723,7 +3733,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    //               scope.raiseError(errNotApplicable, subject);
    //         }
    //         else {
-         compileExpression(arg.firstChild(), scope, subjRef, 0, &unboxingStack);
+         compileExpression(arg.firstChild(), scope, subjRef, 0);
 
          paramCount++;
 
@@ -3766,8 +3776,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 //   }
 
    ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
-
-   unboxCallstack(scope, &unboxingStack);
 
    //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
 //   if (spaceToRelease != 0) {
@@ -4419,7 +4427,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
       subj = 0;
    }
 
-   ObjectInfo info = compileExpression(node, scope, subj, mode, NULL);
+   ObjectInfo info = compileExpression(node, scope, subj, mode);
 
    if (typecasting) {
       // if the type class returns itself, no need to typecast the result
@@ -4436,7 +4444,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
    return ObjectInfo(okObject, 0, 0, subj);
 }
 
-ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode, ObjectStack* unboxingStack)
+ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode)
 {
    scope.writer->newBookmark();
 
@@ -4446,21 +4454,21 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
       if (member.nextNode() != nsNone) {
          if (member == nsObject) {
-            objectInfo = compileObject(member, scope, mode, NULL);
+            objectInfo = compileObject(member, scope, mode);
 
             // skip boxing for assigning target
             if (!findSymbol(member, nsAssigning))
-               writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, NULL);
+               writeBoxing(node.FirstTerminal(), scope, objectInfo, 0);
          }
          if (member != nsNone) {
             objectInfo = compileOperations(member, scope, objectInfo, mode);
          }
       }
-      else objectInfo = compileObject(member, scope, mode, unboxingStack);
+      else objectInfo = compileObject(member, scope, mode);
    }
-   else objectInfo = compileObject(node, scope, mode, unboxingStack);
+   else objectInfo = compileObject(node, scope, mode);
 
-   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, unboxingStack);
+   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType);
 
    if (targetType != 0) {
       if (!checkIfCompatible(scope, targetType, objectInfo)) {
@@ -4516,7 +4524,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 //
 ////         compileContentAssignment(node, scope, target, info);
 
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, target.type, 0, NULL);
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, target.type, 0);
    }
    else {
       ref_t targetType = 0;
@@ -4534,7 +4542,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
 
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, targetType, 0, NULL);
+      ObjectInfo info = compileExpression(assigning.firstChild(), scope, targetType, 0);
    }
 
    return ObjectInfo(okObject);
@@ -4705,7 +4713,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             scope.writer->newNode(lxExpression);
-            compileExpression(statement, scope, 0, HINT_ROOT, NULL);
+            compileExpression(statement, scope, 0, HINT_ROOT);
             scope.writer->closeNode();
             break;
 //         case nsThrow:
@@ -4809,7 +4817,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
-         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0, NULL);
+         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
 
 //         if (param.info.kind == okThisParam && moduleScope->typeHints.exist(param.subject, scope.getClassRefId())) {
 //            param.info.extraparam = param.subject;
@@ -6299,7 +6307,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
       // compile symbol body, if it is not a singleton
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
 
-      retVal = compileExpression(expression, codeScope, 0, 0, NULL);
+      retVal = compileExpression(expression, codeScope, 0, 0);
    }
    else writeTerminal(node.FirstTerminal(), codeScope, retVal);
 

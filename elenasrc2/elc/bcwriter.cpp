@@ -597,24 +597,24 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 ////         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: loadBase(CommandTape& tape, ObjectInfo object)
-//{
-//   switch (object.kind) {
+
+void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
 //      case okCurrent:
 //         // bloadsi param
 //         tape.write(bcBLoadSI, object.param);
 //         break;
-//      case okLocalAddress:
-//         // bcopyf n
-//         tape.write(bcBCopyF, object.param);
-//         break;
+      case lxLocalAddress:
+         // bcopyf n
+         tape.write(bcBCopyF, sourceArgument);
+         break;
 //      case okAccumulator:
 //         // bcopya
 //         tape.write(bcBCopyA);
 //         break;
-//   }
-//}
+   }
+}
 //
 //void ByteCodeWriter :: loadStatic(CommandTape& tape, ref_t reference)
 //{
@@ -2699,6 +2699,14 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          }
          else tape.write(bcALoadBI, argument);
          break;
+      case lxFieldAddress:
+         // bloadfi 1
+         // aloadbi 0
+         if (argument == 0) {
+            tape.write(bcBLoadFI, 1, bpFrame);
+            tape.write(bcALoadBI, 0);
+         }
+         break;
       case lxBlockLocal:
          // aloadfi n
          tape.write(bcALoadFI, argument, bpBlock);
@@ -3090,9 +3098,61 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    }
 
    translateCall(tape, node);
+
+   // unbox the arguments
+   unboxCallParameters(tape, node);
 }
 
-void ByteCodeWriter::translateReturnExpression(CommandTape& tape, SNode node)
+void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxBoxing) {
+         SNode object;
+         SNode temp;
+
+         SNode member = current.firstChild();
+         while (member != lxNone) {
+            if (member == lxTempLocal) {
+               temp = member;
+            }
+            else if (test(member.type, lxObjectMask)) {
+               object = member;
+            }
+
+            member = member.nextNode();
+         }
+
+         if (temp == lxTempLocal) {
+            loadObject(tape, lxLocal, temp.argument);
+            if (object == lxLocalAddress) {
+               loadBase(tape, object.type, object.argument);
+            }
+            else if (temp == lxFieldAddress) {
+               if (node.argument == 4) {
+                  //assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+               }
+               else if (node.argument == 2) {
+                  //assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+               }
+               else if (node.argument == 1) {
+                  //assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+               }
+               else if (node.argument == 8) {
+                  //assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
+               }
+               else {
+
+               }
+            }
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void ByteCodeWriter :: translateReturnExpression(CommandTape& tape, SNode node)
 {
    translateExpression(tape, node);
 
@@ -3106,6 +3166,10 @@ void ByteCodeWriter :: translateBoxingExpression(CommandTape& tape, SNode node)
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
    boxObject(tape, node.argument, target.argument, node == lxBoxing);
+   SNode temp = SyntaxTree::findChild(node, lxTempLocal);
+   if (temp != lxNone) {
+      saveObject(tape, lxLocal, temp.argument);
+   }
 }
 
 void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
