@@ -2520,6 +2520,14 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
                classRef = targetClassReference;
                object.type = targetTypeRef;
             }
+            // if source is target wrapper (i.e. source is a target container)
+            // virtually copy the value into the stack allocated local
+            else if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
+               boxing = lxBoxing;
+
+               classRef = targetClassReference;
+               object.type = targetTypeRef;
+            }
          }
       }
    }
