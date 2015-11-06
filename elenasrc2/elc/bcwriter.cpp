@@ -256,32 +256,32 @@ void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
 //
 //   return end;
 //}
-//
-//void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
-//{
-//   if (withStackControl)
-//      tape.write(blDeclare, bsBranch);  // mark branch-level
-//
-//   tape.newLabel();                  // declare then-end label
-//}
-//
-//void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
-//{
-//   tape.write(blDeclare, bsBranch);  // mark branch-level
-//   tape.newLabel();                  // declare end label
-//   tape.newLabel();                  // declare else label
-//}
-//
-//void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
-//{
-//   //   jump end
-//   // labElse
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//
-//   tape.write(bcResetStack);
-//}
-//
+
+void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
+{
+   if (withStackControl)
+      tape.write(blDeclare, bsBranch);  // mark branch-level
+
+   tape.newLabel();                  // declare then-end label
+}
+
+void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
+{
+   tape.write(blDeclare, bsBranch);  // mark branch-level
+   tape.newLabel();                  // declare end label
+   tape.newLabel();                  // declare else label
+}
+
+void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
+{
+   //   jump end
+   // labElse
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+
+   tape.write(bcResetStack);
+}
+
 //void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
 //{
 //   tape.write(blDeclare, bsBranch);  // mark branch-level
@@ -1217,21 +1217,21 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
 //   // labEnd
 //   tape.setLabel();
 //}
-//
-//void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
-//{
-//   // then-end:
-//   //  scopyf  branch-level
-//
-//   tape.setLabel();
-//
-//   if (withStackControl) {
-//      tape.write(bcSCopyF, bsBranch);
-//      tape.write(blEnd, bsBranch);
-//   }
-//      
-//}
-//
+
+void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
+{
+   // then-end:
+   //  scopyf  branch-level
+
+   tape.setLabel();
+
+   if (withStackControl) {
+      tape.write(bcSCopyF, bsBranch);
+      tape.write(blEnd, bsBranch);
+   }
+      
+}
+
 //void ByteCodeWriter :: endLoop(CommandTape& tape)
 //{
 //   tape.write(bcJump, baPreviousLabel);
@@ -3213,6 +3213,38 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
    else saveObject(tape, target.type, target.argument);
 }
 
+void ByteCodeWriter :: translateBranching(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode ifPart = SyntaxTree::findChild(node, lxIf);
+   SNode elsePart = SyntaxTree::findChild(node, lxElse);
+
+   if (elsePart != lxNone) {
+      declareThenElseBlock(tape);
+
+      jumpIfNotEqual(tape, ifPart.argument);
+
+      declareBlock(tape);
+      translateCodeBlock(tape, ifPart);
+
+      declareElseBlock(tape);
+
+      declareBlock(tape);
+      translateCodeBlock(tape, elsePart);
+
+      endThenBlock(tape);
+   }
+   else {
+      declareThenBlock(tape);
+
+      jumpIfNotEqual(tape, ifPart.argument);
+
+      declareBlock(tape);
+      translateCodeBlock(tape, ifPart);
+
+      endThenBlock(tape);
+   }   
+}
+
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
    if (node == lxExpression) {
@@ -3233,6 +3265,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    else if (node == lxAssigning) {
       translateAssigningExpression(tape, node);
    }
+   else if (node == lxBranching) {
+      translateBranching(tape, node);
+   }
    else loadObject(tape, node);
 }
 
@@ -3246,4 +3281,81 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
 
       child = child.nextNode();
    }      
+}
+
+void ByteCodeWriter :: translateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      LexicalType type = current.type;
+      switch (type)
+      {
+      case lxExpression:
+         declareBlock(tape);
+         translateExpression(tape, current);
+         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+         break;
+      case lxAssigning:
+      case lxReturning:
+         declareBlock(tape);
+         translateObjectExpression(tape, current);
+         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+         break;
+      case lxBreakpoint:
+         translateBreakpoint(tape, current);
+         break;
+         //         case lxReturning:
+         //            openDebugExpression(tape);
+         //            _writer.translateExpression(tape, current);
+         //            endDebugExpression(tape);
+         //            break;
+      case lxVariable:
+         declareVariable(tape, current.argument);
+         declareLocalInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument);
+         break;
+      case lxIntVariable:
+         declareLocalIntInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument, false);
+         break;
+      case lxLongVariable:
+         declareLocalLongInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument, false);
+         break;
+      case lxReal64Variable:
+         declareLocalRealInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument, false);
+         break;
+      case lxBytesVariable:
+         declareLocalByteArrayInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument, false);
+         break;
+      case lxShortsVariable:
+         declareLocalShortArrayInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument, false);
+         break;
+      case lxIntsVariable:
+         declareLocalIntArrayInfo(tape,
+            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+            SyntaxTree::findChild(current, lxLevel).argument, false);
+         break;
+      default:
+         translateObjectExpression(tape, current);
+         break;
+      }
+      current = current.nextNode();
+   }
+}
+
+void ByteCodeWriter :: translateTree(CommandTape& tape, MemoryDump& dump)
+{
+   SyntaxTree reader(&dump);
+
+   translateCodeBlock(tape, reader.readRoot());
 }

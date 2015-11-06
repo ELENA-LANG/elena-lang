@@ -241,12 +241,12 @@ private:
 //      ref_t realReference;
 //      ref_t literalReference;
 //      ref_t charReference;
-//      ref_t trueReference;
-//      ref_t falseReference;
+      ref_t trueReference;
+      ref_t falseReference;
 //      ref_t paramsReference;
 //      ref_t signatureReference;
-//
-//      ref_t boolType;
+
+      ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -628,7 +628,7 @@ private:
 
       CodeScope(SymbolScope* parent, SyntaxWriter* writer);
       CodeScope(MethodScope* parent, SyntaxWriter* writer);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
    };
 
 //   // - InlineClassScope -
@@ -743,10 +743,10 @@ private:
    Parser         _parser;
 
    MessageMap     _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
-////   MessageMap       _obsolete;                       // list of obsolete messages
-//
-////   int _optFlag;
+   MessageMap     _operators;                        // list of operators
+//   MessageMap       _obsolete;                       // list of obsolete messages
+
+//   int _optFlag;
 
    // optimization rules
    TransformTape _rules;
@@ -772,14 +772,14 @@ private:
       scope.writer->newNode(lxBreakpoint, stepType);
       scope.writer->closeNode();
    }
-   void openDebugExpression(CommandTape& tape)
-   {
-      _writer.declareBlock(tape);
-   }
-   void endDebugExpression(CommandTape& tape)
-   {
-      _writer.declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-   }
+   //void openDebugExpression(CommandTape& tape)
+   //{
+   //   _writer.declareBlock(tape);
+   //}
+   //void endDebugExpression(CommandTape& tape)
+   //{
+   //   _writer.declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   //}
 
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
 
@@ -846,10 +846,10 @@ private:
 //   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result);
 //   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool invertMode);
 //   bool compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result);
-//
-//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-//   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-//
+
+   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
+
 //   ObjectInfo compileInlineOperation(CodeScope& scope, MessageScope& callStack, int messageRef, int mode);
 
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
@@ -863,8 +863,8 @@ private:
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
-//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope, ObjectInfo target, int verb, int subCodinteMode);
-//
+   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
 //   void compileLoop(DNode node, CodeScope& scope);
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);

@@ -124,9 +124,9 @@ public:
    void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
-//   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
-//   void declareThenElseBlock(CommandTape& tape);
-//   void declareElseBlock(CommandTape& tape);
+   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
+   void declareThenElseBlock(CommandTape& tape);
+   void declareElseBlock(CommandTape& tape);
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
@@ -226,7 +226,7 @@ public:
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
 //   void endPrimitiveCatch(CommandTape& tape);
-//   void endThenBlock(CommandTape& tape, bool withStackContro = true);
+   void endThenBlock(CommandTape& tape, bool withStackContro = true);
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
    void endExternalBlock(CommandTape& tape);
@@ -281,12 +281,16 @@ public:
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateBranching(CommandTape& tape, SyntaxTree::Node node);
    void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
+
+   void translateTree(CommandTape& tape, MemoryDump& dump);
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
