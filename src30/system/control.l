@@ -1,7 +1,7 @@
-//// --- true ---
-//
-//#class(limited) BaseBoolValue
-//{
+// --- true ---
+
+#class(limited) BaseBoolValue
+{
 //    #method then : aTrueAction = $nil.
 //
 //    #method then : aTrueAction &else:aFalseAction = $nil.
@@ -25,19 +25,19 @@
 //    #method literal = $nil.
 //
 //    #method wide = $nil.
-//
-//    #method bool = $self.
-//
+
+    #method bool = $self.
+
 //    #method clone = $nil.
 //    
 //    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
 //    
 //    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
-//}
-//
-///// A true value symbol
-//#symbol true = BaseBoolValue
-//{
+}
+
+/// A true value symbol
+#symbol true = BaseBoolValue
+{
 //    /// Executes the action
 //    #method then : aTrueAction = aTrueAction eval.
 //
@@ -79,19 +79,19 @@
 //
 //    /// Returns literal representation.
 //    #method wide = "true" wide. // !! temporal
-//
-//    /// Returns itself.
-//    #method bool = $self.
-//
+
+    /// Returns itself.
+    #method bool = $self.
+
 //    /// Returns itself.
 //    #method clone = $self.
-//}.
-//
-//// --- false ---
-//
-///// A false value symbol
-//#symbol false = BaseBoolValue
-//{
+}.
+
+// --- false ---
+
+/// A false value symbol
+#symbol false = BaseBoolValue
+{
 //    /// Always returns nil
 //    #method then : anAction = $nil.
 //    
@@ -143,14 +143,14 @@
 //    
 //    /// Returns literal representation
 //    #method wide = "false" wide. // !! temporal
-//
-//    /// Returns itself
-//    #method bool = $self.
-//
+
+    /// Returns itself
+    #method bool = $self.
+
 //    /// Returns itself
 //    #method clone = $self.
-//}.
-//
+}.
+
 //// === Basic prototypes ===
 //
 //// --- Enumerator ---

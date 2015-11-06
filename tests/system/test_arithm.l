@@ -293,18 +293,18 @@
 
 #symbol ControlTest =
 [
-//    true ?
-//    [
-//        console writeLine:"? operator works!".
-//    ].
-//    
-//    false ?
-//    [
-//        console writeLine:"!! ControlTest failed".
-//    ]
-//    ! [
-//        console writeLine:"?-! operator works!".
-//    ].
+    true ?
+    [
+        console writeLine:"? operator works!".
+    ].
+    
+    false ?
+    [
+        console writeLine:"!! ControlTest failed".
+    ]
+    ! [
+        console writeLine:"?-! operator works!".
+    ].
 ].
 
 //// --- IntArithmeticTest ---

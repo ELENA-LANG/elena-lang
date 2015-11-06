@@ -1,7 +1,7 @@
 // ==== ver 3.4.0 ===
 
-//// === basic logical types ===
-//#subject(class:system'BaseBoolValue) bool.
+// === basic logical types ===
+#subject(class:system'BaseBoolValue) bool.
  
 // === basic primitive types ===
 
