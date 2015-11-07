@@ -3215,34 +3215,32 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
 
 void ByteCodeWriter :: translateBranching(CommandTape& tape, SyntaxTree::Node node)
 {
-   SNode ifPart = SyntaxTree::findChild(node, lxIf);
-   SNode elsePart = SyntaxTree::findChild(node, lxElse);
-
-   if (elsePart != lxNone) {
+   if (SyntaxTree::existChild(node, lxElse)) {
       declareThenElseBlock(tape);
-
-      jumpIfNotEqual(tape, ifPart.argument);
-
-      declareBlock(tape);
-      translateCodeBlock(tape, ifPart);
-
-      declareElseBlock(tape);
-
-      declareBlock(tape);
-      translateCodeBlock(tape, elsePart);
-
-      endThenBlock(tape);
    }
-   else {
-      declareThenBlock(tape);
+   else declareThenBlock(tape);
 
-      jumpIfNotEqual(tape, ifPart.argument);
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxIf) {
+         jumpIfNotEqual(tape, current.argument);
 
-      declareBlock(tape);
-      translateCodeBlock(tape, ifPart);
+         declareBlock(tape);
+         translateCodeBlock(tape, current);
+      }
+      else if (current == lxElse) {
+         declareElseBlock(tape);
 
-      endThenBlock(tape);
-   }   
+         declareBlock(tape);
+         translateCodeBlock(tape, current);
+      }
+      else if (test(current.type, lxObjectMask))
+         translateObjectExpression(tape, current);
+
+      current = current.nextNode();
+   }
+
+   endThenBlock(tape);
 }
 
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
@@ -3290,64 +3288,64 @@ void ByteCodeWriter :: translateCodeBlock(CommandTape& tape, SyntaxTree::Node no
       LexicalType type = current.type;
       switch (type)
       {
-      case lxExpression:
-         declareBlock(tape);
-         translateExpression(tape, current);
-         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-         break;
-      case lxAssigning:
-      case lxReturning:
-         declareBlock(tape);
-         translateObjectExpression(tape, current);
-         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-         break;
-      case lxBreakpoint:
-         translateBreakpoint(tape, current);
-         break;
-         //         case lxReturning:
-         //            openDebugExpression(tape);
-         //            _writer.translateExpression(tape, current);
-         //            endDebugExpression(tape);
-         //            break;
-      case lxVariable:
-         declareVariable(tape, current.argument);
-         declareLocalInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument);
-         break;
-      case lxIntVariable:
-         declareLocalIntInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument, false);
-         break;
-      case lxLongVariable:
-         declareLocalLongInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument, false);
-         break;
-      case lxReal64Variable:
-         declareLocalRealInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument, false);
-         break;
-      case lxBytesVariable:
-         declareLocalByteArrayInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument, false);
-         break;
-      case lxShortsVariable:
-         declareLocalShortArrayInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument, false);
-         break;
-      case lxIntsVariable:
-         declareLocalIntArrayInfo(tape,
-            (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-            SyntaxTree::findChild(current, lxLevel).argument, false);
-         break;
-      default:
-         translateObjectExpression(tape, current);
-         break;
+         case lxExpression:
+            declareBlock(tape);
+            translateExpression(tape, current);
+            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            break;
+         case lxAssigning:
+         case lxReturning:
+            declareBlock(tape);
+            translateObjectExpression(tape, current);
+            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            break;
+         case lxBreakpoint:
+            translateBreakpoint(tape, current);
+            break;
+            //         case lxReturning:
+            //            openDebugExpression(tape);
+            //            _writer.translateExpression(tape, current);
+            //            endDebugExpression(tape);
+            //            break;
+         case lxVariable:
+            declareVariable(tape, current.argument);
+            declareLocalInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument);
+            break;
+         case lxIntVariable:
+            declareLocalIntInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxLongVariable:
+            declareLocalLongInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxReal64Variable:
+            declareLocalRealInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxBytesVariable:
+            declareLocalByteArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxShortsVariable:
+            declareLocalShortArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxIntsVariable:
+            declareLocalIntArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         default:
+            translateObjectExpression(tape, current);
+            break;
       }
       current = current.nextNode();
    }
