@@ -393,10 +393,10 @@ ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
       return mapReferenceInfo(identifier, false);
    }
    else if (identifier==tsPrivate) {
-      /*if (StringHelper::compare(identifier.value, NIL_VAR)) {
+      if (StringHelper::compare(identifier.value, NIL_VAR)) {
          return ObjectInfo(okNil);
       }
-      else */return defineObjectInfo(mapTerminal(identifier, true), true);
+      else return defineObjectInfo(mapTerminal(identifier, true), true);
    }
    else if (identifier==tsIdentifier) {
       return defineObjectInfo(mapTerminal(identifier, true), true);
@@ -1703,6 +1703,10 @@ bool Compiler :: checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo o
    if (object.type == typeRef) {
       return true;
    }
+   // NOTE : $nil is compatible to any type
+   else if (object.kind == okNil) {
+      return true;
+   }
    else return scope.moduleScope->checkIfCompatible(typeRef, resolveObjectReference(scope, object));
 }
 
@@ -2207,6 +2211,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okFieldAddress:
          scope.writer->newNode(lxFieldAddress, object.param);
+         break;
+      case okNil:
+         scope.writer->newNode(lxNil, object.param);
          break;
       case okExternal:
          //   // external call cannot be used inside symbol
@@ -2944,6 +2951,8 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
 {
    if (!checkIfCompatible(scope, scope.moduleScope->boolType, object)) {
       scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+
+      appendCoordinate(scope.writer, node.FirstTerminal());
 
       scope.writer->closeNode();
    }
@@ -6621,8 +6630,8 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref
 //      node = lxNone;
 //   }
 //   else {
-      SyntaxTree::Node col = SyntaxTree::findChild(node, lxRow);
-      SyntaxTree::Node row = SyntaxTree::findChild(node, lxCol);
+      SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+      SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
       if (col != lxNone && row != lxNone)
          scope.raiseWarning(2, wrnTypeMismatch, row.argument, col.argument);
 //   }

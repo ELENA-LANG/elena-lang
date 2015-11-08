@@ -11,17 +11,17 @@
 //    #method iif:aTrueValue:aFalseValue = $nil.
 //
 //    #method(type:bool) or : anExpr = $nil.
-//
-//    #method(type:bool) and : anExpr = $nil.
-//
+
+    #method(type:bool) and : anExpr = $nil.
+
 //    #method(type:bool) xor : aBool = $nil.
 //
 //    #method equal : anExpr = $nil.
 //
 //    #method(type:bool) equal &bool:aBool = $nil.
-//
-//    #method(type:bool) not = $nil.
-//
+
+    #method(type:bool) not = $nil.
+
 //    #method literal = $nil.
 //
 //    #method wide = $nil.
@@ -53,10 +53,10 @@
 //    ///
 //    /// Always return true
 //    #method(type:bool) or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    #method(type:bool) and : anExpr = anExpr bool.
-//
+
+    /// Executes logical AND operation
+    #method(type:bool) and : anExpr = anExpr bool.
+
 //    /// Executes logical XOR operation
 //    #method(type:bool) xor : aBool
 //    [
@@ -70,10 +70,10 @@
 //
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method(type:bool) equal &bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    #method(type:bool) not = false.
-//
+
+    /// Always returns false.
+    #method(type:bool) not = false.
+
 //    /// Returns literal representation.
 //    #method literal = "true".
 //
@@ -107,10 +107,10 @@
 //    #method(type:bool) or : anExpr = anExpr bool.
 //
 //    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    #method(type:bool) and : anExpr = $self.
-//
+    ///
+    /// Always return false
+    #method(type:bool) and : anExpr = $self.
+
 //    /// Executes logical XOR operation
 //    #method(type:bool) xor : anExpr 
 //    [
@@ -134,10 +134,10 @@
 //        
 //        ^ true.
 //    ]
-//
-//    /// Always returns true
-//    #method not = true.
-//
+
+    /// Always returns true
+    #method not = true.
+
 //    /// Returns literal representation
 //    #method literal = "false".
 //    
