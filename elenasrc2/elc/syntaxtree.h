@@ -212,6 +212,17 @@ public:
          return tree->readFirstNode(position);
       }
 
+      Node lastChild() const
+      {
+         Node current = firstChild();
+         if (current != lxNone) {
+            while (current.nextNode() != lxNone) {
+               current = current.nextNode();
+            }
+         }
+         return current;
+      }
+
       Node nextNode() const
       {
          return tree->readNextNode(position);

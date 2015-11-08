@@ -2933,7 +2933,7 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
    if (overridden != lxNone) {
       loadObject(tape, overridden.firstChild());
    }
-   else tape.write(bcALoadSI);
+   else tape.write(bcALoadSI, 0);
 
    SNode target = SyntaxTree::findChild(callNode, lxTarget);
    if (callNode == lxDirectCalling) {
@@ -2944,11 +2944,9 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
    }
    else {
       // copym message
-      // aloadsi 0
       // acallvi offs
 
       tape.write(bcCopyM, callNode.argument);
-      tape.write(bcALoadSI, 0);
       tape.write(bcACallVI, 0);
       tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
    }
@@ -3277,7 +3275,7 @@ void ByteCodeWriter :: translateNestedExpression(CommandTape& tape, SyntaxTree::
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
    // presave all the members which could create new objects
-   SNode current = node.firstChild();
+   SNode current = node.lastChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
          if (isDynamicObjectExpression(current)) {

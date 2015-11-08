@@ -1712,10 +1712,10 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    if (object.kind == okConstantClass) {
       return object.extraparam;
    }
-   //// if external role is provided
-   //else if (object.kind == okConstantRole) {
-   //   return object.param;
-   //}
+   // if external role is provided
+   else if (object.kind == okConstantRole) {
+      return object.param;
+   }
    else if (object.kind == okConstantSymbol) {
       if (object.extraparam != 0) {
          return object.extraparam;
@@ -2199,6 +2199,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxLocal, object.param);
          break;
       case okField:
+      case okOuter:
          scope.writer->newNode(lxField, object.param);
          break;
       case okLocalAddress:
@@ -4141,7 +4142,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
-         ownerScope.writer->newNode(lxMember);
+         ownerScope.writer->newNode(lxMember, (*outer_it).reference);
          ownerScope.writer->newBookmark();
 
          writeTerminal(TerminalInfo(), ownerScope, info);
@@ -4152,6 +4153,8 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
          outer_it++;
       }
+
+      ownerScope.writer->closeNode();
 
       return ObjectInfo(okObject, scope.reference);
    }
@@ -6699,8 +6702,8 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hi
       // load types
       scope.loadTypes(module);
 
-//      // load extensions
-//      scope.loadExtensions(ns, module);
+      // load extensions
+      scope.loadExtensions(ns, module);
    }
 }
 
