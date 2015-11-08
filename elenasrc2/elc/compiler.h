@@ -143,8 +143,8 @@ public:
    //   okCurrent,                       // param - stack offset
    //
    //   okRole,
-   //   okConstantRole,                 // param - role reference
-   //
+      okConstantRole,                 // param - role reference
+   
       okExternal,
       okInternal,
    
@@ -206,7 +206,7 @@ public:
    typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef List<Unresolved>               Unresolveds;
-   //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
 private:
    // - ModuleScope -
@@ -225,10 +225,10 @@ private:
 
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
-//
-//      // extensions
-//      SubjectMap        extensionHints; 
-//      ExtensionMap      extensions;
+
+      // extensions
+      SubjectMap        extensionHints; 
+      ExtensionMap      extensions;
 
       // type hints
       ForwardMap        types;
@@ -343,10 +343,10 @@ private:
       }
 
       void loadTypes(_Module* module);
-//      void loadExtensions(TerminalInfo terminal, _Module* module);
+      void loadExtensions(TerminalInfo terminal, _Module* module);
 
       void saveType(ref_t type_ref, ref_t classReference, bool internalType);
-//      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 //      void validateForwards();
@@ -608,13 +608,13 @@ private:
          return scope ? scope->info.header.flags : 0;
       }
 
-//      ref_t getExtensionType()
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(slClass);
-//
-//         return scope ? scope->info.extensionTypeRef : 0;
-//      }
-//
+      ref_t getExtensionType()
+      {
+         ClassScope* scope = (ClassScope*)getScope(slClass);
+
+         return scope ? scope->info.extensionTypeRef : 0;
+      }
+
 //      bool isStackSafe()
 //      {
 //         MethodScope* ownerScope = (MethodScope*)getScope(Scope::slMethod);
@@ -669,76 +669,6 @@ private:
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
 
-////   struct MessageScope
-////   {
-////      struct ParamInfo
-////      {
-////         ref_t      subj_ref;
-////         DNode      node;
-////         ObjectInfo info;
-////         bool       unboxing;
-////         int        level;          // if unboxing mode is on, defines the temporal variable offset
-////         int        structOffset;   // contains the field offset if structe field was boxed
-////
-////         ParamInfo()
-////         {
-////            subj_ref = 0;
-////            unboxing = false;
-////            level = 0;
-////            structOffset = 0;
-////         }
-////         ParamInfo(ref_t subj_ref, DNode node)
-////         {
-////            this->subj_ref = subj_ref;
-////            this->node = node;
-////            this->unboxing = false;
-////            this->level = -1;
-////            this->structOffset = -1;
-////         }
-////         ParamInfo(ref_t subj_ref, ObjectInfo info)
-////         {
-////            this->subj_ref = subj_ref;
-////            this->info = info;
-////            this->unboxing = false;
-////            this->level = -1;
-////            this->structOffset = -1;
-////         }
-////         ParamInfo(ref_t subj_ref, DNode node, ObjectInfo info)
-////         {
-////            this->subj_ref = subj_ref;
-////            this->info = info;
-////            this->node = node;
-////            this->unboxing = false;
-////            this->level = -1;
-////            this->structOffset = -1;
-////         }
-////         ParamInfo(ref_t subj_ref, DNode node, bool unboxing)
-////         {
-////            this->subj_ref = subj_ref;
-////            this->node = node;
-////            this->unboxing = unboxing;
-////            this->level = -1;
-////            this->structOffset = -1;
-////         }
-////      };
-////
-////      bool oargUnboxing;
-////      bool directOrder;
-////      int  level; // defines the temporal variable number
-////      bool paramUnboxing;
-////
-////      CachedMemoryMap<size_t, ParamInfo, 4> parameters;
-////
-////      MessageScope()
-////         : parameters(ParamInfo())
-////      {
-////         directOrder = false;
-////         oargUnboxing = false;
-////         level = 0;
-////         paramUnboxing = false;
-////      }
-////   };
-
    ByteCodeWriter _writer;
    Parser         _parser;
 
@@ -787,7 +717,7 @@ private:
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
    ref_t mapNestedExpression(CodeScope& scope);
-//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
 
@@ -853,7 +783,7 @@ private:
 //   ObjectInfo compileInlineOperation(CodeScope& scope, MessageScope& callStack, int messageRef, int mode);
 
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
-   ObjectInfo compileMessage(DNode node, CodeScope& scope, /*MessageScope& callStack, */ObjectInfo object, int messageRef, int mode);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
 //   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
 

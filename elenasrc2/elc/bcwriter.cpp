@@ -2929,7 +2929,11 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
       declareBlock(tape);
    }
 
-   tape.write(bcALoadSI);
+   SNode overridden = SyntaxTree::findChild(callNode, lxOverridden);
+   if (overridden != lxNone) {
+      loadObject(tape, overridden.firstChild());
+   }
+   else tape.write(bcALoadSI);
 
    SNode target = SyntaxTree::findChild(callNode, lxTarget);
    if (callNode == lxDirectCalling) {

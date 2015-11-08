@@ -2,16 +2,16 @@
 //
 //#symbol ifOrdered
 //    = (:aFormer:aLater) [ aFormer < aLater ].
-//
-//// --- common methods ---
-//
-///// A generic extender
-//#class(extension)objectOp
-//{
-//    /// Returns true if the specified object instances are equal; otherwise, false.
-//    #method equal &reference:anObject
-//        => system'internal'object_equal.
-//        
+
+// --- common methods ---
+
+/// A generic extender
+#class(extension)objectOp
+{
+    /// Returns true if the specified object instances are equal; otherwise, false.
+    #method equal &reference:anObject
+        => system'internal'object_equal.
+        
 //    /// Returns the parameter        
 //    #method back : anObject = anObject.
 //
@@ -46,8 +46,8 @@
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    #method safeEqual : anObject
 //        = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self.
-//}
-//
+}
+
 //// --- Operations ---
 //
 //// --- byteOp ---

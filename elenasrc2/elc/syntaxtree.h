@@ -84,6 +84,7 @@ enum LexicalType
    lxType            = 0x802,
    lxStacksafe       = 0x803,
    lxTempLocal       = 0x804,
+   lxOverridden      = 0x805,
 
    lxBreakpoint      = 0x1001,
    lxCol             = 0x1002,
