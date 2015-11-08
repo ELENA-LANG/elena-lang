@@ -9,7 +9,7 @@
     console writeLine:"Starting...".
 
     ControlTest eval.
-//    ObjectTest eval.
+    ObjectTest eval.
 //    BooleanTest eval.
 //    IntegerTest eval.
 //    LongTest eval.

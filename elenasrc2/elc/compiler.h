@@ -128,15 +128,15 @@ public:
 
       okField,                        // param - field offset
       okFieldAddress,                 // param - field offset
-   //   okOuter,                        // param - field offset
-   //   okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuter,                        // param - field offset
+      okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
    //   okSubject,                      // param - parameter offset
    //   okSubjectDispatcher,
       okThisParam,                    // param - parameter offset
    //   okNil,
-   //   okSuper,
+      okSuper,
       okLocalAddress,                  // param - local offset, extraparam - class reference
    //   okParams,                        // param - local offset
    //   okBlockLocal,                    // param - local offset
@@ -631,44 +631,44 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-//   // - InlineClassScope -
-//
-//   struct InlineClassScope : public ClassScope
-//   {
-////      struct Outer
-////      {
-////         int        reference;
-////         ObjectInfo outerObject;
-////
-////         Outer()
-////         {
-////            reference = -1;
-////         }
-////         Outer(int reference, ObjectInfo outerObject)
-////         {
-////            this->reference = reference;
-////            this->outerObject = outerObject;
-////         }
-////      };
-////
-////      Map<ident_t, Outer>     outers;
-////      ClassInfo::FieldTypeMap outerFieldTypes;
-////
-////      Outer mapSelf();
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-////      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
-//
+   // - InlineClassScope -
+
+   struct InlineClassScope : public ClassScope
+   {
+      struct Outer
+      {
+         int        reference;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = -1;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+         }
+      };
+
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
+      Outer mapSelf();
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
+
 ////   struct MessageScope
 ////   {
 ////      struct ParamInfo
@@ -786,7 +786,7 @@ private:
    bool checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-//   ref_t mapNestedExpression(CodeScope& scope);
+   ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
@@ -826,8 +826,8 @@ private:
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
-//   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
+   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
@@ -912,7 +912,7 @@ private:
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
-//   void compileNestedVMT(DNode node, InlineClassScope& scope);
+   void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);
 

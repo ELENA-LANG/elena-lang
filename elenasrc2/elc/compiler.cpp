@@ -30,9 +30,9 @@ using namespace _ELENA_;
 #define HINT_GENERIC_METH     0x00100000     // generic method
 //#define HINT_ASSIGN_MODE      0x00080000     // indicates possible assigning operation (e.g a := a + x)
 //#define HINT_INITIALIZING     0x00040000     // initializing stack allocated object
-//#define HINT_ACTION           0x00020000
+#define HINT_ACTION           0x00020000
 //#define HINT_EXTERNAL_CALL    0x00010000
-//
+
 //#define HINT_SELFEXTENDING    0x00040000     // !! do we need it?
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
@@ -115,18 +115,18 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
    else return 0;
 }
 
-//inline void findUninqueName(_Module* module, ReferenceNs& name)
-//{
-//   size_t pos = getlength(name);
-//   int   index = 0;
-//   ref_t ref = 0;
-//   do {
-//      name[pos] = 0;
-//      name.appendHex(index++);
-//
-//      ref = module->mapReference(name, true);
-//   } while (ref != 0);
-//}
+inline void findUninqueName(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name, true);
+   } while (ref != 0);
+}
 
 // skip the hints and return the first hint node or none
 inline DNode skipHints(DNode& node)
@@ -1034,10 +1034,10 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 {
-//   if (StringHelper::compare(identifier, SUPER_VAR)) {
-//      return ObjectInfo(okSuper, info.header.parentRef);
-//   }
-   /*else */if (StringHelper::compare(identifier, SELF_VAR)) {
+   if (StringHelper::compare(identifier, SUPER_VAR)) {
+      return ObjectInfo(okSuper, info.header.parentRef);
+   }
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
       return ObjectInfo(okParam, (size_t)-1);
    }
    else {
@@ -1048,13 +1048,13 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 
             return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
          }
-////         else if (test(info.header.flags, elDynamicRole)) {
-////            int type = getClassType();
-////            if (type == elDebugArray) {
-////               return ObjectInfo(okField, otArray, -1);
-////            }
-////            else return ObjectInfo(okUnknown);
-////         }
+//         else if (test(info.header.flags, elDynamicRole)) {
+//            int type = getClassType();
+//            if (type == elDebugArray) {
+//               return ObjectInfo(okField, otArray, -1);
+//            }
+//            else return ObjectInfo(okUnknown);
+//         }
          // otherwise it is a normal field
          else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
       }
@@ -1340,12 +1340,12 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    if (StringHelper::compare(identifier, THIS_VAR)) {
       return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
    }
-//   else if (StringHelper::compare(identifier, SELF_VAR)) {
-//      ObjectInfo retVal = parent->mapObject(identifier);
-//      retVal.extraparam = stackSafe ? -1 : 0;
-//
-//      return retVal;
-//   }
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
+      ObjectInfo retVal = parent->mapObject(identifier);
+      retVal.extraparam = stackSafe ? -1 : 0;
+
+      return retVal;
+   }
    else {
       Parameter param = parameters.get(identifier);
 
@@ -1419,11 +1419,11 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 
 ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
 {
-//   // action does not support this variable
-//   if (StringHelper::compare(identifier, THIS_VAR)) {
-//      return parent->mapObject(identifier);
-//   }
-   /*else */return MethodScope::mapObject(identifier);
+   // action does not support this variable
+   if (StringHelper::compare(identifier, THIS_VAR)) {
+      return parent->mapObject(identifier);
+   }
+   else return MethodScope::mapObject(identifier);
 }
 
 // --- Compiler::CodeScope ---
@@ -1525,92 +1525,92 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
 //   else return getType(object);
 //}
 
-//// --- Compiler::InlineClassScope ---
-//
-//Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
-//   : ClassScope(owner->moduleScope, reference)//, outers(Outer())
-//{
-//   this->parent = owner;
-//   info.header.flags |= elNestedClass;
-//}
-//
-////Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-////{
-////   String<ident_c, 10> thisVar(THIS_VAR);
-////
-////   Outer owner = outers.get(thisVar);
-////   // if owner reference is not yet mapped, add it
-////   if (owner.outerObject.kind == okUnknown) {
-////      owner.reference = info.fields.Count();
-////      owner.outerObject.kind = okThisParam;
-////      owner.outerObject.param = 1;
-////
-////      outers.add(thisVar, owner);
-////      mapKey(info.fields, thisVar, owner.reference);
-////   }
-////   return owner;
-////}
-////
-////ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
-////{
-////   if (StringHelper::compare(identifier, THIS_VAR)) {
-////      Outer owner = mapSelf();
-////
-////      // map as an outer field (reference to outer object and outer object field index)
-////      return ObjectInfo(okOuter, owner.reference);
-////   }
-////   else {
-////      Outer outer = outers.get(identifier);
-////
-////	  // if object already mapped
-////      if (outer.reference!=-1) {
-////         if (outer.outerObject.kind == okSuper) {
-////            return ObjectInfo(okSuper, outer.reference);
-////         }
-////         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
-////      }
-////      else {
-////         outer.outerObject = parent->mapObject(identifier);
-////         // handle outer fields in a special way: save only self
-////         if (outer.outerObject.kind==okField) {
-////            Outer owner = mapSelf();
-////
-////            // save the outer field type if provided
-////            if (outer.outerObject.extraparam != 0) {
-////               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
-////            }
-////
-////            // map as an outer field (reference to outer object and outer object field index)
-////            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
-////         }
-////         // map if the object is outer one
-////         else if (outer.outerObject.kind==okParam || outer.outerObject.kind==okLocal || outer.outerObject.kind==okField
-////            || outer.outerObject.kind==okOuter || outer.outerObject.kind==okSuper || outer.outerObject.kind == okThisParam
-////            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
-////         {
-////            outer.reference = info.fields.Count();
-////
-////            outers.add(identifier, outer);
-////            mapKey(info.fields, identifier.value, outer.reference);
-////
-////            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
-////         }
-////         // if inline symbol declared in symbol it treats self variable in a special way
-////         else if (StringHelper::compare(identifier, SELF_VAR)) {
-////            return ObjectInfo(okParam, (size_t)-1);
-////         }
-////         else if (outer.outerObject.kind == okUnknown) {
-////            // check if there is inherited fields
-////            outer.reference = info.fields.get(identifier);
-////            if (outer.reference != -1) {
-////               return ObjectInfo(okField, outer.reference);
-////            }
-////            else return outer.outerObject;
-////         }
-////         else return outer.outerObject;
-////      }
-////   }
-////}
+// --- Compiler::InlineClassScope ---
+
+Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
+   : ClassScope(owner->moduleScope, reference), outers(Outer())
+{
+   this->parent = owner;
+   info.header.flags |= elNestedClass;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   String<ident_c, 10> thisVar(THIS_VAR);
+
+   Outer owner = outers.get(thisVar);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.reference = info.fields.Count();
+      owner.outerObject.kind = okThisParam;
+      owner.outerObject.param = 1;
+
+      outers.add(thisVar, owner);
+      mapKey(info.fields, thisVar, owner.reference);
+   }
+   return owner;
+}
+
+ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
+{
+   if (StringHelper::compare(identifier, THIS_VAR)) {
+      Outer owner = mapSelf();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference);
+   }
+   else {
+      Outer outer = outers.get(identifier);
+
+	  // if object already mapped
+      if (outer.reference!=-1) {
+         if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, outer.reference);
+         }
+         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+      }
+      else {
+         outer.outerObject = parent->mapObject(identifier);
+         // handle outer fields in a special way: save only self
+         if (outer.outerObject.kind==okField) {
+            Outer owner = mapSelf();
+
+            // save the outer field type if provided
+            if (outer.outerObject.extraparam != 0) {
+               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
+            }
+
+            // map as an outer field (reference to outer object and outer object field index)
+            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         }
+         // map if the object is outer one
+         else if (outer.outerObject.kind==okParam || outer.outerObject.kind==okLocal || outer.outerObject.kind==okField
+            || outer.outerObject.kind==okOuter || outer.outerObject.kind==okSuper || outer.outerObject.kind == okThisParam
+            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
+         {
+            outer.reference = info.fields.Count();
+
+            outers.add(identifier, outer);
+            mapKey(info.fields, identifier.value, outer.reference);
+
+            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+         }
+         // if inline symbol declared in symbol it treats self variable in a special way
+         else if (StringHelper::compare(identifier, SELF_VAR)) {
+            return ObjectInfo(okParam, (size_t)-1);
+         }
+         else if (outer.outerObject.kind == okUnknown) {
+            // check if there is inherited fields
+            outer.reference = info.fields.get(identifier);
+            if (outer.reference != -1) {
+               return ObjectInfo(okField, outer.reference);
+            }
+            else return outer.outerObject;
+         }
+         else return outer.outerObject;
+      }
+   }
+}
 
 // --- Compiler ---
 
@@ -1682,17 +1682,17 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//ref_t Compiler :: mapNestedExpression(CodeScope& scope)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // otherwise auto generate the name
-//   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(moduleScope->module, name);
-//
-//   return moduleScope->module->mapReference(name);
-//}
+ref_t Compiler :: mapNestedExpression(CodeScope& scope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // otherwise auto generate the name
+   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
+
+   findUninqueName(moduleScope->module, name);
+
+   return moduleScope->module->mapReference(name);
+}
 
 bool Compiler :: checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object)
 {
@@ -2300,20 +2300,20 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    DNode member = objectNode.firstChild();
    switch (member)
    {
-//      //case nsRetStatement:
-//      case nsNestedClass:
-//         if (objectNode.Terminal() != nsNone) {            
-//            result = compileNestedExpression(objectNode, scope, 0);
-//            break;
-//         }
-//      case nsSubCode:
-//      case nsSubjectArg:
-//      case nsMethodParameter:
-//         result = compileNestedExpression(member, scope, 0);         
-//         break;
-//      case nsInlineExpression:
-//         result = compileNestedExpression(objectNode, scope, HINT_ACTION);
-//         break;
+      //case nsRetStatement:
+      case nsNestedClass:
+         if (objectNode.Terminal() != nsNone) {            
+            result = compileNestedExpression(objectNode, scope, 0);
+            break;
+         }
+      case nsSubCode:
+      case nsSubjectArg:
+      case nsMethodParameter:
+         result = compileNestedExpression(member, scope, 0);         
+         break;
+      case nsInlineExpression:
+         result = compileNestedExpression(objectNode, scope, HINT_ACTION);
+         break;
       case nsExpression:
 //         if (isCollection(member)) {
 //            TerminalInfo parentInfo = objectNode.Terminal();
@@ -4102,324 +4102,299 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, boo
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
+void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
+{
+   _writer.declareClass(scope.tape, scope.reference);
+
+   DNode member = node.firstChild();
+
+   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
+
+   // nested class is sealed if it has no parent
+   if (!test(scope.info.header.flags, elClosed))
+      scope.info.header.flags |= elSealed;
+
+   compileVMT(member, scope);
+
+   _writer.endClass(scope.tape);
+
+   // stateless inline class
+   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
+      scope.info.header.flags |= elStateless;
+   }
+   else scope.info.header.flags &= ~elStateless;
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   scope.save();
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
+ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+{
+   if (test(scope.info.header.flags, elStateless)) {
+      ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
+
+      // if it is a stateless class
+      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+   }
+   else {
+      // dynamic binary symbol
+      if (test(scope.info.header.flags, elStructureRole)) {
+         ownerScope.writer->newNode(lxStruct, scope.info.size);
+         ownerScope.writer->appendNode(lxTarget, scope.reference);
+
+         if (scope.outers.Count() > 0)
+            scope.raiseError(errInvalidInlineClass, node.Terminal());
+      }
+      else {
+         // dynamic normal symbol
+         ownerScope.writer->newNode(lxNested, scope.info.fields.Count());
+         ownerScope.writer->appendNode(lxTarget, scope.reference);         
+      }
+
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      //int toFree = 0;
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         ownerScope.writer->newNode(lxMember);
+         ownerScope.writer->newBookmark();
+
+         writeTerminal(TerminalInfo(), ownerScope, info);
+         writeBoxing(TerminalInfo(), ownerScope, info, 0);
+
+         ownerScope.writer->removeBookmark();
+         ownerScope.writer->closeNode();
+
+         outer_it++;
+      }
+
+      return ObjectInfo(okObject, scope.reference);
+   }
+}
+
+ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
+{
+//   recordStep(ownerScope, node.Terminal(), dsStep);
+
+   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
+
+   // if it is an action code block
+   if (node == nsSubCode) {
+      compileAction(node, scope, DNode());
+   }
+   // if it is an action code block
+   else if (node == nsMethodParameter || node == nsSubjectArg) {
+      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
+   }
+   // if it is a shortcut action code block
+   else if (node == nsObject && test(mode, HINT_ACTION)) {
+      compileAction(node.firstChild(), scope, node);
+   }
+   // if it is inherited nested class
+   else if (node.Terminal() != nsNone) {
+	   // inherit parent
+      compileParentDeclaration(node, scope);
+
+      compileNestedVMT(node.firstChild(), scope);
+   }
+   // if it is normal nested class
+   else {
+      compileParentDeclaration(DNode(), scope);
+
+      compileNestedVMT(node, scope);
+   }
+   return compileNestedExpression(node, ownerScope, scope, mode);
+}
+
+//ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
 //{
-//   _writer.declareClass(scope.tape, scope.reference);
-//
-//   DNode member = node.firstChild();
-//
-//   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
-//
-//   // nested class is sealed if it has no parent
-//   if (!test(scope.info.header.flags, elClosed))
-//      scope.info.header.flags |= elSealed;
-//
-//   compileVMT(member, scope);
-//
-//   _writer.endClass(scope.tape);
-//
-//   // stateless inline class
-//   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
-//      scope.info.header.flags |= elStateless;
-//   }
-//   else scope.info.header.flags &= ~elStateless;
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   scope.save();
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+//   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
 //}
 //
-//ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+//ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
 //{
-//   if (test(scope.info.header.flags, elStateless)) {
-//      ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
+//   int counter = 0;
 //
-//      // if it is a stateless class
-//      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+//   // all collection memebers should be created before the collection itself
+//   while (node != nsNone) {
+//      bool boxed = false;
+//      bool dummy = false;
+//      ObjectInfo current = compileExpression(node, scope, mode);
+//      current = boxObject(scope, current, boxed, dummy);
+//      if (boxed)
+//         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
+//
+//      _writer.pushObject(*scope.tape, current);
+//
+//      node = node.nextNode();
+//      counter++;
 //   }
-//   else {
-//      //bool dummy = false;
-//      //bool dummy2 = false;
-//      //int presaved = 0;
 //
-//      ////// unbox all typed variables
-//      ////Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      ////while(!outer_it.Eof()) {
-//      ////   ObjectInfo info = (*outer_it).outerObject;
+//   // create the collection
+//   _writer.newObject(*scope.tape, counter, vmtReference);
 //
-//      ////   if (checkIfBoxingRequired(ownerScope, info, mode)) {
-//      ////      _writer.loadObject(*ownerScope.tape, info);
-//      ////      boxObject(ownerScope, info, dummy, dummy2);
-//      ////      _writer.pushObject(*ownerScope.tape, ObjectInfo(okAccumulator));
-//      ////      presaved++;
-//      ////   }
+//   _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
 //
-//      ////   outer_it++;
-//      ////}
+//   // assign the members
+//   while (counter > 0) {
+//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+//      _writer.saveBase(*scope.tape, ObjectInfo(okAccumulator), counter - 1);
 //
-//      //// dynamic binary symbol
-//      //if (test(scope.info.header.flags, elStructureRole)) {
-//      //   _writer.newStructure(*ownerScope.tape, scope.info.size, scope.reference);
-//
-//      //   if (scope.outers.Count() > 0)
-//      //      scope.raiseError(errInvalidInlineClass, node.Terminal());
-//      //}
-//      //// dynamic normal symbol
-//      //else _writer.newObject(*ownerScope.tape, scope.info.fields.Count(), scope.reference);
-//
-//      //_writer.loadBase(*ownerScope.tape, ObjectInfo(okAccumulator));
-//
-//      //outer_it = scope.outers.start();
-//      //int toFree = 0;
-//      //while(!outer_it.Eof()) {
-//      //   ObjectInfo info = (*outer_it).outerObject;
-//
-//      //   //NOTE: info should be either fields or locals
-//      //   if (info.kind == okOuterField) {
-//      //      _writer.loadObject(*ownerScope.tape, info);
-//      //      _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
-//      //   }
-//      //   else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
-//      //      if (checkIfBoxingRequired(ownerScope, info, mode)) {
-//      //         _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
-//      //         toFree++;
-//      //      }
-//      //      else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-//      //   }
-//      //   else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-//
-//      //   outer_it++;
-//      //}
-//
-//      //_writer.releaseObject(*ownerScope.tape, toFree);
-//      //_writer.loadObject(*ownerScope.tape, ObjectInfo(okBase));
-//
-//      return ObjectInfo(okObject, scope.reference);
+//      counter--;
 //   }
+//
+//   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
+//
+//   return ObjectInfo(okAccumulator);
 //}
 //
-//ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
+//ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref_t target_type, bool& mismatch, bool& boxed, bool& unboxing)
 //{
-////   recordStep(ownerScope, node.Terminal(), dsStep);
+//   ModuleScope* moduleScope = scope.moduleScope;
 //
-//   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
+//   if (target_type == 0)
+//      return object;
 //
-//   // if it is an action code block
-//   if (node == nsSubCode) {
-//      compileAction(node, scope, DNode());
+//   ref_t source_type = object.type;
+//   ref_t sourceClassReference = 0;
+//   // define the object class
+//   if (object.kind == okConstantClass || object.kind == okLocalAddress) {
+//      sourceClassReference = object.extraparam;
 //   }
-//   // if it is an action code block
-//   else if (node == nsMethodParameter || node == nsSubjectArg) {
-//      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
+//   else if (object.kind == okConstantSymbol) {
+//      sourceClassReference = object.extraparam;
 //   }
-//   // if it is a shortcut action code block
-//   else if (node == nsObject && test(mode, HINT_ACTION)) {
-//      compileAction(node.firstChild(), scope, node);
+//   else if (object.kind == okThisParam && (source_type == 0)) {
+//      sourceClassReference = scope.getClassRefId(false);
 //   }
-//   // if it is inherited nested class
-//   else if (node.Terminal() != nsNone) {
-//	   // inherit parent
-//      compileParentDeclaration(node, scope);
 //
-//      compileNestedVMT(node.firstChild(), scope);
+//   if (source_type == 0) {
+//      if (object.param != 0 && object.kind == okAccumulator) {
+//         sourceClassReference = object.param;
+//      }
+//      else if (object.extraparam != 0 && object.kind == okConstantSymbol) {
+//         sourceClassReference = object.extraparam;
+//      }
+//      else if (object.kind == okSubject) {
+//         sourceClassReference = scope.moduleScope->signatureReference;
+//      }
 //   }
-//   // if it is normal nested class
-//   else {
-//      compileParentDeclaration(DNode(), scope);
 //
-//      compileNestedVMT(node, scope);
+//   if (sourceClassReference == 0 && source_type != 0) {
+//      sourceClassReference = scope.moduleScope->typeHints.get(source_type);
 //   }
-//   return compileNestedExpression(node, ownerScope, scope, mode);
+//
+//   // if types misnatch - should be typecasted
+//   if (target_type != source_type) {
+//      if (moduleScope->typeHints.exist(target_type)) {
+//         // overwrite the type only for strong types
+//         object.type = target_type;
+//
+//         // typecast literal constant
+//         if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
+//            return object;
+//         }
+//
+//         ref_t targetClassReference = moduleScope->typeHints.get(target_type);
+//         ClassInfo targetInfo;
+//         moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
+//
+//         ClassInfo sourceInfo;
+//         if (sourceClassReference != 0)
+//            moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(sourceClassReference), false);
+//
+//         // if the target is structure
+//         if (test(targetInfo.header.flags, elStructureRole)) {
+//            // typecast numeric constant
+//            if (object.kind == okIntConstant && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+//               return object;
+//            }
+//            else if (object.kind == okLongConstant && (targetInfo.header.flags & elDebugMask) == elDebugQWORD) {
+//               return object;
+//            }
+//            else if (object.kind == okRealConstant && (targetInfo.header.flags & elDebugMask) == elDebugReal64) {
+//               return object;
+//            }
+//            else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
+//               return object;
+//            }
+//            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
+//               return ObjectInfo(okAccumulator, 0, 0, target_type);
+//            }
+////            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
+////               return ObjectInfo(okAccumulator, 0, target_type);
+////            }
+//
+//            // NOTE : compiler magic!
+//            // if the source is structure
+//            if (test(sourceInfo.header.flags, elStructureRole)) {
+//               // if source is target wrapper (i.e. source is a target container)
+//               // virtually copy the value into the stack allocated local
+//               if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
+//                  ObjectInfo primitive(okLocal, 0, 0, target_type);
+//                  allocateStructure(scope, 0, primitive);
+//
+//                  compileContentAssignment(DNode(), scope, primitive, object);
+//
+//                  return primitive;
+//               }
+//               // if target is source wrapper (i.e. target is a source container)
+//               // pass it directly
+//               if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
+//                  if (test(targetInfo.header.flags, elEmbeddable)) {
+//
+//                     return object;
+//                  }
+//               }
+//            }
+//         }
+//
+//         // pass $nil directly
+//         if (object.kind == okNil)
+//            return object;
+//
+//         // if source class inherites / is target class
+//         while (sourceClassReference != 0) {
+//            if (moduleScope->typeHints.exist(target_type, sourceClassReference))
+//               return object;
+//
+//            sourceClassReference = sourceInfo.header.parentRef;
+//
+//            if (moduleScope->loadClassInfo(sourceInfo, moduleScope->module->resolveReference(sourceClassReference), true) == 0)
+//               break;
+//         }
+//
+//         // NOTE : compiler magic!
+//         // if the target is generic wrapper (container) and the object is a local
+//         if (object.kind == okLocal && test(targetInfo.header.flags, elWrapper)) {
+//            // allocate a temporal object
+//            _writer.newVariable(*scope.tape, targetClassReference, ObjectInfo(okAccumulator));
+//            unboxing = true;
+//
+//            return ObjectInfo(okAccumulator, 0, 0, target_type);
+//         }
+//
+//         // if type mismatch
+//         // call typecast method
+//         mismatch = true;
+//
+//         // the parameter should be boxed before
+//         bool dummy = false;
+//         boxObject(scope, object, boxed, dummy);
+//
+//         _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
+//         _writer.typecast(*scope.tape);
+//
+//         return ObjectInfo(okAccumulator, 0, 0, target_type);
+//      }
+//   }
+//
+//   return object;
 //}
-//
-////ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
-////{
-////   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
-////}
-////
-////ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
-////{
-////   int counter = 0;
-////
-////   // all collection memebers should be created before the collection itself
-////   while (node != nsNone) {
-////      bool boxed = false;
-////      bool dummy = false;
-////      ObjectInfo current = compileExpression(node, scope, mode);
-////      current = boxObject(scope, current, boxed, dummy);
-////      if (boxed)
-////         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-////
-////      _writer.pushObject(*scope.tape, current);
-////
-////      node = node.nextNode();
-////      counter++;
-////   }
-////
-////   // create the collection
-////   _writer.newObject(*scope.tape, counter, vmtReference);
-////
-////   _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
-////
-////   // assign the members
-////   while (counter > 0) {
-////      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-////      _writer.saveBase(*scope.tape, ObjectInfo(okAccumulator), counter - 1);
-////
-////      counter--;
-////   }
-////
-////   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-////
-////   return ObjectInfo(okAccumulator);
-////}
-////
-////ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref_t target_type, bool& mismatch, bool& boxed, bool& unboxing)
-////{
-////   ModuleScope* moduleScope = scope.moduleScope;
-////
-////   if (target_type == 0)
-////      return object;
-////
-////   ref_t source_type = object.type;
-////   ref_t sourceClassReference = 0;
-////   // define the object class
-////   if (object.kind == okConstantClass || object.kind == okLocalAddress) {
-////      sourceClassReference = object.extraparam;
-////   }
-////   else if (object.kind == okConstantSymbol) {
-////      sourceClassReference = object.extraparam;
-////   }
-////   else if (object.kind == okThisParam && (source_type == 0)) {
-////      sourceClassReference = scope.getClassRefId(false);
-////   }
-////
-////   if (source_type == 0) {
-////      if (object.param != 0 && object.kind == okAccumulator) {
-////         sourceClassReference = object.param;
-////      }
-////      else if (object.extraparam != 0 && object.kind == okConstantSymbol) {
-////         sourceClassReference = object.extraparam;
-////      }
-////      else if (object.kind == okSubject) {
-////         sourceClassReference = scope.moduleScope->signatureReference;
-////      }
-////   }
-////
-////   if (sourceClassReference == 0 && source_type != 0) {
-////      sourceClassReference = scope.moduleScope->typeHints.get(source_type);
-////   }
-////
-////   // if types misnatch - should be typecasted
-////   if (target_type != source_type) {
-////      if (moduleScope->typeHints.exist(target_type)) {
-////         // overwrite the type only for strong types
-////         object.type = target_type;
-////
-////         // typecast literal constant
-////         if (object.kind == okLiteralConstant && moduleScope->typeHints.exist(target_type, moduleScope->literalReference)) {
-////            return object;
-////         }
-////
-////         ref_t targetClassReference = moduleScope->typeHints.get(target_type);
-////         ClassInfo targetInfo;
-////         moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
-////
-////         ClassInfo sourceInfo;
-////         if (sourceClassReference != 0)
-////            moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(sourceClassReference), false);
-////
-////         // if the target is structure
-////         if (test(targetInfo.header.flags, elStructureRole)) {
-////            // typecast numeric constant
-////            if (object.kind == okIntConstant && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
-////               return object;
-////            }
-////            else if (object.kind == okLongConstant && (targetInfo.header.flags & elDebugMask) == elDebugQWORD) {
-////               return object;
-////            }
-////            else if (object.kind == okRealConstant && (targetInfo.header.flags & elDebugMask) == elDebugReal64) {
-////               return object;
-////            }
-////            else if (object.kind == okCharConstant && moduleScope->typeHints.exist(target_type, moduleScope->charReference)) {
-////               return object;
-////            }
-////            else if (object.kind == okSignatureConstant && moduleScope->typeHints.exist(target_type, moduleScope->signatureReference)) {
-////               return ObjectInfo(okAccumulator, 0, 0, target_type);
-////            }
-//////            else if (object.kind == okVerbConstant && test(targetInfo.header.flags, elMessage)) {
-//////               return ObjectInfo(okAccumulator, 0, target_type);
-//////            }
-////
-////            // NOTE : compiler magic!
-////            // if the source is structure
-////            if (test(sourceInfo.header.flags, elStructureRole)) {
-////               // if source is target wrapper (i.e. source is a target container)
-////               // virtually copy the value into the stack allocated local
-////               if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
-////                  ObjectInfo primitive(okLocal, 0, 0, target_type);
-////                  allocateStructure(scope, 0, primitive);
-////
-////                  compileContentAssignment(DNode(), scope, primitive, object);
-////
-////                  return primitive;
-////               }
-////               // if target is source wrapper (i.e. target is a source container)
-////               // pass it directly
-////               if(isLocal(object) && test(targetInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassReference)) {
-////                  if (test(targetInfo.header.flags, elEmbeddable)) {
-////
-////                     return object;
-////                  }
-////               }
-////            }
-////         }
-////
-////         // pass $nil directly
-////         if (object.kind == okNil)
-////            return object;
-////
-////         // if source class inherites / is target class
-////         while (sourceClassReference != 0) {
-////            if (moduleScope->typeHints.exist(target_type, sourceClassReference))
-////               return object;
-////
-////            sourceClassReference = sourceInfo.header.parentRef;
-////
-////            if (moduleScope->loadClassInfo(sourceInfo, moduleScope->module->resolveReference(sourceClassReference), true) == 0)
-////               break;
-////         }
-////
-////         // NOTE : compiler magic!
-////         // if the target is generic wrapper (container) and the object is a local
-////         if (object.kind == okLocal && test(targetInfo.header.flags, elWrapper)) {
-////            // allocate a temporal object
-////            _writer.newVariable(*scope.tape, targetClassReference, ObjectInfo(okAccumulator));
-////            unboxing = true;
-////
-////            return ObjectInfo(okAccumulator, 0, 0, target_type);
-////         }
-////
-////         // if type mismatch
-////         // call typecast method
-////         mismatch = true;
-////
-////         // the parameter should be boxed before
-////         bool dummy = false;
-////         boxObject(scope, object, boxed, dummy);
-////
-////         _writer.setMessage(*scope.tape, encodeMessage(target_type, GET_MESSAGE_ID, 0));
-////         _writer.typecast(*scope.tape);
-////
-////         return ObjectInfo(okAccumulator, 0, 0, target_type);
-////      }
-////   }
-////
-////   return object;
-////}
 
 ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mode)
 {

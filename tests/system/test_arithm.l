@@ -263,17 +263,17 @@
 //        #throw MyException2 new:"Nested OnError2 handler works".
 //    ]
 //}.
-//
-//#symbol ObjectTest =
-//[
-//    #var a := 1.
-//    #var b := "abc".
-//    
-//    ( a equal &reference:a and:[ b equal &reference:a not ])
-//        ? [ console writeLine:"Reference comparison works" ]
-//        ! [ console writeLine:"!! ObjectTest failed" ].
-//].
-//
+
+#symbol ObjectTest =
+[
+    #var a := 1.
+    #var b := "abc".
+    
+    ( a equal &reference:a and:[ b equal &reference:a not ])
+        ? [ console writeLine:"Reference comparison works" ]
+        ! [ console writeLine:"!! ObjectTest failed" ].
+].
+
 //// --- BooleanTest ---
 //
 //#symbol BooleanTest =

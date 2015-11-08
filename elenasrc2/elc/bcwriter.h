@@ -167,13 +167,14 @@ public:
 //   void loadObject(CommandTape& tape, ObjectInfo object);
 //   void pushObject(CommandTape& tape, ObjectInfo object);
 //   void saveObject(CommandTape& tape, ObjectInfo object);
-//   void popObject(CommandTape& tape, ObjectInfo object);
+   void popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void exchange(CommandTape& tape, ObjectInfo object);
 
+   void copyBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset);
+   void saveBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
 ////   void boxArgList(CommandTape& tape, ref_t vmtReference);
@@ -286,6 +287,8 @@ public:
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCodeBlock(CommandTape& tape, SyntaxTree::Node node);

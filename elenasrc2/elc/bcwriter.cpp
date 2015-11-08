@@ -609,10 +609,10 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          // bcopyf n
          tape.write(bcBCopyF, sourceArgument);
          break;
-//      case okAccumulator:
-//         // bcopya
-//         tape.write(bcBCopyA);
-//         break;
+      case lxResult:
+         // bcopya
+         tape.write(bcBCopyA);
+         break;
    }
 }
 //
@@ -707,40 +707,50 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
 ////         break;
 ////   }
 ////}
-////
-////void ByteCodeWriter :: saveBase(CommandTape& tape, ObjectInfo object, int fieldOffset)
-////{
-////   switch (object.kind) {
-////      case okLocal:
-////      case okParam:
-////      case okThisParam:
-////         // aloadfi 1
-////         // axsavebi
-////         tape.write(bcALoadFI, object.param, bpFrame);
-////         tape.write(bcAXSaveBI, fieldOffset);
-////         break;
-////      case okCurrent:
-////         // aloadsi
-////         // axsavebi
-////         tape.write(bcALoadSI, object.param);
-////         tape.write(bcAXSaveBI, fieldOffset);
-////         break;
-////      case okAccumulator:
-////         // axsavebi
-////         tape.write(bcAXSaveBI, fieldOffset);
-////         break;
-////      case okField:
-////      case okOuter:
-////         // aloadfi 1
-////         // aloadai
-////         // axsavebi
-////         tape.write(bcALoadFI, 1, bpFrame);
-////         tape.write(bcALoadAI, object.param);
-////         tape.write(bcAXSaveBI, fieldOffset);
-////         break;
-////   }
-////}
-////
+
+void ByteCodeWriter :: copyBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxResult:
+         // acopyb
+         tape.write(bcACopyB);
+         break;
+   }
+}
+
+void ByteCodeWriter :: saveBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+//      case okLocal:
+//      case okParam:
+//      case okThisParam:
+//         // aloadfi 1
+//         // axsavebi
+//         tape.write(bcALoadFI, object.param, bpFrame);
+//         tape.write(bcAXSaveBI, fieldOffset);
+//         break;
+//      case okCurrent:
+//         // aloadsi
+//         // axsavebi
+//         tape.write(bcALoadSI, object.param);
+//         tape.write(bcAXSaveBI, fieldOffset);
+//         break;
+      case lxResult:
+         // axsavebi
+         tape.write(bcAXSaveBI, sourceArgument);
+         break;
+//      case okField:
+//      case okOuter:
+//         // aloadfi 1
+//         // aloadai
+//         // axsavebi
+//         tape.write(bcALoadFI, 1, bpFrame);
+//         tape.write(bcALoadAI, object.param);
+//         tape.write(bcAXSaveBI, fieldOffset);
+//         break;
+   }
+}
+
 ////void ByteCodeWriter :: saveObject(CommandTape& tape, ObjectInfo object)
 ////{
 ////   switch (object.kind) {
@@ -934,14 +944,14 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
 //   tape.write(bcBCopyS);
 //   tape.write(bcGet);
 //}
-//
-//void ByteCodeWriter :: popObject(CommandTape& tape, ObjectInfo object)
-//{
-//   switch (object.kind) {
-//      case okAccumulator:
-//         // popa
-//         tape.write(bcPopA);
-//         break;
+
+void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxResult:
+         // popa
+         tape.write(bcPopA);
+         break;
 //      case okBase:
 //         // popb
 //         tape.write(bcPopB);
@@ -950,9 +960,9 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
 //         // pope
 //         tape.write(bcPopE);
 //         break;
-//   }
-//}
-//
+   }
+}
+
 //void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
 //{
 //   tape.write(bcFreeStack, count);
@@ -3243,6 +3253,90 @@ void ByteCodeWriter :: translateBranching(CommandTape& tape, SyntaxTree::Node no
    endThenBlock(tape);
 }
 
+// check if the node contains the nodes
+// which could create a new object (e.g. boxing, symbol, ...)
+bool isDynamicExpression(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxBoxing || current == lxNested || current == lxStruct || current == lxSymbol)
+         return true;
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void ByteCodeWriter :: translateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   // presave all the members which could create new objects
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.type == lxMember) {
+         if (isDynamicExpression(current)) {
+            translateExpression(tape, current);
+            pushObject(tape, lxResult);
+         }
+      }
+
+      current = current.prevNode();
+   }
+
+   newObject(tape, node.argument, target.argument);
+
+   loadBase(tape, lxResult);
+
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (current.type == lxMember) {
+         if (isDynamicExpression(current)) {
+            popObject(tape, lxResult);
+         }
+         else translateExpression(tape, current);
+
+         saveBase(tape, lxResult, current.argument);
+      }
+
+      current = current.nextNode();
+   }
+
+   //outer_it = scope.outers.start();
+   //int toFree = 0;
+   //while(!outer_it.Eof()) {
+   //   ObjectInfo info = (*outer_it).outerObject;
+
+   //   //NOTE: info should be either fields or locals
+   //   if (info.kind == okOuterField) {
+   //      _writer.loadObject(*ownerScope.tape, info);
+   //      _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
+   //   }
+   //   else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
+   //      if (checkIfBoxingRequired(ownerScope, info, mode)) {
+   //         _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
+   //         toFree++;
+   //      }
+   //      else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+   //   }
+   //   else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
+
+   //   outer_it++;
+   //}
+
+   //_writer.releaseObject(*ownerScope.tape, toFree);
+   copyBase(tape, lxResult);
+
+}
+
+void ByteCodeWriter :: translateStructExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   newStructure(tape, node.argument, target.argument);
+}
+
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
    if (node == lxExpression) {
@@ -3265,6 +3359,12 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxBranching) {
       translateBranching(tape, node);
+   }
+   else if (node == lxStruct) {
+      translateStructExpression(tape, node);
+   }
+   else if (node == lxNested) {
+      translateNestedExpression(tape, node);
    }
    else loadObject(tape, node);
 }
