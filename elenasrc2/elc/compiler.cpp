@@ -290,31 +290,31 @@ inline bool isImportRedirect(DNode node)
 //{
 //   return operator_id == REFER_MESSAGE_ID || operator_id == SET_REFER_MESSAGE_ID;
 //}
-//
-//inline bool IsDoubleOperator(int operator_id)
-//{
-//   return operator_id == SET_REFER_MESSAGE_ID;
-//}
-//
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   if (operator_id == NOTEQUAL_MESSAGE_ID) {
-//      operator_id = EQUAL_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTLESS_MESSAGE_ID) {
-//      operator_id = LESS_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTGREATER_MESSAGE_ID) {
-//      operator_id = GREATER_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else return false;
-//}
+
+inline bool IsDoubleOperator(int operator_id)
+{
+   return operator_id == SET_REFER_MESSAGE_ID;
+}
+
+inline bool IsInvertedOperator(int& operator_id)
+{
+   if (operator_id == NOTEQUAL_MESSAGE_ID) {
+      operator_id = EQUAL_MESSAGE_ID;
+
+      return true;
+   }
+   else if (operator_id == NOTLESS_MESSAGE_ID) {
+      operator_id = LESS_MESSAGE_ID;
+
+      return true;
+   }
+   else if (operator_id == NOTGREATER_MESSAGE_ID) {
+      operator_id = GREATER_MESSAGE_ID;
+
+      return true;
+   }
+   else return false;
+}
 
 void appendCoordinate(SyntaxWriter* writer, TerminalInfo terminal)
 {
@@ -343,7 +343,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    intReference = mapReference(project->resolveForward(INT_FORWARD));
 //   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
-//   literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
+   literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
 //   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
 //   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
@@ -951,6 +951,9 @@ bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t rol
 bool Compiler::ModuleScope :: checkIfCompatible(ref_t typeRef, ref_t classRef)
 {
    ClassInfo sourceInfo;
+
+   if (typeHints.exist(typeRef, classRef))
+      return true;
 
    // if source class inherites / is target class
    while (classRef != 0) {
@@ -1734,6 +1737,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    }
    else if (object.kind == okIntConstant) {
       return scope.moduleScope->intReference;
+   }
+   else if (object.kind == okLiteralConstant) {
+      return scope.moduleScope->literalReference;
    }
    // if message sent to the class parent
    //else if (object.kind == okSuper) {
@@ -3299,14 +3305,14 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
 //   recordDebugStep(scope, operator_name, dsStep);
 //   openDebugExpression(scope);
-//
-//   // HOTFIX : recognize SET_REFER_MESSAGE_ID
-//   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
-//      operator_id = SET_REFER_MESSAGE_ID;
-//
-//   bool dblOperator = IsDoubleOperator(operator_id);
-//   bool notOperator = IsInvertedOperator(operator_id);
-//
+
+   // HOTFIX : recognize SET_REFER_MESSAGE_ID
+   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
+      operator_id = SET_REFER_MESSAGE_ID;
+
+   bool dblOperator = IsDoubleOperator(operator_id);
+   bool notOperator = IsInvertedOperator(operator_id);
+
 //   ObjectInfo operand;
 //   ObjectInfo operand2;
 //
@@ -3328,20 +3334,32 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 //   MessageScope callStack;
 //   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // !! HOTFIX : dummy node is required for raiseError / raiseWarning
 //   callStack.parameters.add(1, MessageScope::ParamInfo(0, node));
-//   if (dblOperator) {
-//      callStack.parameters.add(2, MessageScope::ParamInfo(0, node.nextNode().firstChild()));
-//   }
-//
-//   int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
-//
+   compileExpression(node.firstChild(), scope, 0, 0);
+   if (dblOperator) {
+      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+   }
+
+   int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
+
 //   if (notOperator)
 //      mode |= HINT_INVERTED;
-//
-//   retVal = compileMessage(node, scope, callStack, object, message_id, mode | HINT_INLINE);
-//
-//   if (dblOperator)
-//      node = node.nextNode();
-//
+
+   retVal = compileMessage(node, scope, object, message_id, mode/* | HINT_INLINE*/);
+
+   if (notOperator) {
+      scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+      scope.writer->closeNode();
+
+      scope.writer->insert(lxBNOT, scope.moduleScope->trueReference);
+      scope.writer->appendNode(lxExtra, scope.moduleScope->falseReference);
+      scope.writer->closeNode();
+
+      retVal.type = scope.moduleScope->boolType;
+   }
+
+   if (dblOperator)
+      node = node.nextNode();
+
 //   endDebugExpression(scope);
 
    return retVal;

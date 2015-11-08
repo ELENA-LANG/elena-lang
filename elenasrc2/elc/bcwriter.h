@@ -256,7 +256,7 @@ public:
    void saveSubject(CommandTape& tape);
 //   void loadSymbolReference(CommandTape& tape, ref_t reference);
 //   void saveIntConstant(CommandTape& tape, int value);
-//   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
 //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
@@ -277,6 +277,8 @@ public:
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
+
+   void translateBoolInvert(CommandTape& tape, SyntaxTree::Node node);
 
    void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);

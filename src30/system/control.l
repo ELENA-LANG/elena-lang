@@ -17,14 +17,14 @@
 //    #method(type:bool) xor : aBool = $nil.
 //
 //    #method equal : anExpr = $nil.
-//
-//    #method(type:bool) equal &bool:aBool = $nil.
+
+    #method(type:bool) equal &bool:aBool = $nil.
 
     #method(type:bool) not = $nil.
 
-//    #method literal = $nil.
-//
-//    #method wide = $nil.
+    #method literal = $nil.
+
+    #method wide = $nil.
 
     #method bool = $self.
 
@@ -64,21 +64,21 @@
 //        
 //        ^ $self.
 //    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method equal : anExpr = anExpr bool.
-//
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal : anExpr = anExpr bool.
+
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method(type:bool) equal &bool:aBool = aBool.
 
     /// Always returns false.
     #method(type:bool) not = false.
 
-//    /// Returns literal representation.
-//    #method literal = "true".
-//
-//    /// Returns literal representation.
-//    #method wide = "true" wide. // !! temporal
+    /// Returns literal representation.
+    #method literal = "true".
+
+    /// Returns literal representation.
+    #method wide = "true" wide. // !! temporal
 
     /// Returns itself.
     #method bool = $self.
@@ -118,15 +118,15 @@
 //        
 //        ^ $self.
 //    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method equal : anExpr
-//    [
-//        anExpr ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
-//
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal : anExpr
+    [
+        anExpr ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
 //    /// Determines whether the specified object is equal to the current object boolean value
 //    #method(type:bool) equal &bool:anExpr
 //    [
@@ -138,11 +138,11 @@
     /// Always returns true
     #method not = true.
 
-//    /// Returns literal representation
-//    #method literal = "false".
-//    
-//    /// Returns literal representation
-//    #method wide = "false" wide. // !! temporal
+    /// Returns literal representation
+    #method literal = "false".
+    
+    /// Returns literal representation
+    #method wide = "false" wide. // !! temporal
 
     /// Returns itself
     #method bool = $self.

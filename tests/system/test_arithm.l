@@ -274,20 +274,20 @@
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
 
-//// --- BooleanTest ---
-//
-//#symbol BooleanTest =
-//[
-//    #var b1 := true.
-//    #var b2 := false.
-//    
-//    console write:"(true == true) is " writeLine:(b1 == b1).
-//    console write:"(true == false) is " writeLine:(b1 == b2).
-//    console write:"(false == true) is " writeLine:(b2 == b1).
-//    console write:"(false == false) is " writeLine:(b2 == b2).
-//    console write:"(false != false) is " writeLine:(b2 != b2).
-//    console write:"(false != true) is " writeLine:(b2 != b1).
-//].
+// --- BooleanTest ---
+
+#symbol BooleanTest =
+[
+    #var b1 := true.
+    #var b2 := false.
+    
+    console write:"(true == true) is " writeLine:(b1 == b1).
+    console write:"(true == false) is " writeLine:(b1 == b2).
+    console write:"(false == true) is " writeLine:(b2 == b1).
+    console write:"(false == false) is " writeLine:(b2 == b2).
+    console write:"(false != false) is " writeLine:(b2 != b2).
+    console write:"(false != true) is " writeLine:(b2 != b1).
+].
 
 // --- ControlTest ---
 

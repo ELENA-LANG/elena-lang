@@ -6,16 +6,16 @@
     /// Creates the object
     #constructor new []
 
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
-//    #method(type:bool) equal : anObject => system'internal'object_equal.
-//    
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
-//    
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &object:$self.
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    ///
+    /// By default compares the object references.
+    #method(type:bool) equal : anObject => system'internal'object_equal.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &object:$self.
                         
     /// Implements a message dispatching in VMT
     #method => system'internal'dispatch.

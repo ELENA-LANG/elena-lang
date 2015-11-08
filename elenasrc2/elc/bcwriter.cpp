@@ -2263,43 +2263,43 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offs
 ////   tape.write(bcNSave);
 ////   tape.write(bcACopyB);
 ////}
-////
-////void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
-////{
-////   // bcopya
-////   // dcopy value
-////   // nsave
-////
-////   tape.write(bcBCopyA);
-////   tape.write(bcDCopy, value);
-////   tape.write(bcNSave);
-////}
-////
-////void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
-////{
-////   // pushr trueRef
-////   // ifr labEnd falseRef
-////   // acopyr falseRef
-////   // asavesi 0
-////   // labEnd:
-////   // popa
-////
-////   tape.newLabel();
-////
-////   tape.write(bcPushR, trueRef | mskConstantRef);
-////   tape.write(bcIfR, baCurrentLabel, falseRef | mskConstantRef);
-////   tape.write(bcACopyR, falseRef | mskConstantRef);
-////   tape.write(bcASaveSI);
-////   tape.setLabel();
-////   tape.write(bcPopA);
-////}
-////
-////void ByteCodeWriter :: copySubject(CommandTape& tape)
-////{
-////   // dcopysubj
-////   tape.write(bcDCopySubj);
-////}
 //
+//void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
+//{
+//   // bcopya
+//   // dcopy value
+//   // nsave
+//
+//   tape.write(bcBCopyA);
+//   tape.write(bcDCopy, value);
+//   tape.write(bcNSave);
+//}
+
+void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
+{
+   // pushr trueRef
+   // ifr labEnd falseRef
+   // acopyr falseRef
+   // asavesi 0
+   // labEnd:
+   // popa
+
+   tape.newLabel();
+
+   tape.write(bcPushR, trueRef | mskConstantRef);
+   tape.write(bcIfR, baCurrentLabel, falseRef | mskConstantRef);
+   tape.write(bcACopyR, falseRef | mskConstantRef);
+   tape.write(bcASaveSI);
+   tape.setLabel();
+   tape.write(bcPopA);
+}
+
+//void ByteCodeWriter :: copySubject(CommandTape& tape)
+//{
+//   // dcopysubj
+//   tape.write(bcDCopySubj);
+//}
+
 void ByteCodeWriter :: saveSubject(CommandTape& tape)
 {
    // dcopysubj
@@ -2783,6 +2783,14 @@ void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
    translateBreakpoint(tape, SyntaxTree::findChild(node, lxBreakpoint));
 
    pushObject(tape, node.type, node.argument);
+}
+
+void ByteCodeWriter :: translateBoolInvert(CommandTape& tape, SyntaxTree::Node node)
+{
+   translateExpression(tape, node);
+
+   SNode extraParam = SyntaxTree::findChild(node, lxExtra);
+   invertBool(tape, node.argument, extraParam.argument);
 }
 
 void ByteCodeWriter :: translateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
@@ -3343,6 +3351,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxNested) {
       translateNestedExpression(tape, node);
+   }
+   else if (node == lxBNOT) {
+      translateBoolInvert(tape, node);
    }
    else loadObject(tape, node);
 }

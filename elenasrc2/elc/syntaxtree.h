@@ -42,8 +42,11 @@ enum LexicalType
    lxExtArgument     = 0x30C,
    lxMember          = 0x30D,
    lxAssigning       = 0x30E,
+
    lxIf              = 0x310,
    lxElse            = 0x311,
+
+   lxBNOT            = 0x320,
 
    lxNested          = 0x101,
    lxStruct          = 0x102,
@@ -85,6 +88,7 @@ enum LexicalType
    lxStacksafe       = 0x803,
    lxTempLocal       = 0x804,
    lxOverridden      = 0x805,
+   lxExtra           = 0x806,
 
    lxBreakpoint      = 0x1001,
    lxCol             = 0x1002,
