@@ -3255,7 +3255,7 @@ void ByteCodeWriter :: translateBranching(CommandTape& tape, SyntaxTree::Node no
 
 // check if the node contains the nodes
 // which could create a new object (e.g. boxing, symbol, ...)
-bool isDynamicExpression(SNode node)
+bool isDynamicObjectExpression(SNode node)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -3276,7 +3276,7 @@ void ByteCodeWriter :: translateNestedExpression(CommandTape& tape, SyntaxTree::
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
-         if (isDynamicExpression(current)) {
+         if (isDynamicObjectExpression(current)) {
             translateExpression(tape, current);
             pushObject(tape, lxResult);
          }
@@ -3292,7 +3292,7 @@ void ByteCodeWriter :: translateNestedExpression(CommandTape& tape, SyntaxTree::
    current = node.firstChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
-         if (isDynamicExpression(current)) {
+         if (isDynamicObjectExpression(current)) {
             popObject(tape, lxResult);
          }
          else translateExpression(tape, current);
@@ -3303,31 +3303,7 @@ void ByteCodeWriter :: translateNestedExpression(CommandTape& tape, SyntaxTree::
       current = current.nextNode();
    }
 
-   //outer_it = scope.outers.start();
-   //int toFree = 0;
-   //while(!outer_it.Eof()) {
-   //   ObjectInfo info = (*outer_it).outerObject;
-
-   //   //NOTE: info should be either fields or locals
-   //   if (info.kind == okOuterField) {
-   //      _writer.loadObject(*ownerScope.tape, info);
-   //      _writer.saveBase(*ownerScope.tape, ObjectInfo(okAccumulator), (*outer_it).reference);
-   //   }
-   //   else if (info.kind == okParam || info.kind == okLocal || info.kind == okField || info.kind == okFieldAddress || info.kind == okLocalAddress) {
-   //      if (checkIfBoxingRequired(ownerScope, info, mode)) {
-   //         _writer.saveBase(*ownerScope.tape, ObjectInfo(okCurrent, --presaved), (*outer_it).reference);
-   //         toFree++;
-   //      }
-   //      else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-   //   }
-   //   else _writer.saveBase(*ownerScope.tape, info, (*outer_it).reference);
-
-   //   outer_it++;
-   //}
-
-   //_writer.releaseObject(*ownerScope.tape, toFree);
    copyBase(tape, lxResult);
-
 }
 
 void ByteCodeWriter :: translateStructExpression(CommandTape& tape, SyntaxTree::Node node)

@@ -305,9 +305,9 @@
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func:$self.
 }
 
-///// A base function
-//#class(limited)BaseFunction1
-//{
+/// A base function
+#class(limited)BaseFunction1
+{
 //    /// Returns itself
 //    #method func1 = $self.
 //    
@@ -316,10 +316,10 @@
 //    
 //    /// Dispatches the verb to the target with func1 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func1:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam []
-//
+    
+    /// Executes the function
+    #method eval : aParam []
+
 //    /// Executes the function for every enumeration item
 //    #method run &enumerator:anEnumerator
 //    [
@@ -343,11 +343,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base two variable function
-//#class(limited)BaseFunction2
-//{
+}
+
+/// A base two variable function
+#class(limited)BaseFunction2
+{
 //    /// Returns itself
 //    #method func2 = $self.
 //    
@@ -356,10 +356,10 @@
 //    
 //    /// Dispatches the verb to the target with func2 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func2:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam &enumerator:anEnumerator
 //    [
@@ -383,11 +383,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base three variable function
-//#class(limited)BaseFunction3
-//{
+}
+
+/// A base three variable function
+#class(limited)BaseFunction3
+{
 //    /// Returns itself
 //    #method func3 = $self.
 //    
@@ -396,10 +396,10 @@
 //    
 //    /// Dispatches the verb to the target object with func3 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func3:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 &enumerator:anEnumerator
 //    [
@@ -423,11 +423,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base four variable function
-//#class(limited)BaseFunction4
-//{
+}
+
+/// A base four variable function
+#class(limited)BaseFunction4
+{
 //    /// Returns itself
 //    #method func4 = $self.
 //    
@@ -436,10 +436,10 @@
 //    
 //    /// Dispatches the verb to the target object with func4 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func4:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
 //    [
@@ -463,11 +463,11 @@
 //        
 //        ^ $nil.
 //    ]
-//}
-//
-///// A base five variable function
-//#class(limited)BaseFunction5
-//{
+}
+
+/// A base five variable function
+#class(limited)BaseFunction5
+{
 //    /// Returns itself
 //    #method func5 = $self.
 //    
@@ -476,10 +476,10 @@
 //    
 //    /// Dispatches the verb to the target object with func5 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func5:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
 //    [
@@ -503,11 +503,11 @@
 //        
 //        ^ $nil.
 //    ]
-//}
-//
-///// A base six variable function
-//#class(limited)BaseFunction6
-//{
+}
+
+/// A base six variable function
+#class(limited)BaseFunction6
+{
 //    /// Returns itself
 //    #method func6 = $self.
 //    
@@ -516,10 +516,10 @@
 //    
 //    /// Dispatches the verb to the target object with func6 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func6:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
 //    [
@@ -543,11 +543,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base seven variable function
-//#class(limited)BaseFunction7
-//{
+}
+
+/// A base seven variable function
+#class(limited)BaseFunction7
+{
 //    /// Returns itself
 //    #method func7 = $self.
 //    
@@ -556,10 +556,10 @@
 //    
 //    /// Dispatches the verb to the target object with func7 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func7:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
 //    [
@@ -583,11 +583,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base eight variable function
-//#class(limited)BaseFunction8
-//{
+}
+
+/// A base eight variable function
+#class(limited)BaseFunction8
+{
 //    /// Returns itself
 //    #method func8 = $self.
 //    
@@ -596,10 +596,10 @@
 //    
 //    /// Dispatches the verb to the target object with func8 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func8:$self.
-//
-//    /// Executes the function    
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
-//    
+
+    /// Executes the function    
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
 //    [
@@ -623,11 +623,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base nine variable function
-//#class(limited)BaseFunction9
-//{
+}
+
+/// A base nine variable function
+#class(limited)BaseFunction9
+{
 //    /// Returns itself
 //    #method func9 = $self.
 //    
@@ -636,10 +636,10 @@
 //    
 //    /// Dispatches the verb to the target object with func9 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func9:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
 //    [
@@ -663,11 +663,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base ten variable function
-//#class(limited)BaseFunction10
-//{
+}
+
+/// A base ten variable function
+#class(limited)BaseFunction10
+{
 //    /// Returns itself
 //    #method func10 = $self.
 //    
@@ -676,10 +676,10 @@
 //    
 //    /// Dispatches the verb to the target object with func10 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func10:$self.
-//
-//    /// Executes the function    
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
-//    
+
+    /// Executes the function    
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
 //    [
@@ -703,11 +703,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base eleven variable functions
-//#class(limited)BaseFunction11
-//{
+}
+
+/// A base eleven variable functions
+#class(limited)BaseFunction11
+{
 //    /// Returns itself
 //    #method func11 = $self.
 //    
@@ -716,10 +716,10 @@
 //    
 //    /// Dispatches the verb to the target object with func11 subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func11:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
-//    
+    
+    /// Executes the function
+    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
+    
 //    /// Executes the function for parameters and every enumeration item
 //    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
 //    [
@@ -743,22 +743,22 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-//// --- base lazy expression ---
-//
-//#class(limited)BaseLazyExpression
-//{
-//    #method eval []
-//    
-//    #method => system'internal'expression_dispatch.
-//}
-//
-//// --- IndexFunction ---
-//
-///// A base index function
-//#class(limited)IndexFunction1
-//{
+}
+
+// --- base lazy expression ---
+
+#class(limited)BaseLazyExpression
+{
+    #method eval []
+    
+    #method => system'internal'expression_dispatch.
+}
+
+// --- IndexFunction ---
+
+/// A base index function
+#class(limited)IndexFunction1
+{
 //    /// Returns itslef
 //    #method nfunc = $self.
 //
@@ -767,16 +767,16 @@
 //    
 //    /// Dispatches the verb to the target object with nfunc subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nfunc:$self.
-//    
-//    /// Executes the function
-//    ///
-//    /// Default implementation calls eval&index for compatibility with old code
-//    #method(stacksafe) eval &int:n 
-//        = $self eval &index:(IntNumber new &int:n).
-//
-//    /// Obsolete
-//    #method(stacksafe) eval &index:n []
-//
+    
+    /// Executes the function
+    ///
+    /// Default implementation calls eval&index for compatibility with old code
+    #method(stacksafe) eval &int:n 
+        = $self eval &index:(IntNumber new &int:n).
+
+    /// Obsolete
+    #method(stacksafe) eval &index:n []
+
 //    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
 //    #method(stacksafe) rewind &int:aStart &int:n &int:dx
 //    [
@@ -822,11 +822,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base two variable index function
-//#class(limited)IndexFunction2
-//{
+}
+
+/// A base two variable index function
+#class(limited)IndexFunction2
+{
 //    /// Returns itslef
 //    #method nnfunc = $self.
 //    
@@ -835,16 +835,16 @@
 //    
 //    /// Dispatches the verb to the target object with nnfunc subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nnfunc:$self.
-//    
-//    /// Executes the function
-//    ///
-//    /// Default implementation calls eval&index&index for compatibility with old code
-//    #method(stacksafe) eval &int:i &int:j
-//        = $self eval &index:(IntNumber new &int:i) &index:(IntNumber new &int:j).
-//
-//    /// Obsolete
-//    #method eval &index:i &index:j []
-//
+    
+    /// Executes the function
+    ///
+    /// Default implementation calls eval&index&index for compatibility with old code
+    #method(stacksafe) eval &int:i &int:j
+        = $self eval &index:(IntNumber new &int:i) &index:(IntNumber new &int:j).
+
+    /// Obsolete
+    #method eval &index:i &index:j []
+
 //    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
 //    #method rewind &int:i &int:j &int:n &int:m &int:dx
 //    [
@@ -890,11 +890,11 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
-///// A base three variable index function
-//#class(limited)IndexFunction3
-//{
+}
+
+/// A base three variable index function
+#class(limited)IndexFunction3
+{
 //    /// Returns itself
 //    #method n3func = $self.
 //    
@@ -903,10 +903,10 @@
 //    
 //    /// Dispatches the verb to the target object with n3func subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &n3func:$self.
-//    
-//    /// Executes the function
-//    #method(stacksafe) eval &int:i &int:j &int:k []
-//
+    
+    /// Executes the function
+    #method(stacksafe) eval &int:i &int:j &int:k []
+
 //    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
 //    #method rewind &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
 //    [
@@ -968,8 +968,8 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
+}
+
 //// --- Boolean ---
 //
 ///// A boolean variable. 
