@@ -601,10 +601,10 @@ void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
 {
    switch (sourceType) {
-//      case okCurrent:
-//         // bloadsi param
-//         tape.write(bcBLoadSI, object.param);
-//         break;
+      case lxCurrent:
+         // bloadsi param
+         tape.write(bcBLoadSI, sourceArgument);
+         break;
       case lxLocalAddress:
          // bcopyf n
          tape.write(bcBCopyF, sourceArgument);
@@ -2818,15 +2818,12 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 
 void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node node)
 {
-   SNode larg;
-   SNode rarg;
-   assignOpArguments(node, larg, rarg);
+   int operation = node.argument;
+   bool assingMode = false;
+   bool selectMode = false;
+   int  level = 0;
 
    switch (node.argument) {
-      //      case WRITE_MESSAGE_ID:
-      //         tape.write(bcNCopy);
-      //         break;
-      //      case APPEND_MESSAGE_ID:
       case ADD_MESSAGE_ID:
       case SUB_MESSAGE_ID:
       case MUL_MESSAGE_ID:
@@ -2834,52 +2831,71 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
-         translateObjectExpression(tape, larg);
-         copyBase(tape, 4);
-         translateObjectExpression(tape, rarg);
-         doIntOperation(tape, node.argument);
+         assingMode = true;
          break;
       case EQUAL_MESSAGE_ID:
       case LESS_MESSAGE_ID:
-         translateObjectExpression(tape, larg);
-         loadBase(tape, lxResult);
-         translateObjectExpression(tape, rarg);
-         doIntOperation(tape, node.argument);
-         selectByIndex(tape, 
-            SyntaxTree::findChild(node, lxElseValue).argument, 
-            SyntaxTree::findChild(node, lxIfValue).argument);
+         selectMode = true;
          break;
       case GREATER_MESSAGE_ID:
-         translateObjectExpression(tape, rarg);
-         loadBase(tape, lxResult);
-         translateObjectExpression(tape, larg);
-         doIntOperation(tape, LESS_MESSAGE_ID);
-         selectByIndex(tape, 
-            SyntaxTree::findChild(node, lxElseValue).argument, 
-            SyntaxTree::findChild(node, lxIfValue).argument);
+         selectMode = true;
+         operation = LESS_MESSAGE_ID;
          break;
-         //      case REDUCE_MESSAGE_ID:
-      //         tape.write(bcNSub);
-      //         break;
-      //      
-      //      case INCREASE_MESSAGE_ID:
-      //         tape.write(bcNMul);
-      //         break;
-      //      case SEPARATE_MESSAGE_ID:
-      //         tape.write(bcNDiv);
-      //         break;
-      //      
-      //         tape.write(bcNAnd);
-      //         break;
-      //      
-      //         tape.write(bcNOr);
-      //         break;
-      //      
-      //         tape.write(bcNXor);
-      //         break;
-      //      default:
-      //         break;
    }
+
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+
+   if (test(larg.type, lxExpressionMask)) {
+      tape.write(bcPushB);
+      level++;
+
+      translateObjectExpression(tape, larg);
+      pushObject(tape, lxResult);
+      level++;
+   }
+
+   if (test(rarg.type, lxExpressionMask)) {
+      if (level == 0) {
+         tape.write(bcPushB);
+         level++;
+      }
+
+      translateObjectExpression(tape, rarg);
+      pushObject(tape, lxResult);
+      level++;
+   }
+
+   if (level > 0)
+      loadBase(tape, lxCurrent, level - 1);
+
+   if (test(larg.type, lxExpressionMask)) {
+      loadObject(tape, lxCurrent, 1);
+   }
+   else translateObjectExpression(tape, larg);
+
+   if (assingMode) {
+      copyBase(tape, 4);
+   }
+   else loadBase(tape, lxResult);
+
+   if (test(rarg.type, lxExpressionMask)) {
+      popObject(tape, lxResult);
+      level--;
+   }
+   else translateObjectExpression(tape, rarg);
+
+   doIntOperation(tape, operation);
+
+   if (selectMode) {
+      selectByIndex(tape,
+         SyntaxTree::findChild(node, lxElseValue).argument,
+         SyntaxTree::findChild(node, lxIfValue).argument);
+   }
+   else assignBaseTo(tape, lxResult);
+
+   releaseObject(tape, level);
 }
 
 void ByteCodeWriter :: translateBoolOperation(CommandTape& tape, SyntaxTree::Node node)

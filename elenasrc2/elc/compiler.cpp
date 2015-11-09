@@ -3327,7 +3327,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    bool dblOperator = IsDoubleOperator(operator_id);
    bool notOperator = IsInvertedOperator(operator_id);
 
-   ObjectInfo operand = compileExpression(node.firstChild(), scope, 0, 0);
+   ObjectInfo operand = compileExpression(node, scope, 0, 0);
    ObjectInfo operand2;
    if (dblOperator) {
       operand2 = compileExpression(node.nextNode().firstChild(), scope, 0, 0);
@@ -4478,7 +4478,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    scope.writer->newBookmark();
 
    ObjectInfo objectInfo;
-   if (node == nsExpression) {
+   if (node != nsObject) {
       DNode member = node.firstChild();
 
       if (member.nextNode() != nsNone) {
