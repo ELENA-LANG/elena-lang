@@ -247,6 +247,7 @@ private:
 //      ref_t signatureReference;
 
       ref_t boolType;
+      ref_t intType;
 
       // warning mapiing
       bool warnOnUnresolved;

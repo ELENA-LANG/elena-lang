@@ -170,7 +170,7 @@ public:
    void popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void exchange(CommandTape& tape, ObjectInfo object);
 
-   void copyBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void copyBase(CommandTape& tape, int size);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -211,9 +211,9 @@ public:
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+
 //   void freeVirtualStack(CommandTape& tape, int count);
 
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
@@ -242,6 +242,8 @@ public:
 ////   void endSwitchBlock(CommandTape& tape);
 //
 ////   void copy(CommandTape& tape);
+   void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
+
    void assignInt(CommandTape& tape, LexicalType target, int offset);
 //   void assignLong(CommandTape& tape, LexicalType target, int offset);
 //   void assignShort(CommandTape& tape, LexicalType target, int offset);
@@ -257,7 +259,7 @@ public:
 //   void loadSymbolReference(CommandTape& tape, ref_t reference);
 //   void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   //void doLiteralOperation(CommandTape& tape, int operator_id);
@@ -278,7 +280,9 @@ public:
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
-   void translateBoolInvert(CommandTape& tape, SyntaxTree::Node node);
+   void translateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+   void translateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void translateIntOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);

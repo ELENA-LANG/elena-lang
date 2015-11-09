@@ -16,9 +16,9 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxObjectMask      = 0x100,
-   lxExpressionMask  = 0x200,
-   //lxCallMask        = 0x200,
+   lxObjectMask      = 0x0100,
+   lxExpressionMask  = 0x0200,
+   lxPrimitiveOpMask = 0x1000,
 
    lxEnding          = -1,
 
@@ -46,7 +46,9 @@ enum LexicalType
    lxIf              = 0x310,
    lxElse            = 0x311,
 
-   lxBNOT            = 0x320,
+   lxBoolOp          = 0x0320,
+   lxNilOp           = 0x0321,
+   lxIntOp           = 0x1322,
 
    lxNested          = 0x101,
    lxStruct          = 0x102,
@@ -91,14 +93,15 @@ enum LexicalType
    lxStacksafe       = 0x803,
    lxTempLocal       = 0x804,
    lxOverridden      = 0x805,
-   lxExtra           = 0x806,
+   lxIfValue         = 0x806,
+   lxElseValue       = 0x807,
 
-   lxBreakpoint      = 0x1001,
-   lxCol             = 0x1002,
-   lxRow             = 0x1003,
-   lxLength          = 0x1004,
-   lxTerminal        = 0x1005,
-   lxLevel           = 0x1006,
+   lxBreakpoint      = 0x2001,
+   lxCol             = 0x2002,
+   lxRow             = 0x2003,
+   lxLength          = 0x2004,
+   lxTerminal        = 0x2005,
+   lxLevel           = 0x2006,
 };
 
 // --- SyntaxWriter ---

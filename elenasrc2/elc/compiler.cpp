@@ -240,23 +240,23 @@ inline bool isImportRedirect(DNode node)
 //      return false;
 //   }
 //}
-//
-//inline bool IsExprOperator(int operator_id)
-//{
-//   switch(operator_id) {
-//      case ADD_MESSAGE_ID:
-//      case SUB_MESSAGE_ID:
-//      case MUL_MESSAGE_ID:
-//      case DIV_MESSAGE_ID:
-//      case AND_MESSAGE_ID:
-//      case OR_MESSAGE_ID:
-//      case XOR_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+
+inline bool IsExprOperator(int operator_id)
+{
+   switch(operator_id) {
+      case ADD_MESSAGE_ID:
+      case SUB_MESSAGE_ID:
+      case MUL_MESSAGE_ID:
+      case DIV_MESSAGE_ID:
+      case AND_MESSAGE_ID:
+      case OR_MESSAGE_ID:
+      case XOR_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 //inline bool IsVarOperator(int operator_id)
 //{
 //   switch (operator_id) {
@@ -270,22 +270,22 @@ inline bool isImportRedirect(DNode node)
 //      return false;
 //   }
 //}
-//
-//inline bool IsCompOperator(int operator_id)
-//{
-//   switch(operator_id) {
-//      case EQUAL_MESSAGE_ID:
-//      case NOTEQUAL_MESSAGE_ID:
-//      case LESS_MESSAGE_ID:
-//      case NOTLESS_MESSAGE_ID:
-//      case GREATER_MESSAGE_ID:
-//      case NOTGREATER_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+
+inline bool IsCompOperator(int operator_id)
+{
+   switch(operator_id) {
+      case EQUAL_MESSAGE_ID:
+      case NOTEQUAL_MESSAGE_ID:
+      case LESS_MESSAGE_ID:
+      case NOTLESS_MESSAGE_ID:
+      case GREATER_MESSAGE_ID:
+      case NOTGREATER_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 //inline bool IsReferOperator(int operator_id)
 //{
 //   return operator_id == REFER_MESSAGE_ID || operator_id == SET_REFER_MESSAGE_ID;
@@ -350,7 +350,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
 
-   boolType = module->mapSubject(project->resolveForward(BOOL_FORWARD), false);
+   boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
+   intType = module->mapSubject(project->resolveForward(INTTYPE_FORWARD), false);
 
    defaultNs.add(module->Name());
 
@@ -3304,6 +3305,8 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
 
 ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
+
    ObjectInfo retVal(okObject);
 
    TerminalInfo operator_name = node.Terminal();
@@ -3324,45 +3327,79 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    bool dblOperator = IsDoubleOperator(operator_id);
    bool notOperator = IsInvertedOperator(operator_id);
 
-//   ObjectInfo operand;
-//   ObjectInfo operand2;
-//
-//   // if it is comparing with nil
-//   if (object.kind == okNil) {
-//      // if operation with $nil
-//      operand = compileExpression(node, scope, 0);
-//
-//      _writer.loadObject(*scope.tape, operand);
-//
-//      if (notOperator) {
-//         _writer.selectByAcc(*scope.tape, scope.moduleScope->trueReference, scope.moduleScope->falseReference);
-//      }
-//      else _writer.selectByAcc(*scope.tape, scope.moduleScope->falseReference, scope.moduleScope->trueReference);
-//
-//      return ObjectInfo(okAccumulator, 0, 0, scope.moduleScope->boolType);
-//   }
-//
-//   MessageScope callStack;
-//   callStack.parameters.add(0, MessageScope::ParamInfo(0, node, object)); // !! HOTFIX : dummy node is required for raiseError / raiseWarning
-//   callStack.parameters.add(1, MessageScope::ParamInfo(0, node));
-   compileExpression(node.firstChild(), scope, 0, 0);
+   ObjectInfo operand = compileExpression(node.firstChild(), scope, 0, 0);
+   ObjectInfo operand2;
    if (dblOperator) {
-      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+      operand2 = compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+   }
+
+   // if it is comparing with nil
+   if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
+      // if operation with $nil
+      operand = compileExpression(node, scope, 0, 0);
+
+      scope.writer->insert(lxNilOp, operator_id);
+      if (notOperator) {
+         scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);
+         scope.writer->appendNode(lxElseValue, scope.moduleScope->trueReference);
+      }
+      else {
+         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
+         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
+      }
+   }
+
+   // try to implement the primitive operation directly
+   LexicalType primitiveOp = lxNone;
+   size_t size = 0;
+   if (checkIfCompatible(scope, moduleScope->intType, operand) && checkIfCompatible(scope, moduleScope->intType, object)) {
+      if (IsExprOperator(operator_id) || IsCompOperator(operator_id)) {
+         if (IsExprOperator(operator_id))
+            retVal.type = moduleScope->intType;
+
+         primitiveOp = lxIntOp;
+         size = 4;
+      }
+   }
+
+   if (primitiveOp != lxNone) {
+      scope.writer->insert(primitiveOp, operator_id);
+
+      if (IsCompOperator(operator_id)) {
+         if (notOperator) {
+            scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);
+            scope.writer->appendNode(lxElseValue, scope.moduleScope->trueReference);
+         }
+         else {
+            scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
+            scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
+         }
+      }
+
+      scope.writer->closeNode();
+
+      if (retVal.type != 0) {
+         allocateStructure(scope, 0, retVal);
+         scope.writer->insert(lxAssigning, size);
+         writeTerminal(TerminalInfo(), scope, retVal);
+         scope.writer->closeNode();
+      }
+
+      return retVal;
    }
 
    int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
 
-//   if (notOperator)
-//      mode |= HINT_INVERTED;
-
+   // otherwise operation is replaced with a normal message call
    retVal = compileMessage(node, scope, object, message_id, mode/* | HINT_INLINE*/);
 
    if (notOperator) {
       scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
       scope.writer->closeNode();
 
-      scope.writer->insert(lxBNOT, scope.moduleScope->trueReference);
-      scope.writer->appendNode(lxExtra, scope.moduleScope->falseReference);
+      scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
+      scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
+      scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
       scope.writer->closeNode();
 
       retVal.type = scope.moduleScope->boolType;

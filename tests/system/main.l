@@ -11,7 +11,7 @@
     ControlTest eval.
     ObjectTest eval.
     BooleanTest eval.
-//    IntegerTest eval.
+    IntegerTest eval.
 //    LongTest eval.
 //    RealTest eval.
 //    LiteralTest eval.
