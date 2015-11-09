@@ -2800,7 +2800,7 @@ void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
    pushObject(tape, node.type, node.argument);
 }
 
-void assignOpArguments(SNode node, SNode& larg, SNode rarg)
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {

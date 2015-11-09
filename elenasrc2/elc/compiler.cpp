@@ -3380,8 +3380,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       if (retVal.type != 0) {
          allocateStructure(scope, 0, retVal);
+
+         scope.writer->insertChild(lxLocalAddress, retVal.param);
          scope.writer->insert(lxAssigning, size);
-         writeTerminal(TerminalInfo(), scope, retVal);
          scope.writer->closeNode();
       }
 
