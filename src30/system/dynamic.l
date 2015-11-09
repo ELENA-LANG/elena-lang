@@ -1,30 +1,30 @@
-//// --- Symbol ---
-//
-///// A dynamic symbol
-//#class(sealed,symbol) Symbol
-//{
+// --- Symbol ---
+
+/// A dynamic symbol
+#class(sealed,symbol) Symbol
+{
 //    /// Loads a symbol
 //    #constructor new &literal:aName
 //        => system'internal'symbol_new.
-//        
-//    /// Redirects incoming messages to the symbol
-//    #method => system'internal'symbol_redirect.
-//}
-//
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//#class(sealed,signature) Verb
-//{
+        
+    /// Redirects incoming messages to the symbol
+    #method => system'internal'symbol_redirect.
+}
+
+// --- Verb ---
+
+/// A dynamic verb extender
+#class(sealed,signature) Verb
+{
 //    /// Loads a dynamic verb
 //    #constructor(stacksafe) new &verb:aVerb
 //        => system'internal'int_copy.
 //
 //    #method verb = $self.
-//
-//    /// Dispatches incoming messages and redirects to the target
-//    #method => system'internal'handle_verb.
-//}
+
+    /// Dispatches incoming messages and redirects to the target
+    #method => system'internal'handle_verb.
+}
 
 // --- Message ---
 
@@ -45,11 +45,11 @@
     #method => system'internal'handle_message.
 }
 
-//// --- Signature ---
-//
-///// A dynamic signature extender
-//#class(sealed,signature) Signature
-//{
+// --- Signature ---
+
+/// A dynamic signature extender
+#class(sealed,signature) Signature
+{
 //    /// Creates a dynamic signature
 //    #constructor(stacksafe) new &mssg:aMessage
 //        => system'internal'subj_copymssg.
@@ -71,11 +71,11 @@
 //    /// Compares the values
 //    #method(stacksafe) equal &subject : aSubject
 //        => system'internal'subject_equal.
-//        
-//    /// Qualifies incoming messages and redirects to the target
-//    #method => system'internal'qualify_message.
-//}
-//
+        
+    /// Qualifies incoming messages and redirects to the target
+    #method => system'internal'qualify_message.
+}
+
 //// --- MessageVar ---
 //
 //#class(sealed,struct:embeddable) MessageVar

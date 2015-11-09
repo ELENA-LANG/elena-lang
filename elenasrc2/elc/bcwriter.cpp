@@ -2588,12 +2588,12 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskInt64Ref;
       case lxConstantReal:
          return mskRealRef;
-      //case okMessageConstant:
-      //   return mskMessage;
-      //case okSignatureConstant:
-      //   return mskSignature;
-      //case okVerbConstant:
-      //   return mskVerb;
+      case lxMessageConstant:
+         return mskMessage;
+      case lxSignatureConstant:
+         return mskSignature;
+      case lxVerbConstant:
+         return mskVerb;
       default:
          return mskConstantRef;
    }
@@ -2624,6 +2624,9 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantReal:
+      case lxMessageConstant:
+      case lxSignatureConstant:
+      case lxVerbConstant:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -2684,7 +2687,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantReal:
-         // pushr reference
+      case lxMessageConstant:
+      case lxSignatureConstant:
+      case lxVerbConstant:
+            // pushr reference
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
       case lxLocal:
@@ -2939,7 +2945,7 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
 
    SNode overridden = SyntaxTree::findChild(callNode, lxOverridden);
    if (overridden != lxNone) {
-      loadObject(tape, overridden.firstChild());
+      translateExpression(tape, overridden);
    }
    else tape.write(bcALoadSI, 0);
 

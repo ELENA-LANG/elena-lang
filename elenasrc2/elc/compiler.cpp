@@ -2221,6 +2221,15 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okNil:
          scope.writer->newNode(lxNil, object.param);
          break;
+      case okVerbConstant:
+         scope.writer->newNode(lxVerbConstant, object.param);
+         break;
+      case okMessageConstant:
+         scope.writer->newNode(lxMessageConstant, object.param);
+         break;
+      case okSignatureConstant:
+         scope.writer->newNode(lxSignatureConstant, object.param);
+         break;
       case okExternal:
          //   // external call cannot be used inside symbol
          //   if (test(mode, HINT_ROOT))
@@ -2314,7 +2323,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    DNode member = objectNode.firstChild();
    switch (member)
    {
-      //case nsRetStatement:
+      case nsRetStatement:
       case nsNestedClass:
          if (objectNode.Terminal() != nsNone) {            
             result = compileNestedExpression(objectNode, scope, 0);
@@ -2345,9 +2354,9 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          result = compileExpression(member, scope, 0, 0);
          /*}*/
          break;
-//      case nsMessageReference:
-//         result = compileMessageReference(member, scope);
-//         break;
+      case nsMessageReference:
+         result = compileMessageReference(member, scope);
+         break;
       default:
          result = compileTerminal(objectNode, scope, mode);
    }   
@@ -2355,107 +2364,109 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    return result;
 }
 
-////ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
-////{
-////   DNode arg = node.firstChild();
-////
-////   IdentifierString message;
-////
-////   // reserve place for param counter
-////   message.append('0');
-////   message.append('#');
-////
-////   ObjectInfo retVal;
-////   if (arg == nsNone) {
-////      ref_t verb_id = _verbs.get(node.Terminal().value);
-////      if (verb_id != 0) {
-////         retVal.kind = okVerbConstant;
-////
-////         message.append((char)verb_id + 0x20);
-////      }
-////      else {
-////         retVal.kind = okSignatureConstant;
-////
-////         message.append(0x20);
-////         message.append('&');
-////
-////         scope.moduleScope->mapSubject(node.Terminal(), message);
-////      }
-////   }
-////   else {
-////      int count = 0;
-////      if (!findSymbol(arg, nsSizeValue)) {
-////         retVal.kind = okSignatureConstant;
-////
-////         message.append(0x20);
-////         message.append('&');
-////         scope.moduleScope->mapSubject(arg.Terminal(), message);
-////      }
-////      else {
-////         retVal.kind = okMessageConstant;
-////
-////         ref_t verb_id = _verbs.get(arg.Terminal());
-////         if (verb_id == 0) {
-////            message.append(EVAL_MESSAGE_ID + 0x20);
-////            message.append('&');
-////            scope.moduleScope->mapSubject(arg.Terminal(), message);
-////         }
-////         else message.append((char)verb_id + 0x20);
-////      }
-////
-////      arg = arg.nextNode();
-////
-////      // if method has argument list
-////      while (arg == nsSubjectArg) {
-////         TerminalInfo subject = arg.Terminal();
-////
-////         message.append('&');
-////         ref_t subjRef = scope.moduleScope->mapSubject(subject, message);
-////         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-////            count = OPEN_ARG_COUNT;
-////         }
-////
-////         arg = arg.nextNode();
-////      }
-////
-////      if (arg == nsSizeValue) {
-////         TerminalInfo size = arg.Terminal();
-////         if (size == tsInteger) {
-////            count += StringHelper::strToInt(size.value);
-////            if (count > 0x0F)
-////               scope.raiseError(errNotApplicable, size);
-////         }
-////         else scope.raiseError(errInvalidOperation, size);
-////
-////         // define the number of parameters
-////         message[0] = message[0] + (char)count;
-////      }
-////   }
-////
-////   retVal.param = scope.moduleScope->module->mapReference(message);
-////
-////   return retVal;
-////}
-////
-////ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object, bool& unboxing)
-////{
-////   if (object.kind == okFieldAddress) {
-////      if (object.param == 0) {
-////         object.kind = okParam;
-////         object.param = 1;
-////      }
-////      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), unboxing, 0);
-////   }
-////   else if (object.kind == okIndexAccumulator) {
-////      bool dummy, dummy2;
-////      object = boxObject(scope, object, dummy, dummy2);
-////   }
-////
-////   _writer.loadObject(*scope.tape, object);
-////
-////   return ObjectInfo(okAccumulator, 0, 0, object.type);
-////}
-////
+ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
+{
+   DNode arg = node.firstChild();
+
+   IdentifierString message;
+
+   // reserve place for param counter
+   message.append('0');
+   message.append('#');
+
+   ObjectInfo retVal;
+   if (arg == nsNone) {
+      ref_t verb_id = _verbs.get(node.Terminal().value);
+      if (verb_id != 0) {
+         retVal.kind = okVerbConstant;
+
+         message.append((char)verb_id + 0x20);
+      }
+      else {
+         retVal.kind = okSignatureConstant;
+
+         message.append(0x20);
+         message.append('&');
+
+         scope.moduleScope->mapSubject(node.Terminal(), message);
+      }
+   }
+   else {
+      int count = 0;
+      if (!findSymbol(arg, nsSizeValue)) {
+         retVal.kind = okSignatureConstant;
+
+         message.append(0x20);
+         message.append('&');
+         scope.moduleScope->mapSubject(arg.Terminal(), message);
+      }
+      else {
+         retVal.kind = okMessageConstant;
+
+         ref_t verb_id = _verbs.get(arg.Terminal());
+         if (verb_id == 0) {
+            message.append(EVAL_MESSAGE_ID + 0x20);
+            message.append('&');
+            scope.moduleScope->mapSubject(arg.Terminal(), message);
+         }
+         else message.append((char)verb_id + 0x20);
+      }
+
+      arg = arg.nextNode();
+
+      // if method has argument list
+      while (arg == nsSubjectArg) {
+         TerminalInfo subject = arg.Terminal();
+
+         message.append('&');
+         ref_t subjRef = scope.moduleScope->mapSubject(subject, message);
+         //if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+         //   count = OPEN_ARG_COUNT;
+         //}
+
+         arg = arg.nextNode();
+      }
+
+      if (arg == nsSizeValue) {
+         TerminalInfo size = arg.Terminal();
+         if (size == tsInteger) {
+            count += StringHelper::strToInt(size.value);
+            if (count > 0x0F)
+               scope.raiseError(errNotApplicable, size);
+         }
+         else scope.raiseError(errInvalidOperation, size);
+
+         // define the number of parameters
+         message[0] = message[0] + (char)count;
+      }
+   }
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   writeTerminal(TerminalInfo(), scope, retVal);
+
+   return retVal;
+}
+
+//ObjectInfo Compiler :: loadObject(CodeScope& scope, ObjectInfo& object, bool& unboxing)
+//{
+//   if (object.kind == okFieldAddress) {
+//      if (object.param == 0) {
+//         object.kind = okParam;
+//         object.param = 1;
+//      }
+//      else object = boxStructureField(scope, object, ObjectInfo(okThisParam, 1), unboxing, 0);
+//   }
+//   else if (object.kind == okIndexAccumulator) {
+//      bool dummy, dummy2;
+//      object = boxObject(scope, object, dummy, dummy2);
+//   }
+//
+//   _writer.loadObject(*scope.tape, object);
+//
+//   return ObjectInfo(okAccumulator, 0, 0, object.type);
+//}
+//
 ////ObjectInfo Compiler :: saveObject(CodeScope& scope, ObjectInfo& object, int offset)
 ////{
 ////   if (object.kind == okFieldAddress) {
@@ -3688,13 +3699,13 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 //   else _writer.releaseObject(*scope.tape, spaceToRelease);
 //}
 
-ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
+ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool stacksafe*/)
 {
    bool   first = true;
    ref_t  verb_id = 0;
    int    paramCount = 0;
    DNode  arg;
-   
+
    IdentifierString signature;
    TerminalInfo     verb = node.Terminal();
    // check if it is a short-cut eval message
@@ -3705,37 +3716,35 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    }
    else {
       arg = node.firstChild();
-   
+
       verb_id = _verbs.get(verb.value);
       if (verb_id == 0) {
          size_t id = scope.moduleScope->mapSubject(verb, signature);
-   
+
          // if followed by argument list - it is EVAL verb
          if (arg != nsNone) {
             // HOT FIX : strong types cannot be used as a custom verb with a parameter
             if (scope.moduleScope->typeHints.exist(id))
                scope.raiseError(errStrongTypeNotAllowed, verb);
-   
+
             verb_id = EVAL_MESSAGE_ID;
-   
+
             first = false;
          }
          // otherwise it is GET message
          else verb_id = GET_MESSAGE_ID;
       }
    }
-   
-   ObjectInfo dummy;
 
    // if message has generic argument list
    while (arg == nsMessageParameter) {
       compileExpression(arg.firstChild(), scope, 0, 0);
 
       paramCount++;
-   
+
       arg = arg.nextNode();
    }
-   
+
    // if message has named argument list
    while (arg == nsSubjectArg) {
       TerminalInfo subject = arg.Terminal();
@@ -3751,54 +3760,59 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
 
       // skip an argument
       if (arg == nsMessageParameter) {
-   //         // if it is an open argument list
-   //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-   //            // if a generic argument is used with an open argument list
-   //            callStack.directOrder = false;
-   
-               // check if argument list should be unboxed
-   //            DNode param = arg.firstChild();
-   
-   //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-   //               // add argument list to be unboxed
-   //               callStack.oargUnboxing = true;
-   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-   //            }
-   //            else {
-   //               while (arg != nsNone) {
-   //                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-   //
-   //                  arg = arg.nextNode();
-   //               }
-   //
-   //               // terminator
-   //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-   //            }
-   //            paramCount += OPEN_ARG_COUNT;
-   //            if (paramCount > 0x0F)
-   //               scope.raiseError(errNotApplicable, subject);
-   //         }
-   //         else {
+         //         // if it is an open argument list
+         //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+         //            // if a generic argument is used with an open argument list
+         //            callStack.directOrder = false;
+
+         // check if argument list should be unboxed
+         //            DNode param = arg.firstChild();
+
+         //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+         //               // add argument list to be unboxed
+         //               callStack.oargUnboxing = true;
+         //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+         //            }
+         //            else {
+         //               while (arg != nsNone) {
+         //                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
+         //
+         //                  arg = arg.nextNode();
+         //               }
+         //
+         //               // terminator
+         //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+         //            }
+         //            paramCount += OPEN_ARG_COUNT;
+         //            if (paramCount > 0x0F)
+         //               scope.raiseError(errNotApplicable, subject);
+         //         }
+         //         else {
          compileExpression(arg.firstChild(), scope, subjRef, 0);
 
          paramCount++;
 
          if (paramCount >= OPEN_ARG_COUNT)
             scope.raiseError(errTooManyParameters, verb);
-   
+
          arg = arg.nextNode();
-   //         }
+         //         }
       }
    }
-   
+
    // if signature is presented
    ref_t sign_id = 0;
    if (!emptystr(signature)) {
       sign_id = scope.moduleScope->module->mapSubject(signature, false);
    }
-   
+
    // create a message id
-   ref_t messageRef = encodeMessage(sign_id, verb_id, paramCount);
+   return encodeMessage(sign_id, verb_id, paramCount);
+}
+
+ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
+{
+   ref_t messageRef = compileMessageParameters(node, scope);
    ref_t extensionRef = mapExtension(scope, messageRef, object);
 
    if (extensionRef != 0) {
@@ -3872,6 +3886,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          while (member.nextNode() == nsMessageParameter)
             member = member.nextNode();
       }
+      else if (member == nsExtension) {
+         currentObject = compileExtension(member, scope, currentObject, mode);
+      }
       else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
          || member == nsL7Operation || member == nsL0Operation)
       {
@@ -3904,9 +3921,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //         else nextOperation = true;
 //      }
 //
-////      if (member == nsExtension) {
-////         currentObject = compileExtension(member, scope, currentObject, mode);
-////      }
 ////      else if (member == nsSwitching) {
 ////         compileSwitch(member, scope, currentObject);
 ////
@@ -3919,124 +3933,89 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    return currentObject;
 }
 
-////ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-////{
-////   ModuleScope* moduleScope = scope.moduleScope;
-////   ObjectInfo   role;
-////
-////   DNode roleNode = node.firstChild();
-////   // check if the extension can be used as a static role (it is constant)
-////   if (roleNode.firstChild() == nsNone) {
-////      int flags = 0;
-////
-////      role = scope.mapObject(roleNode.Terminal());
-////      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-////         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
-////
-////         // if the symbol is used inside itself
-////         if (classRef == scope.getClassRefId()) {
-////            flags = scope.getClassFlags();
-////
-////            mode |= HINT_SELFEXTENDING;
-////         }
-////         // otherwise
-////         else {
-////            ClassInfo roleClass;
-////            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
-////
-////            flags = roleClass.header.flags;
-////         }
-////      }
-////      if (role.kind == okSubject) {
-////         // if subject variable is used
-////         role = ObjectInfo(okSubjectDispatcher, role.param);
-////      }
-////      // if the symbol VMT can be used as an external role
-////      else if (test(flags, elStateless)) {
-////         role = ObjectInfo(okConstantRole, role.param);
-////      }
-////   }
-////
-////   // if it is a generic role
-////   if (role.kind != okSubjectDispatcher && role.kind != okConstantRole) {
-////      // if the target object should be presaved
-////      if (object.kind == okAccumulator) {
-////         _writer.pushObject(*scope.tape, object);
-////         role = compileObject(roleNode, scope, 0);         
-////         _writer.loadObject(*scope.tape, role);
-////         _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
-////         _writer.popObject(*scope.tape, object);
-////
-////         role = ObjectInfo(okBase);
-////      }
-////      else role = compileObject(roleNode, scope, 0);
-////   }
-////
-////   // override standard message compiling routine
-////   node = node.nextNode();
-////
-////   object = compileExtensionMessage(node, scope, object, role, HINT_EXTENSION_MODE);
-////
-////   return object;
-////}
-////
-////ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode)
-////{
-////   MessageScope callStack;
-////
-////   // put the target
-////   bool genericRole = false;
-////   if (role.kind == okAccumulator || role.kind == okSymbol || role.kind == okBase) {
-////      // if generic role is used, put into the call stack before the target object
-////      callStack.parameters.add(0, MessageScope::ParamInfo(0, role));
-////      callStack.parameters.add(1, MessageScope::ParamInfo(0, object));
-////
-////      genericRole = true;
-////   }
-////   else callStack.parameters.add(0, MessageScope::ParamInfo(0, object));
-////
-////   ref_t messageRef = mapMessage(node, scope, callStack);
-////
-////   // if it is embeddable constructor call
-////   if (test(mode, HINT_INITIALIZING)) {
-////      // check if it is allowed
-////      ref_t classReference = resolveObjectReference(scope, role);
-////      bool embeddable = test(scope.moduleScope->checkMethod(classReference, messageRef), tpEmbeddable);
-////
-////      if (!embeddable) {
-////         // if not, make standart constructor call
-////         (*callStack.parameters.getIt(0)).info = role;
-////            
-////         mode &= ~HINT_INITIALIZING;
-////      }         
-////   }
-////
-////   // if the target is in register(i.e. it is the result of the previous operation), direct message compilation is not possible
-////   if (object.kind == okAccumulator) {
-////      callStack.directOrder = false;
-////   }
-////   else if (role.kind == okAccumulator || role.kind == okBase) {
-////      callStack.directOrder = false;
-////   }
-////
-////   // tell compileMessage that generic role is in the call stack
-////   if (genericRole)
-////      role = ObjectInfo(okRole);
-////
-////   ObjectInfo retVal = compileMessage(node, scope, callStack, role, messageRef, mode);
-////
-////   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
-////   // if generic role is used, take into account that role was in the call stack as well
-////   if (genericRole)
-////      spaceToRelease--;
-////
-////   if (spaceToRelease != 0) {
-////      // if open argument list is used
-////      releaseOpenArguments(scope, spaceToRelease);
-////   }
-////
-////   return retVal;
-////}
+ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+   ObjectInfo   role;
+
+   DNode roleNode = node.firstChild();
+   // check if the extension can be used as a static role (it is constant)
+   if (roleNode.firstChild() == nsNone) {
+      int flags = 0;
+
+      role = scope.mapObject(roleNode.Terminal());
+      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
+         // if the symbol is used inside itself
+         if (classRef == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+
+            //mode |= HINT_SELFEXTENDING;
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
+
+            flags = roleClass.header.flags;
+         }
+      }
+      //if (role.kind == okSubject) {
+      //   // if subject variable is used
+      //   role = ObjectInfo(okSubjectDispatcher, role.param);
+      //}
+      // if the symbol VMT can be used as an external role
+      /*else */if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
+   }
+
+   // if it is a generic role
+   if (/*role.kind != okSubjectDispatcher && */role.kind != okConstantRole) {
+      scope.writer->newNode(lxOverridden);
+      role = compileObject(roleNode, scope, 0);
+      scope.writer->closeNode();
+   }
+
+   // override standard message compiling routine
+   node = node.nextNode();
+
+   return compileExtensionMessage(node, scope, object, role/*, HINT_EXTENSION_MODE*/);
+}
+
+ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/)
+{
+   ref_t messageRef = compileMessageParameters(node, scope);
+
+//   // if it is embeddable constructor call
+//   if (test(mode, HINT_INITIALIZING)) {
+//      // check if it is allowed
+//      ref_t classReference = resolveObjectReference(scope, role);
+//      bool embeddable = test(scope.moduleScope->checkMethod(classReference, messageRef), tpEmbeddable);
+//
+//      if (!embeddable) {
+//         // if not, make standart constructor call
+//         (*callStack.parameters.getIt(0)).info = role;
+//            
+//         mode &= ~HINT_INITIALIZING;
+//      }         
+//   }
+
+   ObjectInfo retVal = compileMessage(node, scope, role, messageRef, 0);
+
+//   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
+//   // if generic role is used, take into account that role was in the call stack as well
+//   if (genericRole)
+//      spaceToRelease--;
+//
+//   if (spaceToRelease != 0) {
+//      // if open argument list is used
+//      releaseOpenArguments(scope, spaceToRelease);
+//   }
+
+   return retVal;
+}
 
 bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared)
 {

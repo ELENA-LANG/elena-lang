@@ -1001,13 +1001,13 @@
 //    
 //    /// Returns the string iterator
 //    #method iterator = LiteralIterator new &literal:$self.
-//    
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:$self.
-//    
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:$self.
-//    
+    
+    /// Dispatches the verb to the target object with literal subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:$self.
+    
+    /// Dispatches the verb to the target object with literal subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:$self.
+    
 //    /// Clones the value
 //    #method clone = LiteralValue new &literal:$self.
 //
@@ -1391,13 +1391,13 @@
 //    
 //    /// Returns the object iterator
 //    #method iterator = WideLiteralIterator new &wide:$self.
-//    
-//    /// Dispatches the verb to the target object with wide subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &wide:$self.
-//    
-//    /// Dispatches the verb to the target object with wide subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &wide:$self.
-//    
+    
+    /// Dispatches the verb to the target object with wide subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &wide:$self.
+    
+    /// Dispatches the verb to the target object with wide subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &wide:$self.
+    
 //    /// Clones the value
 //    #method clone = WideLiteralValue new &wide:$self.
 //

@@ -117,9 +117,9 @@ public:
       okIntConstant,                  // param - reference 
       okLongConstant,                 // param - reference 
       okRealConstant,                 // param - reference 
-   //   okMessageConstant,              // param - reference 
-   //   okSignatureConstant,            // param - reference 
-   //   okVerbConstant,                 // param - reference 
+      okMessageConstant,              // param - reference 
+      okSignatureConstant,            // param - reference 
+      okVerbConstant,                 // param - reference 
    //
    //   okIndexAccumulator,
    //   okExtraRegister,
@@ -763,7 +763,7 @@ private:
 
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 
-//   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
+   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
@@ -782,13 +782,14 @@ private:
 
 //   ObjectInfo compileInlineOperation(CodeScope& scope, MessageScope& callStack, int messageRef, int mode);
 
+   ref_t compileMessageParameters(DNode node, CodeScope& scope/*, bool stacksafe*/);
+
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, int mode);
-//   void compileMessageParameters(DNode node, MessageScope& callStack, CodeScope& scope, bool stacksafe);
+   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
-//   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
