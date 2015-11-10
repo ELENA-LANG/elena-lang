@@ -70,29 +70,29 @@
         anOperand cast:%write &to:$self.
     ]
     
-//    /// Appends the numeric value
-//    #method append : anOperand
-//    [
-//        anOperand cast:%append &to:$self.
-//    ]
-//    
-//    /// Subtracts the numeric value and reassigns the value
-//    #method reduce : anOperand
-//    [
-//        anOperand cast:%reduce &to:$self.
-//    ]
-//    
-//    /// Multiplies by the numeric value and reassigns the value
-//    #method multiplyBy : anOperand
-//    [
-//        anOperand cast:%multiplyBy &to:$self.
-//    ]
-//    
-//    /// Divides into the numeric value and reassigns the value
-//    #method divideInto : anOperand
-//    [
-//        anOperand cast:%divideInto &to:$self.
-//    ]
+    /// Appends the numeric value
+    #method append : anOperand
+    [
+        anOperand cast:%append &to:$self.
+    ]
+    
+    /// Subtracts the numeric value and reassigns the value
+    #method reduce : anOperand
+    [
+        anOperand cast:%reduce &to:$self.
+    ]
+    
+    /// Multiplies by the numeric value and reassigns the value
+    #method multiplyBy : anOperand
+    [
+        anOperand cast:%multiplyBy &to:$self.
+    ]
+    
+    /// Divides into the numeric value and reassigns the value
+    #method divideInto : anOperand
+    [
+        anOperand cast:%divideInto &to:$self.
+    ]
 }
 
 // --- BaseNumber ---
@@ -1741,13 +1741,13 @@
 //    [
 //        theValue := anOperand int.
 //    ]
-//
-//    /// Appends the integer value
-//    #method(stacksafe) append &int:anOperand
-//    [
-//        theValue := theValue + anOperand.
-//    ]
-//
+
+    /// Appends the integer value
+    #method(stacksafe) append &int:anOperand
+    [
+        theValue := theValue + anOperand.
+    ]
+
 //    /// Appends the integer value
 //    #method append &short:anOperand
 //    [
@@ -1759,13 +1759,13 @@
 //    [
 //        theValue := theValue + anOperand int.
 //    ]
-//
-//    /// Reduces the integer value        
-//    #method(stacksafe) reduce &int:anOperand
-//    [
-//        theValue := theValue - anOperand.
-//    ]
-//        
+
+    /// Reduces the integer value        
+    #method(stacksafe) reduce &int:anOperand
+    [
+        theValue := theValue - anOperand.
+    ]
+        
 //    /// Reduces the integer value        
 //    #method reduce &short:anOperand
 //    [
@@ -1777,13 +1777,13 @@
 //    [
 //        theValue := theValue - anOperand int.
 //    ]
-//
-//    /// Multiplies by the integer value        
-//    #method(stacksafe) multiplyBy &int:anOperand
-//    [
-//        theValue := theValue * anOperand.
-//    ]        
-//        
+
+    /// Multiplies by the integer value        
+    #method(stacksafe) multiplyBy &int:anOperand
+    [
+        theValue := theValue * anOperand.
+    ]        
+
 //    /// Multiplies by the integer value        
 //    #method multiplyBy &short:anOperand
 //    [
@@ -1795,13 +1795,13 @@
 //    [
 //        theValue := theValue * anOperand int.
 //    ]        
-//
-//    /// Divides into the integer value        
-//    #method(stacksafe) divideInto &int:anOperand
-//    [
-//        theValue := theValue / anOperand.
-//    ]
-//        
+
+    /// Divides into the integer value        
+    #method(stacksafe) divideInto &int:anOperand
+    [
+        theValue := theValue / anOperand.
+    ]
+
 //    /// Divides into the integer value        
 //    #method divideInto &short:anOperand
 //    [
@@ -1813,15 +1813,15 @@
 //    [
 //        theValue := theValue / anOperand int.
 //    ]
-//
-//    /// Compares the integer value    
-//    #method(type:bool,stacksafe) equal &int:anOperand 
-//        = theValue == anOperand.
-//
-//    /// Compares the integer value    
-//    #method(type:bool,stacksafe) less &int:anOperand
-//        = theValue < anOperand.
-//
+
+    /// Compares the integer value    
+    #method(type:bool,stacksafe) equal &int:anOperand 
+        = theValue == anOperand.
+
+    /// Compares the integer value    
+    #method(type:bool,stacksafe) less &int:anOperand
+        = theValue < anOperand.
+
 //    /// Returns the sum of integers                
 //    #method(type:int,stacksafe) add &int:anOperand
 //        = IntNumber new &int:(theValue + anOperand).
@@ -1849,16 +1849,16 @@
 //    /// Returns the result of bitwise XOR operation
 //    #method(type:int,stacksafe) xor &int:anOperand
 //        = IntNumber new &int:(theValue ^^ anOperand).
-//
+
 //    /// Returns the integer value
 //    #method value = IntNumber new &int:theValue.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &int:theValue.
-//
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &int:theValue.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &int:theValue.
+
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &int:theValue.
+
 //    /// Clones the variable
 //    #method clone = Integer new &int:theValue.
 //    

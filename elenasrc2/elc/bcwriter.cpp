@@ -3263,7 +3263,7 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxBoxing) {
+      if (current == lxBoxing || current == lxCondBoxing) {
          SNode object;
          SNode temp;
 

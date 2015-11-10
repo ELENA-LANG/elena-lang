@@ -2544,15 +2544,15 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    if (object.kind == okLocalAddress) {
       boxing = lxBoxing;
    }
+   else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam == -1 && size != 0) {
+      boxing = lxCondBoxing;
+   }
    else if (object.kind == okFieldAddress && object.param > 0) {
       allocateStructure(scope, 0, object);
       scope.writer->insertChild(lxLocalAddress, object.param);
       scope.writer->insert(lxAssigning, 4);
       scope.writer->closeNode();
    }
-   //else if (object.kind == okParam) {
-   //   scope.writer->newNode(lxCondBoxing, size);
-   //}
 
    if (boxing != lxNone && size != 0) {
       scope.writer->insert(boxing, size);
@@ -6439,7 +6439,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
          while (member != lxNone) {
             // if boxing used for external call
             // remove it
-            if (member == lxBoxing) {
+            if (member == lxBoxing || member == lxCondBoxing) {
                member = lxExpression;
             }
 
@@ -6458,7 +6458,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
       while (member != lxNone) {
          // if boxing used for direct stack safe call
          // remove it
-         if (member == lxBoxing) {
+         if (member == lxBoxing || member == lxCondBoxing) {
             member = lxExpression;
          }
 
@@ -6471,9 +6471,9 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
 {
    SyntaxTree::Node member = node.firstChild();
    while (member != lxNone) {
-      // if boxing used for direct stack safe call
+      // if boxing used for primitive operation
       // remove it
-      if (member == lxBoxing) {
+      if (member == lxBoxing || member == lxCondBoxing) {
          member = lxExpression;
       }
 
@@ -6485,7 +6485,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
 {
    // assigning (local address boxing) => assigning (local address expression)
    if (node.argument != 0) {
-      SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing);
+      SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing, lxCondBoxing);
       if (boxing != lxNone && boxing.argument == node.argument) {
          boxing = lxExpression;
       }
@@ -6682,7 +6682,7 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
             optimizeSyntaxExpression(scope, current);
             break;
          case lxBoxing:
-         //case lxCondBoxing:
+         case lxCondBoxing:
             optimizeBoxing(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
