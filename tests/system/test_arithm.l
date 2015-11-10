@@ -15,7 +15,6 @@
 {
     test            
     [
-        console writeLine:(2 + 3 * 4).
     ]        
 }.
         

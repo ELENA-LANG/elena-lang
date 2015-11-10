@@ -2567,6 +2567,9 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
 
       scope.writer->closeNode();
 
+      object.kind = okObject;
+      object.param = classRef;
+
       return true;
    }
    else return false;
