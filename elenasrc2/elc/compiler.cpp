@@ -2499,6 +2499,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
+   int size = 0;
    ref_t classRef = 0;
    if (object.type != 0) {
       classRef = moduleScope->typeHints.get(object.type);
@@ -2509,7 +2510,8 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    if (classRef != 0)
       moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(classRef), false);
 
-   int size = sourceInfo.size;
+   if (test(sourceInfo.header.flags, elStructureRole) && test(sourceInfo.header.flags, elEmbeddable))
+      size = sourceInfo.size;
 
    LexicalType boxing = lxNone;
    if (targetTypeRef != 0) {
@@ -3366,6 +3368,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          scope.writer->insert(lxAssigning, size);
          scope.writer->closeNode();
       }
+
+      if (IsCompOperator(operator_id))
+         retVal.type = moduleScope->boolType;
 
       return retVal;
    }

@@ -13,6 +13,9 @@
 
 #symbol XTester =
 {
+    #method(type:literal,stacksafe) convert &literal:aLiteral
+        = aLiteral.    
+        
     test            
     [
     ]        

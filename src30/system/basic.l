@@ -100,35 +100,35 @@
 /// A base numeric variable
 #class BaseVariable :: BaseNumber
 {
-//    /// Assigns the value
-//    #method write : anOperand
-//    [
-//        anOperand cast:%write &to:$self.
-//    ]
-//    
-//    /// Appends the value
-//    #method append : anOperand
-//    [
-//        anOperand cast:%append &to:$self.
-//    ]
-//    
-//    /// Subtracts the value and reassigns the value
-//    #method reduce : anOperand
-//    [
-//        anOperand cast:%reduce &to:$self.
-//    ]
-//    
-//    /// Multiplies by the value and reassigns the value
-//    #method multiplyBy : anOperand
-//    [
-//        anOperand cast:%multiplyBy &to:$self.
-//    ]
-//    
-//    /// Divides into the value and reassigns the value
-//    #method divideInto : anOperand
-//    [
-//        anOperand cast:%divideInto &to:$self.
-//    ]
+    /// Assigns the value
+    #method write : anOperand
+    [
+        anOperand cast:%write &to:$self.
+    ]
+    
+    /// Appends the value
+    #method append : anOperand
+    [
+        anOperand cast:%append &to:$self.
+    ]
+    
+    /// Subtracts the value and reassigns the value
+    #method reduce : anOperand
+    [
+        anOperand cast:%reduce &to:$self.
+    ]
+    
+    /// Multiplies by the value and reassigns the value
+    #method multiplyBy : anOperand
+    [
+        anOperand cast:%multiplyBy &to:$self.
+    ]
+    
+    /// Divides into the value and reassigns the value
+    #method divideInto : anOperand
+    [
+        anOperand cast:%divideInto &to:$self.
+    ]
 }
 
 // --- ByteNumber ---
@@ -644,11 +644,11 @@
 //    /// Creates the object with the maximal value
 //    #constructor max
 //        => system'internal'int_max.
-//    
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &int:anOperand
-//        => system'internal'int_copy.
-//
+    
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &int:anOperand
+        => system'internal'int_copy.
+
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &short:anOperand
 //        => system'internal'int_copyshort.
