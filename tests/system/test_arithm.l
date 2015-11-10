@@ -15,7 +15,7 @@
 {
     test            
     [
-        #var n := 2 + 3 * 4.
+        console writeLine:(2 + 3 * 4).
     ]        
 }.
         

@@ -241,35 +241,19 @@ inline bool isImportRedirect(DNode node)
 //   }
 //}
 
-inline bool IsExprOperator(int operator_id)
+inline bool IsVarOperator(int operator_id)
 {
-   switch(operator_id) {
-      case ADD_MESSAGE_ID:
-      case SUB_MESSAGE_ID:
-      case MUL_MESSAGE_ID:
-      case DIV_MESSAGE_ID:
-      case AND_MESSAGE_ID:
-      case OR_MESSAGE_ID:
-      case XOR_MESSAGE_ID:
-         return true;
-      default:
-         return false;
+   switch (operator_id) {
+   case WRITE_MESSAGE_ID:
+   case APPEND_MESSAGE_ID:
+   case REDUCE_MESSAGE_ID:
+   case INCREASE_MESSAGE_ID:
+   case SEPARATE_MESSAGE_ID:
+      return true;
+   default:
+      return false;
    }
 }
-
-//inline bool IsVarOperator(int operator_id)
-//{
-//   switch (operator_id) {
-//   case WRITE_MESSAGE_ID:
-//   case APPEND_MESSAGE_ID:
-//   case REDUCE_MESSAGE_ID:
-//   case INCREASE_MESSAGE_ID:
-//   case SEPARATE_MESSAGE_ID:
-//      return true;
-//   default:
-//      return false;
-//   }
-//}
 
 inline bool IsCompOperator(int operator_id)
 {
@@ -351,7 +335,6 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
 
    boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
-   intType = module->mapSubject(project->resolveForward(INTTYPE_FORWARD), false);
 
    defaultNs.add(module->Name());
 
@@ -3006,11 +2989,11 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
    return ObjectInfo(okObject);
 }
 
-//int Compiler :: mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand)
-//{
-//   if (operand.kind == okIntConstant) {
-//      return elDebugDWORD;
-//   }
+int Compiler ::mapOperandType(CodeScope& scope, ObjectInfo operand)
+{
+   if (operand.kind == okIntConstant) {
+      return elDebugDWORD;
+   }
 //   else if (operand.kind == okLongConstant) {
 //      return elDebugQWORD;
 //   }
@@ -3020,34 +3003,20 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
 //   else if (operand.kind == okSubject) {
 //      return elDebugSubject;
 //   }
-//   else if (operand.kind == okAccumulator && operand.param != 0) {
-//      return moduleScope.getClassFlags(operand.param) & elDebugMask;
-//   }
-//   else if (operand.kind == okUnknown) {
-//      return 0;
-//   }
-//   else if (operand.kind == okConstantSymbol || operand.kind == okLocalAddress) {
-//      return moduleScope.getClassFlags(operand.extraparam) & elDebugMask;
-//   }
-//   else return moduleScope.getClassFlags(moduleScope.typeHints.get(operand.type)) & elDebugMask;
-//}
-//
-//int Compiler :: mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand)
-//{
-//   int flags = 0;
-//
-//   if (operand.kind == okAccumulator && operand.param != 0) {
-//      flags = moduleScope.getClassFlags(operand.param);
-//   }
-//   else flags = moduleScope.getClassFlags(moduleScope.typeHints.get(operand.type));
-//
-//   // read only classes cannot be used for variable operations
-//   if (test(flags, elReadOnlyRole))
-//      flags = 0;
-//
-//   return flags & elDebugMask;
-//}
-//
+   else return scope.moduleScope->getClassFlags(resolveObjectReference(scope, operand)) & elDebugMask;
+}
+
+int Compiler :: mapVarOperandType(CodeScope& scope, ObjectInfo operand)
+{
+   int flags = scope.moduleScope->getClassFlags(resolveObjectReference(scope, operand));
+
+   // read only classes cannot be used for variable operations
+   if (test(flags, elReadOnlyRole))
+      flags = 0;
+
+   return flags & elDebugMask;
+}
+
 //bool Compiler :: compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -3352,10 +3321,19 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    // try to implement the primitive operation directly
    LexicalType primitiveOp = lxNone;
    size_t size = 0;
-   if (checkIfCompatible(scope, moduleScope->intType, operand) && checkIfCompatible(scope, moduleScope->intType, object)) {
-      if (IsExprOperator(operator_id) || IsCompOperator(operator_id)) {
+   int lflag, rflag;
+
+   if (IsVarOperator(operator_id)) {
+      lflag = mapVarOperandType(scope, object);
+   }
+   else lflag = mapOperandType(scope, operand);
+
+   rflag = mapOperandType(scope, operand);
+
+   if (lflag == rflag) {
+      if (lflag == elDebugDWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
          if (IsExprOperator(operator_id))
-            retVal.type = moduleScope->intType;
+            retVal.param = moduleScope->intReference;
 
          primitiveOp = lxIntOp;
          size = 4;
@@ -3378,7 +3356,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       scope.writer->closeNode();
 
-      if (retVal.type != 0) {
+      if (retVal.param != 0) {
          allocateStructure(scope, 0, retVal);
 
          scope.writer->insertChild(lxLocalAddress, retVal.param);
@@ -5025,11 +5003,11 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
    bool bytearray = false;
    int size = 0;
    ref_t classReference = 0;
-   //if (exprOperand.kind == okAccumulator && exprOperand.param != 0) {
-   //   classReference = exprOperand.param;
-   //   size = scope.moduleScope->defineStructSize(classReference);
-   //}
-   /*else */if (exprOperand.kind == okExternal && exprOperand.type == 0) {
+   if (exprOperand.kind == okObject && exprOperand.param != 0) {
+      classReference = exprOperand.param;
+      size = scope.moduleScope->defineStructSize(classReference);
+   }
+   else if (exprOperand.kind == okExternal && exprOperand.type == 0) {
       // typecast index to int if no type provided
       classReference = scope.moduleScope->intReference;
    }
@@ -6486,6 +6464,20 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
+void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
+{
+   SyntaxTree::Node member = node.firstChild();
+   while (member != lxNone) {
+      // if boxing used for direct stack safe call
+      // remove it
+      if (member == lxBoxing) {
+         member = lxExpression;
+      }
+
+      member = member.nextNode();
+   }
+}
+
 void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
 {
    // assigning (local address boxing) => assigning (local address expression)
@@ -6694,6 +6686,10 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
          case lxDirectCalling:
          case lxSDirctCalling:
             optimizeDirectCall(scope, current);
+            optimizeSyntaxExpression(scope, current);
+            break;
+         case lxIntOp:
+            optimizeOp(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
          case lxStdExternalCall:

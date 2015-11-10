@@ -509,8 +509,7 @@ namespace _ELENA_
    #define PARAMS_FORWARD           "'$params"
    #define SUBJ_FORWARD             "'$sign"
 
-   #define BOOLTYPE_FORWARD         "'$bool_type"
-   #define INTTYPE_FORWARD          "'$int_type"
+   #define BOOLTYPE_FORWARD         "'$bool"
 
    #define STARTUP_CLASS            "'startUp"
 

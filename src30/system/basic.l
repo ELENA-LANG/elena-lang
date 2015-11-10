@@ -64,12 +64,12 @@
 /// A base integer variable
 #class IntBaseVariable :: IntBaseNumber
 {
-//    /// Assigns the numeric value
-//    #method write : anOperand
-//    [
-//        anOperand cast:%write &to:$self.
-//    ]
-//    
+    /// Assigns the numeric value
+    #method write : anOperand
+    [
+        anOperand cast:%write &to:$self.
+    ]
+    
 //    /// Appends the numeric value
 //    #method append : anOperand
 //    [
@@ -866,13 +866,13 @@
 //    /// Bitwise shift operation
 //    #method(stacksafe) shift &int:anOrder &vint:aResult
 //        => system'internal'int_shift2.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &int:$self.
-//
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &int:$self.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &int:$self.
+
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &int:$self.
+
 //    /// Bitwise inversion
 //    #method(type:int,stacksafe) not
 //        => system'internal'int_not.
@@ -883,13 +883,13 @@
 //
 //    /// Clones the value
 //    #method clone = IntNumber new &int:$self.
-//    
-//    /// Dispatches the verb to the target object with int subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &int:$self.
-//    
-//    /// Dispatches the verb to the target object with int subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:$self.
-//
+    
+    /// Dispatches the verb to the target object with int subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &int:$self.
+    
+    /// Dispatches the verb to the target object with int subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:$self.
+
 //    // Reads the object hash code into the output parameter
 //    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
 //    
@@ -1678,12 +1678,12 @@
 {
     #field(type:int)theValue.
     
-//    /// Creates an integer variable with a default value (0)
-//    #constructor new
-//    [
-//        theValue := 0.
-//    ]
-//    
+    /// Creates an integer variable with a default value (0)
+    #constructor new
+    [
+        theValue := 0.
+    ]
+    
 //    /// Creates an integer variable
 //    #constructor new : aValue
 //    [
@@ -1719,13 +1719,13 @@
 //    
 //    /// Returns the long integer value
 //    #method long = LongNumber new &int:theValue.
-//    
-//    /// Copies the integer value
-//    #method(stacksafe) write &int:anOperand
-//    [
-//        theValue := anOperand.
-//    ]
-//
+    
+    /// Copies the integer value
+    #method(stacksafe) write &int:anOperand
+    [
+        theValue := anOperand.
+    ]
+
 //    /// Reads the integer value
 //    #method(stacksafe) read &vint:aRetVal
 //    [
@@ -3295,11 +3295,11 @@
 //    /// Converts the parameter to the literal value
 //    #method(type:literal,stacksafe) convert &char:aValue
 //        => system'internal's_copychar.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(type:literal,stacksafe) convert &int:aNumber
-//        => system'internal's_copyint.
-//
+    
+    /// Converts the parameter to the literal value
+    #method(type:literal,stacksafe) convert &int:aNumber
+        => system'internal's_copyint.
+
 //    /// Converts the parameter to the literal value
 //    #method(type:literal,stacksafe) convert &short:aNumber
 //        => system'internal's_copyint.
@@ -3353,11 +3353,11 @@
 //    /// Converts the parameter to the literal value
 //    #method(type:wide,stacksafe) convert &char:aValue
 //        => system'internal'ws_copychar.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(type:wide,stacksafe) convert &int:aNumber
-//        => system'internal'ws_copyint.
-//
+    
+    /// Converts the parameter to the literal value
+    #method(type:wide,stacksafe) convert &int:aNumber
+        => system'internal'ws_copyint.
+
 //    /// Converts the parameter to the literal value
 //    #method(type:wide,stacksafe) convert &short:aNumber
 //        => system'internal'ws_copyint.

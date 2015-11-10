@@ -2816,11 +2816,12 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 
 }
 
-void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node node)
 {
    int operation = node.argument;
-   bool assingMode = false;
+   bool assignMode = false;
    bool selectMode = false;
+   bool invertMode = false;
    int  level = 0;
 
    switch (node.argument) {
@@ -2831,10 +2832,11 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
-         assingMode = true;
+         assignMode = true;
          break;
-      case EQUAL_MESSAGE_ID:
       case LESS_MESSAGE_ID:
+         invertMode = true;
+      case EQUAL_MESSAGE_ID:
          selectMode = true;
          break;
       case GREATER_MESSAGE_ID:
@@ -2845,11 +2847,16 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
 
    SNode larg;
    SNode rarg;
-   assignOpArguments(node, larg, rarg);
+   if (invertMode) {
+      assignOpArguments(node, rarg, larg);
+   }
+   else assignOpArguments(node, larg, rarg);
 
    if (test(larg.type, lxExpressionMask)) {
-      tape.write(bcPushB);
-      level++;
+      if (assignMode) {
+         tape.write(bcPushB);
+         level++;
+      }
 
       translateObjectExpression(tape, larg);
       pushObject(tape, lxResult);
@@ -2857,7 +2864,7 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
    }
 
    if (test(rarg.type, lxExpressionMask)) {
-      if (level == 0) {
+      if (level == 0 && assignMode) {
          tape.write(bcPushB);
          level++;
       }
@@ -2867,7 +2874,7 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
       level++;
    }
 
-   if (level > 0)
+   if (level > 0 && assignMode)
       loadBase(tape, lxCurrent, level - 1);
 
    if (test(larg.type, lxExpressionMask)) {
@@ -2875,7 +2882,7 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
    }
    else translateObjectExpression(tape, larg);
 
-   if (assingMode) {
+   if (assignMode) {
       copyBase(tape, 4);
    }
    else loadBase(tape, lxResult);
@@ -2886,7 +2893,9 @@ void ByteCodeWriter :: translateIntOperation(CommandTape& tape, SyntaxTree::Node
    }
    else translateObjectExpression(tape, rarg);
 
-   doIntOperation(tape, operation);
+   if (node.type == lxIntOp) {
+      doIntOperation(tape, operation);
+   }   
 
    if (selectMode) {
       selectByIndex(tape,
@@ -3338,13 +3347,12 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
       child = child.nextNode();
    }
 
-   if (test(source.type, lxPrimitiveOpMask)) {
+   if (test(source.type, lxPrimitiveOpMask) && IsExprOperator(source.argument)) {
       loadBase(tape, target.type, target.argument);
 
       translateObjectExpression(tape, source);
    }
    else {
-
       translateObjectExpression(tape, source);
 
       if (source == lxExternalCall || source == lxStdExternalCall) {
@@ -3496,7 +3504,7 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
       translateNilOperation(tape, node);
    }
    else if (node == lxIntOp) {
-      translateIntOperation(tape, node);
+      translateOperation(tape, node);
    }
    else loadObject(tape, node);
 }

@@ -247,7 +247,6 @@ private:
 //      ref_t signatureReference;
 
       ref_t boolType;
-      ref_t intType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -770,9 +769,9 @@ private:
    ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
-//   int mapInlineOperandType(ModuleScope& moduleScope, ObjectInfo operand);
-//   int mapInlineTargetOperandType(ModuleScope& moduleScope, ObjectInfo operand);
-//
+   int mapOperandType(CodeScope& scope, ObjectInfo operand);
+   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
+
 //   bool compileInlineArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, int mode);
 //   bool compileInlineVarArithmeticOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result);
 //   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool invertMode);
@@ -874,6 +873,7 @@ private:
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);

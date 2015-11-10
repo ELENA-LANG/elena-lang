@@ -282,7 +282,7 @@ public:
 
    void translateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
    void translateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-   void translateIntOperation(CommandTape& tape, SyntaxTree::Node node);
+   void translateOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
