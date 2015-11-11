@@ -104,11 +104,11 @@
 //    #constructor new
 //        <= %new &literal:"A number is not in the correct format" &subject: %FormatError.
 //}
-//
-//// --- OutOfRangeException ---
-//
-//#class OutOfRangeException :: Exception
-//{
+
+// --- OutOfRangeException ---
+
+#class OutOfRangeException :: Exception
+{
 //    /// Creates the exception
 //    #constructor new
 //        <= %new &literal:"An index is out of range" &subject: %OutOfRangeError.
@@ -116,8 +116,8 @@
 //    /// Creates the exception
 //    #constructor new:aMessage
 //        <= %new &literal:(aMessage literal) &subject: %OutOfRangeError.
-//}
-//
+}
+
 //// --- IndexOutOfRangeException ---
 //
 //#class IndexOutOfRangeException :: Exception

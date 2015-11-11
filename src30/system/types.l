@@ -14,7 +14,7 @@
 #subject(class:system'IntNumber)    int.
 #subject(class:system'LongNumber)   long.
 #subject(class:system'RealNumber)   real.
-//#subject(class:system'CharValue)    char.
+#subject(class:system'CharValue)    char.
 //#subject(class:system'Message)      mssg.
 //#subject(class:system'Verb)         verb.
 //#subject(class:system'Signature)    subject.
@@ -25,7 +25,7 @@
 #subject(class:system'Real)         vreal.
 //#subject(class:system'Byte)         vbyte.
 //#subject(class:system'Short)        vshort.
-//#subject(class:system'Char)         vchar.
+#subject(class:system'Char)         vchar.
 //#subject(class:system'MessageVar)   vmssg.
 
 // === basic dynamic types ===

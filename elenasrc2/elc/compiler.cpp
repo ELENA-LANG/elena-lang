@@ -328,7 +328,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
    realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
-//   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
+   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
 //   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
 //   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
@@ -1731,6 +1731,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else if (object.kind == okLiteralConstant) {
       return scope.moduleScope->literalReference;
    }
+   else if (object.kind == okCharConstant) {
+      return scope.moduleScope->charReference;
+   }
    // if message sent to the class parent
    //else if (object.kind == okSuper) {
    //   return object.param;
@@ -2760,123 +2763,112 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
 //   return ObjectInfo(okAccumulator, field.extraparam, 0, type);
 //}
 
-//ref_t Compiler :: mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/)
-//{
-////   callStack.directOrder = true;
+ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
+{
+   bool   first = true;
+   ref_t  verb_id = 0;
+   DNode  arg;
+
+   IdentifierString signature;
+   TerminalInfo     verb = node.Terminal();
+   // check if it is a short-cut eval message
+   if (node == nsMessageParameter) {
+      arg = node;
+
+      verb_id = EVAL_MESSAGE_ID;
+   }
+   else {
+      arg = node.firstChild();
+
+      verb_id = _verbs.get(verb.value);
+      if (verb_id == 0) {
+         size_t id = scope.moduleScope->mapSubject(verb, signature);
+
+         // if followed by argument list - it is EVAL verb
+         if (arg != nsNone) {
+            // HOT FIX : strong types cannot be used as a custom verb with a parameter
+            if (scope.moduleScope->typeHints.exist(id))
+               scope.raiseError(errStrongTypeNotAllowed, verb);
+
+            verb_id = EVAL_MESSAGE_ID;
+
+            first = false;
+         }
+         // otherwise it is GET message
+         else verb_id = GET_MESSAGE_ID;
+      }
+   }
+
+   paramCount = 0;
+   // if message has generic argument list
+   while (arg == nsMessageParameter) {
+      paramCount++;
+
+      arg = arg.nextNode();
+   }
+
+   // if message has named argument list
+   while (arg == nsSubjectArg) {
+      TerminalInfo subject = arg.Terminal();
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+
+      arg = arg.nextNode();
+
+      // skip an argument
+      if (arg == nsMessageParameter) {
+         // if it is an open argument list
+//         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+//            // if a generic argument is used with an open argument list
+//            callStack.directOrder = false;
+
+            // check if argument list should be unboxed
+//            DNode param = arg.firstChild();
+
+//            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+//               // add argument list to be unboxed
+//               callStack.oargUnboxing = true;
+//               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+//            }
+//            else {
+//               while (arg != nsNone) {
+//                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
 //
-//   bool   first = true;
-//   ref_t  verb_id = 0;
-//   int    paramCount = 0;
-//   DNode  arg;
+//                  arg = arg.nextNode();
+//               }
 //
-//   IdentifierString signature;
-//   TerminalInfo     verb = node.Terminal();
-//   // check if it is a short-cut eval message
-//   if (node == nsMessageParameter) {
-//      arg = node;
-//
-//      verb_id = EVAL_MESSAGE_ID;
-//   }
-//   else {
-//      arg = node.firstChild();
-//
-//      verb_id = _verbs.get(verb.value);
-//      if (verb_id == 0) {
-//         size_t id = scope.moduleScope->mapSubject(verb, signature);
-//
-//         // if followed by argument list - it is EVAL verb
-//         if (arg != nsNone) {
-//            // HOT FIX : strong types cannot be used as a custom verb with a parameter
-//            if (scope.moduleScope->typeHints.exist(id))
-//               scope.raiseError(errStrongTypeNotAllowed, verb);
-//
-//            verb_id = EVAL_MESSAGE_ID;
-//
-//            first = false;
+//               // terminator
+//               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
+//            }
+//            paramCount += OPEN_ARG_COUNT;
+//            if (paramCount > 0x0F)
+//               scope.raiseError(errNotApplicable, subject);
 //         }
-//         // otherwise it is GET message
-//         else verb_id = GET_MESSAGE_ID;
-//      }
-//   }
-//
-//   // if message has generic argument list
-//   while (arg == nsMessageParameter) {
-////      callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-//
-//      paramCount++;
-//
-////      if (arg.firstChild().firstChild() != nsNone)
-////         callStack.directOrder = false;
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   // if message has named argument list
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
-//
-//      arg = arg.nextNode();
-//
-//      // skip an argument
-//      if (arg == nsMessageParameter) {
-//         // if it is an open argument list
-////         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-////            // if a generic argument is used with an open argument list
-////            callStack.directOrder = false;
-//
-//            // check if argument list should be unboxed
-////            DNode param = arg.firstChild();
-//
-////            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-////               // add argument list to be unboxed
-////               callStack.oargUnboxing = true;
-////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-////            }
-////            else {
-////               while (arg != nsNone) {
-////                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-////
-////                  arg = arg.nextNode();
-////               }
-////
-////               // terminator
-////               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-////            }
-////            paramCount += OPEN_ARG_COUNT;
-////            if (paramCount > 0x0F)
-////               scope.raiseError(errNotApplicable, subject);
-////         }
-////         else {
-////            callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg));
-//            paramCount++;
-//
-//            if (paramCount >= OPEN_ARG_COUNT)
-//               scope.raiseError(errTooManyParameters, verb);
-//
-////            if (arg.firstChild().firstChild() != nsNone)
-////               callStack.directOrder = false;
-//
-//            arg = arg.nextNode();
-////         }
-//      }
-//   }
-//
-//   // if signature is presented
-//   ref_t sign_id = 0;
-//   if (!emptystr(signature)) {
-//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//   }
-//
-//   // create a message id
-//   return encodeMessage(sign_id, verb_id, paramCount);
-//}
+//         else {
+            paramCount++;
+
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, verb);
+
+            arg = arg.nextNode();
+//         }
+      }
+   }
+
+   // if signature is presented
+   ref_t sign_id = 0;
+   if (!emptystr(signature)) {
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+   }
+
+   // create a message id
+   return encodeMessage(sign_id, verb_id, paramCount);
+}
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
 {
@@ -5391,112 +5383,94 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
    _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
 }
 
-//void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // try to implement light-weight resend operation
-//   if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
-//      ObjectInfo target = compileTerminal(node, scope, 0);
-//      if (target.kind == okConstantSymbol || target.kind == okField) {
-//         _writer.declareMethod(*scope.tape, methodScope->message, false, false);
-//
-//         if (target.kind == okField) {
-//            _writer.loadObject(*scope.tape, ObjectInfo(okAccField, target.param));
-//         }
-//         else _writer.loadObject(*scope.tape, target);
-//
-//         _writer.resend(*scope.tape);
-//
-//         _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
-//
-//         return;
-//      }
-//   }
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
-//   scope.level++;
-//
-//   // copy arguments
-//   int param_count = getParamCount(methodScope->message);
-//   while (param_count > 0) {
-//      _writer.pushObject(*scope.tape, ObjectInfo(okParam, -1 - param_count));
-//      param_count--;
-//   }
-//
-//   _writer.pushObject(*scope.tape, ObjectInfo(okParam, (size_t)-1));
-//   _writer.pushObject(*scope.tape, ObjectInfo(okExtraRegister));
-//
-//   ObjectInfo target = compileObject(node, scope, 0);
-//
-//   bool boxed = false;
-//   bool dummy = false;
-//   boxObject(scope, target, boxed, dummy);
-//   if (boxed)
-//      scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//
-//   _writer.loadObject(*scope.tape, target);
-//
-//   _writer.popObject(*scope.tape, ObjectInfo(okExtraRegister));
-//
-//   _writer.callRoleMessage(*scope.tape, getParamCount(methodScope->message));
-//
-//   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-//}
-//
-//void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // find where the target constructor is declared in the current class
-//   size_t count = 0;
-//   ref_t messageRef = mapMessage(node, scope, count);
-//   ref_t classRef = classClassScope.reference;
-//   bool found = false;
-//
-//   // find where the target constructor is declared in the current class
-//   // but it is not equal to the current method
-//   if (methodScope->message != messageRef && classClassScope.info.methods.exist(messageRef)) {
-//      found = true;
-//   }
-//   // otherwise search in the parent class constructors
-//   else {
-//      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//      ref_t parent = classScope->info.header.parentRef;
-//      ClassInfo info;
-//      while (parent != 0) {
-//         moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
-//
-//         if (moduleScope->checkMethod(info.classClassRef, messageRef) != tpUnknown) {
-//            classRef = info.classClassRef;
-//            found = true;
-//
-//            break;
-//         }
-//         else parent = info.header.parentRef;
-//      }
-//   }
-//   if (found) {
-//      if (count != 0 && methodScope->parameters.Count() != 0) {
-//         withFrame = true;
-//
-//         // new stack frame
-//         // stack already contains $self value
-//         _writer.newFrame(*scope.tape);
-//         scope.level++;
-//      }
-//
-//      DNode dummy;
-//      if (withFrame) {
-//         compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef), 0);
-//      }
-//      else compileExtensionMessage(node, scope, ObjectInfo(okAccumulator), ObjectInfo(okConstantClass, 0, classRef), 0);
-//   }
-//   else scope.raiseError(errUnknownMessage, node.Terminal());
-//}
+void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // try to implement light-weight resend operation
+   if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
+      ObjectInfo target = scope.mapObject(node.Terminal());
+      if (target.kind == okConstantSymbol || target.kind == okField) {
+         _writer.declareMethod(*tape, methodScope->message, false, false);
+
+         if (target.kind == okField) {
+            _writer.loadObject(*tape, lxResultField, target.param);
+         }
+         else _writer.loadObject(*tape, lxConstantSymbol, target.param);
+
+         _writer.resend(*tape);
+
+         _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
+
+         return;
+      }
+   }
+
+   // new stack frame
+   // stack already contains previous $self value
+   _writer.declareMethod(*tape, methodScope->message, false, true);
+   scope.level++;
+
+   scope.writer->newNode(lxResending, methodScope->message);
+
+   ObjectInfo target = compileExpression(node, scope, 0, 0);
+
+   scope.writer->closeNode();
+
+   _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+}
+
+void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // find where the target constructor is declared in the current class
+   size_t count = 0;
+   ref_t messageRef = mapMessage(node, scope, count);
+   ref_t classRef = classClassScope.reference;
+   bool found = false;
+
+   // find where the target constructor is declared in the current class
+   // but it is not equal to the current method
+   if (methodScope->message != messageRef && classClassScope.info.methods.exist(messageRef)) {
+      found = true;
+   }
+   // otherwise search in the parent class constructors
+   else {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      ref_t parent = classScope->info.header.parentRef;
+      ClassInfo info;
+      while (parent != 0) {
+         moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
+
+         if (moduleScope->checkMethod(info.classClassRef, messageRef) != tpUnknown) {
+            classRef = info.classClassRef;
+            found = true;
+
+            break;
+         }
+         else parent = info.header.parentRef;
+      }
+   }
+   if (found) {
+      if (count != 0 && methodScope->parameters.Count() != 0) {
+         withFrame = true;
+
+         // new stack frame
+         // stack already contains $self value
+         _writer.newFrame(classClassScope.tape);
+         scope.level++;
+      }
+
+      DNode dummy;
+      if (withFrame) {
+         compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef));
+      }
+      else compileExtensionMessage(node, scope, ObjectInfo(okObject), ObjectInfo(okConstantClass, 0, classRef));
+   }
+   else scope.raiseError(errUnknownMessage, node.Terminal());
+}
 
 void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape)
 {
@@ -5526,23 +5500,23 @@ void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& sco
    else scope.raiseError(errInvalidOperation, node.Terminal());
 }
 
-//void Compiler :: compileResendExpression(DNode node, CodeScope& scope)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // new stack frame
-//   // stack already contains current $self reference
-//   _writer.declareMethod(*scope.tape, methodScope->message, false, true);
-//   scope.level++;
-//
-//   compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/));
-//   scope.freeSpace();
-//
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//   _writer.endMethod(*scope.tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
-//}
-//
+void Compiler :: compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape)
+{
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // new stack frame
+   // stack already contains current $self reference
+   _writer.declareMethod(*tape, methodScope->message, false, true);
+   scope.level++;
+
+   compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/));
+   scope.freeSpace();
+
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+   _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+}
+
 //void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function)
 //{
 //   MethodScope methodScope(&scope);
@@ -5581,19 +5555,19 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
    }
 
-//   DNode resendBody = node.select(nsResendExpression);
+   DNode resendBody = node.select(nsResendExpression);
    DNode dispatchBody = node.select(nsDispatchExpression);
 
-//   // check if it is a resend
-//   if (resendBody != nsNone) {
-//      compileResendExpression(resendBody.firstChild(), codeScope);
-//   }
+   // check if it is a resend
+   if (resendBody != nsNone) {
+      compileResendExpression(resendBody.firstChild(), codeScope, tape);
+   }
    // check if it is a dispatch
-   /*else */if (dispatchBody != nsNone) {
+   else if (dispatchBody != nsNone) {
       if (isImportRedirect(dispatchBody.firstChild())) {
          compileImportCode(dispatchBody.firstChild(), codeScope, scope.message, dispatchBody.firstChild().Terminal(), tape);
       }
-//      else compileDispatchExpression(dispatchBody.firstChild(), codeScope);
+      else compileDispatchExpression(dispatchBody.firstChild(), codeScope, tape);
    }
    else {
       // new stack frame
@@ -5682,7 +5656,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 //   codeScope.tape = &classClassScope.tape;
 
    DNode body = node.select(nsSubCode);
-//   DNode resendBody = node.select(nsResendExpression);
+   DNode resendBody = node.select(nsResendExpression);
    DNode dispatchBody = node.select(nsDispatchExpression);
 
    _writer.declareMethod(classClassScope.tape, scope.message, false, false);
@@ -5693,23 +5667,23 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 //   // check if acc is zero than skip the default / resend code
 //   if (embeddable)
 //      _writer.tryEmbeddable(*codeScope.tape);
-//
-//   if (resendBody != nsNone) {
-//      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
-//
+
+   if (resendBody != nsNone) {
+      compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
+
 //      // HOT FIX : raise an error if the frame was open
 //      if (withFrame && embeddable)
 //         scope.raiseError(errIllegalConstructor, node.Terminal());
-//   }
+   }
    // if no redirect statement - call virtual constructor implicitly
-   /*else */if (!test(codeScope.getClassFlags(), elDynamicRole)) {
+   else if (!test(codeScope.getClassFlags(), elDynamicRole)) {
       // HOTFIX: -1 indicates the stack is not consumed by the constructor
       _writer.callMethod(classClassScope.tape, 1, -1);
    }
-//   // if it is a dynamic object implicit constructor call is not possible
-//   else if (dispatchBody == nsNone)
-//      scope.raiseError(errIllegalConstructor, node.Terminal());
-//
+   // if it is a dynamic object implicit constructor call is not possible
+   else if (dispatchBody == nsNone)
+      scope.raiseError(errIllegalConstructor, node.Terminal());
+
 //   if (embeddable)
 //      _writer.endEmbeddable(*codeScope.tape);
 
@@ -5733,7 +5707,6 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       compileCode(body, codeScope);
 
       codeScope.writer->appendNode(lxLocal, 1);
-
    }
 
    // NOTE : close root node

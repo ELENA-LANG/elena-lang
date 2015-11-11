@@ -835,14 +835,14 @@
     /// Converts to UTF-16 literal
     #method wide = wideConvertor convert &literal:$self.
 
-//    /// Compares the values
-//    #method(type:bool) equal &literal : aLiteral
-//        => system'internal's_equal.
-//
-//    /// Compares the values
-//    #method(type:bool) less &literal : aLiteral
-//        => system'internal's_less.
-//
+    /// Compares the values
+    #method(type:bool) equal &literal : aLiteral
+        => system'internal's_equal.
+
+    /// Compares the values
+    #method(type:bool) less &literal : aLiteral
+        => system'internal's_less.
+
 //    /// Compares the values
 //    #method(type:bool) equal &char : aChar
 //        <= %equal &literal:(aChar literal).
@@ -850,40 +850,40 @@
 //    /// Compares the values
 //    #method(type:bool) less &char : aChar
 //        <= %less &literal:(aChar literal).
-//
-//    /// Concatinates the values
-//    #method(type:literal) add &literal : aLiteral
-//        => system'internal's_add.
-//
+
+    /// Concatinates the values
+    #method(type:literal) add &literal : aLiteral
+        => system'internal's_add.
+
 //    /// Concatinates the values
 //    #method(type:literal,stacksafe) add &char:aChar
 //        = $self add &literal:(aChar literal).
-//
-//    /// Concatinates the values
-//    #method add : anObject
-//        = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'internal's_getat.
-//
+
+    /// Concatinates the values
+    #method add : anObject
+        = anObject cast:%add &to:$self.
+
+    /// Returns the character at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'internal's_getat.
+
 //    // Reads the byte at the specified index and saves into an output parameter
 //    #method(stacksafe) read &int:anIndex &vbyte:anInt
 //        => system'internal'bs_readbyte.
-//        
-//    /// Returns the character at the specified index
-//    #method(type:char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(type:char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//
+        
+    /// Returns the character at the specified index
+    #method(type:char,stacksafe) getAt &int:anIndex
+    [
+        #var(type:char)aChar.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+
 //    /// Saves the index of the first occurence of the specified substring into an output parameter.
 //    ///
 //    /// If the substring is not found. returns -1
@@ -975,27 +975,27 @@
 //    /// Returns the substring
 //    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
 //        => system'internal's_subs.
-//
-//    /// Reads the literal length into an output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal's_getlen.
-//
+
+    /// Reads the literal length into an output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal's_getlen.
+
 //    /// Saves the literal into a UTF-32 character array
 //    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
 //        => system'internal's_save.
 //
 //    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
 //        => system'internal's_saveraw.
-//
-//    /// Returns the string length
-//    #method length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
+
+    /// Returns the string length
+    #method length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
 //    /// Returns the string enumerator
 //    #method enumerator = LiteralEnumerator new &literal:$self.
 //    
@@ -1225,14 +1225,14 @@
     /// Converts to UTF-8 literal
     #method literal = literalConvertor convert &wide:$self.
 
-//    /// Compares the values
-//    #method(type:bool) equal &wide : aLiteral
-//        => system'internal'ws_equal.
-//
-//    /// Compares the values
-//    #method(type:bool) less &wide : aLiteral
-//        => system'internal'ws_less.
-//
+    /// Compares the values
+    #method(type:bool) equal &wide : aLiteral
+        => system'internal'ws_equal.
+
+    /// Compares the values
+    #method(type:bool) less &wide : aLiteral
+        => system'internal'ws_less.
+
 //    /// Compares the values
 //    #method(type:bool) equal &char : aChar
 //        <= %equal &wide:(aChar wide).

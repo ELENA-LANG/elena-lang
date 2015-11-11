@@ -14,9 +14,9 @@
     IntegerTest eval.
     LongTest eval.
     RealTest eval.
-//    LiteralTest eval.
-//
-////    BreakTest eval.
+    LiteralTest eval.
+
+//    BreakTest eval.
 //    MultiDispatchTest eval.
 //
 //    MultySelectTest  eval.

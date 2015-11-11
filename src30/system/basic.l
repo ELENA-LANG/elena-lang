@@ -2369,19 +2369,19 @@
 //    #method => theValue.
 }
 
-//// --- CharValue ---
-//
-///// An UTF-32 character symbol
-//#class(sealed,integer:4) CharValue :: BaseValue
-//{
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        => system'internal'int_init.        
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &char:anOperand
-//        => system'internal'int_copy.
-//
+// --- CharValue ---
+
+/// An UTF-32 character symbol
+#class(sealed,integer:4) CharValue :: BaseValue
+{
+    /// Creates the object with a default value (0)
+    #constructor new
+        => system'internal'int_init.        
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &char:anOperand
+        => system'internal'int_copy.
+
 //    /// Creates the object with specified value
 //    #constructor new : anOperand
 //        <= new &char:(anOperand cast:%convert &to:charConvertor char).
@@ -2397,10 +2397,10 @@
 //    /// Returns the maximal possible character value (010FFFFh)
 //    #constructor max
 //        <= %new &char:#010FFFFh.
-//
-//    /// Returns itself
-//    #method char = $self.
-//
+
+    /// Returns itself
+    #method char = $self.
+
 //    /// Returns the numeric value
 //    #method int = intConvertor convert &char:$self.
 //    
@@ -2467,13 +2467,13 @@
 //
 //    /// Clones the value
 //    #method clone = CharValue new &char:$self.
-//
-//    /// Dispatches the verb to the target object with char subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &char:$self.
-//    
-//    /// Dispatches the verb to the target object with char subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
-//
+
+    /// Dispatches the verb to the target object with char subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &char:$self.
+    
+    /// Dispatches the verb to the target object with char subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
+
 //    /// Returns the literal value
 //    #method(stacksafe) literal = literalConvertor convert &char:$self.
 //
@@ -2524,23 +2524,23 @@
 //        
 //        ^ IntNumber new &int:aCode.
 //    ]
-//}
-//
-//// --- Char ---
-//
-///// An UTF-32 character variable
-/////
-///// Extends CharValue class
-//#class(sealed,struct:embeddable) Char :: BaseVariable
-//{
-//    #field(type:char)theValue.
-//    
-//    /// Creates a variable with a default value (0)
-//    #constructor new
-//    [
-//        theValue := #0.
-//    ]
-//    
+}
+
+// --- Char ---
+
+/// An UTF-32 character variable
+///
+/// Extends CharValue class
+#class(sealed,struct:embeddable) Char :: BaseVariable
+{
+    #field(type:char)theValue.
+    
+    /// Creates a variable with a default value (0)
+    #constructor new
+    [
+        theValue := #0.
+    ]
+    
 //    /// Creates a variable with a specified value
 //    #constructor new : aValue   
 //    [
@@ -2618,8 +2618,8 @@
 //
 //    /// Extends the character value
 //    #method => theValue.    
-//}
-//
+}
+
 //// === Basic Factory symbols ==
 //
 //#class BaseExtender

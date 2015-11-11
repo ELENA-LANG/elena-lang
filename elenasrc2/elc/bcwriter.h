@@ -187,13 +187,13 @@ public:
 //   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callRoleMessage(CommandTape& tape, int paramCount);
+   void callRoleMessage(CommandTape& tape, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void typecast(CommandTape& tape);
 
 //   void doGenericHandler(CommandTape& tape);
-//   void resend(CommandTape& tape);
+   void resend(CommandTape& tape);
 //   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
 //   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
@@ -284,6 +284,7 @@ public:
    void translateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void translateOperation(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);

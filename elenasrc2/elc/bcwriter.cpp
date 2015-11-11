@@ -968,10 +968,10 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_
 //         // popb
 //         tape.write(bcPopB);
 //         break;
-//      case okExtraRegister:
-//         // pope
-//         tape.write(bcPopE);
-//         break;
+      case lxCurrentMessage:
+         // pope
+         tape.write(bcPopE);
+         break;
    }
 }
 
@@ -1033,12 +1033,12 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-//void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
-//{
-//   // acallvi 0
-//   tape.write(bcACallVI);
-//   tape.write(bcFreeStack, 1 + paramCount);
-//}
+void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
+{
+   // acallvi 0
+   tape.write(bcACallVI);
+   tape.write(bcFreeStack, 1 + paramCount);
+}
 
 //void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
 //{
@@ -1087,13 +1087,13 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 //
 //   tape.write(bcBSRedirect);
 //}
-//
-//void ByteCodeWriter :: resend(CommandTape& tape)
-//{
-//   // ajumpvi 0
-//   tape.write(bcAJumpVI);
-//}
-//
+
+void ByteCodeWriter :: resend(CommandTape& tape)
+{
+   // ajumpvi 0
+   tape.write(bcAJumpVI);
+}
+
 //void ByteCodeWriter :: resend(CommandTape& tape, ObjectInfo object, int dispatchIndex)
 //{
 //   switch (object.kind) {
@@ -2680,6 +2680,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushai reference
          tape.write(bcPushAI, argument);
          break;
+      case lxCurrentMessage:
+         // pushe
+         tape.write(bcPushE);
+         break;
       default:
          break;
    }
@@ -2742,6 +2746,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case okSubjectDispatcher:
          // acopyf n
          tape.write(bcACopyF, argument);
+         break;
+      case lxResultField:
+         // aloadai
+         tape.write(bcALoadAI, argument);
          break;
       default:
          break;
@@ -3487,6 +3495,24 @@ void ByteCodeWriter :: translateStructExpression(CommandTape& tape, SyntaxTree::
    newStructure(tape, node.argument, target.argument);
 }
 
+void ByteCodeWriter :: translateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   // copy arguments
+   int param_count = getParamCount(node.argument);
+   while (param_count > 0) {
+      pushObject(tape, lxLocal, -1 - param_count);
+      param_count--;
+   }
+
+   pushObject(tape, lxLocal, -1);
+   pushObject(tape, lxCurrentMessage);
+
+   translateExpression(tape, node);
+
+   popObject(tape, lxCurrentMessage);
+   callRoleMessage(tape, getParamCount(node.argument));
+}
+
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
    if (node == lxExpression) {
@@ -3524,6 +3550,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxIntOp || node == lxLongOp || node == lxRealOp) {
       translateOperation(tape, node);
+   }
+   else if (node == lxResending) {
+      translateResendingExpression(tape, node);
    }
    else loadObject(tape, node);
 }

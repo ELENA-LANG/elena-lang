@@ -240,7 +240,7 @@ private:
       ref_t longReference;
       ref_t realReference;
       ref_t literalReference;
-//      ref_t charReference;
+      ref_t charReference;
       ref_t trueReference;
       ref_t falseReference;
 //      ref_t paramsReference;
@@ -741,16 +741,8 @@ private:
 //   ///*ObjectInfo*/void boxStructureField(CodeScope& scope, ObjectInfo field/*, ObjectInfo thisObject, bool& unboxing, int mode = 0*/);
    bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef);
 
-//   ref_t mapMessage(DNode node, CodeScope& scope/*, MessageScope& callStack*/);
-//   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
-//   {
-//      MessageScope callStack;
-//      ref_t messageRef = mapMessage(node, scope, callStack);
-//      count = callStack.parameters.Count();
-//
-//      return messageRef;
-//   }
-//
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count);
+
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
 //   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
@@ -811,11 +803,11 @@ private:
 //   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
-//
-//   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+
+   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
-//   void compileResendExpression(DNode node, CodeScope& scope);
-//   void compileDispatchExpression(DNode node, CodeScope& scope);
+   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
+   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 
    ObjectInfo compileCode(DNode node, CodeScope& scope);
 
