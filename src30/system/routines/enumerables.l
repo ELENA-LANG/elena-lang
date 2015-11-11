@@ -119,14 +119,14 @@
 //        ^ aList array.
 //    ]
 //}
-//
-//// --- enumerableOp ---
-//
-//#class(extension)enumerableOp
-//{
-//    #method run &each:aFunction
-//      = aFunction run &enumerator:(self enumerator).
-//      
+
+// --- enumerableOp ---
+
+#class(extension)enumerableOp
+{
+    #method run &each:aFunction
+      = aFunction run &enumerator:(self enumerator).
+      
 //    #method run &eachPair:aFunction
 //      = aFunction run:self &enumerator:(self enumerator).
 //      
@@ -170,8 +170,8 @@
 //            
 //        ^ aLastItem.
 //    ]
-//}
-//
+}
+
 //// --- indexableOp ---
 //
 //#class(extension)indexableOp

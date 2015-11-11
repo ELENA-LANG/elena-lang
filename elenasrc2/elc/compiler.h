@@ -788,7 +788,7 @@ private:
 
    ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
-//   void compileLoop(DNode node, CodeScope& scope);
+   void compileLoop(DNode node, CodeScope& scope);
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
@@ -829,7 +829,7 @@ private:
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, MethodScope& scope, int mode);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
-////   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
+   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/);
 
    void compileSymbolCode(ClassScope& scope);

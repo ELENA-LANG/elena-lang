@@ -1684,18 +1684,18 @@
         theValue := 0.
     ]
     
-//    /// Creates an integer variable
-//    #constructor new : aValue
-//    [
-//        theValue := aValue int.
-//    ]
-//    
-//    /// Creates an integer variable
-//    #constructor(stacksafe) new &int:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//    
+    /// Creates an integer variable
+    #constructor new : aValue
+    [
+        theValue := aValue int.
+    ]
+    
+    /// Creates an integer variable
+    #constructor(stacksafe) new &int:aValue
+    [
+        theValue := aValue.
+    ]
+    
 //    /// Creates an integer variable
 //    #constructor new &short:aValue
 //    [
@@ -2479,41 +2479,41 @@
 //
 //    /// Returns the wide literal value
 //    #method(stacksafe) wide = wideConvertor convert &char:$self.
-//    
-//    /// Reads the number of bytes to represent the symbol
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'char_getlen.
-//        
-//    /// Reads the number of bytes to represent the symbol
-//    #method(stacksafe) readWideLength &vint:aRetVal
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        aLength := aLength + 1.
-//        aLength := aLength / 2.
-//
-//        aRetVal << aLength.
-//    ]
-//        
-//    /// Retuns the number of bytes to represent the symbol        
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//    
-//    /// Retuns the number of short integers to represent the symbol
-//    #method wideLength
-//    [
-//        #var(type:int)aLength.
-//        $self readWideLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
+    
+    /// Reads the number of bytes to represent the symbol
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'char_getlen.
+        
+    /// Reads the number of bytes to represent the symbol
+    #method(stacksafe) readWideLength &vint:aRetVal
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        aLength := aLength + 1.
+        aLength := aLength / 2.
+
+        aRetVal << aLength.
+    ]
+        
+    /// Retuns the number of bytes to represent the symbol        
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+    
+    /// Retuns the number of short integers to represent the symbol
+    #method wideLength
+    [
+        #var(type:int)aLength.
+        $self readWideLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
 //    // Reads the object hash code into the output parameter
 //    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
 //    

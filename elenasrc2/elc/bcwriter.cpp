@@ -241,21 +241,21 @@ void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
 //   return tape.newLabel();
 //}
 
-//int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
-//{
-//   // loop-begin
-//
-//   tape.newLabel();                 // declare loop start label
-//   tape.setLabel(true);
-//
-//   int end = tape.newLabel();       // declare loop end label
-//
-////   // snop
-////   if (threadFriendly)
-////      tape.write(bcSNop);
-//
-//   return end;
-//}
+int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
+{
+   // loop-begin
+
+   tape.newLabel();                 // declare loop start label
+   tape.setLabel(true);
+
+   int end = tape.newLabel();       // declare loop end label
+
+//   // snop
+//   if (threadFriendly)
+//      tape.write(bcSNop);
+
+   return end;
+}
 
 void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
 {
@@ -384,27 +384,27 @@ void ByteCodeWriter :: newFrame(CommandTape& tape)
    tape.write(bcPushA);
 }
 
-//void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
-//{
-//   if (itemSize != 1) {
-//      // muln itemSize
-//      tape.write(bcMulN, itemSize);
-//   }
-//   // bcreate
-//   tape.write(bcBCreate);
-//}
-//
-//void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
-//{
-//   // wcreate
-//   tape.write(bcWCreate);
-//}
-//
-//void ByteCodeWriter :: newDynamicNStructure(CommandTape& tape)
-//{
-//   // ncreate
-//   tape.write(bcNCreate);
-//}
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
+{
+   if (itemSize != 1) {
+      // muln itemSize
+      tape.write(bcMulN, itemSize);
+   }
+   // bcreate
+   tape.write(bcBCreate);
+}
+
+void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
+{
+   // wcreate
+   tape.write(bcWCreate);
+}
+
+void ByteCodeWriter :: newDynamicNStructure(CommandTape& tape)
+{
+   // ncreate
+   tape.write(bcNCreate);
+}
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
 {
@@ -438,12 +438,12 @@ void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType
 //   tape.write(bcAXSaveBI, 0);
 //   tape.write(bcACopyB);
 //}
-//
-//void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
-//{
-//   // create
-//   tape.write(bcCreate);
-//}
+
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
+{
+   // create
+   tape.write(bcCreate);
+}
 
 void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 {
@@ -1254,20 +1254,20 @@ void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
       
 }
 
-//void ByteCodeWriter :: endLoop(CommandTape& tape)
-//{
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcIfR, baPreviousLabel, comparingRef | mskConstantRef);
-//
-//   tape.setLabel();
-//   tape.releaseLabel();
-//}
+void ByteCodeWriter :: endLoop(CommandTape& tape)
+{
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcIfR, baPreviousLabel, comparingRef | mskConstantRef);
+
+   tape.setLabel();
+   tape.releaseLabel();
+}
 
 void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
 {
@@ -3405,6 +3405,18 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
    }
 }
 
+void ByteCodeWriter :: translateLooping(CommandTape& tape, SyntaxTree::Node node)
+{
+   declareLoop(tape/*, true*/);
+
+   translateCodeBlock(tape, node);
+
+   if (node.argument != 0) {
+      endLoop(tape, node.argument);
+   }
+   else endLoop(tape);
+}
+
 void ByteCodeWriter :: translateBranching(CommandTape& tape, SyntaxTree::Node node)
 {
    if (SyntaxTree::existChild(node, lxElse)) {
@@ -3535,6 +3547,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxBranching) {
       translateBranching(tape, node);
+   }
+   else if (node == lxLooping) {
+      translateLooping(tape, node);
    }
    else if (node == lxStruct) {
       translateStructExpression(tape, node);

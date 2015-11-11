@@ -151,32 +151,32 @@
 //    #method clone = $self.
 }.
 
-//// === Basic prototypes ===
-//
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//#class(limited) Enumerator
-//{
-//    /// Returns itself
-//    #method enumerator = $self.
-//    
-//    /// Returns the current object
-//    #method get = $nil.
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method(type:bool) next = $nil.
-//    
-//    /// Resets the enumerator
-//    #method reset []
-//    
-//    /// Dispatches the verb to the target object with enumerator subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &enumerator:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerator subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerator:$self.
-//}
-//
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+/// An enumerator prototype
+#class(limited) Enumerator
+{
+    /// Returns itself
+    #method enumerator = $self.
+    
+    /// Returns the current object
+    #method get = $nil.
+    
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method(type:bool) next = $nil.
+    
+    /// Resets the enumerator
+    #method reset []
+    
+    /// Dispatches the verb to the target object with enumerator subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &enumerator:$self.
+    
+    /// Dispatches the verb to the target object with enumerator subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerator:$self.
+}
+
 //// --- Iterator ---
 //
 ///// An iterator prototype
@@ -294,41 +294,41 @@
 //            flag := aBool bool.
 //        ].
 //    ]
-//    
-//    /// Returns itself
-//    #method func = $self.
-//    
-//    /// Dispatches the verb to the target with func subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func:$self.
-//    
-//    /// Dispatches the verb to the target with func subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func:$self.
+    
+    /// Returns itself
+    #method func = $self.
+    
+    /// Dispatches the verb to the target with func subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func:$self.
+    
+    /// Dispatches the verb to the target with func subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func:$self.
 }
 
 /// A base function
 #class(limited)BaseFunction1
 {
-//    /// Returns itself
-//    #method func1 = $self.
-//    
-//    /// Dispatches the verb to the target with func1 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func1:$self.
-//    
-//    /// Dispatches the verb to the target with func1 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func1:$self.
+    /// Returns itself
+    #method func1 = $self.
+    
+    /// Dispatches the verb to the target with func1 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func1:$self.
+    
+    /// Dispatches the verb to the target with func1 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func1:$self.
     
     /// Executes the function
     #method eval : aParam []
 
-//    /// Executes the function for every enumeration item
-//    #method run &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:(anEnumerator get).
-//        ].        
-//    ]
-//    
+    /// Executes the function for every enumeration item
+    #method run &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:(anEnumerator get).
+        ].        
+    ]
+    
 //    /// Executes the function for every enumeration item until it returns true
 //    #method retrieve &enumerator:anEnumerator
 //    [
@@ -348,9 +348,9 @@
 /// A base two variable function
 #class(limited)BaseFunction2
 {
-//    /// Returns itself
-//    #method func2 = $self.
-//    
+    /// Returns itself
+    #method func2 = $self.
+    
 //    /// Dispatches the verb to the target with func2 subject
 //    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func2:$self.
 //    

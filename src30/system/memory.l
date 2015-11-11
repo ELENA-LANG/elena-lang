@@ -802,32 +802,32 @@
 {
     #field(type:bytearray)theValue.
 
-//    /// Creates the empty literal
-//    #constructor min
-//        => system'internal's_empty.
-//        
-//    /// Creates the literal string with specified length        
-//    #constructor(stacksafe) new &int:aSize 
-//        => system'internal's_create.
-//
-//    /// Creates the literal string with specified length and copies the parameter value
-//    #constructor(stacksafe) new &int:aSize &literal:aLiteral
-//        => system'internal's_copy.
-//
-//    /// Creates the literal string with specified length fills with spciefied character value        
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'internal's_fill.
-//
-//    /// Creates the literal string copy              
-//    #constructor new &literal:aLiteral
-//        <= %new &int:(aLiteral length int) &literal:aLiteral.
-//        
-//    /// Creates the copy of a subarray        
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'internal's_copysubarr.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
-//        => system'internal's_copybuf.
+    /// Creates the empty literal
+    #constructor min
+        => system'internal's_empty.
+        
+    /// Creates the literal string with specified length        
+    #constructor(stacksafe) new &int:aSize 
+        => system'internal's_create.
+
+    /// Creates the literal string with specified length and copies the parameter value
+    #constructor(stacksafe) new &int:aSize &literal:aLiteral
+        => system'internal's_copy.
+
+    /// Creates the literal string with specified length fills with spciefied character value        
+    #constructor(stacksafe) new &int:aSize &char:aChar
+        => system'internal's_fill.
+
+    /// Creates the literal string copy              
+    #constructor new &literal:aLiteral
+        <= %new &int:(aLiteral length int) &literal:aLiteral.
+        
+    /// Creates the copy of a subarray        
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+        => system'internal's_copysubarr.
+
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
+        => system'internal's_copybuf.
 
     /// Returns itself
     #method literal = $self.
@@ -996,9 +996,9 @@
         ^ IntNumber new &int:aLength.
     ]
 
-//    /// Returns the string enumerator
-//    #method enumerator = LiteralEnumerator new &literal:$self.
-//    
+    /// Returns the string enumerator
+    #method enumerator = LiteralEnumerator new &literal:$self.
+    
 //    /// Returns the string iterator
 //    #method iterator = LiteralIterator new &literal:$self.
     
@@ -1256,28 +1256,28 @@
 //    /// Concatinates the values
 //    #method add : anObject
 //        = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'internal'ws_getat.
-//
+
+    /// Returns the character at specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'internal'ws_getat.
+
 //    // Reads the short integer at the specified index and saves into an output parameter
 //    #method(stacksafe) read &int:anIndex &vshort:aValue
 //        => system'internal'sa_readword.
-//        
-//    /// Returns the character at specified index
-//    #method(type:char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(type:char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//
+        
+    /// Returns the character at specified index
+    #method(type:char,stacksafe) getAt &int:anIndex
+    [
+        #var(type:char)aChar.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+
 //    /// Saves the index of the first occurence of the specified substring into an output parameter.
 //    ///
 //    /// If the substring is not found. returns -1
@@ -1385,10 +1385,10 @@
 //
 //    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
 //        => system'internal'ws_saveraw.
-//
-//    /// Returns the object enumerator
-//    #method enumerator = WideLiteralEnumerator new &wide:$self.
-//    
+
+    /// Returns the object enumerator
+    #method enumerator = WideLiteralEnumerator new &wide:$self.
+    
 //    /// Returns the object iterator
 //    #method iterator = WideLiteralIterator new &wide:$self.
     
@@ -1783,9 +1783,9 @@
         ^ IntNumber new &int:aLength.
     ]
 
-//    /// Returns the array enumerator
-//    #method enumerator = ArrayEnumerator new &array:$self.
-//
+    /// Returns the array enumerator
+    #method enumerator = ArrayEnumerator new &array:$self.
+
 //    /// Returns the array iterator
 //    #method iterator = ArrayIterator new &array:$self.
 
@@ -1815,66 +1815,66 @@
 //        ^ IntNumber new &int:aLength.
 //    ]
 //}
-//
-//// === Enumerators / Indexers
-//
-//// --- LiteralEnumerator ---
-//
-///// A literal enumerator
-//#class LiteralEnumerator :: Enumerator
-//{
-//    #field(type:literal) theLiteral.
-//    #field(type:vint)    theIndex.
-//    #field(type:vint)    theDiff.
-//    #field(type:char)    theChar.
-//    
-//    /// Creates an enumerator
-//    #constructor new : anObject
-//        <= new &literal:(anObject literal).
-//    
-//    /// Creates an enumerator
-//    #constructor new &literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := Integer new &int:(-1).
-//        theDiff := Integer new &int:1.
-//        theChar := #0.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex write &int:-1.
-//        theDiff write &int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(type:int)aLength.       
-//        theLiteral readLength &vint:aLength.
-//        
-//        theIndex += theDiff.
-//        
-//        (theIndex < aLength)
-//            ? [
-//                theChar := theLiteral getAt &int:theIndex.                
-//                
-//                theChar readLength &vint:theDiff.
-//                
-//                ^ true.
-//            ].
-//
-//        theDiff write &int:0.
-//        theChar := #0.
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns the current character
-//    #method get = theChar.
-//}
-//
+
+// === Enumerators / Indexers
+
+// --- LiteralEnumerator ---
+
+/// A literal enumerator
+#class LiteralEnumerator :: Enumerator
+{
+    #field(type:literal) theLiteral.
+    #field(type:vint)    theIndex.
+    #field(type:vint)    theDiff.
+    #field(type:char)    theChar.
+    
+    /// Creates an enumerator
+    #constructor new : anObject
+        <= new &literal:(anObject literal).
+    
+    /// Creates an enumerator
+    #constructor new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := Integer new &int:(-1).
+        theDiff := Integer new &int:1.
+        theChar := #0.
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex write &int:-1.
+        theDiff write &int:1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        #var(type:int)aLength.       
+        theLiteral readLength &vint:aLength.
+        
+        theIndex += theDiff.
+        
+        (theIndex < aLength)
+            ? [
+                theChar := theLiteral getAt &int:theIndex.                
+                
+                theChar readLength &vint:theDiff.
+                
+                ^ true.
+            ].
+
+        theDiff write &int:0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    /// Returns the current character
+    #method get = theChar.
+}
+
 //// --- LiteralIterator ---
 //
 ///// A literal value iterator
@@ -1934,67 +1934,67 @@
 //    #method readLength &vint:anOutput
 //        => theLiteral.
 //}
-//
-//// --- LiteralEnumerator ---
-//
-///// A literal enumerator
-//#class WideLiteralEnumerator :: Enumerator
-//{
-//    #field(type:wide) theLiteral.
-//    #field(type:vint) theIndex.
-//    #field(type:vint) theDiff.
-//    #field(type:char) theChar.
-//    
-//    /// Creates an enumerator
-//    #constructor new : anObject
-//        <= new &wide:(anObject wide).
-//    
-//    /// Creates an enumerator
-//    #constructor new &wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := Integer new &int:(-1).
-//        theDiff := Integer new &int:1.
-//        theChar := #0.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex write &int:-1.
-//        theDiff write &int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(type:int)aLength.
-//        
-//        theLiteral readLength &vint:aLength.
-//
-//        theIndex += theDiff.
-//        
-//        (theIndex < aLength)
-//            ? [
-//                theChar := theLiteral getAt &int:theIndex.
-//                
-//                theChar readLength &vint:theDiff.
-//                theDiff += 1.
-//                theDiff /= 2.
-//                
-//                ^ true.
-//            ].
-//
-//        theDiff write &int:0.
-//        theChar := #0.
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns the current character
-//    #method get = theChar.
-//}
-//
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+#class WideLiteralEnumerator :: Enumerator
+{
+    #field(type:wide) theLiteral.
+    #field(type:vint) theIndex.
+    #field(type:vint) theDiff.
+    #field(type:char) theChar.
+    
+    /// Creates an enumerator
+    #constructor new : anObject
+        <= new &wide:(anObject wide).
+    
+    /// Creates an enumerator
+    #constructor new &wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := Integer new &int:(-1).
+        theDiff := Integer new &int:1.
+        theChar := #0.
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex write &int:-1.
+        theDiff write &int:1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        #var(type:int)aLength.
+        
+        theLiteral readLength &vint:aLength.
+
+        theIndex += theDiff.
+        
+        (theIndex < aLength)
+            ? [
+                theChar := theLiteral getAt &int:theIndex.
+                
+                theChar readLength &vint:theDiff.
+                theDiff += 1.
+                theDiff /= 2.
+                
+                ^ true.
+            ].
+
+        theDiff write &int:0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    /// Returns the current character
+    #method get = theChar.
+}
+
 //// --- WideLiteralIterator ---
 //
 ///// A wide literal enumerator
@@ -2103,48 +2103,48 @@
 //    #method readLength &vint:anOutput
 //        => theArray.
 //}
-//
-//// --- ArrayEnumerator ---
-//
-///// An array enumerator
-//#class ArrayEnumerator :: Enumerator
-//{
-//    #field(type:array) theArray.
-//    #field(type:vint)  theIndex.
-//    
-//    /// Creates an array enumerator
-//    #constructor new : anArray
-//        <= new &array:(anArray array).
-//    
-//    /// Creates an array enumerator
-//    #constructor new &array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := Integer new &int:(-1).
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex write &int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(type:int)aLength.
-//        theArray readLength &vint:aLength.
-//        
-//        theIndex append &int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    #method get
-//        = theArray getAt &int:theIndex.
-//}
-//
+
+// --- ArrayEnumerator ---
+
+/// An array enumerator
+#class ArrayEnumerator :: Enumerator
+{
+    #field(type:array) theArray.
+    #field(type:vint)  theIndex.
+    
+    /// Creates an array enumerator
+    #constructor new : anArray
+        <= new &array:(anArray array).
+    
+    /// Creates an array enumerator
+    #constructor new &array:anArray
+    [
+        theArray := anArray.
+        theIndex := Integer new &int:(-1).
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex write &int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        #var(type:int)aLength.
+        theArray readLength &vint:aLength.
+        
+        theIndex append &int:1.
+
+        ^ theIndex < aLength.
+    ]
+    
+    /// Returns the current object
+    #method get
+        = theArray getAt &int:theIndex.
+}
+
 //// --- Func1Group ---
 //
 //#subject(class:system'Func1Array)func1array.

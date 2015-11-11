@@ -3902,15 +3902,20 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
             size = scope.moduleScope->defineStructSize(classReference);
          }
-         else size = scope.moduleScope->defineTypeSize(object.type, classReference);
+         else if (object.kind == okFieldAddress) {
+            size = scope.moduleScope->defineTypeSize(object.type, classReference);
+         }
+         else if (object.kind == okLocal || object.kind == okField) {
+
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
 
          currentObject = compileAssigningExpression(node, member, scope, currentObject);
 
          if (size >= 0) {
             scope.writer->insert(lxAssigning, size);
             scope.writer->closeNode();
-         }
-         else scope.raiseError(errInvalidOperation, node.Terminal());
+         }         
       }
       else if (member == nsMessageOperation) {
          currentObject = compileMessage(member, scope, currentObject);
@@ -4619,35 +4624,43 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
 //   _writer.pushObject(*scope.tape, object);
 //   _writer.throwCurrent(*scope.tape);
 //}
-//
-//void Compiler :: compileLoop(DNode node, CodeScope& scope)
-//{
+
+void Compiler :: compileLoop(DNode node, CodeScope& scope)
+{
 //   _writer.declareLoop(*scope.tape/*, true*/);
-//
-//   DNode expr = node.firstChild().firstChild();
-//
-//   // if it is while-do loop
-//   if (expr.nextNode() == nsL7Operation) {
-//      DNode loopNode = expr.nextNode();
-//
+
+   DNode expr = node.firstChild().firstChild();
+
+   // if it is while-do loop
+   if (expr.nextNode() == nsL7Operation) {
+      scope.writer->newNode(lxLooping);
+      scope.writer->newNode(lxExpression);
+
+      DNode loopNode = expr.nextNode();
+
 //      openDebugExpression(scope);
-//      ObjectInfo cond = compileObject(expr, scope, 0);
-//
-//      //remove last virtual breakpoint
-//      //_writer.removeLastBreakpoint(*scope.tape);
-//
+      ObjectInfo cond = compileObject(expr, scope, 0);
+
+      //remove last virtual breakpoint
+      //_writer.removeLastBreakpoint(*scope.tape);
+
 //      // get the current value
 //      _writer.loadObject(*scope.tape, cond);
-//
-//      compileBranching(loopNode, scope, cond, _operators.get(loopNode.Terminal()), HINT_LOOP);
-//
+
+      compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
+
 //      endDebugExpression(scope);
 //      _writer.endLoop(*scope.tape);
-//   }
-//   // if it is repeat loop
-//   else {
-//      ObjectInfo retVal = compileExpression(expr, scope, 0);
-//
+
+      scope.writer->closeNode();
+      scope.writer->closeNode();
+   }
+   // if it is repeat loop
+   else {
+      scope.writer->newNode(lxLooping, scope.moduleScope->trueReference);
+
+      ObjectInfo retVal = compileExpression(expr, scope, scope.moduleScope->boolType, 0);
+
 //      //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 //
 //      bool mismatch = false;
@@ -4658,10 +4671,11 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
 //         scope.raiseWarning(4, wrnBoxingCheck, expr.FirstTerminal());
 //
 //      _writer.endLoop(*scope.tape, scope.moduleScope->trueReference);
-//   }
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//}
-//
+      scope.writer->closeNode();
+   }
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+}
+
 //void Compiler :: compileTry(DNode node, CodeScope& scope)
 //{
 //   // declare try catch block
@@ -4746,10 +4760,10 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
 //            break;
-//         case nsLoop:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileLoop(statement, scope);
-//            break;
+         case nsLoop:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileLoop(statement, scope);
+            break;
 //         case nsTry:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileTry(statement, scope);
@@ -5765,54 +5779,52 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& class
    _writer.endIdleMethod(classClassScope.tape);
 }
 
-//void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//   // check if the method is inhreited and update vmt size accordingly
-//   // NOTE: the method is class class member though it is compiled within class scope
-//   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
-//   if (it.Eof()) {
-//      classClassScope.info.methods.add(scope.message, true);
-//   }
-//   else (*it) = true;
-//
-//   CodeScope codeScope(&scope);
-//
-//   // compile constructor hints
-//   //int mode = scope.compileHints(hints);
-//
-//   // HOTFIX: constructor is declared in class class but should be executed if the class instance
-//   codeScope.tape = &classClassScope.tape;
-//
-//   _writer.declareIdleMethod(*codeScope.tape, scope.message);
-//
-//   if (test(classScope->info.header.flags, elStructureRole)) {
-//      _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantClass, classScope->reference));
-//      switch(classScope->info.size) {
-//         case -1:
-//            _writer.newDynamicStructure(*codeScope.tape, 1);
-//            break;
-//         case -2:
-//            _writer.newDynamicWStructure(*codeScope.tape);
-//            break;
-//         case -4:
-//            _writer.newDynamicNStructure(*codeScope.tape);
-//            break;
-//         default:
-//            _writer.newDynamicStructure(*codeScope.tape, -((int)classScope->info.size));
-//            break;
-//      }
-//   }
-//   else {
-//      _writer.loadObject(*codeScope.tape, ObjectInfo(okConstantClass, classScope->reference));
-//      _writer.newDynamicObject(*codeScope.tape);
-//   }
-//
-//   _writer.exitMethod(*codeScope.tape, 0, 0, false);
-//
-//   _writer.endIdleMethod(*codeScope.tape);
-//}
+void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   // check if the method is inhreited and update vmt size accordingly
+   // NOTE: the method is class class member though it is compiled within class scope
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
+   if (it.Eof()) {
+      classClassScope.info.methods.add(scope.message, true);
+   }
+   else (*it) = true;
+
+   // compile constructor hints
+   //int mode = scope.compileHints(hints);
+
+   //// HOTFIX: constructor is declared in class class but should be executed if the class instance
+   //codeScope.tape = &classClassScope.tape;
+
+   _writer.declareIdleMethod(classClassScope.tape, scope.message);
+
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      _writer.loadObject(classClassScope.tape, lxConstantClass, classScope->reference);
+      switch(classScope->info.size) {
+         case -1:
+            _writer.newDynamicStructure(classClassScope.tape, 1);
+            break;
+         case -2:
+            _writer.newDynamicWStructure(classClassScope.tape);
+            break;
+         case -4:
+            _writer.newDynamicNStructure(classClassScope.tape);
+            break;
+         default:
+            _writer.newDynamicStructure(classClassScope.tape, -((int)classScope->info.size));
+            break;
+      }
+   }
+   else {
+      _writer.loadObject(classClassScope.tape, lxConstantClass, classScope->reference);
+      _writer.newDynamicObject(classClassScope.tape);
+   }
+
+   _writer.exitMethod(classClassScope.tape, 0, 0, false);
+
+   _writer.endIdleMethod(classClassScope.tape);
+}
 
 void Compiler :: compileVMT(DNode member, ClassScope& scope)
 {
@@ -6034,10 +6046,10 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    MethodScope methodScope(&classScope);
    methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
 
-//   if (test(classScope.info.header.flags, elDynamicRole)) {
-//      compileDynamicDefaultConstructor(methodScope, classClassScope);
-//   }
-   /*else */compileDefaultConstructor(methodScope, classClassScope);
+   if (test(classScope.info.header.flags, elDynamicRole)) {
+      compileDynamicDefaultConstructor(methodScope, classClassScope);
+   }
+   else compileDefaultConstructor(methodScope, classClassScope);
 
    _writer.endClass(classClassScope.tape);
 

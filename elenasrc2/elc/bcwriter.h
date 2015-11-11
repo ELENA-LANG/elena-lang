@@ -123,7 +123,7 @@ public:
    void excludeFrame(CommandTape& tape);
    void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
-//   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
+   int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape, bool withStackControl = true);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
@@ -154,13 +154,13 @@ public:
 
    void newFrame(CommandTape& tape);
    void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize);
-//   void newDynamicWStructure(CommandTape& tape);
-//   void newDynamicNStructure(CommandTape& tape);
+   void newDynamicStructure(CommandTape& tape, int itemSize);
+   void newDynamicWStructure(CommandTape& tape);
+   void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
-//   void newDynamicObject(CommandTape& tape);
+   void newDynamicObject(CommandTape& tape);
 
 //   void loadPrimitive(CommandTape& tape, ref_t reference);
 //   void loadStatic(CommandTape& tape, ref_t reference);
@@ -228,8 +228,8 @@ public:
 //   void endAlt(CommandTape& tape);
 //   void endPrimitiveCatch(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
-//   void endLoop(CommandTape& tape);
-//   void endLoop(CommandTape& tape, ref_t comparingRef);
+   void endLoop(CommandTape& tape);
+   void endLoop(CommandTape& tape, ref_t comparingRef);
    void endExternalBlock(CommandTape& tape);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
@@ -289,6 +289,7 @@ public:
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateLooping(CommandTape& tape, SyntaxTree::Node node);
    void translateBranching(CommandTape& tape, SyntaxTree::Node node);
    void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
