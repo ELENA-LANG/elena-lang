@@ -2863,7 +2863,7 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
    }
    else assignOpArguments(node, larg, rarg);
 
-   if (test(larg.type, lxExpressionMask)) {
+   if (!test(larg.type, lxSimpleMask)) {
       if (assignMode) {
          tape.write(bcPushB);
          level++;
@@ -2874,7 +2874,7 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
       level++;
    }
 
-   if (test(rarg.type, lxExpressionMask)) {
+   if (!test(rarg.type, lxSimpleMask)) {
       if (level == 0 && assignMode) {
          tape.write(bcPushB);
          level++;
@@ -2888,7 +2888,7 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
    if (level > 0 && assignMode)
       loadBase(tape, lxCurrent, level - 1);
 
-   if (test(larg.type, lxExpressionMask)) {
+   if (!test(larg.type, lxSimpleMask)) {
       loadObject(tape, lxCurrent, 1);
    }
    else translateObjectExpression(tape, larg);
@@ -2903,7 +2903,7 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
    }
    else loadBase(tape, lxResult);
 
-   if (test(rarg.type, lxExpressionMask)) {
+   if (!test(rarg.type, lxSimpleMask)) {
       popObject(tape, lxResult);
       level--;
    }
