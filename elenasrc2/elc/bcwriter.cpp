@@ -724,6 +724,9 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
       case 4:
          tape.write(bcNCopy);
          break;
+      case 8:
+         tape.write(bcLCopy);
+         break;
    }
 }
 
@@ -2077,56 +2080,56 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offs
 //   //   tape.write(bcNCopy);
 //   //}
 //}
-//
-//void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int offset)
-//{
-//   //if (target.kind == okFieldAddress) {
-//   //   // bloadfi 1
-//   //   tape.write(bcBLoadFI, 1, bpFrame);
-//
-//   //   if (target.param == 0) {
-//   //      // lcopy
-//
-//   //      tape.write(bcLCopy);
-//   //   }
-//   //   else {
-//   //      // dcopy 0
-//   //      // bread
-//   //      // dcopy prm
-//   //      // bwrite
-//   //      // dcopy 4
-//   //      // bread
-//   //      // dcopy prm + 4
-//   //      // bwrite
-//   //      tape.write(bcDCopy, 0);
-//   //      tape.write(bcBRead);
-//   //      tape.write(bcDCopy, target.param);
-//   //      tape.write(bcBWrite);
-//   //      tape.write(bcDCopy, 4);
-//   //      tape.write(bcBRead);
-//   //      tape.write(bcDCopy, target.param + 4);
-//   //      tape.write(bcBWrite);
-//   //   }
-//   //}
-//   //else if (target.kind == okLocal) {
-//   //   // bloadfi param
-//   //   // lcopy
-//
-//   //   tape.write(bcBLoadFI, target.param, bpFrame);
-//   //   tape.write(bcLCopy);
-//   //}
-//   //else if (target.kind == okLocalAddress) {
-//   //   // bcopyf param
-//   //   // lcopy
-//   //   tape.write(bcBCopyF, target.param);
-//   //   tape.write(bcLCopy);
-//   //}
-//   //else if (target.kind == okBase) {
-//   //   // lcopy
-//   //   tape.write(bcLCopy);
-//   //}
-//}
-//
+
+void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int offset)
+{
+   if (target == lxFieldAddress) {
+      // bloadfi 1
+      tape.write(bcBLoadFI, 1, bpFrame);
+
+      if (offset == 0) {
+         // lcopy
+
+         tape.write(bcLCopy);
+      }
+      else {
+         // dcopy 0
+         // bread
+         // dcopy prm
+         // bwrite
+         // dcopy 4
+         // bread
+         // dcopy prm + 4
+         // bwrite
+         tape.write(bcDCopy, 0);
+         tape.write(bcBRead);
+         tape.write(bcDCopy, offset);
+         tape.write(bcBWrite);
+         tape.write(bcDCopy, 4);
+         tape.write(bcBRead);
+         tape.write(bcDCopy, offset + 4);
+         tape.write(bcBWrite);
+      }
+   }
+   //else if (target.kind == okLocal) {
+   //   // bloadfi param
+   //   // lcopy
+
+   //   tape.write(bcBLoadFI, target.param, bpFrame);
+   //   tape.write(bcLCopy);
+   //}
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      // lcopy
+      tape.write(bcBCopyF, offset);
+      tape.write(bcLCopy);
+   }
+   //else if (target.kind == okBase) {
+   //   // lcopy
+   //   tape.write(bcLCopy);
+   //}
+}
+
 ////void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
 ////{
 ////   // if it is alinged
@@ -2360,44 +2363,44 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
    }
 }
 
-//void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case WRITE_MESSAGE_ID:
-//         tape.write(bcLCopy);
-//         break;
-//      case ADD_MESSAGE_ID:
-//         tape.write(bcLAdd);
-//         break;
-//      case SUB_MESSAGE_ID:
-//         tape.write(bcLSub);
-//         break;
-//      case MUL_MESSAGE_ID:
-//         tape.write(bcLMul);
-//         break;
-//      case DIV_MESSAGE_ID:
-//         tape.write(bcLDiv);
-//         break;
-//      case AND_MESSAGE_ID:
-//         tape.write(bcLAnd);
-//         break;
-//      case OR_MESSAGE_ID:
-//         tape.write(bcLOr);
-//         break;
-//      case XOR_MESSAGE_ID:
-//         tape.write(bcLXor);
-//         break;
-//      case EQUAL_MESSAGE_ID:
-//         tape.write(bcLEqual);
-//         break;
-//      case LESS_MESSAGE_ID:
-//         tape.write(bcLLess);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case WRITE_MESSAGE_ID:
+         tape.write(bcLCopy);
+         break;
+      case ADD_MESSAGE_ID:
+         tape.write(bcLAdd);
+         break;
+      case SUB_MESSAGE_ID:
+         tape.write(bcLSub);
+         break;
+      case MUL_MESSAGE_ID:
+         tape.write(bcLMul);
+         break;
+      case DIV_MESSAGE_ID:
+         tape.write(bcLDiv);
+         break;
+      case AND_MESSAGE_ID:
+         tape.write(bcLAnd);
+         break;
+      case OR_MESSAGE_ID:
+         tape.write(bcLOr);
+         break;
+      case XOR_MESSAGE_ID:
+         tape.write(bcLXor);
+         break;
+      case EQUAL_MESSAGE_ID:
+         tape.write(bcLEqual);
+         break;
+      case LESS_MESSAGE_ID:
+         tape.write(bcLLess);
+         break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -2883,7 +2886,12 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
    else translateObjectExpression(tape, larg);
 
    if (assignMode) {
-      copyBase(tape, 4);
+      if (node.type == lxIntOp) {
+         copyBase(tape, 4);
+      }
+      else if (node.type == lxLongOp) {
+         copyBase(tape, 8);
+      }
    }
    else loadBase(tape, lxResult);
 
@@ -2895,7 +2903,10 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
 
    if (node.type == lxIntOp) {
       doIntOperation(tape, operation);
-   }   
+   }
+   else if (node == lxLongOp) {
+      doLongOperation(tape, operation);
+   }
 
    if (selectMode) {
       selectByIndex(tape,
@@ -3362,18 +3373,23 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
             }
          }
       }
-      else if (size == 4) {
-         assignInt(tape, target.type, target.argument);
+      else if (size != 0) {
+         if (size == 4) {
+            assignInt(tape, target.type, target.argument);
+         }
+      //         else if (size == 2) {
+      //            _writer.assignShort(*scope.tape, variableInfo);
+      //         }
+      //         else if (size == 1) {
+      //            _writer.assignByte(*scope.tape, variableInfo);
+      //         }
+         else if (size == 8) {
+            assignLong(tape, target.type, target.argument);
+         }
+         //else {
+
+         //}      
       }
-      ////         else if (size == 2) {
-      ////            _writer.assignShort(*scope.tape, variableInfo);
-      ////         }
-      ////         else if (size == 1) {
-      ////            _writer.assignByte(*scope.tape, variableInfo);
-      ////         }
-      ////         else if (size == 8) {
-      ////            _writer.assignLong(*scope.tape, variableInfo);
-      ////         }
       else saveObject(tape, target.type, target.argument);
    }
 }
@@ -3503,7 +3519,7 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    else if (node == lxNilOp) {
       translateNilOperation(tape, node);
    }
-   else if (node == lxIntOp) {
+   else if (node == lxIntOp || node == lxLongOp) {
       translateOperation(tape, node);
    }
    else loadObject(tape, node);

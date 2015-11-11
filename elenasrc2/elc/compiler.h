@@ -237,7 +237,7 @@ private:
       // cached references
       ref_t superReference;
       ref_t intReference;
-//      ref_t longReference;
+      ref_t longReference;
 //      ref_t realReference;
       ref_t literalReference;
 //      ref_t charReference;

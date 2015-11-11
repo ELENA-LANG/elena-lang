@@ -245,7 +245,7 @@ public:
    void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
 
    void assignInt(CommandTape& tape, LexicalType target, int offset);
-//   void assignLong(CommandTape& tape, LexicalType target, int offset);
+   void assignLong(CommandTape& tape, LexicalType target, int offset);
 //   void assignShort(CommandTape& tape, LexicalType target, int offset);
 //   void assignByte(CommandTape& tape, LexicalType target, int offset);
    void saveInt(CommandTape& tape, LexicalType target, int argument);
@@ -260,7 +260,7 @@ public:
 //   void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
-//   void doLongOperation(CommandTape& tape, int operator_id);
+   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   //void doLiteralOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);

@@ -12,7 +12,7 @@
     ObjectTest eval.
     BooleanTest eval.
     IntegerTest eval.
-//    LongTest eval.
+    LongTest eval.
 //    RealTest eval.
 //    LiteralTest eval.
 //

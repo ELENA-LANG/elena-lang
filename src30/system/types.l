@@ -21,7 +21,7 @@
 //#subject(class:system'Symbol)       symbol_ref.
 
 #subject(class:system'Integer)      vint.
-//#subject(class:system'Long)         vlong.
+#subject(class:system'Long)         vlong.
 //#subject(class:system'Real)         vreal.
 //#subject(class:system'Byte)         vbyte.
 //#subject(class:system'Short)        vshort.

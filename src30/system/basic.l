@@ -673,10 +673,10 @@
 //
 //    /// Returns the byte value    
 //    #method byte = byteConvertor convert &int:$self.
-//
-//    /// Returns the long integer
-//    #method long = LongNumber new &int:$self.
-//
+
+    /// Returns the long integer
+    #method long = LongNumber new &int:$self.
+
 //    /// Returns the real number
 //    #method real = RealNumber new &int:$self.
 //
@@ -914,19 +914,19 @@
 //    /// Returns the maximal value
 //    #constructor max
 //        => system'internal'long_max.
-//    
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        <= new &long:0l.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &long:anOperand 
-//        => system'internal'long_copy.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &int:anOperand 
-//        => system'internal'long_copyint.
-//
+    
+    /// Creates the object with a default value (0)
+    #constructor new
+        <= new &long:0l.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &long:anOperand 
+        => system'internal'long_copy.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &int:anOperand 
+        => system'internal'long_copyint.
+
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &short:anOperand 
 //        => system'internal'long_copyint.
@@ -1131,13 +1131,13 @@
 //    
 //    #method(type:long,stacksafe) shift &int:anOrder
 //        => system'internal'long_shift.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &long:$self.
-//
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &long:$self.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &long:$self.
+
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &long:$self.
+
 //    /// Negates the value
 //    #method(type:long,stacksafe) negative = 0l - $self.
 //
@@ -1147,13 +1147,13 @@
 //
 //    /// Clones the value
 //    #method clone = LongNumber new &long:$self.
-//    
-//    /// Dispatches the verb to the target object with long subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:$self.
-//    
-//    /// Dispatches the verb to the target object with long subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:$self.
-//
+    
+    /// Dispatches the verb to the target object with long subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:$self.
+    
+    /// Dispatches the verb to the target object with long subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:$self.
+
 //    // Reads the object hash code into the output parameter
 //    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
 //    
@@ -1881,12 +1881,12 @@
 {
     #field(type:long)theValue.
     
-//    /// Creates a long integer variable with a default value (0)
-//    #constructor new
-//    [
-//        theValue := 0l.
-//    ]
-//    
+    /// Creates a long integer variable with a default value (0)
+    #constructor new
+    [
+        theValue := 0l.
+    ]
+    
 //    /// Creates a long integer variable
 //    #constructor new : aValue
 //    [
@@ -1923,25 +1923,25 @@
 //    
 //    /// Returns the value
 //    #method real = RealNumber new &long:theValue.
-//
-//    /// Copies the integer value
-//    #method(stacksafe) write &long:anOperand
-//    [
-//        theValue := anOperand.
-//    ]
-//
+
+    /// Copies the integer value
+    #method(stacksafe) write &long:anOperand
+    [
+        theValue := anOperand.
+    ]
+
 //    /// Reads the integer value
 //    #method(stacksafe) read &vlong:aRetVal
 //    [
 //        aRetVal << theValue.
 //    ]
-//
-//    /// Copies the integer value
-//    #method write &int:anOperand
-//    [
-//        theValue := anOperand long.
-//    ]
-//
+
+    /// Copies the integer value
+    #method write &int:anOperand
+    [
+        theValue := anOperand long.
+    ]
+
 //    /// Copies the integer value
 //    #method write &short:anOperand
 //    [
@@ -1953,19 +1953,19 @@
 //    [
 //        theValue := anOperand long.
 //    ]
-//             
-//    /// Appends the integer value           
-//    #method(stacksafe) append &long:anOperand    
-//    [
-//        theValue := theValue + anOperand.
-//    ]
-//                        
-//    /// Appends the integer value           
-//    #method append &int:anOperand    
-//    [
-//        theValue := theValue + anOperand long.
-//    ]
-//                        
+             
+    /// Appends the integer value           
+    #method(stacksafe) append &long:anOperand    
+    [
+        theValue := theValue + anOperand.
+    ]
+                        
+    /// Appends the integer value           
+    #method append &int:anOperand    
+    [
+        theValue := theValue + anOperand long.
+    ]
+
 //    /// Appends the integer value           
 //    #method append &short:anOperand    
 //    [
@@ -1977,19 +1977,19 @@
 //    [
 //        theValue := theValue + anOperand long.
 //    ]
-//
-//    /// Reduces the integer value
-//    #method(stacksafe) reduce &long:anOperand
-//    [
-//        theValue := theValue - anOperand.
-//    ]
-//        
-//    /// Reduces the integer value
-//    #method reduce &int:anOperand
-//    [
-//        theValue := theValue - anOperand long.
-//    ]
-//        
+
+    /// Reduces the integer value
+    #method(stacksafe) reduce &long:anOperand
+    [
+        theValue := theValue - anOperand.
+    ]
+        
+    /// Reduces the integer value
+    #method reduce &int:anOperand
+    [
+        theValue := theValue - anOperand long.
+    ]
+        
 //    /// Reduces the integer value
 //    #method reduce &short:anOperand
 //    [
@@ -2001,19 +2001,19 @@
 //    [
 //        theValue := theValue - anOperand long.
 //    ]
-//
-//    /// Multiplies by the integer value
-//    #method(stacksafe) multiplyBy &long:anOperand
-//    [
-//        theValue := theValue * anOperand.
-//    ]        
-//        
-//    /// Multiplies by the integer value
-//    #method multiplyBy &int:anOperand
-//    [
-//        theValue := theValue * LongNumber new &int:anOperand.
-//    ]        
-//        
+
+    /// Multiplies by the integer value
+    #method(stacksafe) multiplyBy &long:anOperand
+    [
+        theValue := theValue * anOperand.
+    ]        
+        
+    /// Multiplies by the integer value
+    #method multiplyBy &int:anOperand
+    [
+        theValue := theValue * LongNumber new &int:anOperand.
+    ]        
+
 //    /// Multiplies by the integer value
 //    #method multiplyBy &short:anOperand
 //    [
@@ -2025,19 +2025,19 @@
 //    [
 //        theValue := theValue * anOperand long.
 //    ]        
-//
-//    /// Divides into the integer value
-//    #method(stacksafe) divideInto &long:anOperand
-//    [
-//        theValue := theValue / anOperand.
-//    ]
-//        
-//    /// Divides into the integer value
-//    #method divideInto &int:anOperand
-//    [
-//        theValue := theValue / LongNumber new &int:anOperand.
-//    ]
-//        
+
+    /// Divides into the integer value
+    #method(stacksafe) divideInto &long:anOperand
+    [
+        theValue := theValue / anOperand.
+    ]
+        
+    /// Divides into the integer value
+    #method divideInto &int:anOperand
+    [
+        theValue := theValue / LongNumber new &int:anOperand.
+    ]
+        
 //    /// Divides into the integer value
 //    #method divideInto &short:anOperand
 //    [
@@ -2049,23 +2049,23 @@
 //    [
 //        theValue := theValue / anOperand long.
 //    ]
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) equal &long:anOperand 
-//        = theValue == anOperand.
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) less &long:anOperand
-//        = theValue < anOperand.
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) equal &int:anOperand 
-//        = $self equal &long:(LongNumber new &int:anOperand).
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) less &int:anOperand
-//        = $self less &long:(LongNumber new &int:anOperand).
-//        
+
+    /// Compares the integer value
+    #method(type:bool,stacksafe) equal &long:anOperand 
+        = theValue == anOperand.
+
+    /// Compares the integer value
+    #method(type:bool,stacksafe) less &long:anOperand
+        = theValue < anOperand.
+
+    /// Compares the integer value
+    #method(type:bool,stacksafe) equal &int:anOperand 
+        = $self equal &long:(LongNumber new &int:anOperand).
+
+    /// Compares the integer value
+    #method(type:bool,stacksafe) less &int:anOperand
+        = $self less &long:(LongNumber new &int:anOperand).
+        
 //    /// Returns the sum of integers
 //    #method(type:long,stacksafe) add &long:anOperand
 //        = LongNumber new &long:(theValue + anOperand).
@@ -2096,22 +2096,22 @@
 //
 //    /// Returns the integer value
 //    #method value = LongNumber new &long:theValue.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &long:theValue.
-//
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &long:theValue.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &long:theValue.
+
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &long:theValue.
+
 //    /// Clones the value
 //    #method clone = Long new &long:theValue.
-//    
-//    /// Dispatches the verb to the target object with long subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:(LongNumber new &long:theValue).
-//    
-//    /// Dispatches the verb to the target object with long subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:(LongNumber new &long:theValue).
-//
+    
+    /// Dispatches the verb to the target object with long subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &long:(LongNumber new &long:theValue).
+    
+    /// Dispatches the verb to the target object with long subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:(LongNumber new &long:theValue).
+
 //    /// Expands a long integer value    
 //    #method => theValue.    
 }
@@ -3307,11 +3307,11 @@
 //    /// Converts the parameter to the literal value
 //    #method(type:literal,stacksafe) convert &byte:aNumber
 //        => system'internal's_copyint.
-//
-//    /// Converts the parameter to the literal value
-//    #method(type:literal,stacksafe) convert &long:aNumber
-//        => system'internal's_copylong.
-//
+
+    /// Converts the parameter to the literal value
+    #method(type:literal,stacksafe) convert &long:aNumber
+        => system'internal's_copylong.
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    #method(type:literal,stacksafe) convert &int:aNumber &index:aRadix
 //        => system'internal's_copyint_radix.
@@ -3365,11 +3365,11 @@
 //    /// Converts the parameter to the literal value
 //    #method(type:wide,stacksafe) convert &byte:aNumber
 //        => system'internal'ws_copyint.
-//
-//    /// Converts the parameter to the literal value
-//    #method(type:wide,stacksafe) convert &long:aNumber
-//        => system'internal'ws_copylong.
-//
+
+    /// Converts the parameter to the literal value
+    #method(type:wide,stacksafe) convert &long:aNumber
+        => system'internal'ws_copylong.
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    #method(type:wide,stacksafe) convert &int:aNumber &index:aRadix
 //        => system'internal'ws_copyint_radix.

@@ -325,7 +325,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    // cache the frequently used references
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
-//   longReference = mapReference(project->resolveForward(LONG_FORWARD));
+   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
@@ -1722,6 +1722,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else if (object.kind == okIntConstant) {
       return scope.moduleScope->intReference;
    }
+   else if (object.kind == okLongConstant) {
+      return scope.moduleScope->longReference;
+   }
    else if (object.kind == okLiteralConstant) {
       return scope.moduleScope->literalReference;
    }
@@ -2999,9 +3002,9 @@ int Compiler ::mapOperandType(CodeScope& scope, ObjectInfo operand)
    if (operand.kind == okIntConstant) {
       return elDebugDWORD;
    }
-//   else if (operand.kind == okLongConstant) {
-//      return elDebugQWORD;
-//   }
+   else if (operand.kind == okLongConstant) {
+      return elDebugQWORD;
+   }
 //   else if (operand.kind == okRealConstant) {
 //      return elDebugReal64;
 //   }
@@ -3342,6 +3345,13 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
          primitiveOp = lxIntOp;
          size = 4;
+      }
+      else if (lflag == elDebugQWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
+         if (IsExprOperator(operator_id))
+            retVal.param = moduleScope->longReference;
+
+         primitiveOp = lxLongOp;
+         size = 8;
       }
    }
 
@@ -6697,6 +6707,7 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
             optimizeSyntaxExpression(scope, current);
             break;
          case lxIntOp:
+         case lxLongOp:
             optimizeOp(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;

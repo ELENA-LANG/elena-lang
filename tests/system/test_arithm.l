@@ -13,9 +13,6 @@
 
 #symbol XTester =
 {
-    #method(type:literal,stacksafe) convert &literal:aLiteral
-        = aLiteral.    
-        
     test            
     [
     ]        
@@ -333,31 +330,31 @@
         [ console writeLine:"Integer operators are working". ].
 ].
 
-//// --- LongArithmeticTest ---
-//
-//#symbol LongTest =
-//[    
-//    #var l := 100000000000000l / 5000000000000l.
-//    
-//    console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
-//    console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
-//    console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).
-//    console write:"(12345679 != 12345678) is " writeLine:(12345678l != 12345679l).
-//    console write:"(12345678l < 3) is " writeLine:(12345678l < 3l).
-//    console write:"(12345678l > 12345679l) is " writeLine:(12345678l > 12345679l).
-//    console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
-//    console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
-//    
-//    #var n := Long new write:1l.
-//    n += 2l.
-//    n -= 2l.
-//    n *= 2l.
-//    n /= 2l.
-//    
-//    (n == 1l) ?
-//        [ console writeLine:"Long Integer operators are working". ].
-//].
-//
+// --- LongArithmeticTest ---
+
+#symbol LongTest =
+[    
+    #var l := 100000000000000l / 5000000000000l.
+    
+    console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
+    console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
+    console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).
+    console write:"(12345679 != 12345678) is " writeLine:(12345678l != 12345679l).
+    console write:"(12345678l < 3) is " writeLine:(12345678l < 3l).
+    console write:"(12345678l > 12345679l) is " writeLine:(12345678l > 12345679l).
+    console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
+    console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
+    
+    #var n := Long new write:1l.
+    n += 2l.
+    n -= 2l.
+    n *= 2l.
+    n /= 2l.
+    
+    (n == 1l) ?
+        [ console writeLine:"Long Integer operators are working". ].
+].
+
 //// --- RealArithmeticTest ---
 //
 //#symbol RealTest =

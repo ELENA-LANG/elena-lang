@@ -50,6 +50,7 @@ enum LexicalType
    lxBoolOp          = 0x0320,
    lxNilOp           = 0x0321,
    lxIntOp           = 0x1322,
+   lxLongOp          = 0x1323,
 
    lxNested          = 0x101,
    lxStruct          = 0x102,
