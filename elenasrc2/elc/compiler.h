@@ -238,7 +238,7 @@ private:
       ref_t superReference;
       ref_t intReference;
       ref_t longReference;
-//      ref_t realReference;
+      ref_t realReference;
       ref_t literalReference;
 //      ref_t charReference;
       ref_t trueReference;

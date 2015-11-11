@@ -2401,35 +2401,35 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
    }
 }
 
-//void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case WRITE_MESSAGE_ID:
-//         tape.write(bcLCopy);
-//         break;
-//      case ADD_MESSAGE_ID:
-//         tape.write(bcRAdd);
-//         break;
-//      case SUB_MESSAGE_ID:
-//         tape.write(bcRSub);
-//         break;
-//      case MUL_MESSAGE_ID:
-//         tape.write(bcRMul);
-//         break;
-//      case DIV_MESSAGE_ID:
-//         tape.write(bcRDiv);
-//         break;
-//      case EQUAL_MESSAGE_ID:
-//         tape.write(bcREqual);
-//         break;
-//      case LESS_MESSAGE_ID:
-//         tape.write(bcRLess);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case WRITE_MESSAGE_ID:
+         tape.write(bcLCopy);
+         break;
+      case ADD_MESSAGE_ID:
+         tape.write(bcRAdd);
+         break;
+      case SUB_MESSAGE_ID:
+         tape.write(bcRSub);
+         break;
+      case MUL_MESSAGE_ID:
+         tape.write(bcRMul);
+         break;
+      case DIV_MESSAGE_ID:
+         tape.write(bcRDiv);
+         break;
+      case EQUAL_MESSAGE_ID:
+         tape.write(bcREqual);
+         break;
+      case LESS_MESSAGE_ID:
+         tape.write(bcRLess);
+         break;
+      default:
+         break;
+   }
+}
+
 ////void ByteCodeWriter :: doLiteralOperation(CommandTape& tape, int operator_id)
 ////{
 //   //switch (operator_id) {
@@ -2889,7 +2889,7 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
       if (node.type == lxIntOp) {
          copyBase(tape, 4);
       }
-      else if (node.type == lxLongOp) {
+      else if (node.type == lxLongOp || node == lxRealOp) {
          copyBase(tape, 8);
       }
    }
@@ -2906,6 +2906,9 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
    }
    else if (node == lxLongOp) {
       doLongOperation(tape, operation);
+   }
+   else if (node == lxRealOp) {
+      doRealOperation(tape, operation);
    }
 
    if (selectMode) {
@@ -3519,7 +3522,7 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    else if (node == lxNilOp) {
       translateNilOperation(tape, node);
    }
-   else if (node == lxIntOp || node == lxLongOp) {
+   else if (node == lxIntOp || node == lxLongOp || node == lxRealOp) {
       translateOperation(tape, node);
    }
    else loadObject(tape, node);

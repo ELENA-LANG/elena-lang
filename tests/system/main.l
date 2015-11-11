@@ -13,7 +13,7 @@
     BooleanTest eval.
     IntegerTest eval.
     LongTest eval.
-//    RealTest eval.
+    RealTest eval.
 //    LiteralTest eval.
 //
 ////    BreakTest eval.

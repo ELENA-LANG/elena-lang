@@ -947,13 +947,13 @@
 //    
 //    /// Returns the byte value
 //    #method byte = byteConvertor convert &long:$self.
-//
-//    /// Returns itself
-//    #method long = $self.
-//
-//    /// Returns a real value
-//    #method real = RealNumber new &long:$self.
-//
+
+    /// Returns itself
+    #method long = $self.
+
+    /// Returns a real value
+    #method real = RealNumber new &long:$self.
+
 //    /// Compares the integer value
 //    #method(type:bool,stacksafe) equal &long:anOperand
 //        => system'internal'long_equal.
@@ -1182,15 +1182,15 @@
 //    /// Creates the object with a default value (0)
 //    #constructor new
 //        <= new &real:0.0r.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &real:anOperand 
-//        => system'internal'long_copy.
-//  
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &int:anOperand 
-//        => system'internal'real_copyint.
-//
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &real:anOperand 
+        => system'internal'long_copy.
+  
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &int:anOperand 
+        => system'internal'real_copyint.
+
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &short:anOperand 
 //        => system'internal'real_copyint.
@@ -1198,26 +1198,26 @@
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &byte:anOperand 
 //        => system'internal'real_copyint.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &long:anOperand 
-//        => system'internal'real_copylong.
-//        
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &long:anOperand 
+        => system'internal'real_copylong.
+        
 //    /// Creates the object with specified value
 //    #constructor new : anObject
 //        <= new &real:(anObject real).
-//        
-//    /// Returns itself        
-//    #method real = $self.
-//    
-//    /// Compares the numeric values
-//    #method(type:bool,stacksafe) equal &real:anOperand
-//        => system'internal'real_equal.
-//
-//    /// Compares the numeric values
-//    #method(type:bool,stacksafe) equal &int:anOperand
-//        = $self equal &real:(system'RealNumber new &int:anOperand).
-//
+        
+    /// Returns itself        
+    #method real = $self.
+    
+    /// Compares the numeric values
+    #method(type:bool,stacksafe) equal &real:anOperand
+        => system'internal'real_equal.
+
+    /// Compares the numeric values
+    #method(type:bool,stacksafe) equal &int:anOperand
+        = $self equal &real:(RealNumber new &int:anOperand).
+
 //    /// Compares the numeric values
 //    #method(type:bool,stacksafe) equal &byte:anOperand
 //        = $self equal &real:(system'RealNumber new &byte:anOperand).
@@ -1225,19 +1225,19 @@
 //    /// Compares the numeric values
 //    #method(type:bool,stacksafe) equal &short:anOperand
 //        = $self equal &real:(system'RealNumber new &short:anOperand).
-//
-//    /// Compares the numeric values
-//    #method(type:bool,stacksafe) equal &long:anOperand
-//        = $self equal &real:(system'RealNumber new &long:anOperand).
-//
-//    /// Compares the numeric values
-//    #method(type:bool,stacksafe) less &real:anOperand
-//        => system'internal'real_less.
-//
-//    /// Compares the numeric values
-//    #method(type:bool,stacksafe) less &int:anOperand
-//        = $self less &real:(system'RealNumber new &int:anOperand).
-//
+
+    /// Compares the numeric values
+    #method(type:bool,stacksafe) equal &long:anOperand
+        = $self equal &real:(RealNumber new &long:anOperand).
+
+    /// Compares the numeric values
+    #method(type:bool,stacksafe) less &real:anOperand
+        => system'internal'real_less.
+
+    /// Compares the numeric values
+    #method(type:bool,stacksafe) less &int:anOperand
+        = $self less &real:(RealNumber new &int:anOperand).
+
 //    /// Compares the numeric values
 //    #method(type:bool,stacksafe) less &byte:anOperand
 //        = $self less &real:(system'RealNumber new &byte:anOperand).
@@ -1245,19 +1245,19 @@
 //    /// Compares the numeric values
 //    #method(type:bool,stacksafe) less &short:anOperand
 //        = $self less &real:(system'RealNumber new &short:anOperand).
-//
-//    /// Compares the numeric values
-//    #method(type:bool,stacksafe) less &long:anOperand
-//        = $self less &real:(system'RealNumber new &long:anOperand).
-//
-//    /// Returns the sum of numbers
-//    #method(type:real,stacksafe) add &real:anOperand
-//        => system'internal'real_add.
-//
-//    /// Returns the sum of numbers
-//    #method(type:real,stacksafe) add &int:anOperand
-//        = $self add &real:(system'RealNumber new &int:anOperand).
-//
+
+    /// Compares the numeric values
+    #method(type:bool,stacksafe) less &long:anOperand
+        = $self less &real:(RealNumber new &long:anOperand).
+
+    /// Returns the sum of numbers
+    #method(type:real,stacksafe) add &real:anOperand
+        => system'internal'real_add.
+
+    /// Returns the sum of numbers
+    #method(type:real,stacksafe) add &int:anOperand
+        = $self add &real:(RealNumber new &int:anOperand).
+
 //    /// Returns the sum of numbers
 //    #method(type:real,stacksafe) add &byte:anOperand
 //        = $self add &real:(system'RealNumber new &byte:anOperand).
@@ -1265,19 +1265,19 @@
 //    /// Returns the sum of numbers
 //    #method(type:real,stacksafe) add &short:anOperand
 //        = $self add &real:(system'RealNumber new &short:anOperand).
-//
-//    /// Returns the sum of numbers
-//    #method(type:real,stacksafe) add &long:anOperand
-//        = $self add &real:(system'RealNumber new &long:anOperand).
-//
-//    /// Returns the difference of numbers
-//    #method(type:real,stacksafe) subtract &real:anOperand
-//        => system'internal'real_sub.
-//
-//    /// Returns the difference of numbers
-//    #method(type:real,stacksafe) subtract &int:anOperand
-//        = $self subtract &real:(system'RealNumber new &int:anOperand).
-//
+
+    /// Returns the sum of numbers
+    #method(type:real,stacksafe) add &long:anOperand
+        = $self add &real:(RealNumber new &long:anOperand).
+
+    /// Returns the difference of numbers
+    #method(type:real,stacksafe) subtract &real:anOperand
+        => system'internal'real_sub.
+
+    /// Returns the difference of numbers
+    #method(type:real,stacksafe) subtract &int:anOperand
+        = $self subtract &real:(RealNumber new &int:anOperand).
+
 //    /// Returns the difference of numbers
 //    #method(type:real,stacksafe) subtract &byte:anOperand
 //        = $self subtract &real:(system'RealNumber new &byte:anOperand).
@@ -1285,19 +1285,19 @@
 //    /// Returns the difference of numbers
 //    #method(type:real,stacksafe) subtract &short:anOperand
 //        = $self subtract &real:(system'RealNumber new &short:anOperand).
-//
-//    /// Returns the difference of numbers
-//    #method(type:real,stacksafe) subtract &long:anOperand
-//        = $self subtract &real:(system'RealNumber new &long:anOperand).
-//
-//    /// Returns the product of numbers
-//    #method(type:real,stacksafe) multiply &real:anOperand
-//        => system'internal'real_mul.
-//
-//    /// Returns the product of numbers
-//    #method(type:real,stacksafe) multiply &int:anOperand
-//        = $self multiply &real:(system'RealNumber new &int:anOperand).
-//
+
+    /// Returns the difference of numbers
+    #method(type:real,stacksafe) subtract &long:anOperand
+        = $self subtract &real:(RealNumber new &long:anOperand).
+
+    /// Returns the product of numbers
+    #method(type:real,stacksafe) multiply &real:anOperand
+        => system'internal'real_mul.
+
+    /// Returns the product of numbers
+    #method(type:real,stacksafe) multiply &int:anOperand
+        = $self multiply &real:(RealNumber new &int:anOperand).
+
 //    /// Returns the product of numbers
 //    #method(type:real,stacksafe) multiply &byte:anOperand
 //        = $self multiply &real:(system'RealNumber new &byte:anOperand).
@@ -1305,19 +1305,19 @@
 //    /// Returns the product of numbers
 //    #method(type:real,stacksafe) multiply &short:anOperand
 //        = $self multiply &real:(system'RealNumber new &short:anOperand).
-//
-//    /// Returns the product of numbers
-//    #method(type:real,stacksafe) multiply &long:anOperand
-//        = $self multiply &real:(system'RealNumber new &long:anOperand).
-//
-//    /// Returns the result of the division
-//    #method(type:real,stacksafe) divide &real:anOperand
-//        => system'internal'real_div.
-//
-//    /// Returns the result of the division
-//    #method(type:real,stacksafe) divide &int:anOperand
-//        = $self divide &real:(system'RealNumber new &int:anOperand).
-//
+
+    /// Returns the product of numbers
+    #method(type:real,stacksafe) multiply &long:anOperand
+        = $self multiply &real:(RealNumber new &long:anOperand).
+
+    /// Returns the result of the division
+    #method(type:real,stacksafe) divide &real:anOperand
+        => system'internal'real_div.
+
+    /// Returns the result of the division
+    #method(type:real,stacksafe) divide &int:anOperand
+        = $self divide &real:(RealNumber new &int:anOperand).
+
 //    /// Returns the result of the division
 //    #method(type:real,stacksafe) divide &byte:anOperand
 //        = $self divide &real:(system'RealNumber new &byte:anOperand).
@@ -1325,29 +1325,29 @@
 //    /// Returns the result of the division
 //    #method(type:real,stacksafe) divide &short:anOperand
 //        = $self divide &real:(system'RealNumber new &short:anOperand).
-//
-//    /// Returns the result of the division
-//    #method(type:real,stacksafe) divide &long:anOperand
-//        = $self divide &real:(system'RealNumber new &long:anOperand).
-//
+
+    /// Returns the result of the division
+    #method(type:real,stacksafe) divide &long:anOperand
+        = $self divide &real:(RealNumber new &long:anOperand).
+
 //    /// Negates the value
 //    #method negative = 0r - $self.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &real:$self.
-//    
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &real:$self.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &real:$self.
+    
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &real:$self.
+
 //    /// Clones the value    
 //    #method clone = RealNumber new &real:$self.
-//    
-//    /// Dispatches the verb to the target object with real subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:$self.
-//    
-//    /// Dispatches the verb to the target object with real subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:$self.
-//
+    
+    /// Dispatches the verb to the target object with real subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:$self.
+    
+    /// Dispatches the verb to the target object with real subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:$self.
+
 //    // Reads the object hash code into the output parameter
 //    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
 //    
@@ -2125,12 +2125,12 @@
 {
     #field(type:real)theValue.
     
-//    /// Creates a real variable
-//    #constructor new
-//    [
-//        theValue := 0.0r.
-//    ]
-//
+    /// Creates a real variable
+    #constructor new
+    [
+        theValue := 0.0r.
+    ]
+
 //    /// Creates a real variable
 //    #constructor new : aValue
 //    [
@@ -2166,31 +2166,31 @@
 //    
 //    /// Returns the real value
 //    #method real = RealNumber new &real:theValue.
-//        
-//    /// Copies the numeric value
-//    #method(stacksafe) write &real:anOperand
-//    [
-//        theValue := anOperand.
-//    ]
-//    
+        
+    /// Copies the numeric value
+    #method(stacksafe) write &real:anOperand
+    [
+        theValue := anOperand.
+    ]
+    
 //    /// Reads the numeric value
 //    #method(stacksafe) read &vreal:aRetVal
 //    [
 //        aRetVal << theValue.
 //    ]    
-//    
-//    /// Copies the numeric value
-//    #method write &int:anOperand
-//    [
-//        theValue := RealNumber new &int:anOperand.
-//    ]
-//    
-//    /// Copies the numeric value
-//    #method write &long:anOperand
-//    [
-//        theValue := RealNumber new &long:anOperand.
-//    ]
-//    
+    
+    /// Copies the numeric value
+    #method write &int:anOperand
+    [
+        theValue := RealNumber new &int:anOperand.
+    ]
+    
+    /// Copies the numeric value
+    #method write &long:anOperand
+    [
+        theValue := RealNumber new &long:anOperand.
+    ]
+    
 //    /// Copies the numeric value
 //    #method write &short:anOperand
 //    [
@@ -2202,25 +2202,25 @@
 //    [
 //        theValue := RealNumber new &byte:anOperand.
 //    ]
-//        
-//    /// Appends the real value
-//    #method(stacksafe) append &real:anOperand    
-//    [
-//        theValue := theValue + anOperand.
-//    ]
-//    
-//    /// Appends the integer value
-//    #method append &int:anOperand    
-//    [
-//        theValue := theValue add &int:anOperand.
-//    ]
-//    
-//    /// Appends the integer value
-//    #method append &long:anOperand    
-//    [
-//        theValue := theValue add &long:anOperand.
-//    ]
-//        
+        
+    /// Appends the real value
+    #method(stacksafe) append &real:anOperand    
+    [
+        theValue := theValue + anOperand.
+    ]
+    
+    /// Appends the integer value
+    #method append &int:anOperand    
+    [
+        theValue := theValue add &int:anOperand.
+    ]
+    
+    /// Appends the integer value
+    #method append &long:anOperand    
+    [
+        theValue := theValue add &long:anOperand.
+    ]
+        
 //    /// Appends the integer value
 //    #method append &short:anOperand    
 //    [
@@ -2232,25 +2232,25 @@
 //    [
 //        theValue := theValue + anOperand real.
 //    ]
-//    
-//    /// Reduces the real value
-//    #method(stacksafe) reduce &real:anOperand
-//    [
-//        theValue := theValue - anOperand.
-//    ]
-//        
-//    /// Reduces the integer value
-//    #method reduce &int:anOperand
-//    [
-//        theValue := theValue subtract &int:anOperand.
-//    ]    
-//        
-//    /// Reduces the integer value
-//    #method reduce &long:anOperand
-//    [
-//        theValue := theValue - anOperand real.
-//    ]
-//        
+    
+    /// Reduces the real value
+    #method(stacksafe) reduce &real:anOperand
+    [
+        theValue := theValue - anOperand.
+    ]
+        
+    /// Reduces the integer value
+    #method reduce &int:anOperand
+    [
+        theValue := theValue subtract &int:anOperand.
+    ]    
+        
+    /// Reduces the integer value
+    #method reduce &long:anOperand
+    [
+        theValue := theValue - anOperand real.
+    ]
+        
 //    /// Reduces the integer value
 //    #method reduce &short:anOperand
 //    [
@@ -2262,25 +2262,25 @@
 //    [
 //        theValue := theValue - anOperand real.
 //    ]
-//        
-//    /// Multiplies by the real numeric value
-//    #method(stacksafe) multiplyBy &real:anOperand
-//    [
-//        theValue := theValue * anOperand.
-//    ]        
-//        
-//    /// Multiplies by the integer value
-//    #method multiplyBy &int:anOperand
-//    [
-//        theValue := theValue multiply &int:anOperand.
-//    ]        
-//        
-//    /// Multiplies by the integer value
-//    #method multiplyBy &long:anOperand
-//    [
-//        theValue := theValue * anOperand real.
-//    ]        
-//        
+        
+    /// Multiplies by the real numeric value
+    #method(stacksafe) multiplyBy &real:anOperand
+    [
+        theValue := theValue * anOperand.
+    ]        
+        
+    /// Multiplies by the integer value
+    #method multiplyBy &int:anOperand
+    [
+        theValue := theValue multiply &int:anOperand.
+    ]        
+        
+    /// Multiplies by the integer value
+    #method multiplyBy &long:anOperand
+    [
+        theValue := theValue * anOperand real.
+    ]        
+        
 //    /// Multiplies by the integer value
 //    #method multiplyBy &short:anOperand
 //    [
@@ -2292,25 +2292,25 @@
 //    [
 //        theValue := theValue * anOperand real.
 //    ]        
-//
-//    /// Divides into the numeric real value        
-//    #method(stacksafe) divideInto &real:anOperand
-//    [
-//        theValue := theValue / anOperand.
-//    ]
-//        
-//    /// Divides into the integer value
-//    #method divideInto &int:anOperand
-//    [
-//        theValue := theValue divide &int:anOperand.
-//    ]
-//        
-//    /// Divides into the integer value
-//    #method divideInto &long:anOperand
-//    [
-//        theValue := theValue / anOperand real.
-//    ]
-//        
+
+    /// Divides into the numeric real value        
+    #method(stacksafe) divideInto &real:anOperand
+    [
+        theValue := theValue / anOperand.
+    ]
+        
+    /// Divides into the integer value
+    #method divideInto &int:anOperand
+    [
+        theValue := theValue divide &int:anOperand.
+    ]
+        
+    /// Divides into the integer value
+    #method divideInto &long:anOperand
+    [
+        theValue := theValue / anOperand real.
+    ]
+        
 //    /// Divides into the integer value
 //    #method divideInto &short:anOperand
 //    [
@@ -2322,49 +2322,49 @@
 //    [
 //        theValue := theValue / anOperand real.
 //    ]
-//
-//    /// Compares the real value
-//    #method(type:bool,stacksafe) equal &real:anOperand 
-//        = theValue == anOperand.
-//
-//    /// Compares the real value
-//    #method(type:bool,stacksafe) less &real:anOperand
-//        = theValue < anOperand.
-//
-//    /// Returns the sum of numbers        
-//    #method(stacksafe) add &real:anOperand
-//        = RealNumber new &real:(theValue + anOperand).
-//    
-//    /// Returns the difference
-//    #method(stacksafe) subtract &real:anOperand
-//        = RealNumber new &real:(theValue - anOperand).
-//    
-//    /// Returns the product
-//    #method(stacksafe) multiply &real:anOperand
-//        = RealNumber new &real:(theValue * anOperand).
-//    
-//    /// Returns the result of division
-//    #method(stacksafe) divide &real:anOperand
-//        = RealNumber new &real:(theValue / anOperand).
-//
+
+    /// Compares the real value
+    #method(type:bool,stacksafe) equal &real:anOperand 
+        = theValue == anOperand.
+
+    /// Compares the real value
+    #method(type:bool,stacksafe) less &real:anOperand
+        = theValue < anOperand.
+
+    /// Returns the sum of numbers        
+    #method(stacksafe) add &real:anOperand
+        = RealNumber new &real:(theValue + anOperand).
+    
+    /// Returns the difference
+    #method(stacksafe) subtract &real:anOperand
+        = RealNumber new &real:(theValue - anOperand).
+    
+    /// Returns the product
+    #method(stacksafe) multiply &real:anOperand
+        = RealNumber new &real:(theValue * anOperand).
+    
+    /// Returns the result of division
+    #method(stacksafe) divide &real:anOperand
+        = RealNumber new &real:(theValue / anOperand).
+
 //    /// Returns the value
 //    #method value = RealNumber new &real:theValue.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &real:theValue.
-//
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &real:theValue.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &real:theValue.
+
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &real:theValue.
+
 //    /// Clones the variable
 //    #method clone = Real new &real:theValue.
-//    
-//    /// Dispatches the verb to the target object with real subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:(RealNumber new &real:theValue).
-//    
-//    /// Dispatches the verb to the target object with real subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:(RealNumber new &real:theValue).
-//    
+    
+    /// Dispatches the verb to the target object with real subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &real:(RealNumber new &real:theValue).
+    
+    /// Dispatches the verb to the target object with real subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:(RealNumber new &real:theValue).
+    
 //    /// Expands a real value
 //    #method => theValue.
 }
@@ -3327,10 +3327,10 @@
 //    /// Converts the parameter to the literal value with the provided radix
 //    #method(type:literal,stacksafe) convert &long:aNumber &index:aRadix
 //        => system'internal's_copylong_radix.
-//
-//    /// Converts the parameter to the literal value
-//    #method(type:literal,stacksafe) convert &real:aNumber
-//        => system'internal's_copyreal.
+
+    /// Converts the parameter to the literal value
+    #method(type:literal,stacksafe) convert &real:aNumber
+        => system'internal's_copyreal.
 
     /// Converts UTF-16 literal to UTF-8 one
     #method(type:literal,stacksafe) convert &wide:aLiteral
@@ -3385,10 +3385,10 @@
 //    /// Converts the parameter to the literal value with the provided radix
 //    #method(type:wide,stacksafe) convert &long:aNumber &index:aRadix
 //        => system'internal'ws_copylong_radix.
-//
-//    /// Converts the parameter to the literal value
-//    #method(type:wide,stacksafe) convert &real:aNumber
-//        => system'internal'ws_copyreal.
+
+    /// Converts the parameter to the literal value
+    #method(type:wide,stacksafe) convert &real:aNumber
+        => system'internal'ws_copyreal.
 
     /// Converts UTF-8 literal to UTF-16e
     #method(type:wide,stacksafe) convert &literal:aLiteral

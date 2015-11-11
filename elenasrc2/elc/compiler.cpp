@@ -326,7 +326,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
-//   realReference = mapReference(project->resolveForward(REAL_FORWARD));
+   realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
 //   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
@@ -1725,6 +1725,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else if (object.kind == okLongConstant) {
       return scope.moduleScope->longReference;
    }
+   else if (object.kind == okRealConstant) {
+      return scope.moduleScope->realReference;
+   }
    else if (object.kind == okLiteralConstant) {
       return scope.moduleScope->literalReference;
    }
@@ -3005,9 +3008,9 @@ int Compiler ::mapOperandType(CodeScope& scope, ObjectInfo operand)
    else if (operand.kind == okLongConstant) {
       return elDebugQWORD;
    }
-//   else if (operand.kind == okRealConstant) {
-//      return elDebugReal64;
-//   }
+   else if (operand.kind == okRealConstant) {
+      return elDebugReal64;
+   }
 //   else if (operand.kind == okSubject) {
 //      return elDebugSubject;
 //   }
@@ -3351,6 +3354,13 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
             retVal.param = moduleScope->longReference;
 
          primitiveOp = lxLongOp;
+         size = 8;
+      }
+      else if (lflag == elDebugReal64 && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
+         if (IsExprOperator(operator_id))
+            retVal.param = moduleScope->realReference;
+
+         primitiveOp = lxRealOp;
          size = 8;
       }
    }
@@ -6708,6 +6718,7 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
             break;
          case lxIntOp:
          case lxLongOp:
+         case lxRealOp:
             optimizeOp(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
