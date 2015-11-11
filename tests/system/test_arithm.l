@@ -7,7 +7,7 @@
 //#define system'io.
 //#define system'math.
 //#define system'culture.
-//#define extensions.
+#define extensions.
 //#define extensions'math.
 //#define extensions'text.
 
@@ -15,8 +15,6 @@
 {
     test            
     [
-        #var l := "abc" + "de".
-        #var c := l@2.
     ]        
 }.
         

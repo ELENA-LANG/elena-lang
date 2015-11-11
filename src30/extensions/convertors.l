@@ -1,5 +1,5 @@
-//#define system.
-//#define system'collections.
+#define system.
+#define system'collections.
 //#define system'routines.
 //#define system'calendar.
 //#define system'text.
@@ -41,40 +41,40 @@
 //        ^ theOutput wide.
 //    ]
 //}.
-//
-//#symbol arrayExConvertor =
-//{
-//    convert &enumerable:aList
-//    [
-//        #var(type:array_list)aRetVal := ArrayList new.
-//        
-//        aList run &each:anItem [ aRetVal append:anItem ].
-//
-//        ^ aRetVal array.
-//    ]
-//}.
-//
-//// --- convertorOp ---
-//
-//#class(extension)convertorOp
-//{
-//    #method toArray
-//        = self cast:%eval &to:
-//            {
-//                literal : aLiteral = arrayExConvertor convert &enumerable:aLiteral.
-//                
-//                wide : aWide = arrayExConvertor convert &enumerable:aWide.
-//                
-//                array : anArray
-//                    = anArray.
-//                    
-//                enumerable : aList
-//                    = arrayExConvertor convert &enumerable:aList.
-//                    
-//                enumerator : anEnumerator
-//                    = arrayExConvertor convert &enumerable:anEnumerator.
-//            }.
-//    
+
+#symbol arrayExConvertor =
+{
+    convert &enumerable:aList
+    [
+        #var(type:array_list)aRetVal := ArrayList new.
+        
+        aList run &each:anItem [ aRetVal append:anItem ].
+
+        ^ aRetVal array.
+    ]
+}.
+
+// --- convertorOp ---
+
+#class(extension)convertorOp
+{
+    #method toArray
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = arrayExConvertor convert &enumerable:aLiteral.
+                
+                wide : aWide = arrayExConvertor convert &enumerable:aWide.
+                
+                array : anArray
+                    = anArray.
+                    
+                enumerable : aList
+                    = arrayExConvertor convert &enumerable:aList.
+                    
+                enumerator : anEnumerator
+                    = arrayExConvertor convert &enumerable:anEnumerator.
+            }.
+    
 //    #method toLiteral
 //        = self cast:%eval &to:
 //            {
@@ -178,8 +178,8 @@
 //
 //    #method convertTo : aTarget
 //        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
-//}
-//
+}
+
 //#class(extension:datetime) dateFormatterOp 
 //{
 //    #method toShortTimeLiteral

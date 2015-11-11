@@ -5387,6 +5387,9 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
+   // NOTE : top expression is required for propery translation
+   scope.writer->newNode(lxRoot);
+
    // try to implement light-weight resend operation
    if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
       ObjectInfo target = scope.mapObject(node.Terminal());
@@ -5416,6 +5419,11 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
    ObjectInfo target = compileExpression(node, scope, 0, 0);
 
    scope.writer->closeNode();
+
+   // NOTE : close root node
+   scope.writer->closeNode();
+
+   saveSyntaxTree(*scope.moduleScope, *tape, methodScope->syntaxTree);
 
    _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
 }
@@ -5509,12 +5517,15 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope, CommandTa
    _writer.declareMethod(*tape, methodScope->message, false, true);
    scope.level++;
 
+   scope.writer->newBookmark();
+   writeTerminal(TerminalInfo(), scope, ObjectInfo(okThisParam, 1));
+
    compileMessage(node, scope, ObjectInfo(okThisParam, 1/*, methodScope->getClassType()*/));
    scope.freeSpace();
 
-   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+   scope.writer->removeBookmark();
 
-   _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 }
 
 //void Compiler :: compileImportMethod(DNode node, ClassScope& scope, ref_t message, ident_t function)
@@ -5543,8 +5554,6 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
    int paramCount = getParamCount(scope.message);
 
    SyntaxWriter writer(&scope.syntaxTree);
-   // NOTE : top expression is required for propery translation
-   writer.newNode(lxRoot);
 
    CodeScope codeScope(&scope, &writer);
 
@@ -5560,7 +5569,17 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 
    // check if it is a resend
    if (resendBody != nsNone) {
+      // NOTE : top expression is required for propery translation
+      writer.newNode(lxRoot);
+
       compileResendExpression(resendBody.firstChild(), codeScope, tape);
+
+      // NOTE : close root node
+      writer.closeNode();
+
+      saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
+
+      _writer.endMethod(*tape, getParamCount(scope.message) + 1, scope.reserved, true);
    }
    // check if it is a dispatch
    else if (dispatchBody != nsNone) {
@@ -5570,6 +5589,9 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       else compileDispatchExpression(dispatchBody.firstChild(), codeScope, tape);
    }
    else {
+      // NOTE : top expression is required for propery translation
+      writer.newNode(lxRoot);
+
       // new stack frame
       // stack already contains current $self reference
       // the original message should be restored if it is a generic method
@@ -5605,18 +5627,6 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
                writer.closeNode();
             }
             else writer.appendNode(lxLocal, 1);
-
-//            _writer.loadObject(*codeScope.tape, ObjectInfo(okThisParam, 1));
-//
-//            bool mismatch = false;
-//            bool boxed = false;
-//            bool dummy = false;
-//            ObjectInfo acc(okAccumulator);
-//            compileTypecast(codeScope, acc, , mismatch, boxed, dummy);
-//            if (mismatch)
-//               scope.raiseWarning(2, wrnTypeMismatch, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
-//            if (boxed)
-//               scope.raiseWarning(4, wrnBoxingCheck, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
          }
       }
 

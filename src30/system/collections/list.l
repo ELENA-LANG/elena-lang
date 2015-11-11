@@ -1,9 +1,9 @@
-//#import system.
-//
+#import system.
+
 //#subject(class:system'collections'ListItem)   list_item.
 //
 //#subject(class:system'collections'List)list.
-//#subject(class:system'collections'ArrayList)  array_list.
+#subject(class:system'collections'ArrayList)  array_list.
 //#subject(class:system'collections'Dictionary) dictionary.
 //
 //// --- ListItem ---
@@ -326,24 +326,24 @@
 //        ].
 //    ]
 //}
-//
-//// --- ArrayList ---
-//
-///// An array list object
-//#class(sealed) ArrayList
-//{
-//    #field(type:array) theArray.
-//    #field(type:vint)  theLength.
-//    #field(type:vint)  theCapacity.
-//    
-//    /// Creates the list
-//    #constructor new
-//    [
-//        theCapacity := Integer new &int:32.
-//        theLength := Integer new.
-//        theArray := Array new &int:32.
-//    ]
-//    
+
+// --- ArrayList ---
+
+/// An array list object
+#class(sealed) ArrayList
+{
+    #field(type:array) theArray.
+    #field(type:vint)  theLength.
+    #field(type:vint)  theCapacity.
+    
+    /// Creates the list
+    #constructor new
+    [
+        theCapacity := Integer new &int:32.
+        theLength := Integer new.
+        theArray := Array new &int:32.
+    ]
+    
 //    /// Creates the list
 //    #constructor new : aCapacity
 //        <= new &int:(aCapacity int).
@@ -391,36 +391,36 @@
 //        
 //        theArray setAt &int:anIndex &object:anObject.
 //    ]
-//    
-//    #method $expand
-//    [
-//        (theCapacity <= theLength)?
-//        [
-//            theCapacity += 32.
-//            
-//            #var(type:array)aNewArray := Array new &int:theCapacity.
-//            #var(type:int) i := 0.
-//            #loop (i < theLength)?
-//            [
-//                aNewArray setAt &int:i &object:(theArray getAt &int:i).
-//                
-//                i := i + 1.
-//            ].
-//            
-//            theArray := aNewArray.
-//        ].
-//    ]
-//    
-//    /// Appends a new object to the end of the list
-//    #method append : anObject
-//    [
-//        $self $expand.
-//        
-//        theArray setAt &int:theLength &object:anObject.
-//        
-//        theLength += 1.
-//    ]
-//    
+    
+    #method $expand
+    [
+        (theCapacity <= theLength)?
+        [
+            theCapacity += 32.
+            
+            #var(type:array)aNewArray := Array new &int:theCapacity.
+            #var(type:int) i := 0.
+            #loop (i < theLength)?
+            [
+                aNewArray setAt &int:i &object:(theArray getAt &int:i).
+                
+                i := i + 1.
+            ].
+            
+            theArray := aNewArray.
+        ].
+    ]
+    
+    /// Appends a new object to the end of the list
+    #method append : anObject
+    [
+        $self $expand.
+        
+        theArray setAt &int:theLength &object:anObject.
+        
+        theLength += 1.
+    ]
+    
 //    /// Inserts a new object to the specified position
 //    #method insert &int:anIndex &object:anObject
 //    [
@@ -467,16 +467,16 @@
 //
 //    #method remove &at:anIndex
 //        <= remove &int:(anIndex int).
-//
-//    /// Returns itself
-//    #method array_list = $self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
-//    
+
+    /// Returns itself
+    #method array_list = $self.
+    
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
+    
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
+    
 //    /// Returns the number of list items
 //    #method length = theLength int.
 //    
@@ -507,11 +507,11 @@
 //    /// Returns a list copy
 //    #method(type:array_list) clone
 //        = ArrayList $new &array:theArray &int:theLength.
-//        
-//    #method array
-//        = Array new &int:0 &int:theLength &array:theArray.
-//}
-//
+        
+    #method array
+        = Array new &int:0 &int:theLength &array:theArray.
+}
+
 //// --- ArrayListEnumerator ---
 //
 ///// A list enumerator

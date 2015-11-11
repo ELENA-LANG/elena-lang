@@ -1673,22 +1673,22 @@
 //    /// Returns a wide literal value
 //    #method wide = theValue wide.
 //}
-//
-//// --- BaseArray ---
-//
-///// A base array
-//#class(dynamic) BaseArray
-//{
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        => system'internal'arr_create.
-//}
-//
-//// --- Array ---
-//
-///// An array
-//#class(sealed) Array :: BaseArray
-//{
+
+// --- BaseArray ---
+
+/// A base array
+#class(dynamic) BaseArray
+{
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        => system'internal'arr_create.
+}
+
+// --- Array ---
+
+/// An array
+#class(sealed) Array :: BaseArray
+{
 //    /// Creates an empty array
 //    #constructor min
 //        => system'internal'arr_empty.
@@ -1696,43 +1696,43 @@
 //    /// Creates the array with the specified length
 //    #constructor new : aLength
 //        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    ///
-//    /// Obsolete
-//    #constructor new &length:aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        => system'internal'arr_create.
-//    
-//    /// Creates a copy of the provided array
-//    #constructor new &array:anArray
-//        <= %new &int:0 &int:(anArray length int) &array:anArray.
-//    
-//    /// Creates a copy of the provided sub array
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
-//        => system'internal'arr_copysubarr.
-//        
-//    /// Returns the specified array member
-//    #method getAt : anIndex
-//        = $self getAt &int:(anIndex int).
-//
-//    /// Returns the specified array member
-//    #method(stacksafe) getAt &int:anIndex
-//        => system'internal'arr_getat.
-//
-//    /// Sets the specified array member
-//    #method setAt:anIndex:anObject
-//    [
-//        $self setAt &int:(anIndex int) &object:anObject.
-//    ]
-//    
-//    /// Sets the specified array member
-//    #method(stacksafe) setAt &int:anIndex &object:anObject
-//        => system'internal'arr_setat.
-//
+    
+    /// Creates the array with the specified length
+    ///
+    /// Obsolete
+    #constructor new &length:aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        => system'internal'arr_create.
+    
+    /// Creates a copy of the provided array
+    #constructor new &array:anArray
+        <= %new &int:0 &int:(anArray length int) &array:anArray.
+    
+    /// Creates a copy of the provided sub array
+    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
+        => system'internal'arr_copysubarr.
+        
+    /// Returns the specified array member
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    /// Returns the specified array member
+    #method(stacksafe) getAt &int:anIndex
+        => system'internal'arr_getat.
+
+    /// Sets the specified array member
+    #method setAt:anIndex:anObject
+    [
+        $self setAt &int:(anIndex int) &object:anObject.
+    ]
+    
+    /// Sets the specified array member
+    #method(stacksafe) setAt &int:anIndex &object:anObject
+        => system'internal'arr_setat.
+
 //    /// Concatinates the arrays    
 //    #method add : anObject
 //        = $self add &array:(anObject array).
@@ -1766,40 +1766,40 @@
 //            
 //        ^ aRetVal.
 //    ]
-//
-//    /// Returns itself
-//    #method array = $self.
-//
-//    /// Reads the array length into an output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'arr_getlen.
-//
-//    /// Returns the array length
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
+
+    /// Returns itself
+    #method array = $self.
+
+    /// Reads the array length into an output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'arr_getlen.
+
+    /// Returns the array length
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
 //    /// Returns the array enumerator
 //    #method enumerator = ArrayEnumerator new &array:$self.
 //
 //    /// Returns the array iterator
 //    #method iterator = ArrayIterator new &array:$self.
-//
-//    /// Dispatches the verb to the target object with array subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
-//    
-//    /// Dispatches the verb to the target object with array subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array:$self.
-//
+
+    /// Dispatches the verb to the target object with array subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
+    
+    /// Dispatches the verb to the target object with array subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array:$self.
+
 //    /// Clones the array
 //    #method(type:array) clone 
 //        = Array new &array:$self.
-//}
-//
+}
+
 //// --- OpenArgs ---
 //
 //#class(sealed,dynamic)OpenArgs
