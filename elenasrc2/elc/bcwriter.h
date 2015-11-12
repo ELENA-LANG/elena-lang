@@ -215,7 +215,7 @@ public:
    void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
    void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
-//   void freeVirtualStack(CommandTape& tape, int count);
+   void freeVirtualStack(CommandTape& tape, int count);
 
    void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    void updateStackAlloc(ByteCodeIterator it, int size);
@@ -289,6 +289,7 @@ public:
    void translateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void translateInternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
    void translateTrying(CommandTape& tape, SyntaxTree::Node node);

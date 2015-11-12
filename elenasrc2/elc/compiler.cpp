@@ -2230,10 +2230,11 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
 
          // HOTFIX : external node will be declared later
          return; 
-//      case okInternal:
-//         if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
-//            scope.raiseError(errInvalidOperation, node.Terminal());
-//         break;
+      case okInternal:
+         //if (!test(mode, HINT_EXTERNAL_CALL) && node.nextNode() != nsMessageOperation)
+         //   scope.raiseError(errInvalidOperation, node.Terminal());
+         // HOTFIX : external node will be declared later
+         return;
    }
 
    appendObjectInfo(scope, object);
@@ -3919,12 +3920,12 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //      }
       member = member.nextNode();
    }
-////   else if (object.kind == okInternal) {
-////      currentObject = compileInternalCall(member, scope, object);
-////
-////      member = member.nextNode();
-////   }
-//
+   else if (object.kind == okInternal) {
+      currentObject = compileInternalCall(member, scope, object);
+
+      member = member.nextNode();
+   }
+
 //   bool nextOperation = false;
    while (member != nsNone) {
       if (member == nsAssigning) {
@@ -4988,26 +4989,27 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // only eval message is allowed
-//   TerminalInfo     verb = node.Terminal();
-//   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
-//      scope.raiseError(errInvalidOperation, verb);
-//
-//   DNode arg = node.firstChild();
-//   int count = countSymbol(arg, nsMessageParameter);
-//   _writer.declareArgumentList(*scope.tape, count);
+ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // only eval message is allowed
+   TerminalInfo     verb = node.Terminal();
+   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
+      scope.raiseError(errInvalidOperation, verb);
+
+   scope.writer->newNode(lxInternalCall, routine.param);
+
+   DNode arg = node.firstChild();
 //
 //   int index = 0;
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//      ref_t type = moduleScope->mapType(terminal);
-//
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+      ref_t type = moduleScope->mapType(terminal);
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         compileExpression(arg.firstChild(), scope, type, 0);
 //         ObjectInfo info = compileObject(arg.firstChild(), scope, 0);
 //         _writer.loadObject(*scope.tape, info);
 //
@@ -5022,17 +5024,16 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 //
 //         _writer.saveObject(*scope.tape, ObjectInfo(okCurrent, index));
 //         index++;
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   _writer.loadObject(*scope.tape, routine);
-//   _writer.freeVirtualStack(*scope.tape, count);
-//
-//   return ObjectInfo(okAccumulator);
-//}
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+
+      arg = arg.nextNode();
+   }
+
+   scope.writer->closeNode();
+
+   return ObjectInfo(okObject);
+}
 
 void Compiler :: reserveSpace(CodeScope& scope, int size)
 {
@@ -6477,6 +6478,20 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
+void Compiler :: optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node)
+{
+   SyntaxTree::Node arg = node.firstChild();
+   while (arg != lxNone) {
+      // if boxing used for external call
+      // remove it
+      if (arg == lxBoxing || arg == lxCondBoxing) {
+         arg = lxExpression;
+      }
+
+      arg = arg.nextNode();
+   }
+}
+
 void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
 {
    bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
@@ -6727,6 +6742,10 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
          case lxStdExternalCall:
          case lxExternalCall:
             optimizeExtCall(scope, current);
+            optimizeSyntaxExpression(scope, current);
+            break;
+         case lxInternalCall:
+            optimizeInternalCall(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
          default:

@@ -633,9 +633,6 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
 ////      case okSymbol:
 ////         tape.write(bcCallR, object.param | mskSymbolRef);
 ////         break;
-////      case okInternal:
-////         tape.write(bcCallR, object.param | mskInternalRef);
-////         break;
 ////      case okConstantSymbol:
 ////      case okConstantClass:
 ////      case okLiteralConstant:
@@ -975,10 +972,10 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_
    }
 }
 
-//void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
-//{
-//   tape.write(bcFreeStack, count);
-//}
+void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
+{
+   tape.write(bcFreeStack, count);
+}
 
 void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 {
@@ -2745,6 +2742,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
+      case lxInternalCall:
+         tape.write(bcCallR, argument | mskInternalRef);
+         break;
       default:
          break;
    }
@@ -3200,115 +3200,43 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 }
 
-//void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
-//{
-//   bool directMode = true;
-//   bool tryMode = false;
-//   bool altMode = false;
-//   bool assignMode = false;
-//   bool callMode = false;
-//
-//   int size = 0;
-//   int paramCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//      else if (test(current.type, lxCallMask)) {
-//         callMode = true;
-//      }
-//      else if (current == lxCatch) {
-//         tryMode = true;
-//      }
-//      else if (current == lxAlternative) {
-//         altMode = true;
-//      }
-//      else if (current == lxAssigning) {
-//         assignMode = true;
-//         size = current.argument;   // if argument is zero - reference assigning, otherwise data copying
-//      }
-//
-//      if (current == lxExpression) 
-//         directMode = false;
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (altMode)
-//      pushObject(tape, lxNil);
-//
-//   if (altMode || tryMode)
-//      declareTry(tape);
-//
-//   // allocate the place for the parameters if required
-//   if (callMode) {
-//   }
-//   else directMode = true;
-//
-//   size_t counter = countChildren(node);
-//   size_t index = 0;
-//   // skip the first node for assign mode
-//   if (assignMode)
-//      index++;
-//
-//   while (index < counter) {
-//      if (callMode) {
-//         // get parameters in reverse order if required
-//         current = getChild(node, directMode ? counter - index - 1 : index);
-//      }
-//      else current = getChild(node, index);
-//
-//      if (test(current.type, lxObjectMask)) {
-//         translateObjectExpression(tape, current);
-//         if (callMode) {
-//            if (directMode) {
-//               pushObject(tape, lxResult);
-//            }
-//            else saveObject(tape, lxCurrent, index);
-//         }
-//      }
-//      else if (current == lxAssigning) {
-//         translateObjectExpression(tape, current.firstChild());
-//      }
-//
-//      index++;
-//   }
-//
-//   // saving the target for alternative message
-//   if (altMode) {
-//      loadObject(tape, lxCurrent);
-//      saveObject(tape, lxCurrent, paramCount);
-//   }
-//
-//   // executing operations
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxCallMask)) {
-//         translateCall(tape, current);
-//      }
-//      else if (current == lxAlternative) {
-//         declareAlt(tape);
-//         translateExpression(tape, current);
-//         endAlt(tape);
-//      }
-//      else if (current == lxCatch) {
-//         declareCatch(tape);
-//         translateExpression(tape, current);
-//         endCatch(tape);
-//      }
-//      else if (assignMode && test(current.type, lxObjectMask)) {
-//         if (size != 0) {
-//            copyObject(tape, current.type, size, current.argument);
-//         }
-//         else saveObject(tape, current.type, current.argument);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
+void ByteCodeWriter :: translateInternalCall(CommandTape& tape, SNode node)
+{
+   int paramCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      current = current.nextNode();
+   }
+
+   declareArgumentList(tape, paramCount);
+
+   int index = 0;
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      if (test(current.type, lxObjectMask)) {
+         translateObjectExpression(tape, current);
+
+         saveObject(tape, lxCurrent, index);
+         index++;
+      }
+
+      current = current.nextNode();
+   }
+
+   loadObject(tape, node);
+   freeVirtualStack(tape, paramCount);
+
+}
 
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 {
@@ -3665,6 +3593,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
       case lxStdExternalCall:
       case lxExternalCall:
          translateExternalCall(tape, node);
+         break;
+      case lxInternalCall:
+         translateInternalCall(tape, node);
          break;
       case lxBoxing:
          translateBoxingExpression(tape, node);

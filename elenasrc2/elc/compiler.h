@@ -802,7 +802,7 @@ private:
 //
 //   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
+   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
@@ -864,6 +864,7 @@ private:
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
