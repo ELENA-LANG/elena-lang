@@ -6340,8 +6340,9 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope/*, D
    if (retVal.kind == okUnknown) {
       // compile symbol body, if it is not a singleton
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
-
+      writer.newNode(lxExpression);
       retVal = compileExpression(expression, codeScope, 0, 0);
+      writer.closeNode();
    }
    else writeTerminal(node.FirstTerminal(), codeScope, retVal);
 

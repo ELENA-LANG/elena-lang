@@ -2889,7 +2889,7 @@ void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node no
       loadBase(tape, lxCurrent, level - 1);
 
    if (!test(larg.type, lxSimpleMask)) {
-      loadObject(tape, lxCurrent, 1);
+      loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
    }
    else translateObjectExpression(tape, larg);
 
