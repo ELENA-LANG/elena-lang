@@ -55,6 +55,8 @@ enum LexicalType
    lxIntOp           = 0x1322,
    lxLongOp          = 0x1323,
    lxRealOp          = 0x1324,
+   lxIntArrOp        = 0x1325,
+   lxArrOp           = 0x1326,
 
    lxNested          = 0x0101,
    lxStruct          = 0x0102,

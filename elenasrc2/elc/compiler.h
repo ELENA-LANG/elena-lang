@@ -223,8 +223,8 @@ private:
       List<ident_t> defaultNs;
       ForwardMap    forwards;       // forward declarations
 
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
 
       // extensions
       SubjectMap        extensionHints; 
@@ -279,11 +279,11 @@ private:
 //      }
 //
 //      void compileForwardHints(DNode hints, bool& constant);
-//
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       void raiseError(const char* message, TerminalInfo terminal);
       void raiseWarning(int level, const char* message, TerminalInfo terminal);
@@ -309,7 +309,7 @@ private:
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       int defineStructSize(ref_t classReference, bool& variable);
       int defineStructSize(ref_t classReference)
@@ -459,10 +459,10 @@ private:
    {
       MemoryDump syntaxTree;
 
-//      bool  constant;
-//      ref_t typeRef;
+      bool  constant;
+      ref_t typeRef;
 
-//      void compileHints(DNode hints);
+      void compileHints(DNode hints);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -844,8 +844,8 @@ private:
    void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileSymbolDeclaration(DNode node, SymbolScope& scope/*, DNode hints*/);
-   void compileSymbolImplementation(DNode node, SymbolScope& scope/*, DNode hints*/, bool isStatic);
+   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
+   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
 ////   void compileForward(DNode node, ModuleScope& scope, DNode hints);
    void compileType(DNode& member, ModuleScope& scope, DNode hints);

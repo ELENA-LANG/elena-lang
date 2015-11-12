@@ -175,6 +175,7 @@ public:
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
 ////   void boxArgList(CommandTape& tape, ref_t vmtReference);
@@ -263,8 +264,8 @@ public:
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);
 //   //void doLiteralOperation(CommandTape& tape, int operator_id);
-//   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
@@ -283,6 +284,7 @@ public:
    void translateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
    void translateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void translateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void translateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void translateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);

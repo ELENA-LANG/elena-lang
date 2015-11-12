@@ -1973,6 +1973,13 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
 //   }
 //}
 
+void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
+{
+   if (target == lxResult) {
+      tape.write(bcNLoad);
+   }
+}
+
 void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
 {
    if (target == lxFieldAddress) {
@@ -2443,61 +2450,48 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
 //   //      break;
 //   //}
 ////}
-//
-//void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // nload
-//         // get
-//         tape.write(bcNLoad);
-//         tape.write(bcGet);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // set
-//         tape.write(bcSet);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // aswapsi 0
-//         // nload
-//         // popa
-//         // nread
-//         // dcopye
-//         // nsave
-//         tape.write(bcASwapSI, 0);
-//         tape.write(bcNLoad);
-//         tape.write(bcPopA);
-//         tape.write(bcNRead);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nload
-//         // ecopyd
-//         // popa
-//         // nload
-//         // eswap
-//         // nwrite
-//         tape.write(bcNLoad);
-//         tape.write(bcECopyD);
-//         tape.write(bcPopA);
-//         tape.write(bcNLoad);
-//         tape.write(bcESwap);
-//         tape.write(bcNWrite);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // get
+         tape.write(bcGet);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // set
+         tape.write(bcSet);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // nread
+         // dcopye
+         // nsave
+         tape.write(bcNRead);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // ecopyd
+         // nload
+         // eswap
+         // nwrite
+         tape.write(bcECopyD);
+         tape.write(bcNLoad);
+         tape.write(bcESwap);
+         tape.write(bcNWrite);
+         break;
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 {
@@ -2824,7 +2818,90 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 
       current = current.nextNode();
    }
+}
 
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (larg == lxNone) {
+            larg = current;
+         }
+         else if (rarg == lxNone) {
+            rarg = current;
+         }
+         else rarg2 = current;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void ByteCodeWriter :: translateArrOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool setMode = node.argument == SET_REFER_MESSAGE_ID;
+
+   SNode larg, rarg, rarg2;
+   assignOpArguments(node, larg, rarg, rarg2);   
+
+   if (setMode) {
+      translateObjectExpression(tape, larg);
+      loadBase(tape, lxResult);
+
+      if (!test(rarg.type, lxSimpleMask) || !test(rarg2.type, lxSimpleMask)) {
+         tape.write(bcPushB);
+      }
+
+      if (!test(rarg.type, lxSimpleMask)) {
+         translateObjectExpression(tape, rarg);
+         pushObject(tape, lxResult);
+      }
+
+      translateObjectExpression(tape, rarg2);
+      loadIndex(tape, lxResult);
+
+      if (!test(rarg.type, lxSimpleMask)) {
+         popObject(tape, lxResult);
+      }
+      else translateObjectExpression(tape, rarg);
+
+      if (!test(rarg.type, lxSimpleMask) || !test(rarg2.type, lxSimpleMask)) {
+         tape.write(bcPopB);
+      }
+   }
+   else {
+      if (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask)) {
+         tape.write(bcPushB);
+      }
+
+      if (!test(larg.type, lxSimpleMask)) {
+         translateObjectExpression(tape, larg);
+         pushObject(tape, lxResult);
+      }
+
+      translateObjectExpression(tape, rarg);
+      loadIndex(tape, lxResult);
+
+      if (!test(larg.type, lxSimpleMask)) {
+         popObject(tape, lxResult);
+      }
+      else translateObjectExpression(tape, larg);
+
+      if (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask)) {
+         tape.write(bcPopB);
+      }
+   }
+
+   switch (node.type)
+   {
+      case lxIntArrOp:
+         doIntArrayOperation(tape, node.argument);
+         break;
+      case lxArrOp:
+         doArrayOperation(tape, node.argument);
+         break;
+   }   
 }
 
 void ByteCodeWriter :: translateOperation(CommandTape& tape, SyntaxTree::Node node)
@@ -3568,52 +3645,67 @@ void ByteCodeWriter :: translateResendingExpression(CommandTape& tape, SyntaxTre
 
 void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
 {
-   if (node == lxExpression) {
-      translateExpression(tape, node);
+   switch (node.type)
+   {
+      case lxExpression:
+         translateExpression(tape, node);
+         break;
+      case lxTypecasting:
+      case lxCalling:
+      case lxDirectCalling:
+      case lxSDirctCalling:
+         translateCallExpression(tape, node);
+         break;
+      case lxTrying:
+         translateTrying(tape, node);
+         break;
+      case lxReturning:
+         translateReturnExpression(tape, node);
+         break;
+      case lxStdExternalCall:
+      case lxExternalCall:
+         translateExternalCall(tape, node);
+         break;
+      case lxBoxing:
+         translateBoxingExpression(tape, node);
+         break;
+      case lxAssigning:
+         translateAssigningExpression(tape, node);
+         break;
+      case lxBranching:
+         translateBranching(tape, node);
+         break;
+      case lxLooping:
+         translateLooping(tape, node);
+         break;
+      case lxStruct:
+         translateStructExpression(tape, node);
+         break;
+      case lxNested:
+         translateNestedExpression(tape, node);
+         break;
+      case lxBoolOp:
+         translateBoolOperation(tape, node);
+         break;
+      case lxNilOp:
+         translateNilOperation(tape, node);
+         break;
+      case lxIntOp:
+      case lxLongOp:
+      case lxRealOp:
+         translateOperation(tape, node);
+         break;
+      case lxIntArrOp:
+      case lxArrOp:
+         translateArrOperation(tape, node);
+         break;
+      case lxResending:
+         translateResendingExpression(tape, node);
+         break;
+      default:
+         loadObject(tape, node);
+         break;
    }
-   else if (node == lxTypecasting || node == lxCalling || node == lxDirectCalling || node == lxSDirctCalling) {
-      translateCallExpression(tape, node);
-   }
-   else if (node == lxTrying) {
-      translateTrying(tape, node);
-   }
-   else if (node == lxReturning) {
-      translateReturnExpression(tape, node);
-   }
-   else if (node == lxStdExternalCall || node == lxExternalCall) {
-      translateExternalCall(tape, node);
-   }
-   else if (node == lxBoxing) {
-      translateBoxingExpression(tape, node);
-   }
-   else if (node == lxAssigning) {
-      translateAssigningExpression(tape, node);
-   }
-   else if (node == lxBranching) {
-      translateBranching(tape, node);
-   }
-   else if (node == lxLooping) {
-      translateLooping(tape, node);
-   }
-   else if (node == lxStruct) {
-      translateStructExpression(tape, node);
-   }
-   else if (node == lxNested) {
-      translateNestedExpression(tape, node);
-   }
-   else if (node == lxBoolOp) {
-      translateBoolOperation(tape, node);
-   }
-   else if (node == lxNilOp) {
-      translateNilOperation(tape, node);
-   }
-   else if (node == lxIntOp || node == lxLongOp || node == lxRealOp) {
-      translateOperation(tape, node);
-   }
-   else if (node == lxResending) {
-      translateResendingExpression(tape, node);
-   }
-   else loadObject(tape, node);
 }
 
 void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
