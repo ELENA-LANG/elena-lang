@@ -11,6 +11,25 @@
 //#define extensions'math.
 //#define extensions'text.
 
+#class(sealed,nonstructural) CallStack
+{
+    #field(type:intarray) theStack.
+    
+    /// Creates a current call stack
+    #constructor new
+    [
+        #var(type:intarray,size:64)aStack.
+        #var(type:int)aLength.
+        
+        system'internal'callstack_load eval
+            &intarray:aStack
+            &length:64
+            &vint:aLength.
+            
+        theStack := IntArray new &int:0 &int:aLength &intarray:aStack.            
+    ]
+}    
+
 #symbol XTester =
 {
     test            

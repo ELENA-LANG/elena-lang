@@ -481,6 +481,7 @@ private:
    struct MethodScope : public Scope
    {
       MemoryDump   syntaxTree;
+      CommandTape* tape;
 
       ref_t        message;
       LocalMap     parameters;
@@ -723,7 +724,7 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-   void declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf);
+   void declareParameterDebugInfo(MethodScope& scope, bool withThis, bool withSelf);
 
 //   ObjectInfo compileTypecast(CodeScope& scope, ObjectInfo& target, size_t type_ref, bool& enforced, bool& boxed, bool& unboxing);
 

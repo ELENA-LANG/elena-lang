@@ -1302,6 +1302,9 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->rootToFree = 1;
 //   this->withOpenArg = false;
    this->stackSafe = false;
+
+   //NOTE : tape has to be overridden in the constructor
+   this->tape = &parent->tape;
 }
 
 bool Compiler::MethodScope :: include()
@@ -1742,7 +1745,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    }
 }
 
-void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape, bool withThis, bool withSelf)
+void Compiler :: declareParameterDebugInfo(MethodScope& scope, bool withThis, bool withSelf)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1752,26 +1755,26 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, CommandTape* tape
       /*if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->paramsReference)) {
          _writer.declareLocalParamsInfo(*tape, it.key(), -1 - (*it).offset);
       }
-      else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->intReference)) {
-         _writer.declareLocalIntInfo(*tape, it.key(), -1 - (*it).offset, true);
+      else */if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->intReference)) {
+         _writer.declareLocalIntInfo(*scope.tape, it.key(), -1 - (*it).offset, true);
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->longReference)) {
-         _writer.declareLocalLongInfo(*tape, it.key(), -1 - (*it).offset, true);
+         _writer.declareLocalLongInfo(*scope.tape, it.key(), -1 - (*it).offset, true);
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
-         _writer.declareLocalRealInfo(*tape, it.key(), -1 - (*it).offset, true);
+         _writer.declareLocalRealInfo(*scope.tape, it.key(), -1 - (*it).offset, true);
       }
-      else */_writer.declareLocalInfo(*tape, it.key(), -1 - (*it).offset);
+      else _writer.declareLocalInfo(*scope.tape, it.key(), -1 - (*it).offset);
 
       it++;
    }
    if (withThis)
-      _writer.declareSelfInfo(*tape, 1);
+      _writer.declareSelfInfo(*scope.tape, 1);
 
    if (withSelf)
-      _writer.declareSelfInfo(*tape, -1);
+      _writer.declareSelfInfo(*scope.tape, -1);
 
-   _writer.declareMessageInfo(*tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
+   _writer.declareMessageInfo(*scope.tape, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t referenceProperName)
@@ -2106,24 +2109,29 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             scope.writer->closeNode();
          }
          else if (flags == elDebugBytes) {
-            scope.writer->newNode(lxBytesVariable, 0);
+            scope.writer->newNode(lxBytesVariable, size);
             scope.writer->appendNode(lxTerminal, (int)terminal.value);
             scope.writer->appendNode(lxLevel, variable.param);
             scope.writer->closeNode();
          }
          else if (flags == elDebugShorts) {
-            scope.writer->newNode(lxShortsVariable, 0);
+            scope.writer->newNode(lxShortsVariable, size);
             scope.writer->appendNode(lxTerminal, (int)terminal.value);
             scope.writer->appendNode(lxLevel, variable.param);
             scope.writer->closeNode();
          }
          else if (flags == elDebugIntegers) {
-            scope.writer->newNode(lxIntsVariable, 0);
+            scope.writer->newNode(lxIntsVariable, size);
             scope.writer->appendNode(lxTerminal, (int)terminal.value);
             scope.writer->appendNode(lxLevel, variable.param);
             scope.writer->closeNode();
          }
-//         else _writer.declareLocalInfo(*scope.tape, node.Terminal(), variable.param);
+         else {
+            scope.writer->newNode(lxBinaryVariable, size);
+            scope.writer->appendNode(lxTerminal, (int)terminal.value);
+            scope.writer->appendNode(lxLevel, variable.param);
+            scope.writer->closeNode();
+         }
       }
       else {
          int level = scope.newLocal();
@@ -4965,12 +4973,11 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
 void Compiler :: reserveSpace(CodeScope& scope, int size)
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
 
    // if it is not enough place to allocate
    // !! it should be refactored : code generation should start after the syntax tree is built
    if (methodScope->reserved < scope.reserved) {
-      ByteCodeIterator allocStatement = tape->find(bcOpen);
+      ByteCodeIterator allocStatement = methodScope->tape->find(bcOpen);
       // reserve place for stack allocated object
       (*allocStatement).argument += size;
 
@@ -4980,7 +4987,7 @@ void Compiler :: reserveSpace(CodeScope& scope, int size)
          // to include new frame header
          (*allocStatement).argument += 2;
 
-         _writer.insertStackAlloc(allocStatement, *tape, size);
+         _writer.insertStackAlloc(allocStatement, *methodScope->tape, size);
       }
       // otherwise update the size
       else _writer.updateStackAlloc(allocStatement, size);
@@ -5035,20 +5042,11 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
       // allocate
       reserveSpace(scope, size);
 
-//      // reserve place for byte array header if required
-//      if (bytearray) {
-//         if (presavedAccumulator)
-//            _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         _writer.loadObject(*scope.tape, exprOperand);
-//         _writer.saveIntConstant(*scope.tape, -dynamicSize);
-//
-//         if (presavedAccumulator)
-//            _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//
-//         exprOperand.param -= 2;
-//      }
-//
+      // reserve place for byte array header if required
+      if (bytearray) {
+         exprOperand.param -= 2;
+      }
+
       return true;
    }
    else return false;
@@ -5235,11 +5233,10 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
 void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods)
 {
-   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
    SyntaxWriter writer(&scope.syntaxTree);
    CodeScope codeScope(&scope, &writer);
 
-   CommandTape* tape = &classScope->tape;
+   CommandTape* tape = scope.tape;
 
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
@@ -5275,8 +5272,6 @@ void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGene
 
 void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
 {
-   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
-
    // check if the method is inhreited and update vmt size accordingly
    if(scope.include() && test(scope.getClassFlag(), elClosed))
       scope.raiseError(errClosedParent, node.Terminal());
@@ -5289,10 +5284,10 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
 
    // new stack frame
    // stack already contains previous $self value
-   _writer.declareMethod(*tape, scope.message, false);
+   _writer.declareMethod(*scope.tape, scope.message, false);
    codeScope.level++;
 
-   declareParameterDebugInfo(scope, tape, false, true);
+   declareParameterDebugInfo(scope, false, true);
 
    if (isReturnExpression(node.firstChild())) {
       compileRetExpression(node.firstChild(), codeScope, HINT_ROOT);
@@ -5306,14 +5301,14 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
    // NOTE : close root node
    writer.closeNode();
 
-   saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
+   saveSyntaxTree(*scope.moduleScope, *scope.tape, scope.syntaxTree);
 
-   _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
+   _writer.endMethod(*scope.tape, scope.parameters.Count() + 1, scope.reserved);
 }
 
 void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
 {
-   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+   CommandTape* tape = scope.tape;
 
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
@@ -5330,7 +5325,7 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
    _writer.declareMethod(*tape, scope.message, false);
    codeScope.level++;
 
-   declareParameterDebugInfo(scope, tape, false, false);
+   declareParameterDebugInfo(scope, false, false);
 
    compileRetExpression(node, codeScope, 0);
 
@@ -5520,7 +5515,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 
    CodeScope codeScope(&scope, &writer);
 
-   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+   CommandTape* tape = scope.tape;
 
    // save extensions if any
    if (test(codeScope.getClassFlags(false), elExtension)) {
@@ -5567,7 +5562,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
          codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
       }
 
-      declareParameterDebugInfo(scope, tape, true, test(codeScope.getClassFlags(), elRole));
+      declareParameterDebugInfo(scope, true, test(codeScope.getClassFlags(), elRole));
 
       DNode body = node.select(nsSubCode);
       // if method body is a returning expression
@@ -5625,8 +5620,8 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
    CodeScope codeScope(&scope, &writer);
 
-//   // HOTFIX: constructor is declared in class class but should be executed if the class instance
-//   codeScope.tape = &classClassScope.tape;
+   // HOTFIX: constructor is declared in class class but should be executed if the class scope
+   scope.tape = &classClassScope.tape;
 
    DNode body = node.select(nsSubCode);
    DNode resendBody = node.select(nsResendExpression);
@@ -5675,7 +5670,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       }
       else _writer.saveObject(classClassScope.tape, lxLocal, 1);
 
-      declareParameterDebugInfo(scope, &classClassScope.tape, true, false);
+      declareParameterDebugInfo(scope, true, false);
 
       compileCode(body, codeScope);
 
@@ -5705,8 +5700,8 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, ClassScope& class
    // compile constructor hints
    //int mode = scope.compileHints(hints);
 
-   //// HOTFIX: constructor is declared in class class but should be executed if the class instance
-   //codeScope.tape = &classClassScope.tape;
+   // HOTFIX: constructor is declared in class class but should be executed if the class scope
+   scope.tape = &classClassScope.tape;
 
    _writer.declareIdleMethod(classClassScope.tape, scope.message);
 
@@ -5743,8 +5738,8 @@ void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, ClassScope
    // compile constructor hints
    //int mode = scope.compileHints(hints);
 
-   //// HOTFIX: constructor is declared in class class but should be executed if the class instance
-   //codeScope.tape = &classClassScope.tape;
+   // HOTFIX: constructor is declared in class class but should be executed if the class scope
+   scope.tape = &classClassScope.tape;
 
    _writer.declareIdleMethod(classClassScope.tape, scope.message);
 

@@ -258,7 +258,7 @@ public:
 //   void copySubject(CommandTape& tape);
    void saveSubject(CommandTape& tape);
 //   void loadSymbolReference(CommandTape& tape, ref_t reference);
-//   void saveIntConstant(CommandTape& tape, int value);
+   void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
    void doLongOperation(CommandTape& tape, int operator_id);
@@ -280,6 +280,8 @@ public:
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
+
+   void translateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
    void translateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
    void translateNilOperation(CommandTape& tape, SyntaxTree::Node node);

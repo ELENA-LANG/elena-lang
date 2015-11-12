@@ -97,7 +97,8 @@ enum LexicalType
    lxBytesVariable   = 0x40B,
    lxShortsVariable  = 0x40C,
    lxIntsVariable    = 0x40D,
-   lxReleasing       = 0x40E,
+   lxBinaryVariable  = 0x40E,
+   lxReleasing       = 0x40F,
 
    lxTarget          = 0x801,
    lxType            = 0x802,

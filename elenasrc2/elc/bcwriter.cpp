@@ -2279,17 +2279,17 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
 ////   tape.write(bcNSave);
 ////   tape.write(bcACopyB);
 ////}
-//
-//void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
-//{
-//   // bcopya
-//   // dcopy value
-//   // nsave
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, value);
-//   tape.write(bcNSave);
-//}
+
+void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
+{
+   // bcopya
+   // dcopy value
+   // nsave
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, value);
+   tape.write(bcNSave);
+}
 
 void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
 {
@@ -3651,6 +3651,12 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
    }      
 }
 
+void ByteCodeWriter :: translateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
+{
+   loadObject(tape, lxLocalAddress, offset + 2);
+   saveIntConstant(tape, -node.argument);
+}
+
 void ByteCodeWriter :: translateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
 {
    SyntaxTree::Node current = node.firstChild();
@@ -3699,20 +3705,45 @@ void ByteCodeWriter :: translateCodeBlock(CommandTape& tape, SyntaxTree::Node no
                SyntaxTree::findChild(current, lxLevel).argument, false);
             break;
          case lxBytesVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            translateBinary(tape, current, level);
             declareLocalByteArrayInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               SyntaxTree::findChild(current, lxLevel).argument, false);
+               level, false);
             break;
+         }
          case lxShortsVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            translateBinary(tape, current, level);
             declareLocalShortArrayInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               SyntaxTree::findChild(current, lxLevel).argument, false);
+               level, false);
             break;
+         }
          case lxIntsVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            translateBinary(tape, current, level);
             declareLocalIntArrayInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               SyntaxTree::findChild(current, lxLevel).argument, false);
+               level, false);
             break;
+         }
+         case lxBinaryVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            translateBinary(tape, current, level);
+            declareLocalInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               level);
+            break;
+         }
          case lxReleasing:
             releaseObject(tape, node.argument);
             break;
