@@ -293,43 +293,43 @@
 //        => system'internal'ns_create.
 }
 
-//// --- IntArray ---
-//
-///// An array of integers
-//#class(sealed) IntArray :: BaseIntArray
-//{
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int : aLength
-//        => system'internal'ns_create.
-//
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &intarray:anArray
-//        => system'internal'ns_copysubarr.
-//        
-//    /// Creates the short array copy
-//    #constructor new &intarray:anArray
-//        <= new &int:0 &int:(anArray length int) &intarray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'ns_getlen.
-//
-//    /// Returns the array length
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//    
-//    /// Returns itself
-//    #method intarray = $self.
-//
+// --- IntArray ---
+
+/// An array of integers
+#class(sealed) IntArray :: BaseIntArray
+{
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int : aLength
+        => system'internal'ns_create.
+
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &intarray:anArray
+        => system'internal'ns_copysubarr.
+        
+    /// Creates the short array copy
+    #constructor new &intarray:anArray
+        <= new &int:0 &int:(anArray length int) &intarray:anArray.
+    
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'ns_getlen.
+
+    /// Returns the array length
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+    
+    /// Returns itself
+    #method intarray = $self.
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &int:aValue
 //    [
@@ -386,14 +386,14 @@
 //
 //    /// Creates the object copy
 //    #method clone = IntArray new &intarray:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &intarray:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intarray:$self.    
-//}
-//
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &intarray:$self.
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intarray:$self.    
+}
+
 //// --- IntMatrix ---
 //
 //#class(sealed)IntMatrix
@@ -790,10 +790,10 @@
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &chararray:$self.    
 }
         
-//// --- emptyliteralvalue ---
-//
-///// An empty literal value
-//#symbol(const,type:literal) emptyLiteralValue = "".
+// --- emptyliteralvalue ---
+
+/// An empty literal value
+#symbol(const,type:literal) emptyLiteralValue = "".
 
 // --- LiteralValue ---
 

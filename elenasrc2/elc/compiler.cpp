@@ -3944,24 +3944,15 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //
 //         scope.writer->closeNode();
 //      }
-//      else if (member == nsCatchMessageOperation) {
-//         scope.writer->newNode(lxCatch);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->closeNode();
-//      }
-//      else {
-//         if (nextOperation)
-//            scope.writer->insert(lxExpression);
-//
-//
-//         if (nextOperation) {
-//            scope.writer->closeNode();
-//         }
-//         else nextOperation = true;
-//      }
-//
+      else if (member == nsCatchMessageOperation) {
+         scope.writer->newBookmark();
+
+         scope.writer->appendNode(lxResult);
+
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->removeBookmark();
+      }
 ////      else if (member == nsSwitching) {
 ////         compileSwitch(member, scope, currentObject);
 ////
@@ -4478,6 +4469,13 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode)
 {
+   bool tryMode = false;
+
+   if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
+      scope.writer->newNode(lxTrying);
+      tryMode = true;
+   }      
+
    scope.writer->newBookmark();
 
    ObjectInfo objectInfo;
@@ -4513,6 +4511,9 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    }      
 
    scope.writer->removeBookmark();
+
+   if (tryMode)
+      scope.writer->closeNode();
 
    return objectInfo;
 }

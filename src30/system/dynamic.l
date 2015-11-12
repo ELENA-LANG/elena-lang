@@ -65,12 +65,12 @@
 //    /// Creates a dynamic signature
 //    #constructor new &wide:aSubjectName
 //        <= new &literal:(aSubjectName literal).
-//
-//    #method subject = $self.
-//
-//    /// Compares the values
-//    #method(stacksafe) equal &subject : aSubject
-//        => system'internal'subject_equal.
+
+    #method subject = $self.
+
+    /// Compares the values
+    #method(stacksafe) equal &subject : aSubject
+        => system'internal'subject_equal.
         
     /// Qualifies incoming messages and redirects to the target
     #method => system'internal'qualify_message.

@@ -3405,6 +3405,29 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
    }
 }
 
+void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExpressionMask)) {
+         translateObjectExpression(tape, current);
+
+         if (first) {
+            declareCatch(tape);
+            
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endCatch(tape);
+}
+
 void ByteCodeWriter :: translateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
    declareLoop(tape/*, true*/);
@@ -3550,6 +3573,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
    }
    else if (node == lxTypecasting || node == lxCalling || node == lxDirectCalling || node == lxSDirctCalling) {
       translateCallExpression(tape, node);
+   }
+   else if (node == lxTrying) {
+      translateTrying(tape, node);
    }
    else if (node == lxReturning) {
       translateReturnExpression(tape, node);

@@ -289,6 +289,7 @@ public:
    void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateTrying(CommandTape& tape, SyntaxTree::Node node);
    void translateLooping(CommandTape& tape, SyntaxTree::Node node);
    void translateBranching(CommandTape& tape, SyntaxTree::Node node);
    void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
