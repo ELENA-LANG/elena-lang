@@ -1728,6 +1728,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return scope.getClassRefId(false);
       case okSubject:
       case okSubjectDispatcher:
+      case okSignatureConstant:
          return scope.moduleScope->signatureReference;
          //else if (object.kind == okSuper) {
          //   return object.param;
@@ -5429,11 +5430,15 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
          scope.level++;
       }
 
-      DNode dummy;
+      scope.writer->newBookmark();
+      writeTerminal(TerminalInfo(), scope, ObjectInfo(okThisParam, 1));
+
       if (withFrame) {
          compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef));
       }
       else compileExtensionMessage(node, scope, ObjectInfo(okObject), ObjectInfo(okConstantClass, 0, classRef));
+
+      scope.writer->removeBookmark();
    }
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }
