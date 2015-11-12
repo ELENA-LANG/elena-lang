@@ -132,8 +132,8 @@ public:
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
-   //   okSubject,                      // param - parameter offset
-   //   okSubjectDispatcher,
+      okSubject,                      // param - parameter offset
+      okSubjectDispatcher,
       okThisParam,                    // param - parameter offset
       okNil,
       okSuper,
@@ -244,7 +244,7 @@ private:
       ref_t trueReference;
       ref_t falseReference;
 //      ref_t paramsReference;
-//      ref_t signatureReference;
+      ref_t signatureReference;
 
       ref_t boolType;
 
