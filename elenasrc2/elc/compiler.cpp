@@ -5273,61 +5273,40 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
 void Compiler :: compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods)
 {
-   CommandTape* tape = &((ClassScope*)scope.getScope(Scope::slClass))->tape;
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   SyntaxWriter writer(&scope.syntaxTree);
+   CodeScope codeScope(&scope, &writer);
+
+   CommandTape* tape = &classScope->tape;
 
    // check if the method is inhreited and update vmt size accordingly
    scope.include();
-   
-   CodeScope codeScope(&scope, NULL);
 
    _writer.declareIdleMethod(*tape, scope.message);
 
    if (isImportRedirect(node)) {
       importCode(node, *scope.moduleScope, tape, node.Terminal());
    }
-//   else {
-//      _writer.doGenericHandler(*codeScope.tape);
-//
-//      // if it is generic handler with redirect statement / redirect statement
-//      if (node != nsNone) {
-//         if (withGenericMethods) {
-//            _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
-//            _writer.setSubject(*codeScope.tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
-//            _writer.doGenericHandler(*codeScope.tape);
-//            _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
-//         }
-//         DNode nextNode = node.nextNode();
-//
-//         // !! currently only simple construction is supported
-//         if (node == nsObject && node.firstChild() == nsNone && nextNode == nsNone) {
-//            TerminalInfo target = node.Terminal();
-//
-//            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//            // if the target is a data field
-//            if (test(classScope->info.header.flags, elStructureRole) && classScope->info.fields.exist(target)) {
-//               int offset = classScope->info.fields.get(target);
-//               bool dummy = false;
-//
-//               _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
-//
-//               boxStructureField(codeScope,
-//                  ObjectInfo(okFieldAddress, offset, 0, classScope->info.fieldTypes.get(offset)), ObjectInfo(okAccumulator), dummy, HINT_HEAP_MODE);
-//
-//               _writer.popObject(*codeScope.tape, ObjectInfo(okExtraRegister));
-//
-//               _writer.resend(*codeScope.tape, ObjectInfo(okAccumulator), 0);
-//            }
-//            else _writer.resend(*codeScope.tape, compileTerminal(node, codeScope, 0), 0);
-//         }
-//         else scope.raiseError(errInvalidOperation, node.Terminal());
-//      }
-//      // if it is generic handler only
-//      else if (withGenericMethods) {
-//         _writer.pushObject(*codeScope.tape, ObjectInfo(okExtraRegister));
-//         _writer.setSubject(*codeScope.tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
-//         _writer.resendResolvedMethod(*codeScope.tape, scope.moduleScope->superReference, encodeVerb(DISPATCH_MESSAGE_ID));
-//      }
-//   }
+   else {
+      _writer.doGenericHandler(*tape);
+
+      // if it is generic handler with redirect statement / redirect statement
+      if (node != nsNone) {
+         if (withGenericMethods) {
+            _writer.pushObject(*tape, lxCurrentMessage);
+            _writer.setSubject(*tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
+            _writer.doGenericHandler(*tape);
+            _writer.popObject(*tape, lxCurrentMessage);
+         }
+         compileDispatchExpression(node, codeScope, tape);
+      }
+      // if it is generic handler only
+      else if (withGenericMethods) {
+         _writer.pushObject(*tape, lxCurrentMessage);
+         _writer.setSubject(*tape, encodeMessage(codeScope.moduleScope->mapSubject(GENERIC_PREFIX), 0, 0));
+         _writer.resendResolvedMethod(*tape, scope.moduleScope->superReference, encodeVerb(DISPATCH_MESSAGE_ID));
+      }
+   }
 
    _writer.endIdleMethod(*tape);
 }
@@ -5859,20 +5838,20 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             }
             break;
          }
-//         case nsDefaultGeneric:
-//         {
-//            MethodScope methodScope(&scope);
-//            declareArgumentList(member, methodScope);
-//
-//            // override subject with generic postfix
-//            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
-//
-//            // mark as having generic methods
-//            scope.info.header.flags |= elWithGenerics;
-//
-//            compileMethod(member, methodScope, HINT_GENERIC_METH);
-//            break;
-//         }
+         case nsDefaultGeneric:
+         {
+            MethodScope methodScope(&scope);
+            declareArgumentList(member, methodScope);
+
+            // override subject with generic postfix
+            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
+
+            // mark as having generic methods
+            scope.info.header.flags |= elWithGenerics;
+
+            compileMethod(member, methodScope, HINT_GENERIC_METH);
+            break;
+         }
       }
       member = member.nextNode();
    }

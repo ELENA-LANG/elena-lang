@@ -182,9 +182,9 @@ public:
 //
    void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
-//
+
 //   void setMessage(CommandTape& tape, ref_t message);
-//   void setSubject(CommandTape& tape, ref_t subject);
+   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callRoleMessage(CommandTape& tape, int paramCount);
@@ -192,10 +192,10 @@ public:
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void typecast(CommandTape& tape);
 
-//   void doGenericHandler(CommandTape& tape);
+   void doGenericHandler(CommandTape& tape);
    void resend(CommandTape& tape);
 //   void resend(CommandTape& tape, ObjectInfo object, int dispatchIndex = 0);
-//   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
 ////   int declareLabel(CommandTape& tape);

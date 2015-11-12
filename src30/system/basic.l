@@ -2474,11 +2474,11 @@
     /// Dispatches the verb to the target object with char subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
 
-//    /// Returns the literal value
-//    #method(stacksafe) literal = literalConvertor convert &char:$self.
-//
-//    /// Returns the wide literal value
-//    #method(stacksafe) wide = wideConvertor convert &char:$self.
+    /// Returns the literal value
+    #method(stacksafe) literal = literalConvertor convert &char:$self.
+
+    /// Returns the wide literal value
+    #method(stacksafe) wide = wideConvertor convert &char:$self.
     
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readLength &vint:aLength
@@ -3292,9 +3292,9 @@
 /// A literal convertor
 #symbol literalConvertor =
 {
-//    /// Converts the parameter to the literal value
-//    #method(type:literal,stacksafe) convert &char:aValue
-//        => system'internal's_copychar.
+    /// Converts the parameter to the literal value
+    #method(type:literal,stacksafe) convert &char:aValue
+        => system'internal's_copychar.
     
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &int:aNumber
@@ -3350,9 +3350,9 @@
 /// A wide literal convertor
 #symbol wideConvertor =
 {
-//    /// Converts the parameter to the literal value
-//    #method(type:wide,stacksafe) convert &char:aValue
-//        => system'internal'ws_copychar.
+    /// Converts the parameter to the literal value
+    #method(type:wide,stacksafe) convert &char:aValue
+        => system'internal'ws_copychar.
     
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &int:aNumber

@@ -1018,12 +1018,12 @@ void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 //   // copy
 //   tape.write(bcCopy);
 //}
-//
-//void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
-//{
-//   // setsubj subj
-//   tape.write(bcSetSubj, subject);
-//}
+
+void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
+{
+   // setsubj subj
+   tape.write(bcSetSubj, subject);
+}
 
 void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
 {
@@ -1040,12 +1040,12 @@ void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-//void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xjumprm r, m
-//
-//   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
-//}
+void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xjumprm r, m
+
+   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
+}
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
 {
@@ -1080,13 +1080,13 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 //   tape.write(bcACallVI, 0);
 //   tape.write(bcFreeStack, 1);
 //}
-//
-//void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
-//{
-//   // bsredirect
-//
-//   tape.write(bcBSRedirect);
-//}
+
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
+{
+   // bsredirect
+
+   tape.write(bcBSRedirect);
+}
 
 void ByteCodeWriter :: resend(CommandTape& tape)
 {

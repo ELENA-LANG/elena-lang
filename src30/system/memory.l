@@ -884,97 +884,97 @@
         ^ CharValue new &char:aChar.
     ]
 
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
-//        => system'internal's_indexof.
-//
-//    /// Saves the index of the first occurence of the specified symbol into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-//        => system'internal's_indexof_char.        
-//
-//    /// Returns the index of the first occurence of the specified object.
-//    /// 
-//    /// If the object is not found. returns -1
-//    #method indexOf : aSearchObject &at:anIndex
-//        = aSearchObject cast:%eval &to:
-//            {
-//               eval:anIndex &literal:aLiteral
-//                  = self indexOf &literal:aLiteral &at:anIndex.
-//    
-//               eval:anIndex &wide:aLiteral
-//                  = self indexOf &literal:(aLiteral literal) &at:anIndex.
-//    
-//               eval:anIndex &char:aChar
-//                  = self indexOf &char:aChar &at:anIndex.
-//            } &with:anIndex.
-//
-//    /// obsolete            
-//    #method indexOf:anIndex:aSearchObject
-//        <= indexOf:aSearchObject &at:anIndex.
-//
-//    /// Returns the index of the first occurence of the specified symbol.
-//    /// 
-//    /// If the substring is not found. returns -1
-//    #method indexOf &char:aChar &at:anIndex
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method indexOf &literal:aLiteral &at:anIndex
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(type:literal,stacksafe) insert &int:anIndex &literal:aLiteral
-//        => system'internal's_insert.
-//
-//    /// Inserts a character into and returns the new one
-//    #method(type:literal,stacksafe) insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &literal:(aChar literal).
-//
-//    /// Inserts an object into and returns the new one
-//    #method insert : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//               eval &literal:aLiteral
-//                  = self insert &int:(anIndex int) &literal:aLiteral.
-//    
-//               eval &wide:aLiteral
-//                  = self insert &int:(anIndex int) &literal:(aLiteral literal).
-//    
-//               eval &char:aChar
-//                  = self insert &int:(anIndex int) &char:aChar.
-//            }.
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method delete:aLength &at:anIndex
-//        = $self delete &int:(anIndex int) &int:(aLength int).
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method(type:literal,stacksafe) delete &int:anIndex &int:aLength
-//        => system'internal's_delete.
-//
-//    /// Returns the substring
-//    #method Substring : aLength &at:anIndex
-//        = $self Substring &int:(anIndex int) &int:(aLength int).
-//
-//    /// Returns the substring
-//    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
-//        => system'internal's_subs.
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
+        => system'internal's_indexof.
+
+    /// Saves the index of the first occurence of the specified symbol into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'internal's_indexof_char.        
+
+    /// Returns the index of the first occurence of the specified object.
+    /// 
+    /// If the object is not found. returns -1
+    #method indexOf : aSearchObject &at:anIndex
+        = aSearchObject cast:%eval &to:
+            {
+               eval:anIndex &literal:aLiteral
+                  = self indexOf &literal:aLiteral &at:anIndex.
+    
+               eval:anIndex &wide:aLiteral
+                  = self indexOf &literal:(aLiteral literal) &at:anIndex.
+    
+               eval:anIndex &char:aChar
+                  = self indexOf &char:aChar &at:anIndex.
+            } &with:anIndex.
+
+    /// obsolete            
+    #method indexOf:anIndex:aSearchObject
+        <= indexOf:aSearchObject &at:anIndex.
+
+    /// Returns the index of the first occurence of the specified symbol.
+    /// 
+    /// If the substring is not found. returns -1
+    #method indexOf &char:aChar &at:anIndex
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    #method indexOf &literal:aLiteral &at:anIndex
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Inserts the substring into and returns the new one
+    #method(type:literal,stacksafe) insert &int:anIndex &literal:aLiteral
+        => system'internal's_insert.
+
+    /// Inserts a character into and returns the new one
+    #method(type:literal,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &literal:(aChar literal).
+
+    /// Inserts an object into and returns the new one
+    #method insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval &literal:aLiteral
+                  = self insert &int:(anIndex int) &literal:aLiteral.
+    
+               eval &wide:aLiteral
+                  = self insert &int:(anIndex int) &literal:(aLiteral literal).
+    
+               eval &char:aChar
+                  = self insert &int:(anIndex int) &char:aChar.
+            }.
+
+    /// Deletes the substring from the object and returns the new one
+    #method delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+
+    /// Deletes the substring from the object and returns the new one
+    #method(type:literal,stacksafe) delete &int:anIndex &int:aLength
+        => system'internal's_delete.
+
+    /// Returns the substring
+    #method Substring : aLength &at:anIndex
+        = $self Substring &int:(anIndex int) &int:(aLength int).
+
+    /// Returns the substring
+    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
+        => system'internal's_subs.
 
     /// Reads the literal length into an output parameter
     #method(stacksafe) readLength &vint:aLength
