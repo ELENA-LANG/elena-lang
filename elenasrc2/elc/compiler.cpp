@@ -4605,9 +4605,9 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
    if (thenCode.firstChild().nextNode() != nsNone) {
       compileCode(thenCode, subScope);
 
-//      if (test(subCodeMode, HINT_LOOP) && subScope.level > scope.level) {
-//         _writer.releaseObject(*scope.tape, subScope.level - scope.level);
-//      }
+      if (subScope.level > scope.level) {
+         scope.writer->appendNode(lxReleasing, subScope.level - scope.level);
+      }
    }
    // if it is inline action
    else compileRetExpression(thenCode.firstChild(), scope, 0);
@@ -4634,12 +4634,11 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
    // if it is while-do loop
    if (expr.nextNode() == nsL7Operation) {
       scope.writer->newNode(lxLooping);
-      scope.writer->newNode(lxExpression);
 
       DNode loopNode = expr.nextNode();
 
 //      openDebugExpression(scope);
-      ObjectInfo cond = compileObject(expr, scope, 0);
+      ObjectInfo cond = compileExpression(expr, scope, scope.moduleScope->boolType, 0);
 
       //remove last virtual breakpoint
       //_writer.removeLastBreakpoint(*scope.tape);
@@ -4647,12 +4646,15 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
 //      // get the current value
 //      _writer.loadObject(*scope.tape, cond);
 
+      int operator_id = _operators.get(loopNode.Terminal());
+
+      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
       compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
+      scope.writer->closeNode();
 
 //      endDebugExpression(scope);
 //      _writer.endLoop(*scope.tape);
 
-      scope.writer->closeNode();
       scope.writer->closeNode();
    }
    // if it is repeat loop
@@ -4762,7 +4764,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //            break;
          case nsLoop:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            scope.writer->newNode(lxExpression);
             compileLoop(statement, scope);
+            scope.writer->closeNode();
             break;
 //         case nsTry:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);

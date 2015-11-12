@@ -69,7 +69,7 @@
 #subject(class:Handle) handle.
 //#subject(class:system'RTPointer)rt_ptr.
 //#subject(class:system'UnsafePointer)dirty_ptr.
-//
-//// --- Enumerators / Indexers ---
-//#subject(class:system'Enumerator)enumerator.
+
+// --- Enumerators / Indexers ---
+#subject(class:system'Enumerator)enumerator.
 //#subject(class:system'Iterator)iterator.

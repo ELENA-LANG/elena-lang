@@ -3409,7 +3409,25 @@ void ByteCodeWriter :: translateLooping(CommandTape& tape, SyntaxTree::Node node
 {
    declareLoop(tape/*, true*/);
 
-   translateCodeBlock(tape, node);
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxIf) {
+         jumpIfNotEqual(tape, current.argument);
+
+         declareBlock(tape);
+         translateCodeBlock(tape, current);
+      }
+      else if (current == lxElse) {
+         declareElseBlock(tape);
+
+         declareBlock(tape);
+         translateCodeBlock(tape, current);
+      }
+      else if (test(current.type, lxObjectMask))
+         translateObjectExpression(tape, current);
+
+      current = current.nextNode();
+   }
 
    if (node.argument != 0) {
       endLoop(tape, node.argument);
@@ -3645,6 +3663,9 @@ void ByteCodeWriter :: translateCodeBlock(CommandTape& tape, SyntaxTree::Node no
             declareLocalIntArrayInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
                SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxReleasing:
+            releaseObject(tape, node.argument);
             break;
          default:
             translateObjectExpression(tape, current);
