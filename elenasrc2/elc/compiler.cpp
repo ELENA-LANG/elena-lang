@@ -355,16 +355,16 @@ ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)
    }
 }
 
-//ref_t Compiler::ModuleScope :: getBaseIndexFunctionClass(int paramCount)
-//{
-//   if (paramCount > 0) {
-//      IdentifierString className(project->resolveForward(NFUNCX_FORWARD));
-//      className.appendInt(paramCount);
-//
-//      return mapReference(className);
-//   }
-//   else return 0;
-//}
+ref_t Compiler::ModuleScope :: getBaseIndexFunctionClass(int paramCount)
+{
+   if (paramCount > 0) {
+      IdentifierString className(project->resolveForward(NFUNCX_FORWARD));
+      className.appendInt(paramCount);
+
+      return mapReference(className);
+   }
+   else return 0;
+}
 
 ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
 {
@@ -4074,13 +4074,13 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
       else if (getSignature(methodScope.message) == 0) {
          parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
       }
-      //else {
-      //   // check if it is nfunc
-      //   ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
-      //   if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
-      //      parentRef = nfuncRef;
-      //   }
-      //}
+      else {
+         // check if it is nfunc
+         ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
+         if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
+            parentRef = nfuncRef;
+         }
+      }
 
       InheritResult res = compileParentDeclaration(parentRef, scope, true);
       if (res == irInvalid) {

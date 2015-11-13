@@ -352,7 +352,7 @@ private:
 //      void validateForwards();
 
       ref_t getBaseFunctionClass(int paramCount);
-//      ref_t getBaseIndexFunctionClass(int paramCount);
+      ref_t getBaseIndexFunctionClass(int paramCount);
       ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);

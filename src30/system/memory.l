@@ -1689,13 +1689,13 @@
 /// An array
 #class(sealed) Array :: BaseArray
 {
-//    /// Creates an empty array
-//    #constructor min
-//        => system'internal'arr_empty.
-//    
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
+    /// Creates an empty array
+    #constructor min
+        => system'internal'arr_empty.
+    
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
     
     /// Creates the array with the specified length
     ///
@@ -1786,8 +1786,8 @@
     /// Returns the array enumerator
     #method enumerator = ArrayEnumerator new &array:$self.
 
-//    /// Returns the array iterator
-//    #method iterator = ArrayIterator new &array:$self.
+    /// Returns the array iterator
+    #method iterator = ArrayIterator new &array:$self.
 
     /// Dispatches the verb to the target object with array subject
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
@@ -2048,61 +2048,61 @@
 //    #method readLength &vint:anOutput
 //        => theLiteral.
 //}
-//
-//// --- ArrayIterator ---
-//
-///// An array iterator
-//#class ArrayIterator :: Iterator
-//{
-//    #field(type:array) theArray.
-//    #field(type:vint)  theIndex.
-//
-//    /// Returns the parameter iterator
-//    #constructor new : anArray
-//        <= new &array:(anArray array).
-//    
-//    /// Returns the parameter iterator
-//    #constructor new &array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := Integer new.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(type:int)aLength.
-//        theArray readLength &vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject
-//    [
-//        theArray setAt &int:theIndex &object:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex write &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theArray.
-//}
+
+// --- ArrayIterator ---
+
+/// An array iterator
+#class ArrayIterator :: Iterator
+{
+    #field(type:array) theArray.
+    #field(type:vint)  theIndex.
+
+    /// Returns the parameter iterator
+    #constructor new : anArray
+        <= new &array:(anArray array).
+    
+    /// Returns the parameter iterator
+    #constructor new &array:anArray
+    [
+        theArray := anArray.
+        theIndex := Integer new.
+    ]
+    
+    /// Returns false if the index out of range
+    #method available
+    [
+        #var(type:int)aLength.
+        theArray readLength &vint:aLength.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    #method get
+        = theArray getAt &int:theIndex.
+    
+    /// Sets the current member
+    #method set : anObject
+    [
+        theArray setAt &int:theIndex &object:anObject.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    #method readIndex  &vint:anIndex
+    [
+        anIndex << theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex 
+    [
+        theIndex write &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    #method readLength &vint:anOutput
+        => theArray.
+}
 
 // --- ArrayEnumerator ---
 

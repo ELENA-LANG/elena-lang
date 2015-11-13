@@ -72,4 +72,4 @@
 
 // --- Enumerators / Indexers ---
 #subject(class:system'Enumerator)enumerator.
-//#subject(class:system'Iterator)iterator.
+#subject(class:system'Iterator)iterator.

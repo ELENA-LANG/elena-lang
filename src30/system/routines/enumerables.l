@@ -172,10 +172,10 @@
 //    ]
 }
 
-//// --- indexableOp ---
-//
-//#class(extension)indexableOp
-//{
+// --- indexableOp ---
+
+#class(extension)indexableOp
+{
 //    #method exchange : anIndex1 : anIndex2
 //        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
 //        
@@ -227,27 +227,27 @@
 //        
 //        ^ aCopy.
 //    ]
-//    
-//    #method set &every:anIndexFunc
-//        = self::indexableOp set &nfunc:(anIndexFunc nfunc).
-//        
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(type:iterator)aIndexer := self iterator.
-//
-//        #loop (aIndexer available) ?
-//        [
-//            #var(type:int)anIndex.
-//            aIndexer readIndex &vint:anIndex.
-//            
-//            aIndexer set:(anIndexFunc eval &int:anIndex).
-//            
-//            aIndexer append &index:1.
-//        ].
-//        
-//        ^ self.
-//    ]    
-//
+    
+    #method set &every:anIndexFunc
+        = self::indexableOp set &nfunc:(anIndexFunc nfunc).
+        
+    #method set &nfunc:anIndexFunc
+    [
+        #var(type:iterator)aIndexer := self iterator.
+
+        #loop (aIndexer available) ?
+        [
+            #var(type:int)anIndex.
+            aIndexer readIndex &vint:anIndex.
+            
+            aIndexer set:(anIndexFunc eval &int:anIndex).
+            
+            aIndexer append &index:1.
+        ].
+        
+        ^ self.
+    ]    
+
 //    #method sort : aCompareFunc
 //        = self::indexableOp sort &func2:(aCompareFunc func2).
 //    
@@ -316,8 +316,8 @@
 //          
 //        ^ true.                              
 //    ]
-//}
-//
+}
+
 //// --- stringListOp ---
 //
 //#symbol stringListOpDispatcher =

@@ -29,10 +29,10 @@
     #method bool = $self.
 
 //    #method clone = $nil.
-//    
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
-//    
-//    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
+    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
+    
+    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
 }
 
 /// A true value symbol
@@ -177,91 +177,91 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerator:$self.
 }
 
-//// --- Iterator ---
-//
-///// An iterator prototype
-//#class(limited) Iterator
-//{
-//    /// Returns itself
-//    #method iterator = $self.
-//    
-//    /// Returns false if the index out of range
-//    #method(type:bool) available = $nil.
-//
-//    /// Returns the current member
-//    #method get = $nil.
-//    
-//    /// Sets the current member
-//    #method set : anObject []
-//    
-//    /// Reads the current index into an output parameter
-//    #method(stacksafe) readIndex &vint:anIndex []
-//    
-//    /// Sets the index by specified value
-//    ///
-//    /// Default implementation for compatibility calls obsolete write&index method
-//    #method(stacksafe) writeIndex &int:anIndex 
-//        [ $self write &index:(IntNumber new &int:anIndex). ] 
-//    
-//    /// Returns the index value
-//    #method index
-//    [
-//        #var(type:int)anIndex := 0.
-//        $self readIndex &vint:anIndex.
-//                        
-//        ^ IntNumber new &int:anIndex.
-//    ]                
-//    
-//    /// Sets the index by specified value
-//    #method set &index:anIndex 
-//        <= writeIndex &int:(anIndex int).
-//    
-//    /// obsolete
-//    #method write &index:anIndex []
-//    
-//    /// Increaments the index by specified value
-//    #method append &index:anOffset
-//    [
-//        #var(type:int)anIndex := 0.
-//        $self readIndex &vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex &int:anIndex.
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    #method reduce &index:anOffset
-//    [
-//        #var(type:int)anIndex := 0.
-//        $self readIndex &vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex &int:anIndex.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    #method(stacksafe) readLength &vint:anOutput
-//    [
-//        anOutput << 0. 
-//    ]
-//    
-//    /// Returns the end of indexer position
-//    #method length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//    
-//    /// Dispatches the verb to the target object with iterator subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &iterator:$self.
-//    
-//    /// Dispatches the verb to the target object with iterator subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &iterator:$self.
-//}
+// --- Iterator ---
+
+/// An iterator prototype
+#class(limited) Iterator
+{
+    /// Returns itself
+    #method iterator = $self.
+    
+    /// Returns false if the index out of range
+    #method(type:bool) available = $nil.
+
+    /// Returns the current member
+    #method get = $nil.
+    
+    /// Sets the current member
+    #method set : anObject []
+    
+    /// Reads the current index into an output parameter
+    #method(stacksafe) readIndex &vint:anIndex []
+    
+    /// Sets the index by specified value
+    ///
+    /// Default implementation for compatibility calls obsolete write&index method
+    #method(stacksafe) writeIndex &int:anIndex 
+        [ $self write &index:(IntNumber new &int:anIndex). ] 
+    
+    /// Returns the index value
+    #method index
+    [
+        #var(type:int)anIndex := 0.
+        $self readIndex &vint:anIndex.
+                        
+        ^ IntNumber new &int:anIndex.
+    ]                
+    
+    /// Sets the index by specified value
+    #method set &index:anIndex 
+        <= writeIndex &int:(anIndex int).
+    
+    /// obsolete
+    #method write &index:anIndex []
+    
+    /// Increaments the index by specified value
+    #method append &index:anOffset
+    [
+        #var(type:int)anIndex := 0.
+        $self readIndex &vint:anIndex.
+        
+        anIndex := anIndex + anOffset int.
+        
+        $self writeIndex &int:anIndex.
+    ]
+
+    /// Decreaments the index by specified value
+    #method reduce &index:anOffset
+    [
+        #var(type:int)anIndex := 0.
+        $self readIndex &vint:anIndex.
+        
+        anIndex := anIndex - anOffset int.
+        
+        $self writeIndex &int:anIndex.
+    ]
+
+    /// Reads the length to the output parameter    
+    #method(stacksafe) readLength &vint:anOutput
+    [
+        anOutput << 0. 
+    ]
+    
+    /// Returns the end of indexer position
+    #method length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+    
+    /// Dispatches the verb to the target object with iterator subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &iterator:$self.
+    
+    /// Dispatches the verb to the target object with iterator subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &iterator:$self.
+}
 
 // --- base functions ---
 
@@ -351,11 +351,11 @@
     /// Returns itself
     #method func2 = $self.
     
-//    /// Dispatches the verb to the target with func2 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func2:$self.
-//    
-//    /// Dispatches the verb to the target with func2 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func2:$self.
+    /// Dispatches the verb to the target with func2 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func2:$self.
+    
+    /// Dispatches the verb to the target with func2 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func2:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 []
@@ -388,14 +388,14 @@
 /// A base three variable function
 #class(limited)BaseFunction3
 {
-//    /// Returns itself
-//    #method func3 = $self.
-//    
-//    /// Dispatches the verb to the target object with func3 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func3:$self.
-//    
-//    /// Dispatches the verb to the target object with func3 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func3:$self.
+    /// Returns itself
+    #method func3 = $self.
+    
+    /// Dispatches the verb to the target object with func3 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func3:$self.
+    
+    /// Dispatches the verb to the target object with func3 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func3:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 []
@@ -428,14 +428,14 @@
 /// A base four variable function
 #class(limited)BaseFunction4
 {
-//    /// Returns itself
-//    #method func4 = $self.
-//    
-//    /// Dispatches the verb to the target object with func4 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func4:$self.
-//    
-//    /// Dispatches the verb to the target object with func4 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func4:$self.
+    /// Returns itself
+    #method func4 = $self.
+    
+    /// Dispatches the verb to the target object with func4 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func4:$self.
+    
+    /// Dispatches the verb to the target object with func4 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func4:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
@@ -468,14 +468,14 @@
 /// A base five variable function
 #class(limited)BaseFunction5
 {
-//    /// Returns itself
-//    #method func5 = $self.
-//    
-//    /// Dispatches the verb to the target object with func5 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func5:$self.
-//    
-//    /// Dispatches the verb to the target object with func5 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func5:$self.
+    /// Returns itself
+    #method func5 = $self.
+    
+    /// Dispatches the verb to the target object with func5 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func5:$self.
+    
+    /// Dispatches the verb to the target object with func5 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func5:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
@@ -508,14 +508,14 @@
 /// A base six variable function
 #class(limited)BaseFunction6
 {
-//    /// Returns itself
-//    #method func6 = $self.
-//    
-//    /// Dispatches the verb to the target object with func6 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func6:$self.
-//    
-//    /// Dispatches the verb to the target object with func6 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func6:$self.
+    /// Returns itself
+    #method func6 = $self.
+    
+    /// Dispatches the verb to the target object with func6 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func6:$self.
+    
+    /// Dispatches the verb to the target object with func6 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func6:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
@@ -548,14 +548,14 @@
 /// A base seven variable function
 #class(limited)BaseFunction7
 {
-//    /// Returns itself
-//    #method func7 = $self.
-//    
-//    /// Dispatches the verb to the target object with func7 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func7:$self.
-//    
-//    /// Dispatches the verb to the target object with func7 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func7:$self.
+    /// Returns itself
+    #method func7 = $self.
+    
+    /// Dispatches the verb to the target object with func7 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func7:$self.
+    
+    /// Dispatches the verb to the target object with func7 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func7:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
@@ -588,14 +588,14 @@
 /// A base eight variable function
 #class(limited)BaseFunction8
 {
-//    /// Returns itself
-//    #method func8 = $self.
-//    
-//    /// Dispatches the verb to the target object with func8 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func8:$self.
-//    
-//    /// Dispatches the verb to the target object with func8 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func8:$self.
+    /// Returns itself
+    #method func8 = $self.
+    
+    /// Dispatches the verb to the target object with func8 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func8:$self.
+    
+    /// Dispatches the verb to the target object with func8 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func8:$self.
 
     /// Executes the function    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
@@ -628,14 +628,14 @@
 /// A base nine variable function
 #class(limited)BaseFunction9
 {
-//    /// Returns itself
-//    #method func9 = $self.
-//    
-//    /// Dispatches the verb to the target object with func9 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func9:$self.
-//    
-//    /// Dispatches the verb to the target object with func9 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func9:$self.
+    /// Returns itself
+    #method func9 = $self.
+    
+    /// Dispatches the verb to the target object with func9 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func9:$self.
+    
+    /// Dispatches the verb to the target object with func9 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func9:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
@@ -668,14 +668,14 @@
 /// A base ten variable function
 #class(limited)BaseFunction10
 {
-//    /// Returns itself
-//    #method func10 = $self.
-//    
-//    /// Dispatches the verb to the target object with func10 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func10:$self.
-//    
-//    /// Dispatches the verb to the target object with func10 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func10:$self.
+    /// Returns itself
+    #method func10 = $self.
+    
+    /// Dispatches the verb to the target object with func10 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func10:$self.
+    
+    /// Dispatches the verb to the target object with func10 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func10:$self.
 
     /// Executes the function    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
@@ -708,14 +708,14 @@
 /// A base eleven variable functions
 #class(limited)BaseFunction11
 {
-//    /// Returns itself
-//    #method func11 = $self.
-//    
-//    /// Dispatches the verb to the target object with func11 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func11:$self.
-//    
-//    /// Dispatches the verb to the target object with func11 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func11:$self.
+    /// Returns itself
+    #method func11 = $self.
+    
+    /// Dispatches the verb to the target object with func11 subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func11:$self.
+    
+    /// Dispatches the verb to the target object with func11 subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func11:$self.
     
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
@@ -759,14 +759,14 @@
 /// A base index function
 #class(limited)IndexFunction1
 {
-//    /// Returns itslef
-//    #method nfunc = $self.
-//
-//    /// Dispatches the verb to the target object with nfunc subject    
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nfunc:$self.
-//    
-//    /// Dispatches the verb to the target object with nfunc subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nfunc:$self.
+    /// Returns itslef
+    #method nfunc = $self.
+
+    /// Dispatches the verb to the target object with nfunc subject    
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nfunc:$self.
+    
+    /// Dispatches the verb to the target object with nfunc subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nfunc:$self.
     
     /// Executes the function
     ///
@@ -827,14 +827,14 @@
 /// A base two variable index function
 #class(limited)IndexFunction2
 {
-//    /// Returns itslef
-//    #method nnfunc = $self.
-//    
-//    /// Dispatches the verb to the target object with nnfunc subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nnfunc:$self.
-//    
-//    /// Dispatches the verb to the target object with nnfunc subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nnfunc:$self.
+    /// Returns itslef
+    #method nnfunc = $self.
+    
+    /// Dispatches the verb to the target object with nnfunc subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &nnfunc:$self.
+    
+    /// Dispatches the verb to the target object with nnfunc subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &nnfunc:$self.
     
     /// Executes the function
     ///
@@ -895,14 +895,14 @@
 /// A base three variable index function
 #class(limited)IndexFunction3
 {
-//    /// Returns itself
-//    #method n3func = $self.
-//    
-//    /// Dispatches the verb to the target object with n3func subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &n3func:$self.
-//    
-//    /// Dispatches the verb to the target object with n3func subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &n3func:$self.
+    /// Returns itself
+    #method n3func = $self.
+    
+    /// Dispatches the verb to the target object with n3func subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &n3func:$self.
+    
+    /// Dispatches the verb to the target object with n3func subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &n3func:$self.
     
     /// Executes the function
     #method(stacksafe) eval &int:i &int:j &int:k []
