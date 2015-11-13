@@ -271,29 +271,29 @@
     /// Executes the action
     #method eval []
     
-//    /// Executes the action while the condition is true
-//    #method run &if:aBool
-//    [
-//        #loop aBool ?
-//        [
-//            $self eval.
-//        ].
-//    ]
-//
-//    /// Executes the action while the condition is false
-//    ///
-//    /// Executes at least once
-//    #method run &until:aBool
-//    [
-//        #var(type:bool)flag := false.
-//        
-//        #loop flag !
-//        [
-//            $self eval.
-//            
-//            flag := aBool bool.
-//        ].
-//    ]
+    /// Executes the action while the condition is true
+    #method run &if:aBool
+    [
+        #loop aBool ?
+        [
+            $self eval.
+        ].
+    ]
+
+    /// Executes the action while the condition is false
+    ///
+    /// Executes at least once
+    #method run &until:aBool
+    [
+        #var(type:bool)flag := false.
+        
+        #loop flag !
+        [
+            $self eval.
+            
+            flag := aBool bool.
+        ].
+    ]
     
     /// Returns itself
     #method func = $self.
@@ -329,20 +329,20 @@
         ].        
     ]
     
-//    /// Executes the function for every enumeration item until it returns true
-//    #method retrieve &enumerator:anEnumerator
-//    [
-//        #var anItem := nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for every enumeration item until it returns true
+    #method retrieve &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base two variable function

@@ -56,27 +56,27 @@
 //        ].
 //    ]
 //}
-//
-//// --- control ---
-//
-//#symbol control =
-//{
+
+// --- control ---
+
+#symbol control =
+{
 //    try : anAction
 //    [
 //        anAction eval | if: e [].
 //    ]    
-//    
-//    do:anAction = anAction eval.
-//    
-//    do:anAction &until:anExpr
-//        = anAction run &until:anExpr.
-//
-//    while:anExpr
-//        = $self while:anExpr &do:[].
-//
-//    while:anExpr &do:anAction
-//        = anAction run &if:anExpr.
-//
+    
+    do:anAction = anAction eval.
+    
+    do:anAction &until:anExpr
+        = anAction run &until:anExpr.
+
+    while:anExpr
+        = $self while:anExpr &do:[].
+
+    while:anExpr &do:anAction
+        = anAction run &if:anExpr.
+
 //    run &int:aStart &int:anEnd &every:aFunction
 //        = (aStart < anEnd)
 //            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
@@ -86,4 +86,4 @@
 //        = (aStart < anEnd)
 //            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
 //            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
-//}.
+}.
