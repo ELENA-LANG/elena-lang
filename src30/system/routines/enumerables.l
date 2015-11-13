@@ -248,38 +248,38 @@
         ^ self.
     ]    
 
-//    #method sort : aCompareFunc
-//        = self::indexableOp sort &func2:(aCompareFunc func2).
-//    
-//    #method sort &func2:aCompareFunc
-//    [
-//        #var(type:iterator) aFormer := self iterator.
-//        #var(type:iterator) aLater := self iterator.
-//
-//        #loop (aFormer available) ?
-//        [
-//            #var(type:vint)i.
-//            aFormer readIndex &vint:i.
-//            
-//            aLater writeIndex &int:(i + 1).
-//            
-//            #loop (aLater available) ?
-//            [
-//                (aCompareFunc eval:(aFormer get):(aLater get))
-//                    ! [
-//                        #var aTmp := aFormer get.
-//                        aFormer set:(aLater get).
-//                        aLater set:aTmp.
-//                    ].
-//                    
-//                aLater append &index:1.
-//            ].
-//            aFormer append &index:1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
+    #method sort : aCompareFunc
+        = self::indexableOp sort &func2:(aCompareFunc func2).
+    
+    #method sort &func2:aCompareFunc
+    [
+        #var(type:iterator) aFormer := self iterator.
+        #var(type:iterator) aLater := self iterator.
+
+        #loop (aFormer available) ?
+        [
+            #var(type:vint)i.
+            aFormer readIndex &vint:i.
+            
+            aLater writeIndex &int:(i + 1).
+            
+            #loop (aLater available) ?
+            [
+                (aCompareFunc eval:(aFormer get):(aLater get))
+                    ! [
+                        #var aTmp := aFormer get.
+                        aFormer set:(aLater get).
+                        aLater set:aTmp.
+                    ].
+                    
+                aLater append &index:1.
+            ].
+            aFormer append &index:1.
+        ].
+        
+        ^ self.
+    ]
+    
 //    #method ascendant
 //        = (self clone)::indexableOp sort:ifOrdered.
 //

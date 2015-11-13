@@ -3790,7 +3790,7 @@ void ByteCodeWriter :: translateCodeBlock(CommandTape& tape, SyntaxTree::Node no
             break;
          }
          case lxReleasing:
-            releaseObject(tape, node.argument);
+            releaseObject(tape, current.argument);
             break;
          default:
             translateObjectExpression(tape, current);
