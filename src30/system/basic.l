@@ -1711,9 +1711,9 @@
     /// Returns itself
     #method vint = $self.
 
-//    /// Returns the integer value
-//    #method int = IntNumber new &int:theValue.
-//                                      
+    /// Returns the integer value
+    #method int = IntNumber new &int:theValue.
+                                      
 //    /// Returns the real number
 //    #method real = RealNumber new &int:theValue.
 //    

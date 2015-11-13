@@ -17,34 +17,34 @@
         theLength := Integer new &int:0.
     ]
 
-//    #method clear
-//    [
-//        theLength << 0.
-//    ]
-//
-//    #method(stacksafe) readLength &vint:aRetVal
-//    [
-//        aRetVal << theLength.
-//    ]
-//
-//    #method length
-//        = theLength int.
-//
-//    #method(stacksafe) setLength &int:aLength
-//    [
-//        theLength << aLength.
-//    ]
-//
-//    #method set &length:aLength
-//        <= setLength &int:(aLength int).
-//
-//    #method chararray = theBuffer.
-//
-//    #method literal
-//        = LiteralValue new &int:0 &int:theLength &chararray:theBuffer.
-//
-//    #method wide
-//        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
+    #method clear
+    [
+        theLength << 0.
+    ]
+
+    #method(stacksafe) readLength &vint:aRetVal
+    [
+        aRetVal << theLength.
+    ]
+
+    #method length
+        = theLength int.
+
+    #method(stacksafe) setLength &int:aLength
+    [
+        theLength << aLength.
+    ]
+
+    #method set &length:aLength
+        <= setLength &int:(aLength int).
+
+    #method chararray = theBuffer.
+
+    #method literal
+        = LiteralValue new &int:0 &int:theLength &chararray:theBuffer.
+
+    #method wide
+        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
 
     #method write : aLine
     [
