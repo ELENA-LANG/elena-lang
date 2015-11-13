@@ -72,24 +72,24 @@
 //
 ////    OpenArgTester test &args:1:"a":3.
 //].
-//
-//// --- MultiDispatchTest ---
-//
-//#symbol DispatchTester =
-//{
-//    eval &x:anX &y:anY
-//    [
-//        ^ anX + anY.
-//    ]
-//}.
-//
-//#symbol MultiDispatchTest =
-//[
-//    #var msg := %(x&y).
-//    
-//    DispatchTester::msg eval:1:2.
-//].
-//
+
+// --- MultiDispatchTest ---
+
+#symbol DispatchTester =
+{
+    eval &x:anX &y:anY
+    [
+        ^ anX + anY.
+    ]
+}.
+
+#symbol MultiDispatchTest =
+[
+    #var msg := %(x&y).
+    
+    DispatchTester::msg eval:1:2.
+].
+
 //// --- MultySelectTest ---
 //
 //#symbol MultySelectTest =
@@ -196,20 +196,7 @@
 //        
 //    console writeLine:".".
 //].
-//
-////#symbol BreakTest =
-////[
-////    #var a := 2.
-////    #var n := control do:
-////    [
-////       (a == 1) ? [ #break "a". ].
-////
-////       (a == 2) ? [ #break "b". ].
-////
-////       ^ nil.
-////    ].
-////].
-//
+
 //#symbol actionTester =
 //{
 //    testGeneric : anAction
