@@ -691,35 +691,35 @@
 /// An array of unicode characters (UTF-32)
 #class(sealed) CharArray :: BaseIntArray
 {
-//    /// Creates the new array with a specified length
-//    #constructor(stacksafe) new &int : aLength
-//        => system'internal'ns_create.
-//
-//    /// Creates the new array with a specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
-//        => system'internal'ns_copysubarr.
-//        
-//    /// Creates the short array copy
-//    #constructor new &chararray:anArray
-//        <= new &int:0 &int:(anArray length int) &chararray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'ns_getlen.
-//
-//    /// Returns the array length        
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
+    /// Creates the new array with a specified length
+    #constructor(stacksafe) new &int : aLength
+        => system'internal'ns_create.
+
+    /// Creates the new array with a specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
+        => system'internal'ns_copysubarr.
+        
+    /// Creates the short array copy
+    #constructor new &chararray:anArray
+        <= new &int:0 &int:(anArray length int) &chararray:anArray.
+    
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'ns_getlen.
+
+    /// Returns the array length        
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
 //    [
@@ -746,48 +746,48 @@
     /// Returns itself
     #method chararray = $self.
 
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
-//        => system'internal'ns_read.
-//
-//    /// Copies the array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
-//        => system'internal'ns_write.
-//
-//    /// Writes a character value at the specified position
-//    #method(stacksafe) write &int:anIndex &char:aValue
-//        => system'internal'ns_writedword.
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vchar:anInt
-//        => system'internal'ns_readdword.
-//
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
+        => system'internal'ns_read.
+
+    /// Copies the array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
+        => system'internal'ns_write.
+
+    /// Writes a character value at the specified position
+    #method(stacksafe) write &int:anIndex &char:aValue
+        => system'internal'ns_writedword.
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vchar:anInt
+        => system'internal'ns_readdword.
+
 //    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
 //        => system'internal'ns_move.
-//
-//    /// Returns a character at the specified position
-//    #method getAt : anIndex
-//    [
-//        #var(type:char)aRetVal.
-//        $self read &int:(anIndex int) &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]        
-//
-//    /// Sets a character at the specified position
-//    #method setAt : anIndex : aValue
-//    [
-//        $self write &int:(anIndex int) &char:(aValue char).
-//    ]
-//
-//    /// Creates the object copy
-//    #method clone = CharArray new &chararray:$self.
-//    
-//    /// Dispatches the verb to the target object with chararray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &chararray:$self.
-//    
-//    /// Dispatches the verb to the target object with chararray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &chararray:$self.    
+
+    /// Returns a character at the specified position
+    #method getAt : anIndex
+    [
+        #var(type:char)aRetVal.
+        $self read &int:(anIndex int) &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+
+    /// Sets a character at the specified position
+    #method setAt : anIndex : aValue
+    [
+        $self write &int:(anIndex int) &char:(aValue char).
+    ]
+
+    /// Creates the object copy
+    #method clone = CharArray new &chararray:$self.
+    
+    /// Dispatches the verb to the target object with chararray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &chararray:$self.
+    
+    /// Dispatches the verb to the target object with chararray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &chararray:$self.    
 }
         
 // --- emptyliteralvalue ---
@@ -980,12 +980,12 @@
     #method(stacksafe) readLength &vint:aLength
         => system'internal's_getlen.
 
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
-//        => system'internal's_save.
-//
-//    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
-//        => system'internal's_saveraw.
+    /// Saves the literal into a UTF-32 character array
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
+        => system'internal's_save.
+
+    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
+        => system'internal's_saveraw.
 
     /// Returns the string length
     #method length
@@ -1008,19 +1008,19 @@
     /// Dispatches the verb to the target object with literal subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:$self.
     
-//    /// Clones the value
-//    #method clone = LiteralValue new &literal:$self.
-//
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+    /// Clones the value
+    #method clone = LiteralValue new &literal:$self.
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 //// --- String ---
@@ -1192,32 +1192,32 @@
 {
     #field(type:shortarray)theValue.
 
-//    /// Creates the empty literal
-//    #constructor min
-//        => system'internal'ws_empty.
-//        
-//    /// Creates the literal string with specified length
-//    #constructor(stacksafe) new &int:aSize 
-//        => system'internal'ws_create.
-//
-//    /// Creates the literal string with specified length and copies the parameter value
-//    #constructor(stacksafe) new &int:aSize &wide:aLiteral
-//        => system'internal'ws_copy.
-//    
-//    /// Creates the literal string with specified length fills with spciefied character value
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'internal'ws_fill.
-//
-//    /// Creates the literal string copy
-//    #constructor new &wide:aLiteral
-//        <= %new &int:(aLiteral length int) &wide:aLiteral.
-//        
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'internal'ws_copysubarr.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
-//        => system'internal'ws_copybuf.
+    /// Creates the empty literal
+    #constructor min
+        => system'internal'ws_empty.
+        
+    /// Creates the literal string with specified length
+    #constructor(stacksafe) new &int:aSize 
+        => system'internal'ws_create.
+
+    /// Creates the literal string with specified length and copies the parameter value
+    #constructor(stacksafe) new &int:aSize &wide:aLiteral
+        => system'internal'ws_copy.
+    
+    /// Creates the literal string with specified length fills with spciefied character value
+    #constructor(stacksafe) new &int:aSize &char:aChar
+        => system'internal'ws_fill.
+
+    /// Creates the literal string copy
+    #constructor new &wide:aLiteral
+        <= %new &int:(aLiteral length int) &wide:aLiteral.
+        
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+        => system'internal'ws_copysubarr.
+
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
+        => system'internal'ws_copybuf.
 
     /// Returns itself
     #method wide = $self.
@@ -1240,22 +1240,22 @@
 //    /// Compares the values
 //    #method(type:bool) less &char : aChar
 //        <= %less &wide:(aChar wide).
-//
-//    /// Concatinates the values
-//    #method(type:wide,stacksafe) add &wide : aLiteral
-//        => system'internal'ws_add.
-//
+
+    /// Concatinates the values
+    #method(type:wide,stacksafe) add &wide : aLiteral
+        => system'internal'ws_add.
+
 //    /// Concatinates the values
 //    #method(type:wide,stacksafe) add &char:aChar
 //        = $self add &wide:(aChar wide).
-//
-//    /// Concatinates the values
-//    #method(type:wide) add &literal:aLiteral
-//        = $self add &wide:(aLiteral wide).
-//
-//    /// Concatinates the values
-//    #method add : anObject
-//        = anObject cast:%add &to:$self.
+
+    /// Concatinates the values
+    #method(type:wide) add &literal:aLiteral
+        = $self add &wide:(aLiteral wide).
+
+    /// Concatinates the values
+    #method add : anObject
+        = anObject cast:%add &to:$self.
 
     /// Returns the character at specified index
     #method getAt : aParam
@@ -1278,113 +1278,113 @@
         ^ CharValue new &char:aChar.
     ]
 
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
-//        => system'internal'ws_indexof.
-//
-//    /// Saves the index of the first occurence of the specified character into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-//        => system'internal'ws_indexof_char.
-//
-//    /// Returns the index of the first occurence of the specified character.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified object.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method indexOf : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//                eval &literal:aLiteral = self indexOf &int:(anIndex int) &wide:(aLiteral wide).
-//                
-//                eval &wide:aLiteral = self indexOf &int:(anIndex int) &wide:aLiteral.
-//                
-//                eval &char:aChar = self indexOf &int:(anIndex int) &char:aChar.
-//            }.
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(type:wide,stacksafe) insert &int:anIndex &wide:aLiteral
-//        => system'internal'ws_insert.
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(type:wide,stacksafe) insert &int:anIndex &literal:aLiteral
-//        = $self insert &int:anIndex &wide:(aLiteral wide).
-//
-//    /// Inserts a character into and returns the new one
-//    #method(type:wide,stacksafe) insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &wide:(aChar wide).
-//
-//    /// Inserts an object into and returns the new one
-//    #method insert : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//               eval &wide:aLiteral
-//                  = self insert &int:(anIndex int) &wide:aLiteral.
-//    
-//               eval &literal:aLiteral
-//                  = self insert &int:(anIndex int) &wide:(aLiteral wide).
-//    
-//               eval &char:aChar
-//                  = self insert &int:(anIndex int) &char:aChar.
-//            }.
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method delete:aLength &at:anIndex
-//        = $self delete &int:(anIndex int) &int:(aLength int).
-//            
-//    /// Deletes the substring from the object and returns the new one            
-//    #method(type:wide,stacksafe) delete &int:anIndex &int:aLength
-//        => system'internal'ws_delete.
-//
-//    /// Returns the substring
-//    #method(type:wide,stacksafe) Substring &int:anIndex &int:aLength
-//        => system'internal'ws_subs.
-//
-//    #method(type:wide) Substring : aLength &at:anIndex
-//        <= Substring &int:(anIndex int) &int:(aLength int).
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
+        => system'internal'ws_indexof.
+
+    /// Saves the index of the first occurence of the specified character into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'internal'ws_indexof_char.
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified object.
+    ///
+    /// If the substring is not found. returns -1
+    #method indexOf : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+                eval &literal:aLiteral = self indexOf &int:(anIndex int) &wide:(aLiteral wide).
+                
+                eval &wide:aLiteral = self indexOf &int:(anIndex int) &wide:aLiteral.
+                
+                eval &char:aChar = self indexOf &int:(anIndex int) &char:aChar.
+            }.
+
+    /// Inserts the substring into and returns the new one
+    #method(type:wide,stacksafe) insert &int:anIndex &wide:aLiteral
+        => system'internal'ws_insert.
+
+    /// Inserts the substring into and returns the new one
+    #method(type:wide,stacksafe) insert &int:anIndex &literal:aLiteral
+        = $self insert &int:anIndex &wide:(aLiteral wide).
+
+    /// Inserts a character into and returns the new one
+    #method(type:wide,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &wide:(aChar wide).
+
+    /// Inserts an object into and returns the new one
+    #method insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval &wide:aLiteral
+                  = self insert &int:(anIndex int) &wide:aLiteral.
+    
+               eval &literal:aLiteral
+                  = self insert &int:(anIndex int) &wide:(aLiteral wide).
+    
+               eval &char:aChar
+                  = self insert &int:(anIndex int) &char:aChar.
+            }.
+
+    /// Deletes the substring from the object and returns the new one
+    #method delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+            
+    /// Deletes the substring from the object and returns the new one            
+    #method(type:wide,stacksafe) delete &int:anIndex &int:aLength
+        => system'internal'ws_delete.
+
+    /// Returns the substring
+    #method(type:wide,stacksafe) Substring &int:anIndex &int:aLength
+        => system'internal'ws_subs.
+
+    #method(type:wide) Substring : aLength &at:anIndex
+        <= Substring &int:(anIndex int) &int:(aLength int).
 
     /// Reads the literal length into an output parameter
     #method(stacksafe) readLength &vint:aLength
         => system'internal'ws_getlen.
 
-//    /// Returns the string length
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
-//        => system'internal'ws_save.
-//
-//    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
-//        => system'internal'ws_saveraw.
+    /// Returns the string length
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
+    /// Saves the literal into a UTF-32 character array
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
+        => system'internal'ws_save.
+
+    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
+        => system'internal'ws_saveraw.
 
     /// Returns the object enumerator
     #method enumerator = WideLiteralEnumerator new &wide:$self.
@@ -1398,19 +1398,19 @@
     /// Dispatches the verb to the target object with wide subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &wide:$self.
     
-//    /// Clones the value
-//    #method clone = WideLiteralValue new &wide:$self.
-//
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+    /// Clones the value
+    #method clone = WideLiteralValue new &wide:$self.
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 //// --- WideString ---

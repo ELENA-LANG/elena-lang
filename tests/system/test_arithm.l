@@ -186,16 +186,16 @@
 //    #var s := aList safeSeek:"abc".
 //    #var n2 := aList safeSeek:-1.
 //].
-//
-//#symbol EnumTest =
-//[
-//    "abc" run &each: (:x)
-//    [
-//        console write:x.
-//    ].
-//        
-//    console writeLine:".".
-//].
+
+#symbol EnumTest =
+[
+    "abc" run &each: (:x)
+    [
+        console write:x.
+    ].
+        
+    console writeLine:".".
+].
 
 //#symbol actionTester =
 //{
@@ -532,17 +532,17 @@
 //    | if &MyError2: e [ console writeLine:(e literal). ].
 //    
 //].
-//
-//// --- TextBufferTest ---
-//
-//#symbol TextBufferTest =
-//[
-//    #var aBuffer := system'text'TextBuffer new.
-//    aBuffer write:"abc".
-//
-//    #var anOutput := aBuffer literal.
-//].
-//
+
+// --- TextBufferTest ---
+
+#symbol TextBufferTest =
+[
+    #var aBuffer := system'text'TextBuffer new.
+    aBuffer write:"abc".
+
+    #var anOutput := aBuffer literal.
+].
+
 //// --- DateTest ---
 //
 //#symbol DateTest =
