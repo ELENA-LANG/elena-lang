@@ -3250,8 +3250,8 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       if (test(current.type, lxObjectMask)) {
          paramCount++;
       }
-   
-      if (test(current.type, lxExpressionMask)) 
+    
+      if (test(current.type, lxExpressionMask) || current == lxResult) 
          directMode = false;
    
       current = current.nextNode();
