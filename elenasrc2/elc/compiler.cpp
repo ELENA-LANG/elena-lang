@@ -1958,6 +1958,8 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       
       scope.writer->newBookmark();
 
+      writeTerminal(TerminalInfo(), scope, switchValue);
+
       ObjectInfo result = compileOperator(option.firstChild(), scope, switchValue, 0, operator_id);
       if (!checkIfCompatible(scope, scope.moduleScope->boolType, result)) {
          scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
