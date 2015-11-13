@@ -3026,7 +3026,7 @@ void ByteCodeWriter :: translateNilOperation(CommandTape& tape, SyntaxTree::Node
    SNode elseParam = SyntaxTree::findChild(node, lxElseValue);
 
    if (node.argument == EQUAL_MESSAGE_ID) {
-      selectByAcc(tape, ifParam.argument, elseParam.argument);
+      selectByAcc(tape, elseParam.argument, ifParam.argument);
    }
 }
 

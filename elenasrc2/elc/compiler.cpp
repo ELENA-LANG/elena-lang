@@ -3299,91 +3299,82 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
    ObjectInfo operand = compileExpression(node, scope, 0, 0);
 
-   // if it is comparing with nil
-   if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
-      // if operation with $nil
-      operand = compileExpression(node, scope, 0, 0);
-
-      scope.writer->insert(lxNilOp, operator_id);
-      if (notOperator) {
-         scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);
-         scope.writer->appendNode(lxElseValue, scope.moduleScope->trueReference);
-      }
-      else {
-         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
-         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
-      }
-   }
-
    // try to implement the primitive operation directly
    LexicalType primitiveOp = lxNone;
    size_t size = 0;
-   int lflag, rflag;
 
-   if (IsVarOperator(operator_id)) {
-      lflag = mapVarOperandType(scope, object);
+   // if it is comparing with nil
+   if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
+      primitiveOp = lxNilOp;
    }
-   else lflag = mapOperandType(scope, object);
+   else {
+      int lflag, rflag;
 
-   rflag = mapOperandType(scope, operand);
-
-   if (lflag == rflag) {
-      if (lflag == elDebugDWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
-         if (IsExprOperator(operator_id))
-            retVal.param = moduleScope->intReference;
-
-         primitiveOp = lxIntOp;
-         size = 4;
+      if (IsVarOperator(operator_id)) {
+         lflag = mapVarOperandType(scope, object);
       }
-      else if (lflag == elDebugQWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
-         if (IsExprOperator(operator_id))
-            retVal.param = moduleScope->longReference;
+      else lflag = mapOperandType(scope, object);
 
-         primitiveOp = lxLongOp;
-         size = 8;
-      }
-      else if (lflag == elDebugReal64 && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
-         if (IsExprOperator(operator_id))
-            retVal.param = moduleScope->realReference;
+      rflag = mapOperandType(scope, operand);
 
-         primitiveOp = lxRealOp;
-         size = 8;
-      }
-      else if (lflag == elDebugSubject && IsCompOperator(operator_id)) {
-         primitiveOp = lxIntOp;
-         size = 4;
-      }
-      else if (IsReferOperator(operator_id)) {
-         if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
-            if (operator_id == SET_REFER_MESSAGE_ID) {
-               ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+      if (lflag == rflag) {
+         if (lflag == elDebugDWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
+            if (IsExprOperator(operator_id))
+               retVal.param = moduleScope->intReference;
 
-               if (mapOperandType(scope, operand2) == elDebugDWORD) {
+            primitiveOp = lxIntOp;
+            size = 4;
+         }
+         else if (lflag == elDebugQWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
+            if (IsExprOperator(operator_id))
+               retVal.param = moduleScope->longReference;
+
+            primitiveOp = lxLongOp;
+            size = 8;
+         }
+         else if (lflag == elDebugReal64 && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
+            if (IsExprOperator(operator_id))
+               retVal.param = moduleScope->realReference;
+
+            primitiveOp = lxRealOp;
+            size = 8;
+         }
+         else if (lflag == elDebugSubject && IsCompOperator(operator_id)) {
+            primitiveOp = lxIntOp;
+            size = 4;
+         }
+         else if (IsReferOperator(operator_id)) {
+            if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+               if (operator_id == SET_REFER_MESSAGE_ID) {
+                  ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+
+                  if (mapOperandType(scope, operand2) == elDebugDWORD) {
+                     primitiveOp = lxIntArrOp;
+                  }
+               }
+               else {
+                  size = 4;
+                  retVal.param = moduleScope->intReference;
                   primitiveOp = lxIntArrOp;
                }
             }
-            else {
-               size = 4;
-               retVal.param = moduleScope->intReference;
-               primitiveOp = lxIntArrOp;
-            }
-         }
-         else if (lflag == elDebugArray && rflag == elDebugDWORD) {
-            // check if it is typed array
-            ref_t classReference = resolveObjectReference(scope, object);
-            ref_t type = 0;
-            if (classReference != 0) {
-               ClassInfo info;
-               scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference), false);
-               type = info.fieldTypes.get(-1);
-            }
+            else if (lflag == elDebugArray && rflag == elDebugDWORD) {
+               // check if it is typed array
+               ref_t classReference = resolveObjectReference(scope, object);
+               ref_t type = 0;
+               if (classReference != 0) {
+                  ClassInfo info;
+                  scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference), false);
+                  type = info.fieldTypes.get(-1);
+               }
 
-            if (operator_id == SET_REFER_MESSAGE_ID) {
-               ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, type, 0);
-            }
-            else retVal.type = type;
+               if (operator_id == SET_REFER_MESSAGE_ID) {
+                  ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, type, 0);
+               }
+               else retVal.type = type;
 
-            primitiveOp = lxArrOp;
+               primitiveOp = lxArrOp;
+            }
          }
       }
    }
