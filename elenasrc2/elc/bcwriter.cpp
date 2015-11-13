@@ -1157,12 +1157,12 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, boo
 //   // jump label
 //   tape.write(bcJump, previousLabel ? baPreviousLabel : baCurrentLabel);
 //}
-//
-//void ByteCodeWriter :: throwCurrent(CommandTape& tape)
-//{
-//   // throw
-//   tape.write(bcThrow);
-//}
+
+void ByteCodeWriter :: throwCurrent(CommandTape& tape)
+{
+   // throw
+   tape.write(bcThrow);
+}
 
 void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
 {
@@ -3342,6 +3342,16 @@ void ByteCodeWriter :: translateReturnExpression(CommandTape& tape, SNode node)
    gotoEnd(tape, baFirstLabel);
 }
 
+void ByteCodeWriter :: translateThrowExpression(CommandTape& tape, SNode node)
+{
+   translateExpression(tape, node);
+
+   pushObject(tape, lxResult);
+   throwCurrent(tape);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
 void ByteCodeWriter :: translateBoxingExpression(CommandTape& tape, SNode node)
 {
    translateExpression(tape, node);
@@ -3615,6 +3625,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
          break;
       case lxReturning:
          translateReturnExpression(tape, node);
+         break;
+      case lxThrowing:
+         translateThrowExpression(tape, node);
          break;
       case lxStdExternalCall:
       case lxExternalCall:

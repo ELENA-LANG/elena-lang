@@ -210,46 +210,46 @@
     ]
 }.
 
-//#class MyException :: Exception
-//{
-//    #constructor new : aMessage
-//        <= %new &literal:(aMessage literal) &subject:%MyError.
-//}
-//
-//#class MyException2 :: Exception
-//{
-//    #constructor new : aMessage
-//        <= %new &literal:(aMessage literal) &subject:%MyError2.
-//}
-//
-//#symbol ExecTester =
-//{
-//    do : anAction [ anAction eval. ]
-//
-//    do:x &with:y
-//    [
-//    ]
-//            
-//    run : anAction
-//    [
-//        anAction eval &x:"Eval Works!!".
-//    ]
-//    
-//    break
-//    [
-//        #throw MyException new:"OnError handler works".
-//    ]
-//    
-//    break2
-//    [
-//        #throw MyException2 new:"OnError2 handler works".
-//    ]
-//    
-//    break3
-//    [
-//        #throw MyException2 new:"Nested OnError2 handler works".
-//    ]
-//}.
+#class MyException :: Exception
+{
+    #constructor new : aMessage
+        <= %new &literal:(aMessage literal) &subject:%MyError.
+}
+
+#class MyException2 :: Exception
+{
+    #constructor new : aMessage
+        <= %new &literal:(aMessage literal) &subject:%MyError2.
+}
+
+#symbol ExecTester =
+{
+    do : anAction [ anAction eval. ]
+
+    do:x &with:y
+    [
+    ]
+            
+    run : anAction
+    [
+        anAction eval &x:"Eval Works!!".
+    ]
+    
+    break
+    [
+        #throw MyException new:"OnError handler works".
+    ]
+    
+    break2
+    [
+        #throw MyException2 new:"OnError2 handler works".
+    ]
+    
+    break3
+    [
+        #throw MyException2 new:"Nested OnError2 handler works".
+    ]
+}.
 
 #symbol ObjectTest =
 [
@@ -469,14 +469,14 @@
         if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
-//// --- MethodNotFoundTest ---
-//
-//#symbol MethodNotFoundTest =
-//[
-//    #var n := 2.
-//    
-//    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
-//].
+// --- MethodNotFoundTest ---
+
+#symbol MethodNotFoundTest =
+[
+    #var n := 2.
+    
+    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
+].
 
 // --- LoopTest ---
 
@@ -509,29 +509,29 @@
     &until:[j == 0].
 ].
 
-//// --- ExceptionTest ---
-//
-//#symbol ExceptionTest =
-//[
-//    ExecTester break | if &Error: e [ console writeLine:"Throw works!". ].
-//    
-//    ExecTester break | if &Error: e [ console writeLine:(e literal). ].
-//    
-//    ExecTester break2 
-//    | on:
-//    {
-//        MyError = e [ console writeLine:"!!Wrong handler". ].
-//        
-//        MyError2 = e [ console writeLine:(e literal). ].
-//    }.
-//    
-//    control do:
-//    [
-//        ExecTester break3 | if &MyError: e [ console writeLine:"!!Wrong handler". ].
-//    ]
-//    | if &MyError2: e [ console writeLine:(e literal). ].
-//    
-//].
+// --- ExceptionTest ---
+
+#symbol ExceptionTest =
+[
+    ExecTester break | if &Error: e [ console writeLine:"Throw works!". ].
+    
+    ExecTester break | if &Error: e [ console writeLine:(e literal). ].
+    
+    ExecTester break2 
+    | on:
+    {
+        MyError = e [ console writeLine:"!!Wrong handler". ].
+        
+        MyError2 = e [ console writeLine:(e literal). ].
+    }.
+    
+    control do:
+    [
+        ExecTester break3 | if &MyError: e [ console writeLine:"!!Wrong handler". ].
+    ]
+    | if &MyError2: e [ console writeLine:(e literal). ].
+    
+].
 
 // --- TextBufferTest ---
 

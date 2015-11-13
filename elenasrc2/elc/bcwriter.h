@@ -205,7 +205,7 @@ public:
 //   void jumpIfNotEqualN(CommandTape& tape, int value);
 //   void jump(CommandTape& tape, bool previousLabel = false);
 
-//   void throwCurrent(CommandTape& tape);
+   void throwCurrent(CommandTape& tape);
 
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
@@ -300,6 +300,7 @@ public:
    void translateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
+   void translateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateNestedExpression(CommandTape& tape, SyntaxTree::Node node);

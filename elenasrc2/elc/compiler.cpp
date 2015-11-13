@@ -4610,15 +4610,16 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
    return ObjectInfo(okObject);
 }
 
-//void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
-//{
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
-//
-//   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
-//
-//   _writer.pushObject(*scope.tape, object);
-//   _writer.throwCurrent(*scope.tape);
-//}
+void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
+{
+   scope.writer->newNode(lxThrowing);
+
+   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, mode);
+
+   //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
+
+   scope.writer->closeNode();
+}
 
 void Compiler :: compileLoop(DNode node, CodeScope& scope)
 {
@@ -4754,9 +4755,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             compileExpression(statement, scope, 0, HINT_ROOT);
             scope.writer->closeNode();
             break;
-//         case nsThrow:
-//            compileThrow(statement, scope, 0);
-//            break;
+         case nsThrow:
+            compileThrow(statement, scope, 0);
+            break;
          case nsLoop:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             scope.writer->newNode(lxExpression);

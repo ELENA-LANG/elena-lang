@@ -24,8 +24,9 @@
     RoleTest eval.
     ConvertorTest eval.
     ArrayTest eval.     
-//    MethodNotFoundTest eval.
-//    ExceptionTest eval.
+    MethodNotFoundTest eval.
+    ExceptionTest eval.
+//    OpenArgTest eval.
 //    DateTest eval.
 //    ListTest eval.
 //    DictionaryTest eval.
@@ -33,7 +34,6 @@
 //    BoxingTest eval.
 //    OuterFieldTest eval.
 //    LocalTest eval.
-//    OpenArgTest eval.
 //    StructTest eval.
 //    GroupTest eval.
 //    GenericMethodTest eval.
