@@ -40,10 +40,10 @@ typedef Compiler::ObjectKind ObjectKind;
 
 // --- Auxiliary routines ---
 
-//inline bool isCollection(DNode node)
-//{
-//   return (node == nsExpression && node.nextNode()==nsExpression);
-//}
+inline bool isCollection(DNode node)
+{
+   return (node == nsExpression && node.nextNode()==nsExpression);
+}
 
 inline bool isReturnExpression(DNode expr)
 {
@@ -2360,21 +2360,19 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          result = compileNestedExpression(objectNode, scope, HINT_ACTION);
          break;
       case nsExpression:
-//         if (isCollection(member)) {
-//            TerminalInfo parentInfo = objectNode.Terminal();
-//            // if the parent class is defined
-//            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
-//               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
-//               if (vmtReference == 0)
-//                  scope.raiseError(errUnknownObject, parentInfo);
-//
-//               result = compileCollection(member, scope, 0, vmtReference);
-//            }
-//            else result = compileCollection(member, scope, 0);
-//         }
-         /*else {*/
-         result = compileExpression(member, scope, 0, 0);
-         /*}*/
+         if (isCollection(member)) {
+            TerminalInfo parentInfo = objectNode.Terminal();
+            // if the parent class is defined
+            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
+               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
+               if (vmtReference == 0)
+                  scope.raiseError(errUnknownObject, parentInfo);
+
+               result = compileCollection(member, scope, 0, vmtReference);
+            }
+            else result = compileCollection(member, scope, 0);
+         }
+         else result = compileExpression(member, scope, 0, 0);
          break;
       case nsMessageReference:
          result = compileMessageReference(member, scope);
@@ -4237,48 +4235,39 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
    return compileNestedExpression(node, ownerScope, scope, mode);
 }
 
-//ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
-//{
-//   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
-//}
-//
-//ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
-//{
-//   int counter = 0;
-//
-//   // all collection memebers should be created before the collection itself
-//   while (node != nsNone) {
-//      bool boxed = false;
-//      bool dummy = false;
-//      ObjectInfo current = compileExpression(node, scope, mode);
-//      current = boxObject(scope, current, boxed, dummy);
-//      if (boxed)
-//         scope.raiseWarning(4, wrnBoxingCheck, node.FirstTerminal());
-//
-//      _writer.pushObject(*scope.tape, current);
-//
-//      node = node.nextNode();
-//      counter++;
-//   }
-//
-//   // create the collection
-//   _writer.newObject(*scope.tape, counter, vmtReference);
-//
-//   _writer.loadBase(*scope.tape, ObjectInfo(okAccumulator));
-//
-//   // assign the members
-//   while (counter > 0) {
-//      _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//      _writer.saveBase(*scope.tape, ObjectInfo(okAccumulator), counter - 1);
-//
-//      counter--;
-//   }
-//
-//   _writer.loadObject(*scope.tape, ObjectInfo(okBase));
-//
-//   return ObjectInfo(okAccumulator);
-//}
-//
+ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
+{
+   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
+}
+
+ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
+{
+   int counter = 0;
+
+   scope.writer->newBookmark();
+
+   // all collection memebers should be created before the collection itself
+   while (node != nsNone) {
+
+      scope.writer->newNode(lxMember, counter);
+
+      ObjectInfo current = compileExpression(node, scope, 0, mode);
+
+      scope.writer->closeNode();
+
+      node = node.nextNode();
+      counter++;
+   }
+
+   scope.writer->insert(lxNested, counter);
+   scope.writer->appendNode(lxTarget, vmtReference);
+   scope.writer->closeNode();
+
+   scope.writer->removeBookmark();
+
+   return ObjectInfo(okObject);
+}
+
 //ObjectInfo Compiler :: compileTypecast(CodeScope& scope, ObjectInfo& object, ref_t target_type, bool& mismatch, bool& boxed, bool& unboxing)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;

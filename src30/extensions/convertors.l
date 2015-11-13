@@ -166,16 +166,16 @@
 //
 //    #method toShort
 //        = self cast:%convert &to:shortConvertor.
-//
-//    #method toInt
-//        = self cast:%convert &to:intConvertor.
-//
-//    #method toLong
-//        = self cast:%convert &to:longConvertor.
-//    
-//    #method toReal
-//        = self cast:%convert &to:realConvertor.
-//
+
+    #method toInt
+        = self cast:%convert &to:intConvertor.
+
+    #method toLong
+        = self cast:%convert &to:longConvertor.
+    
+    #method toReal
+        = self cast:%convert &to:realConvertor.
+
 //    #method convertTo : aTarget
 //        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }

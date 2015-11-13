@@ -20,10 +20,10 @@
     EnumTest eval.    
     TextBufferTest eval.
     LoopTest eval.
-//    ActionTest eval.
-//    RoleTest eval.
-//    ConvertorTest eval.
-//    ArrayTest eval.     
+    ActionTest eval.
+    RoleTest eval.
+    ConvertorTest eval.
+    ArrayTest eval.     
 //    MethodNotFoundTest eval.
 //    ExceptionTest eval.
 //    DateTest eval.

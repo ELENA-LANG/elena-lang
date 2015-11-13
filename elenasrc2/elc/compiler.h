@@ -751,8 +751,8 @@ private:
 
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
 //   int defineMethodHint(CodeScope& scope, ObjectInfo object, ref_t messageRef);
 

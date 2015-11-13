@@ -3053,18 +3053,18 @@
 //    #method convert : anObject
 //        = anObject cast:%convert &to:$self.
 //}.
-//
-///// An integer convertor
-//#symbol intConvertor =
-//{
-//    /// Converts a literal string into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:aValue &vint:aRetVal
-//        => system'internal'int_copystr.
-//
-//    /// Converts a wide literal string into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:aValue &vint:aRetVal
-//        => system'internal'int_copywstr.
-//
+
+/// An integer convertor
+#symbol intConvertor =
+{
+    /// Converts a literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:aValue &vint:aRetVal
+        => system'internal'int_copystr.
+
+    /// Converts a wide literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:aValue &vint:aRetVal
+        => system'internal'int_copywstr.
+
 //    /// Converts a character value into an integer and saves the result into an output parameter
 //    #method(stacksafe)convert &char:aValue &vint:aRetVal
 //        => system'internal'int_saveint.
@@ -3084,25 +3084,25 @@
 //    /// Converts a real number into an integer and saves the result into an output parameter
 //    #method(stacksafe)convert &real:aReal &vint:aRetVal
 //        => system'internal'int_copyreal.
-//        
-//    /// Converts a literal string into an integer
-//    #method(type:int,stacksafe) convert &literal:aLiteral
-//    [
-//        #var(type:int)aRetVal.
-//        $self convert &literal:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//        
-//    /// Converts a wide literal string into an integer
-//    #method(type:int,stacksafe) convert &wide:aLiteral
-//    [
-//        #var(type:int)aRetVal.
-//        $self convert &wide:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//        
+        
+    /// Converts a literal string into an integer
+    #method(type:int,stacksafe) convert &literal:aLiteral
+    [
+        #var(type:int)aRetVal.
+        $self convert &literal:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
+    /// Converts a wide literal string into an integer
+    #method(type:int,stacksafe) convert &wide:aLiteral
+    [
+        #var(type:int)aRetVal.
+        $self convert &wide:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
 //    /// Converts a character value into an integer
 //    #method(type:int,stacksafe) convert &char:aValue
 //    [
@@ -3151,22 +3151,22 @@
 //    /// Returns a parameter                                    
 //    #method(type:int,stacksafe) convert &int:anInt
 //        = IntNumber new &int:anInt.
-//        
-//    #method convert : anObject
-//        = anObject cast:%convert &to:$self.
-//}.
-//
-///// A long integer convertor
-//#symbol longConvertor =
-//{
-//    /// Converts a literal string into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:aValue &vlong:aRetVal
-//        => system'internal'long_copystr.
-//
-//    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:aValue &vlong:aRetVal
-//        => system'internal'long_copywstr.
-//
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
+}.
+
+/// A long integer convertor
+#symbol longConvertor =
+{
+    /// Converts a literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:aValue &vlong:aRetVal
+        => system'internal'long_copystr.
+
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:aValue &vlong:aRetVal
+        => system'internal'long_copywstr.
+
 //    #method(stacksafe)convert &int:aValue &vlong:aRetVal
 //        => system'internal'long_convertint.
 //
@@ -3203,66 +3203,66 @@
 //        
 //        ^ LongNumber new &int:aRetVal.
 //    ]
-//
-//    /// Converts a literal string into a long integer
-//    #method(type:long,stacksafe) convert &literal:aLiteral
-//    [
-//        #var(type:long)aRetVal.
-//        $self convert &literal:aLiteral &vlong:aRetVal.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//
-//    /// Converts a wide literal string into a long integer
-//    #method(type:long,stacksafe) convert &wide:aLiteral
-//    [
-//        #var(type:long)aRetVal.
-//        $self convert &wide:aLiteral &vlong:aRetVal.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//    
+
+    /// Converts a literal string into a long integer
+    #method(type:long,stacksafe) convert &literal:aLiteral
+    [
+        #var(type:long)aRetVal.
+        $self convert &literal:aLiteral &vlong:aRetVal.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    /// Converts a wide literal string into a long integer
+    #method(type:long,stacksafe) convert &wide:aLiteral
+    [
+        #var(type:long)aRetVal.
+        $self convert &wide:aLiteral &vlong:aRetVal.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+    
 //    /// Returns a parameter
 //    #method(type:long,stacksafe) convert &long:aLong
 //        = LongNumber new &long:aLong.
-//        
-//    #method convert : anObject
-//        = anObject cast:%convert &to:$self.
-//}.
-//
-///// A real number convertor
-//#symbol realConvertor =
-//{
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &int:aValue &vreal:aRetVal
-//        => system'internal'real_saveint.
-//
-//    /// Converts a literal string into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:aValue &vreal:aRetVal
-//        => system'internal'real_copystr.
-//        
-//    /// Converts a wide literal string into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:aValue &vreal:aRetVal
-//        => system'internal'real_copywstr.
-//        
-//    /// Converts a literal string into a real number
-//    #method(type:real,stacksafe)convert &literal:aLiteral
-//    [
-//        #var(type:real)aRetVal.
-//        $self convert &literal:aLiteral &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//        
-//    /// Converts a wide literal string into a real number
-//    #method(type:real,stacksafe)convert &wide:aLiteral
-//    [
-//        #var(type:real)aRetVal.
-//        $self convert &wide:aLiteral &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
+}.
+
+/// A real number convertor
+#symbol realConvertor =
+{
+    /// Converts an integer into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &int:aValue &vreal:aRetVal
+        => system'internal'real_saveint.
+
+    /// Converts a literal string into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &literal:aValue &vreal:aRetVal
+        => system'internal'real_copystr.
+        
+    /// Converts a wide literal string into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &wide:aValue &vreal:aRetVal
+        => system'internal'real_copywstr.
+        
+    /// Converts a literal string into a real number
+    #method(type:real,stacksafe)convert &literal:aLiteral
+    [
+        #var(type:real)aRetVal.
+        $self convert &literal:aLiteral &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+        
+    /// Converts a wide literal string into a real number
+    #method(type:real,stacksafe)convert &wide:aLiteral
+    [
+        #var(type:real)aRetVal.
+        $self convert &wide:aLiteral &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
 //    /// Returns a parameter
 //    #method(type:real,stacksafe)convert &real:aReal
 //        = RealNumber new &real:aReal.
@@ -3282,10 +3282,10 @@
 //    /// Converts a short integer into a real number
 //    #method(type:real,stacksafe)convert &short:aValue
 //        = RealNumber new &short:aValue.
-//        
-//    #method convert : anObject
-//        = anObject cast:%convert &to:$self.
-//}.
+        
+    #method convert : anObject
+        = anObject cast:%convert &to:$self.
+}.
 
 // --- literalConvertor ---
 
