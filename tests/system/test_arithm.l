@@ -90,18 +90,18 @@
     DispatchTester::msg eval:1:2.
 ].
 
-//// --- MultySelectTest ---
-//
-//#symbol MultySelectTest =
-//[
-//    #var n := 3.
-//    
-//    n =>
-//        1 ? [ console writeLine:"=> operator fails". ]
-//        2 ? [ console writeLine:"=> operator fails". ]
-//        3 ? [ console writeLine:"=> operator works!". ].
-//].
-//
+// --- MultySelectTest ---
+
+#symbol MultySelectTest =
+[
+    #var n := 3.
+    
+    n =>
+        1 ? [ console writeLine:"=> operator fails". ]
+        2 ? [ console writeLine:"=> operator fails". ]
+        3 ? [ console writeLine:"=> operator works!". ].
+].
+
 //// --- LocalTest ---
 //
 //#symbol LocalTester =

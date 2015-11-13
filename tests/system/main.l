@@ -16,7 +16,7 @@
     RealTest eval.
     LiteralTest eval.
     MultiDispatchTest eval.
-//    MultySelectTest  eval.
+    MultySelectTest  eval.
 //    EnumTest eval.    
 //    TextBufferTest eval.
 //    LoopTest eval.

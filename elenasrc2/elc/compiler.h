@@ -139,7 +139,7 @@ public:
       okSuper,
       okLocalAddress,                  // param - local offset, extraparam - class reference
    //   okParams,                        // param - local offset
-   //   okBlockLocal,                    // param - local offset
+      okBlockLocal,                    // param - local offset
    //   okCurrent,                       // param - stack offset
    //
    //   okRole,
@@ -744,7 +744,7 @@ private:
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count);
 
-//   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
+   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
 //   void compileAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo);
 //   void compileContentAssignment(DNode node, CodeScope& scope, ObjectInfo variableInfo, ObjectInfo object);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
@@ -770,6 +770,7 @@ private:
 //   bool compileInlineComparisionOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo& result, bool invertMode);
 //   bool compileInlineReferOperator(CodeScope& scope, int operator_id, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2, ObjectInfo& result);
 
+   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 

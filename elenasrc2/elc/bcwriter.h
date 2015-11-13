@@ -127,8 +127,8 @@ public:
    void declareThenBlock(CommandTape& tape, bool withStackControl = true);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
-//   void declareSwitchBlock(CommandTape& tape);
-//   void declareSwitchOption(CommandTape& tape);
+   void declareSwitchBlock(CommandTape& tape);
+   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
@@ -199,12 +199,12 @@ public:
    void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 
-////   int declareLabel(CommandTape& tape);
-//   void jumpIfEqual(CommandTape& tape, ref_t ref);
+//   int declareLabel(CommandTape& tape);
+   void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
-////   void jumpIfNotEqualN(CommandTape& tape, int value);
+//   void jumpIfNotEqualN(CommandTape& tape, int value);
 //   void jump(CommandTape& tape, bool previousLabel = false);
-//
+
 //   void throwCurrent(CommandTape& tape);
 
    void tryLock(CommandTape& tape);
@@ -238,10 +238,10 @@ public:
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
-////   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
-////   void endSwitchOption(CommandTape& tape);
-////   void endSwitchBlock(CommandTape& tape);
-//
+//   void exitStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void endSwitchOption(CommandTape& tape);
+   void endSwitchBlock(CommandTape& tape);
+
 ////   void copy(CommandTape& tape);
    void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
 
@@ -297,6 +297,7 @@ public:
    void translateTrying(CommandTape& tape, SyntaxTree::Node node);
    void translateLooping(CommandTape& tape, SyntaxTree::Node node);
    void translateBranching(CommandTape& tape, SyntaxTree::Node node);
+   void translateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
