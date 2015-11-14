@@ -330,7 +330,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
    charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
-//   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
+   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
 
@@ -1300,7 +1300,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->message = 0;
    this->reserved = 0;
    this->rootToFree = 1;
-//   this->withOpenArg = false;
+   this->withOpenArg = false;
    this->stackSafe = false;
 
    //NOTE : tape has to be overridden in the constructor
@@ -1341,10 +1341,10 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
       int local = param.offset;
       if (local >= 0) {
-         /*if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
+         if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
             return ObjectInfo(okParams, -1 - local, 0, param.sign_ref);
          }
-         else */return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.sign_ref);
+         else return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.sign_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -2847,40 +2847,19 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
       // skip an argument
       if (arg == nsMessageParameter) {
          // if it is an open argument list
-//         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-//            // if a generic argument is used with an open argument list
-//            callStack.directOrder = false;
-
-            // check if argument list should be unboxed
-//            DNode param = arg.firstChild();
-
-//            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-//               // add argument list to be unboxed
-//               callStack.oargUnboxing = true;
-//               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-//            }
-//            else {
-//               while (arg != nsNone) {
-//                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-//
-//                  arg = arg.nextNode();
-//               }
-//
-//               // terminator
-//               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-//            }
-//            paramCount += OPEN_ARG_COUNT;
-//            if (paramCount > 0x0F)
-//               scope.raiseError(errNotApplicable, subject);
-//         }
-//         else {
+         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0x0F)
+               scope.raiseError(errNotApplicable, subject);
+         }
+         else {
             paramCount++;
 
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
 
             arg = arg.nextNode();
-//         }
+         }
       }
    }
 
@@ -3660,6 +3639,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    if (dispatchCall) {
       scope.writer->insert(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
 
+      scope.writer->appendNode(lxMessage, messageRef);
       scope.writer->appendNode(lxTarget, classReference);
    }
    else if (callType == tpClosed) {
@@ -3799,43 +3779,41 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool 
 
       // skip an argument
       if (arg == nsMessageParameter) {
-         //         // if it is an open argument list
-         //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-         //            // if a generic argument is used with an open argument list
-         //            callStack.directOrder = false;
+         // if it is an open argument list
+         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            // check if argument list should be unboxed
+            DNode param = arg.firstChild();
 
-         // check if argument list should be unboxed
-         //            DNode param = arg.firstChild();
+            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
+               // add argument list to be unboxed
+               //               callStack.oargUnboxing = true;
+               //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+            }
+            else {
+               while (arg != nsNone) {
+                  compileExpression(arg.firstChild(), scope, 0, 0);
 
-         //            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-         //               // add argument list to be unboxed
-         //               callStack.oargUnboxing = true;
-         //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
-         //            }
-         //            else {
-         //               while (arg != nsNone) {
-         //                  callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(0, arg));
-         //
-         //                  arg = arg.nextNode();
-         //               }
-         //
-         //               // terminator
-         //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo());
-         //            }
-         //            paramCount += OPEN_ARG_COUNT;
-         //            if (paramCount > 0x0F)
-         //               scope.raiseError(errNotApplicable, subject);
-         //         }
-         //         else {
-         compileExpression(arg.firstChild(), scope, subjRef, 0);
+                  arg = arg.nextNode();
+               }
 
-         paramCount++;
+               // terminator
+               writeTerminal(TerminalInfo(), scope, ObjectInfo(okNil));
+            }
+            paramCount += OPEN_ARG_COUNT;
 
-         if (paramCount >= OPEN_ARG_COUNT)
-            scope.raiseError(errTooManyParameters, verb);
+            if (paramCount > 0x0F)
+               scope.raiseError(errNotApplicable, subject);
+         }
+         else {
+            compileExpression(arg.firstChild(), scope, subjRef, 0);
 
-         arg = arg.nextNode();
-         //         }
+            paramCount++;
+
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, verb);
+
+            arg = arg.nextNode();
+         }
       }
    }
 
@@ -3862,12 +3840,6 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
    }
 
    ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
-
-   //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
-//   if (spaceToRelease != 0) {
-//      // if open argument list is used
-//      releaseOpenArguments(scope, spaceToRelease);
-//   }
 
    return retVal;
 }
@@ -4674,62 +4646,53 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
    //_writer.declareBreakpoint(*scope.tape, 0, 0, 0, dsVirtualEnd);
 }
 
-//void Compiler :: compileTry(DNode node, CodeScope& scope)
-//{
-//   // declare try catch block
-//   _writer.declareTry(*scope.tape);
+void Compiler :: compileTry(DNode node, CodeScope& scope)
+{
+//   scope.writer->newNode(lxTrying);
 //
 //   // implement try expression
-//   compileExpression(node.firstChild(), scope, 0);
+//   compileExpression(node.firstChild(), scope, 0, 0);
 //
-//   // implement finally block
-//   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//
-//   // declare catch
-//   _writer.declareCatch(*scope.tape);
-//
-//   // implement finally block
-//   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+////   // implement finally block
+////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
+////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
 //
 //   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
 //   if (catchNode != nsNone) {
+//      scope.writer->newBookmark();
+//
+//      scope.writer->appendNode(lxResult);
+//
 //      // implement catch message
-//      compileMessage(catchNode, scope, ObjectInfo(okAccumulator));
+//      compileMessage(catchNode, scope, ObjectInfo(okObject));
+//
+//      scope.writer->removeBookmark();
 //   }
-//   // or throw the exception further
-//   else _writer.throwCurrent(*scope.tape);
+////   // or throw the exception further
+////   else _writer.throwCurrent(*scope.tape);
 //
-//   _writer.endCatch(*scope.tape);
-//}
+//   scope.writer->closeNode();
 //
-//void Compiler :: compileLock(DNode node, CodeScope& scope)
-//{
-//   // implement the expression to be locked
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, 0);
-//
-//   _writer.loadObject(*scope.tape, object);
-//   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-//   _writer.tryLock(*scope.tape);
-//   _writer.declareTry(*scope.tape);
-//
-//   // implement critical section
+//   // implement finally block
 //   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-//
-//   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//   _writer.freeLock(*scope.tape);
-//
-//   // finally block - should free the lock if the exception was thrown
-//   _writer.declareCatch(*scope.tape);
-//
-//   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//   _writer.freeLock(*scope.tape);
-//
-//   _writer.throwCurrent(*scope.tape);
-//
-//   _writer.endCatch(*scope.tape);
-//}
+}
+
+void Compiler :: compileLock(DNode node, CodeScope& scope)
+{
+   scope.writer->newNode(lxLocking);
+
+   // implement the expression to be locked
+   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, 0);
+
+   scope.writer->newNode(lxBody);
+
+   // implement critical section
+   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+
+   scope.writer->closeNode();   
+   scope.writer->closeNode();
+}
 
 ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 {
@@ -4764,14 +4727,14 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             compileLoop(statement, scope);
             scope.writer->closeNode();
             break;
-//         case nsTry:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileTry(statement, scope);
-//            break;
-//         case nsLock:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileLock(statement, scope);
-//            break;
+         case nsTry:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileTry(statement, scope);
+            break;
+         case nsLock:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileLock(statement, scope);
+            break;
          case nsRetStatement:
          {
             needVirtualEnd = false;
@@ -5174,21 +5137,20 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 
          int index = 1 + scope.parameters.Count();
 
-         //// if it is an open argument type
-         //if (scope.moduleScope->typeHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
-         //   scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
+         // if it is an open argument type
+         if (scope.moduleScope->typeHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
+            scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
 
-         //   // the generic arguments should be free by the method exit
-         //   scope.rootToFree += paramCount;
-         //   scope.withOpenArg = true;
+            // the generic arguments should be free by the method exit
+            scope.rootToFree += paramCount;
+            scope.withOpenArg = true;
 
-         //   // to indicate open argument list
-         //   paramCount += OPEN_ARG_COUNT;
-         //   if (paramCount > 0xF)
-         //      scope.raiseError(errNotApplicable, arg.Terminal());
-
-         //}
-         //else {
+            // to indicate open argument list
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0xF)
+               scope.raiseError(errNotApplicable, arg.Terminal());
+         }
+         else {
             paramCount++;
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
@@ -5196,7 +5158,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
             scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
 
             arg = arg.nextNode();
-         //}
+         }
       }
    }
 

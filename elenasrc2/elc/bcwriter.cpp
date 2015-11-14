@@ -3180,6 +3180,13 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
    }
    else tape.write(bcALoadSI, 0);
 
+   // copym message
+   SNode msg = SyntaxTree::findChild(callNode, lxMessage);
+   if (msg != lxNone) {
+      tape.write(bcCopyM, msg.argument);
+   }
+   else tape.write(bcCopyM, callNode.argument);
+
    SNode target = SyntaxTree::findChild(callNode, lxTarget);
    if (callNode == lxDirectCalling) {
       callResolvedMethod(tape, target.argument, callNode.argument);
@@ -3188,10 +3195,7 @@ void ByteCodeWriter :: translateCall(CommandTape& tape, SNode callNode)
       callVMTResolvedMethod(tape, target.argument, callNode.argument);
    }
    else {
-      // copym message
       // acallvi offs
-
-      tape.write(bcCopyM, callNode.argument);
       tape.write(bcACallVI, 0);
       tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
    }
@@ -3235,7 +3239,6 @@ void ByteCodeWriter :: translateInternalCall(CommandTape& tape, SNode node)
 
    loadObject(tape, node);
    freeVirtualStack(tape, paramCount);
-
 }
 
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
@@ -3281,6 +3284,11 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
    }
 
    translateCall(tape, node);
+
+   if (paramCount > getParamCount(node.argument)) {
+      //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
+      releaseObject(tape, paramCount - getParamCount(node.argument) - 1);
+   }
 
    // unbox the arguments
    unboxCallParameters(tape, node);
@@ -3420,6 +3428,35 @@ void ByteCodeWriter :: translateAssigningExpression(CommandTape& tape, SyntaxTre
    }
 }
 
+void ByteCodeWriter :: translateLocking(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target;
+   SNode block;
+   assignOpArguments(node, target, block);
+
+   translateObjectExpression(tape, target);
+   pushObject(tape, lxResult);
+
+   tryLock(tape);
+   declareTry(tape);
+
+   translateCodeBlock(tape, block);
+
+   popObject(tape, lxResult);
+   freeLock(tape);
+
+   // finally block - should free the lock if the exception was thrown
+   declareCatch(tape);
+
+   popObject(tape, lxResult);
+   freeLock(tape);
+
+   throwCurrent(tape);
+
+   endCatch(tape);
+
+}
+
 void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
 {
    bool first = true;
@@ -3434,6 +3471,8 @@ void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
          if (first) {
             declareCatch(tape);
             
+            // ...
+
             first = false;
          }
       }
@@ -3441,6 +3480,8 @@ void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
    }
 
    endCatch(tape);
+
+   // ...
 }
 
 void ByteCodeWriter :: translateLooping(CommandTape& tape, SyntaxTree::Node node)
@@ -3650,6 +3691,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
          break;
       case lxLooping:
          translateLooping(tape, node);
+         break;
+      case lxLocking:
+         translateLocking(tape, node);
          break;
       case lxStruct:
          translateStructExpression(tape, node);

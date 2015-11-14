@@ -1800,21 +1800,21 @@
 //        = Array new &array:$self.
 }
 
-//// --- OpenArgs ---
-//
-//#class(sealed,dynamic)OpenArgs
-//{
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'args_getlen.
-//        
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//}
+// --- OpenArgs ---
+
+#class(sealed,dynamic)OpenArgs
+{
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'args_getlen.
+        
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+}
 
 // === Enumerators / Indexers
 

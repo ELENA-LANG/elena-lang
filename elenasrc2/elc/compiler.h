@@ -138,7 +138,7 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                  // param - local offset, extraparam - class reference
-   //   okParams,                        // param - local offset
+      okParams,                        // param - local offset
       okBlockLocal,                    // param - local offset
    //   okCurrent,                       // param - stack offset
    //
@@ -243,7 +243,7 @@ private:
       ref_t charReference;
       ref_t trueReference;
       ref_t falseReference;
-//      ref_t paramsReference;
+      ref_t paramsReference;
       ref_t signatureReference;
 
       ref_t boolType;
@@ -487,7 +487,7 @@ private:
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      bool      withOpenArg;
+      bool      withOpenArg;
       bool      stackSafe;
 
       int compileHints(DNode hints);
@@ -792,8 +792,8 @@ private:
 
    void compileLoop(DNode node, CodeScope& scope);
    void compileThrow(DNode node, CodeScope& scope, int mode);
-//   void compileTry(DNode node, CodeScope& scope);
-//   void compileLock(DNode node, CodeScope& scope);
+   void compileTry(DNode node, CodeScope& scope);
+   void compileLock(DNode node, CodeScope& scope);
 
    void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 //   void saveExternalParameters(CodeScope& scope, ExternalScope& externalScope);

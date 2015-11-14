@@ -294,6 +294,7 @@ public:
    void translateInternalCall(CommandTape& tape, SyntaxTree::Node node);
    void translateCall(CommandTape& tape, SyntaxTree::Node node);
 
+   void translateLocking(CommandTape& tape, SyntaxTree::Node node);
    void translateTrying(CommandTape& tape, SyntaxTree::Node node);
    void translateLooping(CommandTape& tape, SyntaxTree::Node node);
    void translateBranching(CommandTape& tape, SyntaxTree::Node node);
