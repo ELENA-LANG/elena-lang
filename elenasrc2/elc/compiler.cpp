@@ -3795,10 +3795,11 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool 
             // check if argument list should be unboxed
             DNode param = arg.firstChild();
 
-            if (arg.firstChild().nextNode() == nsNone && scope.mapObject(arg.firstChild().Terminal()).kind == okParams) {
-               // add argument list to be unboxed
-               //               callStack.oargUnboxing = true;
-               //               callStack.parameters.add(callStack.parameters.Count(), MessageScope::ParamInfo(subjRef, arg, true));
+            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
+            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
+               scope.writer->newNode(lxArgUnboxing);
+               writeTerminal(arg.firstChild().Terminal(), scope, argListParam);
+               scope.writer->closeNode();
             }
             else {
                while (arg != nsNone) {

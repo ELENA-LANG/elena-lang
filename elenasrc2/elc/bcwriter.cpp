@@ -905,52 +905,44 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcPopA);
 }
 
-//void ByteCodeWriter :: unboxArgList(CommandTape& tape)
-//{
-//   // bcopya
-//   // dcopy 0
-//   // labSearch:
-//   // get
-//   // inc
-//   // elser labSearch
-//   // ecopyd
-//   // dec
-//   // pushn 0
-//
-//   // labNext:
-//   // dec
-//   // get
-//   // pusha
-//   // elsen labNext 0
-//
-//   // dcopye
-//   // bcopys 0
-//   // get
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcGet);
-//   tape.write(bcInc);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//   tape.write(bcECopyD);
-//   tape.write(bcDec);
-//   tape.write(bcPushN, 0);
-//
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcDec);
-//   tape.write(bcGet);
-//   tape.write(bcPushA);
-//   tape.write(bcElseN, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//
-//   tape.write(bcDCopyE);
-//   tape.write(bcBCopyS);
-//   tape.write(bcGet);
-//}
+void ByteCodeWriter :: unboxArgList(CommandTape& tape)
+{
+   // bcopya
+   // dcopy 0
+   // labSearch:
+   // get
+   // inc
+   // elser labSearch
+   // ecopyd
+   // dec
+   // pushn 0
+
+   // labNext:
+   // dec
+   // get
+   // pusha
+   // elsen labNext 0
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+   tape.write(bcECopyD);
+   tape.write(bcDec);
+   tape.write(bcPushN, 0);
+
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcDec);
+   tape.write(bcGet);
+   tape.write(bcPushA);
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+}
 
 void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
 {
@@ -985,23 +977,23 @@ void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
       tape.write(bcPopI, count);
 }
 
-//void ByteCodeWriter :: releaseArgList(CommandTape& tape)
-//{
-//   // bcopya
-//   // labSearch:
-//   // popa
-//   // elser labSearch
-//   // acopyb
-//
-//   tape.write(bcBCopyA);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcPopA);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//   tape.write(bcACopyB);
-//}
-//
+void ByteCodeWriter :: releaseArgList(CommandTape& tape)
+{
+   // bcopya
+   // labSearch:
+   // popa
+   // elser labSearch
+   // acopyb
+
+   tape.write(bcBCopyA);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcPopA);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+   tape.write(bcACopyB);
+}
+
 //void ByteCodeWriter :: setMessage(CommandTape& tape, ref_t message)
 //{
 //   // copym message
@@ -3253,13 +3245,19 @@ void ByteCodeWriter :: translateInternalCall(CommandTape& tape, SNode node)
 void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 {
    bool directMode = true;
+   bool argUnboxMode = false;
 
    int paramCount = 0;
 
    // analizing a sub tree
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxObjectMask)) {
+      if (current == lxArgUnboxing) {
+         argUnboxMode = true;
+         translateExpression(tape, current);
+         unboxArgList(tape);
+      }
+      else if (test(current.type, lxObjectMask)) {
          paramCount++;
       }
     
@@ -3281,7 +3279,10 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       // get parameters in reverse order if required
       current = getChild(node, directMode ? counter - index - 1 : index);
    
-      if (test(current.type, lxObjectMask)) {
+      if (current == lxArgUnboxing) {
+         // argument list is already unboxed
+      }
+      else if (test(current.type, lxObjectMask)) {
          translateObjectExpression(tape, current);
          if (directMode) {
             pushObject(tape, lxResult);
@@ -3294,7 +3295,11 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
 
    translateCall(tape, node);
 
-   if (paramCount > getParamCount(node.argument)) {
+   if (argUnboxMode) {
+      releaseArgList(tape);
+      releaseObject(tape);
+   }
+   else if (paramCount > getParamCount(node.argument)) {
       //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
       releaseObject(tape, paramCount - getParamCount(node.argument) - 1);
    }

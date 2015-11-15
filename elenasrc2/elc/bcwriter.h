@@ -179,10 +179,10 @@ public:
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
-//   void unboxArgList(CommandTape& tape);
+   void unboxArgList(CommandTape& tape);
 
    void releaseObject(CommandTape& tape, int count = 1);
-//   void releaseArgList(CommandTape& tape);
+   void releaseArgList(CommandTape& tape);
 
 //   void setMessage(CommandTape& tape, ref_t message);
    void setSubject(CommandTape& tape, ref_t subject);
