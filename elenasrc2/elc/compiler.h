@@ -245,6 +245,7 @@ private:
       ref_t falseReference;
       ref_t paramsReference;
       ref_t signatureReference;
+      ref_t arrayReference;
 
       ref_t boolType;
 

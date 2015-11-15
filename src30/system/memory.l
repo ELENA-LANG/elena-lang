@@ -1804,6 +1804,14 @@
 
 #class(sealed,dynamic)OpenArgs
 {
+    /// Returns the specified array member
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    /// Returns the specified array member
+    #method(stacksafe) getAt &int:anIndex
+        => system'internal'arr_getat.
+
     #method(stacksafe) readLength &vint:aLength
         => system'internal'args_getlen.
         

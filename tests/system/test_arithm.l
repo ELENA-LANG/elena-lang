@@ -13,8 +13,20 @@
 
 #symbol XTester =
 {
+    testParamsCopy &args: aParams
+    [        
+        #var n := aParams @ 0.
+
+        //$self testBoxing:aParams.
+                        
+        //#var n2 := $self test:0 &args:aParams.
+                        
+        //^ n.
+    ]
+    
     test            
     [
+        XTester testParamsCopy &args:1:"a":3.
     ]            
 }.
         

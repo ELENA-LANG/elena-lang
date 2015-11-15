@@ -333,6 +333,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
+   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 
    boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
 
@@ -1737,6 +1738,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          //   return object.param;
          //}
          // if message sent to the dispatcher
+      case okParams:
+         return scope.moduleScope->paramsReference;
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -1752,10 +1755,10 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, bool withThis, bo
    // declare method parameter debug info
    LocalMap::Iterator it = scope.parameters.start();
    while (!it.Eof()) {
-      /*if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->paramsReference)) {
-         _writer.declareLocalParamsInfo(*tape, it.key(), -1 - (*it).offset);
+      if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->paramsReference)) {
+         _writer.declareLocalParamsInfo(*scope.tape, it.key(), -1 - (*it).offset);
       }
-      else */if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->intReference)) {
+      else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->intReference)) {
          _writer.declareLocalIntInfo(*scope.tape, it.key(), -1 - (*it).offset, true);
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->longReference)) {
@@ -2251,6 +2254,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okBlockLocal:
          scope.writer->newNode(lxBlockLocal, object.param);
          break;
+      case okParams:
+         scope.writer->newNode(lxBlockLocalAddr, object.param);
+         break;
       case okExternal:
          //   // external call cannot be used inside symbol
          //   if (test(mode, HINT_ROOT))
@@ -2581,6 +2587,11 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
 
    if (object.kind == okLocalAddress) {
       boxing = lxBoxing;
+   }
+   else if (object.kind == okParams) {
+      boxing = lxArgBoxing;
+      classRef = scope.moduleScope->paramsReference;
+      size = -1;
    }
    else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam == -1 && size != 0) {
       boxing = lxCondBoxing;
@@ -3337,38 +3348,38 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
             primitiveOp = lxIntOp;
             size = 4;
          }
-         else if (IsReferOperator(operator_id)) {
-            if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
-               if (operator_id == SET_REFER_MESSAGE_ID) {
-                  ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+      }
+      else if (IsReferOperator(operator_id)) {
+         if (lflag == elDebugIntegers && rflag == elDebugDWORD) {
+            if (operator_id == SET_REFER_MESSAGE_ID) {
+               ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, 0, 0);
 
-                  if (mapOperandType(scope, operand2) == elDebugDWORD) {
-                     primitiveOp = lxIntArrOp;
-                  }
-               }
-               else {
-                  size = 4;
-                  retVal.param = moduleScope->intReference;
+               if (mapOperandType(scope, operand2) == elDebugDWORD) {
                   primitiveOp = lxIntArrOp;
                }
             }
-            else if (lflag == elDebugArray && rflag == elDebugDWORD) {
-               // check if it is typed array
-               ref_t classReference = resolveObjectReference(scope, object);
-               ref_t type = 0;
-               if (classReference != 0) {
-                  ClassInfo info;
-                  scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference), false);
-                  type = info.fieldTypes.get(-1);
-               }
-
-               if (operator_id == SET_REFER_MESSAGE_ID) {
-                  ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, type, 0);
-               }
-               else retVal.type = type;
-
-               primitiveOp = lxArrOp;
+            else {
+               size = 4;
+               retVal.param = moduleScope->intReference;
+               primitiveOp = lxIntArrOp;
             }
+         }
+         else if (lflag == elDebugArray && rflag == elDebugDWORD) {
+            // check if it is typed array
+            ref_t classReference = resolveObjectReference(scope, object);
+            ref_t type = 0;
+            if (classReference != 0) {
+               ClassInfo info;
+               scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(classReference), false);
+               type = info.fieldTypes.get(-1);
+            }
+
+            if (operator_id == SET_REFER_MESSAGE_ID) {
+               ObjectInfo operand2 = compileExpression(node.nextNode().firstChild(), scope, type, 0);
+            }
+            else retVal.type = type;
+
+            primitiveOp = lxArrOp;
          }
       }
    }
@@ -4209,7 +4220,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
 ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
 {
-   return compileCollection(objectNode, scope, mode, scope.moduleScope->mapReference(scope.moduleScope->project->resolveForward(ARRAY_FORWARD)));
+   return compileCollection(objectNode, scope, mode, scope.moduleScope->arrayReference);
 }
 
 ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
@@ -6365,7 +6376,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
       while (member != lxNone) {
          // if boxing used for direct stack safe call
          // remove it
-         if (member == lxBoxing || member == lxCondBoxing) {
+         if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing) {
             member = lxExpression;
          }
 
@@ -6380,7 +6391,7 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
    while (member != lxNone) {
       // if boxing used for primitive operation
       // remove it
-      if (member == lxBoxing || member == lxCondBoxing) {
+      if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing) {
          member = lxExpression;
       }
 
@@ -6590,6 +6601,7 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
             break;
          case lxBoxing:
          case lxCondBoxing:
+         case lxArgBoxing:
             optimizeBoxing(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
@@ -6601,6 +6613,8 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
          case lxIntOp:
          case lxLongOp:
          case lxRealOp:
+         case lxIntArrOp:
+         case lxArrOp:
             optimizeOp(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;

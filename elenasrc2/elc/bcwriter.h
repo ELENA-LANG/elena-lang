@@ -141,7 +141,7 @@ public:
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ref_t nameRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -178,9 +178,9 @@ public:
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-////   void boxArgList(CommandTape& tape, ref_t vmtReference);
-////   void unboxArgList(CommandTape& tape);
-//
+   void boxArgList(CommandTape& tape, ref_t vmtReference);
+//   void unboxArgList(CommandTape& tape);
+
    void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
 

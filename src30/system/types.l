@@ -38,7 +38,7 @@
 #subject(class:system'CharArray)    chararray.
 #subject(class:system'Array)        array.
 #subject(class:system'OpenArgs)     params.
-//#subject(class:system'OpenArgs)     args.
+#subject(class:system'OpenArgs)     args.
 //#subject(class:system'MessageArray) mssgarray.
 
 #subject(class:system'LiteralValue) literal.

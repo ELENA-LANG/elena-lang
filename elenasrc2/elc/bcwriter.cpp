@@ -179,10 +179,10 @@ void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t local
    tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 }
 
-//void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   tape.write(bdParamsLocal, (ref_t)localName, level);
-//}
+void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
+{
+   tape.write(bdParamsLocal, (ref_t)localName, level);
+}
 
 void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
@@ -856,57 +856,55 @@ void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference
       tape.setLabel();
 }
 
-//void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
-//{
-//   // bcopya
-//   // dcopy 0
-//   // labSearch:
-//   // get
-//   // inc
-//   // elser labSearch
-//   // dec
-//   // acopyr vmt
-//   // create
-//
-//   // pusha
-//   // xlen
-//   // dcopy 0
-//   // labCopy:
-//   // get
-//   // bswapsi 0
-//   // xset
-//   // bswapsi 0
-//   // next labCopy
-//   // popa
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcGet);
-//   tape.write(bcInc);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//
-//   tape.write(bcDec);
-//   tape.write(bcACopyR, vmtReference);
-//   tape.write(bcCreate);
-//
-//   tape.write(bcPushA);
-//   tape.write(bcXLen);
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcGet);
-//   tape.write(bcBSwapSI);
-//   tape.write(bcXSet);
-//   tape.write(bcBSwapSI);
-//   tape.write(bcNext, baCurrentLabel);
-//   tape.releaseLabel();
-//
-//   tape.write(bcPopA);
-//}
-//
+void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
+{
+   // bcopya
+   // dcopy 0
+   // labSearch:
+   // get
+   // inc
+   // elser labSearch
+   // acopyr vmt
+   // create
+
+   // pusha
+   // xlen
+   // dcopy 0
+   // labCopy:
+   // get
+   // bswapsi 0
+   // xset
+   // bswapsi 0
+   // next labCopy
+   // popa
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+
+   tape.write(bcACopyR, vmtReference | mskVMTRef);
+   tape.write(bcCreate);
+
+   tape.write(bcPushA);
+   tape.write(bcXLen);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcBSwapSI);
+   tape.write(bcXSet);
+   tape.write(bcBSwapSI);
+   tape.write(bcNext, baCurrentLabel);
+   tape.releaseLabel();
+
+   tape.write(bcPopA);
+}
+
 //void ByteCodeWriter :: unboxArgList(CommandTape& tape)
 //{
 //   // bcopya
@@ -2452,7 +2450,9 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
       case REFER_MESSAGE_ID:
+         // bcopya
          // get
+         tape.write(bcBCopyA);
          tape.write(bcGet);
          break;
       case SET_REFER_MESSAGE_ID:
@@ -2641,6 +2641,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushf n
          tape.write(bcPushF, argument);
          break;
+      case lxBlockLocalAddr:
+         // pushf n
+         tape.write(bcPushF, argument, bpFrame);
+         break;
       case lxCurrent:
          // pushsi index
          tape.write(bcPushSI, argument);
@@ -2737,6 +2741,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case okSubjectDispatcher:
          // acopyf n
          tape.write(bcACopyF, argument);
+         break;
+      case lxBlockLocalAddr:
+         // acopyf n
+         tape.write(bcACopyF, argument, bpFrame);
          break;
       case lxResultField:
          // aloadai
@@ -2841,6 +2849,7 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 void ByteCodeWriter :: translateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 {
    bool setMode = node.argument == SET_REFER_MESSAGE_ID;
+   bool assignMode = node != lxArrOp;
 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);   
@@ -2849,7 +2858,7 @@ void ByteCodeWriter :: translateArrOperation(CommandTape& tape, SyntaxTree::Node
       translateObjectExpression(tape, larg);
       loadBase(tape, lxResult);
 
-      if (!test(rarg.type, lxSimpleMask) || !test(rarg2.type, lxSimpleMask)) {
+      if (assignMode && (!test(rarg.type, lxSimpleMask) || !test(rarg2.type, lxSimpleMask))) {
          tape.write(bcPushB);
       }
 
@@ -2871,7 +2880,7 @@ void ByteCodeWriter :: translateArrOperation(CommandTape& tape, SyntaxTree::Node
       }
    }
    else {
-      if (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask)) {
+      if (assignMode && (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask))) {
          tape.write(bcPushB);
       }
 
@@ -2888,7 +2897,7 @@ void ByteCodeWriter :: translateArrOperation(CommandTape& tape, SyntaxTree::Node
       }
       else translateObjectExpression(tape, larg);
 
-      if (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask)) {
+      if (assignMode && (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask))) {
          tape.write(bcPopB);
       }
    }
@@ -3366,7 +3375,11 @@ void ByteCodeWriter :: translateBoxingExpression(CommandTape& tape, SNode node)
 
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
-   boxObject(tape, node.argument, target.argument, node == lxBoxing);
+   if (node == lxArgBoxing) {
+      boxArgList(tape, target.argument);
+   }
+   else boxObject(tape, node.argument, target.argument, node == lxBoxing);
+
    SNode temp = SyntaxTree::findChild(node, lxTempLocal);
    if (temp != lxNone) {
       saveObject(tape, lxLocal, temp.argument);
@@ -3678,6 +3691,8 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
          translateInternalCall(tape, node);
          break;
       case lxBoxing:
+      case lxCondBoxing:
+      case lxArgBoxing:
          translateBoxingExpression(tape, node);
          break;
       case lxAssigning:
