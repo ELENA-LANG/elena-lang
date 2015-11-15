@@ -2,7 +2,7 @@
 
 #subject(class:system'calendar'SystemTime)    __time.
 //#subject(class:system'calendar'SystemTimeVar) __vtime.
-//#subject(class:system'calendar'TimeStruct)    __time_st.
+#subject(class:system'calendar'TimeStruct)    __time_st.
 
 //#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
 //#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
@@ -85,173 +85,173 @@
 //        aVariable << theValue.
 //    ]
 //}
-//
-//// --- TimeStruct ---
-//
-//#class(struct:embeddable,sealed) TimeStruct
-//{
-//    #field(type:short)theYear.
-//    #field(type:short)theMonth.
-//    #field(type:short)theDayOfWeek.
-//    #field(type:short)theDay.
-//    #field(type:short)theHour.
-//    #field(type:short)theMinute.
-//    #field(type:short)theSecond.
-//    #field(type:short)theMillisecond.
-//    
-//    #constructor new
-//        => system'internal'dlong_empty.
-//
-//    #constructor new &__time:aTime
-//    [
-//        $self write &__time:aTime.
-//    ]
-//        
-//    #method __time_st = $self.
-//    
-//    #method(stacksafe) year = IntNumber new &short:theYear.
-//
-//    #method(stacksafe) month = IntNumber new &short:theMonth.
-//
-//    #method(stacksafe) dayOfWeek = IntNumber new &short:theDayOfWeek.
-//
-//    #method(stacksafe) day = IntNumber new &short:theDay.
-//
-//    #method(stacksafe) hour = IntNumber new &short:theHour.
-//
-//    #method(stacksafe) minute = IntNumber new &short:theMinute.
-//
-//    #method(stacksafe) second = IntNumber new &short:theSecond.
-//
-//    #method(stacksafe) millisecond = IntNumber new &short:theMillisecond.
-//
-//    #method set &year:aValue
-//        <= writeYear &int:(aValue int).
-//
-//    #method set &month:aValue 
-//        <= writeMonth &int:(aValue int).
-//
-//    #method(stacksafe) set &day:aValue 
-//        <= writeDay &int:(aValue int).
-//
-//    #method(stacksafe) set &hour:aValue 
-//        <= writeHour &int:(aValue int).
-//
-//    #method(stacksafe) set &minute:aValue 
-//        <= writeMinute &int:(aValue int).
-//
-//    #method(stacksafe) set &second:aValue 
-//        <= writeSecond &int:(aValue int).
-//
-//    #method(stacksafe) set &millisecond:aValue 
-//        <= writeMillisecond &int:(aValue int).
-//
-//    #method(stacksafe) readYear &vint:aRetVal
-//    [
-//        aRetVal write &short:theYear.
-//    ]
-//
-//    #method(stacksafe) readMonth &vint:aRetVal
-//    [
-//        aRetVal write &short:theMonth.
-//    ]
-//
-//    #method(stacksafe) readDayOfWeek &vint:aRetVal
-//    [
-//        aRetVal write &short:theDayOfWeek.
-//    ]
-//
-//    #method(stacksafe) readDay &vint:aRetVal
-//    [
-//        aRetVal write &short:theDay.
-//    ]
-//
-//    #method(stacksafe) readHour &vint:aRetVal
-//    [
-//        aRetVal write &short:theHour.
-//    ]
-//
-//    #method(stacksafe) readMinute &vint:aRetVal
-//    [
-//        aRetVal write &short:theMinute.
-//    ]
-//
-//    #method(stacksafe) readSecond &vint:aRetVal
-//    [
-//        aRetVal write &short:theSecond.
-//    ]
-//
-//    #method(stacksafe) readMillisecond &vint:aRetVal
-//    [
-//        aRetVal write &short:theMillisecond.
-//    ]
-//
-//    #method(stacksafe) writeYear &int:aValue
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theYear := n.
-//    ]
-//
-//    #method(stacksafe) writeMonth &int:aValue 
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theMonth := n.
-//    ]
-//
-//    #method(stacksafe) writeDay &int:aValue 
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theDay := n.
-//    ]
-//
-//    #method(stacksafe) writeHour &int:aValue 
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theHour := n.
-//    ]
-//
-//    #method(stacksafe) writeMinute &int:aValue 
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theMinute := n.
-//    ]
-//
-//    #method(stacksafe) writeSecond &int:aValue 
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theSecond := n.
-//    ]
-//
-//    #method(stacksafe) writeMillisecond &int:aValue 
-//    [ 
-//        #var(type:short)n.
-//        aValue readShort &vshort:n.
-//            
-//        theMillisecond := n.
-//    ]
-//
+
+// --- TimeStruct ---
+
+#class(struct:embeddable,sealed) TimeStruct
+{
+    #field(type:short)theYear.
+    #field(type:short)theMonth.
+    #field(type:short)theDayOfWeek.
+    #field(type:short)theDay.
+    #field(type:short)theHour.
+    #field(type:short)theMinute.
+    #field(type:short)theSecond.
+    #field(type:short)theMillisecond.
+    
+    #constructor new
+        => system'internal'dlong_empty.
+
+    #constructor new &__time:aTime
+    [
+        $self write &__time:aTime.
+    ]
+        
+    #method __time_st = $self.
+    
+    #method(stacksafe) year = IntNumber new &short:theYear.
+
+    #method(stacksafe) month = IntNumber new &short:theMonth.
+
+    #method(stacksafe) dayOfWeek = IntNumber new &short:theDayOfWeek.
+
+    #method(stacksafe) day = IntNumber new &short:theDay.
+
+    #method(stacksafe) hour = IntNumber new &short:theHour.
+
+    #method(stacksafe) minute = IntNumber new &short:theMinute.
+
+    #method(stacksafe) second = IntNumber new &short:theSecond.
+
+    #method(stacksafe) millisecond = IntNumber new &short:theMillisecond.
+
+    #method set &year:aValue
+        <= writeYear &int:(aValue int).
+
+    #method set &month:aValue 
+        <= writeMonth &int:(aValue int).
+
+    #method(stacksafe) set &day:aValue 
+        <= writeDay &int:(aValue int).
+
+    #method(stacksafe) set &hour:aValue 
+        <= writeHour &int:(aValue int).
+
+    #method(stacksafe) set &minute:aValue 
+        <= writeMinute &int:(aValue int).
+
+    #method(stacksafe) set &second:aValue 
+        <= writeSecond &int:(aValue int).
+
+    #method(stacksafe) set &millisecond:aValue 
+        <= writeMillisecond &int:(aValue int).
+
+    #method(stacksafe) readYear &vint:aRetVal
+    [
+        aRetVal write &short:theYear.
+    ]
+
+    #method(stacksafe) readMonth &vint:aRetVal
+    [
+        aRetVal write &short:theMonth.
+    ]
+
+    #method(stacksafe) readDayOfWeek &vint:aRetVal
+    [
+        aRetVal write &short:theDayOfWeek.
+    ]
+
+    #method(stacksafe) readDay &vint:aRetVal
+    [
+        aRetVal write &short:theDay.
+    ]
+
+    #method(stacksafe) readHour &vint:aRetVal
+    [
+        aRetVal write &short:theHour.
+    ]
+
+    #method(stacksafe) readMinute &vint:aRetVal
+    [
+        aRetVal write &short:theMinute.
+    ]
+
+    #method(stacksafe) readSecond &vint:aRetVal
+    [
+        aRetVal write &short:theSecond.
+    ]
+
+    #method(stacksafe) readMillisecond &vint:aRetVal
+    [
+        aRetVal write &short:theMillisecond.
+    ]
+
+    #method(stacksafe) writeYear &int:aValue
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theYear := n.
+    ]
+
+    #method(stacksafe) writeMonth &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theMonth := n.
+    ]
+
+    #method(stacksafe) writeDay &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theDay := n.
+    ]
+
+    #method(stacksafe) writeHour &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theHour := n.
+    ]
+
+    #method(stacksafe) writeMinute &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theMinute := n.
+    ]
+
+    #method(stacksafe) writeSecond &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theSecond := n.
+    ]
+
+    #method(stacksafe) writeMillisecond &int:aValue 
+    [ 
+        #var(type:short)n.
+        aValue readShort &vshort:n.
+            
+        theMillisecond := n.
+    ]
+
 //    #method(stacksafe) read &__vtime:aRetVal
 //    [
 //        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__vtime:aRetVal.
 //    ]    
-//    
-//    #method(stacksafe) write &__time:aFileTime
-//    [
-//        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
-//    ]
-//      
+    
+    #method(stacksafe) write &__time:aFileTime
+    [
+        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
+    ]
+      
 //    #method(stacksafe) toWide &date_attributes:Flags
 //    [
 //        #var(type:shortarray,size:127)aBuffer.
@@ -291,4 +291,4 @@
 //
 //    #method(stacksafe) toShortTime
 //        <= %toWide &time_attributes:0.
-//}
+}

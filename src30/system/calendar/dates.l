@@ -255,87 +255,87 @@
 //        
 //        ^ Date new &__time:(theValue add &__time:aValue).
 //    ]
-//
-//    #method year
-//    [
-//        #var(type:int)aYear.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readYear &vint:aYear.
-//
-//        ^ IntNumber new &int:aYear.
-//    ]
-//    
-//    #method month
-//    [
-//        #var(type:int)aMonth.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readMonth &vint:aMonth.
-//
-//        ^ IntNumber new &int:aMonth.
-//    ]
-//
-//    #method day
-//    [
-//        #var(type:int)aDay.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readDay &vint:aDay.
-//
-//        ^ IntNumber new &int:aDay.
-//    ]
-//
-//    #method dayOfWeek
-//    [
-//        #var(type:int)aDayOfWeek.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readDayOfWeek &vint:aDayOfWeek.
-//
-//        ^ IntNumber new &int:aDayOfWeek.
-//    ]
-//
-//    #method hour
-//    [
-//        #var(type:int)aHour.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readHour &vint:aHour.
-//
-//        ^ IntNumber new &int:aHour.
-//    ]
-//
-//    #method minute
-//    [
-//        #var(type:int)aMinute.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readMinute &vint:aMinute.
-//
-//        ^ IntNumber new &int:aMinute.
-//    ]
-//
-//    #method second
-//    [
-//        #var(type:int)aSecond.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readSecond &vint:aSecond.
-//
-//        ^ IntNumber new &int:aSecond.
-//    ]
-//
-//    #method millisecond
-//    [
-//        #var(type:int)aMSecond.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        aSystemTime readMillisecond &vint:aMSecond.
-//
-//        ^ IntNumber new &int:aMSecond.
-//    ]
-//
+
+    #method year
+    [
+        #var(type:int)aYear.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readYear &vint:aYear.
+
+        ^ IntNumber new &int:aYear.
+    ]
+    
+    #method month
+    [
+        #var(type:int)aMonth.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readMonth &vint:aMonth.
+
+        ^ IntNumber new &int:aMonth.
+    ]
+
+    #method day
+    [
+        #var(type:int)aDay.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readDay &vint:aDay.
+
+        ^ IntNumber new &int:aDay.
+    ]
+
+    #method dayOfWeek
+    [
+        #var(type:int)aDayOfWeek.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readDayOfWeek &vint:aDayOfWeek.
+
+        ^ IntNumber new &int:aDayOfWeek.
+    ]
+
+    #method hour
+    [
+        #var(type:int)aHour.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readHour &vint:aHour.
+
+        ^ IntNumber new &int:aHour.
+    ]
+
+    #method minute
+    [
+        #var(type:int)aMinute.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readMinute &vint:aMinute.
+
+        ^ IntNumber new &int:aMinute.
+    ]
+
+    #method second
+    [
+        #var(type:int)aSecond.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readSecond &vint:aSecond.
+
+        ^ IntNumber new &int:aSecond.
+    ]
+
+    #method millisecond
+    [
+        #var(type:int)aMSecond.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        aSystemTime readMillisecond &vint:aMSecond.
+
+        ^ IntNumber new &int:aMSecond.
+    ]
+
 //    #method add &years:aYears
 //    [
 //        #var(type:int)years.

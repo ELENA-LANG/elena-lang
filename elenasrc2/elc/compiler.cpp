@@ -2602,7 +2602,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    else if (object.kind == okFieldAddress && object.param > 0) {
       allocateStructure(scope, 0, object);
       scope.writer->insertChild(lxLocalAddress, object.param);
-      scope.writer->insert(lxAssigning, 4);
+      scope.writer->insert(lxAssigning, size);
       scope.writer->closeNode();
    }
    else if (object.kind == okSubject) {

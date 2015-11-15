@@ -11,6 +11,23 @@
 //#define extensions'math.
 //#define extensions'text.
 
+#class(struct:embeddable,sealed) TimeStruct
+{
+    #field(type:short)theYear.
+    #field(type:short)theMonth.
+    #field(type:short)theDayOfWeek.
+    #field(type:short)theDay.
+    #field(type:short)theHour.
+    #field(type:short)theMinute.
+    #field(type:short)theSecond.
+    #field(type:short)theMillisecond.
+    
+    #method(stacksafe) readMonth &vint:aRetVal
+    [
+        aRetVal write &short:theMonth.
+    ]
+}
+    
 #symbol XTester =
 {
     test            

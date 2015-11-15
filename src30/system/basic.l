@@ -679,11 +679,11 @@
 
 //    /// Returns the real number
 //    #method real = RealNumber new &int:$self.
-//
-//    #method(stacksafe)readShort &vshort:aValue
-//    [
-//        shortConvertor convert &int:$self &vshort:aValue.
-//    ]
+
+    #method(stacksafe)readShort &vshort:aValue
+    [
+        shortConvertor convert &int:$self &vshort:aValue.
+    ]
 
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &int:anOperand 
@@ -1726,16 +1726,16 @@
         theValue := anOperand.
     ]
 
-//    /// Reads the integer value
-//    #method(stacksafe) read &vint:aRetVal
-//    [
-//        aRetVal << theValue.
-//    ]
-//
-//    /// Copies the integer value
-//    #method(stacksafe) write &short:anOperand
-//        => system'internal'int_copyshort.
-//
+    /// Reads the integer value
+    #method(stacksafe) read &vint:aRetVal
+    [
+        aRetVal << theValue.
+    ]
+
+    /// Copies the integer value
+    #method(stacksafe) write &short:anOperand
+        => system'internal'int_copyshort.
+
 //    /// Copies the integer value
 //    #method write &byte:anOperand
 //    [
@@ -2851,10 +2851,10 @@
 //    #method convert : anObject
 //        = anObject cast:%convert &to:$self.
 //}.
-//
-///// A 16bit integer convertor
-//#symbol shortConvertor =
-//{
+
+/// A 16bit integer convertor
+#symbol shortConvertor =
+{
 //    /// Converts a character into a short integer value and saves the result into an output parameter
 //    #method(stacksafe) convert &char:aValue &vshort:aRetVal
 //        => system'internal'word_copychar.
@@ -2862,11 +2862,11 @@
 //    /// Converts a byte value into a short integer value and saves the result into an output parameter
 //    #method(stacksafe) convert &byte:aValue &vshort:aRetVal
 //        => system'internal'word_copybyte.
-//        
-//    /// Converts an integer into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &int:aValue &vshort:aRetVal
-//        => system'internal'word_copyint.
-//        
+        
+    /// Converts an integer into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &int:aValue &vshort:aRetVal
+        => system'internal'word_copyint.
+        
 //    /// Converts a long integer into a short integer value and saves the result into an output parameter
 //    #method(stacksafe) convert &long:aValue &vshort:aRetVal
 //        => system'internal'word_copylong.
@@ -2952,8 +2952,8 @@
 //        
 //    #method convert : anObject
 //        = anObject cast:%convert &to:$self.
-//}.
-//
+}.
+
 ///// An Unicode character convertor
 //#symbol charConvertor =
 //{

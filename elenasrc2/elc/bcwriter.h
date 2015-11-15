@@ -247,14 +247,14 @@ public:
 
    void assignInt(CommandTape& tape, LexicalType target, int offset);
    void assignLong(CommandTape& tape, LexicalType target, int offset);
-//   void assignShort(CommandTape& tape, LexicalType target, int offset);
-//   void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignShort(CommandTape& tape, LexicalType target, int offset);
+   void assignByte(CommandTape& tape, LexicalType target, int offset);
    void saveInt(CommandTape& tape, LexicalType target, int argument);
 //   void loadInt(CommandTape& tape, ObjectInfo target);
 //   void saveReal(CommandTape& tape, ObjectInfo target);
-//   void copyInt(CommandTape& tape, int offset);
-//   void copyShort(CommandTape& tape, int offset);
-//   void copyStructure(CommandTape& tape, int offset, int size);
+   void copyInt(CommandTape& tape, int offset);
+   void copyShort(CommandTape& tape, int offset);
+   void copyStructure(CommandTape& tape, int offset, int size);
 //   void copySubject(CommandTape& tape);
    void saveSubject(CommandTape& tape);
 //   void loadSymbolReference(CommandTape& tape, ref_t reference);
