@@ -2257,6 +2257,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okParams:
          scope.writer->newNode(lxBlockLocalAddr, object.param);
          break;
+      case okObject:
+         scope.writer->newNode(lxResult);
+         break;
       case okExternal:
          //   // external call cannot be used inside symbol
          //   if (test(mode, HINT_ROOT))
@@ -5377,12 +5380,15 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
       }
 
       scope.writer->newBookmark();
-      writeTerminal(TerminalInfo(), scope, ObjectInfo(okThisParam, 1));
-
+      
       if (withFrame) {
+         writeTerminal(TerminalInfo(), scope, ObjectInfo(okThisParam, 1));
          compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef));
       }
-      else compileExtensionMessage(node, scope, ObjectInfo(okObject), ObjectInfo(okConstantClass, 0, classRef));
+      else {
+         writeTerminal(TerminalInfo(), scope, ObjectInfo(okObject));
+         compileExtensionMessage(node, scope, ObjectInfo(okObject), ObjectInfo(okConstantClass, 0, classRef));
+      }
 
       scope.writer->removeBookmark();
    }

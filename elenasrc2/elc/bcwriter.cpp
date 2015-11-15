@@ -3299,7 +3299,7 @@ void ByteCodeWriter :: translateCallExpression(CommandTape& tape, SNode node)
       releaseArgList(tape);
       releaseObject(tape);
    }
-   else if (paramCount > getParamCount(node.argument)) {
+   else if (paramCount > getParamCount(node.argument) + 1) {
       //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
       releaseObject(tape, paramCount - getParamCount(node.argument) - 1);
    }
