@@ -6339,7 +6339,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
 {
    SyntaxTree::Node arg = node.firstChild();
    while (arg != lxNone) {
-      if (arg == lxIntExtArgument) {
+      if (arg == lxIntExtArgument || arg == lxExtArgument) {
          SyntaxTree::Node member = arg.firstChild();
          while (member != lxNone) {
             // if boxing used for external call

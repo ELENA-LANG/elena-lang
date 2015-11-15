@@ -27,7 +27,7 @@
     MethodNotFoundTest eval.
     ExceptionTest eval.
     OpenArgTest eval.
-//    DateTest eval.
+    DateTest eval.
 //    ListTest eval.
 //    DictionaryTest eval.
 ////    GetPropertyTest eval.

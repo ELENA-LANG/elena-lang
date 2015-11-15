@@ -1,70 +1,72 @@
-//#import system.
-//
-//#subject(class:system'calendar'SystemTime)    __time.
+#import system.
+
+#subject(class:system'calendar'SystemTime)    __time.
 //#subject(class:system'calendar'SystemTimeVar) __vtime.
 //#subject(class:system'calendar'TimeStruct)    __time_st.
-//
+
 //#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
 //#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
-//
-//// --- SystemTime ---
-//
-//#symbol $factory =
-//{
-//    #method(type:__time) utcNow
-//    [
-//        #var(type:__time)aTime.
-//        
-//        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-//        
-//        ^ SystemTime new &__time:aTime.
-//    ]
-//    
-//    #method(type:__time) now
-//    [
-//        #var(type:__time)aTime.
-//        #var(type:__time)aLocalTime.
-//        
-//        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-//        
-//        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__vtime:aLocalTime.
-//        
-//        ^ SystemTime new &__time:aLocalTime.
-//    ]
-//}.
-//
-//#class(sealed,integer:8) SystemTime :: BaseValue
-//{
-//    #constructor(stacksafe) new &__time:aValue
-//        => system'internal'long_copy.
-//
-//    #constructor(stacksafe) $new &long:aValue
-//        => system'internal'long_copy.
-//
-//    #constructor now
-//        <= new &__time:($factory now).
-//
-//    #constructor utcNow
-//        <= new &__time:($factory utcNow).
-//                        
-//    #method(type:bool) equal &__time:anOperand
-//        => system'internal'long_equal.
-//        
-//    #method(type:bool) less &__time:anOperand
-//        => system'internal'long_less.
-//    
-//    #method(stacksafe) read &vlong:aRetVal
-//        => system'internal'long_save.
-//        
-//    #method(type:__time,stacksafe) subtract &__time:anOperand
-//        => system'internal'long_sub.
-//        
-//    #method(type:__time,stacksafe) add &__time:anOperand
-//        => system'internal'long_add.
-//    
-//    #method __time = $self.
-//}
-//
+
+// --- SystemTime ---
+
+#symbol $factory =
+{
+    #method(type:__time) utcNow
+    [
+        #var(type:__time)aTime.
+        
+        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+        
+        ^ SystemTime new &__time:aTime.
+    ]
+    
+    #method(type:__time) now
+    [
+        #var(type:__time)aTime.
+        #var(type:__time)aLocalTime.
+        
+        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+
+        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__time:aLocalTime.
+
+        ^ SystemTime new &__time:aLocalTime.
+    ]
+}.
+
+#class(sealed,struct:embeddable) SystemTime :: BaseValue
+{
+    #field(type:long)theValue.
+    
+    #constructor(stacksafe) new &__time:aValue
+        => system'internal'long_copy.
+
+    #constructor(stacksafe) $new &long:aValue
+        => system'internal'long_copy.
+
+    #constructor now
+        <= new &__time:($factory now).
+
+    #constructor utcNow
+        <= new &__time:($factory utcNow).
+                        
+    #method(type:bool) equal &__time:anOperand
+        => system'internal'long_equal.
+        
+    #method(type:bool) less &__time:anOperand
+        => system'internal'long_less.
+    
+    #method(stacksafe) read &vlong:aRetVal
+        => system'internal'long_save.
+        
+    #method(type:__time,stacksafe) subtract &__time:anOperand
+        => system'internal'long_sub.
+        
+    #method(type:__time,stacksafe) add &__time:anOperand
+        => system'internal'long_add.
+    
+    #method __time = $self.
+}
+
 //#class(sealed,struct:embeddable) SystemTimeVar
 //{
 //    #field(type:__time)theValue.

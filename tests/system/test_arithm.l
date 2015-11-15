@@ -2,7 +2,7 @@
 #define system'routines.
 //#define system'collections.
 //#define system'dynamic.
-//#define system'calendar.
+#define system'calendar.
 //#define system'text.
 //#define system'io.
 //#define system'math.
@@ -13,17 +13,8 @@
 
 #symbol XTester =
 {
-    testParamsCopy &args: aParams
-    [        
-        #var n2 := $self test:0 &args:aParams.
-    ]        
-    
-    test : anIndex &args:aParams
-        = aParams @ (anIndex int).
-
     test            
     [
-        XTester testParamsCopy &args:1:"a":3.
     ]            
 }.
         
@@ -552,41 +543,41 @@
     #var anOutput := aBuffer literal.
 ].
 
-//// --- DateTest ---
+// --- DateTest ---
+
+#symbol DateTest =
+[
+    #var aDate := now.
+    
+    #var aYear := aDate year.
+    #var aMonth := aDate month.
+    #var aDay := aDate day.
+    #var anHour := aDate hour.
+    #var aMinute := aDate minute.
+    #var aSecond := aDate second.
+    
+    #var aRetVal := aDate literal.
+].
+
+//// --- GetPropertyTest ---
 //
-//#symbol DateTest =
+//#symbol GetPropertyAgent =
+//{
+//    eval : aGetProperty
+//    [
+//        #var n := aGetProperty property.
+//        
+//        2 == aGetProperty property
+//            ? [ console writeLine:"GetProperty works!". ]
+//            ! [ console writeLine:"!! GetProperty does not work !!". ]
+//    ]
+//}.
+//
+//#symbol GetPropertyTest =
 //[
-//    #var aDate := now.
-//    
-//    #var aYear := aDate year.
-//    #var aMonth := aDate month.
-//    #var aDay := aDate day.
-//    #var anHour := aDate hour.
-//    #var aMinute := aDate minute.
-//    #var aSecond := aDate second.
-//    
-//    #var aRetVal := aDate literal.
+//    GetPropertyAgent eval:%property[2].
 //].
-//
-//////// --- GetPropertyTest ---
-//////
-//////#symbol GetPropertyAgent =
-//////{
-//////    eval : aGetProperty
-//////    [
-//////        #var n := aGetProperty property.
-//////        
-//////        2 == aGetProperty property
-//////            ? [ console writeLine:"GetProperty works!". ]
-//////            ! [ console writeLine:"!! GetProperty does not work !!". ]
-//////    ]
-//////}.
-//////
-//////#symbol GetPropertyTest =
-//////[
-//////    GetPropertyAgent eval:%property[2].
-//////].
-//
+
 //#symbol StructTest =
 //[
 //    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, tapeControl, %(getAt&args)(1), system'console, %(writeLine)(1) )). 

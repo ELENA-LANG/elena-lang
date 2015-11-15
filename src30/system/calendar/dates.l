@@ -1,14 +1,14 @@
-//#import system.
-//
-//#subject(class:system'calendar'Date) datetime.
-//#subject(class:system'calendar'TimeSpan) timespan.
-//
-//// --- TimeSpan --
-//
-//#class(sealed,struct:embeddable) TimeSpan :: BaseNumber
-//{
-//    #field(type:__time)theValue.
-//
+#import system.
+
+#subject(class:system'calendar'Date) datetime.
+#subject(class:system'calendar'TimeSpan) timespan.
+
+// --- TimeSpan --
+
+#class(sealed,struct:embeddable) TimeSpan :: BaseNumber
+{
+    #field(type:__time)theValue.
+
 //    #constructor min <= %new &__time:(SystemTime $new &long:0l).
 //
 //    #constructor(stacksafe) new &__time:aValue
@@ -163,31 +163,31 @@
 //
 //    #method clone
 //        = TimeSpan new &__time:theValue.
-//
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timespan:$self.
-//    
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &timespan:$self.
-//}
-//
-//// --- Date ---
-//
-//#class(sealed,struct:embeddable) Date :: BaseNumber
-//{
-//    #field(type:__time)theValue.
-//
-//    #constructor min <= %new &__time:(SystemTime $new &long:0l).
-//
-//    #constructor now
-//        <= %new &__time:(SystemTime now).
-//
-//    #constructor utcNow
-//        <= %new &__time:(SystemTime utcNow).
-//            
-//    #constructor(stacksafe) new &__time:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//  
+
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timespan:$self.
+    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &timespan:$self.
+}
+
+// --- Date ---
+
+#class(sealed,struct:embeddable) Date :: BaseNumber
+{
+    #field(type:__time)theValue.
+
+    #constructor min <= %new &__time:(SystemTime $new &long:0l).
+
+    #constructor now
+        <= %new &__time:(SystemTime now).
+
+    #constructor utcNow
+        <= %new &__time:(SystemTime utcNow).
+            
+    #constructor(stacksafe) new &__time:aValue
+    [
+        theValue := aValue.
+    ]
+  
 //    #constructor new &year:aYear &month:aMonth &day:aDay &hour:anHour &minute:aMinute &second:aSecond
 //    [
 //        #var(type:__time_st)aSystemTime.
@@ -413,20 +413,20 @@
 //
 //        ^ (aDateValue + " " + aTimeValue) wide.
 //    ]
-//        
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
-//    
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &datetime:$self.
-//    
-//    #method datetime = $self.
-//
+        
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
+    
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &datetime:$self.
+    
+    #method datetime = $self.
+
 //    #method clone
 //        = Date new &__time:theValue.
 //    
-//}
-//
-//// --- now ---
-//
-//#symbol(type:datetime) now = Date now.
-//
-//#symbol(type:datetime) utcNow = Date utcNow.
+}
+
+// --- now ---
+
+#symbol(type:datetime) now = Date now.
+
+#symbol(type:datetime) utcNow = Date utcNow.
