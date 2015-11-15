@@ -802,8 +802,7 @@ private:
    void reserveSpace(CodeScope& scope, int size);
    bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
 //   void allocateLocal(CodeScope& scope, ObjectInfo& exprOperand);
-//
-//   ObjectInfo compilePrimitiveCatch(DNode node, CodeScope& scope);
+
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
    ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 

@@ -390,29 +390,29 @@
 //
 //    #method add &seconds:Seconds
 //        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:0 &seconds:Seconds).
-//
-//    #method literal
-//    [
-//        #var(type:__time_st)aStruct.
-//        aStruct write &__time:theValue.
-//
-//        #var aTimeValue := aStruct toShortTime literal.
-//        
-//        #var aDateValue := aStruct toShortDate literal.
-//
-//        ^ (aDateValue + " " + aTimeValue) literal.
-//    ]
-//
-//    #method wide
-//    [
-//        #var(type:__time_st)aStruct.
-//        aStruct write &__time:theValue.
-//        
-//        #var aTimeValue := aStruct toShortTime wide.
-//        #var aDateValue := aStruct toShortDate wide.
-//
-//        ^ (aDateValue + " " + aTimeValue) wide.
-//    ]
+
+    #method literal
+    [
+        #var(type:__time_st)aStruct.
+        aStruct write &__time:theValue.
+
+        #var aTimeValue := aStruct toShortTime literal.
+        
+        #var aDateValue := aStruct toShortDate literal.
+
+        ^ (aDateValue + " " + aTimeValue) literal.
+    ]
+
+    #method wide
+    [
+        #var(type:__time_st)aStruct.
+        aStruct write &__time:theValue.
+        
+        #var aTimeValue := aStruct toShortTime wide.
+        #var aDateValue := aStruct toShortDate wide.
+
+        ^ (aDateValue + " " + aTimeValue) wide.
+    ]
         
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &datetime:$self.
     

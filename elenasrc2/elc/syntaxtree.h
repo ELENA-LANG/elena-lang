@@ -318,6 +318,13 @@ public:
       return child == type;
    }
 
+   static bool existChild(Node node, LexicalType type1, LexicalType type2)
+   {
+      Node child = findChild(node, type1, type2);
+
+      return child != lxNone;
+   }
+
    Node readRoot();
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);

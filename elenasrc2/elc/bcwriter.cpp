@@ -3495,7 +3495,7 @@ void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
 
          if (first) {
             declareCatch(tape);
-            
+
             // ...
 
             first = false;
@@ -3505,8 +3505,6 @@ void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
    }
 
    endCatch(tape);
-
-   // ...
 }
 
 void ByteCodeWriter :: translateLooping(CommandTape& tape, SyntaxTree::Node node)

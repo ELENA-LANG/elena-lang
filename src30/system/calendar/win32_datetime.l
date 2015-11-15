@@ -4,8 +4,8 @@
 //#subject(class:system'calendar'SystemTimeVar) __vtime.
 #subject(class:system'calendar'TimeStruct)    __time_st.
 
-//#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
-//#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
+#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
+#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
 
 // --- SystemTime ---
 
@@ -252,43 +252,47 @@
         system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
     ]
       
-//    #method(stacksafe) toWide &date_attributes:Flags
-//    [
-//        #var(type:shortarray,size:127)aBuffer.
-//
-//        #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
-//            &int:0
-//            &int:(Flags int)
-//            &__time_st:$self
-//            &int:0
-//            &shortarray:aBuffer
-//            &int:255
-//            &int:0
-//            | raise:(FormatException new:"Invalid date").
-//
-//        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
-//    ]
-//    
-//    #method(stacksafe) toWide &time_attributes:Flags
-//    [
-//        #var(type:shortarray,size:127)aBuffer.
-//
-//        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
-//            &int:0
-//            &int:(Flags int)
-//            &__time_st:$self
-//            &int:0
-//            &shortarray:aBuffer
-//            &int:255
-//            &int:0
-//            | raise:(FormatException new:"Invalid time").
-//
-//        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
-//    ]
-//
-//    #method(stacksafe) toShortDate
-//        <= %toWide &date_attributes:DATE_SHORTDATE.
-//
-//    #method(stacksafe) toShortTime
-//        <= %toWide &time_attributes:0.
+    #method(stacksafe) toWide &date_attributes:Flags
+    [
+        #var(type:shortarray,size:127)aBuffer.
+
+        #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
+            &int:0
+            &int:(Flags int)
+            &__time_st:$self
+            &int:0
+            &shortarray:aBuffer
+            &int:255
+            &int:0.
+            
+        (aLength == 0)
+            ? [ #throw FormatException new:"Invalid date". ].
+
+        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
+    ]
+    
+    #method(stacksafe) toWide &time_attributes:Flags
+    [
+        #var(type:shortarray,size:127)aBuffer.
+
+        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
+            &int:0
+            &int:(Flags int)
+            &__time_st:$self
+            &int:0
+            &shortarray:aBuffer
+            &int:255
+            &int:0.
+            
+        (aLength == 0)
+            ? [ #throw FormatException new:"Invalid time". ].
+
+        ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
+    ]
+
+    #method(stacksafe) toShortDate
+        <= %toWide &date_attributes:DATE_SHORTDATE.
+
+    #method(stacksafe) toShortTime
+        <= %toWide &time_attributes:0.
 }

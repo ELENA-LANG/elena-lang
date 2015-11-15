@@ -3865,16 +3865,16 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
    DNode member = node.nextNode();
 
+   bool externalMode = false;
    if (object.kind == okExternal) {
 //      recordDebugStep(scope, member.Terminal(), dsAtomicStep);
       currentObject = compileExternalCall(member, scope, node.Terminal(), mode);
-//      if (test(mode, HINT_TRY)) {
-//         // skip error handling for the external operation
-//         mode &= ~HINT_TRY;
-//
-//         member = member.nextNode();
-//      }
+
+      externalMode = true;
       member = member.nextNode();
+
+      if (member != nsNone)
+         scope.raiseError(errInvalidOperation, node.Terminal());
    }
    else if (object.kind == okInternal) {
       currentObject = compileInternalCall(member, scope, object);
@@ -3925,7 +3925,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
       }
-
 //      else if (member == nsAltMessageOperation) {
 //         scope.writer->newNode(lxAlternative);
 //         scope.writer->appendNode(lxResult);
@@ -4883,14 +4882,6 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    if (!rootMode)
       scope.writer->closeNode(); // lxAssigning
 
-//   //// indicate that the result is 0 or -1
-//   //if (test(mode, HINT_LOOP))
-//   //   retVal.extraparam = scope.moduleScope->intSubject;
-//
-//   // error handling should follow the function call immediately
-//   if (test(mode, HINT_TRY))
-//      compilePrimitiveCatch(node.nextNode(), scope);
-
    return retVal;
 }
 
@@ -5007,39 +4998,23 @@ bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo
    else return false;
 }
 
-////inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
-////{
-////   signature.append(module->resolveSubject(type));
-////}
-//
-////inline bool IsVarOperation(int operator_id)
-////{
-////   switch (operator_id) {
-////      case WRITE_MESSAGE_ID:
-////      case APPEND_MESSAGE_ID:
-////      case REDUCE_MESSAGE_ID:
-////      case SEPARATE_MESSAGE_ID:
-////      case INCREASE_MESSAGE_ID:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
-//
-//ObjectInfo Compiler :: compilePrimitiveCatch(DNode node, CodeScope& scope)
+//inline void copySubject(_Module* module, ReferenceNs& signature, ref_t type)
 //{
-//   _writer.declarePrimitiveCatch(*scope.tape);
-//
-//   size_t size = 0;
-//   ref_t message = mapMessage(node, scope, size);
-//   if (message == encodeMessage(0, RAISE_MESSAGE_ID, 1)) {
-//      compileThrow(node.firstChild().firstChild().firstChild(), scope, 0);
+//   signature.append(module->resolveSubject(type));
+//}
+
+//inline bool IsVarOperation(int operator_id)
+//{
+//   switch (operator_id) {
+//      case WRITE_MESSAGE_ID:
+//      case APPEND_MESSAGE_ID:
+//      case REDUCE_MESSAGE_ID:
+//      case SEPARATE_MESSAGE_ID:
+//      case INCREASE_MESSAGE_ID:
+//         return true;
+//      default:
+//         return false;
 //   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//   _writer.endPrimitiveCatch(*scope.tape);
-//
-//   return ObjectInfo(okIndexAccumulator);
 //}
 
 ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
