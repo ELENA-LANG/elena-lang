@@ -162,19 +162,19 @@
 //    BoxingTester add :(2 + 3 * 4).
 //    
 //].
-//
-//#symbol DictionaryTest =
-//[
-//    #var aList := Dictionary new.
-//    
-//    aList @ 1 := "1a".
-//    aList @ 2 := "2".
-//    
-//    aList @ 1 := "1".
-//    
-//    #var anN1 := aList @ 1.
-//    #var anN2 := aList @ 2.
-//].
+
+#symbol DictionaryTest =
+[
+    #var aList := Dictionary new.
+    
+    aList @ 1 := "1a".
+    aList @ 2 := "2".
+    
+    aList @ 1 := "1".
+    
+    #var anN1 := aList @ 1.
+    #var anN2 := aList @ 2.
+].
 
 #symbol ListTest =
 [

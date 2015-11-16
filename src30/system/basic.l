@@ -357,23 +357,23 @@
 //
 //    /// Clones the value
 //    #method clone = ByteNumber new &byte:$self.
-//    
-//    /// Dispatches the verb to the target object with byte subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &byte:$self.
-//    
-//    /// Dispatches the verb to the target object with byte subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &byte:$self.
-//
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+    
+    /// Dispatches the verb to the target object with byte subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &byte:$self.
+    
+    /// Dispatches the verb to the target object with byte subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &byte:$self.
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- ShortNumber ---
@@ -613,23 +613,23 @@
 //
 //    /// Clones the value
 //    #method clone = ShortNumber new &short:$self.    
-//                
-//    /// Dispatches the verb to the target object with short subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &short:$self.
-//    
-//    /// Dispatches the verb to the target object with short subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &short:$self.
-//
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+                
+    /// Dispatches the verb to the target object with short subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &short:$self.
+    
+    /// Dispatches the verb to the target object with short subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &short:$self.
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- IntNumber ---
@@ -1154,16 +1154,16 @@
     /// Dispatches the verb to the target object with long subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:$self.
 
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- realNumber ---
@@ -1348,16 +1348,16 @@
     /// Dispatches the verb to the target object with real subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:$self.
 
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- Byte ---
@@ -2514,16 +2514,16 @@
         ^ IntNumber new &int:aLength.
     ]
 
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
-//    
-//    #method hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ IntNumber new &int:aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    
+    #method hash_code
+    [
+        #var(type:int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ IntNumber new &int:aCode.
+    ]
 }
 
 // --- Char ---
@@ -2705,47 +2705,47 @@
 //    /// Expands the value
 //    #method => theValue.
 //}
-//
-//// --- KeyValue ---
-//
-///// A key - object pair
-/////
-///// Extends the object with a key property
-//#class(sealed) KeyValue
-//{
-//    #field theKey.
-//    #field theObject.
-//    
-//    /// Creates a new objext
-//    #constructor new &key:aKey &object:anObject
-//    [
-//        theKey := aKey.
-//        theObject := anObject.
-//    ]
-//    
-//    #method keyvalue = $self.
-//    
-//    /// Returns the key
-//    #method key = theKey.
-//    
-//    /// Returns the key
-//    #method object = theObject.
-//
-//    #method set &object:anObject
-//    [
-//        theObject := anObject.
-//    ]
-//    
-//    /// Dispatches the verb to the target object
-//    #method cast : aVerb &to:aTarget => theObject.
-//    
-//    /// Dispatches the verb to the target object
-//    #method cast : aVerb &to:aTarget &with:aParam => theObject.
-//            
-//    /// Redirects the incoming messages to the object
-//    #method => theObject.
-//}
-//
+
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+#class(sealed) KeyValue
+{
+    #field theKey.
+    #field theObject.
+    
+    /// Creates a new objext
+    #constructor new &key:aKey &object:anObject
+    [
+        theKey := aKey.
+        theObject := anObject.
+    ]
+    
+    #method keyvalue = $self.
+    
+    /// Returns the key
+    #method key = theKey.
+    
+    /// Returns the key
+    #method object = theObject.
+
+    #method set &object:anObject
+    [
+        theObject := anObject.
+    ]
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theObject.
+            
+    /// Redirects the incoming messages to the object
+    #method => theObject.
+}
+
 //// === Basic Convertors ===
 //
 //// --- convertor helpers ---

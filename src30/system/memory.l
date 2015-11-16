@@ -352,38 +352,38 @@
 //            i := i + 1.
 //        ].
 //    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
-//        => system'internal'ns_read.
-//
-//    /// Copies the short array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &intarray:anArray
-//        => system'internal'ns_write.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aValue
-//        => system'internal'ns_writedword.
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vint:anInt
-//        => system'internal'ns_readdword.
-//
-//    /// Returns an integer at the specified position
-//    #method getAt : anIndex
-//    [
-//        #var(type:int)aRetVal.
-//        $self read &int:(anIndex int) &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]        
-//
-//    /// Sets an integer at the specified position
-//    #method setAt : anIndex : aValue
-//    [
-//        $self write &int:(anIndex int) &int:(aValue int).
-//    ]
-//
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
+        => system'internal'ns_read.
+
+    /// Copies the short array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &intarray:anArray
+        => system'internal'ns_write.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:anIndex &int:aValue
+        => system'internal'ns_writedword.
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vint:anInt
+        => system'internal'ns_readdword.
+
+    /// Returns an integer at the specified position
+    #method getAt : anIndex
+    [
+        #var(type:int)aRetVal.
+        $self read &int:(anIndex int) &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]        
+
+    /// Sets an integer at the specified position
+    #method setAt : anIndex : aValue
+    [
+        $self write &int:(anIndex int) &int:(aValue int).
+    ]
+
 //    /// Creates the object copy
 //    #method clone = IntArray new &intarray:$self.
     

@@ -4,7 +4,7 @@
 
 #subject(class:system'collections'List)list.
 #subject(class:system'collections'ArrayList)  array_list.
-//#subject(class:system'collections'Dictionary) dictionary.
+#subject(class:system'collections'Dictionary) dictionary.
 
 // --- ListItem ---
 
@@ -344,17 +344,17 @@
         theArray := Array new &int:32.
     ]
     
-//    /// Creates the list
-//    #constructor new : aCapacity
-//        <= new &int:(aCapacity int).
-//    
-//    #constructor new &int:aCapacity
-//    [
-//        theCapacity := Integer new &int:aCapacity.
-//        theLength := Integer new.
-//        theArray := Array new &int:aCapacity.
-//    ]
-//    
+    /// Creates the list
+    #constructor new : aCapacity
+        <= new &int:(aCapacity int).
+    
+    #constructor new &int:aCapacity
+    [
+        theCapacity := Integer new &int:aCapacity.
+        theLength := Integer new.
+        theArray := Array new &int:aCapacity.
+    ]
+    
 //    /// Creates the list
 //    #constructor(stacksafe) $new &array:anArray &int:aLength
 //    [
@@ -365,32 +365,32 @@
 //        
 //        theArray := anArray clone.
 //    ]
-//    
-//    /// Returns the object at the specified position
-//    #method getAt : anIndex
-//        = $self getAt &int:(anIndex int).
-//
-//    /// Returns the object at the specified position
-//    #method(stacksafe) getAt &int:anIndex
-//    [
-//        (theLength > anIndex)
-//            ! [ #throw OutOfRangeException new. ].
-//
-//        ^ theArray getAt &int:anIndex.
-//    ]
-//    
-//    /// Returns the object at the specified position
-//    #method setAt : anIndex : anObject
-//        = $self setAt &int:(anIndex int) &object:anObject.
-//
-//    /// Returns the object at the specified position
-//    #method(stacksafe) setAt &int:anIndex &object:anObject
-//    [
-//        (theLength > anIndex)
-//            ! [ #throw OutOfRangeException new. ].
-//        
-//        theArray setAt &int:anIndex &object:anObject.
-//    ]
+    
+    /// Returns the object at the specified position
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    /// Returns the object at the specified position
+    #method(stacksafe) getAt &int:anIndex
+    [
+        (theLength > anIndex)
+            ! [ #throw OutOfRangeException new. ].
+
+        ^ theArray getAt &int:anIndex.
+    ]
+    
+    /// Returns the object at the specified position
+    #method setAt : anIndex : anObject
+        = $self setAt &int:(anIndex int) &object:anObject.
+
+    /// Returns the object at the specified position
+    #method(stacksafe) setAt &int:anIndex &object:anObject
+    [
+        (theLength > anIndex)
+            ! [ #throw OutOfRangeException new. ].
+        
+        theArray setAt &int:anIndex &object:anObject.
+    ]
     
     #method $expand
     [
@@ -477,15 +477,15 @@
     /// Dispatches the verb to the target object with enumerable subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
     
-//    /// Returns the number of list items
-//    #method length = theLength int.
-//    
-//    /// Reads the number of list item to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//    [
-//        aLength << theLength.
-//    ]
-//    
+    /// Returns the number of list items
+    #method length = theLength int.
+    
+    /// Reads the number of list item to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+    [
+        aLength << theLength.
+    ]
+    
 //    /// Clears the list
 //    #method clear 
 //    [
@@ -601,185 +601,185 @@
 //        theIndex << anIndex.
 //    ]
 //}
-//
-//// --- Dictionary ---
-//
-///// Dictionary class
-//#class(sealed) Dictionary
-//{
-//    #field(type:array_list) theList.
-//    #field(type:array)      theHashTable.
-//    #field(type:int)        theHashMask.
-//    
-//    #field theDefault.
-//
-//    /// Creates a dictionary
-//    #constructor new
-//        <= new &int:32 &int:32 &object:$nil.
-//
-//    #constructor new &default:aDefault
-//        <= new &int:32 &int:32 &object:aDefault.
-//
-//    #constructor new:aCapacity &default:aDefault
-//        <= new &int:(aCapacity int) &int:32 &object:aDefault.
-//
-//    /// Creates a dictionary
-//    #constructor new &int:aCapacity &int:aHashLength &object:aDefault
-//    [
-//        #var(type:int)size := 32.
-//        #loop (size < aHashLength)?
-//        [
-//            size := size shift &int:-1.
-//        ].
-//        
-//        size := size - 1.
-//        theHashMask := IntNumber new &int:size.
-//        
-//        theHashTable := Array new &int:aHashLength.
-//        theList := ArrayList new &int:aCapacity.
-//        
-//        theDefault := aDefault.
-//    ]
-//    
-//    /// Gets a dictionary item with the specified key
-//    #method getAt : aKey
-//        = aKey cast:%getAt &to:$self.
-//        
-//    /// Sets a dictionary item with the specified key
-//    #method setAt : aKey : anObject
-//    [
-//        #var(type:int)aHashCode := aKey hash_code.
-//        
-//        $self $getItem &int:aHashCode &key:aKey set &object:anObject.
-//    ]
-//        
-//    #method(stacksafe) $getItem &int:aCode &key:aKey
-//    [
-//        #var(type:int)aHashCode := aCode && theHashMask.
-//        
-//        #var aHashItem := theHashTable getAt &int:aHashCode.
-//        ($nil == aHashItem) ?
-//        [
-//            aHashItem := IntArray new &int:5.
-//            
-//            aHashItem write &int:0 &int:1.
-//            
-//            theHashTable setAt &int:aHashCode &object:aHashItem.
-//        ].
-//        
-//        #var(type:intarray) aBacket := aHashItem intarray.        
-//        #var(type:int)aLength := 0.        
-//        aBacket read &int:0 &vint:aLength.
-//        
-//        #var(type:int)i := 1.
-//        #loop (i < aLength)?
-//        [
-//            #var(type:int)anItemIndex.
-//            aBacket read &int:i &vint:anItemIndex.
-//            
-//            #var anItem := theList getAt &int:anItemIndex.
-//            
-//            (aKey safeEqual:(anItem key))
-//                ? [ ^ anItem. ].
-//            
-//            i := i + 1.
-//        ].
-//        
-//        #var aNewItem := KeyValue new &key:aKey &object:theDefault.
-//        
-//        theList readLength &vint:i.
-//        theList append:aNewItem.
-//        
-//        // Extend a backet
-//        #var(type:int)aCapacity.
-//        aBacket readLength &vint:aCapacity.
-//        (aCapacity == aLength)
-//            ? [
-//                #var(type:intarray)aNewBacket := IntArray new &int:(aCapacity + 5).
-//                aNewBacket write &int:0 &int:aCapacity &intarray:aBacket.
-//
-//                aBacket := aNewBacket.
-//                theHashTable setAt &int:aHashCode &object:aNewBacket.
-//            ].
-//            
-//        aBacket write &int:aLength &int:i.
-//            
-//        aLength := aLength + 1.
-//        aBacket write &int:0 &int:aLength.
-//        
-//        ^ aNewItem.
-//    ]    
-//        
-//    #method(generic)getAt : aKey
-//    [
-//        #var(type:int)aHashCode := aKey hash_code.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//            
-//    #method getAt &int:aKey
-//    [
-//        #var(type:int)aHashCode.
-//        aKey readHashCode &vint:aHashCode.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//        
-//    #method getAt &long:aKey
-//    [
-//        #var(type:int)aHashCode.
-//        aKey readHashCode &vint:aHashCode.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//        
-//    #method getAt &real:aKey
-//    [
-//        #var(type:int)aHashCode.
-//        aKey readHashCode &vint:aHashCode.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//        
-//    #method getAt &char:aKey
-//    [
-//        #var(type:int)aHashCode.
-//        aKey readHashCode &vint:aHashCode.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//        
-//    #method getAt &literal:aKey
-//    [
-//        #var(type:int)aHashCode.
-//        aKey readHashCode &vint:aHashCode.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//        
-//    #method getAt &wide:aKey
-//    [
-//        #var(type:int)aHashCode.
-//        aKey readHashCode &vint:aHashCode.
-//        
-//        ^ $self $getItem &int:aHashCode &key:aKey object.
-//    ]
-//
-//    /// Returns itself
-//    #method dictionary = $self.
-//
+
+// --- Dictionary ---
+
+/// Dictionary class
+#class(sealed) Dictionary
+{
+    #field(type:array_list) theList.
+    #field(type:array)      theHashTable.
+    #field(type:int)        theHashMask.
+    
+    #field theDefault.
+
+    /// Creates a dictionary
+    #constructor new
+        <= new &int:32 &int:32 &object:$nil.
+
+    #constructor new &default:aDefault
+        <= new &int:32 &int:32 &object:aDefault.
+
+    #constructor new:aCapacity &default:aDefault
+        <= new &int:(aCapacity int) &int:32 &object:aDefault.
+
+    /// Creates a dictionary
+    #constructor new &int:aCapacity &int:aHashLength &object:aDefault
+    [
+        #var(type:int)size := 32.
+        #loop (size < aHashLength)?
+        [
+            size := size shift &int:-1.
+        ].
+        
+        size := size - 1.
+        theHashMask := IntNumber new &int:size.
+        
+        theHashTable := Array new &int:aHashLength.
+        theList := ArrayList new &int:aCapacity.
+        
+        theDefault := aDefault.
+    ]
+    
+    /// Gets a dictionary item with the specified key
+    #method getAt : aKey
+        = aKey cast:%getAt &to:$self.
+        
+    /// Sets a dictionary item with the specified key
+    #method setAt : aKey : anObject
+    [
+        #var(type:int)aHashCode := aKey hash_code.
+        
+        $self $getItem &int:aHashCode &key:aKey set &object:anObject.
+    ]
+        
+    #method(stacksafe) $getItem &int:aCode &key:aKey
+    [
+        #var(type:int)aHashCode := aCode && theHashMask.
+        
+        #var aHashItem := theHashTable getAt &int:aHashCode.
+        ($nil == aHashItem) ?
+        [
+            aHashItem := IntArray new &int:5.
+            
+            aHashItem write &int:0 &int:1.
+            
+            theHashTable setAt &int:aHashCode &object:aHashItem.
+        ].
+        
+        #var(type:intarray) aBacket := aHashItem intarray.        
+        #var(type:int)aLength := 0.        
+        aBacket read &int:0 &vint:aLength.
+        
+        #var(type:int)i := 1.
+        #loop (i < aLength)?
+        [
+            #var(type:int)anItemIndex.
+            aBacket read &int:i &vint:anItemIndex.
+            
+            #var anItem := theList getAt &int:anItemIndex.
+            
+            (aKey safeEqual:(anItem key))
+                ? [ ^ anItem. ].
+            
+            i := i + 1.
+        ].
+        
+        #var aNewItem := KeyValue new &key:aKey &object:theDefault.
+        
+        theList readLength &vint:i.
+        theList append:aNewItem.
+        
+        // Extend a backet
+        #var(type:int)aCapacity.
+        aBacket readLength &vint:aCapacity.
+        (aCapacity == aLength)
+            ? [
+                #var(type:intarray)aNewBacket := IntArray new &int:(aCapacity + 5).
+                aNewBacket write &int:0 &int:aCapacity &intarray:aBacket.
+
+                aBacket := aNewBacket.
+                theHashTable setAt &int:aHashCode &object:aNewBacket.
+            ].
+            
+        aBacket write &int:aLength &int:i.
+            
+        aLength := aLength + 1.
+        aBacket write &int:0 &int:aLength.
+        
+        ^ aNewItem.
+    ]    
+        
+    #method(generic)getAt : aKey
+    [
+        #var(type:int)aHashCode := aKey hash_code.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+            
+    #method getAt &int:aKey
+    [
+        #var(type:int)aHashCode.
+        aKey readHashCode &vint:aHashCode.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+        
+    #method getAt &long:aKey
+    [
+        #var(type:int)aHashCode.
+        aKey readHashCode &vint:aHashCode.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+        
+    #method getAt &real:aKey
+    [
+        #var(type:int)aHashCode.
+        aKey readHashCode &vint:aHashCode.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+        
+    #method getAt &char:aKey
+    [
+        #var(type:int)aHashCode.
+        aKey readHashCode &vint:aHashCode.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+        
+    #method getAt &literal:aKey
+    [
+        #var(type:int)aHashCode.
+        aKey readHashCode &vint:aHashCode.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+        
+    #method getAt &wide:aKey
+    [
+        #var(type:int)aHashCode.
+        aKey readHashCode &vint:aHashCode.
+        
+        ^ $self $getItem &int:aHashCode &key:aKey object.
+    ]
+
+    /// Returns itself
+    #method dictionary = $self.
+
 //    /// Returns a dictionary enumerator
 //    #method enumerator => theList.
 //    
 //    #method array_list
 //        = theList clone.
-//            
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
-//
+            
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
+    
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
+
 //    /// Clones a dictionary
 //    #method clone 
 //    [
@@ -795,4 +795,4 @@
 //        
 //        ^ aList.
 //    ]
-//}
+}

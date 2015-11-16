@@ -29,7 +29,7 @@
     OpenArgTest eval.
     DateTest eval.
     ListTest eval.
-//    DictionaryTest eval.
+    DictionaryTest eval.
 ////    GetPropertyTest eval.
 //    BoxingTest eval.
 //    OuterFieldTest eval.
