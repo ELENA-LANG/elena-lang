@@ -2451,9 +2451,9 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 
          message.append('&');
          ref_t subjRef = scope.moduleScope->mapSubject(subject, message);
-         //if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-         //   count = OPEN_ARG_COUNT;
-         //}
+         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            count = OPEN_ARG_COUNT;
+         }
 
          arg = arg.nextNode();
       }
