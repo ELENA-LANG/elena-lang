@@ -30,8 +30,7 @@
     DateTest eval.
     ListTest eval.
     DictionaryTest eval.
-////    GetPropertyTest eval.
-//    BoxingTest eval.
+    BoxingTest eval.
 //    OuterFieldTest eval.
 //    LocalTest eval.
 //    StructTest eval.

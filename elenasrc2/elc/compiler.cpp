@@ -2170,6 +2170,8 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          scope.writer->closeNode();
 
          variable.param = level;
+
+         size = 0; // to indicate assigning by ref
       }
 
       DNode assigning = node.firstChild();
