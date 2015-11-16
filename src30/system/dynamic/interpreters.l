@@ -1,6 +1,6 @@
-//#import system.
+#import system.
 //#import system'routines.
-//
+
 //// --- CastOver ---
 //
 //#class(group) CastOver :: BaseArray
@@ -21,33 +21,33 @@
 //    
 //    #method => system'internal'handle_castover.
 //}
-//
-//// --- Tape ---
-//
-//#class(group) Tape :: BaseArray
-//{
-//    #method => system'internal'handle_tape.
-//}
-//
-//// --- tapeControl ---
-//
-//#symbol tapeControl =
-//{
-//    getAt :anIndex &args:Params
-//    [
-//        #var(type:int)aLength := Params length.
-//
-//        ^ Params@(aLength - anIndex int).
-//    ]
-//}.
-//
-//// --- Struct ---
-//
-//#class(group) Struct :: BaseArray
-//{
-//    #method => system'internal'handle_selector.
-//}
-//
+
+// --- Tape ---
+
+#class(group) Tape :: BaseArray
+{
+    #method => system'internal'handle_tape.
+}
+
+// --- tapeControl ---
+
+#symbol tapeControl =
+{
+    getAt :anIndex &args:Params
+    [
+        #var(type:int)aLength := Params length.
+
+        ^ Params@(aLength - anIndex int).
+    ]
+}.
+
+// --- Struct ---
+
+#class(group) Struct :: BaseArray
+{
+    #method => system'internal'handle_selector.
+}
+
 //// --- Dynamic ---
 //
 //#class Dynamic

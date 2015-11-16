@@ -21,16 +21,16 @@
     #method => system'internal'dispatch.
 }
 
-//// --- nil constant ---
-//
-///// A nil value
-//#symbol nil =
-//{
-//    /// Returns true if the specified object is nil.
-//    #method(type:bool) equal : anObject = ($nil == anObject).
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    #method(generic)get = $nil.
-//}.
+// --- nil constant ---
+
+/// A nil value
+#symbol nil =
+{
+    /// Returns true if the specified object is nil.
+    #method(type:bool) equal : anObject = ($nil == anObject).
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    #method(generic)get = $nil.
+}.

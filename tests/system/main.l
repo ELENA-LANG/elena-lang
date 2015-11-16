@@ -31,12 +31,12 @@
     ListTest eval.
     DictionaryTest eval.
     BoxingTest eval.
-//    OuterFieldTest eval.
-//    LocalTest eval.
-//    StructTest eval.
-//    GroupTest eval.
-//    GenericMethodTest eval.
-//    ConstructorTest eval.
+    OuterFieldTest eval.
+    LocalTest eval.
+    StructTest eval.
+    GroupTest eval.
+    GenericMethodTest eval.
+    ConstructorTest eval.
 //    DTOToStructTest eval.
 //    UnboxTest eval.
 //    ByRefTest eval.

@@ -1,7 +1,7 @@
 #define system.
 #define system'routines.
 #define system'collections.
-//#define system'dynamic.
+#define system'dynamic.
 #define system'calendar.
 //#define system'text.
 //#define system'io.
@@ -102,37 +102,37 @@
         3 ? [ console writeLine:"=> operator works!". ].
 ].
 
-//// --- LocalTest ---
-//
-//#symbol LocalTester =
-//{
-//    do &int:n
-//    [
-//        #var o := n.
-//    ]
-//}.
-//
-//#symbol LocalTest =
-//[
-//    #var(type:int)n := 3.    
-//    n := n + 1.
-//    
-//    LocalTester do &int:n.
-//    
-//    #var(type:long)l := 12345678901234566l.
-//    l := l + 1l.
-//    
-//    #var o := n.
-//    #var o2 := l.
-//].
-//
-//// --- OuterFieldTest ---
-//
-//#symbol OuterFieldTest =
-//[
-//    #var i := Integer new.
-//    { eval : n [ i << n. ] } eval:3.
-//].
+// --- LocalTest ---
+
+#symbol LocalTester =
+{
+    do &int:n
+    [
+        #var o := n.
+    ]
+}.
+
+#symbol LocalTest =
+[
+    #var(type:int)n := 3.    
+    n := n + 1.
+    
+    LocalTester do &int:n.
+    
+    #var(type:long)l := 12345678901234566l.
+    l := l + 1l.
+    
+    #var o := n.
+    #var o2 := l.
+].
+
+// --- OuterFieldTest ---
+
+#symbol OuterFieldTest =
+[
+    #var i := Integer new.
+    { eval : n [ i << n. ] } eval:3.
+].
 
 #symbol BoxingTester =
 {
@@ -578,85 +578,85 @@
 //    GetPropertyAgent eval:%property[2].
 //].
 
-//#symbol StructTest =
-//[
-//    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, tapeControl, %(getAt&args)(1), system'console, %(writeLine)(1) )). 
-//
-//    #var x := a x.
-//
-//    a eval&print:"Struct method works".
-//].
-//
-//#symbol GroupMember1 =
-//{
-//    m1 : prm = "group 1 " + prm.
-//}.
-//
-//#symbol GroupMember2 =
-//{
-//    m2 : prm : prm2 = "group 2 " + prm.
-//}.
-//
-//#symbol GroupTest =
-//[
-//    #var g := Group(GroupMember1, GroupMember2).
-//    
-//    #var m1 := g m1:"called".
-//    #var m2 := g m2:"called":2.
-//].
-//
-//// --- ClassWithGeneric ---
-//
-//#class ClassWithGeneric
-//{
-//    #field theExtension.
-//    
-//    #constructor new : anExtension
-//    [
-//        theExtension := anExtension.
-//    ]
-//    
-//    #method x = 2.
-//    
-//    #method(generic)get
-//    [
-//        ^ nil.
-//    ]
-//    
-//    #method => theExtension.
-//}
-//
-//// --- GenericMethodTest --
-//
-//#symbol GenericMethodTest =
-//[
-//    #var o := ClassWithGeneric new:2.
-//    
-//    #var x := o x.
-//    #var y := o y.
-//    
-//    #var s := o add:3.
-//].
-//
-//#class BaseClass
-//{
-//    #field theField1.
-//                   
-//    #constructor new [ theField1 := 1. ]
-//}
-//
-//#class ChildClass :: BaseClass
-//{
-//    #field theField2.
-//    
-//    #constructor new <= ( %new ) [ theField2 := 2. ]
-//}
-//
-//#symbol ConstructorTest =
-//[
-//    #var o := ChildClass new.
-//].
-//
+#symbol StructTest =
+[
+    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, tapeControl, %(getAt&args)(1), system'console, %(writeLine)(1) )). 
+
+    #var x := a x.
+
+    a eval&print:"Struct method works".
+].
+
+#symbol GroupMember1 =
+{
+    m1 : prm = "group 1 " + prm.
+}.
+
+#symbol GroupMember2 =
+{
+    m2 : prm : prm2 = "group 2 " + prm.
+}.
+
+#symbol GroupTest =
+[
+    #var g := Group(GroupMember1, GroupMember2).
+    
+    #var m1 := g m1:"called".
+    #var m2 := g m2:"called":2.
+].
+
+// --- ClassWithGeneric ---
+
+#class ClassWithGeneric
+{
+    #field theExtension.
+    
+    #constructor new : anExtension
+    [
+        theExtension := anExtension.
+    ]
+    
+    #method x = 2.
+    
+    #method(generic)get
+    [
+        ^ nil.
+    ]
+    
+    #method => theExtension.
+}
+
+// --- GenericMethodTest --
+
+#symbol GenericMethodTest =
+[
+    #var o := ClassWithGeneric new:2.
+    
+    #var x := o x.
+    #var y := o y.
+    
+    #var s := o add:3.
+].
+
+#class BaseClass
+{
+    #field theField1.
+                   
+    #constructor new [ theField1 := 1. ]
+}
+
+#class ChildClass :: BaseClass
+{
+    #field theField2.
+    
+    #constructor new <= ( %new ) [ theField2 := 2. ]
+}
+
+#symbol ConstructorTest =
+[
+    #var o := ChildClass new.
+].
+
 //#symbol DTOToStructTest =
 //[
 //    #var aDTO := { X = 2. Y = 3. Z = 4. }.    

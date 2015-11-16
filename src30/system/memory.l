@@ -1815,7 +1815,7 @@
     #method(stacksafe) readLength &vint:aLength
         => system'internal'args_getlen.
         
-    #method(stacksafe) length
+    #method(stacksafe,type:int) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
