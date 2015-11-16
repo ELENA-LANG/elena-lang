@@ -3419,6 +3419,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       return retVal;
    }
 
+   if (operator_id == SET_REFER_MESSAGE_ID)
+      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+
    int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
 
    // otherwise operation is replaced with a normal message call
