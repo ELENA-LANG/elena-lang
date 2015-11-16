@@ -1,82 +1,82 @@
 #import system.
 
-//#subject(class:system'collections'ListItem)   list_item.
-//
-//#subject(class:system'collections'List)list.
+#subject(class:system'collections'ListItem)   list_item.
+
+#subject(class:system'collections'List)list.
 #subject(class:system'collections'ArrayList)  array_list.
 //#subject(class:system'collections'Dictionary) dictionary.
-//
-//// --- ListItem ---
-//
-///// A list item
-//#class(sealed) ListItem
-//{
-//    #field                 theContent.
-//    #field(type:list_item) theNext.
-//    
-//    /// Creates a new item
-//    #constructor new : aValue
-//    [
-//        theContent := aValue.
-//    ]
-//
-//    /// Returns the item object
-//    #method get = theContent.
-//            
-//    /// Sets the item object
-//    #method set : anObject
-//    [
-//        theContent := anObject.
-//    ]    
-//
-//    /// Returns the next item
-//    #method(type:list_item) nextItem = theNext.
-//
-//    /// Sets the next item
-//    #method setNextItem &list_item:aNext
-//    [
-//        theNext := aNext.
-//    ]
-//}
-//
-//// --- ListEnumerator ---
-//
-///// A list enumerator
-//#class ListEnumerator :: Enumerator
-//{
-//    #field(type:list)     theList.
-//    #field(type:list_item)theCurrent.
-//    
-//    /// Creates a list enumerator
-//    #constructor new &list:aList
-//    [
-//        theList := aList.
-//    ]
-//
-//    /// Creates a list enumerator
-//    #constructor new : anObject
-//        <= new &list:(anObject list).
-//
-//    /// Returns the current object
-//    #method get = theCurrent get.
-//    
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theCurrent := $nil.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        ($nil == theCurrent)
-//            ? [ theCurrent := theList topItem. ]
-//            ! [ theCurrent := theCurrent nextItem. ].
-//            
-//        ^ $nil != theCurrent.
-//    ]
-//}
-//
+
+// --- ListItem ---
+
+/// A list item
+#class(sealed) ListItem
+{
+    #field                 theContent.
+    #field(type:list_item) theNext.
+    
+    /// Creates a new item
+    #constructor new : aValue
+    [
+        theContent := aValue.
+    ]
+
+    /// Returns the item object
+    #method get = theContent.
+            
+    /// Sets the item object
+    #method set : anObject
+    [
+        theContent := anObject.
+    ]    
+
+    /// Returns the next item
+    #method(type:list_item) nextItem = theNext.
+
+    /// Sets the next item
+    #method setNextItem &list_item:aNext
+    [
+        theNext := aNext.
+    ]
+}
+
+// --- ListEnumerator ---
+
+/// A list enumerator
+#class ListEnumerator :: Enumerator
+{
+    #field(type:list)     theList.
+    #field(type:list_item)theCurrent.
+    
+    /// Creates a list enumerator
+    #constructor new &list:aList
+    [
+        theList := aList.
+    ]
+
+    /// Creates a list enumerator
+    #constructor new : anObject
+        <= new &list:(anObject list).
+
+    /// Returns the current object
+    #method get = theCurrent get.
+    
+    /// Resets the enumerator
+    #method reset
+    [
+        theCurrent := $nil.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        ($nil == theCurrent)
+            ? [ theCurrent := theList topItem. ]
+            ! [ theCurrent := theCurrent nextItem. ].
+            
+        ^ $nil != theCurrent.
+    ]
+}
+
 //// --- ListIndexer ---
 //
 ///// A list iterator
@@ -139,54 +139,54 @@
 //        theIndex write &int:i.
 //    ]
 //}
-//
-//// --- List ---
-//
-///// A list object
-//#class(sealed) List
-//{
-//    #field theState.
-//    #field(type:vint)      theCount.
-//    #field(type:list_item) theTop.
-//    #field(type:list_item) theLast.
-//
-//    /// Creates a list
-//    #constructor new
-//    [
-//        theState := %empty.
-//        theCount := Integer new.
-//    ]
-//
-//    /// Returns the top item
-//    #method(type:list_item) topItem = theTop.
-//
-//    /// Returns the top object
-//    #method first = theTop get.
-//
-//    /// Returns the last object
-//    #method last = theLast get.    
-//
-//    #method append&empty : anObject
-//    [
-//        theCount write &int:1.
-//        theTop := ListItem new:anObject.
-//        theLast := theTop.
-//        theState := %active.
-//    ]
-//
+
+// --- List ---
+
+/// A list object
+#class(sealed) List
+{
+    #field theState.
+    #field(type:vint)      theCount.
+    #field(type:list_item) theTop.
+    #field(type:list_item) theLast.
+
+    /// Creates a list
+    #constructor new
+    [
+        theState := %empty.
+        theCount := Integer new.
+    ]
+
+    /// Returns the top item
+    #method(type:list_item) topItem = theTop.
+
+    /// Returns the top object
+    #method first = theTop get.
+
+    /// Returns the last object
+    #method last = theLast get.    
+
+    #method append&empty : anObject
+    [
+        theCount write &int:1.
+        theTop := ListItem new:anObject.
+        theLast := theTop.
+        theState := %active.
+    ]
+
 //    #method insert&empty : anObject
 //        <= %append &empty:anObject.
-//
-//    #method append&active : anObject
-//    [
-//        theCount += 1.
-//        
-//        #var(type:list_item) aNewItem := ListItem new:anObject.
-//        
-//        theLast setNextItem &list_item:aNewItem.        
-//        theLast := aNewItem.
-//    ]
-//
+
+    #method append&active : anObject
+    [
+        theCount += 1.
+        
+        #var(type:list_item) aNewItem := ListItem new:anObject.
+        
+        theLast setNextItem &list_item:aNewItem.        
+        theLast := aNewItem.
+    ]
+
 //    #method insert&active : anObject
 //    [
 //        theCount += 1.        
@@ -221,10 +221,10 @@
 //    /// Returns the object at the specified position
 //    #method(stacksafe) getAt &int:anIndex
 //        = $self getItemAt &int:anIndex get.
-//
-//    /// Appends a new object to the end of the list
-//    #method append : anObject => theState.
-//
+
+    /// Appends a new object to the end of the list
+    #method append : anObject => theState.
+
 //    /// Inserts a new object to the beginning of the list
 //    #method insert : anObject => theState.
 //
@@ -296,22 +296,22 @@
 //        theTop := $nil.
 //        theLast := $nil.
 //    ]
-//    
-//    /// Returns the list enumerator
-//    #method enumerator = ListEnumerator new &list:$self.
-//    
+
+    /// Returns the list enumerator
+    #method enumerator = ListEnumerator new &list:$self.
+
 //    /// Returns the list iterator
 //    #method iterator = ListIterator new &list:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
-//
-//    /// Returns itself
-//    #method list = $self.
-//    
+    
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
+    
+    /// Dispatches the verb to the target object with enumerable subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
+
+    /// Returns itself
+    #method list = $self.
+    
 //    /// Clones the list
 //    #method clone 
 //    [
@@ -325,7 +325,7 @@
 //            anItem := anItem nextItem.
 //        ].
 //    ]
-//}
+}
 
 // --- ArrayList ---
 

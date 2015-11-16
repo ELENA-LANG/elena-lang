@@ -28,7 +28,7 @@
     ExceptionTest eval.
     OpenArgTest eval.
     DateTest eval.
-//    ListTest eval.
+    ListTest eval.
 //    DictionaryTest eval.
 ////    GetPropertyTest eval.
 //    BoxingTest eval.

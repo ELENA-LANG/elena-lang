@@ -21,7 +21,7 @@ using namespace _ELENA_;
 //#define HINT_INLINE           0x40000000
 //#define HINT_LOOP             0x20000000
 //#define HINT_TRY              0x10000000
-//#define HINT_ALT              0x12000000
+#define HINT_ALT              0x12000000
 //#define HINT_CATCH            0x08000000
 //#define HINT_STACKSAFE_CALL   0x04000000
 //#define HINT_INVERTED         0x02000000
@@ -3882,7 +3882,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       member = member.nextNode();
    }
 
-//   bool nextOperation = false;
    while (member != nsNone) {
       if (member == nsAssigning) {
          ref_t classReference = 0;
@@ -3925,14 +3924,15 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
       }
-//      else if (member == nsAltMessageOperation) {
-//         scope.writer->newNode(lxAlternative);
-//         scope.writer->appendNode(lxResult);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->closeNode();
-//      }
+      else if (member == nsAltMessageOperation) {
+         scope.writer->newBookmark();
+
+         scope.writer->appendNode(lxCurrent);
+
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->removeBookmark();
+      }
       else if (member == nsCatchMessageOperation) {
          scope.writer->newBookmark();
 
@@ -4450,11 +4450,22 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode)
 {
    bool tryMode = false;
+   bool altMode = false;
 
    if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
       scope.writer->newNode(lxTrying);
       tryMode = true;
    }      
+   else if (findSymbol(node.firstChild(), nsAltMessageOperation)) {
+      // for alt mode the target object should be presaved
+      scope.writer->newNode(lxExpression);
+      scope.writer->newNode(lxVariable);
+      compileExpression(node.firstChild(), scope, 0, 0);
+      scope.writer->closeNode();
+
+      scope.writer->newNode(lxAlt);
+      altMode = true;
+   }
 
    scope.writer->newBookmark();
 
@@ -4464,11 +4475,14 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
       if (member.nextNode() != nsNone) {
          if (member == nsObject) {
-            objectInfo = compileObject(member, scope, mode);
+            if (!altMode) {
+               objectInfo = compileObject(member, scope, mode);
 
-            // skip boxing for assigning target
-            if (!findSymbol(member, nsAssigning))
-               writeBoxing(node.FirstTerminal(), scope, objectInfo, 0);
+               // skip boxing for assigning target
+               if (!findSymbol(member, nsAssigning))
+                  writeBoxing(node.FirstTerminal(), scope, objectInfo, 0);
+            }
+            else scope.writer->appendNode(lxResult);
          }
          if (member != nsNone) {
             objectInfo = compileOperations(member, scope, objectInfo, mode);
@@ -4492,8 +4506,16 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
    scope.writer->removeBookmark();
 
-   if (tryMode)
-      scope.writer->closeNode();
+   if (tryMode || altMode) {
+      scope.writer->closeNode(); // close try / alt
+
+      if (altMode) {
+         scope.writer->appendNode(lxReleasing, 1);
+         scope.writer->closeNode(); // close expression
+      }
+         
+   }
+      
 
    return objectInfo;
 }

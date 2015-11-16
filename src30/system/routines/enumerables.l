@@ -135,10 +135,10 @@
 //      
 //    #method seek &each:aFunction
 //      = aFunction retrieve &enumerator:(self enumerator).
-//
-//    #method safeSeek : aValue
-//        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
-//
+
+    #method safeSeek : aValue
+        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
+
 //    #method ifExists : aValue
 //        = $nil != self::enumerableOp safeSeek:aValue.
 //

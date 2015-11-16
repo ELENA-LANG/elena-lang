@@ -131,8 +131,7 @@ public:
    void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
-//   void declareAlt(CommandTape& tape);
-////   void declarePrimitiveCatch(CommandTape& tape);
+   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -226,8 +225,7 @@ public:
 
 ////   void setLabel(CommandTape& tape);
    void endCatch(CommandTape& tape);
-//   void endAlt(CommandTape& tape);
-//   void endPrimitiveCatch(CommandTape& tape);
+   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
@@ -296,6 +294,7 @@ public:
 
    void translateLocking(CommandTape& tape, SyntaxTree::Node node);
    void translateTrying(CommandTape& tape, SyntaxTree::Node node);
+   void translateAlt(CommandTape& tape, SyntaxTree::Node node);
    void translateLooping(CommandTape& tape, SyntaxTree::Node node);
    void translateBranching(CommandTape& tape, SyntaxTree::Node node);
    void translateSwitching(CommandTape& tape, SyntaxTree::Node node);

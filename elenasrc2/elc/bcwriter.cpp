@@ -353,28 +353,20 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
 
-//void ByteCodeWriter :: declarePrimitiveCatch(CommandTape& tape)
-//{
-//   int labEnd = tape.newLabel();
-//
-//   // elsen 0 labEnd
-//   tape.write(bcElseN, labEnd, 0);
-//}
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
 
 void ByteCodeWriter :: newFrame(CommandTape& tape)
 {
@@ -1212,20 +1204,12 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    tape.setLabel();
 }
 
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//   // pop
-//
-//   tape.setLabel();
-//   tape.write(bcPop);
-//}
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
 
-//void ByteCodeWriter :: endPrimitiveCatch(CommandTape& tape)
-//{
-//   // labEnd
-//   tape.setLabel();
-//}
+   tape.setLabel();
+}
 
 void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
 {
@@ -3507,6 +3491,29 @@ void ByteCodeWriter :: translateTrying(CommandTape& tape, SyntaxTree::Node node)
    endCatch(tape);
 }
 
+void ByteCodeWriter :: translateAlt(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExpressionMask)) {
+         translateObjectExpression(tape, current);
+
+         if (first) {
+            declareAlt(tape);
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endAlt(tape);
+}
+
 void ByteCodeWriter :: translateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
    declareLoop(tape/*, true*/);
@@ -3687,6 +3694,9 @@ void ByteCodeWriter :: translateObjectExpression(CommandTape& tape, SNode node)
       case lxTrying:
          translateTrying(tape, node);
          break;
+      case lxAlt:
+         translateAlt(tape, node);
+         break;
       case lxReturning:
          translateReturnExpression(tape, node);
          break;
@@ -3772,6 +3782,12 @@ void ByteCodeWriter :: translateExpression(CommandTape& tape, SNode node)
    while (child != lxNone) {
       if (test(child.type, lxObjectMask)) {
          translateObjectExpression(tape, child);
+      }
+      else if (child == lxVariable) {
+         translateObjectExpression(tape, child);
+      }
+      else if (child == lxReleasing) {
+         releaseObject(tape, child.argument);
       }
 
       child = child.nextNode();
