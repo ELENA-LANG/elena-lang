@@ -66,11 +66,11 @@
 //    /// Reads the next line of characters from the standard input stream.
 //    #method read &wide
 //        = theReader read &wide.
-//
-//    /// Reads the next character from the input stream
-//    #method readChar
-//        = theReader char.
-//
+
+    /// Reads the next character from the input stream
+    #method readChar
+        = theReader char.
+
 //    /// Reads the next key code from the input stream
 //    #method readKey
 //        = theReader int.

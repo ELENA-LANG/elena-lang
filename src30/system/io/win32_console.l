@@ -111,11 +111,11 @@
     [
     ]
 
-//    #method free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &handle:theHandle.
-//    ]
+    #method free
+    [
+        system'external'KERNEL32 CloseHandle
+            &int:theHandle.
+    ]
 }
 
 // --- ConsoleReader ---
@@ -129,35 +129,35 @@
         theHandle := aHandle.
     ]
 
-//    #method(stacksafe) read &vchar:aChar
-//    [
-//        #var(type:bytearray,size:20)aDump.
-//        #var(type:int)aNumberRead.
-//        #var(type:short)anEventType.
-//        #var(type:int)aKeyDown.
-//        
-//        #var found := false.
-//        #loop found !
-//        [
-//            system'external'KERNEL32 ReadConsoleInputW
-//                &handle        : theHandle
-//                &bytearray     : aDump
-//                &int           : 1
-//                &vint          : aNumberRead.
-//
-//            aDump read &int:0 &vshort:anEventType.
-//            (anEventType == 1)
-//                ? [  
-//                    aDump read &int:4 &vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1.
-//                ]
-//                ! [ found := false. ].
-//        ].
-//
-//        aDump read &int:14 &vchar:aChar.
-//    ]
-//
+    #method(stacksafe) read &vchar:aChar
+    [
+        #var(type:bytearray,size:20)aDump.
+        #var(type:int)aNumberRead.
+        #var(type:short)anEventType.
+        #var(type:int)aKeyDown.
+        
+        #var found := false.
+        #loop found !
+        [
+            system'external'KERNEL32 ReadConsoleInputW
+                &int           : theHandle
+                &bytearray     : aDump
+                &int           : 1
+                &vint          : aNumberRead.
+
+            aDump read &int:0 &vshort:anEventType.
+            (anEventType == 1)
+                ? [  
+                    aDump read &int:4 &vint:aKeyDown.
+                    
+                    found := aKeyDown == 1.
+                ]
+                ! [ found := false. ].
+        ].
+
+        aDump read &int:14 &vchar:aChar.
+    ]
+
 //    #method read &vint:aKey
 //    [
 //        #var(type:bytearray,size:20)aDump.
@@ -235,20 +235,20 @@
 //        
 //        ^ IntNumber new &int:aRetVal.
 //    ]
-//            
-//    #method char
-//    [
-//        #var(type:char)aRetVal.
-//        $self read &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]
-//
-//    #method free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &handle:theHandle.
-//    ]
+            
+    #method char
+    [
+        #var(type:char)aRetVal.
+        $self read &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]
+
+    #method free
+    [
+        system'external'KERNEL32 CloseHandle
+            &int:theHandle.
+    ]
 }
 
 // --- Console Standard Symbols
