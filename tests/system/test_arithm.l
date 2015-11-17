@@ -1,15 +1,9 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define system'dynamic.
-#define system'calendar.
-//#define system'text.
-//#define system'io.
-//#define system'math.
-//#define system'culture.
-#define extensions.
-//#define extensions'math.
-//#define extensions'text.
+#import system.
+#import system'routines.
+#import system'collections.
+#import system'dynamic.
+#import system'calendar.
+#import extensions.
 
 #symbol XByRefTest =
 [

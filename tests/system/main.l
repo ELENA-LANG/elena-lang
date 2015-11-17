@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 // --- Main ---
 
