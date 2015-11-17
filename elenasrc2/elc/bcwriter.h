@@ -279,37 +279,37 @@ public:
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
-   void translateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
+   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-   void translateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
-   void translateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-   void translateOperation(CommandTape& tape, SyntaxTree::Node node);
-   void translateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
-   void translateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-   void translateExternalCall(CommandTape& tape, SyntaxTree::Node node);
-   void translateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-   void translateCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
+   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateCall(CommandTape& tape, SyntaxTree::Node node);
 
-   void translateLocking(CommandTape& tape, SyntaxTree::Node node);
-   void translateTrying(CommandTape& tape, SyntaxTree::Node node);
-   void translateAlt(CommandTape& tape, SyntaxTree::Node node);
-   void translateLooping(CommandTape& tape, SyntaxTree::Node node);
-   void translateBranching(CommandTape& tape, SyntaxTree::Node node);
-   void translateSwitching(CommandTape& tape, SyntaxTree::Node node);
-   void translateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateCallExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateStructExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateExpression(CommandTape& tape, SyntaxTree::Node node);
-   void translateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
+   void generateLocking(CommandTape& tape, SyntaxTree::Node node);
+   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
+   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
+   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
+   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
+   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
 
-   void translateTree(CommandTape& tape, MemoryDump& dump);
+   void generateTree(CommandTape& tape, MemoryDump& dump);
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };

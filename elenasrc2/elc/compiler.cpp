@@ -5390,6 +5390,12 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
       else {
          writeTerminal(TerminalInfo(), scope, ObjectInfo(okObject));
          compileExtensionMessage(node, scope, ObjectInfo(okObject), ObjectInfo(okConstantClass, 0, classRef));
+
+         // HOT FIX : save the created object
+         scope.writer->newNode(lxAssigning);
+         scope.writer->appendNode(lxLocal, 1);
+         scope.writer->appendNode(lxResult);
+         scope.writer->closeNode();
       }
 
       scope.writer->removeBookmark();
@@ -5597,6 +5603,14 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
    if (resendBody != nsNone) {
       compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
+
+      // HOTFIX : generate the code
+      writer.closeNode();
+      saveSyntaxTree(*scope.moduleScope, classClassScope.tape, scope.syntaxTree);
+
+      // HOTFIX : clear writer and open the node once again
+      writer.clear();
+      writer.newNode(lxRoot);
 
 //      // HOT FIX : raise an error if the frame was open
 //      if (withFrame && embeddable)
@@ -6659,7 +6673,7 @@ void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDum
 {
    optimizeSyntaxTree(scope, dump);
 
-   _writer.translateTree(tape, dump);
+   _writer.generateTree(tape, dump);
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)
