@@ -20,6 +20,15 @@ void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 
    _writer.insertDWord(position, type);
    _writer.insertDWord(position + 4, argument);
+
+   Stack<size_t>::Iterator it = _bookmarks.start();
+   while (!it.Eof()) {
+      if (*it > position) {
+         *it = *it + 8;
+      }
+
+      it++;
+   }
 }
 
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)

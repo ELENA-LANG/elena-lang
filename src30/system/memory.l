@@ -15,38 +15,38 @@
 /// A byte array
 #class(sealed) ByteArray :: BaseByteArray
 {
-//    /// Creates the byte array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        => system'internal'bs_create.
-//
-//    /// Creates the byte array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the copy of a byte subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
-//        => system'internal'bs_copysubarr.
-//    
-//    /// Creates the byte array copy
-//    #constructor(stacksafe) new &bytearray:anArray
-//        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
+    /// Creates the byte array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        => system'internal'bs_create.
+
+    /// Creates the byte array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the copy of a byte subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
+        => system'internal'bs_copysubarr.
+    
+    /// Creates the byte array copy
+    #constructor(stacksafe) new &bytearray:anArray
+        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
     
     /// Returns itself
     #method bytearray = $self.
 
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'bs_getlen.
-//        
-//    /// Returns the byte array length        
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'bs_getlen.
+        
+    /// Returns the byte array length        
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
 //    [
@@ -69,78 +69,78 @@
 //            i := i + 1.
 //        ].
 //    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
-//        => system'internal'bs_read.
-//
-//    /// Copies the byte array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
-//        => system'internal'bs_write.
-//
-//    /// Writes the byte value at specified position
-//    #method(stacksafe) write &int:anIndex &byte:anInt
-//        => system'internal'bs_writebyte.
-//
-//    /// Reads a byte value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vbyte:anInt
-//        => system'internal'bs_readbyte.
-//
-//    /// Writes a short integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &short:anInt
-//        => system'internal'bs_writeword.
-//
-//    /// Reads a short integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vshort:aChar
-//        => system'internal'bs_readword.
-//
-//    /// Writes a character value at the specified position
-//    #method(stacksafe) write &int:anIndex &char:anInt
-//        => system'internal'bs_writedword.
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'internal'bs_readdword.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &int:anInt
-//        => system'internal'bs_writedword.
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vint:anInt
-//        => system'internal'bs_readdword.
-//
-//    /// Writes a long integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &long:aLong
-//        => system'internal'bs_writeqword.
-//
-//    /// Reads a long integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vlong:aLong
-//        => system'internal'bs_readqword.
-//
-//    /// Writes a real value at the specified position
-//    #method(stacksafe) write &int:anIndex &real:aLong
-//        => system'internal'bs_writeqword.
-//
-//    /// Reads a real value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vreal:aLong
-//        => system'internal'bs_readqword.
-//
-//    /// Returns a byte at the specified position
-//    #method getAt : anIndex
-//    [
-//        #var(type:byte)aRetVal.
-//        $self read &int:(anIndex int) &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]        
-//
-//    /// Sets a byte at the specified position
-//    #method setAt : anIndex : aValue
-//    [
-//        $self write &int:(anIndex int) &byte:(aValue byte).
-//    ]
-//    
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
+        => system'internal'bs_read.
+
+    /// Copies the byte array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
+        => system'internal'bs_write.
+
+    /// Writes the byte value at specified position
+    #method(stacksafe) write &int:anIndex &byte:anInt
+        => system'internal'bs_writebyte.
+
+    /// Reads a byte value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
+        => system'internal'bs_readbyte.
+
+    /// Writes a short integer value at the specified position
+    #method(stacksafe) write &int:anIndex &short:anInt
+        => system'internal'bs_writeword.
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vshort:aChar
+        => system'internal'bs_readword.
+
+    /// Writes a character value at the specified position
+    #method(stacksafe) write &int:anIndex &char:anInt
+        => system'internal'bs_writedword.
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'internal'bs_readdword.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:anIndex &int:anInt
+        => system'internal'bs_writedword.
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vint:anInt
+        => system'internal'bs_readdword.
+
+    /// Writes a long integer value at the specified position
+    #method(stacksafe) write &int:anIndex &long:aLong
+        => system'internal'bs_writeqword.
+
+    /// Reads a long integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vlong:aLong
+        => system'internal'bs_readqword.
+
+    /// Writes a real value at the specified position
+    #method(stacksafe) write &int:anIndex &real:aLong
+        => system'internal'bs_writeqword.
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vreal:aLong
+        => system'internal'bs_readqword.
+
+    /// Returns a byte at the specified position
+    #method getAt : anIndex
+    [
+        #var(type:byte)aRetVal.
+        $self read &int:(anIndex int) &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]        
+
+    /// Sets a byte at the specified position
+    #method setAt : anIndex : aValue
+    [
+        $self write &int:(anIndex int) &byte:(aValue byte).
+    ]
+    
 //    /// Concatinates the arrays    
 //    #method(stacksafe,type:bytearray) add &int:aLength2 &bytearray:anArray
 //    [

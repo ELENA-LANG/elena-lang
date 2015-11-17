@@ -160,8 +160,8 @@ public:
    }
    void insertChild(int position, LexicalType type, ref_t argument)
    {
+      insert(position, lxEnding, 0);
       insert(position, type, argument);
-      insert(position + 8, lxEnding, 0);
    }
    void insertChild(LexicalType type, ref_t argument)
    {      

@@ -11,20 +11,15 @@
 //#define extensions'math.
 //#define extensions'text.
 
-#class TopFilter :: Enumerator
-{
-    #field(type:vint)theCounter.
-    #field(type:enumerator)theEnumerator.
+#symbol XUnboxTest =
+[        
+    #var(type:int)n := 1.
     
-    #method next
-    [
-        ((theCounter > 0)and:[ theEnumerator next ])
-            ? [ theCounter -= 1. ^ true. ].
-        
-        ^ false.
-    ]
-}    
-
+    #var o := BoxerHelper new.
+    
+    o init &vint:n.
+].    
+    
 #symbol XTester =
 {
     test            
@@ -693,48 +688,48 @@
     #var z := aCopy Z.
 ].
 
-//#class BoxerHelper
-//{
-//    #constructor new []
-//    
-//    #method init &vint:aRetVal
-//    [
-//        aRetVal << 2.
-//    ]
-//    
-//    #method exchange &ref:anObject1 &ref:anObject2
-//    [
-//        #var tmp := anObject1 value.
-//        anObject1 << (anObject2 value).
-//        anObject2 << tmp.
-//    ]    
-//}
-//
-//#symbol UnboxTest =
-//[        
-//    #var(type:int)n := 1.
-//    
-//    #var o := BoxerHelper new.
-//    
-//    o init &vint:n.
-//            
-//    (2 == n)
-//        ? [ console writeLine:"Unboxing parameter works". ].
-//
-//    #var(type:bytearray,size:4)a.
-//
-//    a@0 := 070h.
-//    a@1 := 080h.
-//    a@2 := 0C0h.
-//    a@3 := 0FFh.
-//
-//    #var(type:int)r.
-//    a read &int:0 &vint:r.
-//    
-//    (0FFC08070h == r)
-//        ? [ console writeLine:"Unboxing object works". ].
-//].
-//
+#class BoxerHelper
+{
+    #constructor new []
+    
+    #method init &vint:aRetVal
+    [
+        aRetVal << 2.
+    ]
+    
+    #method exchange &ref:anObject1 &ref:anObject2
+    [
+        #var tmp := anObject1 value.
+        anObject1 << (anObject2 value).
+        anObject2 << tmp.
+    ]    
+}
+
+#symbol UnboxTest =
+[        
+    #var(type:int)n := 1.
+    
+    #var o := BoxerHelper new.
+    
+    o init &vint:n.
+            
+    (2 == n)
+        ? [ console writeLine:"Unboxing parameter works". ].
+
+    #var(type:bytearray,size:4)a.
+
+    a@0 := 070h.
+    a@1 := 080h.
+    a@2 := 0C0h.
+    a@3 := 0FFh.
+
+    #var(type:int)r.
+    a read &int:0 &vint:r.
+    
+    (0FFC08070h == r)
+        ? [ console writeLine:"Unboxing object works". ].
+].
+
 //#symbol ByRefTest =
 //[
 //    #var a := 2.

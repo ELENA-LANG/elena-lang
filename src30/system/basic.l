@@ -136,25 +136,25 @@
 /// An unsigned 8 bit integer
 #class(sealed,integer:1) ByteNumber :: IntBaseNumber
 {
-//    /// Returns the minimal value (0)
-//    #constructor min
-//        => system'internal'byte_min.
-//    
-//    /// Returns the maxial value (255)
-//    #constructor max
-//        => system'internal'byte_max.
-//    
-//    /// Creates the object with a specified value
-//    #constructor(stacksafe) new &byte:anOperand
-//        => system'internal'int_copy.
-//
-//    /// Creates the object with a specified value
-//    #constructor new : aValue
-//        <= new &byte:(aValue byte).
-//
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        => system'internal'int_init.
+    /// Returns the minimal value (0)
+    #constructor min
+        => system'internal'byte_min.
+    
+    /// Returns the maxial value (255)
+    #constructor max
+        => system'internal'byte_max.
+    
+    /// Creates the object with a specified value
+    #constructor(stacksafe) new &byte:anOperand
+        => system'internal'int_copy.
+
+    /// Creates the object with a specified value
+    #constructor new : aValue
+        <= new &byte:(aValue byte).
+
+    /// Creates the object with a default value (0)
+    #constructor new
+        => system'internal'int_init.
 
     /// Returns itself
     #method byte = $self.
@@ -381,30 +381,30 @@
 /// A signed 16 bit integer
 #class(sealed,integer:2) ShortNumber :: IntBaseNumber
 {
-//    /// Returns the minimal value (-32768)
-//    #constructor min
-//        => system'internal'short_min.
-//    
-//    /// Returns the maxial value (32767)
-//    #constructor max
-//        => system'internal'short_max.
-//    
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &byte:anOperand
-//        => system'internal'int_copy.
-//        
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &short:anOperand
-//        => system'internal'int_copy.
-//
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        => system'internal'int_init.
-//        
-//    /// Creates the object with specified value
-//    #constructor new : anObject
-//        <= new &short:(anObject short).
-//        
+    /// Returns the minimal value (-32768)
+    #constructor min
+        => system'internal'short_min.
+    
+    /// Returns the maxial value (32767)
+    #constructor max
+        => system'internal'short_max.
+    
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &byte:anOperand
+        => system'internal'int_copy.
+        
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &short:anOperand
+        => system'internal'int_copy.
+
+    /// Creates the object with a default value (0)
+    #constructor new
+        => system'internal'int_init.
+        
+    /// Creates the object with specified value
+    #constructor new : anObject
+        <= new &short:(anObject short).
+        
 //    /// Returns the byte value        
 //    #method byte = byteConvertor convert &short:$self.
 //                
@@ -668,11 +668,11 @@
     /// Returns itself
     #method int = $self.
 
-//    /// Returns the value as a short integer    
-//    #method(stacksafe) short = shortConvertor convert &int:$self.
-//
-//    /// Returns the byte value    
-//    #method byte = byteConvertor convert &int:$self.
+    /// Returns the value as a short integer    
+    #method(stacksafe) short = shortConvertor convert &int:$self.
+
+    /// Returns the byte value    
+    #method byte = byteConvertor convert &int:$self.
 
     /// Returns the long integer
     #method long = LongNumber new &int:$self.
@@ -2746,13 +2746,13 @@
     #method => theObject.
 }
 
-//// === Basic Convertors ===
-//
-//// --- convertor helpers ---
-//
-///// A byte convertor
-//#symbol byteConvertor =
-//{
+// === Basic Convertors ===
+
+// --- convertor helpers ---
+
+/// A byte convertor
+#symbol byteConvertor =
+{
 //    /// Converts a character into a byte value and saves the result into an output parameter
 //    #method(stacksafe) convert &char:aValue &vbyte:aRetVal
 //        => system'internal'byte_copychar.
@@ -2760,11 +2760,11 @@
 //    /// Converts a short integer into a byte value and saves the result into an output parameter
 //    #method(stacksafe) convert &short:aValue &vbyte:aRetVal
 //        => system'internal'byte_copyword.
-//        
-//    /// Converts an integer into a byte value and saves the result into an output parameter
-//    #method(stacksafe) convert &int:aValue &vbyte:aRetVal
-//        => system'internal'byte_copyint.
-//        
+        
+    /// Converts an integer into a byte value and saves the result into an output parameter
+    #method(stacksafe) convert &int:aValue &vbyte:aRetVal
+        => system'internal'byte_copyint.
+        
 //    /// Converts a long integer into a byte value and saves the result into an output parameter
 //    #method(stacksafe) convert &long:aValue &vbyte:aRetVal
 //        => system'internal'byte_copylong.
@@ -2802,16 +2802,16 @@
 //        
 //        ^ ByteNumber new &byte:aRetVal.
 //    ]
-//        
-//    /// Converts an integer into a byte value
-//    #method(type:byte,stacksafe) convert &int:aValue
-//    [
-//        #var(type:byte)aRetVal.
-//        $self convert &int:aValue &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//        
+        
+    /// Converts an integer into a byte value
+    #method(type:byte,stacksafe) convert &int:aValue
+    [
+        #var(type:byte)aRetVal.
+        $self convert &int:aValue &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+        
 //    /// Converts a long integer into a byte value
 //    #method(type:byte,stacksafe) convert &long:aValue
 //    [
@@ -2850,7 +2850,7 @@
 //        
 //    #method convert : anObject
 //        = anObject cast:%convert &to:$self.
-//}.
+}.
 
 /// A 16bit integer convertor
 #symbol shortConvertor =
@@ -2895,16 +2895,16 @@
 //        
 //        ^ ShortNumber new &short:aRetVal.
 //    ]
-//        
-//    /// Converts an integer into a short integer value
-//    #method(type:short,stacksafe) convert &int:aValue
-//    [
-//        #var(type:short)aRetVal.
-//        $self convert &int:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//        
+        
+    /// Converts an integer into a short integer value
+    #method(type:short,stacksafe) convert &int:aValue
+    [
+        #var(type:short)aRetVal.
+        $self convert &int:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+        
 //    /// Converts a long integer into a short integer value
 //    #method(type:short,stacksafe) convert &long:aValue
 //    [

@@ -2553,6 +2553,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
 
    int size = 0;
    ref_t classRef = 0;
+   bool unboxRequired = false;
    if (object.type != 0) {
       classRef = moduleScope->typeHints.get(object.type);
    }
@@ -2592,6 +2593,9 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
                object.type = targetTypeRef;
             }
          }
+
+         if (!test(targetInfo.header.flags, elReadOnlyRole))
+            unboxRequired = true;
       }
    }
 
@@ -2623,7 +2627,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       scope.writer->appendNode(lxTarget, classRef);
       appendCoordinate(scope.writer, terminal);
 
-      if (!test(sourceInfo.header.flags, elReadOnlyRole) && (object.kind == lxLocalAddress || object.kind == lxFieldAddress)) {
+      if (unboxRequired && (object.kind == okLocalAddress || object.kind == okFieldAddress)) {
          int level = scope.newLocal();
          scope.writer->insertChild(scope.rootBookmark, lxVariable, 0);
          scope.writer->appendNode(lxTempLocal, level);

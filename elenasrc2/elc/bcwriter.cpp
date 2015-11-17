@@ -146,7 +146,8 @@ void ByteCodeWriter :: excludeFrame(CommandTape& tape)
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
-   tape.write(bdLocal, (ref_t)localName, level);
+   if (!emptystr(localName))
+      tape.write(bdLocal, (ref_t)localName, level);
 }
 
 void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
@@ -3313,6 +3314,7 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
             loadObject(tape, lxLocal, temp.argument);
             if (object == lxLocalAddress) {
                loadBase(tape, object.type, object.argument);
+               copyBase(tape, current.argument);
             }
             else if (temp == lxFieldAddress) {
                if (node.argument == 4) {

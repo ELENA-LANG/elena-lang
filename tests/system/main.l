@@ -38,7 +38,7 @@
     GenericMethodTest eval.
     ConstructorTest eval.
     DTOToStructTest eval.
-//    UnboxTest eval.
+    UnboxTest eval.
 //    ByRefTest eval.
 //    SuperTest eval.
 //    EmbedConstTest eval.
