@@ -11,14 +11,16 @@
 //#define extensions'math.
 //#define extensions'text.
 
-#symbol XUnboxTest =
-[        
-    #var(type:int)n := 1.
+#symbol XByRefTest =
+[
+    #var a := 2.
+    #var b := "hello".
     
-    #var o := BoxerHelper new.
+    BoxerHelper new exchange &ref:a &ref:b.
     
-    o init &vint:n.
-].    
+    ((a == "hello")and:(b == 2))
+        ? [ console writeLine:"ByRef routine works". ].
+].
     
 #symbol XTester =
 {
@@ -730,17 +732,17 @@
         ? [ console writeLine:"Unboxing object works". ].
 ].
 
-//#symbol ByRefTest =
-//[
-//    #var a := 2.
-//    #var b := "hello".
-//    
-//    BoxerHelper new exchange &ref:a &ref:b.
-//    
-//    ((a == "hello")and:(b == 2))
-//        ? [ console writeLine:"ByRef routine works". ].
-//].
-//
+#symbol ByRefTest =
+[
+    #var a := 2.
+    #var b := "hello".
+    
+    BoxerHelper new exchange &ref:a &ref:b.
+    
+    ((a == "hello")and:(b == 2))
+        ? [ console writeLine:"ByRef routine works". ].
+].
+
 //#class Parent
 //{
 //    #method print

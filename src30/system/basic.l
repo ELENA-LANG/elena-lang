@@ -2638,73 +2638,73 @@
 //    
 //    #method => theObject.
 //}
-//
-///// A generic variable. 
-/////
-///// Extends an assigned value
-//#class(variable) Variable
-//{
-//    #field theValue.
-//    
-//    /// Creates the empty variable
-//    #constructor new
-//    [
-//    ]        
-//        
-//    /// Creates the variable
-//    #constructor new : aValue
-//    [
-//        theValue := aValue.
-//    ]
-//
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    #method(type:bool) equal : anObject
-//        => theValue.
-//      
-//    /// Assigns the variable
-//    #method write : aValue
-//    [
-//        theValue := aValue.
-//    ]
-//        
-//    /// Returns the value
-//    #method value = theValue.        
-//
-//    /// Appends the value
-//    #method append : aValue
-//    [
-//        ($nil == theValue)
-//            ? [ theValue := aValue. ]
-//            ! [ theValue := theValue + aValue. ].
-//    ]
-//    
-//    /// Subtracts the value
-//    #method reduce : aValue
-//    [
-//        theValue := theValue - aValue.
-//    ]
-//
-//    /// Multiplies by the value
-//    #method multiplyBy : aValue
-//    [
-//        theValue := theValue * aValue.
-//    ]
-//    
-//    /// Divides into the value
-//    #method divideInto : aValue
-//    [
-//        theValue := theValue / aValue.
-//    ]
-//    
-//    /// Dispatches the verb to the target object
-//    #method cast : aVerb &to:aTarget => theValue.
-//    
-//    /// Dispatches the verb to the target object
-//    #method cast : aVerb &to:aTarget &with:aParam => theValue.
-//
-//    /// Expands the value
-//    #method => theValue.
-//}
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+#class(variable) Variable
+{
+    #field theValue.
+    
+    /// Creates the empty variable
+    #constructor new
+    [
+    ]        
+        
+    /// Creates the variable
+    #constructor new : aValue
+    [
+        theValue := aValue.
+    ]
+
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    #method(type:bool) equal : anObject
+        => theValue.
+      
+    /// Assigns the variable
+    #method write : aValue
+    [
+        theValue := aValue.
+    ]
+        
+    /// Returns the value
+    #method value = theValue.        
+
+    /// Appends the value
+    #method append : aValue
+    [
+        ($nil == theValue)
+            ? [ theValue := aValue. ]
+            ! [ theValue := theValue + aValue. ].
+    ]
+    
+    /// Subtracts the value
+    #method reduce : aValue
+    [
+        theValue := theValue - aValue.
+    ]
+
+    /// Multiplies by the value
+    #method multiplyBy : aValue
+    [
+        theValue := theValue * aValue.
+    ]
+    
+    /// Divides into the value
+    #method divideInto : aValue
+    [
+        theValue := theValue / aValue.
+    ]
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theValue.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theValue.
+
+    /// Expands the value
+    #method => theValue.
+}
 
 // --- KeyValue ---
 

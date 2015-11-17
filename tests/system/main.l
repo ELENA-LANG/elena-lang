@@ -39,7 +39,7 @@
     ConstructorTest eval.
     DTOToStructTest eval.
     UnboxTest eval.
-//    ByRefTest eval.
+    ByRefTest eval.
 //    SuperTest eval.
 //    EmbedConstTest eval.
 ].

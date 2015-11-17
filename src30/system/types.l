@@ -7,7 +7,7 @@
 
 #subject(class:system'KeyValue)     keyvalue.
 
-//#subject(class:system'Variable)     ref.
+#subject(class:system'Variable)     ref.
 
 #subject(class:system'ByteNumber)   byte.
 #subject(class:system'ShortNumber)  short.

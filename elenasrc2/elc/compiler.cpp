@@ -2595,7 +2595,15 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
          }
 
          if (!test(targetInfo.header.flags, elReadOnlyRole))
-            unboxRequired = true;
+            unboxRequired = (object.kind == okLocalAddress || object.kind == okFieldAddress);
+      }
+      // NOTE : compiler magic!
+      // if the target is generic wrapper (container) and the object is a local
+      else if (test(targetInfo.header.flags, elWrapper)) {
+         classRef = targetClassReference;
+         boxing = lxBoxing;
+         size = 0;
+         unboxRequired = (object.kind == okLocal || object.kind == okField);
       }
    }
 
@@ -2622,12 +2630,12 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       classRef = scope.moduleScope->signatureReference;
    }
 
-   if (boxing != lxNone && size != 0) {
+   if (boxing != lxNone/* && size != 0*/) {
       scope.writer->insert(boxing, size);
       scope.writer->appendNode(lxTarget, classRef);
       appendCoordinate(scope.writer, terminal);
 
-      if (unboxRequired && (object.kind == okLocalAddress || object.kind == okFieldAddress)) {
+      if (unboxRequired) {
          int level = scope.newLocal();
          scope.writer->insertChild(scope.rootBookmark, lxVariable, 0);
          scope.writer->appendNode(lxTempLocal, level);

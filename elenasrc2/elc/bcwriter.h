@@ -158,7 +158,7 @@ public:
    void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-//   void newVariable(CommandTape& tape, ref_t reference, ObjectInfo field);
+   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
    void newDynamicObject(CommandTape& tape);
 
 //   void loadPrimitive(CommandTape& tape, ref_t reference);

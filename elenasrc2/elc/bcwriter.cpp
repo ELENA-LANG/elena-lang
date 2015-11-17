@@ -423,14 +423,14 @@ void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType
    tape.write(bcACopyB);
 }
 
-//void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, ObjectInfo field)
-//{
-//   loadBase(tape, field);
-//   newObject(tape, 1, reference);
-//   tape.write(bcBSwap);
-//   tape.write(bcAXSaveBI, 0);
-//   tape.write(bcACopyB);
-//}
+void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
+{
+   loadBase(tape, field, argument);
+   newObject(tape, 1, reference);
+   tape.write(bcBSwap);
+   tape.write(bcAXSaveBI, 0);
+   tape.write(bcACopyB);
+}
 
 void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
 {
@@ -723,12 +723,9 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
 void ByteCodeWriter :: saveBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
 {
    switch (sourceType) {
-//      case okLocal:
-//      case okParam:
-//      case okThisParam:
-//         // aloadfi 1
-//         // axsavebi
-//         tape.write(bcALoadFI, object.param, bpFrame);
+//      case lxLocal:
+         // aloadfi 1
+         // axsavebi
 //         tape.write(bcAXSaveBI, fieldOffset);
 //         break;
 //      case okCurrent:
@@ -3316,6 +3313,10 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
                loadBase(tape, object.type, object.argument);
                copyBase(tape, current.argument);
             }
+            else if (object == lxLocal) {
+               loadObject(tape, lxResultField);
+               saveObject(tape, object.type, object.argument);
+            }
             else if (temp == lxFieldAddress) {
                if (node.argument == 4) {
                   //assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
@@ -3365,6 +3366,9 @@ void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
 
    if (node == lxArgBoxing) {
       boxArgList(tape, target.argument);
+   }
+   else if (node.argument == 0) {
+      newVariable(tape, target.argument, lxResult);
    }
    else boxObject(tape, node.argument, target.argument, node == lxBoxing);
 
