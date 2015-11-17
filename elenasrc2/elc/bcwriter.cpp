@@ -2487,6 +2487,7 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, ExternalScope& e
    while (!out_it.Eof()) {
       if ((*out_it).size == 4) {
          loadObject(tape, lxBlockLocal, (*out_it).offset);
+         pushObject(tape, lxResultField, 0);
       }
       else {
          loadObject(tape, lxBlockLocal, (*out_it).offset);
@@ -3255,8 +3256,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBinaryVariable:
          {
             int level = SyntaxTree::findChild(current, lxLevel).argument;
+            
+            // HOTFIX : only for dynamic objects
+            if (current.argument != 0)
+               generateBinary(tape, current, level);
 
-            generateBinary(tape, current, level);
             declareLocalInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
                level);

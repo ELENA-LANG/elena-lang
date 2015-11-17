@@ -1863,47 +1863,55 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          // make the reservation permanent
          scope.saved = scope.reserved;
 
-         if (flags == elDebugDWORD) {
-            scope.writer->newNode(lxIntVariable, 0);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
-         }
-         else if (flags == elDebugQWORD) {
-            scope.writer->newNode(lxLongVariable, 0);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
-         }
-         else if (flags == elDebugReal64) {
-            scope.writer->newNode(lxReal64Variable, 0);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
-         }
-         else if (flags == elDebugBytes) {
-            scope.writer->newNode(lxBytesVariable, size);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
-         }
-         else if (flags == elDebugShorts) {
-            scope.writer->newNode(lxShortsVariable, size);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
-         }
-         else if (flags == elDebugIntegers) {
-            scope.writer->newNode(lxIntsVariable, size);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
-         }
-         else {
-            scope.writer->newNode(lxBinaryVariable, size);
-            scope.writer->appendNode(lxTerminal, (int)terminal.value);
-            scope.writer->appendNode(lxLevel, variable.param);
-            scope.writer->closeNode();
+         switch (flags & elDebugMask)
+         {
+            case elDebugDWORD:
+               scope.writer->newNode(lxIntVariable, 0);
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
+            case elDebugQWORD:
+               scope.writer->newNode(lxLongVariable, 0);
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
+            case elDebugReal64:
+               scope.writer->newNode(lxReal64Variable, 0);
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
+            case elDebugBytes:
+               scope.writer->newNode(lxBytesVariable, size);
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
+            case elDebugShorts:
+               scope.writer->newNode(lxShortsVariable, size);
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
+            case elDebugIntegers:
+               scope.writer->newNode(lxIntsVariable, size);
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
+            default:
+               // HOTFIX : size should be provide only for dynamic variables
+               if (test(flags, elDynamicRole)) {
+                  scope.writer->newNode(lxBinaryVariable, size);
+               }
+               else scope.writer->newNode(lxBinaryVariable);
+
+               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
          }
       }
       else {

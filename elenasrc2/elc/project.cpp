@@ -42,7 +42,7 @@ Project :: Project()
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
-   _warningMasks = 3;
+   _warningMasks = 1;
 }
 
 bool Project :: loadOption(_ConfigFile& config, ProjectSetting setting)

@@ -4,22 +4,12 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-
-#symbol XByRefTest =
-[
-    #var a := 2.
-    #var b := "hello".
-    
-    BoxerHelper new exchange &ref:a &ref:b.
-    
-    ((a == "hello")and:(b == 2))
-        ? [ console writeLine:"ByRef routine works". ].
-].
-    
+                
 #symbol XTester =
 {
     test            
     [
+        #var(type:__time_st)aStruct.
     ]            
 }.
         
