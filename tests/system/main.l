@@ -40,6 +40,6 @@
     DTOToStructTest eval.
     UnboxTest eval.
     ByRefTest eval.
-//    SuperTest eval.
+    SuperTest eval.
 //    EmbedConstTest eval.
 ].

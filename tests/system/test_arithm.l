@@ -743,34 +743,34 @@
         ? [ console writeLine:"ByRef routine works". ].
 ].
 
-//#class Parent
-//{
-//    #method print
-//    [
-//        console writeLine:"Super works".
-//    ]
-//}
-//
-//#class Child :: Parent
-//{
-//    #method print
-//    [
-//        console writeLine:"Super does not work".
-//    ]
-//    
-//    #method test
-//    [
-//        $super print.
-//    ]
-//}
-//
-//#symbol SuperTest =
-//[
-//    #var o := Child new.
-//    
-//    o test.
-//].
-//
+#class Parent
+{
+    #method print
+    [
+        console writeLine:"Super works".
+    ]
+}
+
+#class Child :: Parent
+{
+    #method print
+    [
+        console writeLine:"Super does not work".
+    ]
+    
+    #method test
+    [
+        $super print.
+    ]
+}
+
+#symbol SuperTest =
+[
+    #var o := Child new.
+    
+    o test.
+].
+
 //#subject(class:TestVar)test_var.
 //#class(sealed,struct:embeddable) TestVar
 //{

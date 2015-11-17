@@ -1734,10 +1734,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
       case okSubjectDispatcher:
       case okSignatureConstant:
          return scope.moduleScope->signatureReference;
-         //else if (object.kind == okSuper) {
-         //   return object.param;
-         //}
-         // if message sent to the dispatcher
+      case okSuper:
+         return object.param;
       case okParams:
          return scope.moduleScope->paramsReference;
       default:
@@ -2227,6 +2225,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okParam:
       case okThisParam:
          scope.writer->newNode(lxLocal, object.param);
+         break;
+      case okSuper:
+         scope.writer->newNode(lxLocal, 1);
          break;
       case okField:
       case okOuter:
@@ -3648,12 +3649,11 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    else if (classReference == scope.moduleScope->signatureReference) {
       dispatchCall = true;
    }
+   else if (target.kind == okSuper) {
+      // parent methods are always sealed
+      callType = tpSealed;
+   }
 
-//   else if (target.kind == okSuper) {
-//      // parent methods are always sealed
-//      callType = tpSealed;
-//   }
-//
 //   _writer.setMessage(*scope.tape, messageRef);
 //
 //   recordDebugStep(scope, node.Terminal(), dsStep);
