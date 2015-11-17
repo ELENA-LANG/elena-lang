@@ -2232,6 +2232,11 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okOuter:
          scope.writer->newNode(lxField, object.param);
          break;
+      case okOuterField:
+         scope.writer->newNode(lxExpression);
+         scope.writer->appendNode(lxField, object.param);
+         scope.writer->appendNode(lxResultField, object.extraparam);
+         break;
       case okLocalAddress:
          scope.writer->newNode(lxLocalAddress, object.param);
          break;

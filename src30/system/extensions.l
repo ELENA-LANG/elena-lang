@@ -605,11 +605,11 @@
 //    #method is &nonnegative
 //        = self <= 0.
 //}
-//
-//// --- arrayOp ---
-//
-//#class(extension:intarray)intArrayOp
-//{
+
+// --- arrayOp ---
+
+#class(extension:intarray)intArrayOp
+{
 //    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
 //    [
 //        #var(type:intarray)a := self intarray.
@@ -644,15 +644,15 @@
 //        
 //        ^ self.
 //    ]
-//}
-//
-//// --- arrayOp ---
-//
-//#class(extension:array)arrayOp
-//{
-//    #method(stacksafe) reallocate &int:aNewLength
-//        => system'internal'arr_realloc.
-//
+}
+
+// --- arrayOp ---
+
+#class(extension:array)arrayOp
+{
+    #method(stacksafe) reallocate &int:aNewLength
+        => system'internal'arr_realloc.
+
 //    #method exchange : anIndex1 : anIndex2
 //        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
 //        
@@ -823,8 +823,8 @@
 //        
 //        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
 //    ]
-//}
-//
+}
+
 //// --- literalOp ---
 //
 //#class(extension:literal)literalOp

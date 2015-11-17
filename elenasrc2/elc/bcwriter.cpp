@@ -2626,7 +2626,6 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushSI, argument);
          break;
       case lxField:
-//      case okOuter:
          // aloadfi 1
          // pushai offset / pusha
          tape.write(bcALoadFI, 1, bpFrame);

@@ -1,36 +1,36 @@
-//#import system.
-//
-//// === pattern enumerators ==
-//
-//// --- Toping ---
-//
-//#class TopFilter :: Enumerator
-//{
-//    #field(type:vint)theCounter.
-//    #field(type:enumerator)theEnumerator.
-//    
-//    #constructor new : aCounter &enumerator:anEnumerator
-//    [
-//        theCounter := Integer new &int:(aCounter int).
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method next
-//    [
-//        ((theCounter > 0)and:[ theEnumerator next ])
-//            ? [ theCounter -= 1. ^ true. ].
-//        
-//        ^ false.
-//    ]
-//    
-//    #method reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
+#import system.
+
+// === pattern enumerators ==
+
+// --- Toping ---
+
+#class TopFilter :: Enumerator
+{
+    #field(type:vint)theCounter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new : aCounter &enumerator:anEnumerator
+    [
+        theCounter := Integer new &int:(aCounter int).
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method next
+    [
+        ((theCounter > 0)and:[ theEnumerator next ])
+            ? [ theCounter -= 1. ^ true. ].
+        
+        ^ false.
+    ]
+    
+    #method reset 
+    [
+        theEnumerator reset.
+    ]    
+}
+
 //// --- Filtering ---
 //
 //#class Filter :: Enumerator

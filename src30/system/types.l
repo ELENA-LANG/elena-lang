@@ -15,7 +15,7 @@
 #subject(class:system'LongNumber)   long.
 #subject(class:system'RealNumber)   real.
 #subject(class:system'CharValue)    char.
-//#subject(class:system'Message)      mssg.
+#subject(class:system'Message)      mssg.
 //#subject(class:system'Verb)         verb.
 #subject(class:system'Signature)    subject.
 //#subject(class:system'Symbol)       symbol_ref.
@@ -39,7 +39,7 @@
 #subject(class:system'Array)        array.
 #subject(class:system'OpenArgs)     params.
 #subject(class:system'OpenArgs)     args.
-//#subject(class:system'MessageArray) mssgarray.
+#subject(class:system'MessageArray) mssgarray.
 
 #subject(class:system'LiteralValue) literal.
 #subject(class:system'WideLiteralValue) wide.

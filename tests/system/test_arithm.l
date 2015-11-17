@@ -11,6 +11,20 @@
 //#define extensions'math.
 //#define extensions'text.
 
+#class TopFilter :: Enumerator
+{
+    #field(type:vint)theCounter.
+    #field(type:enumerator)theEnumerator.
+    
+    #method next
+    [
+        ((theCounter > 0)and:[ theEnumerator next ])
+            ? [ theCounter -= 1. ^ true. ].
+        
+        ^ false.
+    ]
+}    
+
 #symbol XTester =
 {
     test            
@@ -657,28 +671,28 @@
     #var o := ChildClass new.
 ].
 
-//#symbol DTOToStructTest =
-//[
-//    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-//    #var aProperties := MessageArray new &int:10.
-//    #var aLength := Integer new.
-//    
-//    aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.
-//
-//    #var aCopy := DynamicStruct new.
-//    aProperties top:aLength run &each:(:aSubject)
-//    [
-//        #var prop_value := aDTO::aSubject eval.
-//        #var prop := aSubject subject.
-//        
-//        aCopy::prop set:prop_value.
-//    ].
-//    
-//    #var x := aCopy X.
-//    #var y := aCopy Y.
-//    #var z := aCopy Z.
-//].
-//
+#symbol DTOToStructTest =
+[
+    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
+    #var aProperties := MessageArray new &int:10.
+    #var aLength := Integer new.
+    
+    aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.
+
+    #var aCopy := DynamicStruct new.
+    aProperties top:aLength run &each:(:aSubject)
+    [
+        #var prop_value := aDTO::aSubject eval.
+        #var prop := aSubject subject.
+        
+        aCopy::prop set:prop_value.
+    ].
+    
+    #var x := aCopy X.
+    #var y := aCopy Y.
+    #var z := aCopy Z.
+].
+
 //#class BoxerHelper
 //{
 //    #constructor new []
