@@ -141,75 +141,75 @@
 //    #method index = theIndex int.
 }
 
-//// --- StringWriter ---
+// --- StringWriter ---
+
+#class StringWriter
+{    
+    #field theValue.
+    
+    #constructor new
+    [
+        theValue := emptyLiteralValue.
+    ]
+    
+    #constructor new : aText
+    [
+        theValue := aText.
+    ]
+    
+    #method write : aText
+    [
+        theValue := theValue + aText.
+    ]
+    
+    #method writeLine : aText
+    [
+        $self write:aText write:'newLine.
+    ]
+   
+    #method writeLine
+    [
+        $self write:'newLine.
+    ]    
+      
+    #method literal => theValue.
+    
+    #method wide => theValue.
+}
+
+//// --- StringReader ---
 //
-//#class StringWriter
-//{    
-//    #field theValue.
-//    
-//    #constructor new
+//#class StringReader : TextReader
+//{
+//    #field(type:literal) theLiteral.
+//    #field(type:int)     theLength.
+//    #field theIndex.
+//
+//    #constructor new &literal:aLiteral
 //    [
-//        theValue := emptyLiteralValue.
+//        theLiteral := aLiteral.
+//        theIndex := Integer new:0.
+//        theLength := aLiteral length.
+//
+//        theOutput := TextBuffer new.
+//        theOpen := true.
 //    ]
 //    
-//    #constructor new : aText
+//    #method read &shortarray:anOutput &out'length:aLength
 //    [
-//        theValue := aText.
+//        #var(type:int)anIndex.
+//        theIndex read &out'int:anIndex.
+//        
+//        (aLength > theLength)
+//            ? [ aLength := theLength - theIndex. ].
+//        
+//        anOutput write &index:anIndex &length:aLength &literal:theLiteral.
+//        
+//        theIndex append &int:aLength.
 //    ]
 //    
-//    #method write : aText
+//    #method close
 //    [
-//        theValue := theValue + aText.
+//        theLiteral := emptyLiteralValue literal.
 //    ]
-//    
-//    #method writeLine : aText
-//    [
-//        $self write:aText write:'newLine.
-//    ]
-//   
-//    #method writeLine
-//    [
-//        $self write:'newLine.
-//    ]    
-//      
-//    #method literal => theValue.
-//    
-//    #method wide => theValue.
 //}
-//
-////// --- StringReader ---
-////
-////#class StringReader : TextReader
-////{
-////    #field(type:literal) theLiteral.
-////    #field(type:int)     theLength.
-////    #field theIndex.
-////
-////    #constructor new &literal:aLiteral
-////    [
-////        theLiteral := aLiteral.
-////        theIndex := Integer new:0.
-////        theLength := aLiteral length.
-////
-////        theOutput := TextBuffer new.
-////        theOpen := true.
-////    ]
-////    
-////    #method read &shortarray:anOutput &out'length:aLength
-////    [
-////        #var(type:int)anIndex.
-////        theIndex read &out'int:anIndex.
-////        
-////        (aLength > theLength)
-////            ? [ aLength := theLength - theIndex. ].
-////        
-////        anOutput write &index:anIndex &length:aLength &literal:theLiteral.
-////        
-////        theIndex append &int:aLength.
-////    ]
-////    
-////    #method close
-////    [
-////        theLiteral := emptyLiteralValue literal.
-////    ]
-////}

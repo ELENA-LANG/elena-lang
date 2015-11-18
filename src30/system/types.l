@@ -68,7 +68,7 @@
 // === system handles ===
 #subject(class:Handle) handle.
 //#subject(class:system'RTPointer)rt_ptr.
-//#subject(class:system'UnsafePointer)dirty_ptr.
+#subject(class:system'UnsafePointer)dirty_ptr.
 
 // --- Enumerators / Indexers ---
 #subject(class:system'Enumerator)enumerator.

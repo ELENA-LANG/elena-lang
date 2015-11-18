@@ -187,163 +187,163 @@
 //        
 //        theLength += 1.
 //    ]
-//
-//    #method(stacksafe) indexOf &int:aPosition &char:aValue &vint:aRetVal
-//    [
-//        #var(type:int)anIndex := 0.
-//        #var(type:char)aCurrent.
-//        
-//        #loop (anIndex < theLength)?
-//        [
-//            theBuffer read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent == aValue)
-//                ? [ aRetVal << anIndex. ^$self. ].
-//                
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        aRetVal << -1.
-//    ]
-//
-//    #method(stacksafe) indexOf &int:aPosition &literal:aLiteral &vint:aRetVal
-//    [
-//        #var(type:int)aLiteralLength.
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aFirstCharLen.
-//        #var(type:char)aCurrent.
-//        #var(type:char)aFirstChar.
-//        #var(type:char)aNextChar.
-//        
-//        aLiteral readLength &vint:aLiteralLength.
-//        
-//        aLiteral read &int:0 &vchar:aFirstChar.
-//        aFirstChar readLength &vint:aFirstCharLen.
-//        
-//        #var(type:int)aMaxIndex := theLength - aLiteralLength.
-//        #loop (anIndex < aMaxIndex)?
-//        [
-//            theBuffer read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent == aFirstChar) ?
-//            [ 
-//                #var(type:int)j := aFirstCharLen.
-//                #var(type:int)chLen.
-//                #loop (j < aLiteralLength) ?
-//                [
-//                    theBuffer read &int:(anIndex + j) &vchar:aCurrent.
-//                    aLiteral read &int:j &vchar:aNextChar.
-//                    
-//                    (aNextChar != aCurrent)
-//                        ? [ j := aLiteralLength. chLen := 1. ]
-//                        ! [ aNextChar readLength &vint:chLen. ].
-//                    
-//                    j := j + chLen.
-//                ].
-//                
-//                (j == aLiteralLength)
-//                    ? [ aRetVal << anIndex. ^ $self. ].
-//            ].
-//                
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        aRetVal << -1.
-//    ]
-//
-//    #method(stacksafe) indexOf &int:aPosition &wide:aLiteral &vint:aRetVal
-//    [
-//        #var(type:int)aLiteralLength.
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aFirstCharLen.
-//        #var(type:char)aCurrent.
-//        #var(type:char)aFirstChar.
-//        #var(type:char)aNextChar.
-//        
-//        aLiteral readLength &vint:aLiteralLength.
-//        
-//        aLiteral read &int:0 &vchar:aFirstChar.
-//        aFirstChar readWideLength &vint:aFirstCharLen.
-//        
-//        #loop (anIndex < theLength)?
-//        [
-//            theBuffer read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent == aFirstChar) ?
-//            [ 
-//                #var(type:int)j := aFirstCharLen.
-//                #var(type:int)chLen.
-//                #loop (j < aLiteralLength) ?
-//                [
-//                    theBuffer read &int:(anIndex + j) &vchar:aCurrent.
-//                    aLiteral read &int:j &vchar:aNextChar.
-//                    
-//                    (aNextChar != aCurrent)
-//                        ? [ j := aLiteralLength. chLen := 1. ]
-//                        ! [ aNextChar readWideLength &vint:chLen. ].
-//                    
-//                    j := j + chLen.
-//                ].
-//                
-//                (j > aLiteralLength)
-//                    ? [ aRetVal << anIndex. ^ $self. ].
-//            ].
-//                
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        aRetVal << -1.
-//    ]
-//
-//    #method indexOf &int:aPosition &char:aValue    
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:aPosition &char:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//    
-//    #method indexOf &int:aPosition &literal:aValue
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:aPosition &literal:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//    
-//    #method indexOf &int:aPosition &wide:aValue
-//    [
-//        #var(type:int)aRetVal.
-//        $self indexOf &int:aPosition &wide:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
-//    [
-//        (aLength == 0)
-//            ? [ ^ emptyLiteralValue. ].
-//            
-//        ^ LiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
-//    ]
-//
-//    #method(type:wide,stacksafe) WideSubstring &int:anIndex &int:aLength
-//    [
-//        (aLength == 0)
-//            ? [ ^ emptyWideLiteralValue. ].
-//            
-//        ^ WideLiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
-//    ]
-//
-//    #method(stacksafe) delete &int:anIndex &int:aLength
-//    [
-//        #var(type:int)n := 0 - aLength.
-//        #var(type:int)l := theLength.
-//        l := l - anIndex.
-//        l := l - aLength.
-//        
-//        theBuffer move &int:(anIndex + aLength) &int:l &int:n.
-//        
-//        theLength -= aLength.
-//    ]
+
+    #method(stacksafe) indexOf &int:aPosition &char:aValue &vint:aRetVal
+    [
+        #var(type:int)anIndex := 0.
+        #var(type:char)aCurrent.
+        
+        #loop (anIndex < theLength)?
+        [
+            theBuffer read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aValue)
+                ? [ aRetVal << anIndex. ^$self. ].
+                
+            anIndex := anIndex + 1.
+        ].
+        
+        aRetVal << -1.
+    ]
+
+    #method(stacksafe) indexOf &int:aPosition &literal:aLiteral &vint:aRetVal
+    [
+        #var(type:int)aLiteralLength.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aFirstCharLen.
+        #var(type:char)aCurrent.
+        #var(type:char)aFirstChar.
+        #var(type:char)aNextChar.
+        
+        aLiteral readLength &vint:aLiteralLength.
+        
+        aLiteral read &int:0 &vchar:aFirstChar.
+        aFirstChar readLength &vint:aFirstCharLen.
+        
+        #var(type:int)aMaxIndex := theLength - aLiteralLength.
+        #loop (anIndex < aMaxIndex)?
+        [
+            theBuffer read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aFirstChar) ?
+            [ 
+                #var(type:int)j := aFirstCharLen.
+                #var(type:int)chLen.
+                #loop (j < aLiteralLength) ?
+                [
+                    theBuffer read &int:(anIndex + j) &vchar:aCurrent.
+                    aLiteral read &int:j &vchar:aNextChar.
+                    
+                    (aNextChar != aCurrent)
+                        ? [ j := aLiteralLength. chLen := 1. ]
+                        ! [ aNextChar readLength &vint:chLen. ].
+                    
+                    j := j + chLen.
+                ].
+                
+                (j == aLiteralLength)
+                    ? [ aRetVal << anIndex. ^ $self. ].
+            ].
+                
+            anIndex := anIndex + 1.
+        ].
+        
+        aRetVal << -1.
+    ]
+
+    #method(stacksafe) indexOf &int:aPosition &wide:aLiteral &vint:aRetVal
+    [
+        #var(type:int)aLiteralLength.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aFirstCharLen.
+        #var(type:char)aCurrent.
+        #var(type:char)aFirstChar.
+        #var(type:char)aNextChar.
+        
+        aLiteral readLength &vint:aLiteralLength.
+        
+        aLiteral read &int:0 &vchar:aFirstChar.
+        aFirstChar readWideLength &vint:aFirstCharLen.
+        
+        #loop (anIndex < theLength)?
+        [
+            theBuffer read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aFirstChar) ?
+            [ 
+                #var(type:int)j := aFirstCharLen.
+                #var(type:int)chLen.
+                #loop (j < aLiteralLength) ?
+                [
+                    theBuffer read &int:(anIndex + j) &vchar:aCurrent.
+                    aLiteral read &int:j &vchar:aNextChar.
+                    
+                    (aNextChar != aCurrent)
+                        ? [ j := aLiteralLength. chLen := 1. ]
+                        ! [ aNextChar readWideLength &vint:chLen. ].
+                    
+                    j := j + chLen.
+                ].
+                
+                (j > aLiteralLength)
+                    ? [ aRetVal << anIndex. ^ $self. ].
+            ].
+                
+            anIndex := anIndex + 1.
+        ].
+        
+        aRetVal << -1.
+    ]
+
+    #method indexOf &int:aPosition &char:aValue    
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:aPosition &char:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf &int:aPosition &literal:aValue
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:aPosition &literal:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf &int:aPosition &wide:aValue
+    [
+        #var(type:int)aRetVal.
+        $self indexOf &int:aPosition &wide:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
+    [
+        (aLength == 0)
+            ? [ ^ emptyLiteralValue. ].
+            
+        ^ LiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
+    ]
+
+    #method(type:wide,stacksafe) WideSubstring &int:anIndex &int:aLength
+    [
+        (aLength == 0)
+            ? [ ^ emptyWideLiteralValue. ].
+            
+        ^ WideLiteralValue new &int:anIndex &int:aLength &chararray:theBuffer.
+    ]
+
+    #method(stacksafe) delete &int:anIndex &int:aLength
+    [
+        #var(type:int)n := 0 - aLength.
+        #var(type:int)l := theLength.
+        l := l - anIndex.
+        l := l - aLength.
+        
+        theBuffer move &int:(anIndex + aLength) &int:l &int:n.
+        
+        theLength -= aLength.
+    ]
 }

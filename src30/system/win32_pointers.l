@@ -54,20 +54,20 @@
 //    #method(stacksafe) free
 //        => system'internal'api_free_index.
 //}
-//
-//// --- UnsafePointer ---
-//
-//#class(sealed,struct:embeddable) UnsafePointer
-//{
-//    #field(type:int)thePointer.
-//
+
+// --- UnsafePointer ---
+
+#class(sealed,struct:embeddable) UnsafePointer
+{
+    #field(type:int)thePointer.
+
 //    #constructor new : anObject
 //    [
 //        $self write:anObject.
 //    ]
-//    
-//    #method dirty_ptr = $self.
-//    
+    
+    #method dirty_ptr = $self.
+    
 //    #method(stacksafe) write : anObject
 //        => system'internal'dptr_copy.
 //                
@@ -116,37 +116,37 @@
 //        
 //        ^ IntNumber new &int:aValue.
 //    ]
-//
-//    // unsafe code
-//    #method(stacksafe) literal
-//    [
-//        #var(type:int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
-//        #var(type:literal)aLiteral := LiteralValue new &int:aLen.
-//        system'external'kernel32 lstrcpyA &literal:aLiteral &int:thePointer.
-//        
-//        ^ aLiteral.
-//    ]        
-//
-//    // unsafe code
-//    #method(stacksafe) wide
-//    [
-//        #var(type:int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
-//        #var(type:wide)aLiteral := WideLiteralValue new &int:aLen.
-//        system'external'kernel32 lstrcpyW &wide:aLiteral &int:thePointer.
-//        
-//        ^ aLiteral.
-//    ]
-//    
+
+    // unsafe code
+    #method(stacksafe) literal
+    [
+        #var(type:int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
+        #var(type:literal)aLiteral := LiteralValue new &int:aLen.
+        system'external'kernel32 lstrcpyA &literal:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]        
+
+    // unsafe code
+    #method(stacksafe) wide
+    [
+        #var(type:int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
+        #var(type:wide)aLiteral := WideLiteralValue new &int:aLen.
+        system'external'kernel32 lstrcpyW &wide:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]
+    
 //    #method(stacksafe,type:bool)is &empty
 //        = 0 == thePointer.
-//    
-//    /// Dispatches the verb to the target object with handle subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dirty_ptr:$self.
-//    
-//    /// Dispatches the verb to the target object with bytearray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dirty_ptr:$self.    
-//}
-//
+    
+    /// Dispatches the verb to the target object with handle subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dirty_ptr:$self.
+    
+    /// Dispatches the verb to the target object with bytearray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dirty_ptr:$self.    
+}
+
 //// --- COORD ---
 //
 //#subject(class:system'COORD)win_coord.

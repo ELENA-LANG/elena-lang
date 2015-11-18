@@ -1,6 +1,6 @@
-//#import system.
-//#import system'text.
-//
+#import system.
+#import system'text.
+
 //// --- File Access Modes ---
 //#symbol(const,type:int) $FILE_READ_DATA     = 00000001h.
 //#symbol(const,type:int) $FILE_APPEND_DATA   = 00000004h.
@@ -17,13 +17,13 @@
 //#symbol(const,type:int) $FILE_BEGIN = 0.
 //#symbol(const,type:int) $FILE_CURRENT = 1.
 //#symbol(const,type:int) $FILE_END = 2.
-//
-//// --- FileStream ---
-//
-//#class(struct) FileStream :: Stream
-//{
-//    #field(type:handle) theHandle.
-//    
+
+// --- FileStream ---
+
+#class(struct) FileStream :: Stream
+{
+    #field(type:handle) theHandle.
+    
 //    #constructor openForRead &path:aPath
 //        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
 //    
@@ -97,14 +97,14 @@
 //    
 //        aLength << n. 
 //    ]
-//    
-//    #method close
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &handle:theHandle.
-//    ]
-//}
-//
+    
+    #method close
+    [
+        system'external'KERNEL32 CloseHandle
+            &int:theHandle.
+    ]
+}
+
 //// --- fileStreamHelper ---
 //
 //#symbol $fileStreamHelper =
@@ -171,58 +171,58 @@
 //        theStream close.
 //    ]
 //}
-//
-//// --- StreamReader ---
-//
-//#class StreamReader :: TextReader
-//{
-//    #field(type:stream) theStream.
-//    #field(type:encoder) theEncoder.
-//    #field(type:bool) theOpen.
-//
-//    #constructor new &stream:aStream &encoder:anEncoder
-//        <= ( %new )
-//    [
-//        theStream := aStream.
-//        theEncoder := anEncoder.
-//        theOpen := true.
-//    ]
-//
-//    #constructor new &path:aPath
-//        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:UTF8Encoder.
-//
-//    #constructor new &path:aPath &encoder:anEncoder
-//        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:anEncoder.
-//
-//    #method available = theOpen.
-//
-//    #method stream = theStream.
-//
-//    #method encoder = theEncoder.
-//
-//    #method read &chararray:anOutput &vint:aLength
-//    [
-//        #var(type:int)aBufferLength := 64.
-//        #var(type:bytearray,size:64)aBuffer.
-//        theStream read &bytearray:aBuffer &vint:aBufferLength.
-//        (aBufferLength == 0)
-//            ? [ theOpen := false. aLength << 0. ]
-//            ! [
-//                #var(type:int)aRead := aBufferLength.
-//
-//                theEncoder convert &int:0 &vint:aBufferLength &bytearray:aBuffer &chararray:anOutput &vint:aLength.
-//                
-//                (aRead > aBufferLength)
-//                    ? [ theStream reduceIndex &int:(aRead - aBufferLength). ].
-//            ].            
-//    ]
-//    
-//    #method close
-//    [
-//        theStream close.
-//    ]
-//}
-//
+
+// --- StreamReader ---
+
+#class StreamReader :: TextReader
+{
+    #field(type:stream) theStream.
+    #field(type:encoder) theEncoder.
+    #field(type:bool) theOpen.
+
+    #constructor new &stream:aStream &encoder:anEncoder
+        <= ( %new )
+    [
+        theStream := aStream.
+        theEncoder := anEncoder.
+        theOpen := true.
+    ]
+
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:UTF8Encoder.
+
+    #constructor new &path:aPath &encoder:anEncoder
+        <= %new &stream:(FileStream openForRead &path:aPath) &encoder:anEncoder.
+
+    #method available = theOpen.
+
+    #method stream = theStream.
+
+    #method encoder = theEncoder.
+
+    #method read &chararray:anOutput &vint:aLength
+    [
+        #var(type:int)aBufferLength := 64.
+        #var(type:bytearray,size:64)aBuffer.
+        theStream read &bytearray:aBuffer &vint:aBufferLength.
+        (aBufferLength == 0)
+            ? [ theOpen := false. aLength << 0. ]
+            ! [
+                #var(type:int)aRead := aBufferLength.
+
+                theEncoder convert &int:0 &vint:aBufferLength &bytearray:aBuffer &chararray:anOutput &vint:aLength.
+                
+                (aRead > aBufferLength)
+                    ? [ theStream reduceIndex &int:(aRead - aBufferLength). ].
+            ].            
+    ]
+    
+    #method close
+    [
+        theStream close.
+    ]
+}
+
 //// --- BinaryFileReader ---
 //
 //#class(sealed)BinaryFileReader :: BinaryReader

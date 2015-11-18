@@ -1,7 +1,7 @@
-//#import system.
+#import system.
 //#import system'routines.
-//#import system'text.
-//
+#import system'text.
+
 //// --- BinaryReader ---
 //
 //#class(limited) BinaryReader
@@ -122,103 +122,103 @@
 //        aBuffer read &int:0 &vreal:aReal.
 //    ]
 //}
-//
-//// --- TextReader ---
-//
-//#class(limited) TextReader
-//{
-//    #field(type:textbuffer) theOutput.
-//    #field(type:literal)    theNewLineConstant.
-//    #field(type:int)        theNewLineLength.
-//
-//    #constructor new
-//    [
-//        theOutput := TextBuffer new.
-//        theNewLineConstant := 'newLine literal.
-//                
-//        theNewLineLength := theNewLineConstant length int.
-//    ]
-//
-//    #method(stacksafe) read &chararray:anArray &vint:anActualLength
-//    [
-//    ]
-//
-//    #method stream [ #throw NotSupportedException new. ]
-//
-//    #method encoder [ #throw NotSupportedException new. ]
-//
-//    #method close [ ]
-//    
-//    #method(type:bool) available = false.
-//            
-//    #method(type:literal) read &literal
-//    [
-//        #var(type:literal) aLine := emptyLiteralValue.
-//        
-//        #var(type:int)aLength := -1.
-//        #loop (aLength == -1) ?
-//        [
-//            theOutput indexOf &int:0 &literal:theNewLineConstant &vint:aLength.
-//            
-//            (aLength == -1)
-//                ? [
-//                    #var(type:chararray,size:64)aBuffer.
-//                    #var(type:int)aBufferLength := 64.
-//                    
-//                    $self read &chararray:aBuffer &vint:aBufferLength.
-//                    (aBufferLength == 0)
-//                        ? [ aLength := -2. ]  // !! to indicate the eof
-//                        ! [ theOutput write &chararray:aBuffer &int:aBufferLength. ].
-//                ].
-//        ].
-//        
-//        (aLength < 0) 
-//            ? [
-//                aLine := theOutput literal.                
-//                theOutput clear.
-//            ]
-//            ! [ 
-//                aLine := theOutput Substring &int:0 &int:aLength.
-//                theOutput delete &int:0 &int:(aLength + theNewLineLength).
-//            ].            
-//
-//        ^ aLine.
-//    ]
-//    
-//    #method(type:wide) read &wide
-//    [
-//        #var(type:wide) aLine := emptyWideLiteralValue.
-//        #var(type:wide) nl := theNewLineConstant wide.
-//        #var(type:int) nl_len.
-//        nl readLength &vint:nl_len.
-//        
-//        #var(type:int)aLength := -1.
-//        #loop (aLength == -1) ?
-//        [
-//            theOutput indexOf &int:0 &wide:nl &vint:aLength.
-//            
-//            (aLength == -1)
-//                ? [
-//                    #var(type:chararray,size:64)aBuffer.
-//                    #var(type:int)aBufferLength := 64.
-//                    
-//                    $self read &chararray:aBuffer &vint:aBufferLength.
-//                    (aBufferLength == 0)
-//                        ? [ aLength := -2. ]  // !! to indicate the eof
-//                        ! [ theOutput write &chararray:aBuffer &int:aBufferLength. ].
-//                ].
-//        ].
-//        
-//        (aLength < 0) 
-//            ? [
-//                aLine := theOutput wide.                
-//                theOutput clear.
-//            ]
-//            ! [ 
-//                aLine := theOutput WideSubstring &int:0 &int:aLength.
-//                theOutput delete &int:0 &int:(aLength + nl_len).
-//            ].            
-//
-//        ^ aLine.
-//    ]
-//}
+
+// --- TextReader ---
+
+#class(limited) TextReader
+{
+    #field(type:textbuffer) theOutput.
+    #field(type:literal)    theNewLineConstant.
+    #field(type:int)        theNewLineLength.
+
+    #constructor new
+    [
+        theOutput := TextBuffer new.
+        theNewLineConstant := 'newLine literal.
+                
+        theNewLineLength := theNewLineConstant length int.
+    ]
+
+    #method(stacksafe) read &chararray:anArray &vint:anActualLength
+    [
+    ]
+
+    #method stream [ #throw NotSupportedException new. ]
+
+    #method encoder [ #throw NotSupportedException new. ]
+
+    #method close [ ]
+    
+    #method(type:bool) available = false.
+            
+    #method(type:literal) read &literal
+    [
+        #var(type:literal) aLine := emptyLiteralValue.
+        
+        #var(type:int)aLength := -1.
+        #loop (aLength == -1) ?
+        [
+            theOutput indexOf &int:0 &literal:theNewLineConstant &vint:aLength.
+            
+            (aLength == -1)
+                ? [
+                    #var(type:chararray,size:64)aBuffer.
+                    #var(type:int)aBufferLength := 64.
+                    
+                    $self read &chararray:aBuffer &vint:aBufferLength.
+                    (aBufferLength == 0)
+                        ? [ aLength := -2. ]  // !! to indicate the eof
+                        ! [ theOutput write &chararray:aBuffer &int:aBufferLength. ].
+                ].
+        ].
+        
+        (aLength < 0) 
+            ? [
+                aLine := theOutput literal.                
+                theOutput clear.
+            ]
+            ! [ 
+                aLine := theOutput Substring &int:0 &int:aLength.
+                theOutput delete &int:0 &int:(aLength + theNewLineLength).
+            ].            
+
+        ^ aLine.
+    ]
+    
+    #method(type:wide) read &wide
+    [
+        #var(type:wide) aLine := emptyWideLiteralValue.
+        #var(type:wide) nl := theNewLineConstant wide.
+        #var(type:int) nl_len.
+        nl readLength &vint:nl_len.
+        
+        #var(type:int)aLength := -1.
+        #loop (aLength == -1) ?
+        [
+            theOutput indexOf &int:0 &wide:nl &vint:aLength.
+            
+            (aLength == -1)
+                ? [
+                    #var(type:chararray,size:64)aBuffer.
+                    #var(type:int)aBufferLength := 64.
+                    
+                    $self read &chararray:aBuffer &vint:aBufferLength.
+                    (aBufferLength == 0)
+                        ? [ aLength := -2. ]  // !! to indicate the eof
+                        ! [ theOutput write &chararray:aBuffer &int:aBufferLength. ].
+                ].
+        ].
+        
+        (aLength < 0) 
+            ? [
+                aLine := theOutput wide.                
+                theOutput clear.
+            ]
+            ! [ 
+                aLine := theOutput WideSubstring &int:0 &int:aLength.
+                theOutput delete &int:0 &int:(aLength + nl_len).
+            ].            
+
+        ^ aLine.
+    ]
+}
