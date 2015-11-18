@@ -3586,13 +3586,15 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       LexicalType argType = lxNone;
       // if it is an integer number pass it directly
-      if ((flags & elDebugMask) == elDebugDWORD) {
-         argType = lxIntExtArgument;
+      switch (flags & elDebugMask) {
+         case elDebugDWORD:
+         case elDebugPTR:
+            argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
+            break;
+         default:
+            argType = lxExtArgument;
+            break;
       }
-      else if ((flags & elDebugMask) == elDebugPTR) {
-         argType = lxIntExtArgument;
-      }
-      else argType = lxExtArgument;
 
       scope.writer->newNode(argType);
 
