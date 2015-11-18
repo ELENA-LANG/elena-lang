@@ -9,6 +9,10 @@
 {
     test            
     [
+        #var t := Integer new.
+        #var s := "2".
+        
+//        s convertTo:t.
     ]        
 }.
         

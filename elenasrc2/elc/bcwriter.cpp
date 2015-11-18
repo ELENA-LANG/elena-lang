@@ -2642,10 +2642,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
    size_t counter = countChildren(node);
    size_t index = 0;   
-   while (index < counter) {
+   for (int i = 0; i < counter; i++) {
       // get parameters in reverse order if required
-      current = getChild(node, directMode ? counter - index - 1 : index);
-   
+      current = getChild(node, directMode ? counter - i - 1 : i);
+
       if (current == lxArgUnboxing) {
          // argument list is already unboxed
       }
@@ -2656,7 +2656,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
                loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
                presavedCount--;
             }
-            else loadObject(tape, lxLocal, tempLocal.argument); 
+            else loadObject(tape, lxLocal, tempLocal.argument);
          }
          else generateObjectExpression(tape, current);
 
@@ -2664,9 +2664,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
             pushObject(tape, lxResult);
          }
          else saveObject(tape, lxCurrent, index);
+
+         index++;
       }
-   
-      index++;
    }
 
    generateCall(tape, node);
