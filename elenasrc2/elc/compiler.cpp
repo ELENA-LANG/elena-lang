@@ -2592,7 +2592,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
             primitiveOp = lxLongOp;
             size = 8;
          }
-         else if (lflag == elDebugReal64 && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
+         else if (lflag == elDebugReal64 && (IsRealExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
             if (IsExprOperator(operator_id))
                retVal.param = moduleScope->realReference;
 

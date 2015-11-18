@@ -54,18 +54,18 @@
 //    /// Clears the console
 //    #method clear 
 //        => theWriter.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    #method readLine
-//        = theReader read &literal.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    #method read &literal
-//        = theReader read &literal.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    #method read &wide
-//        = theReader read &wide.
+
+    /// Reads the next line of characters from the standard input stream.
+    #method readLine
+        = theReader read &literal.
+
+    /// Reads the next line of characters from the standard input stream.
+    #method read &literal
+        = theReader read &literal.
+
+    /// Reads the next line of characters from the standard input stream.
+    #method read &wide
+        = theReader read &wide.
 
     /// Reads the next character from the input stream
     #method readChar

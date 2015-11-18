@@ -720,6 +720,19 @@ inline bool IsExprOperator(int operator_id)
    }
 }
 
+inline bool IsRealExprOperator(int operator_id)
+{
+   switch (operator_id) {
+   case ADD_MESSAGE_ID:
+   case SUB_MESSAGE_ID:
+   case MUL_MESSAGE_ID:
+   case DIV_MESSAGE_ID:
+      return true;
+   default:
+      return false;
+   }
+}
+
 } // _ELENA_
 
 #endif // elenaH

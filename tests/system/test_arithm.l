@@ -5,11 +5,22 @@
 #import system'calendar.
 #import extensions.
                 
+#class(sealed,struct:embeddable) Byte :: IntBaseVariable
+{
+    #field(type:byte)theValue.
+   
+    /// Appends the integer value
+    #method(stacksafe) append &byte:anOperand
+    [
+        theValue := theValue + anOperand.
+    ]
+}    
+    
 #symbol XTester =
 {
     test            
     [
-    ]            
+    ]        
 }.
         
 #symbol XTest =

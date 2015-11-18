@@ -206,19 +206,19 @@
     /// Returns itself
     #method shortarray = $self.
 
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'internal'sa_getlen.
-//
-//    /// Returns the array length        
-//    #method(stacksafe) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ IntNumber new &int:aLength.
-//    ]
-//
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'internal'sa_getlen.
+
+    /// Returns the array length        
+    #method(stacksafe) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ IntNumber new &int:aLength.
+    ]
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &short:aValue
 //    [
@@ -249,38 +249,38 @@
 //    /// Copies the short array at the specified position   
 //    #method(stacksafe) write &int:anIndex &int:aLength &shortarray:anArray
 //        => system'internal'sa_write.
-//
-//    /// Writes a short integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &short:aValue
-//        => system'internal'sa_writeword.
-//
-//    /// Reads a short integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vshort:aValue
-//        => system'internal'sa_readword.
-//
-//    /// Returns a short integer at the specified position
-//    #method getAt : anIndex
-//    [
-//        #var(type:short)aRetVal.
-//        $self read &int:(anIndex int) &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]        
-//
-//    /// Sets a short integer at the specified position
-//    #method setAt : anIndex : aValue
-//    [
-//        $self write &int:(anIndex int) &short:(aValue short).
-//    ]
-//
+
+    /// Writes a short integer value at the specified position
+    #method(stacksafe) write &int:anIndex &short:aValue
+        => system'internal'sa_writeword.
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vshort:aValue
+        => system'internal'sa_readword.
+
+    /// Returns a short integer at the specified position
+    #method getAt : anIndex
+    [
+        #var(type:short)aRetVal.
+        $self read &int:(anIndex int) &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]        
+
+    /// Sets a short integer at the specified position
+    #method setAt : anIndex : aValue
+    [
+        $self write &int:(anIndex int) &short:(aValue short).
+    ]
+
 //    /// Creates the object copy
 //    #method clone = ShortArray new &shortarray:$self.
-//    
-//    /// Dispatches the verb to the target object with shortarray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &shortarray:$self.
-//    
-//    /// Dispatches the verb to the target object with shortarray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &shortarray:$self.
+    
+    /// Dispatches the verb to the target object with shortarray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &shortarray:$self.
+    
+    /// Dispatches the verb to the target object with shortarray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &shortarray:$self.
 }
 
 // --- BaseIntArray ---
@@ -1023,167 +1023,167 @@
     ]
 }
 
-//// --- String ---
-//
-///// A literal variable. 
-/////
-///// Extends system'LiteralValue value
-//#class String :: BaseValue
-//{
-//    #field(type:literal)theValue.
-//
-//    /// Creates an empty literal variable 
-//    #constructor new
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//
-//    /// Creates a literal variable with specified value
-//    #constructor new : aValue
-//    [
-//        $self write:aValue.
-//    ]
-//    
-//    /// Creates a literal variable with specified value
-//    #constructor new &literal:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//    
-//    /// Creates a literal variable with specified value
-//    #constructor new &char:aValue
-//    [
-//        theValue := aValue literal.
-//    ]
-//    
-//    /// Creates a literal variable with specified value
-//    #constructor new &wide:aValue
-//    [
-//        theValue := aValue literal.
-//    ]
-//    
-//    /// Writes the value
-//    #method write : anOperand
-//    [
-//        anOperand cast:%write &to:$self.
-//    ]
-//    
-//    /// Writes the value
-//    #method write &literal:aLiteral
-//    [
-//        theValue := aLiteral.
-//    ]
-//    
-//    /// Writes the value
-//    #method write &wide:aLiteral
-//    [
-//        theValue := aLiteral literal.
-//    ]
-//    
-//    /// Writes the value
-//    #method write &char:aChar
-//    [
-//        theValue := aChar literal.
-//    ]
-//
-//    /// Appends the value    
-//    #method append : anOperand
-//    [
-//        anOperand cast:%append &to:$self.
-//    ]
-//    
-//    /// Appends the value    
-//    #method append &literal:anOperand
-//    [
-//        theValue := theValue add &literal:anOperand.
-//    ]
-//    
-//    /// Appends the value    
-//    #method append &wide:anOperand
-//    [
-//        theValue := theValue add &literal:(anOperand literal).
-//    ]
-//    
-//    /// Appends the value    
-//    #method append &char:anOperand
-//    [
-//        theValue := theValue add &literal:(anOperand literal).
-//    ]
-//
-//    /// Inserts a sub string
-//    #method insert &int:anIndex &literal:aLiteral
-//    [
-//        (anIndex == 0)
-//            ? [ theValue := aLiteral add &literal:theValue. ]
-//            ! [ theValue := theValue insert &int:anIndex &literal:aLiteral. ].
-//    ]
-//    
-//    /// Inserts a character
-//    #method insert &int:anIndex &char:aChar
-//    [
-//        (anIndex == 0)
-//            ? [ theValue := aChar literal add &literal:theValue. ]
-//            ! [ theValue := theValue insert &int:anIndex &literal:(aChar literal). ].
-//    ]
-//    
-//    /// Inserts a wide literal
-//    #method insert &int:anIndex &wide:aLiteral
-//    [
-//        theValue := theValue insert &int:anIndex &literal:(aLiteral literal).
-//    ]
-//
-//    /// Inserts an object at the specified position
-//    #method insert : anObject &at:anIndex
-//    [
-//        anObject cast:%eval &to:
-//        {
-//            eval &char:aChar [ self insert &int:(anIndex int) &char:aChar. ]
-//            
-//            eval &literal:aLiteral [ self insert &int:(anIndex int) &literal:aLiteral. ]
-//            
-//            eval &wide:aLiteral [ self insert &int:(anIndex int) &wide:aLiteral. ]
-//        }.
-//    ]            
-//                                    
-//    /// Deletes a sub string
-//    #method delete &int:anIndex &int:aLength
-//    [
-//        theValue := theValue delete &int:anIndex &int:aLength.
-//    ]
-//
-//    /// Deletes a sub string
-//    #method delete : aLength &at:anIndex
-//        <= delete &int:(anIndex int) &int:(aLength int).
-//
-//    /// Clears the variable value
-//    #method clear
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//
-//    /// Clones the object    
-//    #method clone = String new &literal:theValue.
-//                
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:theValue.
-//    
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:theValue.
-//
-//    /// Returns a literal value        
-//    #method literal = theValue.
-//    
-//    /// Returns a literal value        
-//    #method value = theValue.
-//    
-//    /// Redirects other messages to the literal value
-//    #method => theValue.
-//}
-//
-//// --- emptyWideLiteralValue ---
-//
-///// An empty wide literal value
-//#symbol(type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
+// --- String ---
+
+/// A literal variable. 
+///
+/// Extends system'LiteralValue value
+#class String :: BaseValue
+{
+    #field(type:literal)theValue.
+
+    /// Creates an empty literal variable 
+    #constructor new
+    [
+        theValue := emptyLiteralValue.
+    ]
+
+    /// Creates a literal variable with specified value
+    #constructor new : aValue
+    [
+        $self write:aValue.
+    ]
+    
+    /// Creates a literal variable with specified value
+    #constructor new &literal:aValue
+    [
+        theValue := aValue.
+    ]
+    
+    /// Creates a literal variable with specified value
+    #constructor new &char:aValue
+    [
+        theValue := aValue literal.
+    ]
+    
+    /// Creates a literal variable with specified value
+    #constructor new &wide:aValue
+    [
+        theValue := aValue literal.
+    ]
+    
+    /// Writes the value
+    #method write : anOperand
+    [
+        anOperand cast:%write &to:$self.
+    ]
+    
+    /// Writes the value
+    #method write &literal:aLiteral
+    [
+        theValue := aLiteral.
+    ]
+    
+    /// Writes the value
+    #method write &wide:aLiteral
+    [
+        theValue := aLiteral literal.
+    ]
+    
+    /// Writes the value
+    #method write &char:aChar
+    [
+        theValue := aChar literal.
+    ]
+
+    /// Appends the value    
+    #method append : anOperand
+    [
+        anOperand cast:%append &to:$self.
+    ]
+    
+    /// Appends the value    
+    #method append &literal:anOperand
+    [
+        theValue := theValue add &literal:anOperand.
+    ]
+    
+    /// Appends the value    
+    #method append &wide:anOperand
+    [
+        theValue := theValue add &literal:(anOperand literal).
+    ]
+    
+    /// Appends the value    
+    #method append &char:anOperand
+    [
+        theValue := theValue add &literal:(anOperand literal).
+    ]
+
+    /// Inserts a sub string
+    #method insert &int:anIndex &literal:aLiteral
+    [
+        (anIndex == 0)
+            ? [ theValue := aLiteral add &literal:theValue. ]
+            ! [ theValue := theValue insert &int:anIndex &literal:aLiteral. ].
+    ]
+    
+    /// Inserts a character
+    #method insert &int:anIndex &char:aChar
+    [
+        (anIndex == 0)
+            ? [ theValue := aChar literal add &literal:theValue. ]
+            ! [ theValue := theValue insert &int:anIndex &literal:(aChar literal). ].
+    ]
+    
+    /// Inserts a wide literal
+    #method insert &int:anIndex &wide:aLiteral
+    [
+        theValue := theValue insert &int:anIndex &literal:(aLiteral literal).
+    ]
+
+    /// Inserts an object at the specified position
+    #method insert : anObject &at:anIndex
+    [
+        anObject cast:%eval &to:
+        {
+            eval &char:aChar [ self insert &int:(anIndex int) &char:aChar. ]
+            
+            eval &literal:aLiteral [ self insert &int:(anIndex int) &literal:aLiteral. ]
+            
+            eval &wide:aLiteral [ self insert &int:(anIndex int) &wide:aLiteral. ]
+        }.
+    ]            
+                                    
+    /// Deletes a sub string
+    #method delete &int:anIndex &int:aLength
+    [
+        theValue := theValue delete &int:anIndex &int:aLength.
+    ]
+
+    /// Deletes a sub string
+    #method delete : aLength &at:anIndex
+        <= delete &int:(anIndex int) &int:(aLength int).
+
+    /// Clears the variable value
+    #method clear
+    [
+        theValue := emptyLiteralValue.
+    ]
+
+    /// Clones the object    
+    #method clone = String new &literal:theValue.
+                
+    /// Dispatches the verb to the target object with literal subject
+    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:theValue.
+    
+    /// Dispatches the verb to the target object with literal subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:theValue.
+
+    /// Returns a literal value        
+    #method literal = theValue.
+    
+    /// Returns a literal value        
+    #method value = theValue.
+    
+    /// Redirects other messages to the literal value
+    #method => theValue.
+}
+
+// --- emptyWideLiteralValue ---
+
+/// An empty wide literal value
+#symbol(type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
 
 // --- WideLiteralValue ---
 
@@ -1569,110 +1569,110 @@
 //    /// Redirects other messages to the literal value
 //    #method => theValue.
 //}
-//
-//// --- Variant ---
-//
-///// A basic type variant class
-//#class Variant :: String
-//{
-//    /// Tries to convert the literal value to a byte number
-//    #method byte
-//        = byteConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to a short integer number
-//    #method short
-//        = shortConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to a character
-//    #method char
-//    [
-//        #var(type:char)retVal.
-//        charConvertor $convert &int:0 &literal:theValue &vchar:retVal.
-//        
-//        ^ CharValue new &char:retVal.
-//    ]
-//
-//    /// Tries to convert the literal value to the integer number
-//    #method int
-//        = intConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to the long integer number
-//    #method long
-//        = longConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    #method real
-//        = realConvertor convert &literal:theValue.
-//
-//    /// Converts the parameter into a literal string
-//    #method write &int:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &short:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &byte:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &long:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &real:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    #method cast : aVerb &to:aTarget
-//    [
-//        #var aValue := aTarget cast:%eval &to:
-//        {
-//            eval : aVariant &int:aValue
-//                = aVariant int.
-//                
-//            eval : aVariant &byte:aValue
-//                = aVariant byte.
-//                
-//            eval : aVariant &short:aValue
-//                = aVariant short.
-//                
-//            eval : aVariant &long:aValue
-//                = aVariant long.
-//                
-//            eval : aVariant &real:aValue
-//                = aVariant real.
-//                
-//            eval : aVariant &literal:aValue
-//                = aVariant literal.
-//                
-//            eval : aVariant &wide:aValue
-//                = aVariant wide.
-//        }
-//        &with:$self.
-//        
-//        ^ aValue cast:aVerb &to:aTarget.
-//    ]
-//
-//    #method equal : anObject
-//        = anObject equal:$self bool.
-//
-//    /// Returns a literal value
-//    #method literal = theValue.
-//    
-//    /// Returns a wide literal value
-//    #method wide = theValue wide.
-//}
+
+// --- Variant ---
+
+/// A basic type variant class
+#class Variant :: String
+{
+    /// Tries to convert the literal value to a byte number
+    #method byte
+        = byteConvertor convert &literal:theValue.
+
+    /// Tries to convert the literal value to a short integer number
+    #method short
+        = shortConvertor convert &literal:theValue.
+
+    /// Tries to convert the literal value to a character
+    #method char
+    [
+        #var(type:char)retVal.
+        charConvertor $convert &int:0 &literal:theValue &vchar:retVal.
+        
+        ^ CharValue new &char:retVal.
+    ]
+
+    /// Tries to convert the literal value to the integer number
+    #method int
+        = intConvertor convert &literal:theValue.
+
+    /// Tries to convert the literal value to the long integer number
+    #method long
+        = longConvertor convert &literal:theValue.
+
+    /// Tries to convert the literal value to the real number
+    #method real
+        = realConvertor convert &literal:theValue.
+
+    /// Converts the parameter into a literal string
+    #method write &int:aValue
+    [
+        theValue := aValue literal.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &short:aValue
+    [
+        theValue := aValue literal.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &byte:aValue
+    [
+        theValue := aValue literal.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &long:aValue
+    [
+        theValue := aValue literal.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &real:aValue
+    [
+        theValue := aValue literal.
+    ]    
+
+    #method cast : aVerb &to:aTarget
+    [
+        #var aValue := aTarget cast:%eval &to:
+        {
+            eval : aVariant &int:aValue
+                = aVariant int.
+                
+            eval : aVariant &byte:aValue
+                = aVariant byte.
+                
+            eval : aVariant &short:aValue
+                = aVariant short.
+                
+            eval : aVariant &long:aValue
+                = aVariant long.
+                
+            eval : aVariant &real:aValue
+                = aVariant real.
+                
+            eval : aVariant &literal:aValue
+                = aVariant literal.
+                
+            eval : aVariant &wide:aValue
+                = aVariant wide.
+        }
+        &with:$self.
+        
+        ^ aValue cast:aVerb &to:aTarget.
+    ]
+
+    #method equal : anObject
+        = anObject equal:$self bool.
+
+    /// Returns a literal value
+    #method literal = theValue.
+    
+    /// Returns a wide literal value
+    #method wide = theValue wide.
+}
 
 // --- BaseArray ---
 

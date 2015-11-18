@@ -176,8 +176,8 @@
     #method toReal
         = self cast:%convert &to:realConvertor.
 
-//    #method convertTo : aTarget
-//        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
+    #method convertTo : aTarget
+        = aTarget write:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
 //#class(extension:datetime) dateFormatterOp 
