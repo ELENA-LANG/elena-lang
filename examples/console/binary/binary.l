@@ -1,7 +1,7 @@
-#define system.
-#define system'math.
-#define system'routines.
-#define extensions.
+#import system.
+#import system'math.
+#import system'routines.
+#import extensions.
 
 // --- Program --- 
 

@@ -3312,21 +3312,21 @@
     #method(type:literal,stacksafe) convert &long:aNumber
         => system'internal's_copylong.
 
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:literal,stacksafe) convert &int:aNumber &index:aRadix
-//        => system'internal's_copyint_radix.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:literal,stacksafe) convert &short:aNumber &index:aRadix
-//        => system'internal's_copyint_radix.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:literal,stacksafe) convert &byte:aNumber &index:aRadix
-//        => system'internal's_copyint_radix.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:literal,stacksafe) convert &long:aNumber &index:aRadix
-//        => system'internal's_copylong_radix.
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:literal,stacksafe) convert &int:aNumber &index:aRadix
+        => system'internal's_copyint_radix.
+
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:literal,stacksafe) convert &short:aNumber &index:aRadix
+        => system'internal's_copyint_radix.
+
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:literal,stacksafe) convert &byte:aNumber &index:aRadix
+        => system'internal's_copyint_radix.
+
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:literal,stacksafe) convert &long:aNumber &index:aRadix
+        => system'internal's_copylong_radix.
 
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &real:aNumber
@@ -3370,21 +3370,21 @@
     #method(type:wide,stacksafe) convert &long:aNumber
         => system'internal'ws_copylong.
 
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:wide,stacksafe) convert &int:aNumber &index:aRadix
-//        => system'internal'ws_copyint_radix.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:wide,stacksafe) convert &short:aNumber &index:aRadix
-//        => system'internal'ws_copyint_radix.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:wide,stacksafe) convert &byte:aNumber &index:aRadix
-//        => system'internal'ws_copyint_radix.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    #method(type:wide,stacksafe) convert &long:aNumber &index:aRadix
-//        => system'internal'ws_copylong_radix.
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:wide,stacksafe) convert &int:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:wide,stacksafe) convert &short:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:wide,stacksafe) convert &byte:aNumber &index:aRadix
+        => system'internal'ws_copyint_radix.
+
+    /// Converts the parameter to the literal value with the provided radix
+    #method(type:wide,stacksafe) convert &long:aNumber &index:aRadix
+        => system'internal'ws_copylong_radix.
 
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &real:aNumber

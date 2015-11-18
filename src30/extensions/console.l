@@ -1,7 +1,7 @@
 #import system.
-//#define system'routines.
+#import system'routines.
 ////#define system'dynamic.
-#define system'text.
+#import system'text.
 
 // --- outputOp ---
 
@@ -837,199 +837,199 @@
     ]
 }
 
-//// --- inputOp ---
+// --- inputOp ---
+
+#class(extension) inputOp
+{
+    #method readLine : anObject
+    [
+        (self read &literal)::convertorOp convertTo:anObject.
+        
+        ^ anObject.
+    ]
+
+    #method readLine : anObject1 : anObject2
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convertTo:anObject1.
+        (aParams@1)::convertorOp convertTo:anObject2.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3
+    [ 
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convertTo:anObject1.
+        (aParams@1)::convertorOp convertTo:anObject2.
+        (aParams@2)::convertorOp convertTo:anObject3.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convertTo:anObject1.
+        (aParams@1)::convertorOp convertTo:anObject2.
+        (aParams@2)::convertorOp convertTo:anObject3.
+        (aParams@3)::convertorOp convertTo:anObject4.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convertTo:anObject1.
+        (aParams@1)::convertorOp convertTo:anObject2.
+        (aParams@2)::convertorOp convertTo:anObject3.
+        (aParams@3)::convertorOp convertTo:anObject4.
+        (aParams@4)::convertorOp convertTo:anObject5.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convertTo:anObject1.
+        (aParams@1)::convertorOp convertTo:anObject2.
+        (aParams@2)::convertorOp convertTo:anObject3.
+        (aParams@3)::convertorOp convertTo:anObject4.
+        (aParams@4)::convertorOp convertTo:anObject5.
+        (aParams@5)::convertorOp convertTo:anObject6.
+    ]
+    
+    #method readLine &args:Arguments
+    [
+        #var aLine := self read &literal.
+        
+        #var(type:array) aParams := aLine split &char:#32.
+        
+        #var(type:vint)aLength.        
+        Arguments readLength &vint:aLength.
+        
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            (aParams getAt &int:anIndex)::convertorOp convertTo:(Arguments @ anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+    ]
+}
+
+//// --- wideInputOp ---
 //
-//#class(extension) inputOp
+//#symbol wideInputOp =
 //{
 //    #method readLine : anObject
 //    [
-//        (self read &literal)::convertorOp convertTo:anObject.
+//        convertor save:(self read &wide) &to:anObject.
 //        
 //        ^ anObject.
 //    ]
 //
 //    #method readLine : anObject1 : anObject2
 //    [
-//        #var aLine := self read &literal.
+//        #var aLine := self read &wide.
 //        
-//        #var aParams := aLine split &char:#32.
+//        #var aParams := aLine ::literalOp split &char:#32.
 //        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
+//        convertor save:(aParams@0) &to:anObject1.
+//        convertor save:(aParams@1) &to:anObject2.
 //    ]
 //        
 //    #method readLine : anObject1 : anObject2 : anObject3
 //    [ 
-//        #var aLine := self read &literal.
+//        #var aBuffer := WideString new.
 //        
-//        #var aParams := aLine split &char:#32.
+//        self readLine:aBuffer.
 //        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
+//        #var aParams := aBuffer ::literalOp split &char:#32.
+//        
+//        convertor save:(aParams@0) &to:anObject1.
+//        convertor save:(aParams@1) &to:anObject2.
+//        convertor save:(aParams@2) &to:anObject3.
 //    ]
 //        
 //    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
 //    [
-//        #var aLine := self read &literal.
+//        #var aBuffer := WideString new.
 //        
-//        #var aParams := aLine split &char:#32.
+//        self readLine:aBuffer.
 //        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//        (aParams@3)::convertorOp convertTo:anObject4.
+//        #var aParams := aBuffer ::literalOp split &char:#32.
+//        
+//        convertor save:(aParams@0) &to:anObject1.
+//        convertor save:(aParams@1) &to:anObject2.
+//        convertor save:(aParams@2) &to:anObject3.
+//        convertor save:(aParams@3) &to:anObject4.
 //    ]
 //        
 //    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
 //    [
-//        #var aLine := self read &literal.
+//        #var aBuffer := WideString new.
 //        
-//        #var aParams := aLine split &char:#32.
+//        self readLine:aBuffer.
 //        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//        (aParams@3)::convertorOp convertTo:anObject4.
-//        (aParams@4)::convertorOp convertTo:anObject5.
+//        #var aParams := aBuffer ::literalOp split &char:#32.
+//        
+//        convertor save:(aParams@0) &to:anObject1.
+//        convertor save:(aParams@1) &to:anObject2.
+//        convertor save:(aParams@2) &to:anObject3.
+//        convertor save:(aParams@3) &to:anObject4.
+//        convertor save:(aParams@4) &to:anObject5.
 //    ]
 //        
 //    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
 //    [
-//        #var aLine := self read &literal.
+//        #var aBuffer := WideString new.
 //        
-//        #var aParams := aLine split &char:#32.
+//        self readLine:aBuffer.
 //        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//        (aParams@3)::convertorOp convertTo:anObject4.
-//        (aParams@4)::convertorOp convertTo:anObject5.
-//        (aParams@5)::convertorOp convertTo:anObject6.
+//        #var aParams := aBuffer ::literalOp split &char:#32.
+//        
+//        convertor save:(aParams@0) &to:anObject1.
+//        convertor save:(aParams@1) &to:anObject2.
+//        convertor save:(aParams@2) &to:anObject3.
+//        convertor save:(aParams@3) &to:anObject4.
+//        convertor save:(aParams@4) &to:anObject5.
+//        convertor save:(aParams@5) &to:anObject6.
 //    ]
 //    
 //    #method readLine &args:Arguments
 //    [
-//        #var aLine := self read &literal.
+//        #var aBuffer := WideString new.
 //        
-//        #var(type:array) aParams := aLine split &char:#32.
+//        self readLine:aBuffer.
 //        
-//        #var(type:vint)aLength.        
+//        #var(type:array) aParams := aBuffer ::literalOp split &char:#32.
+//        
+//        #var(type:int)aLength.        
 //        Arguments readLength &vint:aLength.
 //        
 //        #var(type:int)anIndex := 0.
 //        #loop (anIndex < aLength) ?
 //        [
-//            (aParams getAt &int:anIndex)::convertorOp convertTo:(Arguments @ anIndex).
+//            convertor save:(aParams getAt &index:anIndex) &to:(Arguments @ anIndex).
 //            
 //            anIndex := anIndex + 1.
 //        ].
 //    ]
-//}
+//}.
 //
-////// --- wideInputOp ---
-////
-////#symbol wideInputOp =
-////{
-////    #method readLine : anObject
-////    [
-////        convertor save:(self read &wide) &to:anObject.
-////        
-////        ^ anObject.
-////    ]
-////
-////    #method readLine : anObject1 : anObject2
-////    [
-////        #var aLine := self read &wide.
-////        
-////        #var aParams := aLine ::literalOp split &char:#32.
-////        
-////        convertor save:(aParams@0) &to:anObject1.
-////        convertor save:(aParams@1) &to:anObject2.
-////    ]
-////        
-////    #method readLine : anObject1 : anObject2 : anObject3
-////    [ 
-////        #var aBuffer := WideString new.
-////        
-////        self readLine:aBuffer.
-////        
-////        #var aParams := aBuffer ::literalOp split &char:#32.
-////        
-////        convertor save:(aParams@0) &to:anObject1.
-////        convertor save:(aParams@1) &to:anObject2.
-////        convertor save:(aParams@2) &to:anObject3.
-////    ]
-////        
-////    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
-////    [
-////        #var aBuffer := WideString new.
-////        
-////        self readLine:aBuffer.
-////        
-////        #var aParams := aBuffer ::literalOp split &char:#32.
-////        
-////        convertor save:(aParams@0) &to:anObject1.
-////        convertor save:(aParams@1) &to:anObject2.
-////        convertor save:(aParams@2) &to:anObject3.
-////        convertor save:(aParams@3) &to:anObject4.
-////    ]
-////        
-////    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
-////    [
-////        #var aBuffer := WideString new.
-////        
-////        self readLine:aBuffer.
-////        
-////        #var aParams := aBuffer ::literalOp split &char:#32.
-////        
-////        convertor save:(aParams@0) &to:anObject1.
-////        convertor save:(aParams@1) &to:anObject2.
-////        convertor save:(aParams@2) &to:anObject3.
-////        convertor save:(aParams@3) &to:anObject4.
-////        convertor save:(aParams@4) &to:anObject5.
-////    ]
-////        
-////    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
-////    [
-////        #var aBuffer := WideString new.
-////        
-////        self readLine:aBuffer.
-////        
-////        #var aParams := aBuffer ::literalOp split &char:#32.
-////        
-////        convertor save:(aParams@0) &to:anObject1.
-////        convertor save:(aParams@1) &to:anObject2.
-////        convertor save:(aParams@2) &to:anObject3.
-////        convertor save:(aParams@3) &to:anObject4.
-////        convertor save:(aParams@4) &to:anObject5.
-////        convertor save:(aParams@5) &to:anObject6.
-////    ]
-////    
-////    #method readLine &args:Arguments
-////    [
-////        #var aBuffer := WideString new.
-////        
-////        self readLine:aBuffer.
-////        
-////        #var(type:array) aParams := aBuffer ::literalOp split &char:#32.
-////        
-////        #var(type:int)aLength.        
-////        Arguments readLength &vint:aLength.
-////        
-////        #var(type:int)anIndex := 0.
-////        #loop (anIndex < aLength) ?
-////        [
-////            convertor save:(aParams getAt &index:anIndex) &to:(Arguments @ anIndex).
-////            
-////            anIndex := anIndex + 1.
-////        ].
-////    ]
-////}.
-////
-////// === helper symbols ==
-////
-////// --- consoleEx ---
-////
-////#static consoleEx
-////    = Extension(console, 'outputOp, 'inputOp).
+//// === helper symbols ==
+//
+//// --- consoleEx ---
+//
+//#static consoleEx
+//    = Extension(console, 'outputOp, 'inputOp).

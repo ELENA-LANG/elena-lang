@@ -825,10 +825,10 @@
 //    ]
 }
 
-//// --- literalOp ---
-//
-//#class(extension:literal)literalOp
-//{
+// --- literalOp ---
+
+#class(extension:literal)literalOp
+{
 //    #method indexOf : anObject
 //        = self literal indexOf:anObject &at:0.
 //
@@ -837,21 +837,21 @@
 //
 //    #method indexOf &char:aChar
 //        = self literal indexOf &char:aChar &at:0.
-//        
-//    #method(type:literal) Substring &at:anIndex
-//        = self::literalOp Substring &int:(anIndex int).
-//        
-//    #method(type:literal,stacksafe) Substring &int:anIndex
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aLength.
-//        aLiteral readLength &vint:aLength.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ aLiteral Substring &int:anIndex &int:aLength.
-//    ]        
-//    
+        
+    #method(type:literal) Substring &at:anIndex
+        = self::literalOp Substring &int:(anIndex int).
+        
+    #method(type:literal,stacksafe) Substring &int:anIndex
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aLength.
+        aLiteral readLength &vint:aLength.
+        
+        aLength := aLength - anIndex.
+        
+        ^ aLiteral Substring &int:anIndex &int:aLength.
+    ]        
+    
 //    #method trimLeft &char:aChar
 //    [
 //        #var(type:literal)aLiteral := self literal.        
@@ -913,19 +913,19 @@
 //    
 //    #method trim
 //        = self::literalOp trimLeft &char:#32 trimRight &char:#32.        
-//    
-//    #method padLeft &char:aChar &int:aLength
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:int)aCurrentLength.
-//        aLiteral readLength &vint:aCurrentLength.
-//        
-//        (aCurrentLength < aLength)
-//            ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
-//            
-//        ^ self.            
-//    ]
-//    
+    
+    #method padLeft &char:aChar &int:aLength
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var(type:int)aCurrentLength.
+        aLiteral readLength &vint:aCurrentLength.
+        
+        (aCurrentLength < aLength)
+            ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
+            
+        ^ self.            
+    ]
+    
 //    #method padRight &char:aChar &int:aLength
 //    [
 //        #var(type:literal)aLiteral := self literal.        
@@ -1034,12 +1034,12 @@
 //        ^ aLength == 0.
 //    ]
 //    
-//}
-//
-//// --- wideOp ---
-//
-//#class(extension:wide)wideOp
-//{
+}
+
+// --- wideOp ---
+
+#class(extension:wide)wideOp
+{
 //    #method indexOf : anObject
 //        = self wide indexOf:anObject &at:0.
 //        
@@ -1048,21 +1048,21 @@
 //
 //    #method indexOf &char:aChar
 //        = self wide indexOf &int:0 &char:aChar.
-//                
-//    #method(type:wide) Substring &at:anIndex
-//        = self::wideOp Substring &int:(anIndex int).
-//        
-//    #method(type:wide,stacksafe) Substring &int:anIndex
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)aLength.
-//        aLiteral readLength &vint:aLength.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ aLiteral Substring &int:anIndex &int:aLength.
-//    ]
-//     
+                
+    #method(type:wide) Substring &at:anIndex
+        = self::wideOp Substring &int:(anIndex int).
+        
+    #method(type:wide,stacksafe) Substring &int:anIndex
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)aLength.
+        aLiteral readLength &vint:aLength.
+        
+        aLength := aLength - anIndex.
+        
+        ^ aLiteral Substring &int:anIndex &int:aLength.
+    ]
+     
 //    #method trimLeft &char:aChar
 //    [
 //        #var(type:wide)aLiteral := self wide.
@@ -1122,19 +1122,19 @@
 //    
 //    #method trim
 //        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
-//    
-//    #method padLeft &char:aChar &int:aLength
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)aCurrentLength.
-//        aLiteral readLength &vint:aCurrentLength.
-//        
-//        (aCurrentLength < aLength)
-//            ? [ ^ WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
-//            
-//        ^ self.            
-//    ]
-//    
+    
+    #method padLeft &char:aChar &int:aLength
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)aCurrentLength.
+        aLiteral readLength &vint:aCurrentLength.
+        
+        (aCurrentLength < aLength)
+            ? [ ^ WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
+            
+        ^ self.            
+    ]
+    
 //    #method padRight &char:aChar &int:aLength
 //    [
 //        #var(type:wide)aLiteral := self wide.        
@@ -1245,25 +1245,25 @@
 //        
 //        ^ aLength == 0.
 //    ]
-//}
-//
-//// --- stringOp ---
-//
-//#symbol stringOpDispatcher =
-//{
-//    eval &literal:aLiteral = literalOp.
-//    
-//    eval &wide:aLiteral = wideOp.
-//}.
-//
-//#class(extension) stringOp
-//{
-//    #method Substring : anIndex
-//        = self Substring:(self length - anIndex) &at:(anIndex int).
-//            
-//    #method Substring : anIndex : aLength
-//        = self Substring:aLength &at:anIndex.
-//            
+}
+
+// --- stringOp ---
+
+#symbol stringOpDispatcher =
+{
+    eval &literal:aLiteral = literalOp.
+    
+    eval &wide:aLiteral = wideOp.
+}.
+
+#class(extension) stringOp
+{
+    #method Substring : anIndex
+        = self Substring:(self length - anIndex) &at:(anIndex int).
+            
+    #method Substring : anIndex : aLength
+        = self Substring:aLength &at:anIndex.
+            
 //    #method trimLeft &char:aChar
 //    [
 //        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
@@ -1305,14 +1305,14 @@
 //        
 //        ^ self::dispatcher trimRight.
 //    ]
-//    
-//    #method padLeft &char:aChar &length:aLength
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher padLeft &char:aChar &int:(aLength int).
-//    ]
-//    
+    
+    #method padLeft &char:aChar &length:aLength
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher padLeft &char:aChar &int:(aLength int).
+    ]
+    
 //    #method padRight &char:aChar &length:aLength
 //    [
 //        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
@@ -1408,4 +1408,4 @@
 //            
 //        ^ self.
 //    ]    
-//}
+}
