@@ -2580,7 +2580,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       if (lflag == rflag) {
          if (lflag == elDebugDWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
             if (IsExprOperator(operator_id))
-               retVal.param = moduleScope->intReference;
+               retVal.param = resolveObjectReference(scope, object);
 
             primitiveOp = lxIntOp;
             size = 4;
