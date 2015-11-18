@@ -355,16 +355,16 @@
         theArray := Array new &int:aCapacity.
     ]
     
-//    /// Creates the list
-//    #constructor(stacksafe) $new &array:anArray &int:aLength
-//    [
-//        theCapacity := Integer new.
-//        theLength := Integer new &int:aLength.
-//        
-//        anArray readLength &vint:theCapacity.
-//        
-//        theArray := anArray clone.
-//    ]
+    /// Creates the list
+    #constructor(stacksafe) $new &array:anArray &int:aLength
+    [
+        theCapacity := Integer new.
+        theLength := Integer new &int:aLength.
+        
+        anArray readLength &vint:theCapacity.
+        
+        theArray := anArray clone.
+    ]
     
     /// Returns the object at the specified position
     #method getAt : anIndex
@@ -497,110 +497,110 @@
 //
 //    /// Returns the last object
 //    #method last = theArray getAt &int:(theLength - 1).
-//    
-//    /// Returns the list enumerator
-//    #method enumerator = ArrayListEnumerator new &array_list:$self.
-//    
-//    /// Returns the list iterator9
-//    #method iterator = ArrayListIterator new &array_list:$self.
-//    
-//    /// Returns a list copy
-//    #method(type:array_list) clone
-//        = ArrayList $new &array:theArray &int:theLength.
+    
+    /// Returns the list enumerator
+    #method enumerator = ArrayListEnumerator new &array_list:$self.
+    
+    /// Returns the list iterator9
+    #method iterator = ArrayListIterator new &array_list:$self.
+    
+    /// Returns a list copy
+    #method(type:array_list) clone
+        = ArrayList $new &array:theArray &int:theLength.
         
     #method array
         = Array new &int:0 &int:theLength &array:theArray.
 }
 
-//// --- ArrayListEnumerator ---
-//
-///// A list enumerator
-//#class ArrayListEnumerator :: Enumerator
-//{
-//    #field(type:array_list) theList.
-//    #field(type:vint)       theIndex.
-//    
-//    /// Creates a list enumerator
-//    #constructor new &array_list:aList
-//    [
-//        theList := aList.
-//        theIndex := Integer new &int:-1.
-//    ]
-//
-//    /// Creates a list enumerator
-//    #constructor new : anObject
-//        <= new &array_list:(anObject array_list).
-//
-//    /// Returns the current object
-//    #method get = theList getAt &int:theIndex.
-//    
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex << -1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        theIndex += 1.
-//        
-//        #var(type:int)aLength.
-//        theList readLength &vint:aLength.
-//        
-//        ^ (aLength > theIndex).
-//    ]
-//}
-//
-//// --- ArrayListIndexer ---
-//
-///// A list iterator
-//#class ArrayListIterator :: Iterator
-//{
-//    #field(type:array_list)theList.
-//    #field(type:vint)      theIndex.
-//    
-//    /// Creates a list iterator
-//    #constructor new &array_list:aList
-//    [
-//        theList := aList.
-//        theIndex := Integer new.
-//    ]
-//
-//    /// Creates a list iterator
-//    #constructor new : anObject
-//        <= new &array_list:(anObject array_list).
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(type:int)aLength.
-//        theList readLength &vint:aLength.
-//        
-//        ^ (aLength > theIndex).
-//    ]
-//
-//    /// Returns the current member
-//    #method get = theList getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject 
-//    [
-//        theList setAt &int:theIndex &object:anObject.
-//    ]
-//    
-//    /// Reads the current index into an output parameter
-//    #method readIndex &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex
-//    [
-//        theIndex << anIndex.
-//    ]
-//}
+// --- ArrayListEnumerator ---
+
+/// A list enumerator
+#class ArrayListEnumerator :: Enumerator
+{
+    #field(type:array_list) theList.
+    #field(type:vint)       theIndex.
+    
+    /// Creates a list enumerator
+    #constructor new &array_list:aList
+    [
+        theList := aList.
+        theIndex := Integer new &int:-1.
+    ]
+
+    /// Creates a list enumerator
+    #constructor new : anObject
+        <= new &array_list:(anObject array_list).
+
+    /// Returns the current object
+    #method get = theList getAt &int:theIndex.
+    
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex << -1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        theIndex += 1.
+        
+        #var(type:int)aLength.
+        theList readLength &vint:aLength.
+        
+        ^ (aLength > theIndex).
+    ]
+}
+
+// --- ArrayListIndexer ---
+
+/// A list iterator
+#class ArrayListIterator :: Iterator
+{
+    #field(type:array_list)theList.
+    #field(type:vint)      theIndex.
+    
+    /// Creates a list iterator
+    #constructor new &array_list:aList
+    [
+        theList := aList.
+        theIndex := Integer new.
+    ]
+
+    /// Creates a list iterator
+    #constructor new : anObject
+        <= new &array_list:(anObject array_list).
+    
+    /// Returns false if the index out of range
+    #method available
+    [
+        #var(type:int)aLength.
+        theList readLength &vint:aLength.
+        
+        ^ (aLength > theIndex).
+    ]
+
+    /// Returns the current member
+    #method get = theList getAt &int:theIndex.
+    
+    /// Sets the current member
+    #method set : anObject 
+    [
+        theList setAt &int:theIndex &object:anObject.
+    ]
+    
+    /// Reads the current index into an output parameter
+    #method readIndex &vint:anIndex
+    [
+        anIndex << theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex
+    [
+        theIndex << anIndex.
+    ]
+}
 
 // --- Dictionary ---
 

@@ -1795,9 +1795,9 @@
     /// Dispatches the verb to the target object with array subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array:$self.
 
-//    /// Clones the array
-//    #method(type:array) clone 
-//        = Array new &array:$self.
+    /// Clones the array
+    #method(type:array) clone 
+        = Array new &array:$self.
 }
 
 // --- OpenArgs ---

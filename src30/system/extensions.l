@@ -1,7 +1,7 @@
-//// === actions ===
-//
-//#symbol ifOrdered
-//    = (:aFormer:aLater) [ aFormer < aLater ].
+// === actions ===
+
+#symbol ifOrdered
+    = (:aFormer:aLater) [ aFormer < aLater ].
 
 // --- common methods ---
 

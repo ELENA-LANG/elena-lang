@@ -1,9 +1,9 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define system'text.
-#define extensions.
-#define extensions'routines.
+#import system.
+#import system'routines.
+#import system'collections.
+#import system'text.
+#import extensions.
+#import extensions'routines.
 
 // --- WordList ---
 

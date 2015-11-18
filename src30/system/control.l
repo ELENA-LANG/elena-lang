@@ -360,29 +360,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true
-//    #method retrieve : aParam &enumerator:anEnumerator
-//    [
-//        #var anItem := nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true
+    #method retrieve : aParam &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base three variable function

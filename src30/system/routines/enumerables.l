@@ -127,11 +127,11 @@
     #method run &each:aFunction
       = aFunction run &enumerator:(self enumerator).
       
-//    #method run &eachPair:aFunction
-//      = aFunction run:self &enumerator:(self enumerator).
-//      
-//    #method run:aParam &eachPair:aFunction
-//      = aFunction run:aParam &enumerator:(self enumerator).
+    #method run &eachPair:aFunction
+      = aFunction run:self &enumerator:(self enumerator).
+      
+    #method run:aParam &eachPair:aFunction
+      = aFunction run:aParam &enumerator:(self enumerator).
       
     #method seek &each:aFunction
       = aFunction retrieve &enumerator:(self enumerator).
@@ -139,8 +139,8 @@
     #method safeSeek : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
-//    #method ifExists : aValue
-//        = $nil != self::enumerableOp safeSeek:aValue.
+    #method ifExists : aValue
+        = $nil != self::enumerableOp safeSeek:aValue.
 
     #method top:aCounter
         = system'routines'TopFilter new:aCounter &enumerator:(self enumerator).
@@ -280,9 +280,9 @@
         ^ self.
     ]
     
-//    #method ascendant
-//        = (self clone)::indexableOp sort:ifOrdered.
-//
+    #method ascendant
+        = (self clone)::indexableOp sort:ifOrdered.
+
 //    #method Subarray : aLength &at:anIndex
 //        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
 //                

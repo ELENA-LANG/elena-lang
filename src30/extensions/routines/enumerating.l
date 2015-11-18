@@ -1,8 +1,8 @@
-//#define system.
+#import system.
 //#define system'io.
 //#define system'text.
-//#define extensions'text.
-//
+#import extensions'text.
+
 //// --- ReaderEnumerator ---
 //
 //#class ReaderEnumerator :: Enumerator
@@ -61,15 +61,15 @@
 //    #method run &eachLine:anAction
 //        = anAction run &enumerator:(ReaderEnumerator new &path:self).
 //}
-//
-//// --- stringExOp ---
-//
-//#class(extension)stringExOp
-//{
-//    #method run &eachWord:aFunction
-//        = aFunction run &enumerator:(WordEnumerator new &literal:(self literal)).
-//}
-//
+
+// --- stringExOp ---
+
+#class(extension)stringExOp
+{
+    #method run &eachWord:aFunction
+        = aFunction run &enumerator:(WordEnumerator new &literal:(self literal)).
+}
+
 //// --- printingLn ---
 //
 //#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
