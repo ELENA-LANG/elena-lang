@@ -2,21 +2,21 @@
 
 #class(limited) BaseBoolValue
 {
-//    #method then : aTrueAction = $nil.
-//
-//    #method then : aTrueAction &else:aFalseAction = $nil.
-//
-//    #method else : aTrueAction = $nil.
-//    
-//    #method iif:aTrueValue:aFalseValue = $nil.
-//
-//    #method(type:bool) or : anExpr = $nil.
+    #method then : aTrueAction = $nil.
+
+    #method then : aTrueAction &else:aFalseAction = $nil.
+
+    #method else : aTrueAction = $nil.
+    
+    #method iif:aTrueValue:aFalseValue = $nil.
+
+    #method(type:bool) or : anExpr = $nil.
 
     #method(type:bool) and : anExpr = $nil.
 
-//    #method(type:bool) xor : aBool = $nil.
-//
-//    #method equal : anExpr = $nil.
+    #method(type:bool) xor : aBool = $nil.
+
+    #method equal : anExpr = $nil.
 
     #method(type:bool) equal &bool:aBool = $nil.
 
@@ -28,7 +28,7 @@
 
     #method bool = $self.
 
-//    #method clone = $nil.
+    #method clone = $nil.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
     
@@ -38,38 +38,38 @@
 /// A true value symbol
 #symbol true = BaseBoolValue
 {
-//    /// Executes the action
-//    #method then : aTrueAction = aTrueAction eval.
-//
-//    /// Executes then-action
-//    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    #method else : aTrueAction = $nil.
-//
-//    #method iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    #method(type:bool) or : anExpr = $self.
+    /// Executes the action
+    #method then : aTrueAction = aTrueAction eval.
+
+    /// Executes then-action
+    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
+
+    /// Always returns nil.
+    #method else : aTrueAction = $nil.
+
+    #method iif:aTrueValue:aFalseValue = aTrueValue.
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    #method(type:bool) or : anExpr = $self.
 
     /// Executes logical AND operation
     #method(type:bool) and : anExpr = anExpr bool.
 
-//    /// Executes logical XOR operation
-//    #method(type:bool) xor : aBool
-//    [
-//        aBool ? [ ^ false. ].
-//        
-//        ^ $self.
-//    ]
+    /// Executes logical XOR operation
+    #method(type:bool) xor : aBool
+    [
+        aBool ? [ ^ false. ].
+        
+        ^ $self.
+    ]
 
     /// Determines whether the specified object is equal to the current object boolean value.
     #method equal : anExpr = anExpr bool.
 
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method(type:bool) equal &bool:aBool = aBool.
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method(type:bool) equal &bool:aBool = aBool.
 
     /// Always returns false.
     #method(type:bool) not = false.
@@ -83,8 +83,8 @@
     /// Returns itself.
     #method bool = $self.
 
-//    /// Returns itself.
-//    #method clone = $self.
+    /// Returns itself.
+    #method clone = $self.
 }.
 
 // --- false ---
@@ -92,32 +92,32 @@
 /// A false value symbol
 #symbol false = BaseBoolValue
 {
-//    /// Always returns nil
-//    #method then : anAction = $nil.
-//    
-//    /// Executes else-action
-//    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    #method else : aFalseAction = aFalseAction eval.
-//
-//    #method iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    #method(type:bool) or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
+    /// Always returns nil
+    #method then : anAction = $nil.
+    
+    /// Executes else-action
+    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
+
+    /// Executes the action
+    #method else : aFalseAction = aFalseAction eval.
+
+    #method iif:aTrueValue:aFalseValue = aFalseValue.
+
+    /// Executes logical OR operation
+    #method(type:bool) or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
     ///
     /// Always return false
     #method(type:bool) and : anExpr = $self.
 
-//    /// Executes logical XOR operation
-//    #method(type:bool) xor : anExpr 
-//    [
-//        anExpr ? [ ^ true. ].
-//        
-//        ^ $self.
-//    ]
+    /// Executes logical XOR operation
+    #method(type:bool) xor : anExpr 
+    [
+        anExpr ? [ ^ true. ].
+        
+        ^ $self.
+    ]
 
     /// Determines whether the specified object is equal to the current object boolean value
     #method equal : anExpr
@@ -127,13 +127,13 @@
         ^ true.
     ]
 
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method(type:bool) equal &bool:anExpr
-//    [
-//        anExpr ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method(type:bool) equal &bool:anExpr
+    [
+        anExpr ? [ ^ $self. ].
+        
+        ^ true.
+    ]
 
     /// Always returns true
     #method not = true.
@@ -147,8 +147,8 @@
     /// Returns itself
     #method bool = $self.
 
-//    /// Returns itself
-//    #method clone = $self.
+    /// Returns itself
+    #method clone = $self.
 }.
 
 // === Basic prototypes ===

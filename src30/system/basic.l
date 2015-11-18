@@ -344,13 +344,13 @@
 //    
 //    #method(type:byte,stacksafe) shift &int:anOrder
 //        => system'internal'byte_shift.
-//
-//    /// Returns the literal presentation
-//    #method literal = literalConvertor convert &byte:$self.
-//
-//    /// Returns the literal presentation
-//    #method wide = wideConvertor convert &byte:$self.
-//
+
+    /// Returns the literal presentation
+    #method literal = literalConvertor convert &byte:$self.
+
+    /// Returns the literal presentation
+    #method wide = wideConvertor convert &byte:$self.
+
 //    /// Bitwise inversion
 //    #method(type:byte,stacksafe) not
 //        => system'internal'byte_not.

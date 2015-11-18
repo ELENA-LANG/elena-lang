@@ -18,6 +18,7 @@ using namespace _ELENA_;
 #define HINT_MASK             0xFFFF0000
 
 #define HINT_ROOT             0x80000000
+#define HINT_NOBOXING         0x40000000
 #define HINT_ALT              0x12000000
 #define HINT_GENERIC_METH     0x00100000     // generic method
 #define HINT_ACTION           0x00020000
@@ -2144,7 +2145,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
             }
             else result = compileCollection(member, scope, 0);
          }
-         else result = compileExpression(member, scope, 0, 0);
+         else result = compileExpression(member, scope, 0, HINT_NOBOXING);
          break;
       case nsMessageReference:
          result = compileMessageReference(member, scope);
@@ -2242,6 +2243,9 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 
 bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode)
 {
+   if (test(mode, HINT_NOBOXING))
+      return false;
+
    ModuleScope* moduleScope = scope.moduleScope;
 
    int size = 0;
@@ -3011,7 +3015,7 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    // if it is a generic role
    if (role.kind != okSubjectDispatcher && role.kind != okConstantRole) {
       scope.writer->newNode(lxOverridden);
-      role = compileObject(roleNode, scope, 0);
+      role = compileExpression(roleNode, scope, 0, 0);
       scope.writer->closeNode();
    }
 
