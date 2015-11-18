@@ -2019,6 +2019,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxSignatureConstant, object.param);
          break;
       case okSubject:
+      case okSubjectDispatcher:
          scope.writer->newNode(lxLocalAddress, object.param);
          break;
       case okBlockLocal:
@@ -2029,6 +2030,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okObject:
          scope.writer->newNode(lxResult);
+         break;
+      case okConstantRole:
+         scope.writer->newNode(lxConstantSymbol, object.param);
          break;
       case okExternal:
          // HOTFIX : external node will be declared later
@@ -2784,9 +2788,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    appendObjectInfo(scope, retVal);
 
    // define the message target if required
-   if (target.kind == okConstantRole) {
+   if (target.kind == okConstantRole || target.kind == okSubjectDispatcher) {
       scope.writer->newNode(lxOverridden);
-      scope.writer->appendNode(lxConstantSymbol, target.param);
+      writeTerminal(TerminalInfo(), scope, target);      
       scope.writer->closeNode();
    }
 

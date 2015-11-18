@@ -1,46 +1,46 @@
-#define system.
-#define system'collections.
-#define system'routines.
+#import system.
+#import system'collections.
+#import system'routines.
 //#define system'calendar.
-//#define system'text.
-//
-//// --- convertors ---
-//
-//#symbol literalExConvertor =
-//{
-//    convert &enumerable:aList
-//    [
-//        #var(type:textbuffer) theOutput := TextBuffer new.
-//
-//        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toLiteral) write:"," ].
-//        
-//        #var(type:int)aLength.
-//        theOutput readLength &vint:aLength.
-//
-//        (0 < aLength)
-//            ? [ theOutput setLength &int:(-1 + aLength). ].
-//        
-//        ^ theOutput literal.
-//    ]
-//}.
-//
-//#symbol wideExConvertor =
-//{
-//    convert &enumerable:aList
-//    [
-//        #var(type:textbuffer) theOutput := TextBuffer new.
-//
-//        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toWide) write:"," ].
-//        
-//        #var(type:int)aLength.
-//        theOutput readLength &vint:aLength.
-//
-//        (0 < aLength)
-//            ? [ theOutput setLength &int:(-1 + aLength). ].
-//        
-//        ^ theOutput wide.
-//    ]
-//}.
+#import system'text.
+
+// --- convertors ---
+
+#symbol literalExConvertor =
+{
+    convert &enumerable:aList
+    [
+        #var(type:textbuffer) theOutput := TextBuffer new.
+
+        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toLiteral) write:"," ].
+        
+        #var(type:int)aLength.
+        theOutput readLength &vint:aLength.
+
+        (0 < aLength)
+            ? [ theOutput setLength &int:(-1 + aLength). ].
+        
+        ^ theOutput literal.
+    ]
+}.
+
+#symbol wideExConvertor =
+{
+    convert &enumerable:aList
+    [
+        #var(type:textbuffer) theOutput := TextBuffer new.
+
+        aList run:theOutput &eachPair:(:aParam:anItem) [ aParam write:(anItem::convertorOp toWide) write:"," ].
+        
+        #var(type:int)aLength.
+        theOutput readLength &vint:aLength.
+
+        (0 < aLength)
+            ? [ theOutput setLength &int:(-1 + aLength). ].
+        
+        ^ theOutput wide.
+    ]
+}.
 
 #symbol arrayExConvertor =
 {
@@ -75,66 +75,66 @@
                     = arrayExConvertor convert &enumerable:anEnumerator.
             }.
     
-//    #method toLiteral
-//        = self cast:%eval &to:
-//            {
-//                literal : aLiteral = aLiteral.
-//                
-//                wide : aWide = aWide literal.
-//                
-//                array : anArray
-//                    = literalExConvertor convert &enumerable:anArray.
-//                
-//                enumerable : aList
-//                    = literalExConvertor convert &enumerable:aList.
-//                    
-//                int : aValue = aValue literal.
-//                    
-//                short : aValue = aValue literal.
-//                    
-//                byte : aValue = aValue literal.
-//                    
-//                long : aValue = aValue literal.
-//                    
-//                real : aValue = aValue literal.
-//                    
-//                datetime : aValue = aValue literal.
-//                    
-//                timestamp : aValue = aValue literal.
-//                
-//                ! : anObject = anObject literal.
-//            }.
-//    
-//    #method toWide
-//        = self cast:%eval &to:
-//            {
-//                literal : aLiteral = aLiteral wide.
-//                
-//                wide : aWide = aWide.
-//                
-//                array : anArray
-//                    = wideExConvertor convert &enumerable:anArray.
-//                
-//                enumerable : aList
-//                    = wideExConvertor convert &enumerable:aList.
-//                    
-//                int : aValue = aValue wide.
-//                    
-//                short : aValue = aValue wide.
-//                    
-//                byte : aValue = aValue wide.
-//                    
-//                long : aValue = aValue wide.
-//                    
-//                real : aValue = aValue wide.
-//                    
-//                datetime : aValue = aValue wide.
-//                    
-//                timestamp : aValue = aValue wide.
-//                
-//                ! : anObject = anObject wide.
-//            }.
-//
+    #method toLiteral
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = aLiteral.
+                
+                wide : aWide = aWide literal.
+                
+                array : anArray
+                    = literalExConvertor convert &enumerable:anArray.
+                
+                enumerable : aList
+                    = literalExConvertor convert &enumerable:aList.
+                    
+                int : aValue = aValue literal.
+                    
+                short : aValue = aValue literal.
+                    
+                byte : aValue = aValue literal.
+                    
+                long : aValue = aValue literal.
+                    
+                real : aValue = aValue literal.
+                    
+                datetime : aValue = aValue literal.
+                    
+                timestamp : aValue = aValue literal.
+                
+                ! : anObject = anObject literal.
+            }.
+    
+    #method toWide
+        = self cast:%eval &to:
+            {
+                literal : aLiteral = aLiteral wide.
+                
+                wide : aWide = aWide.
+                
+                array : anArray
+                    = wideExConvertor convert &enumerable:anArray.
+                
+                enumerable : aList
+                    = wideExConvertor convert &enumerable:aList.
+                    
+                int : aValue = aValue wide.
+                    
+                short : aValue = aValue wide.
+                    
+                byte : aValue = aValue wide.
+                    
+                long : aValue = aValue wide.
+                    
+                real : aValue = aValue wide.
+                    
+                datetime : aValue = aValue wide.
+                    
+                timestamp : aValue = aValue wide.
+                
+                ! : anObject = anObject wide.
+            }.
+
 //     #method toLiteral &base:aBase
 //        = self cast:%eval &to:
 //                   { 
