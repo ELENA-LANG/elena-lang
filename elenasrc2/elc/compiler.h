@@ -672,9 +672,14 @@ private:
    void compileParentDeclaration(DNode node, ClassScope& scope);
    InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 
-   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef);
+   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
 
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count);
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
+   {
+      bool dummy = false;
+      return mapMessage(node, scope, count, dummy);
+   }
 
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);

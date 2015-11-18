@@ -9,14 +9,14 @@
 {
     test            
     [
-        #var(type:bytearray,size:20)aDump.
-        #var(type:int)aNumberRead.
-        
-        system'external'KERNEL32 ReadConsoleInputW
-            &int           : 0
-            &bytearray     : aDump
-            &int           : 1
-            &vint          : aNumberRead.
+//        #var(type:bytearray,size:20)aDump.
+//        #var(type:int)aNumberRead.
+//        
+//        system'external'KERNEL32 ReadConsoleInputW
+//            &int           : 0
+//            &bytearray     : aDump
+//            &int           : 1
+//            &vint          : aNumberRead.
     ]            
 }.
         

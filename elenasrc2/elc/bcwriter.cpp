@@ -2603,8 +2603,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 {
    bool directMode = true;
    bool argUnboxMode = false;
+   bool unboxMode = false;
 
    int paramCount = 0;
+   int presavedCount = 0;
 
    // analizing a sub tree
    SNode current = node.firstChild();
@@ -2618,6 +2620,14 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          paramCount++;
       }
     
+      // presave the boxed arguments if required
+      if (current == lxUnboxing) {
+         generateObjectExpression(tape, current);
+         pushObject(tape, lxResult);
+         presavedCount++;
+         unboxMode = true;
+      }
+
       if (test(current.type, lxExpressionMask) || current == lxResult) 
          directMode = false;
    
@@ -2640,7 +2650,16 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          // argument list is already unboxed
       }
       else if (test(current.type, lxObjectMask)) {
-         generateObjectExpression(tape, current);
+         if (current == lxUnboxing) {
+            SNode tempLocal = SyntaxTree::findChild(current, lxTempLocal);
+            if (tempLocal == lxNone) {
+               loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
+               presavedCount--;
+            }
+            else loadObject(tape, lxLocal, tempLocal.argument); 
+         }
+         else generateObjectExpression(tape, current);
+
          if (directMode) {
             pushObject(tape, lxResult);
          }
@@ -2662,60 +2681,36 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    }
 
    // unbox the arguments
-   unboxCallParameters(tape, node);
+   if(unboxMode)
+      unboxCallParameters(tape, node);
 }
 
 void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)
 {
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current == lxBoxing || current == lxCondBoxing) {
-         SNode object;
-         SNode temp;
-
-         SNode member = current.firstChild();
-         while (member != lxNone) {
-            if (member == lxTempLocal) {
-               temp = member;
-            }
-            else if (test(member.type, lxObjectMask)) {
-               object = member;
-            }
-
-            member = member.nextNode();
+   size_t counter = countChildren(node);
+   size_t index = 0;
+   while (index < counter) {
+      // get parameters in reverse order if required
+      SNode current = getChild(node, counter - index - 1);
+      if (current == lxUnboxing) {
+         SNode target = SyntaxTree::findMatchedChild(current, lxObjectMask);
+         SNode tempLocal = SyntaxTree::findChild(current, lxTempLocal);
+         if (tempLocal != lxNone) {
+            loadObject(tape, lxLocal, tempLocal.argument);
          }
+         else popObject(tape, lxResult);
 
-         if (temp == lxTempLocal) {
-            loadObject(tape, lxLocal, temp.argument);
-            if (object == lxLocalAddress) {
-               loadBase(tape, object.type, object.argument);
-               copyBase(tape, current.argument);
-            }
-            else if (object == lxLocal) {
-               loadObject(tape, lxResultField);
-               saveObject(tape, object.type, object.argument);
-            }
-            else if (temp == lxFieldAddress) {
-               if (node.argument == 4) {
-                  //assignInt(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-               }
-               else if (node.argument == 2) {
-                  //assignShort(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-               }
-               else if (node.argument == 1) {
-                  //assignByte(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-               }
-               else if (node.argument == 8) {
-                  //assignLong(*scope.tape, ObjectInfo(okFieldAddress, param.structOffset));
-               }
-               else {
-
-               }
-            }
+         if (target == lxLocalAddress) {
+            loadBase(tape, target.type, target.argument);
+            copyBase(tape, current.argument);
+         }
+         else if (target == lxLocal) {
+            loadObject(tape, lxResultField);
+            saveObject(tape, target.type, target.argument);
          }
       }
 
-      current = current.nextNode();
+      index++;
    }
 }
 
@@ -2748,7 +2743,7 @@ void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
    else if (node.argument == 0) {
       newVariable(tape, target.argument, lxResult);
    }
-   else boxObject(tape, node.argument, target.argument, node == lxBoxing);
+   else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
 
    SNode temp = SyntaxTree::findChild(node, lxTempLocal);
    if (temp != lxNone) {
@@ -3096,6 +3091,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxBoxing:
       case lxCondBoxing:
       case lxArgBoxing:
+      case lxUnboxing:
          generateBoxingExpression(tape, node);
          break;
       case lxAssigning:

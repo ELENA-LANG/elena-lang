@@ -27,35 +27,34 @@ enum LexicalType
 
    lxRoot            = 0x001,
 
-   //lxCodeBlock       = 0x001,
-
    lxExpression      = 0x0301,
-   lxBoxing          = 0x0302,
-   lxCondBoxing      = 0x0303,
-   lxArgBoxing       = 0x0304,
-   lxTypecasting     = 0x0305,
-   lxCalling         = 0x0306,
-   lxDirectCalling   = 0x0307,
-   lxSDirctCalling   = 0x0308,
-   lxResending       = 0x0309,
-   lxTrying          = 0x030A,
-   lxAlt             = 0x030B,
-   lxLocking         = 0x030C,
-   lxBranching       = 0x030D,
-   lxSwitching       = 0x030E,
-   lxLooping         = 0x030F,
-   lxReturning       = 0x0310,
-   lxThrowing        = 0x0311,
-   lxStdExternalCall = 0x0312,
-   lxExternalCall    = 0x0313,
-   lxIntExtArgument  = 0x0314,
-   lxExtArgument     = 0x0315,
-   lxInternalCall    = 0x0316,
-   lxMember          = 0x0317,
-   lxAssigning       = 0x0318,
-   lxArgUnboxing     = 0x0319,
-   lxIf              = 0x031A,
-   lxElse            = 0x031B,
+   lxBoxing          = 0x0302,   // boxing of the argument
+   lxCondBoxing      = 0x0303,   // conditional boxing
+   lxUnboxing        = 0x0304,   // boxing and unboxing of the argument
+   lxArgBoxing       = 0x0305,
+   lxTypecasting     = 0x0306,
+   lxCalling         = 0x0307,
+   lxDirectCalling   = 0x0308,
+   lxSDirctCalling   = 0x0309,
+   lxResending       = 0x030A,
+   lxTrying          = 0x030B,
+   lxAlt             = 0x030C,
+   lxLocking         = 0x030D,
+   lxBranching       = 0x030E,
+   lxSwitching       = 0x030F,
+   lxLooping         = 0x0310,
+   lxReturning       = 0x0311,
+   lxThrowing        = 0x0312,
+   lxStdExternalCall = 0x0313,
+   lxExternalCall    = 0x0314,
+   lxIntExtArgument  = 0x0315,
+   lxExtArgument     = 0x0316,
+   lxInternalCall    = 0x0317,
+   lxMember          = 0x0318,
+   lxAssigning       = 0x0319,
+   lxArgUnboxing     = 0x031A,
+   lxIf              = 0x031B,
+   lxElse            = 0x031C,
    lxOption          = 0x031D,
    lxBody            = 0x031E,
 
@@ -278,6 +277,17 @@ public:
       Node current = node.firstChild();
 
       while (current != lxNone && current != type) {
+         current = current.nextNode();
+      }
+
+      return current;
+   }
+
+   static Node findMatchedChild(Node node, int mask)
+   {
+      Node current = node.firstChild();
+
+      while (current != lxNone && !test(current.type, mask)) {
          current = current.nextNode();
       }
 

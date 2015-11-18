@@ -21,6 +21,7 @@ using namespace _ELENA_;
 #define HINT_ALT              0x12000000
 #define HINT_GENERIC_METH     0x00100000     // generic method
 #define HINT_ACTION           0x00020000
+#define HINT_ALTBOXING        0x00010000
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -2234,7 +2235,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
    return retVal;
 }
 
-bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef)
+bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
@@ -2317,15 +2318,17 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       classRef = scope.moduleScope->signatureReference;
    }
 
-   if (boxing != lxNone/* && size != 0*/) {
-      scope.writer->insert(boxing, size);
+   if (boxing != lxNone) {
+      scope.writer->insert(unboxRequired ? lxUnboxing : boxing, size);
       scope.writer->appendNode(lxTarget, classRef);
       appendCoordinate(scope.writer, terminal);
 
       if (unboxRequired) {
-         int level = scope.newLocal();
-         scope.writer->insertChild(scope.rootBookmark, lxVariable, 0);
-         scope.writer->appendNode(lxTempLocal, level);
+         if (test(mode, HINT_ALTBOXING)) {
+            int level = scope.newLocal();
+            scope.writer->insertChild(scope.rootBookmark, lxVariable, 0);
+            scope.writer->appendNode(lxTempLocal, level);
+         }
       }
 
       scope.writer->closeNode();
@@ -2338,7 +2341,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    else return false;
 }
 
-ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
+ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount, bool& argsUnboxing)
 {
    bool   first = true;
    ref_t  verb_id = 0;
@@ -2402,6 +2405,12 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount)
             paramCount += OPEN_ARG_COUNT;
             if (paramCount > 0x0F)
                scope.raiseError(errNotApplicable, subject);
+
+            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
+            // HOTFIX : set flag if the argument list has to be unboxed
+            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
+               argsUnboxing = true;
+            }
          }
          else {
             paramCount++;
@@ -2779,44 +2788,25 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 
 ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool stacksafe*/)
 {
-   bool   first = true;
-   ref_t  verb_id = 0;
-   int    paramCount = 0;
-   DNode  arg;
+   bool argsUnboxing = false;
+   size_t paramCount = 0;
+   ref_t  messageRef = mapMessage(node, scope, paramCount, argsUnboxing);
 
-   IdentifierString signature;
-   TerminalInfo     verb = node.Terminal();
-   // check if it is a short-cut eval message
+   int paramMode = 0;
+   // HOTFIX : if open argument list has to be unboxed
+   // alternative boxing routine should be used (using a temporal variable)
+   if (argsUnboxing)
+      paramMode |= HINT_ALTBOXING;
+
+   DNode arg;
    if (node == nsMessageParameter) {
       arg = node;
-
-      verb_id = EVAL_MESSAGE_ID;
    }
-   else {
-      arg = node.firstChild();
-
-      verb_id = _verbs.get(verb.value);
-      if (verb_id == 0) {
-         size_t id = scope.moduleScope->mapSubject(verb, signature);
-
-         // if followed by argument list - it is EVAL verb
-         if (arg != nsNone) {
-            // HOT FIX : strong types cannot be used as a custom verb with a parameter
-            if (scope.moduleScope->typeHints.exist(id))
-               scope.raiseError(errStrongTypeNotAllowed, verb);
-
-            verb_id = EVAL_MESSAGE_ID;
-
-            first = false;
-         }
-         // otherwise it is GET message
-         else verb_id = GET_MESSAGE_ID;
-      }
-   }
+   else arg = node.firstChild();
 
    // if message has generic argument list
    while (arg == nsMessageParameter) {
-      compileExpression(arg.firstChild(), scope, 0, 0);
+      compileExpression(arg.firstChild(), scope, 0, paramMode);
 
       paramCount++;
 
@@ -2827,12 +2817,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool 
    while (arg == nsSubjectArg) {
       TerminalInfo subject = arg.Terminal();
 
-      if (!first) {
-         signature.append('&');
-      }
-      else first = false;
-
-      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature, true);
+      ref_t subjRef = scope.moduleScope->mapType(subject);
 
       arg = arg.nextNode();
 
@@ -2851,7 +2836,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool 
             }
             else {
                while (arg != nsNone) {
-                  compileExpression(arg.firstChild(), scope, 0, 0);
+                  compileExpression(arg.firstChild(), scope, 0, paramMode);
 
                   arg = arg.nextNode();
                }
@@ -2859,32 +2844,16 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope/*, bool 
                // terminator
                writeTerminal(TerminalInfo(), scope, ObjectInfo(okNil));
             }
-            paramCount += OPEN_ARG_COUNT;
-
-            if (paramCount > 0x0F)
-               scope.raiseError(errNotApplicable, subject);
          }
          else {
-            compileExpression(arg.firstChild(), scope, subjRef, 0);
-
-            paramCount++;
-
-            if (paramCount >= OPEN_ARG_COUNT)
-               scope.raiseError(errTooManyParameters, verb);
+            compileExpression(arg.firstChild(), scope, subjRef, paramMode);
 
             arg = arg.nextNode();
          }
       }
    }
 
-   // if signature is presented
-   ref_t sign_id = 0;
-   if (!emptystr(signature)) {
-      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-   }
-
-   // create a message id
-   return encodeMessage(sign_id, verb_id, paramCount);
+   return messageRef;
 }
 
 ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
@@ -3190,7 +3159,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
          ownerScope.writer->newBookmark();
 
          writeTerminal(TerminalInfo(), ownerScope, info);
-         writeBoxing(node.FirstTerminal(), ownerScope, info, 0);
+         writeBoxing(node.FirstTerminal(), ownerScope, info, 0, 0);
 
          ownerScope.writer->removeBookmark();
          ownerScope.writer->closeNode();
@@ -3349,7 +3318,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
                // skip boxing for assigning target
                if (!findSymbol(member, nsAssigning))
-                  writeBoxing(node.FirstTerminal(), scope, objectInfo, 0);
+                  writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, mode);
             }
             else scope.writer->appendNode(lxResult);
          }
@@ -3361,7 +3330,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    }
    else objectInfo = compileObject(node, scope, mode);
 
-   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType);
+   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, mode);
 
    if (targetType != 0) {
       if (!checkIfCompatible(scope, targetType, objectInfo)) {
@@ -3523,6 +3492,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
    bool needVirtualEnd = true;
    DNode statement = node.firstChild();
 
+   // make a root bookmark for temporal variable allocating
+   scope.rootBookmark = scope.writer->newBookmark();
+
    // skip subject argument
    while (statement == nsSubjectArg || statement == nsMethodParameter)
       statement= statement.nextNode();
@@ -3531,7 +3503,6 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
       DNode hints = skipHints(statement);
 
       //_writer.declareStatement(*scope.tape);
-      scope.rootBookmark = scope.writer->newBookmark();
 
       switch(statement) {
          case nsExpression:
@@ -3578,8 +3549,6 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             recordDebugStep(scope, statement.Terminal(), dsEOP);
             break;
       }
-      scope.rootBookmark = -1;
-      scope.writer->removeBookmark();
 
       scope.freeSpace();
 
@@ -3589,6 +3558,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
    if (needVirtualEnd) {
       recordDebugVirtualStep(scope, dsVirtualEnd);
    }
+
+   scope.rootBookmark = -1;
+   scope.writer->removeBookmark();
 
    return retVal;
 }
@@ -5034,7 +5006,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
          while (member != lxNone) {
             // if boxing used for external call
             // remove it
-            if (member == lxBoxing || member == lxCondBoxing) {
+            if (member == lxBoxing || member == lxCondBoxing || member == lxUnboxing) {
                member = lxExpression;
             }
 
@@ -5051,7 +5023,7 @@ void Compiler :: optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node)
    while (arg != lxNone) {
       // if boxing used for external call
       // remove it
-      if (arg == lxBoxing || arg == lxCondBoxing) {
+      if (arg == lxBoxing || arg == lxCondBoxing || arg == lxUnboxing) {
          arg = lxExpression;
       }
 
@@ -5067,7 +5039,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
       while (member != lxNone) {
          // if boxing used for direct stack safe call
          // remove it
-         if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing) {
+         if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing || member == lxUnboxing) {
             member = lxExpression;
          }
 
@@ -5082,7 +5054,7 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
    while (member != lxNone) {
       // if boxing used for primitive operation
       // remove it
-      if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing) {
+      if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing || member == lxUnboxing) {
          member = lxExpression;
       }
 
@@ -5094,7 +5066,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
 {
    // assigning (local address boxing) => assigning (local address expression)
    if (node.argument != 0) {
-      SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing, lxCondBoxing);
+      SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing, lxCondBoxing, lxUnboxing);
       if (boxing != lxNone && boxing.argument == node.argument) {
          boxing = lxExpression;
       }
@@ -5133,6 +5105,7 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
          case lxBoxing:
          case lxCondBoxing:
          case lxArgBoxing:
+         case lxUnboxing:
             optimizeBoxing(scope, current);
             optimizeSyntaxExpression(scope, current);
             break;
