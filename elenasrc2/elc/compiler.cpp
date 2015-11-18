@@ -1531,6 +1531,11 @@ bool Compiler :: checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo o
    else if (object.kind == okNil) {
       return true;
    }
+   else if (object.kind == okIntConstant) {
+      int flags = scope.moduleScope->getClassFlags(scope.moduleScope->typeHints.get(typeRef));
+
+      return (flags & elDebugMask) == elDebugDWORD;
+   }
    else return scope.moduleScope->checkIfCompatible(typeRef, resolveObjectReference(scope, object));
 }
 

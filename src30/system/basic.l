@@ -3304,9 +3304,9 @@
     #method(type:literal,stacksafe) convert &short:aNumber
         => system'internal's_copyint.
 
-//    /// Converts the parameter to the literal value
-//    #method(type:literal,stacksafe) convert &byte:aNumber
-//        => system'internal's_copyint.
+    /// Converts the parameter to the literal value
+    #method(type:literal,stacksafe) convert &byte:aNumber
+        => system'internal's_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &long:aNumber
@@ -3336,9 +3336,9 @@
     #method(type:literal,stacksafe) convert &wide:aLiteral
         => system'internal'str_copywstr.
 
-//    /// Returns the literal presentation of the parameter
-//    #method(type:literal,stacksafe) convert : anObject
-//        = anObject literal.
+    /// Returns the literal presentation of the parameter
+    #method(type:literal,stacksafe) convert : anObject
+        = anObject literal.
 
     /// Returns a parameter                
     #method(type:literal,stacksafe) convert &literal:aLiteral
@@ -3362,9 +3362,9 @@
     #method(type:wide,stacksafe) convert &short:aNumber
         => system'internal'ws_copyint.
 
-//    /// Converts the parameter to the literal value
-//    #method(type:wide,stacksafe) convert &byte:aNumber
-//        => system'internal'ws_copyint.
+    /// Converts the parameter to the literal value
+    #method(type:wide,stacksafe) convert &byte:aNumber
+        => system'internal'ws_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &long:aNumber
@@ -3394,9 +3394,9 @@
     #method(type:wide,stacksafe) convert &literal:aLiteral
         => system'internal'wstr_copystr.
         
-//    /// Returns the literal presentation of the parameter
-//    #method(type:wide,stacksafe) convert : anObject
-//        = anObject wide.
+    /// Returns the literal presentation of the parameter
+    #method(type:wide,stacksafe) convert : anObject
+        = anObject wide.
         
     /// Returns a parameter
     #method(type:wide,stacksafe) convert &wide:aLiteral
