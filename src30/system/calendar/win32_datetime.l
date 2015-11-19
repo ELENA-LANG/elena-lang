@@ -3,7 +3,6 @@
 #import system.
 
 #subject(class:system'calendar'SystemTime)    __time.
-//#subject(class:system'calendar'SystemTimeVar) __vtime.
 #subject(class:system'calendar'TimeStruct)    __time_st.
 
 #symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
@@ -57,6 +56,11 @@
     #method(type:bool) less &__time:anOperand
         => system'internal'long_less.
     
+    #method(stacksafe) write &__time:aValue
+    [
+        theValue := aValue.
+    ]
+    
     #method(stacksafe) read &vlong:aRetVal
         => system'internal'long_save.
         
@@ -68,25 +72,6 @@
     
     #method __time = $self.
 }
-
-//#class(sealed,struct:embeddable) SystemTimeVar
-//{
-//    #field(type:__time)theValue.
-//    
-//    #method __time = SystemTime new &__time:theValue.
-//    
-//    #method __vtime = $self.
-//    
-//    #method(stacksafe) write &__time:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//    
-//    #method(stacksafe) read &__vtime:aVariable
-//    [
-//        aVariable << theValue.
-//    ]
-//}
 
 // --- TimeStruct ---
 

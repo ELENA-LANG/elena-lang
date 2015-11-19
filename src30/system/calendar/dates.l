@@ -11,13 +11,13 @@
 {
     #field(type:__time)theValue.
 
-//    #constructor min <= %new &__time:(SystemTime $new &long:0l).
-//
-//    #constructor(stacksafe) new &__time:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//    
+    #constructor min <= %new &__time:(SystemTime $new &long:0l).
+
+    #constructor(stacksafe) new &__time:aValue
+    [
+        theValue := aValue.
+    ]
+    
 //    #constructor new &hours:Hours &minutes:Minutes &seconds:Seconds
 //    [
 //        #var(type:long)aValue := 0l.
@@ -40,131 +40,131 @@
 //        
 //        theValue := SystemTime $new &long:aValue.
 //    ]
-//    
-//    #method(stacksafe) read &__vtime : aRetVal
-//    [
-//        aRetVal write &__time:theValue.
-//    ]
-//
-//    #method __time = SystemTime new &__time:theValue.
-//
-//    #method timespan = $self.
-//            
-//    #method days
-//    [
-//        #var(type:long)aRetVal.
-//        theValue read &vlong:aRetVal.
-//        
-//        aRetVal := aRetVal / 864000000000l.
-//        
-//        ^ intConvertor convert &long:aRetVal.
-//    ]
-//                        
-//    #method hours
-//    [
-//        #var(type:long)aRetVal.
-//        theValue read &vlong:aRetVal.
-//        
-//        aRetVal := aRetVal / 36000000000l.
-//        
-//        ^ intConvertor convert &long:aRetVal.
-//    ]
-//                        
-//    #method minutes
-//    [
-//        #var(type:long)aRetVal.
-//        theValue read &vlong:aRetVal.
-//        
-//        aRetVal := aRetVal / 600000000l.
-//        
-//        ^ intConvertor convert &long:aRetVal.
-//    ]
-//                        
-//    #method seconds
-//    [
-//        #var(type:long)aRetVal.
-//        theValue read &vlong:aRetVal.
-//        
-//        aRetVal := aRetVal / 10000000l.
-//        
-//        ^ intConvertor convert &long:aRetVal.
-//    ]
-//
-//    #method milliseconds
-//    [
-//        #var(type:long)aRetVal.
-//        theValue read &vlong:aRetVal.
-//        
-//        aRetVal := aRetVal / 10000l.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//   
-//    #method equal &timespan:aSpan
-//    [
-//        #var(type:__time)aValue.
-//        aSpan read &__vtime:aValue.
-//        
-//        ^ aValue == theValue.
-//    ]
-//
-//    #method less &timespan:aSpan
-//    [
-//        #var(type:__time)aValue.
-//        aSpan read &__vtime:aValue.
-//        
-//        ^ aValue < theValue.
-//    ]
-//
-//    #method add &datetime:aDate
-//        = aDate add &timespan:$self.
-//    
-//    #method add &timespan:aSpan
-//    [
-//        #var(type:__time)aTime.
-//        aSpan read &__vtime:aTime.
-//                
-//        #var(type:long)aValue.
-//        aTime read &vlong:aValue.
-//
-//        #var(type:long)aCurrentValue.
-//        theValue read &vlong:aCurrentValue.
-//
-//        ^ TimeSpan new &__time:(SystemTime $new &long:(aValue + aCurrentValue)).
-//    ]
-//
-//    #method subtract &timespan:aSpan
-//    [
-//        #var(type:__time)aValue.
-//        aSpan read &__vtime:aValue.
-//                
-//        aValue := theValue subtract &__time:aValue.
-//        
-//        ^ TimeSpan new &__time:aValue.
-//    ]
-//
-//    #method literal
-//    [
-//        #var(type:__time_st)aStruct.
-//        aStruct write &__time:theValue.
-//        
-//        #var aValue := aStruct toShortTime literal.
-//
-//        ^ ($self days literal + "." + aValue) literal.
-//    ]
-//
-//    #method wide
-//    [
-//        #var(type:__time_st)aStruct.
-//        aStruct write &__time:theValue.
-//        
-//        #var aValue := aStruct toShortTime literal.
-//        
-//         ^ ($self days literal + "." + aValue) wide.
-//    ]
-//
-//    #method clone
-//        = TimeSpan new &__time:theValue.
+    
+    #method(stacksafe) read &__time : aRetVal
+    [
+        aRetVal write &__time:theValue.
+    ]
+
+    #method __time = SystemTime new &__time:theValue.
+
+    #method timespan = $self.
+            
+    #method days
+    [
+        #var(type:long)aRetVal.
+        theValue read &vlong:aRetVal.
+        
+        aRetVal := aRetVal / 864000000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
+    ]
+                        
+    #method hours
+    [
+        #var(type:long)aRetVal.
+        theValue read &vlong:aRetVal.
+        
+        aRetVal := aRetVal / 36000000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
+    ]
+                        
+    #method minutes
+    [
+        #var(type:long)aRetVal.
+        theValue read &vlong:aRetVal.
+        
+        aRetVal := aRetVal / 600000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
+    ]
+                        
+    #method seconds
+    [
+        #var(type:long)aRetVal.
+        theValue read &vlong:aRetVal.
+        
+        aRetVal := aRetVal / 10000000l.
+        
+        ^ intConvertor convert &long:aRetVal.
+    ]
+
+    #method milliseconds
+    [
+        #var(type:long)aRetVal.
+        theValue read &vlong:aRetVal.
+        
+        aRetVal := aRetVal / 10000l.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+   
+    #method equal &timespan:aSpan
+    [
+        #var(type:__time)aValue.
+        aSpan read &__time:aValue.
+        
+        ^ aValue == theValue.
+    ]
+
+    #method less &timespan:aSpan
+    [
+        #var(type:__time)aValue.
+        aSpan read &__time:aValue.
+        
+        ^ aValue < theValue.
+    ]
+
+    #method add &datetime:aDate
+        = aDate add &timespan:$self.
+    
+    #method add &timespan:aSpan
+    [
+        #var(type:__time)aTime.
+        aSpan read &__time:aTime.
+                
+        #var(type:long)aValue.
+        aTime read &vlong:aValue.
+
+        #var(type:long)aCurrentValue.
+        theValue read &vlong:aCurrentValue.
+
+        ^ TimeSpan new &__time:(SystemTime $new &long:(aValue + aCurrentValue)).
+    ]
+
+    #method subtract &timespan:aSpan
+    [
+        #var(type:__time)aValue.
+        aSpan read &__time:aValue.
+                
+        aValue := theValue subtract &__time:aValue.
+        
+        ^ TimeSpan new &__time:aValue.
+    ]
+
+    #method literal
+    [
+        #var(type:__time_st)aStruct.
+        aStruct write &__time:theValue.
+        
+        #var aValue := aStruct toShortTime literal.
+
+        ^ ($self days literal + "." + aValue) literal.
+    ]
+
+    #method wide
+    [
+        #var(type:__time_st)aStruct.
+        aStruct write &__time:theValue.
+        
+        #var aValue := aStruct toShortTime literal.
+        
+         ^ ($self days literal + "." + aValue) wide.
+    ]
+
+    #method clone
+        = TimeSpan new &__time:theValue.
 
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &timespan:$self.
     
@@ -213,50 +213,50 @@
   
     #method __time_st = TimeStruct new &__time:theValue.
 
-//    #method(stacksafe) read &__vtime : aRetVal
-//    [
-//        aRetVal write &__time:theValue.
-//    ]
-//   
-//    #method equal &datetime:aDate
-//    [
-//        #var(type:__time)aValue.
-//        aDate read &__vtime:aValue.
-//        
-//        ^ aValue == theValue.
-//    ]
-//
-//    #method less &datetime:aDate
-//    [
-//        #var(type:__time)aValue.
-//        aDate read &__vtime:aValue.
-//        
-//        ^ aValue < theValue.
-//    ]
-//  
-//    #method subtract &datetime:aDate
-//    [
-//        #var(type:__time)aValue.
-//        aDate read &__vtime:aValue.
-//        
-//        ^ TimeSpan new &__time:(theValue subtract &__time:aValue).
-//    ]
-//  
-//    #method subtract &timespan:aTimeSpan
-//    [
-//        #var(type:__time)aValue.
-//        aTimeSpan read &__vtime:aValue.
-//        
-//        ^ Date new &__time:(theValue subtract &__time:aValue).
-//    ]
-//  
-//    #method add &timespan:aTimeSpan
-//    [
-//        #var(type:__time)aValue.
-//        aTimeSpan read &__vtime:aValue.
-//        
-//        ^ Date new &__time:(theValue add &__time:aValue).
-//    ]
+    #method(stacksafe) read &__time : aRetVal
+    [
+        aRetVal write &__time:theValue.
+    ]
+   
+    #method equal &datetime:aDate
+    [
+        #var(type:__time)aValue.
+        aDate read &__time:aValue.
+        
+        ^ aValue == theValue.
+    ]
+
+    #method less &datetime:aDate
+    [
+        #var(type:__time)aValue.
+        aDate read &__time:aValue.
+        
+        ^ aValue < theValue.
+    ]
+  
+    #method subtract &datetime:aDate
+    [
+        #var(type:__time)aValue.
+        aDate read &__time:aValue.
+        
+        ^ TimeSpan new &__time:(theValue subtract &__time:aValue).
+    ]
+  
+    #method subtract &timespan:aTimeSpan
+    [
+        #var(type:__time)aValue.
+        aTimeSpan read &__time:aValue.
+        
+        ^ Date new &__time:(theValue subtract &__time:aValue).
+    ]
+  
+    #method add &timespan:aTimeSpan
+    [
+        #var(type:__time)aValue.
+        aTimeSpan read &__time:aValue.
+        
+        ^ Date new &__time:(theValue add &__time:aValue).
+    ]
 
     #method year
     [
@@ -422,9 +422,8 @@
     
     #method datetime = $self.
 
-//    #method clone
-//        = Date new &__time:theValue.
-//    
+    #method clone
+        = Date new &__time:theValue.
 }
 
 // --- now ---
