@@ -3397,7 +3397,9 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
    CodeScope subScope(&scope);
 
    DNode thenCode = thenNode.firstChild();
-   if (thenCode.firstChild().nextNode() != nsNone) {
+
+   DNode expr = thenCode.firstChild();
+   if (expr == nsCodeEnd || expr.nextNode() != nsNone) {
       compileCode(thenCode, subScope);
 
       if (subScope.level > scope.level) {
@@ -3405,7 +3407,7 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
       }
    }
    // if it is inline action
-   else compileRetExpression(thenCode.firstChild(), scope, 0);
+   else compileRetExpression(expr, scope, 0);
 
    return ObjectInfo(okObject);
 }

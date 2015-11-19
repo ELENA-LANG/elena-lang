@@ -9,12 +9,6 @@
 {
     test            
     [
-        #var s := "2".
-        
-        (s toInt) =>
-            1 ? [ console writeLine:"Wrong!!". ]
-            2 ? [ console writeLine:"Right!!". ]
-            ! [ console writeLine:"Wrong!!". ].
     ]        
 }.
         

@@ -337,15 +337,15 @@
     #method(type:long,stacksafe) xor &long:anOperand
         = LongNumber new &byte:$self xor &long:anOperand.
 
-//    #method shift : anOrder
-//        <= shift &int:(anOrder int).
-//    
-//    /// Bitwise shift operation
-//    #method(type:byte) shift &index:anOrder
-//        <= shift &int:(anOrder int).
-//    
-//    #method(type:byte,stacksafe) shift &int:anOrder
-//        => system'internal'byte_shift.
+    #method shift : anOrder
+        <= shift &int:(anOrder int).
+    
+    /// Bitwise shift operation
+    #method(type:byte) shift &index:anOrder
+        <= shift &int:(anOrder int).
+    
+    #method(type:byte,stacksafe) shift &int:anOrder
+        => system'internal'byte_shift.
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &byte:$self.
@@ -593,15 +593,15 @@
     #method(stacksafe) xor &long:anOperand
         = LongNumber new &short:$self xor &long:anOperand.        
 
-//    /// Bitwise shift operation
-//    #method(type:short,stacksafe) shift &int:anOrder
-//        => system'internal'short_shift.
-//
-//    #method shift:anOrder
-//        <= shift &int:(anOrder int).
-//
-//    #method(type:short) shift &index:anOrder
-//        <= shift &int:(anOrder int).
+    /// Bitwise shift operation
+    #method(type:short,stacksafe) shift &int:anOrder
+        => system'internal'short_shift.
+
+    #method shift:anOrder
+        <= shift &int:(anOrder int).
+
+    #method(type:short) shift &index:anOrder
+        <= shift &int:(anOrder int).
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &short:$self.
@@ -1124,15 +1124,15 @@
     #method(stacksafe) xor &byte:anOperand
         = $self xor &long:(LongNumber new &byte:anOperand).
 
-//    #method shift:anOrder
-//        <= shift &int:(anOrder int).
-//    
-//    /// Returns the result of bitwise shift operation
-//    #method(type:long) shift &index:anOrder
-//        <= shift &int:(anOrder int).
-//    
-//    #method(type:long,stacksafe) shift &int:anOrder
-//        => system'internal'long_shift.
+    #method shift:anOrder
+        <= shift &int:(anOrder int).
+    
+    /// Returns the result of bitwise shift operation
+    #method(type:long) shift &index:anOrder
+        <= shift &int:(anOrder int).
+    
+    #method(type:long,stacksafe) shift &int:anOrder
+        => system'internal'long_shift.
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &long:$self.
@@ -3083,9 +3083,9 @@
     #method(stacksafe)convert &long:aValue &vint:aRetVal
         => system'internal'int_savelong.
         
-//    /// Converts a real number into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &real:aReal &vint:aRetVal
-//        => system'internal'int_copyreal.
+    /// Converts a real number into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &real:aReal &vint:aRetVal
+        => system'internal'int_copyreal.
         
     /// Converts a literal string into an integer
     #method(type:int,stacksafe) convert &literal:aLiteral
@@ -3141,14 +3141,14 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
-//    /// Converts a long integer into an integer
-//    #method(type:int,stacksafe) convert &real:aReal
-//    [
-//        #var(type:int)aRetVal.
-//        $self convert &real:aReal &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
+    /// Converts a long integer into an integer
+    #method(type:int,stacksafe) convert &real:aReal
+    [
+        #var(type:int)aRetVal.
+        $self convert &real:aReal &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
 
     /// Returns a parameter                                    
     #method(type:int,stacksafe) convert &int:anInt
@@ -3224,9 +3224,9 @@
         ^ LongNumber new &long:aRetVal.
     ]
     
-//    /// Returns a parameter
-//    #method(type:long,stacksafe) convert &long:aLong
-//        = LongNumber new &long:aLong.
+    /// Returns a parameter
+    #method(type:long,stacksafe) convert &long:aLong
+        = LongNumber new &long:aLong.
         
     #method convert : anObject
         = anObject cast:%convert &to:$self.
@@ -3265,25 +3265,25 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
-//    /// Returns a parameter
-//    #method(type:real,stacksafe)convert &real:aReal
-//        = RealNumber new &real:aReal.
-//        
-//    /// Converts an integer into a real number
-//    #method(type:real,stacksafe)convert &int:anInt
-//        = RealNumber new &int:anInt.
-//        
-//    /// Converts a long integer into a real number
-//    #method(type:real,stacksafe)convert &long:aLong
-//        = RealNumber new &long:aLong.
-//        
-//    /// Converts a byte into a real number
-//    #method(type:real,stacksafe)convert &byte:aValue
-//        = RealNumber new &byte:aValue.
-//        
-//    /// Converts a short integer into a real number
-//    #method(type:real,stacksafe)convert &short:aValue
-//        = RealNumber new &short:aValue.
+    /// Returns a parameter
+    #method(type:real,stacksafe)convert &real:aReal
+        = RealNumber new &real:aReal.
+        
+    /// Converts an integer into a real number
+    #method(type:real,stacksafe)convert &int:anInt
+        = RealNumber new &int:anInt.
+        
+    /// Converts a long integer into a real number
+    #method(type:real,stacksafe)convert &long:aLong
+        = RealNumber new &long:aLong.
+        
+    /// Converts a byte into a real number
+    #method(type:real,stacksafe)convert &byte:aValue
+        = RealNumber new &byte:aValue.
+        
+    /// Converts a short integer into a real number
+    #method(type:real,stacksafe)convert &short:aValue
+        = RealNumber new &short:aValue.
         
     #method convert : anObject
         = anObject cast:%convert &to:$self.

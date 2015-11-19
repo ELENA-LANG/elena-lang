@@ -779,51 +779,51 @@
     /// Obsolete
     #method(stacksafe) eval &index:n []
 
-//    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-//    #method(stacksafe) rewind &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop (i >= n) ?
-//        [
-//            $self eval &int:i.
-//            
-//            i := i - dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting value, ending value, step)
-//    #method(stacksafe) run &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop (i <= n) ?
-//        [
-//            $self eval &int:i.
-//            
-//            i := i + dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]
-//
-//    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
-//    #method(stacksafe) retrieve &int:aStart &int:n &int:dx
-//    [
-//        #var(type:int)i := aStart.
-//        
-//        #loop(i <= n) ?
-//        [
-//            ($self eval &int:i)
-//                ? [ ^ IntNumber new &int:i. ].
-//            
-//            i := i + dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
+    #method(stacksafe) rewind &int:aStart &int:n &int:dx
+    [
+        #var(type:int)i := aStart.
+        
+        #loop (i >= n) ?
+        [
+            $self eval &int:i.
+            
+            i := i - dx.
+        ].
+        
+        ^ $nil.        
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting value, ending value, step)
+    #method(stacksafe) run &int:aStart &int:n &int:dx
+    [
+        #var(type:int)i := aStart.
+        
+        #loop (i <= n) ?
+        [
+            $self eval &int:i.
+            
+            i := i + dx.
+        ].
+        
+        ^ $nil.        
+    ]
+
+    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
+    #method(stacksafe) retrieve &int:aStart &int:n &int:dx
+    [
+        #var(type:int)i := aStart.
+        
+        #loop(i <= n) ?
+        [
+            ($self eval &int:i)
+                ? [ ^ IntNumber new &int:i. ].
+            
+            i := i + dx.
+        ].
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base two variable index function
