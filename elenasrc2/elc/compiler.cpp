@@ -2677,28 +2677,27 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       if (IsCompOperator(operator_id))
          retVal.type = moduleScope->boolType;
-
-      return retVal;
    }
+   else {
+      if (operator_id == SET_REFER_MESSAGE_ID)
+         compileExpression(node.nextNode().firstChild(), scope, 0, 0);
 
-   if (operator_id == SET_REFER_MESSAGE_ID)
-      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+      int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
 
-   int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
+      // otherwise operation is replaced with a normal message call
+      retVal = compileMessage(node, scope, object, message_id, mode/* | HINT_INLINE*/);
 
-   // otherwise operation is replaced with a normal message call
-   retVal = compileMessage(node, scope, object, message_id, mode/* | HINT_INLINE*/);
+      if (notOperator) {
+         scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+         scope.writer->closeNode();
 
-   if (notOperator) {
-      scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-      scope.writer->closeNode();
+         scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
+         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
+         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
+         scope.writer->closeNode();
 
-      scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
-      scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
-      scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
-      scope.writer->closeNode();
-
-      retVal.type = scope.moduleScope->boolType;
+         retVal.type = scope.moduleScope->boolType;
+      }
    }
 
    if (dblOperator)

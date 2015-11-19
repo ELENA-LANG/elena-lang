@@ -1939,11 +1939,9 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
       case SET_REFER_MESSAGE_ID:
          // ecopyd
          // nload
-         // eswap
          // nwrite
          tape.write(bcECopyD);
          tape.write(bcNLoad);
-         tape.write(bcESwap);
          tape.write(bcNWrite);
          break;
       default:
