@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 // === pattern enumerators ==
@@ -85,109 +87,109 @@
 //        theEnumerator reset.
 //    ]    
 //}
-//
-//// --- RangeEnumerator ---
-//
-//#class RangeEnumerator :: Enumerator
-//{
-//    #field theVariable.
-//    #field theStart.
-//    #field theEnd.
-//    #field theStep.
-//    
-//    #field(type:bool)theForward.
-//    
-//    #constructor new &for:aVariable &from:aStart &to:anEnd &by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd) bool.
-//        
-//        $self reset.
-//    ]
-//
-//    #constructor new &from:aStart &to:anEnd &by:aStep
-//        <= new &for:(Variable new) &from:aStart &to:anEnd &by:aStep.
-//
-//    #constructor new &from:aStart &to:anEnd
-//        <= new &for:(Variable new) &from:aStart &to:anEnd &by:1.
-//        
-//    #method reset 
-//    [
-//        theVariable << theStart.
-//
-//        theForward 
-//            ? [ theVariable -= theStep. ]
-//            ! [ theVariable += theStep. ].
-//    ]    
-//    
-//    #method get = theVariable value.
-//    
-//    #method next
-//    [
-//        theForward 
-//            ? [ theVariable += theStep. ^ (theVariable <= theEnd) bool. ].
-//        
-//        theVariable -= theStep. 
-//        
-//        ^ (theVariable >= theEnd) bool.
-//    ]
-//}
-//
-//// --- RangeEnumerator ---
-//
-//#class IntervalEnumerator :: Enumerator
-//{
-//    #field theVariable.
-//    #field theStart.
-//    #field theEnd.
-//    #field theStep.
-//    
-//    #field(type:bool)theForward.
-//    
-//    #constructor new &for:aVariable &from:aStart &till:anEnd &by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd) bool.
-//        
-//        $self reset.
-//    ]
-//
-//    #constructor new &from:aStart &till:anEnd &by:aStep
-//        <= new &for:(Variable new) &from:aStart &till:anEnd &by:aStep.
-//
-//    #constructor new &from:aStart &till:anEnd
-//        <= new &for:(Variable new) &from:aStart &till:anEnd &by:1.
-//        
-//    #method reset 
-//    [
-//        theVariable << theStart.
-//
-//        theForward 
-//            ? [ theVariable -= theStep. ]
-//            ! [ theVariable += theStep. ].
-//    ]    
-//    
-//    #method get = theVariable value.
-//    
-//    #method next
-//    [
-//        theForward 
-//            ? [ theVariable += theStep. ^ (theVariable < theEnd) bool. ].
-//        
-//        theVariable -= theStep. 
-//        
-//        ^ (theVariable > theEnd) bool.
-//    ]
-//}
-//
+
+// --- RangeEnumerator ---
+
+#class RangeEnumerator :: Enumerator
+{
+    #field theVariable.
+    #field theStart.
+    #field theEnd.
+    #field theStep.
+    
+    #field(type:bool)theForward.
+    
+    #constructor new &for:aVariable &from:aStart &to:anEnd &by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd) bool.
+        
+        $self reset.
+    ]
+
+    #constructor new &from:aStart &to:anEnd &by:aStep
+        <= new &for:(Variable new) &from:aStart &to:anEnd &by:aStep.
+
+    #constructor new &from:aStart &to:anEnd
+        <= new &for:(Variable new) &from:aStart &to:anEnd &by:1.
+        
+    #method reset 
+    [
+        theVariable << theStart.
+
+        theForward 
+            ? [ theVariable -= theStep. ]
+            ! [ theVariable += theStep. ].
+    ]    
+    
+    #method get = theVariable value.
+    
+    #method next
+    [
+        theForward 
+            ? [ theVariable += theStep. ^ (theVariable <= theEnd) bool. ].
+        
+        theVariable -= theStep. 
+        
+        ^ (theVariable >= theEnd) bool.
+    ]
+}
+
+// --- RangeEnumerator ---
+
+#class IntervalEnumerator :: Enumerator
+{
+    #field theVariable.
+    #field theStart.
+    #field theEnd.
+    #field theStep.
+    
+    #field(type:bool)theForward.
+    
+    #constructor new &for:aVariable &from:aStart &till:anEnd &by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd) bool.
+        
+        $self reset.
+    ]
+
+    #constructor new &from:aStart &till:anEnd &by:aStep
+        <= new &for:(Variable new) &from:aStart &till:anEnd &by:aStep.
+
+    #constructor new &from:aStart &till:anEnd
+        <= new &for:(Variable new) &from:aStart &till:anEnd &by:1.
+        
+    #method reset 
+    [
+        theVariable << theStart.
+
+        theForward 
+            ? [ theVariable -= theStep. ]
+            ! [ theVariable += theStep. ].
+    ]    
+    
+    #method get = theVariable value.
+    
+    #method next
+    [
+        theForward 
+            ? [ theVariable += theStep. ^ (theVariable < theEnd) bool. ].
+        
+        theVariable -= theStep. 
+        
+        ^ (theVariable > theEnd) bool.
+    ]
+}
+
 //// === patterns ===
 //
 //// --- BasePattern ---

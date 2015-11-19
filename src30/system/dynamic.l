@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // --- Symbol ---
 
 /// A dynamic symbol

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // === actions ===
 
 #symbol ifOrdered
@@ -610,20 +612,20 @@
 
 #class(extension:intarray)intArrayOp
 {
-//    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(type:intarray)a := self intarray.
-//
-//        #var(type:int)n1.
-//        #var(type:int)n2.
-//
-//        a read &int:anIndex1 &vint:n1.
-//        a read &int:anIndex2 &vint:n2.
-//        
-//        a write &int:anIndex1 &int:n2.
-//        a write &int:anIndex2 &int:n1.
-//    ]
-//
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(type:intarray)a := self intarray.
+
+        #var(type:int)n1.
+        #var(type:int)n2.
+
+        a read &int:anIndex1 &vint:n1.
+        a read &int:anIndex2 &vint:n2.
+        
+        a write &int:anIndex1 &int:n2.
+        a write &int:anIndex2 &int:n1.
+    ]
+
 //    #method set &every:anIndexFunc
 //        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
 //        
@@ -653,19 +655,19 @@
     #method(stacksafe) reallocate &int:aNewLength
         => system'internal'arr_realloc.
 
-//    #method exchange : anIndex1 : anIndex2
-//        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
-//        
-//    #method exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(type:array) anArray := self array.
-//
-//        #var aTemp := anArray getAt &int:anIndex1.
-//        
-//        anArray setAt &int:anIndex1 &object:(anArray getAt &int:anIndex2).
-//        anArray setAt &int:anIndex2 &object:aTemp.
-//    ]
-//    
+    #method exchange : anIndex1 : anIndex2
+        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
+        
+    #method exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(type:array) anArray := self array.
+
+        #var aTemp := anArray getAt &int:anIndex1.
+        
+        anArray setAt &int:anIndex1 &object:(anArray getAt &int:anIndex2).
+        anArray setAt &int:anIndex2 &object:aTemp.
+    ]
+    
 //    #method(stacksafe) indexOf &int:anIndex &object:anObject &vint:aRetVal
 //    [
 //        aRetVal << -1.

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 //#import system.
 //
 //#symbol(const,type:int)OFN_PATHMUSTEXIST = 00000800h.

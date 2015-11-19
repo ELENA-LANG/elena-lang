@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 //#import system.
 //
 //#symbol(const,type:int)INFINITE = 0FFFFFFFFh.
