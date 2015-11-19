@@ -2450,23 +2450,23 @@
 //        
 //        ^ CharValue new &int:(n - aNumber).
 //    ]
-//    
-//    /// Compares values
-//    #method(stacksafe) equal &char:anOperand 
-//        => system'internal'int_equal.
-//
-//    /// Compares values
-//    #method(stacksafe) less &char:anOperand 
-//        => system'internal'int_less.
-//
-//    /// Compares values
-//    #method(stacksafe) equal &int:anOperand 
-//        => system'internal'int_equal.
-//
-//    /// Compares values
-//    #method(stacksafe) less &int:anOperand 
-//        => system'internal'int_less.
-//
+    
+    /// Compares values
+    #method(stacksafe) equal &char:anOperand 
+        => system'internal'int_equal.
+
+    /// Compares values
+    #method(stacksafe) less &char:anOperand 
+        => system'internal'int_less.
+
+    /// Compares values
+    #method(stacksafe) equal &int:anOperand 
+        => system'internal'int_equal.
+
+    /// Compares values
+    #method(stacksafe) less &int:anOperand 
+        => system'internal'int_less.
+
 //    /// Clones the value
 //    #method clone = CharValue new &char:$self.
 
@@ -2622,24 +2622,24 @@
 //    #method => theValue.    
 }
 
-//// === Basic Factory symbols ==
-//
-//#class BaseExtender
-//{
-//    #field theObject.
-//    
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    #method(type:bool) equal : anObject
-//        => theObject.
-//      
-//    /// Dispatches the verb to the target object
-//    #method cast : aVerb &to:aTarget => theObject.
-//    
-//    /// Dispatches the verb to the target object
-//    #method cast : aVerb &to:aTarget &with:aParam => theObject.
-//    
-//    #method => theObject.
-//}
+// === Basic Factory symbols ==
+
+#class BaseExtender
+{
+    #field theObject.
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    #method(type:bool) equal : anObject
+        => theObject.
+      
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theObject.
+    
+    #method => theObject.
+}
 
 /// A generic variable. 
 ///

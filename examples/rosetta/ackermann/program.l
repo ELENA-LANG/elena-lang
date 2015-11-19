@@ -8,8 +8,8 @@
 // A( 2 , 4 ) =  11
 // A( 3 , 4 ) =  125
 
-#define system.
-#define extensions.
+#import system.
+#import extensions.
 
 // --- Ackermann function ---
 

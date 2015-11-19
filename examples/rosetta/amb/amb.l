@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define extensions.
-#define extensions'routines.
+#import system.
+#import system'routines.
+#import extensions.
+#import extensions'routines.
 
 // --- Joinable --
 
