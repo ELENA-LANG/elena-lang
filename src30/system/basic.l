@@ -2966,11 +2966,11 @@
 //    /// Converts a short integer into a character and saves the result into an output parameter
 //    #method(stacksafe) convert &short:aValue &vchar:aRetVal
 //        => system'internal'char_saveshort.
-//        
-//    /// Converts an integer into a character and saves the result into an output parameter
-//    #method(stacksafe) convert &int:aValue &vchar:aRetVal
-//        => system'internal'char_saveint.
-//        
+        
+    /// Converts an integer into a character and saves the result into an output parameter
+    #method(stacksafe) convert &int:aValue &vchar:aRetVal
+        => system'internal'char_saveint.
+        
 //    /// Returns a parameter        
 //    #method(type:char,stacksafe)convert &char:aChar
 //        = CharValue new &char:aChar.
@@ -3042,15 +3042,15 @@
 //        
 //        ^ CharValue new &char:aRetVal.
 //    ]        
-//        
-//    /// Converts an integer into a character
-//    #method(type:char,stacksafe) convert &int:aValue
-//    [
-//        #var(type:char)aRetVal.
-//        $self convert &int:aValue &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]
+        
+    /// Converts an integer into a character
+    #method(type:char,stacksafe) convert &int:aValue
+    [
+        #var(type:char)aRetVal.
+        $self convert &int:aValue &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]
         
     #method convert : anObject
         = anObject cast:%convert &to:$self.

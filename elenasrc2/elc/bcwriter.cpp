@@ -2982,7 +2982,7 @@ bool isDynamicObjectExpression(SNode node)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxBoxing || current == lxNested || current == lxStruct || current == lxSymbol)
+      if (!test(current.type, lxSimpleMask))
          return true;
 
       current = current.nextNode();
