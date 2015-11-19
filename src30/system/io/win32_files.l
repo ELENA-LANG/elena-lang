@@ -1,22 +1,22 @@
 #import system.
 #import system'text.
 
-//// --- File Access Modes ---
-//#symbol(const,type:int) $FILE_READ_DATA     = 00000001h.
-//#symbol(const,type:int) $FILE_APPEND_DATA   = 00000004h.
-//#symbol(const,type:int) $FILE_GENERIC_READ  = 80000000h.
-//#symbol(const,type:int) $FILE_GENERIC_WRITE = 40000000h.
-//
-//#symbol(const,type:int) $OPEN_EXISTING      = 0003h.
-//#symbol(const,type:int) $CREATE_ALWAYS      = 0002h.
-//#symbol(const,type:int) $OPEN_ALWAYS        = 0004h.
-//
-//#symbol(const,type:int) $FILE_SHARE_READ    = 00000001h.
-//#symbol(const,type:int) $FILE_SHARE_WRITE   = 00000002h.
-//
-//#symbol(const,type:int) $FILE_BEGIN = 0.
-//#symbol(const,type:int) $FILE_CURRENT = 1.
-//#symbol(const,type:int) $FILE_END = 2.
+// --- File Access Modes ---
+#symbol(const,type:int) $FILE_READ_DATA     = 00000001h.
+#symbol(const,type:int) $FILE_APPEND_DATA   = 00000004h.
+#symbol(const,type:int) $FILE_GENERIC_READ  = 80000000h.
+#symbol(const,type:int) $FILE_GENERIC_WRITE = 40000000h.
+
+#symbol(const,type:int) $OPEN_EXISTING      = 0003h.
+#symbol(const,type:int) $CREATE_ALWAYS      = 0002h.
+#symbol(const,type:int) $OPEN_ALWAYS        = 0004h.
+
+#symbol(const,type:int) $FILE_SHARE_READ    = 00000001h.
+#symbol(const,type:int) $FILE_SHARE_WRITE   = 00000002h.
+
+#symbol(const,type:int) $FILE_BEGIN = 0.
+#symbol(const,type:int) $FILE_CURRENT = 1.
+#symbol(const,type:int) $FILE_END = 2.
 
 // --- FileStream ---
 
@@ -24,71 +24,71 @@
 {
     #field(type:handle) theHandle.
     
-//    #constructor openForRead &path:aPath
-//        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
-//    
+    #constructor openForRead &path:aPath
+        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
+    
 //    #constructor openForReWrite &path:aPath
 //        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
 //    
 //    #constructor openForAppend &path:aPath
 //        <= %new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
-//    
-//    #constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
-//    [
-//        theHandle := system'external'KERNEL32 CreateFileW
-//                      &wide:aPath
-//                      &int:dwDesiredAccess
-//                      &int:dwShareMode
-//                      &int:0
-//                      &int:dwCreationDisposition
-//                      &int:dwFlagsAndAttributes
-//                      &int:0.
-//                      
-//        (-1 == theHandle)
-//            ? [ #throw IOException new:"Cannot open the file". ].
-//    ]
-//    
-//    #method write &bytearray:aDump &int:aLength
-//    [
-//        #var(type:int)aWritten := 0.
-//        system'external'KERNEL32 WriteFile
-//            &handle    : theHandle
-//            &bytearray : aDump
-//            &int       : aLength
-//            &vint      : aWritten
-//            &int       : 0.
-//    ]
-//
-//    #method read &bytearray:aDump &vint:aLength
-//    [
-//        system'external'KERNEL32 ReadFile
-//            &handle      : theHandle
-//            &bytearray   : aDump
-//            &int         : aLength
-//            &vint        : aLength
-//            &int         : 0.
-//    ]
-//    
-//    #method readIndex &vint:anIndex
-//    [
-//        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
-//            &handle : theHandle
-//            &int    : 0
-//            &int    : 0
-//            &int    : $FILE_CURRENT.
-//            
-//        anIndex << ret.
-//    ] 
-//    
-//    #method writeIndex &int:anIndex
-//    [
-//        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
-//            &handle : theHandle
-//            &int    : anIndex
-//            &int    : 0
-//            &int    : $FILE_BEGIN.
-//    ] 
-//    
+    
+    #constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
+    [
+        theHandle := system'external'KERNEL32 CreateFileW
+                      &wide:aPath
+                      &int:dwDesiredAccess
+                      &int:dwShareMode
+                      &int:0
+                      &int:dwCreationDisposition
+                      &int:dwFlagsAndAttributes
+                      &int:0.
+                      
+        (-1 == theHandle)
+            ? [ #throw IOException new:"Cannot open the file". ].
+    ]
+    
+    #method write &bytearray:aDump &int:aLength
+    [
+        #var(type:int)aWritten := 0.
+        system'external'KERNEL32 WriteFile
+            &int       : theHandle
+            &bytearray : aDump
+            &int       : aLength
+            &vint      : aWritten
+            &int       : 0.
+    ]
+
+    #method read &bytearray:aDump &vint:aLength
+    [
+        system'external'KERNEL32 ReadFile
+            &int       : theHandle
+            &bytearray : aDump
+            &int       : aLength
+            &vint      : aLength
+            &int       : 0.
+    ]
+    
+    #method readIndex &vint:anIndex
+    [
+        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
+            &int : theHandle
+            &int : 0
+            &int : 0
+            &int : $FILE_CURRENT.
+            
+        anIndex << ret.
+    ] 
+    
+    #method writeIndex &int:anIndex
+    [
+        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
+            &int : theHandle
+            &int : anIndex
+            &int : 0
+            &int : $FILE_BEGIN.
+    ] 
+    
 //    #method readLength &vint:aLength 
 //    [ 
 //        #var(type:int)n := system'external'KERNEL32 GetFileSize

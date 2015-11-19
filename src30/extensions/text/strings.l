@@ -85,18 +85,18 @@
         ^ (-1 != theIndex).
     ]
     
-//    #method mark
-//    [
-//        (-1 == theIndex)
-//            ? [
-//                $self clear.
-//            ]
-//            ! [
-//                theIndex := 1 + theIndex.
-//                theStart := theIndex.
-//            ].
-//        
-//    ]
+    #method mark
+    [
+        (-1 == theIndex)
+            ? [
+                $self clear.
+            ]
+            ! [
+                theIndex := 1 + theIndex.
+                theStart := theIndex.
+            ].
+        
+    ]
     
     #method append &value:aValue 
     [
@@ -120,25 +120,25 @@
         theValue := theValue delete:aLength &at:theIndex.
     ]
 
-//    #method clear
-//    [
-//        theValue := emptyLiteralValue.
-//        theIndex := 0.
-//        theStart := 0.
-//    ]
-//
-//    #method Marked
-//        = (-1 == theIndex)
-//            ? [ theValue Substring:theStart ]
-//            ! [ theValue Substring:(theIndex - theStart) &at:theStart ].
+    #method clear
+    [
+        theValue := emptyLiteralValue.
+        theIndex := 0.
+        theStart := 0.
+    ]
+
+    #method Marked
+        = (-1 == theIndex)
+            ? [ theValue Substring:theStart ]
+            ! [ theValue Substring:(theIndex - theStart) &at:theStart ].
     
     #method literal => theValue.
     
     #method wide => theValue.
     
-//    #method length => theValue.
-//    
-//    #method index = theIndex int.
+    #method length => theValue.
+    
+    #method index = theIndex int.
 }
 
 // --- StringWriter ---
