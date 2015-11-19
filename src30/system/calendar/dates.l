@@ -208,9 +208,9 @@
 //        <= %new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
 //  
 //    #method __time = SystemTime new &__time:theValue.
-//  
-//    #method __time_st = TimeStruct new &__time:theValue.
-//
+  
+    #method __time_st = TimeStruct new &__time:theValue.
+
 //    #method(stacksafe) read &__vtime : aRetVal
 //    [
 //        aRetVal write &__time:theValue.

@@ -5,17 +5,16 @@
 #import system'calendar.
 #import extensions.
 
-#symbol xx =
-    { ! : x : y = y::$subject get. }.
-                        
 #symbol XTester =
 {
     test            
     [
-        #var t := Integer new.
         #var s := "2".
         
-        s convertTo:t.
+        (s toInt) =>
+            1 ? [ console writeLine:"Wrong!!". ]
+            2 ? [ console writeLine:"Right!!". ]
+            ! [ console writeLine:"Wrong!!". ].
     ]        
 }.
         

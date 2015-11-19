@@ -1770,16 +1770,15 @@ Compiler::InheritResult Compiler :: compileParentDeclaration(ref_t parentRef, Cl
 
 void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
 {
-   scope.writer->insert(lxSwitching);
-
    if (switchValue.kind == okObject) {
       scope.writer->insert(lxVariable);
-      scope.writer->appendNode(lxResult);
+      scope.writer->insert(lxSwitching);
       scope.writer->closeNode();
 
       switchValue.kind = okBlockLocal;
       switchValue.param = 1;
    }
+   else scope.writer->insert(lxSwitching);
 
    DNode option = node.firstChild();
    while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
