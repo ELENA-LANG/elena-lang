@@ -972,72 +972,72 @@
 //    ]
 }
 
-//// --- Boolean ---
-//
-///// A boolean variable. 
-/////
-///// Extends a boolean value
-//#class Boolean :: BaseValue
-//{
-//    #field(type:bool) theValue.
-//
-//    /// Creates a boolean variable with an initial value (false)
-//    #constructor new
-//    [        
-//        theValue := false.
-//    ]
-//
-//    /// Creates a boolean variable with specified value
-//    #constructor new : aValue
-//    [        
-//        theValue := true equal &bool:(aValue bool).
-//    ]
-//    
-//    /// Creates a boolean variable with specified value
-//    #constructor new &bool:aValue
-//    [        
-//        theValue := aValue.
-//    ]
-//
-//    /// Returns the boolean value
-//    #method value = theValue.
-//
-//    /// Writes the value
-//    #method write : aValue
-//    [
-//        theValue := aValue bool.
-//    ]
-//
-//    /// Writes the value
-//    #method write &bool:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//
-//    /// Returns the boolean value
-//    #method bool = theValue.
-//
-//    /// Executes logical OR operation
-//    #method append : aValue
-//    [
-//        theValue := theValue or:aValue.
-//    ]
-//
-//    /// Executes logical AND operation            
-//    #method multiplyBy : aValue
-//    [
-//        theValue := theValue and:aValue.
-//    ]
-//            
-//    /// Inverts the boolean value
-//    #method invert
-//    [
-//        theValue := theValue not bool.
-//    ]            
-//
-//    /// Clones the object
-//    #method clone = Boolean new:theValue.
-//            
-//    /// Redirects the other messages to the boolean value            
-//    #method => theValue.
-//}
+// --- Boolean ---
+
+/// A boolean variable. 
+///
+/// Extends a boolean value
+#class Boolean :: BaseValue
+{
+    #field(type:bool) theValue.
+
+    /// Creates a boolean variable with an initial value (false)
+    #constructor new
+    [        
+        theValue := false.
+    ]
+
+    /// Creates a boolean variable with specified value
+    #constructor new : aValue
+    [        
+        theValue := true equal &bool:(aValue bool).
+    ]
+    
+    /// Creates a boolean variable with specified value
+    #constructor new &bool:aValue
+    [        
+        theValue := aValue.
+    ]
+
+    /// Returns the boolean value
+    #method value = theValue.
+
+    /// Writes the value
+    #method write : aValue
+    [
+        theValue := aValue bool.
+    ]
+
+    /// Writes the value
+    #method write &bool:aValue
+    [
+        theValue := aValue.
+    ]
+
+    /// Returns the boolean value
+    #method bool = theValue.
+
+    /// Executes logical OR operation
+    #method append : aValue
+    [
+        theValue := theValue or:aValue.
+    ]
+
+    /// Executes logical AND operation            
+    #method multiplyBy : aValue
+    [
+        theValue := theValue and:aValue.
+    ]
+            
+    /// Inverts the boolean value
+    #method invert
+    [
+        theValue := theValue not bool.
+    ]            
+
+    /// Clones the object
+    #method clone = Boolean new:theValue.
+            
+    /// Redirects the other messages to the boolean value            
+    #method => theValue.
+}

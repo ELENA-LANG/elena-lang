@@ -602,91 +602,91 @@
 //    /// Dispatches the verb to the target object with intarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realarray:$self.    
 //}
-//
-//// --- IntMatrix ---
-//
-//#class(sealed)RealMatrix
-//{
-//    #field(type:bytearray)theArray.
-//    #field(type:int)theRows.
-//    #field(type:int)theColumns.
-//    
-//    #constructor(stacksafe) new &int:Rows &int:Columns
-//    [
-//        theArray := ByteArray new &int:(Columns * Rows * 8).
-//        
-//        theRows := IntNumber new &int:Rows.
-//        theColumns := IntNumber new &int:Columns.
-//    ]
-//        
-//    #constructor new : Rows : Columns
-//        <= new &int:(Columns int) &int:(Rows int).
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    #method(stacksafe) readLengths &vint:Rows &vint:Columns
-//    [
-//        Columns << theColumns.
-//        Rows << theRows.
-//    ]
-//
-//    #method length = theRows.
-//    
-//    /// Returns itself
-//    #method realmatrix = $self.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:i &int:j &real:aValue
-//    [
-//        #var(type:int)anIndex := i * theColumns + j.
-//        
-//        anIndex := anIndex shift &int:(-3).
-//        
-//        theArray write &int:anIndex &real:aValue.
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:i &int:j &vreal:aValue
-//    [
-//        #var(type:int)anIndex := i * theColumns + j.
-//        
-//        anIndex := anIndex shift &int:(-3).
-//        
-//        theArray read &int:anIndex &vreal:aValue.
-//    ]
-//
-//    #method getAt : i : j
-//    [
-//        #var(type:real)aValue.            
-//        $self read &int:(i int) &int:(j int) &vreal:aValue.
-//        
-//        ^ RealNumber new &real:aValue.
-//    ]
-//
+
+// --- RealMatrix ---
+
+#class(sealed)RealMatrix
+{
+    #field(type:bytearray)theArray.
+    #field(type:int)theRows.
+    #field(type:int)theColumns.
+    
+    #constructor(stacksafe) new &int:Rows &int:Columns
+    [
+        theArray := ByteArray new &int:(Columns * Rows * 8).
+        
+        theRows := IntNumber new &int:Rows.
+        theColumns := IntNumber new &int:Columns.
+    ]
+        
+    #constructor new : Rows : Columns
+        <= new &int:(Columns int) &int:(Rows int).
+        
+    /// Reads the matrix lengths to the output parameter
+    #method(stacksafe) readLengths &vint:Rows &vint:Columns
+    [
+        Columns << theColumns.
+        Rows << theRows.
+    ]
+
+    #method length = theRows.
+    
+    /// Returns itself
+    #method realmatrix = $self.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:i &int:j &real:aValue
+    [
+        #var(type:int)anIndex := i * theColumns + j.
+        
+        anIndex := anIndex shift &int:(-3).
+        
+        theArray write &int:anIndex &real:aValue.
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:i &int:j &vreal:aValue
+    [
+        #var(type:int)anIndex := i * theColumns + j.
+        
+        anIndex := anIndex shift &int:(-3).
+        
+        theArray read &int:anIndex &vreal:aValue.
+    ]
+
+    #method getAt : i : j
+    [
+        #var(type:real)aValue.            
+        $self read &int:(i int) &int:(j int) &vreal:aValue.
+        
+        ^ RealNumber new &real:aValue.
+    ]
+
 //    #method setAt : i : j : aValue
 //    [
 //        $self write &int:(i int) &int:(j int) &real:(aValue real).    
 //    ]
-//
-//    /// Returns a row
-//    #method getAt : i =
-//    {
-//        length = theColumns int.
-//        
-//        getAt : j
-//            = self getAt:i:j.
-//        
-//        setAt : j : aValue
-//        [
-//            self setAt:i:j:aValue.
-//        ]
-//    }.
-//
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &realmatrix:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realmatrix:$self.
-//}
+
+    /// Returns a row
+    #method getAt : i =
+    {
+        length = theColumns int.
+        
+        getAt : j
+            = self getAt:i:j.
+        
+        setAt : j : aValue
+        [
+            self setAt:i:j:aValue.
+        ]
+    }.
+
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &realmatrix:$self.
+    
+    /// Dispatches the verb to the target object with intarray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realmatrix:$self.
+}
 
 // --- CharArray ---
 

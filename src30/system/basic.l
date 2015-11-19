@@ -3405,47 +3405,47 @@
         = aLiteral.
 }.
 
-//// --- realOpController ---
-//
-//#symbol realOpController =
-//{
-//    #method(stacksafe) exp &real:aReal &vreal:aRetVal
-//        => system'internal'r_exp.
-//        
-//    #method(stacksafe) abs &real:aReal &vreal:aRetVal
-//        => system'internal'r_abs.
-//        
-//    #method(stacksafe) ln &real:aReal &vreal:aRetVal
-//        => system'internal'r_ln.
-//        
-//    #method(stacksafe) round &real:aReal &vreal:aRetVal
-//        => system'internal'r_round.
-//        
-//    #method(stacksafe) truncate &real:aReal &vreal:aRetVal
-//        => system'internal'r_truncate.
-//        
-//    #method(stacksafe) sin &real:aReal &vreal:aRetVal
-//        => system'internal'r_sin.
-//        
-//    #method(stacksafe) cos &real:aReal &vreal:aRetVal
-//        => system'internal'r_cos.
-//        
-//    #method(stacksafe) arctan &real:aReal &vreal:aRetVal
-//        => system'internal'r_arctan.
-//                
-//    #method(stacksafe) sqrt &real:aReal &vreal:aRetVal
-//        => system'internal'r_sqrt.
-//        
-//    #method(stacksafe) pi &vreal:aRetVal
-//        => system'internal'r_pi.
-//        
-//    #method(type:real) pi
-//    [
-//        #var(type:real)aRetVal.
-//        $self pi &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]        
-//}.
-//
-//#symbol(type:real)pi_value = realOpController pi.
+// --- realOpController ---
+
+#symbol realOpController =
+{
+    #method(stacksafe) exp &real:aReal &vreal:aRetVal
+        => system'internal'r_exp.
+        
+    #method(stacksafe) abs &real:aReal &vreal:aRetVal
+        => system'internal'r_abs.
+        
+    #method(stacksafe) ln &real:aReal &vreal:aRetVal
+        => system'internal'r_ln.
+        
+    #method(stacksafe) round &real:aReal &vreal:aRetVal
+        => system'internal'r_round.
+        
+    #method(stacksafe) truncate &real:aReal &vreal:aRetVal
+        => system'internal'r_truncate.
+        
+    #method(stacksafe) sin &real:aReal &vreal:aRetVal
+        => system'internal'r_sin.
+        
+    #method(stacksafe) cos &real:aReal &vreal:aRetVal
+        => system'internal'r_cos.
+        
+    #method(stacksafe) arctan &real:aReal &vreal:aRetVal
+        => system'internal'r_arctan.
+                
+    #method(stacksafe) sqrt &real:aReal &vreal:aRetVal
+        => system'internal'r_sqrt.
+        
+    #method(stacksafe) pi &vreal:aRetVal
+        => system'internal'r_pi.
+        
+    #method(type:real) pi
+    [
+        #var(type:real)aRetVal.
+        $self pi &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]        
+}.
+
+#symbol(type:real)pi_value = realOpController pi.

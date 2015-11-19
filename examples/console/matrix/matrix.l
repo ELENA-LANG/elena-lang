@@ -1,10 +1,10 @@
 // based on http://cboard.cprogramming.com/cplusplus-programming/30001-determinant-calculation.html prelude sample
 
 // --- default namespaces ---
-#define system.
-#define system'dynamic.
-#define extensions.
-#define extensions'math.
+#import system.
+#import system'dynamic.
+#import extensions.
+#import extensions'math.
 
 // --- factory ---
 
