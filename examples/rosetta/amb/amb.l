@@ -86,4 +86,6 @@
         seek: (:a:b:c:d) [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
         do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d. ]
         | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
+        
+    console readChar.        
 ].

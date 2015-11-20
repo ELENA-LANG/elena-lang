@@ -858,6 +858,8 @@
         
         (aParams@0)::convertorOp convertTo:anObject1.
         (aParams@1)::convertorOp convertTo:anObject2.
+            
+        ^ self.
     ]
         
     #method readLine : anObject1 : anObject2 : anObject3
@@ -869,6 +871,8 @@
         (aParams@0)::convertorOp convertTo:anObject1.
         (aParams@1)::convertorOp convertTo:anObject2.
         (aParams@2)::convertorOp convertTo:anObject3.
+            
+        ^ self.
     ]
         
     #method readLine : anObject1 : anObject2 : anObject3 : anObject4
@@ -881,6 +885,8 @@
         (aParams@1)::convertorOp convertTo:anObject2.
         (aParams@2)::convertorOp convertTo:anObject3.
         (aParams@3)::convertorOp convertTo:anObject4.
+            
+        ^ self.
     ]
         
     #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
@@ -894,6 +900,8 @@
         (aParams@2)::convertorOp convertTo:anObject3.
         (aParams@3)::convertorOp convertTo:anObject4.
         (aParams@4)::convertorOp convertTo:anObject5.
+            
+        ^ self.
     ]
         
     #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
@@ -908,6 +916,8 @@
         (aParams@3)::convertorOp convertTo:anObject4.
         (aParams@4)::convertorOp convertTo:anObject5.
         (aParams@5)::convertorOp convertTo:anObject6.
+            
+        ^ self.
     ]
     
     #method readLine &args:Arguments
@@ -926,6 +936,8 @@
             
             anIndex := anIndex + 1.
         ].
+            
+        ^ self.
     ]
 }
 

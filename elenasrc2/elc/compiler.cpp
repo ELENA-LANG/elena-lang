@@ -4020,45 +4020,37 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-   // NOTE : top expression is required for propery translation
-   scope.writer->newNode(lxRoot);
+   _writer.declareMethod(*tape, methodScope->message, false, false);
 
    // try to implement light-weight resend operation
    if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
       ObjectInfo target = scope.mapObject(node.Terminal());
       if (target.kind == okConstantSymbol || target.kind == okField) {
-         _writer.declareMethod(*tape, methodScope->message, false, false);
-
          if (target.kind == okField) {
             _writer.loadObject(*tape, lxResultField, target.param);
          }
          else _writer.loadObject(*tape, lxConstantSymbol, target.param);
 
          _writer.resend(*tape);
-
-         _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
-
-         return;
       }
    }
+   else {
+      // NOTE : top expression is required for propery translation
+      scope.writer->newNode(lxRoot);
 
-   // new stack frame
-   // stack already contains previous $self value
-   _writer.declareMethod(*tape, methodScope->message, false, true);
-   scope.level++;
+      scope.writer->newNode(lxResending, methodScope->message);
 
-   scope.writer->newNode(lxResending, methodScope->message);
+      ObjectInfo target = compileExpression(node, scope, 0, 0);
 
-   ObjectInfo target = compileExpression(node, scope, 0, 0);
+      scope.writer->closeNode();
 
-   scope.writer->closeNode();
+      // NOTE : close root node
+      scope.writer->closeNode();
 
-   // NOTE : close root node
-   scope.writer->closeNode();
+      saveSyntaxTree(*scope.moduleScope, *tape, methodScope->syntaxTree);
+   }
 
-   saveSyntaxTree(*scope.moduleScope, *tape, methodScope->syntaxTree);
-
-   _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, true);
+   _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
 }
 
 void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)

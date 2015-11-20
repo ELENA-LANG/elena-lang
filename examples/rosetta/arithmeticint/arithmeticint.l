@@ -1,6 +1,6 @@
-#define system.
-#define system'math.
-#define extensions.
+#import system.
+#import system'math.
+#import extensions.
 
 // --- Program ---
 

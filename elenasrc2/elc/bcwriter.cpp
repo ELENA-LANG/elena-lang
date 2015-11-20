@@ -348,12 +348,20 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-void ByteCodeWriter :: newFrame(CommandTape& tape)
+void ByteCodeWriter :: newFrame(CommandTape& tape, bool withPresavedAcc)
 {
    //   open 1
    //   pusha
    tape.write(bcOpen, 1);
-   tape.write(bcPushA);
+
+   if (withPresavedAcc)
+      tape.write(bcPushA);
+}
+
+void ByteCodeWriter :: closeFrame(CommandTape& tape)
+{
+   // close
+   tape.write(bcClose);
 }
 
 void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
@@ -3038,20 +3046,21 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
 
 void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
 {
-   // copy arguments
-   int param_count = getParamCount(node.argument);
-   while (param_count > 0) {
-      pushObject(tape, lxLocal, -1 - param_count);
-      param_count--;
-   }
+   // new frame
+   newFrame(tape, false);
 
-   pushObject(tape, lxLocal, -1);
+   // save message
    pushObject(tape, lxCurrentMessage);
 
    generateExpression(tape, node);
 
+   // restore message
    popObject(tape, lxCurrentMessage);
-   callRoleMessage(tape, getParamCount(node.argument));
+
+   // close frame
+   closeFrame(tape);
+
+   resend(tape);
 }
 
 void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)

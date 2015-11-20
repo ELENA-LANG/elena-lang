@@ -14,8 +14,8 @@ Given 2 integer numbers, A and B. One needs to find their sum.
     The required output is one integer: the sum of A and B. 
 */
 
-#define system.
-#define extensions.
+#import system.
+#import extensions.
 
 #symbol program =
 [

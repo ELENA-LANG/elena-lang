@@ -1,5 +1,5 @@
-#define system.
-#define extensions.
+#import system.
+#import extensions.
 
 // --- Average ---
 

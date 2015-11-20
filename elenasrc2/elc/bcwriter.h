@@ -127,7 +127,7 @@ public:
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-   void newFrame(CommandTape& tape);
+   void newFrame(CommandTape& tape, bool withPresavedAcc = true);
    void newStructure(CommandTape& tape, int size, ref_t reference);
    void newDynamicStructure(CommandTape& tape, int itemSize);
    void newDynamicWStructure(CommandTape& tape);
@@ -197,6 +197,7 @@ public:
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
+   void closeFrame(CommandTape& tape);
 
    void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
 
