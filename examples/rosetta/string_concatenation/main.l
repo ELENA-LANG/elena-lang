@@ -8,4 +8,5 @@
     
     console writeLine:s.
     console writeLine:s2.
+    console readChar.
 ].

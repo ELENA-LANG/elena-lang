@@ -928,114 +928,113 @@
         ^ self.            
     ]
     
-//    #method padRight &char:aChar &int:aLength
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aCurrentLength.
-//        aLiteral readLength &vint:aCurrentLength.
-//
-//        (aCurrentLength < aLength)
-//            ? [ ^ aLiteral add &literal:(LiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
-//            
-//        ^ self.            
-//    ]
-//
-//    #method startingWith:s
-//        = self::literalOp startingWith &literal:(s literal).
-//        
-//    #method startingWith &literal:s
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:vint)n.
-//        aLiteral indexOf &int:0 &literal:s &vint:n.
-//        
-//        ^ 0 == n.
-//    ]
-//        
-//    #method endingWith &literal:s
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:int)l1.
-//        #var(type:int)l2.
-//        aLiteral readLength &vint:l1.
-//        s readLength &vint:l2.
-//
-//        #var(type:vint)n.
-//        aLiteral indexOf &int:(l1 - l2) &literal:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//
-//    #method endingWith:s
-//        = self::literalOp endingWith &literal:(s literal).
-//        
-//    #method containing &literal:s
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:int)l1.
-//        #var(type:int)l2.
-//        aLiteral readLength &vint:l1.
-//        s readLength &vint:l2.
-//
-//        #var(type:vint)n.
-//        aLiteral indexOf &int:0 &literal:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//
-//    #method containing:s
-//        = self::literalOp containing &literal:(s literal).
-//    
-//    #method replaceFirst &literal:aReplacee &literal:aReplacer
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:vint) aReplaceeLen.
-//        #var(type:vint)anIndex.
-//        
-//        aReplacee readLength &vint:aReplaceeLen.
-//        aLiteral indexOf &int:0 &literal:aReplacee &vint:anIndex.
-//        
-//        (anIndex != -1)
-//            ? [ ^ aLiteral delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
-//            ! [ ^ aLiteral. ].
-//    ]    
-//    
-//    #method replace &literal:aReplacee &literal:aReplacer
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var aTarget := String new.
-//        #var(type:int)aStart := 0.
-//        #var(type:int)anEnd.
-//        #var(type:int)aReplaceeLen.
-//        aReplacee readLength &vint:aReplaceeLen.
-//        
-//        aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
-//        
-//        #loop (anEnd != -1) ?
-//        [
-//            aTarget 
-//                append &literal:(aLiteral Substring &int:aStart &int:(anEnd - aStart))
-//                append &literal:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
-//        ].
-//    
-//        ^ (aStart != 0)
-//            ? [ aTarget append:(aLiteral::literalOp Substring &int:aStart) literal ]
-//            ! [ self literal ].
-//    ]
-//    
-//    #method is &empty
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aLength.
-//        aLiteral readLength &vint:aLength.
-//        
-//        ^ aLength == 0.
-//    ]
-//    
+    #method padRight &char:aChar &int:aLength
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aCurrentLength.
+        aLiteral readLength &vint:aCurrentLength.
+
+        (aCurrentLength < aLength)
+            ? [ ^ aLiteral add &literal:(LiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
+            
+        ^ self.            
+    ]
+
+    #method startingWith:s
+        = self::literalOp startingWith &literal:(s literal).
+        
+    #method startingWith &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:vint)n.
+        aLiteral indexOf &int:0 &literal:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+        
+    #method endingWith &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+
+        #var(type:vint)n.
+        aLiteral indexOf &int:(l1 - l2) &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method endingWith:s
+        = self::literalOp endingWith &literal:(s literal).
+        
+    #method containing &literal:s
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+
+        #var(type:vint)n.
+        aLiteral indexOf &int:0 &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method containing:s
+        = self::literalOp containing &literal:(s literal).
+    
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
+    [
+        #var(type:literal)aLiteral := self literal.
+        #var(type:vint) aReplaceeLen.
+        #var(type:vint)anIndex.
+        
+        aReplacee readLength &vint:aReplaceeLen.
+        aLiteral indexOf &int:0 &literal:aReplacee &vint:anIndex.
+        
+        (anIndex != -1)
+            ? [ ^ aLiteral delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
+            ! [ ^ aLiteral. ].
+    ]    
+    
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var aTarget := String new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anEnd.
+        #var(type:int)aReplaceeLen.
+        aReplacee readLength &vint:aReplaceeLen.
+        
+        aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget 
+                append &literal:(aLiteral Substring &int:aStart &int:(anEnd - aStart))
+                append &literal:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget append:(aLiteral::literalOp Substring &int:aStart) literal ]
+            ! [ self literal ].
+    ]
+    
+    #method is &empty
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:int)aLength.
+        aLiteral readLength &vint:aLength.
+        
+        ^ aLength == 0.
+    ]    
 }
 
 // --- wideOp ---
@@ -1137,66 +1136,66 @@
         ^ self.            
     ]
     
-//    #method padRight &char:aChar &int:aLength
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)aCurrentLength.
-//        aLiteral readLength &vint:aCurrentLength.
-//
-//        (aCurrentLength < aLength)
-//            ? [ ^ aLiteral add &wide:(WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
-//            
-//        ^ self.            
-//    ]
-//
-//    #method startingWith &wide:s
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)n.
-//        aLiteral indexOf &int:0 &wide:s &vint:n.
-//        
-//        ^ 0 == n.
-//    ]
-//    
-//    #method startingWith:s
-//        = self::wideOp startingWith &wide:(s wide).
-//
-//    #method endingWith &wide:s
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)l1.
-//        #var(type:int)l2.
-//        #var(type:int)n.
-//        
-//        aLiteral readLength &vint:l1.
-//        s readLength &vint:l2.
-//        
-//        aLiteral indexOf &int:(l1 - l2) &wide:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//    
-//    #method endingWith:s
-//        = self::wideOp endingWith &wide:(s wide).
-//
-//    #method containing &wide:s
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)l1.
-//        #var(type:int)l2.
-//        #var(type:int)n.
-//        
-//        aLiteral readLength &vint:l1.
-//        s readLength &vint:l2.
-//        
-//        aLiteral indexOf &int:0 &wide:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//    
-//    #method containing:s
-//        = self::wideOp containing &wide:(s wide).
-//
+    #method padRight &char:aChar &int:aLength
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)aCurrentLength.
+        aLiteral readLength &vint:aCurrentLength.
+
+        (aCurrentLength < aLength)
+            ? [ ^ aLiteral add &wide:(WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
+            
+        ^ self.            
+    ]
+
+    #method startingWith &wide:s
+    [
+        #var(type:wide)aLiteral := self wide.        
+        #var(type:int)n.
+        aLiteral indexOf &int:0 &wide:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+    
+    #method startingWith:s
+        = self::wideOp startingWith &wide:(s wide).
+
+    #method endingWith &wide:s
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        #var(type:int)n.
+        
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+        
+        aLiteral indexOf &int:(l1 - l2) &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method endingWith:s
+        = self::wideOp endingWith &wide:(s wide).
+
+    #method containing &wide:s
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:int)l1.
+        #var(type:int)l2.
+        #var(type:int)n.
+        
+        aLiteral readLength &vint:l1.
+        s readLength &vint:l2.
+        
+        aLiteral indexOf &int:0 &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method containing:s
+        = self::wideOp containing &wide:(s wide).
+
 //    #method replaceFirst &wide:aReplacee &wide:aReplacer
 //    [
 //        #var(type:wide)aLiteral := self wide.
@@ -1315,99 +1314,99 @@
         ^ self::dispatcher padLeft &char:aChar &int:(aLength int).
     ]
     
-//    #method padRight &char:aChar &length:aLength
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher padRight &char:aChar &int:(aLength int).
-//    ]
-//    
-//    #method startingWith : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher startingWith:s.
-//    ]
-//    
-//    #method endingWith : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher endingWith:s.
-//    ]
-//    
-//    #method containing : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher containing:s.
-//    ]
-//    
-//    #method replaceFirst &literal:aReplacee &literal:aReplacer
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher replaceFirst &literal:aReplacee &literal:aReplacer.
-//    ]
-//    
-//    #method replace &literal:aReplacee &literal:aReplacer
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
-//    ]
-//    
-//    #method write : aLiteral &length:aCounter
-//        = self::stringOp write : aLiteral &int:(aCounter int).
-//            
-//    #method(stacksafe) write : aLiteral &int:aCounter
-//    [
-//        #var(type:int)aNumber := aCounter.
-//        
-//        #loop (aNumber > 0) ?
-//        [
-//            self write:aLiteral. 
-//            
-//            aNumber := aNumber - 1.
-//        ].
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &paddingLeft:aWidth &with:aChar
-//    [
-//        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self.
-//    ]
-//
-//    #method write : aLine &paddingRight:aWidth &with:aChar
-//    [
-//        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &padding:aWidth &with:aChar
-//    [
-//        #var(type:int)aWidthInt := aWidth int.
-//        #var(type:int)aLength := aLine length.        
-//        
-//        (aLength < aWidthInt)
-//            ? [
-//                #var(type:int)aLen := aWidthInt - aLength.
-//                #var(type:int)aLeftLen := aLen / 2.
-//                
-//                self::stringOp write:aChar &int:aLeftLen.
-//                self write:aLine.
-//                self::stringOp write:aChar &int:(aLen - aLeftLen).
-//            ]
-//            ! [ self write:aLine. ].
-//            
-//        ^ self.
-//    ]    
+    #method padRight &char:aChar &length:aLength
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher padRight &char:aChar &int:(aLength int).
+    ]
+    
+    #method startingWith : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher startingWith:s.
+    ]
+    
+    #method endingWith : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher endingWith:s.
+    ]
+    
+    #method containing : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher containing:s.
+    ]
+    
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher replaceFirst &literal:aReplacee &literal:aReplacer.
+    ]
+    
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
+    ]
+    
+    #method write : aLiteral &length:aCounter
+        = self::stringOp write : aLiteral &int:(aCounter int).
+            
+    #method(stacksafe) write : aLiteral &int:aCounter
+    [
+        #var(type:int)aNumber := aCounter.
+        
+        #loop (aNumber > 0) ?
+        [
+            self write:aLiteral. 
+            
+            aNumber := aNumber - 1.
+        ].
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &paddingLeft:aWidth &with:aChar
+    [
+        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
+            
+        ^ self.
+    ]
+
+    #method write : aLine &paddingRight:aWidth &with:aChar
+    [
+        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &padding:aWidth &with:aChar
+    [
+        #var(type:int)aWidthInt := aWidth int.
+        #var(type:int)aLength := aLine length.        
+        
+        (aLength < aWidthInt)
+            ? [
+                #var(type:int)aLen := aWidthInt - aLength.
+                #var(type:int)aLeftLen := aLen / 2.
+                
+                self::stringOp write:aChar &int:aLeftLen.
+                self write:aLine.
+                self::stringOp write:aChar &int:(aLen - aLeftLen).
+            ]
+            ! [ self write:aLine. ].
+            
+        ^ self.
+    ]    
 }

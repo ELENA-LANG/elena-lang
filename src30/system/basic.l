@@ -2987,12 +2987,12 @@
     #method(type:char,stacksafe) $convert &int:anIndex &shortarray:aLiteral &vchar:char
         => system'internal'char_copywstr.
 
-//    #method(stacksafe) $save &char:aChar &int:anIndex &shortarray:aCharArray &vint:aLength
-//        => system'internal'sa_copychar.
-//    
-//    #method(stacksafe) $save &char:aChar &int:anIndex &bytearray:aCharArray &vint:aLength
-//        => system'internal'ba_copychar.
-//
+    #method(stacksafe) $save &char:aChar &int:anIndex &shortarray:aCharArray &vint:aLength
+        => system'internal'sa_copychar.
+    
+    #method(stacksafe) $save &char:aChar &int:anIndex &bytearray:aCharArray &vint:aLength
+        => system'internal'ba_copychar.
+
 //    /// Converts a literal string into a character                
 //    #method(type:char,stacksafe) convert &literal:aValue
 //    [

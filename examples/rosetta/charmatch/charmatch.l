@@ -1,6 +1,6 @@
-#define system.
-#define system'routines.
-#define extensions.
+#import system.
+#import system'routines.
+#import extensions.
 
 // --- Program ---
 
@@ -22,4 +22,6 @@
     [
         console writeLine:s:" contains el".
     ].
+    
+    console readChar.
 ].

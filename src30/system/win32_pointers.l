@@ -63,61 +63,61 @@
 {
     #field(type:int)thePointer.
 
-//    #constructor new : anObject
-//    [
-//        $self write:anObject.
-//    ]
+    #constructor new : anObject
+    [
+        $self write:anObject.
+    ]
     
     #method dirty_ptr = $self.
     
-//    #method(stacksafe) write : anObject
-//        => system'internal'dptr_copy.
-//                
-//    #method(stacksafe) append &int:aValue
-//    [
-//        thePointer := thePointer + aValue.
-//    ]                            
-//                            
-//    #method(stacksafe) write &int:anObject
-//        => system'internal'int_copy.
-//                
-//    #method(stacksafe) write &handle:anObject
-//        => system'internal'int_copy.
-//    
-//    #method(stacksafe) write &literal:aLiteral
-//        => system'internal'dptr_copy.
-//    
-//    #method(stacksafe) write &wide:aLiteral
-//        => system'internal'dptr_copy.
-//    
-//    #method(stacksafe) write &shortarray:anArray
-//        => system'internal'dptr_copy.
-//    
-//    #method(stacksafe) write &bytearray:anArray
-//        => system'internal'dptr_copy.
-//        
-//    #method(stacksafe) write &dirty_ptr:aPointer
-//    [
-//        #var(type:int)tmp.
-//        aPointer read &vint:tmp.
-//        
-//        thePointer := tmp.
-//    ]            
-//
-//    #method(stacksafe) read &vint:aPointer
-//        => system'internal'dptr_readint.
-//
-//    #method(stacksafe) read &bytearray:arr &int:len
-//        => system'internal'dptr_readbytearray.
-//
-//    // unsafe code
-//    #method(stacksafe) int
-//    [
-//        #var(type:int)aValue.
-//        $self read &vint:aValue.
-//        
-//        ^ IntNumber new &int:aValue.
-//    ]
+    #method(stacksafe) write : anObject
+        => system'internal'dptr_copy.
+                
+    #method(stacksafe) append &int:aValue
+    [
+        thePointer := thePointer + aValue.
+    ]                            
+                            
+    #method(stacksafe) write &int:anObject
+        => system'internal'int_copy.
+                
+    #method(stacksafe) write &handle:anObject
+        => system'internal'int_copy.
+    
+    #method(stacksafe) write &literal:aLiteral
+        => system'internal'dptr_copy.
+    
+    #method(stacksafe) write &wide:aLiteral
+        => system'internal'dptr_copy.
+    
+    #method(stacksafe) write &shortarray:anArray
+        => system'internal'dptr_copy.
+    
+    #method(stacksafe) write &bytearray:anArray
+        => system'internal'dptr_copy.
+        
+    #method(stacksafe) write &dirty_ptr:aPointer
+    [
+        #var(type:int)tmp.
+        aPointer read &vint:tmp.
+        
+        thePointer := tmp.
+    ]            
+
+    #method(stacksafe) read &vint:aPointer
+        => system'internal'dptr_readint.
+
+    #method(stacksafe) read &bytearray:arr &int:len
+        => system'internal'dptr_readbytearray.
+
+    // unsafe code
+    #method(stacksafe) int
+    [
+        #var(type:int)aValue.
+        $self read &vint:aValue.
+        
+        ^ IntNumber new &int:aValue.
+    ]
 
     // unsafe code
     #method(stacksafe) literal
@@ -139,8 +139,8 @@
         ^ aLiteral.
     ]
     
-//    #method(stacksafe,type:bool)is &empty
-//        = 0 == thePointer.
+    #method(stacksafe,type:bool)is &empty
+        = 0 == thePointer.
     
     /// Dispatches the verb to the target object with handle subject
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dirty_ptr:$self.

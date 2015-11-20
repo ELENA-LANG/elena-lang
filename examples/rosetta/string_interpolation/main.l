@@ -3,5 +3,5 @@
 #symbol program =
 [    
     #var s := "Mary had a @@x lamb." replace &literal:"@@x" &literal:"little".
-    console writeLine:s.
+    console writeLine:s readChar.
 ].

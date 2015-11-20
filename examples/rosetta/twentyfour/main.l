@@ -1,8 +1,8 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define system'dynamic.
-#define extensions.
+#import system.
+#import system'routines.
+#import system'collections.
+#import system'dynamic.
+#import extensions.
 
 // --- Expression ---
 

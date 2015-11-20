@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define system'math.
-#define extensions.
+#import system.
+#import system'routines.
+#import system'math.
+#import extensions.
  
 #class(extension) op 
 {
@@ -28,4 +28,6 @@
     
     console writeLine:"median of (":a1:") is ":(a1 median).
     console writeLine:"median of (":a2:") is ":(a2 median).
+    
+    console readChar.
 ].

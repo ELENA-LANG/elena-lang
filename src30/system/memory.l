@@ -845,21 +845,21 @@
     #method(type:bool) less &literal : aLiteral
         => system'internal's_less.
 
-//    /// Compares the values
-//    #method(type:bool) equal &char : aChar
-//        <= %equal &literal:(aChar literal).
-//
-//    /// Compares the values
-//    #method(type:bool) less &char : aChar
-//        <= %less &literal:(aChar literal).
+    /// Compares the values
+    #method(type:bool) equal &char : aChar
+        <= %equal &literal:(aChar literal).
+
+    /// Compares the values
+    #method(type:bool) less &char : aChar
+        <= %less &literal:(aChar literal).
 
     /// Concatinates the values
     #method(type:literal) add &literal : aLiteral
         => system'internal's_add.
 
-//    /// Concatinates the values
-//    #method(type:literal,stacksafe) add &char:aChar
-//        = $self add &literal:(aChar literal).
+    /// Concatinates the values
+    #method(type:literal,stacksafe) add &char:aChar
+        = $self add &literal:(aChar literal).
 
     /// Concatinates the values
     #method add : anObject
@@ -1235,21 +1235,21 @@
     #method(type:bool) less &wide : aLiteral
         => system'internal'ws_less.
 
-//    /// Compares the values
-//    #method(type:bool) equal &char : aChar
-//        <= %equal &wide:(aChar wide).
-//
-//    /// Compares the values
-//    #method(type:bool) less &char : aChar
-//        <= %less &wide:(aChar wide).
+    /// Compares the values
+    #method(type:bool) equal &char : aChar
+        <= %equal &wide:(aChar wide).
+
+    /// Compares the values
+    #method(type:bool) less &char : aChar
+        <= %less &wide:(aChar wide).
 
     /// Concatinates the values
     #method(type:wide,stacksafe) add &wide : aLiteral
         => system'internal'ws_add.
 
-//    /// Concatinates the values
-//    #method(type:wide,stacksafe) add &char:aChar
-//        = $self add &wide:(aChar wide).
+    /// Concatinates the values
+    #method(type:wide,stacksafe) add &char:aChar
+        = $self add &wide:(aChar wide).
 
     /// Concatinates the values
     #method(type:wide) add &literal:aLiteral
