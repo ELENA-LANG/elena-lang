@@ -1,10 +1,10 @@
-#define system.
-#define system'text.
-#define system'routines.
-#define system'calendar.
-#define extensions.
-#define extensions'math.
-#define extensions'routines.
+#import system.
+#import system'text.
+#import system'routines.
+#import system'calendar.
+#import extensions.
+#import extensions'math.
+#import extensions'routines.
 
 // --- calendar ---
 

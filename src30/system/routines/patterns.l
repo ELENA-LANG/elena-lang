@@ -190,45 +190,45 @@
     ]
 }
 
-//// === patterns ===
-//
-//// --- BasePattern ---
-//
-//#class BasePattern :: BaseFunction1
-//{
-//    #field theResult.
-//    
-//    #method run &enumerator:anEnumerator
-//    [
-//        $super run &enumerator:anEnumerator.
-//        
-//        ^ theResult.
-//    ]
-//}
-//
-//// --- Summing ---
-//
-//#class Summing :: BasePattern
-//{
-//    #constructor new : aVariable
-//    [
-//        theResult := aVariable.
-//    ]
-//
-//    #method eval : aParam [ theResult append:aParam. ]
-//}
-//
-//// --- patternOp ---
-//
-//#class(extension)patternOp
-//{
-//    #method summarize : aVariable
-//    [
-//        Summing new:aVariable run &enumerator:(self enumerator).
-//        
-//        ^ aVariable value.
-//    ]
-//    
-//    #method summarize
-//        = self::patternOp summarize:(Variable new).
-//}
+// === patterns ===
+
+// --- BasePattern ---
+
+#class BasePattern :: BaseFunction1
+{
+    #field theResult.
+    
+    #method run &enumerator:anEnumerator
+    [
+        $super run &enumerator:anEnumerator.
+        
+        ^ theResult.
+    ]
+}
+
+// --- Summing ---
+
+#class Summing :: BasePattern
+{
+    #constructor new : aVariable
+    [
+        theResult := aVariable.
+    ]
+
+    #method eval : aParam [ theResult append:aParam. ]
+}
+
+// --- patternOp ---
+
+#class(extension)patternOp
+{
+    #method summarize : aVariable
+    [
+        Summing new:aVariable run &enumerator:(self enumerator).
+        
+        ^ aVariable value.
+    ]
+    
+    #method summarize
+        = self::patternOp summarize:(Variable new).
+}

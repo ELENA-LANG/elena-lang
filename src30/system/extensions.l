@@ -739,70 +739,70 @@
 //        
 //        ^ self.
 //    ]
-//    
-//    #method set &every:anIndexFunc
-//        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
-//    
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(type:array)anArray := self array.
-//        
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLength.
-//        anArray readLength &vint:aLength.
-//        
-//        #loop (anIndex < aLength) ?
-//        [            
-//            anArray setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method sort : aCompareFunc
-//        = self::arrayOp sort &func2:(aCompareFunc func2).
-//    
-//    #method sort &func2:aCompareFunc
-//    [
-//        #var(type:array)anArray := self array.
-//        
-//        #var(type:int)i := 0.
-//        #var(type:int)j := 0.
-//        #var(type:int)aLength.
-//        anArray readLength &vint:aLength.
-//        #var aCurrent := $nil.
-//        #var aNext := $nil.
-//        
-//        #loop (i < aLength) ?
-//        [
-//            aCurrent := anArray getAt &int:i.
-//            
-//            j := i + 1.
-//            #loop (j < aLength) ?
-//            [
-//                aNext := anArray getAt &int:j.
-//                (aCompareFunc eval:aCurrent:aNext)
-//                    ! [                        
-//                        anArray setAt &int:i &object:aNext.
-//                        anArray setAt &int:j &object:aCurrent.
-//                        
-//                        aCurrent := aNext.
-//                    ].
-//                    
-//                j := j + 1.
-//            ].
-//            
-//            i := i + 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method ascendant
-//        = (self clone)::arrayOp sort:ifOrdered.
-//    
+    
+    #method set &every:anIndexFunc
+        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
+    
+    #method set &nfunc:anIndexFunc
+    [
+        #var(type:array)anArray := self array.
+        
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLength.
+        anArray readLength &vint:aLength.
+        
+        #loop (anIndex < aLength) ?
+        [            
+            anArray setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self.
+    ]
+    
+    #method sort : aCompareFunc
+        = self::arrayOp sort &func2:(aCompareFunc func2).
+    
+    #method sort &func2:aCompareFunc
+    [
+        #var(type:array)anArray := self array.
+        
+        #var(type:int)i := 0.
+        #var(type:int)j := 0.
+        #var(type:int)aLength.
+        anArray readLength &vint:aLength.
+        #var aCurrent := $nil.
+        #var aNext := $nil.
+        
+        #loop (i < aLength) ?
+        [
+            aCurrent := anArray getAt &int:i.
+            
+            j := i + 1.
+            #loop (j < aLength) ?
+            [
+                aNext := anArray getAt &int:j.
+                (aCompareFunc eval:aCurrent:aNext)
+                    ! [                        
+                        anArray setAt &int:i &object:aNext.
+                        anArray setAt &int:j &object:aCurrent.
+                        
+                        aCurrent := aNext.
+                    ].
+                    
+                j := j + 1.
+            ].
+            
+            i := i + 1.
+        ].
+        
+        ^ self.
+    ]
+    
+    #method ascendant
+        = (self clone)::arrayOp sort:ifOrdered.
+    
 //    #method is &empty
 //    [
 //        #var(type:array)anArray := self array.
@@ -811,20 +811,20 @@
 //        
 //        ^ aLength == 0.
 //    ]
-//    
-//    #method Subarray : aLength &at:anIndex
-//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-//    
-//    /// obsolete
-//    #method Subarray &index:anIndex &length:aLength
-//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-//    
-//    #method Subarray &int:anIndex &int:aLength
-//    [
-//        #var(type:iterator) it := self iterator.
-//        
-//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-//    ]
+    
+    #method Subarray : aLength &at:anIndex
+        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+    
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
+        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+    
+    #method Subarray &int:anIndex &int:aLength
+    [
+        #var(type:iterator) it := self iterator.
+        
+        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
+    ]
 }
 
 // --- literalOp ---

@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define system'math.
-#define extensions.
+#import system.
+#import system'routines.
+#import system'math.
+#import extensions.
 
 // --- Constants ---
 

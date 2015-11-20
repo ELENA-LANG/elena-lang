@@ -770,8 +770,8 @@
     /// Returns itself
     #method dictionary = $self.
 
-//    /// Returns a dictionary enumerator
-//    #method enumerator => theList.
+    /// Returns a dictionary enumerator
+    #method enumerator => theList.
     
     #method array_list
         = theList clone.

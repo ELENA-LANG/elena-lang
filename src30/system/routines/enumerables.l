@@ -285,20 +285,20 @@
     #method ascendant
         = (self clone)::indexableOp sort:ifOrdered.
 
-//    #method Subarray : aLength &at:anIndex
-//        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
-//                
-//    /// obsolete
-//    #method Subarray &index:anIndex &length:aLength
-//        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
-//                
-//    #method Subarray &int:anIndex &int:aLength
-//    [
-//        #var(type:iterator) it := self iterator.
-//        
-//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-//    ]
-//    
+    #method Subarray : aLength &at:anIndex
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    #method Subarray &int:anIndex &int:aLength
+    [
+        #var(type:iterator) it := self iterator.
+        
+        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
+    ]
+    
 //    #method equal &indexable:anArray
 //    [
 //        (self length != anArray length)

@@ -2,9 +2,9 @@
 // Determine whether the generated string is balanced; that is, whether it consists entirely of pairs of opening/closing brackets (in that order),
 // none of which mis-nest. 
 
-#define system.
-#define system'routines.
-#define extensions.
+#import system.
+#import system'routines.
+#import extensions.
 
 // --- RandomBrackets ---
 
