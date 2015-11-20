@@ -2325,6 +2325,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    {
       case lxIntArrOp:
          doIntArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_MESSAGE_ID)
+            assignBaseTo(tape, lxResult);
          break;
       case lxArrOp:
          doArrayOperation(tape, node.argument);
@@ -2774,7 +2777,7 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
       child = child.nextNode();
    }
 
-   if (test(source.type, lxPrimitiveOpMask) && IsExprOperator(source.argument)) {
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.type == lxIntArrOp && source.argument == REFER_MESSAGE_ID))) {
       loadBase(tape, target.type, target.argument);
 
       generateObjectExpression(tape, source);

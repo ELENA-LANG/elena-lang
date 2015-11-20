@@ -33,60 +33,60 @@
     ]    
 }
 
-//// --- Filtering ---
-//
-//#class Filter :: Enumerator
-//{
-//    #field(type:func1)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    
-//    #constructor new &each:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter func1.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method next
-//    [
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:(theEnumerator get))
-//                ? [ ^ true. ].
-//        ].
-//        
-//        ^ false.
-//    ]
-//    
-//    #method reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
-//// --- Selecting ---
-//
-//#class Selector :: Enumerator
-//{
-//    #field(type:func1)theSelector.
-//    #field(type:enumerator)theEnumerator.
-//    
-//    #constructor new &each:aSelector &enumerator:anEnumerator
-//    [
-//        theSelector := aSelector func1.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theSelector eval:(theEnumerator get).
-//    
-//    #method next = theEnumerator next.
-//    
-//    #method reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
+// --- Filtering ---
+
+#class Filter :: Enumerator
+{
+    #field(type:func1)theFilter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &each:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter func1.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method next
+    [
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:(theEnumerator get))
+                ? [ ^ true. ].
+        ].
+        
+        ^ false.
+    ]
+    
+    #method reset 
+    [
+        theEnumerator reset.
+    ]    
+}
+
+// --- Selecting ---
+
+#class Selector :: Enumerator
+{
+    #field(type:func1)theSelector.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &each:aSelector &enumerator:anEnumerator
+    [
+        theSelector := aSelector func1.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theSelector eval:(theEnumerator get).
+    
+    #method next = theEnumerator next.
+    
+    #method reset 
+    [
+        theEnumerator reset.
+    ]    
+}
 
 // --- RangeEnumerator ---
 

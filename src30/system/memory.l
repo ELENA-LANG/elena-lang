@@ -1735,39 +1735,39 @@
     #method(stacksafe) setAt &int:anIndex &object:anObject
         => system'internal'arr_setat.
 
-//    /// Concatinates the arrays    
-//    #method add : anObject
-//        = $self add &array:(anObject array).
-//
-//    /// Concatinates the arrays    
-//    #method add &array:anArray
-//    [
-//        #var(type:int)aLength1.
-//        #var(type:int)aLength2.
-//        
-//        $self readLength &vint:aLength1.        
-//        anArray readLength &vint:aLength2.
-//        
-//        #var(type:array)aRetVal := Array new &int:(aLength1 + aLength2).
-//
-//        #var(type:int)anIndex := 0.
-//        #loop (anIndex < aLength1) ?
-//        [
-//            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//
-//        anIndex := 0.
-//        #loop (anIndex < aLength2) ?
-//        [
-//            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
+    /// Concatinates the arrays    
+    #method add : anObject
+        = $self add &array:(anObject array).
+
+    /// Concatinates the arrays    
+    #method add &array:anArray
+    [
+        #var(type:int)aLength1.
+        #var(type:int)aLength2.
+        
+        $self readLength &vint:aLength1.        
+        anArray readLength &vint:aLength2.
+        
+        #var(type:array)aRetVal := Array new &int:(aLength1 + aLength2).
+
+        #var(type:int)anIndex := 0.
+        #loop (anIndex < aLength1) ?
+        [
+            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+
+        anIndex := 0.
+        #loop (anIndex < aLength2) ?
+        [
+            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+            
+        ^ aRetVal.
+    ]
 
     /// Returns itself
     #method array = $self.

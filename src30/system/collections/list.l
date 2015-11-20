@@ -772,9 +772,9 @@
 
 //    /// Returns a dictionary enumerator
 //    #method enumerator => theList.
-//    
-//    #method array_list
-//        = theList clone.
+    
+    #method array_list
+        = theList clone.
             
     /// Dispatches the verb to the target object with enumerable subject
     #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.

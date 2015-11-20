@@ -147,31 +147,31 @@
     #method top:aCounter
         = system'routines'TopFilter new:aCounter &enumerator:(self enumerator).
 
-//    #method filter &each:aFilter
-//        = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).
-//
-//    #method select &each:aSelector
-//        = system'routines'Selector new &each:aSelector &enumerator:(self enumerator).
-//        
-//    #method firstMember
-//    [
-//        #var(type:enumerator)anEnumerator := self enumerator.
-//        
-//        (anEnumerator next) 
-//            ? [ ^ anEnumerator get. ]
-//            ! [ ^ $nil. ].
-//    ]
-//
-//    #method lastMember
-//    [
-//        #var(type:enumerator)anEnumerator := self enumerator.
-//        #var aLastItem := $nil.
-//        
-//        #loop (anEnumerator next) ?
-//            [ aLastItem := anEnumerator get. ].
-//            
-//        ^ aLastItem.
-//    ]
+    #method filter &each:aFilter
+        = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).
+
+    #method select &each:aSelector
+        = system'routines'Selector new &each:aSelector &enumerator:(self enumerator).
+        
+    #method firstMember
+    [
+        #var(type:enumerator)anEnumerator := self enumerator.
+        
+        (anEnumerator next) 
+            ? [ ^ anEnumerator get. ]
+            ! [ ^ $nil. ].
+    ]
+
+    #method lastMember
+    [
+        #var(type:enumerator)anEnumerator := self enumerator.
+        #var aLastItem := $nil.
+        
+        #loop (anEnumerator next) ?
+            [ aLastItem := anEnumerator get. ].
+            
+        ^ aLastItem.
+    ]
 }
 
 // --- indexableOp ---
