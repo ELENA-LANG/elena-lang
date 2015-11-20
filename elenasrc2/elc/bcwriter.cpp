@@ -348,14 +348,12 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-void ByteCodeWriter :: newFrame(CommandTape& tape, bool withPresavedAcc)
+void ByteCodeWriter :: newFrame(CommandTape& tape)
 {
    //   open 1
    //   pusha
    tape.write(bcOpen, 1);
-
-   if (withPresavedAcc)
-      tape.write(bcPushA);
+   tape.write(bcPushA);
 }
 
 void ByteCodeWriter :: closeFrame(CommandTape& tape)
@@ -3047,7 +3045,7 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
 void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
 {
    // new frame
-   newFrame(tape, false);
+   newFrame(tape);
 
    // save message
    pushObject(tape, lxCurrentMessage);

@@ -2318,11 +2318,14 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam == -1 && size != 0) {
       boxing = lxCondBoxing;
    }
-   else if (object.kind == okFieldAddress && object.param > 0) {
-      allocateStructure(scope, 0, object);
-      scope.writer->insertChild(lxLocalAddress, object.param);
-      scope.writer->insert(lxAssigning, size);
-      scope.writer->closeNode();
+   else if (object.kind == okFieldAddress) {
+      if (object.param > 0) {
+         allocateStructure(scope, 0, object);
+         scope.writer->insertChild(lxLocalAddress, object.param);
+         scope.writer->insert(lxAssigning, size);
+         scope.writer->closeNode();
+      }
+      else boxing = lxBoxing;
    }
    else if (object.kind == okSubject) {
       boxing = lxBoxing;
@@ -4023,16 +4026,18 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
    _writer.declareMethod(*tape, methodScope->message, false, false);
 
    // try to implement light-weight resend operation
+   ObjectInfo target;
    if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
-      ObjectInfo target = scope.mapObject(node.Terminal());
-      if (target.kind == okConstantSymbol || target.kind == okField) {
-         if (target.kind == okField) {
-            _writer.loadObject(*tape, lxResultField, target.param);
-         }
-         else _writer.loadObject(*tape, lxConstantSymbol, target.param);
-
-         _writer.resend(*tape);
+      target = scope.mapObject(node.Terminal());
+   }
+   
+   if (target.kind == okConstantSymbol || target.kind == okField) {
+      if (target.kind == okField) {
+         _writer.loadObject(*tape, lxResultField, target.param);
       }
+      else _writer.loadObject(*tape, lxConstantSymbol, target.param);
+
+      _writer.resend(*tape);
    }
    else {
       // NOTE : top expression is required for propery translation

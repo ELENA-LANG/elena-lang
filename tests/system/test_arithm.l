@@ -5,22 +5,10 @@
 #import system'calendar.
 #import extensions.
 
-#class(sealed,struct:embeddable) XReal :: BaseVariable
-{
-    #field(type:real)theValue.
-        
-    /// Expands a real value
-    #method => theValue.
-}
-
 #symbol XTester =
 {
     test            
     [
-        #var aSum := Real new.
-        #var aCount := Integer new:1.
-        
-        ^ aSum / aCount.
     ]        
 }.
         
