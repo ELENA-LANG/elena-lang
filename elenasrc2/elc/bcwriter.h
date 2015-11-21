@@ -143,7 +143,7 @@ public:
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-   void saveBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);

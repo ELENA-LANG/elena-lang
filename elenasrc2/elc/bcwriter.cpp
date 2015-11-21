@@ -493,6 +493,18 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          // bcopya
          tape.write(bcBCopyA);
          break;
+      case lxField:
+         // pusha
+         // bloadfi 1
+         // aloadbi
+         // bcopya
+         // popa
+         tape.write(bcPushA);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcALoadBI, sourceArgument);
+         tape.write(bcBCopyA);
+         tape.write(bcPopA);
+         break;
    }
 }
 
@@ -518,12 +530,18 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
    }
 }
 
-void ByteCodeWriter :: saveBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument)
 {
    switch (sourceType) {
       case lxResult:
-         // axsavebi
-         tape.write(bcAXSaveBI, sourceArgument);
+         if (directOperation) {
+            // axsavebi
+            tape.write(bcAXSaveBI, sourceArgument);
+         }
+         else {
+            // asavebi
+            tape.write(bcASaveBI, sourceArgument);
+         }
          break;
    }
 }
@@ -2792,6 +2810,13 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
             }
          }
       }
+      else if (target == lxExpression) {
+         SNode arg1, arg2;
+
+         assignOpArguments(target, arg1, arg2);
+         loadBase(tape, arg1.type, arg1.argument);
+         saveBase(tape, false, lxResult, arg2.argument);
+      }
       else if (size != 0) {
          if (source == lxFieldAddress) {
             loadBase(tape, target.type, target.argument);
@@ -3029,7 +3054,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
          }
          else generateExpression(tape, current);
 
-         saveBase(tape, lxResult, current.argument);
+         saveBase(tape, true, lxResult, current.argument);
       }
 
       current = current.nextNode();

@@ -2921,7 +2921,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          else if (object.kind == okFieldAddress) {
             size = scope.moduleScope->defineTypeSize(object.type, classReference);
          }
-         else if (object.kind == okLocal || object.kind == okField) {
+         else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
 
          }
          else scope.raiseError(errInvalidOperation, node.Terminal());
@@ -3378,7 +3378,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
    }
    else {
       ref_t targetType = 0;
-      if (target.kind == okLocal || target.kind == okField) {
+      if (target.kind == okLocal || target.kind == okField || target.kind == okOuterField) {
          if (target.type != 0) {
             targetType = target.type;
          }
