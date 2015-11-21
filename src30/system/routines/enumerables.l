@@ -299,25 +299,25 @@
         ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
     ]
     
-//    #method equal &indexable:anArray
-//    [
-//        (self length != anArray length)
-//            ? [ ^ false. ].
-//            
-//        #var(type:iterator) a := self iterator.
-//        #var(type:iterator) b := anArray iterator.
-//        
-//        #loop (a available)?
-//        [
-//            (a get == b get)
-//                ! [ ^ false. ].
-//                
-//            a append &index:1.
-//            b append &index:1.
-//        ].
-//          
-//        ^ true.                              
-//    ]
+    #method equal &indexable:anArray
+    [
+        (self length != anArray length)
+            ? [ ^ false. ].
+            
+        #var(type:iterator) a := self iterator.
+        #var(type:iterator) b := anArray iterator.
+        
+        #loop (a available)?
+        [
+            (a get == b get)
+                ! [ ^ false. ].
+                
+            a append &index:1.
+            b append &index:1.
+        ].
+          
+        ^ true.                              
+    ]
 }
 
 // --- stringListOp ---
