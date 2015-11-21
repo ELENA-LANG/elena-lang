@@ -18,28 +18,28 @@
         theValue := aValue.
     ]
     
-//    #constructor new &hours:Hours &minutes:Minutes &seconds:Seconds
-//    [
-//        #var(type:long)aValue := 0l.
-//        
-//        aValue := Hours long * 36000000000l.
-//        aValue := aValue + Minutes long multiply &long:600000000l.
-//        aValue := aValue + Seconds long multiply &long:10000000l.
-//        
-//        theValue := SystemTime $new &long:aValue.
-//    ]
-//            
-//    #constructor new &days:Days &hours:Hours &minutes:Minutes &seconds:Seconds
-//    [
-//        #var(type:long)aValue := 0l.
-//        
-//        aValue := Hours long * 36000000000l.
-//        aValue := aValue + Minutes long multiply &long:600000000l.
-//        aValue := aValue + Seconds long multiply &long:10000000l.
-//        aValue := aValue + Days long multiply &long:864000000000l.
-//        
-//        theValue := SystemTime $new &long:aValue.
-//    ]
+    #constructor new &hours:Hours &minutes:Minutes &seconds:Seconds
+    [
+        #var(type:long)aValue := 0l.
+        
+        aValue := Hours long * 36000000000l.
+        aValue := aValue + Minutes long multiply &long:600000000l.
+        aValue := aValue + Seconds long multiply &long:10000000l.
+        
+        theValue := SystemTime $new &long:aValue.
+    ]
+            
+    #constructor new &days:Days &hours:Hours &minutes:Minutes &seconds:Seconds
+    [
+        #var(type:long)aValue := 0l.
+        
+        aValue := Hours long * 36000000000l.
+        aValue := aValue + Minutes long multiply &long:600000000l.
+        aValue := aValue + Seconds long multiply &long:10000000l.
+        aValue := aValue + Days long multiply &long:864000000000l.
+        
+        theValue := SystemTime $new &long:aValue.
+    ]
     
     #method(stacksafe) read &__time : aRetVal
     [
@@ -190,26 +190,26 @@
         theValue := aValue.
     ]
   
-//    #constructor new &year:aYear &month:aMonth &day:aDay &hour:anHour &minute:aMinute &second:aSecond
-//    [
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime writeYear &int:(aYear int).
-//        aSystemTime writeMonth &int:(aMonth int).
-//        aSystemTime writeDay &int:(aDay int).
-//        aSystemTime writeHour &int:(anHour int).
-//        aSystemTime writeMinute &int:(aMinute int).
-//        aSystemTime writeSecond &int:(aSecond int).
-//        aSystemTime writeMillisecond &int:0.
-//        
-//        #var(type:__time)aValue.
-//        aSystemTime read &__vtime:aValue.        
-//        theValue := aValue.
-//    ]
-//    
-//    #constructor new &year:aYear &month:aMonth &day:aDay
-//        <= %new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
-//  
-//    #method __time = SystemTime new &__time:theValue.
+    #constructor new &year:aYear &month:aMonth &day:aDay &hour:anHour &minute:aMinute &second:aSecond
+    [
+        #var(type:__time_st)aSystemTime.
+        aSystemTime writeYear &int:(aYear int).
+        aSystemTime writeMonth &int:(aMonth int).
+        aSystemTime writeDay &int:(aDay int).
+        aSystemTime writeHour &int:(anHour int).
+        aSystemTime writeMinute &int:(aMinute int).
+        aSystemTime writeSecond &int:(aSecond int).
+        aSystemTime writeMillisecond &int:0.
+        
+        #var(type:__time)aValue.
+        aSystemTime read &__time:aValue.        
+        theValue := aValue.
+    ]
+    
+    #constructor new &year:aYear &month:aMonth &day:aDay
+        <= %new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
+  
+    #method __time = SystemTime new &__time:theValue.
   
     #method __time_st = TimeStruct new &__time:theValue.
 
@@ -338,60 +338,60 @@
         ^ IntNumber new &int:aMSecond.
     ]
 
-//    #method add &years:aYears
-//    [
-//        #var(type:int)years.
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        
-//        aSystemTime readYear &vint:years.
-//        years := years + aYears int.
-//        aSystemTime writeYear &int:years.
-//        
-//        #var(type:__time)aRetVal.
-//        aSystemTime read &__vtime:aRetVal.
-//        
-//        ^ Date new &__time:aRetVal.
-//    ]
-//
-//    #method add &months:Months
-//    [
-//        #var(type:__time_st)aSystemTime.
-//        aSystemTime write &__time:theValue.
-//        
-//        #var(type:int) months := Months int.
-//        
-//        #var(type:int)years := months / 12.
-//        months := Months::intOp mod:12.
-//
-//        #var(type:int) n.
-//        aSystemTime readMonth &vint:n.
-//        months := months + n.
-//        (months > 12)
-//            ? [ months := months - 12. years := years + 1. ].
-//                
-//        aSystemTime writeMonth &int:months.
-//        
-//        aSystemTime readYear &vint:n.
-//        aSystemTime writeYear &int:(n + years).
-//        
-//        #var(type:__time)aRetVal.
-//        aSystemTime read &__vtime:aRetVal.
-//        
-//        ^ Date new &__time:aRetVal.
-//    ]
-//
-//    #method add &days:aDays
-//        = $self add &timespan:(TimeSpan new &days:aDays &hours:0 &minutes:0 &seconds:0).
-//
-//    #method add &hours:anHours
-//        = $self add &timespan:(TimeSpan new &days:0 &hours:anHours &minutes:0 &seconds:0).
-//
-//    #method add &minutes:aMinutes
-//        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:aMinutes &seconds:0).
-//
-//    #method add &seconds:Seconds
-//        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:0 &seconds:Seconds).
+    #method add &years:aYears
+    [
+        #var(type:int)years.
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        
+        aSystemTime readYear &vint:years.
+        years := years + aYears int.
+        aSystemTime writeYear &int:years.
+        
+        #var(type:__time)aRetVal.
+        aSystemTime read &__time:aRetVal.
+        
+        ^ Date new &__time:aRetVal.
+    ]
+
+    #method add &months:Months
+    [
+        #var(type:__time_st)aSystemTime.
+        aSystemTime write &__time:theValue.
+        
+        #var(type:int) months := Months int.
+        
+        #var(type:int)years := months / 12.
+        months := Months::intOp mod:12.
+
+        #var(type:int) n.
+        aSystemTime readMonth &vint:n.
+        months := months + n.
+        (months > 12)
+            ? [ months := months - 12. years := years + 1. ].
+                
+        aSystemTime writeMonth &int:months.
+        
+        aSystemTime readYear &vint:n.
+        aSystemTime writeYear &int:(n + years).
+        
+        #var(type:__time)aRetVal.
+        aSystemTime read &__time:aRetVal.
+        
+        ^ Date new &__time:aRetVal.
+    ]
+
+    #method add &days:aDays
+        = $self add &timespan:(TimeSpan new &days:aDays &hours:0 &minutes:0 &seconds:0).
+
+    #method add &hours:anHours
+        = $self add &timespan:(TimeSpan new &days:0 &hours:anHours &minutes:0 &seconds:0).
+
+    #method add &minutes:aMinutes
+        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:aMinutes &seconds:0).
+
+    #method add &seconds:Seconds
+        = $self add &timespan:(TimeSpan new &days:0 &hours:0 &minutes:0 &seconds:Seconds).
 
     #method literal
     [

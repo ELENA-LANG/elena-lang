@@ -229,10 +229,10 @@
         theMillisecond := n.
     ]
 
-//    #method(stacksafe) read &__vtime:aRetVal
-//    [
-//        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__vtime:aRetVal.
-//    ]    
+    #method(stacksafe) read &__time:aRetVal
+    [
+        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
+    ]    
     
     #method(stacksafe) write &__time:aFileTime
     [

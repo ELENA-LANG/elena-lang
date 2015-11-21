@@ -112,9 +112,12 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
       _reader.seek(position);
 
       int type = _reader.getDWord();
-      _reader.getDWord();
+         _reader.getDWord();
 
       if (type != -1) {
+         if (level == 0)
+            break;
+
          level++;
          if (level == 0) {
             _reader.seek(position);

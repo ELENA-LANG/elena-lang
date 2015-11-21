@@ -7,7 +7,7 @@
 
 #symbol program =
 [
-    #var casas := 1000.
+    #var casas := 10000.
     ('program'arguments length > 1)?
         [ casas := 'program'arguments@1 toInt. ].
     
