@@ -1,58 +1,58 @@
 // ==== ver 3.4.1 ===
 
-//#import system.
+#import system.
 //#import system'drawing.
-//
-//// --- classes ---
-//#symbol(type:wide) StaticClass = "Static" wide. // !! temporal
-//#symbol(type:wide) EditClass   = "Edit" wide. // !! temporal
-//#symbol(type:wide) ButtonClass = "Button" wide. // !! temporal
-//#symbol(type:wide) ComboboxClass = "Combobox" wide. // !! temporal
-//
-//// --- WindowHandle ---
-//
-//#class(sealed,struct:embeddable) WindowHandle
-//{
-//    #field(type:handle)theHandle.
-//    
-//    #constructor min
-//        => system'internal'int_init.
-//        
-//    #constructor(stacksafe) new &hwnd:aHandle
-//        => system'internal'int_copy.
-//        
-//    #constructor(stacksafe) new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
-//    [
-//        #var(type:int)aParamIndex := 0.
-//        ($nil != aParam) ?
-//        [
-//            #var(type:rt_ptr)aPointer := RTPointer new:aParam.
-//    
-//            aParamIndex := aPointer.
-//        ].
-//                
-//        #var(type:handle)aHandle := system'external'USER32 CreateWindowExW
-//            &int:       dwExStyle
-//            &wide:      aClassName
-//            &wide:      aWindowName  
-//            &int:       aStyle
-//            &int:       x
-//            &int:       y
-//            &int:       width
-//            &int:       height
-//            &handle:    aParent
-//            &int:       0
-//            &handle:    instance
-//            &int:       aParamIndex.
-//
-//        (aHandle==0)
-//            ? [ #throw WinFormsException new. ].
-//
-//        theHandle := aHandle.
-//    ]
-//
-//    #method hwnd = $self.        
-//    
+
+// --- classes ---
+#symbol(type:wide) StaticClass = "Static" wide. // !! temporal
+#symbol(type:wide) EditClass   = "Edit" wide. // !! temporal
+#symbol(type:wide) ButtonClass = "Button" wide. // !! temporal
+#symbol(type:wide) ComboboxClass = "Combobox" wide. // !! temporal
+
+// --- WindowHandle ---
+
+#class(sealed,struct:embeddable) WindowHandle
+{
+    #field(type:int)theHandle.
+    
+    #constructor min
+        => system'internal'int_init.
+        
+    #constructor(stacksafe) new &hwnd:aHandle
+        => system'internal'int_copy.
+        
+    #constructor(stacksafe) new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
+    [
+        #var(type:int)aParamIndex := 0.
+        ($nil != aParam) ?
+        [
+            #var(type:rt_ptr)aPointer := RTPointer new:aParam.
+    
+            aParamIndex := aPointer.
+        ].
+                
+        #var(type:int)aHandle := system'external'USER32 CreateWindowExW
+            &int:       dwExStyle
+            &wide:      aClassName
+            &wide:      aWindowName  
+            &int:       aStyle
+            &int:       x
+            &int:       y
+            &int:       width
+            &int:       height
+            &int:       aParent
+            &int:       0
+            &int:       instance
+            &int:       aParamIndex.
+
+        (aHandle==0)
+            ? [ #throw WinFormsException new. ].
+
+        theHandle := aHandle.
+    ]
+
+    #method hwnd = $self.        
+    
 //    #method setVisible &int:aValue
 //    [
 //        system'external'USER32 ShowWindow &handle:theHandle &int:aValue.
@@ -64,19 +64,19 @@
 //        
 //        ^ (visible != 0).
 //    ]
-//    
-//    #method setEnabled &int:aValue
-//    [
-//        system'external'USER32 EnableWindow &handle:theHandle &int:aValue.
-//    ]            
-//    
-//    #method isEnabled
-//    [
-//        #var(type:int)visible := system'external'USER32 IsWindowEnabled &handle:theHandle.
-//        
-//        ^ (visible != 0).
-//    ]
-//
+    
+    #method setEnabled &int:aValue
+    [
+        system'external'USER32 EnableWindow &int:theHandle &int:aValue.
+    ]            
+    
+    #method isEnabled
+    [
+        #var(type:int)visible := system'external'USER32 IsWindowEnabled &int:theHandle.
+        
+        ^ (visible != 0).
+    ]
+
 //    #method setChecked &int:aValue
 //    [
 //        system'external'USER32 SendMessageW &handle:theHandle &int:BM_SETCHECK &int:aValue &int:0.
@@ -150,13 +150,13 @@
 //    [
 //        system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
 //    ]
-//            
-//    #method(stacksafe) free
-//    [
-//        system'external'USER32 DestroyWindow &handle:theHandle.
-//    ]
-//}
-//
+            
+    #method(stacksafe) free
+    [
+        system'external'USER32 DestroyWindow &int:theHandle.
+    ]
+}
+
 //// --- PAINTSTRUCT ---
 //
 //#class(sealed,struct:embeddable)PAINTSTRUCT

@@ -1,41 +1,41 @@
 // ==== ver 3.4.1 ===
 
-//#import system.
-//
-//#symbol(const,type:int)OFN_PATHMUSTEXIST = 00000800h.
-//#symbol(const,type:int)OFN_EXPLORER      = 00080000h.
-//#symbol(const,type:int)OFN_LONGNAMES     = 00200000h.
-//#symbol(const,type:int)OFN_HIDEREADONLY  = 00000004h.
-//
-//#symbol(const,type:int)DS_CENTER         = 0800h.
-//
-//// --- messageBox ---
-//
-//#symbol messageBox =
-//{
-//    #method(stacksafe) open &hwnd:parent &caption:caption &value:message &int:flags
-//    [
-//        #var(type:int)retVal := system'external'USER32 MessageBoxW
-//            &handle:parent
-//            &wide:(message wide)
-//            &wide:(caption wide)
-//            &int:flags.
-//            
-//        ^ IntNumber new &int:retVal.
-//    ]
-//    
-//    #method(stacksafe) open &caption:caption &value:message &int:flags
-//    [
-//        #var(type:int)retVal := system'external'USER32 MessageBoxW
-//            &handle:('program mainWindow hwnd)
-//            &wide:(message wide)
-//            &wide:(caption wide)
-//            &int:flags.
-//            
-//        ^ IntNumber new &int:retVal.
-//    ]
-//}.
-//
+#import system.
+
+#symbol(const,type:int)OFN_PATHMUSTEXIST = 00000800h.
+#symbol(const,type:int)OFN_EXPLORER      = 00080000h.
+#symbol(const,type:int)OFN_LONGNAMES     = 00200000h.
+#symbol(const,type:int)OFN_HIDEREADONLY  = 00000004h.
+
+#symbol(const,type:int)DS_CENTER         = 0800h.
+
+// --- messageBox ---
+
+#symbol messageBox =
+{
+    #method(stacksafe) open &hwnd:parent &caption:caption &value:message &int:flags
+    [
+        #var(type:int)retVal := system'external'USER32 MessageBoxW
+            &int:parent
+            &wide:(message wide)
+            &wide:(caption wide)
+            &int:flags.
+            
+        ^ IntNumber new &int:retVal.
+    ]
+    
+    #method(stacksafe) open &caption:caption &value:message &int:flags
+    [
+        #var(type:int)retVal := system'external'USER32 MessageBoxW
+            &int:('program mainWindow hwnd)
+            &wide:(message wide)
+            &wide:(caption wide)
+            &int:flags.
+            
+        ^ IntNumber new &int:retVal.
+    ]
+}.
+
 //// --- BaseFileDialog ---
 //
 //#class BaseFileDialog

@@ -9,53 +9,53 @@
     #constructor(stacksafe) new &handle:aHandle
         => system'internal'int_copy.
 
-//    #constructor(stacksafe) new &int:aHandle
-//        => system'internal'int_copy.
-//
-//    #constructor min
-//        => system'internal'int_init.
-//
-//    #method(type:bool,stacksafe) equal &handle:anOperand 
-//        => system'internal'int_equal.
+    #constructor(stacksafe) new &int:aHandle
+        => system'internal'int_copy.
+
+    #constructor min
+        => system'internal'int_init.
+
+    #method(type:bool,stacksafe) equal &handle:anOperand 
+        => system'internal'int_equal.
 
     #method handle = $self.
 
-//    /// Dispatches the verb to the target object with handle subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &handle:$self.
-//    
-//    /// Dispatches the verb to the target object with bytearray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &handle:$self.
+    /// Dispatches the verb to the target object with handle subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &handle:$self.
+    
+    /// Dispatches the verb to the target object with bytearray subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &handle:$self.
 }
 
-//// --- RTPointer ---
-//
-//#static rt_sync = Object new.
-//
-//#class(sealed,struct:embeddable) RTPointer
-//{
-//    #field(type:int)theIndex.
-//    
-//    #constructor new : anObject
-//        => system'internal'api_alloc_index.
-//
-//    #method rt_ptr = $self.            
-//                        
-//    #method index
-//    [
-//        ^ IntNumber new &int:theIndex.
-//    ]
-//    
-//    #method(stacksafe) readIndex &vint:aRetVal
-//    [
-//        aRetVal << theIndex.
-//    ]
-//        
-//    #method(stacksafe) get
-//        => system'internal'ptr_get.
-//
-//    #method(stacksafe) free
-//        => system'internal'api_free_index.
-//}
+// --- RTPointer ---
+
+#static rt_sync = Object new.
+
+#class(sealed,struct:embeddable) RTPointer
+{
+    #field(type:int)theIndex.
+    
+    #constructor new : anObject
+        => system'internal'api_alloc_index.
+
+    #method rt_ptr = $self.            
+                        
+    #method index
+    [
+        ^ IntNumber new &int:theIndex.
+    ]
+    
+    #method(stacksafe) readIndex &vint:aRetVal
+    [
+        aRetVal << theIndex.
+    ]
+        
+    #method(stacksafe) get
+        => system'internal'ptr_get.
+
+    #method(stacksafe) free
+        => system'internal'api_free_index.
+}
 
 // --- UnsafePointer ---
 

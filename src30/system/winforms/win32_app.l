@@ -1,29 +1,29 @@
 // ==== ver 3.4.1 ===
 
-//#import system.
-//
-//// --- BaseApplication ---
-//
-//#class BaseApplication
-//{
-//}
-//
-//// --- SDIApplication ---
-//
-//#class SDIApplication :: BaseApplication
-//{
-//    #field            theMainWindow.
-//    #field(type:hwnd) theHandle.
-//    
-//    #constructor new
-//    [
-//        RTPointer new:$self.
-//        
-//        theMainWindow := 'mainWindow new.
-//    ]
-//    
-//    #method mainWindow = theMainWindow.
-//    
+#import system.
+
+// --- BaseApplication ---
+
+#class BaseApplication
+{
+}
+
+// --- SDIApplication ---
+
+#class SDIApplication :: BaseApplication
+{
+    #field            theMainWindow.
+    #field(type:hwnd) theHandle.
+    
+    #constructor new
+    [
+        RTPointer new:$self.
+        
+        theMainWindow := 'mainWindow new.
+    ]
+    
+    #method mainWindow = theMainWindow.
+    
 //    #method start
 //    [
 //        #var(type:win_msg)aMsg.
@@ -69,34 +69,34 @@
 //                    ].
 //        ].
 //    ]
-//            
-//    #method stop
-//    [
-//        theHandle := WindowHandle min.
-//        
-//        system'external'USER32 PostQuitMessage &int:0.
-//    ]
-//}
-//
-//#static program = SDIApplication new.
-//
-//#class $GUIStartUp :: StartUp
-//{
-//    #method start
-//    [
-//        'program start
-//            | on:
-//            {
-//                Abort = e [].
-//                
-//                ! = e 
-//                    [ 
-//                        messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
-//                    ].
-//            }.
-//            
-//        $self $onStop:nil.
-//    ]
-//}
-//
-//#static startUp = $GUIStartUp new.
+            
+    #method stop
+    [
+        theHandle := WindowHandle min.
+        
+        system'external'USER32 PostQuitMessage &int:0.
+    ]
+}
+
+#static program = SDIApplication new.
+
+#class $GUIStartUp :: StartUp
+{
+    #method start
+    [
+        'program start
+            | on:
+            {
+                Abort = e [].
+                
+                ! = e 
+                    [ 
+                        messageBox open &caption:"ELENA" &value:(e message) &int:MB_ICONEXCLAMATION.
+                    ].
+            }.
+            
+        $self $onStop:nil.
+    ]
+}
+
+#static startUp = $GUIStartUp new.

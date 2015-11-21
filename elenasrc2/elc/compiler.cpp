@@ -4113,7 +4113,7 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
 
          // HOT FIX : save the created object
          scope.writer->newNode(lxAssigning);
-         scope.writer->appendNode(lxLocal, 1);
+         scope.writer->appendNode(lxCurrent, 1);
          scope.writer->appendNode(lxResult);
          scope.writer->closeNode();
       }

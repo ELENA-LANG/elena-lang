@@ -4,7 +4,7 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-
+    
 #symbol XTester =
 {
     test
@@ -636,14 +636,14 @@
 {
     #field theField1.
                    
-    #constructor new [ theField1 := 1. ]
+    #constructor new [ theField1 := Integer new &int:1. ]
 }
 
 #class ChildClass :: BaseClass
 {
     #field theField2.
     
-    #constructor new <= ( %new ) [ theField2 := 2. ]
+    #constructor new <= ( %new ) [ theField2 := Integer new &int:2. ]
 }
 
 #symbol ConstructorTest =

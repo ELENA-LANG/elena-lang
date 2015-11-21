@@ -1,5 +1,7 @@
-#define system.
-#define system'collections.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'collections.
 
 // --- BaseControlCollection ---
 
@@ -19,4 +21,3 @@
         theList append:aControl.
     ]
 }
-

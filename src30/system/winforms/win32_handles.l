@@ -1,34 +1,34 @@
 // ==== ver 3.4.1 ===
 
-//#import system.
+#import system.
 //#import system'drawing.
-//
-//// --- HInstance ---
-//
-//#class(sealed,struct:embeddable) HInstance
-//{
-//    #field(type:handle)theHandle.
-//    
-//    #constructor new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//        
-//    #constructor current
-//    //    <= new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0).
-//    [
-//        #var(type:handle)aCurrent := system'external'KERNEL32 GetModuleHandleW &int:0.
-//        
-//        theHandle := aCurrent.
-//    ]
-//
-//    #method hinstance = $self.
-//}
-//
-//// --- HINSTANCE ---
-//
-//#static(type:hinstance) CurrentInstance = HInstance current.
-//
+
+// --- HInstance ---
+
+#class(sealed,struct:embeddable) HInstance
+{
+    #field(type:int)theHandle.
+    
+    #constructor new &int:aHandle
+    [
+        theHandle := aHandle.
+    ]
+        
+    #constructor current
+    //    <= new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0).
+    [
+        #var(type:int)aCurrent := system'external'KERNEL32 GetModuleHandleW &int:0.
+        
+        theHandle := aCurrent.
+    ]
+
+    #method hinstance = $self.
+}
+
+// --- HINSTANCE ---
+
+#static(type:hinstance) CurrentInstance = HInstance current.
+
 //// --- MSG ---
 //
 //#class(sealed,struct:embeddable) MSG 
@@ -47,28 +47,28 @@
 //    
 //    #method win_msg = $self.
 //}
-//
-//// --- CREATESTRUCT ---
-//
-//#class(sealed,struct:embeddable)CREATESTRUCT
-//{
-//    #field(type:int)       theCreateParam.
-//    #field(type:hinstance) theInstance.    
-//    #field(type:int)       theMenu.
-//    #field(type:int)       theParent.
-//    #field(type:int)       theHeight.
-//    #field(type:int)       theWidth.
-//    #field(type:int)       theY.
-//    #field(type:int)       theX.
-//    #field(type:int)       theStyle.
-//    #field(type:int)       theNamePtr.
-//    #field(type:int)       theClassPtr.
-//    #field(type:int)       theExStyle.
-//    
-//    #method(stacksafe) readCreateParam &vint:aRetVal
-//        => system'internal'int_save.
-//}
-//
+
+// --- CREATESTRUCT ---
+
+#class(sealed,struct:embeddable)CREATESTRUCT
+{
+    #field(type:int)       theCreateParam.
+    #field(type:hinstance) theInstance.    
+    #field(type:int)       theMenu.
+    #field(type:int)       theParent.
+    #field(type:int)       theHeight.
+    #field(type:int)       theWidth.
+    #field(type:int)       theY.
+    #field(type:int)       theX.
+    #field(type:int)       theStyle.
+    #field(type:int)       theNamePtr.
+    #field(type:int)       theClassPtr.
+    #field(type:int)       theExStyle.
+    
+    #method(stacksafe) readCreateParam &vint:aRetVal
+        => system'internal'int_save.
+}
+
 //// --- HMENU ---
 //
 //#class(sealed,struct:embeddable) HMENU
