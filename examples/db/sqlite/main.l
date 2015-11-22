@@ -1,8 +1,8 @@
-#define system.
-#define system'routines.
-#define system'io.
-#define extensions.
-#define sqlite.
+#import system.
+#import system'routines.
+#import system'io.
+#import extensions.
+#import sqlite.
 
 #symbol(const) DBFileName = "data.db".
 
