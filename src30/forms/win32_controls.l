@@ -53,9 +53,9 @@
             ! [ theHandle setEnabled &int:0. ].
     ]
 
-//    #method click []
-//    
-//    #method change []
+    #method click []
+    
+    #method change []
 
     #method open
     [
@@ -67,89 +67,89 @@
         $self $onCreate.
     ]
 
-//    #method is &opened = ($nil != theHandle).
-//    
-//    #method hwnd = theHandle.
-//
-//    #method set &visible : aValue
-//    [
-//        $super set &visible:aValue.
-//        
-//        ($nil == theHandle)
-//            ! [
-//                theVisible
-//                    ? [ theHandle setVisible &int:5. ]
-//                    ! [ theHandle setVisible &int:0. ].
-//            ].
-//    ]
-//                                                
-//    #method set &enabled : aValue
-//    [
-//        $super set &enabled:aValue.
-//        
-//        ($nil == theHandle)
-//            ! [
-//                theEnabled
-//                    ? [ theHandle setEnabled &int:-1. ]
-//                    ! [ theHandle setEnabled &int:0. ].
-//            ].
-//    ]
-//    
-//    #method set &caption : aCaption
-//    [
-//        $super set &caption:aCaption.
-//        
-//        ($nil == theHandle)
-//            ! [
-//                theHandle setCaption &wide:(aCaption wide).
-//            ].
-//    ]
-//    
-//    #method append &caption : aValue
-//    [    
-//        $self set &caption:($self caption + aValue wide).
-//    ]
-//
-//    #method caption
-//    [
-//        ($nil == theHandle)
-//            ! [
-//                theCaption := theHandle getCaption.
-//            ].
-//            
-//        ^ theCaption.            
-//    ]
-//
-//    #method setLocation &int:x &int:y
-//    [
-//        theRegion writeLocation &int:x &int:y.
-//        
-//        ($nil == theHandle)
-//            ! [
-//                theHandle setPosition &int:x &int:y &int:0 &int:0 &int:SWP_NOSIZE.
-//            ].
-//    ]
-//    
-//    #method(stacksafe) setDimension &int:aWidth &int:aHeight
-//    [
-//        theRegion writeDimension &int:aWidth &int:aHeight.
-//        
-//        ($nil == theHandle)
-//            ! [
-//                theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int:SWP_NOMOVE.
-//            ].
-//    ]
-//    
-//    #method refresh
-//    [
-//        ($nil != theHandle)
-//            ? [ theHandle refresh. ].
-//    ]
-//    
-//    #method(stacksafe) $resize &int:aWidth &int:aHeight
-//    [
-//        theRegion writeDimension &int:aWidth &int:aHeight.
-//    ]  
+    #method is &opened = ($nil != theHandle).
+    
+    #method hwnd = theHandle.
+
+    #method set &visible : aValue
+    [
+        $super set &visible:aValue.
+        
+        ($nil == theHandle)
+            ! [
+                theVisible
+                    ? [ theHandle setVisible &int:5. ]
+                    ! [ theHandle setVisible &int:0. ].
+            ].
+    ]
+                                                
+    #method set &enabled : aValue
+    [
+        $super set &enabled:aValue.
+        
+        ($nil == theHandle)
+            ! [
+                theEnabled
+                    ? [ theHandle setEnabled &int:-1. ]
+                    ! [ theHandle setEnabled &int:0. ].
+            ].
+    ]
+    
+    #method set &caption : aCaption
+    [
+        $super set &caption:aCaption.
+        
+        ($nil == theHandle)
+            ! [
+                theHandle setCaption &wide:(aCaption wide).
+            ].
+    ]
+    
+    #method append &caption : aValue
+    [    
+        $self set &caption:($self caption + aValue wide).
+    ]
+
+    #method caption
+    [
+        ($nil == theHandle)
+            ! [
+                theCaption := theHandle getCaption.
+            ].
+            
+        ^ theCaption.            
+    ]
+
+    #method setLocation &int:x &int:y
+    [
+        theRegion writeLocation &int:x &int:y.
+        
+        ($nil == theHandle)
+            ! [
+                theHandle setPosition &int:x &int:y &int:0 &int:0 &int:SWP_NOSIZE.
+            ].
+    ]
+    
+    #method(stacksafe) setDimension &int:aWidth &int:aHeight
+    [
+        theRegion writeDimension &int:aWidth &int:aHeight.
+        
+        ($nil == theHandle)
+            ! [
+                theHandle setPosition &int:0 &int:0 &int:aWidth &int:aHeight &int:SWP_NOMOVE.
+            ].
+    ]
+    
+    #method refresh
+    [
+        ($nil != theHandle)
+            ? [ theHandle refresh. ].
+    ]
+    
+    #method(stacksafe) $resize &int:aWidth &int:aHeight
+    [
+        theRegion writeDimension &int:aWidth &int:aHeight.
+    ]  
 }    
 
 // --- ControlCollection ---
@@ -164,17 +164,17 @@
         theParent := aParent.
     ]
     
-//    #method append : aControl
-//    [
-//        $super append:(aControl control).
-//        
-//        aControl $set &parent:theParent.
-//        
-//        (theParent is &opened)?
-//        [
-//            aControl open.
-//        ].
-//    ]
+    #method append : aControl
+    [
+        $super append:(aControl control).
+        
+        aControl $set &parent:theParent.
+        
+        (theParent is &opened)?
+        [
+            aControl open.
+        ].
+    ]
 }
 
 // --- BaseWinContainer ---
@@ -190,30 +190,30 @@
         theControls := ControlCollection new:$self.
     ]
 
-//    #method set &onResize:anAction
-//    [
-//        theResize := anAction func1.
-//    ]
-//
-//    #method retrieve &hwnd:aHandle
-//    [
-//        (theHandle == aHandle)
-//            ? [ ^ $self. ].
-//
-//        #var(type:control)aCurrent.
-//        #var(type:enumerator)it := theControls enumerator.
-//        #var aRetVal := $nil.
-//        #loop (it next)?
-//        [ 
-//            aCurrent := it get control.
-//        
-//            aRetVal := aCurrent retrieve &hwnd:aHandle.
-//            ($nil != aRetVal)
-//                ? [ ^ aRetVal. ].
-//        ].
-//                                    
-//        ^ $nil.            
-//    ]
+    #method set &onResize:anAction
+    [
+        theResize := anAction func1.
+    ]
+
+    #method retrieve &hwnd:aHandle
+    [
+        (theHandle == aHandle)
+            ? [ ^ $self. ].
+
+        #var(type:control)aCurrent.
+        #var(type:enumerator)it := theControls enumerator.
+        #var aRetVal := $nil.
+        #loop (it next)?
+        [ 
+            aCurrent := it get control.
+        
+            aRetVal := aCurrent retrieve &hwnd:aHandle.
+            ($nil != aRetVal)
+                ? [ ^ aRetVal. ].
+        ].
+                                    
+        ^ $nil.            
+    ]
         
     #method open
     [
@@ -224,20 +224,20 @@
             [ it get open. ].
     ]
         
-//    #method close
-//    [
-//        #var(type:enumerator)it := theControls enumerator.
-//        #loop (it next)?
-//            [ it get close. ].
-//    ]
-//    
-//    #method(stacksafe) $resize &int:aWidth &int:aHeight
-//    [
-//        $super $resize &int:aWidth &int:aHeight.
-//        
-//        ($nil == theResize)
-//            ! [ theResize eval:$self. ].
-//    ]  
+    #method close
+    [
+        #var(type:enumerator)it := theControls enumerator.
+        #loop (it next)?
+            [ it get close. ].
+    ]
+    
+    #method(stacksafe) $resize &int:aWidth &int:aHeight
+    [
+        $super $resize &int:aWidth &int:aHeight.
+        
+        ($nil == theResize)
+            ! [ theResize eval:$self. ].
+    ]  
 }
 
 //// --- Frame ---
@@ -556,10 +556,10 @@
         theTabStop := true.
     ]
     
-//    #method set &onClick:aFunction
-//    [
-//        theClick := aFunction func1.
-//    ]
+    #method set &onClick:aFunction
+    [
+        theClick := aFunction func1.
+    ]
     
     #method(stacksafe) $updateStyles &vint:aRetVal
     [
@@ -573,11 +573,11 @@
         aRetVal << (aRetVal || Styles).
     ]
     
-//    #method click 
-//    [
-//        ($nil != theClick)
-//            ? [ theClick eval:$self. ].
-//    ]
+    #method click 
+    [
+        ($nil != theClick)
+            ? [ theClick eval:$self. ].
+    ]
 }
 
 // --- Button ---

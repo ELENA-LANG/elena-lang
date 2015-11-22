@@ -11,6 +11,8 @@
 {
     #field(type:__time)theValue.
 
+    #constructor new <= %new &__time:(SystemTime $new &long:0l).
+
     #constructor min <= %new &__time:(SystemTime $new &long:0l).
 
     #constructor(stacksafe) new &__time:aValue
@@ -176,6 +178,8 @@
 #class(sealed,struct:embeddable) Date :: BaseNumber
 {
     #field(type:__time)theValue.
+
+    #constructor new <= %new &__time:(SystemTime $new &long:0l).
 
     #constructor min <= %new &__time:(SystemTime $new &long:0l).
 

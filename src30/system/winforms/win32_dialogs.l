@@ -26,13 +26,16 @@
     
     #method(stacksafe) open &caption:caption &value:message &int:flags
     [
-        #var(type:int)retVal := system'external'USER32 MessageBoxW
-            &int:('program mainWindow hwnd)
-            &wide:(message wide)
-            &wide:(caption wide)
+        #var aHandle := 'program mainWindow hwnd.
+        
+        ($nil == aHandle)
+            ? [ aHandle := WindowHandle new. ].
+                
+        ^ messageBox open 
+            &hwnd:(aHandle hwnd)
+            &caption:caption
+            &value:message
             &int:flags.
-            
-        ^ IntNumber new &int:retVal.
     ]
 }.
 

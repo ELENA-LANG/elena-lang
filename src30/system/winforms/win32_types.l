@@ -5,7 +5,7 @@
 #subject(class:system'winforms'WindowHandle)      hwnd.
 //#subject(class:system'winforms'HMENU)             hmenu.
 
-//#subject(class:system'winforms'MSG)               win_msg.
+#subject(class:system'winforms'MSG)               win_msg.
 #subject(class:system'winforms'CREATESTRUCT)      win_createstruct.
 //#subject(class:system'winforms'PAINTSTRUCT)       win_paintstruct.
 //

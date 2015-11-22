@@ -24,28 +24,28 @@
     
     #method mainWindow = theMainWindow.
     
-//    #method start
-//    [
-//        #var(type:win_msg)aMsg.
-//        #var(type:int)proceeded.
-//        
-//        theMainWindow open.
-//        theHandle := theMainWindow hwnd.
-//        
-//        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:theHandle &int:0 &int:0.
-//        #loop (aResult != 0)?
-//        [
-//            proceeded := system'external'USER32 IsDialogMessageW &handle:theHandle &win_msg:aMsg.
-//            (proceeded == 0) ?
-//                [
-//                    system'external'USER32 TranslateMessage &win_msg:aMsg.
-//                    system'external'USER32 DispatchMessageW &win_msg:aMsg.
-//                ].
-//
-//            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:theHandle &int:0 &int:0.
-//        ].
-//    ]
-//
+    #method start
+    [
+        #var(type:win_msg)aMsg.
+        #var(type:int)proceeded.
+        
+        theMainWindow open.
+        theHandle := theMainWindow hwnd.
+        
+        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:theHandle &int:0 &int:0.
+        #loop (aResult != 0)?
+        [
+            proceeded := system'external'USER32 IsDialogMessageW &int:theHandle &win_msg:aMsg.
+            (proceeded == 0) ?
+                [
+                    system'external'USER32 TranslateMessage &win_msg:aMsg.
+                    system'external'USER32 DispatchMessageW &win_msg:aMsg.
+                ].
+
+            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:theHandle &int:0 &int:0.
+        ].
+    ]
+
 //    #method run &hwnd:aHandle
 //    [
 //        #var(type:win_msg)aMsg.

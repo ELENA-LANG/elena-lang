@@ -1,15 +1,15 @@
 // ==== ver 3.4.1 ===
 
-//#import system.
-//
+#import system.
+
 //// data structure wrappers
 //#subject(class:system'drawing'HDC)         hdc.
 //#subject(class:system'drawing'HBITMAP)     hbitmap.
 //#subject(class:system'drawing'HPEN)        hpen.
 //#subject(class:system'drawing'HBRUSH)      hbrush.
-//
-//#subject(class:system'drawing'RECT)        win_rect.
-//
+
+#subject(class:system'drawing'RECT)        win_rect.
+
 //// --- Raster Operation Codes ---
 //
 //#symbol(const,type:int)SRCCOPY          = 00CC0020h.
@@ -17,65 +17,65 @@
 //#symbol(const,type:int)IMAGE_BITMAP     = 0.
 //
 //#symbol(const,type:int)LR_LOADFROMFILE  = 0010h.
-//
-//// --- RECT ---
-//
-//#class(sealed,struct:embeddable)RECT
-//{
-//    #field(type:int)       theLeft.
-//    #field(type:int)       theTop.
-//    #field(type:int)       theRight.
-//    #field(type:int)       theBottom.
-//    
-//    #method(type:int)left = theLeft.
-//    
-//    #method(type:int)top = theTop.
-//    
-//    #method(type:int)right = theRight.
-//    
-//    #method(type:int)bottom = theBottom.
-//    
-//    #method setLeft &int:aValue
-//    [
-//        theLeft := aValue.
-//    ]
-//    
-//    #method setTop &int:aValue
-//    [
-//        theTop := aValue.
-//    ]
-//    
-//    #method setRight &int:aValue
-//    [
-//        theRight := aValue.
-//    ]
-//    
-//    #method setBottom &int:aValue
-//    [
-//        theBottom := aValue.
-//    ]
-//    
-//    #method readLeft &vint:aRetVal
-//    [
-//        aRetVal << theLeft.
-//    ]
-//    
-//    #method readTop &vint:aRetVal
-//    [
-//        aRetVal << theTop.
-//    ]
-//    
-//    #method readRight &vint:aRetVal
-//    [
-//        aRetVal << theRight.
-//    ]
-//    
-//    #method readBottom &vint:aRetVal
-//    [
-//        aRetVal << theBottom.
-//    ]
-//}
-//
+
+// --- RECT ---
+
+#class(sealed,struct:embeddable)RECT
+{
+    #field(type:int)       theLeft.
+    #field(type:int)       theTop.
+    #field(type:int)       theRight.
+    #field(type:int)       theBottom.
+    
+    #method(type:int)left = theLeft.
+    
+    #method(type:int)top = theTop.
+    
+    #method(type:int)right = theRight.
+    
+    #method(type:int)bottom = theBottom.
+    
+    #method setLeft &int:aValue
+    [
+        theLeft := aValue.
+    ]
+    
+    #method setTop &int:aValue
+    [
+        theTop := aValue.
+    ]
+    
+    #method setRight &int:aValue
+    [
+        theRight := aValue.
+    ]
+    
+    #method setBottom &int:aValue
+    [
+        theBottom := aValue.
+    ]
+    
+    #method readLeft &vint:aRetVal
+    [
+        aRetVal << theLeft.
+    ]
+    
+    #method readTop &vint:aRetVal
+    [
+        aRetVal << theTop.
+    ]
+    
+    #method readRight &vint:aRetVal
+    [
+        aRetVal << theRight.
+    ]
+    
+    #method readBottom &vint:aRetVal
+    [
+        aRetVal << theBottom.
+    ]
+}
+
 //// --- HDC ---
 //
 //#class(sealed,struct:embeddable) HDC

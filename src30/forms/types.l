@@ -17,7 +17,7 @@
 //#subject(class:forms'Panel)             panel.
 //#subject(class:forms'RadioButtonGroup)  radiogroup.
 //#subject(class:forms'ImageList)         imagelist.
-//#subject(class:forms'SDIForm)           sdiform.
+#subject(class:forms'SDIForm)           sdiform.
 //#subject(class:forms'ChildForm)         form.
 
 #subject(class:forms'ControlCollection)controls.

@@ -29,24 +29,24 @@
 
 #static(type:hinstance) CurrentInstance = HInstance current.
 
-//// --- MSG ---
-//
-//#class(sealed,struct:embeddable) MSG 
-//{
-//    #field(type:handle)theHWND.
-//    #field(type:int)   theMessage.
-//    #field(type:int)   theWParam.
-//    #field(type:int)   theLParam.
-//    #field(type:int)   theTime.
-//    #field(type:int)   theX.
-//    #field(type:int)   theY.    
-//    
-//    #method readMessage &vint:aMessage
-//    [
-//    ]
-//    
-//    #method win_msg = $self.
-//}
+// --- MSG ---
+
+#class(sealed,struct:embeddable) MSG 
+{
+    #field(type:handle)theHWND.
+    #field(type:int)   theMessage.
+    #field(type:int)   theWParam.
+    #field(type:int)   theLParam.
+    #field(type:int)   theTime.
+    #field(type:int)   theX.
+    #field(type:int)   theY.    
+    
+    #method readMessage &vint:aMessage
+    [
+    ]
+    
+    #method win_msg = $self.
+}
 
 // --- CREATESTRUCT ---
 
