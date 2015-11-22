@@ -135,21 +135,21 @@
         system'external'USER32 GetClientRect &int:theHandle &win_rect:aStruct.
     ]
   
-//    #method(stacksafe) read &hdc:anHDC
-//    [
-//        #var(type:handle)dc := system'external'USER32 GetDC &handle:theHandle.
-//        
-//        anHDC << dc.
-//    ]
-//
-//    #method hdc
-//    [
-//        #var(type:hdc)aDC.
-//        $self read &hdc:aDC.
-//
-//        ^ HDC new &hdc:aDC.
-//    ]
-//
+    #method(stacksafe) read &hdc:anHDC
+    [
+        #var(type:int)dc := system'external'USER32 GetDC &handle:theHandle.
+        
+        anHDC << dc.
+    ]
+
+    #method hdc
+    [
+        #var(type:hdc)aDC.
+        $self read &hdc:aDC.
+
+        ^ HDC new &hdc:aDC.
+    ]
+
 //    #method(stacksafe) set &hmenu:aMenuHandle
 //    [
 //        system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
@@ -161,37 +161,37 @@
     ]
 }
 
-//// --- PAINTSTRUCT ---
-//
-//#class(sealed,struct:embeddable)PAINTSTRUCT
-//{
-//    #field(type:hdc)      theHDC.
-//    #field(type:int)      theErase.
-//    #field(type:win_rect) theRect. 
-//    #field(type:int)      theRestore.
-//    #field(type:int)      theIncUpdate.
-//    
-//    #field(type:int)      dummy0.
-//    #field(type:int)      dummy1.
-//    #field(type:int)      dummy2.
-//    #field(type:int)      dummy3.
-//    #field(type:int)      dummy4.
-//    #field(type:int)      dummy5.
-//    #field(type:int)      dummy6.
-//    #field(type:int)      dummy7.
-//
-//    #method(stacksafe) read &hdc:aHandle
-//        => system'internal'int_save.
-//            
-//    #method hdc = HDC new &hdc:theHDC.            
-//            
-//    #method(stacksafe) begin &hwnd:aHandle
-//    [
-//        system'external'USER32 BeginPaint &handle:aHandle &win_paintstruct:$self.
-//    ]
-//    
-//    #method(stacksafe) end &hwnd:aHandle
-//    [
-//        system'external'USER32 EndPaint &handle:aHandle &win_paintstruct:$self.
-//    ]
-//}
+// --- PAINTSTRUCT ---
+
+#class(sealed,struct:embeddable)PAINTSTRUCT
+{
+    #field(type:hdc)      theHDC.
+    #field(type:int)      theErase.
+    #field(type:win_rect) theRect. 
+    #field(type:int)      theRestore.
+    #field(type:int)      theIncUpdate.
+    
+    #field(type:int)      dummy0.
+    #field(type:int)      dummy1.
+    #field(type:int)      dummy2.
+    #field(type:int)      dummy3.
+    #field(type:int)      dummy4.
+    #field(type:int)      dummy5.
+    #field(type:int)      dummy6.
+    #field(type:int)      dummy7.
+
+    #method(stacksafe) read &hdc:aHandle
+        => system'internal'int_save.
+            
+    #method hdc = HDC new &hdc:theHDC.            
+            
+    #method(stacksafe) begin &hwnd:aHandle
+    [
+        system'external'USER32 BeginPaint &int:aHandle &win_paintstruct:$self.
+    ]
+    
+    #method(stacksafe) end &hwnd:aHandle
+    [
+        system'external'USER32 EndPaint &int:aHandle &win_paintstruct:$self.
+    ]
+}

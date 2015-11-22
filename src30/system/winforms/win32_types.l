@@ -7,6 +7,6 @@
 
 #subject(class:system'winforms'MSG)               win_msg.
 #subject(class:system'winforms'CREATESTRUCT)      win_createstruct.
-//#subject(class:system'winforms'PAINTSTRUCT)       win_paintstruct.
-//
+#subject(class:system'winforms'PAINTSTRUCT)       win_paintstruct.
+
 //#subject(class:system'winforms'WindowCallback)    win_callback.
