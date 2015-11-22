@@ -118,7 +118,7 @@
             ]
             ! [
                 theMenuHandle := HMENU new.
-                hmenu append &int:MF_STRING &handle:theMenuHandle &wide:theCaption.
+                hmenu append &int:MF_STRING &int:theMenuHandle &wide:theCaption.
                 
                 $super open.
             ].

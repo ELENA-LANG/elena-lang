@@ -137,7 +137,7 @@
   
     #method(stacksafe) read &hdc:anHDC
     [
-        #var(type:int)dc := system'external'USER32 GetDC &handle:theHandle.
+        #var(type:int)dc := system'external'USER32 GetDC &int:theHandle.
         
         anHDC << dc.
     ]

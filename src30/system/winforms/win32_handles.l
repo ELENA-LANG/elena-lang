@@ -96,7 +96,7 @@
             
     #method(stacksafe) append &int:Flags &handle:aParent &wide:aCaption
     [
-        system'external'USER32 AppendMenuW &int:theHandle &int:(Flags || MF_POPUP) &handle:aParent &wide:aCaption.
+        system'external'USER32 AppendMenuW &int:theHandle &int:(Flags || MF_POPUP) &int:aParent &wide:aCaption.
     ]
             
     #method(stacksafe) free

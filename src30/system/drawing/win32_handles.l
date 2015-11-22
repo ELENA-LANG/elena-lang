@@ -121,7 +121,7 @@
     [
         system'external'GDI32 BitBlt &int:theHandle &int:destX &int:destY &int:width &int:height &int:dc &int:sourX &int:sourY &int:Flags.
         
-        //#var(type:int) err := system'external'KERNEL32 GetLastError.
+        #var(type:int) err := system'external'KERNEL32 GetLastError.
     ]        
 
     #method(stacksafe) moveTo &int:anX &int:anY
@@ -178,7 +178,7 @@
         
     #method select &hdc:aHandle
     [
-        #var(type:int)aRetVal := system'external'GDI32 SelectObject &int:aHandle &handle:theHandle.
+        #var(type:int)aRetVal := system'external'GDI32 SelectObject &int:aHandle &int:theHandle.
     ]        
     
     #method free
