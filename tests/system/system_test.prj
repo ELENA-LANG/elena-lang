@@ -1,7 +1,7 @@
 ﻿[project]
-vmpath=..\..\bin\
 subjectinfo=-1
 executable=system_test.exe
+options=-w4
 namespace=system_test
 template=console
 debuginfo=-1
@@ -14,7 +14,4 @@ main.l
 [forwards]
 'program=system_test'program
 'test=system_test'test
-
-[primitives]
-inline=..\..\lib30\inline\core_routines.bin
 

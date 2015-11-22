@@ -1,4 +1,4 @@
-#define system.
+#import system.
 
 // --- Main ---
 
@@ -15,10 +15,7 @@
     LongTest eval.
     RealTest eval.
     LiteralTest eval.
-
-//    BreakTest eval.
     MultiDispatchTest eval.
-
     MultySelectTest  eval.
     EnumTest eval.    
     TextBufferTest eval.
@@ -29,14 +26,13 @@
     ArrayTest eval.     
     MethodNotFoundTest eval.
     ExceptionTest eval.
+    OpenArgTest eval.
     DateTest eval.
     ListTest eval.
     DictionaryTest eval.
-//    GetPropertyTest eval.
     BoxingTest eval.
     OuterFieldTest eval.
     LocalTest eval.
-    OpenArgTest eval.
     StructTest eval.
     GroupTest eval.
     GenericMethodTest eval.
@@ -45,5 +41,5 @@
     UnboxTest eval.
     ByRefTest eval.
     SuperTest eval.
-    EmbedConstTest eval.
+//    EmbedConstTest eval.
 ].

@@ -1,7 +1,7 @@
-#define system.
-#define system'math.
-#define system'calendar.
-#define extensions.
+#import system.
+#import system'math.
+#import system'calendar.
+#import extensions.
 
 #symbol(const) MAX = 1000000.
 

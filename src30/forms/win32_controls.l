@@ -1,7 +1,9 @@
-#define system.
-#define system'collections.
-#define system'drawing.
-#define system'winforms.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'collections.
+#import system'drawing.
+#import system'winforms.
 
 // --- IControl ---
 

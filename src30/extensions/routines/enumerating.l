@@ -1,7 +1,9 @@
-#define system.
-#define system'io.
-#define system'text.
-#define extensions'text.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'io.
+//#define system'text.
+#import extensions'text.
 
 // --- ReaderEnumerator ---
 

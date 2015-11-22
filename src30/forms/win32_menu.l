@@ -1,6 +1,8 @@
-#define system.
-#define system'collections.
-#define system'winforms.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'collections.
+#import system'winforms.
 
 // --- BaseMenu ---
 
@@ -116,7 +118,7 @@
             ]
             ! [
                 theMenuHandle := HMENU new.
-                hmenu append &int:MF_STRING &handle:theMenuHandle &wide:theCaption.
+                hmenu append &int:MF_STRING &int:theMenuHandle &wide:theCaption.
                 
                 $super open.
             ].

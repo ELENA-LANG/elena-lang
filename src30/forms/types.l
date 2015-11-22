@@ -1,4 +1,6 @@
-#define system.
+// ==== ver 3.4.1 ===
+
+#import system.
 
 // --- control types ---
 #subject(class:forms'IControl)          control.

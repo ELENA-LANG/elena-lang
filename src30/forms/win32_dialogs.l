@@ -1,5 +1,7 @@
-#define system.
-#define system'winforms.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'winforms.
 
 // --- File Dialog ---
 

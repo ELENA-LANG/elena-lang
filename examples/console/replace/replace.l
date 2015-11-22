@@ -1,6 +1,6 @@
-#define system.
-#define extensions.
-#define extensions'text.
+#import system.
+#import extensions.
+#import extensions'text.
 
 // --- Program ---
 

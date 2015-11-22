@@ -1,13 +1,14 @@
-#import system.
+// ==== ver 3.4.1 ===
 
-#subject(class:system'calendar'Date) datetime.
-#subject(class:system'calendar'TimeSpan) timespan.
+#import system.
 
 // --- TimeSpan --
 
 #class(sealed,struct:embeddable) TimeSpan :: BaseNumber
 {
     #field(type:__time)theValue.
+
+    #constructor new <= %new &__time:(SystemTime $new &long:0l).
 
     #constructor min <= %new &__time:(SystemTime $new &long:0l).
 
@@ -39,7 +40,7 @@
         theValue := SystemTime $new &long:aValue.
     ]
     
-    #method(stacksafe) read &__vtime : aRetVal
+    #method(stacksafe) read &__time : aRetVal
     [
         aRetVal write &__time:theValue.
     ]
@@ -101,7 +102,7 @@
     #method equal &timespan:aSpan
     [
         #var(type:__time)aValue.
-        aSpan read &__vtime:aValue.
+        aSpan read &__time:aValue.
         
         ^ aValue == theValue.
     ]
@@ -109,7 +110,7 @@
     #method less &timespan:aSpan
     [
         #var(type:__time)aValue.
-        aSpan read &__vtime:aValue.
+        aSpan read &__time:aValue.
         
         ^ aValue < theValue.
     ]
@@ -120,7 +121,7 @@
     #method add &timespan:aSpan
     [
         #var(type:__time)aTime.
-        aSpan read &__vtime:aTime.
+        aSpan read &__time:aTime.
                 
         #var(type:long)aValue.
         aTime read &vlong:aValue.
@@ -134,7 +135,7 @@
     #method subtract &timespan:aSpan
     [
         #var(type:__time)aValue.
-        aSpan read &__vtime:aValue.
+        aSpan read &__time:aValue.
                 
         aValue := theValue subtract &__time:aValue.
         
@@ -175,6 +176,8 @@
 {
     #field(type:__time)theValue.
 
+    #constructor new <= %new &__time:(SystemTime $new &long:0l).
+
     #constructor min <= %new &__time:(SystemTime $new &long:0l).
 
     #constructor now
@@ -200,7 +203,7 @@
         aSystemTime writeMillisecond &int:0.
         
         #var(type:__time)aValue.
-        aSystemTime read &__vtime:aValue.        
+        aSystemTime read &__time:aValue.        
         theValue := aValue.
     ]
     
@@ -211,7 +214,7 @@
   
     #method __time_st = TimeStruct new &__time:theValue.
 
-    #method(stacksafe) read &__vtime : aRetVal
+    #method(stacksafe) read &__time : aRetVal
     [
         aRetVal write &__time:theValue.
     ]
@@ -219,7 +222,7 @@
     #method equal &datetime:aDate
     [
         #var(type:__time)aValue.
-        aDate read &__vtime:aValue.
+        aDate read &__time:aValue.
         
         ^ aValue == theValue.
     ]
@@ -227,7 +230,7 @@
     #method less &datetime:aDate
     [
         #var(type:__time)aValue.
-        aDate read &__vtime:aValue.
+        aDate read &__time:aValue.
         
         ^ aValue < theValue.
     ]
@@ -235,7 +238,7 @@
     #method subtract &datetime:aDate
     [
         #var(type:__time)aValue.
-        aDate read &__vtime:aValue.
+        aDate read &__time:aValue.
         
         ^ TimeSpan new &__time:(theValue subtract &__time:aValue).
     ]
@@ -243,7 +246,7 @@
     #method subtract &timespan:aTimeSpan
     [
         #var(type:__time)aValue.
-        aTimeSpan read &__vtime:aValue.
+        aTimeSpan read &__time:aValue.
         
         ^ Date new &__time:(theValue subtract &__time:aValue).
     ]
@@ -251,7 +254,7 @@
     #method add &timespan:aTimeSpan
     [
         #var(type:__time)aValue.
-        aTimeSpan read &__vtime:aValue.
+        aTimeSpan read &__time:aValue.
         
         ^ Date new &__time:(theValue add &__time:aValue).
     ]
@@ -347,7 +350,7 @@
         aSystemTime writeYear &int:years.
         
         #var(type:__time)aRetVal.
-        aSystemTime read &__vtime:aRetVal.
+        aSystemTime read &__time:aRetVal.
         
         ^ Date new &__time:aRetVal.
     ]
@@ -374,7 +377,7 @@
         aSystemTime writeYear &int:(n + years).
         
         #var(type:__time)aRetVal.
-        aSystemTime read &__vtime:aRetVal.
+        aSystemTime read &__time:aRetVal.
         
         ^ Date new &__time:aRetVal.
     ]
@@ -422,7 +425,6 @@
 
     #method clone
         = Date new &__time:theValue.
-    
 }
 
 // --- now ---

@@ -10,8 +10,8 @@ and returns the sum of all the numeric values passed in so far to that accumulat
 ELENA is OO language, so a function is in fact an object
 */
 
-#define system.
-#define system'dynamic.
+#import system.
+#import system'dynamic.
 
 #symbol Function = 
     (:x) [ self append:x ].

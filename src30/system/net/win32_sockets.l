@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 // --- AddrInfo ---
@@ -121,8 +123,10 @@
 
 // --- Socket ---
 
-#class(sealed,integer:4)Socket
+#class(sealed,struct:embeddable)Socket
 {
+    #field(type:int)theHandle.
+    
     #constructor(stacksafe) $new &int:aSocket
         => system'internal'int_copy.
     
@@ -141,7 +145,7 @@
     #method(stacksafe) open &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
         #var(type:int)aRetVal := system'external'WS2_32 connect 
-            &socket:$self
+            &int:theHandle
             &dirty_ptr:aSockAddrPtr
             &int:aNameLen.
             
@@ -152,7 +156,7 @@
     #method(stacksafe) bind &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
         #var(type:int)aRetVal := system'external'WS2_32 bind 
-            &socket:$self
+            &int:theHandle
             &dirty_ptr:aSockAddrPtr
             &int:aNameLen.
             
@@ -163,7 +167,7 @@
     #method(stacksafe) listen &int:aBackLog
     [
         #var(type:int)aRetVal := system'external'WS2_32 listen 
-            &socket:$self
+            &int:theHandle
             &int:aBackLog.
             
         (SOCKET_ERROR == aRetVal)
@@ -173,7 +177,7 @@
     #method(stacksafe,type:bool) tryOpen &dirty_ptr:aSockAddrPtr &int:aNameLen
     [
         #var(type:int)aRetVal := system'external'WS2_32 connect 
-            &socket:$self
+            &int:theHandle
             &dirty_ptr:aSockAddrPtr
             &int:aNameLen.
             
@@ -183,7 +187,7 @@
     #method(stacksafe)write &bytearray:aBuffer &int:aLength &int:aFlags
     [
         #var(type:int)aRetVal := system'external'WS2_32 send 
-            &socket:$self
+            &int:theHandle
             &bytearray:aBuffer
             &int:aLength
             &int:aFlags.
@@ -195,7 +199,7 @@
     #method(stacksafe) read &bytearray:aBuffer &int:aLength &int:aFlags
     [
         #var(type:int)aRetVal := system'external'WS2_32 recv
-            &socket:$self
+            &int:theHandle
             &bytearray:aBuffer
             &int:aLength
             &int:aFlags.
@@ -207,7 +211,7 @@
     #method accept
     [
         #var(type:socket)aSocket := system'external'WS2_32 accept
-            &socket:$self
+            &int:theHandle
             &int:0
             &int:0.
             
@@ -221,7 +225,7 @@
     #method(stacksafe) shutdown &int:aType
     [
         #var(type:int)aRetVal := system'external'WS2_32 shutdown
-            &socket:$self
+            &int:theHandle
             &int:aType.
             
         (SOCKET_ERROR == aRetVal)
@@ -231,7 +235,7 @@
     #method(stacksafe) iocommand &int:aCommand &vint:aParameter
     [
         #var(type:int)aRetVal := system'external'WS2_32 ioctlsocket
-            &socket:$self
+            &int:theHandle
             &int:aCommand
             &vint:aParameter.
             
@@ -244,7 +248,7 @@
         #var(type:int)n := aValue iif:1:0.
         
         #var(type:int)aRetVal := system'external'WS2_32 setsockopt
-            &socket:$self
+            &int:theHandle
             &int:aLevel
             &int:anOption
             &vint:n
@@ -257,6 +261,6 @@
     #method(stacksafe) close
     [
         system'external'WS2_32 closesocket
-            &socket:$self.
+            &int:theHandle.
     ]
 }

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 // --- common types ---
@@ -36,7 +38,7 @@
     
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &coord:$self.
     
-    #method clone = Point new &x:theX &y:theY.
+    #method clone = Point new &int:theX &int:theY.
     
     #method x = IntNumber new &int:theX.
     
@@ -144,7 +146,7 @@
         theHeight := aHeight int.
     ]
     
-    #constructor new &int:aWidth &int:aHeight
+    #constructor(stacksafe) new &int:aWidth &int:aHeight
     [
         theWidth := aWidth.
         theHeight := aHeight.
@@ -192,7 +194,7 @@
     
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dimension:$self.
     
-    #method clone = Dimension new &width:theWidth &height:theHeight.
+    #method clone = Dimension new &int:theWidth &int:theHeight.
     
     #method(type:bool) equal &dimension:aDimension
     [
@@ -230,7 +232,7 @@
         theHeight := aHeight int.
     ]
     
-    #constructor new &int:anX &int:anY &int:aWidth &int:aHeight
+    #constructor(stacksafe) new &int:anX &int:anY &int:aWidth &int:aHeight
     [
         theX := anX.
         theY := anY.

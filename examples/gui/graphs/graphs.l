@@ -10,7 +10,7 @@
 #symbol ending   = pi_value * 6.
 #symbol H        = 0.005r.
 #symbol A        = 5.0r.
-#symbol C        = 2.0r / 3.0r.
+#symbol C        = /*2.0r / 3.0r*/0.66666666666r.
 
 // --- function ---
 

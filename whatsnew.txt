@@ -13,6 +13,7 @@
 
 [ELC]
 [-] issue #150 fixed
+[*] issue #42 implemented
 
 [IDE]
 [-] issue #75 fixed : call stack window is not properly refreshed

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 // --- $windowClassControl ---
@@ -28,7 +30,7 @@
 
     #method(stacksafe) onpaint &hwnd:aControl &vint:aRetVal
     [
-        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:aControl &int:WM_PAINT &int:0 &int:0.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &int:aControl &int:WM_PAINT &int:0 &int:0.
         
         aRetVal << result.
     ]
@@ -55,7 +57,7 @@
     
     #method(stacksafe) ondestroy &hwnd:aControl &vint:aResult
     [
-        #var(type:int)anIndex := system'external'USER32 SetWindowLongW &hwnd:aControl &int:GWL_USERDATA &int:0.
+        #var(type:int)anIndex := system'external'USER32 SetWindowLongW &int:aControl &int:GWL_USERDATA &int:0.
         (anIndex != 0)?
             [
                 #var(type:rt_ptr)ptr := anIndex.
@@ -71,9 +73,9 @@
         #var(type:vint)param.
         aCreateStruct readCreateParam &vint:param.
         
-        system'external'USER32 SetWindowLongW &handle:anHWND &int:GWL_USERDATA &int:param.
+        system'external'USER32 SetWindowLongW &int:anHWND &int:GWL_USERDATA &int:param.
         
-        system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct.
+        system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:aWParam &win_createstruct:aCreateStruct.
         
         aRetVal << 0.
     ]
@@ -87,7 +89,7 @@
                 ^ $self.
             ].                
         
-        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:0 &int:0.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:0 &int:0.
          
         aRetVal << result.
     ]
@@ -105,7 +107,7 @@
                 ^ $self.
             ].                
                 
-        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &int:wParam &int:lParam.lParam.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &int:wParam &int:lParam.
         
         aRetVal << result.
     ]
@@ -147,7 +149,7 @@
                 ].
             ].
         
-        #var(type:int)result := system'external'USER32 DefWindowProcW &handle:anHWND &int:aMessage &hwnd:aControl &int:aLParam.
+        #var(type:int)result := system'external'USER32 DefWindowProcW &int:anHWND &int:aMessage &hwnd:aControl &int:aLParam.
         
         aRetVal << result.
     ]

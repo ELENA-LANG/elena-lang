@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 #import system'text.
 
@@ -52,7 +54,7 @@
     [
         #var(type:int)aWritten := 0.
         system'external'KERNEL32 WriteFile
-            &handle    : theHandle
+            &int       : theHandle
             &bytearray : aDump
             &int       : aLength
             &vint      : aWritten
@@ -62,20 +64,20 @@
     #method read &bytearray:aDump &vint:aLength
     [
         system'external'KERNEL32 ReadFile
-            &handle      : theHandle
-            &bytearray   : aDump
-            &int         : aLength
-            &vint        : aLength
-            &int         : 0.
+            &int       : theHandle
+            &bytearray : aDump
+            &int       : aLength
+            &vint      : aLength
+            &int       : 0.
     ]
     
     #method readIndex &vint:anIndex
     [
         #var(type:int) ret := system'external'KERNEL32 SetFilePointer
-            &handle : theHandle
-            &int    : 0
-            &int    : 0
-            &int    : $FILE_CURRENT.
+            &int : theHandle
+            &int : 0
+            &int : 0
+            &int : $FILE_CURRENT.
             
         anIndex << ret.
     ] 
@@ -83,10 +85,10 @@
     #method writeIndex &int:anIndex
     [
         #var(type:int) ret := system'external'KERNEL32 SetFilePointer
-            &handle : theHandle
-            &int    : anIndex
-            &int    : 0
-            &int    : $FILE_BEGIN.
+            &int : theHandle
+            &int : anIndex
+            &int : 0
+            &int : $FILE_BEGIN.
     ] 
     
     #method readLength &vint:aLength 
@@ -101,7 +103,7 @@
     #method close
     [
         system'external'KERNEL32 CloseHandle
-            &handle:theHandle.
+            &int:theHandle.
     ]
 }
 

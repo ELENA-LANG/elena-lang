@@ -1,19 +1,13 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define system'dynamic.
-#define system'calendar.
-#define system'text.
-#define system'io.
-#define system'math.
-#define system'culture.
-#define extensions.
-#define extensions'math.
-#define extensions'text.
-
+#import system.
+#import system'routines.
+#import system'collections.
+#import system'dynamic.
+#import system'calendar.
+#import extensions.
+    
 #symbol XTester =
 {
-    test            
+    test
     [
     ]        
 }.
@@ -196,19 +190,6 @@
         
     console writeLine:".".
 ].
-
-//#symbol BreakTest =
-//[
-//    #var a := 2.
-//    #var n := control do:
-//    [
-//       (a == 1) ? [ #break "a". ].
-//
-//       (a == 2) ? [ #break "b". ].
-//
-//       ^ nil.
-//    ].
-//].
 
 #symbol actionTester =
 {
@@ -572,24 +553,24 @@
     #var aRetVal := aDate literal.
 ].
 
-////// --- GetPropertyTest ---
-////
-////#symbol GetPropertyAgent =
-////{
-////    eval : aGetProperty
-////    [
-////        #var n := aGetProperty property.
-////        
-////        2 == aGetProperty property
-////            ? [ console writeLine:"GetProperty works!". ]
-////            ! [ console writeLine:"!! GetProperty does not work !!". ]
-////    ]
-////}.
-////
-////#symbol GetPropertyTest =
-////[
-////    GetPropertyAgent eval:%property[2].
-////].
+//// --- GetPropertyTest ---
+//
+//#symbol GetPropertyAgent =
+//{
+//    eval : aGetProperty
+//    [
+//        #var n := aGetProperty property.
+//        
+//        2 == aGetProperty property
+//            ? [ console writeLine:"GetProperty works!". ]
+//            ! [ console writeLine:"!! GetProperty does not work !!". ]
+//    ]
+//}.
+//
+//#symbol GetPropertyTest =
+//[
+//    GetPropertyAgent eval:%property[2].
+//].
 
 #symbol StructTest =
 [
@@ -655,14 +636,14 @@
 {
     #field theField1.
                    
-    #constructor new [ theField1 := 1. ]
+    #constructor new [ theField1 := Integer new &int:1. ]
 }
 
 #class ChildClass :: BaseClass
 {
     #field theField2.
     
-    #constructor new <= ( %new ) [ theField2 := 2. ]
+    #constructor new <= ( %new ) [ theField2 := Integer new &int:2. ]
 }
 
 #symbol ConstructorTest =
@@ -773,18 +754,18 @@
     o test.
 ].
 
-#subject(class:TestVar)test_var.
-#class(sealed,struct:embeddable) TestVar
-{
-    #field(type:int)theValue.
-    
-    #constructor(stacksafe,embeddable) new &int:aValue
-    [
-        theValue := aValue.
-    ]
-}
-
-#symbol EmbedConstTest =
-[
-    #var(type:test_var)var := TestVar new &int:2.
-].
+//#subject(class:TestVar)test_var.
+//#class(sealed,struct:embeddable) TestVar
+//{
+//    #field(type:int)theValue.
+//    
+//    #constructor(stacksafe,embeddable) new &int:aValue
+//    [
+//        theValue := aValue.
+//    ]
+//}
+//
+//#symbol EmbedConstTest =
+//[
+//    #var(type:test_var)var := TestVar new &int:2.
+//].

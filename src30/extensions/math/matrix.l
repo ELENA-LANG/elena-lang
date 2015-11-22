@@ -1,9 +1,11 @@
-#define system.
-#define system'math.
-#define system'routines.
-#define system'dynamic.
-#define system'text.
-#define extensions.
+// ==== ver 3.4.1 ===
+
+#import system.
+//#define system'math.
+//#define system'routines.
+#import system'dynamic.
+#import system'text.
+#import extensions.
 
 #class MatrixException :: Exception
 {
@@ -383,4 +385,3 @@
         ^ anOutput literal.
     ]
 }
-

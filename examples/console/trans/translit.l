@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define system'text.
-#define extensions.
+#import system.
+#import system'routines.
+#import system'text.
+#import extensions.
 
 // --- RusLatRules ---
 

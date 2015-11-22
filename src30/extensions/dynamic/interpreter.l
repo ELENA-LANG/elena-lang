@@ -1,7 +1,9 @@
-#define system.
-#define system'text.
-#define extensions.
-//#define system'dynamic.
+// === ver 3.4.1 ===
+
+#import system.
+#import system'text.
+#import extensions.
+#import system'dynamic.
 
 // --- IOException ---
 
@@ -48,4 +50,4 @@
 
 //// --- globlas ---
 //
-//#static globals = DynamicStruct new.
+#static globals = DynamicStruct new.

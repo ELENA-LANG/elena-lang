@@ -1,6 +1,8 @@
-#define system.
-#define system'routines.
-#define extensions.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'routines.
+#import extensions.
 
 #subject(class:BaseStrategy)$strategy.
 

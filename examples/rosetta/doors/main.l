@@ -1,6 +1,6 @@
-#define system.
-#define system'routines.
-#define extensions.
+#import system.
+#import system'routines.
+#import extensions.
 
 // --- program ---
 
@@ -20,4 +20,6 @@
     [
         console writeLine:"Door #":(i + 1):" :":(Doors@i iif:"Open":"Closed").
     ].
+    
+    console readChar.
 ].

@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define extensions.
+#import system.
+#import system'routines.
+#import system'collections.
+#import extensions.
 
 #class SMA
 {
@@ -54,4 +54,6 @@
         console write:"sma3 + " :i :" = ": (SMA3 += i) &paddingRight:30 &with:#32.
         console writeLine:"sma5 + " :i :" = ": (SMA5 += i).
     ].
+    
+    console readChar.
 ].

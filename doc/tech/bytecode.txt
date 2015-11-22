@@ -70,6 +70,8 @@ ELENA byte codes (or ecodes)
 
  setverb m                  - ext.verb << m
  
+ xselectr r1, r2            - acc = (acc = 0 ? r1 : r2)
+ 
 
  Memory operations:
  -----------------

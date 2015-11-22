@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 #symbol(const,type:int) $MB_ERR_INVALID_CHARS     = 00000008h.

@@ -1,10 +1,10 @@
-#define system.
-#define system'io.
-#define system'routines.
-#define system'collections.
-#define extensions.
-#define extensions'routines.
-#define extensions'text.
+#import system.
+#import system'io.
+#import system'routines.
+#import system'collections.
+#import extensions.
+#import extensions'routines.
+#import extensions'text.
 
 // --- Record ---
 #class Record

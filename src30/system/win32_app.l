@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // --- CommandLine ---
 
 #symbol $CommandLineFactory =
@@ -18,7 +20,7 @@
 #class StartUp
 {
     #field theFinializeEvent.
-    
+
     #method set &onAppEnd:aHandle
     [
         ($nil == theFinializeEvent)
@@ -35,8 +37,8 @@
                 
                 ! = e [ console writeLine:(e literal). ].
             }.
-            
-        $self $onStop:nil.
+
+        $self $onStop:$nil.
     ]
     
     #method $onStop : arg

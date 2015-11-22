@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // --- true ---
 
 #class(limited) BaseBoolValue
@@ -332,7 +334,7 @@
     /// Executes the function for every enumeration item until it returns true
     #method retrieve &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.

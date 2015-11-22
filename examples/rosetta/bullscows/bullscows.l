@@ -1,6 +1,6 @@
-#define system.
-#define system'routines.
-#define extensions.
+#import system.
+#import system'routines.
+#import extensions.
 
 #class GameMaster
 {
@@ -78,4 +78,6 @@
     #var aGameMaster := GameMaster new.
 
     [ aGameMaster proceed:(aGameMaster ask) ] doWhile.
+    
+    console readChar.
 ].

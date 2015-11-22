@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 // --- BaseApplication ---
@@ -30,17 +32,17 @@
         theMainWindow open.
         theHandle := theMainWindow hwnd.
         
-        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:theHandle &int:0 &int:0.
+        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:theHandle &int:0 &int:0.
         #loop (aResult != 0)?
         [
-            proceeded := system'external'USER32 IsDialogMessageW &handle:theHandle &win_msg:aMsg.
+            proceeded := system'external'USER32 IsDialogMessageW &int:theHandle &win_msg:aMsg.
             (proceeded == 0) ?
                 [
                     system'external'USER32 TranslateMessage &win_msg:aMsg.
                     system'external'USER32 DispatchMessageW &win_msg:aMsg.
                 ].
 
-            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &handle:theHandle &int:0 &int:0.
+            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:theHandle &int:0 &int:0.
         ].
     ]
 
@@ -55,7 +57,7 @@
             aResult := system'external'USER32 PeekMessageW &win_msg:aMsg &int:0 &int:0 &int:0 &int:1.
                 (aResult != 0)
                     ? [
-                        proceeded := system'external'USER32 IsDialogMessageW &handle:aHandle &win_msg:aMsg.
+                        proceeded := system'external'USER32 IsDialogMessageW &int:aHandle &win_msg:aMsg.
                         (proceeded == 0) ?
                             [
                                 system'external'USER32 TranslateMessage &win_msg:aMsg.

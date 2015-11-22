@@ -1,5 +1,7 @@
-#define system.
-#define system'text.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'text.
 
 #class WordEnumerator :: Enumerator
 {

@@ -1,6 +1,6 @@
-#define system.
-#define system'calendar.
-#define extensions.
+#import system.
+#import system'calendar.
+#import extensions.
 
 // --- Control ---
 

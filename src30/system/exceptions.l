@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // --- CallStack ---
 
 /// A call stack
@@ -162,6 +164,7 @@
     #constructor new:aMessage
         <= %new &literal:(aMessage literal) &subject: %InvalidOperationError.
 }
+
 // --- MethodNotFound ---
 
 #class MethodNotFoundException :: Exception

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // === actions ===
 
 #symbol ifOrdered
@@ -1032,8 +1034,7 @@
         aLiteral readLength &vint:aLength.
         
         ^ aLength == 0.
-    ]
-    
+    ]    
 }
 
 // --- wideOp ---

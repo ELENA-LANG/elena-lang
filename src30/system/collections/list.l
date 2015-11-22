@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 #subject(class:system'collections'ListItem)   list_item.
@@ -296,10 +298,10 @@
         theTop := $nil.
         theLast := $nil.
     ]
-    
+
     /// Returns the list enumerator
     #method enumerator = ListEnumerator new &list:$self.
-    
+
     /// Returns the list iterator
     #method iterator = ListIterator new &list:$self.
     

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 #symbol(const,type:int)OFN_PATHMUSTEXIST = 00000800h.
@@ -14,7 +16,7 @@
     #method(stacksafe) open &hwnd:parent &caption:caption &value:message &int:flags
     [
         #var(type:int)retVal := system'external'USER32 MessageBoxW
-            &handle:parent
+            &int:parent
             &wide:(message wide)
             &wide:(caption wide)
             &int:flags.
@@ -24,13 +26,16 @@
     
     #method(stacksafe) open &caption:caption &value:message &int:flags
     [
-        #var(type:int)retVal := system'external'USER32 MessageBoxW
-            &handle:('program mainWindow hwnd)
-            &wide:(message wide)
-            &wide:(caption wide)
+        #var aHandle := 'program mainWindow hwnd.
+        
+        ($nil == aHandle)
+            ? [ aHandle := WindowHandle new. ].
+                
+        ^ messageBox open 
+            &hwnd:(aHandle hwnd)
+            &caption:caption
+            &value:message
             &int:flags.
-            
-        ^ IntNumber new &int:retVal.
     ]
 }.
 
@@ -109,11 +114,11 @@
         aStruct write &int:0 &int:76.        
           
 //      hwndOwner;
-        ptr write &handle:theParent.
+        ptr write &int:theParent.
         aStruct write &int:4 &int:ptr.
           
 //      hInstance;
-        ptr write &handle:CurrentInstance.
+        ptr write &int:CurrentInstance.
         aStruct write &int:8 &int:ptr.
 
 //        lpstrFilter;

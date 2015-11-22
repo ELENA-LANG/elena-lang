@@ -1,7 +1,8 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 #subject(class:system'calendar'SystemTime)    __time.
-#subject(class:system'calendar'SystemTimeVar) __vtime.
 #subject(class:system'calendar'TimeStruct)    __time_st.
 
 #symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
@@ -15,7 +16,7 @@
     [
         #var(type:__time)aTime.
         
-        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
+        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
         
         ^ SystemTime new &__time:aTime.
     ]
@@ -25,16 +26,18 @@
         #var(type:__time)aTime.
         #var(type:__time)aLocalTime.
         
-        system'external'KERNEL32 GetSystemTimeAsFileTime &__vtime:aTime.
-        
-        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__vtime:aLocalTime.
-        
+        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+
+        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__time:aLocalTime.
+
         ^ SystemTime new &__time:aLocalTime.
     ]
 }.
 
-#class(sealed,integer:8) SystemTime :: BaseValue
+#class(sealed,struct:embeddable) SystemTime :: BaseValue
 {
+    #field(type:long)theValue.
+    
     #constructor(stacksafe) new &__time:aValue
         => system'internal'long_copy.
 
@@ -53,6 +56,11 @@
     #method(type:bool) less &__time:anOperand
         => system'internal'long_less.
     
+    #method(stacksafe) write &__time:aValue
+    [
+        theValue := aValue.
+    ]
+    
     #method(stacksafe) read &vlong:aRetVal
         => system'internal'long_save.
         
@@ -63,25 +71,6 @@
         => system'internal'long_add.
     
     #method __time = $self.
-}
-
-#class(sealed,struct:embeddable) SystemTimeVar
-{
-    #field(type:__time)theValue.
-    
-    #method __time = SystemTime new &__time:theValue.
-    
-    #method __vtime = $self.
-    
-    #method(stacksafe) write &__time:aValue
-    [
-        theValue := aValue.
-    ]
-    
-    #method(stacksafe) read &__vtime:aVariable
-    [
-        aVariable << theValue.
-    ]
 }
 
 // --- TimeStruct ---
@@ -240,9 +229,9 @@
         theMillisecond := n.
     ]
 
-    #method(stacksafe) read &__vtime:aRetVal
+    #method(stacksafe) read &__time:aRetVal
     [
-        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__vtime:aRetVal.
+        system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
     ]    
     
     #method(stacksafe) write &__time:aFileTime
@@ -261,8 +250,10 @@
             &int:0
             &shortarray:aBuffer
             &int:255
-            &int:0
-            | raise:(FormatException new:"Invalid date").
+            &int:0.
+            
+        (aLength == 0)
+            ? [ #throw FormatException new:"Invalid date". ].
 
         ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
     ]
@@ -278,8 +269,10 @@
             &int:0
             &shortarray:aBuffer
             &int:255
-            &int:0
-            | raise:(FormatException new:"Invalid time").
+            &int:0.
+            
+        (aLength == 0)
+            ? [ #throw FormatException new:"Invalid time". ].
 
         ^ WideLiteralValue $new &int:0 &int:(aLength - 1) &shortarray:aBuffer.                
     ]

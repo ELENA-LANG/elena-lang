@@ -1,13 +1,15 @@
+// ==== ver 3.4.1 ===
+
 #import system.
-#import system'drawing.
+//#import system'drawing.
 
 // --- HInstance ---
 
 #class(sealed,struct:embeddable) HInstance
 {
-    #field(type:handle)theHandle.
+    #field(type:int)theHandle.
     
-    #constructor new &handle:aHandle
+    #constructor new &int:aHandle
     [
         theHandle := aHandle.
     ]
@@ -15,7 +17,7 @@
     #constructor current
     //    <= new &hinstance:(system'external'KERNEL32 GetModuleHandleW &int:0).
     [
-        #var(type:handle)aCurrent := system'external'KERNEL32 GetModuleHandleW &int:0.
+        #var(type:int)aCurrent := system'external'KERNEL32 GetModuleHandleW &int:0.
         
         theHandle := aCurrent.
     ]
@@ -71,34 +73,34 @@
 
 #class(sealed,struct:embeddable) HMENU
 {
-    #field(type:handle)theHandle.
+    #field(type:int)theHandle.
     
     #constructor new
     [
-        #var(type:handle)h := system'external'USER32 CreateMenu.
+        #var(type:int)h := system'external'USER32 CreateMenu.
         
         theHandle := h.
     ]
 
     #constructor newPopup
     [
-        #var(type:handle)h := system'external'USER32 CreatePopupMenu.
+        #var(type:int)h := system'external'USER32 CreatePopupMenu.
         
         theHandle := h.
     ]
 
     #method(stacksafe) append &int:Flags &int:anID &wide:aCaption
     [
-        system'external'USER32 AppendMenuW &handle:theHandle &int:Flags &int:anID &wide:aCaption.
+        system'external'USER32 AppendMenuW &int:theHandle &int:Flags &int:anID &wide:aCaption.
     ]
             
     #method(stacksafe) append &int:Flags &handle:aParent &wide:aCaption
     [
-        system'external'USER32 AppendMenuW &handle:theHandle &int:(Flags || MF_POPUP) &handle:aParent &wide:aCaption.
+        system'external'USER32 AppendMenuW &int:theHandle &int:(Flags || MF_POPUP) &int:aParent &wide:aCaption.
     ]
             
     #method(stacksafe) free
     [
-        system'external'USER32 DestroyMenu &handle:theHandle.
+        system'external'USER32 DestroyMenu &int:theHandle.
     ]
 }

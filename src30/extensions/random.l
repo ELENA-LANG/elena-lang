@@ -1,5 +1,7 @@
-#define system.
-#define system'routines.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'routines.
 
 // --- RandomGenerator ---
 

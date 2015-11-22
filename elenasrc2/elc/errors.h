@@ -100,11 +100,11 @@ namespace _ELENA_
 //   #define wrnObsolete              "%s(%d:%d): warning 412: Obsolete language construction near '%s'"
    #define wrnUnknownModule         "%s(%d:%d): warning 413: Unknown module '%s'\n"
    #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
-   #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked for '%s'\n"
+   #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked\n"
 //   #define wrnUnknownMessage        "%s(%d:%d): warning 416: method '%s' is not supported by the object\n"
-   #define wrnBoxingCheck           "%s(%d:%d): warning 417:  %s may be boxed\n" 
+   #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n" 
    #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n" 
-   #define wrnUnboxinging           "%s(%d:%d): warning 419:  %s will be unboxed\n" 
+   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n" 
 
 } // _ELENA_
 

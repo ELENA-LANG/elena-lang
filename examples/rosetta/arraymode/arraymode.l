@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define extensions.
+#import system.
+#import system'routines.
+#import system'collections.
+#import extensions.
 
 // Averages/Mode
 
@@ -35,5 +35,6 @@
     console 
         writeLine:"mode of (":anArray1:") is (":(anArray1 mode):")"
         writeLine:"mode of (":anArray2:") is (":(anArray2 mode):")"
-        writeLine:"mode of (":anArray3:") is (":(anArray3 mode):")".
+        writeLine:"mode of (":anArray3:") is (":(anArray3 mode):")"
+        readChar.
 ].

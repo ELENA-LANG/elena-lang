@@ -1,7 +1,7 @@
-#define system.
-#define system'routines.
-#define extensions.
-#define extensions'routines.
+#import system.
+#import system'routines.
+#import extensions.
+#import extensions'routines.
 
 // --- Joinable --
 
@@ -86,4 +86,6 @@
         seek: (:a:b:c:d) [ (joinable:a:b) and:(joinable:b:c) and:(joinable:c:d) ]
         do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d. ]
         | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
+        
+    console readChar.        
 ].

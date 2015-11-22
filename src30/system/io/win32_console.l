@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 #subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
@@ -51,7 +53,7 @@
 {
     #method(type:handle) new &attributes:anAttributes
     [ 
-        #var(type:handle)aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
+        #var(type:handle) aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
         
         ^ Handle new &handle:aHandle.
     ]
@@ -59,7 +61,7 @@
 
 // --- ConsoleWriter ---
 
-#class(struct:embeddable) $ConsoleWriter
+#class(sealed,struct:embeddable) $ConsoleWriter
 {
     #field(type:handle) theHandle.
 
@@ -79,11 +81,11 @@
         aLiteral readLength &vint:aLength.
 
         system'external'KERNEL32 WriteConsoleW
-            &handle  :  theHandle
-            &wide    :  aLiteral
-            &int     :  aLength
-            &int     :  0                       // !! temporally we do not use it
-            &int     :  0.             
+            &int  :  theHandle
+            &wide :  aLiteral
+            &int  :  aLength
+            &int  :  0                       // !! temporally we do not use it
+            &int  :  0.             
 
         // !!check the result of the operation
     ]
@@ -96,13 +98,13 @@
         #var(type:short)aSizeY.
         #var(type:int)aRetVal.
         
-        system'external'KERNEL32 GetConsoleScreenBufferInfo &handle:theHandle &console_screen_buffer_info:aBuffer.
+        system'external'KERNEL32 GetConsoleScreenBufferInfo &int:theHandle &console_screen_buffer_info:aBuffer.
         
         aBuffer readSizeX &vshort:aSizeX.
         aBuffer readSizeY &vshort:aSizeY.
         aLength := aSizeX * aSizeY.
         
-        system'external'KERNEL32 FillConsoleOutputCharacterW &handle:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
+        system'external'KERNEL32 FillConsoleOutputCharacterW &int:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
         
         system'external'KERNEL32 SetConsoleCursorPosition &int:0.
     ]
@@ -110,11 +112,11 @@
     #method refresh
     [
     ]
-            
+
     #method free
     [
         system'external'KERNEL32 CloseHandle
-            &handle:theHandle.
+            &int:theHandle.
     ]
 }
 
@@ -140,7 +142,7 @@
         #loop found !
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &handle        : theHandle
+                &int           : theHandle
                 &bytearray     : aDump
                 &int           : 1
                 &vint          : aNumberRead.
@@ -169,7 +171,7 @@
         #loop found !
         [
             system'external'KERNEL32 ReadConsoleInputW
-                &handle        : theHandle
+                &int           : theHandle
                 &bytearray     : aDump
                 &int           : 1
                 &vint          : aNumberRead.
@@ -190,7 +192,7 @@
     #method(stacksafe) read &shortarray:aBuffer &vint:aRetVal
     [
         system'external'KERNEL32 ReadConsoleW
-            &handle     : theHandle
+            &int        : theHandle
             &shortarray : aBuffer
             &int        : aRetVal
             &vint       : aRetVal
@@ -231,7 +233,8 @@
 
     #method int
     [
-        #var(type:int)aRetVal := $self int.
+        #var(type:int)aRetVal.
+        $self read &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
     ]
@@ -247,7 +250,7 @@
     #method free
     [
         system'external'KERNEL32 CloseHandle
-            &handle:theHandle.
+            &int:theHandle.
     ]
 }
 

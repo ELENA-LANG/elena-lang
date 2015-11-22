@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 #import system'collections.
 
@@ -354,5 +356,4 @@
                 eval &literal:aSplitter = aLiteral::stringListOp split &literal:aSplitter.
             }.
     ]
-
 }

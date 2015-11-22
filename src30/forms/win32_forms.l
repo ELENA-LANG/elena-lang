@@ -1,6 +1,8 @@
-#define system.
-#define system'drawing.
-#define system'winforms.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'drawing.
+#import system'winforms.
 
 // --- BaseForm ---
 

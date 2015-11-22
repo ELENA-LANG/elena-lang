@@ -1,8 +1,10 @@
-#define system.
-#define system'collections.
-#define system'routines.
-#define system'calendar.
-#define system'text.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'collections.
+#import system'routines.
+#import system'calendar.
+#import system'text.
 
 // --- convertors ---
 
@@ -185,4 +187,3 @@
     #method toShortTimeLiteral
         = self __time_st toShortTime literal.
 }
- 

@@ -1,5 +1,7 @@
-#define system.
-#define system'drawing.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'drawing.
 
 // --- BaseControl ---
 
@@ -87,7 +89,7 @@
 
     #method dimension = theRegion dimension.
     
-    #method setDimension &int:aWidth &int:aHeight
+    #method(stacksafe) setDimension &int:aWidth &int:aHeight
     [
         theRegion writeDimension &int:aWidth &int:aHeight.
     ]

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 
 #symbol(const,type:int)INFINITE = 0FFFFFFFFh.
@@ -6,7 +8,7 @@
 
 #class(struct:embeddable,sealed) ThreadHandle
 {
-    #field(type:handle) theHandle.
+    #field(type:int) theHandle.
     #field(type:rt_ptr) theActionPtr.
     
     #constructor new &func:anAction
@@ -25,7 +27,7 @@
     #method start
     [
         system'external'KERNEL32 ResumeThread
-            &handle:theHandle.
+            &int:theHandle.
     ]
 
     #method join
@@ -34,7 +36,7 @@
     #method join &int:aTimeOut
     [
         system'external'KERNEL32 WaitForSingleObject
-            &handle:theHandle
+            &int:theHandle
             &int:aTimeOut.
     ]     
                                                                    

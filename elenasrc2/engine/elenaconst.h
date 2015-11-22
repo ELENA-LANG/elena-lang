@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0009            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0000
+   #define ENGINE_MINOR_VERSION     0x0002
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -335,7 +335,7 @@ namespace _ELENA_
    #define ELENA_SIGNITURE          "ELENA.9."       // the stand alone image
    #define ELENACLIENT_SIGNITURE    "VM.ELENA.9."    // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.9.01"     // the module version
+   #define MODULE_SIGNATURE         "ELENA.9.02"     // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.4"
 
   // --- ELENA core module names ---
@@ -507,10 +507,11 @@ namespace _ELENA_
    #define VERB_FORWARD             "'$verb"
    #define ARRAY_FORWARD            "'$array"
    #define PARAMS_FORWARD           "'$params"
-   #define BOOL_FORWARD             "'$bool"
    #define SUBJ_FORWARD             "'$sign"
 
-   #define STARTUP_CLASS            "'program"
+   #define BOOLTYPE_FORWARD         "'$bool"
+
+   #define STARTUP_CLASS            "'startUp"
 
 } // _ELENA_
 

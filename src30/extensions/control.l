@@ -1,7 +1,7 @@
-// ==== ver 3.1.2 ===
+// ==== ver 3.4.1 ===
 
-#define system.
-#define system'routines.
+#import system.
+#import system'routines.
 
 #class(extension:int)intLoopOp
 {

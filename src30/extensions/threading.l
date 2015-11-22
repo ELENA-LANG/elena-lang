@@ -1,5 +1,7 @@
-#define system.
-#define system'threading.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'threading.
 
 // --- threadControl ---
 

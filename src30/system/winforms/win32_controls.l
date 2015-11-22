@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 #import system.
 #import system'drawing.
 
@@ -11,8 +13,12 @@
 
 #class(sealed,struct:embeddable) WindowHandle
 {
-    #field(type:handle)theHandle.
+    #field(type:int)theHandle.
     
+    #constructor new
+        => system'internal'int_init.
+        
+    // obsolete, new[0] should be used instead
     #constructor min
         => system'internal'int_init.
         
@@ -29,7 +35,7 @@
             aParamIndex := aPointer.
         ].
                 
-        #var(type:handle)aHandle := system'external'USER32 CreateWindowExW
+        #var(type:int)aHandle := system'external'USER32 CreateWindowExW
             &int:       dwExStyle
             &wide:      aClassName
             &wide:      aWindowName  
@@ -38,9 +44,9 @@
             &int:       y
             &int:       width
             &int:       height
-            &handle:    aParent
+            &int:       aParent
             &int:       0
-            &handle:    instance
+            &int:       instance
             &int:       aParamIndex.
 
         (aHandle==0)
@@ -53,48 +59,48 @@
     
     #method setVisible &int:aValue
     [
-        system'external'USER32 ShowWindow &handle:theHandle &int:aValue.
+        system'external'USER32 ShowWindow &int:theHandle &int:aValue.
     ]
     
     #method(type:bool) isVisible
     [
-        #var(type:int)visible := system'external'USER32 IsWindowVisible &handle:theHandle.
+        #var(type:int)visible := system'external'USER32 IsWindowVisible &int:theHandle.
         
         ^ (visible != 0).
     ]
     
     #method setEnabled &int:aValue
     [
-        system'external'USER32 EnableWindow &handle:theHandle &int:aValue.
+        system'external'USER32 EnableWindow &int:theHandle &int:aValue.
     ]            
     
     #method isEnabled
     [
-        #var(type:int)visible := system'external'USER32 IsWindowEnabled &handle:theHandle.
+        #var(type:int)visible := system'external'USER32 IsWindowEnabled &int:theHandle.
         
         ^ (visible != 0).
     ]
 
     #method setChecked &int:aValue
     [
-        system'external'USER32 SendMessageW &handle:theHandle &int:BM_SETCHECK &int:aValue &int:0.
+        system'external'USER32 SendMessageW &int:theHandle &int:BM_SETCHECK &int:aValue &int:0.
     ]
 
     #method isChecked
     [
-        #var(type:int)aResult := system'external'USER32 SendMessageW &handle:theHandle &int:BM_GETCHECK &int:0 &int:0.
+        #var(type:int)aResult := system'external'USER32 SendMessageW &int:theHandle &int:BM_GETCHECK &int:0 &int:0.
 
 		^ (aResult == BST_CHECKED).
     ]    
             
     #method setCaption &wide:aValue
     [
-        system'external'USER32 SendMessageW &handle:theHandle &int:WM_SETTEXT &int:0 &wide:aValue.
+        system'external'USER32 SendMessageW &int:theHandle &int:WM_SETTEXT &int:0 &wide:aValue.
     ]
     
     #method getCaption
     [
-        #var(type:int)aLength := system'external'USER32 SendMessageW &handle:theHandle &int:WM_GETTEXTLENGTH &int:0 &int:0.
+        #var(type:int)aLength := system'external'USER32 SendMessageW &int:theHandle &int:WM_GETTEXTLENGTH &int:0 &int:0.
         
         (aLength == 0)
             ? [ ^ emptyWideLiteralValue. ]
@@ -102,7 +108,7 @@
                 #var(type:wide)aCaption := WideLiteralValue new &int:aLength.
                 aLength := aLength + 1.
                 
-                system'external'USER32 SendMessageW &handle:theHandle &int:WM_GETTEXT &int:aLength &wide:aCaption.
+                system'external'USER32 SendMessageW &int:theHandle &int:WM_GETTEXT &int:aLength &wide:aCaption.
                 
                 ^ aCaption.
             ].
@@ -110,28 +116,28 @@
 
     #method sendMessage &int:aMessage &int:aWParam &wide:aLParam
     [
-        system'external'USER32 SendMessageW &handle:theHandle &int:aMessage &int:aWParam &wide:aLParam.            
+        system'external'USER32 SendMessageW &int:theHandle &int:aMessage &int:aWParam &wide:aLParam.            
     ]
             
     #method refresh
     [
-        system'external'USER32 InvalidateRect &handle:theHandle &int:0 &int:1.
-        system'external'USER32 UpdateWindow &handle:theHandle.
+        system'external'USER32 InvalidateRect &int:theHandle &int:0 &int:1.
+        system'external'USER32 UpdateWindow &int:theHandle.
     ]
     
     #method(stacksafe) setPosition &int:x &int:y &int:cx &int:cy &int:flags
     [
-        system'external'USER32 SetWindowPos &handle:theHandle &int:0 &int:x &int:y &int:cx &int:cy &int:flags.
+        system'external'USER32 SetWindowPos &int:theHandle &int:0 &int:x &int:y &int:cx &int:cy &int:flags.
     ]
 
     #method(stacksafe) getClientRect &win_rect:aStruct
     [
-        system'external'USER32 GetClientRect &handle:theHandle &win_rect:aStruct.
+        system'external'USER32 GetClientRect &int:theHandle &win_rect:aStruct.
     ]
   
     #method(stacksafe) read &hdc:anHDC
     [
-        #var(type:handle)dc := system'external'USER32 GetDC &handle:theHandle.
+        #var(type:int)dc := system'external'USER32 GetDC &int:theHandle.
         
         anHDC << dc.
     ]
@@ -146,12 +152,12 @@
 
     #method(stacksafe) set &hmenu:aMenuHandle
     [
-        system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
+        system'external'USER32 SetMenu &int:theHandle &int:aMenuHandle.
     ]
             
     #method(stacksafe) free
     [
-        system'external'USER32 DestroyWindow &handle:theHandle.
+        system'external'USER32 DestroyWindow &int:theHandle.
     ]
 }
 
@@ -181,11 +187,11 @@
             
     #method(stacksafe) begin &hwnd:aHandle
     [
-        system'external'USER32 BeginPaint &handle:aHandle &win_paintstruct:$self.
+        system'external'USER32 BeginPaint &int:aHandle &win_paintstruct:$self.
     ]
     
     #method(stacksafe) end &hwnd:aHandle
     [
-        system'external'USER32 EndPaint &handle:aHandle &win_paintstruct:$self.
+        system'external'USER32 EndPaint &int:aHandle &win_paintstruct:$self.
     ]
 }

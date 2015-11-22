@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // === basic memory classes ===
 
 // --- BaseByteArray ---
@@ -601,7 +603,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realarray:$self.    
 }
 
-// --- IntMatrix ---
+// --- RealMatrix ---
 
 #class(sealed)RealMatrix
 {
@@ -1804,10 +1806,18 @@
 
 #class(sealed,dynamic)OpenArgs
 {
+    /// Returns the specified array member
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    /// Returns the specified array member
+    #method(stacksafe) getAt &int:anIndex
+        => system'internal'arr_getat.
+
     #method(stacksafe) readLength &vint:aLength
         => system'internal'args_getlen.
         
-    #method(stacksafe) length
+    #method(stacksafe,type:int) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -1935,7 +1945,7 @@
         => theLiteral.
 }
 
-// --- LiteralEnumerator ---
+// --- WideLiteralEnumerator ---
 
 /// A literal enumerator
 #class WideLiteralEnumerator :: Enumerator

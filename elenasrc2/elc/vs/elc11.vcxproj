@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\..\engine\x86jitcompiler.cpp" />
     <ClCompile Include="..\image.cpp" />
+    <ClCompile Include="..\syntaxtree.cpp" />
     <ClCompile Include="..\win32\elc.cpp" />
     <ClCompile Include="..\compiler.cpp" />
     <ClCompile Include="..\project.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\source.h" />
     <ClInclude Include="..\syntax.h" />
     <ClInclude Include="..\bcwriter.h" />
+    <ClInclude Include="..\syntaxtree.h" />
     <ClInclude Include="..\win32\linker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,3 +1,5 @@
+// ==== ver 3.4.1 ===
+
 // data structure wrappers
 #subject(class:system'winforms'HInstance)         hinstance.
 #subject(class:system'winforms'WindowHandle)      hwnd.

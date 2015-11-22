@@ -12,4 +12,5 @@
     // Alternative 2
     console writeLine:(s1 toLower &locale:currentLocale).
     console writeLine:(s1 toUpper &locale:currentLocale).
+    console readChar.
 ].
