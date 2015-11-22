@@ -1,28 +1,28 @@
 // ==== ver 3.4.1 ===
 
 #import system.
-//#import system'routines.
+#import system'routines.
 
-//// --- CastOver ---
-//
-//#class(group) CastOver :: BaseArray
-//{
-//    #constructor new &args:aMembers
-//        <= (new &int:(aMembers length int))
-//    [
-//        #var(type:int)i := 0.
-//        #var(type:int)l := aMembers length.
-//        
-//        #loop (i < l)?
-//        [
-//            $self setField &int:i &object:(aMembers@i).
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//    
-//    #method => system'internal'handle_castover.
-//}
+// --- CastOver ---
+
+#class(group) CastOver :: BaseArray
+{
+    #constructor new &args:aMembers
+        <= (new &int:(aMembers length int))
+    [
+        #var(type:int)i := 0.
+        #var(type:int)l := aMembers length.
+        
+        #loop (i < l)?
+        [
+            $self setField &int:i &object:(aMembers@i).
+            
+            i := i + 1.
+        ].
+    ]
+    
+    #method => system'internal'handle_castover.
+}
 
 // --- Tape ---
 

@@ -33,33 +33,33 @@
         ^ aList array.
     ]
     
-//    #method split &literal:aValue
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:array_list) aList := ArrayList new.
-//        #var(type:int)aStart := 0.
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aValueLen.
-//        #var(type:int)aLiteralLen.
-//        
-//        aValue readLength &vint:aValueLen.
-//        aLiteral readLength &vint:aLiteralLen.
-//        
-//        #loop (anIndex >= 0)?        
-//        [
-//            aLiteral indexOf &int:aStart &literal:aValue &vint:anIndex.
-//            (-1 != anIndex) ?
-//            [
-//                aList += aLiteral Substring &int:aStart &int:(anIndex - aStart).
-//                aStart := anIndex + aValueLen.
-//            ]
-//            ! [
-//                aList += aLiteral Substring &int:aStart &int:(aLiteralLen - aStart).
-//            ].
-//        ].
-//        
-//        ^ aList array.
-//    ]
+    #method split &literal:aValue
+    [
+        #var(type:literal)aLiteral := self literal.        
+        #var(type:array_list) aList := ArrayList new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aValueLen.
+        #var(type:int)aLiteralLen.
+        
+        aValue readLength &vint:aValueLen.
+        aLiteral readLength &vint:aLiteralLen.
+        
+        #loop (anIndex >= 0)?        
+        [
+            aLiteral indexOf &int:aStart &literal:aValue &vint:anIndex.
+            (-1 != anIndex) ?
+            [
+                aList += aLiteral Substring &int:aStart &int:(anIndex - aStart).
+                aStart := anIndex + aValueLen.
+            ]
+            ! [
+                aList += aLiteral Substring &int:aStart &int:(aLiteralLen - aStart).
+            ].
+        ].
+        
+        ^ aList array.
+    ]
 }
 
 // --- wideListOp ---
@@ -94,32 +94,32 @@
         ^ aList array.
     ]
     
-//    #method split &wide:aValue
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:array_list) aList := ArrayList new.
-//        #var(type:int)aStart := 0.
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLiteralLen.
-//        aLiteral readLength &vint:aLiteralLen.
-//        #var(type:int)aValueLen.
-//        aValue readLength &vint:aValueLen.
-//        
-//        #loop (anIndex >= 0)?        
-//        [
-//            aLiteral indexOf &int:aStart &wide:aValue &vint:anIndex.
-//            (-1 != anIndex) ?
-//            [
-//                aList += aLiteral Substring &int:aStart &int:(anIndex - aStart).
-//                aStart := anIndex + aValueLen.
-//            ]
-//            ! [
-//                aList += aLiteral Substring &int:aStart &int:(aLiteralLen - aStart).
-//            ].
-//        ].
-//        
-//        ^ aList array.
-//    ]
+    #method split &wide:aValue
+    [
+        #var(type:wide)aLiteral := self wide.
+        #var(type:array_list) aList := ArrayList new.
+        #var(type:int)aStart := 0.
+        #var(type:int)anIndex := 0.
+        #var(type:int)aLiteralLen.
+        aLiteral readLength &vint:aLiteralLen.
+        #var(type:int)aValueLen.
+        aValue readLength &vint:aValueLen.
+        
+        #loop (anIndex >= 0)?        
+        [
+            aLiteral indexOf &int:aStart &wide:aValue &vint:anIndex.
+            (-1 != anIndex) ?
+            [
+                aList += aLiteral Substring &int:aStart &int:(anIndex - aStart).
+                aStart := anIndex + aValueLen.
+            ]
+            ! [
+                aList += aLiteral Substring &int:aStart &int:(aLiteralLen - aStart).
+            ].
+        ].
+        
+        ^ aList array.
+    ]
 }
 
 // --- enumerableOp ---
@@ -198,37 +198,37 @@
         anIndexer set:anObject2.
     ]
     
-//    #method indexOf : anObject
-//    [
-//        #var(type:iterator)anIndexer := self iterator.
-//        
-//        #var(type:int)i := 0.
-//        #loop (anIndexer available)?
-//        [
-//            (anObject == anIndexer get)
-//                ? [ ^ IntNumber new &int:i. ].
-//            
-//            i := i + 1.
-//        ].
-//        
-//        ^ -1.
-//    ]
-//    
-//    #method deepClone
-//    [
-//        #var aCopy := self clone.
-//        
-//        #var(type:iterator)aIndexer := aCopy iterator.
-//        
-//        #loop (aIndexer available)?
-//        [
-//            aIndexer set:(aIndexer get clone).
-//            
-//            aIndexer append &index:1.
-//        ].
-//        
-//        ^ aCopy.
-//    ]
+    #method indexOf : anObject
+    [
+        #var(type:iterator)anIndexer := self iterator.
+        
+        #var(type:int)i := 0.
+        #loop (anIndexer available)?
+        [
+            (anObject == anIndexer get)
+                ? [ ^ IntNumber new &int:i. ].
+            
+            i := i + 1.
+        ].
+        
+        ^ -1.
+    ]
+    
+    #method deepClone
+    [
+        #var aCopy := self clone.
+        
+        #var(type:iterator)aIndexer := aCopy iterator.
+        
+        #loop (aIndexer available)?
+        [
+            aIndexer set:(aIndexer get clone).
+            
+            aIndexer append &index:1.
+        ].
+        
+        ^ aCopy.
+    ]
     
     #method set &every:anIndexFunc
         = self::indexableOp set &nfunc:(anIndexFunc nfunc).

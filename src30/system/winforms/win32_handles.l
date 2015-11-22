@@ -69,38 +69,38 @@
         => system'internal'int_save.
 }
 
-//// --- HMENU ---
-//
-//#class(sealed,struct:embeddable) HMENU
-//{
-//    #field(type:handle)theHandle.
-//    
-//    #constructor new
-//    [
-//        #var(type:handle)h := system'external'USER32 CreateMenu.
-//        
-//        theHandle := h.
-//    ]
-//
-//    #constructor newPopup
-//    [
-//        #var(type:handle)h := system'external'USER32 CreatePopupMenu.
-//        
-//        theHandle := h.
-//    ]
-//
-//    #method(stacksafe) append &int:Flags &int:anID &wide:aCaption
-//    [
-//        system'external'USER32 AppendMenuW &handle:theHandle &int:Flags &int:anID &wide:aCaption.
-//    ]
-//            
-//    #method(stacksafe) append &int:Flags &handle:aParent &wide:aCaption
-//    [
-//        system'external'USER32 AppendMenuW &handle:theHandle &int:(Flags || MF_POPUP) &handle:aParent &wide:aCaption.
-//    ]
-//            
-//    #method(stacksafe) free
-//    [
-//        system'external'USER32 DestroyMenu &handle:theHandle.
-//    ]
-//}
+// --- HMENU ---
+
+#class(sealed,struct:embeddable) HMENU
+{
+    #field(type:int)theHandle.
+    
+    #constructor new
+    [
+        #var(type:int)h := system'external'USER32 CreateMenu.
+        
+        theHandle := h.
+    ]
+
+    #constructor newPopup
+    [
+        #var(type:int)h := system'external'USER32 CreatePopupMenu.
+        
+        theHandle := h.
+    ]
+
+    #method(stacksafe) append &int:Flags &int:anID &wide:aCaption
+    [
+        system'external'USER32 AppendMenuW &int:theHandle &int:Flags &int:anID &wide:aCaption.
+    ]
+            
+    #method(stacksafe) append &int:Flags &handle:aParent &wide:aCaption
+    [
+        system'external'USER32 AppendMenuW &int:theHandle &int:(Flags || MF_POPUP) &handle:aParent &wide:aCaption.
+    ]
+            
+    #method(stacksafe) free
+    [
+        system'external'USER32 DestroyMenu &int:theHandle.
+    ]
+}

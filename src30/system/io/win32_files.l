@@ -29,11 +29,11 @@
     #constructor openForRead &path:aPath
         <= %new &wide:(aPath wide) &int:$FILE_GENERIC_READ &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
     
-//    #constructor openForReWrite &path:aPath
-//        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
-//    
-//    #constructor openForAppend &path:aPath
-//        <= %new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
+    #constructor openForReWrite &path:aPath
+        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$CREATE_ALWAYS &int:0.
+    
+    #constructor openForAppend &path:aPath
+        <= %new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
     
     #constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
     [
@@ -91,14 +91,14 @@
             &int : $FILE_BEGIN.
     ] 
     
-//    #method readLength &vint:aLength 
-//    [ 
-//        #var(type:int)n := system'external'KERNEL32 GetFileSize
-//            &handle : theHandle
-//            &int:0.
-//    
-//        aLength << n. 
-//    ]
+    #method readLength &vint:aLength 
+    [ 
+        #var(type:int)n := system'external'KERNEL32 GetFileSize
+            &handle : theHandle
+            &int:0.
+    
+        aLength << n. 
+    ]
     
     #method close
     [
@@ -107,72 +107,72 @@
     ]
 }
 
-//// --- fileStreamHelper ---
-//
-//#symbol $fileStreamHelper =
-//{
-//    #method(type:stream)openForWrite &path:aPath &bool:anAppendMode
-//    [
-//        anAppendMode ? [ ^ FileStream openForAppend &path:aPath. ].
-//        
-//        ^ FileStream openForReWrite &path:aPath.
-//    ]
-//}.
-//
-//// --- StreamWriter ---
-//
-//#class StreamWriter :: TextWriter
-//{
-//    #field(type:stream) theStream.
-//    #field(type:encoder) theEncoder.
-//
-//    #constructor new &stream:aStream &encoder:anEncoder
-//        <= (new)
-//    [
-//        theStream := aStream.
-//        theEncoder := anEncoder.
-//
-//        theNewLineConstant := system'text'newLine literal.
-//    ]
-//
-//    #constructor new &path:aPath
-//        <= %new &stream:(FileStream openForReWrite &path:aPath) &encoder:UTF8Encoder.
-//        
-//    #constructor new &path:aPath &bool:anAppendMode
-//        <= %new &stream:($fileStreamHelper openForWrite &path:aPath &bool:anAppendMode) &encoder:UTF8Encoder.
-//        
-//    #method stream = theStream.        
-//        
-//    #method encoder = theEncoder.        
-//        
-//    #method write &chararray:anInput &int:aLength
-//    [
-//        #var(type:int)aTotal := aLength.
-//        #var(type:bytearray,size:64)aBuffer.
-//        #var(type:int)aBlockLength.
-//        #var(type:int)aBufferLength.
-//        #var(type:int)anOffset := 0.
-//        
-//        #loop (aTotal > 0) ?
-//        [
-//            (aTotal < 64)
-//                ? [ aBlockLength := aTotal. ]
-//                ! [ aBlockLength := 64. ].
-//                
-//            theEncoder convert &int:anOffset &vint:aBlockLength &chararray:anInput &bytearray:aBuffer &vint:aBufferLength.
-//            
-//            theStream write &bytearray:aBuffer &int:aBufferLength.
-//            
-//            aTotal := aTotal - aBlockLength.
-//            anOffset := anOffset + aBlockLength.
-//        ].
-//    ]
-//    
-//    #method close
-//    [
-//        theStream close.
-//    ]
-//}
+// --- fileStreamHelper ---
+
+#symbol $fileStreamHelper =
+{
+    #method(type:stream)openForWrite &path:aPath &bool:anAppendMode
+    [
+        anAppendMode ? [ ^ FileStream openForAppend &path:aPath. ].
+        
+        ^ FileStream openForReWrite &path:aPath.
+    ]
+}.
+
+// --- StreamWriter ---
+
+#class StreamWriter :: TextWriter
+{
+    #field(type:stream) theStream.
+    #field(type:encoder) theEncoder.
+
+    #constructor new &stream:aStream &encoder:anEncoder
+        <= (new)
+    [
+        theStream := aStream.
+        theEncoder := anEncoder.
+
+        theNewLineConstant := system'text'newLine literal.
+    ]
+
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForReWrite &path:aPath) &encoder:UTF8Encoder.
+        
+    #constructor new &path:aPath &bool:anAppendMode
+        <= %new &stream:($fileStreamHelper openForWrite &path:aPath &bool:anAppendMode) &encoder:UTF8Encoder.
+        
+    #method stream = theStream.        
+        
+    #method encoder = theEncoder.        
+        
+    #method write &chararray:anInput &int:aLength
+    [
+        #var(type:int)aTotal := aLength.
+        #var(type:bytearray,size:64)aBuffer.
+        #var(type:int)aBlockLength.
+        #var(type:int)aBufferLength.
+        #var(type:int)anOffset := 0.
+        
+        #loop (aTotal > 0) ?
+        [
+            (aTotal < 64)
+                ? [ aBlockLength := aTotal. ]
+                ! [ aBlockLength := 64. ].
+                
+            theEncoder convert &int:anOffset &vint:aBlockLength &chararray:anInput &bytearray:aBuffer &vint:aBufferLength.
+            
+            theStream write &bytearray:aBuffer &int:aBufferLength.
+            
+            aTotal := aTotal - aBlockLength.
+            anOffset := anOffset + aBlockLength.
+        ].
+    ]
+    
+    #method close
+    [
+        theStream close.
+    ]
+}
 
 // --- StreamReader ---
 
@@ -225,49 +225,49 @@
     ]
 }
 
-//// --- BinaryFileReader ---
-//
-//#class(sealed)BinaryFileReader :: BinaryReader
-//{
-//    #constructor new &path:aPath
-//        <= %new &stream:(FileStream openForRead &path:aPath).
-//}
-//
-//// --- BinaryFileWriter ---
-//
-//#class(sealed)BinaryFileWriter :: BinaryWriter
-//{
-//    #constructor new &path:aPath
-//        <= %new &stream:(FileStream openForReWrite &path:aPath).
-//}
-//
-//// --- fileOp ---
-//
-//#class(extension:file)fileOp
-//{
-//    #method openForRead = FileStream openForRead &path:self.
-//    
-//    #method openForReWrite = FileStream openForReWrite &path:self.
-//    
-//    #method openForAppend = FileStream openForAppend &path:self.    
-//        
-//    #method textreader = StreamReader new &path:self.
-//    
-//    #method textwriter = StreamWriter new &path:self.
-//    
-//    #method logger = StreamWriter new &path:self &bool:true.
-//    
-//    #method(type:bool) is &available
-//    [
-//        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
-//        
-//        ^ (ret != 0FFFFFFFFh).
-//    ]
-//    
-//    #method delete
-//    [
-//        #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
-//        
-//       ^ ret != 0.
-//    ]
-//}
+// --- BinaryFileReader ---
+
+#class(sealed)BinaryFileReader :: BinaryReader
+{
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForRead &path:aPath).
+}
+
+// --- BinaryFileWriter ---
+
+#class(sealed)BinaryFileWriter :: BinaryWriter
+{
+    #constructor new &path:aPath
+        <= %new &stream:(FileStream openForReWrite &path:aPath).
+}
+
+// --- fileOp ---
+
+#class(extension:file)fileOp
+{
+    #method openForRead = FileStream openForRead &path:self.
+    
+    #method openForReWrite = FileStream openForReWrite &path:self.
+    
+    #method openForAppend = FileStream openForAppend &path:self.    
+        
+    #method textreader = StreamReader new &path:self.
+    
+    #method textwriter = StreamWriter new &path:self.
+    
+    #method logger = StreamWriter new &path:self &bool:true.
+    
+    #method(type:bool) is &available
+    [
+        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
+        
+        ^ (ret != 0FFFFFFFFh).
+    ]
+    
+    #method delete
+    [
+        #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
+        
+       ^ ret != 0.
+    ]
+}

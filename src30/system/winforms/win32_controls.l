@@ -150,10 +150,10 @@
         ^ HDC new &hdc:aDC.
     ]
 
-//    #method(stacksafe) set &hmenu:aMenuHandle
-//    [
-//        system'external'USER32 SetMenu &handle:theHandle &handle:aMenuHandle.
-//    ]
+    #method(stacksafe) set &hmenu:aMenuHandle
+    [
+        system'external'USER32 SetMenu &int:theHandle &int:aMenuHandle.
+    ]
             
     #method(stacksafe) free
     [

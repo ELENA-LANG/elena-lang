@@ -2,9 +2,6 @@
 
 #import system.
 
-#subject(class:system'calendar'Date) datetime.
-#subject(class:system'calendar'TimeSpan) timespan.
-
 // --- TimeSpan --
 
 #class(sealed,struct:embeddable) TimeSpan :: BaseNumber

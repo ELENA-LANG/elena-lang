@@ -197,35 +197,35 @@
 }
 
 // --- ChildWindowCallback ---
-//
-//#class ChildWindowCallback :: WindowCallback
-//{
-//    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+
+#class ChildWindowCallback :: WindowCallback
+{
+    #method eval &hwnd:anHWND &int:aMessage &vint:aRetVal
+    [
+        (aMessage == WM_CLOSE)
+            ? [
+                anHWND free.
+                
+                aRetVal << 0.
+                
+                ^ $self.
+            ].
+        
+        (aMessage == WM_DESTROY)
+            ? [
+                $self ondestroy &hwnd:anHWND &vint:aRetVal.
+                
+                ^ $self.
+            ].
+        
+        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
+    ]
+
+//    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
 //    [
-//        (aMessage == WM_CLOSE)
-//            ? [
-//                anHWND free.
-//                
-//                aRetVal << 0.
-//                
-//                ^ $self.
-//            ].
-//        
-//        (aMessage == WM_DESTROY)
-//            ? [
-//                $self ondestroy &hwnd:anHWND &vint:aRetVal.
-//                
-//                ^ $self.
-//            ].
-//        
-//        $super eval &hwnd:anHWND &int:aMessage &vint:aRetVal.
+//        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
 //    ]
-//
-////    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
-////    [
-////        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
-////    ]
-//}
+}
 
 // --- SDIWindowClass ---
 

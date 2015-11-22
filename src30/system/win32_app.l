@@ -21,12 +21,12 @@
 {
     #field theFinializeEvent.
 
-//    #method set &onAppEnd:aHandle
-//    [
-//        ($nil == theFinializeEvent)
-//            ? [ theFinializeEvent := aHandle. ]
-//            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
-//    ]
+    #method set &onAppEnd:aHandle
+    [
+        ($nil == theFinializeEvent)
+            ? [ theFinializeEvent := aHandle. ]
+            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
+    ]
     
     #method start
     [

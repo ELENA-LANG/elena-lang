@@ -140,55 +140,55 @@
         ].
     ]
 
-//    #method insert &int:anIndex &int:aLength &chararray:anArray
-//    [
-//        $self reserve &int:aLength.
-//        
-//        theBuffer move &int:anIndex &int:theLength &int:aLength.
-//        
-//        theBuffer write &int:anIndex &int:aLength &chararray:anArray.
-//        
-//        theLength += aLength.
-//    ]
-//
-//    #method insert &int:anIndex &literal:aLiteral
-//    [
-//        #var(type:int)aLength.
-//        UTF8Encoding charCount &literal:aLiteral &vint:aLength.
-//
-//        $self reserve &int:aLength.
-//        
-//        theBuffer move &int:anIndex &int:theLength &int:aLength.
-//        
-//        aLiteral save &int:anIndex &chararray:theBuffer &vint:aLength.
-//        
-//        theLength += aLength.
-//    ]
-//
-//    #method insert &int:anIndex &wide:aLiteral
-//    [
-//        #var(type:int)aLength.
-//        UTF16Encoding charCount &wide:aLiteral &vint:aLength.
-//
-//        $self reserve &int:aLength.
-//        
-//        theBuffer move &int:anIndex &int:theLength &int:aLength.
-//        
-//        aLiteral save &int:anIndex &chararray:theBuffer &vint:aLength.
-//        
-//        theLength += aLength.
-//    ]
-//    
-//    #method insert &int:anIndex &char:aChar
-//    [
-//        $self reserve &int:1.
-//        
-//        theBuffer move &int:anIndex &int:theLength &int:1.
-//        
-//        theBuffer write &int:anIndex &char:aChar.
-//        
-//        theLength += 1.
-//    ]
+    #method insert &int:anIndex &int:aLength &chararray:anArray
+    [
+        $self reserve &int:aLength.
+        
+        theBuffer move &int:anIndex &int:theLength &int:aLength.
+        
+        theBuffer write &int:anIndex &int:aLength &chararray:anArray.
+        
+        theLength += aLength.
+    ]
+
+    #method insert &int:anIndex &literal:aLiteral
+    [
+        #var(type:int)aLength.
+        UTF8Encoding charCount &literal:aLiteral &vint:aLength.
+
+        $self reserve &int:aLength.
+        
+        theBuffer move &int:anIndex &int:theLength &int:aLength.
+        
+        aLiteral save &int:anIndex &chararray:theBuffer &vint:aLength.
+        
+        theLength += aLength.
+    ]
+
+    #method insert &int:anIndex &wide:aLiteral
+    [
+        #var(type:int)aLength.
+        UTF16Encoding charCount &wide:aLiteral &vint:aLength.
+
+        $self reserve &int:aLength.
+        
+        theBuffer move &int:anIndex &int:theLength &int:aLength.
+        
+        aLiteral save &int:anIndex &chararray:theBuffer &vint:aLength.
+        
+        theLength += aLength.
+    ]
+    
+    #method insert &int:anIndex &char:aChar
+    [
+        $self reserve &int:1.
+        
+        theBuffer move &int:anIndex &int:theLength &int:1.
+        
+        theBuffer write &int:anIndex &char:aChar.
+        
+        theLength += 1.
+    ]
 
     #method(stacksafe) indexOf &int:aPosition &char:aValue &vint:aRetVal
     [

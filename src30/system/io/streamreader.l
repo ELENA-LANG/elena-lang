@@ -1,129 +1,129 @@
 // ==== ver 3.4.1 ===
 
 #import system.
-//#import system'routines.
+#import system'routines.
 #import system'text.
 
-//// --- BinaryReader ---
-//
-//#class(limited) BinaryReader
-//{
-//    #field(type:stream)theStream.
-//    #field(type:int)theLength.
-//    
-//    #constructor new &stream:aStream
-//    [
-//        theStream := aStream.
-//        
-//        theLength := aStream length int.
-//    ]
-//    
-//    #method(stacksafe) read &bytearray:anArray &vint:anActualLength
-//    [
-//        theStream read &bytearray:anArray &vint:anActualLength.
-//    ]
-//
-//    #method stream = theStream.
-//
-//    #method close => theStream.
-//
-//    #method(type:bool) available
-//    [
-//        #var(type:int)aPosition.
-//        
-//        theStream readIndex &vint:aPosition.
-//        
-//        ^ aPosition < theLength.
-//    ]
-//            
-//    #method(stacksafe) read &bytearray:anArray &int:aLength
-//    [
-//        #var(type:int)aRead := aLength.
-//        
-//        $self read &bytearray:anArray &vint:aRead.
-//         
-//        (aLength > aRead)
-//            ? [ #throw IOException new. ].
-//    ]
-//
-//    #method read &vbyte:anInt
-//    [
-//        #var(type:bytearray,size:4)aBuffer.
-//        #var(type:int)aRead := 1.
-//        
-//        $self read &bytearray:aBuffer &vint:aRead.
-//        
-//        (aRead < 1)
-//            ? [ #throw IOException new. ].
-//            
-//        aBuffer read &int:0 &vbyte:anInt.
-//    ]
-//
-//    #method read &vshort:anInt
-//    [
-//        #var(type:bytearray,size:4)aBuffer.
-//        #var(type:int)aRead := 2.
-//        
-//        $self read &bytearray:aBuffer &vint:aRead.
-//        
-//        (aRead < 1)
-//            ? [ #throw IOException new. ].
-//            
-//        aBuffer read &int:0 &vshort:anInt.
-//    ]
-//
-//    #method read &vchar:anInt
-//    [
-//        #var(type:bytearray,size:4)aBuffer.
-//        #var(type:int)aRead := 4.
-//        
-//        $self read &bytearray:aBuffer &vint:aRead.
-//        
-//        (aRead < 1)
-//            ? [ #throw IOException new. ].
-//            
-//        aBuffer read &int:0 &vchar:anInt.
-//    ]
-//
-//    #method read &vint:anInt
-//    [
-//        #var(type:bytearray,size:4)aBuffer.
-//        #var(type:int)aRead := 4.
-//        
-//        $self read &bytearray:aBuffer &int:aRead.
-//        
-//        (aRead < 4)
-//            ? [ #throw IOException new. ].
-//            
-//        aBuffer read &int:0 &vint:anInt.
-//    ]
-//
-//    #method read &vlong:aLong
-//    [
-//        #var(type:bytearray,size:8)aBuffer.
-//        #var(type:int)aRead := 8.
-//        
-//        $self read &bytearray:aBuffer &vint:aRead.
-//        
-//        (aRead < 8)
-//            ? [ #throw IOException new. ].
-//            
-//        aBuffer read &int:0 &vlong:aLong.
-//    ]
-//
-//    #method read &vreal:aReal
-//    [
-//        #var(type:bytearray,size:8)aBuffer.
-//        #var(type:int)aRead := 8.
-//        
-//        $self read &bytearray:aBuffer &vint:aRead.
-//        
-//        (aRead < 8)
-//            ? [ #throw IOException new. ].
-//            
-//        aBuffer read &int:0 &vreal:aReal.
-//    ]
-//}
+// --- BinaryReader ---
+
+#class(limited) BinaryReader
+{
+    #field(type:stream)theStream.
+    #field(type:int)theLength.
+    
+    #constructor new &stream:aStream
+    [
+        theStream := aStream.
+        
+        theLength := aStream length int.
+    ]
+    
+    #method(stacksafe) read &bytearray:anArray &vint:anActualLength
+    [
+        theStream read &bytearray:anArray &vint:anActualLength.
+    ]
+
+    #method stream = theStream.
+
+    #method close => theStream.
+
+    #method(type:bool) available
+    [
+        #var(type:int)aPosition.
+        
+        theStream readIndex &vint:aPosition.
+        
+        ^ aPosition < theLength.
+    ]
+            
+    #method(stacksafe) read &bytearray:anArray &int:aLength
+    [
+        #var(type:int)aRead := aLength.
+        
+        $self read &bytearray:anArray &vint:aRead.
+         
+        (aLength > aRead)
+            ? [ #throw IOException new. ].
+    ]
+
+    #method read &vbyte:anInt
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        #var(type:int)aRead := 1.
+        
+        $self read &bytearray:aBuffer &vint:aRead.
+        
+        (aRead < 1)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &int:0 &vbyte:anInt.
+    ]
+
+    #method read &vshort:anInt
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        #var(type:int)aRead := 2.
+        
+        $self read &bytearray:aBuffer &vint:aRead.
+        
+        (aRead < 1)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &int:0 &vshort:anInt.
+    ]
+
+    #method read &vchar:anInt
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        #var(type:int)aRead := 4.
+        
+        $self read &bytearray:aBuffer &vint:aRead.
+        
+        (aRead < 1)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &int:0 &vchar:anInt.
+    ]
+
+    #method read &vint:anInt
+    [
+        #var(type:bytearray,size:4)aBuffer.
+        #var(type:int)aRead := 4.
+        
+        $self read &bytearray:aBuffer &int:aRead.
+        
+        (aRead < 4)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &int:0 &vint:anInt.
+    ]
+
+    #method read &vlong:aLong
+    [
+        #var(type:bytearray,size:8)aBuffer.
+        #var(type:int)aRead := 8.
+        
+        $self read &bytearray:aBuffer &vint:aRead.
+        
+        (aRead < 8)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &int:0 &vlong:aLong.
+    ]
+
+    #method read &vreal:aReal
+    [
+        #var(type:bytearray,size:8)aBuffer.
+        #var(type:int)aRead := 8.
+        
+        $self read &bytearray:aBuffer &vint:aRead.
+        
+        (aRead < 8)
+            ? [ #throw IOException new. ].
+            
+        aBuffer read &int:0 &vreal:aReal.
+    ]
+}
 
 // --- TextReader ---
 

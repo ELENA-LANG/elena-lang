@@ -78,22 +78,22 @@
     #method => system'internal'qualify_message.
 }
 
-//// --- MessageVar ---
-//
-//#class(sealed,struct:embeddable) MessageVar
-//{
-//    /// Creates a dynamic signature
-//    #field(type:mssg)theMessage.
-//    
-//    #constructor new &mssg:aMessage
-//    [
-//        theMessage := aMessage.
-//    ]
-//    
-//    #method mssg = Message new &mssg:theMessage.
-//    
-//    #method => theMessage.
-//}
+// --- MessageVar ---
+
+#class(sealed,struct:embeddable) MessageVar
+{
+    /// Creates a dynamic signature
+    #field(type:mssg)theMessage.
+    
+    #constructor new &mssg:aMessage
+    [
+        theMessage := aMessage.
+    ]
+    
+    #method mssg = Message new &mssg:theMessage.
+    
+    #method => theMessage.
+}
 
 // --- MessageArray ---
 
@@ -137,47 +137,47 @@
     
     #method enumerator = MessageArrayEnumerator new &mssgarray:$self.
 
-//    #method iterator = MessageArrayIterator new &mssgarray:$self.
+    #method iterator = MessageArrayIterator new &mssgarray:$self.
     
     #method cast : aVerb &to:aTarget = aTarget::aVerb eval &mssgarray:$self.
     
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &mssgarray:$self.
 }
 
-//// --- MessageArrayIterator ---
-//
-//#class MessageArrayIterator :: Iterator
-//{
-//    #field(type:mssgarray) theArray.
-//    #field(type:vint)  theIndex.
-//
-//    #constructor new &mssgarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := Integer new.
-//    ]
-//    
-//    #method available
-//    [
-//        #var(type:int)aLength.
-//        theArray readLength &vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex write &int:anIndex.
-//    ]
-//}
+// --- MessageArrayIterator ---
+
+#class MessageArrayIterator :: Iterator
+{
+    #field(type:mssgarray) theArray.
+    #field(type:vint)  theIndex.
+
+    #constructor new &mssgarray:anArray
+    [
+        theArray := anArray.
+        theIndex := Integer new.
+    ]
+    
+    #method available
+    [
+        #var(type:int)aLength.
+        theArray readLength &vint:aLength.
+        
+        ^ theIndex < aLength.
+    ]
+
+    #method get
+        = theArray getAt &int:theIndex.
+    
+    #method readIndex  &vint:anIndex
+    [
+        anIndex << theIndex.
+    ]
+    
+    #method writeIndex &int:anIndex 
+    [
+        theIndex write &int:anIndex.
+    ]
+}
 
 // --- MessageArrayEnumerator ---
 

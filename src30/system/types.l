@@ -16,9 +16,9 @@
 #subject(class:system'RealNumber)   real.
 #subject(class:system'CharValue)    char.
 #subject(class:system'Message)      mssg.
-//#subject(class:system'Verb)         verb.
+#subject(class:system'Verb)         verb.
 #subject(class:system'Signature)    subject.
-//#subject(class:system'Symbol)       symbol_ref.
+#subject(class:system'Symbol)       symbol_ref.
 
 #subject(class:system'Integer)      vint.
 #subject(class:system'Long)         vlong.
@@ -26,14 +26,14 @@
 #subject(class:system'Byte)         vbyte.
 #subject(class:system'Short)        vshort.
 #subject(class:system'Char)         vchar.
-//#subject(class:system'MessageVar)   vmssg.
+#subject(class:system'MessageVar)   vmssg.
 
 // === basic dynamic types ===
 #subject(class:system'ByteArray)    bytearray.
 #subject(class:system'ShortArray)   shortarray.
 #subject(class:system'IntArray)     intarray.
-//#subject(class:system'IntMatrix)    intmatrix.
-//#subject(class:system'RealArray)    realarray.
+#subject(class:system'IntMatrix)    intmatrix.
+#subject(class:system'RealArray)    realarray.
 #subject(class:system'RealMatrix)   realmatrix.
 #subject(class:system'CharArray)    chararray.
 #subject(class:system'Array)        array.

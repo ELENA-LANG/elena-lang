@@ -402,29 +402,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 &enumerator:anEnumerator
-//    [
-//        #var anItem := nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base four variable function
@@ -442,29 +442,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.
+    ]
 }
 
 /// A base five variable function
@@ -482,29 +482,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.
+    ]
 }
 
 /// A base six variable function
@@ -522,29 +522,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base seven variable function
@@ -562,29 +562,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base eight variable function
@@ -602,29 +602,29 @@
     /// Executes the function    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base nine variable function
@@ -642,29 +642,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base ten variable function
@@ -682,29 +682,29 @@
     /// Executes the function    
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base eleven variable functions
@@ -722,29 +722,29 @@
     /// Executes the function
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
     
-//    /// Executes the function for parameters and every enumeration item
-//    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for parameters and every enumeration item
+    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
 }
 
 // --- base lazy expression ---
@@ -847,51 +847,51 @@
     /// Obsolete
     #method eval &index:i &index:j []
 
-//    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
-//    #method rewind &int:i &int:j &int:n &int:m &int:dx
-//    [
-//        #var(type:int)x := i.
-//        #var(type:int)y := j.
-//        
-//        #loop(x >= n) ?
-//        [
-//            y := j.
-//            
-//            #loop (y >= m) ?
-//            [
-//                $self eval &int:x &int:y.
-//                
-//                y := y - dx.
-//            ].
-//                        
-//            x := x - dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
-//    #method run &int:i &int:j &int:n &int:m &int:dx
-//    [
-//        #var(type:int)x := i.
-//        #var(type:int)y := j.
-//        
-//        #loop(x <= n) ?
-//        [
-//            y := j.
-//            
-//            #loop (y <= m) ?
-//            [
-//                $self eval &int:x &int:y.
-//                
-//                y := y + dx.
-//            ].
-//                        
-//            x := x + dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
+    #method rewind &int:i &int:j &int:n &int:m &int:dx
+    [
+        #var(type:int)x := i.
+        #var(type:int)y := j.
+        
+        #loop(x >= n) ?
+        [
+            y := j.
+            
+            #loop (y >= m) ?
+            [
+                $self eval &int:x &int:y.
+                
+                y := y - dx.
+            ].
+                        
+            x := x - dx.
+        ].
+        
+        ^ $nil.        
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
+    #method run &int:i &int:j &int:n &int:m &int:dx
+    [
+        #var(type:int)x := i.
+        #var(type:int)y := j.
+        
+        #loop(x <= n) ?
+        [
+            y := j.
+            
+            #loop (y <= m) ?
+            [
+                $self eval &int:x &int:y.
+                
+                y := y + dx.
+            ].
+                        
+            x := x + dx.
+        ].
+        
+        ^ $nil.        
+    ]
 }
 
 /// A base three variable index function
@@ -909,67 +909,67 @@
     /// Executes the function
     #method(stacksafe) eval &int:i &int:j &int:k []
 
-//    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
-//    #method rewind &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
-//    [
-//        #var(type:int)x := i.
-//        #var(type:int)y := j.
-//        #var(type:int)z := k.
-//        
-//        #loop(x >= n) ?
-//        [
-//            y := j.
-//            
-//            #loop (y >= m) ?
-//            [
-//                z := k.
-//                
-//                #loop (z >= p) ?
-//                [
-//                    $self eval &int:x &int:y &int:z.
-//                    
-//                    z := z - dx.
-//                ].                
-//                
-//                y := y - dx.
-//            ].
-//                        
-//            x := x - dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
-//    #method run &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
-//    [
-//        #var(type:int)x := i.
-//        #var(type:int)y := j.
-//        #var(type:int)z := k.
-//        
-//        #loop(x <= n) ?
-//        [
-//            y := j.
-//            
-//            #loop (y <= m) ?
-//            [
-//                z := k.
-//                
-//                #loop (z <= p) ?
-//                [
-//                    $self eval &int:x &int:y &int:z.
-//                    
-//                    z := z + dx.
-//                ].                
-//                
-//                y := y + dx.
-//            ].
-//                        
-//            x := x + dx.
-//        ].
-//        
-//        ^ $nil.        
-//    ]
+    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
+    #method rewind &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
+    [
+        #var(type:int)x := i.
+        #var(type:int)y := j.
+        #var(type:int)z := k.
+        
+        #loop(x >= n) ?
+        [
+            y := j.
+            
+            #loop (y >= m) ?
+            [
+                z := k.
+                
+                #loop (z >= p) ?
+                [
+                    $self eval &int:x &int:y &int:z.
+                    
+                    z := z - dx.
+                ].                
+                
+                y := y - dx.
+            ].
+                        
+            x := x - dx.
+        ].
+        
+        ^ $nil.        
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
+    #method run &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
+    [
+        #var(type:int)x := i.
+        #var(type:int)y := j.
+        #var(type:int)z := k.
+        
+        #loop(x <= n) ?
+        [
+            y := j.
+            
+            #loop (y <= m) ?
+            [
+                z := k.
+                
+                #loop (z <= p) ?
+                [
+                    $self eval &int:x &int:y &int:z.
+                    
+                    z := z + dx.
+                ].                
+                
+                y := y + dx.
+            ].
+                        
+            x := x + dx.
+        ].
+        
+        ^ $nil.        
+    ]
 }
 
 // --- Boolean ---

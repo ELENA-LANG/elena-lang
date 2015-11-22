@@ -423,52 +423,52 @@
         theLength += 1.
     ]
     
-//    /// Inserts a new object to the specified position
-//    #method insert &int:anIndex &object:anObject
-//    [
-//        (anIndex >= theLength)
-//            ? [ #throw OutOfRangeException new. ].
-//        
-//        $self $expand.
-//        
-//        #var(type:int) i := theLength.
-//        #loop (i > anIndex)?
-//        [
-//            theArray setAt &int:i &object:(theArray getAt &int:(i - 1)).
-//            
-//            i := i - 1.
-//        ].
-//        
-//        theArray setAt &int:anIndex &object:anObject.
-//    ]    
-//    
-//    /// Inserts a new object to the beginning of the list
-//    #method insert : anObject
-//        <= insert &int:0 &object:anObject.
-//
-//    #method insert : anObject &at:anIndex
-//        <= insert &int:(anIndex int) &object:anObject.
-//        
-//    /// Removes an object at the specified position
-//    #method(stacksafe) remove &int:anIndex
-//    [
-//        (anIndex >= theLength)
-//            ? [ #throw OutOfRangeException new. ].
-//        
-//        theLength -= 1.
-//        
-//        #var(type:int)i := anIndex.
-//        #loop (i < theLength)?
-//        [
-//            theArray setAt &int:i &object:(theArray getAt &int:(i + 1)).
-//        ].
-//    ]
-//        
-//    #method remove &index:anIndex
-//        <= remove &int:(anIndex int).
-//
-//    #method remove &at:anIndex
-//        <= remove &int:(anIndex int).
+    /// Inserts a new object to the specified position
+    #method insert &int:anIndex &object:anObject
+    [
+        (anIndex >= theLength)
+            ? [ #throw OutOfRangeException new. ].
+        
+        $self $expand.
+        
+        #var(type:int) i := theLength.
+        #loop (i > anIndex)?
+        [
+            theArray setAt &int:i &object:(theArray getAt &int:(i - 1)).
+            
+            i := i - 1.
+        ].
+        
+        theArray setAt &int:anIndex &object:anObject.
+    ]    
+    
+    /// Inserts a new object to the beginning of the list
+    #method insert : anObject
+        <= insert &int:0 &object:anObject.
+
+    #method insert : anObject &at:anIndex
+        <= insert &int:(anIndex int) &object:anObject.
+        
+    /// Removes an object at the specified position
+    #method(stacksafe) remove &int:anIndex
+    [
+        (anIndex >= theLength)
+            ? [ #throw OutOfRangeException new. ].
+        
+        theLength -= 1.
+        
+        #var(type:int)i := anIndex.
+        #loop (i < theLength)?
+        [
+            theArray setAt &int:i &object:(theArray getAt &int:(i + 1)).
+        ].
+    ]
+        
+    #method remove &index:anIndex
+        <= remove &int:(anIndex int).
+
+    #method remove &at:anIndex
+        <= remove &int:(anIndex int).
 
     /// Returns itself
     #method array_list = $self.
@@ -488,17 +488,17 @@
         aLength << theLength.
     ]
     
-//    /// Clears the list
-//    #method clear 
-//    [
-//        theLength write &int:0.        
-//    ]
-//    
-//    /// Returns the top object
-//    #method first = theArray getAt &int:0.
-//
-//    /// Returns the last object
-//    #method last = theArray getAt &int:(theLength - 1).
+    /// Clears the list
+    #method clear 
+    [
+        theLength write &int:0.        
+    ]
+    
+    /// Returns the top object
+    #method first = theArray getAt &int:0.
+
+    /// Returns the last object
+    #method last = theArray getAt &int:(theLength - 1).
     
     /// Returns the list enumerator
     #method enumerator = ArrayListEnumerator new &array_list:$self.
@@ -782,19 +782,19 @@
     /// Dispatches the verb to the target object with enumerable subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
 
-//    /// Clones a dictionary
-//    #method clone 
-//    [
-//        #var aList := Dictionary new.
-//
-//        #var(type:enumerator) it := theList enumerator.
-//        #loop (it next)?
-//        [
-//            #var anItem := it get.
-//            
-//            aList@(anItem key) := anItem object.
-//        ].
-//        
-//        ^ aList.
-//    ]
+    /// Clones a dictionary
+    #method clone 
+    [
+        #var aList := Dictionary new.
+
+        #var(type:enumerator) it := theList enumerator.
+        #loop (it next)?
+        [
+            #var anItem := it get.
+            
+            aList@(anItem key) := anItem object.
+        ].
+        
+        ^ aList.
+    ]
 }
