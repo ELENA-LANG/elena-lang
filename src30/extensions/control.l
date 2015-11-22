@@ -61,10 +61,10 @@
 
 #symbol control =
 {
-//    try : anAction
-//    [
-//        anAction eval | if: e [].
-//    ]    
+    try : anAction
+    [
+        anAction eval | if: e [].
+    ]    
     
     do:anAction = anAction eval.
     

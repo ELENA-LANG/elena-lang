@@ -163,11 +163,11 @@
                       
                    } &with:aBase.
             
-//    #method toByte
-//        = self cast:%convert &to:byteConvertor.
-//
-//    #method toShort
-//        = self cast:%convert &to:shortConvertor.
+    #method toByte
+        = self cast:%convert &to:byteConvertor.
+
+    #method toShort
+        = self cast:%convert &to:shortConvertor.
 
     #method toInt
         = self cast:%convert &to:intConvertor.

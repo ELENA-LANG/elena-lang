@@ -1,5 +1,7 @@
-#define system.
-#define system'routines.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'routines.
 
 #class(sealed)DBReader
 {
@@ -18,7 +20,7 @@
     
     #method(stacksafe) readNext &vint:aResult
     [
-        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
+        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
         
         aResult << aRetVal.
     ]

@@ -1,7 +1,9 @@
-#define system.
-#define system'routines.
-#define system'collections.
-#define extensions.
+// ==== ver 3.4.1 ===
+
+#import system.
+#import system'routines.
+#import system'collections.
+#import extensions.
 
 #symbol(const,type:int)SQLITE_OK = 0.
 #symbol(const,type:int)SQLITE_ROW = 100.
@@ -30,7 +32,7 @@
 
 #class(sealed) DBConnection
 {
-    #field(type:handle) theDBHandle.
+    #field(type:int) theDBHandle.
     #field(type:literal)thePath.
     #field(type:bool)theOpen.
     
@@ -42,7 +44,7 @@
     
     #method sqlite_cnn = $self.
     
-    #method handle = theDBHandle.
+    #method int = theDBHandle.
     
     #method is &available = theOpen.
     
@@ -52,12 +54,12 @@
         #var(type:int) aRetVal := system'external'sqlite3 sqlite3_open &literal:thePath &vint:aHandle.
         (aRetVal != SQLITE_OK)? [ #throw DBException new &message:"Could not open a database file". ] ! [ theOpen := true. ].
 
-        theDBHandle := Handle new &int:aHandle.
+        theDBHandle := aHandle.
     ]
     
     #method last_error_message
     [
-        #var(type:dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &handle:theDBHandle.
+        #var(type:dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:theDBHandle.
 
         ^ aPtr literal.
     ]
@@ -127,7 +129,7 @@
     #method close
     [
         theOpen
-            ? [ system'external'sqlite3 sqlite3_close &handle:theDBHandle. ].
+            ? [ system'external'sqlite3 sqlite3_close &int:theDBHandle. ].
             
         theOpen := false.
     ]
@@ -160,7 +162,7 @@
         aText readLength &vint:aTextLen.
         
         #var(type:int) aRetVal := system'external'sqlite3 sqlite3_prepare_v2
-                                                &handle:(theConnection handle)
+                                                &int:(theConnection int)
                                                 &literal:aText
                                                 &int:aTextLen
                                                 &vint:aHandle
@@ -172,21 +174,21 @@
     
     #method eval
     [
-        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
+        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 
         (aRetPrc != SQLITE_DONE)? [ #throw DBException new &message:"Could not execute SQL statement.". ].
     ]
     
     #method evalNext
     [
-        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
+        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 
         ^ (aRetPrc == SQLITE_ROW).
     ]
     
     #method(stacksafe) evalScalar
     [
-        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &handle:theCommandHandle.
+        #var(type:int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 
         (aRetPrc != SQLITE_ROW)? [ ^ $nil. ].
 
@@ -199,33 +201,33 @@
     
     #method(stacksafe) getAt &int:anIndex
     [
-        #var(type:int) columnType := system'external'sqlite3 sqlite3_column_type &handle:theCommandHandle &int:anIndex.
+        #var(type:int) columnType := system'external'sqlite3 sqlite3_column_type &int:theCommandHandle &int:anIndex.
         
         (columnType == SQLITE_INTEGER)?
         [
-            #var(type:int) val := system'external'sqlite3 sqlite3_column_int &handle:theCommandHandle &int:anIndex.
+            #var(type:int) val := system'external'sqlite3 sqlite3_column_int &int:theCommandHandle &int:anIndex.
             
             ^ IntNumber new &int:val.
         ].
         
         (columnType == SQLITE_TEXT)?
         [
-            #var(type:dirty_ptr)aColumnTextPtr := system'external'sqlite3 sqlite3_column_text &handle:theCommandHandle &int:anIndex.
+            #var(type:dirty_ptr)aColumnTextPtr := system'external'sqlite3 sqlite3_column_text &int:theCommandHandle &int:anIndex.
 
             ^ aColumnTextPtr literal.
         ].
         
         (columnType == SQLITE_FLOAT)?
         [
-            #var(type:real) val := system'external'sqlite3 sqlite3_column_double &handle:theCommandHandle &int:anIndex.
+            #var(type:real) val := system'external'sqlite3 sqlite3_column_double &int:theCommandHandle &int:anIndex.
             
             ^ RealNumber new &real:val.
         ].
 
         (columnType == SQLITE_BLOB)?
         [
-            #var(type:int)blob := system'external'sqlite3  sqlite3_column_blob &handle:theCommandHandle &int:anIndex.
-            #var(type:int)len := system'external'sqlite3 sqlite3_column_bytes &handle:theCommandHandle &int:anIndex.
+            #var(type:int)blob := system'external'sqlite3  sqlite3_column_blob &int:theCommandHandle &int:anIndex.
+            #var(type:int)len := system'external'sqlite3 sqlite3_column_bytes &int:theCommandHandle &int:anIndex.
             
             #var(type:bytearray)arr := ByteArray new &int:len.
 
@@ -247,7 +249,7 @@
     
     #method(stacksafe) readFieldCount &vint:aCount
     [
-        #var(type:int) ret := system'external'sqlite3 sqlite3_column_count &handle:theCommandHandle.
+        #var(type:int) ret := system'external'sqlite3 sqlite3_column_count &int:theCommandHandle.
         
         aCount << ret.
     ]
@@ -261,7 +263,7 @@
         #var(type:int) i := 0.
         #loop (i < field_count)?
         [
-            #var(type:dirty_ptr)aColumnNamePtr := system'external'sqlite3 sqlite3_column_origin_name &handle:theCommandHandle &int:i.
+            #var(type:dirty_ptr)aColumnNamePtr := system'external'sqlite3 sqlite3_column_origin_name &int:theCommandHandle &int:i.
             
             names setAt &int:i &object:(aColumnNamePtr literal).
             
@@ -273,7 +275,7 @@
     
     #method free
     [
-        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_finalize &handle:theCommandHandle.
+        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_finalize &int:theCommandHandle.
         
         (aRetVal != SQLITE_OK) ? [ #throw DBException new &message:"Could not finalize SQL statement.". ].
     ]
