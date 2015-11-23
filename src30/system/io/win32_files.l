@@ -94,7 +94,7 @@
     #method readLength &vint:aLength 
     [ 
         #var(type:int)n := system'external'KERNEL32 GetFileSize
-            &handle : theHandle
+            &int : theHandle
             &int:0.
     
         aLength << n. 

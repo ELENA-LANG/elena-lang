@@ -521,6 +521,8 @@ void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target, int o
 void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
 {
    switch (size) {
+      case 1:
+      case 2:
       case 4:
          tape.write(bcNCopy);
          break;

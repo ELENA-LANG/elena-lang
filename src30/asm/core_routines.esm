@@ -1431,6 +1431,7 @@ procedure int_savelong
   lessn labNegative 0  
   elsen labErr 0  
 
+  nload
   bloadsi 3
   nsave
   quitn 3  
@@ -1438,6 +1439,7 @@ procedure int_savelong
 labNegative:
   elsen labErr 0FFFFFFFFh
 
+  nload
   bloadsi 3
   nsave
   quitn 3  
