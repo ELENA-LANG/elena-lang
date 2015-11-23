@@ -257,6 +257,18 @@ public:
          return tree->readPreviousNode(position);
       }
 
+      void insertNode(LexicalType type, int argument = 0)
+      {
+         tree->insertNode(position, type, argument);
+      }
+
+      void appendNode(LexicalType type, int argument = 0)
+      {
+         Node lastNode = lastChild();
+
+         tree->insertNode(lastNode.position + 8, type, argument);
+      }
+
       Node()
       {
          type = lxNone;
@@ -267,6 +279,7 @@ public:
    };
 
 private:
+   _Memory*     _dump;
    MemoryReader _reader;
 
    Node read();
@@ -341,9 +354,12 @@ public:
    Node readNextNode(size_t position);
    Node readPreviousNode(size_t position);
 
+   Node insertNode(size_t position, LexicalType type, int argument);
+
    SyntaxTree(_Memory* dump)
       : _reader(dump)
    {      
+      _dump = dump;
    }
 };
 

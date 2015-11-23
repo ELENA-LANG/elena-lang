@@ -57,6 +57,17 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
 
 // --- SyntaxReader ---
 
+SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
+{
+   SyntaxWriter writer(_dump);
+
+   writer.insertChild(position, type, argument);
+
+   _reader.seek(position);
+
+   return read();
+}
+
 SyntaxTree::Node SyntaxTree:: read()
 {
    int type = _reader.getDWord();

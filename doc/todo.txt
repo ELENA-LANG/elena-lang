@@ -1,25 +1,68 @@
 ------                                 
 In development:
 ------                                                                                         
-              fdev - upndown
-                       * start server / connect to server
-
               xdev - general implementation
                        * implement issue #145                       
                          - if the method is embeddable and the variable is allocated and returned
 
+                         
+#var(type:int)n := s length.
+
+=>
+
+#var(type:int)n.
+s readLength &vint:n.
+
+
+assinging 4
+|
++--- local address
+|
++--- typecasting
+     |
+     +--- direct call
+          |
+          +--- local
+
+
+assinging 4
+|
++--- local address
+|
++--- direct call <>
+     |
+     +--- local
+<     
+     |
+     +--- local address
+>
+
+
+
+
+
+
              idev - linux
                        * redirect output to the window
                        * output window
-
+                       
               sdev - rosetta code samples
                        * linux : migrate two rosetta samples to linux
                        * 9 bil names
                        * 99 Bottles of Beer
-
+                       
+              fdev - db app
+                       * implement simple char system to test socket api
 ------                                 
 Pipeline:
 ------                                                                                         
+              fdev - db app
+                       * implement passing an object over tcp/ip
+                       * implement remote database access
+------                                 
+              fdev - upndown
+                       * start server / connect to server
+
               xdev - general implementation
                        * reimplement embeddable constructor
                        * implementing 2.0.0 issues

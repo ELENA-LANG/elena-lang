@@ -1018,9 +1018,6 @@ labErr:
 labCopy:
   bloadsi 3
   nsave
-  dcopy 4
-  ecopy 0
-  bwrite
   quitn 3  
 
 end
