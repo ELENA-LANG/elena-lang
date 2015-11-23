@@ -2582,7 +2582,9 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
       primitiveOp = lxNilOp;
    }
-   else {
+   // HOTFIX : primitive operations can be implemented only in the method
+   // because the symbol implementations do not open a new stack frame
+   else if (scope.getScope(Scope::slMethod) != NULL) {
       int lflag, rflag;
 
       if (IsVarOperator(operator_id)) {
