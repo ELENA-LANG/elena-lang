@@ -670,7 +670,10 @@ int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& f
 
          outputType = methodInfo.typeRef;
 
-         if (test(info.header.flags, elSealed)) {
+         if ((methodInfo.hint & tpMask) == tpSealed) {
+            return methodInfo.hint;
+         }
+         else if (test(info.header.flags, elSealed)) {
             return tpSealed | methodInfo.hint;
          }
          else if (test(info.header.flags, elClosed)) {
@@ -1216,9 +1219,11 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
 int Compiler::MethodScope :: compileHints(DNode hints)
 {
+   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
+
    int mode = 0;
-   int hint = 0;
-   ref_t type = 0;
+
+   MethodInfo info = classScope->info.methodHints.get(message);
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
       if (StringHelper::compare(terminal, HINT_GENERIC)) {
@@ -1235,26 +1240,27 @@ int Compiler::MethodScope :: compileHints(DNode hints)
          DNode value = hints.select(nsHintValue);
          TerminalInfo typeTerminal = value.Terminal();
 
-         type = moduleScope->mapType(typeTerminal);
-         if (type == 0)
+         info.typeRef = moduleScope->mapType(typeTerminal);
+         if (info.typeRef == 0)
             raiseError(wrnInvalidHint, terminal);
       }
       else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
-         hint |= tpStackSafe;
+         info.hint |= tpStackSafe;
       }
       else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
-         hint |= tpEmbeddable;
+         info.hint |= tpEmbeddable;
+      }
+      else if (StringHelper::compare(terminal, HINT_SEALED)) {
+         info.hint |= tpSealed;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
 
-   if (type != 0 || hint != 0) {
-      ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-
+   if (info.typeRef != 0 || info.hint != 0) {
       classScope->info.methodHints.exclude(message);
-      classScope->info.methodHints.add(message, MethodInfo(type, hint));
+      classScope->info.methodHints.add(message, info);
    }
 
    return mode;
@@ -4650,15 +4656,15 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
          if (member.firstChild() == nsDispatchHandler) {
             methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
          }
-//         else if (member == nsDefaultGeneric) {
-//            declareArgumentList(member, methodScope);
-//
-//            // override subject with generic postfix
-//            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
-//
-//            // mark as having generic methods
-//            scope.info.header.flags |= elWithGenerics;
-//         }
+         else if (member == nsDefaultGeneric) {
+            declareArgumentList(member, methodScope);
+
+            // override subject with generic postfix
+            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
+
+            // mark as having generic methods
+            scope.info.header.flags |= elWithGenerics;
+         }
          else declareArgumentList(member, methodScope);
 
          methodScope.compileHints(hints);
@@ -4667,8 +4673,15 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
          if (scope.info.methods.exist(methodScope.message, true))
             scope.raiseError(errDuplicatedMethod, member.Terminal());
 
-         if (methodScope.include() && closed)
+         bool included = methodScope.include();
+         bool sealedMethod = methodScope.isSealed();
+         // if the class is closed, no new methods can be declared
+         if (included && closed)
             scope.raiseError(errClosedParent, member.Terminal());
+
+         // if the method is sealed, it cannot be overridden
+         if (!included && sealedMethod)
+            scope.raiseError(errClosedMethod, member.Terminal());
 
       }
       member = member.nextNode();

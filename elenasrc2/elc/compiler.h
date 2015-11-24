@@ -477,6 +477,13 @@ private:
       {
          return ((ClassScope*)parent)->info.header.flags;
       }
+      
+      bool isSealed() const
+      {
+         MethodInfo info = ((ClassScope*)parent)->info.methodHints.get(message);
+
+         return (info.hint & tpMask) == tpSealed;
+      }
 
       bool include();
 

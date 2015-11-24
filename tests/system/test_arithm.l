@@ -5,10 +5,32 @@
 #import system'calendar.
 #import extensions.
     
+#class(limited) XClass
+{
+    #method normalMethod
+    [
+        console writeLine:"XClass.normalMethod".
+    ]
+    
+    #method(sealed)sealedMethod
+    [
+        $self normalMethod.
+    ]
+}        
+    
+#class XSubClass :: XClass
+{
+    #method normalMethod
+    [
+        console writeLine:"XSubClass.normalMethod".
+    ]
+}    
+    
 #symbol XTester =
 {
     test
     [
+        XSubClass new sealedMethod.
     ]        
 }.
         

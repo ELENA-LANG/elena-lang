@@ -66,6 +66,7 @@ namespace _ELENA_
    #define errInvalidHint           "%s(%d:%d): error 147: Invalid hint '%s'\n"
    #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
    #define errIllegalConstructor    "%s(%d:%d): error 149: Dynamic class requires implicit default constructor\n"
+   #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
 //   #define errInternalError         "internal error 599"
