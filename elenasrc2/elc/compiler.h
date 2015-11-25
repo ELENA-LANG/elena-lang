@@ -329,6 +329,8 @@ private:
 
       bool checkIfCompatible(ref_t typeRef, ref_t classRef);
 
+      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
+
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
 
@@ -480,9 +482,16 @@ private:
       
       bool isSealed() const
       {
-         MethodInfo info = ((ClassScope*)parent)->info.methodHints.get(message);
+         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
 
-         return (info.hint & tpMask) == tpSealed;
+         return (hint & tpMask) == tpSealed;
+      }
+
+      bool isEmbeddable() const
+      {
+         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
+
+         return test(hint, tpEmbeddable);
       }
 
       bool include();
@@ -800,8 +809,7 @@ private:
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
-
-   void saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDump& dump);
+   void defineEmbeddableAttributes(ModuleScope& scope, MemoryDump& dump);
 
 public:
    void loadRules(StreamReader* optimization);

@@ -439,34 +439,24 @@ struct ClassHeader
    ref_t  parentRef;
 };
 
-// --- MethodInfo ---
-
-struct MethodInfo
-{
-   ref_t typeRef;
-   int   hint;
-
-   MethodInfo()
-   {
-      typeRef = 0;
-      hint = 0;
-   }
-
-   MethodInfo(ref_t type, int hint)
-   {
-      this->typeRef = type;
-      this->hint = hint;
-   }
-};
-
 // --- ClassInfo ---
+
+enum MethodAttribute
+{
+   maTypeMask =  0x100,
+
+   maNone     = 0x000,
+   maHint     = 0x001,
+   maType     = 0x101,
+};
 
 struct ClassInfo
 {
-   typedef MemoryMap<ref_t, bool, false> MethodMap;
-   typedef MemoryMap<ident_t, int, true> FieldMap;
-   typedef MemoryMap<int, ref_t>         FieldTypeMap;
-   typedef MemoryMap<ref_t, MethodInfo>  MethodInfoMap;
+   typedef Pair<ref_t, int>                   Attribute;
+   typedef MemoryMap<ref_t, bool, false>      MethodMap;
+   typedef MemoryMap<ident_t, int, true>      FieldMap;
+   typedef MemoryMap<int, ref_t>              FieldTypeMap;
+   typedef MemoryMap<Attribute, ref_t, false> MethodInfoMap;
 
    ClassHeader   header;
    size_t        size;           // Object size
@@ -474,6 +464,7 @@ struct ClassInfo
    ref_t         extensionTypeRef;
    MethodMap     methods;
    FieldMap      fields;
+
    FieldTypeMap  fieldTypes;
    MethodInfoMap methodHints;
 
@@ -506,7 +497,7 @@ struct ClassInfo
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(MethodInfo())
+      : fields(-1), methods(0), methodHints(0)
    {
       header.flags = 0;
       classClassRef = extensionTypeRef = 0;

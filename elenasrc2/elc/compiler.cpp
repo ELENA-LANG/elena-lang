@@ -26,6 +26,7 @@ using namespace _ELENA_;
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
+typedef ClassInfo::Attribute Attribute;
 
 // --- Auxiliary routines ---
 
@@ -514,6 +515,56 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool exi
    }
 }
 
+void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
+{
+   target.header = copy.header;
+   target.classClassRef = copy.classClassRef;
+   target.extensionTypeRef = copy.extensionTypeRef;
+   target.size = copy.size;
+
+   if (!headerOnly) {
+      // import method references and mark them as inherited
+      ClassInfo::MethodMap::Iterator it = copy.methods.start();
+      while (!it.Eof()) {
+         target.methods.add(importMessage(exporter, it.key(), module), false);
+
+         it++;
+      }
+
+      target.fields.add(copy.fields);
+
+      // import field types
+      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+      while (!type_it.Eof()) {
+         target.fieldTypes.add(type_it.key(), importSubject(exporter, *type_it, module));
+
+         type_it++;
+      }
+
+      // import method types
+      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
+      while (!mtype_it.Eof()) {
+         Attribute key = mtype_it.key();
+         ref_t value = *mtype_it;
+         if (test(key.value2, maTypeMask))
+            value = importSubject(exporter, value, module);
+
+         target.methodHints.add(
+            Attribute(importMessage(exporter, key.value1, module), key.value2),
+            value);
+
+         mtype_it++;
+      }
+   }
+   // import class class reference
+   if (target.classClassRef != 0)
+      target.classClassRef = importReference(exporter, target.classClassRef, module);
+
+
+   // import parent reference
+   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
+}
+
 ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
    _Module* argModule;
@@ -535,57 +586,17 @@ ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, b
 
    MemoryReader reader(metaData);
 
-   if (!headerOnly && argModule != module) {
+   if (argModule != module) {
       ClassInfo copy;
       copy.load(&reader, headerOnly);
 
-      info.header = copy.header;
-      info.classClassRef = copy.classClassRef;
-      info.extensionTypeRef = copy.extensionTypeRef;
-      info.size = copy.size;
-
-      // import method references and mark them as inherited
-      ClassInfo::MethodMap::Iterator it = copy.methods.start();
-      while (!it.Eof()) {
-         info.methods.add(importMessage(argModule, it.key(), module), false);
-
-         it++;
-      }
-
-      info.fields.add(copy.fields);
-
-      // import field types
-      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-      while (!type_it.Eof()) {
-         info.fieldTypes.add(type_it.key(), importSubject(argModule, *type_it, module));
-
-         type_it++;
-      }
-
-      // import method types
-      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
-      while (!mtype_it.Eof()) {
-         MethodInfo methInfo = *mtype_it;
-         methInfo.typeRef = importSubject(argModule, methInfo.typeRef, module);
-
-         info.methodHints.add(
-            importMessage(argModule, mtype_it.key(), module), methInfo);
-
-         mtype_it++;
-      }
+      importClassInfo(copy, info, argModule, headerOnly);
    }
    else info.load(&reader, headerOnly);
 
    if (argModule != module) {
-      // import class class reference
-      if (info.classClassRef != 0)
-         info.classClassRef = importReference(argModule, info.classClassRef, module);
-
       // import reference
       importReference(argModule, moduleRef, module);
-
-      // import parent reference
-      info.header.parentRef = importReference(argModule, info.header.parentRef, module);
    }
    return moduleRef;
 }
@@ -666,20 +677,19 @@ int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& f
       bool methodFound = info.methods.exist(message);
 
       if (methodFound) {
-         MethodInfo methodInfo = info.methodHints.get(message);
+         int hint = info.methodHints.get(Attribute(message, maHint));
+         outputType = info.methodHints.get(Attribute(message, maType));
 
-         outputType = methodInfo.typeRef;
-
-         if ((methodInfo.hint & tpMask) == tpSealed) {
-            return methodInfo.hint;
+         if ((hint & tpMask) == tpSealed) {
+            return hint;
          }
          else if (test(info.header.flags, elSealed)) {
-            return tpSealed | methodInfo.hint;
+            return tpSealed | hint;
          }
          else if (test(info.header.flags, elClosed)) {
-            return tpClosed | methodInfo.hint;
+            return tpClosed | hint;
          }
-         else return tpNormal | methodInfo.hint;
+         else return tpNormal | hint;
       }
    }
 
@@ -1223,7 +1233,9 @@ int Compiler::MethodScope :: compileHints(DNode hints)
 
    int mode = 0;
 
-   MethodInfo info = classScope->info.methodHints.get(message);
+   ref_t outputType = 0;
+   int hint = classScope->info.methodHints.get(Attribute(message, maHint));
+
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
       if (StringHelper::compare(terminal, HINT_GENERIC)) {
@@ -1240,27 +1252,32 @@ int Compiler::MethodScope :: compileHints(DNode hints)
          DNode value = hints.select(nsHintValue);
          TerminalInfo typeTerminal = value.Terminal();
 
-         info.typeRef = moduleScope->mapType(typeTerminal);
-         if (info.typeRef == 0)
+         outputType = moduleScope->mapType(typeTerminal);
+         if (outputType == 0)
             raiseError(wrnInvalidHint, terminal);
       }
       else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
-         info.hint |= tpStackSafe;
+         hint |= tpStackSafe;
       }
       else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
-         info.hint |= tpEmbeddable;
+         hint |= tpEmbeddable;
       }
       else if (StringHelper::compare(terminal, HINT_SEALED)) {
-         info.hint |= tpSealed;
+         hint |= tpSealed;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
 
-   if (info.typeRef != 0 || info.hint != 0) {
-      classScope->info.methodHints.exclude(message);
-      classScope->info.methodHints.add(message, info);
+   if (outputType != 0) {
+      classScope->info.methodHints.exclude(Attribute(message, maType));
+      classScope->info.methodHints.add(Attribute(message, maType), outputType);
+   }
+
+   if (hint != 0) {
+      classScope->info.methodHints.exclude(Attribute(message, maHint));
+      classScope->info.methodHints.add(Attribute(message, maHint), hint);
    }
 
    return mode;
@@ -1671,39 +1688,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          ClassInfo copy;
          copy.load(&reader);
 
-         scope.info.header = copy.header;
-         scope.info.size = copy.size;
-
-         // import method references and mark them as inherited
-         ClassInfo::MethodMap::Iterator it = copy.methods.start();
-         while (!it.Eof()) {
-            scope.info.methods.add(importMessage(module, it.key(), moduleScope->module), false);
-
-            it++;
-         }
-
-         scope.info.fields.add(copy.fields);
-
-         // import field types
-         ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-         while (!type_it.Eof()) {
-            scope.info.fieldTypes.add(type_it.key(), importSubject(module, *type_it, moduleScope->module));
-
-            type_it++;
-         }
-
-         // import method types
-         ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
-         while (!mtype_it.Eof()) {
-            MethodInfo methHint = *mtype_it;
-            methHint.typeRef = importSubject(module, methHint.typeRef, moduleScope->module);
-
-            scope.info.methodHints.add(
-               importMessage(module, mtype_it.key(), moduleScope->module),
-               methHint);
-
-            mtype_it++;
-         }
+         moduleScope->importClassInfo(copy, scope.info, module, false);
       }
       else {
          scope.info.load(&reader);
@@ -3085,7 +3070,7 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
    }
 
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
-   methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
 
    return lazyExpression;
 }
@@ -3281,8 +3266,8 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
             subj = 0;
          }
       }
-      else if (classScope->info.methodHints.exist(scope.getMessageID())) {
-         subj = classScope->info.methodHints.get(scope.getMessageID()).typeRef;
+      else if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maType))) {
+         subj = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maType));
       }
       else subj = 0;
 
@@ -3991,7 +3976,8 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
    // NOTE : close root node
    writer.closeNode();
 
-   saveSyntaxTree(*scope.moduleScope, *scope.tape, scope.syntaxTree);
+   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   _writer.generateTree(*scope.tape, scope.syntaxTree);
 
    _writer.endMethod(*scope.tape, scope.parameters.Count() + 1, scope.reserved);
 }
@@ -4022,7 +4008,8 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
    // NOTE : close root node
    writer.closeNode();
 
-   saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
+   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   _writer.generateTree(*tape, scope.syntaxTree);
 
    _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
 }
@@ -4060,7 +4047,8 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
       // NOTE : close root node
       scope.writer->closeNode();
 
-      saveSyntaxTree(*scope.moduleScope, *tape, methodScope->syntaxTree);
+      optimizeSyntaxTree(*scope.moduleScope, methodScope->syntaxTree);
+      _writer.generateTree(*tape, methodScope->syntaxTree);
    }
 
    _writer.endMethod(*tape, getParamCount(methodScope->message) + 1, methodScope->reserved, false);
@@ -4199,7 +4187,8 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       // NOTE : close root node
       writer.closeNode();
 
-      saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
+      optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+      _writer.generateTree(*tape, scope.syntaxTree);
 
       _writer.endMethod(*tape, getParamCount(scope.message) + 1, scope.reserved, true);
    }
@@ -4240,7 +4229,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
          // if the method returns itself
          if(retVal.kind == okUnknown) {
             ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-            ref_t typeHint = classScope->info.methodHints.get(scope.message).typeRef;
+            ref_t typeHint = classScope->info.methodHints.get(Attribute(scope.message, maType));
 
             if (typeHint != 0) {
                writer.newNode(lxTypecasting, encodeMessage(typeHint, GET_MESSAGE_ID, 0));
@@ -4257,7 +4246,11 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       // NOTE : close root node
       writer.closeNode();
 
-      saveSyntaxTree(*scope.moduleScope, *tape, scope.syntaxTree);
+      optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+      if (scope.isEmbeddable()) {
+         defineEmbeddableAttributes(*scope.moduleScope, scope.syntaxTree);
+      }
+      _writer.generateTree(*tape, scope.syntaxTree);
 
       _writer.endMethod(*tape, stackToFree, scope.reserved);
    }
@@ -4287,7 +4280,9 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
 
       // HOTFIX : generate the code
       writer.closeNode();
-      saveSyntaxTree(*scope.moduleScope, classClassScope.tape, scope.syntaxTree);
+
+      optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+      _writer.generateTree(classClassScope.tape, scope.syntaxTree);
 
       // HOTFIX : clear writer and open the node once again
       writer.clear();
@@ -4327,7 +4322,8 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    // NOTE : close root node
    writer.closeNode();
 
-   saveSyntaxTree(*scope.moduleScope, classClassScope.tape, scope.syntaxTree);
+   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   _writer.generateTree(classClassScope.tape, scope.syntaxTree);
 
    _writer.endMethod(classClassScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
 }
@@ -4427,14 +4423,14 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
                   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+               methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
 
                compileDispatcher(member.firstChild().firstChild(), methodScope, test(scope.info.header.flags, elWithGenerics));
             }
             // if it is a normal method
             else {
                declareArgumentList(member, methodScope);
-               methodScope.stackSafe = test(scope.info.methodHints.get(methodScope.message).hint, tpStackSafe);
+               methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
 
                compileMethod(member, methodScope, methodScope.compileHints(hints));
             }
@@ -4619,7 +4615,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
 
          declareArgumentList(member, methodScope);
-         int hint = classClassScope.info.methodHints.get(methodScope.message).hint;
+         int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
          methodScope.stackSafe = test(hint, tpStackSafe);
 
          compileConstructor(member, methodScope, classClassScope/*, test(hint, tpEmbeddable)*/);
@@ -5010,7 +5006,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    // NOTE : close root node
    writer.closeNode();
 
-   saveSyntaxTree(*scope.moduleScope, scope.tape, scope.syntaxTree);
+   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   _writer.generateTree(scope.tape, scope.syntaxTree);
 
    if (isStatic) {
       _writer.endStaticSymbol(scope.tape, scope.reference);
@@ -5177,11 +5174,9 @@ void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
    optimizeSyntaxExpression(scope, reader.readRoot());
 }
 
-void Compiler :: saveSyntaxTree(ModuleScope& scope, CommandTape& tape, MemoryDump& dump)
+void Compiler :: defineEmbeddableAttributes(ModuleScope& scope, MemoryDump& dump)
 {
-   optimizeSyntaxTree(scope, dump);
 
-   _writer.generateTree(tape, dump);
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)

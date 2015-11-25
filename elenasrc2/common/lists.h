@@ -12,6 +12,26 @@
 namespace _ELENA_
 {
 
+// --- Pair template ---
+
+template <class T1, class T2> struct Pair
+{
+   T1 value1;
+   T2 value2;
+
+   Pair()
+   {
+      this->value1 = 0;
+      this->value2 = 0;
+   }
+   Pair(T1 value1, T2 value2)
+   {
+      this->value1 = value1;
+      this->value2 = value2;
+   }
+};
+
+
 // --- template forward declarations ---
 template <class T> class _BList;
 template <class T> class _List;
@@ -317,6 +337,41 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator >(size_t key) const
    {
       return (this->key > key);
+   }
+
+   Pair<size_t, int> getKey(Pair<size_t, int> key) const
+   {
+      return key;
+   }
+
+   bool operator ==(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
+
+   bool operator <=(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 <= key.value1);
+   }
+
+   bool operator <(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 < key.value1);
+   }
+
+   bool operator >=(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 >= key.value1);
+   }
+
+   bool operator >(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 > key.value1);
    }
 
    ident_t getKey(ident_t key) const
@@ -1726,6 +1781,11 @@ public:
    size_t storeKey(size_t, size_t key)
    {
       return key;
+   }
+
+   ref_t storeKey(size_t position, Pair<size_t, int>)
+   {
+      return position;
    }
 
    ident_t storeKey(size_t position, ident_t key)

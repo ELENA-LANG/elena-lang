@@ -1,6 +1,35 @@
 ------                                 
 In development:
-------                                                                                         
+------
+
+field types
+method types
+method hints
+method attributes
+
+int   attr;
+ref_t message
+int   type;
+union {
+   int hint;
+   ref_t type;
+};
+
+
+message
+{int,hint}
+{int,type}
+
+
+mtype,method,type
+attr,method,type
+hint,method,value
+
+ftype,offset,type
+
+
+
+
               xdev - general implementation
                        * implement issue #145                       
                          - if the method is embeddable and the variable is allocated and returned
