@@ -9,7 +9,11 @@
 {
     test
     [
-    ]        
+         #var s1 := "a ".
+         #var s2 := s1 trimRight.
+         console writeLine:("s1 length = " + s1 length literal + " -- " + s1).
+         console writeLine:("s2 length = " + s2 length literal + " -- " + s2).
+     ]        
 }.
         
 #symbol XTest =

@@ -890,6 +890,7 @@
         #var(type:int)aLength.
         aLiteral readLength &vint:aLength.
         #var(type:int)anIndex := aLength - 1.
+        #var(type:int)aPrevious := aLength.
         #var(type:char)aCurrent.
         #var(type:int)aCharLen.
         aChar readLength &vint:aCharLen.
@@ -899,8 +900,9 @@
             aLiteral read &int:anIndex &vchar:aCurrent.
             
             (aCurrent equal &char:aChar)
-                ! [ ^ aLiteral delete &int:anIndex &int:(aLength - anIndex). ].
+                ! [ ^ aLiteral delete &int:aPrevious &int:(aLength - aPrevious). ].
             
+            aPrevious := anIndex.
             anIndex := anIndex - aCharLen.
         ].
         
@@ -1102,13 +1104,15 @@
         aChar readLength &vint:aCharLen.
                 
         #var(type:int)anIndex := aLength - 1.
+        #var(type:int)aPrevious := aLength.
         #loop (anIndex >= 0) ?
         [
             aLiteral read &int:anIndex &vchar:aCurrent.
             
             (aCurrent equal &char:aChar)
-                ! [ ^ aLiteral delete &int:anIndex &int:(aLength - anIndex). ].
+                ! [ ^ aLiteral delete &int:aPrevious &int:(aLength - aPrevious). ].
             
+            aPrevious := anIndex.
             anIndex := anIndex - aCharLen.
         ].
         
