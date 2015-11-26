@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "syntaxtree.h"
+#include <stdarg.h>
 
 using namespace _ELENA_;
 
@@ -142,4 +143,56 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
    }
 
    return Node();
+}
+
+bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
+{
+   va_list argptr;
+   va_start(argptr, counter);
+
+   Node member = node.firstChild();
+   if (member == lxNone)
+      return false;
+
+   for (int i = 0; i < counter; i++) {
+      // get the next pattern
+      NodePattern pattern = va_arg(argptr, NodePattern);
+
+      // find the next tree node
+      while (!test(member.type, mask)) {
+         member = member.nextNode();
+         if (member == lxNone)
+            return false;
+      }
+
+      if (!pattern.match(member)) {
+         return false;
+      }
+      else member = member.nextNode();
+   }
+
+   return true;
+}
+
+SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
+{
+   va_list argptr;
+   va_start(argptr, counter);
+
+   Node member = node;
+   for (int i = 0; i < counter; i++) {
+      member = member.firstChild();
+      if (member == lxNone)
+         break;
+
+      // get the next pattern
+      NodePattern pattern = va_arg(argptr, NodePattern);
+
+      // find the matched member
+      while (member != lxNone && !pattern.match(member)) {
+         member = member.nextNode();
+      }
+   }
+
+   return member;
 }

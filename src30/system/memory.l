@@ -2159,7 +2159,7 @@
 
 #subject(class:system'Func1Array)func1array.
 
-#class(arrayof:func1) Func1Array
+#class(arrayof:func1,sealed) Func1Array
 {
     #constructor(stacksafe) new &int:aLength
         => system'internal'arr_create.

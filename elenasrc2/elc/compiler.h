@@ -480,6 +480,11 @@ private:
          return ((ClassScope*)parent)->info.header.flags;
       }
       
+      ref_t getReturningType() const
+      {
+         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
+      }
+
       bool isSealed() const
       {
          int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
@@ -809,7 +814,9 @@ private:
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
-   void defineEmbeddableAttributes(ModuleScope& scope, MemoryDump& dump);
+
+   bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
+   void defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump);
 
 public:
    void loadRules(StreamReader* optimization);

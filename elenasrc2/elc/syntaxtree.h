@@ -23,9 +23,9 @@ enum LexicalType
 
    lxEnding          = -1,
 
-   lxNone            = 0x000,
-
-   lxRoot            = 0x001,
+   lxNone            = 0x0000,
+   lxInvalid         = 0x0001,
+   lxRoot            = 0x0002,
 
    lxExpression      = 0x0301,
    lxBoxing          = 0x0302,   // boxing of the argument
@@ -278,6 +278,33 @@ public:
       }
    };
 
+   struct NodePattern
+   {
+      LexicalType type;
+      LexicalType alt_type1;
+
+      bool match(Node node)
+      {
+         return node.type == type || node.type == alt_type1;
+      }
+
+      NodePattern()
+      {
+         type = lxNone;
+         alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type)
+      {
+         this->type = type;
+         this->alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type1, LexicalType type2)
+      {
+         this->type = type1;
+         this->alt_type1 = type2;
+      }
+   };
+
 private:
    _Memory*     _dump;
    MemoryReader _reader;
@@ -355,6 +382,9 @@ public:
    Node readPreviousNode(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
+
+   bool matchPattern(Node node, int mask, int counter, ...);
+   Node findPattern(Node node, int counter, ...);
 
    SyntaxTree(_Memory* dump)
       : _reader(dump)

@@ -1261,6 +1261,7 @@ int Compiler::MethodScope :: compileHints(DNode hints)
       }
       else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
          hint |= tpEmbeddable;
+         hint |= tpSealed;
       }
       else if (StringHelper::compare(terminal, HINT_SEALED)) {
          hint |= tpSealed;
@@ -4229,7 +4230,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
          // if the method returns itself
          if(retVal.kind == okUnknown) {
             ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-            ref_t typeHint = classScope->info.methodHints.get(Attribute(scope.message, maType));
+            ref_t typeHint = scope.getReturningType();
 
             if (typeHint != 0) {
                writer.newNode(lxTypecasting, encodeMessage(typeHint, GET_MESSAGE_ID, 0));
@@ -4248,7 +4249,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
 
       optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
       if (scope.isEmbeddable()) {
-         defineEmbeddableAttributes(*scope.moduleScope, scope.syntaxTree);
+         defineEmbeddableAttributes(scope, scope.syntaxTree);
       }
       _writer.generateTree(*tape, scope.syntaxTree);
 
@@ -5174,9 +5175,63 @@ void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
    optimizeSyntaxExpression(scope, reader.readRoot());
 }
 
-void Compiler :: defineEmbeddableAttributes(ModuleScope& scope, MemoryDump& dump)
+bool Compiler :: recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node root, ref_t& subject)
 {
+   ref_t returnType = scope.getReturningType();
+   if (returnType != 0 && scope.moduleScope->defineTypeSize(returnType) > 0) {
+      if (tree.matchPattern(root, lxObjectMask, 2, SyntaxTree::NodePattern(lxExpression), SyntaxTree::NodePattern(lxReturning))) {
+         SyntaxTree::Node message = tree.findPattern(root, 2,
+            SyntaxTree::NodePattern(lxExpression),
+            SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling));
 
+         // if it is eval&subject2:var[1] message
+         if (getParamCount(message.argument) != 1)
+            return false;
+
+         // check if it is operation with $self
+         SyntaxTree::Node target = tree.findPattern(root, 3,
+            SyntaxTree::NodePattern(lxExpression),
+            SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling),
+            SyntaxTree::NodePattern(lxLocal));
+
+         if (target == lxNone || target.argument != 1)
+            return false;
+
+         // check if the argument is returned
+         SyntaxTree::Node arg = tree.findPattern(root, 4,
+            SyntaxTree::NodePattern(lxExpression),
+            SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling),
+            SyntaxTree::NodePattern(lxExpression),
+            SyntaxTree::NodePattern(lxLocalAddress));
+
+         SyntaxTree::Node ret = tree.findPattern(root, 3,
+            SyntaxTree::NodePattern(lxReturning),
+            SyntaxTree::NodePattern(lxBoxing),
+            SyntaxTree::NodePattern(lxLocalAddress));
+
+         if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
+            subject = getSignature(message.argument);
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
+void Compiler :: defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump)
+{
+   SyntaxTree tree(&dump);
+   SyntaxTree::Node root = tree.readRoot();
+
+   ClassScope* classScope = ((ClassScope*)scope.parent);
+
+   // Optimization : var = get&subject => eval&subject2:var[1]
+   ref_t type = 0;
+   if (recognizeEmbeddableGet(scope, tree, root, type)) {
+      classScope->info.methodHints.add(Attribute(scope.message, maEmbeddableGet), type);
+   }
 }
 
 void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/)

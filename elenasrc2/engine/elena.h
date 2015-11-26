@@ -443,11 +443,12 @@ struct ClassHeader
 
 enum MethodAttribute
 {
-   maTypeMask =  0x100,
+   maTypeMask      = 0x100,
 
-   maNone     = 0x000,
-   maHint     = 0x001,
-   maType     = 0x101,
+   maNone          = 0x000,
+   maHint          = 0x001,
+   maType          = 0x102,
+   maEmbeddableGet = 0x103
 };
 
 struct ClassInfo

@@ -5,10 +5,28 @@
 #import system'calendar.
 #import extensions.
     
+#class(sealed) XClass
+{
+    #method(stacksafe) readLength &vint:n
+    [
+        n << 234.
+    ]
+    
+    #method(type:int,embeddable) length
+    [
+        #var(type:int)n.
+        $self readLength &vint:n.
+        
+        ^ n.
+    ]
+}
+    
+    
 #symbol XTester =
 {
     test
     [
+        #var(type:int)n := XClass new length.
     ]        
 }.
         

@@ -2,36 +2,8 @@
 In development:
 ------
 
-field types
-method types
-method hints
-method attributes
-
-int   attr;
-ref_t message
-int   type;
-union {
-   int hint;
-   ref_t type;
-};
-
-
-message
-{int,hint}
-{int,type}
-
-
-mtype,method,type
-attr,method,type
-hint,method,value
-
-ftype,offset,type
-
-
-
-
               xdev - general implementation
-                       * implement issue #145                       
+                       * implement issue #145
                          - if the method is embeddable and the variable is allocated and returned
 
                          
@@ -41,6 +13,31 @@ ftype,offset,type
 
 #var(type:int)n.
 s readLength &vint:n.
+
+expression
+|
++--- direct call <message>
+     |
+     +--- local 1 ($self)
+     |
+     +--- expression
+          |
+          +--- local address = 1
+
+returning
+|
++--- boxing
+     |
+     +--- local address = 1
+
+
+     
+match = expression, returning
+
+expression, direct class, local
+expression, direct class, expression, local address
+
+returning, boxing, local address
 
 
 assinging 4
