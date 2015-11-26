@@ -1804,12 +1804,16 @@ public:
    {
       Item item(key, value, 0);
 
+      int position = _buffer.Length();
       if (_tale == 0) {
          // save top
-         _buffer.writeDWord(0, 4);
+         if (position == 0) {
+            _buffer.writeDWord(0, 4);
+            position = 4;
+         }
+         else _buffer[0] = position;
       }
 
-      int position = _buffer.Length();
       _buffer.write(position, &item, sizeof(item));
 
       if (KeyStored) {

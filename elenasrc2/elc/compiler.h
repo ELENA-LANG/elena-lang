@@ -80,6 +80,7 @@ public:
       tpDispatcher = 0x04,
       tpStackSafe  = 0x10,
       tpEmbeddable = 0x20,
+      tpGeneric    = 0x40,
    };
 
    struct Unresolved
@@ -422,6 +423,7 @@ private:
       {
          // save class meta data
          MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+         metaWriter.Memory()->trim(0);
          info.save(&metaWriter);
       }
 
@@ -464,7 +466,7 @@ private:
       bool      withOpenArg;
       bool      stackSafe;
 
-      int compileHints(DNode hints);
+      void compileHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -501,6 +503,13 @@ private:
          int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
 
          return test(hint, tpEmbeddable);
+      }
+
+      bool isGeneric() const
+      {
+         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
+
+         return test(hint, tpGeneric);
       }
 
       bool include();
@@ -761,7 +770,7 @@ private:
 
    ObjectInfo compileCode(DNode node, CodeScope& scope);
 
-   void declareArgumentList(DNode node, MethodScope& scope);
+   void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
@@ -776,7 +785,7 @@ private:
    void compileActionMethod(DNode member, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, MethodScope& scope);
    void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
-   void compileMethod(DNode node, MethodScope& scope, int mode);
+   void compileMethod(DNode node, MethodScope& scope, bool genericMethod);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/);

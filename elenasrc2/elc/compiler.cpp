@@ -20,7 +20,6 @@ using namespace _ELENA_;
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 #define HINT_ALT              0x12000000
-#define HINT_GENERIC_METH     0x00100000     // generic method
 #define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
 
@@ -1227,26 +1226,21 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    }
 }
 
-int Compiler::MethodScope :: compileHints(DNode hints)
+void Compiler::MethodScope :: compileHints(DNode hints)
 {
    ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
 
-   int mode = 0;
-
    ref_t outputType = 0;
+   bool hintChanged = false;
    int hint = classScope->info.methodHints.get(Attribute(message, maHint));
 
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
       if (StringHelper::compare(terminal, HINT_GENERIC)) {
-         if (getSignature(message) != 0)
-            raiseError(errInvalidHint, terminal);
-
-         message = overwriteSubject(message, moduleScope->mapSubject(GENERIC_PREFIX));
-
          setClassFlag(elWithGenerics);
 
-         mode |= HINT_GENERIC_METH;
+         hint |= tpGeneric;
+         hintChanged = true;
       }
       else if (StringHelper::compare(terminal, HINT_TYPE)) {
          DNode value = hints.select(nsHintValue);
@@ -1258,13 +1252,16 @@ int Compiler::MethodScope :: compileHints(DNode hints)
       }
       else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
          hint |= tpStackSafe;
+         hintChanged = true;
       }
       else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
          hint |= tpEmbeddable;
          hint |= tpSealed;
+         hintChanged = true;
       }
       else if (StringHelper::compare(terminal, HINT_SEALED)) {
          hint |= tpSealed;
+         hintChanged = true;
       }
       else raiseWarning(1, wrnUnknownHint, terminal);
 
@@ -1276,12 +1273,10 @@ int Compiler::MethodScope :: compileHints(DNode hints)
       classScope->info.methodHints.add(Attribute(message, maType), outputType);
    }
 
-   if (hint != 0) {
+   if (hintChanged) {
       classScope->info.methodHints.exclude(Attribute(message, maHint));
       classScope->info.methodHints.add(Attribute(message, maHint), hint);
    }
-
-   return mode;
 }
 
 // --- Compiler::ActionScope ---
@@ -3814,7 +3809,7 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
    return encodeMessage(sign_id, EVAL_MESSAGE_ID, scope.parameters.Count());
 }
 
-void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
+void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints)
 {
    IdentifierString signature;
    ref_t verb_id = 0;
@@ -3901,6 +3896,18 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
             arg = arg.nextNode();
          }
       }
+   }
+
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      if (StringHelper::compare(terminal, HINT_GENERIC)) {
+         if (!emptystr(signature))
+            scope.raiseError(errInvalidHint, terminal);
+
+         signature.copy(GENERIC_PREFIX);
+      }
+
+      hints = hints.nextNode();
    }
 
    // if signature is presented
@@ -4164,7 +4171,7 @@ void Compiler :: compileImportCode(DNode node, CodeScope& codeScope, ref_t messa
    _writer.endIdleMethod(*tape);
 }
 
-void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
+void Compiler :: compileMethod(DNode node, MethodScope& scope, bool genericMethod)
 {
    int paramCount = getParamCount(scope.message);
 
@@ -4211,10 +4218,10 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, int mode)
       // new stack frame
       // stack already contains current $self reference
       // the original message should be restored if it is a generic method
-      _writer.declareMethod(*tape, scope.message, test(mode, HINT_GENERIC_METH));
+      _writer.declareMethod(*tape, scope.message, genericMethod);
       codeScope.level++;
       // declare the current subject for a generic method
-      if (test(mode, HINT_GENERIC_METH)) {
+      if (genericMethod) {
          _writer.saveSubject(*tape);
          codeScope.level++;
          codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
@@ -4434,17 +4441,19 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             }
             // if it is a normal method
             else {
-               declareArgumentList(member, methodScope);
-               methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
+               declareArgumentList(member, methodScope, hints);
 
-               compileMethod(member, methodScope, methodScope.compileHints(hints));
+               int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+               methodScope.stackSafe = test(hint, tpStackSafe);
+
+               compileMethod(member, methodScope, test(hint, tpGeneric));
             }
             break;
          }
          case nsDefaultGeneric:
          {
             MethodScope methodScope(&scope);
-            declareArgumentList(member, methodScope);
+            declareArgumentList(member, methodScope, hints);
 
             // override subject with generic postfix
             methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
@@ -4452,7 +4461,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
             // mark as having generic methods
             scope.info.header.flags |= elWithGenerics;
 
-            compileMethod(member, methodScope, HINT_GENERIC_METH);
+            compileMethod(member, methodScope, true);
             break;
          }
       }
@@ -4619,7 +4628,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
       if (member == nsConstructor) {
          MethodScope methodScope(&classScope);
 
-         declareArgumentList(member, methodScope);
+         declareArgumentList(member, methodScope, hints);
          int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
          methodScope.stackSafe = test(hint, tpStackSafe);
 
@@ -4658,7 +4667,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
             methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
          }
          else if (member == nsDefaultGeneric) {
-            declareArgumentList(member, methodScope);
+            declareArgumentList(member, methodScope, hints);
 
             // override subject with generic postfix
             methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->mapSubject(GENERIC_PREFIX));
@@ -4666,7 +4675,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
             // mark as having generic methods
             scope.info.header.flags |= elWithGenerics;
          }
-         else declareArgumentList(member, methodScope);
+         else declareArgumentList(member, methodScope, hints);
 
          methodScope.compileHints(hints);
 

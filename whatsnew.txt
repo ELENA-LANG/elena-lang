@@ -19,6 +19,7 @@
 
 [LIB]
 [-] issue #174 fixed: bizarre return value in toLiteral&base:16
+[-] issue #169 fixed: An error in literalOp.trimRight[1]
 
 [IDE]
 [-] issue #75 fixed : call stack window is not properly refreshed
