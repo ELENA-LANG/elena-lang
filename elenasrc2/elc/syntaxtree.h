@@ -109,6 +109,7 @@ enum LexicalType
    lxIfValue         = 0x806,
    lxElseValue       = 0x807,
    lxMessage         = 0x808,
+   lxEmbeddable      = 0x809,
 
    lxBreakpoint      = 0x2001,
    lxCol             = 0x2002,
@@ -126,6 +127,12 @@ class SyntaxWriter
    Stack<size_t> _bookmarks;
 
 public:
+   int setBookmark(size_t position)
+   {
+      _bookmarks.push(position);
+      return _bookmarks.Count();
+   }
+
    int newBookmark()
    {
       _bookmarks.push(_writer.Position());
@@ -144,8 +151,8 @@ public:
       _bookmarks.clear();
    }
 
-   void insert(int position, LexicalType type, ref_t argument);
-   void insert(int position, LexicalType type)
+   void insert(int bookmark, LexicalType type, ref_t argument);
+   void insert(int bookmark, LexicalType type)
    {
       insert(type, 0);
    }
@@ -157,10 +164,10 @@ public:
    {
       insert(0, type, 0);
    }
-   void insertChild(int position, LexicalType type, ref_t argument)
+   void insertChild(int bookmark, LexicalType type, ref_t argument)
    {
-      insert(position, lxEnding, 0);
-      insert(position, type, argument);
+      insert(bookmark, lxEnding, 0);
+      insert(bookmark, type, argument);
    }
    void insertChild(LexicalType type, ref_t argument)
    {      
@@ -197,6 +204,8 @@ public:
 class SyntaxTree
 {
 public:
+   struct NodePattern;
+
    // --- Node ---
    class Node
    {
@@ -228,6 +237,18 @@ public:
 
          tree->_reader.seek(position - 8);
          *(int*)(tree->_reader.Address()) = (int)type;
+         tree->_reader.seek(prevPos);
+      }
+
+      void setArgument(ref_t argument)
+      {
+         this->argument = argument;
+
+         int prevPos = tree->_reader.Position();
+
+         tree->_reader.seek(position - 4);
+         *(int*)(tree->_reader.Address()) = (int)argument;
+
          tree->_reader.seek(prevPos);
       }
 
@@ -267,6 +288,11 @@ public:
          Node lastNode = lastChild();
 
          tree->insertNode(lastNode.position + 8, type, argument);
+      }
+
+      Node findPattern(NodePattern pattern)
+      {
+         return tree->findPattern(*this, 1, pattern);
       }
 
       Node()

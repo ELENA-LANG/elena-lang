@@ -61,8 +61,8 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
 SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
 {
    SyntaxWriter writer(_dump);
-
-   writer.insertChild(position, type, argument);
+   
+   writer.insertChild(writer.setBookmark(position), type, argument);
 
    _reader.seek(position);
 

@@ -280,6 +280,10 @@ private:
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+      {
+         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      }
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       int defineStructSize(ref_t classReference, bool& variable);
@@ -810,6 +814,7 @@ private:
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);

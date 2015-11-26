@@ -2763,6 +2763,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
       scope.writer->appendNode(lxTarget, classReference);
       if (test(methodHint, tpStackSafe))
          scope.writer->appendNode(lxStacksafe);
+      if (test(methodHint, tpEmbeddable))
+         scope.writer->appendNode(lxEmbeddable);
    }
    else {
       scope.writer->insert(lxCalling, messageRef);
@@ -4735,6 +4737,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    optimizeTape(scope.tape);
 
    // create byte code sections
+   scope.save();
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
@@ -5087,6 +5090,27 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
+void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode)
+{
+   SyntaxTree::Node callTarget = SyntaxTree::findChild(callNode, lxTarget);
+
+   ClassInfo info;
+   scope.loadClassInfo(info, callTarget.argument);
+
+   ref_t subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddableGet));
+   // if it is possible to replace get&subject operation with eval&subject2:local
+   if (subject != 0) {
+      // removing assinging operation
+      assignNode = lxExpression;
+
+      // move assigning target into the call node
+      SyntaxTree::Node assignTarget = assignNode.findPattern(SyntaxTree::NodePattern(lxLocalAddress));
+      callNode.appendNode(assignTarget.type, assignTarget.argument);
+      assignTarget = lxExpression;
+      callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
+   }
+}
+
 void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
 {
    // assigning (local address boxing) => assigning (local address expression)
@@ -5094,6 +5118,11 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
       SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing, lxCondBoxing, lxUnboxing);
       if (boxing != lxNone && boxing.argument == node.argument) {
          boxing = lxExpression;
+      }
+
+      SyntaxTree::Node directCall = SyntaxTree::findChild(node, lxDirectCalling);
+      if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
+         optimizeEmbeddableCall(scope, node, directCall);
       }
    }
 }
