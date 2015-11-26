@@ -290,8 +290,8 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
       return config.getSetting(COMPILER_CATEGORY, ELC_L0);
-//   case _ELENA_::opL1:
-//      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
+   case _ELENA_::opL1:
+      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
 //   case _ELENA_::opL2:
 //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
    case _ELENA_::opTemplate:
@@ -394,9 +394,10 @@ void _ELC_::Project :: setOption(const wchar_t* value)
          }
          else if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_OPTOFF)) {
             _settings.add(_ELENA_::opL0, 0);
-//            _settings.add(_ELENA_::opL1, 0);
-//            _settings.add(_ELENA_::opL2, 0);
-//            _settings.add(_ELENA_::opL3, 0);
+            _settings.add(_ELENA_::opL1, 0);
+         }
+         else if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_OPT1OFF)) {
+            _settings.add(_ELENA_::opL1, 0);
          }
          else raiseError(ELC_ERR_INVALID_OPTION, valueName);
          break;
@@ -477,6 +478,9 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
          project.raiseWarning(1, errInvalidFile, RULES_FILE);
       }
       else compiler.loadRules(&rulesFile);
+   }
+   if (project.IntSetting(_ELENA_::opL1, -1) != 0) {
+      compiler.turnOnOptimiation(1);
    }
 }
 

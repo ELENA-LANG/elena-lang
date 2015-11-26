@@ -1473,6 +1473,8 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 Compiler :: Compiler(StreamReader* syntax)
    : _parser(syntax), _verbs(0)
 {
+   _optFlag = 0;
+
    ByteCodeCompiler::loadVerbs(_verbs);
    ByteCodeCompiler::loadOperators(_operators);
 }
@@ -5199,6 +5201,9 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node n
 
 void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
 {
+   if (!test(_optFlag, 1))
+      return;
+
    SyntaxTree reader(&dump);
 
    optimizeSyntaxExpression(scope, reader.readRoot());

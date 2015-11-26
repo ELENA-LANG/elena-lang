@@ -58,7 +58,8 @@ enum ProjectSetting
 //   opWarnOnSignature       = 0x0043,
 
    // compiler optimization options
-   opL0                    = 0x0050,   // generic
+   opL0                    = 0x0050,   // byte-code optimization
+   opL1                    = 0x0051,   // source-code optimization
 
    opPrimitives            = 0x0060,
    opForwards              = 0x0061,

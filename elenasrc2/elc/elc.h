@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x001C
+#define ELC_REVISION_NUMBER             0x001D
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -51,6 +51,7 @@
 #define ELC_PRM_PROJECTPATH         "xpath"
 #define ELC_PRM_CODEPAGE            "xcp"
 #define ELC_PRM_OPTOFF              "xo-"
+#define ELC_PRM_OPT1OFF             "xo1-"
 
 // --- ELC config categories ---
 #define COMPILER_CATEGORY           "compiler"
@@ -86,6 +87,7 @@
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "ygsize"
 #define ELC_L0                      "l0"                // optimization: byte code optimization
+#define ELC_L1                      "l1"                // optimization: source code optimization
 
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2015 by Alex Rakov\n"

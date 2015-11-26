@@ -653,7 +653,7 @@ private:
    MessageMap     _verbs;                            // list of verbs
    MessageMap     _operators;                        // list of operators
 
-//   int _optFlag;
+   int            _optFlag;
 
    // optimization rules
    TransformTape _rules;
@@ -825,6 +825,10 @@ private:
 
 public:
    void loadRules(StreamReader* optimization);
+   void turnOnOptimiation(int level)
+   {
+      _optFlag |= level;
+   }
 
    bool run(Project& project);
 
