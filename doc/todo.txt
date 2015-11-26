@@ -4,7 +4,8 @@ In development:
 
               xdev - general implementation
                        * implement issue #145
-                         - if the method is embeddable and the variable is allocated and returned
+                          - new method hint, to ignore warning "suppress:w1"
+                          - review lib30, simplify the code using call optimization, set sealed methods if required
 
              idev - linux
                        * redirect output to the window

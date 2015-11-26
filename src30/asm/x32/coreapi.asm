@@ -1435,6 +1435,9 @@ procedure coreapi'inttostr
    mov  ebp, esp
    xor  ecx, ecx
    push eax
+   // ; take sign into account only for the decimal representation
+   cmp  ebx, 10        
+   jnz  short Lab6
    cmp  eax, 0
    jns  short Lab6
    neg  eax
@@ -1451,6 +1454,8 @@ Lab1:
 Lab5:   
    add  ecx, 2
    push eax
+   cmp  ebx, 10        
+   jnz  short Lab7
    mov  eax, [ebp-4]
    cmp  eax, 0
    jns  short Lab7
