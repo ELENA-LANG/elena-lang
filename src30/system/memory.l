@@ -41,12 +41,12 @@
         => system'internal'bs_getlen.
         
     /// Returns the byte array length        
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     /// Fills the sub array with a specified value
@@ -146,9 +146,7 @@
     /// Concatinates the arrays    
     #method(stacksafe,type:bytearray) add &int:aLength2 &bytearray:anArray
     [
-        #var(type:int)aLength1.
-        
-        $self readLength &vint:aLength1.        
+        #var(type:int)aLength1 := $self length.
         
         #var(type:bytearray)aRetVal := ByteArray new &int:(aLength1 + aLength2).
 
@@ -213,19 +211,18 @@
         => system'internal'sa_getlen.
 
     /// Returns the array length        
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     /// Fills the sub array with a specified value
     #method(stacksafe) fill &int:anIndex &int:aLength &short:aValue
     [
-        #var(type:int)aTotalLength.
-        $self readLength &vint:aTotalLength.
+        #var(type:int)aTotalLength := $self length.
         
         #var(type:int)i := anIndex.
         #var(type:int)m := anIndex + aLength.
@@ -321,12 +318,12 @@
         => system'internal'ns_getlen.
 
     /// Returns the array length
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
     
     /// Returns itself
@@ -335,8 +332,7 @@
     /// Fills the sub array with a specified value
     #method(stacksafe) fill &int:anIndex &int:aLength &int:aValue
     [
-        #var(type:int)aTotalLength.
-        $self readLength &vint:aTotalLength.
+        #var(type:int)aTotalLength := $self length.
         
         #var(type:int)i := anIndex.
         #var(type:int)m := anIndex + aLength.
@@ -422,7 +418,7 @@
         Rows << theRows.
     ]
 
-    #method length = theRows.
+    #method(type:int) length = theRows.
     
     /// Returns itself
     #method intmatrix = $self.
@@ -516,12 +512,12 @@
     ]
 
     /// Returns the array length
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
     
     /// Returns itself
@@ -530,8 +526,7 @@
     /// Fills the sub array with a specified value
     #method(stacksafe) fill &int:anIndex &int:aLength &real:aValue
     [
-        #var(type:int)aTotalLength.
-        $self readLength &vint:aTotalLength.
+        #var(type:int)aTotalLength := $self length.
         
         #var(type:int)i := anIndex.
         #var(type:int)m := anIndex + aLength.
@@ -629,7 +624,7 @@
         Rows << theRows.
     ]
 
-    #method length = theRows.
+    #method(type:int) length = theRows.
     
     /// Returns itself
     #method realmatrix = $self.

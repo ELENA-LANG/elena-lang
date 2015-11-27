@@ -2499,21 +2499,21 @@
     ]
         
     /// Retuns the number of bytes to represent the symbol        
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
     
     /// Retuns the number of short integers to represent the symbol
-    #method wideLength
+    #method(stacksafe,type:int,embeddable,suppress:w3) wideLength
     [
         #var(type:int)aLength.
         $self readWideLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     // Reads the object hash code into the output parameter
