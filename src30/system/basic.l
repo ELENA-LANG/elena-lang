@@ -369,7 +369,7 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method(embeddable,type:int) hash_code
+    #method(embeddable,type:int,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.

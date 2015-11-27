@@ -1226,6 +1226,26 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    }
 }
 
+void Compiler::MethodScope ::compileWarningHints(DNode hints)
+{
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo level = value.Terminal();
+         if (StringHelper::compare(level, "w2")) {
+            warningMask = WARNING_MASK_1;
+         }
+         else if (StringHelper::compare(level, "w3")) {
+            warningMask = WARNING_MASK_2;
+         }
+         else raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+      }
+
+      hints = hints.nextNode();
+   }
+}
+
 void Compiler::MethodScope :: compileHints(DNode hints)
 {
    ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
@@ -1262,6 +1282,10 @@ void Compiler::MethodScope :: compileHints(DNode hints)
       else if (StringHelper::compare(terminal, HINT_SEALED)) {
          hint |= tpSealed;
          hintChanged = true;
+      }
+      else if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
+         // HOTFIX : ignore for the first pass
+         // should be recognized on the second pass
       }
       else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
@@ -4428,6 +4452,7 @@ void Compiler :: compileVMT(DNode member, ClassScope& scope)
          case nsMethod:
          {
             MethodScope methodScope(&scope);
+            methodScope.compileWarningHints(hints);
 
             // if it is a dispatch handler
             if (member.firstChild() == nsDispatchHandler) {

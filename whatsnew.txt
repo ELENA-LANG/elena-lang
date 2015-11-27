@@ -16,6 +16,7 @@
 [*] issue #42 implemented
 [*] issue #145 implemented : source level call optimization
 [+] new option "xo1-" : turning off compiler source level optimization
+[+] new method hint "suppress" : turning off compiler warnings for the method
 
 [LIB]
 [-] issue #174 fixed: bizarre return value in toLiteral&base:16

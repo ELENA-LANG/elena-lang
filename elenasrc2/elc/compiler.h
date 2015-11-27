@@ -476,6 +476,7 @@ private:
       bool      stackSafe;
 
       void compileHints(DNode hints);
+      void compileWarningHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
       {
