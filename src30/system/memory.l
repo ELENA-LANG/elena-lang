@@ -709,19 +709,18 @@
         => system'internal'ns_getlen.
 
     /// Returns the array length        
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     /// Fills the sub array with a specified value
     #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
     [
-        #var(type:int)aTotalLength.
-        $self readLength &vint:aTotalLength.
+        #var(type:int)aTotalLength := $self length.
         
         #var(type:int)i := anIndex.
         #var(type:int)m := anIndex + aLength.
@@ -985,12 +984,12 @@
         => system'internal's_saveraw.
 
     /// Returns the string length
-    #method length
+    #method(type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     /// Returns the string enumerator
@@ -1011,12 +1010,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(type:int,embeddable,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -1368,12 +1367,12 @@
         => system'internal'ws_getlen.
 
     /// Returns the string length
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     /// Saves the literal into a UTF-32 character array
@@ -1401,12 +1400,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(type:int,embeddable,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -1772,12 +1771,12 @@
         => system'internal'arr_getlen.
 
     /// Returns the array length
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 
     /// Returns the array enumerator
@@ -1812,12 +1811,12 @@
     #method(stacksafe) readLength &vint:aLength
         => system'internal'args_getlen.
         
-    #method(stacksafe,type:int) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
 }
 
@@ -2176,12 +2175,12 @@
     #method(stacksafe) setAt &int:anIndex &object:anObject
         => system'internal'arr_setat.
 
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]        
 }
 
