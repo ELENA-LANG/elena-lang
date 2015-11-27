@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x001E
+#define ELC_REVISION_NUMBER             0x001F
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -42,10 +42,8 @@
 #define ELC_W_WEAKUNRESOLVED        "wwun"
 #define ELC_W_LEVEL1                "w1"
 #define ELC_W_LEVEL2                "w2"
-#define ELC_W_LEVEL4                "w4"
-#define ELC_W_LEVEL1_OFF            "w1-"
-#define ELC_W_LEVEL2_OFF            "w2-"
-#define ELC_W_LEVEL4_OFF            "w4-"
+#define ELC_W_LEVEL3                "w3"
+#define ELC_W_OFF                   "w-"
 #define ELC_PRM_EXTRA               'x'
 #define ELC_PRM_TABSIZE             "xtab"
 #define ELC_PRM_PROJECTPATH         "xpath"
@@ -145,8 +143,8 @@ public:
    virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value);
    virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
-   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
-   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
+   virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path);
 
    void addSource(_ELENA_::path_t path);
 

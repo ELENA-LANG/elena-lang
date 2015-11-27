@@ -714,7 +714,7 @@ void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t ref
          if (!refModule || refModule == module) {
             forwardsUnresolved->add(Unresolved(sourcePath, reference | mask, module, terminal.Row(), terminal.Col()));
          }
-         else raiseWarning(1, wrnUnresovableLink, terminal);
+         else raiseWarning(wrnUnresovableLink, terminal);
       }
    }
 }
@@ -724,14 +724,14 @@ void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo termi
    project->raiseError(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
 }
 
-void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
+void Compiler::ModuleScope :: raiseWarning(const char* message, TerminalInfo terminal)
 {
-   project->raiseWarning(level, message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+   project->raiseWarning(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
 }
 
-void Compiler::ModuleScope :: raiseWarning(int level, const char* message, int row, int col)
+void Compiler::ModuleScope :: raiseWarning(const char* message, int row, int col)
 {
-   project->raiseWarning(level, message, sourcePath, row, col, DEFAULT_STR);
+   project->raiseWarning(message, sourcePath, row, col, DEFAULT_STR);
 }
 
 void Compiler::ModuleScope :: loadTypes(_Module* extModule)
@@ -778,7 +778,7 @@ void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* ext
 
                typeExtensions->add(message, role_ref);
             }
-            else raiseWarning(1, wrnDuplicateExtension, terminal);
+            else raiseWarning(wrnDuplicateExtension, terminal);
          }
       }
    }
@@ -879,7 +879,7 @@ void Compiler::SymbolScope :: compileHints(DNode hints)
          if (typeRef == 0)
             raiseError(wrnInvalidHint, terminal);
       }
-      else raiseWarning(1, wrnUnknownHint, hints.Terminal());
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -1013,7 +1013,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
             info.header.flags |= elReadOnlyRole;
          }
-         else raiseWarning(1, wrnUnknownHint, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
@@ -1032,7 +1032,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
             info.header.flags |= elReadOnlyRole;
          }
-         else raiseWarning(1, wrnUnknownHint, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
          info.header.flags |= (elEmbeddable | elStructureRole);
       }
@@ -1076,7 +1076,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             else if ((int)info.size > 0)
                raiseError(wrnInvalidHint, value.Terminal());
          }
-         else raiseWarning(1, wrnUnknownHint, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
          info.header.flags |= (elEmbeddable | elStructureRole | elDynamicRole);
       }
@@ -1114,7 +1114,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= elWrapper;
       }
-      else raiseWarning(1, wrnUnknownHint, terminal);
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1139,7 +1139,7 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
 
             size = moduleScope->defineTypeSize(type);
          }
-         else raiseWarning(1, wrnInvalidHint, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
       else if (StringHelper::compare(terminal, HINT_SIZE)) {
          if (size < 0) {
@@ -1154,11 +1154,11 @@ void Compiler::ClassScope :: compileFieldHints(DNode hints, int& size, ref_t& ty
 
                size = StringHelper::strToLong(sizeValue.value, 16) * size;
             }
-            else raiseWarning(1, wrnUnknownHint, terminal);
+            else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
          }
-         else raiseWarning(1, wrnUnknownHint, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
       }
-      else raiseWarning(1, wrnUnknownHint, terminal);
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1263,7 +1263,7 @@ void Compiler::MethodScope :: compileHints(DNode hints)
          hint |= tpSealed;
          hintChanged = true;
       }
-      else raiseWarning(1, wrnUnknownHint, terminal);
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -1368,9 +1368,9 @@ void Compiler::CodeScope :: compileLocalHints(DNode hints, ref_t& type, int& siz
 
             size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
          }
-         else raiseWarning(1, wrnUnknownHint, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
       }
-      else raiseWarning(1, wrnUnknownHint, terminal);
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -2768,7 +2768,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 
       // if the class found and the message is not supported - warn the programmer and raise an exception
       if (classFound && callType == tpUnknown) {
-         scope.raiseWarning(1, wrnUnknownMessage, node.FirstTerminal());
+         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.FirstTerminal());
       }
    }
 
@@ -3988,7 +3988,7 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
    // NOTE : close root node
    writer.closeNode();
 
-   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   analizeSyntaxTree(&scope, scope.syntaxTree);
    _writer.generateTree(*scope.tape, scope.syntaxTree);
 
    _writer.endMethod(*scope.tape, scope.parameters.Count() + 1, scope.reserved);
@@ -4020,7 +4020,7 @@ void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
    // NOTE : close root node
    writer.closeNode();
 
-   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   analizeSyntaxTree(&scope, scope.syntaxTree);
    _writer.generateTree(*tape, scope.syntaxTree);
 
    _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
@@ -4059,7 +4059,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
       // NOTE : close root node
       scope.writer->closeNode();
 
-      optimizeSyntaxTree(*scope.moduleScope, methodScope->syntaxTree);
+      analizeSyntaxTree(&scope, methodScope->syntaxTree);
       _writer.generateTree(*tape, methodScope->syntaxTree);
    }
 
@@ -4199,7 +4199,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, bool genericMetho
       // NOTE : close root node
       writer.closeNode();
 
-      optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+      analizeSyntaxTree(&scope, scope.syntaxTree);
       _writer.generateTree(*tape, scope.syntaxTree);
 
       _writer.endMethod(*tape, getParamCount(scope.message) + 1, scope.reserved, true);
@@ -4258,7 +4258,7 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, bool genericMetho
       // NOTE : close root node
       writer.closeNode();
 
-      optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+      analizeSyntaxTree(&scope, scope.syntaxTree);
       if (scope.isEmbeddable()) {
          defineEmbeddableAttributes(scope, scope.syntaxTree);
       }
@@ -4293,7 +4293,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       // HOTFIX : generate the code
       writer.closeNode();
 
-      optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+      analizeSyntaxTree(&scope, scope.syntaxTree);
       _writer.generateTree(classClassScope.tape, scope.syntaxTree);
 
       // HOTFIX : clear writer and open the node once again
@@ -4334,7 +4334,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
    // NOTE : close root node
    writer.closeNode();
 
-   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   analizeSyntaxTree(&scope, scope.syntaxTree);
    _writer.generateTree(classClassScope.tape, scope.syntaxTree);
 
    _writer.endMethod(classClassScope.tape, getParamCount(scope.message) + 1, scope.reserved, withFrame);
@@ -5021,7 +5021,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    // NOTE : close root node
    writer.closeNode();
 
-   optimizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   analizeSyntaxTree(&scope, scope.syntaxTree);
    _writer.generateTree(scope.tape, scope.syntaxTree);
 
    if (isStatic) {
@@ -5138,84 +5138,85 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: analizeBoxing(Scope* scope, SyntaxTree::Node node)
 {
-   scope.raiseWarning(4, wrnBoxingCheck,
-      SyntaxTree::findChild(node, lxRow).argument,
-      SyntaxTree::findChild(node, lxCol).argument);
+   SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+   SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
+   if (col != lxNone && row != lxNone) {
+      scope->raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument);
+   }
 }
 
-void Compiler :: optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t targetType)
+void Compiler :: analizeTypecast(Scope* scope, SyntaxTree::Node node)
 {
    SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
    SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
    if (col != lxNone && row != lxNone)
-      scope.raiseWarning(2, wrnTypeMismatch, row.argument, col.argument);
+      scope->raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument);
 }
 
-void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
 {
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
       switch (current.type)
       {
          case lxAssigning:
-            optimizeAssigning(scope, current);
-            optimizeSyntaxExpression(scope, current);
+            optimizeAssigning(*scope->moduleScope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          case lxTypecasting:
-            optimizeTypecast(scope, current, getSignature(current.argument));
-            optimizeSyntaxExpression(scope, current);
+            analizeTypecast(scope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          case lxBoxing:
          case lxCondBoxing:
          case lxArgBoxing:
          case lxUnboxing:
-            optimizeBoxing(scope, current);
-            optimizeSyntaxExpression(scope, current);
+            analizeBoxing(scope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          case lxDirectCalling:
          case lxSDirctCalling:
-            optimizeDirectCall(scope, current);
-            optimizeSyntaxExpression(scope, current);
+            optimizeDirectCall(*scope->moduleScope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          case lxIntOp:
          case lxLongOp:
          case lxRealOp:
          case lxIntArrOp:
          case lxArrOp:
-            optimizeOp(scope, current);
-            optimizeSyntaxExpression(scope, current);
+            optimizeOp(*scope->moduleScope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          case lxStdExternalCall:
          case lxExternalCall:
-            optimizeExtCall(scope, current);
-            optimizeSyntaxExpression(scope, current);
+            optimizeExtCall(*scope->moduleScope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          case lxInternalCall:
-            optimizeInternalCall(scope, current);
-            optimizeSyntaxExpression(scope, current);
+            optimizeInternalCall(*scope->moduleScope, current);
+            analizeSyntaxExpression(scope, current);
             break;
          default:
             if (test(current.type, lxExpressionMask)/* && current.nextNode() != lxAssigning*/) {
-               optimizeSyntaxExpression(scope, current);
+               analizeSyntaxExpression(scope, current);
             }
             break;
       }
 
       current = current.nextNode();
    }
-
 }
 
-void Compiler :: optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
+void Compiler :: analizeSyntaxTree(Scope* scope, MemoryDump& dump)
 {
    if (!test(_optFlag, 1))
       return;
 
    SyntaxTree reader(&dump);
 
-   optimizeSyntaxExpression(scope, reader.readRoot());
+   analizeSyntaxExpression(scope, reader.readRoot());
 }
 
 bool Compiler :: recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node root, ref_t& subject)
@@ -5287,7 +5288,7 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hi
    // check if the module exists
    _Module* module = scope.project->loadModule(ns, true);
    if (!module)
-      scope.raiseWarning(1, wrnUnknownModule, ns);
+      scope.raiseWarning(wrnUnknownModule, ns);
 
    ident_t value = retrieve(scope.defaultNs.start(), ns, NULL);
    if (value == NULL) {
@@ -5322,7 +5323,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
 
          scope.saveType(typeRef, classRef, internalType);
       }
-      else scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
+      else scope.raiseWarning(wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -5478,7 +5479,7 @@ void Compiler :: validateUnresolved(Unresolveds& unresolveds, Project& project)
       if (!validate(project, (*it).module, (*it).reference)) {
          ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
 
-         project.raiseWarning(1, wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
+         project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
       }
    }
 }

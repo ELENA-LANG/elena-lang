@@ -9,7 +9,6 @@
 {
     test
     [
-        #var s := 2 toLiteral.
     ]        
 }.
         

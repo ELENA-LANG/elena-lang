@@ -258,8 +258,8 @@ private:
       }
 
       void raiseError(const char* message, TerminalInfo terminal);
-      void raiseWarning(int level, const char* message, TerminalInfo terminal);
-      void raiseWarning(int level, const char* message, int row, int col);
+      void raiseWarning(const char* message, TerminalInfo terminal);
+      void raiseWarning(const char* message, int row, int col);
 
       bool checkReference(ident_t referenceName);
 
@@ -353,6 +353,7 @@ private:
 
       ModuleScope* moduleScope;
       Scope*       parent;
+      int          warningMask;
 
       void raiseError(const char* message, TerminalInfo terminal)
       {
@@ -361,7 +362,13 @@ private:
 
       void raiseWarning(int level, const char* message, TerminalInfo terminal)
       {
-         moduleScope->raiseWarning(level, message, terminal);
+         if (test(warningMask, level))
+            moduleScope->raiseWarning(message, terminal);
+      }
+      void raiseWarning(int level, const char* message, int row, int col)
+      {
+         if (test(warningMask, level))
+            moduleScope->raiseWarning(message, row, col);
       }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier)
@@ -384,11 +391,13 @@ private:
       {
          this->parent = NULL;
          this->moduleScope = moduleScope;
+         this->warningMask = moduleScope->project->getWarningMask();
       }
       Scope(Scope* parent)
       {
          this->parent = parent;
          this->moduleScope = parent->moduleScope;
+         this->warningMask = parent->warningMask;
       }
    };
 
@@ -818,16 +827,17 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
-   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);
-   void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);   
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
-   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, ref_t typeRef);
-   void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node);
-   void optimizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
+
+   void analizeBoxing(Scope* scope, SyntaxTree::Node node);
+   void analizeTypecast(Scope* scope, SyntaxTree::Node node);
+   void analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node);
+   void analizeSyntaxTree(Scope* scope, MemoryDump& dump);
 
    bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
    void defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump);

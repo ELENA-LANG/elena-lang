@@ -138,15 +138,6 @@ void _ELC_::Project :: raiseError(const char* msg, _ELENA_::ident_t path, int ro
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project :: raiseError(const char* msg)
-//{
-//   MsgString wMsg(msg);
-//
-//   print(wMsg);
-//
-//   throw _ELENA_::_Exception();
-//}
-
 void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t identifier)
 {
    _ELENA_::WideString wMsg(msg);
@@ -157,29 +148,6 @@ void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t identif
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
-//{
-//   MsgString wMsg(msg);
-//
-//   print(wMsg, wValue);
-//
-//   throw _ELENA_::_Exception();
-//}
-//
-//void _ELC_::Project :: raiseError(const char* msg, const wchar16_t wValue)
-//{
-//   MsgString wMsg(msg);
-//
-//   print(wMsg, wValue);
-//
-//   throw _ELENA_::_Exception();
-//}
-//
-//void _ELC_::Project :: printInfo(const char* msg, const char* value)
-//{
-//   print(msg);
-//}
-
 void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ident_t value)
 {
    _ELENA_::WideString wMsg(msg);
@@ -187,11 +155,6 @@ void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ident_t value)
 
    print(wMsg, (const wchar_t*)wParam);
 }
-
-////void _ELC_::Project :: printInfo(const wchar16_t* msg)
-////{
-////   print(msg);
-////}
 
 void _ELC_::Project::raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier)
 {
@@ -204,9 +167,9 @@ void _ELC_::Project::raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _EL
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
+void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
 {
-   if (!indicateWarning(level))
+   if (!indicateWarning())
       return;
 
    _ELENA_::WideString wMsg(msg);
@@ -216,9 +179,9 @@ void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::iden
    print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
 }
 
-void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path)
+void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path)
 {
-   if (!indicateWarning(level))
+   if (!indicateWarning())
       return;
 
    _ELENA_::WideString wMsg(msg);
@@ -409,31 +372,22 @@ void _ELC_::Project :: setOption(const wchar_t* value)
             _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
          }
          else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL1)) {
-            _warningMasks |= 1;
+            _warningMasks = _ELENA_::WARNING_MASK_1;
          }
          else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL2)) {
-            _warningMasks |= 3;
+            _warningMasks = _ELENA_::WARNING_MASK_2;
          }
-         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL4)) {
-            _warningMasks |= 7;
+         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL3)) {
+            _warningMasks = _ELENA_::WARNING_MASK_3;
          }
-         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL1_OFF)) {
+         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_OFF)) {
             _warningMasks = 0;
-         }
-         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL2_OFF)) {
-            _warningMasks = 1;
-         }
-         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL4_OFF)) {
-            _warningMasks = 3;
          }
          else raiseError(ELC_ERR_INVALID_OPTION, valueName);
          break;
       case ELC_PRM_TARGET:
          _settings.add(_ELENA_::opTarget, _ELENA_::StringHelper::clone(valueName + 1));
          break;
-////      case ELC_PRM_ENTRY:
-////         loadForward(_ELENA_::ConstantIdentifier(STARTUP_CLASS), _ELENA_::StringHelper::clone(value + 1));
-////         break;
       case ELC_PRM_START:
          _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(valueName + 1));
          break;
@@ -475,7 +429,7 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 
       _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
       if (!rulesFile.isOpened()) {
-         project.raiseWarning(1, errInvalidFile, RULES_FILE);
+         project.raiseWarning(errInvalidFile, RULES_FILE);
       }
       else compiler.loadRules(&rulesFile);
    }

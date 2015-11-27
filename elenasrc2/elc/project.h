@@ -14,6 +14,15 @@
 namespace _ELENA_
 {
 
+// --- Project warning levels
+const int WARNING_LEVEL_1 = 1;
+const int WARNING_LEVEL_2 = 2;
+const int WARNING_LEVEL_3 = 4;
+
+const int WARNING_MASK_1 = 1;
+const int WARNING_MASK_2 = 3;
+const int WARNING_MASK_3 = 7;
+
 // --- Project list types ---
 //typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
 typedef Dictionary2D<int, ident_t>    ProjectSettings;
@@ -160,8 +169,8 @@ public:
 
    virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
 
-   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
+   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
 
 ////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
@@ -196,9 +205,11 @@ public:
 
    virtual int getTabSize() { return 4; }
 
-   bool indicateWarning(int level)
+   int getWarningMask() const { return _warningMasks; }
+
+   bool indicateWarning()
    {
-      if (!test(_warningMasks, level))
+      if (_warningMasks == 0)
          return false;
 
       _hasWarning = true;
