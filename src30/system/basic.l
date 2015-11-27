@@ -625,12 +625,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(embeddable,type:int,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -880,7 +880,7 @@
         => system'internal'int_not.
 
     /// Negates the value
-    #method(stacksafe) negative
+    #method(stacksafe,suppress:w3) negative
         = 0 - $self.
 
     /// Clones the value
@@ -895,12 +895,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(type:int,embeddable,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -1141,7 +1141,7 @@
     #method wide = wideConvertor convert &long:$self.
 
     /// Negates the value
-    #method(type:long,stacksafe) negative = 0l - $self.
+    #method(type:long,stacksafe,suppress:w3) negative = 0l - $self.
 
     /// Bitwise inversion
     #method(type:long,stacksafe) not
@@ -1159,12 +1159,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(type:int,embeddable,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -1333,7 +1333,7 @@
         = $self divide &real:(RealNumber new &long:anOperand).
 
     /// Negates the value
-    #method negative = 0r - $self.
+    #method(type:real,suppress:w3) negative = 0r - $self.
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &real:$self.
@@ -1353,12 +1353,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(type:int,embeddable,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -1498,7 +1498,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &byte:(ByteNumber new &byte:theValue).
 
     /// Expands a byte integer
-    #method => theValue.    
+    #method(suppress:w3) => theValue.    
 }
 
 // --- Short ---
@@ -1670,7 +1670,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &short:(ShortNumber new &short:theValue).
 
     /// Expands a short integer
-    #method => theValue.    
+    #method(suppress:w3) => theValue.    
 }
 
 // --- Integer ---
@@ -1871,7 +1871,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:(IntNumber new &int:theValue).
 
     /// Expands a short integer
-    #method => theValue.    
+    #method(suppress:w3) => theValue.    
 }
 
 // --- Long ---
@@ -2115,7 +2115,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:(LongNumber new &long:theValue).
 
     /// Expands a long integer value    
-    #method => theValue.    
+    #method(suppress:w3) => theValue.    
 }
 
 // --- Real ---
@@ -2368,7 +2368,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:(RealNumber new &real:theValue).
     
     /// Expands a real value
-    #method => theValue.
+    #method(suppress:w3) => theValue.
 }
 
 // --- CharValue ---
@@ -2519,12 +2519,12 @@
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
     
-    #method hash_code
+    #method(embeddable,type:int,suppress:w3) hash_code
     [
         #var(type:int)aCode.
         $self readHashCode &vint:aCode.
         
-        ^ IntNumber new &int:aCode.
+        ^ aCode.
     ]
 }
 
@@ -2619,7 +2619,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:(CharValue new &char:theValue).
 
     /// Extends the character value
-    #method => theValue.    
+    #method(suppress:w3) => theValue.    
 }
 
 // === Basic Factory symbols ==

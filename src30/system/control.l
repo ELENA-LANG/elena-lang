@@ -60,7 +60,7 @@
     #method(type:bool) and : anExpr = anExpr bool.
 
     /// Executes logical XOR operation
-    #method(type:bool) xor : aBool
+    #method(type:bool,suppress:w2) xor : aBool
     [
         aBool ? [ ^ false. ].
         
@@ -114,7 +114,7 @@
     #method(type:bool) and : anExpr = $self.
 
     /// Executes logical XOR operation
-    #method(type:bool) xor : anExpr 
+    #method(type:bool,suppress:w2) xor : anExpr 
     [
         anExpr ? [ ^ true. ].
         
@@ -122,7 +122,7 @@
     ]
 
     /// Determines whether the specified object is equal to the current object boolean value
-    #method equal : anExpr
+    #method(suppress:w2) equal : anExpr
     [
         anExpr ? [ ^ $self. ].
         
@@ -206,12 +206,12 @@
         [ $self write &index:(IntNumber new &int:anIndex). ] 
     
     /// Returns the index value
-    #method index
+    #method(embeddable,type:int,suppress:w3) index
     [
-        #var(type:int)anIndex := 0.
+        #var(type:int)anIndex.
         $self readIndex &vint:anIndex.
                         
-        ^ IntNumber new &int:anIndex.
+        ^ anIndex.
     ]                
     
     /// Sets the index by specified value
@@ -250,12 +250,12 @@
     ]
     
     /// Returns the end of indexer position
-    #method length
+    #method(type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
     
     /// Dispatches the verb to the target object with iterator subject
@@ -274,7 +274,7 @@
     #method eval []
     
     /// Executes the action while the condition is true
-    #method run &if:aBool
+    #method(sealed,suppress:w2) run &if:aBool
     [
         #loop aBool ?
         [
@@ -285,7 +285,7 @@
     /// Executes the action while the condition is false
     ///
     /// Executes at least once
-    #method run &until:aBool
+    #method(sealed) run &until:aBool
     [
         #var(type:bool)flag := false.
         
@@ -332,7 +332,7 @@
     ]
     
     /// Executes the function for every enumeration item until it returns true
-    #method retrieve &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -363,7 +363,7 @@
     #method eval : aParam1 : aParam2 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam &enumerator:anEnumerator
+    #method(sealed) run : aParam &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -372,7 +372,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true
-    #method retrieve : aParam &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam &enumerator:anEnumerator
     [
         #var anItem := nil.
         #loop (anEnumerator next) ?
@@ -403,7 +403,7 @@
     #method eval : aParam1 : aParam2 : aParam3 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -412,7 +412,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 &enumerator:anEnumerator
     [
         #var anItem := nil.
         #loop (anEnumerator next) ?
@@ -443,7 +443,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -452,7 +452,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -483,7 +483,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -492,7 +492,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -523,7 +523,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -532,7 +532,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -563,7 +563,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -572,7 +572,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -603,7 +603,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -612,7 +612,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -643,7 +643,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -652,7 +652,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -683,7 +683,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -692,7 +692,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -723,7 +723,7 @@
     #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
     
     /// Executes the function for parameters and every enumeration item
-    #method run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
     [
         #loop (anEnumerator next) ?
         [
@@ -732,7 +732,7 @@
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    #method retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
     [
         #var anItem := $nil.
         #loop (anEnumerator next) ?
@@ -780,7 +780,7 @@
     #method(stacksafe) eval &index:n []
 
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-    #method(stacksafe) rewind &int:aStart &int:n &int:dx
+    #method(stacksafe,sealed) rewind &int:aStart &int:n &int:dx
     [
         #var(type:int)i := aStart.
         
@@ -795,7 +795,7 @@
     ]          
     
     /// Executes the function for every value in the specified range (starting value, ending value, step)
-    #method(stacksafe) run &int:aStart &int:n &int:dx
+    #method(stacksafe,sealed) run &int:aStart &int:n &int:dx
     [
         #var(type:int)i := aStart.
         
@@ -810,7 +810,7 @@
     ]
 
     /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
-    #method(stacksafe) retrieve &int:aStart &int:n &int:dx
+    #method(stacksafe,sealed,suppress:w2) retrieve &int:aStart &int:n &int:dx
     [
         #var(type:int)i := aStart.
         
@@ -848,7 +848,7 @@
     #method eval &index:i &index:j []
 
     /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
-    #method rewind &int:i &int:j &int:n &int:m &int:dx
+    #method(sealed) rewind &int:i &int:j &int:n &int:m &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -871,7 +871,7 @@
     ]          
     
     /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
-    #method run &int:i &int:j &int:n &int:m &int:dx
+    #method(sealed) run &int:i &int:j &int:n &int:m &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -910,7 +910,7 @@
     #method(stacksafe) eval &int:i &int:j &int:k []
 
     /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
-    #method rewind &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
+    #method(sealed) rewind &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
@@ -941,7 +941,7 @@
     ]          
     
     /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
-    #method run &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
+    #method(sealed) run &int:i &int:j &int:k &int:n &int:m &int:p &int:dx
     [
         #var(type:int)x := i.
         #var(type:int)y := j.
