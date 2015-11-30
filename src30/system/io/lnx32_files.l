@@ -79,7 +79,7 @@
     
     #method close
     [
-        system'external'libc fclose &handle:theHandle.
+        system'external'libc fclose &int:theHandle.
     ]
 }
 

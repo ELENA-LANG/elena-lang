@@ -36,6 +36,7 @@ bin/elc2 -cexamples/console/bsort/bsort.project
 bin/elc2 -cexamples/console/replace/replace.project
 bin/elc2 -cexamples/console/matrix/matrix.project
 bin/elc2 -cexamples/console/trans/tanslit.project
+bin/elc2 -cexamples/console/pi/pi.project
 bin/elc2 -cexamples/files/textfile/textfile.project
 bin/elc2 -cexamples/console/goods/goods.project
 bin/elc2 -cexamples/files/textdb/textdb.project

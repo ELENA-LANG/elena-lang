@@ -148,7 +148,10 @@
 
     #method(stacksafe) readMonth &vint:aRetVal
     [
-        aRetVal << (tm_mon + 1).
+        #var(type:int)aMonth := tm_mon.
+        aMonth := aMonth + 1.
+
+        aRetVal << aMonth.
     ]
 
     #method(stacksafe) readDayOfWeek &vint:aRetVal
