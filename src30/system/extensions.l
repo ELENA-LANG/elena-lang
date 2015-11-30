@@ -24,7 +24,7 @@
         = aFunction eval:self.
 
     /// Returns true if the object is nil
-    #method is &nil
+    #method(type:bool) is &nil
         = nil == self.
         
     /// Returns true if the object is literal or character
@@ -39,10 +39,10 @@
     #method is &numeric
         = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
         
-    #method is &empty
+    #method(type:bool,suppress:w2) is &empty
         = self length == 0.
         
-    #method is &nonempty
+    #method(type:bool) is &nonempty
         = self length != 0.
         
     /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
@@ -56,7 +56,7 @@
 
 #class(extension:byte) byteOp
 {
-    #method absolute
+    #method(type:byte) absolute
     [
         #var(type:byte)n := self byte.
         (n < 0)
@@ -65,7 +65,7 @@
         ^ ByteNumber new &byte:n.
     ]
     
-    #method mod : anOperand
+    #method(type:byte,suppress:w2) mod : anOperand
     [
         #var retVal := self byte / anOperand * anOperand.
         
@@ -98,22 +98,22 @@
     #method power : aPower
         = self::byteOp power &byte:(aPower byte).
                 
-    #method is &odd
+    #method(type:bool) is &odd
         = self::byteOp mod:2 != 0.
         
-    #method is &even
+    #method(type:bool) is &even
         = self::byteOp mod:2 == 0.
         
-    #method is &zero
+    #method(type:bool) is &zero
         = self byte equal &int:0.
         
-    #method is &positive
+    #method(type:bool) is &positive
         = self byte > 0.
         
-    #method is &negative
+    #method(type:bool) is &negative
         = self byte < 0.
         
-    #method is &nonnegative
+    #method(type:bool) is &nonnegative
         = self byte <= 0.
 }
 
@@ -121,7 +121,7 @@
 
 #class(extension:short) shortOp
 {
-    #method absolute
+    #method(type:short) absolute
     [
         #var(type:short)n := self short.
         (n < 0)
@@ -130,7 +130,7 @@
         ^ ShortNumber new &short:n.
     ]
     
-    #method mod : anOperand
+    #method(type:short,suppress:w2) mod : anOperand
     [
         #var retVal := self short / anOperand * anOperand.
         
@@ -163,25 +163,25 @@
     #method power : aPower
         = self::shortOp power &short:(aPower short).
                 
-    #method is &odd
+    #method(type:bool) is &odd
         = self::shortOp mod:2 != 0.
         
-    #method is &even
+    #method(type:bool) is &even
         = self::shortOp mod:2 == 0.
         
-    #method is &zero
+    #method(type:bool) is &zero
         = self short equal &int:0.
         
-    #method is &positive
+    #method(type:bool) is &positive
         = self short > 0.
         
-    #method is &negative
+    #method(type:bool) is &negative
         = self short < 0.
         
-    #method is &nonnegative
+    #method(type:bool) is &nonnegative
         = self short <= 0.
     
-    #method high
+    #method(type:byte) high
     [
         #var(type:short)aWord := self short.
         aWord := aWord && 0FF00h.
@@ -190,7 +190,7 @@
         ^ byteConvertor convert &short:aWord.
     ]
         
-    #method low
+    #method(type:byte) low
     [
         #var(type:short)aWord := self short.
         aWord := aWord && 0FFh.
@@ -253,22 +253,22 @@
     #method power : aPower
         = self::intOp power &int:(aPower int).
                 
-    #method is &odd
+    #method(type:bool) is &odd
         = self int and &int:1 != 0.
         
-    #method is &even
+    #method(type:bool) is &even
         = self int and &int:1 == 0.
         
-    #method is &zero
+    #method(type:bool) is &zero
         = self int equal &int:0.
         
-    #method is &positive
+    #method(type:bool) is &positive
         = self int > 0.
         
-    #method is &negative
+    #method(type:bool) is &negative
         = self int < 0.
         
-    #method is &nonnegative
+    #method(type:bool) is &nonnegative
         = self int <= 0.
 
     #method high
@@ -293,7 +293,7 @@
 
 #class(extension:long) longOp
 {
-    #method absolute
+    #method(type:long) absolute
     [
         #var(type:long)n := self long.
 
@@ -303,7 +303,7 @@
         ^ LongNumber new &long:n.
     ]
     
-    #method mod : anOperand
+    #method(type:long) mod : anOperand
     [
         #var(type:long)x := self long.
         #var(type:long)y := anOperand long.
@@ -340,25 +340,25 @@
     #method power : aPower
         = self::longOp power &long:(aPower long).
                 
-    #method is &odd
+    #method(type:bool) is &odd
         = self::longOp mod:2l != 0.
         
-    #method is &even
+    #method(type:bool) is &even
         = self::longOp mod:2l == 0.
         
-    #method is &zero
+    #method(type:bool) is &zero
         = self long equal &long:0l.
         
-    #method is &positive
+    #method(type:bool) is &positive
         = self long > 0l.
         
-    #method is &negative
+    #method(type:bool) is &negative
         = self long < 0l.
         
-    #method is &nonnegative
+    #method(type:bool) is &nonnegative
         = self long <= 0l.
 
-    #method high
+    #method(type:int) high
     [
         #var(type:long)aWord := self long.
         aWord := aWord && -4294967296l.
@@ -367,7 +367,7 @@
         ^ intConvertor convert &long:aWord.
     ]
 
-    #method low
+    #method(type:int) low
     [
         #var(type:long)aWord := self long.
         aWord := aWord && 4294967295l.
@@ -595,17 +595,17 @@
         ^ RealNumber new &real:(1.0r / aValue).
     ]    
             
-    #method is &zero
-        = self == 0.
+    #method(type:bool) is &zero
+        = self real == 0.
         
-    #method is &positive
-        = self > 0.
+    #method(type:bool) is &positive
+        = self real > 0.
         
-    #method is &negative
-        = self < 0.
+    #method(type:bool) is &negative
+        = self real < 0.
         
-    #method is &nonnegative
-        = self <= 0.
+    #method(type:bool) is &nonnegative
+        = self real <= 0.
 }
 
 // --- arrayOp ---
@@ -634,8 +634,7 @@
         #var(type:intarray)anArray := self intarray.
         
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
-        anArray readLength &vint:aLength.
+        #var(type:int)aLength := anArray length.
         
         #loop (anIndex < aLength) ?
         [            
@@ -668,14 +667,12 @@
         anArray setAt &int:anIndex2 &object:aTemp.
     ]
     
-    #method(stacksafe) indexOf &int:anIndex &object:anObject &vint:aRetVal
+    #method(stacksafe,suppress:w2) indexOf &int:anIndex &object:anObject &vint:aRetVal
     [
         aRetVal << -1.
         
         #var(type:array)anArray := self array.
-        #var(type:int)aLength.
-        
-        anArray readLength &vint:aLength.
+        #var(type:int)aLength := anArray length.
         
         #var(type:int)i := anIndex.
         #loop (i < aLength)?
@@ -701,11 +698,10 @@
     #method indexOf : anObject
         = self::arrayOp indexOf &int:0 &object:anObject.
         
-    #method safeSeek : aValue
+    #method(suppress:w2) safeSeek : aValue
     [
         #var(type:array)anArray := self array.
-        #var(type:int)aLength.                
-        anArray readLength &vint:aLength.
+        #var(type:int)aLength := anArray length.
         
         #var(type:int)i := 0.
         #loop (i < aLength)?
@@ -764,14 +760,13 @@
     #method sort : aCompareFunc
         = self::arrayOp sort &func2:(aCompareFunc func2).
     
-    #method sort &func2:aCompareFunc
+    #method(suppress:w2) sort &func2:aCompareFunc
     [
         #var(type:array)anArray := self array.
         
         #var(type:int)i := 0.
         #var(type:int)j := 0.
-        #var(type:int)aLength.
-        anArray readLength &vint:aLength.
+        #var(type:int)aLength := anArray length.
         #var aCurrent := $nil.
         #var aNext := $nil.
         
@@ -803,7 +798,7 @@
     #method ascendant
         = (self clone)::arrayOp sort:ifOrdered.
     
-    #method is &empty
+    #method(type:bool) is &empty
     [
         #var(type:array)anArray := self array.
         #var(type:int)aLength.
@@ -846,8 +841,7 @@
     #method(type:literal,stacksafe) Substring &int:anIndex
     [
         #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength.
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         aLength := aLength - anIndex.
         
@@ -858,11 +852,9 @@
     [
         #var(type:literal)aLiteral := self literal.        
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         #var(type:char)aCurrent.
-        #var(type:int)aCharLen.
-        aChar readLength &vint:aCharLen.
+        #var(type:int)aCharLen := aChar length.
         
         #loop (anIndex < aLength) ?
         [
@@ -884,16 +876,14 @@
     #method trimLeft
         = self::literalOp trimLeft &char:#32.    
        
-    #method trimRight &char:aChar
+    #method(suppress:w2) trimRight &char:aChar
     [
         #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength.
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         #var(type:int)anIndex := aLength - 1.
         #var(type:int)aPrevious := aLength.
         #var(type:char)aCurrent.
-        #var(type:int)aCharLen.
-        aChar readLength &vint:aCharLen.
+        #var(type:int)aCharLen := aChar length.
         
         #loop (anIndex >= 0) ?
         [
@@ -921,8 +911,7 @@
     #method padLeft &char:aChar &int:aLength
     [
         #var(type:literal)aLiteral := self literal.
-        #var(type:int)aCurrentLength.
-        aLiteral readLength &vint:aCurrentLength.
+        #var(type:int)aCurrentLength := aLiteral length.
         
         (aCurrentLength < aLength)
             ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
@@ -974,10 +963,8 @@
     #method containing &literal:s
     [
         #var(type:literal)aLiteral := self literal.
-        #var(type:int)l1.
-        #var(type:int)l2.
-        aLiteral readLength &vint:l1.
-        s readLength &vint:l2.
+        #var(type:int)l1 := aLiteral length.
+        #var(type:int)l2 := s length.
 
         #var(type:vint)n.
         aLiteral indexOf &int:0 &literal:s &vint:n.
@@ -991,10 +978,9 @@
     #method replaceFirst &literal:aReplacee &literal:aReplacer
     [
         #var(type:literal)aLiteral := self literal.
-        #var(type:vint) aReplaceeLen.
+        #var(type:vint) aReplaceeLen := aReplacee length.
         #var(type:vint)anIndex.
         
-        aReplacee readLength &vint:aReplaceeLen.
         aLiteral indexOf &int:0 &literal:aReplacee &vint:anIndex.
         
         (anIndex != -1)
@@ -1008,8 +994,7 @@
         #var aTarget := String new.
         #var(type:int)aStart := 0.
         #var(type:int)anEnd.
-        #var(type:int)aReplaceeLen.
-        aReplacee readLength &vint:aReplaceeLen.
+        #var(type:int)aReplaceeLen := aReplacee length.
         
         aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
         
@@ -1029,11 +1014,10 @@
             ! [ self literal ].
     ]
     
-    #method is &empty
+    #method(type:bool) is &empty
     [
         #var(type:literal)aLiteral := self literal.        
-        #var(type:int)aLength.
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         ^ aLength == 0.
     ]    
@@ -1058,24 +1042,20 @@
     #method(type:wide,stacksafe) Substring &int:anIndex
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:int)aLength.
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         aLength := aLength - anIndex.
         
         ^ aLiteral Substring &int:anIndex &int:aLength.
     ]
      
-    #method trimLeft &char:aChar
+    #method(suppress:w2) trimLeft &char:aChar
     [
         #var(type:wide)aLiteral := self wide.
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
+        #var(type:int)aLength := aLiteral length.
         #var(type:char)aCurrent.
-        #var(type:int)aCharLen.
-        
-        aLiteral readLength &vint:aLength.
-        aChar readLength &vint:aCharLen.
+        #var(type:int)aCharLen := aChar length.
         
         #loop (anIndex < aLength) ?
         [
@@ -1093,15 +1073,12 @@
     #method trimLeft
         = self::wideOp trimLeft &char:#32.
        
-    #method trimRight &char:aChar
+    #method(suppress:w2) trimRight &char:aChar
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:int)aLength.
+        #var(type:int)aLength := aLiteral length.
         #var(type:char)aCurrent.
-        #var(type:int)aCharLen.
-
-        aLiteral readLength &vint:aLength.
-        aChar readLength &vint:aCharLen.
+        #var(type:int)aCharLen := aChar length.
                 
         #var(type:int)anIndex := aLength - 1.
         #var(type:int)aPrevious := aLength.
@@ -1131,8 +1108,7 @@
     #method padLeft &char:aChar &int:aLength
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:int)aCurrentLength.
-        aLiteral readLength &vint:aCurrentLength.
+        #var(type:int)aCurrentLength := aLiteral length.
         
         (aCurrentLength < aLength)
             ? [ ^ WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
@@ -1143,8 +1119,7 @@
     #method padRight &char:aChar &int:aLength
     [
         #var(type:wide)aLiteral := self wide.        
-        #var(type:int)aCurrentLength.
-        aLiteral readLength &vint:aCurrentLength.
+        #var(type:int)aCurrentLength := aLiteral length.
 
         (aCurrentLength < aLength)
             ? [ ^ aLiteral add &wide:(WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
@@ -1167,13 +1142,9 @@
     #method endingWith &wide:s
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:int)l1.
-        #var(type:int)l2.
-        #var(type:int)n.
-        
-        aLiteral readLength &vint:l1.
-        s readLength &vint:l2.
-        
+        #var(type:int)l1 := aLiteral length.
+        #var(type:int)l2 := s length.
+        #var(type:int)n.        
         aLiteral indexOf &int:(l1 - l2) &wide:s &vint:n.
         
         ^ n != -1.
@@ -1185,12 +1156,9 @@
     #method containing &wide:s
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:int)l1.
-        #var(type:int)l2.
+        #var(type:int)l1 := aLiteral length.
+        #var(type:int)l2 := s length.
         #var(type:int)n.
-        
-        aLiteral readLength &vint:l1.
-        s readLength &vint:l2.
         
         aLiteral indexOf &int:0 &wide:s &vint:n.
         
@@ -1203,10 +1171,9 @@
     #method replaceFirst &wide:aReplacee &wide:aReplacer
     [
         #var(type:wide)aLiteral := self wide.
-        #var(type:int) aReplaceeLen.
+        #var(type:int) aReplaceeLen := aReplacee length.
         #var(type:int)anIndex.
         
-        aReplacee readLength &vint:aReplaceeLen.
         aLiteral indexOf &int:0 &wide:aReplacee &vint:anIndex.
         
         (anIndex != -1)
@@ -1214,15 +1181,14 @@
             ! [ ^ aLiteral. ].
     ]
         
-    #method replace &wide:aReplacee &wide:aReplacer
+    #method(suppress:w2) replace &wide:aReplacee &wide:aReplacer
     [
         #var(type:wide)aLiteral := self wide.
         
         #var aTarget := String new.
         #var(type:int)aStart := 0.
         #var(type:int)anEnd.
-        #var(type:int)aReplaceeLen.
-        aReplacee readLength &vint:aReplaceeLen.
+        #var(type:int)aReplaceeLen := aReplacee length.
         
         aLiteral indexOf &int:aStart &wide:aReplacee &vint:anEnd.
         
@@ -1242,11 +1208,10 @@
             ! [ aLiteral ].
     ]
 
-    #method is &empty
+    #method(type:bool) is &empty
     [
-        #var(type:int)aLength.
         #var(type:wide)aLiteral := self wide.        
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         ^ aLength == 0.
     ]

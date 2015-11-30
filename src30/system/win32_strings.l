@@ -58,17 +58,16 @@
         
         #var(type:literal)aRetVal := emptyLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
         #var(type:char)aCurrent.
         #var(type:char)aConverted.
         #var(type:int)aCurrentLen.
         
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         #loop (anIndex < aLength)?
         [
             aLiteral read &int:anIndex &vchar:aCurrent.
-            aCurrent readLength &vint:aCurrentLen.
+            aCurrentLen := aCurrent length.
             
             $characterController toUpperCase &char:aCurrent &vchar:aConverted.
             
@@ -86,17 +85,16 @@
         
         #var(type:literal)aRetVal := emptyLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
         #var(type:char)aCurrent.
         #var(type:char)aConverted.
         #var(type:int)aCurrentLen.
         
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         #loop (anIndex < aLength)?
         [
             aLiteral read &int:anIndex &vchar:aCurrent.
-            aCurrent readLength &vint:aCurrentLen.
+            aCurrentLen := aCurrent length.
             
             $characterController toLowerCase &char:aCurrent &vchar:aConverted.
             
@@ -119,17 +117,16 @@
         
         #var(type:wide)aRetVal := emptyWideLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
         #var(type:char)aCurrent.
         #var(type:char)aConverted.
         #var(type:int)aCurrentLen.
 
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
                 
         #loop (anIndex < aLength)?
         [
             aLiteral read &int:anIndex &vchar:aCurrent.
-            aCurrent readLength &vint:aCurrentLen.
+            aCurrentLen := aCurrent length.
             
             $characterController toUpperCase &char:aCurrent &vchar:aConverted.
             
@@ -147,17 +144,16 @@
         
         #var(type:wide)aRetVal := emptyWideLiteralValue.        
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
         #var(type:char)aCurrent.
         #var(type:char)aConverted.
         #var(type:int)aCurrentLen.
         
-        aLiteral readLength &vint:aLength.
+        #var(type:int)aLength := aLiteral length.
         
         #loop (anIndex < aLength)?
         [
             aLiteral read &int:anIndex &vchar:aCurrent.
-            aCurrent readLength &vint:aCurrentLen.
+            aCurrentLen := aCurrent length.
             
             $characterController toLowerCase &char:aCurrent &vchar:aConverted.
             

@@ -92,7 +92,7 @@
     
     #method mssg = Message new &mssg:theMessage.
     
-    #method => theMessage.
+    #method(suppress:w3) => theMessage.
 }
 
 // --- MessageArray ---
@@ -108,12 +108,12 @@
     #method(stacksafe) readLength &vint:aLength
         => system'internal'ns_getlen.
         
-    #method(stacksafe) length
+    #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
         
-        ^ IntNumber new &int:aLength.
+        ^ aLength.
     ]
     
     #method mssgarray = $self.

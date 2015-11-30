@@ -198,7 +198,7 @@
         anIndexer set:anObject2.
     ]
     
-    #method indexOf : anObject
+    #method(suppress:w2) indexOf : anObject
     [
         #var(type:iterator)anIndexer := self iterator.
         
@@ -253,7 +253,7 @@
     #method sort : aCompareFunc
         = self::indexableOp sort &func2:(aCompareFunc func2).
     
-    #method sort &func2:aCompareFunc
+    #method(suppress:w2) sort &func2:aCompareFunc
     [
         #var(type:iterator) aFormer := self iterator.
         #var(type:iterator) aLater := self iterator.
@@ -299,7 +299,7 @@
         ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
     ]
     
-    #method equal &indexable:anArray
+    #method(suppress:w2) equal &indexable:anArray
     [
         (self length != anArray length)
             ? [ ^ false. ].

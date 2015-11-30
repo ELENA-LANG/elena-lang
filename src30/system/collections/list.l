@@ -249,7 +249,7 @@
     ]
 
     /// Removes an object at the specified position
-    #method remove &int:anIndex
+    #method(suppress:w2) remove &int:anIndex
     [
         ($nil == theTop)
             ? [ #throw OutOfRangeException new. ].
@@ -280,14 +280,20 @@
     #method remove &index:anIndex
         <= remove &int:(anIndex int).
         
-    /// Returns the number of list items
-    #method length = theCount int.
-    
     /// Reads the number of list item to the output parameter
     #method(stacksafe) readLength &vint:aLength
     [
         aLength << theCount.
     ]
+    
+    /// Returns the number of list items
+    #method(type:int,embeddable,suppress:w3) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ aLength.
+    ]    
     
     /// Clears the list
     #method clear 
@@ -479,13 +485,19 @@
     /// Dispatches the verb to the target object with enumerable subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
     
-    /// Returns the number of list items
-    #method length = theLength int.
-    
     /// Reads the number of list item to the output parameter
     #method(stacksafe) readLength &vint:aLength
     [
         aLength << theLength.
+    ]
+    
+    /// Returns the number of list items
+    #method(type:int,embeddable,suppress:w3) length
+    [
+        #var(type:int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ aLength.
     ]
     
     /// Clears the list
@@ -648,14 +660,14 @@
         = aKey cast:%getAt &to:$self.
         
     /// Sets a dictionary item with the specified key
-    #method setAt : aKey : anObject
+    #method(suppress:w2) setAt : aKey : anObject
     [
         #var(type:int)aHashCode := aKey hash_code.
         
         $self $getItem &int:aHashCode &key:aKey set &object:anObject.
     ]
         
-    #method(stacksafe) $getItem &int:aCode &key:aKey
+    #method(stacksafe,suppress:w2) $getItem &int:aCode &key:aKey
     [
         #var(type:int)aHashCode := aCode && theHashMask.
         
@@ -670,7 +682,7 @@
         ].
         
         #var(type:intarray) aBacket := aHashItem intarray.        
-        #var(type:int)aLength := 0.        
+        #var(type:int)aLength := 0.
         aBacket read &int:0 &vint:aLength.
         
         #var(type:int)i := 1.
@@ -712,7 +724,7 @@
         ^ aNewItem.
     ]    
         
-    #method(generic)getAt : aKey
+    #method(generic,suppress:w2)getAt : aKey
     [
         #var(type:int)aHashCode := aKey hash_code.
         

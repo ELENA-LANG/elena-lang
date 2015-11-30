@@ -131,7 +131,7 @@
         theHandle := aHandle.
     ]
 
-    #method(stacksafe) read &vchar:aChar
+    #method(stacksafe,suppress:w2) read &vchar:aChar
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.
@@ -160,7 +160,7 @@
         aDump read &int:14 &vchar:aChar.
     ]
 
-    #method read &vint:aKey
+    #method(stacksafe,suppress:w2) read &vint:aKey
     [
         #var(type:bytearray,size:20)aDump.
         #var(type:int)aNumberRead.

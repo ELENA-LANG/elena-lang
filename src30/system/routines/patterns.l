@@ -48,7 +48,7 @@
     
     #method get = theEnumerator get.
     
-    #method next
+    #method(suppress:w2) next
     [
         #loop (theEnumerator next)?
         [

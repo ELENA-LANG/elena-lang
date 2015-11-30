@@ -28,10 +28,8 @@
     #method literal
     [
         #var(type:int)anIndex := 0.
-        #var(type:int)aLength.
+        #var(type:int)aLength := theStack length.
         #var(type:int)aBufferLength := 0.
-        
-        theStack readLength &vint:aLength.
 
         #var(type:bytearray,size:512)aBuffer.
         #var(type:literal)aCallStackText := emptyLiteralValue.                

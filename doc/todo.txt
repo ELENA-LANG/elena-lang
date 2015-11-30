@@ -3,9 +3,7 @@ In development:
 ------
 
               xdev - general implementation
-                       * implement issue #145
-                          - new method hint, to ignore warning "suppress:w1" (#165)
-                          - review lib30, simplify the code using call optimization, set sealed methods if required
+                       * test operation with threads
 
              idev - linux
                        * redirect output to the window
@@ -278,6 +276,8 @@ Pipeline:
                        * port console samples                                                                               
                        
               adev - lib30 optimization
+                       * simplify the code using call optimization, set sealed methods if required
+
                        * reivew system'winforms'SDIApplication.start, optimize the main loop
                        * review $ConsoleWriter.write&literal[1]
 
