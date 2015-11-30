@@ -14,7 +14,7 @@
                                           &int:1.
 
        aVariable := system'external'libdl dlsym
-                        &handle:aLibHandle  
+                        &int:aLibHandle  
                         &literal:"stdout".
 
        #var(type:int)aHandle.
@@ -65,7 +65,7 @@
 
     #method refresh
     [
-        system'external'libc fflush &handle:theHandle.
+        system'external'libc fflush &int:theHandle.
     ]
             
     #method free

@@ -34,7 +34,7 @@
             &bytearray : aDump        
             &int       : 1
             &int       : aLength
-            &handle    : theHandle.
+            &int       : theHandle.
     ]
 
     #method read &bytearray:aDump &vint:aLength
@@ -43,7 +43,7 @@
             &bytearray : aDump        
             &int       : 1
             &int       : aLength
-            &handle    : theHandle.
+            &int       : theHandle.
 
         aLength << n.
     ]

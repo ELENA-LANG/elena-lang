@@ -2,8 +2,10 @@
 
 // --- Handler ---
 
-#class(sealed,integer:4) Handle
+#class(sealed,struct:embeddable) Handle
 {
+    #field(type:int)theHandle.
+
     #constructor(stacksafe) new &handle:aHandle
         => system'internal'int_copy.
 

@@ -64,7 +64,7 @@
                 ! = e [ console writeLine:(e literal). ].
             }.
             
-        $self $onStop:nil.
+        $self $onStop:$nil.
     ]
     
     #method $onStop : arg

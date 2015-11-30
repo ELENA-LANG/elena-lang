@@ -3,7 +3,6 @@
 #import system.
 
 #subject(class:system'calendar'SystemTime)    __time.
-#subject(class:system'calendar'SystemTimeVar) __vtime.
 #subject(class:system'calendar'TimeStruct)    __time_st.
 
 // --- SystemTime ---
@@ -21,7 +20,7 @@
         #var(type:__time_st)tm.
         tm writeUTC &__time:time.
 
-        tm read &__vtime:time.
+        tm read &__time:time.
         
         ^ SystemTime new &__time:time.
     ]
@@ -76,6 +75,9 @@
     #method(stacksafe,type:bool) less &__time:anOperand
         => system'internal'long_less.
     
+    #method(stacksafe) write &__time:aValue
+        => system'internal'long_copy.
+    
     #method(stacksafe) read &vlong:aRetVal
     [
         #var(type:long)l.
@@ -105,25 +107,6 @@
         => system'internal'long_add.
     
     #method __time = $self.
-}
-
-#class(sealed,struct:embeddable) SystemTimeVar
-{
-    #field(type:__time)theValue.
-    
-    #method __time = SystemTime new &__time:theValue.
-    
-    #method __vtime = $self.
-    
-    #method(stacksafe) write &__time:aValue
-    [
-        theValue := aValue.
-    ]
-    
-    #method(stacksafe) read &__vtime:aVariable
-    [
-        aVariable write &__time:theValue.
-    ]
 }
 
 // --- TimeStruct ---
@@ -239,7 +222,7 @@
         tm_usec := n.
     ]
     
-    #method(stacksafe) read &__vtime:aRetVal
+    #method(stacksafe) read &__time:aRetVal
     [
        #var(type:int)tm_sec := system'external'libc mktime &__time_st:$self.
        #var(type:__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
