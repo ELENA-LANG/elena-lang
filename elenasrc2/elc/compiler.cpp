@@ -1807,12 +1807,13 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
       else if (option == nsLessSwitchOption) {
          operator_id = LESS_MESSAGE_ID;
       }
-      
+
       scope.writer->newBookmark();
 
       writeTerminal(TerminalInfo(), scope, switchValue);
 
-      ObjectInfo result = compileOperator(option.firstChild(), scope, switchValue, 0, operator_id);
+      DNode operand = option.firstChild();
+      ObjectInfo result = compileOperator(operand, scope, switchValue, 0, operator_id);
       if (!checkIfCompatible(scope, scope.moduleScope->boolType, result)) {
          scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
 
@@ -1951,7 +1952,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          scope.writer->newNode(lxAssigning, size);
          writeTerminal(terminal, scope, variable);
 
-         compileAssigningExpression(node, assigning, scope, variable, /*size > 0 ? HINT_INITIALIZING : */0);         
+         compileAssigningExpression(node, assigning, scope, variable, /*size > 0 ? HINT_INITIALIZING : */0);
 
          scope.writer->closeNode();
       }
@@ -2048,7 +2049,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okExternal:
          // HOTFIX : external node will be declared later
-         return; 
+         return;
       case okInternal:
          // HOTFIX : external node will be declared later
          return;
@@ -2136,14 +2137,14 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    {
       case nsRetStatement:
       case nsNestedClass:
-         if (objectNode.Terminal() != nsNone) {            
+         if (objectNode.Terminal() != nsNone) {
             result = compileNestedExpression(objectNode, scope, 0);
             break;
          }
       case nsSubCode:
       case nsSubjectArg:
       case nsMethodParameter:
-         result = compileNestedExpression(member, scope, 0);         
+         result = compileNestedExpression(member, scope, 0);
          break;
       case nsInlineExpression:
          result = compileNestedExpression(objectNode, scope, HINT_ACTION);
@@ -2168,7 +2169,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          break;
       default:
          result = compileTerminal(objectNode, scope, mode);
-   }   
+   }
 
    return result;
 }
@@ -2808,7 +2809,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    // define the message target if required
    if (target.kind == okConstantRole || target.kind == okSubjectDispatcher) {
       scope.writer->newNode(lxOverridden);
-      writeTerminal(TerminalInfo(), scope, target);      
+      writeTerminal(TerminalInfo(), scope, target);
       scope.writer->closeNode();
    }
 
@@ -2948,14 +2949,14 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          if (size >= 0) {
             scope.writer->insert(lxAssigning, size);
             scope.writer->closeNode();
-         }         
+         }
       }
       else if (member == nsMessageOperation) {
          currentObject = compileMessage(member, scope, currentObject);
       }
       else if (member == nsMessageParameter) {
          currentObject = compileMessage(member, scope, currentObject);
-      
+
          // skip all except the last message parameter
          while (member.nextNode() == nsMessageParameter)
             member = member.nextNode();
@@ -3178,7 +3179,7 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
       else {
          // dynamic normal symbol
          ownerScope.writer->newNode(lxNested, scope.info.fields.Count());
-         ownerScope.writer->appendNode(lxTarget, scope.reference);         
+         ownerScope.writer->appendNode(lxTarget, scope.reference);
       }
 
       Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
@@ -3324,7 +3325,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
       scope.writer->newNode(lxTrying);
       tryMode = true;
-   }      
+   }
    else if (findSymbol(node.firstChild(), nsAltMessageOperation)) {
       // for alt mode the target object should be presaved
       scope.writer->newNode(lxExpression);
@@ -3371,7 +3372,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
          scope.writer->closeNode();
       }
-   }      
+   }
 
    scope.writer->removeBookmark();
 
@@ -3381,14 +3382,14 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
       if (altMode) {
          scope.writer->appendNode(lxReleasing, 1);
          scope.writer->closeNode(); // close expression
-      }         
-   }      
+      }
+   }
 
    return objectInfo;
 }
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
-{   
+{
    // if primitive data operation can be used
    if (target.kind == okLocalAddress || target.kind == okFieldAddress) {
       ObjectInfo info = compileExpression(assigning.firstChild(), scope, target.type, 0);
@@ -3514,7 +3515,7 @@ void Compiler :: compileLock(DNode node, CodeScope& scope)
    // implement critical section
    compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
 
-   scope.writer->closeNode();   
+   scope.writer->closeNode();
    scope.writer->closeNode();
 }
 
@@ -4061,7 +4062,7 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
    if (node.firstChild() == nsNone && node.nextNode() == nsNone) {
       target = scope.mapObject(node.Terminal());
    }
-   
+
    if (target.kind == okConstantSymbol || target.kind == okField) {
       if (target.kind == okField) {
          _writer.loadObject(*tape, lxResultField, target.param);
@@ -4134,7 +4135,7 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
       }
 
       scope.writer->newBookmark();
-      
+
       if (withFrame) {
          writeTerminal(TerminalInfo(), scope, ObjectInfo(okThisParam, 1));
          compileExtensionMessage(node, scope, ObjectInfo(okThisParam, 1), ObjectInfo(okConstantClass, 0, classRef));

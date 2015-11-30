@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
-//               
+//
 //		This file contains ELENA Engine Syntax Tree classes
 //
 //                                              (C)2005-2015, by Alexei Rakov
@@ -170,7 +170,7 @@ public:
       insert(bookmark, type, argument);
    }
    void insertChild(LexicalType type, ref_t argument)
-   {      
+   {
       insert(lxEnding, 0);
       insert(type, argument);
    }
@@ -254,7 +254,10 @@ public:
 
       Node firstChild() const
       {
-         return tree->readFirstNode(position);
+         if (tree != NULL) {
+            return tree->readFirstNode(position);
+         }
+         else return Node();
       }
 
       Node lastChild() const
@@ -414,7 +417,7 @@ public:
 
    SyntaxTree(_Memory* dump)
       : _reader(dump)
-   {      
+   {
       _dump = dump;
    }
 };

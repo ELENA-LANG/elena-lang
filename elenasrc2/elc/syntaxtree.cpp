@@ -61,7 +61,7 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
 SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
 {
    SyntaxWriter writer(_dump);
-   
+
    writer.insertChild(writer.setBookmark(position), type, argument);
 
    _reader.seek(position);
@@ -111,7 +111,7 @@ SyntaxTree::Node SyntaxTree:: readNextNode(size_t position)
 
    } while (level > 0);
 
-   return read();   
+   return read();
 }
 
 
@@ -161,16 +161,20 @@ bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
       // find the next tree node
       while (!test(member.type, mask)) {
          member = member.nextNode();
-         if (member == lxNone)
+         if (member == lxNone) {
+            va_end(argptr);
             return false;
+         }
       }
 
       if (!pattern.match(member)) {
+         va_end(argptr);
          return false;
       }
       else member = member.nextNode();
    }
 
+   va_end(argptr);
    return true;
 }
 
@@ -193,6 +197,8 @@ SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
          member = member.nextNode();
       }
    }
+
+   va_end(argptr);
 
    return member;
 }

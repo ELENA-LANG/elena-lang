@@ -1,31 +1,31 @@
-sudo mkdir /usr/share/elena/
-sudo mkdir /etc/elena/
+mkdir /usr/share/elena/
+mkdir /etc/elena/
 
-sudo cp bin/elc.config /etc/elena/elc.config
-sudo cp -a bin/templates /etc/elena/templates
+cp bin/elc.config /etc/elena/elc.config
+cp -a bin/templates /etc/elena/templates
 
 bin/elog dat/og/rules.txt
-sudo cp dat/og/rules.dat /usr/share/elena
+cp dat/og/rules.dat /usr/share/elena
 
 bin/elsg dat/sg/syntax.txt
-sudo cp dat/sg/syntax.dat /usr/share/elena
+cp dat/sg/syntax.dat /usr/share/elena
 
 echo core
-sudo bin/asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32
+bin/asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32
 
 echo core_lnx
-sudo bin/asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32
+bin/asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32
 
 echo core_rt_lnx
-sudo bin/asm2binx src30/asm/x32/core_rt_lnx.asm /usr/lib/elena/core/x32
+bin/asm2binx src30/asm/x32/core_rt_lnx.asm /usr/lib/elena/core/x32
 
 echo coreapi
-sudo bin/asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32
+bin/asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32
 
-sudo bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
+bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system
 
-sudo bin/elc2 -csrc30/system/system.project
-sudo bin/elc2 -csrc30/extensions/extensions.project
+bin/elc2 -csrc30/system/system.project
+bin/elc2 -csrc30/extensions/extensions.project
 
 bin/elc2 -cexamples/console/helloworld/u_helloworld.project
 bin/elc2 -cexamples/console/sum/intsum.project

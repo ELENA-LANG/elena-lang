@@ -89,13 +89,6 @@ void _ELC_::Project :: raiseError(const char* msg, const char* path, int row, in
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project :: raiseError(const char* msg)
-//{
-//   print(msg);
-//
-//   throw _ELENA_::_Exception();
-//}
-
 void _ELC_::Project :: raiseError(const char* msg, const char* value)
 {
    print(msg, value);
@@ -103,38 +96,10 @@ void _ELC_::Project :: raiseError(const char* msg, const char* value)
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project :: raiseError(const char* msg, const wchar16_t* wValue)
-//{
-//   _ELENA_::UTF8String s(wValue);
-//
-//   print(msg, (const char*)s);
-//
-//   throw _ELENA_::_Exception();
-//}
-
-//void _ELC_::Project :: raiseError(const char* msg, const wchar16_t wValue)
-//{
-//   _ELENA_::UTF8String s(&wValue, 1);
-//
-//   print(msg, (const char*)s);
-//
-//   throw _ELENA_::_Exception();
-//}
-
-//void _ELC_::Project :: printInfo(const char* msg, const char* value)
-//{
-//   print(msg, value);
-//}
-
 void _ELC_::Project :: printInfo(const char* msg, const char* s)
 {
    print(msg, s);
 }
-
-//void _ELC_::Project :: printInfo(const wchar16_t* msg)
-//{
-//   print(msg);
-//}
 
 void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const char* path)
 {
@@ -144,17 +109,17 @@ void _ELC_::Project :: raiseErrorIf(bool throwExecption, const char* msg, const 
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseWarning(int level, const char* msg, const char* path, int row, int column, const char* s)
+void _ELC_::Project :: raiseWarning(const char* msg, const char* path, int row, int column, const char* s)
 {
-   if (!indicateWarning(level))
+   if (!indicateWarning())
       return;
 
    print(msg, path, row, column, s);
 }
 
-void _ELC_::Project :: raiseWarning(int level, const char* msg, const char* path)
+void _ELC_::Project :: raiseWarning(const char* msg, const char* path)
 {
-   if (!indicateWarning(level))
+   if (!indicateWarning())
       return;
 
    print(msg, path);
@@ -189,8 +154,6 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
       return config.getSetting(PROJECT_CATEGORY, ELC_NAMESPACE);
    case _ELENA_::opGCMGSize:
       return config.getSetting(LINKER_CATEGORY, ELC_MG_SIZE);
-   case _ELENA_::opGCObjectSize:
-      return config.getSetting(LINKER_CATEGORY, ELC_GC_OBJSIZE);
    case _ELENA_::opGCYGSize:
       return config.getSetting(LINKER_CATEGORY, ELC_YG_SIZE);
 //   case _ELENA_::opSizeOfStackReserv:
@@ -221,10 +184,8 @@ const char* _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELENA_::P
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:
       return config.getSetting(COMPILER_CATEGORY, ELC_L0);
-//   case _ELENA_::opL1:
-//      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
-//   case _ELENA_::opL2:
-//      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
+   case _ELENA_::opL1:
+      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
    case _ELENA_::opTemplate:
       return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
    default:
@@ -313,9 +274,10 @@ void _ELC_::Project :: setOption(const char* value)
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_PRM_OPTOFF)) {
             _settings.add(_ELENA_::opL0, 0);
-//            _settings.add(_ELENA_::opL1, 0);
-//            _settings.add(_ELENA_::opL2, 0);
-//            _settings.add(_ELENA_::opL3, 0);
+            _settings.add(_ELENA_::opL1, 0);
+         }
+         else if (_ELENA_::StringHelper::compare(value, ELC_PRM_OPT1OFF)) {
+            _settings.add(_ELENA_::opL1, 0);
          }
          else raiseError(ELC_ERR_INVALID_OPTION, value);
          break;
@@ -327,22 +289,16 @@ void _ELC_::Project :: setOption(const char* value)
             _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL1)) {
-            _warningMasks |= 1;
+            _warningMasks |= _ELENA_::WARNING_MASK_1;
          }
          else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL2)) {
-            _warningMasks |= 3;
+            _warningMasks |= _ELENA_::WARNING_MASK_2;
          }
-         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL4)) {
-            _warningMasks |= 7;
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL3)) {
+            _warningMasks |= _ELENA_::WARNING_MASK_3;
          }
-         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL1_OFF)) {
+         else if (_ELENA_::StringHelper::compare(value, ELC_W_OFF)) {
             _warningMasks = 0;
-         }
-         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL2_OFF)) {
-            _warningMasks = 1;
-         }
-         else if (_ELENA_::StringHelper::compare(value, ELC_W_LEVEL4_OFF)) {
-            _warningMasks = 3;
          }
          break;
       case ELC_PRM_TARGET:
@@ -356,7 +312,7 @@ void _ELC_::Project :: setOption(const char* value)
          break;
       case ELC_PRM_CONFIG:
       {
-         projectName.copy(valueName + 1);
+         projectName.copy(value + 1);
 
          loadConfig(value + 1);
 
@@ -378,24 +334,17 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 
 void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 {
-//   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
-//      // !! temporal: there should be several optimization levels
-//      _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
-//      _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
-//      if (!rulesFile.isOpened()) {
-//         project.raiseWarning(errInvalidFile, rulesPath);
-//      }
-//      else compiler.loadRules(&rulesFile);
-//   }
-////   if (project.IntSetting(_ELENA_::opL1) != 0) {
-////      compiler.setOptFlag(_ELENA_::optDirectConstant);
-////   }
-////   if (project.IntSetting(_ELENA_::opL2) != 0) {
-////      compiler.setOptFlag(_ELENA_::optJumps);
-////   }
-//   if (project.IntSetting(_ELENA_::opL3, -1) != 0) {
-//      compiler.setOptFlag(_ELENA_::optIdleFrame);
-//   }
+   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
+      _ELENA_::Path rulesPath(RULES_FILE);
+      _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
+      if (!rulesFile.isOpened()) {
+         project.raiseWarning(errInvalidFile, rulesPath);
+      }
+      else compiler.loadRules(&rulesFile);
+   }
+   if (project.IntSetting(_ELENA_::opL1, -1) != 0) {
+      compiler.turnOnOptimiation(1);
+   }
 }
 
 // --- Main function ---
@@ -437,7 +386,9 @@ int main(int argc, char* argv[])
       }
 
       project.initLoader();
-      
+
+      int platform = project.IntSetting(_ELENA_::opPlatform);
+
       // Greetings
       print(ELC_STARTING, (_ELENA_::ident_t)project.projectName, showPlatform(platform));
 
@@ -468,7 +419,7 @@ int main(int argc, char* argv[])
       }
 
       // Linking..
-      if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptLinux32Console) {
+      if (platform == _ELENA_::ptLinux32Console) {
          print(ELC_LINKING);
 
          ImageHelper helper;
