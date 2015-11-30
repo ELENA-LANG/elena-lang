@@ -3,6 +3,12 @@ In development:
 ------
 
               xdev - general implementation
+                       * fix pi2
+                       * fix linux datetime.new - the month is wrong
+                       * fix linux goods
+                       * fix linux pi / pi2
+                       * fix linux goods
+                       * fix linux textview
                        * test operation with threads
 
              idev - linux

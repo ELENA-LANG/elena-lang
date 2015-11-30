@@ -422,7 +422,6 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 {
    if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
-      // !! temporal: there should be several optimization levels
       _ELENA_::Path rulesPath;
       _ELENA_::Path::loadPath(rulesPath, project.StrSetting(_ELENA_::opAppPath));
       _ELENA_::Path::combinePath(rulesPath, RULES_FILE);

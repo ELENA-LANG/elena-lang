@@ -9,6 +9,7 @@
 {
     test
     [
+        #var(type:int)l := "abc" length.
     ]        
 }.
         
