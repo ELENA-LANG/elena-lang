@@ -235,29 +235,15 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    populateMenu();
    populateToolbar();
 
-   show_all_children();
+   _mainFrame = new EditFrame(model);
+   _projectView = Gtk::manage(new Gtk::TreeView());
+   _bottomTab = Gtk::manage(new Gtk::Notebook());
+   _statusbar = Gtk::manage(new Gtk::Statusbar());
 
-   _mainFrame = new EditFrame(model/*this*/);
-//////   TextView* textView = new TextView(_mainFrame, 5, 28, 400, 400);
-//////   _mainFrame->populate(textView);
-//////   textView->setReceptor(_appWindow);
+   // !! temporal
+   _bottomTab->append_page(*Gtk::manage(new Gtk::Label("Output")), "Output");
+   _statusbar->push("Example");
+   //_projectView->
 
-   populate(_mainFrame/*, _statusBar*/);
-
-////   g_signal_connect(G_OBJECT(_mainFrame->getHandle()), "switch-page",
-////      G_CALLBACK(tabpage_changed), _appWindow);
-////
-////   _mainFrame->show();
-////   _appMenu->_show();
-////
-////   _appToolBar->show();
-////   _statusBar->show();
-////
-////   _appWindow ->show(); // !! temporal
-//////   _outputBar->show();  // !! temporal
-//
-//   controls.add(_mainFrame);
-//////   controls.add(textView);
-////   controls.add(_statusBar);
-////   controls.add(_appToolBar);
+   populate(_mainFrame, _projectView, _bottomTab, _statusbar);
 }

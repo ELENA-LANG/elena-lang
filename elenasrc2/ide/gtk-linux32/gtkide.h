@@ -16,11 +16,14 @@ namespace _GUI_
 
 class MainWindow : public SDIWindow
 {
-   _Controller*  _controller;
-   Model*        _model;
+   _Controller*   _controller;
+   Model*         _model;
 
-   Gtk::Toolbar* _toolbar;
-   EditFrame*    _mainFrame;
+   Gtk::Toolbar*   _toolbar;
+   Gtk::TreeView*  _projectView;
+   Gtk::Statusbar* _statusbar;
+   Gtk::Notebook*  _bottomTab;
+   EditFrame*      _mainFrame;
 
 protected:
    Clipboard      _clipboard;

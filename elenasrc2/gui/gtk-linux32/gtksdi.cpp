@@ -12,7 +12,8 @@ using namespace _GUI_;
 // --- SDIWindow ---
 
 SDIWindow :: SDIWindow(const char* caption)
-   : Gtk::Window(Gtk::WINDOW_TOPLEVEL), _box(Gtk::ORIENTATION_VERTICAL)
+   : Gtk::Window(Gtk::WINDOW_TOPLEVEL), _box(Gtk::ORIENTATION_VERTICAL),
+     _hbox(Gtk::ORIENTATION_HORIZONTAL), _vbox(Gtk::ORIENTATION_VERTICAL)
 {
    set_title(caption);
 
@@ -58,18 +59,23 @@ void SDIWindow :: exit()
 //   gtk_widget_show(_vpaned);
 //}
 
-void SDIWindow :: populate(Gtk::Widget* client/*, Control* statusbar*/)
+void SDIWindow :: populate(Gtk::Widget* client, Gtk::Widget* left, Gtk::Widget* bottom, Gtk::Widget* statusbar)
 {
-   if (client) {
-      _box.pack_start(*client, TRUE, TRUE, 0);
+   _box.pack_start(_hbox, TRUE, TRUE, 0);
 
-      //_vpaned.add1(*client);
-//   gtk_paned_pack1(GTK_PANED(_vpaned), widget, TRUE, TRUE);
-//   //gtk_box_pack_start(GTK_BOX(_vbox), widget, TRUE, TRUE, 0);
-   }
+   if (left)
+      _hbox.pack_start(*left, Gtk::PACK_SHRINK);
 
-//   if (statusbar)
-//      _addBottom((Control*)statusbar);
+   _hbox.pack_start(_vbox, Gtk::PACK_EXPAND_WIDGET);
+
+   if (client)
+      _vbox.pack_start(*client, TRUE, TRUE, 0);
+
+   if (bottom)
+      _vbox.pack_start(*bottom, Gtk::PACK_SHRINK);
+
+   if (statusbar)
+      _box.pack_start(*statusbar, Gtk::PACK_SHRINK);
 
    show_all_children(); // !!temporal
 }

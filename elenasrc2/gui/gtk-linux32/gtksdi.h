@@ -18,8 +18,10 @@ class SDIWindow : public Gtk::Window
 {
 protected:
    Gtk::Box                   _box;
+   Gtk::Box                   _hbox;
+   Gtk::Box                   _vbox;
 
-   Glib::RefPtr<Gtk::UIManager> _refUIManager;
+   Glib::RefPtr<Gtk::UIManager>   _refUIManager;
    Glib::RefPtr<Gtk::ActionGroup> _refActionGroup;
 //   Gtk::VPaned _vpaned;
 
@@ -28,7 +30,7 @@ protected:
    void loadUI(Glib::ustring ui_info, const char* name);
 
 public:
-   virtual void populate(Gtk::Widget* client/*, Control* statusbar*/);
+   virtual void populate(Gtk::Widget* client, Gtk::Widget* left, Gtk::Widget* bottom, Gtk::Widget* statusbar);
 
    virtual void exit();
 
