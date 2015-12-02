@@ -5,29 +5,10 @@
 #import system'calendar.
 #import extensions.
     
-#import forms.
 #symbol XTester =
 {
     test
     [        
-        #var(type:int) y := 10.
-        //listLabelsRegisters := List new.
-//        #loop (i <= 17) ?
-//        [
-            #var tmp := Label new.
-//            listLabelsRegisters += tmp.
-//            form controls += tmp.
-//            
-//            #var regName := "".
-//            (i <= 10)
-//            ? [
-//                regName := "R" + (i literal) + ": 0x" + zero
-//              ]
-//            ! [
-//                regName := ($getRegisterName:i) + ": 0x" + zero.
-//              ].
-              
-            tmp set &x:10 &y:(y int).    
     ]        
 }.
         

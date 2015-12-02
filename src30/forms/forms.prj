@@ -1,6 +1,6 @@
 ﻿[project]
 output=..\..\lib30
-options=-w4
+options=-w3
 namespace=forms
 template=lib
 debuginfo=-1

@@ -124,10 +124,10 @@
     [
         theRegion writeLocation &int:x &int:y.
         
-//        ($nil == theHandle)
-//            ! [
-//                theHandle setPosition &int:x &int:y &int:0 &int:0 &int:SWP_NOSIZE.
-//            ].
+        ($nil == theHandle)
+            ! [
+                theHandle setPosition &int:x &int:y &int:0 &int:0 &int:SWP_NOSIZE.
+            ].
     ]
     
     #method(stacksafe) setDimension &int:aWidth &int:aHeight
