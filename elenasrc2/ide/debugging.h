@@ -34,7 +34,7 @@ public:
    virtual void debugThread() = 0;
 
    virtual void readAutoContext(_DebuggerWatch* watch) = 0;
-   virtual void readContext(_DebuggerWatch* watch, size_t selfPtr) = 0;
+   virtual void readContext(_DebuggerWatch* watch, size_t selfPtr, size_t classPtr = 0) = 0;
    virtual void readCallStack(_DebuggerCallStack* watch) = 0;
 
    virtual ~_DebugController() {}
@@ -58,6 +58,8 @@ public:
    virtual void write(_DebugController* controller, double value) = 0;
    virtual void write(_DebugController* controller, long long value) = 0;
    virtual void write(_DebugController* controller, int index, int value) = 0;
+
+   virtual void append(_DebugController* controller, ident_t variableName, size_t address, size_t vmtAddress) = 0;
 
    virtual ~_DebuggerWatch() {}
 };

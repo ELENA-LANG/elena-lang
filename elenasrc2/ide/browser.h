@@ -82,6 +82,8 @@ public:
    virtual void write(_ELENA_::_DebugController* controller, long long value);
    virtual void write(_ELENA_::_DebugController* controller, int index, int value);
 
+   virtual void append(_ELENA_::_DebugController* controller, _ELENA_::ident_t variableName, size_t address, size_t vmtAddress);
+
    virtual void refresh(_ELENA_::_DebugController* controller);
 
    DebuggerWatch(_Browser* browser, void* root, size_t objectAddress, size_t deepLevel)

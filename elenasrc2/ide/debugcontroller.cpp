@@ -117,18 +117,19 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, iden
 //   }
 }
 
-DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &className, int& flags)
+DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &className, int& flags, size_t vmtPtr)
 {
-   // read class VMT address
-   size_t vmtPtr = _debugger.Context()->ClassVMT(address);
+   // read class VMT address if not provided
+   if (vmtPtr == 0) {
+      vmtPtr = _debugger.Context()->ClassVMT(address);
+   }
+
+   // exit if the class is unknown
    if (vmtPtr==0)
       return NULL;
 
    // if it is role, read the role owner
    flags = _debugger.Context()->VMTFlags(vmtPtr);
-   //if (test(flags, elRoleVMT)) {
-   //   vmtPtr = _debugger.Context()->ClassVMT(vmtPtr);
-   //}
 
    // get class debug info address
    size_t position = _classes.get(vmtPtr);
@@ -412,6 +413,7 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
 
          if (vmtPtr != 0) {
             _classes.add(vmtPtr, (size_t)reader.Address());
+            _classNames.add(reference, vmtPtr);
          }
       }
       // skip symbol entry address
@@ -927,28 +929,22 @@ void DebugController :: readMessage(_DebuggerWatch* watch, ref_t reference)
    watch->write(this, reference, "$message", messageValue);
 }
 
-void DebugController::readObject(_DebuggerWatch* watch, ref_t address, ident_t name, bool ignoreInline)
+void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, ident_t className, ident_t name)
+{
+   if (!emptystr(className)) {
+      watch->write(this, address, name, className);
+   }
+   else watch->write(this, address, name, "<unknown>");
+}
+
+void DebugController :: readObject(_DebuggerWatch* watch, ref_t address, ident_t name)
 {
    if (address != 0) {
       ident_t className = NULL;
       int flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
-      if (info != NULL) {
-         /*// do not show self for embedded inline classes
-         if (ignoreInline && test(flags, elInlineClass) && !test(flags, elSymbol)) {
-            readFields(watch, info, address);
-         }
-         else*/ watch->write(this, address, name, className);
-      }
-      /*// if unknown check if it is a group object
-      else if (test(flags, elGroup)) {
-         watch->write(this, address, name, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
-      }*/
-      /*// if unknown check if it is a dynamic subject
-      else if (test(flags, elDynamicSubjectRole)) {
-         watch->write(this, address, name, _T("<subject>"));
-      }*/
-      else watch->write(this, address, name, "<unknown>");
+
+      readObject(watch, address, className, name);
    }
    else watch->write(this, address, name, "<nil>");
 }
@@ -1058,7 +1054,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          if (lineInfo[index].symbol == dsLocal) {
             // write local variable
             int localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-            readObject(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef, false);
+            readObject(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          else if (lineInfo[index].symbol == dsIntLocal) {
             // write stack allocated local variable
@@ -1136,37 +1132,30 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          //   int message = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
          //   readMessage(watch, message);
          //}
+         else if (lineInfo[index].symbol == dsStructPtr) {
+            int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            ref_t classPtr = _classNames.get((ident_t)lineInfo[index + 1].addresses.source.nameRef);
+
+            readObject(watch, localPtr, (ident_t)lineInfo[index + 1].addresses.source.nameRef, (ident_t)lineInfo[index].addresses.local.nameRef);
+
+            watch->append(this, (ident_t)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
+         }
          else if (lineInfo[index].symbol == dsStack) {
             // write local variable
             int localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);
-            readObject(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef, false);
+            readObject(watch, localPtr, (ident_t)lineInfo[index].addresses.local.nameRef);
          }
          index--;
       }
    }
 }
 
-void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr)
+void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_t classPtr)
 {
    if (_debugger.isStarted()) {
       int flags = 0;
       ident_t className = NULL;
-      DebugLineInfo* info = seekClassInfo(selfPtr, className, flags);
-   //   if (test(flags, elGroup)) {
-   //      int list[DEBUG_MAX_LIST_LENGTH];
-   //      int length = 0;
-
-   //      // get group size
-   //      getValue(selfPtr - 8, (char*)&length, 4);
-
-   //      if (length > sizeof(list))
-   //         length = sizeof(list);
-
-   //      getValue(selfPtr, (char*)list, length);
-
-   //      length >>= 2;
-   //      readList(watch, list, length);
-   //   }
+      DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
       if (info) {
          int type = info->addresses.symbol.flags & elDebugMask;
          if (type==elDebugLiteral) {

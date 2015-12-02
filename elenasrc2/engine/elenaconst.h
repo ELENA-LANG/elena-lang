@@ -216,6 +216,8 @@ namespace _ELENA_
       dsByteArrayLocalPtr       = 0x0B05,
       dsShortArrayLocalPtr      = 0x0C05,
       dsIntArrayLocalPtr        = 0x0D05,
+      dsStructPtr               = 0x0E05,
+      dsStructInfo              = 0x0F05,
 
       dsDebugMask               = 0x00F0,
       dsTypeMask                = 0x0F00,

@@ -24,25 +24,15 @@ void DebuggerWatch :: clear()
    _browser->clear(_root);
 }
 
-//inline void writeAddress(_ELENA_::String& node, size_t address)
-//{
-//   node.append(_T(" @"));
-//   node.appendHex(address);
-//}
-
 void* DebuggerWatch :: addNode(_ELENA_::ident_t variableName, _ELENA_::ident_t className, size_t address)
 {
    if (className[0]=='<') {
       IdentifierString node(variableName, " = ", className);
 
-      // writeAddress(node, address);
-
       return _browser->newNode(_root, node, address);
    }
    else {
       IdentifierString node(variableName, " = {", className, "}");
-
-      //writeAddress(node, address);
 
       return _browser->newNode(_root, node, address);
    }
@@ -53,14 +43,10 @@ void DebuggerWatch :: editNode(void* node, _ELENA_::ident_t variableName, _ELENA
    if (className[0]=='<') {
       IdentifierString name(variableName, " = ", className);
 
-      // writeAddress(name, address);
-
       _browser->setCaption(node, name);
    }
    else {
       IdentifierString name(variableName, " = {", className, "}");
-
-      // writeAddress(name, address);
 
       _browser->setCaption(node, name);
    }
@@ -81,6 +67,16 @@ void DebuggerWatch :: writeSubWatch(_DebugController* controller, void* node, si
       watch.refresh(controller);
    }
    else refreshNode(node);
+}
+
+void DebuggerWatch :: append(_DebugController* controller, ident_t variableName, size_t address, size_t vmtAddress)
+{
+   void* item = _browser->findNodeStartingWith(_root, variableName);
+
+   DebuggerWatch watch(_browser, item, address, 2);
+   watch.clear();
+
+   controller->readContext(&watch, address, vmtAddress);
 }
 
 void DebuggerWatch :: writeSubWatch(_ELENA_::_DebugController* controller, void* node, size_t address, char* byteArray, int length)

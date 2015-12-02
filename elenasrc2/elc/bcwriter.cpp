@@ -144,6 +144,14 @@ void ByteCodeWriter :: excludeFrame(CommandTape& tape)
    tape.write(bcAllocStack, 1);
 }
 
+void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStruct, (ref_t)localName, level);
+      tape.write(bdLocalInfo, (ref_t)className);
+   }      
+}
+
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
    if (!emptystr(localName))
@@ -1003,6 +1011,19 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, in
    writeLocal(scope, localName, level, dsLocal, frameLevel);
 }
 
+void ByteCodeWriter :: writeInfo(Scope& scope, DebugSymbol symbol, ident_t className)
+{
+   if (!scope.debug)
+      return;
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.source.nameRef = scope.debugStrings->Position();
+
+   scope.debugStrings->writeLiteral(className);
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
+
 void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
 {
    if (!scope.debug)
@@ -1418,6 +1439,11 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (*it).additional);
+            break;
+         case bdStruct:
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsStructPtr, 0);
+            it++;
+            writeInfo(scope, dsStructInfo, (ident_t)(*it).Argument());
             break;
          case bcOpen:
             frameLevel = (*it).argument;
@@ -3292,9 +3318,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             if (current.argument != 0)
                generateBinary(tape, current, level);
 
-            declareLocalInfo(tape,
+            declareStructInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               level);
+               level, (ident_t)SyntaxTree::findChild(current, lxClassName).argument);
             break;
          }
          case lxReleasing:

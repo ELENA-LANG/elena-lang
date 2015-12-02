@@ -1930,6 +1930,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 
                scope.writer->appendNode(lxTerminal, (int)terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->appendNode(lxClassName, (int)scope.moduleScope->module->resolveReference(classReference));
                scope.writer->closeNode();
                break;
          }

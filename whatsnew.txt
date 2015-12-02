@@ -25,6 +25,7 @@
 
 [IDE]
 [-] issue #75 fixed : call stack window is not properly refreshed
+[-] issue #185 fixed : stack allocated structures are not correctly displayed
 
 [Samples]
 [+] rosetta code sample : simple windowed app

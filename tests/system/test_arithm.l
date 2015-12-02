@@ -758,14 +758,18 @@
 #class(sealed,struct:embeddable) TestVar
 {
     #field(type:int)theValue.
+    #field(type:int)theValue2.
     
     #constructor(stacksafe,embeddable) new &int:aValue
     [
         theValue := aValue.
+        theValue2 := 0.
     ]
 }
 
 #symbol EmbedConstTest =
 [
     #var(type:test_var)var := TestVar new &int:2.
+    
+    console writeLine:"!!".
 ].

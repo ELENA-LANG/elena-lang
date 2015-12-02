@@ -2,10 +2,11 @@
 In development:
 ------
 
-              xdev - general implementation
-                       * issue #162 : embeddable constructor call
-                         if assinging stack allocated object with embeddable direct call - check if there is embedded method
-                         
+              idev - usability
+                       * #185
+                       * #164
+
+              xdev - general implementation                         
                        * fix linux pi / pi2
                        * test operation with threads
 

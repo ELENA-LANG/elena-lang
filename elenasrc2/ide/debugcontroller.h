@@ -135,6 +135,7 @@ protected:
    DebugEventManager _events;
 
    ClassInfoMap      _classes;
+   SymbolMap         _classNames;
 
    bool              _started;
    bool              _running;
@@ -166,7 +167,7 @@ protected:
       return /*(lineInfoAddress < _tape.Length()) ? (DebugLineInfo*)_tape.get(lineInfoAddress) :*/ (DebugLineInfo*)lineInfoAddress;
    }
 
-   DebugLineInfo* seekClassInfo(size_t address, ident_t &className, int& flags);
+   DebugLineInfo* seekClassInfo(size_t address, ident_t &className, int& flags, size_t vmtAddress = 0);
    DebugLineInfo* seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
       ident_t &methodName, ident_t &path);
 
@@ -180,7 +181,8 @@ protected:
    void readByteArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readShortArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readIntArray(_DebuggerWatch* watch, size_t address, ident_t name);
-   void readObject(_DebuggerWatch* watch, ref_t selfPtr, ident_t name, bool ignoreInline);
+   void readObject(_DebuggerWatch* watch, ref_t selfPtr, ident_t name);
+   void readObject(_DebuggerWatch* watch, ref_t address, ident_t className, ident_t name);
    void readMessage(_DebuggerWatch* watch, ref_t reference);
    void readPString(size_t address, IdentifierString& string);
    void readLocalInt(_DebuggerWatch* watch, ref_t selfPtr, ident_t name);
@@ -238,8 +240,7 @@ public:
    void clearBreakpoints();
 
    virtual void readAutoContext(_DebuggerWatch* watch);
-   virtual void readContext(_DebuggerWatch* watch, size_t selfPtr);
-//   //void readRegisters(_DebuggerWatch* watch);
+   virtual void readContext(_DebuggerWatch* watch, size_t selfPtr, size_t classPtr = 0);
    virtual void readCallStack(_DebuggerCallStack* watch);
 
    void release()
