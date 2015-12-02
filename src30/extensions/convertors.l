@@ -175,6 +175,9 @@
     #method toLong
         = self cast:%convert &to:longConvertor.
     
+    #method toChar
+        = self cast:%convert &to:charConvertor.
+    
     #method toReal
         = self cast:%convert &to:realConvertor.
 

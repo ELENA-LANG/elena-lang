@@ -5,24 +5,10 @@
 #import system'calendar.
 #import extensions.
     
-#subject(class:TestStruct)test_struct.
-#class(struct:embeddable)TestStruct
-{
-    #field(type:int)theField1.
-    #field(type:int)theField2.
-    
-    #constructor(embeddable,stacksafe) new &int:aField1 &int:aField2
-    [
-        theField1 := aField1.
-        theField2 := aField2.
-    ]
-}
-    
 #symbol XTester =
 {
     test
-    [
-        #var(type:test_struct)o := TestStruct new &int:1 &int:2.
+    [        
     ]        
 }.
         

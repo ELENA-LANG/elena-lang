@@ -30,7 +30,7 @@
 {
     result = true.
     
-    eval : Indexers &int:aLength
+    #method(suppress:w2) eval : Indexers &int:aLength
     [
         ($nil == (Indexers seek &each: anIndexer 
                 [
