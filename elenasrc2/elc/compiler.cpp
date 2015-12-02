@@ -4293,7 +4293,30 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, bool genericMetho
    }
 }
 
-void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/)
+void Compiler :: compileEmbeddableConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope)
+{
+   ref_t originalSubjRef = getSignature(scope.message);
+
+   IdentifierString signature(scope.moduleScope->module->resolveSubject(originalSubjRef));
+   signature.append(EMBEDDED_PREFIX);
+
+   ref_t embedddedMethodRef = overwriteSubject(scope.message, scope.moduleScope->module->mapSubject(signature, false));
+
+   classClassScope.info.methodHints.add(Attribute(scope.message, maEmbeddedInit), getSignature(embedddedMethodRef));
+
+   // compile an embedded constructor
+   // HOTFIX: embedded constructor is declared in class class but should be executed if the class scope
+   scope.tape = &classClassScope.tape;
+   scope.message = embedddedMethodRef;
+   scope.include();
+   compileMethod(node, scope, false);
+
+   // compile a constructor calling the embedded method
+   scope.message = overwriteSubject(scope.message, originalSubjRef);
+   compileConstructor(DNode(), scope, classClassScope, embedddedMethodRef);
+}
+
+void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
 {
    SyntaxWriter writer(&scope.syntaxTree);
    // NOTE : top expression is required for propery translation
@@ -4338,6 +4361,7 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       compileConstructorDispatchExpression(dispatchBody.firstChild(), codeScope, &classClassScope.tape);
       return;
    }
+   // if the constructor has a body
    else if (body != nsNone) {
       if (!withFrame) {
          withFrame = true;
@@ -4354,6 +4378,11 @@ void Compiler :: compileConstructor(DNode node, MethodScope& scope, ClassScope& 
       compileCode(body, codeScope);
 
       codeScope.writer->appendNode(lxLocal, 1);
+   }
+   // if the constructor should call embeddable method
+   else if (embeddedMethodRef != 0) {
+      _writer.saveObject(classClassScope.tape, lxCurrent, 1);
+      _writer.resendResolvedMethod(classClassScope.tape, classClassScope.reference, embeddedMethodRef);
    }
 
    // NOTE : close root node
@@ -4658,7 +4687,16 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
          methodScope.stackSafe = test(hint, tpStackSafe);
 
-         compileConstructor(member, methodScope, classClassScope/*, test(hint, tpEmbeddable)*/);
+         // if the constructor is stack safe, embeddable and the class is an embeddable structure
+         // the special method should be compiled
+         if (methodScope.stackSafe && test(hint, tpEmbeddable) && test(classScope.info.header.flags, elStructureRole | elEmbeddable)) {
+            // make sure the constructor has no redirect / dispatch statements
+            if (node.select(nsResendExpression) != nsNone || node.select(nsDispatchExpression))
+               methodScope.raiseError(errInvalidOperation, member.Terminal());
+
+            compileEmbeddableConstructor(member, methodScope, classClassScope);
+         }
+         else compileConstructor(member, methodScope, classClassScope);
       }
       member = member.nextNode();
    }
@@ -4678,6 +4716,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    optimizeTape(classClassScope.tape);
 
    // create byte code sections
+   classClassScope.save();
    _writer.save(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
 }
 
@@ -5127,7 +5166,7 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode)
+void Compiler::optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode)
 {
    SyntaxTree::Node callTarget = SyntaxTree::findChild(callNode, lxTarget);
 
@@ -5145,6 +5184,25 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& as
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxExpression;
       callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
+   }
+
+   subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddedInit));
+   // if it is possible to replace constructor call with embeddaded initialization without creating a temporal dynamic object
+   if (subject != 0) {
+      // move assigning target into the call node
+      SyntaxTree::Node assignTarget = assignNode.findPattern(SyntaxTree::NodePattern(lxLocalAddress));
+      SyntaxTree::Node callTarget = callNode.findPattern(SyntaxTree::NodePattern(lxConstantClass));
+      if (callTarget != lxNone) {
+         // removing assinging operation
+         assignNode = lxExpression;
+
+         // move assigning target into the call node
+         callTarget = assignTarget.type;
+         callTarget.setArgument(assignTarget.argument);
+         assignTarget = lxExpression;
+
+         callNode.setArgument(overwriteSubject(callNode.argument, subject));
+      }
    }
 }
 

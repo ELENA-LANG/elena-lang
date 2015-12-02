@@ -471,9 +471,9 @@ private:
       ref_t        message;
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
-      int       rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-      bool      withOpenArg;
-      bool      stackSafe;
+      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
+      bool         withOpenArg;
+      bool         stackSafe;
 
       void compileHints(DNode hints);
       void compileWarningHints(DNode hints);
@@ -798,7 +798,8 @@ private:
    void compileMethod(DNode node, MethodScope& scope, bool genericMethod);
    void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
    void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
-   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope/*, bool embeddable*/);
+   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
+   void compileEmbeddableConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope);
 
    void compileSymbolCode(ClassScope& scope);
 

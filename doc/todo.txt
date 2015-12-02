@@ -3,12 +3,10 @@ In development:
 ------
 
               xdev - general implementation
-                       * fix pi2
-                       * fix linux datetime.new - the month is wrong
-                       * fix linux goods
+                       * issue #162 : embeddable constructor call
+                         if assinging stack allocated object with embeddable direct call - check if there is embedded method
+                         
                        * fix linux pi / pi2
-                       * fix linux goods
-                       * fix linux textview
                        * test operation with threads
 
              idev - linux

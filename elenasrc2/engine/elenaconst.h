@@ -443,6 +443,7 @@ namespace _ELENA_
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
    #define GENERIC_PREFIX           "#generic"
+   #define EMBEDDED_PREFIX          "#embedded"
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"

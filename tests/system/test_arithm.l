@@ -5,11 +5,24 @@
 #import system'calendar.
 #import extensions.
     
+#subject(class:TestStruct)test_struct.
+#class(struct:embeddable)TestStruct
+{
+    #field(type:int)theField1.
+    #field(type:int)theField2.
+    
+    #constructor(embeddable,stacksafe) new &int:aField1 &int:aField2
+    [
+        theField1 := aField1.
+        theField2 := aField2.
+    ]
+}
+    
 #symbol XTester =
 {
     test
     [
-        #var(type:int)l := "abc" length.
+        #var(type:test_struct)o := TestStruct new &int:1 &int:2.
     ]        
 }.
         
@@ -755,18 +768,18 @@
     o test.
 ].
 
-//#subject(class:TestVar)test_var.
-//#class(sealed,struct:embeddable) TestVar
-//{
-//    #field(type:int)theValue.
-//    
-//    #constructor(stacksafe,embeddable) new &int:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//}
-//
-//#symbol EmbedConstTest =
-//[
-//    #var(type:test_var)var := TestVar new &int:2.
-//].
+#subject(class:TestVar)test_var.
+#class(sealed,struct:embeddable) TestVar
+{
+    #field(type:int)theValue.
+    
+    #constructor(stacksafe,embeddable) new &int:aValue
+    [
+        theValue := aValue.
+    ]
+}
+
+#symbol EmbedConstTest =
+[
+    #var(type:test_var)var := TestVar new &int:2.
+].
