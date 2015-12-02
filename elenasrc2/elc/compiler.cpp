@@ -3350,8 +3350,9 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
                objectInfo = compileObject(member, scope, mode);
 
                // skip boxing for assigning target
+               // HOTFIX : the target should be boxed despite HINT_NOBOXING if it's followed by an operation
                if (!findSymbol(member, nsAssigning))
-                  writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, mode);
+                  writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, 0);
             }
             else scope.writer->appendNode(lxResult);
          }
