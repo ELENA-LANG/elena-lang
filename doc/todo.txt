@@ -2,13 +2,9 @@
 In development:
 ------
               xdev - general implementation                         
-                       * Date.get&__time$calendar - no need to box the field content for the dynamic object ; 
-                         should the check if the object is stack allocated be put? ;
-                         it should be declared as stacksafe
-
+                       * fix pi2
                        * fix linux pi / pi2
                        * test operation with threads
-                       * fix pi2
 
              idev - linux
                        * redirect output to the window

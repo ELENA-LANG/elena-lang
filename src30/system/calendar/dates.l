@@ -212,7 +212,7 @@
   
     #method __time = SystemTime new &__time:theValue.
   
-    #method __time_st = TimeStruct new &__time:theValue.
+    #method(stacksafe) __time_st = TimeStruct new &__time:theValue.
 
     #method(stacksafe) read &__time : aRetVal
     [

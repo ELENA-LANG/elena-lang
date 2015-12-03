@@ -89,7 +89,7 @@
     #constructor new
         => system'internal'dlong_empty.
 
-    #constructor new &__time:aTime
+    #constructor(stacksafe) new &__time:aTime
     [
         $self write &__time:aTime.
     ]
