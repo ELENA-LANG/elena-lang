@@ -2990,25 +2990,30 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
    declareLoop(tape/*, true*/);
 
+   //declareBlock(tape);
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxIf) {
          jumpIfNotEqual(tape, current.argument);
-
-         declareBlock(tape);
+         
          generateCodeBlock(tape, current);
       }
       else if (current == lxElse) {
          declareElseBlock(tape);
 
-         declareBlock(tape);
          generateCodeBlock(tape, current);
       }
-      else if (test(current.type, lxObjectMask))
+      else if (test(current.type, lxObjectMask)) {
+         declareBlock(tape);
          generateObjectExpression(tape, current);
-
+         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+      }
+         
       current = current.nextNode();
    }
+
+   //declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 
    if (node.argument != 0) {
       endLoop(tape, node.argument);
@@ -3054,13 +3059,13 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
       if (current == lxIf) {
          jumpIfNotEqual(tape, current.argument);
 
-         declareBlock(tape);
+         //declareBlock(tape);
          generateCodeBlock(tape, current);
       }
       else if (current == lxElse) {
          declareElseBlock(tape);
 
-         declareBlock(tape);
+         //declareBlock(tape);
          generateCodeBlock(tape, current);
       }
       else if (test(current.type, lxObjectMask))

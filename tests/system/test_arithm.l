@@ -9,10 +9,11 @@
 {
     test
     [
-        #var(type:intarray) x := system'IntArray new:8000h.
-    	#var(type:int) xc := 0.
-    	#var(type:int) cnt := 0.
-    	#loop (cnt < 8000h) ? [ x@cnt := 23. cnt := cnt + 1. ]. 
+        #var i := 5.
+        #loop (i > 0) ?
+        [
+            i := i - 1.
+        ].        
     ]
 }.
         

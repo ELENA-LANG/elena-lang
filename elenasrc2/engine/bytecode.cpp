@@ -503,6 +503,11 @@ bool CommandTape :: optimizeIdleBreakpoints(CommandTape& tape)
             (*it).code = bcNone;
          }
       }
+      // HOTFIX : if there is a label before breakpoint
+      // it should not be removed
+      else if (code == blLabel) {
+         idle = false;
+      }
       else if (code <= bcReserved && code >= bcNop) {
          idle = false;
       }

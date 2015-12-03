@@ -2049,10 +2049,8 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxConstantSymbol, object.param);
          break;
       case okExternal:
-         // HOTFIX : external node will be declared later
-         return;
       case okInternal:
-         // HOTFIX : external node will be declared later
+         // HOTFIX : external / internal node will be declared later
          return;
    }
 
@@ -3556,9 +3554,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             break;
          case nsLoop:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            scope.writer->newNode(lxExpression);
+            //scope.writer->newNode(lxExpression);
             compileLoop(statement, scope);
-            scope.writer->closeNode();
+            //scope.writer->closeNode();
             break;
          case nsTry:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
