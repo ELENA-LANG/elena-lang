@@ -5,15 +5,17 @@
 #import system'calendar.
 #import extensions.
 
+#class(sealed,struct:embeddable) XDate :: BaseNumber
+{
+    #field(type:__time)theValue.
+
+    #method __time_st = TimeStruct new &__time:theValue.
+}    
+
 #symbol XTester =
 {
     test
     [
-        #var i := 5.
-        #loop (i > 0) ?
-        [
-            i := i - 1.
-        ].        
     ]
 }.
         

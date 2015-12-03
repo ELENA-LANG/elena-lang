@@ -1,12 +1,11 @@
 ------                                 
 In development:
 ------
-
-              idev - usability
-                       * #164
-
               xdev - general implementation                         
-                       * fix dt calculator
+                       * Date.get&__time$calendar - no need to box the field content for the dynamic object ; 
+                         should the check if the object is stack allocated be put? ;
+                         it should be declared as stacksafe
+
                        * fix linux pi / pi2
                        * test operation with threads
                        * fix pi2

@@ -561,6 +561,30 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
       case 8:
          tape.write(bcLCopy);
          break;
+      default:
+         // dcopy 0
+         // ecopy count / 4
+         // pushe
+         // labCopy:
+         // esavesi 0
+         // nread
+         // nwrite
+         // eloadsi
+         // next labCopy
+         // pop
+         tape.write(bcDCopy);
+         tape.write(bcECopy, size >> 2);
+         tape.write(bcPushE);
+         tape.newLabel();
+         tape.setLabel(true);
+         tape.write(bcESaveSI);
+         tape.write(bcNRead);
+         tape.write(bcNWrite);
+         tape.write(bcELoadSI);
+         tape.write(bcNext, baCurrentLabel);
+         tape.releaseLabel();
+         tape.write(bcPop);         
+         break;
    }
 }
 
@@ -2774,6 +2798,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)
 {
+   loadBase(tape, lxResult);
+
    size_t counter = countChildren(node);
    size_t index = 0;
    while (index < counter) {
@@ -2788,17 +2814,35 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
          else popObject(tape, lxResult);
 
          if (target == lxLocalAddress) {
+            tape.write(bcPushB);
             loadBase(tape, target.type, target.argument);
             copyBase(tape, current.argument);
+            tape.write(bcPopB);
          }
          else if (target == lxLocal) {
             loadObject(tape, lxResultField);
             saveObject(tape, target.type, target.argument);
          }
+         else if (target == lxFieldAddress) {
+            tape.write(bcPushB);
+
+            loadBase(tape, target.type, target.argument);
+            if (current.argument == 4) {
+               copyInt(tape, target.argument);
+            }
+            else if (current.argument == 2) {
+               copyShort(tape, target.argument);
+            }
+            else copyStructure(tape, target.argument, current.argument);
+
+            tape.write(bcPopB);
+         }
       }
 
       index++;
    }
+
+   assignBaseTo(tape, lxResult);
 }
 
 void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
