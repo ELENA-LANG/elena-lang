@@ -14,6 +14,30 @@ using namespace _ELENA_;
 
 typedef SyntaxTree::Node SNode;
 
+// check if the node contains only the simple nodes
+bool isSimpleObjectExpression(SNode node, bool ignoreFields = false)
+{
+   if (node == lxNone)
+      return true;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         if (!isSimpleObjectExpression(current, ignoreFields))
+            return false;
+      }
+      else if (ignoreFields && (current.type == lxField || current.type == lxFieldAddress)) {
+         // ignore fields if required
+      }
+      else if (!test(current.type, lxSimpleMask))
+         return false;
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 // --- Auxiliary declareVariable ---
 
 void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
@@ -2319,15 +2343,19 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);   
 
+   bool largSimple = isSimpleObjectExpression(larg);
+   bool rargSimple = isSimpleObjectExpression(rarg);
+   bool rarg2Simple = isSimpleObjectExpression(rarg2);
+
    if (setMode) {
       generateObjectExpression(tape, larg);
       loadBase(tape, lxResult);
 
-      if (assignMode && (!test(rarg.type, lxSimpleMask) || !test(rarg2.type, lxSimpleMask))) {
+      if (assignMode && (!largSimple || !rarg2Simple)) {
          tape.write(bcPushB);
       }
 
-      if (!test(rarg.type, lxSimpleMask)) {
+      if (!rargSimple) {
          generateObjectExpression(tape, rarg);
          pushObject(tape, lxResult);
       }
@@ -2335,21 +2363,21 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       generateObjectExpression(tape, rarg2);
       loadIndex(tape, lxResult);
 
-      if (!test(rarg.type, lxSimpleMask)) {
+      if (!rargSimple) {
          popObject(tape, lxResult);
       }
       else generateObjectExpression(tape, rarg);
 
-      if (!test(rarg.type, lxSimpleMask) || !test(rarg2.type, lxSimpleMask)) {
+      if (!rargSimple || !rarg2Simple) {
          tape.write(bcPopB);
       }
    }
    else {
-      if (assignMode && (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask))) {
+      if (assignMode && (!largSimple || !rargSimple)) {
          tape.write(bcPushB);
       }
 
-      if (!test(larg.type, lxSimpleMask)) {
+      if (!largSimple) {
          generateObjectExpression(tape, larg);
          pushObject(tape, lxResult);
       }
@@ -2357,12 +2385,12 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       generateObjectExpression(tape, rarg);
       loadIndex(tape, lxResult);
 
-      if (!test(larg.type, lxSimpleMask)) {
+      if (!largSimple) {
          popObject(tape, lxResult);
       }
       else generateObjectExpression(tape, larg);
 
-      if (assignMode && (!test(larg.type, lxSimpleMask) || !test(rarg.type, lxSimpleMask))) {
+      if (assignMode && (!largSimple || !rargSimple)) {
          tape.write(bcPopB);
       }
    }
@@ -2417,7 +2445,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
    else assignOpArguments(node, larg, rarg);
 
-   if (!test(larg.type, lxSimpleMask)) {
+   bool largSimple = isSimpleObjectExpression(larg);
+   bool rargSimple = isSimpleObjectExpression(rarg);
+
+   if (!largSimple) {
       if (assignMode) {
          tape.write(bcPushB);
          level++;
@@ -2428,7 +2459,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       level++;
    }
 
-   if (!test(rarg.type, lxSimpleMask)) {
+   if (!rargSimple) {
       if (level == 0 && assignMode) {
          tape.write(bcPushB);
          level++;
@@ -2442,7 +2473,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    if (level > 0 && assignMode)
       loadBase(tape, lxCurrent, level - 1);
 
-   if (!test(larg.type, lxSimpleMask)) {
+   if (!largSimple) {
       loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
    }
    else generateObjectExpression(tape, larg);
@@ -2457,7 +2488,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
    else loadBase(tape, lxResult);
 
-   if (!test(rarg.type, lxSimpleMask)) {
+   if (!rargSimple) {
       popObject(tape, lxResult);
       level--;
    }
@@ -2681,7 +2712,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          unboxMode = true;
       }
 
-      if (test(current.type, lxExpressionMask) || current == lxResult) 
+      if (current == lxExpression && !isSimpleObjectExpression(current, true)) {
+         // ignore nested expression
+      }
+      else if (test(current.type, lxExpressionMask) || current == lxResult) 
          directMode = false;
    
       current = current.nextNode();
@@ -3038,21 +3072,6 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
    endThenBlock(tape);
 }
 
-// check if the node contains the nodes
-// which could create a new object (e.g. boxing, symbol, ...)
-bool isDynamicObjectExpression(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (!test(current.type, lxSimpleMask))
-         return true;
-
-      current = current.nextNode();
-   }
-
-   return false;
-}
-
 void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
 {
    SNode target = SyntaxTree::findChild(node, lxTarget);
@@ -3061,7 +3080,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    SNode current = node.lastChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
-         if (isDynamicObjectExpression(current)) {
+         if (!isSimpleObjectExpression(current, true)) {
             generateExpression(tape, current);
             pushObject(tape, lxResult);
          }
@@ -3077,7 +3096,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    current = node.firstChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
-         if (isDynamicObjectExpression(current)) {
+         if (!isSimpleObjectExpression(current, true)) {
             popObject(tape, lxResult);
          }
          else generateExpression(tape, current);

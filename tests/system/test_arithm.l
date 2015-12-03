@@ -5,41 +5,15 @@
 #import system'calendar.
 #import extensions.
 
-#symbol $isDigit = ch
-[
-    #var c := ch toInt.
-    ^((c >= 30h) and: (c <= 39h)).
-].
-    
-#symbol $htoi = hexString
-[
-    #var i := 0.
-    #var(type:int) ret := 0.
-    #var tmp := 0.
-   
-    #loop (i < hexString length) ?
-    [
-        #var c := hexString@i.
-        ((c >= #65) and: (c <= #70))
-            ? [ tmp := (c toInt) - 65 + 10. ].             
-        ((c >= #97) and: (c <= #102))
-            ? [ tmp := (c toInt) - 97 + 10. ].
-        ($isDigit:c)
-            ? [ tmp := (c toInt) - 48. ].
-           
-        ret := 16 * ret + tmp.
-        i := i + 1.
-    ].
-    ^ret.
-].
-
-        
 #symbol XTester =
 {
     test
     [
-       #var s := $htoi:"100".
-    ]        
+        #var(type:intarray) x := system'IntArray new:8000h.
+    	#var(type:int) xc := 0.
+    	#var(type:int) cnt := 0.
+    	#loop (cnt < 8000h) ? [ x@cnt := 23. cnt := cnt + 1. ]. 
+    ]
 }.
         
 #symbol XTest =
@@ -134,6 +108,11 @@
     [
         #var o := n.
     ]
+    
+    do:n
+    [
+        #var o := n.
+    ]
 }.
 
 #symbol LocalTest =
@@ -142,6 +121,8 @@
     n := n + 1.
     
     LocalTester do &int:n.
+    
+    LocalTester do:(n int).
     
     #var(type:long)l := 12345678901234566l.
     l := l + 1l.
@@ -800,6 +781,4 @@
 #symbol EmbedConstTest =
 [
     #var(type:test_var)var := TestVar new &int:2.
-    
-    console writeLine:"!!".
 ].

@@ -69,7 +69,7 @@ enum LexicalType
    lxNested          = 0x0101,
    lxStruct          = 0x0102,
    lxSymbol          = 0x0103,
-   lxConstantSymbol  = 0x0104,
+   lxConstantSymbol  = 0x4104,
    lxField           = 0x0105,
    lxFieldAddress    = 0x0106,
    lxLocalAddress    = 0x4107,

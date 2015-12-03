@@ -3,12 +3,13 @@ In development:
 ------
 
               idev - usability
-                       * #185
                        * #164
 
               xdev - general implementation                         
+                       * fix dt calculator
                        * fix linux pi / pi2
                        * test operation with threads
+                       * fix pi2
 
              idev - linux
                        * redirect output to the window
