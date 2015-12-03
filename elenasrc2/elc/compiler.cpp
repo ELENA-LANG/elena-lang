@@ -2969,6 +2969,10 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          || member == nsL7Operation || member == nsL0Operation)
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
+         // HOTFIX : if the primitive operation is followed by another operation
+         // the result may be boxed
+         if (member.nextNode() != nsNone && currentObject.kind == okLocalAddress)
+            writeBoxing(node.FirstTerminal(), scope, currentObject, 0, 0);
       }
       else if (member == nsAltMessageOperation) {
          scope.writer->newBookmark();

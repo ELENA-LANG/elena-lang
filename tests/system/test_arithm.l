@@ -4,11 +4,41 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
+
+#symbol $isDigit = ch
+[
+    #var c := ch toInt.
+    ^((c >= 30h) and: (c <= 39h)).
+].
     
+#symbol $htoi = hexString
+[
+    #var i := 0.
+    #var(type:int) ret := 0.
+    #var tmp := 0.
+   
+    #loop (i < hexString length) ?
+    [
+        #var c := hexString@i.
+        ((c >= #65) and: (c <= #70))
+            ? [ tmp := (c toInt) - 65 + 10. ].             
+        ((c >= #97) and: (c <= #102))
+            ? [ tmp := (c toInt) - 97 + 10. ].
+        ($isDigit:c)
+            ? [ tmp := (c toInt) - 48. ].
+           
+        ret := 16 * ret + tmp.
+        i := i + 1.
+    ].
+    ^ret.
+].
+
+        
 #symbol XTester =
 {
     test
-    [        
+    [
+       #var s := $htoi:"100".
     ]        
 }.
         
