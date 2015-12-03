@@ -2,8 +2,8 @@
 In development:
 ------
               xdev - general implementation                         
-                       * fix pi2
                        * fix linux pi / pi2
+                       * test script samples
                        * test operation with threads
 
              idev - linux

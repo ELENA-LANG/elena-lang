@@ -49,4 +49,6 @@
     #var aDiff := anEnd - aStart.
 
     console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
+    
+    console readChar.
 ].
