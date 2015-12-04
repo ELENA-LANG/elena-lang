@@ -207,6 +207,7 @@ public:
    void assignLong(CommandTape& tape, LexicalType target, int offset);
    void assignShort(CommandTape& tape, LexicalType target, int offset);
    void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
    void saveInt(CommandTape& tape, LexicalType target, int argument);
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);

@@ -1719,6 +1719,22 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
    }
 }
 
+void ByteCodeWriter::assignStruct(CommandTape& tape, LexicalType target, int offset, int size)
+{
+   if (target == lxFieldAddress) {
+      // bloadfi 1
+
+      copyStructure(tape, offset, size);
+   }
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      tape.write(bcBCopyF, offset);
+
+      copyStructure(tape, 0, size);
+   }
+
+}
+
 void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
 {
    // if it is alinged
@@ -2953,6 +2969,7 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
             else if (size == 8) {
                assignLong(tape, target.type, target.argument);
             }
+            else assignStruct(tape, target.type, target.argument, size);
          }
       }
       else saveObject(tape, target.type, target.argument);

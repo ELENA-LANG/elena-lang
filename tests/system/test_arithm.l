@@ -4,26 +4,11 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-
-#class(sealed,struct:embeddable) XInteger
-{
-    #field(type:int)theValue.
-
-    /// Appends the integer value
-    #method(stacksafe) append &int:anOperand
-    [
-        theValue := theValue + anOperand.
-    ]
-}
         
 #symbol XTester =
 {
     test
     [
-        #var(type:int)n := 3.
-        #var(type:int)k := 1.
-        
-        n := n + k.
     ]
 }.
         
