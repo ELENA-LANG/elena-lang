@@ -5210,10 +5210,30 @@ void Compiler::optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assi
    }
 }
 
+SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type)
+{
+   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
+   if (child == lxExpression)
+   {
+      return SyntaxTree::findChild(child, type);
+   }
+   else return child;
+}
+
+SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask)
+{
+   SyntaxTree::Node child = SyntaxTree::findMatchedChild(node, mask);
+   if (child == lxExpression)
+   {
+      return SyntaxTree::findMatchedChild(child, mask);
+   }
+   else return child;
+}
+
 void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
 {
-   // assigning (local address boxing) => assigning (local address expression)
    if (node.argument != 0) {
+      // assigning (local address boxing) => assigning (local address expression)
       SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing, lxCondBoxing, lxUnboxing);
       if (boxing != lxNone && boxing.argument == node.argument) {
          boxing = lxExpression;
@@ -5250,9 +5270,30 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
       switch (current.type)
       {
          case lxAssigning:
+         {
             optimizeAssigning(*scope->moduleScope, current);
             analizeSyntaxExpression(scope, current);
+
+            // assignment operation
+            SyntaxTree::Node assignNode = findSubNode(current, lxAssigning);
+            if (assignNode != lxNone) {
+               SyntaxTree::Node operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
+               if (operationNode != lxNone) {
+                  SyntaxTree::Node larg = findSubNodeMask(operationNode, lxObjectMask);
+                  SyntaxTree::Node target = SyntaxTree::findMatchedChild(current, lxObjectMask);
+                  if (larg.type == target.type && larg.argument == target.argument) {
+                     // remove an extra assignment
+                     larg = findSubNodeMask(assignNode, lxObjectMask);
+
+                     larg = target.type;
+                     larg.setArgument(target.argument);
+                     current = lxExpression;
+                     target = lxExpression;
+                  }
+               }
+            }
             break;
+         }
          case lxTypecasting:
             analizeTypecast(scope, current);
             analizeSyntaxExpression(scope, current);

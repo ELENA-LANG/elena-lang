@@ -834,7 +834,7 @@ private:
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
+  void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
 
    void analizeBoxing(Scope* scope, SyntaxTree::Node node);
    void analizeTypecast(Scope* scope, SyntaxTree::Node node);

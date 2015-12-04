@@ -537,6 +537,12 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          tape.write(bcBCopyA);
          tape.write(bcPopA);
          break;
+      case lxFieldAddress:
+         if (sourceArgument == 0) {
+            // bloadfi 1
+            tape.write(bcBLoadFI, 1, bpFrame);
+         }
+         break;
    }
 }
 

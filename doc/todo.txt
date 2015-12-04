@@ -2,9 +2,9 @@
 In development:
 ------
               xdev - general implementation                         
-                       * fix linux pi / pi2
                        * test script samples
                        * test operation with threads
+                       * fix linux pi / pi2
 
              idev - linux
                        * redirect output to the window
