@@ -15,21 +15,32 @@ using namespace _ELENA_;
 typedef SyntaxTree::Node SNode;
 
 // check if the node contains only the simple nodes
-bool isSimpleObjectExpression(SNode node, bool ignoreFields = false)
+
+bool isSimpleObject(SNode node, bool ignoreFields = false)
+{
+   if (test(node.type, lxObjectMask)) {
+      if (node == lxExpression) {
+         if (!isSimpleObjectExpression(node, ignoreFields))
+            return false;
+      }
+      else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
+         // ignore fields if required
+      }
+      else if (!test(node.type, lxSimpleMask))
+         return false;
+   }
+
+   return true;
+}
+
+bool _ELENA_::isSimpleObjectExpression(SNode node, bool ignoreFields)
 {
    if (node == lxNone)
       return true;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxExpression) {
-         if (!isSimpleObjectExpression(current, ignoreFields))
-            return false;
-      }
-      else if (ignoreFields && (current.type == lxField || current.type == lxFieldAddress)) {
-         // ignore fields if required
-      }
-      else if (!test(current.type, lxSimpleMask))
+      if (!isSimpleObject(current, ignoreFields))
          return false;
 
       current = current.nextNode();
@@ -158,7 +169,6 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool with
 
 void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
 {
-   // exclude
    tape.write(blDeclare, bsBranch);
 }
 
@@ -2389,9 +2399,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);   
 
-   bool largSimple = isSimpleObjectExpression(larg);
-   bool rargSimple = isSimpleObjectExpression(rarg);
-   bool rarg2Simple = isSimpleObjectExpression(rarg2);
+   bool largSimple = isSimpleObject(larg);
+   bool rargSimple = isSimpleObject(rarg);
+   bool rarg2Simple = isSimpleObject(rarg2);
 
    if (setMode) {
       generateObjectExpression(tape, larg);
@@ -2491,8 +2501,8 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
    else assignOpArguments(node, larg, rarg);
 
-   bool largSimple = isSimpleObjectExpression(larg);
-   bool rargSimple = isSimpleObjectExpression(rarg);
+   bool largSimple = isSimpleObject(larg);
+   bool rargSimple = isSimpleObject(rarg);
 
    if (!largSimple) {
       if (assignMode) {
@@ -2590,18 +2600,13 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
 
    SNode arg = node.firstChild();
    while (arg != lxNone) {
-      ExternalScope::ParamInfo param;
-
       SNode object = arg.firstChild();
-      if (test(arg.type, lxObjectMask)) {
+      if (!isSimpleObject(object, true)) {
+         ExternalScope::ParamInfo param;
+
          generateObjectExpression(tape, object);
          pushObject(tape, lxResult);
          param.offset = ++externalScope.frameSize;
-
-         if (arg == lxIntExtArgument) {
-            param.size = 4;
-         }
-         else param.size = -1;
 
          externalScope.operands.push(param);
       }
@@ -2610,21 +2615,34 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
    }
 }
 
-void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, ExternalScope& externalScope)
+void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
 {
    // save function parameters
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
-   while (!out_it.Eof()) {
-      if ((*out_it).size == 4) {
-         loadObject(tape, lxBlockLocal, (*out_it).offset);
-         pushObject(tape, lxResultField, 0);
-      }
-      else {
-         loadObject(tape, lxBlockLocal, (*out_it).offset);
-         pushObject(tape, lxResult);
+   SNode arg = node.lastChild();
+   while (arg != lxNone) {
+      SNode object = arg.firstChild();
+      if (test(arg.type, lxObjectMask)) {
+         SNode valueNode = SyntaxTree::findChild(arg, lxValue);
+         if (arg == lxIntExtArgument && valueNode != lxNone) {
+            declareVariable(tape, valueNode.argument);
+         }
+         else {
+            if (!isSimpleObject(object, true)) {
+               loadObject(tape, lxBlockLocal, (*out_it).offset);
+
+               out_it++;
+            }
+            else generateObjectExpression(tape, object);
+
+            if (arg == lxIntExtArgument) {
+               pushObject(tape, lxResultField);
+            }
+            else pushObject(tape, lxResult);
+         }
       }
 
-      out_it++;
+      arg = arg.prevNode();
    }
 }
 
@@ -2642,7 +2660,7 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
    excludeFrame(tape);
 
    // save function parameters
-   saveExternalParameters(tape, externalScope);
+   saveExternalParameters(tape, node, externalScope);
    
    // call the function
    callExternal(tape, node.argument, externalScope.frameSize);

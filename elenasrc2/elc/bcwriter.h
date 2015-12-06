@@ -38,12 +38,10 @@ class ByteCodeWriter
    {
       struct ParamInfo
       {
-         int size;
          int offset;
 
          ParamInfo()
          {
-            size = 0;
             offset = 0;
          }
       };
@@ -227,7 +225,7 @@ public:
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
-   void saveExternalParameters(CommandTape& tape, ExternalScope& externalScope);
+   void saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
@@ -267,6 +265,8 @@ public:
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
+
+bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 
 } // _ELENA_
 

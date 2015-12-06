@@ -3639,6 +3639,11 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
          ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
+         if (info.kind == okIntConstant) {
+            int value = StringHelper::strToInt(moduleScope->module->resolveConstant(info.param));
+
+            scope.writer->appendNode(lxValue, value);
+         }
 
          arg = arg.nextNode();
       }

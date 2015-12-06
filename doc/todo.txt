@@ -2,7 +2,8 @@
 In development:
 ------
               xdev - general implementation                         
-                       * fixing  #181
+                       * implementing #156
+                       * implementing #161
 
                        * test script samples
                        * test operation with threads

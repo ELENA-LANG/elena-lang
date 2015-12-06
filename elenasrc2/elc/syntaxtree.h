@@ -118,6 +118,7 @@ enum LexicalType
    lxTerminal        = 0x2005,
    lxLevel           = 0x2006,
    lxClassName       = 0x2007,
+   lxValue           = 0x2008,
 };
 
 // --- SyntaxWriter ---
