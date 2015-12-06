@@ -1606,6 +1606,38 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
    }
 }
 
+void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // rload
+      // nsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target == lxLocal) {
+      // bloadfi param
+      // rload
+      // nsave
+      tape.write(bcBLoadFI, argument, bpFrame);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target == lxFieldAddress) {
+      // rload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param
+      // bwrite
+      tape.write(bcRLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, argument);
+      tape.write(bcBWrite);
+   }
+}
+
 void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
 {
    if (target == lxResult) {
@@ -2953,6 +2985,9 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
          if (target == lxLocalAddress) {
             if (node.argument == 4) {
                saveInt(tape, target.type, target.argument);
+            }
+            else if (node.argument == 8) {
+               saveReal(tape, target.type, target.argument);
             }
          }
       }

@@ -2,7 +2,6 @@
 In development:
 ------
               xdev - general implementation                         
-                       * implementing #156
                        * implementing #161
 
                        * test script samples
