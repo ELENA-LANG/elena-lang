@@ -3,9 +3,14 @@
 
 #symbol Program =
 [
-   //#var d := Date now.
+   #var d1 := Date new &year:2015 &month:1 &day:1.
+   #var d2 := Date new &year:2015 &month:2 &day:1.
 
-   //console writeLine:d.
+   #var s := d2 - d1.
+   #var msec := s milliseconds.
 
-   console writeLine:(utcNow literal).
+   console writeLine:d1.
+   console writeLine:d2.
+   console writeLine:msec.
+   console writeLine:s.
 ].

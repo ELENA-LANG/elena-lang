@@ -5190,9 +5190,11 @@ void Compiler::optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assi
 
       // move assigning target into the call node
       SyntaxTree::Node assignTarget = assignNode.findPattern(SyntaxTree::NodePattern(lxLocalAddress));
-      callNode.appendNode(assignTarget.type, assignTarget.argument);
-      assignTarget = lxExpression;
-      callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
+      if (assignTarget != lxNone) {
+         callNode.appendNode(assignTarget.type, assignTarget.argument);
+         assignTarget = lxExpression;
+         callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
+      }
    }
 
    subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddedInit));
@@ -5201,7 +5203,7 @@ void Compiler::optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assi
       // move assigning target into the call node
       SyntaxTree::Node assignTarget = assignNode.findPattern(SyntaxTree::NodePattern(lxLocalAddress));
       SyntaxTree::Node callTarget = callNode.findPattern(SyntaxTree::NodePattern(lxConstantClass));
-      if (callTarget != lxNone) {
+      if (callTarget != lxNone && assignTarget != lxNone) {
          // removing assinging operation
          assignNode = lxExpression;
 

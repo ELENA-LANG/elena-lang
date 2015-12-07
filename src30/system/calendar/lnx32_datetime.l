@@ -37,7 +37,7 @@
     ]
 }.
 
-#class(sealed,struct:embeddable,const) SystemTime :: BaseValue
+#class(sealed,struct:embeddable) SystemTime :: BaseValue
 {
     #field(type:int)tv_sec.
     #field(type:int)tv_usec.
@@ -69,11 +69,31 @@
     #constructor utcNow
         <= new &__time:($factory utcNow).
                         
+    #method(stacksafe) $read &vint:aSeconds &vint:aMicroSeconds 
+    [
+       aSeconds << tv_sec.
+       aMicroSeconds << tv_usec.
+    ]
+
+    #method(stacksafe)readMSec &vint:aMicroSeconds 
+    [
+       aMicroSeconds << tv_usec.
+    ]
+
     #method(stacksafe,type:bool) equal &__time:anOperand
         => system'internal'long_equal.
         
     #method(stacksafe,type:bool) less &__time:anOperand
-        => system'internal'long_less.
+    [
+       #var(type:int)sec.
+       #var(type:int)usec.
+       anOperand $read &vint:sec &vint:usec.
+  
+       (sec == tv_sec)?
+           [ ^ tv_usec < usec. ].
+
+       ^ tv_sec < sec.
+    ]
     
     #method(stacksafe) write &__time:aValue
         => system'internal'long_copy.
@@ -83,28 +103,45 @@
         #var(type:long)l.
         longConvertor convert &int:tv_sec &vlong:l.
         
-        l := l * 1000000000l.
+        l := l * 10000000l.
         
         #var(type:long)l2.
         longConvertor convert &int:tv_usec &vlong:l2.
-        l2 := l2 * 1000l.
+        l2 := l2 * 10l.
         
         l := l + l2.
         
         aRetVal << l.
     ]
         
-    #method(stacksafe) read &vint:aRetVal
-        => system'internal'int_save.
-        
-    #method(stacksafe) readMSecs &vint:aRetVal
-        => system'internal'long_savehi.
-        
     #method(stacksafe,type:__time) subtract &__time:anOperand
-        => system'internal'long_sub.
+    [
+       #var(type:int)sec.
+       #var(type:int)usec.
+       anOperand $read &vint:sec &vint:usec.
+
+       #var(type:int)ms := tv_usec.
+       (usec > tv_usec)
+          ? [  sec := sec + 1. ms := ms + 1000000. ].
+
+       ms := ms - usec.
+
+       ^ SystemTime $new &int:(tv_sec - sec) &int:ms.
+    ]
         
     #method(stacksafe,type:__time) add &__time:anOperand
-        => system'internal'long_add.
+    [
+       #var(type:int)sec.
+       #var(type:int)usec.
+       anOperand $read &vint:sec &vint:usec.
+
+       #var(type:int)ms := tv_usec + usec.
+
+       (ms > 1000000)
+          ? [  sec := sec + 1. ms := ms - 1000000. ].
+
+       ^ SystemTime $new &int:(tv_sec + sec) &int:ms.
+    ]
     
     #method __time = $self.
 }
@@ -167,6 +204,14 @@
     #method(stacksafe) readHour &vint:aRetVal
     [
         aRetVal << tm_hour.
+    ]
+
+    #method hour
+    [
+        #var(type:int)n.
+        $self readHour &vint:n.
+
+        ^ n.
     ]
 
     #method(stacksafe) readMinute &vint:aRetVal
@@ -240,7 +285,7 @@
        system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
 
        #var(type:int)tmp.     
-       aTime readMSecs &vint:tmp.
+       aTime readMSec &vint:tmp.
        tm_usec := tmp.
     ]
     
@@ -251,7 +296,7 @@
        system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
 
        #var(type:int)tmp.     
-       aTime readMSecs &vint:tmp.
+       aTime readMSec &vint:tmp.
        tm_usec := tmp.
     ]
      
@@ -262,11 +307,15 @@
         $self readYear &vint:aYear.
         $self readMonth &vint:aMonth. 
 
-        ^ tm_mday literal + "." + aMonth literal + "." + aYear literal.
+        ^ tm_mday literal padLeft &char:#48 &int:2 
+              + "." + aMonth literal padLeft &char:#48 &int:2
+              + "." + aYear literal padLeft &char:#48 &int:2.
     ]
 
     #method(stacksafe) toShortTime
     [
-        ^ tm_hour literal + ":" + tm_min literal + ":" + tm_sec literal.
+        ^ tm_hour literal padLeft &char:#48 &int:2
+             + ":" + tm_min literal padLeft &char:#48 &int:2
+             + ":" + tm_sec literal padLeft &char:#48 &int:2.
     ]
 }

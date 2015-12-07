@@ -146,7 +146,7 @@
     [
         #var(type:__time_st)aStruct.
         aStruct write &__time:theValue.
-        
+
         #var aValue := aStruct toShortTime literal.
 
         ^ ($self days literal + "." + aValue) literal.
