@@ -2338,7 +2338,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
          scope.writer->insert(lxAssigning, size);
          scope.writer->closeNode();
       }
-      else boxing = lxBoxing;
+      boxing = lxBoxing;
    }
    else if (object.kind == okSubject) {
       boxing = lxBoxing;

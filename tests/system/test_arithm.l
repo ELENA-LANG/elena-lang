@@ -5,46 +5,10 @@
 #import system'calendar.
 #import extensions.
 
-#class(struct:embeddable,sealed) XTimeStruct
-{
-    #field(type:short)theYear.
-    #field(type:short)theMonth.
-    #field(type:short)theDayOfWeek.
-    #field(type:short)theDay.
-    #field(type:short)theHour.
-    #field(type:short)theMinute.
-    #field(type:short)theSecond.
-    #field(type:short)theMillisecond.
-    
-    #method(stacksafe) toWide &time_attributes:Flags
-    [
-        #var(type:shortarray,size:127)aBuffer.
-
-        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
-            &int:0
-            &int:(Flags int)
-            &__time_st:$self
-            &int:0
-            &shortarray:aBuffer
-            &int:255
-            &int:0.
-    ]
-}                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 #symbol XTester =
 {
     test
     [
-        #var d1 := Date new &year:2015 &month:1 &day:1.
-        #var d2 := Date new &year:2015 &month:2 &day:1.
-        
-        #var s := d2 - d1.
-        
-        #var days := s days.
-        #var msecs := s milliseconds.
-        
-        console writeLine:s.
     ]
 }.
         
