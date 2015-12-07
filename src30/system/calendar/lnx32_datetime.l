@@ -287,6 +287,8 @@
        #var(type:int)tmp.     
        aTime readMSec &vint:tmp.
        tm_usec := tmp.
+
+       //system'console writeLine:(tm_hour). 
     ]
     
     #method(stacksafe) writeUTC &__time:aTime                                     
