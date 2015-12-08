@@ -527,6 +527,10 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          // bloadsi param
          tape.write(bcBLoadSI, sourceArgument);
          break;
+      case lxLocal:
+         // bloadfi param
+         tape.write(bcBLoadFI, sourceArgument, bpFrame);
+         break;
       case lxLocalAddress:
          // bcopyf n
          tape.write(bcBCopyF, sourceArgument);
@@ -2817,7 +2821,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 
-   if (!directMode && paramCount > 1) {
+   if (!directMode && (paramCount > 1 || unboxMode)) {
       declareArgumentList(tape, paramCount);
    }
    // if message has no arguments - direct mode is allowed
@@ -2885,29 +2889,26 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
          }
          else popObject(tape, lxResult);
 
-         if (target == lxLocalAddress) {
+         if (current.argument != 0) {
             tape.write(bcPushB);
             loadBase(tape, target.type, target.argument);
-            copyBase(tape, current.argument);
+
+            if (target == lxFieldAddress) {
+               if (current.argument == 4) {
+                  copyInt(tape, target.argument);
+               }
+               else if (current.argument == 2) {
+                  copyShort(tape, target.argument);
+               }
+               else copyStructure(tape, target.argument, current.argument);
+            }
+            else copyBase(tape, current.argument);
+
             tape.write(bcPopB);
          }
-         else if (target == lxLocal) {
+         else {
             loadObject(tape, lxResultField);
             saveObject(tape, target.type, target.argument);
-         }
-         else if (target == lxFieldAddress) {
-            tape.write(bcPushB);
-
-            loadBase(tape, target.type, target.argument);
-            if (current.argument == 4) {
-               copyInt(tape, target.argument);
-            }
-            else if (current.argument == 2) {
-               copyShort(tape, target.argument);
-            }
-            else copyStructure(tape, target.argument, current.argument);
-
-            tape.write(bcPopB);
          }
       }
 

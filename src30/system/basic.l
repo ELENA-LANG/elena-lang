@@ -2403,8 +2403,19 @@
     /// Returns itself
     #method char = $self.
 
+    #method(stacksafe) readInt &vint:aRetVal
+    [
+        intConvertor convert &char:$self &vint:aRetVal.
+    ]
+
     /// Returns the numeric value
-    #method int = intConvertor convert &char:$self.
+    #method(stacksafe,embeddable,suppress:w2) int
+    [
+        #var(type:int)aRetVal.
+        $self readInt &vint:aRetVal.
+        
+        ^ aRetVal.
+    ]
     
     #method add : anObject
         = anObject cast:%eval &to:
@@ -2439,14 +2450,14 @@
         
     #method add &int:aNumber
     [
-        #var(type:int)n := $self.
+        #var(type:int)n := $self int.
         
         ^ CharValue new &int:(n + aNumber).
     ]
         
     #method subtract &int:aNumber
     [
-        #var(type:int)n := $self.
+        #var(type:int)n := $self int.
         
         ^ CharValue new &int:(n - aNumber).
     ]

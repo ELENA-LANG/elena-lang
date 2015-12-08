@@ -162,9 +162,11 @@ DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step, bool stepOver
                   case dsVirtualEnd:
                      level--;
                      break;
-                  case dsEOP:
-                     level = 0;
-                     break;
+                  case dsEnd:
+                     return NULL;
+                  //case dsEOP:
+                  //   level = 0;
+                  //   break;
                   default:
                      break;
                }

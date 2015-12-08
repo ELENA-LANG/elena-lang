@@ -1,12 +1,13 @@
 ------                                 
 In development:
 ------
-              xdev - general implementation                         
-                       * implementing #161
+              idev - usability
+                       * implement #164
 
+              xdev - general implementation                         
                        * test script samples
                        * test operation with threads
-                       * fix linux pi / pi2
+                       * fix linux pi2
 
              idev - linux
                        * redirect output to the window
@@ -19,6 +20,10 @@ In development:
                        
               fdev - db app
                        * implement simple char system to test socket api
+
+              xdev - usability
+                       * ecv : dynamically define the page size
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -161,6 +166,7 @@ Pipeline:
                        * redesign cfparser, to use breadth-first model (current one - deep first)
 
               xdev - test
+                       * unbox field when passed as ref
                        * test math functions
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
@@ -183,7 +189,7 @@ Pipeline:
                       * think over general architecture
                       * asm2bin64 - compile x64 bit opcodes
                       * create x64 elena vm
-
+                      
               idev - usability
                        * fix #83
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails

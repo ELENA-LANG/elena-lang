@@ -794,7 +794,7 @@
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-#class(sealed,string) LiteralValue :: BaseValue
+#class(sealed,string,const) LiteralValue :: BaseValue
 {
     #field(type:bytearray)theValue.
 
@@ -1184,7 +1184,7 @@
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-#class(sealed,widestring) WideLiteralValue :: BaseValue
+#class(sealed,widestring,const) WideLiteralValue :: BaseValue
 {
     #field(type:shortarray)theValue.
 
