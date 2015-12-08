@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------
+              idev - usability
+                       * implement #164
+
               xdev - general implementation                         
                        * test script samples
                        * test operation with threads
@@ -186,7 +189,7 @@ Pipeline:
                       * think over general architecture
                       * asm2bin64 - compile x64 bit opcodes
                       * create x64 elena vm
-
+                      
               idev - usability
                        * fix #83
                        * it should be possible to turn-off deleting compiled modules if one of the project module fails
