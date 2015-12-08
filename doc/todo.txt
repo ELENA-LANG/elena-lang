@@ -2,11 +2,12 @@
 In development:
 ------
               xdev - general implementation                         
-                       * implementing #161
+                       * fix open arg list boxing
+                       * unbox field when passed as ref
 
                        * test script samples
                        * test operation with threads
-                       * fix linux pi / pi2
+                       * fix linux pi2
 
              idev - linux
                        * redirect output to the window
@@ -19,6 +20,10 @@ In development:
                        
               fdev - db app
                        * implement simple char system to test socket api
+
+              xdev - usability
+                       * ecv : dynamically define the page size
+
 ------                                 
 Pipeline:
 ------                                                                                         

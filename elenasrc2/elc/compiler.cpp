@@ -19,6 +19,8 @@ using namespace _ELENA_;
 
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
+#define HINT_NOUNBOXING       0x20000000
+#define HINT_RETEXPR          0x08000000
 #define HINT_ALT              0x12000000
 #define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
@@ -2262,6 +2264,24 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    if (test(mode, HINT_NOBOXING))
       return false;
 
+   switch (object.kind)
+   {
+      case okLocalAddress:
+      case okParams:
+      case okLocal:
+      case okParam:
+      case okThisParam:
+      case okFieldAddress:
+      case okSubject:
+         break;
+      default:
+         if (targetTypeRef == 0) {
+            // filter out unnessesary cases
+            return false;
+         }
+         else break;
+   }
+
    ModuleScope* moduleScope = scope.moduleScope;
 
    int size = 0;
@@ -2270,7 +2290,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
    if (object.type != 0) {
       classRef = moduleScope->typeHints.get(object.type);
    }
-   else classRef = object.extraparam;
+   else classRef = resolveObjectReference(scope, object);
 
    ClassInfo sourceInfo;
    if (classRef != 0)
@@ -2319,6 +2339,9 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
          unboxRequired = (object.kind == okLocal || object.kind == okField);
       }
    }
+   else if (!test(sourceInfo.header.flags, elReadOnlyRole)) {
+      unboxRequired = true;
+   }
 
    if (object.kind == okLocalAddress) {
       boxing = lxBoxing;
@@ -2345,6 +2368,10 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       size = 4;
       classRef = scope.moduleScope->signatureReference;
    }
+
+   // HOTFIX : prevent unboxing for returning expression
+   if (test(mode, HINT_NOUNBOXING))
+      unboxRequired = false;
 
    if (boxing != lxNone) {
       scope.writer->insert(unboxRequired ? lxUnboxing : boxing, size);
@@ -3305,7 +3332,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
       }
    }
 
-   ObjectInfo info = compileExpression(node, scope, subj, mode);
+   ObjectInfo info = compileExpression(node, scope, subj, mode | HINT_RETEXPR);
 
    if (typecasting) {
       // if the type class returns itself, no need to typecast the result
@@ -3324,6 +3351,8 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 {
    bool tryMode = false;
    bool altMode = false;
+   bool retExpr = test(mode, HINT_RETEXPR);
+   mode &= ~HINT_RETEXPR;
 
    if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
       scope.writer->newNode(lxTrying);
@@ -3366,16 +3395,14 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    }
    else objectInfo = compileObject(node, scope, mode);
 
-   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, mode);
+   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, retExpr ? mode | HINT_NOUNBOXING : mode);
 
-   if (targetType != 0) {
-      if (!checkIfCompatible(scope, targetType, objectInfo)) {
-         scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+   if (targetType != 0 && !checkIfCompatible(scope, targetType, objectInfo)) {
+      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
-         appendCoordinate(scope.writer, node.FirstTerminal());
+      appendCoordinate(scope.writer, node.FirstTerminal());
 
-         scope.writer->closeNode();
-      }
+      scope.writer->closeNode();
    }
 
    scope.writer->removeBookmark();

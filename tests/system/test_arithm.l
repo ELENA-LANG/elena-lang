@@ -7,6 +7,16 @@
 
 #symbol XTester =
 {
+    testParamsCopy &args: aParams
+    [        
+        $self testBoxing:aParams.
+    ]    
+    
+    testBoxing : anArray
+    [
+        #var b := anArray.
+    ]    
+    
     test
     [
     ]
