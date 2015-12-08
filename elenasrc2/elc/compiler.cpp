@@ -2340,7 +2340,7 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       }
    }
    else if (!test(sourceInfo.header.flags, elReadOnlyRole)) {
-      unboxRequired = true;
+      unboxRequired = (object.kind != okParams);
    }
 
    if (object.kind == okLocalAddress) {

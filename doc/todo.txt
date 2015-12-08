@@ -2,9 +2,6 @@
 In development:
 ------
               xdev - general implementation                         
-                       * fix open arg list boxing
-                       * unbox field when passed as ref
-
                        * test script samples
                        * test operation with threads
                        * fix linux pi2
@@ -166,6 +163,7 @@ Pipeline:
                        * redesign cfparser, to use breadth-first model (current one - deep first)
 
               xdev - test
+                       * unbox field when passed as ref
                        * test math functions
                        * test with cyriclic and chinese names (strings, variables, files2)
                        * test short -> int, int -> short should correctly set sign
