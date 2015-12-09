@@ -475,7 +475,7 @@ private:
       bool         withOpenArg;
       bool         stackSafe;
 
-      void compileHints(DNode hints);
+      int compileHints(DNode hints);
       void compileWarningHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -522,7 +522,11 @@ private:
          return test(hint, tpGeneric);
       }
 
-      bool include();
+      bool include(ClassScope* classScope);
+      bool include()
+      {
+         return include((ClassScope*)getScope(Scope::slClass));
+      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -834,7 +838,7 @@ private:
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-  void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
 
    void analizeBoxing(Scope* scope, SyntaxTree::Node node);
    void analizeTypecast(Scope* scope, SyntaxTree::Node node);

@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------
-              idev - usability
-                       * implement #164
-
               xdev - general implementation                         
                        * test script samples
                        * test operation with threads

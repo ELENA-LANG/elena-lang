@@ -1181,10 +1181,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->tape = &parent->tape;
 }
 
-bool Compiler::MethodScope :: include()
+bool Compiler::MethodScope :: include(ClassScope* classScope)
 {
-   ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-
    // check if the method is inhreited and update vmt size accordingly
    ClassInfo::MethodMap::Iterator it = classScope->info.methods.getIt(message);
    if (it.Eof()) {
@@ -1248,7 +1246,7 @@ void Compiler::MethodScope ::compileWarningHints(DNode hints)
    }
 }
 
-void Compiler::MethodScope :: compileHints(DNode hints)
+int Compiler::MethodScope :: compileHints(DNode hints)
 {
    ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
 
@@ -1303,6 +1301,8 @@ void Compiler::MethodScope :: compileHints(DNode hints)
       classScope->info.methodHints.exclude(Attribute(message, maHint));
       classScope->info.methodHints.add(Attribute(message, maHint), hint);
    }
+
+   return hint;
 }
 
 // --- Compiler::ActionScope ---
@@ -4331,24 +4331,17 @@ void Compiler :: compileMethod(DNode node, MethodScope& scope, bool genericMetho
 
 void Compiler :: compileEmbeddableConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope)
 {
-   ref_t originalSubjRef = getSignature(scope.message);
-
-   IdentifierString signature(scope.moduleScope->module->resolveSubject(originalSubjRef));
-   signature.append(EMBEDDED_PREFIX);
-
-   ref_t embedddedMethodRef = overwriteSubject(scope.message, scope.moduleScope->module->mapSubject(signature, false));
-
-   classClassScope.info.methodHints.add(Attribute(scope.message, maEmbeddedInit), getSignature(embedddedMethodRef));
+   ref_t originalMethodRef = scope.message;
+   ref_t embedddedMethodRef = overwriteSubject(scope.message, classClassScope.info.methodHints.get(Attribute(scope.message, maEmbeddedInit)));
 
    // compile an embedded constructor
    // HOTFIX: embedded constructor is declared in class class but should be executed if the class scope
    scope.tape = &classClassScope.tape;
    scope.message = embedddedMethodRef;
-   scope.include();
    compileMethod(node, scope, false);
 
    // compile a constructor calling the embedded method
-   scope.message = overwriteSubject(scope.message, originalSubjRef);
+   scope.message = originalMethodRef;
    compileConstructor(DNode(), scope, classClassScope, embedddedMethodRef);
 }
 
@@ -4725,9 +4718,13 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 
          // if the constructor is stack safe, embeddable and the class is an embeddable structure
          // the special method should be compiled
-         if (methodScope.stackSafe && test(hint, tpEmbeddable) && test(classScope.info.header.flags, elStructureRole | elEmbeddable)) {
+         if (test(hint, tpEmbeddable)) {
             // make sure the constructor has no redirect / dispatch statements
             if (node.select(nsResendExpression) != nsNone || node.select(nsDispatchExpression))
+               methodScope.raiseError(errInvalidOperation, member.Terminal());
+
+            // make sure the class is embeddable
+            if (!test(classScope.info.header.flags, elStructureRole | elEmbeddable) || !methodScope.stackSafe)
                methodScope.raiseError(errInvalidOperation, member.Terminal());
 
             compileEmbeddableConstructor(member, methodScope, classClassScope);
@@ -4778,7 +4775,7 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
          }
          else declareArgumentList(member, methodScope, hints);
 
-         methodScope.compileHints(hints);
+         int methodHints = methodScope.compileHints(hints);
 
          // check if there is no duplicate method
          if (scope.info.methods.exist(methodScope.message, true))
@@ -4794,6 +4791,19 @@ void Compiler :: declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol
          if (!included && sealedMethod)
             scope.raiseError(errClosedMethod, member.Terminal());
 
+         // if the constructor is embeddable
+         // the special method should be declared as well
+         if (member == nsConstructor && test(methodHints, tpEmbeddable)) {
+            MethodScope specialMethodScope(&scope);
+
+            IdentifierString signature(scope.moduleScope->module->resolveSubject(getSignature(methodScope.message)));
+            signature.append(EMBEDDED_PREFIX);
+
+            specialMethodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(signature, false));
+
+            scope.info.methodHints.add(Attribute(methodScope.message, maEmbeddedInit), getSignature(specialMethodScope.message));
+            specialMethodScope.include();
+         }
       }
       member = member.nextNode();
    }
