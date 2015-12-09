@@ -1,129 +1,42 @@
-#define system.
-#define system'routines.
-#define system'dynamic.
-#define extensions'dynamic.
+#import system.
+#import system'routines.
+#import system'dynamic.
+#import extensions'dynamic.
 
-//// --- Interpreter ---
-//
-//#class BFTape
-//{
-//    #field theArray.
-//    #field thePointer. 
-//
-//    #constructor new &length:aLength
-//    [
-//        thePointer := Integer new:0.
-//
-//        theArray := arrayControl new &length:aLength &each: n [ Integer new:0 ].
-//    ]
-//
-//    #method tape = $self.
-//
-//    #method append
-//    [
-//         (theArray@thePointer) += 1.
-//    ]
-//    
-//    #method reduce
-//    [
-//         (theArray@thePointer) -= 1.
-//    ]
-//    
-//    #method next
-//    [
-//        thePointer += 1.
-//    ]
-//
-//    #method previous
-//    [
-//        thePointer -= 1.
-//    ]
-//    
-//    #method input
-//    [
-//        (theArray@thePointer) write &int::(console readChar).
-//    ]
-//    
-//    #method output
-//    [
-//        console write:(CharValue new:(theArray@thePointer)).
-//    ]
-//
-//    #method run : aLoop
-//    [
-//        control while:[ 0 < (theArray@thePointer) ] &do: [ aLoop eval:self ].
-//    ]
-//            
-//    #method get = theArray@thePointer.
-//}
 
 #symbol InterpreterTest =
 [
     scriptEngine load &path:"~\scripts\eson.es".
 
-    #var s := scriptEngine eval:"{ x : 1, y : 2}".
-//    #var s := scriptEngine eval &literal:"{ x : 2 , y : 3 , writeLine : &x[ system'console.writeLine(x) ] }".
+    #var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
     #var x := s x.
     #var y := s y.
-//    s writeLine:"Hello".
-//    
-//    #var l := scriptControl load &path:"d:\alex\elena\tests\tape_tester\sample.es".
-//
-//    #var aTape := BFTape new &length:100.
-//
-//    l eval:aTape.
+    
+    ((x == 1)and:(y == 2))?
+    [
+        console writeLine:"Script: structure works".
+    ].
+    
+    s writeLine:"Script: function works".
 ].
 
-//// === Roles ===
-//
-//#class(role)EGetProp
-//{
-//}
-//
-//#symbol GetPropertyTester =
-//[
-//    #var subj := %length.
-//    #var prop := %length [ 3 ].
-//    
-//    #var l := prop~subj get.
-//
-//    #var aTape := Struct(%X, 2, %Y, 3).
-//    #var x := aTape X.
-//    #var y := aTape Y.
-//].  
+#symbol ReflectionTester =
+[
+    #var s := 2 toTextSerialized. 
+        
+    #var anObject := String new:"abd".
 
-//#symbol ReflectionTester =
-//[
-//    #var s := 2~textserializable literal. 
-//        
-//    #var anObject := String new:"abd".
-//
-//    #var aPresentation := anObject~textserializable literal. 
-////    
-//].
+    #var aPresentation := anObject toTextSerialized. 
+].
 
-//#symbol TapeTest =
-//[
-//   #var aTape := Tape(
-//       1, 
-//       system'dynamic'tapeControl,
-//       %read(1,),
-//       system'console,
-//       %writeLine(1),
-//       system'console,
-//       %readChar(0)).
-//
-//    aTape eval:"Hello World".
-//].
+#symbol ClassTest =
+[
+    #var n := Integer new.
+  
+    #var g := Struct(%getNext, Tape(1, 1, tapeControl, %(getAt&args)(1), %(get&index), %(append)(1)), %index, n).
 
-//#symbol ClassTest =
-//[
-//    #var n := Integer new.
-//  
-//    #var g := system'dynamic'Class(%next(0), system'dynamic'Tape(1, 1, system'dynamic'tapeControl, %read(1,), %index(0), %append(1)), %index(0), [ n ]).
-//
-//    g next.
-//].
+    g eval &getNext.
+].
 
 #symbol SubjectSerializerTest =
 [
@@ -132,20 +45,33 @@
     #var subjName := %length :: subjectROp name.
     
     #var newSubj := Signature new &literal:subjName.
+    
+    (subj equal &subject:newSubj)
+        ? [ console writeLine:"Subject serializing works". ]
+        ! [ console writeLine:"Subject serializing does not work". ].
+].
+
+#symbol ClassSerializerTest =
+[
+    #var aClass := Symbol new &literal:"system'Integer".
+    #var anInstance := aClass new.
+    
+    #var className := anInstance className.
+    
+    (className == "system'Integer")
+        ? [ console writeLine:"Class serializing works". ]
+        ! [ console writeLine:"Class serializing does not work". ].    
 ].
 
 #symbol Program =
 [ 
     SubjectSerializerTest eval.
-
-//    #var aClass := Symbol new &literal:"system'Integer".
-//    #var anInstance := aClass new.
+    
+    ClassSerializerTest eval.    
 
     InterpreterTest eval
         | if &ScriptError: e [ console writeLine:(e message). ].
 
-//    ClassTest eval.
-//    GetPropertyTester eval.
-//    ReflectionTester eval.
-//    TapeTest eval.
+    ClassTest eval.
+    ReflectionTester eval.
 ].

@@ -1,7 +1,8 @@
 ------                                 
 In development:
 ------
-              xdev - general implementation                         
+              xdev - general implementation 
+                       * tape_tester 
                        * test script samples
                        * test operation with threads
                        * fix linux pi2

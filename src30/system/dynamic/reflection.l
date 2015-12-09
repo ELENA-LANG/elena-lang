@@ -21,7 +21,7 @@
 
 #class(extension) classROp
 {
-    #method fieldCount
+    #method(type:int) fieldCount
     [
         #var(type:int)aLength.
         $classControl readLength:self &vint:aLength.
@@ -34,11 +34,18 @@
         
     #method(stacksafe) getField &int:anIndex
         => system'internal'arrptr_get.
+        
+    #method getFieldAt : anIndex
+        = self::classROp getField &int:(anIndex int).
                                 
     #method class
         => system'internal'class_getClass.
 
+    /// obsolete
     #method name
+        = self::classROp className.
+
+    #method className
     [
         #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.

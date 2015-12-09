@@ -22,6 +22,7 @@ text\encoder.l
 routines\enumerating.l
 routines\combinations.l
 dynamic\interpreter.l
+dynamic\serializer.l
 
 [forwards]
 '$import=system'ext_routines
