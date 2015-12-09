@@ -56,7 +56,7 @@ ToolBarButton AppToolBarButtons[] =
    {IDM_DEBUG_GOTOSOURCE, IDR_GOTO},
 };
 
-int StatusBarWidths[5] = {200, 90, 60, 40, 80};
+int StatusBarWidths[5] = {200, 120, 80, 60, 80};
 
 MenuInfo contextMenuInfo[8] = {
    {IDM_FILE_CLOSE, CONTEXT_MENU_CLOSE},
