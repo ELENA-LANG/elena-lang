@@ -1,8 +1,9 @@
 mkdir /usr/share/elena/
 mkdir /etc/elena/
+mkdir /etc/elena/templates
 
-cp bin/elc.config /etc/elena/elc.config
-cp -a bin/templates /etc/elena/templates
+cp bin/elc.config /etc/elena/
+cp -a bin/templates/*.config /etc/elena/templates/
 
 bin/elena-og dat/og/rules.txt
 cp dat/og/rules.dat /usr/share/elena

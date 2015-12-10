@@ -5,6 +5,7 @@ mkdir -p ./$RELEASE/etc/elena/templates/
 mkdir -p ./$RELEASE/usr/share/elena/
 mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
 mkdir -p ./$RELEASE/usr/lib/elena/lib30/system/
+mkdir -p ./$RELEASE/usr/bin/
 
 echo copying configuration
 
@@ -21,8 +22,8 @@ cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
 
 echo copying binaries
 
-cp ../bin/elena-lc ./$RELEASE/usr/bin
-cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena
+cp ../bin/elena-lc ./$RELEASE/usr/bin/
+cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
 
 echo compiling core
 ../bin/elena-asm2binx ../src30/asm/x32/core.asm ./$RELEASE/usr/lib/elena/core/x32
@@ -31,9 +32,11 @@ echo compiling core
 ../bin/elena-asm2binx ../src30/asm/x32/coreapi.asm ./$RELEASE/usr/lib/elena/core/x32
 
 echo compiling lib30
-../bin/elena-asm2binx ../src30/asm/core_routines.esm ./$RELEASE/usr/lib/elena/lib30/system
-elena-lc -c../src30/system.project -o./$RELEASE/usr/lib/elena/lib30/
-elena-lc -c../src30/extensions.project -o./$RELEASE/usr/lib/elena/lib30/
+../bin/elena-asm2binx ../src30/asm/core_routines.esm /usr/lib/elena/lib30/system
+elena-lc -c../src30/system/system.project
+elena-lc -c../src30/extensions/extensions.project
+
+cp -r /usr/lib/elena/lib30 ./$RELEASE/usr/lib/elena/
 
 mkdir ./$RELEASE/DEBIAN
 cp ./control ./$RELEASE/DEBIAN
