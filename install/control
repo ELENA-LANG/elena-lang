@@ -1,6 +1,6 @@
 Package:elena-lang
 Version:1.9.23
-Section:custom
+Section:basic
 Priority: optional
 Maintainer: Alex Rakov <arakov@yandex.ru>
 Architecture: i386

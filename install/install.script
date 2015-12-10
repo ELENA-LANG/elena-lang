@@ -1,27 +1,43 @@
-sudo mkdir -p /usr/lib/elena/lib30
-sudo mkdir -p /usr/lib/elena/core/x32
-sudo mkdir -p /etc/elena/templates
-sudo mkdir -p /usr/share/elena
+RELEASE=elena-1.9.23.i386-linux
 
-sudo cp ./bin/*.config /etc/elena/
-sudo cp ./bin/templates/*.config /etc/elena/templates/
+mkdir -p ./$RELEASE/etc/elena/
+mkdir -p ./$RELEASE/etc/elena/templates/
+mkdir -p ./$RELEASE/usr/share/elena/
+mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
+mkdir -p ./$RELEASE/usr/lib/elena/lib30/system/
 
-sudo cp ./bin/libelenart.so /usr/lib/elena/
+echo copying configuration
 
-bin/elog dat/og/rules.txt
-sudo cp dat/og/rules.dat /usr/share/elena/
+cp ../bin/*.config ./$RELEASE/etc/elena/
+cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
 
-bin/elsg dat/sg/syntax.txt
-sudo cp dat/sg/syntax.dat /usr/share/elena/
+echo compiling shared files
 
-sudo bin/asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32/
-sudo bin/asm2binx src30/asm/x32/core_lnx.asm /usr/lib/elena/core/x32/
-sudo bin/asm2binx src30/asm/x32/core_rt_lnx.asm /usr/lib/elena/core/x32/
-sudo bin/asm2binx src30/asm/x32/coreapi.asm /usr/lib/elena/core/x32/
+../bin/elena-og ../dat/og/rules.txt
+cp ../dat/og/rules.dat ./$RELEASE/usr/share/elena
 
-sudo bin/asm2binx src30/asm/core_routines.esm /usr/lib/elena/lib30/system/
+../bin/elena-sg ../dat/sg/syntax.txt
+cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
 
-sudo bin/elc2 -csrc30/system/system.project
-sudo bin/elc2 -csrc30/extensions/extensions.project
+echo copying binaries
+
+cp ../bin/elena-lc ./$RELEASE/usr/bin
+cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena
+
+echo compiling core
+../bin/elena-asm2binx ../src30/asm/x32/core.asm ./$RELEASE/usr/lib/elena/core/x32
+../bin/elena-asm2binx ../src30/asm/x32/core_lnx.asm ./$RELEASE/usr/lib/elena/core/x32
+../bin/elena-asm2binx ../src30/asm/x32/core_rt_lnx.asm ./$RELEASE/usr/lib/elena/core/x32
+../bin/elena-asm2binx ../src30/asm/x32/coreapi.asm ./$RELEASE/usr/lib/elena/core/x32
+
+echo compiling lib30
+../bin/elena-asm2binx ../src30/asm/core_routines.esm ./$RELEASE/usr/lib/elena/lib30/system
+elena-lc -c../src30/system.project -o./$RELEASE/usr/lib/elena/lib30/
+elena-lc -c../src30/extensions.project -o./$RELEASE/usr/lib/elena/lib30/
+
+mkdir ./$RELEASE/DEBIAN
+cp ./control ./$RELEASE/DEBIAN
+
+dpkg-deb --build $RELEASE
 
 exit 0

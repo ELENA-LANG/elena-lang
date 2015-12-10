@@ -29,19 +29,19 @@ public:
 //   GtkAccelGroup* getAccel() { return _accel; }
 //
 //   virtual void* getHandle() { return _widget; }
-//
-//   TCHAR getMnemonicAccKey() const { return '_'; };
-//
-//   void enableItemById(int id, bool enabled);
-//   void checkItemById(int id, bool enabled);
-//
-//   void eraseItemById(int id);
-//
-//   void insertItemById(int positionId, int id, const TCHAR* caption);
-//   void insertSeparatorById(int positionId, int id);
-//
-//   void renameItemById(int id, const TCHAR* caption);
-//
+
+   char getMnemonicAccKey() const { return '_'; };
+
+   void enableItemById(int id, bool enabled) {}
+   void checkItemById(int id, bool enabled) {}
+
+   void eraseItemById(int id) {}
+
+   void insertItemById(int positionId, int id, const char* caption) { }
+   void insertSeparatorById(int positionId, int id) {}
+
+   void renameItemById(int id, const char* caption) {}
+
 //   Menu(GtkItemFactoryEntry* items, int itemNumber, void* object);
 };
 

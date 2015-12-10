@@ -8,6 +8,7 @@
 #define winideH
 
 #include "gtk-linux32/gtksdi.h"
+#include "gtk-linux32/gtkmenu.h"
 #include "../ide.h"
 
 namespace _GUI_

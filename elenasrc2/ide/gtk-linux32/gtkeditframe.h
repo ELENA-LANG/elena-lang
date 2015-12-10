@@ -9,7 +9,7 @@
 
 #include "gtk-linux32/gtktabbar.h"
 #include "gtk-linux32/gtktextview.h"
-////#include "gtk-linux32/gtkmenu.h"
+#include "gtk-linux32/gtkmenu.h"
 //#include "gtk-linux32/gtksdi.h"
 #include "../idecommon.h"
 
