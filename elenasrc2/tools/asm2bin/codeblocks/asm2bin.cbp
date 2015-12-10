@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../../../../bin/asm2binx.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../../../../bin/elenas2b.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="../temp" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -18,7 +18,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="../../../../bin/asm2binx.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../../../../bin/elenas2b.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output="../temp" />
 				<Option type="1" />
 				<Option compiler="gcc" />
