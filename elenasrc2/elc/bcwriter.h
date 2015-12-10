@@ -145,6 +145,7 @@ public:
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxArgList(CommandTape& tape, ref_t vmtReference);

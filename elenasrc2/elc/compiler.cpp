@@ -46,6 +46,11 @@ inline bool isSingleStatement(DNode expr)
    return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
 }
 
+inline bool isSingleObject(DNode expr)
+{
+   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
+}
+
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    ref_t verbId = 0;
@@ -3656,27 +3661,42 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          case elDebugPTR:
             argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
             break;
+         case elDebugReference:
+            argType = lxExtInteranlRef;
+            break;
          default:
             argType = lxExtArgument;
             break;
       }
 
-      scope.writer->newNode(argType);
-
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
-         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
-         if (info.kind == okIntConstant) {
-            int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
+         if (argType == lxExtInteranlRef) {
+            if (isSingleObject(arg.firstChild())) {
+               ObjectInfo target = compileTerminal(arg.firstChild(), scope, 0);
+               if (target.kind == okInternal) {
+                  scope.writer->appendNode(lxExtInteranlRef, target.param);
+               }
+               else scope.raiseError(errInvalidOperation, terminal);
+            }
+            else scope.raiseError(errInvalidOperation, terminal);
+         }
+         else {
+            scope.writer->newNode(argType);
 
-            scope.writer->appendNode(lxValue, value);
+            ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
+            if (info.kind == okIntConstant) {
+               int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
+
+               scope.writer->appendNode(lxValue, value);
+            }
+
+            scope.writer->closeNode();
          }
 
          arg = arg.nextNode();
       }
       else scope.raiseError(errInvalidOperation, terminal);
-
-      scope.writer->closeNode();
    }
 }
 

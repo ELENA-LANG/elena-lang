@@ -2,11 +2,16 @@
 In development:
 ------
               xdev - general implementation 
-                       * tape_tester 
-                       * test script samples
+                       * symbol_ref : internal - should be treated in the special way for external call
                        * test operation with threads
-                       * fix linux pi2
-
+                       * debian package
+                       * #182
+                       * #163
+                       * #157
+                       * #180
+------                                 
+Pipeline:
+------                                                                                         
              idev - linux
                        * redirect output to the window
                        * output window
@@ -22,9 +27,6 @@ In development:
               xdev - usability
                        * ecv : dynamically define the page size
 
-------                                 
-Pipeline:
-------                                                                                         
               fdev - db app
                        * implement passing an object over tcp/ip
                        * implement remote database access
@@ -62,6 +64,9 @@ Pipeline:
                          typecasting required
     
               xdev - generic development
+                       * tape_tester : classTest
+                       * test script samples
+                       * fix linux pi2
                        * review multi-method implementation in clojure
                        * forms.onPaint : should it be possible somehow to validate if the action can be used for this type??
                        * begin / end should be verbs?

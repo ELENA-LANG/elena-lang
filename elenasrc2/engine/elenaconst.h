@@ -312,7 +312,7 @@ namespace _ELENA_
    const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
-   const int elDebugReference      = 0x000B0000;
+   const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
 
   // --- ELENA Linker / ELENA VM constants ---

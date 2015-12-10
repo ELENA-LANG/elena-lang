@@ -560,6 +560,12 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
    }
 }
 
+void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
+{
+   // acopyr reference
+   tape.write(bcACopyR, reference | mskInternalRef);
+}
+
 void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target, int offset)
 {
    switch (target) {
@@ -2636,17 +2642,21 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
 
    SNode arg = node.firstChild();
    while (arg != lxNone) {
-      SNode object = arg.firstChild();
-      if (!isSimpleObject(object, true)) {
-         ExternalScope::ParamInfo param;
-
-         generateObjectExpression(tape, object);
-         pushObject(tape, lxResult);
-         param.offset = ++externalScope.frameSize;
-
-         externalScope.operands.push(param);
+      if (arg == lxExtInteranlRef) {
+         // skip for symbol reference
       }
+      else {
+         SNode object = arg.firstChild();
+         if (!isSimpleObject(object, true)) {
+            ExternalScope::ParamInfo param;
 
+            generateObjectExpression(tape, object);
+            pushObject(tape, lxResult);
+            param.offset = ++externalScope.frameSize;
+
+            externalScope.operands.push(param);
+         }
+      }
       arg = arg.nextNode();
    }
 }
@@ -2657,24 +2667,30 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
    SNode arg = node.lastChild();
    while (arg != lxNone) {
-      SNode object = arg.firstChild();
-      if (test(arg.type, lxObjectMask)) {
-         SNode valueNode = SyntaxTree::findChild(arg, lxValue);
-         if (arg == lxIntExtArgument && valueNode != lxNone) {
-            declareVariable(tape, valueNode.argument);
-         }
-         else {
-            if (!isSimpleObject(object, true)) {
-               loadObject(tape, lxBlockLocal, (*out_it).offset);
-
-               out_it++;
+      if (arg == lxExtInteranlRef) {
+         loadInternalReference(tape, arg.argument);
+         pushObject(tape, lxResult);
+      }
+      else {
+         SNode object = arg.firstChild();
+         if (test(arg.type, lxObjectMask)) {
+            SNode valueNode = SyntaxTree::findChild(arg, lxValue);
+            if (arg == lxIntExtArgument && valueNode != lxNone) {
+               declareVariable(tape, valueNode.argument);
             }
-            else generateObjectExpression(tape, object);
+            else {
+               if (!isSimpleObject(object, true)) {
+                  loadObject(tape, lxBlockLocal, (*out_it).offset);
 
-            if (arg == lxIntExtArgument) {
-               pushObject(tape, lxResultField);
+                  out_it++;
+               }
+               else generateObjectExpression(tape, object);
+
+               if (arg == lxIntExtArgument) {
+                  pushObject(tape, lxResultField);
+               }
+               else pushObject(tape, lxResult);
             }
-            else pushObject(tape, lxResult);
          }
       }
 
