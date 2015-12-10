@@ -53,6 +53,12 @@
         theTop -= 1.
         theList setAt &int:theTop &object:$nil.
     ]
+    
+    #method clear
+    [
+        theList clear.
+        theTop << 0.
+    ]
 }
 
 // --- Queue ---
@@ -118,6 +124,13 @@
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
+    ]
+    
+    #method clear
+    [
+        theList clear.
+        theTop << 0.
+        theTale << 0.
     ]
 }
 

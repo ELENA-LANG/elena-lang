@@ -2,7 +2,6 @@
 In development:
 ------
               xdev - general implementation 
-                       * debian package
                        * #182
                        * #163
                        * #157

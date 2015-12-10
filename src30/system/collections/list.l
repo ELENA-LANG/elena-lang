@@ -500,6 +500,20 @@
         ^ aLength.
     ]
     
+    #method(stacksafe) readCapacity &vint:aCapacity
+    [
+        aCapacity << theCapacity.
+    ]
+    
+    /// Returns the number of list items
+    #method(type:int,embeddable,suppress:w3) capacity
+    [
+        #var(type:int)aCapacity.
+        $self readCapacity &vint:aCapacity.
+        
+        ^ aCapacity.
+    ]
+    
     /// Clears the list
     #method clear 
     [
@@ -808,5 +822,11 @@
         ].
         
         ^ aList.
+    ]
+    
+    #method clear
+    [
+        theHashTable := Array new &int:(theHashTable length).
+        theList clear.
     ]
 }
