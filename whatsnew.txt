@@ -31,6 +31,9 @@
 [+] rosetta code sample : simple windowed app
 [+] rosetta code sample : gui component interaction
 
+[Misc]
+[+] linux : Debian package
+
 ******************************************************************************
                              What's New in 1.9.22
 ******************************************************************************

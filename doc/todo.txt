@@ -2,8 +2,6 @@
 In development:
 ------
               xdev - general implementation 
-                       * symbol_ref : internal - should be treated in the special way for external call
-                       * test operation with threads
                        * debian package
                        * #182
                        * #163
