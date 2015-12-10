@@ -35,3 +35,4 @@
 ..\..\bin\elc -cstring_interpolation\string_interpolation.prj
 ..\..\bin\elc -cstring_matching\string_matching.prj
 ..\..\bin\elc -cstring_prepend\string_prepend.prj
+..\..\bin\elc -cninetynine\ninetynine.prj

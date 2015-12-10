@@ -638,6 +638,10 @@ md examples\rosetta\string_prepend
 copy %1\examples\rosetta\string_prepend\*.l examples\rosetta\string_prepend
 copy %1\examples\rosetta\string_prepend\*.prj examples\rosetta\string_prepend
 
+md examples\rosetta\ninetynine
+copy %1\examples\rosetta\ninetynine\*.l examples\rosetta\ninetynine
+copy %1\examples\rosetta\ninetynine\*.prj examples\rosetta\ninetynine
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
