@@ -2,10 +2,6 @@
 In development:
 ------
               xdev - general implementation 
-                       * fix bestshuffle
-                       * fix bullscows
-                       * fix calendar
-                       * fix doors
                        * string_comparison is not compiled
 
 ------                                 
