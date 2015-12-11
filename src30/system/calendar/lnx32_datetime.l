@@ -165,8 +165,10 @@
     
     #field(type:int) tm_usec.
     
-    #constructor new
-        => system'internal'dlong_empty.
+    #constructor new 
+    [
+       tm_isdst := -1.  
+    ]
     
     #constructor new &__time:aTime
     [
@@ -272,17 +274,25 @@
     
     #method(stacksafe) read &__time:aRetVal
     [
+       // HOTFIX
+       tm_isdst := -1.
+
        #var(type:int)tm_sec := system'external'libc mktime &__time_st:$self.
        #var(type:__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
 
        aRetVal write &__time:tm. 
     ]    
     
+    #method(stacksafe) writeSpan &__time:aTime
+    [
+        $self writeUTC &__time:aTime.
+    ] 
+
     #method(stacksafe) write &__time:aTime
     [
        #var(type:dirty_ptr)ptr := system'external'libc localtime &__time:aTime.
 
-       system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
+       system'external'libc memcpy &__time_st:$self &int:ptr &int:44.
 
        #var(type:int)tmp.     
        aTime readMSec &vint:tmp.
@@ -295,7 +305,7 @@
     [
        #var(type:int)ptr := system'external'libc gmtime &__time:aTime.
 
-       system'external'libc memcpy &__time_st:$self &int:ptr &int:36.
+       system'external'libc memcpy &__time_st:$self &int:ptr &int:44.
 
        #var(type:int)tmp.     
        aTime readMSec &vint:tmp.

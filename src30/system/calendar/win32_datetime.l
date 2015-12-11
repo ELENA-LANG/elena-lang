@@ -234,6 +234,11 @@
         system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
     ]    
     
+    #method(stacksafe) writeSpan &__time:aTime
+    [
+        $self write &__time:aTime.
+    ] 
+
     #method(stacksafe) write &__time:aFileTime
     [
         system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
