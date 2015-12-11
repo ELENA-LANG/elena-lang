@@ -3222,7 +3222,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    SNode current = node.lastChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
-         if (!isSimpleObjectExpression(current, true)) {
+         if (!isSimpleObjectExpression(current)) {
             generateExpression(tape, current);
             pushObject(tape, lxResult);
          }
@@ -3238,7 +3238,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    current = node.firstChild();
    while (current != lxNone) {
       if (current.type == lxMember) {
-         if (!isSimpleObjectExpression(current, true)) {
+         if (!isSimpleObjectExpression(current)) {
             popObject(tape, lxResult);
          }
          else generateExpression(tape, current);

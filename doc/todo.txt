@@ -2,8 +2,11 @@
 In development:
 ------
               xdev - general implementation 
-                       * #182
-                       * #163
+                       * fix bestshuffle
+                       * fix bullscows
+                       * fix calendar
+                       * fix doors
+                       * string_comparison is not compiled
 
 ------                                 
 Pipeline:
