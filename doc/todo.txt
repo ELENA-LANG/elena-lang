@@ -4,7 +4,7 @@ In development:
               xdev - general implementation 
                        * #182
                        * #163
-                       * #180
+
 ------                                 
 Pipeline:
 ------                                                                                         

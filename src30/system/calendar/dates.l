@@ -144,8 +144,9 @@
 
     #method literal
     [
-        #var(type:__time_st)aStruct.
-        aStruct write &__time:theValue.
+        //#var(type:__time_st)aStruct.
+        //aStruct write &__time:theValue.
+        #var aStruct := TimeStruct new &__time:theValue.
 
         #var aValue := aStruct toShortTime literal.
 
@@ -154,8 +155,9 @@
 
     #method wide
     [
-        #var(type:__time_st)aStruct.
-        aStruct write &__time:theValue.
+        //#var(type:__time_st)aStruct.
+        //aStruct write &__time:theValue.        
+        #var aStruct := TimeStruct new &__time:theValue.
         
         #var aValue := aStruct toShortTime literal.
         
