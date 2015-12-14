@@ -1,18 +1,13 @@
 #import system.
 
-#class TokenEOL
+#class TokenEOL :: BaseToken
 {
-    #field line.
-    
-    #constructor new &line:aLine
-    [
-        line := aLine.
-    ]
-    
-    #method literal
-    [
-        ^("End of line").
-    ]
-    
-    #method Line = line.
+    #method tokenType = %eol.
+
+//    #method literal
+//    [
+//        ^("End of line").
+//    ]
+//    
+//    #method Line = line.
 }

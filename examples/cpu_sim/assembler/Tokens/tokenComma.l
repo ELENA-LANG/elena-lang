@@ -1,17 +1,12 @@
 #import system.
 
-#class TokenComma
+#class TokenComma :: BaseToken
 {
-    #field line.
+    #method tokenType = %comma.
     
-    #constructor new &line:aLine
-    [
-        line := aLine.
-    ]
-    
-    #method literal
-    [
-        ^(",").
-    ]
-    #method Line = line.
+//    #method literal
+//    [
+//        ^(",").
+//    ]
+//    #method Line = line.
 }

@@ -1,23 +1,41 @@
 #import system.
 
-#class TokenIdentifier
+#class BaseToken
 {
-    #field line.
-    #field value.
+    #field theLineNumber.
     
-    #constructor new &name:aVal &line:aLine
+    #method line_number = theLineNumber.
+    
+    #constructor new &line_number:lineNumber
     [
-        line := aLine.
-        value := aVal.
+        theLineNumber := lineNumber.
     ]
+}
+
+#class BaseTokenValue :: BaseToken
+{
+    #field theValue.
     
-    #method literal
+    #method value = theValue.
+    
+    #constructor new &value:aValue &line_number:lineNumber
+        <= (new &line_number:lineNumber)
     [
-        ^(value literal).
+        theValue := aValue.
     ]
+}
+
+#class TokenIdentifier :: BaseTokenValue
+{
+    #method tokenType = %identifier.
     
-    #method Value = value.
-    #method Value:aValue [ value := aValue. ]
-    
-    #method Line = line.
+//    #method literal
+//    [
+//        ^(value literal).
+//    ]
+//    
+//    #method Value = value.
+//    #method Value:aValue [ value := aValue. ]
+//    
+//    #method Line = line.
 }

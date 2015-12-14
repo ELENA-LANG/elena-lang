@@ -1408,6 +1408,11 @@
         ^ (ch >= 30h) and: (ch <= 39h).
     ]
     
+    #method(type:bool)is &newLine
+    [
+        ^ self == #10.
+    ]
+    
     #method(type:bool)is &letter
     [
         #var(type:int) ch := intConvertor convert &char:self.

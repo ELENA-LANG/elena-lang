@@ -81,16 +81,31 @@
     ^ret.
 ].
 
+
+
+
+
+
+#symbol(type:int,const)dfaIdentifier = 1.
+#symbol(type:int,const)dfaDigit = 2.
+#symbol(type:int,const)dfaOther = 3.
+
 #class LexerDFA :: Statemachine
 {
     #field(type:bool)theSpaceMode.
     #field(type:bool)theSingleTokenMode.
+    #field(type:bool)theNewToken.
+    
+    #field theTokenType.
     
     #constructor new
     [
         theSpaceMode := true.
         theSingleTokenMode := false.
+        theNewToken := true.
     ]
+    
+    #method state = theTokenType.
     
     #method proceed &char:aChar
     [
@@ -101,25 +116,34 @@
         whitespace
             ? [
                 theSingleTokenMode := false.
-                
+                                
                 theSpaceMode
                     ! [ theSpaceMode := true. ^ true. ].
             ]
             ! [
                 theSingleTokenMode
-                    ? [  theSingleTokenMode := false. theSpaceMode := false. ^ true. ].
+                    ? [  theSingleTokenMode := false. theSpaceMode := false. theNewToken := true. ^ true. ].
                 
                 (letter or:digit)
                     ! [ 
                         theSpaceMode
                             ! [ theSpaceMode := true. ^ true. ].
                             
-                        theSingleTokenMode := true.                         
+                        theSingleTokenMode := true.
                     ].
                     
-                theSpaceMode := false.                    
-            ].
+                theSpaceMode ?
+                    [ theSpaceMode := false. theNewToken := true. ].
+                
             
+                theNewToken ?
+                [
+                    theTokenType := digit iif:dfaDigit:(letter iif:dfaIdentifier:dfaOther).
+                    
+                    theNewToken := false.
+                ].
+            ].
+        
         ^ false.            
     ]
     
@@ -129,10 +153,6 @@
 #class Lexer
 {
     #field content.
-    
-    
-    #field lineNumber.
-    #field position.
     #field tokenList.
     
     #method TokenList = tokenList.
@@ -140,20 +160,49 @@
     #constructor new &sourceFile:aSource
     [
         content := File new &path:aSource literalContent.
-        
-        
-        
-        position := 0.
-        lineNumber := 0.
-        tokenList := List new.        
+        tokenList := List new.
     ]
     
     #method scan
     [
-        content run &token_dfa:(LexerDFA new) &each:aToken
+        #var lineNumber := Integer new:1.
+        #var dfa := LexerDFA new.
+        #var registerExpected := Boolean new:false.
+        content run &token_dfa:dfa &each:aToken
         [
-            //console writeLine:aToken.
+            (aToken == "%")
+                ? [
+                    registerExpected
+                        ? [ console writeLine:"Register expected". ]
+                        ! [ registerExpected << true. ].
+                ]
+                ! [
+                    #var tokenAttr := $nil.
+                    
+                    (dfa state) =>
+                        dfaIdentifier 
+                            ? [
+                                tokenAttr := registerExpected iif:assembler'Tokens'TokenRegister:assembler'Tokens'TokenIdentifier
+                                    new &value:aToken &line_number:(lineNumber int).
+                                    
+                                registerExpected << false.
+                            ]
+                        dfaDigit
+                            ? [
+                                tokenAttr := assembler'Tokens'TokenIntLiteral new &value:aToken &line_number:(lineNumber int).
+                            ]
+                        ! [
+                            aToken =>
+                                "," ? [ tokenAttr := assembler'Tokens'TokenComma new &line_number:(lineNumber int). ].
+                        ].
+                    
+                    tokenList += TokenItem new &token:tokenAttr.
+                ]
+            
         ].
+        
+        // add virtual EOL
+        tokenList += TokenItem new &token:(assembler'Tokens'TokenEOL new &line_number:(lineNumber + 1)).
         
 //        #var skipThis := false.
 //        #loop (position < sourceFile length)?

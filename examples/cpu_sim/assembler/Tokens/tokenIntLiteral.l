@@ -1,21 +1,15 @@
 #import system.
 
-#class TokenIntLiteral
+#class TokenIntLiteral :: BaseTokenValue
 {
-    #field line.
-    #field value.
+    #method tokenType = %numerical.
     
-    #constructor new &value:aVal &line:aLine
-    [
-        line := aLine.
-        value := aVal.
-    ]
-    
-    #method literal
-    [
-        ^(value literal).
-    ]
-    
-    #method Value = value.
-    #method Line = line.
+//    
+//    
+//    
+//    #method literal => theValue.
+//    
+//    #method Value = theValue.
+//    
+//    #method Line = theLineNumber.
 }

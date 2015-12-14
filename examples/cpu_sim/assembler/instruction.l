@@ -3,6 +3,36 @@
 #import system'math.
 #import system'collections.
 
+#class Instruction
+{
+    #field theName.
+    #field theOperands.
+    #field theLineNumber.
+//    #field type.
+    
+    #constructor new &name:name &operands:operands &line_number:lineNumber
+    [
+        theLineNumber := lineNumber.
+        theName := name.
+        theOperands := operands.
+//        type := assembler'TypeInstruction Instruction.
+    ]
+    
+//    #method Name = name.
+//    #method Line = line.
+//    #method Operands = operands.
+//    #method Type = type.
+}
+
+
+
+
+
+
+
+
+
+
 #symbol(const,type:int)TY_Label       = 0.
 #symbol(const,type:int)TY_Instruction = 1.
 
@@ -18,27 +48,6 @@
     #method CpuData = T_Data.
     #method CpuInstruction = T_Inst.
 }.
-
-#class Instruction
-{
-    #field name.
-    #field operands.
-    #field line.
-    #field type.
-    
-    #constructor new &line:aLine &name:aName &operands:aOperands
-    [
-        line := aLine.
-        name := aName.
-        operands := aOperands.
-        type := assembler'TypeInstruction Instruction.
-    ]
-    
-    #method Name = name.
-    #method Line = line.
-    #method Operands = operands.
-    #method Type = type.
-}
 
 #class CpuData
 {

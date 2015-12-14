@@ -1,6 +1,26 @@
 #import system.
 #import system'collections.
 
+#class TokenItem
+{
+    #field theToken.
+    
+    #constructor new &token:aToken
+    [
+        theToken := aToken.
+    ]    
+  
+    #method(generic)is
+    [
+        ^ theToken tokenType equal &subject:$subject.
+    ]
+        
+    #method => theToken.        
+}
+
+
+
+
 #symbol(const,type:int)$TK_IntLiteral       = 0.
 #symbol(const,type:int)$TK_EOL              = 1.
 #symbol(const,type:int)$TK_StringLiteral    = 2.
@@ -23,18 +43,3 @@
     #method Hash             = $TK_Hash.
     #method Colon            = $TK_Colon.
 }.
-
-#class Token
-{
-    #field t_token.
-    #field t_tokenType.
-    
-    #constructor new &token:aToken &tokenType:aTkType
-    [
-        t_token := aToken.
-        t_tokenType := aTkType.
-    ]
-    
-    #method token = t_token.
-    #method tokenType = t_tokenType.
-}

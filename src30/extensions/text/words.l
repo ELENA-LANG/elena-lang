@@ -12,6 +12,10 @@
     #method(type:bool,stacksafe) proceed &char:aChar = $nil.
     
     #method(type:bool) is &whitespace = $nil.
+    
+    #method token_dfa = $self.
+    
+    #method state = $nil.
 }
 
 #class SimpleStatemachine :: Statemachine

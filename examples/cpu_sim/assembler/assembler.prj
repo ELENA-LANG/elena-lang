@@ -11,10 +11,10 @@ warn:unresolved=-1
 'program=assembler'program
 
 [files]
+Tokens\tokenIdentifier.l
 Tokens\tokenIntLiteral.l
 Tokens\tokenEOL.l
 Tokens\tokenStringLiteral.l
-Tokens\tokenIdentifier.l
 Tokens\tokenRegister.l
 Tokens\tokenIndirectRegister.l
 Tokens\tokenComma.l
@@ -48,12 +48,12 @@ Assemblers\assemblerSubi.l
 Assemblers\assemblerSubu.l
 Assemblers\assemblerSw.l
 main.l
+token.l
 lexer.l
 cpuRegister.l
 parser.l
 opcodes.l
 label.l
-token.l
 instruction.l
 binaryFile.l
 codeGenerator.l
