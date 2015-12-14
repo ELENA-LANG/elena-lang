@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
 
-#define ELENAVM_REVISION_NUMBER    0x0001             // ELENAVM revision version
+#define ELENAVM_REVISION_NUMBER    0x0002             // ELENAVM revision version
 
 namespace _ELENA_
 {
@@ -308,7 +308,7 @@ public:
 
    virtual ident_t getNamespace()
    {
-      return _loader.getPackage();
+      return _loader.getNamespace();
    }
 
    virtual ident_t getClassName(void* vmtAddress)

@@ -505,9 +505,9 @@ bool Instance :: initLoader(InstanceConfig& config)
       Path path;
       Path::loadPath(path, *it);
       if (StringHelper::compare(it.key(), CORE_ALIAS)) {
-         _loader.addCoreAlias(path);
+         _loader.addCorePath(path);
       }
-      else _loader.addPrimitiveAlias(it.key(), path);
+      else _loader.addPrimitivePath(it.key(), path);
 
       it++;
    }
@@ -743,7 +743,7 @@ bool Instance::loadTemplate(ident_t name)
 
 void Instance::setPackagePath(ident_t package, path_t path)
 {
-   _loader.setPackage(package, path);
+   _loader.setNamespace(package, path);
 }
 
 void Instance::setPackagePath(ident_t line)

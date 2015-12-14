@@ -64,7 +64,7 @@ void Instance :: init(void* debugSection, ident_t package, path_t configPath)
    _debugSection.init(debugSection);
 
    loadConfig(configPath);
-   _loader.setPackage(package);
+   _loader.setNamespace(package);
 }
 
 int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)

@@ -1,8 +1,9 @@
 ------                                 
 In development:
 ------
-              xdev - general implementation 
-                       * string_comparison is not compiled
+
+              sdev - samples
+                       * refactor cpu_sim
 
 ------                                 
 Pipeline:

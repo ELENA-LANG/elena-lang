@@ -1,5 +1,5 @@
 ﻿[project]
-output=..\..\lib30
+output=..\lib
 namespace=cpuvm
 template=lib
 debuginfo=-1

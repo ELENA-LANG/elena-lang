@@ -918,7 +918,7 @@ int main(int argc, char* argv[])
       FileName name;
       FileName::load(name, moduleName);
 
-      loader.setPackage(IdentifierString(name), path);
+      loader.setNamespace(IdentifierString(name), path);
       module = loader.loadModule(IdentifierString(name), result, false);
    }
    else module = loader.loadModule(moduleName, result, false);

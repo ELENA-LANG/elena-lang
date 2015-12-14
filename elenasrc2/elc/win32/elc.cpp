@@ -204,6 +204,8 @@ _ELENA_::ConfigCategoryIterator _ELC_::Project :: getCategory(_ELENA_::_ConfigFi
       return config.getCategoryIt(FORWARD_CATEGORY);
    case _ELENA_::opExternals:
       return config.getCategoryIt(EXTERNALS_CATEGORY);
+   case _ELENA_::opReferences:
+      return config.getCategoryIt(REFERENCE_CATEGORY);
    case _ELENA_::opWinAPI:
       return config.getCategoryIt(WINAPI_CATEGORY);
    default:

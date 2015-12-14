@@ -167,9 +167,9 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
       Path::combinePath(filePath, value);
 
       if (StringHelper::compare(it.key(), CORE_ALIAS)) {
-         _loader.addCoreAlias(filePath);
+         _loader.addCorePath(filePath);
       }
-      else _loader.addPrimitiveAlias(it.key(), filePath);
+      else _loader.addPrimitivePath(it.key(), filePath);
 
       it++;
    }
@@ -226,6 +226,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    // load external aliases
    loadCategory(config, opExternals, NULL);
    loadCategory(config, opWinAPI, NULL);
+   loadCategory(config, opReferences, configPath);
 
    // load sources
    loadSourceCategory(config, configPath);

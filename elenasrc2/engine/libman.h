@@ -16,38 +16,46 @@ namespace _ELENA_
 
 class LibraryManager : public _LibraryManager
 {
-   typedef Map<ident_t, ident_c*> AliasMap;
+   typedef Map<ident_t, ident_c*> PathMap;
 
    Path              _rootPath;
-   IdentifierString  _package;
-   Path              _packagePath;
+   IdentifierString  _namespace;
 
    ModuleMap         _modules;
    ModuleMap         _debugModules;
    ModuleMap         _binaries;
 
-   AliasMap          _binaryAliases;
+   PathMap           _binaryPaths;
+   PathMap           _packagePaths;
 
 public:
-//   const tchar_t* getRootPath() const { return _rootPath; }
-//
-   ident_t getPackage() const
-   {
-      return _package;
-   }
-
    void setRootPath(path_t root)
    {
       _rootPath.copy(root);
    }
-   void setPackage(ident_t package, path_t path)
+
+   ident_t getNamespace() const
    {
-      _package.copy(package);
-      _packagePath.copy(path);
+      return _namespace;
    }
-   void setPackage(ident_t package)
+   void setNamespace(ident_t package, path_t path)
    {
-      _package.copy(package);
+      _namespace.copy(package);
+      _packagePaths.add(package, IdentifierString::clonePath(path));
+   }
+   void setNamespace(ident_t package)
+   {
+      _namespace.copy(package);
+      _packagePaths.add(package, NULL);
+   }
+
+   void addPackage(ident_t package, path_t path)
+   {
+      _packagePaths.add(package, IdentifierString::clonePath(path));
+   }
+   void addPackage(ident_t package, ident_t path)
+   {
+      _packagePaths.add(package, StringHelper::clone(path));
    }
 
    void nameToPath(ident_t moduleName, Path& path, ident_t extension)
@@ -55,28 +63,32 @@ public:
       Path ext;
       Path::loadPath(ext, extension);
 
-      // if the module belongs to the current project package
-      if (NamespaceName::isIncluded(_package, moduleName))
-      {
-         path.copy(_packagePath);
-         path.nameToPath(moduleName, ext);
+      PathMap::Iterator it = _packagePaths.start();
+      while (!it.Eof()) {
+         // if the module belongs to the current project
+         if (NamespaceName::isIncluded(it.key(), moduleName)) {
+            Path::loadPath(path, *it);
+            path.nameToPath(moduleName, ext);
+
+            return;
+         }
+         it++;
       }
-      // if it is the library module
-      else {
-         path.copy(_rootPath);
-         path.nameToPath(moduleName, ext);
-      }
+
+      // otherwise it is the global library module
+      path.copy(_rootPath);
+      path.nameToPath(moduleName, ext);
    }
 
-   void addPrimitiveAlias(ident_t alias, path_t path)
+   void addPrimitivePath(ident_t alias, path_t path)
    {
-      _binaryAliases.erase(alias);
-      _binaryAliases.add(alias, IdentifierString::clonePath(path));
+      _binaryPaths.erase(alias);
+      _binaryPaths.add(alias, IdentifierString::clonePath(path));
    }
 
-   void addCoreAlias(path_t path)
+   void addCorePath(path_t path)
    {
-      _binaryAliases.add(NULL, IdentifierString::clonePath(path));
+      _binaryPaths.add(NULL, IdentifierString::clonePath(path));
    }
 
    _Module* createModule(ident_t package, LoadResult& result);

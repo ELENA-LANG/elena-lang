@@ -75,7 +75,8 @@ enum ProjectSetting
    opSources               = 0x0062,
    opTemplates             = 0x0063,
    opExternals             = 0x0064,
-   opWinAPI                = 0x0065   // used only for WIN32
+   opWinAPI                = 0x0065,   // used only for WIN32
+   opReferences            = 0x0066
 };
 
 // --- ModuleInfo ---
@@ -190,7 +191,12 @@ public:
       Path::loadPath(outputPath, StrSetting(opProjectPath));
       Path::combinePath(outputPath, StrSetting(opOutputPath));
 
-      _loader.setPackage(StrSetting(opNamespace), outputPath);
+      _loader.setNamespace(StrSetting(opNamespace), outputPath);
+
+      // add references to the additional libraries
+      for (ForwardIterator it = _settings.getIt(opReferences); !it.Eof(); it++) {
+         _loader.addPackage(it.key(), *it);
+      }
    }
 
    virtual ident_t resolveForward(ident_t forward);

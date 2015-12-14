@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0034
+#define ELC_REVISION_NUMBER             0x0035
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -62,6 +62,7 @@
 #define TEMPLATE_CATEGORY           "templates"
 #define WINAPI_CATEGORY             "winapi"
 #define EXTERNALS_CATEGORY          "externals"
+#define REFERENCE_CATEGORY          "references"
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "debuginfo"
@@ -71,14 +72,14 @@
 #define ELC_MG_SIZE                 "mgsize"
 //#define ELC_HEAP_COMMIT             "heapcommit"
 //#define ELC_HEAP_RESERV             "heapresrv"
-////#define ELC_YG_IMAGEBASE            "imagebase"
+//#define ELC_YG_IMAGEBASE            "imagebase"
 #define ELC_LIB_PATH                "libpath"
 #define ELC_SYSTEM_THREADMAX        "maxthread"
 #define ELC_OUTPUT_PATH             "output"
 #define ELC_NAMESPACE               "namespace"
-////#define ELC_STACK_COMMIT            "stackcommit"
-////#define ELC_STACK_RESERV            "stackresrv"
-////#define ELC_PROJECT_START           "start"
+//#define ELC_STACK_COMMIT            "stackcommit"
+//#define ELC_STACK_RESERV            "stackresrv"
+//#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
 #define ELC_PLATFORMTYPE            "platform"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"

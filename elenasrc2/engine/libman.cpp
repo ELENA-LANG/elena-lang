@@ -18,12 +18,14 @@ using namespace _ELENA_;
 // --- LibraryManager ---
 
 LibraryManager :: LibraryManager()
-   : _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr), _debugModules(NULL, freeobj)
+   : _modules(NULL, freeobj), _binaries(NULL, freeobj), 
+   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr), _debugModules(NULL, freeobj)
 {
 }
 
-LibraryManager::LibraryManager(path_t root, ident_t package)
-   : _rootPath(root), _package(package), _modules(NULL, freeobj), _binaries(NULL, freeobj), _binaryAliases(NULL, freestr)
+LibraryManager :: LibraryManager(path_t root, ident_t package)
+   : _rootPath(root), _namespace(package), _modules(NULL, freeobj), _binaries(NULL, freeobj), 
+   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr)
 {
 }
 
@@ -95,7 +97,7 @@ _Module* LibraryManager :: loadNative(ident_t package, LoadResult& result)
 {
    _Module* binary = _binaries.get(package);
    if (!binary) {
-      ident_t path = _binaryAliases.get(package);
+      ident_t path = _binaryPaths.get(package);
       if (emptystr(path)) {
          result = lrNotFound;
 
@@ -121,7 +123,7 @@ _Module* LibraryManager :: loadNative(ident_t package, LoadResult& result)
 
 bool LibraryManager :: loadCore(LoadResult& result)
 {
-   AliasMap::Iterator it = _binaryAliases.start();
+   PathMap::Iterator it = _binaryPaths.start();
    while (!it.Eof()) {
       if (emptystr(it.key())) {
          Path path;
