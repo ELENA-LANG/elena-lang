@@ -1,6 +1,8 @@
 ------                                 
 In development:
 ------
+              adev - lib30     
+                       * read the whole file as a string
 
               sdev - samples
                        * refactor cpu_sim

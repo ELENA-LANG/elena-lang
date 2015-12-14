@@ -1379,3 +1379,51 @@
         ^ self.
     ]    
 }
+
+// --- charOp ---
+
+#class(extension:char)charOp
+{
+    #method(type:bool,suppress:w2)is &whitespace
+    [
+        #var(type:int)aCode := intConvertor convert &char:self.
+        #var(type:bool)ret := false.
+        
+        aCode =>
+            0 ? [ ret := true. ]
+            9 ? [ ret := true. ]
+            10 ? [ ret := true. ]
+            11 ? [ ret := true. ]
+            12 ? [ ret := true. ]
+            13 ? [ ret := true. ]
+            32 ? [ ret := true. ].
+        
+        ^ ret.
+    ]
+    
+    #method(type:bool)is &digit
+    [
+        #var(type:int) ch := intConvertor convert &char:self.
+        
+        ^ (ch >= 30h) and: (ch <= 39h).
+    ]
+    
+    #method(type:bool)is &letter
+    [
+        #var(type:int) ch := intConvertor convert &char:self.
+        
+        ((ch >= 41h) and: (ch <= 5Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 61h) and: (ch <= 7Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 3ACh) and: (ch <= 3CEh))
+            ? [ ^ true. ].
+            
+        ((ch >= 400h) and: (ch <= 42Fh))
+            ? [ ^ true. ].
+            
+        ^ false.            
+    ]
+}

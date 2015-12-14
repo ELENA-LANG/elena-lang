@@ -69,7 +69,10 @@
 #class(extension)stringExOp
 {
     #method run &eachWord:aFunction
-        = aFunction run &enumerator:(WordEnumerator new &literal:(self literal)).
+        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal)).
+        
+    #method run &token_dfa:aStatemachine &each:aFunction
+        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:aStatemachine).
 }
 
 // --- printingLn ---

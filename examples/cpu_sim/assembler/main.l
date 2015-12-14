@@ -10,20 +10,20 @@
 [
     #var source := $nil.
     #var output := $nil.
-    
-    #var i := 1.
-    #var arg := $nil.
+
+    #var i := Integer new:1.
     #loop (i < 'program'arguments length)?
     [
-        arg := 'program'arguments@i.
+        #var arg := 'program'arguments@i.
         (arg == "-o")
-            ? [ 
-                i := i + 1. 
-                output := 'program'arguments@i. 
-              ]
-            ! [ source := 'program'arguments@i. ].
-        i := i + 1.
+            ? [ output := 'program'arguments@(i += 1). ]
+            ! [ source := arg. ].
+        
+        i += 1.
     ].
+
+    (($nil == source)or:($nil == output))
+        ? [ console writeLine:"Invaid argument list. Usage: assembler -o <output file> <source file>". #throw AbortException new. ].
 
     #var lexer := assembler'Lexer new &sourceFile:source.
     lexer scan.

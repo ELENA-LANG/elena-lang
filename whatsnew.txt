@@ -10,6 +10,11 @@
 [ELC]
 [+] new project section "references" : adding a path to a library
 
+[LIB]
+[+] new extension : file.literalContent, file.wideContent
+[+] new extension : char.is &whitespace
+[*] extensions'text: WordEnumerator => TokenEnumerator
+
 ******************************************************************************
                              What's New in 1.9.23
 ******************************************************************************
