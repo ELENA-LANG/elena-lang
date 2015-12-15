@@ -82,14 +82,14 @@
             (it get is &comma)
                 ? [
                     commaExpected
-                        ! [ console writeLine:"operand expected!". ].
+                        ! [ feedback raiseError:"operand expected!". ].
                         
                     operandExpected := true.
                     commaExpected := false.
                 ]
                 ! [
                     commaExpected
-                        ? [ console writeLine:"operand expected!". ].
+                        ? [ feedback raiseError:"operand expected!". ].
                         
                     list += it get.
                     
@@ -101,7 +101,7 @@
         ].
         
         operandExpected
-            ? [ console writeLine:"operand expected!". ].
+            ? [ feedback raiseError:"operand expected!". ].
         
         ^ list toArray.
     ]
@@ -114,9 +114,11 @@
                 #var lineNumber := it get line_number.
                 #var operands := $self parseOperands:(it append &index:1).
                 
-                theInstructions += assembler'Instruction new &name:opcode &operands:operands &line_number:lineNumber.                
+                theInstructions += assembler'Instruction new &name:opcode &operands:operands &line_number:lineNumber.
+                
+                it append &index:1.
             ]
-            ! [ console writeLine:"Mnemonic expected!". ].         
+            ! [ feedback raiseError:"Mnemonic expected!". ].
     ]
     
     #method Output = theInstructions.

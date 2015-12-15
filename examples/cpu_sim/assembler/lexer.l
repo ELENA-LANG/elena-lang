@@ -7,84 +7,50 @@
 #import extensions'text.
 #import system'culture.
 
-#symbol(const,type:char) LF  = #0Ah.
-#symbol(const,type:char) CR  = #0Dh.
-#symbol(const,type:char) TAB = #09h.
-#symbol(const,type:char) SPACE = #20h.
-
-#symbol $isWhiteSpace = ch
-[
-    #var c := ch /*toInt*/.
-    ($nil == c)
-        ? [ ^false. ]
-        ! [ ^((c == SPACE) or: (c == TAB) or: (c == LF) or: (c == CR)). ].
-].
-
-#symbol $isDigit = ch
-[
-    #var c := ch /*toInt*/.
-    ($nil == c)
-        ? [ ^false. ]
-        ! [ ^((c >= #30h) and: (c <= #39h)). ].
-].
-
-#symbol $isLetter = ch
-[
-    #var c := ch /*toInt*/.
-    ($nil == c)
-        ? [ ^false. ]
-        ! [ ^(((c >= #41h) and: (c <= #5Ah)) or: ((c >= #61h) and: (c <= #7Ah))). ].
-].
-
-#symbol $isLetterOrDigit = ch
-[
-    #var c := ch /*toInt*/.
-    ($nil == c)
-        ? [ ^false. ]
-        ! [ ^(($isLetter:c) or: ($isDigit:c) or: (c == #5Fh)). ].
-].
-
-#symbol $htoi = hexString
-[
-    #var i := 0.
-    #var(type:int) ret := 0.
-    #var tmp := 0.
-    
-    #loop (i < hexString length) ?
-    [
-        #var c := hexString@i.
-        ((c >= #65) and: (c <= #70))
-            ? [ tmp := (c toInt) - 65 + 10. ].              
-        ((c >= #97) and: (c <= #102)) 
-            ? [ tmp := (c toInt) - 97 + 10. ].
-        ($isDigit:c)
-            ? [ tmp := (c toInt) - 48. ].
-            
-        ret := (16 * ret) + tmp.
-        i := i + 1.
-    ].
-    ^ret.
-].
-
-#symbol $converToInt = str
-[
-    #var i := 0.
-    #var ret := 0.
-    #loop (i<str length)?
-    [
-        ((str@i != SPACE) && ($isDigit:(str@i)))?
-        [
-            ret := ret * 10 + ((str@i) int) - 48.
-        ].
-        i := i + 1.
-    ].
-    ^ret.
-].
+//#symbol(const,type:char) LF  = #0Ah.
+//#symbol(const,type:char) CR  = #0Dh.
+//#symbol(const,type:char) TAB = #09h.
+//#symbol(const,type:char) SPACE = #20h.
 
 
+//#symbol $htoi = hexString
+//[
+//    #var i := 0.
+//    #var(type:int) ret := 0.
+//    #var tmp := 0.
+//    
+//    #loop (i < hexString length) ?
+//    [
+//        #var c := hexString@i.
+//        ((c >= #65) and: (c <= #70))
+//            ? [ tmp := (c toInt) - 65 + 10. ].              
+//        ((c >= #97) and: (c <= #102)) 
+//            ? [ tmp := (c toInt) - 97 + 10. ].
+//        ($isDigit:c)
+//            ? [ tmp := (c toInt) - 48. ].
+//            
+//        ret := (16 * ret) + tmp.
+//        i := i + 1.
+//    ].
+//    ^ret.
+//].
+//
+//#symbol $converToInt = str
+//[
+//    #var i := 0.
+//    #var ret := 0.
+//    #loop (i<str length)?
+//    [
+//        ((str@i != SPACE) && ($isDigit:(str@i)))?
+//        [
+//            ret := ret * 10 + ((str@i) int) - 48.
+//        ].
+//        i := i + 1.
+//    ].
+//    ^ret.
+//].
 
-
-
+// --- Lexer ---
 
 #symbol(type:int,const)dfaIdentifier = 1.
 #symbol(type:int,const)dfaDigit = 2.
@@ -173,7 +139,7 @@
             (aToken == "%")
                 ? [
                     registerExpected
-                        ? [ console writeLine:"Register expected". ]
+                        ? [ feedback raiseError:"Register expected". ]
                         ! [ registerExpected << true. ].
                 ]
                 ! [

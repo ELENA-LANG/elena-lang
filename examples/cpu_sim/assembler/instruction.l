@@ -8,15 +8,16 @@
     #field theName.
     #field theOperands.
     #field theLineNumber.
-//    #field type.
     
     #constructor new &name:name &operands:operands &line_number:lineNumber
     [
         theLineNumber := lineNumber.
         theName := name.
         theOperands := operands.
-//        type := assembler'TypeInstruction Instruction.
     ]
+    
+    #method castType : target
+        = target eval &instruction:$self.
     
 //    #method Name = name.
 //    #method Line = line.
