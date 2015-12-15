@@ -1,56 +1,34 @@
 #import system.
 #import system'collections.
 
-#class AssemblerBr
+#symbol AssemblerBr =
 {
-    #field mnemonic.
-
-    #constructor new
+    #method assemble &codeGen:codeGen &instruction:ins &byteCodeStream:output
     [
-        mnemonic := List new.
-        mnemonic += "br".
-        mnemonic += "bs".
-        mnemonic += "bv".
-        mnemonic += "bc".
-        mnemonic += "bz".
-        mnemonic += "be".
-        mnemonic += "bne".
-        mnemonic += "ba".
-        mnemonic += "bb".
-        mnemonic += "blt".
-        mnemonic += "bgt".
-        mnemonic += "ble".
-        mnemonic += "bge".
-    ]
-
-    #method assemble &codeGen:aCodeGen &instruction:aIns &byteCodeStream:aStr
-    [
-        #var operands := aIns Operands.
+        #var operands := ins Operands.
         (operands length != 1)
-            ? [ console writeLine:(aIns Name + " does not take + " + aIns Operands length literal). ^$nil. ].
-            
-        (operands@0 tokenType == assembler'TokenType Identifier)?
-        [
-            #var lbl := operands@0 token.
-            #var conditionCode := assembler'ConditionCode Always.
-            
-            (aIns Name) =>
-                "bc" ?  [ conditionCode := assembler'ConditionCode Carry. ]
-                "bs" ?  [ conditionCode := assembler'ConditionCode Sign. ]
-                "bv" ?  [ conditionCode := assembler'ConditionCode Overflow. ]
-                "bz" ?  [ conditionCode := assembler'ConditionCode Zero. ]
-                "be" ?  [ conditionCode := assembler'ConditionCode Equal. ]
-                "bne" ? [ conditionCode := assembler'ConditionCode NotEqual. ]
-                "blt" ? [ conditionCode := assembler'ConditionCode LessThan. ]
-                "bgt" ? [ conditionCode := assembler'ConditionCode GreaterThan. ]
-                "ble" ? [ conditionCode := assembler'ConditionCode LessThanOrEqual. ]
-                "bge" ? [ conditionCode := assembler'ConditionCode GreaterThanOrEqual. ].
+            ? [ assembler'feedback raiseError:(ins Name):" does not take + ":(operands length). ].
+ 
+        #var op := operands@0.
+
+        (op is &identifier)
+            ! [ assembler'feedback raiseError:"Unsupported addressing mode for instruction '":(ins Name):"'" ].
+                       
+        #var conditionCode := assembler'ConditionCode Always.            
+        (ins Name) =>
+            "bc" ?  [ conditionCode := assembler'ConditionCode Carry. ]
+            "bs" ?  [ conditionCode := assembler'ConditionCode Sign. ]
+            "bv" ?  [ conditionCode := assembler'ConditionCode Overflow. ]
+            "bz" ?  [ conditionCode := assembler'ConditionCode Zero. ]
+            "be" ?  [ conditionCode := assembler'ConditionCode Equal. ]
+            "bne" ? [ conditionCode := assembler'ConditionCode NotEqual. ]
+            "blt" ? [ conditionCode := assembler'ConditionCode LessThan. ]
+            "bgt" ? [ conditionCode := assembler'ConditionCode GreaterThan. ]
+            "ble" ? [ conditionCode := assembler'ConditionCode LessThanOrEqual. ]
+            "bge" ? [ conditionCode := assembler'ConditionCode GreaterThanOrEqual. ].
                 
-            #var opCode := assembler'Opcode Br.
-            #var tmp := assembler'CpuInstruction new &opcode:opCode &conditionCode:conditionCode &sym:(lbl Value) &relative:true.
-            aStr emit &data:tmp.
-        ].
+        output emit &data:(assembler'CpuInstruction new &opcode:(assembler'Opcode Br) &conditionCode:conditionCode &sym:(op Value) &relative:true).
     ]
 
-    #method Mnemonic = mnemonic.
-}
+    #method Mnemonic = ("br", "bs", "bv", "bc", "bz", "be", "bne", "ba", "bb", "blt", "bgt", "ble", "bge").
+}.

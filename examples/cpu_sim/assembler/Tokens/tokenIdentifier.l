@@ -16,7 +16,7 @@
 {
     #field theValue.
     
-    #method value = theValue.
+    #method Value = theValue.
     
     #constructor new &value:aValue &line_number:lineNumber
         <= (new &line_number:lineNumber)

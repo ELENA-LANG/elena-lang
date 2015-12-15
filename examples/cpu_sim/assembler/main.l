@@ -14,6 +14,20 @@
         
         #throw AbortException new.
     ]
+    
+    raiseError : aMessage1 : aMessage2
+    [
+        console writeLine:aMessage1:aMessage2.
+        
+        #throw AbortException new.
+    ]
+    
+    raiseError : aMessage1 : aMessage2 : aMessage3
+    [
+        console writeLine:aMessage1:aMessage2:aMessage3.
+        
+        #throw AbortException new.
+    ]
 }.
 
 #symbol program =

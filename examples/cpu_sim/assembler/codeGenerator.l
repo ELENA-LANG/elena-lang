@@ -12,16 +12,28 @@
         AssemblerRet,AssemblerSb,AssemblerSli,AssemblerSri,AssemblerSub,AssemblerSubi,AssemblerSubu,AssemblerSw
     ).
     
+#class(extension) mnemonicOp
+{
+    #method checkMnemonic : aName
+        = self Mnemonic cast:%eval &to:
+            {
+                literal : l
+                    = aName == l.
+                    
+                array : a
+                    = a ifExists:aName.
+            }.
+}
 
 #class CodeGenerator
 {
-    #field output.
-    #field assemblers.
+    #field theOutput.
+    #field theAssemblers.
     
     #constructor new : aOutput
     [
-        assemblers := mnemonics.
-        output := aOutput.
+        theAssemblers := mnemonics.
+        theOutput := aOutput.
     ]
     
     #method assemble : instructions
@@ -32,12 +44,11 @@
                 {
                     eval &instruction:i
                     [
-//                        #var menmonic = 
+                        #var mnemonic := theAssemblers seek &each:m [ m checkMnemonic:(i Name) ].
                         
-//                    #var tmp := $self searchForMnemonics:(ins Name).
-//                    ($nil == tmp)
-//                        ? [ console writeLine:(ins Name + " not found"). ]
-//                        ! [ tmp assemble &codeGen:$self &instruction:ins &byteCodeStream:output. ].
+                        ($nil == mnemonic)
+                            ? [ feedback raiseError:(i Name):" not found" ]
+                            ! [ mnemonic assemble &codeGen:$self &instruction:i &byteCodeStream:theOutput. ].
                     ]
                     
                     eval &label : l

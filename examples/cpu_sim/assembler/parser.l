@@ -110,7 +110,7 @@
     [
         (it get is &identifier)
             ? [                
-                #var opcode := it get value.
+                #var opcode := it get Value.
                 #var lineNumber := it get line_number.
                 #var operands := $self parseOperands:(it append &index:1).
                 
