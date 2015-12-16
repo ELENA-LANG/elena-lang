@@ -104,33 +104,15 @@
     
     #method parseIntToken : token : lineNumber
     [
-        #var value := 0l.
-        (token startingWith:"0x")
-            ? [
-                value := 
-            ]
-            ! [
-                value := control try:[ token toHexLong ] &catching: e [ feedback raiseError:"Invalid numeric constant". ].
-            ].
+        #var value := control try:
+        [
+            (token startingWith:"0x")
+                ? [ ^ token Substring &at:1 toHexLong. ]
+                ! [ ^ token toLong. ].
+        ]
+        &catching: e [ feedback raiseError:"Invalid numeric constant". ].
         
         assembler'Tokens'TokenIntLiteral new &value:value &line_number:(lineNumber int).
-        
-//        #var v1 := $self peekChar:0.
-//        #var v2 := $self peekChar:1.
-//        
-//        ((v1 == #30h) and: (v2 == #78h))
-//            ? [ 
-//            ^($self scanHexNumber).
-//             ]
-//            ! [
-//                #var accum := "".
-//                accum := accum + ($self readChar) literal.
-//                #loop ($isDigit:($self peekChar))?
-//                [
-//                    accum := accum + ($self readChar) literal.
-//                ].
-//                ^(assembler'Tokens'TokenIntLiteral new &value:(accum toLong) &line:lineNumber).
-//              ].
     ]
 
     #method parseNormalToken : dfa : token : lineNumber
