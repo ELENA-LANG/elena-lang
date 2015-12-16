@@ -61,9 +61,9 @@
 
 #symbol control =
 {
-    try : anAction
+    try : anAction &catching:aHandler
     [
-        anAction eval | if: e [].
+        ^ anAction eval | if:aHandler.
     ]    
     
     do:anAction = anAction eval.

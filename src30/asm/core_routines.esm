@@ -1394,6 +1394,26 @@ labErr:
 
 end
 
+procedure int_copystr2
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callr api : coreapi'strtoint
+  nsave
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
 procedure int_copywstr
   
   bloadsi  3
@@ -1403,6 +1423,26 @@ procedure int_copywstr
   nsave
   ifr      labErr 0
   quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure int_copywstr2
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callr api : coreapi'wstrtoint
+  nsave
+  ifr      labErr 0
+  quitn    4
 
 labErr:
   open 1
@@ -1483,6 +1523,28 @@ labErr:
 
 end
 
+procedure long_copystr2
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callr api : coreapi'strtolong
+  nsave
+  dcopye
+  nsavei   1
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
 procedure long_copywstr
   
   bloadsi  3
@@ -1494,6 +1556,28 @@ procedure long_copywstr
   nsavei   1
   ifr      labErr 0
   quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure long_copywstr2
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callr api : coreapi'wstrtolong
+  nsave
+  dcopye
+  nsavei   1
+  ifr      labErr 0
+  quitn    4
 
 labErr:
   open 1

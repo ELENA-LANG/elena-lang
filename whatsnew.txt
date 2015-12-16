@@ -13,6 +13,7 @@
 [LIB]
 [+] new extension : file.literalContent, file.wideContent
 [+] new extension : char.is &whitespace
+[+] new extension : object.toHexInt, object.toHexLong
 [*] extensions'text: WordEnumerator => TokenEnumerator
 
 ******************************************************************************

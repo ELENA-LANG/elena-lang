@@ -186,6 +186,41 @@
 //    #method Type = type.
 }
 
+#class CpuData
+{
+    #field theData.
+//    #field type.
+    
+    #constructor new &data:data
+    [
+        #var dataLen := data length.
+        theData := Array new &length:(dataLen + dataLen int mod: 4) set &every:(&index:i) [ (i < dataLen) ? [ data@i ] ! [ 0 ] ].
+        
+        //type := assembler'TypeInstruction CpuData.
+    ]
+    
+//    #method writeData : stream
+//    [
+//        #var i := 0.
+//        #loop (i < data length)?
+//        [
+//            stream write &byte:((data@i) byte).
+//            i := i + 1.
+//        ].
+//    ]
+//    
+//    #method setPosition : addr
+//    [
+//    ]
+//    
+//    #method GetLength
+//    [
+//        ^(data length).
+//    ]
+//    
+//    #method Type = type.
+}
+
 
 
 
@@ -209,47 +244,3 @@
     #method CpuData = T_Data.
     #method CpuInstruction = T_Inst.
 }.
-
-#class CpuData
-{
-    #field data.
-    #field type.
-    
-    #constructor new &data:aData
-    [
-        #var size := (aData length + aData length mod: 4) int.
-        data := Array new &length:size.
-        
-        #var i := 0.
-        #loop (i < size) ?
-        [
-            (i < aData length)
-                ? [ data@i := aData@i. ]
-                ! [ data@i := ByteNumber new. ]. 
-            i := i + 1.
-        ].
-        
-        type := assembler'TypeInstruction CpuData.
-    ]
-    
-    #method writeData : stream
-    [
-        #var i := 0.
-        #loop (i < data length)?
-        [
-            stream write &byte:((data@i) byte).
-            i := i + 1.
-        ].
-    ]
-    
-    #method setPosition : addr
-    [
-    ]
-    
-    #method GetLength
-    [
-        ^(data length).
-    ]
-    
-    #method Type = type.
-}

@@ -171,9 +171,25 @@
 
     #method toInt
         = self cast:%convert &to:intConvertor.
+        
+    #method toHexInt
+        = self cast:%eval &to:
+            {
+                literal : l = intConvertor convert &literal:l &base:16.
+                
+                wide : l = intConvertor convert &wide:l &base:16.
+            }.
 
     #method toLong
         = self cast:%convert &to:longConvertor.
+        
+    #method toHexLong
+        = self cast:%eval &to:
+            {
+                literal : l = longConvertor convert &literal:l &base:16.
+                
+                wide : l = longConvertor convert &wide:l &base:16.
+            }.
     
     #method toChar
         = self cast:%convert &to:charConvertor.

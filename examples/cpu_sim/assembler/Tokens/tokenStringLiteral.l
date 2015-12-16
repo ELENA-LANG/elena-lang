@@ -1,20 +1,6 @@
 #import system.
 
-#class TokenStringLiteral
+#class TokenStringLiteral :: BaseTokenValue
 {
-    #field line.
-    #field value.
-    
-    #constructor new &value:aVal &line:aLine
-    [
-        line := aLine.
-        value := aVal.
-    ]
-    
-    #method literal
-    [
-        ^(value literal).
-    ]
-    #method Line = line.
-    #method Value = value.
+    #method tokenType = %string_literal.
 }

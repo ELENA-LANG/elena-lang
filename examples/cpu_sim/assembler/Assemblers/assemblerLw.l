@@ -1,32 +1,24 @@
 #import system.
-#import system'collections.
 
 #symbol AssemblerLw =
 {
-//    #field mnemonic.
-//
-//    #constructor new
-//    [
-//        mnemonic := List new.
-//        mnemonic += "lw".
-//    ]
-
-    #method assemble &codeGen:aCodeGen &instruction:aIns &byteCodeStream:aStr
+    #method assemble &codeGen:codeGen &instruction:ins &byteCodeStream:output
     [
-//        #var operands := aIns Operands.
-//        (operands length != 2)
-//            ? [ console writeLine:(aIns Name + " does not take " + aIns Operands length literal). ^$nil. ].
-//            
-//        (((operands@0 tokenType == assembler'TokenType Register) or: 
-//          (operands@1 tokenType == assembler'TokenType IndirectRegister) != true))
-//          ? [ console writeLine:("Unsupported addressing mode for instruction '" + aIns Name + "'"). ^$nil. ].
-//           
-//        #var dst := (operands@0 token) Register.
-//        #var src := (operands@1 token) Register.
-//        #var opCode := assembler'Opcode Lw.
-//        #var tmp := assembler'CpuInstruction new &opcode:opCode &cpuReg1:dst &cpuReg2:src &imm:(operands@1 token Offset).
-//        aStr emit &data:tmp.
+        #var operands := ins Operands.
+        (operands length != 2)
+            ? [ assembler'feedback raiseError:(ins Name):" does not take + ":(operands length). ].
+
+        #var op1 := operands@0.
+        #var op2 := operands@1.
+
+        (op1 is &register && op2 is &indirect_register)
+            ! [ assembler'feedback raiseError:"Unsupported addressing mode for instruction '":(ins Name):"'" ].
+
+        #var dst := op1 Value.
+        #var src := op2 Value.
+
+        output emit &data:(assembler'CpuInstruction new &opcode:(assembler'Opcode Lw) &cpuReg1:dst &cpuReg2:src &imm:(op2 Offset)).
     ]
-//
-//    #method Mnemonic = mnemonic.
+
+    #method Mnemonic = "lw".
 }.

@@ -3074,9 +3074,17 @@
     #method(stacksafe)convert &literal:aValue &vint:aRetVal
         => system'internal'int_copystr.
 
+    /// Converts a literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:value &int:base &vint:retVal
+        => system'internal'int_copystr2.
+
     /// Converts a wide literal string into an integer and saves the result into an output parameter
     #method(stacksafe)convert &wide:aValue &vint:aRetVal
         => system'internal'int_copywstr.
+
+    /// Converts a wide literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:value &int:base &vint:retVal
+        => system'internal'int_copywstr2.
 
     /// Converts a character value into an integer and saves the result into an output parameter
     #method(stacksafe)convert &char:aValue &vint:aRetVal
@@ -3107,6 +3115,15 @@
         ^ IntNumber new &int:aRetVal.
     ]
         
+    /// Converts a literal string into an integer
+    #method(type:int,stacksafe) convert &literal:literal &base:base
+    [
+        #var(type:int)retVal.
+        $self convert &literal:literal &int:(base int) &vint:retVal.
+        
+        ^ IntNumber new &int:retVal.
+    ]
+        
     /// Converts a wide literal string into an integer
     #method(type:int,stacksafe) convert &wide:aLiteral
     [
@@ -3114,6 +3131,15 @@
         $self convert &wide:aLiteral &vint:aRetVal.
         
         ^ IntNumber new &int:aRetVal.
+    ]
+        
+    /// Converts a wide literal string into an integer
+    #method(type:int,stacksafe) convert &wide:literal &base:base
+    [
+        #var(type:int)retVal.
+        $self convert &wide:literal &int:(base int) &vint:retVal.
+        
+        ^ IntNumber new &int:retVal.
     ]
         
     /// Converts a character value into an integer
@@ -3176,9 +3202,17 @@
     #method(stacksafe)convert &literal:aValue &vlong:aRetVal
         => system'internal'long_copystr.
 
+    /// Converts a literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:value &int:base &vlong:retVal
+        => system'internal'long_copystr2.
+
     /// Converts a wide literal string into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &wide:aValue &vlong:aRetVal
         => system'internal'long_copywstr.
+
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:value &int:base &vlong:retVal
+        => system'internal'long_copywstr2.
 
     #method(stacksafe)convert &int:aValue &vlong:aRetVal
         => system'internal'long_convertint.
@@ -3226,6 +3260,15 @@
         ^ LongNumber new &long:aRetVal.
     ]
 
+    /// Converts a literal string into a long integer
+    #method(type:long,stacksafe) convert &literal:literal &base:base
+    [
+        #var(type:long)retVal.
+        $self convert &literal:literal &int:(base int) &vlong:retVal.
+        
+        ^ LongNumber new &long:retVal.
+    ]
+
     /// Converts a wide literal string into a long integer
     #method(type:long,stacksafe) convert &wide:aLiteral
     [
@@ -3233,6 +3276,15 @@
         $self convert &wide:aLiteral &vlong:aRetVal.
         
         ^ LongNumber new &long:aRetVal.
+    ]
+
+    /// Converts a wide literal string into a long integer
+    #method(type:long,stacksafe) convert &wide:literal &base:base
+    [
+        #var(type:long)retVal.
+        $self convert &wide:literal &int:(base int) &vlong:retVal.
+        
+        ^ LongNumber new &long:retVal.
     ]
     
     /// Returns a parameter

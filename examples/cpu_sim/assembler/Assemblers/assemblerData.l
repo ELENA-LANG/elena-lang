@@ -4,35 +4,25 @@
 
 #symbol AssemblerData =
 {
-//    #field mnemonic.
-//
-//    #constructor new
-//    [
-//        mnemonic := List new.
-//        mnemonic += "data".
-//        mnemonic += ".data".
-//    ]
-
-    #method assemble &codeGen:aCodeGen &instruction:aIns &byteCodeStream:aStr
+    #method assemble &codeGen:codeGen &instruction:ins &byteCodeStream:output
     [
-//        #var listTmp := List new.
-//        (aIns Operands) run &each: op
-//        [
-//            (op tokenType) =>
-//                (assembler'TokenType StringLiteral)?
-//                [
-//                    #var value := op token Value.
-//                    // Get the bytes from token Value
-//                    value run &each: aChar [ listTmp += ((aChar int) byte). ].
-//                ]
-//                (assembler'TokenType IntLiteral)?
-//                [
-//                    listTmp += (((op token Value) int) byte).
-//                ].
-//        ].
-//        #var tmp := assembler'CpuData new &data:listTmp.
-//        aStr emit &data:tmp.
+        #var listTmp := List new.
+        (ins Operands) run &each: op
+        [
+            (op is &string_literal)
+                ? [
+                    op Value select &each: x [ byteConvertor convert:x ] summarize:listTmp.
+                ]
+                ! [
+                   (op is &numeric) ?
+                   [
+                       listTmp += byteConvertor convert:(op Value).
+                   ]
+                   ! [ assembler'feedback raiseError:"Unsupported addressing mode for instruction '":(ins Name):"'". ].                   
+                ].
+        ].
+        output emit &data:(assembler'CpuData new &data:listTmp).
     ]
-//
-//    #method Mnemonic = mnemonic.
+
+    #method Mnemonic = ("data", ".data").
 }.

@@ -3906,7 +3906,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
 		   scope.raiseError(errInvalidOperation, verb);
 	   }
 	   else if (verb_id == 0) {
-		   scope.moduleScope->mapSubject(verb, signature);
+         sign_id = scope.moduleScope->mapSubject(verb, signature, true);
 	   }
    }
 
@@ -3929,7 +3929,11 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
       if (scope.parameters.exist(arg.Terminal()))
          scope.raiseError(errDuplicatedLocal, arg.Terminal());
 
-      scope.parameters.add(arg.Terminal(), Parameter(index));
+      // if it is shorthand of eval &subj - recognize the subject
+      if (verb_id == EVAL_MESSAGE_ID && sign_id != 0 && paramCount == 0 && arg.nextNode() != nsMessageParameter) {
+         scope.parameters.add(arg.Terminal(), Parameter(index, sign_id));
+      }
+      else scope.parameters.add(arg.Terminal(), Parameter(index));
       paramCount++;
 
       arg = arg.nextNode();

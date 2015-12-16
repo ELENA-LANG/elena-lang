@@ -9,6 +9,10 @@
 {
     test
     [
+        #var n := "12" cast:%eval &to:
+            {
+                literal : l = intConvertor convert &literal:l &base:16.
+            }.
     ]
 }.
         

@@ -28,14 +28,4 @@
 #class TokenIdentifier :: BaseTokenValue
 {
     #method tokenType = %identifier.
-    
-//    #method literal
-//    [
-//        ^(value literal).
-//    ]
-//    
-//    #method Value = value.
-//    #method Value:aValue [ value := aValue. ]
-//    
-//    #method Line = line.
 }

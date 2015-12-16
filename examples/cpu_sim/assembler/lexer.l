@@ -7,59 +7,18 @@
 #import extensions'text.
 #import system'culture.
 
-//#symbol(const,type:char) LF  = #0Ah.
-//#symbol(const,type:char) CR  = #0Dh.
-//#symbol(const,type:char) TAB = #09h.
-//#symbol(const,type:char) SPACE = #20h.
-
-
-//#symbol $htoi = hexString
-//[
-//    #var i := 0.
-//    #var(type:int) ret := 0.
-//    #var tmp := 0.
-//    
-//    #loop (i < hexString length) ?
-//    [
-//        #var c := hexString@i.
-//        ((c >= #65) and: (c <= #70))
-//            ? [ tmp := (c toInt) - 65 + 10. ].              
-//        ((c >= #97) and: (c <= #102)) 
-//            ? [ tmp := (c toInt) - 97 + 10. ].
-//        ($isDigit:c)
-//            ? [ tmp := (c toInt) - 48. ].
-//            
-//        ret := (16 * ret) + tmp.
-//        i := i + 1.
-//    ].
-//    ^ret.
-//].
-//
-//#symbol $converToInt = str
-//[
-//    #var i := 0.
-//    #var ret := 0.
-//    #loop (i<str length)?
-//    [
-//        ((str@i != SPACE) && ($isDigit:(str@i)))?
-//        [
-//            ret := ret * 10 + ((str@i) int) - 48.
-//        ].
-//        i := i + 1.
-//    ].
-//    ^ret.
-//].
-
 // --- Lexer ---
 
 #symbol(type:int,const)dfaIdentifier = 1.
 #symbol(type:int,const)dfaDigit = 2.
-#symbol(type:int,const)dfaOther = 3.
+#symbol(type:int,const)dfaLiteral = 3.
+#symbol(type:int,const)dfaOther = 4.
 
 #class LexerDFA :: Statemachine
 {
     #field(type:bool)theSpaceMode.
     #field(type:bool)theSingleTokenMode.
+    #field(type:bool)theQuoteMode.
     #field(type:bool)theNewToken.
     
     #field theTokenType.
@@ -69,12 +28,21 @@
         theSpaceMode := true.
         theSingleTokenMode := false.
         theNewToken := true.
+        theQuoteMode := false.
     ]
     
     #method state = theTokenType.
     
     #method proceed &char:aChar
     [
+        theQuoteMode?
+            [
+                (aChar == #22h)
+                    ? [ theQuoteMode := false. theSingleTokenMode := true. ].
+                    
+                ^ false.                
+            ].
+        
         #var(type:bool)whitespace := aChar is &whitespace.
         #var(type:bool)digit := aChar is &digit.
         #var(type:bool)letter := aChar is &letter.
@@ -94,14 +62,19 @@
                     ! [ 
                         theSpaceMode
                             ! [ theSpaceMode := true. ^ true. ].
-                            
-                        theSingleTokenMode := true.
+                        
+                        (aChar == #22h)
+                            ? [ 
+                                theTokenType := dfaLiteral. 
+                                theNewToken := false. 
+                                theQuoteMode := true. 
+                              ]
+                            ! [ theSingleTokenMode := true. ].
                     ].
                     
                 theSpaceMode ?
                     [ theSpaceMode := false. theNewToken := true. ].
-                
-            
+
                 theNewToken ?
                 [
                     theTokenType := digit iif:dfaDigit:(letter iif:dfaIdentifier:dfaOther).
@@ -129,42 +102,105 @@
         tokenList := List new.
     ]
     
+    #method parseIntToken : token : lineNumber
+    [
+        #var value := 0l.
+        (token startingWith:"0x")
+            ? [
+                value := 
+            ]
+            ! [
+                value := control try:[ token toHexLong ] &catching: e [ feedback raiseError:"Invalid numeric constant". ].
+            ].
+        
+        assembler'Tokens'TokenIntLiteral new &value:value &line_number:(lineNumber int).
+        
+//        #var v1 := $self peekChar:0.
+//        #var v2 := $self peekChar:1.
+//        
+//        ((v1 == #30h) and: (v2 == #78h))
+//            ? [ 
+//            ^($self scanHexNumber).
+//             ]
+//            ! [
+//                #var accum := "".
+//                accum := accum + ($self readChar) literal.
+//                #loop ($isDigit:($self peekChar))?
+//                [
+//                    accum := accum + ($self readChar) literal.
+//                ].
+//                ^(assembler'Tokens'TokenIntLiteral new &value:(accum toLong) &line:lineNumber).
+//              ].
+    ]
+
+    #method parseNormalToken : dfa : token : lineNumber
+    [
+        (dfa state) =>
+            dfaIdentifier 
+                ? [
+                    ^ assembler'Tokens'TokenIdentifier new &value:token &line_number:(lineNumber int).
+                ]
+            dfaDigit
+                ? [
+                    ^ $self parseIntToken:token:lineNumber.
+                ]
+            dfaLiteral
+                ? [
+                    ^ assembler'Tokens'TokenStringLiteral new 
+                        &value:(token Substring:(token length - 2) &at:1) &line_number:(lineNumber int).
+                ]
+            ! [
+                token =>
+                    "," ? [ ^ assembler'Tokens'TokenComma new &line_number:(lineNumber int). ].
+            ].
+            
+        feedback raiseError:"Invalid token ":token.            
+    ]
+    
+    #method parseRegister : token : lineNumber
+    [
+        #var ch1 := token@0 literal toLower &locale:currentLocale.
+        #var num := control try:[ token literal Substring &at:1 toInt ] &catching:e [ feedback raiseError:"Invalid register name". ].
+
+        (((ch1 == "r") || (ch1 == "s") || (ch1 == "d")) && (num < 15))
+            ! [ feedback raiseError:"Register ":token:" is not valid". ].
+                        
+        (ch1 == "s") 
+            ? [ num := num + 16. ].
+        (ch1 == "d")
+            ? [ num := num + 32. ].
+            
+        ^ assembler'Tokens'TokenRegister new &register:num &line:lineNumber.
+    ]
+    
     #method scan
     [
         #var lineNumber := Integer new:1.
         #var dfa := LexerDFA new.
         #var registerExpected := Boolean new:false.
+        #var indirectRegisterExpected := Boolean new:false.
         content run &token_dfa:dfa &each:aToken
         [
-            (aToken == "%")
-                ? [
-                    registerExpected
+            aToken =>
+                "%" ? [
+                    (registerExpected || indirectRegisterExpected)
                         ? [ feedback raiseError:"Register expected". ]
                         ! [ registerExpected << true. ].
                 ]
+                "@" ? [
+                    (registerExpected || indirectRegisterExpected)
+                        ? [ feedback raiseError:"Inirect Register expected". ]
+                        ! [ indirectRegisterExpected << true. ].
+                ]
                 ! [
-                    #var tokenAttr := $nil.
-                    
-                    (dfa state) =>
-                        dfaIdentifier 
-                            ? [
-                                tokenAttr := registerExpected iif:assembler'Tokens'TokenRegister:assembler'Tokens'TokenIdentifier
-                                    new &value:aToken &line_number:(lineNumber int).
-                                    
-                                registerExpected << false.
-                            ]
-                        dfaDigit
-                            ? [
-                                tokenAttr := assembler'Tokens'TokenIntLiteral new &value:aToken &line_number:(lineNumber int).
-                            ]
-                        ! [
-                            aToken =>
-                                "," ? [ tokenAttr := assembler'Tokens'TokenComma new &line_number:(lineNumber int). ].
-                        ].
+                    #var tokenAttr := registerExpected iif:($self parseRegister:aToken:lineNumber)
+                                        :(indirectRegisterExpected iif:($self parseIndirectRegister:dfa:aToken:lineNumber)
+                                            :($self parseNormalToken:dfa:aToken:lineNumber)).
+                    registerExpected << false.
+                    indirectRegisterExpected << false.
                     
                     tokenList += TokenItem new &token:tokenAttr.
-                ]
-            
+                ].
         ].
         
         // add virtual EOL
@@ -294,26 +330,6 @@
     
 //    // --- Assembler analises...
 //    
-//    #method scanIntLiteral
-//    [
-//        #var v1 := $self peekChar:0.
-//        #var v2 := $self peekChar:1.
-//        
-//        ((v1 == #30h) and: (v2 == #78h))
-//            ? [ 
-//            ^($self scanHexNumber).
-//             ]
-//            ! [
-//                #var accum := "".
-//                accum := accum + ($self readChar) literal.
-//                #loop ($isDigit:($self peekChar))?
-//                [
-//                    accum := accum + ($self readChar) literal.
-//                ].
-//                ^(assembler'Tokens'TokenIntLiteral new &value:(accum toLong) &line:lineNumber).
-//              ].
-//    ]
-//    
 //    #method scanHexNumber
 //    [
 //        // skip the 0x
@@ -352,44 +368,6 @@
 //        #loop ($isLetterOrDigit:($self peekChar))
 //            ? [ accum := accum + $self readChar. ].
 //        ^(assembler'Tokens'TokenIdentifier new &name:accum &line:lineNumber).
-//    ]
-//    
-//    #method scanRegister
-//    [
-//        $self readChar.
-//        #var accum := "".
-//        
-//        #var auxChar := $nil.
-//        #loop (($isLetterOrDigit:($self peekChar)) and: ($nil != $self peekChar)) ?
-//        [
-//            accum := accum + $self readChar.
-//        ].
-//        
-//        
-//        #var(type:int) accumSize := accum length.
-//        #var regNumber := accum Substring &int:1 &int:accumSize.
-//        #var i := 1.
-//        #var isDigit := true.
-//        #loop ((i < regNumber length) and: isDigit) ?
-//        [
-//            isDigit := $isDigit:(regNumber@i).        
-//            i := i + 1.
-//        ].
-//        
-////        #var register := (regNumber /*trimRight*/) toInt.   
-//        #var register := $converToInt:regNumber.
-//        #var tmpReg := (accum@0 literal) toLower &locale:currentLocale.
-//        (((tmpReg != "r") or: (tmpReg != "s") or: (tmpReg != "d") == false) or: (register > 15))
-//            ? [
-//                console writeLine:("Register, " + accum + ", not valid, in line: " + ((lineNumber + 1) literal)). 
-//              ].
-//                   
-//        (tmpReg == "s") 
-//            ? [ register := register + 16. ].
-//        (tmpReg == "d")
-//            ? [ register := register + 32. ].
-//            
-//        ^(assembler'Tokens'TokenRegister new &register:register &line:lineNumber).
 //    ]
 //    
 //    #method scanIndirectRegister
