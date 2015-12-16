@@ -1,10 +1,11 @@
 ------                                 
 In development:
-------
-              adev - lib30     
-                       * read the whole file as a string
-
+------                                                   
               sdev - samples
+                       * sample random
+                       * rosetta sample : evolutionary algorithm
+                       * rosetta sample : empty program
+                       * rosetta sample : Compare a list of strings
                        * refactor cpu_sim
 
 ------                                 

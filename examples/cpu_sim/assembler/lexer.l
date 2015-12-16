@@ -188,49 +188,6 @@
         // add virtual EOL
         tokenList += TokenItem new &token:(assembler'Tokens'TokenEOL new &line_number:(lineNumber + 1)).
         
-//        #var skipThis := false.
-//        #loop (position < sourceFile length)?
-//        [           
-//            #loop (($self peekChar != LF) and: ($isWhiteSpace:($self peekChar)))
-//                ? [ $self readChar. ].
-//            
-//            skipThis := false. 
-//                
-//            (($self peekChar) == LF) ?
-//            [
-//                #var brk := false.
-//                #loop (($nil != ($self peekChar)) and: (brk != true))?
-//                [
-//                    (($self peekChar) == LF)? [ brk := true. ].
-//                    $self readChar.
-//                    lineNumber := lineNumber + 1.
-//                ].
-//                skipThis := true.
-//                
-//                #var auxTk := assembler'Tokens'TokenEOL new &line:lineNumber.
-//                tokenList += (assembler'Token new &token:auxTk &tokenType:(assembler'TokenType EOL)).
-//                //tokenList += (assembler'Tokens'TokenEOL new &line:lineNumber).
-//            ].
-//                   
-//            ((skipThis == false) and: ($isDigit:($self peekChar)))?
-//            [
-//                #var auxTk := $self scanIntLiteral.
-//                tokenList += (assembler'Token new &token:auxTk &tokenType:(assembler'TokenType IntLiteral)).
-//                //tokenList += ($self scanIntLiteral).
-//                skipThis := true.
-//            ].
-//            
-//            ((skipThis == false) and: ($nil != $self peekChar)) ? // 0x22 == '\"'
-//            [
-//                (($self peekChar) == #22h)?
-//                [
-//                    #var auxTk := $self scanStringLiteral.
-//                    tokenList += (assembler'Token new &token:auxTk &tokenType:(assembler'TokenType StringLiteral)).
-//                    //tokenList += ($self scanStringLiteral).
-//                    skipThis := true.
-//                ].
-//            ].
-//            
 //            ((skipThis == false) and: ($nil != $self peekChar)) ? // 0x3B == ';'
 //            [
 //                (($self peekChar) == #3Bh)?

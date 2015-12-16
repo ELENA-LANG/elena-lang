@@ -22,6 +22,22 @@
         
         ^ IntNumber new &int:aNextValue.
     ]
+    
+    #method nextInt
+        = $self eval:(IntNumber max).
+    
+    #method nextReal
+    [
+        #var(type:int)next.
+        $self eval &int:100000 &vint:next.
+        
+        #var(type:real)retVal.
+        realConvertor convert &int:next &vreal:retVal.
+        
+        retVal := retVal / 100000.0r.
+        
+        ^ RealNumber new &real:retVal.
+    ]
 }
 
 // --- randomGenerator ---

@@ -190,6 +190,34 @@
             
         ^ self.
     ]
+    
+    #method writeLine : anObject1 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar writeLine.
+            
+        ^ self.
+    ]
+    
+    #method writeLine : anObject1 &paddingLeft:aWidth
+        = self::outputOp writeLine:anObject1 &paddingLeft:aWidth &with:#32.
+    
+    #method writeLine : anObject1 : anObject2 &paddingLeft:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingLeft:aWidth &with:aChar writeLine.
+            
+        ^ self.
+    ]
 
     #method write : anObject1 &paddingRight:aWidth
     [
@@ -216,6 +244,29 @@
         ^ self.
     ]
     
+    #method writeLine : anObject1 &paddingRight:aWidth &with:aChar
+    [
+        self write:(anObject1::convertorOp toLiteral) &paddingRight:aWidth &with:aChar writeLine.
+            
+        ^ self.
+    ]
+    
+    #method writeLine : anObject1 &paddingRight:aWidth
+        = self::outputOp writeLine:anObject1 &paddingRight:aWidth &with:#32.
+
+    #method writeLine : anObject1 : anObject2 &paddingRight:aWidth &with:aChar
+    [
+        #var(type:textbuffer)aBuffer := TextBuffer new.
+        
+        aBuffer
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral).
+        
+        self write:(aBuffer literal) &paddingRight:aWidth &with:aChar writeLine.
+            
+        ^ self.
+    ]
+
     #method write : anObject1 : anObject2 : anObject3 &paddingLeft:aWidth &with:aChar
     [
         #var(type:textbuffer)aBuffer := TextBuffer new.
