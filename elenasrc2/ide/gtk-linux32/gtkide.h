@@ -17,6 +17,22 @@ namespace _GUI_
 
 class MainWindow : public SDIWindow
 {
+   class ProjectTreeColumns : public Gtk::TreeModel::ColumnRecord
+   {
+   public:
+      Gtk::TreeModelColumn<Glib::ustring> _caption;
+      Gtk::TreeModelColumn<Glib::ustring> _reference;
+
+      ProjectTreeColumns()
+      {
+          add(_caption);
+          add(_reference);
+      }
+   };
+
+   ProjectTreeColumns           _projectTreeColumns;
+   Glib::RefPtr<Gtk::TreeStore> _projectTree;
+
    _Controller*   _controller;
    Model*         _model;
 
@@ -181,6 +197,8 @@ public:
    int newDocument(const char* name, Document* doc);
    void closeDocument(int index);
    int getCurrentDocumentIndex();
+
+   void reloadProjectView(_ProjectManager* project);
 
    MainWindow(const char* caption, _Controller* controller, Model* model);
 };

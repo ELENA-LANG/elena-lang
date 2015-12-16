@@ -226,6 +226,77 @@ void MainWindow :: pasteFrameClipboard(Document* document)
    }
 }
 
+void MainWindow :: reloadProjectView(_ProjectManager* project)
+{
+//   TreeView* projectView = (TreeView*)_controls[CTRL_PROJECTVIEW];
+//
+//   projectView->clear(NULL);
+//
+//   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1);
+
+   _ELENA_::ConfigCategoryIterator it = project->SourceFiles();
+//   int index = 0;
+//   _ELENA_::wide_c buffer[0x100];
+   while (!it.Eof()) {
+      _ELENA_::ident_t name = it.key();
+      _ELENA_::NamespaceName ns(name);
+      _ELENA_::ReferenceName caption(name);
+
+      Gtk::TreeModel::Children children = _projectTree->children();
+      Gtk::TreeModel::iterator it = children.begin();
+      while (it != children.end()) {
+         Gtk::TreeModel::Row row = *it;
+         Glib::ustring current = row[_projectTreeColumns._reference];
+
+         if (ns.compare(current.c_str()))
+            break;
+
+         it++;
+      }
+
+      Gtk::TreeModel::Row row;
+      if (it != children.end()) {
+         row = *(_projectTree->insert(++it));
+      }
+      else row = *(_projectTree->append());
+      row[_projectTreeColumns._caption] = (const char*)caption;
+      row[_projectTreeColumns._reference] = (const char*)name;
+
+//      TreeViewItem parent = root;
+//      int start = 0;
+//      while (true) {
+//         int end = _ELENA_::StringHelper::find(name + start, PATH_SEPARATOR);
+//
+//         _ELENA_::WideString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
+//
+//         TreeViewItem current = projectView->getChild(parent);
+//         while (current != NULL) {
+//            projectView->getCaption(current, buffer, 0x100);
+//
+//            if (!nodeName.compare(buffer)) {
+//               current = projectView->getNext(current);
+//            }
+//            else break;
+//         }
+//
+//         if (current == NULL) {
+//            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1);
+//         }
+//         parent = current;
+//
+//         if (end != -1) {
+//            start = end + 1;
+//         }
+//         else break;
+//      }
+//
+      it++;
+//      index++;
+   }
+
+//   projectView->expand(root);
+}
+
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
    : SDIWindow(caption)
 {
@@ -244,6 +315,9 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    _bottomTab->append_page(*Gtk::manage(new Gtk::Label("Output")), "Output");
    _statusbar->push("Example");
    //_projectView->
+
+   _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
+   _projectView->set_model(_projectTree);
 
    populate(_mainFrame, _projectView, _bottomTab, _statusbar);
 }

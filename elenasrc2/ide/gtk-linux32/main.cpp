@@ -587,6 +587,7 @@ public:
 
    virtual void reloadProjectView(_ProjectManager* project)
    {
+      appWindow.reloadProjectView(project);
    }
 
    GTKIDEView(_Controller* controller, Model* model)
