@@ -30,6 +30,7 @@ bin\elc -cexamples\console\binary\binary.prj
 bin\elc -cexamples\console\replace\replace.prj
 bin\elc -cexamples\console\goods\goods.prj
 bin\elc -cexamples\console\datetime\dtcalculator.prj
+bin\elc -cexamples\console\random\random.prj
 bin\elc -cexamples\files\textdb\textdb.prj
 bin\elc -cexamples\console\matrix\matrix.prj
 bin\elc -cexamples\console\trans\tanslit.prj

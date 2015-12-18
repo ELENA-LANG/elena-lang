@@ -14,7 +14,11 @@
 [+] new extension : file.literalContent, file.wideContent
 [+] new extension : char.is &whitespace
 [+] new extension : object.toHexInt, object.toHexLong
+[+] new extension : enumerable.zip&into[2], numeric.repeat&each[1]
 [*] extensions'text: WordEnumerator => TokenEnumerator
+
+[Samples]
+[+] console sample : random
 
 ******************************************************************************
                              What's New in 1.9.23

@@ -152,7 +152,10 @@
 
     #method select &each:aSelector
         = system'routines'Selector new &each:aSelector &enumerator:(self enumerator).
-        
+
+    #method zip:anEnumerable &into:aZipper
+        = system'routines'ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
+                        
     #method firstMember
     [
         #var(type:enumerator)anEnumerator := self enumerator.
@@ -172,6 +175,9 @@
             
         ^ aLastItem.
     ]
+    
+    #method repeat &each:aRepeater
+        = system'routines'Repeater new &till:self &each:aRepeater.
 }
 
 // --- indexableOp ---

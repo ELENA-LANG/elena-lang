@@ -15,6 +15,9 @@
     #method(stacksafe) eval &int:aMaxValue &vint:aRetVal
         => system'internal'rnd_next.
 
+    #method(stacksafe) eval &vint:aRetVal
+        => system'internal'rnd_nextint.
+
     #method eval : aMaxValue
     [
         #var(type:int)aNextValue.
@@ -24,17 +27,25 @@
     ]
     
     #method nextInt
-        = $self eval:(IntNumber max).
-    
+    [
+        #var(type:int)aNextValue.
+        $self eval &vint:aNextValue.
+        
+        ^ IntNumber new &int:aNextValue.
+    ]
+
+    #method nextInt : aValue
+        = $self eval:aValue.
+        
     #method nextReal
     [
         #var(type:int)next.
-        $self eval &int:100000 &vint:next.
+        $self eval &int:1000000 &vint:next.
         
         #var(type:real)retVal.
         realConvertor convert &int:next &vreal:retVal.
         
-        retVal := retVal / 100000.0r.
+        retVal := retVal / 1000000.0r.
         
         ^ RealNumber new &real:retVal.
     ]

@@ -3901,7 +3901,7 @@ procedure coreapi'lrndnext
    xor  edx, edx
    mov  ecx, esi
    cmp  ecx, edx
-   jz   short labEnd
+   jle  short labEnd
 
    push eax
    push esi
@@ -3933,6 +3933,42 @@ Lab1:
    cdq
    pop  ecx
    idiv ecx
+   pop  eax
+labEnd:
+   mov  [eax], edx
+   ret
+
+end
+
+procedure coreapi'lrndnextint
+
+   push eax
+   
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   imul  esi
+   add  eax, ecx
+   xchg eax, esi
+   imul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx], esi
+   mov  edx, eax
    pop  eax
 labEnd:
    mov  [eax], edx

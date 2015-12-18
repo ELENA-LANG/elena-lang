@@ -88,6 +88,64 @@
     ]    
 }
 
+// --- Repeater ---
+
+#class Repeater :: Enumerator
+{
+    #field(type:int)   theMax.
+    #field(type:int)   theCurrent.
+    #field(type:func1) theFunc.
+    
+    #constructor new &till:maxValue &each:func
+    [
+        theMax := maxValue int.
+        theCurrent := -1.
+        theFunc := func func1.
+    ]
+    
+    #method get = theFunc eval:theCurrent.
+    
+    #method reset
+    [
+        theCurrent := -1.
+    ]
+    
+    #method next
+    [
+        theCurrent := theCurrent + 1.
+        
+        ^ (theCurrent < theMax).
+    ]
+}
+
+// --- PairEnumerator ---
+
+#class ZipEnumerator :: Enumerator
+{
+    #field(type:enumerator) theEnumerator1.
+    #field(type:enumerator) theEnumerator2.
+    
+    #field(type:func2) theZipper.
+    
+    #constructor new:combinator &enumerator:enum1 &enumerator:enum2
+    [
+        theZipper := combinator func2.
+        
+        theEnumerator1 := enum1.
+        theEnumerator2 := enum2.
+    ]
+    
+    #method get = theZipper eval:(theEnumerator1 get):(theEnumerator2 get).
+    
+    #method next = theEnumerator1 next && theEnumerator2 next.
+    
+    #method reset
+    [
+        theEnumerator1 reset.
+        theEnumerator2 reset.
+    ]
+}
+
 // --- RangeEnumerator ---
 
 #class RangeEnumerator :: Enumerator

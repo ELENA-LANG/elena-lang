@@ -5,21 +5,11 @@
 #import system'calendar.
 #import extensions.
 
+#import extensions'routines.
 #symbol XTester =
 {
     test
     [
-        #var n1 := randomGenerator nextInt.
-        #var n2 := randomGenerator nextInt.
-        #var n3 := randomGenerator nextInt.
-        #var n4 := randomGenerator nextInt.
-        #var n5 := randomGenerator nextInt.
-        
-        #var r1 := randomGenerator nextReal.
-        #var r2 := randomGenerator nextReal.
-        #var r3 := randomGenerator nextReal.
-        #var r4 := randomGenerator nextReal.
-        #var r5 := randomGenerator nextReal.
     ]
 }.
         

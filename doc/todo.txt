@@ -6,6 +6,17 @@ In development:
                        * rosetta sample : evolutionary algorithm
                        * rosetta sample : empty program
                        * rosetta sample : Compare a list of strings
+                       * rosetta sample : Boolean values
+                       * rosetta sample : Classes
+                       * rosetta sample : Collections
+                       * rosetta sample : Comments
+                       * rosetta sample : Copy a string
+                       * rosetta sample : Command-line arguments
+                       * rosetta sample : Ethiopian multiplication
+                       * rosetta sample : Inheritance/Multiple
+                       * rosetta sample : Inheritance/Single
+                       * rosetta sample : JSON
+
                        * refactor cpu_sim
 
 ------                                 

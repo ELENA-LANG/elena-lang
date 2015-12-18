@@ -24,6 +24,18 @@ procedure rnd_next
 
 end
 
+procedure rnd_nextint
+
+  bcopya
+
+  aloadsi 2
+  callr api : coreapi'lrndnextint
+  acopyb
+
+  quitn 2
+
+end
+
 procedure evaluate
 
   aloadsi 2
