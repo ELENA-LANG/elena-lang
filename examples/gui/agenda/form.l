@@ -31,7 +31,7 @@
     #field BtmDelTxt.
     #field BtmInfo.
 
-    #field(type:file) theSavedPath.
+    #field(type:file_path) theSavedPath.
 
     #constructor new
         <= (new)

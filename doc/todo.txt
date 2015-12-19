@@ -1,23 +1,71 @@
 ------                                 
 In development:
 ------                                                   
+              xdev - general implementation
+                       * weak subject / role
+
               sdev - samples
-                       * sample random
-                       * rosetta sample : evolutionary algorithm
-                       * rosetta sample : empty program
+                       * rosetta sample : Check that file exists
+                       * rosetta sample : Closures/Value capture
+                       * rosetta sample : Create a file
+                       * rosetta sample : Create a two-dimensional array at runtime
                        * rosetta sample : Compare a list of strings
-                       * rosetta sample : Boolean values
                        * rosetta sample : Classes
-                       * rosetta sample : Collections
-                       * rosetta sample : Comments
-                       * rosetta sample : Copy a string
-                       * rosetta sample : Command-line arguments
+                       * rosetta sample : Deepcopy
+                       * rosetta sample : Delegates
+                       * rosetta sample : Delete a file
+                       * rosetta sample : Dynamic variable names
+                       * rosetta sample : Empty string
                        * rosetta sample : Ethiopian multiplication
+                       * rosetta sample : File size
+                       * rosetta sample : First-class functions
+                       * rosetta sample : Flipping bits game
+                       * rosetta sample : Identity matrix
+                       * rosetta sample : Input loop
+                       * rosetta sample : Integer comparison
                        * rosetta sample : Inheritance/Multiple
                        * rosetta sample : Inheritance/Single
                        * rosetta sample : JSON
-
-                       * refactor cpu_sim
+                       * rosetta sample : Knuth shuffle
+                       * rosetta sample : Knuth's algorithm S                       
+                       * rosetta sample : Literals/String
+                       * rosetta sample : Literals/Integer
+                       * rosetta sample : Longest string challenge
+                       * rosetta sample : Loops/For
+                       * rosetta sample : Loops/For with a specified step
+                       * rosetta sample : Loops/Foreach
+                       * rosetta sample : Loops/Infinite
+                       * rosetta sample : Loops/While
+                       * rosetta sample : Magic squares of odd order
+                       * rosetta sample : Man or boy test
+                       * rosetta sample : Morse code
+                       * rosetta sample : Narcissist
+                       * rosetta sample : Number reversal game
+                       * rosetta sample : Object serialization
+                       * rosetta sample : Old lady swallowed a fly
+                       * rosetta sample : Pascal's triangle
+                       * rosetta sample : Perfect numbers
+                       * rosetta sample : Pick random element
+                       * rosetta sample : Pig the dice game
+                       * rosetta sample : Program name
+                       * rosetta sample : Program termination
+                       * rosetta sample : Queue/Usage
+                       * rosetta sample : Read a file line by line
+                       * rosetta sample : Repeat a string
+                       * rosetta sample : Reverse words in a string
+                       * rosetta sample : Search a list
+                       * rosetta sample : Send an unknown method call
+                       * rosetta sample : Set of real numbers
+                       * rosetta sample : Set
+                       * rosetta sample : Singleton
+                       * rosetta sample : Stack
+                       * rosetta sample : Stack traces
+                       * rosetta sample : Substring
+                       * rosetta sample : Test a function
+                       * rosetta sample : Tree traversal                       
+ 
+                       * refactor cpu_sim : assembler
+                       * rosetta sample : ABC_Problem
 
 ------                                 
 Pipeline:

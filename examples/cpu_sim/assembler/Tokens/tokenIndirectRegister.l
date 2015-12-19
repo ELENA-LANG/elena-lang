@@ -1,25 +1,15 @@
 #import system.
 
-#class TokenIndirectRegister
+#class TokenIndirectRegister :: BaseTokenValue
 {
-    #field register.
-    #field line.
-    #field offset.
+    #field theOffset.
     
-    #constructor new &register:aRegister &offset:aOffset &line:aLine
+    #method tokenType = %indirect_register.
+    
+    #method set &offset:value
     [
-        offset := aOffset.
-        register := aRegister.
-        line := aLine.
+        theOffset := value int.
     ]
     
-    #constructor new &register:aRegister &line:aLine
-    [
-        register := aRegister.
-        line := aLine.
-        offset := 0.
-    ]
-    #method Line = line.
-    #method Register = register.
-    #method Offset = offset.
+    #method offset = theOffset.
 }

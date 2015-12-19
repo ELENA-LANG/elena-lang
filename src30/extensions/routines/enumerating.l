@@ -58,7 +58,7 @@
 
 // --- fileExOp ---
 
-#class(extension:file)fileExOp
+#class(extension:file_path)fileExOp
 {
     #method run &eachLine:anAction
         = anAction run &enumerator:(ReaderEnumerator new &path:self).

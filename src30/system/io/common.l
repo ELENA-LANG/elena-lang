@@ -4,7 +4,9 @@
 
 // === basic interfaces ===
 #subject(class:system'io'Stream)stream.
-#subject(class:system'io'File) file.
+
+#subject file_path.
+#subject directory_path.
 
 // === i/o interfaces ===
 #subject(class:system'io'TextReader)textreader.

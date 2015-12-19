@@ -1,4 +1,4 @@
-// ==== ver 3.4.1 ===
+// ==== ver 3.4.2 ===
 
 #import system.
 #import system'collections.
@@ -202,6 +202,18 @@
         
         anIndexer writeIndex &int:anIndex1.
         anIndexer set:anObject2.
+    ]
+    
+    #method run &every:nfunc
+    [
+        #var(type:iterator)it := self iterator.
+        
+        #loop (it available)?
+        [
+            nfunc eval &index:(it index).
+            
+            it append &index:1.
+        ].
     ]
     
     #method(suppress:w2) indexOf : anObject

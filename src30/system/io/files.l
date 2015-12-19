@@ -7,17 +7,13 @@
 
 #class File
 {
-    #field thePath.
+    #field(type:file_path) thePath.
     
     #constructor new &path:aPath
     [
         thePath := aPath.
     ]
 
-    #method file = $self.
-    
-    #method path = thePath.
-    
     #method literal = thePath literal.
     
     #method wide = thePath wide.
@@ -29,7 +25,7 @@
 
 // --- fileOp ---
 
-#class(extension:file)fileOp
+#class(extension:file_path)fileOp
 {
     #method read &textbuffer:anOutput
     [

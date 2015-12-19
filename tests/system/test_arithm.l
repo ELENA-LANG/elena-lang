@@ -5,11 +5,19 @@
 #import system'calendar.
 #import extensions.
 
-#import extensions'routines.
 #symbol XTester =
 {
     test
     [
+        #var intArray := (1, 2, 3, 4, 5).
+        #var stringArr := Array new:5.
+        stringArr@0 := "string".
+        #var myAl := ArrayList new += "Hello" += "World" += "!".
+        #var myList := List new += "Hello" += "World" += "!".
+        #var dict := Dictionary new.
+        dict@"Hello" := "World".
+        dict@"Key" := "Value".
+        
     ]
 }.
         

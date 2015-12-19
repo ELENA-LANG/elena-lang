@@ -6,6 +6,8 @@
     
     #method line_number = theLineNumber.
     
+    #method token = $self.
+    
     #constructor new &line_number:lineNumber
     [
         theLineNumber := lineNumber.

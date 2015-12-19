@@ -7,7 +7,7 @@
     ('program'arguments length == 1)?
         [  console writeLine:"Please provide the path to the file to view". #throw AbortException new. ].
 
-    File new &path:('program'arguments@1) run &eachLine:printingLn.
+    'program'arguments@1 file_path run &eachLine:printingLn.
 
     console readChar. // wait for any key
 ].

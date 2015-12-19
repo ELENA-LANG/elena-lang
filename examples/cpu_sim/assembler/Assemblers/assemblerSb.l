@@ -28,5 +28,5 @@
 //        aStr emit &data:tmp.
     ]
 
-//    #method Mnemonic = mnemonic.
+    #method Mnemonic = "sb".
 }.

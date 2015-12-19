@@ -219,7 +219,7 @@
 
 // --- fileOp ---
 
-#class(extension:file)fileExtOp
+#class(extension:file_path)fileExtOp
 {
     #method openForRead = FileStream openForRead &path:self.
     
