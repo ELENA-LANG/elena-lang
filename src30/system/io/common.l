@@ -8,6 +8,13 @@
 #subject file_path.
 #subject directory_path.
 
+#class(extension)ioTypeOp
+{
+    #method(embeddable) file_path = self.
+    
+    #method(embeddable) directory_path = self.
+}
+
 // === i/o interfaces ===
 #subject(class:system'io'TextReader)textreader.
 #subject(class:system'io'BinaryReader)binaryreader.

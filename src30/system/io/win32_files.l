@@ -20,6 +20,8 @@
 #symbol(const,type:int) $FILE_CURRENT = 1.
 #symbol(const,type:int) $FILE_END = 2.
 
+#symbol(const,type:int) $FILE_ATTRIBUTE_DIRECTORY = 10h.
+
 // --- FileStream ---
 
 #class(struct) FileStream :: Stream
@@ -261,7 +263,14 @@
     [
         #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
         
-        ^ (ret != 0FFFFFFFFh).
+        (ret != 0FFFFFFFFh)
+            ? [
+                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
+                
+                ^ ret == 0.
+            ].
+            
+        ^ false.            
     ]
     
     #method delete
@@ -269,5 +278,24 @@
         #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
         
        ^ ret != 0.
+    ]    
+}
+
+// --- directoryExtOp
+
+#class(extension:directory_path)directoryExtOp
+{
+    #method(type:bool) is &available
+    [
+        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
+     
+        (ret != 0FFFFFFFFh)
+            ? [
+                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
+                
+                ^ ret != 0.
+            ].
+            
+        ^ false.            
     ]    
 }

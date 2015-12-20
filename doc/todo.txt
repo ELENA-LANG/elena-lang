@@ -2,7 +2,8 @@
 In development:
 ------                                                   
               xdev - general implementation
-                       * weak subject / role
+                       * weak subject / role : get &type declared in the extension, providing type, marked as embeddable and is replaced with idle operation
+                         by optimization
 
               sdev - samples
                        * rosetta sample : Check that file exists
