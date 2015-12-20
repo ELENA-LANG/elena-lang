@@ -5,22 +5,6 @@
 #import system'calendar.
 #import extensions.
 
-#class(extension)helper
-{
-    #method is &equal
-        = $nil == self seek &each:m [ m equal:(self firstMember) not ].
-        
-    #method is &ascending
-    [
-        #var former := self enumerator.
-        #var later := self enumerator.
-        
-        later next.
-        
-        ^ $nil == former zip:later &into:(:prev:next)[ next <= prev ] seek &each: b [ b ].
-    ]
-}
-
 #symbol XTester =
 {
     test

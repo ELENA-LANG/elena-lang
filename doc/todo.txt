@@ -2,16 +2,11 @@
 In development:
 ------                                                   
 
-2 <= 2  => 2 > 2
-
-
               xdev - general implementation
                        * weak subject / role : get &type declared in the extension, providing type, marked as embeddable and is replaced with idle operation
                          by optimization
 
               sdev - samples
-                       * rosetta sample : Compare a list of strings
-                       * rosetta sample : Classes
                        * rosetta sample : Deepcopy
                        * rosetta sample : Delegates
                        * rosetta sample : Delete a file
