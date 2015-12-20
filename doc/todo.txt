@@ -6,9 +6,6 @@ In development:
                          by optimization
 
               sdev - samples
-                       * rosetta sample : Check that file exists
-                       * rosetta sample : Closures/Value capture
-                       * rosetta sample : Create a file
                        * rosetta sample : Create a two-dimensional array at runtime
                        * rosetta sample : Compare a list of strings
                        * rosetta sample : Classes

@@ -10,10 +10,10 @@
 {
     test
     [
-        console writeLine:"input.txt file ":("input.txt" file_path is &available iif:"exists":"not found").
-        console writeLine:"\input.txt file ":("\input.txt" file_path is &available iif:"exists":"not found").        
-        console writeLine:"docs directory ":("docs" directory_path is &available iif:"exists":"not found").
-        console writeLine:"\docs directory ":("\docs" directory_path is &available iif:"exists":"not found").
+        "output.txt" file_path textwriter close.
+        "\output.txt" file_path textwriter close.        
+        "docs" directory_path create.
+        "\docs" directory_path create.
     ]
 }.
         

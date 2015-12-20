@@ -298,4 +298,14 @@
             
         ^ false.            
     ]    
+    
+    #method create
+    [
+        #var(type:int) ret := system'external'kernel32 CreateDirectoryW
+            &wide:(self wide)
+            &int:0.
+            
+        (ret == 0)
+            ? [ #throw IOException new:"Cannot create a directory". ].
+    ]
 }
