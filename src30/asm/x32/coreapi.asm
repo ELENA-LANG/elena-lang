@@ -2813,7 +2813,10 @@ Lab2:
   lea  edx, [edx+2]
   sub  ecx, 2
   jnz  short Lab2
-
+  nop
+  nop
+  jmp  short LabEnd
+  
 Lab1:
   mov  eax, 1
 
@@ -2845,6 +2848,9 @@ Lab2:
   lea  edx, [edx+1]
   sub  ecx, 1
   jnz  short Lab2
+  nop
+  nop
+  jmp  short LabEnd
 
 Lab1:
   mov  eax, 1

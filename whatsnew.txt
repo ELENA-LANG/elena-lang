@@ -21,6 +21,7 @@
 [+] new extension : object.toHexInt, object.toHexLong
 [+] new extension : enumerable.zip&into[2], numeric.repeat&each[1]
 [*] extensions'text: WordEnumerator => TokenEnumerator
+[!] critical bug fix : "AA" < "AA" = true
 
 [Samples]
 [+] console sample : random

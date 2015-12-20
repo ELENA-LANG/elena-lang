@@ -1,4 +1,4 @@
-// ==== ver 3.4.1 ===
+// ==== ver 3.4.2 ===
 
 // === basic memory classes ===
 

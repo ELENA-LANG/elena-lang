@@ -1,12 +1,15 @@
 ------                                 
 In development:
 ------                                                   
+
+2 <= 2  => 2 > 2
+
+
               xdev - general implementation
                        * weak subject / role : get &type declared in the extension, providing type, marked as embeddable and is replaced with idle operation
                          by optimization
 
               sdev - samples
-                       * rosetta sample : Create a two-dimensional array at runtime
                        * rosetta sample : Compare a list of strings
                        * rosetta sample : Classes
                        * rosetta sample : Deepcopy
