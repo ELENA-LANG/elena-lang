@@ -22,3 +22,11 @@
 {
     #method => system'internal'handle_group.
 }
+
+// --- extensions ---
+
+#class(extension) dynamicOp
+{
+    #method mix &into:role
+        = Extension(role, self).
+}

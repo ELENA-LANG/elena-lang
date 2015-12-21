@@ -2,20 +2,6 @@
 In development:
 ------                                                   
 
-              xdev - general implementation
-                       * implement #196:
-
-= ( i * i )
-
-i = ( i * i)
-
-x [ .... ]
-
-[ ... ]  - lazy expression
-
-i = { ... }
-
-
                        * fix  #187 : Bug in Extension group object
 
 #class(extension)bottleOp

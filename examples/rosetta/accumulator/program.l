@@ -16,16 +16,19 @@ ELENA is OO language, so a function is in fact an object
 #symbol Function = 
     (:x) [ self append:x ].
 
-#symbol Accumulator = (:anInitialValue)
-    [ Extension(Function, Variable new:anInitialValue) ].
+#class(extension)op
+{
+    #method Accumulator
+        = Variable new:self mix &into:Function.
+}
 
 #symbol Program =
 [
-    #var x := Accumulator:1.
+    #var x := 1 Accumulator.
     
     x:5.
     
-    #var y := Accumulator:3.
+    #var y := 3 Accumulator.
     
     console write:(x:2.3r).
 ].

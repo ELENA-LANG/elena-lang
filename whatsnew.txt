@@ -18,6 +18,7 @@
 [+] new extension : char.is &whitespace
 [+] new extension : object.toHexInt, object.toHexLong
 [+] new extension : enumerable.zip&into[2], numeric.repeat&each[1]
+[+] new system'dynamic extension :  object.mix&into[1]
 [*] extensions'text: WordEnumerator => TokenEnumerator
 [!] critical bug fix : "AA" < "AA" = true
 

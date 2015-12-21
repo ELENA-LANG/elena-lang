@@ -26,7 +26,7 @@
 //        }.
 //    ]
 
-    #method bottleEnumerator = Variable new:self extend 
+    #method bottleEnumerator = Variable new:self mix
 //                    &with:target 
 //                        [  
 //                            {
@@ -43,17 +43,17 @@
 //                            }
 //                        ].
                         
-                    &with:target =
+                    &into:target =
                     {
                         enumerator = Enumerator
                         {
                             next = target > 0.
                             
                                 get = StringWriter new
-                                        writeLine:(self bottleDescription):" of beer on the wall"
-                                        writeLine:(self bottleDescription):" of beer"
+                                        writeLine:(target bottleDescription):" of beer on the wall"
+                                        writeLine:(target bottleDescription):" of beer"
                                         writeLine:"Take one down, pass it around"
-                                        writeLine:((self -= 1) bottleDescription):" of beer on the wall".
+                                        writeLine:((target -= 1) bottleDescription):" of beer on the wall".
                         }.
                     }.
                         
