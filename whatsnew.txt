@@ -8,9 +8,6 @@
 ******************************************************************************
 
 [ELENA]
-[+] weak type, declaring a subject without class bound to it; 
-    sending get&<weak_type> is considered as a virtual operation
-    and is not actually executed
 
 [ELC]
 [+] new project section "references" : adding a path to a library

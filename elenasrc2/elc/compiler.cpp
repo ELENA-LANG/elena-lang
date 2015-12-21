@@ -5207,6 +5207,22 @@ void Compiler :: optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node)
 
 void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
 {
+   if (node == lxDirectCalling && SyntaxTree::existChild(node, lxEmbeddable)) {
+      // check if it is a virtual call
+      if (getVerb(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
+         SyntaxTree::Node callTarget = SyntaxTree::findChild(node, lxTarget);
+
+         ClassInfo info;
+         scope.loadClassInfo(info, callTarget.argument);
+         if (info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+            // if it is an idle call, remove it
+            node = lxExpression;
+
+            return;
+         }
+      }      
+   }
+
    bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
    if (stackSafe) {
       SyntaxTree::Node member = node.firstChild();
@@ -5236,7 +5252,7 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler::optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode)
+void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode)
 {
    SyntaxTree::Node callTarget = SyntaxTree::findChild(callNode, lxTarget);
 
@@ -5375,9 +5391,11 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
             break;
          case lxDirectCalling:
          case lxSDirctCalling:
+         {
             optimizeDirectCall(*scope->moduleScope, current);
             analizeSyntaxExpression(scope, current);
-            break;
+         }
+         break;
          case lxIntOp:
          case lxLongOp:
          case lxRealOp:
@@ -5461,6 +5479,15 @@ bool Compiler :: recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, Sy
    return false;
 }
 
+bool Compiler :: recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node root)
+{
+   SyntaxTree::Node object = tree.findPattern(root, 2,
+      SyntaxTree::NodePattern(lxReturning),
+      SyntaxTree::NodePattern(lxLocal));
+
+   return (object == lxLocal && object.argument == -1);
+}
+
 void Compiler :: defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump)
 {
    SyntaxTree tree(&dump);
@@ -5472,6 +5499,11 @@ void Compiler :: defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump
    ref_t type = 0;
    if (recognizeEmbeddableGet(scope, tree, root, type)) {
       classScope->info.methodHints.add(Attribute(scope.message, maEmbeddableGet), type);
+   }
+
+   // Optimization : subject'get = self
+   if (recognizeEmbeddableIdle(scope, tree, root)) {
+      classScope->info.methodHints.add(Attribute(scope.message, maEmbeddableIdle), -1);
    }
 }
 

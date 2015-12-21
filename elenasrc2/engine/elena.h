@@ -173,12 +173,6 @@ public:
 class ReferenceNs : public String<ident_c, IDENTIFIER_LEN * 2>
 {
 public:
-//   static bool compareNs(const wchar16_t* reference, const wchar16_t* ns)
-//   {
-//      int length = getlength(ns);
-//      return StringHelper::compare(reference, ns, length) && reference[length] == '\'';
-//   }
-
    void pathToName(path_t path)
    {
       ident_c buf[IDENTIFIER_LEN];
@@ -215,11 +209,6 @@ public:
       append('\'');
       append(s);
    }
-
-//   void appendName(const wchar16_t* reference)
-//   {
-//      append(reference + StringHelper::findLast(reference, '\'') + 1);
-//   }
 
    ReferenceNs()
    {
@@ -266,11 +255,6 @@ public:
 class NamespaceName : public String < ident_c, IDENTIFIER_LEN >
 {
 public:
-//   static bool hasNameSpace(const wchar16_t* reference)
-//   {
-//      return (StringHelper::findLast(reference, '\'', -1) != -1);
-//   }
-
    static bool isIncluded(ident_t root, ident_t ns)
    {
       size_t length = getlength(root);
@@ -388,13 +372,14 @@ struct ClassHeader
 
 enum MethodAttribute
 {
-   maTypeMask      = 0x100,
+   maTypeMask       = 0x100,
 
-   maNone          = 0x000,
-   maHint          = 0x001,
-   maType          = 0x102,
-   maEmbeddableGet = 0x103,
-   maEmbeddedInit  = 0x104
+   maNone           = 0x000,
+   maHint           = 0x001,
+   maType           = 0x102,
+   maEmbeddableGet  = 0x103,
+   maEmbeddedInit   = 0x104,
+   maEmbeddableIdle = 0x005,
 };
 
 struct ClassInfo

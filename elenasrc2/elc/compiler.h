@@ -846,6 +846,7 @@ private:
    void analizeSyntaxTree(Scope* scope, MemoryDump& dump);
 
    bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
+   bool recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node);
    void defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump);
 
 public:
