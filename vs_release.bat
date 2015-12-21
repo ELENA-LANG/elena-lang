@@ -403,6 +403,10 @@ md examples\console\sum
 copy %1\examples\console\sum\*.l examples\console\sum
 copy %1\examples\console\sum\*.prj examples\console\sum
 
+md examples\console\random
+copy %1\examples\console\random\*.l examples\console\random
+copy %1\examples\console\random\*.prj examples\console\random
+
 md examples\files\textdb
 copy %1\examples\files\textdb\*.l examples\files\textdb
 copy %1\examples\files\textdb\*.prj examples\files\textdb
@@ -641,6 +645,14 @@ copy %1\examples\rosetta\string_prepend\*.prj examples\rosetta\string_prepend
 md examples\rosetta\ninetynine
 copy %1\examples\rosetta\ninetynine\*.l examples\rosetta\ninetynine
 copy %1\examples\rosetta\ninetynine\*.prj examples\rosetta\ninetynine
+
+md examples\rosetta\evolutionary
+copy %1\examples\rosetta\evolutionary\*.l examples\rosetta\evolutionary
+copy %1\examples\rosetta\evolutionary\*.prj examples\rosetta\evolutionary
+
+md examples\rosetta\compare_str_list
+copy %1\examples\rosetta\compare_str_list\*.l examples\rosetta\compare_str_list
+copy %1\examples\rosetta\compare_str_list\*.prj examples\rosetta\compare_str_list
 
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj

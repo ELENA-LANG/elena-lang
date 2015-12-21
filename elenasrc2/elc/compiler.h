@@ -732,8 +732,8 @@ private:
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
-   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, int mode);
-   ObjectInfo compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
+   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
@@ -786,7 +786,7 @@ private:
 
    void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared);
+   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
    void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 
    void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
@@ -807,7 +807,7 @@ private:
 
    void compileSymbolCode(ClassScope& scope);
 
-   void compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared = false);
+   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
    void compileNestedVMT(DNode node, InlineClassScope& scope);
 
    void compileVMT(DNode member, ClassScope& scope);

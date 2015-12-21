@@ -3,8 +3,55 @@ In development:
 ------                                                   
 
               xdev - general implementation
-                       * weak subject / role : get &type declared in the extension, providing type, marked as embeddable and is replaced with idle operation
-                         by optimization
+                       * implement #196:
+
+= ( i * i )
+
+i = ( i * i)
+
+x [ .... ]
+
+[ ... ]  - lazy expression
+
+
+i = { ... }
+
+
+
+                       * fix  #187 : Bug in Extension group object
+
+#class(extension)bottleOp
+{
+    #method bottleDescription
+        = self literal + (self != 1) iif:" bottles":" bottle".
+
+    #method bottleEnumerator = Extension(Variable new:self, 
+                                {
+                                    enumerator = Enumerator
+                                    {
+                                        next = self > 0.
+
+                                        get = StringWriter new
+                                                writeLine:(self bottleDescription):" of beer on the wall"
+                                                writeLine:(self bottleDescription):" of beer"
+                                                writeLine:"Take one down, pass it around"
+                                                writeLine:((self -= 1) bottleDescription):" of beer on the wall".
+                                    }.
+                                }).                                    
+}
+
+#symbol program =
+[
+    #var bottles := 99.
+
+    bottles bottleEnumerator run &each:printingLn.
+].
+
+
+
+                       * implement #163 : try finally catch statement
+                       * implement #125 : wide literal constant
+                       * implement #167 : stack allocated variable and $nil
 
               sdev - samples
                        * rosetta sample : Deepcopy

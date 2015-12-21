@@ -20,10 +20,12 @@ using namespace _ELENA_;
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
-#define HINT_RETEXPR          0x08000000
 #define HINT_ALT              0x12000000
+#define HINT_RETEXPR          0x08000000
 #define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
+#define HINT_CLOSURE          0x00008000
+
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -2141,19 +2143,26 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    DNode member = objectNode.firstChild();
    switch (member)
    {
-      case nsRetStatement:
       case nsNestedClass:
+      case nsRetStatement:
          if (objectNode.Terminal() != nsNone) {
-            result = compileNestedExpression(objectNode, scope, 0);
+            result = compileClosure(objectNode, scope, 0);
             break;
          }
       case nsSubCode:
       case nsSubjectArg:
       case nsMethodParameter:
-         result = compileNestedExpression(member, scope, 0);
+         result = compileClosure(member, scope, 0);
+         break;
+      case nsLambda:
+      case nsLambdaNestedClass:
+         if (objectNode.Terminal() != nsNone) {
+            result = compileClosure(objectNode, scope, HINT_CLOSURE);
+         }
+         else result = compileClosure(member, scope, HINT_CLOSURE);
          break;
       case nsInlineExpression:
-         result = compileNestedExpression(objectNode, scope, HINT_ACTION);
+         result = compileClosure(objectNode, scope, HINT_ACTION);
          break;
       case nsExpression:
          if (isCollection(member)) {
@@ -3092,9 +3101,9 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
    return retVal;
 }
 
-bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, bool alreadyDeclared)
+bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared)
 {
-   bool lazyExpression = isReturnExpression(node.firstChild());
+   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
 
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
@@ -3135,12 +3144,12 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
    return lazyExpression;
 }
 
-void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, bool alreadyDeclared)
+void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
 {
    _writer.declareClass(scope.tape, scope.reference);
 
    ActionScope methodScope(&scope);
-   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, alreadyDeclared);
+   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode, alreadyDeclared);
 
    // if it is single expression
    if (!lazyExpression) {
@@ -3194,7 +3203,7 @@ void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
 {
    if (test(scope.info.header.flags, elStateless)) {
       ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
@@ -3240,21 +3249,25 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
    }
 }
 
-ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope, int mode)
+ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mode)
 {
    InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
 
-   // if it is an action code block
+   // if it is a lazy expression / multi-statement closure without parameters
    if (node == nsSubCode) {
-      compileAction(node, scope, DNode());
+      compileAction(node, scope, DNode(), mode);
+   }
+   // if it is a single-statement closure / labda function without parameters
+   else if (node == nsLambda) {
+      compileAction(node, scope, DNode(), mode);
+   }
+   // if it is a closure / labda function with a parameter
+   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
+      compileAction(node.firstChild(), scope, node, mode);
    }
    // if it is an action code block
    else if (node == nsMethodParameter || node == nsSubjectArg) {
-      compileAction(goToSymbol(node, nsInlineExpression), scope, node);
-   }
-   // if it is a shortcut action code block
-   else if (node == nsObject && test(mode, HINT_ACTION)) {
-      compileAction(node.firstChild(), scope, node);
+      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
    }
    // if it is inherited nested class
    else if (node.Terminal() != nsNone) {
@@ -3269,7 +3282,8 @@ ObjectInfo Compiler :: compileNestedExpression(DNode node, CodeScope& ownerScope
 
       compileNestedVMT(node, scope);
    }
-   return compileNestedExpression(node, ownerScope, scope, mode);
+
+   return compileClosure(node, ownerScope, scope, mode);
 }
 
 ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
@@ -4966,7 +4980,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
-         declareActionScope(objNode, classScope, DNode(), methodScope, false);
+         declareActionScope(objNode, classScope, DNode(), methodScope, 0, false);
 
          declareSingletonAction(classScope, methodScope);
          singleton = true;
@@ -4975,7 +4989,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
-         declareActionScope(objNode, classScope, expression.firstChild(), methodScope, false);
+         declareActionScope(objNode, classScope, expression.firstChild(), methodScope, 0, false);
 
          declareSingletonAction(classScope, methodScope);
          singleton = true;
@@ -4984,7 +4998,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
          ActionScope methodScope(&classScope);
 
-         declareActionScope(objNode, classScope, objNode, methodScope, false);
+         declareActionScope(objNode, classScope, objNode, methodScope, 0, false);
 
          declareSingletonAction(classScope, methodScope);
          singleton = true;
