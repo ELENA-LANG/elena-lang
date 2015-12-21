@@ -13,9 +13,7 @@ x [ .... ]
 
 [ ... ]  - lazy expression
 
-
 i = { ... }
-
 
 
                        * fix  #187 : Bug in Extension group object

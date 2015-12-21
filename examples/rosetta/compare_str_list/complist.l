@@ -19,7 +19,7 @@
         
         later next.
         
-        ^ $nil == former zip:later &into:(:prev:next)[ next <= prev ] seek &each: b [ b ].
+        ^ $nil == former zip:later &into:(:prev:next)[ next <= prev ] seek &each: b=[ b ].
     ]
 }
 

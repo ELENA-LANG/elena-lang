@@ -8,7 +8,7 @@
 ******************************************************************************
 
 [ELENA]
-[+] new simplified closure declaration syntax : i = ( i ), = ( i ), i = { ... }
+[+] new simplified closure declaration syntax : i = [ i ], = [ i ], i = { ... }
 
 [ELC]
 [+] new project section "references" : adding a path to a library

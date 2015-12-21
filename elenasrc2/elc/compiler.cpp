@@ -3111,7 +3111,9 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
       // define message parameter
       methodScope.message = declareInlineArgumentList(argNode, methodScope);
 
-      node = node.select(nsSubCode);
+      if (node != nsLambdaNestedClass) {
+         node = node.select(nsSubCode);
+      }
    }
 
    if (!alreadyDeclared) {
@@ -4078,7 +4080,10 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
    if (isReturnExpression(node.firstChild())) {
       compileRetExpression(node.firstChild(), codeScope, HINT_ROOT);
    }
-   else if (node == nsInlineExpression) {
+   else if (node == nsLambdaNestedClass) {
+      compileClosure(node.firstChild(), codeScope, HINT_ROOT);
+   }
+   else if (node == nsInlineExpression || node == nsLambda) {
       // !! this check should be removed, as it is no longer used
       compileCode(node.firstChild(), codeScope);
    }
@@ -5048,7 +5053,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(classNode, classScope, DNode(), true);
+         compileAction(classNode, classScope, DNode(), 0, true);
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
@@ -5058,7 +5063,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(classNode, classScope, expression.firstChild(), true);
+         compileAction(classNode, classScope, expression.firstChild(), 0, true);
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
@@ -5068,7 +5073,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(goToSymbol(classNode, nsInlineExpression), classScope, classNode, true);
+         compileAction(goToSymbol(classNode, nsInlineExpression), classScope, classNode, 0, true);
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
