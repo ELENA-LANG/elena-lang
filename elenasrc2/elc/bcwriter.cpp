@@ -2723,7 +2723,7 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
    endExternalBlock(tape);
 }
 
-void ByteCodeWriter ::generateCall(CommandTape& tape, SNode callNode)
+ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 {
    SNode bpNode = SyntaxTree::findChild(callNode, lxBreakpoint);
    if (bpNode != lxNone) {
@@ -2739,11 +2739,12 @@ void ByteCodeWriter ::generateCall(CommandTape& tape, SNode callNode)
    else tape.write(bcALoadSI, 0);
 
    // copym message
+   ref_t message = callNode.argument;
    SNode msg = SyntaxTree::findChild(callNode, lxMessage);
-   if (msg != lxNone) {
-      tape.write(bcCopyM, msg.argument);
-   }
-   else tape.write(bcCopyM, callNode.argument);
+   if (msg != lxNone)
+      message = msg.argument;
+
+   tape.write(bcCopyM, message);
 
    SNode target = SyntaxTree::findChild(callNode, lxTarget);
    if (callNode == lxDirectCalling) {
@@ -2760,6 +2761,8 @@ void ByteCodeWriter ::generateCall(CommandTape& tape, SNode callNode)
 
    if (bpNode != lxNone)
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+
+   return message;
 }
 
 void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
@@ -2872,15 +2875,14 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       }
    }
 
-   generateCall(tape, node);
+   ref_t message = generateCall(tape, node);
 
    if (argUnboxMode) {
       releaseArgList(tape);
       releaseObject(tape);
    }
-   else if (paramCount > getParamCount(node.argument) + 1) {
-      //   int  spaceToRelease = callStack.oargUnboxing ? -1 : (callStack.parameters.Count() - getParamCount(messageRef) - 1);
-      releaseObject(tape, paramCount - getParamCount(node.argument) - 1);
+   else if (paramCount > getParamCount(message) + 1) {
+      releaseObject(tape, paramCount - getParamCount(message) - 1);
    }
 
    // unbox the arguments

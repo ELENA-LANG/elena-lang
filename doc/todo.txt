@@ -2,16 +2,11 @@
 In development:
 ------                                                   
 
-              xdev - general implementation
-                       * implement #163 : try finally catch statement
-                       * implement #125 : wide literal constant
-                       * implement #167 : stack allocated variable and $nil
-                       * implement  #198 : self and $self in the closure
+              xdev - general implementation                       
+                       * subject : no need to unbox - should be readonly
+                       * no need to box : vars::varRef set:42, where varRef is subject
 
               sdev - samples
-                       * rosetta sample : Deepcopy
-                       * rosetta sample : Delegates
-                       * rosetta sample : Delete a file
                        * rosetta sample : Dynamic variable names
                        * rosetta sample : Empty string
                        * rosetta sample : Ethiopian multiplication
@@ -64,6 +59,12 @@ In development:
  
                        * refactor cpu_sim : assembler
                        * rosetta sample : ABC_Problem
+                       * rosetta sample : Deepcopy
+
+              xdev - general implementation
+                       * implement #125 : wide literal constant
+                       * implement #167 : stack allocated variable and $nil
+                       * implement  #198 : self and $self in the closure
 
 ------                                 
 Pipeline:
@@ -89,7 +90,7 @@ Pipeline:
 ------                                 
               fdev - upndown
                        * start server / connect to server
-
+                       
               xdev - general implementation
                        * reimplement embeddable constructor
                        * implementing 2.0.0 issues

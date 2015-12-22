@@ -244,7 +244,7 @@ public:
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-   void generateCall(CommandTape& tape, SyntaxTree::Node node);
+   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
 
    void generateLocking(CommandTape& tape, SyntaxTree::Node node);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node);

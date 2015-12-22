@@ -308,4 +308,11 @@
         (ret == 0)
             ? [ #throw IOException new:"Cannot create a directory". ].
     ]
+    
+    #method delete
+    [
+        #var(type:int) ret := system'external'kernel32 RemoveDirectoryW &wide:(self wide).
+        
+       ^ ret != 0.
+    ]    
 }
