@@ -245,6 +245,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
    charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
+   verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
@@ -951,7 +952,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.size = 4;
          info.header.flags |= elDebugDWORD;
 
-         info.header.flags |= (elStructureRole | elMessage | elEmbeddable);
+         info.header.flags |= (elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
       }
       else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
@@ -960,7 +961,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.size = 4;
          info.header.flags |= elDebugReference;
 
-         info.header.flags |= (elStructureRole | elSymbol);
+         info.header.flags |= (elStructureRole | elSymbol | elReadOnlyRole);
       }
       else if (StringHelper::compare(terminal, HINT_SIGNATURE)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
@@ -969,7 +970,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
          info.size = 4;
          info.header.flags |= elDebugSubject;
 
-         info.header.flags |= (elStructureRole | elSignature | elEmbeddable);
+         info.header.flags |= (elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
       }
       else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
          info.header.flags |= elExtension;
@@ -5254,6 +5255,18 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
 
          member = member.nextNode();
       }
+   }
+
+   // if target is overridden with stack allocated subject / messager / verb
+   SyntaxTree::Node overriddenTarget = SyntaxTree::findChild(node, lxOverridden);
+   if (node == lxDirectCalling && overriddenTarget != lxNone) {
+      SyntaxTree::Node boxing = SyntaxTree::findChild(overriddenTarget, lxBoxing, lxCondBoxing);
+      if (boxing != lxNone) {
+         SyntaxTree::Node target = SyntaxTree::findChild(boxing, lxTarget);
+         if (target.argument == scope.signatureReference || target.argument == scope.verbReference) {
+            boxing = lxExpression;
+         }
+      }      
    }
 }
 

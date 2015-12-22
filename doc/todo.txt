@@ -2,10 +2,6 @@
 In development:
 ------                                                   
 
-              xdev - general implementation                       
-                       * subject : no need to unbox - should be readonly
-                       * no need to box : vars::varRef set:42, where varRef is subject
-
               sdev - samples
                        * rosetta sample : Dynamic variable names
                        * rosetta sample : Empty string

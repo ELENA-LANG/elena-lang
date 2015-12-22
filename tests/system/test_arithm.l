@@ -9,6 +9,10 @@
 {
     test
     [
+        #var vars := DynamicStruct new.
+        #var(type:subject) varRef := %x.
+        vars::varRef set:42.
+        #var v := vars::varRef get.
     ]
 }.
         
