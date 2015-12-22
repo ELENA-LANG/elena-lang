@@ -3,7 +3,6 @@ In development:
 ------                                                   
 
               sdev - samples
-                       * rosetta sample : Dynamic variable names
                        * rosetta sample : Empty string
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : File size
