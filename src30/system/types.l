@@ -16,6 +16,7 @@
 #subject(class:system'RealNumber)   real.
 #subject(class:system'CharValue)    char.
 #subject(class:system'Message)      mssg.
+#subject(class:system'ExtensionMessage) ext_mssg.
 #subject(class:system'Verb)         verb.
 #subject(class:system'Signature)    subject.
 #subject(class:system'Symbol)       symbol_ref.

@@ -160,6 +160,7 @@ enum ByteCode
    bcAJumpVI         = 0xA1,
    bcACallVI         = 0xA2,
    bcCallR           = 0xA3,
+   bcAJumpI          = 0xA4,
    bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
    bcAddress         = 0xA7,

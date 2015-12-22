@@ -21,6 +21,9 @@
     #method textreader = thePath::fileExtOp textreader.
     
     #method textwriter = thePath::fileExtOp textwriter.
+    
+    #method(type:int)length
+        = thePath::fileOp length.
 }
 
 // --- fileOp ---
@@ -59,5 +62,15 @@
         self::fileOp read &textbuffer:anOutput.
         
         ^ anOutput wide.
+    ]
+    
+    #method(type:int,suppress:w2)length
+    [
+        #var(type:stream)stream := FileStream openForRead &path:self.
+        #var(type:int) fileLen := stream length.        
+        
+        stream close.
+        
+        ^ fileLen.
     ]
 }

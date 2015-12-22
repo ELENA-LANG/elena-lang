@@ -1,11 +1,12 @@
 ------                                 
 In development:
 ------                                                   
+              xdev - general implementation
+                       * introduce extension constant / wrapper to be used like system'Message
+
+                          %(outputOp.writeLiteral)(1) - should verify if such an extension exists?
 
               sdev - samples
-                       * rosetta sample : Empty string
-                       * rosetta sample : Ethiopian multiplication
-                       * rosetta sample : File size
                        * rosetta sample : First-class functions
                        * rosetta sample : Flipping bits game
                        * rosetta sample : Identity matrix
@@ -55,7 +56,8 @@ In development:
                        * refactor cpu_sim : assembler
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
-
+                       * rosetta sample : Ethiopian multiplication
+                       
               xdev - general implementation
                        * implement #125 : wide literal constant
                        * implement #167 : stack allocated variable and $nil

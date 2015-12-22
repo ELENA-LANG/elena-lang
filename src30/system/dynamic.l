@@ -30,7 +30,7 @@
 
 // --- Message ---
 
-/// A dynamic message extender
+/// A message constant
 #class(sealed,message) Message
 {
     /// Loads a message
@@ -46,6 +46,29 @@
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     #method => system'internal'handle_message.
 }
+
+// --- ExtensionMessage ---
+
+/// An extended message constant
+#class(sealed,extension_message) ExtensionMessage
+{
+    /// Loads a message
+    #constructor(stacksafe) new &ext_mssg:aMessage
+        => system'internal'int_copy.
+
+    #method ext_mssg
+        = $self.
+                        
+    #method subject
+        => system'internal'mssg_getsubj.
+
+    #method(stacksafe) equal &ext_mssg : aSubject
+        => system'internal'long_equal.
+        
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    #method => system'internal'handle_ext_message.
+}
+
 
 // --- Signature ---
 

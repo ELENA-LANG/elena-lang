@@ -262,6 +262,7 @@ Instance :: Instance(ELENAMachine* machine)
    _realClass.copy(_config.forwards.get(REAL_FORWARD));
    _longClass.copy(_config.forwards.get(LONG_FORWARD));
    _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
+   _extMsgClass.copy(_config.forwards.get(EXT_MESSAGE_FORWARD));
    _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
    _verbClass.copy(_config.forwards.get(VERB_FORWARD));
 

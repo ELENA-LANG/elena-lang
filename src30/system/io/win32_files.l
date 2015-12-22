@@ -278,7 +278,7 @@
         #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
         
        ^ ret != 0.
-    ]    
+    ]
 }
 
 // --- directoryExtOp

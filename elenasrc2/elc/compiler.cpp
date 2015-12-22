@@ -954,6 +954,15 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
 
          info.header.flags |= (elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
       }
+      else if (StringHelper::compare(terminal, HINT_EXT_MESSAGE)) {
+         if (testany(info.header.flags, elStructureRole | elNonStructureRole))
+            raiseError(wrnInvalidHint, terminal);
+
+         info.size = 8;
+         //info.header.flags |= elDebugSubject;
+
+         info.header.flags |= (elStructureRole | elMessage | elReadOnlyRole);
+      }
       else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole))
             raiseError(wrnInvalidHint, terminal);
@@ -2039,6 +2048,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okMessageConstant:
          scope.writer->newNode(lxMessageConstant, object.param);
          break;
+      case okExtMessageConstant:
+         scope.writer->newNode(lxExtMessageConstant, object.param);
+         break;
       case okSignatureConstant:
          scope.writer->newNode(lxSignatureConstant, object.param);
          break;
@@ -2196,7 +2208,21 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 
    IdentifierString message;
 
+   // if it is an extension message
+   bool extensionMessage = false;
+   if (arg.nextNode() == nsExtensionReference) {
+      ref_t extensionRef = scope.moduleScope->mapTerminal(arg.Terminal());
+
+      message.copy(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+
+      arg = arg.nextNode().firstChild();
+
+      extensionMessage = true;
+   }
+
    // reserve place for param counter
+   int start = message.Length();
    message.append('0');
    message.append('#');
 
@@ -2227,7 +2253,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
          scope.moduleScope->mapSubject(arg.Terminal(), message);
       }
       else {
-         retVal.kind = okMessageConstant;
+         retVal.kind = extensionMessage ? okExtMessageConstant : okMessageConstant;
 
          ref_t verb_id = _verbs.get(arg.Terminal());
          if (verb_id == 0) {
@@ -2263,7 +2289,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
          else scope.raiseError(errInvalidOperation, size);
 
          // define the number of parameters
-         message[0] = message[0] + (char)count;
+         message[start] = message[start] + (char)count;
       }
    }
 

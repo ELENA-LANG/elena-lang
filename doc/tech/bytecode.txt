@@ -212,6 +212,8 @@ ELENA byte codes (or ecodes)
  Call operations:
  ----------------
  call                       - call [acc] procedure
+
+ jumpn n                    - jump [acc+n] procedure
  
  callextr r                 - calls the external procedure ; index contains the result
 
@@ -261,6 +263,8 @@ ELENA byte codes (or ecodes)
  acallvi i                  - call acc::VMT[i] method
 
  ajumpvi i                  - redirect to acc::VMT[i] method
+ 
+ ajumpi i                   - redirect to acc[i] address
  
  bcreate                    - create the object with size=index and vmt=acc, out : acc  
  

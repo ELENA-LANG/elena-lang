@@ -3596,6 +3596,35 @@ labDefault:
   
 end
 
+procedure handle_ext_message
+
+  bloadsi 1
+  ifb labDefault
+
+  nload
+  eswap
+  setverb EVAL_MESSAGE_ID
+  setsubj 0
+  else labEnd
+  nload
+  ecopyd
+  ajumpi 4
+
+labEnd:
+  open 1
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[0]
+  throw
+
+labDefault:
+  bsredirect  
+  open 1
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[0]
+  throw
+  
+end
+
 procedure handle_verb
 
   bloadsi 1

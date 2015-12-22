@@ -29,7 +29,7 @@
     
     #method(stacksafe) readLength &vint:aLength [ aLength << 0. ] // !! default implementation
         
-    #method length
+    #method(type:int,stacksafe,embeddable,suppress:w2) length
     [
         #var(type:int)aLength.
         $self readLength &vint:aLength.
@@ -39,13 +39,12 @@
     
     #method(stacksafe) readIndex &vint:anIndex []
 
-    #method index
+    #method(type:int,stacksafe,embeddable,suppress:w2) index
     [
-        #var(type:vint)anIndex.
-        
+        #var(type:vint)anIndex.        
         $self readIndex &vint:anIndex.
         
-        ^ IntNumber new &int:anIndex.
+        ^ anIndex.
     ]
 
     #method write &index:anIndex

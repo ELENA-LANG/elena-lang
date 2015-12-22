@@ -8,12 +8,14 @@
 ******************************************************************************
 
 [ELENA]
+[!] binary incompatible due to new opcodes
 [+] new simplified closure declaration syntax : i = [ i ], = [ i ], i = { ... }
 
 [ELC]
 [+] new project section "references" : adding a path to a library
 
 [LIB]
+[+] system : ExtensionMessage
 [+] new extension : file.literalContent, file.wideContent
 [+] new extension : char.is &whitespace
 [+] new extension : object.toHexInt, object.toHexLong

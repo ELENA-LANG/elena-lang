@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
 
-#define ELENAVM_REVISION_NUMBER    0x0002             // ELENAVM revision version
+#define ELENAVM_REVISION_NUMBER    0x0003             // ELENAVM revision version
 
 namespace _ELENA_
 {
@@ -190,6 +190,7 @@ protected:
    IdentifierString _longClass;
    IdentifierString _realClass;
    IdentifierString _msgClass;
+   IdentifierString _extMsgClass;
    IdentifierString _signClass;
    IdentifierString _verbClass;
 
@@ -299,6 +300,11 @@ public:
    virtual ident_t getMessageClass()
    {
       return _msgClass;
+   }
+
+   virtual ident_t getExtMessageClass()
+   {
+      return _extMsgClass;
    }
 
    virtual ident_t getVerbClass()

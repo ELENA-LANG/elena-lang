@@ -34,6 +34,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _long = project->resolveForward(LONG_FORWARD);
    _real = project->resolveForward(REAL_FORWARD);
    _message = project->resolveForward(MESSAGE_FORWARD);
+   _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
    _signature = project->resolveForward(SIGNATURE_FORWARD);
    _verb = project->resolveForward(VERB_FORWARD);
 
@@ -186,6 +187,11 @@ ident_t ExecutableImage::getRealClass()
 ident_t ExecutableImage::getMessageClass()
 {
    return _message;
+}
+
+ident_t ExecutableImage::getExtMessageClass()
+{
+   return _ext_message;
 }
 
 ident_t ExecutableImage::getSignatureClass()

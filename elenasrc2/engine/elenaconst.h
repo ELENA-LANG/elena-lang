@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0009            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0002
+   #define ENGINE_MINOR_VERSION     0x0003
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -175,7 +175,8 @@ namespace _ELENA_
       mskCharRef             = 0x07000000,   // reference to character constant
       mskSymbolLoaderRef     = 0x08000000,   // reference to symbol loader
       mskSignature           = 0x09000000,   // message signature constant
-      mskVerb                = 0x0A000000,   // message signature constant
+      mskVerb                = 0x0A000000,   // message verb constant
+      mskExtMessage          = 0x0B000000,   // external message verb constant
       mskPreloaded           = 0x0C000000,   // prelooded mask, should be used in combination with image mask
    };
 
@@ -337,7 +338,7 @@ namespace _ELENA_
    #define ELENA_SIGNITURE          "ELENA.9."       // the stand alone image
    #define ELENACLIENT_SIGNITURE    "VM.ELENA.9."    // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.9.02"     // the module version
+   #define MODULE_SIGNATURE         "ELENA.9.03"     // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.4"
 
   // --- ELENA core module names ---
@@ -468,6 +469,7 @@ namespace _ELENA_
    #define HINT_LIMITED            "limited"
    #define HINT_MESSAGE            "message"
    #define HINT_SIGNATURE          "signature"
+   #define HINT_EXT_MESSAGE        "extension_message"
    #define HINT_SYMBOL             "symbol"
    #define HINT_EXTENSION          "extension"
    #define HINT_GROUP              "group"
@@ -507,6 +509,7 @@ namespace _ELENA_
    #define TRUE_FORWARD             "'$true"
    #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
+   #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
    #define ARRAY_FORWARD            "'$array"

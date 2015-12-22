@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "bcopys",
    "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
 
-   "jump", "ajumpvi", "acallvi", "callr", "unknown", "callextr", "hook", "address",
+   "jump", "ajumpvi", "acallvi", "callr", "ajumpi", "callextr", "hook", "address",
    "unknown", "less", "notless", "ifb", "elseb", "if", "else", "next",
 
    "pushn", "eloadfi", "pushr", "unknown", "pushai", "esavefi", "pushfi", "dloadfi",

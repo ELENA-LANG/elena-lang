@@ -5,15 +5,58 @@
 #import system'calendar.
 #import extensions.
 
+//Number extend [
+//   cube [ ^self raisedTo: 3 ]
+//].
+//Number extend [
+//   cubeRoot [ ^self raisedTo: (1 / 3) ]
+//].
+// 
+//forward := #( #cos #sin #cube ).
+//reverse := #( #arcCos #arcSin #cubeRoot ).
+// 
+//composer := [ :f :g | [ :x | f value: (g value: x) ] ].
+// 
+//"let us create composed funcs"
+//compounds := OrderedCollection new.
+// 
+//1 to: 3 do: [ :i |
+//  compounds add: ([ :j | composer value: [ :x | x perform: (forward at: j) ]
+//                                  value: [ :x | x perform: (reverse at: j) ] ] value: i)
+//].
+// 
+//compounds do: [ :r | (r value: 0.5) displayNl ].
+
+
+
+//class Program
+//{
+//    delegate Func<A,C> Composer<A,B,C>(Func<B,C> f, Func<A,B> g);
+// 
+//    static void Main(string[] args)
+//    {
+//        Func<double, double> cube = x => Math.Pow(x, 3);
+//        Func<double, double> croot = x => Math.Pow(x, (double)1/3);
+// 
+//        var fun = new[] { Math.Sin, Math.Cos, cube };
+//        var inv = new[] { Math.Asin, Math.Acos, croot };
+//        Composer<double, double, double> compose = (f, g) => delegate(double x) { return f(g(x)); };
+// 
+//        for (var i = 0; i < fun.Length; ++i)
+//        {
+//            Console.WriteLine(compose(fun[i],inv[i])(0.5));
+//        }
+//    }
+//}
+// 
+
+
 #symbol XTester =
 {
     test
     [
-        #var vars := DynamicStruct new.
-        #var(type:subject) varRef := %x.
-        vars::varRef set:42.
-        #var v := vars::varRef get.
-    ]
+//        #var funcs := ()
+    ]            
 }.
         
 #symbol XTest =
