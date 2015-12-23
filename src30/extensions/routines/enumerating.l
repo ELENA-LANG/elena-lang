@@ -13,7 +13,13 @@
     #field theLine.
 
     #constructor new
+    [ 
+    ]
+
+    #constructor new : source
+        <= (new)
     [
+        theReader := source textreader.
     ]
 
     #constructor new &stream:aStream &encoder:anEncoder

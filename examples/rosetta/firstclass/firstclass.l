@@ -1,3 +1,9 @@
+// Write a program to create an ordered collection A of functions of a real number. At least one function should be built-in and 
+// at least one should be user-defined; try using the sine, cosine, and cubing functions. 
+// Fill another collection B with the inverse of each function in A. 
+// Implement function composition as in Functional Composition. Finally, demonstrate that the result of applying the composition 
+// of each function in A and its inverse in B to a value, is the original value
+
 #define system.
 #define system'routines.
 #import system'math.

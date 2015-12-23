@@ -5,69 +5,21 @@
 #import system'calendar.
 #import extensions.
 
-#import system'math.
+#import system'io.
 #import extensions'routines.
-
-//Number extend [
-//   cube [ ^self raisedTo: 3 ]
-//].
-//Number extend [
-//   cubeRoot [ ^self raisedTo: (1 / 3) ]
-//].
-// 
-//forward := #( #cos #sin #cube ).
-//reverse := #( #arcCos #arcSin #cubeRoot ).
-// 
-//composer := [ :f :g | [ :x | f value: (g value: x) ] ].
-// 
-//"let us create composed funcs"
-//compounds := OrderedCollection new.
-// 
-//1 to: 3 do: [ :i |
-//  compounds add: ([ :j | composer value: [ :x | x perform: (forward at: j) ]
-//                                  value: [ :x | x perform: (reverse at: j) ] ] value: i)
-//].
-// 
-//compounds do: [ :r | (r value: 0.5) displayNl ].
-
-
-
-//class Program
-//{
-//    delegate Func<A,C> Composer<A,B,C>(Func<B,C> f, Func<A,B> g);
-// 
-//    static void Main(string[] args)
-//    {
-//        Func<double, double> cube = x => Math.Pow(x, 3);
-//        Func<double, double> croot = x => Math.Pow(x, (double)1/3);
-// 
-//        var fun = new[] { Math.Sin, Math.Cos, cube };
-//        var inv = new[] { Math.Asin, Math.Acos, croot };
-//        Composer<double, double, double> compose = (f, g) => delegate(double x) { return f(g(x)); };
-// 
-//        for (var i = 0; i < fun.Length; ++i)
-//        {
-//            Console.WriteLine(compose(fun[i],inv[i])(0.5));
-//        }
-//    }
-//}
-// 
-
-#class(extension)op
-{
-    #method compose : f : g
-        = (self::g eval)::f eval.
-}
 
 #symbol XTester =
 {
     test    
     [
-        #var fs := (%(mathOp get&sin)(0), %(mathOp get&cos)(0), =[ self power:3.0r ]).
-        #var gs := (%(mathOp get&arcsin)(0), %(mathOp get&arccos)(0), =[ self power:(1.0r / 3) ]).
-
-        fs zip:gs &into: (:f:g)[ 0.5r compose:f:g ]
-            run &each:printingLn.
+        //ReaderEnumerator new:("file.txt" file_path textreader) run &each:printingLn.
+        
+        #var reader := "file.txt" file_path textreader.
+        #loop (reader available)?
+        [
+            console writeLine:(reader read &literal).
+        ].
+        
     ]            
 }.
         

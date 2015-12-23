@@ -2533,21 +2533,23 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    if (object.type != 0 && scope.moduleScope->extensionHints.exist(messageRef, object.type)) {
       type = object.type;
    }
-   // if class reference available - select the possible type
    else {
       if (scope.moduleScope->extensionHints.exist(messageRef)) {
          ref_t classRef = resolveObjectReference(scope, object);
-         SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
-         while (!it.Eof()) {
-            if (it.key() == messageRef) {
-               if (scope.moduleScope->typeHints.exist(*it, classRef)) {
-                  type = *it;
+         // if class reference available - select the possible type
+         if (classRef != 0) {
+            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
+            while (!it.Eof()) {
+               if (it.key() == messageRef) {
+                  if (scope.moduleScope->typeHints.exist(*it, classRef)) {
+                     type = *it;
 
-                  break;
+                     break;
+                  }
                }
-            }
 
-            it++;
+               it++;
+            }
          }
       }
    }

@@ -145,6 +145,8 @@
     [
     ]
 
+    #method textreader = $self.
+
     #method stream [ #throw NotSupportedException new. ]
 
     #method encoder [ #throw NotSupportedException new. ]

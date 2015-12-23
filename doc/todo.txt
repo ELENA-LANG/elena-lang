@@ -2,9 +2,6 @@
 In development:
 ------                                                   
               sdev - samples
-                       * rosetta sample : First-class functions
-                       * rosetta sample : Flipping bits game
-                       * rosetta sample : Identity matrix
                        * rosetta sample : Input loop
                        * rosetta sample : Integer comparison
                        * rosetta sample : Inheritance/Multiple
@@ -48,13 +45,14 @@ In development:
                        * rosetta sample : Test a function
                        * rosetta sample : Tree traversal                       
  
+                       * fix c_a_g ($self in the closure refer to the closure)
+                       * test basic samples 
+                       
                        * refactor cpu_sim : assembler
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
-                       
-                       * fix c_a_g ($self in the closure refer to the closure)
-                       * test basic samples 
+                       * rosetta sample : Flipping bits game
                        
               xdev - general implementation     
                        * implement #125 : wide literal constant
