@@ -37,4 +37,6 @@
 ..\..\bin\elc -cstring_prepend\string_prepend.prj
 ..\..\bin\elc -cninetynine\ninetynine.prj
 ..\..\bin\elc -cevolutionary\evolutionary.prj
-..\..\bin\elc -compare_str_list\complist.prj
+..\..\bin\elc -ccompare_str_list\complist.prj
+..\..\bin\elc -cdynamic_var\dynamic_var.prj
+..\..\bin\elc -cfirstclass\firstclass.prj

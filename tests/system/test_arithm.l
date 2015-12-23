@@ -6,6 +6,7 @@
 #import extensions.
 
 #import system'math.
+#import extensions'routines.
 
 //Number extend [
 //   cube [ ^self raisedTo: 3 ]
@@ -52,41 +53,21 @@
 //}
 // 
 
-//#class(extension)op
-//{
-//    #method compose : f : g
-//        = (self::g eval)::f eval.
-//}
+#class(extension)op
+{
+    #method compose : f : g
+        = (self::g eval)::f eval.
+}
 
 #symbol XTester =
 {
     test    
     [
-        #var f := =[ self power:3 ].
-        
-        #var n := 0.5r.
-        
-        #var r := n::f eval.
-        
-        
-        
-//        #var fs = (%(mathOp get&sin)(0), %(mathOp get&cos)(0), =[ self power:3 ]).
-//        
-//        
-//        #var f := %(mathOp get&sin)(0).
-//        #var g := %(mathOp get&arcsin)(0).
-//        
-//        #var r := (n::g eval)::f eval.
-//                
-                                                
-        //#var r3 := n::f get.
-        
-        
-        //#var g := %(mathOp arcsin)(1).
-        
-        
-        
-        //#var r := (0.5r :: f) eval.
+        #var fs := (%(mathOp get&sin)(0), %(mathOp get&cos)(0), =[ self power:3.0r ]).
+        #var gs := (%(mathOp get&arcsin)(0), %(mathOp get&arccos)(0), =[ self power:(1.0r / 3) ]).
+
+        fs zip:gs &into: (:f:g)[ 0.5r compose:f:g ]
+            run &each:printingLn.
     ]            
 }.
         

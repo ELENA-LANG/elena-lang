@@ -658,6 +658,10 @@ md examples\rosetta\dynamic_var
 copy %1\examples\rosetta\dynamic_var\*.l examples\rosetta\dynamic_var
 copy %1\examples\rosetta\dynamic_var\*.prj examples\rosetta\dynamic_var
 
+md examples\rosetta\firstclass
+copy %1\examples\rosetta\firstclass \*.l examples\rosetta\firstclass
+copy %1\examples\rosetta\firstclass\*.prj examples\rosetta\firstclass
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj

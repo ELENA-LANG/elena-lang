@@ -92,11 +92,19 @@
     ]
 
     #method power : aPower
-    [
-        #var dispatcher := self cast:%eval &to:mathOpDispatcher.
-        
-        ^ self::dispatcher power : aPower.
-    ]
+        = aPower cast:%eval &to:
+        {
+            eval:target &int:n
+            [
+                #var dispatcher := self cast:%eval &to:mathOpDispatcher.
+                
+                ^ self::dispatcher power : aPower.                
+            ]
+                
+            eval:target &real:n
+                = target::realOp power &real:n.
+        }
+        &with:self.
 
     #method sqr
     [

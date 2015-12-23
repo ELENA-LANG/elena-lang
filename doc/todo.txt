@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                                                   
-              xdev - general implementation     
-                       * implement  #198 : self and $self in the closure
-
               sdev - samples
                        * rosetta sample : First-class functions
                        * rosetta sample : Flipping bits game

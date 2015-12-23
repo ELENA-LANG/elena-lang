@@ -423,6 +423,26 @@
         ^ RealNumber new &real:aRetVal.
     ]
 
+    #method (type:real)power &real:y
+    [
+        #var(type:real)x := self real.
+        
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0.0r)
+            ? [ ^ 1.0r. ].
+            
+        realOpController ln &real:x &vreal:x.
+        
+        x := x multiply &real:y.
+        
+        realOpController exp &real:x &vreal:x.
+            
+        ^ RealNumber new &real:x.            
+            
+    ]
+
     #method(type:real)power &int:y
     [
         #var(type:real)x := self real.
