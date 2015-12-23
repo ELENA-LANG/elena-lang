@@ -1329,15 +1329,6 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 {
 }
 
-ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
-{
-   // action does not support this variable
-   if (StringHelper::compare(identifier, THIS_VAR)) {
-      return parent->mapObject(identifier);
-   }
-   else return MethodScope::mapObject(identifier);
-}
-
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(SymbolScope* parent, SyntaxWriter* writer)
@@ -1447,11 +1438,8 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
-   if (StringHelper::compare(identifier, THIS_VAR)) {
-      Outer owner = mapSelf();
-
-      // map as an outer field (reference to outer object and outer object field index)
-      return ObjectInfo(okOuter, owner.reference);
+   if (StringHelper::compare(identifier, SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       Outer outer = outers.get(identifier);
@@ -1488,10 +1476,6 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
             mapKey(info.fields, identifier.value, outer.reference);
 
             return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
-         }
-         // if inline symbol declared in symbol it treats self variable in a special way
-         else if (StringHelper::compare(identifier, SELF_VAR)) {
-            return ObjectInfo(okParam, (size_t)-1);
          }
          else if (outer.outerObject.kind == okUnknown) {
             // check if there is inherited fields

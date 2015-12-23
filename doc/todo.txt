@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------                                                   
+              xdev - general implementation     
+                       * implement  #198 : self and $self in the closure
+
               sdev - samples
                        * rosetta sample : First-class functions
                        * rosetta sample : Flipping bits game
@@ -53,10 +56,12 @@ In development:
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
                        
+                       * fix c_a_g ($self in the closure refer to the closure)
+                       * test basic samples 
+                       
               xdev - general implementation     
                        * implement #125 : wide literal constant
                        * implement #167 : stack allocated variable and $nil
-                       * implement  #198 : self and $self in the closure
 
 ------                                 
 Pipeline:

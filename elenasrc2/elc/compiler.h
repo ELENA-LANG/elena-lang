@@ -538,8 +538,6 @@ private:
    // - ActionScope -
    struct ActionScope : public MethodScope
    {
-      virtual ObjectInfo mapObject(TerminalInfo identifier);
-
       ActionScope(ClassScope* parent);
    };
 

@@ -5,6 +5,8 @@
 #import system'calendar.
 #import extensions.
 
+#import system'math.
+
 //Number extend [
 //   cube [ ^self raisedTo: 3 ]
 //].
@@ -50,11 +52,41 @@
 //}
 // 
 
+//#class(extension)op
+//{
+//    #method compose : f : g
+//        = (self::g eval)::f eval.
+//}
 
 #symbol XTester =
 {
-    test
+    test    
     [
+        #var f := =[ self power:3 ].
+        
+        #var n := 0.5r.
+        
+        #var r := n::f eval.
+        
+        
+        
+//        #var fs = (%(mathOp get&sin)(0), %(mathOp get&cos)(0), =[ self power:3 ]).
+//        
+//        
+//        #var f := %(mathOp get&sin)(0).
+//        #var g := %(mathOp get&arcsin)(0).
+//        
+//        #var r := (n::g eval)::f eval.
+//                
+                                                
+        //#var r3 := n::f get.
+        
+        
+        //#var g := %(mathOp arcsin)(1).
+        
+        
+        
+        //#var r := (0.5r :: f) eval.
     ]            
 }.
         

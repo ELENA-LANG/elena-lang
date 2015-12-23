@@ -10,6 +10,7 @@
 [ELENA]
 [!] binary incompatible due to new opcodes
 [+] new simplified closure declaration syntax : i = [ i ], = [ i ], i = { ... }
+[!] implementing #198
 
 [ELC]
 [+] new project section "references" : adding a path to a library
@@ -23,6 +24,7 @@
 [+] new system'dynamic extension :  object.mix&into[1]
 [*] extensions'text: WordEnumerator => TokenEnumerator
 [!] critical bug fix : "AA" < "AA" = true
+[-] fixing arcsin, arccos
 
 [Samples]
 [+] console sample : random

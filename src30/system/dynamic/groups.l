@@ -29,7 +29,4 @@
 {
     #method mix &into:role
         = Extension(role, self).
-        
-    #method inject &to:action
-        = action eval:self.
 }

@@ -48,6 +48,9 @@
     /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
     #method safeEqual : anObject
         = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self.
+
+    #method inject &to:action
+        = action eval:self.
 }
 
 // --- Operations ---
@@ -543,31 +546,32 @@
     [
         #var(type:real)n := self real.        
         #var(type:real)arg.
-        #var(type:real)aRetVal.
+        #var(type:real)retVal.
         
-        n := 1.0r - n*n.
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt &real:retVal &vreal:arg.
         
-        realOpController sqrt &real:n &vreal:arg.
-        realOpController arctan &real:arg &vreal:aRetVal.
+        arg := n / arg.        
+        realOpController arctan &real:arg &vreal:retVal.
         
-        ^ RealNumber new &real:aRetVal.
+        ^ RealNumber new &real:retVal.
     ]
             
     #method(type:real)arccos
     [
         #var(type:real)n := self real.        
         #var(type:real)arg.
-        #var(type:real)aRetVal.
+        #var(type:real)retVal.
         
-        n := 1.0r - n*n.
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt &real:retVal &vreal:arg.
         
-        realOpController sqrt &real:n &vreal:arg.
+        arg := arg / n.        
+        realOpController arctan &real:arg &vreal:retVal.
         
-        arg := arg / n.
-
-        realOpController arctan &real:arg &vreal:aRetVal.
-                
-        ^ RealNumber new &real:aRetVal.
+        ^ RealNumber new &real:retVal.
     ]
             
     #method(type:real) radian
