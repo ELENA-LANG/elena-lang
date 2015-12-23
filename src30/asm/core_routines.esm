@@ -3608,7 +3608,7 @@ procedure handle_ext_message
   else labEnd
   nload
   ecopyd
-  ajumpi 4
+  ajumpi 1
 
 labEnd:
   open 1

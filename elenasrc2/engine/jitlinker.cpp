@@ -697,7 +697,10 @@ void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
 
    _loader->mapReference(reference, vaddress, mskMessage);
 
-   _compiler->compileInt64(&writer, messageID, (ref_t)vmtExtVAddress, entryOffset);
+   if (_virtualMode) {
+      _compiler->compileInt64(&writer, messageID, mskCodeRef, entryOffset);
+   }
+   else _compiler->compileInt64(&writer, messageID, entryOffset);
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmt, mskVMTRef, false);

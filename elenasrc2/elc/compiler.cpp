@@ -2211,12 +2211,12 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
    // if it is an extension message
    bool extensionMessage = false;
    if (arg.nextNode() == nsExtensionReference) {
-      ref_t extensionRef = scope.moduleScope->mapTerminal(arg.Terminal());
+      ref_t extensionRef = scope.moduleScope->mapTerminal(arg.Terminal(), true);
+      if (extensionRef == 0)
+         scope.raiseError(errUnknownClass, arg.Terminal());
 
       message.copy(scope.moduleScope->module->resolveReference(extensionRef));
       message.append('.');
-
-      arg = arg.nextNode().firstChild();
 
       extensionMessage = true;
    }
@@ -2253,18 +2253,26 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
          scope.moduleScope->mapSubject(arg.Terminal(), message);
       }
       else {
-         retVal.kind = extensionMessage ? okExtMessageConstant : okMessageConstant;
+         if (extensionMessage) {
+            retVal.kind = okExtMessageConstant;
 
-         ref_t verb_id = _verbs.get(arg.Terminal());
+            arg = arg.nextNode().firstChild();
+         }
+         else retVal.kind = okMessageConstant;
+
+         TerminalInfo token = (arg == nsSizeValue) ? node.Terminal() : arg.Terminal();
+
+         ref_t verb_id = _verbs.get(token);
          if (verb_id == 0) {
             message.append(EVAL_MESSAGE_ID + 0x20);
             message.append('&');
-            scope.moduleScope->mapSubject(arg.Terminal(), message);
+            scope.moduleScope->mapSubject(token, message);
          }
          else message.append((char)verb_id + 0x20);
       }
 
-      arg = arg.nextNode();
+      if (arg == nsSubjectArg)
+         arg = arg.nextNode();
 
       // if method has argument list
       while (arg == nsSubjectArg) {
@@ -2278,6 +2286,9 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 
          arg = arg.nextNode();
       }
+
+      if (extensionMessage)
+         arg = goToSymbol(node.firstChild(), nsSizeValue);
 
       if (arg == nsSizeValue) {
          TerminalInfo size = arg.Terminal();

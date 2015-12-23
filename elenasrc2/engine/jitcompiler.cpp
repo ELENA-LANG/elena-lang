@@ -69,6 +69,19 @@ void JITCompiler32 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int
    writer->writeRef(ref, refOffset);
 }
 
+void JITCompiler32::compileInt64(MemoryWriter* writer, int low, int high)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(-8);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(low);
+   writer->writeDWord(high);
+}
+
 void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
 {
    writer->seek(writer->Position() - 8);
