@@ -4107,66 +4107,43 @@ procedure coreapi'rsqrt
 
 end
 
-// ; ecx - filter, esi - vmt starting index, edi - result array, eax - class ; output esi - array length
+// ; filter_vmt (filter,class,index,len,dump) = len
 procedure coreapi'filter_vmt
 
-   mov  ebx, [edi - elSizeOffset]
-   neg  ebx
-   push ebx
    xor  ebx, ebx
-   push ecx   
-   
-   mov  edx, [eax - elVMTSizeOffset]
+   mov  eax, [esp+8]
+   mov  ecx, [eax - elVMTSizeOffset]
+   xor  esi, esi
+   mov  edi, [esp+20]   
 
-   test ecx, VERB_MASK
-   jnz  labVerb
-   
-   // ; filter subject
-labSubjNext:
-   cmp  esi, edx
-   jge  labEnd
+labNext:   
+   mov  edx, [eax + esi * 8]
+   and  edx, INV_SUBJECT_MASK
+   cmp  edx, [esp + 4]
+   jnz  labContinue
+   mov  edx, [esp+12]
+   test edx, edx
+   jz   short labAdding
+   sub  [esp+12], 1
+   jmp  labContinue
 
-   mov  ecx, [eax + esi * 8]
-   and  ecx, SUBJECT_MASK
+labAdding:
+   mov  edx, [eax + esi * 8]
+   mov  [edi+ebx*4], edx
+   add  ebx, 1
+   mov  edx, [esp+16]
+   sub  edx, 1
+   jz   labEnd
+   mov  [esp+16], edx
+   
+labContinue:
    add  esi, 1
-   cmp  ecx, [esp]
-   jnz  short labSubjNext
+   sub  ecx, 1
+   jnz  labNext
    
-   mov  ecx, [eax + esi * 8 - 8]
-   mov  [edi + ebx], ecx
-   add  ebx, 4
-   cmp  ebx, [esp+4]
-   jge  labEnd 
-   nop
-   nop
-   jmp  labSubjNext
-
-   // ; filter verb
-labVerb:
-   cmp  esi, edx
-   jge  labEnd
-
-   mov  ecx, [eax + esi * 8]
-   and  ecx, INV_SUBJECT_MASK
-   add  esi, 1
-   cmp  ecx, [esp]
-   jnz  short labVerb
-   
-   mov  ecx, [eax + esi * 8 - 8]
-   mov  [edi + ebx], ecx
-   add  ebx, 4
-   cmp  ebx, [esp+4]
-   jge  labEnd 
-   nop
-   nop
-   jmp  labVerb
-
 labEnd:
-   pop  ecx
-   shr  ebx, 2
    mov  esi, ebx
-   add  esp, 4
-   ret
+   ret  20
    
 end
 

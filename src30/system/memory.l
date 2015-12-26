@@ -5,7 +5,7 @@
 // --- BaseByteArray ---
 
 /// A base byte array
-#class(stringof:1) BaseByteArray
+#class(stringof:byte) BaseByteArray
 {
     /// Creates the byte array with the specified length
     #constructor(stacksafe) new &int:aLength
@@ -185,7 +185,7 @@
 // --- ShortArray ---
 
 /// A short integer array
-#class(sealed,stringof:2) ShortArray
+#class(sealed,stringof:short) ShortArray
 {
     /// Creates the short array with the specified length
     #constructor(stacksafe) new &int:aLength
@@ -285,7 +285,7 @@
 // --- BaseIntArray ---
 
 /// A base integer array
-#class(stringof:4) BaseIntArray
+#class(stringof:int) BaseIntArray
 {
     /// Creates the integer array with the specified length
     #constructor(stacksafe) new &int : aLength

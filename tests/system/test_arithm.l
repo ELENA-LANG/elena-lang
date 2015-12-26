@@ -5,22 +5,129 @@
 #import system'calendar.
 #import extensions.
 
-#import system'io.
-#import extensions'routines.
+#import system'text.
+
+
+/*
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "isAlive": true,
+  "age": 25,
+  "address": {
+    "streetAddress": "21 2nd Street",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10021-3100"
+  },
+  "phoneNumbers": [
+    {
+      "type": "home",
+      "number": "212 555-1234"
+    },
+    {
+      "type": "office",
+      "number": "646 555-4567"
+    }
+  ],
+  "children": [],
+  "spouse": null
+}
+
+
+        var people = new Dictionary<string, object> {{"1", "John"}, {"2", "Susan"}};
+        var serializer = new JavaScriptSerializer();
+ 
+        var json = serializer.Serialize(people);
+        Console.WriteLine(json);
+ 
+        var deserialized = serializer.Deserialize<Dictionary<string, object>>(json);
+        Console.WriteLine(deserialized["2"]);
+ 
+        var jsonObject = serializer.DeserializeObject(@"{ ""foo"": 1, ""bar"": [10, ""apples""] }");
+        var data = jsonObject as Dictionary<string, object>;
+        var array = data["bar"] as object[];
+        Console.WriteLine(array[1]);
+ 
+        
+NeoJSONReader fromString: '{ "foo": 1, "bar": [10, "apples"] }'.
+                      
+ */
+
+#symbol jsonDispatcher =
+{
+    eval:output &int:n
+    [
+        output write:(n literal).
+    ]
+    
+    eval:output &literal:s
+    [
+        output writeLiteral:"""":s:"""".
+    ]
+    
+    ! : output : object
+    [
+        output write:"{".
+        
+        #var(type:mssgarray,size:10) properties.
+        #var(type:int)len := 10.
+        #var(type:int)offs := 0.
+
+        object read &mssg_mask:%get &index:0 &mssgarray:properties &vint:len.
+        #loop (len > 0) ?
+        [
+            #var(type:int)i:=0.
+            #loop (i < len)?
+            [
+                #var(type:mssg) message := properties@i.
+                
+                output writeLiteral:"""":(message subject name):""":".
+                
+                output::jsonSerializer jsonSerialize:(object::message eval).
+                
+                output write:",".
+                
+                i := i + 1.
+            ].
+            
+            offs := offs + len.
+            
+            object read &mssg_mask:%get &index:offs &mssgarray:properties &vint:len.
+        ].
+        
+        output write:"}".
+    ]
+}.
+
+#class(extension:textbuffer)jsonSerializer
+{
+    #method jsonSerialize : object
+    [
+        ($nil != object)
+            ? [
+                object cast:%eval &to:jsonDispatcher &with:self.
+            ]
+            ! [ self write:"null". ].
+            
+        ^ self.            
+    ]
+}
+
+#class(extension)jsonOp
+{
+    #method toJson
+        = TextBuffer new jsonSerialize:self literal.
+}        
 
 #symbol XTester =
 {
-    test    
+    test
     [
-        //ReaderEnumerator new:("file.txt" file_path textreader) run &each:printingLn.
+        #var o := { X = 3. Y = 4. }.
         
-        #var reader := "file.txt" file_path textreader.
-        #loop (reader available)?
-        [
-            console writeLine:(reader read &literal).
-        ].
-        
-    ]            
+        #var json := o toJson.
+    ]
 }.
         
 #symbol XTest =

@@ -587,6 +587,11 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
       case 8:
          tape.write(bcLCopy);
          break;
+      case -1:
+      case -2:
+      case -4:
+         tape.write(bcCopy);
+         break;
       default:
          // dcopy 0
          // ecopy count / 4

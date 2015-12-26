@@ -1,11 +1,117 @@
+Integer comparison:
+
+=={{header|Elena}}==
+<lang elena>#import system.
+#import extensions.
+
+#symbol program =
+[
+   #var a := console readLine toInt.
+   #var b := console readLine toInt.
+
+   (a < b)
+       ? [ console writeLine:a:" is less than ":b. ].
+
+   (a == b)
+       ? [ console writeLine:a:" equals ":b. ].
+
+   (a > b)
+       ? [ console writeLine:a:" is greater than ":b. ].
+].</lang>
+
+
+Inheritance/Multiple>
+
+=={{header|Elena}}==
+ELENA only permits inheritance from one parent class. However, mixins are supported
+<lang elena>#import system.
+
+#symbol CameraFeature =
+{
+    #method cameraMsg
+        = "camera".
+}.
+
+#class MobilePhone
+{
+    #method mobileMsg
+        = "phone".
+}
+
+#class CameraPhone :: MobilePhone
+{
+    #method => CameraFeature.
+}
+
+#symbol program =
+[
+   #var cp := CameraPhone new.
+
+   console writeLine:(cp cameraMsg).
+   console writeLine:(cp mobileMsg).
+].</lang>
+Alternatively a group object could be created
+<lang elena>#import system.
+#import system'dynamic.
+
+#class CameraFeature
+{
+    #method cameraMsg
+        = "camera".
+}
+
+#class MobilePhone
+{
+    #method mobileMsg
+        = "phone".
+}
+
+#symbol CameraPhone =  
+{
+   new = MobilePhone new mix &into:(CameraFeature new).
+}.
+
+#symbol program =
+[
+   #var cp := CameraPhone new.
+
+   console writeLine:(cp cameraMsg).
+   console writeLine:(cp mobileMsg).
+].</lang>
+
+Inheritance/Single
+
+<lang elena>#import system.
+
+#class Animal
+{ 
+  // ...
+}
+ 
+#class Dog :: Animal
+{ 
+  // ...
+}
+ 
+#class Lab :: Dog
+{ 
+  // ...
+}
+ 
+#class Collie :: Dog
+{ 
+  // ... 
+}
+ 
+#class Cat :: Animal
+{ 
+  // ... 
+}.</lang>
+
 ------                                 
 In development:
 ------                                                   
               sdev - samples
-                       * rosetta sample : Input loop
-                       * rosetta sample : Integer comparison
-                       * rosetta sample : Inheritance/Multiple
-                       * rosetta sample : Inheritance/Single
                        * rosetta sample : JSON
                        * rosetta sample : Knuth shuffle
                        * rosetta sample : Knuth's algorithm S                       

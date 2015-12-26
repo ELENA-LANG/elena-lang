@@ -5170,16 +5170,26 @@ end
 
 procedure class_filterMsg
 
-  aloadsi 2
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  bloadsi 1
-  class
   bloadsi 4
+  pushb
   
-  // ; ecx - filter, esi - vmt starting index, edi - result array, eax - class ; output esi - array length
+  aloadsi 6
+  nload
+  pushd
+
+  aloadsi 5
+  nload
+  pushd
+
+  bloadsi 4
+  class
+  pusha
+
+  aloadsi 6
+  nload
+  pushd
+  
+  // ; filter_vmt  (filter,class,index,len,dump)
   callr api : coreapi'filter_vmt  
 
   bloadsi 5

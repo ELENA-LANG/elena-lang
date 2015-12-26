@@ -1068,20 +1068,7 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             raiseError(wrnInvalidHint, terminal);
 
          TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
-         if (sizeValue.symbol == tsInteger) {
-            info.size = -StringHelper::strToInt(sizeValue.value);
-            if (info.size == -1) {
-               info.header.flags |= elDebugBytes;
-            }
-            else if (info.size == -2) {
-               info.header.flags |= elDebugShorts;
-            }
-            else if (info.size == -4) {
-               info.header.flags |= elDebugIntegers;
-            }
-            else raiseError(wrnInvalidHint, terminal);
-         }
-         else if (sizeValue.symbol == tsIdentifier) {
+         if (sizeValue.symbol == tsIdentifier) {
             DNode value = hints.select(nsHintValue);
             size_t type = moduleScope->mapType(value.Terminal());
             if (type == 0)
@@ -1091,6 +1078,12 @@ void Compiler::ClassScope :: compileClassHints(DNode hints)
             info.size = -moduleScope->defineTypeSize(type);
             if (info.size == -4) {
                info.header.flags |= elDebugIntegers;
+            }
+            else if (info.size == -1) {
+               info.header.flags |= elDebugBytes;
+            }
+            else if (info.size == -2) {
+               info.header.flags |= elDebugShorts;
             }
             else if ((int)info.size > 0)
                raiseError(wrnInvalidHint, value.Terminal());
@@ -2710,8 +2703,13 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
             }
             else {
                size = 4;
-               retVal.param = moduleScope->intReference;
                primitiveOp = lxIntArrOp;
+
+               ClassInfo info;
+               scope.moduleScope->loadClassInfo(info, scope.moduleScope->module->resolveReference(resolveObjectReference(scope, object)), false);
+               retVal.type = info.fieldTypes.get(-1);
+               if (retVal.type == 0)
+                  retVal.param = moduleScope->intReference;
             }
          }
          else if (lflag == elDebugArray && rflag == elDebugDWORD) {
@@ -2750,7 +2748,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
       scope.writer->closeNode();
 
-      if (retVal.param != 0) {
+      if (retVal.param != 0 ||retVal.type != 0) {
          allocateStructure(scope, 0, retVal);
 
          scope.writer->insertChild(lxLocalAddress, retVal.param);
