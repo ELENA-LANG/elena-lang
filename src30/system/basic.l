@@ -2759,6 +2759,19 @@
     #method => theObject.
 }
 
+// --- DTO ---
+
+#class DTO
+{
+    /// Dispatches the verb to the target object
+    #method cast : verb &to:target
+        = target::verb eval &dto:$self.
+    
+    /// Dispatches the verb to the target object
+    #method cast : verb &to:target &with:param
+        = target::verb eval:param &dto:$self.
+}
+
 // === Basic Convertors ===
 
 // --- convertor helpers ---

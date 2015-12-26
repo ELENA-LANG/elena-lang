@@ -19,6 +19,8 @@
         theLength := Integer new &int:0.
     ]
 
+    #method textbuffer = $self.
+
     #method clear
     [
         theLength << 0.
@@ -29,8 +31,13 @@
         aRetVal << theLength.
     ]
 
-    #method length
-        = theLength int.
+    #method(type:int,embeddable) length
+    [
+        #var(type:int)retVal.
+        $self readLength &vint:retVal.
+        
+        ^ retVal.
+    ]
 
     #method(stacksafe) setLength &int:aLength
     [

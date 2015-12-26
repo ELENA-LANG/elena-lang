@@ -58,10 +58,10 @@
         ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
     ]
 
-    #method respondsTo &message:aMessage
+    #method(stacksafe) respondsTo &message:aMessage
         => system'internal'class_indexOfMsg.
         
-    #method read &mssg_mask:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
+    #method(stacksafe) read &mssg_mask:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
         => system'internal'class_filterMsg.
 }
 

@@ -23,6 +23,7 @@ routines\enumerating.l
 routines\combinations.l
 dynamic\interpreter.l
 dynamic\serializer.l
+dynamic\json.l
 
 [forwards]
 '$import=system'ext_routines

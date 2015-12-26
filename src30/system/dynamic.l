@@ -40,7 +40,7 @@
     #method mssg
         = $self.
                         
-    #method subject
+    #method(stacksafe) subject
         => system'internal'mssg_getsubj.
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
@@ -59,7 +59,7 @@
     #method ext_mssg
         = $self.
                         
-    #method subject
+    #method(stacksafe) subject
         => system'internal'mssg_getsubj.
 
     #method(stacksafe) equal &ext_mssg : aSubject
