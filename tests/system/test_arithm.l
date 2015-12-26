@@ -6,7 +6,7 @@
 #import extensions.
 
 #import extensions'dynamic.
-
+#import extensions'text.
 
 
 /*
@@ -26,17 +26,47 @@
  
         
 NeoJSONReader fromString: '{ "foo": 1, "bar": [10, "apples"] }'.
-                      
- */
 
+start -> newstruct -> newfield -> semicol -> newobject -> comma -> newfield -> semicol -> newobject -> array_member 
+ -> array_comma -> array_member -> array_eof -> struct_eof
+  
+    */
+
+//#class JsonDFA :: Statemachine
+//{
+//    #method proceed &char:aChar
+//    [
+//    ]    
+//}
+//
+//#symbol onStart =
+//{
+//    
+//}.
+
+#class(extension)jsonDeserializer
+{
+    #method jsonDeserialize:s
+    [        
+//        TokenEnumerator new &literal:s &token_dfa:(JsonDFA new) run &each:token
+//        [
+//        ].
+    ]
+}
+
+#class(extension)jsonOp
+{
+    #method fromJson
+        = DynamicStruct jsonDeserialize:self.
+}
 
 #symbol XTester =
 {
     test
     [
-        #var o := DTO { X = 3. Y = 4. }.
+        #var json := "{ ""foo"": 1, ""bar"": [10, ""apples""] }".
         
-        #var json := o toJson.
+        #var o := json fromJson.
     ]
 }.
         
