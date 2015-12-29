@@ -1,0 +1,13 @@
+﻿[project]
+executable=loopmultarrays.exe
+namespace=loopma
+template=console
+debuginfo=-1
+warn:unresolved=-1
+
+[files]
+loopma.l
+
+[forwards]
+'program=loopma'program
+
