@@ -10,7 +10,7 @@
 #class(extension)helper
 {
     #method is &equal
-        = $nil == self seek &each:m [ m equal:(self firstMember) not ].
+        = $nil == self seek:(self firstMember) &eachPair:(:n:m) [ m equal:n not ].
         
     #method is &ascending
     [

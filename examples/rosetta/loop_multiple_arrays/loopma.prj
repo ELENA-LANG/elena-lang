@@ -9,5 +9,5 @@ warn:unresolved=-1
 loopma.l
 
 [forwards]
-'program=loopma'program
+'program=loopma'programUsingZip
 

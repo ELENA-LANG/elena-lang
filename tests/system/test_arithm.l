@@ -8,7 +8,6 @@
 #import extensions'dynamic.
 #import extensions'text.
 
-
 /*
         var people = new Dictionary<string, object> {{"1", "John"}, {"2", "Susan"}};
         var serializer = new JavaScriptSerializer();
@@ -44,10 +43,27 @@ start -> newstruct -> newfield -> semicol -> newobject -> comma -> newfield -> s
 //    
 //}.
 
-#class(extension)jsonDeserializer
+//#class(extension)jsonDeserializer
 {
+    #method jsonDeserialize &enumerator:e
+    [
+        #var(type:literal) token := e get literal.
+        #var(type:byte)ch.
+        token read &int:0 &vbyte:ch.
+        
+        ch =>
+            34 ? [  // "
+            ] 
+            91 ? [ // [
+            ]
+            123 ? [ //{
+            ]
+            ! [
+            ].
+    ]
+    
     #method jsonDeserialize:s
-    [        
+    [
 //        TokenEnumerator new &literal:s &token_dfa:(JsonDFA new) run &each:token
 //        [
 //        ].
