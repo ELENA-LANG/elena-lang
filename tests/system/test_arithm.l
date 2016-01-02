@@ -43,7 +43,7 @@ start -> newstruct -> newfield -> semicol -> newobject -> comma -> newfield -> s
 //    
 //}.
 
-//#class(extension)jsonDeserializer
+#class(extension)jsonDeserializer
 {
     #method jsonDeserialize &enumerator:e
     [

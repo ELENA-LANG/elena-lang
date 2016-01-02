@@ -1,3 +1,4 @@
+       = $nil == self seek:(self firstMember) &eachPair:(:m:n) [ m equal:n not ].
 
 
 ------                                 

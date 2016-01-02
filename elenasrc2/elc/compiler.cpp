@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1827,11 +1827,12 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
       //_writer.declareBlock(*scope.tape);
 
-      if (thenCode.firstChild().nextNode() != nsNone) {
+      DNode statement = thenCode.firstChild();
+      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
          compileCode(thenCode, subScope);
       }
       // if it is inline action
-      else compileRetExpression(thenCode.firstChild(), scope, 0);
+      else compileRetExpression(statement, scope, 0);
 
       scope.writer->closeNode();
 
@@ -1847,11 +1848,12 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
       //_writer.declareBlock(*scope.tape);
 
-      if (thenCode.firstChild().nextNode() != nsNone) {
+      DNode statement = thenCode.firstChild();
+      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
          compileCode(thenCode, subScope);
       }
       // if it is inline action
-      else compileRetExpression(thenCode.firstChild(), scope, 0);
+      else compileRetExpression(statement, scope, 0);
 
       scope.writer->closeNode();
    }
