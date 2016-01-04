@@ -37,7 +37,7 @@ public:
    void expand(TreeViewItem item);
    void collapse(TreeViewItem item);
 
-   TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, int param);
+   TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, int param, bool isNode);
    void clear(TreeViewItem item);
    void erase(TreeViewItem item);
 

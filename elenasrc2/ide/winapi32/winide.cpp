@@ -280,7 +280,7 @@ void MainWindow::ContextBrowser :: erase(void* node)
 
 void* MainWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, int param)
 {
-   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param);
+   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param, true);
 }
 
 void MainWindow::ContextBrowser :: reset()
@@ -1466,7 +1466,7 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
 
    projectView->clear(NULL);
 
-   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1);
+   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1, true);
 
    _ELENA_::ConfigCategoryIterator it = project->SourceFiles();
    int index = 0;
@@ -1492,7 +1492,7 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
          }
 
          if (current == NULL) {
-            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1);
+            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1, end != -1 ? true : false);
          }
          parent = current;
 
