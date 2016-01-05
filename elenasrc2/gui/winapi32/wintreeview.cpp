@@ -32,7 +32,7 @@ TreeView :: TreeView(Control* owner, bool persistentSelection)
    ImageList_AddIcon(hImages, hIcon1);
    FreeLibrary(hLib);
 
-   HICON hIcon2 = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(3), IMAGE_ICON, 0, 0, LR_SHARED));
+   HICON hIcon2 = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDR_FILETREE), IMAGE_ICON, 0, 0, LR_SHARED));
    ImageList_AddIcon(hImages, hIcon2);
 
    
