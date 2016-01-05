@@ -10,7 +10,7 @@ using namespace _GUI_;
 
 // --- TreeView ---
 
-TreeView :: TreeView(Control* owner, bool persistentSelection)
+TreeView :: TreeView(Control* owner, bool persistentSelection, bool enableIcons)
    : Control(0, 0, 800, 20) // !! temporal
 {
    HINSTANCE instance = ((Control*)owner)->_getInstance();
@@ -22,22 +22,23 @@ TreeView :: TreeView(Control* owner, bool persistentSelection)
    _handle = ::CreateWindowEx(
       0, WC_TREEVIEW, NULL, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, instance, (LPVOID)this);
-
-   HIMAGELIST hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
-	   GetSystemMetrics(SM_CYSMICON),
-	   ILC_COLOR32 | ILC_MASK, 1, 1);
-   HINSTANCE hLib = LoadLibrary(_T("shell32.dll"));
-
-   HICON hIcon1 = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(4),IMAGE_ICON, 0, 0,LR_SHARED));
-   ImageList_AddIcon(hImages, hIcon1);
-   FreeLibrary(hLib);
-
-   HICON hIcon2 = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDR_FILETREE), IMAGE_ICON, 0, 0, LR_SHARED));
-   ImageList_AddIcon(hImages, hIcon2);
-
    
-   TreeView_SetImageList(_handle, hImages, TVSIL_NORMAL);
+   if (enableIcons)
+   {
+	   HIMAGELIST hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
+		   GetSystemMetrics(SM_CYSMICON),
+		   ILC_COLOR32 | ILC_MASK, 1, 1);
+	   HINSTANCE hLib = LoadLibrary(_T("shell32.dll"));
 
+	   HICON hIcon1 = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(4), IMAGE_ICON, 0, 0, LR_SHARED));
+	   ImageList_AddIcon(hImages, hIcon1);
+	   FreeLibrary(hLib);
+
+	   HICON hIcon2 = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDR_FILETREE), IMAGE_ICON, 0, 0, LR_SHARED));
+	   ImageList_AddIcon(hImages, hIcon2);
+
+	   TreeView_SetImageList(_handle, hImages, TVSIL_NORMAL);
+   }
 }
 
 bool TreeView :: isExpanded(TreeViewItem parent)

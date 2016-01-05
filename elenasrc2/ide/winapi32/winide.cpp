@@ -1050,8 +1050,8 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
-   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR], true);
-   _controls[CTRL_PROJECTVIEW] = new TreeView(this, false);
+   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR], true, false);
+   _controls[CTRL_PROJECTVIEW] = new TreeView(this, false, true);
    _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_PROJECTVIEW], true, IDM_LAYOUT_CHANGED);
 
    ((Control*)_controls[CTRL_TABBAR])->_setHeight(120);
