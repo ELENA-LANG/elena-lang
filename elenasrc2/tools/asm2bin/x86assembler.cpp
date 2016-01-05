@@ -128,6 +128,16 @@ x86Assembler::Operand x86Assembler :: defineRegister(TokenInfo& token)
 	else if (token.check("dx")) {
 		return Operand(x86Helper::otDX);
 	}
+	// SSE/SSE2 - test
+	else if (token.check("xmm0")) {
+		return Operand(x86Helper::otXMM0);
+	}
+	else if (token.check("xmm1")) {
+		return Operand(x86Helper::otXMM1);
+	}
+	else if (token.check("xmm2")) {
+		return Operand(x86Helper::otXMM2);
+	}
    else return Operand(x86Helper::otUnknown);
 }
 
@@ -765,6 +775,18 @@ void x86Assembler :: compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeDWord(dest.offset);
 	}
 	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler ::compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	// -- just a test... 
+	code->writeByte(0x0F);
+	code->writeByte(0x58);
+	x86Helper::writeModRM(code, sour, dest);
 }
 
 void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -1504,6 +1526,20 @@ void x86Assembler :: compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryW
 	code->writeByte(0xA4);
 
 	token.read();
+}
+
+void x86Assembler :: compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	code->writeByte(0x0F);
+	if(sour.type == x86Helper::otMS32disp)
+		code->writeByte(0x29);
+	else
+		code->writeByte(0x28);
+	x86Helper::writeModRM(code, sour, dest);
 }
 
 void x86Assembler :: compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -2395,6 +2431,11 @@ bool x86Assembler :: compileCommandA(TokenInfo& token, ProcedureInfo& info, Memo
       compileADC(token, info, &writer);
       return true;
    }
+   // SSE/SSE2 - test
+   else if (token.check("addps")) {
+	   compileADDPS(token, info, &writer);
+	   return true;
+   }
    else return false;
 }
 bool x86Assembler :: compileCommandB(TokenInfo& token)
@@ -2790,6 +2831,12 @@ bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Memo
 	else if (token.check("movsb")) {
 		compileMOVSB(token, info, &writer);
       return true;
+	}
+
+	// SSE/SSE2 - test
+	else if (token.check("movaps")) {
+		compileMOVAPS(token, info, &writer);
+		return true;
 	}
    else return false;
 }
