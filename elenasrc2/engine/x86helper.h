@@ -73,7 +73,9 @@ public:
       otM32       = 0x00110000,
       otM32disp8  = 0x00110100,
       otM32disp32 = 0x00110200,
-	  otMS32disp = 0x00110102,
+
+	  otMS32disp  = 0x00110102, // maybe it was with wrong name ??
+	  otMS32      = 0x00110105, // ^
 
       otR8        = 0x00200300,
       otM8        = 0x00210000,

@@ -127,6 +127,7 @@ protected:
 	void compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2 - test
+	void compileMOVUPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2 - test
 	void compileSTOSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileCMPSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileCMPXCHG(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
