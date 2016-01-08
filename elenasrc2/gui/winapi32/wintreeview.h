@@ -8,6 +8,7 @@
 #define wintreeviewH
 
 #include "wincommon.h"
+#include "..\ide\winapi32\winideconst.h"
 
 namespace _GUI_
 {
@@ -37,11 +38,11 @@ public:
    void expand(TreeViewItem item);
    void collapse(TreeViewItem item);
 
-   TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, int param);
+   TreeViewItem insertTo(TreeViewItem parent, const wchar_t* caption, int param, bool isNode);
    void clear(TreeViewItem item);
    void erase(TreeViewItem item);
 
-   TreeView(Control* owner, bool persistentSelection);
+   TreeView(Control* owner, bool persistentSelection, bool enableIcons);
 };
 
 } // _GUI_

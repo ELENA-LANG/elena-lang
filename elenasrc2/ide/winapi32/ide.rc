@@ -23,6 +23,7 @@ IDR_STOP	        BITMAP		"icons\\stop.bmp"
 IDR_STEPINTO            BITMAP          "icons\\stepinto.bmp"
 IDR_STEPOVER            BITMAP          "icons\\stepover.bmp"
 IDR_GOTO                BITMAP          "icons\\goto.bmp"
+IDR_FILETREE			ICON	"icons\\file.ico"
 
 // --- Menu ---
 

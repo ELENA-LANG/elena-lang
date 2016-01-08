@@ -39,6 +39,7 @@
 #define	IDR_STEPINTO						         214
 #define	IDR_STEPOVER                           215
 #define	IDR_GOTO                               216
+#define IDR_FILETREE						   217
 
 #define	IDR_IDE_ACCELERATORS		               1400
 #define	IDR_MAIN_MENU			                  1500

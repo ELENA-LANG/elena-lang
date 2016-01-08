@@ -280,7 +280,7 @@ void MainWindow::ContextBrowser :: erase(void* node)
 
 void* MainWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, int param)
 {
-   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param);
+   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param, true);
 }
 
 void MainWindow::ContextBrowser :: reset()
@@ -1050,8 +1050,8 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
-   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR], true);
-   _controls[CTRL_PROJECTVIEW] = new TreeView(this, false);
+   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR], true, false);
+   _controls[CTRL_PROJECTVIEW] = new TreeView(this, false, true);
    _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_PROJECTVIEW], true, IDM_LAYOUT_CHANGED);
 
    ((Control*)_controls[CTRL_TABBAR])->_setHeight(120);
@@ -1466,7 +1466,7 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
 
    projectView->clear(NULL);
 
-   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1);
+   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1, true);
 
    _ELENA_::ConfigCategoryIterator it = project->SourceFiles();
    int index = 0;
@@ -1492,7 +1492,7 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
          }
 
          if (current == NULL) {
-            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1);
+            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1, end != -1 ? true : false);
          }
          parent = current;
 

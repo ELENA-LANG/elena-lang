@@ -10,18 +10,35 @@ using namespace _GUI_;
 
 // --- TreeView ---
 
-TreeView :: TreeView(Control* owner, bool persistentSelection)
+TreeView :: TreeView(Control* owner, bool persistentSelection, bool enableIcons)
    : Control(0, 0, 800, 20) // !! temporal
 {
    HINSTANCE instance = ((Control*)owner)->_getInstance();
 
-   int styles = WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS;
+   int styles = WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT;
    if (persistentSelection)
       styles |= TVS_SHOWSELALWAYS;
 
    _handle = ::CreateWindowEx(
       0, WC_TREEVIEW, NULL, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, instance, (LPVOID)this);
+   
+   if (enableIcons)
+   {
+	   HIMAGELIST hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
+		   GetSystemMetrics(SM_CYSMICON),
+		   ILC_COLOR32 | ILC_MASK, 1, 1);
+	   HINSTANCE hLib = LoadLibrary(_T("shell32.dll"));
+
+	   HICON hIcon1 = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(4), IMAGE_ICON, 0, 0, LR_SHARED));
+	   ImageList_AddIcon(hImages, hIcon1);
+	   FreeLibrary(hLib);
+
+	   HICON hIcon2 = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDR_FILETREE), IMAGE_ICON, 0, 0, LR_SHARED));
+	   ImageList_AddIcon(hImages, hIcon2);
+
+	   TreeView_SetImageList(_handle, hImages, TVSIL_NORMAL);
+   }
 }
 
 bool TreeView :: isExpanded(TreeViewItem parent)
@@ -109,15 +126,22 @@ void TreeView :: collapse(TreeViewItem item)
    TreeView_Expand(_handle, item, TVE_COLLAPSE);
 }
 
-TreeViewItem TreeView :: insertTo(TreeViewItem parent, const wchar_t* caption, int param)
+TreeViewItem TreeView :: insertTo(TreeViewItem parent, const wchar_t* caption, int param, bool isNode)
 {
    TV_INSERTSTRUCT item;
 
    item.hParent=parent;
    item.hInsertAfter= parent ? TVI_LAST : TVI_ROOT;
-   item.item.mask= TVIF_TEXT | TVIF_PARAM;
+   item.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
    item.item.pszText=(wchar_t*)caption;
    item.item.lParam = param;
+   
+   int indexImage = 1, indexSelectedImage = 1;
+   if (isNode)
+	   indexImage = indexSelectedImage = 0;
+
+   item.item.iImage = indexImage;
+   item.item.iSelectedImage = indexSelectedImage;
 
    return (TreeViewItem)::SendMessage(_handle, TVM_INSERTITEM, 0, (LPARAM)&item);
 }
