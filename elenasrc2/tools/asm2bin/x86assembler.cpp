@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2015, by Alexei Rakov
+//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -111,32 +111,32 @@ x86Assembler::Operand x86Assembler :: defineRegister(TokenInfo& token)
 		return Operand(x86Helper::otDH);
 	}
 	else if (token.check("ah")) {
-		return Operand(x86Helper::otAH);
+      return Operand(x86Helper::otAH);
 	}
 	else if (token.check("bh")) {
-		return Operand(x86Helper::otBH);
+      return Operand(x86Helper::otBH);
 	}
 	else if (token.check("ax")) {
-		return Operand(x86Helper::otAX);
+      return Operand(x86Helper::otAX);
 	}
 	else if (token.check("bx")) {
-		return Operand(x86Helper::otBX);
+      return Operand(x86Helper::otBX);
 	}
 	else if (token.check("cx")) {
-		return Operand(x86Helper::otCX);
+      return Operand(x86Helper::otCX);
 	}
 	else if (token.check("dx")) {
-		return Operand(x86Helper::otDX);
+      return Operand(x86Helper::otDX);
 	}
-	// SSE/SSE2 - test
+	// SSE/SSE2
 	else if (token.check("xmm0")) {
-		return Operand(x86Helper::otXMM0);
+      return Operand(x86Helper::otXMM0);
 	}
 	else if (token.check("xmm1")) {
-		return Operand(x86Helper::otXMM1);
+      return Operand(x86Helper::otXMM1);
 	}
 	else if (token.check("xmm2")) {
-		return Operand(x86Helper::otXMM2);
+      return Operand(x86Helper::otXMM2);
 	}
 	else if (token.check("xmm3")) {
 		return Operand(x86Helper::otXMM3);
@@ -153,6 +153,30 @@ x86Assembler::Operand x86Assembler :: defineRegister(TokenInfo& token)
 	else if (token.check("xmm7")) {
 		return Operand(x86Helper::otXMM7);
 	}
+   else if (token.check("mm0")) {
+      return Operand(x86Helper::otMM0);
+   }
+   else if (token.check("mm1")) {
+      return Operand(x86Helper::otMM1);
+   }
+   else if (token.check("mm2")) {
+      return Operand(x86Helper::otMM2);
+   }
+   else if (token.check("mm3")) {
+      return Operand(x86Helper::otMM3);
+   }
+   else if (token.check("mm4")) {
+      return Operand(x86Helper::otMM4);
+   }
+   else if (token.check("mm5")) {
+      return Operand(x86Helper::otMM5);
+   }
+   else if (token.check("mm6")) {
+      return Operand(x86Helper::otMM6);
+   }
+   else if (token.check("mm7")) {
+      return Operand(x86Helper::otMM7);
+   }
    else return Operand(x86Helper::otUnknown);
 }
 
@@ -1516,14 +1540,14 @@ void x86Assembler :: compileREPZ(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 void x86Assembler :: compileLODSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	code->writeByte(0xAD);
+   code->writeByte(0xAD);
 
-	token.read();
+   token.read();
 }
 
 void x86Assembler :: compileLODSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-   	code->writeByte(0x66);
+   code->writeByte(0x66);
 	code->writeByte(0xAD);
 
 	token.read();
@@ -1550,11 +1574,15 @@ void x86Assembler :: compileMOVAPS(TokenInfo& token, ProcedureInfo& info, Memory
 	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	code->writeByte(0x0F);
-	if(sour.type == x86Helper::otMS32disp)
-		code->writeByte(0x29);
-	else
-		code->writeByte(0x28);
-	x86Helper::writeModRM(code, sour, dest);
+   if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+      code->writeByte(0x28);
+      x86Helper::writeModRM(code, sour, dest);
+   }
+   else if ((test(sour.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32)) && test(dest.type, x86Helper::otX128)) {
+      code->writeByte(0x29);
+      x86Helper::writeModRM(code, sour, dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileMOVUPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -1564,17 +1592,16 @@ void x86Assembler :: compileMOVUPS(TokenInfo& token, ProcedureInfo& info, Memory
 	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
 	code->writeByte(0x0F);
-	if (sour.type == x86Helper::otMS32)
-	{
-		code->writeByte(0x11);
-		x86Helper::writeModRM(code, dest, sour);
-		x86Helper::writeModRM(code, sour, dest.type + 4);
-	}
-	else
-	{
-		code->writeByte(0x10);
-		x86Helper::writeModRM(code, sour, dest);
-	}
+
+   if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+      code->writeByte(0x10);
+      x86Helper::writeModRM(code, sour, dest);
+   }
+   else if ((test(sour.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32)) && test(dest.type, x86Helper::otX128)) {
+      code->writeByte(0x11);
+      x86Helper::writeModRM(code, sour, dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)

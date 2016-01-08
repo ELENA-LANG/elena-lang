@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA coder opcode helpers
 //		Supported platforms: x86
-//                                              (C)2005-2014, by Alexei Rakov
+//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef x86helperH
@@ -51,31 +51,33 @@ public:
       otDX        = 0x00400302,
       otBX        = 0x00400303,
 
-      otMM0       = 0x00500300,
-      otMM1       = 0x00500301,
-      otMM2       = 0x00500302,
-      otMM3       = 0x00500303,
-      otMM4       = 0x00500304,
-      otMM5       = 0x00500305,
-      otMM6       = 0x00500306,
-      otMM7       = 0x00500307,
+      otMM0       = 0x00800300,
+      otMM1       = 0x00800301,
+      otMM2       = 0x00800302,
+      otMM3       = 0x00800303,
+      otMM4       = 0x00800304,
+      otMM5       = 0x00800305,
+      otMM6       = 0x00800306,
+      otMM7       = 0x00800307,
       
-      otXMM0      = 0x00600300,
-      otXMM1      = 0x00600301,
-      otXMM2      = 0x00600302,
-      otXMM3      = 0x00600303,
-      otXMM4      = 0x00600304,
-      otXMM5      = 0x00600305,
-      otXMM6      = 0x00600306,
-      otXMM7      = 0x00600307,
+      otXMM0      = 0x01000300,
+      otXMM1      = 0x01000301,
+      otXMM2      = 0x01000302,
+      otXMM3      = 0x01000303,
+      otXMM4      = 0x01000304,
+      otXMM5      = 0x01000305,
+      otXMM6      = 0x01000306,
+      otXMM7      = 0x01000307,
 
       otR32       = 0x00100300,
       otM32       = 0x00110000,
       otM32disp8  = 0x00110100,
       otM32disp32 = 0x00110200,
 
-	  otMS32disp  = 0x00110102, // maybe it was with wrong name ??
-	  otMS32      = 0x00110105, // ^
+      otM64       = 0x00800300,
+      otX128      = 0x01000300,
+      //otMS32disp  = 0x00110102, // maybe it was with wrong name ??
+	   //otMS32      = 0x00110105, // ^
 
       otR8        = 0x00200300,
       otM8        = 0x00210000,
@@ -237,13 +239,6 @@ public:
 	      }
 	      else code->writeDWord(dest.offset);
       }
-      //// HOTFIX: to distingush between [esp] and disp32
-      //else if (test(dest.type, otM32) && (dest.type != otSPDisp32)) {
-	     // if (dest.reference != 0) {
-		    //  code->writeRef(dest.reference, dest.offset);
-	     // }
-	     // else code->writeDWord(dest.offset);
-      //}
       else if (dest.type==otDisp32) {
 	      if (dest.reference != 0) {
 		      code->writeRef(dest.reference, dest.offset);

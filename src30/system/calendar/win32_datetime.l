@@ -248,7 +248,7 @@
     [
         #var(type:shortarray,size:127)aBuffer.
 
-        #var(type:int) aLength := system'external'KERNEL32 GetDateFormatEx
+        #var(type:int) aLength := system'external'KERNEL32 GetDateFormatW
             &int:0
             &int:(Flags int)
             &__time_st:$self
@@ -267,7 +267,7 @@
     [
         #var(type:shortarray,size:127)aBuffer.
 
-        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatEx
+        #var(type:int) aLength := system'external'KERNEL32 GetTimeFormatW
             &int:0
             &int:(Flags int)
             &__time_st:$self

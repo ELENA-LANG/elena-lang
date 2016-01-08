@@ -35,6 +35,12 @@ define VERB_MASK        0FF000000h
 define SUBJECT_MASK     000FFFFF0h
 define INV_SUBJECT_MASK 0FF00000Fh
 
+procedure coreapi'x
+
+   MOVUPS XMM0, [EAX]
+
+end
+
 // ; --- API ---
 
 procedure coreapi'openframe

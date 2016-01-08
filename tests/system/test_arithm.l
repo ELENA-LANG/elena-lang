@@ -53,6 +53,7 @@ start -> newstruct -> newfield -> semicol -> newobject -> comma -> newfield -> s
         
         ch =>
             34 ? [  // "
+                
             ] 
             91 ? [ // [
             ]
