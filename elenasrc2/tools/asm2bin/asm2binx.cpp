@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -15,11 +15,11 @@
 #include "ecassembler.h"
 #include "source.h"
 
-#define REVISION_NUMBER   1
+#define REVISION_NUMBER   2
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA Assembler Compiler %d.%d.%d (C)2007-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
+   printf("ELENA Assembler Compiler %d.%d.%d (C)2007-2016 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
 
    if (argc<2) {
       printf("asm2bin <file.asm> <output path>");

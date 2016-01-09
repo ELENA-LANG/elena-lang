@@ -822,10 +822,12 @@ void x86Assembler ::compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWr
 	checkComma(token);
 	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
-	// -- just a test... 
-	code->writeByte(0x0F);
-	code->writeByte(0x58);
-	x86Helper::writeModRM(code, sour, dest);
+   if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+      code->writeByte(0x0F);
+      code->writeByte(0x58);
+      x86Helper::writeModRM(code, sour, dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)

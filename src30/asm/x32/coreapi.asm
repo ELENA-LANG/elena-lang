@@ -37,7 +37,7 @@ define INV_SUBJECT_MASK 0FF00000Fh
 
 procedure coreapi'x
 
-   MOVUPS XMM0, [EAX]
+   movups xmm0, [eax]
 
 end
 
