@@ -26,6 +26,9 @@
 [!] critical bug fix : "AA" < "AA" = true
 [-] fixing arcsin, arccos
 
+[IDE]
+[*] icons in project tree added
+
 [Samples]
 [+] console sample : random
 [+] rosetta sample : evolutionary algorithm

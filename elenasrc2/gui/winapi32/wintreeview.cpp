@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI ListView Implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "wintreeview.h"
@@ -23,22 +23,28 @@ TreeView :: TreeView(Control* owner, bool persistentSelection, bool enableIcons)
       0, WC_TREEVIEW, NULL, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, instance, (LPVOID)this);
    
-   if (enableIcons)
-   {
-	   HIMAGELIST hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
+   if (enableIcons) {
+	   _hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
 		   GetSystemMetrics(SM_CYSMICON),
 		   ILC_COLOR32 | ILC_MASK, 1, 1);
 	   HINSTANCE hLib = LoadLibrary(_T("shell32.dll"));
 
 	   HICON hIcon1 = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(4), IMAGE_ICON, 0, 0, LR_SHARED));
-	   ImageList_AddIcon(hImages, hIcon1);
+	   ImageList_AddIcon(_hImages, hIcon1);
 	   FreeLibrary(hLib);
 
 	   HICON hIcon2 = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(IDR_FILETREE), IMAGE_ICON, 0, 0, LR_SHARED));
-	   ImageList_AddIcon(hImages, hIcon2);
+	   ImageList_AddIcon(_hImages, hIcon2);
 
-	   TreeView_SetImageList(_handle, hImages, TVSIL_NORMAL);
+	   TreeView_SetImageList(_handle, _hImages, TVSIL_NORMAL);
    }
+   else _hImages = NULL;
+}
+
+TreeView :: ~TreeView()
+{
+   if (_hImages)
+      ImageList_Destroy(_hImages);
 }
 
 bool TreeView :: isExpanded(TreeViewItem parent)
@@ -135,13 +141,7 @@ TreeViewItem TreeView :: insertTo(TreeViewItem parent, const wchar_t* caption, i
    item.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
    item.item.pszText=(wchar_t*)caption;
    item.item.lParam = param;
-   
-   int indexImage = 1, indexSelectedImage = 1;
-   if (isNode)
-	   indexImage = indexSelectedImage = 0;
-
-   item.item.iImage = indexImage;
-   item.item.iSelectedImage = indexSelectedImage;
+   item.item.iSelectedImage = item.item.iImage = isNode ? 0 : 1;
 
    return (TreeViewItem)::SendMessage(_handle, TVM_INSERTITEM, 0, (LPARAM)&item);
 }

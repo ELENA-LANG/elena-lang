@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef x86assemblerH
@@ -79,34 +79,34 @@ protected:
 
    void readParameterList(TokenInfo& token, ProcedureInfo& info, ReferenceNs& refName);
 
-	int readStReg(TokenInfo& token);
+   int readStReg(TokenInfo& token);
    bool setOffset(Operand& operand, Operand disp);
 
-	Operand defineRegister(TokenInfo& token);
-	Operand defineOperand(TokenInfo& token, ProcedureInfo& info, const char* err);
+   Operand defineRegister(TokenInfo& token);
+   Operand defineOperand(TokenInfo& token, ProcedureInfo& info, const char* err);
    Operand defineDisplacement(TokenInfo& token, ProcedureInfo& info, const char* err);
 
    Operand readDispOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix);
-	Operand readPtrOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix);
+   Operand readPtrOperand(TokenInfo& token, ProcedureInfo& info, const char* err, OperandType prefix);
 
-	Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const char* err);
+   Operand compileOperand(TokenInfo& token, ProcedureInfo& info, const char* err);
 
-	void compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileXADD(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2
-	void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2
+   void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSAR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSHLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSHRD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileROL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
