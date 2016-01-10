@@ -128,7 +128,7 @@ x86Assembler::Operand x86Assembler :: defineRegister(TokenInfo& token)
 	else if (token.check("dx")) {
       return Operand(x86Helper::otDX);
 	}
-	// SSE/SSE2
+	// SSE registers
 	else if (token.check("xmm0")) {
       return Operand(x86Helper::otXMM0);
 	}
@@ -830,6 +830,26 @@ void x86Assembler ::compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWr
    else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler::compileADDSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode:   F3 0F 58 /r
+	// Mnemonic: ADDSS xmm1, xmm2/m32
+	// f3 0f 58 ca -- addss xmm1, xmm2
+    // f3 0f 58 08 -- addss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x58);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	bool overridden = false;
@@ -1046,6 +1066,45 @@ void x86Assembler :: compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0x80);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 5), sour);
 		x86Helper::writeImm(code, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileSUBPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 5C /r
+	// Mnemonic: SUBPS xmm1, xmm2/m128
+	// 0f 5c ca -- subps xmm1, xmm2
+	// 0f 5c 08 -- subps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x5C);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileSUBSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{	
+	// Opcode: F3 0F 5C /r
+	// Mnemonic: SUBSS xmm1, xmm2/m32
+	// f3 0f 5c ca -- subss xmm1, xmm2
+	// f3 0f 5c 08 -- subss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x5C);
+		x86Helper::writeModRM(code, sour, dest);
 	}
 	else token.raiseErr("Invalid command (%d)");
 }
@@ -1368,6 +1427,45 @@ void x86Assembler :: compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryWri
 	if (test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) {
 		code->writeByte(0xF7);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), sour);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileMULPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 59 /r
+	// Mnemonic: MULPS xmm1, xmm2/m128
+	// 0f 59 ca -- mulps xmm1, xmm2
+	// 0f 59 08 -- mulps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x59);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileMULSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 59 /r
+	// Mnemonic: MULSS xmm1, xmm2/m32
+	// f3 0f 59 ca -- subps xmm1, xmm2
+	// f3 0f 59 08 -- subps xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x59);
+		x86Helper::writeModRM(code, sour, dest);
 	}
 	else token.raiseErr("Invalid command (%d)");
 }
@@ -2495,9 +2593,14 @@ bool x86Assembler :: compileCommandA(TokenInfo& token, ProcedureInfo& info, Memo
       compileADC(token, info, &writer);
       return true;
    }
-   // SSE/SSE2 - test
+
+   // SSE instructions
    else if (token.check("addps")) {
 	   compileADDPS(token, info, &writer);
+	   return true;
+   }
+   else if (token.check("addss")) {
+	   compileADDSS(token, info, &writer);
 	   return true;
    }
    else return false;
@@ -2897,13 +3000,22 @@ bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Memo
       return true;
 	}
 
-	// SSE/SSE2 - test
+	// SSE instructions
 	else if (token.check("movaps")) {
 		compileMOVAPS(token, info, &writer);
 		return true;
 	}
 	else if (token.check("movups")) {
 		compileMOVUPS(token, info, &writer);
+		return true;
+	}
+
+	else if (token.check("mulps")) {
+		compileMULPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("mulss")) {
+		compileMULSS(token, info, &writer);
 		return true;
 	}
    else return false;
@@ -3049,6 +3161,16 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 	else if (token.check("setnc")) {
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JAE);
       return true;
+	}
+
+	// SSE instructions
+	else if (token.check("subps")) {
+		compileSUBPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("subss")) {
+		compileSUBSS(token, info, &writer);
+		return true;
 	}
    else return false;
 }

@@ -96,12 +96,15 @@ protected:
    void compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileXADD(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-   void compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2
+   void compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileADDSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSUBPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileSUBSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -126,8 +129,8 @@ protected:
 	void compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	void compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2
-	void compileMOVUPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE/SSE2
+	void compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileMOVUPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compileSTOSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileCMPSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileCMPXCHG(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -148,6 +151,8 @@ protected:
    void compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileNOT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileMULPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileMULSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
