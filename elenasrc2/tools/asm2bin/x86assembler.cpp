@@ -832,9 +832,9 @@ void x86Assembler ::compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 void x86Assembler::compileADDSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	// Opcode:   F3 0F 58 /r
-	// Mnemonic: ADDSS xmm1, xmm2/m32
-	// f3 0f 58 ca -- addss xmm1, xmm2
+    // Opcode:   F3 0F 58 /r
+    // Mnemonic: ADDSS xmm1, xmm2/m32
+    // f3 0f 58 ca -- addss xmm1, xmm2
     // f3 0f 58 08 -- addss xmm1, DWORD PTR[eax]
 
 	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
@@ -1104,6 +1104,45 @@ void x86Assembler :: compileSUBSS(TokenInfo& token, ProcedureInfo& info, MemoryW
 		code->writeByte(0xF3);
 		code->writeByte(0x0F);
 		code->writeByte(0x5C);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileSQRTPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 51 /r
+	// Mnemonic: SQRTPS xmm1, xmm2/m128
+	// 0f 51 ca -- sqrtps xmm1, xmm2
+	// 0f 51 08 -- sqrtps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x51);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileSQRTSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 51 /r
+	// Mnemonic: SQRTSS xmm1, xmm2/m32
+	// f3 0f 51 ca -- sqrtss xmm1, xmm2
+	// f3 0f 51 08 -- sqrtss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x51);
 		x86Helper::writeModRM(code, sour, dest);
 	}
 	else token.raiseErr("Invalid command (%d)");
@@ -1470,6 +1509,45 @@ void x86Assembler :: compileMULSS(TokenInfo& token, ProcedureInfo& info, MemoryW
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler :: compileMAXPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 5F /r
+	// Mnemonic: MAXPS xmm1, xmm2/m128
+	// 0f 5F ca -- maxps xmm1, xmm2
+	// 0f 5F 08 -- maxps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x5F);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileMAXSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 5F /r
+	// Mnemonic: maxss xmm1, xmm2/m32
+	// f3 0f 5F ca -- maxss xmm1, xmm2
+	// f3 0f 5F 08 -- maxss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x5F);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
@@ -1513,6 +1591,45 @@ void x86Assembler :: compileDIV(TokenInfo& token, ProcedureInfo& info, MemoryWri
 	else if (test(sour.type, x86Helper::otR8)||test(sour.type, x86Helper::otM8)) {
 		code->writeByte(0xF6);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR8 + 6), sour);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileDIVPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 5E /r
+	// Mnemonic: DIVPS xmm1, xmm2/m128
+	// 0f 5E ca -- divps xmm1, xmm2
+	// 0f 5E 08 -- divps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x5E);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileDIVSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 5E	/r
+	// Mnemonic: DIVSS xmm1, xmm2/m32
+	// f3 0f 5e ca -- divss xmm1, xmm2
+	// f3 0f 5e 08 -- divss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x5E);
+		x86Helper::writeModRM(code, sour, dest);
 	}
 	else token.raiseErr("Invalid command (%d)");
 }
@@ -1636,6 +1753,84 @@ void x86Assembler :: compileREPZ(TokenInfo& token, ProcedureInfo& info, MemoryWr
 	code->writeByte(0xF3);
 
 	token.read();
+}
+
+void x86Assembler :: compileRCPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 53 /r
+	// Mnemonic: RCPPS xmm1, xmm2/m128
+	// 0f 53 ca -- rcpps xmm1, xmm2
+	// 0f 53 08 -- rcpps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x53);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileRCPSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 53 /r
+	// Mnemonic: RCPSS xmm1, xmm2/m32
+	// f3 0f 53 ca -- rcpss xmm1, xmm2
+	// f3 0f 53 08 -- rcpss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x53);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler::compileRSQRTPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 52 /r
+	// Mnemonic: RSQRTPS xmm1, xmm2/m128
+	// 0f 52 ca -- rsqrtps xmm1, xmm2
+	// 0f 52 08 -- rsqrtps xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x52);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler::compileRSQRTSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 52 /r
+	// Mnemonic: RSQRTSS xmm1, xmm2/m32
+	// f3 0f 52 ca -- rsqrtss xmm1, xmm2
+	// f3 0f 52 08 -- rsqrtss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x52);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileLODSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -2664,6 +2859,16 @@ bool x86Assembler :: compileCommandD(TokenInfo& token, ProcedureInfo& info, Memo
 		compileDIV(token, info, &writer);
       return true;
 	}
+
+	// SSE instructions
+	else if (token.check("divps")) {
+		compileDIVPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("divss")) {
+		compileDIVSS(token, info, &writer);
+		return true;
+	}
    else return false;
 }
 bool x86Assembler :: compileCommandE(TokenInfo& token)
@@ -3018,6 +3223,14 @@ bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Memo
 		compileMULSS(token, info, &writer);
 		return true;
 	}
+	else if (token.check("maxps")) {
+		compileMAXPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("maxss")) {
+		compileMAXSS(token, info, &writer);
+		return true;
+	}
    else return false;
 }
 bool x86Assembler :: compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
@@ -3098,6 +3311,24 @@ bool x86Assembler :: compileCommandR(TokenInfo& token, ProcedureInfo& info, Memo
 		compileREPZ(token, info, &writer);
       return true;
 	}
+
+	// SSE instructions
+	else if (token.check("rcpps")) {
+		compileRCPPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("rcpss")) {
+		compileRCPSS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("rsqrtps")) {
+		compileRSQRTPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("rsqrtss")) {
+		compileRSQRTSS(token, info, &writer);
+		return true;
+	}
    else return false;
 }
 bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
@@ -3170,6 +3401,14 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 	}
 	else if (token.check("subss")) {
 		compileSUBSS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("sqrtps")) {
+		compileSQRTPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("sqrtss")) {
+		compileSQRTSS(token, info, &writer);
 		return true;
 	}
    else return false;

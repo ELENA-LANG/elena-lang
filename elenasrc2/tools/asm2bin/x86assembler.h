@@ -105,6 +105,8 @@ protected:
    void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSUBPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileSUBSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileSQRTPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileSQRTSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -141,6 +143,10 @@ protected:
 
 	void compileREP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileREPZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileRCPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileRCPSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileRSQRTPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileRSQRTSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
 	void compilePUSH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compilePOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -153,9 +159,14 @@ protected:
 	void compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMULPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compileMULSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileMAXPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileMAXSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+
 	void compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileDIVPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileDIVSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
 	void compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper);
 	void compileLOOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper);
