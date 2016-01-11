@@ -140,6 +140,16 @@ protected:
 	void compileSAHF(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compilePUSHFD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compilePOPFD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compilePAVGB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePAVGW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePSADBW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePEXTRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePINSRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePMAXSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePMAXUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePMOVMSKB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePMULHUW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePSHUFW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
 	void compileREP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileREPZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

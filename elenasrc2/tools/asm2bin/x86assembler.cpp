@@ -1981,6 +1981,162 @@ void x86Assembler :: compilePOPFD(TokenInfo& token, ProcedureInfo& info, MemoryW
 	token.read();
 }
 
+void x86Assembler :: compilePAVGB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 66 0F E0 /r
+	// Mnemonic: PAVGB xmm1, xmm2/m128
+	// 66 0f e0 ca -- pavgb xmm1, xmm2
+	// 66 0f e0 08 -- pavgb xmm1, XMMWORD PTR[eax]
+
+	// Opcode: 0F E0 /r 
+	// Mnemonic : PAVGB mm1, mm2/m64
+	// 0f e0 c8 -- pavgb mm1, mm0
+	// 0f e0 08 -- pavgb mm1, QWORD PTR [eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x66);
+		code->writeByte(0x0F);
+		code->writeByte(0xE0);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else if (test(sour.type, x86Helper::otM64) && (test(dest.type, x86Helper::otM64) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0xE0);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compilePAVGW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 66 0F E0 /r
+	// Mnemonic: PAVGW xmm1, xmm2/m128
+	// 66 0f e3 ca -- pavgw xmm1, xmm2
+	// 66 0f e3 08 -- pavgw xmm1, XMMWORD PTR[eax]
+
+	// Opcode: 0F E0 /r 
+	// Mnemonic : PAVGW mm1, mm2/m64
+	// 0f e3 c8 -- pavgw mm1, mm0
+	// 0f e3 08 -- pavgw mm1, QWORD PTR [eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x66);
+		code->writeByte(0x0F);
+		code->writeByte(0xE3);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else if (test(sour.type, x86Helper::otM64) && (test(dest.type, x86Helper::otM64) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0xE3);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compilePSADBW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 66 0F F6 /r
+	// Mnemonic: psadbw xmm1, xmm2/m128
+	// 66 0f e3 ca -- psadbw xmm1, xmm2
+	// 66 0f e3 08 -- psadbw xmm1, XMMWORD PTR[eax]
+
+	// Opcode: 0F F6 /r 
+	// Mnemonic : psadbw mm1, mm2/m64
+	// 0f e3 c8 -- psadbw mm1, mm0
+	// 0f e3 08 -- psadbw mm1, QWORD PTR [eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x66);
+		code->writeByte(0x0F);
+		code->writeByte(0xE3);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else if (test(sour.type, x86Helper::otM64) && (test(dest.type, x86Helper::otM64) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0xE3);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler::compilePEXTRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code) 
+{ 
+	// Opcode: 66 0F C5 /r ib
+	// Mnemonic: pextrw r32, xmm, imm8
+	// 66 0f c5 c1 03 -- pextrw eax,xmm1,3
+
+	// Opcode: 0F C5 /r ib
+	// Mnemonic: pextrw r32, mm, imm8
+	// 0f c5 c6 05 -- pextrw eax,mm6,5
+
+	Operand dest = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand sour = compileOperand(token, info, "Invalid destination operand (%d)\n");
+	checkComma(token);
+	token.read();
+	Operand imm = defineOperand(token, info, "Invalid constant");
+	token.read();
+
+	if (test(dest.type, x86Helper::otR32) && test(sour.type, x86Helper::otX128)) {
+		if (imm.offset > 7) token.raiseErr("imm value too large in asm instruction");
+		code->writeByte(0x66);
+		code->writeByte(0x0F);
+		code->writeByte(0xC5);
+		x86Helper::writeModRM(code, dest, sour);
+		x86Helper::writeImm(code, imm);
+	}
+	else if (test(dest.type, x86Helper::otR32) && test(sour.type, x86Helper::otM64)) {
+		if (imm.offset > 3) token.raiseErr("imm value too large in asm instruction");
+		code->writeByte(0x0F);
+		code->writeByte(0xC5);
+		x86Helper::writeModRM(code, dest, sour);
+		x86Helper::writeImm(code, imm);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler::compilePINSRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// TODO! 
+}
+
+void x86Assembler::compilePMAXSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// TODO! 
+}
+
+void x86Assembler::compilePMAXUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// TODO! 
+}
+
+void x86Assembler::compilePMOVMSKB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// TODO! 
+}
+
+void x86Assembler::compilePMULHUW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// TODO! 
+}
+
+void x86Assembler::compilePSHUFW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// TODO! 
+}
+
 void x86Assembler :: compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int prefix, x86JumpHelper& helper)
 {
    token.read();
@@ -3330,6 +3486,38 @@ bool x86Assembler :: compileCommandP(TokenInfo& token, ProcedureInfo& info, Memo
 	}
 	else if (token.check("pavgw")) {
 		compilePAVGW(token, info, &writer);
+		return true;
+	}
+	else if (token.check("psadbw")) {
+		compilePSADBW(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pextrw")) {
+		compilePEXTRW(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pinsrw")) {
+		compilePINSRW(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pmaxsw")) {
+		compilePMAXSW(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pmaxub")) {
+		compilePMAXUB(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pmovmskb")) {
+		compilePMOVMSKB(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pmulhuw")) {
+		compilePMULHUW(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pshufw")) {
+		compilePSHUFW(token, info, &writer);
 		return true;
 	}
    else return false;
