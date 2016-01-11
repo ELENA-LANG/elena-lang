@@ -147,6 +147,8 @@ protected:
 	void compilePINSRW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compilePMAXSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compilePMAXUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePMINSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compilePMINUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compilePMOVMSKB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compilePMULHUW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compilePSHUFW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
