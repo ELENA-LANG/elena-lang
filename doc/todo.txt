@@ -56,7 +56,10 @@ In development:
               xdev - general implementation     
                        * implement #125 : wide literal constant
                        * implement #167 : stack allocated variable and $nil
-
+              
+              xdev - SSE and SSE2 instructions support
+                       * http://softpixel.com/~cwright/programming/simd/sse.php
+                       * http://softpixel.com/~cwright/programming/simd/sse2.php
 ------                                 
 Pipeline:
 ------                                                                                         
