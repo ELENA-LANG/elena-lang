@@ -1548,6 +1548,45 @@ void x86Assembler :: compileMAXSS(TokenInfo& token, ProcedureInfo& info, MemoryW
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler::compileMINPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: 0F 5D /r
+	// Mnemonic: MINPS xmm1, xmm2/m128
+	// 0f 5F ca -- minps xmm1, xmm2
+	// 0f 5F 08 -- minps xmm1, XMMWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0x0F);
+		code->writeByte(0x5D);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler::compileMINSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	// Opcode: F3 0F 5D /r
+	// Mnemonic: minss xmm1, xmm2/m32
+	// f3 0f 5F ca -- minss xmm1, xmm2
+	// f3 0f 5F 08 -- minss xmm1, DWORD PTR[eax]
+
+	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+	checkComma(token);
+	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+	if (test(sour.type, x86Helper::otX128) && (test(dest.type, x86Helper::otX128) || test(dest.type, x86Helper::otM32))) {
+		code->writeByte(0xF3);
+		code->writeByte(0x0F);
+		code->writeByte(0x5D);
+		x86Helper::writeModRM(code, sour, dest);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
@@ -3231,6 +3270,14 @@ bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Memo
 		compileMAXSS(token, info, &writer);
 		return true;
 	}
+	else if (token.check("minps")) {
+		compileMINPS(token, info, &writer);
+		return true;
+	}
+	else if (token.check("minss")) {
+		compileMINSS(token, info, &writer);
+		return true;
+	}
    else return false;
 }
 bool x86Assembler :: compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
@@ -3274,6 +3321,16 @@ bool x86Assembler :: compileCommandP(TokenInfo& token, ProcedureInfo& info, Memo
 	else if (token.check("popfd")) {
 		compilePOPFD(token, info, &writer);
       return true;
+	}
+
+	// SSE instructions
+	else if (token.check("pavgb")) {
+		compilePAVGB(token, info, &writer);
+		return true;
+	}
+	else if (token.check("pavgw")) {
+		compilePAVGW(token, info, &writer);
+		return true;
 	}
    else return false;
 }

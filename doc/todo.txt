@@ -59,7 +59,7 @@ In development:
               
               xdev - SSE and SSE2 instructions support
                        * http://softpixel.com/~cwright/programming/simd/sse.php
-					   * http://softpixel.com/~cwright/programming/simd/sse2.php
+                       * http://softpixel.com/~cwright/programming/simd/sse2.php
 ------                                 
 Pipeline:
 ------                                                                                         

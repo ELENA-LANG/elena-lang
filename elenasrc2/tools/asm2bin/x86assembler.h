@@ -161,6 +161,8 @@ protected:
 	void compileMULSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compileMAXPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compileMAXSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileMINPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+	void compileMINSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
 	void compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
