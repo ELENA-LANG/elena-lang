@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -494,7 +494,7 @@ namespace _ELENA_
 
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
-   #define PACKAGE_KEY              "$elena'@package"                // The project namespace
+   #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor

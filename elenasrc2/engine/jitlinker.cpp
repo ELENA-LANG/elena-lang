@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -551,7 +551,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    }
    else if (vmtVAddress == LOADER_NOTLOADED) {
       // check if it built-in constants
-      if (StringHelper::compare(reference, PACKAGE_KEY)) {
+      if (StringHelper::compare(reference, NAMESPACE_KEY)) {
          _compiler->compileLiteral(&writer, _loader->getNamespace());
 
          vmtVAddress = resolve(_loader->getLiteralClass(), mskVMTRef, true);

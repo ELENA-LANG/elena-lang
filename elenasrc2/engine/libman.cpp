@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA LibraryManager.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -184,13 +184,21 @@ _Module* LibraryManager :: resolveNative(ident_t referenceName, LoadResult& resu
 
 _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
-   NamespaceName name(referenceName);
+   if (NamespaceName::compare(referenceName, NAMESPACE_KEY)) {
+      ReferenceName name(referenceName);
+      ReferenceNs resolvedName(_namespace, name);
 
-   _Module* module = loadModule(name, result);
+      return resolveModule(resolvedName, result, reference);
+   }
+   else {
+      NamespaceName name(referenceName);
 
-   reference = module ? module->mapReference(referenceName, true) : 0;
+      _Module* module = loadModule(name, result);
 
-   return module;
+      reference = module ? module->mapReference(referenceName, true) : 0;
+
+      return module;
+   }
 }
 
 _Module* LibraryManager :: resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference)

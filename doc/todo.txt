@@ -2,10 +2,10 @@
 In development:
 ------                                                   
               xdev - general implementation     
-                       * correct error : ]]  - there should be correct error - dot expected
-
+                       * IDE : project tree #192 
                        * implement #125 : wide literal constant
                        * implement #167 : stack allocated variable and $nil
+                       * the files in subfolder should include path in its name #130 7
               
               sdev - samples
                        * rosetta sample : Knuth shuffle

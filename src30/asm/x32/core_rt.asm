@@ -277,7 +277,7 @@ procedure core_rt'init_rt_info
   test eax, eax
   jz   lbCannotLoadRT
 
-  push const : "$elena'@package"
+  push const : "$elena'@rootnamespace"
   push 0
   call eax
   add  esp, 8

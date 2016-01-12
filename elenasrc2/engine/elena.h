@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -275,15 +275,20 @@ public:
       _string[pos] = 0;
    }
 
-   bool compare(ident_t reference)
+   static bool compare(ident_t reference, ident_t ns)
    {
       size_t pos = StringHelper::findLast(reference, '\'', 0);
-      if (pos == 0 && getlength(_string)==0)
+      if (pos == 0 && getlength(ns) == 0)
          return true;
-      else if (getlength(_string)==pos) {
-         return StringHelper::compare(_string, reference, pos);
+      else if (getlength(ns) == pos) {
+         return StringHelper::compare(reference, ns, pos);
       }
       else return false;
+   }
+
+   bool compare(ident_t reference)
+   {
+      return NamespaceName::compare(reference, _string);
    }
 };
 
