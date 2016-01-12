@@ -5,42 +5,10 @@
 #import system'calendar.
 #import extensions.
 
-#import extensions'dynamic.
-#import extensions'text.
-#import extensions'routines.
-/*
-        var people = new Dictionary<string, object> {{"1", "John"}, {"2", "Susan"}};
-        var serializer = new JavaScriptSerializer();
- 
-        var json = serializer.Serialize(people);
-        Console.WriteLine(json);
- 
-        var deserialized = serializer.Deserialize<Dictionary<string, object>>(json);
-        Console.WriteLine(deserialized["2"]);
- 
-        var jsonObject = serializer.DeserializeObject(@"{ ""foo"": 1, ""bar"": [10, ""apples""] }");
-        var data = jsonObject as Dictionary<string, object>;
-        var array = data["bar"] as object[];
-        Console.WriteLine(array[1]);
- 
-        
-NeoJSONReader fromString: '{ "foo": 1, "bar": [10, "apples"] }'.
-
-start -> newstruct -> newfield -> semicol -> newobject -> comma -> newfield -> semicol -> newobject -> array_member 
- -> array_comma -> array_member -> array_eof -> struct_eof
-  
-    */
-
 #symbol XTester =
 {
     test
     [
-        #var json := "{ ""foo"": 1, ""bar"": [10, ""apples""] }".
-        
-        #var o := json fromJson.
-        
-        #var x := o foo.
-        #var y := o bar.
     ]
 }.
         
