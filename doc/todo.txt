@@ -1,11 +1,13 @@
-       = $nil == self seek:(self firstMember) &eachPair:(:m:n) [ m equal:n not ].
-
-
 ------                                 
 In development:
 ------                                                   
+              xdev - general implementation     
+                       * correct error : ]]  - there should be correct error - dot expected
+
+                       * implement #125 : wide literal constant
+                       * implement #167 : stack allocated variable and $nil
+              
               sdev - samples
-                       * rosetta sample : JSON
                        * rosetta sample : Knuth shuffle
                        * rosetta sample : Knuth's algorithm S                       
                        * rosetta sample : Literals/String
@@ -53,12 +55,6 @@ In development:
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game
                        
-              xdev - general implementation     
-                       * correct error : ]]  - there should be correct error - dot expected
-
-                       * implement #125 : wide literal constant
-                       * implement #167 : stack allocated variable and $nil
-              
               xdev - SSE and SSE2 instructions support
                        * http://softpixel.com/~cwright/programming/simd/sse.php
                        * http://softpixel.com/~cwright/programming/simd/sse2.php

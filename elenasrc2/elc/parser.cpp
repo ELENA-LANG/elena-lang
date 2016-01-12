@@ -38,6 +38,7 @@ inline const char* getError(Symbol symbol)
    case nsDeclarationEndExpected:
    case nsStatementEndExpected:
    case nsDirectiveEndExpected:
+   case nsInlineExpressionEndExpected:
       return errDotExpectedSyntax;
    case nsErrClosingSBracketExpected:
       return errCSBrExpectedSyntax;
