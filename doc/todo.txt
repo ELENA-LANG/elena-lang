@@ -54,6 +54,8 @@ In development:
                        * rosetta sample : Flipping bits game
                        
               xdev - general implementation     
+                       * correct error : ]]  - there should be correct error - dot expected
+
                        * implement #125 : wide literal constant
                        * implement #167 : stack allocated variable and $nil
               

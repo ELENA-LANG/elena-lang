@@ -44,6 +44,74 @@
     #method is &whitespace = theSpaceMode.
 }
 
+#class ExpressionStatemachine :: Statemachine
+{
+    #field(type:bool)theSpaceMode.
+    #field(type:bool)theQuoteMode.
+    #field(type:bool)theNewToken.
+    
+    #field theTokenType.
+    
+    #constructor new
+    [
+        theSpaceMode := true.
+        theNewToken := true.
+        theQuoteMode := false.
+    ]
+    
+    #method proceed &char:aChar
+    [
+        theQuoteMode?
+            [
+                (aChar == #22h)
+                    ? [ theQuoteMode := false. theNewToken := false. ].
+                    
+                ^ false.                
+            ].
+        
+        #var(type:bool)whitespace := aChar is &whitespace.
+        #var(type:bool)digit := aChar is &digit.
+        #var(type:bool)letter := aChar is &letter.
+        whitespace
+            ? [
+                theSpaceMode
+                    ! [ theNewToken := false. theSpaceMode := true. ^ true. ].
+            ]
+            ! [
+                (aChar == #22h)
+                    ? [ 
+                        theQuoteMode := true.
+                        theSpaceMode := false.
+                        
+                        ^ false.
+                      ].
+                                      
+                theSpaceMode
+                    ? [ 
+                        theSpaceMode := false. 
+                        (letter or:digit)
+                            ! [ theNewToken := true. ].
+                      ]
+                    ! [                
+                        (letter or:digit)
+                            ? [                     
+                                theNewToken
+                                    ? [ theNewToken := false. ^ true. ].
+                            ]
+                            ! [ 
+                                theNewToken
+                                    ? [ theNewToken := false. ]
+                                    ! [ theNewToken := true. ^ true. ].                                    
+                            ].
+                    ].
+            ].
+        
+        ^ false.
+    ]
+    
+    #method is &whitespace = theSpaceMode.    
+}
+
 /// obosolet
 #symbol WordEnumerator = TokenEnumerator.
 
