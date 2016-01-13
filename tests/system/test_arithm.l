@@ -9,7 +9,7 @@
 {
     test
     [
-        #var w := "Hello"w.
+        #var e := realOpController e.
     ]
 }.
         

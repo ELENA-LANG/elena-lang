@@ -30,7 +30,7 @@
 
 [IDE]
 [*] icons in project tree added
-[*] issue #130 : 
+[*] issue #130 : namespace is included into the tab name
 
 [Samples]
 [+] console sample : random

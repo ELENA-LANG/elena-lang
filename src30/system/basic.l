@@ -3515,13 +3515,23 @@
     #method(stacksafe) pi &vreal:aRetVal
         => system'internal'r_pi.
         
-    #method(type:real) pi
+    #method(type:real,embeddable,suppress:w3,stacksafe) pi
     [
         #var(type:real)aRetVal.
         $self pi &vreal:aRetVal.
         
-        ^ RealNumber new &real:aRetVal.
+        ^ aRetVal.
+    ]        
+    
+    #method(type:real,suppress:w3,stacksafe) e
+    [
+        #var(type:real)aRetVal.
+        $self exp &real:1.0r &vreal:aRetVal.
+        
+        ^ aRetVal.
     ]        
 }.
 
 #symbol(type:real)pi_value = realOpController pi.
+
+#symbol(type:real)e_value = realOpController e.
