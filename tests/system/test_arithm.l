@@ -9,6 +9,7 @@
 {
     test
     [
+        #var w := "Hello"w.
     ]
 }.
         

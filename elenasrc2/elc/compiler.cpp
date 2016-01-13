@@ -243,6 +243,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
    realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(STR_FORWARD));
+   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
    charReference = mapReference(project->resolveForward(CHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
@@ -1606,6 +1607,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return scope.moduleScope->realReference;
       case okLiteralConstant:
          return scope.moduleScope->literalReference;
+      case okWideLiteralConstant:
+         return scope.moduleScope->wideReference;
       case okCharConstant:
          return scope.moduleScope->charReference;
       case okThisParam:
@@ -1983,6 +1986,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLiteralConstant:
          scope.writer->newNode(lxConstantString, object.param);
          break;
+      case okWideLiteralConstant:
+         scope.writer->newNode(lxConstantWideStr, object.param);
+         break;
       case okCharConstant:
          scope.writer->newNode(lxConstantChar, object.param);
          break;
@@ -2067,6 +2073,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
    ObjectInfo object;
    if (terminal==tsLiteral) {
       object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
+   }
+   else if (terminal == tsWide) {
+      object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
    }
    else if (terminal==tsCharacter) {
       object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
@@ -5180,6 +5189,18 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
+      }
+      else if (retVal.kind == okWideLiteralConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+         WideString wideValue(module->resolveConstant(retVal.param));
+
+         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+
+         dataWriter.Memory()->addReference(scope.moduleScope->wideReference | mskVMTRef, (size_t)-4);
+
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
       }
       else if (retVal.kind == okCharConstant) {
          _Module* module = scope.moduleScope->module;

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree classes
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxTreeH
@@ -78,20 +78,21 @@ enum LexicalType
    lxLocal           = 0x4109,
    lxBlockLocal      = 0x410A,
    lxConstantString  = 0x410B,
-   lxConstantChar    = 0x410C,
-   lxConstantInt     = 0x410D,
-   lxConstantLong    = 0x410E,
-   lxConstantReal    = 0x410F,
-   lxConstantClass   = 0x4110,
-   lxMessageConstant = 0x4111,
-   lxExtMessageConstant = 0x4112,
-   lxSignatureConstant  = 0x4113,
-   lxVerbConstant    = 0x4114,
-   lxNil             = 0x4115,
-   lxCurrent         = 0x4116,
-   lxResult          = 0x4117,
-   lxResultField     = 0x4118,
-   lxCurrentMessage  = 0x4119,
+   lxConstantWideStr = 0x410C,
+   lxConstantChar    = 0x410D,
+   lxConstantInt     = 0x410E,
+   lxConstantLong    = 0x410F,
+   lxConstantReal    = 0x4110,
+   lxConstantClass   = 0x4111,
+   lxMessageConstant = 0x4112,
+   lxExtMessageConstant = 0x4113,
+   lxSignatureConstant  = 0x4114,
+   lxVerbConstant    = 0x4115,
+   lxNil             = 0x4116,
+   lxCurrent         = 0x4117,
+   lxResult          = 0x4118,
+   lxResultField     = 0x4119,
+   lxCurrentMessage  = 0x411A,
 
    lxVariable        = 0x407,
    lxIntVariable     = 0x408,

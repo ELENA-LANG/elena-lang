@@ -2,7 +2,6 @@
 In development:
 ------                                                   
               xdev - general implementation     
-                       * implement #125 : wide literal constant
                        * IDE : project tree #192 
                        * the files in subfolder should include path in its name #130
                        * exp constant #108 

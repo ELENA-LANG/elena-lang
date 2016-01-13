@@ -66,6 +66,7 @@ __define hex			12297
 __define real			12298
 __define character		12299
 __define long                   12300
+__define wide                   12301
 
 // error rules
 __define DECLARATION_END_EXPECTED	16384
@@ -510,6 +511,7 @@ OBJECT ->
 	| long
 	| real
 	| literal
+	| wide
 	| character
 	| ( SUB_EXPRESSION	
 	| % MESSAGE_REFERENCE

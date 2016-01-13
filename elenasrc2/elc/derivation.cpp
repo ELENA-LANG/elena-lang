@@ -34,7 +34,7 @@ void DerivationWriter :: writeTerminal(TerminalInfo terminal)
    _writer->writeDWord(terminal.col);
    _writer->writeDWord(terminal.length);
 
-   if (terminal==tsLiteral || terminal==tsCharacter) {
+   if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<TempString> quote(terminal.value);

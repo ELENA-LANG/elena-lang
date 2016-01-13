@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sourceH
@@ -39,6 +39,7 @@ const char dfaSignStart      = 'u';
 const char dfaQuote          = 'w';
 const char dfaPrivate        = 'x';
 const char dfaCharacter      = '}';
+const char dfaWideQuote      = '~';
 
 class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {

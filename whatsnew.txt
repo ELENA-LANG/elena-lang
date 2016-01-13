@@ -10,6 +10,7 @@
 [ELENA]
 [!] binary incompatible due to new opcodes
 [+] new simplified closure declaration syntax : i = [ i ], = [ i ], i = { ... }
+[+] issue #125 : new UTF-16 literal constant
 [!] implementing #198
 
 [ELC]

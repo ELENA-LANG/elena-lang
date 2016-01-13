@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerH
@@ -114,6 +114,7 @@ public:
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference 
+      okWideLiteralConstant,          // param - reference 
       okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference 
       okLongConstant,                 // param - reference 
@@ -231,6 +232,7 @@ private:
       ref_t longReference;
       ref_t realReference;
       ref_t literalReference;
+      ref_t wideReference;
       ref_t charReference;
       ref_t trueReference;
       ref_t falseReference;

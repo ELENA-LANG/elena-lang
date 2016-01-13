@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser Symbol constants
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxH
@@ -34,6 +34,7 @@ enum Symbol
    tsReal                       = 0x0300A,
    tsCharacter                  = 0x0300B,
    tsLong                       = 0x0300C,
+   tsWide                       = 0x0300D,
 
    nsClass                      = 0x0100E,               // non-terminals
    nsSubjectArg                 = 0x01010,

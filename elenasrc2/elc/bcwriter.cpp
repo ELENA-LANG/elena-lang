@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -2198,6 +2198,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskVMTRef;
       case lxConstantString:
          return mskLiteralRef;
+      case lxConstantWideStr:
+         return mskWideLiteralRef;
       case lxConstantChar:
          return mskCharRef;
       case lxConstantInt:
@@ -2238,6 +2240,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushA);
          break;
       case lxConstantString:
+      case lxConstantWideStr:
       case lxConstantClass:
       case lxConstantSymbol:
       case lxConstantChar:
@@ -2309,6 +2312,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcCallR, argument | mskSymbolRef);
          break;
       case lxConstantString:
+      case lxConstantWideStr:
       case lxConstantClass:
       case lxConstantSymbol:
       case lxConstantChar:
