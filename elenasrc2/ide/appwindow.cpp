@@ -333,7 +333,23 @@ bool IDEController :: openFile(_ELENA_::path_t path)
    if (opened) {
       _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);
 
-      int index = _view->newDocument(_ELENA_::FileName(path), doc);
+      _ELENA_::ReferenceNs module;
+      _ELENA_::Path modulePath(path);
+      _project.retrieveName(modulePath, module);
+
+      _ELENA_::String<text_c, 80> caption;
+      size_t len = strlen(module);
+      if (len > 50)
+         len = 50;
+
+      _ELENA_::StringHelper::copy(caption, module, len, len);
+      caption[len] = 0;
+
+      caption.append(':');
+      caption.append(path + _ELENA_::StringHelper::findLast(path, PATH_SEPARATOR) + 1);
+      //caption.append(modulePath);
+
+      int index = _view->newDocument(caption, doc);
 
       _model->mappings.add(path, index);
       _model->documents.add(doc);

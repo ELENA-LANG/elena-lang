@@ -2,8 +2,7 @@
 In development:
 ------                                                   
               xdev - general implementation     
-                       * IDE : project tree #192 
-                       * the files in subfolder should include path in its name #130
+                       * 
                        * exp constant #108 
               
               sdev - samples

@@ -30,6 +30,7 @@
 
 [IDE]
 [*] icons in project tree added
+[*] issue #130 : 
 
 [Samples]
 [+] console sample : random
