@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image Loader class declarations
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef loaderH
@@ -19,7 +19,7 @@ class _ImageLoader : public _JITLoader
 {
 protected:
    // addresses
-   ReferenceMap _codeReferences, _dataReferences, _symbolReferences, _loaderReferences;
+   ReferenceMap _codeReferences, _dataReferences, _symbolReferences;
    ReferenceMap _statReferences, _exportReferences;
    ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences;
    ReferenceMap _bssReferences;
@@ -38,7 +38,6 @@ public:
       _codeReferences.clear();
       _dataReferences.clear();
       _symbolReferences.clear();
-      _loaderReferences.clear();
       _statReferences.clear();
       _exportReferences.clear();
       _constReferences.clear();
@@ -49,7 +48,7 @@ public:
    }
 
    _ImageLoader()
-      : _codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1), _loaderReferences((size_t)-1),
+      : _codeReferences((size_t)-1), _dataReferences((size_t)-1), _symbolReferences((size_t)-1),
         _statReferences((size_t)-1), _constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
         _literalReferences((size_t)-1), _bssReferences((size_t)-1), _exportReferences((size_t)-1),
         _subjects(0)

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image class declarations
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef imageH
@@ -33,6 +33,7 @@ private:
    size_t   _objectHeaderSize;
 
    ident_t _literal;
+   ident_t _wideLiteral;
    ident_t _character;
    ident_t _int;
    ident_t _long;
@@ -69,6 +70,7 @@ public:
    virtual size_t getLinkerConstant(int id);
 
    virtual ident_t getLiteralClass();
+   virtual ident_t getWideLiteralClass();
    virtual ident_t getCharacterClass();
    virtual ident_t getIntegerClass();
    virtual ident_t getRealClass();

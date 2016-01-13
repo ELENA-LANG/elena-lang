@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitcompilerH
@@ -57,6 +57,7 @@ public:
    virtual void compileInt64(MemoryWriter* writer, int low, int high) = 0;
    virtual void compileReal64(MemoryWriter* writer, double number) = 0;
    virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
+   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
    virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
 
@@ -100,6 +101,7 @@ public:
    virtual void compileInt64(MemoryWriter* writer, int low, int high);
    virtual void compileReal64(MemoryWriter* writer, double number);
    virtual void compileLiteral(MemoryWriter* writer, const char* value);
+   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
    virtual void compileChar32(MemoryWriter* writer, const char* value);
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
 

@@ -2,13 +2,12 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "loader.h"
-//#include "jitlinker.h"
 
 using namespace _ELENA_;
 
@@ -33,9 +32,6 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
          break;
       case mskSymbolRef:
          _symbolReferences.add(reference, (ref_t)vaddress);
-         break;
-      case mskSymbolLoaderRef:
-         _loaderReferences.add(reference, (ref_t)vaddress);
          break;
       default:
       {
@@ -92,8 +88,6 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
             return (void*)resolveExternal(reference);
          case mskStatSymbolRef:
             return (void*)_statReferences.get(reference);
-         case mskSymbolLoaderRef:
-            return (void*)_loaderReferences.get(reference);
          default:
          {
             size_t imageMask = mask & mskImageMask;

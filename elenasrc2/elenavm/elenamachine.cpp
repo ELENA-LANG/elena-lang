@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -256,8 +256,8 @@ Instance :: Instance(ELENAMachine* machine)
    // init loader based on default machine config
    initLoader(_machine->config);
 
-   _literalClass.copy(_config.forwards.get(WSTR_FORWARD));
-   _characterClass.copy(_config.forwards.get(WCHAR_FORWARD));
+   _literalClass.copy(_config.forwards.get(STR_FORWARD));
+   _characterClass.copy(_config.forwards.get(CHAR_FORWARD));
    _intClass.copy(_config.forwards.get(INT_FORWARD));
    _realClass.copy(_config.forwards.get(REAL_FORWARD));
    _longClass.copy(_config.forwards.get(LONG_FORWARD));

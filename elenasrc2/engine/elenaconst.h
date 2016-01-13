@@ -173,7 +173,7 @@ namespace _ELENA_
       mskRealRef             = 0x05000000,   // reference to constant real number
       mskMessage             = 0x06000000,   // message constant
       mskCharRef             = 0x07000000,   // reference to character constant
-      mskSymbolLoaderRef     = 0x08000000,   // reference to symbol loader
+      mskWideLiteralRef      = 0x08000000,   // reference to constant wide literal
       mskSignature           = 0x09000000,   // message signature constant
       mskVerb                = 0x0A000000,   // message verb constant
       mskExtMessage          = 0x0B000000,   // external message verb constant
@@ -504,8 +504,9 @@ namespace _ELENA_
    #define INT_FORWARD              "'$int"
    #define LONG_FORWARD             "'$long"
    #define REAL_FORWARD             "'$real"
-   #define WSTR_FORWARD             "'$literal"
-   #define WCHAR_FORWARD            "'$char"
+   #define STR_FORWARD              "'$literal"
+   #define WIDESTR_FORWARD          "'$wideliteral"
+   #define CHAR_FORWARD             "'$char"
    #define TRUE_FORWARD             "'$true"
    #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"

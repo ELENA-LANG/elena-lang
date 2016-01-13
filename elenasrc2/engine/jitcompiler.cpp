@@ -109,6 +109,21 @@ void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
    writer->align(4, 0);
 }
 
+void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
+{
+   int length = (getlength(value) + 1) << 1;
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(-length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(4, 0);
+}
+
 void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
 {
    size_t len = 1;

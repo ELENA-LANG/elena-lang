@@ -134,7 +134,6 @@ class JITLinker
 ////   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(ident_t reference, ident_t vmt);
    void* resolveExtensionMessage(ident_t reference, ident_t vmt);
-//   //void* resolveLoader(const wchar16_t*  reference);
 //////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:

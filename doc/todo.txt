@@ -2,10 +2,10 @@
 In development:
 ------                                                   
               xdev - general implementation     
-                       * IDE : project tree #192 
                        * implement #125 : wide literal constant
-                       * implement #167 : stack allocated variable and $nil
-                       * the files in subfolder should include path in its name #130 7
+                       * IDE : project tree #192 
+                       * the files in subfolder should include path in its name #130
+                       * exp constant #108 
               
               sdev - samples
                        * rosetta sample : Knuth shuffle
@@ -54,7 +54,10 @@ In development:
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game
-                       
+ 
+              xdev - general implementation     
+                       * implement #167 : stack allocated variable and $nil
+                      
               xdev - SSE and SSE2 instructions support
                        * http://softpixel.com/~cwright/programming/simd/sse.php
                        * http://softpixel.com/~cwright/programming/simd/sse2.php

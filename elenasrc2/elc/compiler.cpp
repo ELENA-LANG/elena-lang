@@ -242,8 +242,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    intReference = mapReference(project->resolveForward(INT_FORWARD));
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
    realReference = mapReference(project->resolveForward(REAL_FORWARD));
-   literalReference = mapReference(project->resolveForward(WSTR_FORWARD));
-   charReference = mapReference(project->resolveForward(WCHAR_FORWARD));
+   literalReference = mapReference(project->resolveForward(STR_FORWARD));
+   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));

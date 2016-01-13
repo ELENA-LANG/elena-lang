@@ -495,6 +495,10 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       value = reference;
       vmtReference = _loader->getLiteralClass();
    }
+   else if (mask == mskWideLiteralRef) {
+      value = reference;
+      vmtReference = _loader->getWideLiteralClass();
+   }
    else if (mask == mskCharRef) {
       value = reference;
       vmtReference = _loader->getCharacterClass();
@@ -535,6 +539,11 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    size_t position = writer.Position();
    if (mask == mskLiteralRef) {
       _compiler->compileLiteral(&writer, value);
+   }
+   else if (mask == mskWideLiteralRef) {
+      WideString wideValue(value);
+
+      _compiler->compileWideLiteral(&writer, wideValue);
    }
    else if (mask == mskCharRef) {
       _compiler->compileChar32(&writer, value);
@@ -735,36 +744,6 @@ void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
    return vaddress;
 }
 
-//void* JITLinker :: resolveLoader(const wchar16_t*  reference)
-//{
-//   // resolve symbol reference
-//   void* symbolVAddress = resolve(reference, mskSymbolRef, /*true*/false);
-//   
-//   // resolve vmt
-//   void* vmtVAddress = resolve(ConstantIdentifier(SYMBOL_CLASS), mskVMTRef, false);
-//
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   bool valueConstant = false;
-//   void* vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(reference, vaddress, mskSymbolLoaderRef);
-//
-//   size_t valuePosition = writer.Position();
-//   _compiler->allocateVariable(writer);
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//   resolveReference(image, valuePosition, (ref_t)symbolVAddress, mskSymbolRef, _virtualMode);
-//
-//   return vaddress;
-//}
-
 //void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
 //{
 //   // get target image & resolve virtual address
@@ -894,6 +873,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
             break;
          case mskConstantRef:
          case mskLiteralRef:
+         case mskWideLiteralRef:
          case mskCharRef:
          case mskInt32Ref:
          case mskRealRef:
@@ -915,9 +895,6 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskExtMessage:
             vaddress = resolveExtensionMessage(reference, _loader->getExtMessageClass());
             break;
-            //         //case mskSymbolLoaderRef:
-//         //   vaddress = resolveLoader(reference);
-//         //   break;
          case mskNativeVariable:
          case mskLockVariable:
             vaddress = resolveNativeVariable(reference, mask);

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -28,8 +28,9 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _objectHeaderSize = compiler->getObjectHeaderSize();
 
    // load default forwards
-   _literal = project->resolveForward(WSTR_FORWARD);
-   _character = project->resolveForward(WCHAR_FORWARD);
+   _literal = project->resolveForward(STR_FORWARD);
+   _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
+   _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
    _long = project->resolveForward(LONG_FORWARD);
    _real = project->resolveForward(REAL_FORWARD);
@@ -162,6 +163,11 @@ size_t ExecutableImage :: getLinkerConstant(int id)
 ident_t ExecutableImage::getLiteralClass()
 {
    return _literal;
+}
+
+ident_t ExecutableImage :: getWideLiteralClass()
+{
+   return _wideLiteral;
 }
 
 ident_t ExecutableImage::getCharacterClass()

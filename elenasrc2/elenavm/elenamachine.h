@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -19,7 +19,7 @@
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
 
-#define ELENAVM_REVISION_NUMBER    0x0003             // ELENAVM revision version
+#define ELENAVM_REVISION_NUMBER    0x0004             // ELENAVM revision version
 
 namespace _ELENA_
 {
@@ -185,6 +185,7 @@ protected:
    JITLinker*      _linker;
 
    IdentifierString _literalClass;
+   IdentifierString _wideLiteralClass;
    IdentifierString _characterClass;
    IdentifierString _intClass;
    IdentifierString _longClass;
@@ -270,6 +271,11 @@ public:
    virtual ident_t getLiteralClass()
    {
       return _literalClass;
+   }
+
+   virtual ident_t getWideLiteralClass()
+   {
+      return _wideLiteralClass;
    }
 
    virtual ident_t getCharacterClass()
