@@ -5,7 +5,6 @@ In development:
               xdev - general implementation     
                        * anagram
                        * dynamic_var
-                       * first_class
                              
               sdev - samples
                        * rosetta sample : Knuth shuffle

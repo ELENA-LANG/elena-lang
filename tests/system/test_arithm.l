@@ -12,9 +12,6 @@
 {
     test
     [
-        #var f := ()[ this power:(1.0r / 3) ].
-        
-        2::f eval.
     ]
 }.
         

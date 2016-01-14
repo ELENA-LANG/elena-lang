@@ -2164,6 +2164,9 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
       case nsMethodParameter:
          result = compileClosure(member, scope, 0);
          break;
+      case nsInlineClosure:
+         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
+         break;
       case nsInlineExpression:
          result = compileClosure(objectNode, scope, HINT_ACTION);
          break;
@@ -3289,7 +3292,7 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mod
    InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
 
    // if it is a lazy expression / multi-statement closure without parameters
-   if (node == nsSubCode) {
+   if (node == nsSubCode || node == nsInlineClosure) {
       compileAction(node, scope, DNode(), mode);
    }
    // if it is a closure / labda function with a parameter
