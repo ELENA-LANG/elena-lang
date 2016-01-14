@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                                                   
-              xdev - general implementation     
-                       * exp constant #108 
-              
               sdev - samples
                        * rosetta sample : Knuth shuffle
                        * rosetta sample : Knuth's algorithm S                       

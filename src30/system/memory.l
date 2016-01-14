@@ -898,15 +898,15 @@
     #method indexOf : aSearchObject &at:anIndex
         = aSearchObject cast:%eval &to:
             {
-               eval:anIndex &literal:aLiteral
-                  = self indexOf &literal:aLiteral &at:anIndex.
+               eval:target &literal:aLiteral
+                  = target indexOf &literal:aLiteral &at:anIndex.
     
-               eval:anIndex &wide:aLiteral
-                  = self indexOf &literal:(aLiteral literal) &at:anIndex.
+               eval:target &wide:aLiteral
+                  = target indexOf &literal:(aLiteral literal) &at:anIndex.
     
-               eval:anIndex &char:aChar
-                  = self indexOf &char:aChar &at:anIndex.
-            } &with:anIndex.
+               eval:target &char:aChar
+                  = target indexOf &char:aChar &at:anIndex.
+            } &with:$self.
 
     /// obsolete            
     #method indexOf:anIndex:aSearchObject
@@ -946,15 +946,15 @@
     #method insert : anObject &at:anIndex
         = anObject cast:%eval &to:
             {
-               eval &literal:aLiteral
-                  = self insert &int:(anIndex int) &literal:aLiteral.
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &literal:aLiteral.
     
-               eval &wide:aLiteral
-                  = self insert &int:(anIndex int) &literal:(aLiteral literal).
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
     
-               eval &char:aChar
-                  = self insert &int:(anIndex int) &char:aChar.
-            }.
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
 
     /// Deletes the substring from the object and returns the new one
     #method delete:aLength &at:anIndex
@@ -1133,12 +1133,12 @@
     [
         anObject cast:%eval &to:
         {
-            eval &char:aChar [ self insert &int:(anIndex int) &char:aChar. ]
+            eval:target &char:aChar [ target insert &int:(anIndex int) &char:aChar. ]
             
-            eval &literal:aLiteral [ self insert &int:(anIndex int) &literal:aLiteral. ]
+            eval:target &literal:aLiteral [ target insert &int:(anIndex int) &literal:aLiteral. ]
             
-            eval &wide:aLiteral [ self insert &int:(anIndex int) &wide:aLiteral. ]
-        }.
+            eval:target &wide:aLiteral [ target insert &int:(anIndex int) &wide:aLiteral. ]
+        } &with:$self.
     ]            
                                     
     /// Deletes a sub string
@@ -1179,7 +1179,7 @@
 // --- emptyWideLiteralValue ---
 
 /// An empty wide literal value
-#symbol(type:wide) emptyWideLiteralValue = #0 wide. // !! temporal
+#symbol(type:wide) emptyWideLiteralValue = ""w.
 
 // --- WideLiteralValue ---
 
@@ -1314,12 +1314,12 @@
     #method indexOf : anObject &at:anIndex
         = anObject cast:%eval &to:
             {
-                eval &literal:aLiteral = self indexOf &int:(anIndex int) &wide:(aLiteral wide).
+                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
                 
-                eval &wide:aLiteral = self indexOf &int:(anIndex int) &wide:aLiteral.
+                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
                 
-                eval &char:aChar = self indexOf &int:(anIndex int) &char:aChar.
-            }.
+                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
+            } &with:$self.
 
     /// Inserts the substring into and returns the new one
     #method(type:wide,stacksafe) insert &int:anIndex &wide:aLiteral
@@ -1337,15 +1337,15 @@
     #method insert : anObject &at:anIndex
         = anObject cast:%eval &to:
             {
-               eval &wide:aLiteral
-                  = self insert &int:(anIndex int) &wide:aLiteral.
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &wide:aLiteral.
     
-               eval &literal:aLiteral
-                  = self insert &int:(anIndex int) &wide:(aLiteral wide).
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
     
-               eval &char:aChar
-                  = self insert &int:(anIndex int) &char:aChar.
-            }.
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
 
     /// Deletes the substring from the object and returns the new one
     #method delete:aLength &at:anIndex
@@ -1523,12 +1523,12 @@
     [
         anObject cast:%eval &to:
         {
-            eval &char:aChar [ self insert &int:(anIndex int) &char:aChar. ]
+            eval:target &char:aChar [ target insert &int:(anIndex int) &char:aChar. ]
             
-            eval &literal:aLiteral [ self insert &int:(anIndex int) &literal:aLiteral. ]
+            eval:target &literal:aLiteral [ target insert &int:(anIndex int) &literal:aLiteral. ]
             
-            eval &wide:aLiteral [ self insert &int:(anIndex int) &wide:aLiteral. ]
-        }.
+            eval:target &wide:aLiteral [ target insert &int:(anIndex int) &wide:aLiteral. ]
+        } &with:$self.
     ]            
         
     /// Deletes a sub string
