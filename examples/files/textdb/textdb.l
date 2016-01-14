@@ -68,7 +68,7 @@
 
     #var aDB := List new += Record new.
     
-    File new &path:('program'arguments@1) run &eachLine: aLine
+    'program'arguments@1 file_path run &eachLine: aLine
     [
         (aLine length == 0)
             ? [ aDB += Record new. ]

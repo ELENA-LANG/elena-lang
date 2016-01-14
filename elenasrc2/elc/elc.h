@@ -89,7 +89,7 @@
 #define ELC_L1                      "l1"                // optimization: source code optimization
 
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2015 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA command-line compiler %d.%d.%d (C)2005-2016 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."

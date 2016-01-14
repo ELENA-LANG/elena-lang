@@ -14,6 +14,8 @@
         thePath := aPath.
     ]
 
+    #method file_path = thePath.
+
     #method literal = thePath literal.
     
     #method wide = thePath wide.

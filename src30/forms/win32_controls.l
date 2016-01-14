@@ -733,13 +733,13 @@
         theList := ArrayList new.
     ]
     
-    #method items =
+    #method items = $self inject &to:owner =
     {
         append : anObject &as:aCaption
         [
             theList append:(KeyValue new &key:aCaption &object:anObject).
             
-            $self $appendItem &wide:(aCaption wide).
+            owner $appendItem &wide:(aCaption wide).
         ]
     }.
     
@@ -1280,13 +1280,13 @@
         theIndexChanged := aFunction func1.
     ]
 
-    #method items =
+    #method items = $self inject &to:owner =
     {
         append : anItem
         [
             theControls append:(RadioButton new set &caption:anItem).
             
-            self $resize.
+            owner $resize.
         ]
     }.
 
@@ -1419,18 +1419,20 @@
         theIndex := anIndex int.
     ] 
    
-    #method control = IControl
-    {
-        #method object = self.
- 
-        #method open [ self open. ]
-          
-        #method close [ self close. ]
-          
-        #method retrieve &hwnd:aHandle = $nil.
-    
-        #method setDimension &int:aWidth &int:aHeight [ $self setDimension &int:aWidth &int:aHeight. ]
-    }.
+    #method control = $self inject &to:owner =
+    [ 
+        IControl {
+            #method object = owner.
+     
+            #method open [ owner open. ]
+              
+            #method close [ owner close. ]
+              
+            #method retrieve &hwnd:aHandle = $nil.
+        
+            #method setDimension &int:aWidth &int:aHeight [ owner setDimension &int:aWidth &int:aHeight. ]
+        }
+    ].
  
     #method $set &parent:aParent
     [
@@ -1514,16 +1516,18 @@
         theBottom := aControl control.
     ]
    
-    #method control = IControl
-    {
-        #method object = self.
+    #method control = $self inject &to: owner = 
+    [ 
+        IControl {
+        #method object = owner.
  
-        #method open [ self open. ]
+        #method open [ owner open. ]
           
-        #method close [ self close. ]
+        #method close [ owner close. ]
           
         #method retrieve &hwnd:aHandle = $nil.
-    }.
+        }
+    ].
  
     #method $set &parent:aParent
     [
