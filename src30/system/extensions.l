@@ -49,7 +49,7 @@
     #method safeEqual : anObject
         = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self.
 
-    #method inject &to:action
+    #method eval &with:action
         = action eval:self.
 }
 

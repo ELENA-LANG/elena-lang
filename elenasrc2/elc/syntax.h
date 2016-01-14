@@ -87,8 +87,6 @@ enum Symbol
    nsL0Operation                = 0x01043,
    nsDefaultGeneric             = 0x01046,
    nsType                       = 0x01047,
-   nsLambda                     = 0x01048,
-   nsLambdaNestedClass          = 0x01049,
    nsExtensionReference         = 0x0104A,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals

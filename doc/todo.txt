@@ -1,6 +1,10 @@
 ------                                 
 In development:
-------                                                   
+------                      
+
+              xdev - general implementation     
+                       * #196 / #198
+                             
               sdev - samples
                        * rosetta sample : Knuth shuffle
                        * rosetta sample : Knuth's algorithm S                       

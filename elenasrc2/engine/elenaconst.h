@@ -432,8 +432,10 @@ namespace _ELENA_
    #define READ_OPERATOR            ">>"
 
   // --- ELENA explicit variables ---
-   #define SELF_VAR                "self"             // the current object group
+   #define METHOD_SELF_VAR         "this"             // the current method self
+   #define SELF_VAR                "self"             // the main object self
    #define THIS_VAR                "$self"            // the current class instance
+   #define OWNER_VAR               "$owner"           // the current method self
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol

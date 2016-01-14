@@ -919,6 +919,9 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
    if (StringHelper::compare(identifier, SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
+   }
    else {
       int reference = info.fields.get(identifier);
       if (reference != -1) {
@@ -1210,8 +1213,8 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    if (StringHelper::compare(identifier, THIS_VAR)) {
       return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
    }
-   else if (StringHelper::compare(identifier, SELF_VAR)) {
-      return ObjectInfo(okParam, (size_t)-1, stackSafe ? -1 : 0);
+   else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       Parameter param = parameters.get(identifier);
@@ -1317,13 +1320,10 @@ Compiler::ActionScope :: ActionScope(ClassScope* parent)
 {
 }
 
-ObjectInfo Compiler::ActionScope::mapObject(TerminalInfo identifier)
+ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
 {
    // HOTFIX : self / $self : closure should refer to the owner ones
    if (StringHelper::compare(identifier, THIS_VAR)) {
-      return parent->mapObject(identifier);
-   }
-   else if (StringHelper::compare(identifier, SELF_VAR)) {
       return parent->mapObject(identifier);
    }
    else return MethodScope::mapObject(identifier);
@@ -1422,7 +1422,7 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
    String<ident_c, 10> thisVar(THIS_VAR);
-
+      
    Outer owner = outers.get(thisVar);
    // if owner reference is not yet mapped, add it
    if (owner.outerObject.kind == okUnknown) {
@@ -1438,50 +1438,58 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
-   Outer outer = outers.get(identifier);
+   if (StringHelper::compare(identifier, THIS_VAR) || StringHelper::compare(identifier, OWNER_VAR)) {
+      Outer owner = mapSelf();
 
-	// if object already mapped
-   if (outer.reference!=-1) {
-      if (outer.outerObject.kind == okSuper) {
-         return ObjectInfo(okSuper, outer.reference);
-      }
-      else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference);
    }
    else {
-      outer.outerObject = parent->mapObject(identifier);
-      // handle outer fields in a special way: save only self
-      if (outer.outerObject.kind==okField) {
-         Outer owner = mapSelf();
+      Outer outer = outers.get(identifier);
 
-         // save the outer field type if provided
-         if (outer.outerObject.extraparam != 0) {
-            outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
+      // if object already mapped
+      if (outer.reference != -1) {
+         if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, outer.reference);
          }
-
-         // map as an outer field (reference to outer object and outer object field index)
-         return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
       }
-      // map if the object is outer one
-      else if (outer.outerObject.kind==okParam || outer.outerObject.kind==okLocal || outer.outerObject.kind==okField
-         || outer.outerObject.kind==okOuter || outer.outerObject.kind==okSuper || outer.outerObject.kind == okThisParam
-         || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
-      {
-         outer.reference = info.fields.Count();
+      else {
+         outer.outerObject = parent->mapObject(identifier);
+         // handle outer fields in a special way: save only self
+         if (outer.outerObject.kind == okField) {
+            Outer owner = mapSelf();
 
-         outers.add(identifier, outer);
-         mapKey(info.fields, identifier.value, outer.reference);
+            // save the outer field type if provided
+            if (outer.outerObject.extraparam != 0) {
+               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
+            }
 
-         return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
-      }
-      else if (outer.outerObject.kind == okUnknown) {
-         // check if there is inherited fields
-         outer.reference = info.fields.get(identifier);
-         if (outer.reference != -1) {
-            return ObjectInfo(okField, outer.reference);
+            // map as an outer field (reference to outer object and outer object field index)
+            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         }
+         // map if the object is outer one
+         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal || outer.outerObject.kind == okField
+            || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
+            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
+         {
+            outer.reference = info.fields.Count();
+
+            outers.add(identifier, outer);
+            mapKey(info.fields, identifier.value, outer.reference);
+
+            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+         }
+         else if (outer.outerObject.kind == okUnknown) {
+            // check if there is inherited fields
+            outer.reference = info.fields.get(identifier);
+            if (outer.reference != -1) {
+               return ObjectInfo(okField, outer.reference);
+            }
+            else return outer.outerObject;
          }
          else return outer.outerObject;
       }
-      else return outer.outerObject;
    }
 }
 
@@ -2155,13 +2163,6 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
       case nsSubjectArg:
       case nsMethodParameter:
          result = compileClosure(member, scope, 0);
-         break;
-      case nsLambda:
-      case nsLambdaNestedClass:
-         if (objectNode.Terminal() != nsNone) {
-            result = compileClosure(objectNode, scope, HINT_CLOSURE);
-         }
-         else result = compileClosure(member, scope, HINT_CLOSURE);
          break;
       case nsInlineExpression:
          result = compileClosure(objectNode, scope, HINT_ACTION);
@@ -3145,9 +3146,7 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
       // define message parameter
       methodScope.message = declareInlineArgumentList(argNode, methodScope);
 
-      if (node != nsLambdaNestedClass) {
-         node = node.select(nsSubCode);
-      }
+      node = node.select(nsSubCode);
    }
 
    if (!alreadyDeclared) {
@@ -3291,10 +3290,6 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mod
 
    // if it is a lazy expression / multi-statement closure without parameters
    if (node == nsSubCode) {
-      compileAction(node, scope, DNode(), mode);
-   }
-   // if it is a single-statement closure / labda function without parameters
-   else if (node == nsLambda) {
       compileAction(node, scope, DNode(), mode);
    }
    // if it is a closure / labda function with a parameter
@@ -4114,10 +4109,7 @@ void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
    if (isReturnExpression(node.firstChild())) {
       compileRetExpression(node.firstChild(), codeScope, HINT_ROOT);
    }
-   else if (node == nsLambdaNestedClass) {
-      compileClosure(node.firstChild(), codeScope, HINT_ROOT);
-   }
-   else if (node == nsInlineExpression || node == nsLambda) {
+   else if (node == nsInlineExpression) {
       // !! this check should be removed, as it is no longer used
       compileCode(node.firstChild(), codeScope);
    }

@@ -22,7 +22,7 @@
             ($nil == theItems)
                 ? [ theItems := List new. ].
             
-            theItems append:(MenuItem new &parent:self &caption:aCaption &onClick:anAction).
+            theItems append:(MenuItem new &parent:$owner &caption:aCaption &onClick:anAction).
         ]
         
         append &caption:aCaption
@@ -156,13 +156,13 @@
         ^ theSeed int.
     ]
     
-    #method control = IControl
+    #method control = IControl 
     {
-        #method object = self.
+        #method object = $owner.
  
-        #method open [ self open. ]
+        #method open [ $owner open. ]
           
-        #method close [ self close. ]
+        #method close [ $owner close. ]
           
         #method retrieve &hwnd:aHandle = $nil.
     }.
