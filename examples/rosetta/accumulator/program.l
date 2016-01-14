@@ -14,7 +14,7 @@ ELENA is OO language, so a function is in fact an object
 #import system'dynamic.
 
 #symbol Function = 
-    (:x) [ self append:x ].
+    { eval :x = self append:x. }.
 
 #class(extension)op
 {

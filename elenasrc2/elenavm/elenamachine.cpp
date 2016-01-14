@@ -257,6 +257,7 @@ Instance :: Instance(ELENAMachine* machine)
    initLoader(_machine->config);
 
    _literalClass.copy(_config.forwards.get(STR_FORWARD));
+   _wideLiteralClass.copy(_config.forwards.get(WIDESTR_FORWARD));
    _characterClass.copy(_config.forwards.get(CHAR_FORWARD));
    _intClass.copy(_config.forwards.get(INT_FORWARD));
    _realClass.copy(_config.forwards.get(REAL_FORWARD));

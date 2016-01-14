@@ -10,6 +10,3 @@ warn:unresolved=0
 [files]
 main.l
 
-[forwards]
-'program=goods'Program
-

@@ -63,7 +63,7 @@
 
 // --- Program --- 
 
-#symbol Program = 
+#symbol program = 
 [
     ('program'arguments length == 1)?
         [  console << "Please provide the path to the file to view". #throw AbortException new. ].
@@ -71,7 +71,7 @@
     #var aList := List new.
     #var anAdapter := Adapter new.
 
-    File new &path:('program'arguments@1) run &eachLine: aLine
+    'program'arguments@1 file_path run &eachLine: aLine
     [
         anAdapter write:aLine.
 
