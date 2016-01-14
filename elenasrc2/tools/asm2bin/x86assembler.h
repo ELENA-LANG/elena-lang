@@ -95,12 +95,17 @@ protected:
    void compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileXADD(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileXORPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileADC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileADDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileADDSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileANDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileANDNPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+
    void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileORPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSUBPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -109,6 +114,7 @@ protected:
    void compileSQRTSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileUCOMISS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSAR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -237,6 +243,9 @@ protected:
    void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
    void compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
+   void compileCMPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileCMPSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
+   void compileCOMISS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
    bool compileCommandA(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandB(TokenInfo& token);
@@ -258,7 +267,7 @@ protected:
    bool compileCommandR(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandS(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandT(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
-   bool compileCommandU(TokenInfo& token);
+   bool compileCommandU(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandV(TokenInfo& token);
    bool compileCommandW(TokenInfo& token);
    bool compileCommandX(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
