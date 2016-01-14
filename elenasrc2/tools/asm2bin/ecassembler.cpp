@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -408,13 +408,12 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcReserve:
          case bcALoadBI:
          case bcASaveSI:
-		 case bcASaveFI:
+	 case bcASaveFI:
          case bcNSaveI:
          case bcNLoadI:
          case bcESwapSI:
          case bcBSwapSI:
          case bcAXSaveBI:
-            //case bcMessage:
          case bcELoadFI:
          case bcELoadSI:
          case bcESaveSI:
