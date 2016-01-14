@@ -5400,3 +5400,14 @@ labErr:
   throw
   
 end
+
+// ------- SSE --------
+procedure testeMatrixSumSSE
+  pusha
+  aloadsi 2
+  pusha
+  aloadsi 4
+  pusha
+  callr api : coreapi'matrixSumSSE
+  quitn 5
+end

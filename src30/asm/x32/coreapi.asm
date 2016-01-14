@@ -4183,3 +4183,36 @@ procedure coreapi'load_symbol
   ret 4
   
 end
+
+procedure coreapi'matrixSumSSE  
+  mov  eax, [esp + 4]
+  mov  edx, 0
+  mov  ecx, [eax + edx * 4]
+  add  ecx, 32
+  mov  ebx, 16
+  push ebp
+stackLoop:
+  fld qword ptr [ecx]
+  fstp dword ptr [ebp]
+  add ebp, 4
+  add ecx, 8
+  sub ebx, 4
+  jnz stackLoop
+  sub ebp, 16
+  movups xmm0, [ebp]
+end
+
+/*  push ebp
+  mov  eax, [esp + 4]
+  mov  edx, 0
+  mov  ecx, [eax + edx * 4]
+  mov  ebx, 4
+stackLoop:
+  fld  qword ptr [ecx]
+  fstp qword ptr [ebp]
+  add ebp, 4
+  add ecx, 8
+  cmp ebx, 0
+  sub ebx, 1
+  jnz stackLoop
+  movups xmm0, dword ptr[ebp] */
