@@ -541,6 +541,8 @@ private:
    struct ActionScope : public MethodScope
    {
       ActionScope(ClassScope* parent);
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
    };
 
    // - CodeScope -

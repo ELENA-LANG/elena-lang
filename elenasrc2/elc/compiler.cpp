@@ -919,9 +919,6 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
    if (StringHelper::compare(identifier, SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
-   else if (StringHelper::compare(identifier, SELF_VAR)) {
-      return ObjectInfo(okParam, (size_t)-1);
-   }
    else {
       int reference = info.fields.get(identifier);
       if (reference != -1) {
@@ -1214,10 +1211,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
       return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
    }
    else if (StringHelper::compare(identifier, SELF_VAR)) {
-      ObjectInfo retVal = parent->mapObject(identifier);
-      retVal.extraparam = stackSafe ? -1 : 0;
-
-      return retVal;
+      return ObjectInfo(okParam, (size_t)-1, stackSafe ? -1 : 0);
    }
    else {
       Parameter param = parameters.get(identifier);
@@ -1321,6 +1315,18 @@ int Compiler::MethodScope :: compileHints(DNode hints)
 Compiler::ActionScope :: ActionScope(ClassScope* parent)
    : MethodScope(parent)
 {
+}
+
+ObjectInfo Compiler::ActionScope::mapObject(TerminalInfo identifier)
+{
+   // HOTFIX : self / $self : closure should refer to the owner ones
+   if (StringHelper::compare(identifier, THIS_VAR)) {
+      return parent->mapObject(identifier);
+   }
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
+      return parent->mapObject(identifier);
+   }
+   else return MethodScope::mapObject(identifier);
 }
 
 // --- Compiler::CodeScope ---
@@ -1432,55 +1438,50 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 
 ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 {
-   if (StringHelper::compare(identifier, SELF_VAR)) {
-      return ObjectInfo(okParam, (size_t)-1);
+   Outer outer = outers.get(identifier);
+
+	// if object already mapped
+   if (outer.reference!=-1) {
+      if (outer.outerObject.kind == okSuper) {
+         return ObjectInfo(okSuper, outer.reference);
+      }
+      else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
    }
    else {
-      Outer outer = outers.get(identifier);
+      outer.outerObject = parent->mapObject(identifier);
+      // handle outer fields in a special way: save only self
+      if (outer.outerObject.kind==okField) {
+         Outer owner = mapSelf();
 
-	  // if object already mapped
-      if (outer.reference!=-1) {
-         if (outer.outerObject.kind == okSuper) {
-            return ObjectInfo(okSuper, outer.reference);
+         // save the outer field type if provided
+         if (outer.outerObject.extraparam != 0) {
+            outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
          }
-         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+
+         // map as an outer field (reference to outer object and outer object field index)
+         return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
       }
-      else {
-         outer.outerObject = parent->mapObject(identifier);
-         // handle outer fields in a special way: save only self
-         if (outer.outerObject.kind==okField) {
-            Outer owner = mapSelf();
+      // map if the object is outer one
+      else if (outer.outerObject.kind==okParam || outer.outerObject.kind==okLocal || outer.outerObject.kind==okField
+         || outer.outerObject.kind==okOuter || outer.outerObject.kind==okSuper || outer.outerObject.kind == okThisParam
+         || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
+      {
+         outer.reference = info.fields.Count();
 
-            // save the outer field type if provided
-            if (outer.outerObject.extraparam != 0) {
-               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
-            }
+         outers.add(identifier, outer);
+         mapKey(info.fields, identifier.value, outer.reference);
 
-            // map as an outer field (reference to outer object and outer object field index)
-            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
-         }
-         // map if the object is outer one
-         else if (outer.outerObject.kind==okParam || outer.outerObject.kind==okLocal || outer.outerObject.kind==okField
-            || outer.outerObject.kind==okOuter || outer.outerObject.kind==okSuper || outer.outerObject.kind == okThisParam
-            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
-         {
-            outer.reference = info.fields.Count();
-
-            outers.add(identifier, outer);
-            mapKey(info.fields, identifier.value, outer.reference);
-
-            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
-         }
-         else if (outer.outerObject.kind == okUnknown) {
-            // check if there is inherited fields
-            outer.reference = info.fields.get(identifier);
-            if (outer.reference != -1) {
-               return ObjectInfo(okField, outer.reference);
-            }
-            else return outer.outerObject;
+         return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+      }
+      else if (outer.outerObject.kind == okUnknown) {
+         // check if there is inherited fields
+         outer.reference = info.fields.get(identifier);
+         if (outer.reference != -1) {
+            return ObjectInfo(okField, outer.reference);
          }
          else return outer.outerObject;
       }
+      else return outer.outerObject;
    }
 }
 
