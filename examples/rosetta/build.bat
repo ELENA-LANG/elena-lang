@@ -30,7 +30,7 @@
 ..\..\bin\elc -cgui_component_interaction\gui_component_interaction.prj
 ..\..\bin\elc -cstring_append\string_append.prj
 ..\..\bin\elc -cstring_case\string_case.prj
-..\..\bin\elc -cstring_comparison\string_comparison.prj
+..\..\bin\elc -cstring_comparison\string_comparision.prj
 ..\..\bin\elc -cstring_concatenation\string_concatenation.prj
 ..\..\bin\elc -cstring_interpolation\string_interpolation.prj
 ..\..\bin\elc -cstring_matching\string_matching.prj
@@ -40,3 +40,4 @@
 ..\..\bin\elc -ccompare_str_list\complist.prj
 ..\..\bin\elc -cdynamic_var\dynamic_var.prj
 ..\..\bin\elc -cfirstclass\firstclass.prj
+..\..\bin\elc -cloop_multiple_arrays\loopma.prj

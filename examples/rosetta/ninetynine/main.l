@@ -9,21 +9,20 @@
 {
     #method bottleDescription
         = self literal + (self != 1) iif:" bottles":" bottle".
-
-    #method bottleEnumerator = Variable new:self inject
-                    &to:target =
-                    {
-                        enumerator = Enumerator
-                        {
-                            next = target > 0.
-                            
-                                get = StringWriter new
-                                        writeLine:(target bottleDescription):" of beer on the wall"
-                                        writeLine:(target bottleDescription):" of beer"
-                                        writeLine:"Take one down, pass it around"
-                                        writeLine:((target -= 1) bottleDescription):" of beer on the wall".
-                        }.
-                    }.                        
+        
+    #method bottleEnumerator = Variable new:self eval &with:target
+    [
+        Enumerator
+        {
+            next = target > 0.
+            
+            get = StringWriter new
+                    writeLine:(target bottleDescription):" of beer on the wall"
+                    writeLine:(target bottleDescription):" of beer"
+                    writeLine:"Take one down, pass it around"
+                    writeLine:((target -= 1) bottleDescription):" of beer on the wall".
+        }
+    ].
 }
 
 #symbol program =

@@ -4,6 +4,9 @@ In development:
 
               xdev - general implementation     
                        * #196 / #198
+                       * anagram
+                       * dynamic_var
+                       * first_class
                              
               sdev - samples
                        * rosetta sample : Knuth shuffle
