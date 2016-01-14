@@ -2915,6 +2915,12 @@ void x86Assembler :: compileFSTP(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		code->writeByte(0xDD);
 		code->writeByte(0xD8 + sour);
 	}
+	else if (token.check("dword")) {
+		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
+
+		code->writeByte(0xD9);
+		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 3), operand);
+	}
 	else if (token.check("qword")) {
 		Operand operand = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
 
