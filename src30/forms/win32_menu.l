@@ -40,13 +40,13 @@
         ].
     ]    
     
-    #method retrieve &menu_id:anID
+    #method retrieveMenu &int:anID
     [
         #var aRetVal.
         #var(type:enumerator)enum := theItems enumerator.
         #loop (enum next)?
         [
-            aRetVal := enum get retrieve &menu_id:anID.
+            aRetVal := enum get retrieveMenu &int:anID.
             ($nil == aRetVal)
                 ! [ ^ aRetVal. ].
         ].
@@ -89,13 +89,13 @@
     
     #method newID => theParent.
     
-    #method retrieve &menu_id:anID
+    #method retrieveMenu &int:anID
     [
         (theID == anID int)
             ? [ ^ $self. ].
             
         ($nil != theItems)?
-            [ ^ $super retrieve &menu_id:anID. ].
+            [ ^ $super retrieveMenu &int:anID. ].
             
         ^ $nil.            
     ]
