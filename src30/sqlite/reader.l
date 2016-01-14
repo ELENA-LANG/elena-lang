@@ -71,10 +71,12 @@
         ^ aRow.
     ]
     
-    #method enumerator = Enumerator
-    {
-        #method get = self row.
-    
-        #method(type:bool) next => self.
-    }.
+    #method enumerator = $self inject &to: reader = [
+        Enumerator
+        {
+            #method get = reader row.
+        
+            #method(type:bool) next => reader.
+        }            
+    ].
 }

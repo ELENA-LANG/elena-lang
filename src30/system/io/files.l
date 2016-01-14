@@ -22,6 +22,9 @@
     
     #method textwriter = thePath::fileExtOp textwriter.
     
+    #method(type:bool)is &available
+        = thePath::fileExtOp is &available.
+    
     #method(type:int)length
         = thePath::fileOp length.
 }
