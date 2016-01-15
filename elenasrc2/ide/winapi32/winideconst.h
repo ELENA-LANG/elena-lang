@@ -11,7 +11,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define APP_VERSION                             "Version 1.9.24.2"
+#define APP_VERSION                             "Version 1.9.25"
 
 // --- Command line arguments ---
 

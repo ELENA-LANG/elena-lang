@@ -1,15 +1,19 @@
 ﻿
                                 ELENA Language 
 
-                                Version 1.9.24
+                                Version 1.9.25
  
+******************************************************************************
+                             What's New in 1.9.25
+******************************************************************************
+
 ******************************************************************************
                              What's New in 1.9.24
 ******************************************************************************
 
 [ELENA]
 [!] binary incompatible due to new opcodes
-[+] new simplified closure declaration syntax : i = [ i ], = [ i ], i = { ... }
+[+] new simplified closure declaration syntax : ()[ i ]
 [+] issue #125 : new UTF-16 literal constant
 [!] implementing #198
 

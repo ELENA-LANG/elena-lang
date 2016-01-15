@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 1.9.24
+                      ELENA Language Project V. 1.9.25
                         (C)2005-2015  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -109,7 +109,8 @@ in the folder <app root>\examples.
 ELENA API Documentation could be found in the folder <app root>\doc\api.
 Number of other documents (todo list, known bugs, road map) are located in
 <app root>\doc. For any suggestion, comments or correction please contact
-the author - elenalanguage@yandex.ru.
+the author via twitter - https://twitter.com/elena_language 
+or github - https://github.com/ELENA-LANG/elena-lang/issues
 
 ****************************************************************************
 * ELENA Project Source code

@@ -3,7 +3,6 @@ In development:
 ------                      
 
               sdev - samples
-                       * rosetta sample : Knuth shuffle
                        * rosetta sample : Knuth's algorithm S                       
                        * rosetta sample : Literals/String
                        * rosetta sample : Literals/Integer
@@ -40,15 +39,16 @@ In development:
                        * rosetta sample : Substring
                        * rosetta sample : Test a function
                        * rosetta sample : Tree traversal                       
- 
-                       * fix c_a_g ($self in the closure refer to the closure)
-                       * test basic samples 
-                       
-                       * refactor cpu_sim : assembler
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game
+                       * rosetta sample : 9 bil names
+                       
+                       * refactor cpu_sim : assembler
+                       
+              fdev - db app
+                       * implement simple chat system to test socket api
  
               xdev - general implementation     
                        * implement #167 : stack allocated variable and $nil
@@ -65,11 +65,6 @@ Pipeline:
                        
               sdev - rosetta code samples
                        * linux : migrate two rosetta samples to linux
-                       * 9 bil names
-                       * 99 Bottles of Beer
-                       
-              fdev - db app
-                       * implement simple char system to test socket api
 
               xdev - usability
                        * ecv : dynamically define the page size

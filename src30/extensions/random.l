@@ -18,6 +18,9 @@
     #method(stacksafe) eval &vint:aRetVal
         => system'internal'rnd_nextint.
 
+    #method eval : minValue : maxValue
+        = minValue + $self eval:(maxValue - minValue).
+
     #method eval : aMaxValue
     [
         #var(type:int)aNextValue.
