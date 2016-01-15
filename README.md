@@ -1,4 +1,4 @@
-ELENA Language Project V. 2.0, (C)2005-2015  By Alex Rakov
+ELENA Language Project V. 2.0, (C)2005-2016  By Alex Rakov
 ====
 ELENA is a general-purpose, object-oriented language with late binding. The package includes compiler, IDE, ELENA libraries and samples.
 Currently Win32-x86 and Linux-I386 platforms are supported.
@@ -57,9 +57,9 @@ compile the project and Project-Debug to debug it.
 ######Linux:
 
 To install just unzip all the files into a directory you want and execute 
-install.script.
+rebuild.script under the superuser. Alternatively install debian package
 
-To compile the program types : ./bin/elc2 -c&lt;path to .project file&gt;
+To compile the program types : ./bin/elena-lc -c<path to .project file>
 
 Get started!
 ---
