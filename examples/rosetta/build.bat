@@ -41,3 +41,4 @@
 ..\..\bin\elc -cdynamic_var\dynamic_var.prj
 ..\..\bin\elc -cfirstclass\firstclass.prj
 ..\..\bin\elc -cloop_multiple_arrays\loopma.prj
+..\..\bin\elc -cknutalg\knutalg.prj

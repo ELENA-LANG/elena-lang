@@ -666,6 +666,10 @@ md examples\rosetta\loop_multiple_arrays
 copy %1\examples\rosetta\loop_multiple_arrays\*.l examples\rosetta\loop_multiple_arrays
 copy %1\examples\rosetta\loop_multiple_arrays\*.prj examples\rosetta\loop_multiple_arrays
 
+md examples\rosetta\knutalg
+copy %1\examples\rosetta\knutalg\*.l examples\rosetta\knutalg
+copy %1\examples\rosetta\knutalg\*.prj examples\rosetta\knutalg
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
