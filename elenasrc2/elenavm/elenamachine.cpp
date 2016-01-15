@@ -350,7 +350,7 @@ void Instance :: printInfo(const wchar_t* msg, ...)
 
 ident_t Instance :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
-   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef) {
+   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
       return module->resolveConstant(reference);
    }
    // if it is a message

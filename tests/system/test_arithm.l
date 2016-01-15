@@ -10,8 +10,11 @@
 
 #symbol XTester =
 {
+    x = 2.
+    
     test
     [
+        #var subj := emptyWideLiteralValue.
     ]
 }.
         
