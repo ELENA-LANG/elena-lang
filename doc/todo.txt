@@ -2,10 +2,6 @@
 In development:
 ------                      
 
-              xdev - general implementation     
-                       * anagram
-                       * dynamic_var
-                             
               sdev - samples
                        * rosetta sample : Knuth shuffle
                        * rosetta sample : Knuth's algorithm S                       

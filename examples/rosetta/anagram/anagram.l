@@ -27,7 +27,7 @@
 
     #var aDictionary := Dictionary new.
 
-    File new &path:"unixdict.txt" run &eachLine: aWord
+    "unixdict.txt" file_path run &eachLine: aWord
     [    
         #var aKey := aWord normalized.
         #var anItem := aDictionary@aKey.
