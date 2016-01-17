@@ -1701,6 +1701,11 @@ void x86Assembler :: compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		   x86Helper::writeModRM(code, sour, sour);
 		   code->writeByte(dest.offset);
 	   }
+	   else if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32)) {
+		   code->writeByte(0x0F);
+		   code->writeByte(0xAF);
+		   x86Helper::writeModRM(code, sour, dest);
+	   }
 	   else token.raiseErr("Invalid command (%d)");
    }
 }
@@ -2026,9 +2031,14 @@ void x86Assembler :: compileMOVUPS(TokenInfo& token, ProcedureInfo& info, Memory
       code->writeByte(0x10);
       x86Helper::writeModRM(code, sour, dest);
    }
-   else if ((test(sour.type, x86Helper::otX128) || test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otX128)) {
+   else if (test(sour.type, x86Helper::otX128) && test(dest.type, x86Helper::otX128)) {
       code->writeByte(0x11);
       x86Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, x86Helper::otM32) && test(dest.type, x86Helper::otX128)) {
+	   code->writeByte(0x11);
+	   x86Helper::writeModRM(code, dest, sour);
+	   code->writeByte(sour.offset);
    }
    else token.raiseErr("Invalid command (%d)");
 }
