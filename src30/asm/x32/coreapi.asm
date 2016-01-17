@@ -4185,34 +4185,57 @@ procedure coreapi'load_symbol
 end
 
 procedure coreapi'matrixSumSSE  
-  mov  eax, [esp + 4]
-  mov  edx, 0
-  mov  ecx, [eax + edx * 4]
-  add  ecx, 32
-  mov  ebx, 16
-  push ebp
-stackLoop:
-  fld qword ptr [ecx]
+  mov  eax, [esp + 20]  // vector 1
+  mov  ecx, [eax]
+  push ecx
+  
+  mov  eax, [esp + 20]  // vector 2
+  mov  ecx, [eax]
+  push ecx
+  
+  mov  ebx, [esp + 20]   // vector size
+  mov  ebx, [ebx]
+  push ebx
+  
+  mov  eax, [esp + 20]   // row size
+  mov  eax, [eax]
+  
+  // Total reduction size
+  imul eax, ebx 
+  push eax 
+  
+  mov eax, [esp + 20]   // result vector
+  mov ecx, [eax]
+  push ecx
+  
+  push ebp    
+mainLoop:
+  add  [esp+20], 24
+  add  [esp+16], 24
+  add  [esp+4], 24
+  mov  eax, 4
+  mov  ecx, 0
+addingLoop:
+  mov edx, [esp+20]
+  fld qword ptr [edx+ecx]
   fstp dword ptr [ebp]
+  
+  mov edx, [esp+16]
+  fld qword ptr [edx+ecx]
+  fstp dword ptr [ebp+24] 
+  
   add ebp, 4
-  add ecx, 8
-  sub ebx, 4
-  jnz stackLoop
+  sub ecx, 8
+  sub [esp+8], ebx
+  sub eax, 1
+  jnz addingLoop
+  
   sub ebp, 16
   movups xmm0, [ebp]
+  movups xmm1, [ebp+24]
+  addps xmm0, xmm1
+  movups [esp+4], xmm0
+  
+  cmp [esp+4], 0
+  jnz mainLoop  
 end
-
-/*  push ebp
-  mov  eax, [esp + 4]
-  mov  edx, 0
-  mov  ecx, [eax + edx * 4]
-  mov  ebx, 4
-stackLoop:
-  fld  qword ptr [ecx]
-  fstp qword ptr [ebp]
-  add ebp, 4
-  add ecx, 8
-  cmp ebx, 0
-  sub ebx, 1
-  jnz stackLoop
-  movups xmm0, dword ptr[ebp] */
