@@ -3,10 +3,6 @@ In development:
 ------                      
 
               sdev - samples
-                       * rosetta sample : Man or boy test
-                       * rosetta sample : Morse code
-                       * rosetta sample : Narcissist
-                       * rosetta sample : Number reversal game
                        * rosetta sample : Object serialization
                        * rosetta sample : Old lady swallowed a fly
                        * rosetta sample : Pascal's triangle
@@ -36,6 +32,8 @@ In development:
                        * rosetta sample : 9 bil names
                        * rosetta sample : Longest string challenge
                        * rosetta sample : Magic squares of odd order
+                       * rosetta sample : Morse code
+                       * rosetta sample : Narcissist
                        
                        * refactor cpu_sim : assembler
                        

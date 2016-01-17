@@ -158,7 +158,29 @@
 
     #method zip:anEnumerable &into:aZipper
         = system'routines'ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
-                        
+             
+    #method equal &enumerable:list
+    [
+        (self length == list length)
+            ! [ ^ false. ].
+            
+        #var(type:enumerator) it1 := self enumerator.
+        #var(type:enumerator) it2 := list enumerator.
+        
+        #loop (it1 next)?
+        [
+            it2 next.
+            
+            (it1 get safeEqual:(it2 get))
+                ! [ ^ false. ].
+        ].
+        
+        ^ true.
+    ]
+             
+    #method sequenceEqual:list
+        = self::enumerableOp equal &enumerable:list.
+                                                  
     #method firstMember
     [
         #var(type:enumerator)anEnumerator := self enumerator.
@@ -339,6 +361,32 @@
           
         ^ true.                              
     ]
+            
+    #method reverse:counter &at:index
+    [
+        #var(type:iterator) it := self iterator.
+        
+        #var(type:int)i := index int.
+        #var(type:int)j := counter int.
+        j := j + i.
+        j := j - 1.
+        
+        #loop (i < j)?
+        [
+            it writeIndex &int:i.
+            #var temp1 := it get.
+            it writeIndex &int:j.
+            #var temp2 := it get.
+            it set:temp1.
+            it writeIndex &int:i.
+            it set:temp2.
+            
+            i := i + 1.
+            j := j - 1.
+        ].
+        
+        ^ self.
+    ]    
 }
 
 // --- stringListOp ---
