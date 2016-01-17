@@ -5,20 +5,29 @@
 #import system'calendar.
 #import extensions.
 
-
-#symbol(const)N = 3.
+#symbol A = (:k:x1:x2:x3:x4:x5)
+[
+    #var m := Integer new:k.
+    #var b := ()[ m -= 1. ^ A eval:m:this:x1:x2:x3:x4. ].
+    
+    (m <= 0)
+        ? [ ^ x4 eval + x5 eval. ]
+        ! [ ^ b eval. ].
+].
 
 #symbol XXXXTest =
 [
-    0 till:N &doEach:i
-    [
-        0 till:N &doEach:j
-        [
-            console write:(((i * 2 - j + N - 1) mod:N) * N + (i*2+j-2) / N + 1).
-        ].
-        
-        console writeLine.
-    ].
+    console writeLine:(A eval:0:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:1:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:2:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:3:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:4:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:5:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:6:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:7:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:8:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:9:()[1]:()[-1]:()[-1]:()[1]:()[0]).
+    console writeLine:(A eval:10:()[1]:()[-1]:()[-1]:()[1]:()[0]).
 ].
 
 #symbol XTester =

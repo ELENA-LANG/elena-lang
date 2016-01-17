@@ -671,6 +671,10 @@ md examples\rosetta\knutalg
 copy %1\examples\rosetta\knutalg\*.l examples\rosetta\knutalg
 copy %1\examples\rosetta\knutalg\*.prj examples\rosetta\knutalg
 
+md examples\rosetta\manboy
+copy %1\examples\rosetta\manboy\*.l examples\rosetta\manboy
+copy %1\examples\rosetta\manboy\*.prj examples\rosetta\manboy
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
