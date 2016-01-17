@@ -5413,6 +5413,6 @@ procedure testeMatrixSumSSE
   pusha 
   aloadsi 10 // return vector
   pusha
-  callr api : coreapi'matrixSumSSE
+  callr api : mathapi'matrixSum
   quitn 6
 end

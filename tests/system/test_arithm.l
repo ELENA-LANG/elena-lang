@@ -5,58 +5,27 @@
 #import system'calendar.
 #import extensions.
 
-#class(extension)algorithmOp
-{
-    #method s_of_n
-    [
-        #var counter := Integer new.
-        
-        ^ ArrayList new mix &into:
-            {
-                eval : n
-                [
-                    counter += 1.
-                    
-                    (this length < self)
-                        ? [ this += n. ]
-                        ! [ 
-                            (randomGenerator eval:counter < self)
-                                ? [ this@(randomGenerator eval:self) := n. ].
-                        ].
-                        
-                    ^ this array.                        
-                ]
-            }.
-    ]
-}
 
+#symbol(const)N = 3.
 
-#symbol testXX =
+#symbol XXXXTest =
 [
-    #var bin := Array new:10 set &every:(&index:n) [ Integer new ].
-    0 till:10000 &doEach: trial
+    0 till:N &doEach:i
     [
-        #var s_of_n := 3 s_of_n.
-        
-        0 till:10 &doEach:n
+        0 till:N &doEach:j
         [
-            #var sample := s_of_n eval:n.
-            
-            (n == 9)
-                ? [ sample run &each: i [ bin@i += 1. ]. ].
+            console write:(((i * 2 - j + N - 1) mod:N) * N + (i*2+j-2) / N + 1).
         ].
-    ].    
-    
-    console writeLine:bin.
-    
-    #throw AbortException new.
+        
+        console writeLine.
+    ].
 ].
 
 #symbol XTester =
 {
     test
     [
-        testXX eval.        
+        XXXXTest eval.
     ]
 }.
         

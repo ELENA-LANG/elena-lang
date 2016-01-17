@@ -3,16 +3,6 @@ In development:
 ------                      
 
               sdev - samples
-                       * rosetta sample : Knuth's algorithm S                       
-                       * rosetta sample : Literals/String
-                       * rosetta sample : Literals/Integer
-                       * rosetta sample : Longest string challenge
-                       * rosetta sample : Loops/For
-                       * rosetta sample : Loops/For with a specified step
-                       * rosetta sample : Loops/Foreach
-                       * rosetta sample : Loops/Infinite
-                       * rosetta sample : Loops/While
-                       * rosetta sample : Magic squares of odd order
                        * rosetta sample : Man or boy test
                        * rosetta sample : Morse code
                        * rosetta sample : Narcissist
@@ -44,6 +34,8 @@ In development:
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game
                        * rosetta sample : 9 bil names
+                       * rosetta sample : Longest string challenge
+                       * rosetta sample : Magic squares of odd order
                        
                        * refactor cpu_sim : assembler
                        
