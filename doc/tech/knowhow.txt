@@ -147,54 +147,6 @@ be copied there;
  <bss>                   data section
 -- debuf segment ---
 
-9) Typecasting algorithm:
-   ----------------------
-
-- explicit : declared subject
-
-- structural : elStructureRole flag
-
-- content type  : elDebugMask bit field
-
-- readonly : elReadOnlyRole flag
-
-(type != source)
-|
-+-> yes -> (target explicit?)
-|            |
-|            +-> yes -> (target structural?)
-|            |            |
-|            |            +-> yes ---> (source structural?)
-|            |            |              |
-|            |            |              +-> yes -> (source is target wrapper?)
-|            |            |              |            |
-|            |            |              |            +-> yes -> [create a local copy]              // vint as int
-|            |            |              |            |            
-|            |            |              |            +-> no --> (source is local && target is source wrapper?)              
-|            |            |              |                         |
-|            |            |              |                         +-> yes ->(target embeddable?)
-|            |            |              |                         |           |
-|            |            |              |                         |           +-> yes -> [ pass directly ]    // int as vint
-|            |            |              |                         |           |
-|            |            |              |                         +-----------+-> no --> [box the source if local] 
-|            |            |              |                                                |
-|            |            |              |                                                |
-|            |            |              +--> no -----------------------------------------+--> [send typecast message to source]
-|            |            |
-|            |            +-> no --> (source is nil)
-|            |                         |
-|            |                         +--> yes --> [pass directly]
-|            |                         |
-|            |                         +--> no ---> [box the source if local]
-|            |                                      |
-|            |                                      (source.class == target.class || source.class has target.class)
-|            |                                        |
-|            |                                        +--> yes --> [pass directly]
-|            |                                        |
-|            |                                        +--> no ----> [send typecast message to source]
-|            |                                      
-+------------+--> no --> [ pass directly ]
-
 10) Script engine commands
 
 [ ]  - reverse the parameters order

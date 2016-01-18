@@ -271,6 +271,7 @@ labSkipWait:
   mov  ebp, esp
   xor  ecx, ecx
   push ecx
+  push ecx
   push ecx                                                              
 
   // ; save static roots
@@ -322,6 +323,7 @@ labYGNextFrame:
   jae  short labFullCollect                         // ; can be promoted
 
   // === Minor collection ===
+  mov [ebp-4], esp
 
   // ; save mg -> yg roots 
   mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
@@ -423,10 +425,12 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
+  
+  pop  ebp
+  mov  esp, [ebp-4]  // ; remove wb-roots
 
   // ; check if it is enough place
   cmp  ebx, edx
-  pop  ebp
   jae  short labFullCollect
 
   // ; free root set

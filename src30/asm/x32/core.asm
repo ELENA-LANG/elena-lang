@@ -142,6 +142,7 @@ labYGCollect:
   // ; create set of roots
   mov  ebp, esp
   xor  ecx, ecx
+  push ecx        // ; reserve place 
   push ecx
   push ecx
 
@@ -180,6 +181,7 @@ labYGNextFrame:
   jae  short labFullCollect                         // ; can be promoted
 
   // === Minor collection ===
+  mov [ebp-4], esp      // ; save position for roots
 
   // ; save mg -> yg roots 
   mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
@@ -283,9 +285,11 @@ labCollectFrame:
 
   sub  edx, ebp
 
+  pop  ebp
+  mov  esp, [ebp-4]  // ; remove wb-roots
+
   // ; check if it is enough place
   cmp  ebx, edx
-  pop  ebp                   
   jae  short labFullCollect
 
   // ; free root set
