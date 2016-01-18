@@ -22,11 +22,13 @@ class MainWindow : public SDIWindow
    public:
       Gtk::TreeModelColumn<Glib::ustring> _caption;
       Gtk::TreeModelColumn<Glib::ustring> _reference;
+      Gtk::TreeModelColumn<int>           _index;
 
       ProjectTreeColumns()
       {
           add(_caption);
           add(_reference);
+          add(_index);
       }
    };
 
@@ -184,6 +186,16 @@ protected:
    {
       _controller->doSetProjectSettings();
    }
+   void on_projectview_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn*)
+   {
+      Gtk::TreeModel::iterator iter = _projectTree->get_iter(path);
+      if(iter) {
+         Gtk::TreeModel::Row row = *iter;
+
+         _controller->selectProjectFile(row[_projectTreeColumns._index]);
+      }
+   }
 
    void populateMenu();
    void populateToolbar();
@@ -197,6 +209,7 @@ public:
    int newDocument(const char* name, Document* doc);
    void closeDocument(int index);
    int getCurrentDocumentIndex();
+   void selectDocument(int docIndex);
 
    void reloadProjectView(_ProjectManager* project);
 

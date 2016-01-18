@@ -2,10 +2,10 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="elenasrc2/tools/asm2bin/codeblocks/asm2bin_lnx.cbp" />
-		<Project filename="elenasrc2/ide/codeblocks/elide_gtk.cbp" />
 		<Project filename="elenasrc2/elenart/codeblocks/elenart_lnx32.cbp" />
 		<Project filename="elenasrc2/elc/codeblocks/elc_lnx32.cbp" />
 		<Project filename="elenasrc2/tools/sg/codeblocks/sg_lnx32.cbp" />
+		<Project filename="elenasrc2/ide/codeblocks/elide_gtk.cbp" />
 		<Project filename="elenasrc2/tools/og/codeblocks/og_lnx32.cbp" />
 		<Project filename="../test/test.cbp" />
 	</Workspace>

@@ -287,7 +287,7 @@ public:
 
    virtual void selectDocument(int docIndex)
    {
-     // appWindow.selectDocument(docIndex);
+      appWindow.selectDocument(docIndex);
    }
 
    virtual void closeDocument(int index)

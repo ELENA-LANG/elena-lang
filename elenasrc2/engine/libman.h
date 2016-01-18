@@ -53,11 +53,12 @@ public:
    {
       _packagePaths.add(package, IdentifierString::clonePath(path));
    }
+#ifdef _WIN32
    void addPackage(ident_t package, ident_t path)
    {
       _packagePaths.add(package, StringHelper::clone(path));
    }
-
+#endif
    void nameToPath(ident_t moduleName, Path& path, ident_t extension)
    {
       Path ext;

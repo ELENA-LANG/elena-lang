@@ -197,6 +197,11 @@ void MainWindow :: closeDocument(int index)
    _mainFrame->eraseDocumentTab(index);
 }
 
+void MainWindow :: selectDocument(int docIndex)
+{
+   _mainFrame->selectTab(docIndex);
+}
+
 void MainWindow :: refreshDocument()
 {
    _mainFrame->refreshDocument();
@@ -234,11 +239,11 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
 //
 //   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1);
 
-   _ELENA_::ConfigCategoryIterator it = project->SourceFiles();
-//   int index = 0;
+   _ELENA_::ConfigCategoryIterator p_it = project->SourceFiles();
+   int index = 0;
 //   _ELENA_::wide_c buffer[0x100];
-   while (!it.Eof()) {
-      _ELENA_::ident_t name = it.key();
+   while (!p_it.Eof()) {
+      _ELENA_::ident_t name = p_it.key();
       _ELENA_::NamespaceName ns(name);
       _ELENA_::ReferenceName caption(name);
 
@@ -261,6 +266,7 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
       else row = *(_projectTree->append());
       row[_projectTreeColumns._caption] = (const char*)caption;
       row[_projectTreeColumns._reference] = (const char*)name;
+      row[_projectTreeColumns._index] = index;
 
 //      TreeViewItem parent = root;
 //      int start = 0;
@@ -290,11 +296,12 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
 //         else break;
 //      }
 //
-      it++;
-//      index++;
+      p_it++;
+      index++;
    }
 
 //   projectView->expand(root);
+   show_all_children();
 }
 
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
@@ -314,10 +321,14 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    // !! temporal
    _bottomTab->append_page(*Gtk::manage(new Gtk::Label("Output")), "Output");
    _statusbar->push("Example");
-   //_projectView->
 
    _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
    _projectView->set_model(_projectTree);
+
+   _projectView->append_column("module", _projectTreeColumns._caption);
+
+   _projectView->signal_row_activated().connect(sigc::mem_fun(*this,
+              &MainWindow::on_projectview_row_activated));
 
    populate(_mainFrame, _projectView, _bottomTab, _statusbar);
 }
