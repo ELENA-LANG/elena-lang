@@ -5400,19 +5400,3 @@ labErr:
   throw
   
 end
-
-// ------- SSE --------
-procedure testeMatrixSumSSE
-  aloadsi 2  // array 1
-  pusha
-  aloadsi 4  // array 2
-  pusha
-  aloadsi 6  // vector size
-  pusha
-  aloadsi 8 // nRows
-  pusha 
-  aloadsi 10 // return vector
-  pusha
-  callr api : mathapi'matrixSum
-  quitn 6
-end
