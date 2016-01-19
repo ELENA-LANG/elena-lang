@@ -5,10 +5,15 @@
 #import system'calendar.
 #import extensions.
 
+#symbol __program =
+[    
+].
+
 #symbol XTester =
 {
     test
     [
+        __program eval.
     ]
 }.
         

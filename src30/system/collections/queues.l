@@ -99,7 +99,9 @@
     [
         (theTale == theTop)
             ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
-            
+
+        #var item := theList getAt &int:theTop.
+                                    
         theList setAt &int:theTop &object:$nil.
         theTop += 1.
         
@@ -109,6 +111,8 @@
                 theTop << 0.
                 theTale << 0.
             ].
+            
+        ^ item.            
     ]
     
     #method(stacksafe) readLength &vint:aRetVal

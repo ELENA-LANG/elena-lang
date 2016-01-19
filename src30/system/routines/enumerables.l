@@ -249,13 +249,12 @@
     [
         #var(type:iterator)anIndexer := self iterator.
         
-        #var(type:int)i := 0.
         #loop (anIndexer available)?
         [
             (anObject == anIndexer get)
-                ? [ ^ IntNumber new &int:i. ].
+                ? [ ^ anIndexer index. ].
             
-            i := i + 1.
+            anIndexer append &index:1.
         ].
         
         ^ -1.
@@ -365,6 +364,9 @@
           
         ^ true.                              
     ]
+            
+    #method reverse
+        = self::indexableOp reverse:(self length) &at:0.
             
     #method reverse:counter &at:index
     [
