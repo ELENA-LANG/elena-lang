@@ -92,6 +92,7 @@
 
 #class Repeater :: Enumerator
 {
+    #field(type:int)   theMin.
     #field(type:int)   theMax.
     #field(type:int)   theCurrent.
     #field(type:func1) theFunc.
@@ -99,7 +100,16 @@
     #constructor new &till:maxValue &each:func
     [
         theMax := maxValue int.
+        theMin := 0.
         theCurrent := -1.
+        theFunc := func func1.
+    ]
+    
+    #constructor new &from:minValue &till:maxValue &each:func
+    [
+        theMin := minValue int.
+        theMax := maxValue int.
+        theCurrent := theMin - 1.
         theFunc := func func1.
     ]
     
@@ -107,7 +117,7 @@
     
     #method reset
     [
-        theCurrent := -1.
+        theCurrent := theMin - 1.
     ]
     
     #method next

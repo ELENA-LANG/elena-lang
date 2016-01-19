@@ -18,7 +18,7 @@
 #class(extension) evoHelper
 {
     #method randomString
-        = self repeat &each:x [ randomChar ] summarize:(String new) literal.
+        = 0 repeat &till:self &each:x [ randomChar ] summarize:(String new) literal.
         
     #method fitness &of:s
         = self zip:s &into:(:a:b)[ (a == b)iif:1:0 ] summarize:(Integer new) int.

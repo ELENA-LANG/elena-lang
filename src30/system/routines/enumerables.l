@@ -201,8 +201,12 @@
         ^ aLastItem.
     ]
     
-    #method repeat &each:aRepeater
+    /// obosolete
+    #method repeat &each:aRepeater    
         = system'routines'Repeater new &till:self &each:aRepeater.
+        
+    #method repeat &till:max &each:aRepeater
+        = system'routines'Repeater new &from:self &till:max &each:aRepeater.
 }
 
 // --- indexableOp ---

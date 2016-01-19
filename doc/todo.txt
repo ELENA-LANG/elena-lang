@@ -3,12 +3,6 @@ In development:
 ------                      
 
               sdev - samples
-                       * rosetta sample : Pascal's triangle
-                       * rosetta sample : Perfect numbers
-                       * rosetta sample : Pick random element
-                       * rosetta sample : Pig the dice game
-                       * rosetta sample : Program name
-                       * rosetta sample : Program termination
                        * rosetta sample : Queue/Usage
                        * rosetta sample : Read a file line by line
                        * rosetta sample : Repeat a string
@@ -33,6 +27,10 @@ In development:
                        * rosetta sample : Morse code
                        * rosetta sample : Narcissist
                        * rosetta sample : Object serialization
+                       * rosetta sample : Pascal's triangle
+                       * rosetta sample : Pig the dice game
+                       * rosetta sample : Program name
+                       * rosetta sample : Program termination
                        
                        * refactor cpu_sim : assembler
                        
