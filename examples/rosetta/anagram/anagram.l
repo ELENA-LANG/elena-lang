@@ -3,13 +3,13 @@
 // http://www.puzzlers.org/pub/wordlists/unixdict.txt, find the sets of words 
 // that share the same characters that contain the most words in them. 
 
-#define system.
-#define system'routines.
-#define system'calendar.
-#define system'io.
-#define system'collections.
-#define extensions.
-#define extensions'routines.
+#import system.
+#import system'routines.
+#import system'calendar.
+#import system'io.
+#import system'collections.
+#import extensions.
+#import extensions'routines.
 
 // --- Normalized ---
 

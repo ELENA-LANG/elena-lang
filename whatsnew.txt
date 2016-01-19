@@ -7,8 +7,12 @@
                              What's New in 1.9.25
 ******************************************************************************
 
+[ELC]
+[!] issue #132 : GC hotfix
+
 [LIB]
 [+] system'routines : enumerable.sequenceEqual[1], indexable.reverse&at[2]
+[+] extensions : textwriter.write&args[1,], textwriter.writeLine&args[1,]
 
 ******************************************************************************
                              What's New in 1.9.24

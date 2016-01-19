@@ -902,6 +902,80 @@
     ]
 }
 
+// --- formatterOp ---
+
+#symbol $helper =
+{
+    #method(stacksafe)readIndex &literal:s &vint:i &vint:retVal
+    [
+        #var(type:char)ch.
+        #var(type:int)n.
+        
+        retVal << 0.
+        s read &int:i &vchar:ch.
+        #loop (ch != #125)?
+        [
+            intConvertor convert &char:ch &vint:n.
+            ((n >= 30h)and:(n <= 39h))?
+            [                
+                n := n - 30h.
+                
+                retVal *= 10.
+                retVal += n.
+            ]
+            ! [ #throw InvalidArgumentException new. ].
+                
+            i += 1.
+            s read &int:i &vchar:ch.   
+        ].
+    ]
+}.
+
+#class(extension) formatterOp
+{
+    #method(stacksafe) write : pattern &args:args
+    [
+        #var(type:literal) s := pattern literal.
+        #var(type:textbuffer)buffer := TextBuffer new.
+        
+        #var(type:int)len := s length.
+        #var(type:int)i := 0.
+        #var(type:char)ch.
+        #var(type:int)chlen.
+        #var(type:int)index := 0.        
+        
+        #loop (i < len)?
+        [
+            s read &int:i &vchar:ch.
+            
+            (ch == #123)
+                ? [ 
+                    i := i + 1.
+                    
+                    $helper readIndex &literal:s &vint:i &vint:index.
+                    buffer write:((args getAt &int:index)::convertorOp toLiteral).
+                    
+                    chlen := 1.
+                ]
+                ! [ 
+                    buffer write &char:ch. 
+                    ch readLength &vint:chlen.
+                ].            
+            
+            i := i + chlen.
+        ].
+        
+        self write:buffer.
+    ]
+    
+    #method writeLine : pattern &args:args
+    [
+        self::formatterOp write:pattern &args:args.
+        
+        self writeLine.
+    ]
+}
+
 // --- inputOp ---
 
 #class(extension) inputOp
