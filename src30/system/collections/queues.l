@@ -51,7 +51,11 @@
             ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
             
         theTop -= 1.
+        
+        #var item := theList getAt &int:theTop.                        
         theList setAt &int:theTop &object:$nil.
+        
+        ^ item.
     ]
     
     #method clear

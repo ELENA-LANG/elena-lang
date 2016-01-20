@@ -493,6 +493,9 @@ x86Assembler::Operand x86Assembler :: readPtrOperand(TokenInfo& token, Procedure
          else if (prefix==x86Helper::otM8) {
             operand.type = x86Helper::otDB;
          }
+         else if (prefix == x86Helper::otM32) {
+            operand.type = x86Helper::otDD;
+         }
       }
 	   else token.raiseErr("'[' expected (%d)\n");
 

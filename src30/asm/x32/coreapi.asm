@@ -3654,7 +3654,10 @@ procedure coreapi'ws_decode
 
 labNext:
    mov  ebx, [eax]
-   cmp  ebx, 010000h
+   cmp  ebx, dword ptr 128
+   jl   short labCH1
+
+   cmp  ebx, 0800h
    jl   short lab1
 
    sub  ecx, 2
@@ -3677,7 +3680,13 @@ lab1:
    mov  word ptr [edi], bx
    add  edi, 2
    sub  ecx, 1
+   jmp  short labSave
 
+labCH1:
+   mov  byte ptr [edi], bl
+   add  edi, 1
+   sub  ecx, 1
+      
 labSave:
    add  eax, 4
    test ecx, ecx
@@ -3693,7 +3702,6 @@ err:
    mov  ecx, edi
    pop  edi
    sub  ecx, edi
-   shr  ecx, 1
 
    ret
   

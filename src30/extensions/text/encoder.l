@@ -1,47 +1,17 @@
+#import system.
+#import system'text.
+
 // ==== ver 3.4.1 ===
 
-//#define system.
-//#define system'text.
-//
-//// --- encoderOp ---
-//
-//#class(extension:encoder)encoderOp
-//{
-//    #method convert &bytearray:aBuffer &length:aLength &textbuffer:anOutput
-//    [
-//        #var(type:encoder)anEncoder := self encoder.
-//                
-//        #var(type:int)aCharLen := 255.
-//        #var(type:chararray,size:255)aCharBuffer.
-//        
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aPage := 255.
-//        
-//        #loop (anIndex < aLength)?
-//        [
-//            (aPage > (aLength - anIndex))
-//                ? [ aPage := aLength - anIndex. ].
-//            
-//            anEncoder convert &index:anIndex &vlength:aPage &bytearray:aBuffer &chararray:aCharBuffer &vlength:aCharLen.
-//            anIndex := anIndex + aPage.
-//            
-//            anOutput write &chararray:aCharBuffer &length:aCharLen.
-//        ].
-//    ]
-//    
-//    #method toLiteral &bytearray:aBuffer &length:aLength
-//    [
-//        #var(type:textbuffer)anOutput := TextBuffer new.
-//        self::encoderOp convert &bytearray:aBuffer &length:aLength &textbuffer:anOutput.
-//        
-//        ^ anOutput literal.
-//    ]
-//    
-//    #method toWide &bytearray:aBuffer &length:aLength
-//    [
-//        #var(type:textbuffer)anOutput := TextBuffer new.
-//        self::encoderOp convert &bytearray:aBuffer &length:aLength &textbuffer:anOutput.
-//        
-//        ^ anOutput wide.
-//    ]
-//}
+#class(extension)encoderOp
+{
+    #method toByteArray        
+        = self cast:%eval &to:
+        {
+            literal : s
+                = UTF8Encoder toByteArray &int:0 &int:(s length) &literal:s.
+            
+            wide : s
+                = UTF16Encoder toByteArray &int:0 &int:(s length) &wide:s.
+        }.
+}

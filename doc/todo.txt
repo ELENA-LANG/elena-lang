@@ -3,14 +3,12 @@ In development:
 ------                      
 
               sdev - samples
-                       * rosetta sample : Set of real numbers
-                       * rosetta sample : Set
-                       * rosetta sample : Singleton
-                       * rosetta sample : Stack
-                       * rosetta sample : Stack traces
-                       * rosetta sample : Substring
                        * rosetta sample : Test a function
                        * rosetta sample : Tree traversal                       
+                       * rosetta sample : Stack traces
+
+                       * rosetta sample : Set of real numbers
+                       * rosetta sample : Set
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
