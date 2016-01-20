@@ -5,26 +5,10 @@
 #import system'calendar.
 #import extensions.
 
-#symbol __program =
-[    
-    #var s := "0123456789".
-    #var n := 3.
-    #var m := 2.
-    #var c := #51.
-    #var z := "345".
- 
-    console writeLine:(s Substring:m &at:n).
-    console writeLine:(s Substring:(s length - n) &at:n).
-    console writeLine:(s Substring:(s length - 1) &at:0).
-    console writeLine:(s Substring:m &at:(s indexOf:c &at:0)).
-    console writeLine:(s Substring:m &at:(s indexOf:z &at:0)).
-].
-
 #symbol XTester =
 {
     test
     [
-        __program eval.
     ]
 }.
         

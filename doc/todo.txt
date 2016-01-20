@@ -2,11 +2,14 @@
 In development:
 ------                      
 
+              fdev - db app
+                       * implement simple chat system to test socket api
+ 
+              xdev - general implementation     
+                       * fix #211 : Message call sequence with open arguments
+                       * implement #167 : stack allocated variable and $nil                       
+                      
               sdev - samples
-                       * rosetta sample : Test a function
-                       * rosetta sample : Tree traversal                       
-                       * rosetta sample : Stack traces
-
                        * rosetta sample : Set of real numbers
                        * rosetta sample : Set
                        * rosetta sample : ABC_Problem
@@ -24,15 +27,11 @@ In development:
                        * rosetta sample : Program name
                        * rosetta sample : Program termination
                        * rosetta sample : Reverse words in a string
+                       * rosetta sample : Tree traversal                       
+                       * rosetta sample : Stack traces
                        
                        * refactor cpu_sim : assembler
                        
-              fdev - db app
-                       * implement simple chat system to test socket api
- 
-              xdev - general implementation     
-                       * implement #167 : stack allocated variable and $nil
-                      
               xdev - SSE and SSE2 instructions support
                        * http://softpixel.com/~cwright/programming/simd/sse.php
                        * http://softpixel.com/~cwright/programming/simd/sse2.php
