@@ -41,6 +41,9 @@
     [
         theCode := IntNumber new &int:(system'external'WS2_32 WSAGetLastError).
     ]
+    
+    /// Returns the message and the call stack
+    #method literal = theMessage add &literal:#10"Socket Error code:" add &literal:(theCode literal) add &literal:#10"Call stack:"#10 add &literal:(theCallStack literal).
 }
 
 // --- WSAStartUp ---

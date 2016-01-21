@@ -3,6 +3,7 @@ In development:
 ------                      
 
               fdev - db app
+                       * socket exception should provide an error code
                        * implement simple chat system to test socket api
  
               xdev - general implementation     

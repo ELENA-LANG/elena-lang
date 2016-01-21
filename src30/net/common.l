@@ -11,4 +11,3 @@
     #constructor(stacksafe) new:aMessage
         <= new &literal:(aMessage literal) &subject: %TcpClientError.
 }
-
