@@ -23,7 +23,7 @@
         addrinfo setFlags &int:AI_PASSIVE.
         
         // Create a SOCKET for connecting to server
-        #var(type:addr_reader)aReader := AddrInfoReader new &wide:(aPort wide) &addrinfo:addrinfo.        
+        #var(type:addr_reader)aReader := AddrInfoReader new &literal:(aPort literal) &addrinfo:addrinfo.        
         aReader read &addrinfo:addrinfo.
         
         #var(type:int)ai_family.

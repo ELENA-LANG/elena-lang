@@ -80,30 +80,30 @@
     #field(type:dirty_ptr)paddrinfo.
     #field(type:dirty_ptr)prootinfo.
     
-    #constructor(stacksafe,embeddable) new &wide:aNode &wide:aService &addrinfo:aHint
+    #constructor(stacksafe,embeddable) new &literal:aNode &literal:aService &addrinfo:aHint
     [
-        #var(type:int)aRetVal := system'external'WS2_32 GetAddrInfoW
-            &wide:aNode
-            &wide:aService
+        #var(type:int)aRetVal := system'external'WS2_32 getaddrinfo
+            &literal:aNode
+            &literal:aService
             &addrinfo:aHint
             &dirty_ptr:paddrinfo.
             
         (0 == aRetVal)
-            ! [ #throw SocketException new:"GetAddrInfoW failed" &error_code:(IntNumber new &int:aRetVal). ].
+            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].
             
         prootinfo := paddrinfo.
     ]
     
-    #constructor(stacksafe,embeddable) new &wide:aService &addrinfo:aHint
+    #constructor(stacksafe,embeddable) new &literal:aService &addrinfo:aHint
     [
-        #var(type:int)aRetVal := system'external'WS2_32 GetAddrInfoW
+        #var(type:int)aRetVal := system'external'WS2_32 getaddrinfo
             &int:0
-            &wide:aService
+            &literal:aService
             &addrinfo:aHint
             &dirty_ptr:paddrinfo.
             
         (0 == aRetVal)
-            ! [ #throw SocketException new:"GetAddrInfoW failed" &error_code:(IntNumber new &int:aRetVal). ].
+            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].
             
         prootinfo := paddrinfo.
     ]
@@ -129,7 +129,7 @@
     
     #method(stacksafe) close
     [
-        system'external'WS2_32 FreeAddrInfoW
+        system'external'WS2_32 freeaddrinfo
             &int:prootinfo.
     ]
     
@@ -151,8 +151,8 @@
     #constructor(stacksafe) new &int:anAdressFamily &int:aType &int:aProtocol
         <= ($new &int:(system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol))
     [
-        (INVALID_SOCKET == $self)
-            ! [ #throw SocketException new:"Error at socket". ].
+        (INVALID_SOCKET == theHandle)
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
     
     #method socket = $self.
@@ -165,7 +165,7 @@
             &int:aNameLen.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe) bind &dirty_ptr:aSockAddrPtr &int:aNameLen
@@ -176,7 +176,7 @@
             &int:aNameLen.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe) listen &int:aBackLog
@@ -186,7 +186,7 @@
             &int:aBackLog.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe,type:bool) tryOpen &dirty_ptr:aSockAddrPtr &int:aNameLen
@@ -208,7 +208,7 @@
             &int:aFlags.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe) read &bytearray:aBuffer &int:aLength &int:aFlags
@@ -220,7 +220,7 @@
             &int:aFlags.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method accept
@@ -244,7 +244,7 @@
             &int:aType.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe) iocommand &int:aCommand &vint:aParameter
@@ -255,7 +255,7 @@
             &vint:aParameter.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe) option &int:aLevel &int:anOption &bool:aValue
@@ -270,7 +270,7 @@
             &int:1.
             
         (SOCKET_ERROR == aRetVal)
-            ! [ #throw SocketException new:"Error at socket". ].
+            ? [ #throw SocketException new:"Error at socket". ].
     ]
 
     #method(stacksafe) close

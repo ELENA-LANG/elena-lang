@@ -9,6 +9,7 @@
 
 [ELC]
 [!] issue #132 : GC hotfix
+[!] issue #216 : operation with structure fields in stacksafe method
 
 [LIB]
 [+] system'routines : enumerable.sequenceEqual[1], indexable.reverse&at[2]
