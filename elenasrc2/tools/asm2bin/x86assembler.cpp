@@ -2041,7 +2041,8 @@ void x86Assembler :: compileMOVUPS(TokenInfo& token, ProcedureInfo& info, Memory
    else if (test(sour.type, x86Helper::otM32) && test(dest.type, x86Helper::otX128)) {
 	   code->writeByte(0x11);
 	   x86Helper::writeModRM(code, dest, sour);
-	   code->writeByte(sour.offset);
+	   if(sour.offset != 0)
+		   code->writeByte(sour.offset);
    }
    else token.raiseErr("Invalid command (%d)");
 }

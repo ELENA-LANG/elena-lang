@@ -10,7 +10,6 @@ bin\asm2binx src30\asm\x32\commands.asm bin\x32
 bin\asm2binx src30\asm\x32\core.asm bin\x32
 bin\asm2binx src30\asm\x32\corex.asm bin\x32
 bin\asm2binx src30\asm\x32\coreapi.asm bin\x32
-bin\asm2binx src30\asm\x32\mathapi.asm bin\x32
 bin\asm2binx src30\asm\x32\core_vm.asm bin\x32
 bin\asm2binx src30\asm\x32\core_rt.asm bin\x32
 bin\asm2binx src30\asm\x32\core_win.asm bin\x32
