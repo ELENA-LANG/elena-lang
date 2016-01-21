@@ -60,9 +60,14 @@
     
     #method(stacksafe) clear
     [
-        system'external'KERNEL32 ZeroMemory
-            &addrinfo:$self
-            &int:32.
+        ai_flags := 0.
+        ai_family := 0.
+        ai_socktype := 0.
+        ai_protocol := 0.
+        ai_addrlen := 0.
+        ai_canonname write &int:0.
+        ai_addr write &int:0.
+        ai_next write &int:0.
     ]
 }
 
@@ -116,7 +121,7 @@
     
     #method(stacksafe)read &addrinfo:anInfo
     [
-        system'external'KERNEL32 CopyMemory 
+        system'external'KERNEL32 RtlMoveMemory
             &addrinfo:anInfo
             &int:paddrinfo
             &int:32. 

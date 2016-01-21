@@ -124,7 +124,7 @@
     [
         #var(type:int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
         #var(type:literal)aLiteral := LiteralValue new &int:aLen.
-        system'external'kernel32 lstrcpyA &literal:aLiteral &int:thePointer.
+        system'external'KERNEL32 lstrcpyA &literal:aLiteral &int:thePointer.
         
         ^ aLiteral.
     ]        
@@ -134,7 +134,7 @@
     [
         #var(type:int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
         #var(type:wide)aLiteral := WideLiteralValue new &int:aLen.
-        system'external'kernel32 lstrcpyW &wide:aLiteral &int:thePointer.
+        system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
         
         ^ aLiteral.
     ]

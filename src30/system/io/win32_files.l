@@ -261,7 +261,7 @@
     
     #method(type:bool) is &available
     [
-        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
+        #var(type:int) ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
         
         (ret != 0FFFFFFFFh)
             ? [
@@ -275,7 +275,7 @@
     
     #method delete
     [
-        #var(type:int) ret := system'external'kernel32 DeleteFileW &wide:(self wide).
+        #var(type:int) ret := system'external'KERNEL32 DeleteFileW &wide:(self wide).
         
        ^ ret != 0.
     ]
@@ -287,7 +287,7 @@
 {
     #method(type:bool) is &available
     [
-        #var(type:int) ret := system'external'kernel32 GetFileAttributesW &wide:(self wide).
+        #var(type:int) ret := system'external'KERNEL32 GetFileAttributesW &wide:(self wide).
      
         (ret != 0FFFFFFFFh)
             ? [
@@ -301,7 +301,7 @@
     
     #method create
     [
-        #var(type:int) ret := system'external'kernel32 CreateDirectoryW
+        #var(type:int) ret := system'external'KERNEL32 CreateDirectoryW
             &wide:(self wide)
             &int:0.
             
@@ -311,7 +311,7 @@
     
     #method delete
     [
-        #var(type:int) ret := system'external'kernel32 RemoveDirectoryW &wide:(self wide).
+        #var(type:int) ret := system'external'KERNEL32 RemoveDirectoryW &wide:(self wide).
         
        ^ ret != 0.
     ]    
