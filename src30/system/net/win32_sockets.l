@@ -42,24 +42,20 @@
         ai_addrlen := aValue.
     ]
     
-    #method(stacksafe)readInfo &vint:aFamily &vint:aSocketType &vint:aProtocol &vint:aLen
+    #method(stacksafe)readInfo &vint:aFamily &vint:aSocketType &vint:aProtocol
     [
         aFamily << ai_family.
         aSocketType << ai_socktype.
         aProtocol << ai_protocol.
-        aLen << ai_addrlen.
     ]
     
-    #method(stacksafe)readAddrLen &vint:aLen
-    [
-        aLen << ai_addrlen.
-    ]
-    
-    #method(stacksafe)readAddrPtr &dirty_ptr:aPointer
+    #method(stacksafe)readAddrPtr &dirty_ptr:aPointer &vint:aLen
     [
         #var(type:dirty_ptr)ptr := ai_addr.
         
         aPointer write &dirty_ptr:ptr.
+        
+        aLen << ai_addrlen.
     ]
     
     #method(stacksafe) clear
@@ -83,6 +79,20 @@
     [
         #var(type:int)aRetVal := system'external'WS2_32 GetAddrInfoW
             &wide:aNode
+            &wide:aService
+            &addrinfo:aHint
+            &dirty_ptr:paddrinfo.
+            
+        (0 == aRetVal)
+            ! [ #throw SocketException new:"GetAddrInfoW failed" &error_code:(IntNumber new &int:aRetVal). ].
+            
+        prootinfo := paddrinfo.
+    ]
+    
+    #constructor(stacksafe,embeddable) new &wide:aService &addrinfo:aHint
+    [
+        #var(type:int)aRetVal := system'external'WS2_32 GetAddrInfoW
+            &int:0
             &wide:aService
             &addrinfo:aHint
             &dirty_ptr:paddrinfo.

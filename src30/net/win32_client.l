@@ -33,11 +33,11 @@
             #var(type:int)ai_protocol.
             #var(type:int)ai_addrlen.
             #var(type:dirty_ptr)ai_addrptr.
-            addrinfo readInfo &vint:ai_family &vint:ai_socktype &vint:ai_protocol &vint:ai_addrlen.
+            addrinfo readInfo &vint:ai_family &vint:ai_socktype &vint:ai_protocol.
             
             theSocket := Socket new &int:ai_family &int:ai_socktype &int:ai_protocol.
             
-            addrinfo readAddrPtr &dirty_ptr:ai_addrptr.
+            addrinfo readAddrPtr &dirty_ptr:ai_addrptr &vint:ai_addrlen.
             
             (theSocket tryOpen &dirty_ptr:ai_addrptr &int:ai_addrlen)
                 ? [
@@ -53,7 +53,7 @@
         
         #throw TcpClientException new:"Unable to connect to server".
     ]
-    
+
     #method set &blocking:aValue
     [
         #var(type:int)aMode.

@@ -15,6 +15,9 @@
 [+] extensions : textwriter.write&args[1,], textwriter.writeLine&args[1,]
 [+] extensions'text : (literal/wide).toByteArray
 
+[Samples]
+[+] net sample : chat
+
 ******************************************************************************
                              What's New in 1.9.24
 ******************************************************************************
