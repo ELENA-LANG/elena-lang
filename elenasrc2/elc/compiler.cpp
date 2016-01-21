@@ -5275,6 +5275,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
          ClassInfo info;
          scope.loadClassInfo(info, callTarget.argument);
          if (info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+
             // if it is an idle call, remove it
             node = lxExpression;
 
@@ -5289,7 +5290,18 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
       while (member != lxNone) {
          // if boxing used for direct stack safe call
          // remove it
-         if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing || member == lxUnboxing) {
+         if (member == lxUnboxing) {
+            SyntaxTree::Node assignExpr = SyntaxTree::findChild(member, lxAssigning);
+
+            if (assignExpr == lxAssigning && member.Tree()->matchPattern(assignExpr, lxObjectMask, 2, 
+               SyntaxTree::NodePattern(lxLocalAddress), 
+               SyntaxTree::NodePattern(lxFieldAddress))) 
+            {
+               member = lxLocalUnboxing;
+            }
+            else member = lxExpression;
+         }
+         else if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing) {
             member = lxExpression;
          }
 

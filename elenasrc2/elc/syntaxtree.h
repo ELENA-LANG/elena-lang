@@ -58,14 +58,15 @@ enum LexicalType
    lxElse            = 0x031D,
    lxOption          = 0x031E,
    lxBody            = 0x031F,
+   lxLocalUnboxing   = 0x0320,
 
-   lxBoolOp          = 0x0320,
-   lxNilOp           = 0x0321,
-   lxIntOp           = 0x1322,
-   lxLongOp          = 0x1323,
-   lxRealOp          = 0x1324,
-   lxIntArrOp        = 0x1325,
-   lxArrOp           = 0x1326,
+   lxBoolOp          = 0x0321,
+   lxNilOp           = 0x0322,
+   lxIntOp           = 0x1323,
+   lxLongOp          = 0x1324,
+   lxRealOp          = 0x1325,
+   lxIntArrOp        = 0x1326,
+   lxArrOp           = 0x1327,
 
    lxNested          = 0x0101,
    lxStruct          = 0x0102,
@@ -224,6 +225,11 @@ public:
    public:
       LexicalType   type;
       ref_t         argument;
+
+      SyntaxTree* Tree()
+      {
+         return tree;
+      }
 
       bool operator == (LexicalType type)
       {

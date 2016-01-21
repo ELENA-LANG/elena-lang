@@ -1776,7 +1776,7 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
    }
 }
 
-void ByteCodeWriter::assignStruct(CommandTape& tape, LexicalType target, int offset, int size)
+void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int offset, int size)
 {
    if (target == lxFieldAddress) {
       // bloadfi 1
@@ -2833,6 +2833,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          unboxArgList(tape);
       }
       else if (test(current.type, lxObjectMask)) {
+         if (current.type == lxLocalUnboxing)
+            unboxMode = true;
+
          paramCount++;
       }
     
@@ -2941,6 +2944,27 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
             loadObject(tape, lxResultField);
             saveObject(tape, target.type, target.argument);
          }
+      }
+      else if (current == lxLocalUnboxing) {
+         SNode assignNode = SyntaxTree::findChild(current, lxAssigning);
+         SNode larg;
+         SNode rarg;
+
+         assignOpArguments(assignNode, larg, rarg);
+
+         tape.write(bcPushB);
+         loadObject(tape, larg.type, larg.argument);
+         loadBase(tape, rarg.type, 0);
+
+         if (assignNode.argument == 4) {
+            assignInt(tape, lxFieldAddress, rarg.argument);
+         }
+         else if (assignNode.argument == 2) {
+            assignLong(tape, lxFieldAddress, rarg.argument);
+         }
+         else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+
+         tape.write(bcPopB);
       }
 
       index++;
@@ -3298,6 +3322,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
    switch (node.type)
    {
       case lxExpression:
+      case lxLocalUnboxing:
          generateExpression(tape, node);
          break;
       case lxTypecasting:
