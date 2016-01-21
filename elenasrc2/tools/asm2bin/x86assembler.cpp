@@ -2042,11 +2042,7 @@ void x86Assembler :: compileMOVUPS(TokenInfo& token, ProcedureInfo& info, Memory
 	   code->writeByte(0x11);
 	   x86Helper::writeModRM(code, dest, sour);
 	   if(sour.offset != 0)
-<<<<<<< HEAD
-	   code->writeByte(sour.offset);
-=======
-		code->writeByte(sour.offset);
->>>>>>> 5bf1ba7130ffed8ab169191215a93da094bdd6ac
+		   code->writeByte(sour.offset);
    }
    else token.raiseErr("Invalid command (%d)");
 }
