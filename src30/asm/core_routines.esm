@@ -3799,6 +3799,19 @@ procedure dptr_readint
 
 end
 
+procedure dptr_writeint
+
+  nload
+  pushd
+  popb
+  aloadsi 2
+  nload
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
 procedure dptr_readbytearray
 
   bloadsi 2

@@ -31,7 +31,7 @@
         aRetVal << theLength.
     ]
 
-    #method(type:int,embeddable) length
+    #method(type:int,embeddable,suppress:w2) length
     [
         #var(type:int)retVal.
         $self readLength &vint:retVal.

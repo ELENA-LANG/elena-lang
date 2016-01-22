@@ -122,21 +122,21 @@
         aStruct write &int:8 &int:ptr.
 
 //        lpstrFilter;
-        ptr write &shortarray:theFilters.
+        ptr assign:theFilters.
         aStruct write &int:12 &int:ptr.
 
 //        nFilterIndex;
         aStruct write &int:24 &int:theFilterIndex.
 
 //        lpstrFile;
-        ptr write &shortarray:theFileName.
+        ptr assign:theFileName.
         aStruct write &int:28 &int:ptr.
 
 //        nMaxFile;
         aStruct write &int:32 &int:theMaxFile.
 
 //        lpstrTitle;
-        ptr write &wide:theCaption.
+        ptr assign:theCaption.
         aStruct write &int:48 &int:ptr.
 
 //        Flags;

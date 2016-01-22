@@ -49,13 +49,10 @@
         aProtocol << ai_protocol.
     ]
     
-    #method(stacksafe)readAddrPtr &dirty_ptr:aPointer &vint:aLen
+    #method(stacksafe)readAddrPtr &dirty_ptr:ptr &vint:len
     [
-        #var(type:dirty_ptr)ptr := ai_addr.
-        
-        aPointer write &dirty_ptr:ptr.
-        
-        aLen << ai_addrlen.
+        ptr write &dirty_ptr:ai_addr.
+        len << ai_addrlen.
     ]
     
     #method(stacksafe) clear
@@ -65,9 +62,9 @@
         ai_socktype := 0.
         ai_protocol := 0.
         ai_addrlen := 0.
-        ai_canonname write &int:0.
-        ai_addr write &int:0.
-        ai_next write &int:0.
+        ai_canonname assign &int:0.
+        ai_addr assign &int:0.
+        ai_next assign &int:0.
     ]
 }
 
@@ -114,7 +111,7 @@
     #method(stacksafe) next
     [
         #var(type:dirty_ptr)ptr := paddrinfo.
-        ptr append &int:28.
+        ptr offset &int:28.
         
         paddrinfo := ptr.
     ]

@@ -226,15 +226,12 @@
 
         (columnType == SQLITE_BLOB)?
         [
-            #var(type:int)blob := system'external'sqlite3  sqlite3_column_blob &int:theCommandHandle &int:anIndex.
+            #var(type:dirty_ptr)blob := system'external'sqlite3  sqlite3_column_blob &int:theCommandHandle &int:anIndex.
             #var(type:int)len := system'external'sqlite3 sqlite3_column_bytes &int:theCommandHandle &int:anIndex.
             
             #var(type:bytearray)arr := ByteArray new &int:len.
 
-            #var(type:dirty_ptr)ptr.
-            ptr write &int:blob.
-
-            ptr read &bytearray:arr &int:len.
+            blob read &bytearray:arr &int:len.
 
             ^ arr.            
         ].

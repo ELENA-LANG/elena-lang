@@ -65,45 +65,28 @@
 
     #constructor new : anObject
     [
-        $self write:anObject.
+        $self assign:anObject.
     ]
     
     #method dirty_ptr = $self.
     
-    #method(stacksafe) write : anObject
+    #method(stacksafe) assign : anObject
         => system'internal'dptr_copy.
                 
-    #method(stacksafe) append &int:aValue
+    #method(stacksafe) assign &int:anObject
+        => system'internal'int_copy.
+                
+    #method(stacksafe) offset &int:aValue
     [
         thePointer := thePointer + aValue.
     ]                            
-                            
-    #method(stacksafe) write &int:anObject
+
+    #method(stacksafe) write &dirty_ptr:anObject
         => system'internal'int_copy.
                 
-    #method(stacksafe) write &handle:anObject
-        => system'internal'int_copy.
-    
-    #method(stacksafe) write &literal:aLiteral
-        => system'internal'dptr_copy.
-    
-    #method(stacksafe) write &wide:aLiteral
-        => system'internal'dptr_copy.
-    
-    #method(stacksafe) write &shortarray:anArray
-        => system'internal'dptr_copy.
-    
-    #method(stacksafe) write &bytearray:anArray
-        => system'internal'dptr_copy.
-        
-    #method(stacksafe) write &dirty_ptr:aPointer
-    [
-        #var(type:int)tmp.
-        aPointer read &vint:tmp.
-        
-        thePointer := tmp.
-    ]            
-
+    #method(stacksafe) write &int:anObject
+        => system'internal'dptr_writeint.
+                
     #method(stacksafe) read &vint:aPointer
         => system'internal'dptr_readint.
 
