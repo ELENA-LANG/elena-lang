@@ -169,7 +169,7 @@
     [
         #var(type:int)aRetVal := system'external'WS2_32 bind 
             &int:theHandle
-            &dirty_ptr:aSockAddrPtr
+            &int:aSockAddrPtr
             &int:aNameLen.
             
         (SOCKET_ERROR == aRetVal)
