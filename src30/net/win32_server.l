@@ -1,14 +1,33 @@
 // ==== ver 3.4.1 ===
 
 #import system.
+#import system'collections.
 #import system'net.
+#import system'threading.
+
+#class(sealed)TcpRemoteClient
+{
+    #field(type:socket)theSocket.
+    
+    #constructor new &socket:socket
+    [
+        theSocket := socket.
+    ]
+    
+    #method tcp_remoteclient = $self.
+}
 
 #class(sealed)TcpServer
 {
     #field(type:socket)theListenSocket.
+    #field(type:array_list)theClients.
+    #field(type:thread)theListenThread.
+    #field(type:func1)theNewClient.
     
     #constructor new &port:aPort
     [
+        theClients := ArrayList new.
+        
         // winsock start up
         WSAStartUp22.
         
@@ -60,4 +79,47 @@
     ]    
     
     #method tcp_server = $self.
+    
+    #method set &onNewClient:aFunction
+    [
+        theNewClient := aFunction func1.
+    ]
+    
+    #method newClient
+    [
+        #var socket := theListenSocket accept.
+        #var client := $nil.
+        ($nil != socket)?
+        [
+            socket option &int:IPPROTO_TCP &int:TCP_NODELAY &bool:true.
+            
+            client := TcpRemoteClient new &socket:socket.
+            
+            theClients += client.
+        ].
+        
+        ^ client.
+    ]
+    
+    #method proceed
+    [
+        #var client := $self newClient.
+        ($nil != client)?
+        [
+            ($nil != theNewClient)
+                ? [ theNewClient eval:client. ].
+        ].
+        
+        ^ true.
+    ]
+    
+    #method start
+    [
+        theListenThread := Thread new &func:
+        [
+            #loop $self proceed.
+        ].
+        
+        theListenThread start.
+    ]
 }

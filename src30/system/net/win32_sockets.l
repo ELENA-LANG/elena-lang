@@ -190,7 +190,7 @@
     [
         #var(type:int)aRetVal := system'external'WS2_32 connect 
             &int:theHandle
-            &dirty_ptr:aSockAddrPtr
+            &int:aSockAddrPtr
             &int:aNameLen.
             
         ^ (SOCKET_ERROR != aRetVal).
@@ -220,7 +220,7 @@
             ? [ #throw SocketException new:"Error at socket". ].
     ]
 
-    #method accept
+    #method accept  
     [
         #var(type:socket)aSocket := system'external'WS2_32 accept
             &int:theHandle

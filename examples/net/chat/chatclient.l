@@ -7,7 +7,7 @@
     
     #constructor new &ip:ip &port:port
     [
-        theNetworkClient := TcpServer new &ip:ip &port:port.
+        theNetworkClient := TcpClient new &ip:ip &port:port.
         
         theNetworkClient set &blocking:false.
         theNetworkClient set &nodelay:true.

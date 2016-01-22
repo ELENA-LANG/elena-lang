@@ -11,4 +11,14 @@
         
         theNetworkServer set &blocking:false.
     ]
+    
+    #method start
+    [
+        theNetworkServer set &onNewClient: client
+        [
+            console writeLine:"new client".
+        ].
+        
+        theNetworkServer start.
+    ]
 }

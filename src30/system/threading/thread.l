@@ -2,6 +2,8 @@
 
 #import system.
 
+#subject(class:Thread)thread.
+
 // --- Thread ---
 
 #class Thread
@@ -12,6 +14,8 @@
     [
         theHandle := ThreadHandle new &func:anAction.
     ]
+    
+    #method thread = $self.
     
     #method start
     [
