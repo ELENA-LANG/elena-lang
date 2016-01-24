@@ -57,6 +57,23 @@
     ]
 }
 
+// --- testOp ---
+
+#class(extension)testOp
+{
+    #method assert &ifTrue
+    [
+        self
+            ! [ console writeLine:"Assertion fails!" ].
+    ]
+    
+    #method assert &ifFalse
+    [
+        self
+            ? [ console writeLine:"Assertion fails!" ].
+    ]
+}
+
 // --- control ---
 
 #symbol control =
