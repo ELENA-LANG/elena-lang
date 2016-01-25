@@ -5,7 +5,6 @@ In development:
               sdev - samples
 
               fdev - db app
-                       * socket exception should provide an error code
                        * implement simple chat system to test socket api
  
               xdev - general implementation     
@@ -13,6 +12,36 @@ In development:
                        * implement #167 : stack allocated variable and $nil                       
                       
               sdev - samples
+                       * rosetta sample : Tokenize a string
+                       * rosetta sample : Top rank per group
+                       * rosetta sample : Trigonometric functions
+                       * rosetta sample : Truncatable primes
+                       * rosetta sample : Truncate a file
+                       * rosetta sample : Twelve statements
+                       * rosetta sample : Undefined values
+                       * rosetta sample : Unicode strings
+                       * rosetta sample : Unicode variable names
+                       * rosetta sample : User input/Text
+                       * rosetta sample : Variable size/Get
+                       * rosetta sample : Variable size/Set
+                       * rosetta sample : Variables
+                       * rosetta sample : Visualize a tree
+                       * rosetta sample : Vogel's approximation method
+                       * rosetta sample : Voronoi diagram
+                       * rosetta sample : Walk a directory/Non-recursively
+                       * rosetta sample : Walk a directory/Recursively
+                       * rosetta sample : Word wrap
+                       * rosetta sample : World Cup group stage
+                       * rosetta sample : Write entire file
+                       * rosetta sample : Write float arrays to a text file
+                       * rosetta sample : XML/DOM serialization
+                       * rosetta sample : XML/Input
+                       * rosetta sample : XML/Output
+                       * rosetta sample : XML/XPath
+                       * rosetta sample : Yin and yang
+                       * rosetta sample : Zig-zag matrix
+                       * rosetta sample : Zebra puzzle
+                       * rosetta sample : Zeckendorf arithmetic
                        * rosetta sample : Short-circuit evaluation
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy

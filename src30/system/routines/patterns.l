@@ -298,7 +298,7 @@
         theOperation := operation func2.
     ]
 
-    #method eval : aParam [ theOperation eval:theResult:aParam. ]
+    #method eval : aParam [ theResult << theOperation eval:theResult:aParam. ]
 }
 
 // --- patternOp ---
