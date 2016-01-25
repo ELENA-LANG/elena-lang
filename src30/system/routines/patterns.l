@@ -286,6 +286,21 @@
     #method eval : aParam [ theResult append:aParam. ]
 }
 
+// --- Accumulating ---
+
+#class Accumulating :: BasePattern
+{
+    #field(type:func2) theOperation.
+    
+    #constructor new : aVariable &with:operation
+    [
+        theResult := aVariable.
+        theOperation := operation func2.
+    ]
+
+    #method eval : aParam [ theOperation eval:theResult:aParam. ]
+}
+
 // --- patternOp ---
 
 #class(extension)patternOp
@@ -299,4 +314,14 @@
     
     #method summarize
         = self::patternOp summarize:(Variable new).
+        
+    #method accumulate : aVariable &with:operation
+    [
+        Accumulating new:aVariable &with:operation run &enumerator:(self enumerator).
+        
+        ^ aVariable value.
+    ]
+    
+    #method accumulate &with:operation 
+        = self::patternOp accumulate:(Variable new) &with:operation.
 }

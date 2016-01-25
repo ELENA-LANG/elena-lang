@@ -13,6 +13,7 @@ In development:
                        * implement #167 : stack allocated variable and $nil                       
                       
               sdev - samples
+                       * rosetta sample : Short-circuit evaluation
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
