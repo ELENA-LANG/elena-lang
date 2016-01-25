@@ -101,10 +101,12 @@ int EditFrame :: newDocument(const char* name, Document* document)
 //   g_signal_connect(textView->getWidgetHandle(), "ctrl-tab-pressed",
 //         G_CALLBACK(ctrl_tab_pressed), _owner);
 
-   addTab(name, textView);
+   int index = addTab(name, textView);
 
    show();
    setFocus();
+
+   return index;
 }
 
 ////void EditFrame :: renameDocument(int index, const TCHAR* name)

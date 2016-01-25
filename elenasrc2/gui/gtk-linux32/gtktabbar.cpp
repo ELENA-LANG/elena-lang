@@ -77,7 +77,7 @@ void TabBar :: eraseTabPage(int index)
    }
 }
 
-void TabBar :: addTab(const char* name, Gtk::Widget* control)
+int TabBar :: addTab(const char* name, Gtk::Widget* control)
 {
    TabPage* page = new TabPage(name);
    page->control = control;
@@ -93,7 +93,10 @@ void TabBar :: addTab(const char* name, Gtk::Widget* control)
 
    append_page(*hb, name); // !! temporal
 
-   selectTab(_tabs.Count() - 1);
+   int index = _tabs.Count() - 1;
+   selectTab(index);
+
+   return index;
 }
 
 void TabBar :: selectTab(int index)

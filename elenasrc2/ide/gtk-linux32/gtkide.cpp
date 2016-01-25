@@ -233,15 +233,10 @@ void MainWindow :: pasteFrameClipboard(Document* document)
 
 void MainWindow :: reloadProjectView(_ProjectManager* project)
 {
-//   TreeView* projectView = (TreeView*)_controls[CTRL_PROJECTVIEW];
-//
-//   projectView->clear(NULL);
-//
-//   TreeViewItem root = projectView->insertTo(NULL, _model->project.name, -1);
+    _projectTree->clear();
 
    _ELENA_::ConfigCategoryIterator p_it = project->SourceFiles();
    int index = 0;
-//   _ELENA_::wide_c buffer[0x100];
    while (!p_it.Eof()) {
       _ELENA_::ident_t name = p_it.key();
       _ELENA_::NamespaceName ns(name);
@@ -268,34 +263,6 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
       row[_projectTreeColumns._reference] = (const char*)name;
       row[_projectTreeColumns._index] = index;
 
-//      TreeViewItem parent = root;
-//      int start = 0;
-//      while (true) {
-//         int end = _ELENA_::StringHelper::find(name + start, PATH_SEPARATOR);
-//
-//         _ELENA_::WideString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
-//
-//         TreeViewItem current = projectView->getChild(parent);
-//         while (current != NULL) {
-//            projectView->getCaption(current, buffer, 0x100);
-//
-//            if (!nodeName.compare(buffer)) {
-//               current = projectView->getNext(current);
-//            }
-//            else break;
-//         }
-//
-//         if (current == NULL) {
-//            current = projectView->insertTo(parent, nodeName, end == -1 ? index : -1);
-//         }
-//         parent = current;
-//
-//         if (end != -1) {
-//            start = end + 1;
-//         }
-//         else break;
-//      }
-//
       p_it++;
       index++;
    }
