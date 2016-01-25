@@ -2898,7 +2898,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       releaseObject(tape);
    }
    else if (paramCount > getParamCount(message) + 1) {
-      releaseObject(tape, paramCount - getParamCount(message) - 1);
+      releaseObject(tape, paramCount - getParamCount(message) - 2);
    }
 
    // unbox the arguments

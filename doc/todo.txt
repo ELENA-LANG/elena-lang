@@ -2,13 +2,13 @@
 In development:
 ------                      
 
-              sdev - samples
+              xdev - general implementation     
+                       * fix #213 : system'MethodNotFoundException should provide the message name  
 
               fdev - db app
                        * implement simple chat system to test socket api
  
               xdev - general implementation     
-                       * fix #211 : Message call sequence with open arguments
                        * implement #167 : stack allocated variable and $nil                       
                       
               sdev - samples

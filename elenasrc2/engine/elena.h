@@ -611,7 +611,7 @@ inline int getParamCount(ref_t message)
    decodeMessage(message, signature, verb, paramCount);
 
    if (paramCount >= OPEN_ARG_COUNT)
-      return 0;
+      return paramCount - OPEN_ARG_COUNT;
 
    return paramCount;
 }
