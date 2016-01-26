@@ -21,9 +21,7 @@ In development:
                        * implement #167 : stack allocated variable and $nil                       
                       
               sdev - samples
-                       * rosetta sample : Tokenize a string
                        * rosetta sample : Top rank per group
-                       * rosetta sample : Trigonometric functions
                        * rosetta sample : Truncatable primes
                        * rosetta sample : Truncate a file
                        * rosetta sample : Twelve statements
@@ -72,10 +70,7 @@ In development:
                        * rosetta sample : Set
                        
                        * refactor cpu_sim : assembler
-                       
-              xdev - SSE and SSE2 instructions support
-                       * http://softpixel.com/~cwright/programming/simd/sse.php
-                       * http://softpixel.com/~cwright/programming/simd/sse2.php
+
 ------                                 
 Pipeline:
 ------                                                                                         
