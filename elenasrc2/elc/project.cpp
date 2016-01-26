@@ -164,7 +164,11 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
 
       // add path if provided
       Path filePath(path);
-      Path::combinePath(filePath, value);
+      // if path starts with tilda - skip path
+      if (value[0] == '~') {         
+         Path::loadPath(filePath, value + 1);
+      }
+      else Path::combinePath(filePath, value);
 
       if (StringHelper::compare(it.key(), CORE_ALIAS)) {
          _loader.addCorePath(filePath);
