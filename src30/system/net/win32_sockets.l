@@ -140,10 +140,10 @@
     #field(type:int)theHandle.
     
     #constructor(stacksafe) $new &int:aSocket
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
     
     #constructor(stacksafe) new &socket:aSocket
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
     
     #constructor(stacksafe) new &int:anAdressFamily &int:aType &int:aProtocol
         <= ($new &int:(system'external'WS2_32 socket &int:anAdressFamily &int:aType &int:aProtocol))

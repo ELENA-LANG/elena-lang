@@ -16,14 +16,14 @@
     #field(type:int)theHandle.
     
     #constructor new
-        => system'internal'int_init.
+        => system'core_routines'int_init.
         
     // obsolete, new[0] should be used instead
     #constructor min
-        => system'internal'int_init.
+        => system'core_routines'int_init.
         
     #constructor(stacksafe) new &hwnd:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
         
     #constructor(stacksafe) new &int:dwExStyle &wide:aClassName &wide:aWindowName &int:aStyle &int:x &int:y &int:width &int:height &hwnd:aParent &hinstance:instance &object:aParam
     [

@@ -87,6 +87,13 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
    return ((Instance*)instance)->loadSubject((ident_t)subjectName);
 }
 
+EXTERN_DLL_EXPORT int LoadMessageName(void* subject, ident_c* lineInfo, int length)
+{
+   return 0;
+
+   //return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
+}
+
 // --- dllmain ---
 
 extern "C"

@@ -891,6 +891,12 @@ void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, 
    tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
 }
 
+void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount)
+{
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskInternalRef, paramCount);
+}
+
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
 {
    // ifr then-end, r
@@ -2713,27 +2719,33 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
 
 void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
 {
-   // compile argument list
-   ExternalScope externalScope;
-   
-   declareExternalBlock(tape);
-
    bool stdCall = (node == lxStdExternalCall);
+   bool apiCall = (node == lxStdExternalCall);
+
+   // compile argument list
+   ExternalScope externalScope;      
+   declareExternalBlock(tape);
+   
    generateExternalArguments(tape, node, externalScope);
 
    // exclude stack if necessary
-   excludeFrame(tape);
+   if (!apiCall)
+      excludeFrame(tape);
 
    // save function parameters
    saveExternalParameters(tape, node, externalScope);
    
    // call the function
-   callExternal(tape, node.argument, externalScope.frameSize);
+   if (apiCall) {
+      callCore(tape, node.argument, externalScope.frameSize);
+   }
+   else callExternal(tape, node.argument, externalScope.frameSize);
    
    if (!stdCall)
       releaseObject(tape, externalScope.operands.Count());
 
-   endExternalBlock(tape);
+   if (!apiCall)
+      endExternalBlock(tape);
 }
 
 ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
@@ -3343,6 +3355,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxThrowing:
          generateThrowExpression(tape, node);
          break;
+      case lxCoreAPICall:
       case lxStdExternalCall:
       case lxExternalCall:
          generateExternalCall(tape, node);

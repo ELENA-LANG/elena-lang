@@ -8,6 +8,7 @@
 ******************************************************************************
 
 [ELC]
+[!] binary incompatible due to implementing issue #134 and #136
 [!] issue #132 : GC hotfix
 [!] issue #216 : operation with structure fields in stacksafe method
 [!] issue #211 : Message call sequence with open arguments

@@ -165,6 +165,7 @@ public:
    void resend(CommandTape& tape);
    void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
+   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);

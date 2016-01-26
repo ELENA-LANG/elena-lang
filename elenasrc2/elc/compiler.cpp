@@ -149,7 +149,7 @@ inline bool isImportRedirect(DNode node)
    if (node.firstChild() == nsNone) {
       TerminalInfo terminal = node.Terminal();
       if (terminal.symbol == tsReference) {
-         if (StringHelper::compare(terminal.value, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && terminal.value[strlen(INTERNAL_MODULE)]=='\'')
+         if (StringHelper::compare(terminal.value, INTERNAL_MASK, INTERNAL_MASK_LEN))
             return true;
       }
    }
@@ -510,19 +510,19 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 
 ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 {
-   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE)) && reference[strlen(EXTERNAL_MODULE)]=='\'') {
-      return ObjectInfo(okExternal);
+   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
+      char ch = reference[strlen(EXTERNAL_MODULE)];
+      if (ch == '\'' || ch == 0)
+         return ObjectInfo(okExternal);
    }
-   else if (StringHelper::compare(reference, INTERNAL_MODULE, strlen(INTERNAL_MODULE)) && reference[strlen(INTERNAL_MODULE)] == '\'') {
-      ReferenceNs fullName(project->resolveForward(IMPORT_FORWARD), reference + strlen(INTERNAL_MODULE) + 1);
+   // To tell apart primitive modules, the name convention is used
+   else if (StringHelper::compare(reference, INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+      return ObjectInfo(okInternal, module->mapReference(reference));
+   }
 
-      return ObjectInfo(okInternal, module->mapReference(fullName));
-   }
-   else {
-      ref_t referenceID = mapReference(reference, existing);
+   ref_t referenceID = mapReference(reference, existing);
 
-      return defineObjectInfo(referenceID);
-   }
+   return defineObjectInfo(referenceID);
 }
 
 void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
@@ -1672,12 +1672,10 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, bool withThis, bo
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t referenceProperName)
 {
-   ReferenceNs fullName(scope.project->resolveForward(IMPORT_FORWARD), referenceProperName + strlen(INTERNAL_MODULE) + 1);
-
    ByteCodeIterator it = tape->end();
 
    ref_t reference = 0;
-   _Module* api = scope.project->resolveModule(fullName, reference);
+   _Module* api = scope.project->resolveModule(referenceProperName, reference);
 
    _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
    if (section == NULL) {
@@ -3756,7 +3754,14 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    bool rootMode = test(mode, HINT_ROOT);
    bool stdCall = false;
-   ident_t dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+
+   ident_t dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+   if (emptystr(dllName)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias, stdCall);
+
    // legacy : if dll is not mapped, use the name directly
    if (emptystr(dllName))
       dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
@@ -3776,7 +3781,11 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
       scope.writer->appendNode(lxLocalAddress, retVal.param);
    }
 
-   scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+   // To tell apart coreapi calls, the name convention is used
+   if (StringHelper::compare(node.Terminal(), COREAPI_MASK, COREAPI_MASK_LEN)) {
+      scope.writer->newNode(lxCoreAPICall, reference);
+   }
+   else scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
 
    compileExternalArguments(node.firstChild(), scope);
 
@@ -4275,6 +4284,7 @@ void Compiler :: compileConstructorDispatchExpression(DNode node, CodeScope& sco
          // NOTE : import code already contains quit command, so do not call "endMethod"
          _writer.endIdleMethod(*tape);
       }
+      else scope.raiseError(errInvalidOperation, node.Terminal());
    }
    else scope.raiseError(errInvalidOperation, node.Terminal());
 }
@@ -5490,6 +5500,7 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
             break;
          case lxStdExternalCall:
          case lxExternalCall:
+         case lxCoreAPICall:
             optimizeExtCall(*scope->moduleScope, current);
             analizeSyntaxExpression(scope, current);
             break;

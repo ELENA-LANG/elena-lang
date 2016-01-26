@@ -43,6 +43,7 @@ define rt_lasterr       0010h
 define rt_loadaddrinfo  0014h
 define rt_loadSubject   0018h
 define rt_loadSubjName  001Ch
+define rt_loadMssgName  0020h
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h

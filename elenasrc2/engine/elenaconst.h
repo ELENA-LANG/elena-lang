@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     0x0009            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0003
+   #define ENGINE_MINOR_VERSION     0x0004
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -338,13 +338,12 @@ namespace _ELENA_
    #define ELENA_SIGNITURE          "ELENA.9."       // the stand alone image
    #define ELENACLIENT_SIGNITURE    "VM.ELENA.9."    // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.9.03"     // the module version
+   #define MODULE_SIGNATURE         "ELENA.9.04"     // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!1.4"
 
   // --- ELENA core module names ---
-  #define CORE_ALIAS                "core"          // Core functionality
-  #define IMPORT_FORWARD            "'$import"
-
+   #define CORE_ALIAS                "core"          // Core functionality
+  
   // --- ELENA verb messages ---
    #define NEW_MESSAGE              "new"
    #define GET_MESSAGE              "get"
@@ -484,11 +483,18 @@ namespace _ELENA_
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
+   #define RTDLL_FORWARD            "$rt"
 
    #define STANDARD_MODULE_LEN      6
-   #define STANDARD_MODULE          "system"        // the standard module name
-   #define EXTERNAL_MODULE          "system'external"
-   #define INTERNAL_MODULE          "system'internal"
+   #define INTERNAL_MASK_LEN        12
+   #define COREAPI_MASK_LEN         5 
+
+   #define STANDARD_MODULE          "system"                         // the standard module name
+   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
+   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
+                                                                     // will be treated like internal core api one
+   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
+
    #define NATIVE_MODULE            "$native"
 
   // VM temporal code

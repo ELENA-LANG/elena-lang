@@ -72,11 +72,11 @@
     #method(stacksafe) $equalSubject : anObject
         => system'internal'subject_equal.
     
-    #method name
+    #method(stacksafe) name
     [
         #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
-        
+                
         $subjectControl readName:self &bytearray:aBuffer &vint:aLength.
         
         ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.

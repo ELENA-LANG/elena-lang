@@ -38,6 +38,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
    _signature = project->resolveForward(SIGNATURE_FORWARD);
    _verb = project->resolveForward(VERB_FORWARD);
+   _rtdll = project->resolveForward(RTDLL_FORWARD);
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
@@ -276,6 +277,8 @@ VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCom
    : Image(false), _exportReferences((size_t)-1)
 {
    _project = project;
+
+   _rtdll = project->resolveForward(RTDLL_FORWARD);
 
    MemoryWriter   data(&_data);
    MemoryWriter   code(&_text);

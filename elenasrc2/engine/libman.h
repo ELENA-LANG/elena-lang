@@ -86,6 +86,10 @@ public:
       _binaryPaths.erase(alias);
       _binaryPaths.add(alias, IdentifierString::clonePath(path));
    }
+   ident_t resolvePrimitive(ident_t alias) const
+   {
+      return _binaryPaths.get(alias);
+   }
 
    void addCorePath(path_t path)
    {

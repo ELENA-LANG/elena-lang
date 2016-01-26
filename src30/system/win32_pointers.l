@@ -7,16 +7,16 @@
     #field(type:int)theHandle.
     
     #constructor(stacksafe) new &handle:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #constructor(stacksafe) new &int:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #constructor min
-        => system'internal'int_init.
+        => system'core_routines'int_init.
 
     #method(type:bool,stacksafe) equal &handle:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
 
     #method handle = $self.
 
@@ -36,7 +36,7 @@
     #field(type:int)theIndex.
     
     #constructor new : anObject
-        => system'internal'api_alloc_index.
+        => system'core_routines'api_alloc_index.
 
     #method rt_ptr = $self.            
                         

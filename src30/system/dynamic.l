@@ -7,10 +7,10 @@
 {
     /// Loads a symbol
     #constructor new &literal:aName
-        => system'internal'symbol_new.
+        => system'core_routines'symbol_new.
         
     /// Redirects incoming messages to the symbol
-    #method => system'internal'symbol_redirect.
+    #method => system'core_routines'symbol_redirect.
 }
 
 // --- Verb ---
@@ -20,12 +20,12 @@
 {
     /// Loads a dynamic verb
     #constructor(stacksafe) new &verb:aVerb
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #method verb = $self.
 
     /// Dispatches incoming messages and redirects to the target
-    #method => system'internal'handle_verb.
+    #method => system'core_routines'handle_verb.
 }
 
 // --- Message ---
@@ -35,16 +35,26 @@
 {
     /// Loads a message
     #constructor(stacksafe) new &mssg:aMessage
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #method mssg
         = $self.
                         
     #method(stacksafe) subject
-        => system'internal'mssg_getsubj.
+        => system'core_routines'mssg_getsubj.
+        
+    #method(stacksafe)literal
+    [
+        #var(type:int)aLength := 255.
+        #var(type:bytearray,size:256)aBuffer.
+        
+        system'external LoadMessageName &mssg:$self &bytearray:aBuffer &vint:aLength.        
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-    #method => system'internal'handle_message.
+    #method => system'core_routines'handle_message.
 }
 
 // --- ExtensionMessage ---
@@ -54,19 +64,19 @@
 {
     /// Loads a message
     #constructor(stacksafe) new &ext_mssg:aMessage
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #method ext_mssg
         = $self.
                         
     #method(stacksafe) subject
-        => system'internal'mssg_getsubj.
+        => system'core_routines'mssg_getsubj.
 
     #method(stacksafe) equal &ext_mssg : aSubject
-        => system'internal'long_equal.
+        => system'core_routines'long_equal.
         
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-    #method => system'internal'handle_ext_message.
+    #method => system'core_routines'handle_ext_message.
 }
 
 
@@ -77,15 +87,15 @@
 {
     /// Creates a dynamic signature
     #constructor(stacksafe) new &mssg:aMessage
-        => system'internal'subj_copymssg.
+        => system'core_routines'subj_copymssg.
         
     /// Creates a dynamic signature
     #constructor(stacksafe) new &subject:aSubject
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     /// Creates a dynamic signature
     #constructor new &literal:aSubjectName
-        => system'internal'subj_load.
+        => system'core_routines'subj_load.
 
     /// Creates a dynamic signature
     #constructor new &wide:aSubjectName
@@ -95,10 +105,10 @@
 
     /// Compares the values
     #method(stacksafe) equal &subject : aSubject
-        => system'internal'subject_equal.
+        => system'core_routines'subject_equal.
         
     /// Qualifies incoming messages and redirects to the target
-    #method => system'internal'qualify_message.
+    #method => system'core_routines'qualify_message.
 }
 
 // --- MessageVar ---
@@ -123,13 +133,13 @@
 #class(sealed,stringof:mssg)MessageArray
 {
     #constructor(stacksafe) new &int : aLength
-        => system'internal'ns_create.
+        => system'core_routines'ns_create.
         
     #constructor new : aLength
         <= new &int:(aLength int).
         
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'ns_getlen.
+        => system'core_routines'ns_getlen.
         
     #method(stacksafe,type:int,embeddable,suppress:w3) length
     [
@@ -142,10 +152,10 @@
     #method mssgarray = $self.
 
     #method(stacksafe) write &int:anIndex &mssg:aValue
-        => system'internal'ns_writedword.
+        => system'core_routines'ns_writedword.
 
     #method(stacksafe) read &int:anIndex &vmssg:anInt
-        => system'internal'ns_readdword.
+        => system'core_routines'ns_readdword.
     
     #method(stacksafe) getAt &int:anIndex
     [

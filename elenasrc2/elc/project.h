@@ -160,6 +160,11 @@ public:
       return _settings.getIt(opForwards);
    }
 
+   ident_t resolvePrimitive(ident_t alias) const
+   {
+      return _loader.resolvePrimitive(alias);
+   }
+
    ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
    virtual void printInfo(const char* msg, ident_t value) = 0;

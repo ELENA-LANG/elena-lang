@@ -216,7 +216,7 @@ ELENA byte codes (or ecodes)
  jumpn n                    - jump [acc+n] procedure
  
  callextr r                 - calls the external procedure ; index contains the result
-
+ 
  callr r                    - calls the procedure;
                               acc contains the result
  

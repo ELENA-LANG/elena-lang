@@ -170,6 +170,9 @@
     /// Creates the exception
     #constructor new
         <= %new &literal:"Method not found" &subject: %MethodNotFoundError.
+        
+    #constructor(stacksafe) new &mssg:missingMessage
+        <= %new &literal:("Method " + missingMessage literal + " not found") &subject: %MethodNotFoundError.
 }
 
 // --- MethodNotSupported ---

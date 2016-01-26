@@ -140,15 +140,15 @@
 {
     /// Returns the minimal value (0)
     #constructor min
-        => system'internal'byte_min.
+        => system'core_routines'byte_min.
     
     /// Returns the maxial value (255)
     #constructor max
-        => system'internal'byte_max.
+        => system'core_routines'byte_max.
     
     /// Creates the object with a specified value
     #constructor(stacksafe) new &byte:anOperand
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     /// Creates the object with a specified value
     #constructor new : aValue
@@ -156,7 +156,7 @@
 
     /// Creates the object with a default value (0)
     #constructor new
-        => system'internal'int_init.
+        => system'core_routines'int_init.
 
     /// Returns itself
     #method byte = $self.
@@ -385,23 +385,23 @@
 {
     /// Returns the minimal value (-32768)
     #constructor min
-        => system'internal'short_min.
+        => system'core_routines'short_min.
     
     /// Returns the maxial value (32767)
     #constructor max
-        => system'internal'short_max.
+        => system'core_routines'short_max.
     
     /// Creates the object with specified value
     #constructor(stacksafe) new &byte:anOperand
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
         
     /// Creates the object with specified value
     #constructor(stacksafe) new &short:anOperand
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     /// Creates the object with a default value (0)
     #constructor new
-        => system'internal'int_init.
+        => system'core_routines'int_init.
         
     /// Creates the object with specified value
     #constructor new : anObject
@@ -641,27 +641,27 @@
 {
     /// Creates the object with the minimal value
     #constructor min
-        => system'internal'int_min.
+        => system'core_routines'int_min.
     
     /// Creates the object with the maximal value
     #constructor max
-        => system'internal'int_max.
+        => system'core_routines'int_max.
     
     /// Creates the object with specified value
     #constructor(stacksafe) new &int:anOperand
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &short:anOperand
-        => system'internal'int_copyshort.
+        => system'core_routines'int_copyshort.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &byte:anOperand
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     /// Creates the object with a default value (0)
     #constructor new
-        => system'internal'int_init.
+        => system'core_routines'int_init.
         
     /// Creates the object with specified value
     #constructor new : anObject
@@ -911,11 +911,11 @@
 {
     /// Returns the minimal value
     #constructor min
-        => system'internal'long_min.
+        => system'core_routines'long_min.
     
     /// Returns the maximal value
     #constructor max
-        => system'internal'long_max.
+        => system'core_routines'long_max.
     
     /// Creates the object with a default value (0)
     #constructor new
@@ -923,19 +923,19 @@
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &long:anOperand 
-        => system'internal'long_copy.
+        => system'core_routines'long_copy.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &int:anOperand 
-        => system'internal'long_copyint.
+        => system'core_routines'long_copyint.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &short:anOperand 
-        => system'internal'long_copyint.
+        => system'core_routines'long_copyint.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &byte:anOperand 
-        => system'internal'long_copyint.
+        => system'core_routines'long_copyint.
         
     /// Creates the object with specified value
     #constructor new : anObject
@@ -1187,23 +1187,23 @@
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &real:anOperand 
-        => system'internal'long_copy.
+        => system'core_routines'long_copy.
   
     /// Creates the object with specified value
     #constructor(stacksafe) new &int:anOperand 
-        => system'internal'real_copyint.
+        => system'core_routines'real_copyint.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &short:anOperand 
-        => system'internal'real_copyint.
+        => system'core_routines'real_copyint.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &byte:anOperand 
-        => system'internal'real_copyint.
+        => system'core_routines'real_copyint.
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &long:anOperand 
-        => system'internal'real_copylong.
+        => system'core_routines'real_copylong.
         
     /// Creates the object with specified value
     #constructor new : anObject
@@ -1903,7 +1903,7 @@
     
     /// Creates a long integer variable
     #constructor(stacksafe) new &int:aValue
-        => system'internal'long_copyint.
+        => system'core_routines'long_copyint.
     
     /// Creates a long integer variable
     #constructor new &short:aValue
@@ -2153,15 +2153,15 @@
     
     /// Creates a real variable
     #constructor(stacksafe) new &int:aValue
-        => system'internal'real_copyint.
+        => system'core_routines'real_copyint.
     
     /// Creates a real variable
     #constructor(stacksafe) new &short:aValue
-        => system'internal'real_copyint.
+        => system'core_routines'real_copyint.
     
     /// Creates a real variable
     #constructor(stacksafe) new &byte:aValue
-        => system'internal'real_copyint.
+        => system'core_routines'real_copyint.
 
     /// Returns itself    
     #method vreal = $self.
@@ -2378,11 +2378,11 @@
 {
     /// Creates the object with a default value (0)
     #constructor new
-        => system'internal'int_init.        
+        => system'core_routines'int_init.        
 
     /// Creates the object with specified value
     #constructor(stacksafe) new &char:anOperand
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     /// Creates the object with specified value
     #constructor new : anOperand

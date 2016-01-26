@@ -83,7 +83,7 @@
     #field(type:int)theHandle.
 
     #constructor(stacksafe) new &hdc:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
         
     #constructor(stacksafe) newCompatible &hdc:aCompatible
     [
@@ -155,7 +155,7 @@
     #field(type:int)theHandle.
 
     #constructor(stacksafe) new &hbitmap:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #constructor(stacksafe) new &hdc:aDC &int:aWidth &int:aHeight
     [
@@ -194,7 +194,7 @@
     #field(type:int)theHandle.
     
     #constructor(stacksafe) new &hpen:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
     
     #constructor(stacksafe) new &int:aStyle &int:aWidth &int:aColor
     [
@@ -218,7 +218,7 @@
     #field(type:int)theHandle.
 
     #constructor new &hbrush:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
     
     #constructor new &int:aColor
     [

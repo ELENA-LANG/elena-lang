@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Win32
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -109,8 +109,10 @@ int Linker :: fillImportTable(ImageInfo& info)
       ident_t external = it.key();
 
       ident_t function = external + StringHelper::findLast(external, '.') + 1;
-
       IdentifierString dll(external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
+      if (StringHelper::compare(dll, RTDLL_FORWARD)) {
+         dll.copy(info.project->resolvePrimitive(RTDLL_FORWARD));
+      }
 
       ReferenceMap* functions = info.importTable.get(dll);
       if (functions==NULL) {

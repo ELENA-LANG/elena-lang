@@ -9,7 +9,7 @@
 {
     /// Creates the byte array with the specified length
     #constructor(stacksafe) new &int:aLength
-        => system'internal'bs_create.
+        => system'core_routines'bs_create.
 }
 
 // --- ByteArray ---
@@ -19,7 +19,7 @@
 {
     /// Creates the byte array with the specified length
     #constructor(stacksafe) new &int:aLength
-        => system'internal'bs_create.
+        => system'core_routines'bs_create.
 
     /// Creates the byte array with the specified length
     #constructor new : aLength
@@ -27,7 +27,7 @@
     
     /// Creates the copy of a byte subarray
     #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
-        => system'internal'bs_copysubarr.
+        => system'core_routines'bs_copysubarr.
     
     /// Creates the byte array copy
     #constructor(stacksafe) new &bytearray:anArray
@@ -189,7 +189,7 @@
 {
     /// Creates the short array with the specified length
     #constructor(stacksafe) new &int:aLength
-        => system'internal'sa_create.
+        => system'core_routines'sa_create.
     
     /// Creates the short array with the specified length
     #constructor new : aLength
@@ -197,7 +197,7 @@
     
     /// Creates the copy of a short subarray
     #constructor(stacksafe) new &int:anIndex &int:aLength &shortarray:anArray
-        => system'internal'sa_copysubarr.
+        => system'core_routines'sa_copysubarr.
 
     /// Creates the short array copy
     #constructor new &shortarray:anArray
@@ -208,7 +208,7 @@
 
     /// Reads the array length to the output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'sa_getlen.
+        => system'core_routines'sa_getlen.
 
     /// Returns the array length        
     #method(stacksafe,type:int,embeddable,suppress:w3) length
@@ -289,7 +289,7 @@
 {
     /// Creates the integer array with the specified length
     #constructor(stacksafe) new &int : aLength
-        => system'internal'ns_create.
+        => system'core_routines'ns_create.
 }
 
 // --- IntArray ---
@@ -299,7 +299,7 @@
 {
     /// Creates the array with the specified length
     #constructor(stacksafe) new &int : aLength
-        => system'internal'ns_create.
+        => system'core_routines'ns_create.
 
     /// Creates the array with the specified length
     #constructor new : aLength
@@ -307,7 +307,7 @@
 
     /// Creates the copy of a subarray
     #constructor(stacksafe) new &int:anIndex &int:aLength &intarray:anArray
-        => system'internal'ns_copysubarr.
+        => system'core_routines'ns_copysubarr.
         
     /// Creates the short array copy
     #constructor new &intarray:anArray
@@ -315,7 +315,7 @@
     
     /// Reads the array length to the output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'ns_getlen.
+        => system'core_routines'ns_getlen.
 
     /// Returns the array length
     #method(stacksafe,type:int,embeddable,suppress:w3) length
@@ -690,7 +690,7 @@
 {
     /// Creates the new array with a specified length
     #constructor(stacksafe) new &int : aLength
-        => system'internal'ns_create.
+        => system'core_routines'ns_create.
 
     /// Creates the new array with a specified length
     #constructor new : aLength
@@ -698,7 +698,7 @@
 
     /// Creates the copy of a subarray
     #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
-        => system'internal'ns_copysubarr.
+        => system'core_routines'ns_copysubarr.
         
     /// Creates the short array copy
     #constructor new &chararray:anArray
@@ -706,7 +706,7 @@
     
     /// Reads the array length to the output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'ns_getlen.
+        => system'core_routines'ns_getlen.
 
     /// Returns the array length        
     #method(stacksafe,type:int,embeddable,suppress:w3) length
@@ -800,19 +800,19 @@
 
     /// Creates the empty literal
     #constructor min
-        => system'internal's_empty.
+        => system'core_routines's_empty.
         
     /// Creates the literal string with specified length        
     #constructor(stacksafe) new &int:aSize 
-        => system'internal's_create.
+        => system'core_routines's_create.
 
     /// Creates the literal string with specified length and copies the parameter value
     #constructor(stacksafe) new &int:aSize &literal:aLiteral
-        => system'internal's_copy.
+        => system'core_routines's_copy.
 
     /// Creates the literal string with specified length fills with spciefied character value        
     #constructor(stacksafe) new &int:aSize &char:aChar
-        => system'internal's_fill.
+        => system'core_routines's_fill.
 
     /// Creates the literal string copy              
     #constructor new &literal:aLiteral
@@ -820,10 +820,10 @@
         
     /// Creates the copy of a subarray        
     #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-        => system'internal's_copysubarr.
+        => system'core_routines's_copysubarr.
 
     #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
-        => system'internal's_copybuf.
+        => system'core_routines's_copybuf.
 
     /// Returns itself
     #method literal = $self.
@@ -1190,19 +1190,19 @@
 
     /// Creates the empty literal
     #constructor min
-        => system'internal'ws_empty.
+        => system'core_routines'ws_empty.
         
     /// Creates the literal string with specified length
     #constructor(stacksafe) new &int:aSize 
-        => system'internal'ws_create.
+        => system'core_routines'ws_create.
 
     /// Creates the literal string with specified length and copies the parameter value
     #constructor(stacksafe) new &int:aSize &wide:aLiteral
-        => system'internal'ws_copy.
+        => system'core_routines'ws_copy.
     
     /// Creates the literal string with specified length fills with spciefied character value
     #constructor(stacksafe) new &int:aSize &char:aChar
-        => system'internal'ws_fill.
+        => system'core_routines'ws_fill.
 
     /// Creates the literal string copy
     #constructor new &wide:aLiteral
@@ -1210,10 +1210,10 @@
         
     /// Creates the copy of a subarray
     #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-        => system'internal'ws_copysubarr.
+        => system'core_routines'ws_copysubarr.
 
     #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
-        => system'internal'ws_copybuf.
+        => system'core_routines'ws_copybuf.
 
     /// Returns itself
     #method wide = $self.
@@ -1677,7 +1677,7 @@
 {
     /// Creates the array with the specified length
     #constructor(stacksafe) new &int:aLength
-        => system'internal'arr_create.
+        => system'core_routines'arr_create.
 }
 
 // --- Array ---
@@ -1687,7 +1687,7 @@
 {
     /// Creates an empty array
     #constructor min
-        => system'internal'arr_empty.
+        => system'core_routines'arr_empty.
     
     /// Creates the array with the specified length
     #constructor new : aLength
@@ -1701,7 +1701,7 @@
     
     /// Creates the array with the specified length
     #constructor(stacksafe) new &int:aLength
-        => system'internal'arr_create.
+        => system'core_routines'arr_create.
     
     /// Creates a copy of the provided array
     #constructor new &array:anArray
@@ -1709,7 +1709,7 @@
     
     /// Creates a copy of the provided sub array
     #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
-        => system'internal'arr_copysubarr.
+        => system'core_routines'arr_copysubarr.
         
     /// Returns the specified array member
     #method getAt : anIndex
@@ -1717,7 +1717,7 @@
 
     /// Returns the specified array member
     #method(stacksafe) getAt &int:anIndex
-        => system'internal'arr_getat.
+        => system'core_routines'arr_getat.
 
     /// Sets the specified array member
     #method setAt:anIndex:anObject
@@ -1727,7 +1727,7 @@
     
     /// Sets the specified array member
     #method(stacksafe) setAt &int:anIndex &object:anObject
-        => system'internal'arr_setat.
+        => system'core_routines'arr_setat.
 
     /// Concatinates the arrays    
     #method add : anObject
@@ -2156,16 +2156,16 @@
 #class(arrayof:func1,sealed) Func1Array
 {
     #constructor(stacksafe) new &int:aLength
-        => system'internal'arr_create.
+        => system'core_routines'arr_create.
         
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'arr_getlen.
+        => system'core_routines'arr_getlen.
 
     #method getAt : anIndex
         = $self getAt &int:(anIndex int).
 
     #method(stacksafe) getAt &int:anIndex
-        => system'internal'arr_getat.
+        => system'core_routines'arr_getat.
 
     #method setAt:anIndex:anObject
     [
@@ -2173,7 +2173,7 @@
     ]
     
     #method(stacksafe) setAt &int:anIndex &object:anObject
-        => system'internal'arr_setat.
+        => system'core_routines'arr_setat.
 
     #method(stacksafe,type:int,embeddable,suppress:w3) length
     [

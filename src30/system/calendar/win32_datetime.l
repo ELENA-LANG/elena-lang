@@ -39,10 +39,10 @@
     #field(type:long)theValue.
     
     #constructor(stacksafe) new &__time:aValue
-        => system'internal'long_copy.
+        => system'core_routines'long_copy.
 
     #constructor(stacksafe) $new &long:aValue
-        => system'internal'long_copy.
+        => system'core_routines'long_copy.
 
     #constructor now
         <= new &__time:($factory now).
@@ -87,7 +87,7 @@
     #field(type:short)theMillisecond.
     
     #constructor new
-        => system'internal'dlong_empty.
+        => system'core_routines'dlong_empty.
 
     #constructor(stacksafe) new &__time:aTime
     [

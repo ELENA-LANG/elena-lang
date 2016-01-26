@@ -58,7 +58,3 @@ winforms\win32_controls.l
 winforms\win32_windows.l
 winforms\win32_dialogs.l
 winforms\win32_app.l
-
-[forwards]
-'$import=system'core_routines
-

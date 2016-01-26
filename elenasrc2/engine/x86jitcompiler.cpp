@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -499,6 +499,11 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
 
 void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
 {
+   // if it is internal native call
+   if (scope.argument & mskAnyRef == mskInternalRef) {      
+      opcode = bcCallR;
+   }
+
    MemoryWriter* writer = scope.code;
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -1403,6 +1408,8 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
          // due to optimization section must be ROModule::ROSection instance
          SectionInfo info = helper.getCoreSection(coreVariables[i]);
+         dataScope.module = info.module;
+
          loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
       }
    }

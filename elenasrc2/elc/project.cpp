@@ -319,7 +319,6 @@ _Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool 
       return NULL;
    }
    else return module;
-
 }
 
 _Module* Project :: resolveCore(ref_t reference, bool silentMode)

@@ -18,6 +18,3 @@ text/strings.l
 text/encoder.l
 routines/enumerating.l
 routines/combinations.l
-
-[forwards]
-'$import=system'ext_routines

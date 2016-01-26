@@ -162,6 +162,9 @@ int Linker32 :: fillImportTable(ImageInfo& info)
       char* function = external + dotPos;
 
       Path dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
+      if (StringHelper::compare(dll, RTDLL_FORWARD)) {
+         dll.copy(info.project->mapPrimitive(RTDLL_FORWARD));
+      }
 
       info.functions.add(StringHelper::clone(function), *it);
       if (!retrieve(info.libraries.start(), dll, (char*)NULL)) {
