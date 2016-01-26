@@ -16,7 +16,7 @@
     console writeLine:("sin(60º) = " + ((60.0r radian) sin) literal).
     console writeLine:("cos(60º) = " + ((60.0r radian) cos) literal).
     console writeLine:("tan(60º) = " + ((60.0r radian) tan) literal).
-    console writeLine:("arcsin(1/2) = " + ((0.5r arcsin) degree) literal).
-    console writeLine:("arccos(1/2) = " + ((0.5r arccos) degree literal)).
-    console writeLine:("arctan(1/2) = " + ((0.5r arctan) degree literal)).
+    console writeLine:("arcsin(1/2) = " + ((0.5r arcsin) degree) literal + "º").
+    console writeLine:("arccos(1/2) = " + ((0.5r arccos) degree) literal + "º").
+    console writeLine:("arctan(1/2) = " + ((0.5r arctan) degree) literal + "º").
 ].
