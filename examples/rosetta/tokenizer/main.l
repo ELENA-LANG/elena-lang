@@ -1,10 +1,12 @@
 #import system.
-#define system'routines.
+#import system'routines.
 
 #symbol program =
 [
     #var string := "Hello,How,Are,You,Today".
     
+    #var output := (string split &by:",") reverse.
+
     (string split &by:",") run &each:o
     [
         console write:(o + ".").
