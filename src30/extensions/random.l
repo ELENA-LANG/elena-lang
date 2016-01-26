@@ -10,13 +10,19 @@
     #field(type:long)theSeed.
     
     #constructor new
-        => system'internal'rnd_init.
+    [
+        system'external core_rnd_init &vlong:theSeed.
+    ]
 
     #method(stacksafe) eval &int:aMaxValue &vint:aRetVal
-        => system'internal'rnd_next.
+    [
+        system'external core_rnd_next &long:theSeed &int:aMaxValue &vint:aRetVal.
+    ]
 
     #method(stacksafe) eval &vint:aRetVal
-        => system'internal'rnd_nextint.
+    [
+        system'external core_rnd_nextint &long:theSeed &vint:aRetVal.
+    ]
 
     #method eval : minValue : maxValue
         = minValue + $self eval:(maxValue - minValue).
