@@ -66,7 +66,7 @@
     #field(type:int)       theExStyle.
     
     #method(stacksafe) readCreateParam &vint:aRetVal
-        => system'internal'int_save.
+        => system'core_routines'int_save.
 }
 
 // --- HMENU ---

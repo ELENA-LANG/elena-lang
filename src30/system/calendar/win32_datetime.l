@@ -51,10 +51,10 @@
         <= new &__time:($factory utcNow).
                         
     #method(type:bool) equal &__time:anOperand
-        => system'internal'long_equal.
+        => system'core_routines'long_equal.
         
     #method(type:bool) less &__time:anOperand
-        => system'internal'long_less.
+        => system'core_routines'long_less.
     
     #method(stacksafe) write &__time:aValue
     [
@@ -62,13 +62,13 @@
     ]
     
     #method(stacksafe) read &vlong:aRetVal
-        => system'internal'long_save.
+        => system'core_routines'long_save.
         
     #method(type:__time,stacksafe) subtract &__time:anOperand
-        => system'internal'long_sub.
+        => system'core_routines'long_sub.
         
     #method(type:__time,stacksafe) add &__time:anOperand
-        => system'internal'long_add.
+        => system'core_routines'long_add.
     
     #method __time = $self.
 }

@@ -5,16 +5,16 @@
 #symbol $classControl =
 {
     #method(stacksafe) readName : anObject &bytearray:aBuffer &vint:aLength
-        => system'internal'load_classname.
+        => system'core_routines'load_classname.
 
     #method(stacksafe) readLength : anObject &vint:aLength        
-        => system'internal'arrptr_getLen.        
+        => system'core_routines'arrptr_getLen.        
 }.
 
 #symbol $subjectControl =
 {
     #method(stacksafe) readName:anObject &bytearray:aBuffer &vint:aLength
-        => system'internal'load_subjname.
+        => system'core_routines'load_subjname.
 }.
 
 // --- classOp ---
@@ -30,16 +30,16 @@
     ]     
                    
     #method(stacksafe) setField &int:anIndex &object:anObject
-        => system'internal'arrptr_set.
+        => system'core_routines'arrptr_set.
         
     #method(stacksafe) getField &int:anIndex
-        => system'internal'arrptr_get.
+        => system'core_routines'arrptr_get.
         
     #method getFieldAt : anIndex
         = self::classROp getField &int:(anIndex int).
                                 
     #method class
-        => system'internal'class_getClass.
+        => system'core_routines'class_getClass.
 
     /// obsolete
     #method name
@@ -59,10 +59,10 @@
     ]
 
     #method(stacksafe) respondsTo &message:aMessage
-        => system'internal'class_indexOfMsg.
+        => system'core_routines'class_indexOfMsg.
         
     #method(stacksafe) read &mssg_mask:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
-        => system'internal'class_filterMsg.
+        => system'core_routines'class_filterMsg.
 }
 
 // --- subjectOp ---
@@ -70,7 +70,7 @@
 #class(extension:subject) subjectROp
 {
     #method(stacksafe) $equalSubject : anObject
-        => system'internal'subject_equal.
+        => system'core_routines'subject_equal.
     
     #method(stacksafe) name
     [

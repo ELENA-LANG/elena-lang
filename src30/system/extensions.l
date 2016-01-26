@@ -12,7 +12,7 @@
 {
     /// Returns true if the specified object instances are equal; otherwise, false.
     #method equal &reference:anObject
-        => system'internal'object_equal.
+        => system'core_routines'object_equal.
         
     /// Returns the parameter        
     #method back : anObject = anObject.
@@ -676,7 +676,7 @@
 #class(extension:array)arrayOp
 {
     #method(stacksafe) reallocate &int:aNewLength
-        => system'internal'arr_realloc.
+        => system'core_routines'arr_realloc.
 
     #method exchange : anIndex1 : anIndex2
         = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).

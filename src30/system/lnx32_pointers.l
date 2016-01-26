@@ -7,16 +7,16 @@
     #field(type:int)theHandle.
 
     #constructor(stacksafe) new &handle:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #constructor(stacksafe) new &int:aHandle
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
 
     #constructor min
-        => system'internal'int_init.
+        => system'core_routines'int_init.
 
     #method(type:bool,stacksafe) equal &handle:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
 
     #method handle = $self.
     
@@ -36,7 +36,7 @@
     #field(type:int)theIndex.
     
     #constructor new : anObject
-        => system'internal'api_alloc_index.
+        => system'core_routines'api_alloc_index.
 
     #method rt_ptr = $self.            
                         
@@ -51,10 +51,10 @@
     ]
         
     #method(stacksafe) get
-        => system'internal'ptr_get.
+        => system'core_routines'ptr_get.
 
     #method(stacksafe) free
-        => system'internal'api_free_index.
+        => system'core_routines'api_free_index.
 }
 
 // --- UnsafePointer ---
@@ -71,7 +71,7 @@
     #method dirty_ptr = $self.
     
     #method(stacksafe) write : anObject
-        => system'internal'dptr_copy.
+        => system'core_routines'dptr_copy.
                 
     #method(stacksafe) append &int:aValue
     [
@@ -79,22 +79,22 @@
     ]                            
                             
     #method(stacksafe) write &int:anObject
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
                 
     #method(stacksafe) write &handle:anObject
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
     
     #method(stacksafe) write &literal:aLiteral
-        => system'internal'dptr_copy.
+        => system'core_routines'dptr_copy.
     
     #method(stacksafe) write &wide:aLiteral
-        => system'internal'dptr_copy.
+        => system'core_routines'dptr_copy.
     
     #method(stacksafe) write &shortarray:anArray
-        => system'internal'dptr_copy.
+        => system'core_routines'dptr_copy.
     
     #method(stacksafe) write &bytearray:anArray
-        => system'internal'dptr_copy.
+        => system'core_routines'dptr_copy.
         
     #method(stacksafe) write &dirty_ptr:aPointer
     [
@@ -105,10 +105,10 @@
     ]            
 
     #method(stacksafe) read &vint:aPointer
-        => system'internal'dptr_readint.
+        => system'core_routines'dptr_readint.
 
     #method(stacksafe) read &bytearray:arr &int:len
-        => system'internal'dptr_readbytearray.
+        => system'core_routines'dptr_readbytearray.
 
     // unsafe code
     #method(stacksafe) int

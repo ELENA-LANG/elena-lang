@@ -155,10 +155,10 @@
 #symbol UTF8Encoder = Encoder
 {
     #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
-        => system'internal's_encode.
+        => system'core_routines's_encode.
     
     #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
-        => system'internal's_decode.
+        => system'core_routines's_decode.
     
     #method(stacksafe) convert &int:anIndex &vint:aLength &literal:aLiteral &bytearray:anOutput &vint:anOutputLength
     [
@@ -178,7 +178,7 @@
     encoder = UTF8Encoder.
     
     #method(stacksafe)charCount &literal:aLiteral &vint:aRetVal
-        => system'internal's_charcount.
+        => system'core_routines's_charcount.
         
     #method(stacksafe)convert &int:anIndex &int:aLength &literal:aLiteral &bytearray:anArray
     [
@@ -189,10 +189,10 @@
         = LiteralValue $new &int:anIndex &int:aLength &bytearray:anArray.
         
     #method(stacksafe) convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
-        => system'internal's_encode.   
+        => system'core_routines's_encode.   
         
     #method(stacksafe) convert &int:anIndex &vint:aLength &literal:aByteArray &chararray:anOutput &vint:anOutputLength
-        => system'internal's_encode.   
+        => system'core_routines's_encode.   
 }.
 
 // --- UTF16Encoder ---
@@ -200,10 +200,10 @@
 #symbol UTF16Encoder = Encoder
 {
     #method convert &int:anIndex &vint:aLength &bytearray:aByteArray &chararray:anOutput &vint:anOutputLength
-        => system'internal'ws_encode.
+        => system'core_routines'ws_encode.
     
     #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength
-        => system'internal'ws_decode.
+        => system'core_routines'ws_decode.
 }.
 
 // --- UTF16Encoding ---
@@ -213,7 +213,7 @@
     encoder = UTF16Encoder.
     
     #method(stacksafe)charCount &wide:aLiteral &vint:aRetVal
-        => system'internal'ws_charcount.
+        => system'core_routines'ws_charcount.
         
     #method(stacksafe)convert &int:anIndex &int:aLength &wide:aLiteral &shortarray:anArray
     [
@@ -221,10 +221,10 @@
     ]
 
     #method(stacksafe)convert &int:anIndex &int:aSize &shortarray:aByteArray &chararray:anOutput &vint:anOutputLength
-        => system'internal'sa_encode.
+        => system'core_routines'sa_encode.
         
     #method(stacksafe)convert &int:anIndex &int:aSize &chararray:aByteArray &shortarray:anOutput &vint:anOutputLength
-        => system'internal'sa_decode.
+        => system'core_routines'sa_decode.
         
     #method(stacksafe)convert &int:anIndex &vint:aSize &literal:aLiteral &shortarray:anOutput &vint:anOutputLength
     [

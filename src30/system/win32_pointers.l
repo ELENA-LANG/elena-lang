@@ -51,10 +51,10 @@
     ]
         
     #method(stacksafe) get
-        => system'internal'ptr_get.
+        => system'core_routines'ptr_get.
 
     #method(stacksafe) free
-        => system'internal'api_free_index.
+        => system'core_routines'api_free_index.
 }
 
 // --- UnsafePointer ---
@@ -71,10 +71,10 @@
     #method dirty_ptr = $self.
     
     #method(stacksafe) assign : anObject
-        => system'internal'dptr_copy.
+        => system'core_routines'dptr_copy.
                 
     #method(stacksafe) assign &int:anObject
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
                 
     #method(stacksafe) offset &int:aValue
     [
@@ -82,16 +82,16 @@
     ]                            
 
     #method(stacksafe) write &dirty_ptr:anObject
-        => system'internal'int_copy.
+        => system'core_routines'int_copy.
                 
     #method(stacksafe) write &int:anObject
-        => system'internal'dptr_writeint.
+        => system'core_routines'dptr_writeint.
                 
     #method(stacksafe) read &vint:aPointer
-        => system'internal'dptr_readint.
+        => system'core_routines'dptr_readint.
 
     #method(stacksafe) read &bytearray:arr &int:len
-        => system'internal'dptr_readbytearray.
+        => system'core_routines'dptr_readbytearray.
 
     // unsafe code
     #method(stacksafe) int

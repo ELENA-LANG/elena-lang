@@ -7,10 +7,10 @@
 #symbol $CommandLineFactory =
 {
     #method(stacksafe) $getArgC &vint:aLength
-       => system'internal'lnx_getargc.
+       => system'system'core_routines'lnx_getargc.
 
     #method(stacksafe) $getArg &int:anIndex &bytearray:aBuffer &vint:aLength
-       => system'internal'lnx_getarg.
+       => system'system'core_routines'lnx_getarg.
 
     new                                                                                                                                 
     [

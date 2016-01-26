@@ -753,7 +753,7 @@
 {
     #method eval []
     
-    #method => system'internal'expression_dispatch.
+    #method => system'core_routines'expression_dispatch.
 }
 
 // --- IndexFunction ---

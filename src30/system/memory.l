@@ -38,7 +38,7 @@
 
     /// Reads the array length to the output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'bs_getlen.
+        => system'core_routines'bs_getlen.
         
     /// Returns the byte array length        
     #method(stacksafe,type:int,embeddable,suppress:w3) length
@@ -74,59 +74,59 @@
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
-        => system'internal'bs_read.
+        => system'core_routines'bs_read.
 
     /// Copies the byte array at the specified position
     #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
-        => system'internal'bs_write.
+        => system'core_routines'bs_write.
 
     /// Writes the byte value at specified position
     #method(stacksafe) write &int:anIndex &byte:anInt
-        => system'internal'bs_writebyte.
+        => system'core_routines'bs_writebyte.
 
     /// Reads a byte value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vbyte:anInt
-        => system'internal'bs_readbyte.
+        => system'core_routines'bs_readbyte.
 
     /// Writes a short integer value at the specified position
     #method(stacksafe) write &int:anIndex &short:anInt
-        => system'internal'bs_writeword.
+        => system'core_routines'bs_writeword.
 
     /// Reads a short integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vshort:aChar
-        => system'internal'bs_readword.
+        => system'core_routines'bs_readword.
 
     /// Writes a character value at the specified position
     #method(stacksafe) write &int:anIndex &char:anInt
-        => system'internal'bs_writedword.
+        => system'core_routines'bs_writedword.
 
     /// Reads a character value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vchar:aChar
-        => system'internal'bs_readdword.
+        => system'core_routines'bs_readdword.
 
     /// Writes an integer value at the specified position
     #method(stacksafe) write &int:anIndex &int:anInt
-        => system'internal'bs_writedword.
+        => system'core_routines'bs_writedword.
 
     /// Reads an integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vint:anInt
-        => system'internal'bs_readdword.
+        => system'core_routines'bs_readdword.
 
     /// Writes a long integer value at the specified position
     #method(stacksafe) write &int:anIndex &long:aLong
-        => system'internal'bs_writeqword.
+        => system'core_routines'bs_writeqword.
 
     /// Reads a long integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vlong:aLong
-        => system'internal'bs_readqword.
+        => system'core_routines'bs_readqword.
 
     /// Writes a real value at the specified position
     #method(stacksafe) write &int:anIndex &real:aLong
-        => system'internal'bs_writeqword.
+        => system'core_routines'bs_writeqword.
 
     /// Reads a real value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vreal:aLong
-        => system'internal'bs_readqword.
+        => system'core_routines'bs_readqword.
 
     /// Returns a byte at the specified position
     #method getAt : anIndex
@@ -243,19 +243,19 @@
     
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &shortarray:anArray
-        => system'internal'sa_read.
+        => system'core_routines'sa_read.
 
     /// Copies the short array at the specified position   
     #method(stacksafe) write &int:anIndex &int:aLength &shortarray:anArray
-        => system'internal'sa_write.
+        => system'core_routines'sa_write.
 
     /// Writes a short integer value at the specified position
     #method(stacksafe) write &int:anIndex &short:aValue
-        => system'internal'sa_writeword.
+        => system'core_routines'sa_writeword.
 
     /// Reads a short integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vshort:aValue
-        => system'internal'sa_readword.
+        => system'core_routines'sa_readword.
 
     /// Returns a short integer at the specified position
     #method getAt : anIndex
@@ -353,19 +353,19 @@
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
-        => system'internal'ns_read.
+        => system'core_routines'ns_read.
 
     /// Copies the short array at the specified position
     #method(stacksafe) write &int:anIndex &int:aLength &intarray:anArray
-        => system'internal'ns_write.
+        => system'core_routines'ns_write.
 
     /// Writes an integer value at the specified position
     #method(stacksafe) write &int:anIndex &int:aValue
-        => system'internal'ns_writedword.
+        => system'core_routines'ns_writedword.
 
     /// Reads an integer value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vint:anInt
-        => system'internal'ns_readdword.
+        => system'core_routines'ns_readdword.
 
     /// Returns an integer at the specified position
     #method getAt : anIndex
@@ -744,22 +744,22 @@
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
-        => system'internal'ns_read.
+        => system'core_routines'ns_read.
 
     /// Copies the array at the specified position
     #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
-        => system'internal'ns_write.
+        => system'core_routines'ns_write.
 
     /// Writes a character value at the specified position
     #method(stacksafe) write &int:anIndex &char:aValue
-        => system'internal'ns_writedword.
+        => system'core_routines'ns_writedword.
 
     /// Reads a character value at the specified position and saves it into an output variable
     #method(stacksafe) read &int:anIndex &vchar:anInt
-        => system'internal'ns_readdword.
+        => system'core_routines'ns_readdword.
 
     #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
-        => system'internal'ns_move.
+        => system'core_routines'ns_move.
 
     /// Returns a character at the specified position
     #method getAt : anIndex
@@ -833,11 +833,11 @@
 
     /// Compares the values
     #method(type:bool) equal &literal : aLiteral
-        => system'internal's_equal.
+        => system'core_routines's_equal.
 
     /// Compares the values
     #method(type:bool) less &literal : aLiteral
-        => system'internal's_less.
+        => system'core_routines's_less.
 
     /// Compares the values
     #method(type:bool) equal &char : aChar
@@ -849,7 +849,7 @@
 
     /// Concatinates the values
     #method(type:literal) add &literal : aLiteral
-        => system'internal's_add.
+        => system'core_routines's_add.
 
     /// Concatinates the values
     #method(type:literal,stacksafe) add &char:aChar
@@ -865,11 +865,11 @@
 
     // Reads the character at the specified index and saves into an output parameter
     #method(stacksafe) read &int:anIndex &vchar:aChar
-        => system'internal's_getat.
+        => system'core_routines's_getat.
 
     // Reads the byte at the specified index and saves into an output parameter
     #method(stacksafe) read &int:anIndex &vbyte:anInt
-        => system'internal'bs_readbyte.
+        => system'core_routines'bs_readbyte.
         
     /// Returns the character at the specified index
     #method(type:char,stacksafe) getAt &int:anIndex
@@ -884,13 +884,13 @@
     ///
     /// If the substring is not found. returns -1
     #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
-        => system'internal's_indexof.
+        => system'core_routines's_indexof.
 
     /// Saves the index of the first occurence of the specified symbol into an output parameter.
     ///
     /// If the substring is not found. returns -1
     #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-        => system'internal's_indexof_char.        
+        => system'core_routines's_indexof_char.        
 
     /// Returns the index of the first occurence of the specified object.
     /// 
@@ -936,7 +936,7 @@
 
     /// Inserts the substring into and returns the new one
     #method(type:literal,stacksafe) insert &int:anIndex &literal:aLiteral
-        => system'internal's_insert.
+        => system'core_routines's_insert.
 
     /// Inserts a character into and returns the new one
     #method(type:literal,stacksafe) insert &int:anIndex &char:aChar
@@ -962,7 +962,7 @@
 
     /// Deletes the substring from the object and returns the new one
     #method(type:literal,stacksafe) delete &int:anIndex &int:aLength
-        => system'internal's_delete.
+        => system'core_routines's_delete.
 
     /// Returns the substring
     #method Substring : aLength &at:anIndex
@@ -970,18 +970,18 @@
 
     /// Returns the substring
     #method(type:literal,stacksafe) Substring &int:anIndex &int:aLength
-        => system'internal's_subs.
+        => system'core_routines's_subs.
 
     /// Reads the literal length into an output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal's_getlen.
+        => system'core_routines's_getlen.
 
     /// Saves the literal into a UTF-32 character array
     #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
-        => system'internal's_save.
+        => system'core_routines's_save.
 
     #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
-        => system'internal's_saveraw.
+        => system'core_routines's_saveraw.
 
     /// Returns the string length
     #method(type:int,embeddable,suppress:w3) length
@@ -1008,7 +1008,7 @@
     #method clone = LiteralValue new &literal:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(type:int,embeddable,suppress:w3) hash_code
     [
@@ -1223,11 +1223,11 @@
 
     /// Compares the values
     #method(type:bool) equal &wide : aLiteral
-        => system'internal'ws_equal.
+        => system'core_routines'ws_equal.
 
     /// Compares the values
     #method(type:bool) less &wide : aLiteral
-        => system'internal'ws_less.
+        => system'core_routines'ws_less.
 
     /// Compares the values
     #method(type:bool) equal &char : aChar
@@ -1239,7 +1239,7 @@
 
     /// Concatinates the values
     #method(type:wide,stacksafe) add &wide : aLiteral
-        => system'internal'ws_add.
+        => system'core_routines'ws_add.
 
     /// Concatinates the values
     #method(type:wide,stacksafe) add &char:aChar
@@ -1259,11 +1259,11 @@
 
     // Reads the character at the specified index and saves into an output parameter
     #method(stacksafe) read &int:anIndex &vchar:aChar
-        => system'internal'ws_getat.
+        => system'core_routines'ws_getat.
 
     // Reads the short integer at the specified index and saves into an output parameter
     #method(stacksafe) read &int:anIndex &vshort:aValue
-        => system'internal'sa_readword.
+        => system'core_routines'sa_readword.
         
     /// Returns the character at specified index
     #method(type:char,stacksafe) getAt &int:anIndex
@@ -1278,13 +1278,13 @@
     ///
     /// If the substring is not found. returns -1
     #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
-        => system'internal'ws_indexof.
+        => system'core_routines'ws_indexof.
 
     /// Saves the index of the first occurence of the specified character into an output parameter.
     ///
     /// If the substring is not found. returns -1
     #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-        => system'internal'ws_indexof_char.
+        => system'core_routines'ws_indexof_char.
 
     /// Returns the index of the first occurence of the specified character.
     ///
@@ -1323,7 +1323,7 @@
 
     /// Inserts the substring into and returns the new one
     #method(type:wide,stacksafe) insert &int:anIndex &wide:aLiteral
-        => system'internal'ws_insert.
+        => system'core_routines'ws_insert.
 
     /// Inserts the substring into and returns the new one
     #method(type:wide,stacksafe) insert &int:anIndex &literal:aLiteral
@@ -1353,18 +1353,18 @@
             
     /// Deletes the substring from the object and returns the new one            
     #method(type:wide,stacksafe) delete &int:anIndex &int:aLength
-        => system'internal'ws_delete.
+        => system'core_routines'ws_delete.
 
     /// Returns the substring
     #method(type:wide,stacksafe) Substring &int:anIndex &int:aLength
-        => system'internal'ws_subs.
+        => system'core_routines'ws_subs.
 
     #method(type:wide) Substring : aLength &at:anIndex
         <= Substring &int:(anIndex int) &int:(aLength int).
 
     /// Reads the literal length into an output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'ws_getlen.
+        => system'core_routines'ws_getlen.
 
     /// Returns the string length
     #method(stacksafe,type:int,embeddable,suppress:w3) length
@@ -1377,10 +1377,10 @@
 
     /// Saves the literal into a UTF-32 character array
     #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
-        => system'internal'ws_save.
+        => system'core_routines'ws_save.
 
     #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
-        => system'internal'ws_saveraw.
+        => system'core_routines'ws_saveraw.
 
     /// Returns the object enumerator
     #method enumerator = WideLiteralEnumerator new &wide:$self.
@@ -1398,7 +1398,7 @@
     #method clone = WideLiteralValue new &wide:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(type:int,embeddable,suppress:w3) hash_code
     [
@@ -1768,7 +1768,7 @@
 
     /// Reads the array length into an output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'arr_getlen.
+        => system'core_routines'arr_getlen.
 
     /// Returns the array length
     #method(stacksafe,type:int,embeddable,suppress:w3) length
@@ -1806,10 +1806,10 @@
 
     /// Returns the specified array member
     #method(stacksafe) getAt &int:anIndex
-        => system'internal'arr_getat.
+        => system'core_routines'arr_getat.
 
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'args_getlen.
+        => system'core_routines'args_getlen.
         
     #method(stacksafe,type:int,embeddable,suppress:w3) length
     [

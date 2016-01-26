@@ -181,7 +181,7 @@
     #field(type:int)      dummy7.
 
     #method(stacksafe) read &hdc:aHandle
-        => system'internal'int_save.
+        => system'core_routines'int_save.
             
     #method hdc = HDC new &hdc:theHDC.            
             

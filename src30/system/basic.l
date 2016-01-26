@@ -174,20 +174,20 @@
     #method real = RealNumber new &byte:$self.
 
     #method(type:bool,stacksafe) equal &byte:anOperand
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     #method(type:bool,stacksafe) less &byte:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
 
     #method(type:bool,stacksafe) equal &short:anOperand
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     #method(type:bool,stacksafe) less &short:anOperand
         = ShortNumber new &byte:$self less &short:anOperand.
 
     /// Compares the value
     #method(type:bool,stacksafe) equal &int:anOperand
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the value
     #method(type:bool,stacksafe) less &int:anOperand
@@ -211,19 +211,19 @@
 
     /// Returns the sum
     #method(type:byte,stacksafe) add &byte:anOperand
-        => system'internal'byte_add.
+        => system'core_routines'byte_add.
 
     /// Returns the difference
     #method(type:byte,stacksafe) subtract &byte:anOperand
-        => system'internal'byte_sub.
+        => system'core_routines'byte_sub.
 
     /// Returns the product
     #method(type:byte,stacksafe) multiply &byte:anOperand
-        => system'internal'byte_mul.
+        => system'core_routines'byte_mul.
 
     /// Returns the result of integer division
     #method(type:byte,stacksafe) divide &byte:anOperand
-        => system'internal'byte_div.
+        => system'core_routines'byte_div.
 
     /// Returns the sum
     #method(stacksafe) add &short:anOperand
@@ -291,15 +291,15 @@
 
     /// Returns the result of bitwise AND operation
     #method(type:byte,stacksafe) and &byte:anOperand
-        => system'internal'byte_and.
+        => system'core_routines'byte_and.
 
     /// Returns the result of bitwise OR operation
     #method(type:byte,stacksafe) or &byte:anOperand
-        => system'internal'byte_or.
+        => system'core_routines'byte_or.
 
     /// Returns the result of bitwise XOR operation
     #method(type:byte,stacksafe) xor &byte:anOperand
-        => system'internal'byte_xor.
+        => system'core_routines'byte_xor.
 
     /// Returns the result of bitwise AND operation
     #method(stacksafe) and &short:anOperand
@@ -315,15 +315,15 @@
 
     /// Returns the result of bitwise AND operation
     #method(type:int,stacksafe) and &int:anOperand
-        => system'internal'int_and.
+        => system'core_routines'int_and.
 
     /// Returns the result of bitwise OR operation
     #method(type:int,stacksafe) or &int:anOperand
-        => system'internal'int_or.
+        => system'core_routines'int_or.
 
     /// Returns the result of bitwise XOR operation
     #method(type:int,stacksafe) xor &int:anOperand
-        => system'internal'int_xor.
+        => system'core_routines'int_xor.
 
     /// Returns the result of bitwise AND operation
     #method(type:long,stacksafe) and &long:anOperand
@@ -345,7 +345,7 @@
         <= shift &int:(anOrder int).
     
     #method(type:byte,stacksafe) shift &int:anOrder
-        => system'internal'byte_shift.
+        => system'core_routines'byte_shift.
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &byte:$self.
@@ -355,7 +355,7 @@
 
     /// Bitwise inversion
     #method(type:byte,stacksafe) not
-        => system'internal'byte_not.
+        => system'core_routines'byte_not.
 
     /// Clones the value
     #method clone = ByteNumber new &byte:$self.
@@ -367,7 +367,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &byte:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(embeddable,type:int,suppress:w3) hash_code
     [
@@ -423,31 +423,31 @@
     #method real = RealNumber new &short:$self.
     
     #method(stacksafe)read &vint:n
-        => system'internal'int_save.
+        => system'core_routines'int_save.
     
     /// Compares the value
     #method(type:bool,stacksafe) equal &int:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the value
     #method(type:bool,stacksafe) less &int:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
     
     /// Compares the value
     #method(type:bool,stacksafe) equal &short:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the value
     #method(type:bool,stacksafe) less &short:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
     
     /// Compares the value
     #method(type:bool,stacksafe) equal &byte:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the value
     #method(type:bool,stacksafe) less &byte:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
     
     /// Compares the value
     #method(type:bool,stacksafe) equal &long:anOperand 
@@ -467,19 +467,19 @@
 
     /// Returns the sum
     #method(type:short,stacksafe) add &short:anOperand
-        => system'internal'short_add.
+        => system'core_routines'short_add.
     
     /// Returns the difference
     #method(type:short,stacksafe) subtract &short:anOperand
-        => system'internal'short_sub.
+        => system'core_routines'short_sub.
 
     /// Returns the product
     #method(type:short,stacksafe) multiply &short:anOperand
-        => system'internal'short_mul.
+        => system'core_routines'short_mul.
 
     /// Returns the result of integer division
     #method(type:short,stacksafe) divide &short:anOperand
-        => system'internal'short_div.
+        => system'core_routines'short_div.
 
     /// Returns the sum
     #method(stacksafe) add &byte:anOperand
@@ -547,27 +547,27 @@
 
     /// Returns the result of bitwise AND operation
     #method(type:short,stacksafe) and &short:anOperand
-        => system'internal'short_and.
+        => system'core_routines'short_and.
 
     /// Returns the result of bitwise OR operation
     #method(type:short,stacksafe) or &short:anOperand
-        => system'internal'short_or.
+        => system'core_routines'short_or.
 
     /// Returns the result of bitwise XOR operation
     #method(type:short,stacksafe) xor &short:anOperand
-        => system'internal'short_xor.
+        => system'core_routines'short_xor.
 
     /// Returns the result of bitwise AND operation
     #method(stacksafe) and &byte:anOperand
-        => system'internal'short_and.
+        => system'core_routines'short_and.
 
     /// Returns the result of bitwise OR operation
     #method(stacksafe) or &byte:anOperand
-        => system'internal'short_or.
+        => system'core_routines'short_or.
 
     /// Returns the result of bitwise XOR operation
     #method(stacksafe) xor &byte:anOperand
-        => system'internal'short_xor.
+        => system'core_routines'short_xor.
         
     /// Returns the result of bitwise AND operation
     #method(stacksafe) and &int:anOperand
@@ -595,7 +595,7 @@
 
     /// Bitwise shift operation
     #method(type:short,stacksafe) shift &int:anOrder
-        => system'internal'short_shift.
+        => system'core_routines'short_shift.
 
     #method shift:anOrder
         <= shift &int:(anOrder int).
@@ -611,7 +611,7 @@
 
     /// Bitwise inversion
     #method(type:byte,stacksafe) not
-        => system'internal'short_not.
+        => system'core_routines'short_not.
 
     /// Clones the value
     #method clone = ShortNumber new &short:$self.    
@@ -623,7 +623,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &short:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(embeddable,type:int,suppress:w3) hash_code
     [
@@ -689,15 +689,15 @@
 
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &int:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &short:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &byte:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
         
     /// Compares the integer value
     #method(stacksafe) equal &long:anOperand 
@@ -709,15 +709,15 @@
 
     /// Compares the integer value
     #method(type:bool,stacksafe) less &int:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
 
     /// Compares the integer value
     #method(type:bool,stacksafe) less &short:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
 
     /// Compares the integer value
     #method(type:bool,stacksafe) less &byte:anOperand
-        => system'internal'int_less.
+        => system'core_routines'int_less.
         
     /// Compares the integer value
     #method(stacksafe) less &long:anOperand 
@@ -729,15 +729,15 @@
 
     /// Returns the sum of integers
     #method(type:int,stacksafe) add &int:anOperand
-        => system'internal'int_add.
+        => system'core_routines'int_add.
         
     /// Returns the sum of integers
     #method(type:int,stacksafe) add &short:anOperand
-        => system'internal'int_add.
+        => system'core_routines'int_add.
 
     /// Returns the sum of integers
     #method(type:int,stacksafe) add &byte:anOperand
-        => system'internal'int_add.
+        => system'core_routines'int_add.
 
     /// Returns the sum of integers
     #method(stacksafe) add &long:anOperand
@@ -749,15 +749,15 @@
 
     /// Returns the difference of integers
     #method(type:int,stacksafe) subtract &int:anOperand
-        => system'internal'int_sub.
+        => system'core_routines'int_sub.
 
     /// Returns the difference of integers
     #method(type:int,stacksafe) subtract &short:anOperand
-        => system'internal'int_sub.
+        => system'core_routines'int_sub.
 
     /// Returns the difference of integers
     #method(type:int,stacksafe) subtract &byte:anOperand
-        => system'internal'int_sub.
+        => system'core_routines'int_sub.
 
     /// Returns the difference of integers
     #method(stacksafe) subtract &long:anOperand
@@ -769,15 +769,15 @@
 
     /// Returns the product of integers
     #method(type:int,stacksafe) multiply &int:anOperand
-        => system'internal'int_mul.
+        => system'core_routines'int_mul.
         
     /// Returns the product of integers
     #method(type:int,stacksafe) multiply &short:anOperand
-        => system'internal'int_mul.
+        => system'core_routines'int_mul.
 
     /// Returns the product of integers
     #method(type:int,stacksafe) multiply &byte:anOperand
-        => system'internal'int_mul.
+        => system'core_routines'int_mul.
 
     /// Returns the product of integers
     #method(stacksafe) multiply &long:anOperand
@@ -789,15 +789,15 @@
 
     /// Returns the result of integer division
     #method(type:int,stacksafe) divide &int:anOperand
-        => system'internal'int_div.
+        => system'core_routines'int_div.
 
     /// Returns the result of integer division
     #method(type:int,stacksafe) divide &short:anOperand
-        => system'internal'int_div.
+        => system'core_routines'int_div.
 
     /// Returns the result of integer division
     #method(type:int,stacksafe) divide &byte:anOperand
-        => system'internal'int_div.
+        => system'core_routines'int_div.
 
     /// Returns the result of integer division
     #method(stacksafe) divide &long:anOperand
@@ -809,15 +809,15 @@
 
     /// Returns the result of bitwise AND operation
     #method(type:int,stacksafe) and &int:anOperand
-        => system'internal'int_and.
+        => system'core_routines'int_and.
 
     /// Returns the result of bitwise AND operation
     #method(type:int,stacksafe) and &short:anOperand
-        => system'internal'int_and.
+        => system'core_routines'int_and.
 
     /// Returns the result of bitwise AND operation
     #method(type:int,stacksafe) and &byte:anOperand
-        => system'internal'int_and.
+        => system'core_routines'int_and.
 
     /// Returns the result of bitwise AND operation
     #method(stacksafe) and &long:anOperand
@@ -825,15 +825,15 @@
 
     /// Returns the result of bitwise OR operation
     #method(type:int,stacksafe) or &int:anOperand
-        => system'internal'int_or.
+        => system'core_routines'int_or.
 
     /// Returns the result of bitwise OR operation
     #method(type:int,stacksafe) or &short:anOperand
-        => system'internal'int_or.
+        => system'core_routines'int_or.
 
     /// Returns the result of bitwise OR operation
     #method(type:int,stacksafe) or &byte:anOperand
-        => system'internal'int_or.
+        => system'core_routines'int_or.
 
     /// Returns the result of bitwise OR operation
     #method(stacksafe) or &long:anOperand
@@ -841,15 +841,15 @@
 
     /// Returns the result of bitwise XOR operation
     #method(type:int,stacksafe) xor &int:anOperand
-        => system'internal'int_xor.
+        => system'core_routines'int_xor.
 
     /// Returns the result of bitwise XOR operation
     #method(type:int,stacksafe) xor &short:anOperand
-        => system'internal'int_xor.
+        => system'core_routines'int_xor.
 
     /// Returns the result of bitwise XOR operation
     #method(type:int,stacksafe) xor &byte:anOperand
-        => system'internal'int_xor.
+        => system'core_routines'int_xor.
 
     /// Returns the result of bitwise XOR operation
     #method(stacksafe) xor &long:anOperand
@@ -863,11 +863,11 @@
         <= shift &int:(anOrder int).
     
     #method(type:int,stacksafe) shift &int:anOrder
-        => system'internal'int_shift.
+        => system'core_routines'int_shift.
 
     /// Bitwise shift operation
     #method(stacksafe) shift &int:anOrder &vint:aResult
-        => system'internal'int_shift2.
+        => system'core_routines'int_shift2.
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &int:$self.
@@ -877,7 +877,7 @@
 
     /// Bitwise inversion
     #method(type:int,stacksafe) not
-        => system'internal'int_not.
+        => system'core_routines'int_not.
 
     /// Negates the value
     #method(stacksafe,suppress:w3) negative
@@ -893,7 +893,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(type:int,embeddable,suppress:w3) hash_code
     [
@@ -958,7 +958,7 @@
 
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &long:anOperand
-        => system'internal'long_equal.
+        => system'core_routines'long_equal.
 
     /// Compares the integer value
     #method(type:bool,stacksafe) equal &int:anOperand 
@@ -978,7 +978,7 @@
 
     /// Compares the integer value
     #method(type:bool,stacksafe) less &long:anOperand
-        => system'internal'long_less.
+        => system'core_routines'long_less.
 
     /// Compares the integer value
     #method(type:bool,stacksafe) less &int:anOperand 
@@ -998,7 +998,7 @@
 
     /// Returns the sum of integers
     #method(type:long,stacksafe) add &long:anOperand
-        => system'internal'long_add.
+        => system'core_routines'long_add.
 
     /// Returns the sum of integers
     #method(stacksafe) add &int:anOperand
@@ -1018,7 +1018,7 @@
 
     /// Returns the difference of integers
     #method(type:long,stacksafe) subtract &long:anOperand
-        => system'internal'long_sub.
+        => system'core_routines'long_sub.
 
     /// Returns the difference of integers
     #method(stacksafe) subtract &int:anOperand
@@ -1038,7 +1038,7 @@
 
     /// Returns the product of integers
     #method(type:long,stacksafe) multiply &long:anOperand
-        => system'internal'long_mul.
+        => system'core_routines'long_mul.
 
     /// Returns the product of integers
     #method(stacksafe) multiply &real:anOperand
@@ -1058,7 +1058,7 @@
 
     /// Returns the result of integer division
     #method(type:long,stacksafe) divide &long:anOperand
-        => system'internal'long_div.
+        => system'core_routines'long_div.
 
     /// Returns the result of integer division
     #method(stacksafe) divide &int:anOperand
@@ -1078,7 +1078,7 @@
         
     /// Returns the result of bitwise AND operation
     #method(type:long,stacksafe) and &long:anOperand
-        => system'internal'long_and.
+        => system'core_routines'long_and.
 
     /// Returns the result of bitwise AND operation
     #method(stacksafe) and &int:anOperand
@@ -1094,7 +1094,7 @@
 
     /// Returns the result of bitwise OR operation
     #method(type:long,stacksafe) or &long:anOperand
-        => system'internal'long_or.
+        => system'core_routines'long_or.
 
     /// Returns the result of bitwise OR operation
     #method(stacksafe) or &int:anOperand
@@ -1110,7 +1110,7 @@
 
     /// Returns the result of bitwise XOR operation
     #method(type:long,stacksafe) xor &long:anOperand
-        => system'internal'long_xor.
+        => system'core_routines'long_xor.
 
     /// Returns the result of bitwise XOR operation
     #method(stacksafe) xor &int:anOperand
@@ -1132,7 +1132,7 @@
         <= shift &int:(anOrder int).
     
     #method(type:long,stacksafe) shift &int:anOrder
-        => system'internal'long_shift.
+        => system'core_routines'long_shift.
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &long:$self.
@@ -1145,7 +1145,7 @@
 
     /// Bitwise inversion
     #method(type:long,stacksafe) not
-        => system'internal'long_not.
+        => system'core_routines'long_not.
 
     /// Clones the value
     #method clone = LongNumber new &long:$self.
@@ -1157,7 +1157,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &long:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(type:int,embeddable,suppress:w3) hash_code
     [
@@ -1214,7 +1214,7 @@
     
     /// Compares the numeric values
     #method(type:bool,stacksafe) equal &real:anOperand
-        => system'internal'real_equal.
+        => system'core_routines'real_equal.
 
     /// Compares the numeric values
     #method(type:bool,stacksafe) equal &int:anOperand
@@ -1234,7 +1234,7 @@
 
     /// Compares the numeric values
     #method(type:bool,stacksafe) less &real:anOperand
-        => system'internal'real_less.
+        => system'core_routines'real_less.
 
     /// Compares the numeric values
     #method(type:bool,stacksafe) less &int:anOperand
@@ -1254,7 +1254,7 @@
 
     /// Returns the sum of numbers
     #method(type:real,stacksafe) add &real:anOperand
-        => system'internal'real_add.
+        => system'core_routines'real_add.
 
     /// Returns the sum of numbers
     #method(type:real,stacksafe) add &int:anOperand
@@ -1274,7 +1274,7 @@
 
     /// Returns the difference of numbers
     #method(type:real,stacksafe) subtract &real:anOperand
-        => system'internal'real_sub.
+        => system'core_routines'real_sub.
 
     /// Returns the difference of numbers
     #method(type:real,stacksafe) subtract &int:anOperand
@@ -1294,7 +1294,7 @@
 
     /// Returns the product of numbers
     #method(type:real,stacksafe) multiply &real:anOperand
-        => system'internal'real_mul.
+        => system'core_routines'real_mul.
 
     /// Returns the product of numbers
     #method(type:real,stacksafe) multiply &int:anOperand
@@ -1314,7 +1314,7 @@
 
     /// Returns the result of the division
     #method(type:real,stacksafe) divide &real:anOperand
-        => system'internal'real_div.
+        => system'core_routines'real_div.
 
     /// Returns the result of the division
     #method(type:real,stacksafe) divide &int:anOperand
@@ -1351,7 +1351,7 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &real:$self.
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(type:int,embeddable,suppress:w3) hash_code
     [
@@ -1453,31 +1453,31 @@
 
     /// Returns the sum of integers                
     #method(type:byte,stacksafe) add &byte:anOperand
-        => system'internal'byte_add.
+        => system'core_routines'byte_add.
 
     /// Returns the difference of integers    
     #method(type:byte,stacksafe) subtract &byte:anOperand
-        => system'internal'byte_sub.
+        => system'core_routines'byte_sub.
             
     /// Returns the product of integers            
     #method(type:byte,stacksafe) multiply &byte:anOperand
-        => system'internal'byte_mul.
+        => system'core_routines'byte_mul.
     
     /// Returns the result of integer division
     #method(type:byte,stacksafe) divide &byte:anOperand
-        => system'internal'byte_div.
+        => system'core_routines'byte_div.
         
     /// Returns the result of bitwise AND operation        
     #method(type:byte,stacksafe) and &byte:anOperand
-        => system'internal'byte_and.
+        => system'core_routines'byte_and.
         
     /// Returns the result of bitwise OR operation        
     #method(type:byte,stacksafe) or &byte:anOperand
-        => system'internal'byte_or.
+        => system'core_routines'byte_or.
         
     /// Returns the result of bitwise XOR operation        
     #method(type:byte,stacksafe) xor &byte:anOperand
-        => system'internal'byte_xor.
+        => system'core_routines'byte_xor.
 
     /// Returns the integer value
     #method value = ByteNumber new &byte:theValue.
@@ -1625,31 +1625,31 @@
 
     /// Returns the sum of integers                
     #method(type:short,stacksafe) add &short:anOperand
-        => system'internal'short_add.
+        => system'core_routines'short_add.
     
     /// Returns the difference of integers
     #method(type:short,stacksafe) subtract &short:anOperand
-        => system'internal'short_sub.
+        => system'core_routines'short_sub.
     
     /// Returns the product of integers
     #method(type:short,stacksafe) multiply &short:anOperand
-        => system'internal'short_mul.
+        => system'core_routines'short_mul.
     
     /// Returns the result of integer division
     #method(type:short,stacksafe) divide &short:anOperand
-        => system'internal'short_div.
+        => system'core_routines'short_div.
     
     /// Returns the result of bitwise AND operation
     #method(type:short,stacksafe) and &short:anOperand
-        => system'internal'short_and.
+        => system'core_routines'short_and.
         
     /// Returns the result of bitwise OR operation
     #method(type:short,stacksafe) or &short:anOperand
-        => system'internal'short_or.
+        => system'core_routines'short_or.
         
     /// Returns the result of bitwise XOR operation
     #method(type:short,stacksafe) xor &short:anOperand
-        => system'internal'short_xor.
+        => system'core_routines'short_xor.
 
     /// Returns the integer value
     #method value = ShortNumber new &short:theValue.
@@ -1736,7 +1736,7 @@
 
     /// Copies the integer value
     #method(stacksafe) write &short:anOperand
-        => system'internal'int_copyshort.
+        => system'core_routines'int_copyshort.
 
     /// Copies the integer value
     #method write &byte:anOperand
@@ -2464,19 +2464,19 @@
     
     /// Compares values
     #method(stacksafe) equal &char:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
 
     /// Compares values
     #method(stacksafe) less &char:anOperand 
-        => system'internal'int_less.
+        => system'core_routines'int_less.
 
     /// Compares values
     #method(stacksafe) equal &int:anOperand 
-        => system'internal'int_equal.
+        => system'core_routines'int_equal.
 
     /// Compares values
     #method(stacksafe) less &int:anOperand 
-        => system'internal'int_less.
+        => system'core_routines'int_less.
 
     /// Clones the value
     #method clone = CharValue new &char:$self.
@@ -2495,7 +2495,7 @@
     
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'char_getlen.
+        => system'core_routines'char_getlen.
         
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readWideLength &vint:aRetVal
@@ -2528,7 +2528,7 @@
     ]
 
     // Reads the object hash code into the output parameter
-    #method(stacksafe) readHashCode &vint:aCode => system'internal'int_hashcode.
+    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
     
     #method(embeddable,type:int,suppress:w3) hash_code
     [
@@ -2612,7 +2612,7 @@
     
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readLength &vint:aLength
-        => system'internal'char_getlen.
+        => system'core_routines'char_getlen.
         
     /// Retuns the number of bytes to represent the symbol        
     #method length
@@ -2781,31 +2781,31 @@
 {
     /// Converts a character into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &char:aValue &vbyte:aRetVal
-        => system'internal'byte_copychar.
+        => system'core_routines'byte_copychar.
         
     /// Converts a short integer into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &short:aValue &vbyte:aRetVal
-        => system'internal'byte_copyword.
+        => system'core_routines'byte_copyword.
         
     /// Converts an integer into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &int:aValue &vbyte:aRetVal
-        => system'internal'byte_copyint.
+        => system'core_routines'byte_copyint.
         
     /// Converts a long integer into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &long:aValue &vbyte:aRetVal
-        => system'internal'byte_copylong.
+        => system'core_routines'byte_copylong.
         
     /// Converts a real number into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &real:aValue &vbyte:aRetVal
-        => system'internal'byte_copyreal.
+        => system'core_routines'byte_copyreal.
         
     /// Converts a literal value into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &literal:aValue &vbyte:aRetVal
-        => system'internal'byte_copystr.
+        => system'core_routines'byte_copystr.
         
     /// Converts a wide literal value into a byte value and saves the result into an output parameter
     #method(stacksafe) convert &wide:aValue &vbyte:aRetVal
-        => system'internal'byte_copywstr.
+        => system'core_routines'byte_copywstr.
         
     /// Returns the parameter        
     #method(type:byte,stacksafe) convert &byte:anInt
@@ -2883,31 +2883,31 @@
 {
     /// Converts a character into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &char:aValue &vshort:aRetVal
-        => system'internal'word_copychar.
+        => system'core_routines'word_copychar.
         
     /// Converts a byte value into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &byte:aValue &vshort:aRetVal
-        => system'internal'word_copybyte.
+        => system'core_routines'word_copybyte.
         
     /// Converts an integer into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &int:aValue &vshort:aRetVal
-        => system'internal'word_copyint.
+        => system'core_routines'word_copyint.
         
     /// Converts a long integer into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &long:aValue &vshort:aRetVal
-        => system'internal'word_copylong.
+        => system'core_routines'word_copylong.
         
     /// Converts a real number into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &real:aValue &vshort:aRetVal
-        => system'internal'word_copyreal.
+        => system'core_routines'word_copyreal.
         
     /// Converts a literal string into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &literal:aValue &vshort:aRetVal
-        => system'internal'word_copystr.
+        => system'core_routines'word_copystr.
         
     /// Converts a wide literal string into a short integer value and saves the result into an output parameter
     #method(stacksafe) convert &wide:aValue &vshort:aRetVal
-        => system'internal'word_copywstr.
+        => system'core_routines'word_copywstr.
         
     /// Returns a short integer value        
     #method(type:short,stacksafe) convert &short:anInt
@@ -2985,37 +2985,37 @@
 {
     /// Converts a byte value into a character and saves the result into an output parameter
     #method(stacksafe) convert &byte:aValue &vchar:aRetVal
-        => system'internal'char_savebyte.
+        => system'core_routines'char_savebyte.
         
     /// Converts a short integer into a character and saves the result into an output parameter
     #method(stacksafe) convert &short:aValue &vchar:aRetVal
-        => system'internal'char_saveshort.
+        => system'core_routines'char_saveshort.
         
     /// Converts an integer into a character and saves the result into an output parameter
     #method(stacksafe) convert &int:aValue &vchar:aRetVal
-        => system'internal'char_saveint.
+        => system'core_routines'char_saveint.
         
     /// Returns a parameter        
     #method(type:char,stacksafe)convert &char:aChar
         = CharValue new &char:aChar.
   
     #method(type:char,stacksafe) $convert &int:anIndex &literal:aLiteral &vchar:char
-        => system'internal'char_copystr.
+        => system'core_routines'char_copystr.
   
     #method(type:char,stacksafe) $convert &int:anIndex &bytearray:aLiteral &vchar:char
-        => system'internal'char_copystr.
+        => system'core_routines'char_copystr.
   
     #method(type:char,stacksafe) $convert &int:anIndex &wide:aLiteral &vchar:char
-        => system'internal'char_copywstr.
+        => system'core_routines'char_copywstr.
         
     #method(type:char,stacksafe) $convert &int:anIndex &shortarray:aLiteral &vchar:char
-        => system'internal'char_copywstr.
+        => system'core_routines'char_copywstr.
 
     #method(stacksafe) $save &char:aChar &int:anIndex &shortarray:aCharArray &vint:aLength
-        => system'internal'sa_copychar.
+        => system'core_routines'sa_copychar.
     
     #method(stacksafe) $save &char:aChar &int:anIndex &bytearray:aCharArray &vint:aLength
-        => system'internal'ba_copychar.
+        => system'core_routines'ba_copychar.
 
     /// Converts a literal string into a character                
     #method(type:char,stacksafe) convert &literal:aValue
@@ -3085,39 +3085,39 @@
 {
     /// Converts a literal string into an integer and saves the result into an output parameter
     #method(stacksafe)convert &literal:aValue &vint:aRetVal
-        => system'internal'int_copystr.
+        => system'core_routines'int_copystr.
 
     /// Converts a literal string into an integer and saves the result into an output parameter
     #method(stacksafe)convert &literal:value &int:base &vint:retVal
-        => system'internal'int_copystr2.
+        => system'core_routines'int_copystr2.
 
     /// Converts a wide literal string into an integer and saves the result into an output parameter
     #method(stacksafe)convert &wide:aValue &vint:aRetVal
-        => system'internal'int_copywstr.
+        => system'core_routines'int_copywstr.
 
     /// Converts a wide literal string into an integer and saves the result into an output parameter
     #method(stacksafe)convert &wide:value &int:base &vint:retVal
-        => system'internal'int_copywstr2.
+        => system'core_routines'int_copywstr2.
 
     /// Converts a character value into an integer and saves the result into an output parameter
     #method(stacksafe)convert &char:aValue &vint:aRetVal
-        => system'internal'int_saveint.
+        => system'core_routines'int_saveint.
 
     /// Converts a short integer value into an integer and saves the result into an output parameter
     #method(stacksafe)convert &short:aValue &vint:aRetVal
-        => system'internal'int_saveint.
+        => system'core_routines'int_saveint.
 
     /// Converts a byte value into an integer and saves the result into an output parameter
     #method(stacksafe)convert &byte:aValue &vint:aRetVal
-        => system'internal'int_saveint.
+        => system'core_routines'int_saveint.
 
     /// Converts a long integer into an integer and saves the result into an output parameter
     #method(stacksafe)convert &long:aValue &vint:aRetVal
-        => system'internal'int_savelong.
+        => system'core_routines'int_savelong.
         
     /// Converts a real number into an integer and saves the result into an output parameter
     #method(stacksafe)convert &real:aReal &vint:aRetVal
-        => system'internal'int_copyreal.
+        => system'core_routines'int_copyreal.
         
     /// Converts a literal string into an integer
     #method(type:int,stacksafe) convert &literal:aLiteral
@@ -3213,26 +3213,26 @@
 {
     /// Converts a literal string into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &literal:aValue &vlong:aRetVal
-        => system'internal'long_copystr.
+        => system'core_routines'long_copystr.
 
     /// Converts a literal string into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &literal:value &int:base &vlong:retVal
-        => system'internal'long_copystr2.
+        => system'core_routines'long_copystr2.
 
     /// Converts a wide literal string into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &wide:aValue &vlong:aRetVal
-        => system'internal'long_copywstr.
+        => system'core_routines'long_copywstr.
 
     /// Converts a wide literal string into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &wide:value &int:base &vlong:retVal
-        => system'internal'long_copywstr2.
+        => system'core_routines'long_copywstr2.
 
     #method(stacksafe)convert &int:aValue &vlong:aRetVal
-        => system'internal'long_convertint.
+        => system'core_routines'long_convertint.
 
     /// Converts a real number into a long integer and saves the result into an output parameter
     #method(stacksafe)convert &real:aValue &vlong:aRetVal
-        => system'internal'long_copyreal.
+        => system'core_routines'long_copyreal.
 
     /// Converts an integer value into a long integer
     #method(stacksafe)convert &int:aValue
@@ -3313,15 +3313,15 @@
 {
     /// Converts an integer into a real number and saves the result into an output parameter
     #method(stacksafe)convert &int:aValue &vreal:aRetVal
-        => system'internal'real_saveint.
+        => system'core_routines'real_saveint.
 
     /// Converts a literal string into a real number and saves the result into an output parameter
     #method(stacksafe)convert &literal:aValue &vreal:aRetVal
-        => system'internal'real_copystr.
+        => system'core_routines'real_copystr.
         
     /// Converts a wide literal string into a real number and saves the result into an output parameter
     #method(stacksafe)convert &wide:aValue &vreal:aRetVal
-        => system'internal'real_copywstr.
+        => system'core_routines'real_copywstr.
         
     /// Converts a literal string into a real number
     #method(type:real,stacksafe)convert &literal:aLiteral
@@ -3372,47 +3372,47 @@
 {
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &char:aValue
-        => system'internal's_copychar.
+        => system'core_routines's_copychar.
     
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &int:aNumber
-        => system'internal's_copyint.
+        => system'core_routines's_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &short:aNumber
-        => system'internal's_copyint.
+        => system'core_routines's_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &byte:aNumber
-        => system'internal's_copyint.
+        => system'core_routines's_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &long:aNumber
-        => system'internal's_copylong.
+        => system'core_routines's_copylong.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:literal,stacksafe) convert &int:aNumber &index:aRadix
-        => system'internal's_copyint_radix.
+        => system'core_routines's_copyint_radix.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:literal,stacksafe) convert &short:aNumber &index:aRadix
-        => system'internal's_copyint_radix.
+        => system'core_routines's_copyint_radix.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:literal,stacksafe) convert &byte:aNumber &index:aRadix
-        => system'internal's_copyint_radix.
+        => system'core_routines's_copyint_radix.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:literal,stacksafe) convert &long:aNumber &index:aRadix
-        => system'internal's_copylong_radix.
+        => system'core_routines's_copylong_radix.
 
     /// Converts the parameter to the literal value
     #method(type:literal,stacksafe) convert &real:aNumber
-        => system'internal's_copyreal.
+        => system'core_routines's_copyreal.
 
     /// Converts UTF-16 literal to UTF-8 one
     #method(type:literal,stacksafe) convert &wide:aLiteral
-        => system'internal'str_copywstr.
+        => system'core_routines'str_copywstr.
 
     /// Returns the literal presentation of the parameter
     #method(type:literal,stacksafe) convert : anObject
@@ -3430,47 +3430,47 @@
 {
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &char:aValue
-        => system'internal'ws_copychar.
+        => system'core_routines'ws_copychar.
     
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &int:aNumber
-        => system'internal'ws_copyint.
+        => system'core_routines'ws_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &short:aNumber
-        => system'internal'ws_copyint.
+        => system'core_routines'ws_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &byte:aNumber
-        => system'internal'ws_copyint.
+        => system'core_routines'ws_copyint.
 
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &long:aNumber
-        => system'internal'ws_copylong.
+        => system'core_routines'ws_copylong.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:wide,stacksafe) convert &int:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
+        => system'core_routines'ws_copyint_radix.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:wide,stacksafe) convert &short:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
+        => system'core_routines'ws_copyint_radix.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:wide,stacksafe) convert &byte:aNumber &index:aRadix
-        => system'internal'ws_copyint_radix.
+        => system'core_routines'ws_copyint_radix.
 
     /// Converts the parameter to the literal value with the provided radix
     #method(type:wide,stacksafe) convert &long:aNumber &index:aRadix
-        => system'internal'ws_copylong_radix.
+        => system'core_routines'ws_copylong_radix.
 
     /// Converts the parameter to the literal value
     #method(type:wide,stacksafe) convert &real:aNumber
-        => system'internal'ws_copyreal.
+        => system'core_routines'ws_copyreal.
 
     /// Converts UTF-8 literal to UTF-16e
     #method(type:wide,stacksafe) convert &literal:aLiteral
-        => system'internal'wstr_copystr.
+        => system'core_routines'wstr_copystr.
         
     /// Returns the literal presentation of the parameter
     #method(type:wide,stacksafe) convert : anObject
@@ -3486,34 +3486,34 @@
 #symbol realOpController =
 {
     #method(stacksafe) exp &real:aReal &vreal:aRetVal
-        => system'internal'r_exp.
+        => system'core_routines'r_exp.
         
     #method(stacksafe) abs &real:aReal &vreal:aRetVal
-        => system'internal'r_abs.
+        => system'core_routines'r_abs.
         
     #method(stacksafe) ln &real:aReal &vreal:aRetVal
-        => system'internal'r_ln.
+        => system'core_routines'r_ln.
         
     #method(stacksafe) round &real:aReal &vreal:aRetVal
-        => system'internal'r_round.
+        => system'core_routines'r_round.
         
     #method(stacksafe) truncate &real:aReal &vreal:aRetVal
-        => system'internal'r_truncate.
+        => system'core_routines'r_truncate.
         
     #method(stacksafe) sin &real:aReal &vreal:aRetVal
-        => system'internal'r_sin.
+        => system'core_routines'r_sin.
         
     #method(stacksafe) cos &real:aReal &vreal:aRetVal
-        => system'internal'r_cos.
+        => system'core_routines'r_cos.
         
     #method(stacksafe) arctan &real:aReal &vreal:aRetVal
-        => system'internal'r_arctan.
+        => system'core_routines'r_arctan.
                 
     #method(stacksafe) sqrt &real:aReal &vreal:aRetVal
-        => system'internal'r_sqrt.
+        => system'core_routines'r_sqrt.
         
     #method(stacksafe) pi &vreal:aRetVal
-        => system'internal'r_pi.
+        => system'core_routines'r_pi.
         
     #method(type:real,embeddable,suppress:w3,stacksafe) pi
     [

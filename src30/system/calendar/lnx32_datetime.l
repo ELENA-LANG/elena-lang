@@ -43,7 +43,7 @@
     #field(type:int)tv_usec.
 
     #constructor(stacksafe,embeddable) $new &int:sec &int:usec
-        => system'internal'long_copystruct.
+        => system'core_routines'long_copystruct.
 
     #constructor(stacksafe,embeddable) $new &long:nanosec
     [
@@ -61,7 +61,7 @@
     ]
 
     #constructor new &__time:aValue
-        => system'internal'long_copy.
+        => system'core_routines'long_copy.
 
     #constructor now
         <= new &__time:($factory now).
@@ -81,7 +81,7 @@
     ]
 
     #method(stacksafe,type:bool) equal &__time:anOperand
-        => system'internal'long_equal.
+        => system'core_routines'long_equal.
         
     #method(stacksafe,type:bool) less &__time:anOperand
     [
@@ -96,7 +96,7 @@
     ]
     
     #method(stacksafe) write &__time:aValue
-        => system'internal'long_copy.
+        => system'core_routines'long_copy.
     
     #method(stacksafe) read &vlong:aRetVal
     [

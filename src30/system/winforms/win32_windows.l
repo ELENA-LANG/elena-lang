@@ -7,7 +7,7 @@
 #symbol $windowClassControl =
 {
     #method(stacksafe) $fillWndClass &bytearray:anArray &wide:aName &int:aStyle &hinstance:anInstance &int:aBackground
-        => system'internal'win_fillWndClass.
+        => system'core_routines'win_fillWndClass.
     
     createClass &name:aName &hinstance:anInstance &int:aStyle &int:aBackground
     [

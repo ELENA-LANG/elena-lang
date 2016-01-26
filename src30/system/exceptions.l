@@ -13,7 +13,7 @@
         #var(type:intarray,size:64)aStack.
         #var(type:int)aLength.
         
-        system'internal'callstack_load eval
+        system'core_routines'callstack_load eval
             &intarray:aStack
             &length:64
             &vint:aLength.
@@ -22,7 +22,7 @@
     ]
     
     #method(stacksafe) $read &int:anIndex &bytearray:aBuffer &vint:aLength
-        => system'internal'callstack_readaddressinfo.
+        => system'core_routines'callstack_readaddressinfo.
     
     /// Generates the call stack literal representation
     #method literal

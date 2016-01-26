@@ -21,14 +21,14 @@
         ].
     ]
     
-    #method => system'internal'handle_castover.
+    #method => system'core_routines'handle_castover.
 }
 
 // --- Tape ---
 
 #class(group) Tape :: BaseArray
 {
-    #method => system'internal'handle_tape.
+    #method => system'core_routines'handle_tape.
 }
 
 // --- tapeControl ---
@@ -47,7 +47,7 @@
 
 #class(group) Struct :: BaseArray
 {
-    #method => system'internal'handle_selector.
+    #method => system'core_routines'handle_selector.
 }
 
 // --- Dynamic ---
