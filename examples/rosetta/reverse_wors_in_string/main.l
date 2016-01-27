@@ -16,10 +16,9 @@
                  
     text run &each: line 
     [ 
-        line split &by:" " reverse run &each: words
+        line split &by:" " reverse run &each: word
         [
-            words run &each: word [ console write:word. ].
-            console write:" ".
+            console write:word write:" ".
         ].
         console writeLine.
     ].

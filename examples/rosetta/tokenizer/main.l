@@ -1,5 +1,6 @@
 #import system.
 #import system'routines.
+#import extensions.
 
 #symbol program =
 [
@@ -7,6 +8,6 @@
     
     string split &by:"," run &each:s
     [
-        console write:(s + ".").
+        console write:s:".".
     ].
 ].
