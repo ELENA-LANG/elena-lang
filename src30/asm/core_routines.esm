@@ -1708,7 +1708,7 @@ procedure char_copystr
   nload
   aloadsi 3
 
-  callr api : coreapi'strtochar
+  callextr api : strtochar
   ifr   labErr 0
 
   dcopye
@@ -1731,7 +1731,7 @@ procedure char_copywstr
   nload
   aloadsi 3
 
-  callr api : coreapi'wstrtochar
+  callextr api : wstrtochar
   ifr   labErr 0
 
   dcopye
@@ -1756,8 +1756,8 @@ procedure s_copyint
   bcopya
   aloadsi 2
   dcopy 10
-
-  callr api : coreapi'inttostr
+  
+  callextr api : inttostr
 
   acopyb
   quitn 2
@@ -1773,7 +1773,7 @@ procedure ws_copyint
   aloadsi 2
   dcopy 10
 
-  callr api : coreapi'inttowstr
+  callextr api : inttowstr
 
   acopyb
   quitn 2
@@ -1789,7 +1789,7 @@ procedure s_copylong
   aloadsi 2
   dcopy 10
 
-  callr api : coreapi'longtostr
+  callextr api : longtostr
 
   acopyb
   quitn 2
@@ -1805,7 +1805,7 @@ procedure ws_copylong
   aloadsi 2
   dcopy 10
 
-  callr api : coreapi'longtowstr
+  callextr api : longtowstr
 
   acopyb
   quitn 2
@@ -1822,7 +1822,7 @@ procedure s_copyint_radix
   nload
   aloadsi 2
 
-  callr api : coreapi'inttostr
+  callextr api : inttostr
 
   acopyb
   quitn 3
@@ -1838,7 +1838,7 @@ procedure ws_copyint_radix
   aloadsi 3
   nload
   aloadsi 2
-  callr api : coreapi'inttowstr
+  callextr api : inttowstr
   acopyb
   quitn 3
 
@@ -1854,7 +1854,7 @@ procedure s_copylong_radix
   aloadsi 3
   nload
   aloadsi 2
-  callr api : coreapi'longtostr
+  callextr api : longtostr
   acopyb
   quitn 3
 
@@ -1870,7 +1870,7 @@ procedure ws_copylong_radix
   aloadsi 3
   nload
   aloadsi 2
-  callr api : coreapi'longtowstr
+  callextr api : longtowstr
   acopyb
   quitn 3
 
@@ -1884,7 +1884,7 @@ procedure s_copyreal
   bcopya
   aloadsi 2
   dcopy 24
-  callr api : coreapi'realtostr
+  callextr api : realtostr
   acopyb
   quitn 2
 
@@ -1898,7 +1898,7 @@ procedure ws_copyreal
   bcopya
   aloadsi 2
   dcopy 24
-  callr api : coreapi'realtowstr
+  callextr api : realtowstr
   acopyb
   quitn 2
 
@@ -1913,7 +1913,7 @@ procedure str_copywstr
   bcreate
   bcopya  
   aloadsi 2
-  callr api : coreapi'wstrtostr
+  callextr api : wstrtostr
   acopyb
   quitn 2
   
@@ -1927,7 +1927,7 @@ procedure wstr_copystr
   wcreate
   bcopya  
   aloadsi 2
-  callr api : coreapi'strtowstr
+  callextr api : strtowstr
   acopyb
   quitn 2  
 
@@ -1976,7 +1976,7 @@ procedure bs_copysubarr
   nload
   aloadsi 4
 
-  callr api : coreapi'subcopy
+  callextr api : subcopy
   
   acopyb
   quitn 4
@@ -2010,7 +2010,7 @@ procedure bs_read
   acopyb
 
   bloadsi 4
-  callr api : coreapi'subcopy
+  callextr api : subcopy
   quitn 4
   
 labErr:
@@ -2039,7 +2039,7 @@ procedure bs_write
   aloadsi 2
   nload
   aloadsi 4
-  callr api : coreapi'insert
+  callextr api : insert
   quitn 4
 
 labErr:
@@ -2216,7 +2216,7 @@ procedure bs_writeqword
   nload
   aloadsi 3
   ecopy 8
-  callr api : coreapi'insert
+  callextr api : insert
   quitn 3
 
 labErr:
@@ -2240,7 +2240,7 @@ procedure bs_readqword
   acopyb
   bloadsi 3
   ecopy 8
-  callr api : coreapi'subcopy
+  callextr api : subcopy
   quitn 3
   
 labErr:
@@ -2293,7 +2293,7 @@ procedure sa_copysubarr
   aloadsi 2
   nload
   aloadsi 4
-  callr api : coreapi'wsubcopy
+  callextr api : wsubcopy
   
   acopyb
   quitn 4
@@ -2335,7 +2335,7 @@ procedure sa_read
   nload
   acopyb
   bloadsi 4
-  callr api : coreapi'wsubcopy
+  callextr api : wsubcopy
   
   quitn 4
   
@@ -2372,7 +2372,7 @@ procedure sa_write
   aloadsi 2
   nload
   aloadsi 4
-  callr api : coreapi'winsert
+  callextr api : winsert
   
   acopyb
   quitn 4
@@ -2480,7 +2480,7 @@ procedure ns_copysubarr
   aloadsi 2
   nload
   aloadsi 4
-  callr api : coreapi'nsubcopy
+  callextr api : nsubcopy
   
   acopyb
   quitn 4
@@ -2502,7 +2502,7 @@ procedure arr_copysubarr
   aloadsi 2
   nload
   aloadsi 4
-  callr api : coreapi'nsubcopy
+  callextr api : nsubcopy
   
   acopyb
   quitn 4
@@ -2534,7 +2534,7 @@ procedure ns_read
   acopyb
 
   bloadsi 4
-  callr api : coreapi'nsubcopy
+  callextr api : nsubcopy
   quitn 4
   
 labErr:
@@ -2563,7 +2563,7 @@ procedure ns_write
   aloadsi 2
   nload
   aloadsi 4
-  callr api : coreapi'ninsert
+  callextr api : ninsert
   quitn 4
 
 labErr:
@@ -2763,7 +2763,7 @@ procedure s_fill
   pushn 0
   pushn 0
   
-  callr api : coreapi'chartostr
+  callextr api : chartostr
   acopyb
   blen
   popi 2
@@ -2905,7 +2905,7 @@ procedure ws_fill
   
   bcopya
   acopys 0
-  callr api : coreapi'chartowstr
+  callextr api : chartowstr
   pop
   
   dcopy 0
@@ -2962,7 +2962,7 @@ end
 procedure s_equal
 
   bloadsi 2
-  callr api : coreapi'sequal
+  callextr api : sequal
   selectr const : system'false const : system'true
   quitn 2
   
@@ -2971,7 +2971,7 @@ end
 procedure ws_equal
 
   bloadsi 2
-  callr api : coreapi'wequal
+  callextr api : wequal
   selectr const : system'false const : system'true
   quitn 2
   
@@ -2980,7 +2980,7 @@ end
 procedure s_less
 
   bloadsi 2
-  callr api : coreapi'sless
+  callextr api : sless
   selectr const : system'false const : system'true
   quitn 2
   
@@ -2989,7 +2989,7 @@ end
 procedure ws_less
 
   bloadsi 2
-  callr api : coreapi'wless
+  callextr api : wless
   selectr const : system'false const : system'true
   quitn 2
   
@@ -3011,12 +3011,12 @@ procedure s_add
   dec
   ecopyd
   dcopy 0
-  callr api : coreapi'insert
+  callextr api : insert
   ecopyd
   aloadsi 2
   blen
   eswap
-  callr api : coreapi'insert
+  callextr api : insert
   acopyb
 
   quitn 2
@@ -3039,12 +3039,12 @@ procedure ws_add
   dec
   ecopyd
   dcopy 0
-  callr api : coreapi'winsert
+  callextr api : winsert
   ecopyd
   aloadsi 2
   wlen
   eswap
-  callr api : coreapi'winsert
+  callextr api : winsert
   acopyb
 
   quitn 2
@@ -3062,7 +3062,7 @@ procedure s_getat
   lessn   labErr 0
 
   acopyb  
-  callr api : coreapi'strtochar
+  callextr api : strtochar
   ifr labErr 0
   bloadsi 3
   dcopye
@@ -3088,7 +3088,7 @@ procedure ws_getat
   lessn   labErr 0
 
   acopyb  
-  callr api : coreapi'wstrtochar
+  callextr api : wstrtochar
   ifr labErr 0
   bloadsi 3
   dcopye
@@ -3109,7 +3109,7 @@ procedure s_indexof
   aloadsi 2                 // ; load index
   nload
   aloadsi 3                 // ; load searching str
-  callr api : coreapi'sseek
+  callextr api : sseek
   acopyb
   bloadsi 4                 // ; load target
   nsave                    // ; save index
@@ -3123,7 +3123,7 @@ procedure ws_indexof
   aloadsi 2                 // ; load index
   nload
   aloadsi 3                 // ; load searching str
-  callr api : coreapi'wseek
+  callextr api : wseek
   acopyb
   bloadsi 4                 // ; load target
   nsave                    // ; save index
@@ -3140,13 +3140,13 @@ procedure s_indexof_char
   bcopys 0
   pushn 0
   pushn 0FFFFFFFEh
-  callr api : coreapi'chartostr
+  callextr api : chartostr
 
   aloadsi 7                 // ; load index
   nload
   acopys 2
   bloadsi 4
-  callr api : coreapi'sseek
+  callextr api : sseek
   bloadsi 9                // ; load target
   nsave                    // ; save index
   popi 4
@@ -3164,13 +3164,13 @@ procedure ws_indexof_char
   bcopys 0
   pushn 0
   pushn 0FFFFFFFEh
-  callr api : coreapi'chartowstr
+  callextr api : chartowstr
 
   aloadsi 7                 // ; load index
   nload
   acopys 2
   bloadsi 4
-  callr api : coreapi'wseek
+  callextr api : wseek
   bloadsi 9                // ; load target
   nsave                    // ; save index
   popi 4
@@ -3200,7 +3200,7 @@ procedure s_insert
   ecopyd
   aloadsi 1
   dcopy 0
-  callr api : coreapi'insert
+  callextr api : insert
 
   // ; insert
   aloadsi 3
@@ -3208,7 +3208,7 @@ procedure s_insert
   blen
   dec
   eswap
-  callr api : coreapi'insert
+  callextr api : insert
   
   // ; copy right side 
   ecopyd
@@ -3216,7 +3216,7 @@ procedure s_insert
   nload  
   eswap
   aloadsi 1
-  callr api : coreapi'sadd
+  callextr api : sadd
 
   acopyb
   quitn 3
@@ -3244,7 +3244,7 @@ procedure ws_insert
   ecopyd
   aloadsi 1
   dcopy 0
-  callr api : coreapi'winsert
+  callextr api : winsert
 
   // ; insert
   aloadsi 3
@@ -3252,7 +3252,7 @@ procedure ws_insert
   wlen
   dec
   eswap
-  callr api : coreapi'winsert
+  callextr api : winsert
   
   // ; copy right side 
   ecopyd
@@ -3260,7 +3260,7 @@ procedure ws_insert
   nload  
   eswap
   aloadsi 1
-  callr api : coreapi'wadd
+  callextr api : wadd
 
   acopyb
   quitn 3
@@ -3290,7 +3290,7 @@ procedure s_delete
   ecopyd
   aloadsi 1
   dcopy 0
-  callr api : coreapi'insert
+  callextr api : insert
 
   // ; copy right side 
   ecopyd          
@@ -3299,7 +3299,7 @@ procedure s_delete
   add
   eswap
   aloadsi 1
-  callr api : coreapi'sadd
+  callextr api : sadd
 
   acopyb
   quitn 3
@@ -3329,7 +3329,7 @@ procedure ws_delete
   ecopyd
   aloadsi 1
   dcopy 0
-  callr api : coreapi'winsert                  
+  callextr api : winsert                  
 
   // ; copy right side 
   ecopyd          
@@ -3338,7 +3338,7 @@ procedure ws_delete
   add
   eswap
   aloadsi 1
-  callr api : coreapi'wadd
+  callextr api : wadd
 
   acopyb
   quitn 3
@@ -3365,7 +3365,7 @@ procedure s_subs
   nload
 
   aloadsi 1
-  callr api : coreapi'subcopy
+  callextr api : subcopy
   
   acopyb
   blen
@@ -3397,7 +3397,7 @@ procedure ws_subs
   nload
 
   aloadsi 1
-  callr api : coreapi'wsubcopy
+  callextr api : wsubcopy
 
   acopyb
   wlen
@@ -3785,7 +3785,7 @@ procedure dptr_readbytearray
   ecopyd
   aloadsi 1
 
-  callr api : coreapi'subcopy  
+  callextr api : subcopy  
   
   quitn 3
 
@@ -3963,7 +3963,7 @@ procedure ws_copysubarr
     
   aloadsi 4
   ecopyd
-  callr api : coreapi'wslen_ch
+  callextr api : wslen_ch
 
   acopyr class : system'WideLiteralValue
   inc
@@ -3977,7 +3977,7 @@ procedure ws_copysubarr
   nload
   aloadsi 4
 
-  callr api : coreapi'ws_copychars
+  callextr api : ws_copychars
   
   acopyb
   wlen
@@ -4007,7 +4007,7 @@ procedure s_copysubarr
     
   aloadsi 4
   ecopyd
-  callr api : coreapi'slen_ch
+  callextr api : slen_ch
             
   acopyr class : system'LiteralValue
   inc
@@ -4021,7 +4021,7 @@ procedure s_copysubarr
   nload
   aloadsi 4
 
-  callr api : coreapi's_copychars
+  callextr api : s_copychars
   
   acopyb
   blen
@@ -4080,7 +4080,7 @@ procedure s_save
   aloadsi 3
   nload
   aloadsi 0
-  callr api : coreapi'strtochararray
+  callextr api : strtochararray
   bloadsi 5
   dcopye
   nsave
@@ -4100,7 +4100,7 @@ procedure ws_save
   aloadsi 3
   nload
   aloadsi 0
-  callr api : coreapi'wstrtochararray
+  callextr api : wstrtochararray
   bloadsi 5
   dcopye
   nsave
@@ -4190,7 +4190,7 @@ procedure ns_move
   aloadsi 5
   pushai 0
 
-  callr api : coreapi'nmove
+  callextr api : nmove
 
   pop  
   popa
@@ -4208,7 +4208,7 @@ procedure s_encode
   aloadsi 4
   bloadsi 5
   
-  callr api : coreapi's_encode
+  callextr api : s_encode
   ifr labErr 0
 
   pushd
@@ -4246,7 +4246,7 @@ procedure ws_encode
   aloadsi 4
   bloadsi 5
   
-  callr api : coreapi'ws_encode
+  callextr api : ws_encode
   ifr labErr 0
 
   pushd
@@ -4286,7 +4286,7 @@ procedure sa_encode
   aloadsi 4
   bloadsi 5
   
-  callr api : coreapi'ws_encode
+  callextr api : ws_encode
   ifr labErr 0
 
   dcopye  
@@ -4313,7 +4313,7 @@ procedure s_decode
   aloadsi 4
   bloadsi 5
   
-  callr api : coreapi's_decode
+  callextr api : s_decode
   ifr labErr 0
 
   pushd
@@ -4351,7 +4351,7 @@ procedure ws_decode
   aloadsi 4
   bloadsi 5
   
-  callr api : coreapi'ws_decode
+  callextr api : ws_decode
   ifr labErr 0
 
   pushd
@@ -4384,7 +4384,7 @@ procedure s_charcount
   bcopya
   aloadsi 2
   blen
-  callr api : coreapi'strcharlen
+  callextr api : strcharlen
   aloadsi 3
   nsave
 
@@ -4395,7 +4395,7 @@ procedure ws_charcount
   bcopya
   aloadsi 2
   wlen
-  callr api : coreapi'wstrcharlen
+  callextr api : wstrcharlen
   aloadsi 3
   nsave
 
@@ -4409,7 +4409,7 @@ procedure sa_copychar
   aloadsi 3
   nload
   bloadsi 4
-  callr api : coreapi'chartoshorts
+  callextr api : chartoshorts
   dcopye
   bloadsi 5
   nsave
@@ -4426,7 +4426,7 @@ procedure ba_copychar
   aloadsi 3
   nload
   bloadsi 4
-  callr api : coreapi'chartobytes
+  callextr api : chartobytes
   dcopye
   bloadsi 5
   nsave
@@ -4451,7 +4451,7 @@ procedure s_copybuf
   nload
   aloadsi 4
   
-  callr api : coreapi'insert
+  callextr api : insert
   
   acopyb
   quitn 4
@@ -4474,7 +4474,7 @@ procedure ws_copybuf
   nload
   aloadsi 4
   
-  callr api : coreapi'winsert
+  callextr api : winsert
   
   acopyb
   quitn 4
@@ -5322,7 +5322,7 @@ procedure sa_decode
   aloadsi 4
   bloadsi 5
   
-  callr api : coreapi'ws_decode
+  callextr api : ws_decode
   ifr labErr 0
 
   dcopye  

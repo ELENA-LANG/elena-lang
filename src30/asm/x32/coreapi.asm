@@ -1035,241 +1035,6 @@ lab1:
 
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-procedure coreapi'openframe
-
-  mov ebx, code : % OPENFRAME
-  jmp ebx
-
-end
-
-procedure coreapi'closeframe
-
-  mov ebx, code : % CLOSEFRAME
-  jmp ebx
-
-end
-
-// ; entry()
-procedure coreapi'entry
-
-  call code : % PREPARE
-  call code : % INIT
-  call code : % NEWFRAME
-  mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-
-  // 'program start
-  xor  edi, edi
-  call code : "'startUp"
-
-  mov  ecx, START_MESSAGE_ID
-  mov  esi, [eax - 4]
-  call [esi + 4]
-
-  // ; exit code
-  call code : % EXIT
-
-  ret
-
-end
-
-procedure coreapi'default_handler                                                       
-
-  // ; exit code
-  call code : % EXIT
-
-end
-
-procedure coreapi'default_thread_handler
-
-  // ; exit code
-  call code : % EXITTHREAD
-
-end
-
-// ; console_vm_entry()
-procedure coreapi'vm_console_entry
-
-  push ebx
-  push ecx
-  push edi
-  push esi
-  push ebp
-  
-  call code : % INIT
-
-  pop  ebp
-  pop  esi
-  pop  edi
-  pop  ecx
-  pop  ebx
-                                                           
-  ret
-
-end
-
-// ; new ebx - size, 
-procedure coreapi'reallocate
-
-  push eax
-  call code : %CALC_SIZE
-
-  call code : %GET_COUNT  
-  mov  ecx, esi
-  
-  call code : %GC_ALLOC
-
-  mov  esi, ecx
-  call code : %SET_COUNT
-
-  mov  edi, eax
-  pop  esi
-
-labNext:
-  mov  edx, [edi]
-  mov  [esi], edx
-  add  edi, 4
-  add  esi, 4
-  sub  ecx, 1
-  jnz  short labNext
-
-  ret
-
-end
-
-procedure coreapi'alloc_index
-
-  mov  eax, [stat : "$elena'@referencetable"]
-  
-  test eax, eax
-  jnz  short labStart
-
-  mov  ebx, 020h
-  call code : %CALC_SIZE
-  nop
-  call code : %GC_ALLOC  
-  xor  esi, esi
-  call code : %SET_COUNT 
-
-  mov  [stat : "$elena'@referencetable"], eax
-
-labStart:
-  // ; try to increase eax
-  call code : %GET_COUNT  
-  add  esi, 1  
-  call code : %SET_COUNT   // ; if the object size cannot be expanded - returns 0    
-  test esi, esi
-  // ; if enough place jump to the indexing part
-  jnz  short labIndex
-
-  // ; try to reuse existing slots
-  call code : %GET_COUNT
-  mov  ecx, esi
-  xor  edx, edx
-  mov  esi, eax
-labNext:
-  cmp  [esi], 0
-  jz   short labReuse
-  add  esi, 4
-  add  edx, 1
-  sub  ecx, 1 
-  ja   short labNext                                                                                               
-
-  // ; if no place reallocate the reference table
-  call code : %GET_COUNT
-  mov  ebx, esi
-  add  ebx, 10h
-
-  call code : "$native'coreapi'reallocate"
-
-  mov  [stat : "$elena'@referencetable"], eax
-  jmp  labStart
-
-labReuse:
-  mov  [eax + esi * 4], const : "system'nil"
-  jmp  short labEnd
-  
-labIndex:
-  sub  esi, 1
-  mov  [eax + esi * 4], const : "system'nil"
-labEnd:
-
-  ret
-
-end
-
-// ; free_index
-procedure coreapi'free_index
-
-  mov  ebx, [stat : "$elena'@referencetable"]
-  mov  [ebx + esi * 4], 0
-  
-  ret
-
-end
-
-// ; resolve_index (index)
-procedure coreapi'resolve_index
-
-  mov  ebx, [esp + 4]
-  mov  edx, [ebx]
-  mov  esi, [stat : "$elena'@referencetable"]
-  mov  eax, [esi + edx * 4]
-  
-  ret 4
-
-end
-
-procedure coreapi'resolve_index_value
-
-  mov  ebx, [stat : "$elena'@referencetable"]
-  mov  eax, [ebx + esi * 4]
-  
-  ret
-
-end
-
-// ; start_thread(param)
-procedure coreapi'start_thread
-
-  mov  eax, [esp + 4]
-           
-  // ; init thread
-  call code : % NEWTHREAD
-  mov  ecx, 1
-  test eax, eax
-  jz   short lErr
-
-  mov  ebx, code : "$native'coreapi'default_thread_handler"
-  call code : % INIT_ET
-
-  push  eax
-  mov   ecx, EXEC_MESSAGE_ID
-  mov   esi, [eax - 4]
-  call [esi + 4]
-  
-  // ; close thread
-  call code : % CLOSETHREAD
-
-  xor  eax, eax
-
-lErr:
-  
-  ret 4
-end
-
 // ; eax - str, esi - index; eax = 0 if err ; ecx - out
 procedure coreapi'strtochar
 
@@ -2727,7 +2492,7 @@ labEnd:
 
 end
 
-procedure coreapi'wequal
+procedure coreapi'sequal
 
   mov  esi, edi              // s2
   mov  edx, eax              // s1
@@ -2735,7 +2500,7 @@ procedure coreapi'wequal
   mov  eax, 0
   cmp  ecx, [esi-8]          // compare with s2.length
   jnz  short Lab1
-  add  ecx, 2
+  add  ecx, 1
 Lab2:
   mov  ebx, [esi]
   cmp  ebx,  [edx]
@@ -2752,7 +2517,7 @@ Lab1:
 
 end
 
-procedure coreapi'sequal
+procedure coreapi'wequal
 
   mov  esi, edi              // s2
   mov  edx, eax              // s1
@@ -2760,7 +2525,7 @@ procedure coreapi'sequal
   mov  eax, 0
   cmp  ecx, [esi-8]          // compare with s2.length
   jnz  short Lab1
-  add  ecx, 1
+  add  ecx, 2
 Lab2:
   mov  ebx, [esi]
   cmp  ebx,  [edx]
@@ -2953,6 +2718,28 @@ labEnd2:
 
 end
 
+procedure coreapi'sadd
+
+  mov  edx, esi         // ; dst index
+  mov  esi, ecx         // ; src index
+  
+  add  ecx, [eax-8]  
+
+  add  edx, edi
+  add  esi, eax
+  
+labNext2:
+  mov  ebx, [esi]
+  mov  byte ptr [edx], bl
+  lea  esi, [esi+1]
+  lea  edx, [edx+1]
+  add  ecx, 1
+  jnz  short labNext2
+
+  ret
+  
+end
+
 procedure coreapi'wadd
 
   shl  esi, 1
@@ -2978,26 +2765,29 @@ labNext2:
   
 end
 
-procedure coreapi'sadd
+// ; wslen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'wslen_ch
 
-  mov  edx, esi         // ; dst index
-  mov  esi, ecx         // ; src index
-  
-  add  ecx, [eax-8]  
+   xor  esi, esi
 
-  add  edx, edi
-  add  esi, eax
-  
-labNext2:
-  mov  ebx, [esi]
-  mov  byte ptr [edx], bl
-  lea  esi, [esi+1]
-  lea  edx, [edx+1]
-  add  ecx, 1
-  jnz  short labNext2
+labNext:
+   mov  ebx, [eax]
+   cmp  ebx, 010000h
+   jl   short lab1
 
-  ret
-  
+   add  esi, 2
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret   
+   
+lab1:
+   add  esi, 1
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret   
+
 end
 
 procedure coreapi'ws_copychars
@@ -3032,6 +2822,51 @@ lab1:
   shr  esi, 1
 
   ret
+
+end
+
+// ; slen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'slen_ch
+
+   xor  esi, esi
+
+labNext:
+   mov  ebx, [eax]
+   cmp  ebx, 00000080h
+   jl   short lab1
+   cmp  ebx, 0800h
+   jl   short lab2
+   cmp  ebx, 10000h
+   jl   short lab3
+   
+   add  esi, 4
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+   
+lab1:
+   add  esi, 1
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+
+lab2:
+   add  esi, 2
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+
+lab3:
+   add  esi, 3
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret
+
+   ret
 
 end
 
@@ -3777,6 +3612,33 @@ lab1:
 
 end
 
+// ; rcopyl (eax:char, edi - target)
+procedure coreapi'chartoshorts
+
+   cmp  ecx, 010000h
+   jl   short lab1
+   
+   mov  edx, ecx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [edi + esi * 2], dx
+   add  esi, 1
+
+   mov  edx, ecx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [edi+esi * 2], dx
+   add  esi, 1
+   mov  ecx, 2
+   ret
+   
+lab1:
+   mov  [edi + esi * 2], ecx
+   add  esi, 1
+   mov  ecx, 1
+   ret
+
+end
 
 // ; (esi - index, ecx - char, edi - target ; out : ecx : length)
 procedure coreapi'chartobytes
@@ -3859,33 +3721,243 @@ lab3:
 
 end
 
-// ; rcopyl (eax:char, edi - target)
-procedure coreapi'chartoshorts
 
-   cmp  ecx, 010000h
-   jl   short lab1
-   
-   mov  edx, ecx
-   shr  edx, 10
-   add  edx, 0D7C0h
-   mov  word ptr [edi + esi * 2], dx
-   add  esi, 1
 
-   mov  edx, ecx
-   and  edx, 03FFh
-   add  edx, 0DC00h
-   mov  word ptr [edi+esi * 2], dx
-   add  esi, 1
-   mov  ecx, 2
-   ret
-   
-lab1:
-   mov  [edi + esi * 2], ecx
-   add  esi, 1
-   mov  ecx, 1
-   ret
+
+
+
+
+
+
+
+
+
+
+
+
+procedure coreapi'openframe
+
+  mov ebx, code : % OPENFRAME
+  jmp ebx
 
 end
+
+procedure coreapi'closeframe
+
+  mov ebx, code : % CLOSEFRAME
+  jmp ebx
+
+end
+
+// ; entry()
+procedure coreapi'entry
+
+  call code : % PREPARE
+  call code : % INIT
+  call code : % NEWFRAME
+  mov  ebx, code : "$native'coreapi'default_handler"
+  call code : % INIT_ET
+
+  // 'program start
+  xor  edi, edi
+  call code : "'startUp"
+
+  mov  ecx, START_MESSAGE_ID
+  mov  esi, [eax - 4]
+  call [esi + 4]
+
+  // ; exit code
+  call code : % EXIT
+
+  ret
+
+end
+
+procedure coreapi'default_handler                                                       
+
+  // ; exit code
+  call code : % EXIT
+
+end
+
+procedure coreapi'default_thread_handler
+
+  // ; exit code
+  call code : % EXITTHREAD
+
+end
+
+// ; console_vm_entry()
+procedure coreapi'vm_console_entry
+
+  push ebx
+  push ecx
+  push edi
+  push esi
+  push ebp
+  
+  call code : % INIT
+
+  pop  ebp
+  pop  esi
+  pop  edi
+  pop  ecx
+  pop  ebx
+                                                           
+  ret
+
+end
+
+// ; new ebx - size, 
+procedure coreapi'reallocate
+
+  push eax
+  call code : %CALC_SIZE
+
+  call code : %GET_COUNT  
+  mov  ecx, esi
+  
+  call code : %GC_ALLOC
+
+  mov  esi, ecx
+  call code : %SET_COUNT
+
+  mov  edi, eax
+  pop  esi
+
+labNext:
+  mov  edx, [edi]
+  mov  [esi], edx
+  add  edi, 4
+  add  esi, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+  ret
+
+end
+
+procedure coreapi'alloc_index
+
+  mov  eax, [stat : "$elena'@referencetable"]
+  
+  test eax, eax
+  jnz  short labStart
+
+  mov  ebx, 020h
+  call code : %CALC_SIZE
+  nop
+  call code : %GC_ALLOC  
+  xor  esi, esi
+  call code : %SET_COUNT 
+
+  mov  [stat : "$elena'@referencetable"], eax
+
+labStart:
+  // ; try to increase eax
+  call code : %GET_COUNT  
+  add  esi, 1  
+  call code : %SET_COUNT   // ; if the object size cannot be expanded - returns 0    
+  test esi, esi
+  // ; if enough place jump to the indexing part
+  jnz  short labIndex
+
+  // ; try to reuse existing slots
+  call code : %GET_COUNT
+  mov  ecx, esi
+  xor  edx, edx
+  mov  esi, eax
+labNext:
+  cmp  [esi], 0
+  jz   short labReuse
+  add  esi, 4
+  add  edx, 1
+  sub  ecx, 1 
+  ja   short labNext                                                                                               
+
+  // ; if no place reallocate the reference table
+  call code : %GET_COUNT
+  mov  ebx, esi
+  add  ebx, 10h
+
+  call code : "$native'coreapi'reallocate"
+
+  mov  [stat : "$elena'@referencetable"], eax
+  jmp  labStart
+
+labReuse:
+  mov  [eax + esi * 4], const : "system'nil"
+  jmp  short labEnd
+  
+labIndex:
+  sub  esi, 1
+  mov  [eax + esi * 4], const : "system'nil"
+labEnd:
+
+  ret
+
+end
+
+// ; free_index
+procedure coreapi'free_index
+
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  [ebx + esi * 4], 0
+  
+  ret
+
+end
+
+// ; resolve_index (index)
+procedure coreapi'resolve_index
+
+  mov  ebx, [esp + 4]
+  mov  edx, [ebx]
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  eax, [esi + edx * 4]
+  
+  ret 4
+
+end
+
+procedure coreapi'resolve_index_value
+
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  eax, [ebx + esi * 4]
+  
+  ret
+
+end
+
+// ; start_thread(param)
+procedure coreapi'start_thread
+
+  mov  eax, [esp + 4]
+           
+  // ; init thread
+  call code : % NEWTHREAD
+  mov  ecx, 1
+  test eax, eax
+  jz   short lErr
+
+  mov  ebx, code : "$native'coreapi'default_thread_handler"
+  call code : % INIT_ET
+
+  push  eax
+  mov   ecx, EXEC_MESSAGE_ID
+  mov   esi, [eax - 4]
+  call [esi + 4]
+  
+  // ; close thread
+  call code : % CLOSETHREAD
+
+  xor  eax, eax
+
+lErr:
+  
+  ret 4
+end
+
 
 procedure coreapi'lrndnew
 
@@ -4010,76 +4082,6 @@ labEnd:
   pop  edi
   sub  ecx, edi
   ret
-
-end
-
-// ; slen_ch - ecx - len, eax - charr, esi - result 
-procedure coreapi'slen_ch
-
-   xor  esi, esi
-
-labNext:
-   mov  ebx, [eax]
-   cmp  ebx, 00000080h
-   jl   short lab1
-   cmp  ebx, 0800h
-   jl   short lab2
-   cmp  ebx, 10000h
-   jl   short lab3
-   
-   add  esi, 4
-   lea  eax, [eax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   ret
-   
-lab1:
-   add  esi, 1
-   lea  eax, [eax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   ret
-
-lab2:
-   add  esi, 2
-   lea  eax, [eax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   ret
-
-lab3:
-   add  esi, 3
-   lea  eax, [eax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   ret
-
-   ret
-
-end
-
-// ; wslen_ch - ecx - len, eax - charr, esi - result 
-procedure coreapi'wslen_ch
-
-   xor  esi, esi
-
-labNext:
-   mov  ebx, [eax]
-   cmp  ebx, 010000h
-   jl   short lab1
-
-   add  esi, 2
-   lea  eax, [eax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   ret   
-   
-lab1:
-   add  esi, 1
-   lea  eax, [eax + 4]
-   sub  ecx, 1
-   jnz  short labNext
-   ret   
 
 end
 
