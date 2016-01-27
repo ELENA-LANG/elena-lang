@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debugcontrollerH
@@ -103,7 +103,6 @@ protected:
 
       virtual const char* getLiteral(const char* def) { return def; } // !! temporal not supported
       virtual const wide_c* getLiteral(const wide_c* def) { return def; } // !! temporal not supported
-
 
       void setSize(size_t size)
       {

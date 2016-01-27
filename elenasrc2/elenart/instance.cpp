@@ -61,9 +61,11 @@ bool Instance :: loadConfig(path_t configFile)
    return true;
 }
 
-void Instance :: init(void* debugSection, ident_t package, path_t configPath)
+void Instance :: init(void* debugSection, path_t configPath)
 {
-   _debugSection.init(debugSection);
+   IdentifierString package;
+
+   _debugSection.init(debugSection, package);
 
    loadConfig(configPath);
    _loader.setNamespace(package);

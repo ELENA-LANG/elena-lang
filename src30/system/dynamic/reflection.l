@@ -4,17 +4,8 @@
 
 #symbol $classControl =
 {
-    #method(stacksafe) readName : anObject &bytearray:aBuffer &vint:aLength
-        => system'core_routines'load_classname.
-
     #method(stacksafe) readLength : anObject &vint:aLength        
         => system'core_routines'arrptr_getLen.        
-}.
-
-#symbol $subjectControl =
-{
-    #method(stacksafe) readName:anObject &bytearray:aBuffer &vint:aLength
-        => system'core_routines'load_subjname.
 }.
 
 // --- classOp ---
@@ -47,10 +38,11 @@
 
     #method className
     [
-        #var(type:int)aLength := 255.
         #var(type:bytearray,size:256)aBuffer.
-        
-        $classControl readName:self &bytearray:aBuffer &vint:aLength.
+        #var(type:int)aLength := system'external LoadClassName 
+            &ref:self
+            &bytearray:aBuffer
+            &int:255.
         
         (aLength == 0)
             ? [ #throw NotSupportedException new:"Reflection functionality is not supported". ].
@@ -72,13 +64,7 @@
     #method(stacksafe) $equalSubject : anObject
         => system'core_routines'subject_equal.
     
+    /// obsolete
     #method(stacksafe) name
-    [
-        #var(type:int)aLength := 255.
-        #var(type:bytearray,size:256)aBuffer.
-                
-        $subjectControl readName:self &bytearray:aBuffer &vint:aLength.
-        
-        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-    ]
+        = self literal.
 }

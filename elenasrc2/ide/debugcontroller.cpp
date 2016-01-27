@@ -476,15 +476,18 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
 
 bool DebugController :: loadDebugData(StreamReader& reader, bool setEntryAddress)
 {
+   IdentifierString reference;
    if (setEntryAddress) {
       // read entry point
       _entryPoint = reader.getDWord();
 
       if (_entryPoint != 0)
          setEntryAddress = false;
+
+      // skip project namespace
+      reader.readString(reference);
    }
 
-   IdentifierString reference;
    while (!reader.Eof()) {
       // read reference
       reader.readString(reference);

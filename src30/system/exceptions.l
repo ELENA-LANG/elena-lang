@@ -13,16 +13,13 @@
         #var(type:intarray,size:64)aStack.
         #var(type:int)aLength.
         
-        system'core_routines'callstack_load eval
+        system'external core_callstack_load
             &intarray:aStack
-            &length:64
+            &int:64
             &vint:aLength.
             
         theStack := IntArray new &int:0 &int:aLength &intarray:aStack.            
     ]
-    
-    #method(stacksafe) $read &int:anIndex &bytearray:aBuffer &vint:aLength
-        => system'core_routines'callstack_readaddressinfo.
     
     /// Generates the call stack literal representation
     #method literal
@@ -30,13 +27,19 @@
         #var(type:int)anIndex := 0.
         #var(type:int)aLength := theStack length.
         #var(type:int)aBufferLength := 0.
+        #var(type:int)address.
 
         #var(type:bytearray,size:512)aBuffer.
         #var(type:literal)aCallStackText := emptyLiteralValue.                
         #loop (anIndex < aLength) ?
         [
-            aBufferLength := 512.
-            $self $read &int:anIndex &bytearray:aBuffer &vint:aBufferLength.
+            theStack read &int:anIndex &vint:address.
+            
+            aBufferLength := system'external LoadAddressInfo
+                &int:address 
+                &bytearray:aBuffer
+                &int:512.
+            
             (aBufferLength > 0)
                 ? [ aCallStackText := aCallStackText add &literal:(LiteralValue $new &int:0 &int:aBufferLength &bytearray:aBuffer) add &literal:('newLine literal). ].
             

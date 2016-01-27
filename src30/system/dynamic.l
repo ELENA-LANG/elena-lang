@@ -105,6 +105,14 @@
     #method(stacksafe) equal &subject : aSubject
         => system'core_routines'subject_equal.
         
+    #method(stacksafe)literal
+    [
+        #var(type:bytearray,size:256)aBuffer.        
+        #var(type:int)aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]
+        
     /// Qualifies incoming messages and redirects to the target
     #method => system'core_routines'qualify_message.
 }

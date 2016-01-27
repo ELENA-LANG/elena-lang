@@ -323,12 +323,6 @@ namespace _ELENA_
    const int lnObjectSize          = 0x00000004;
 
    const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
-   const int lnVMAPI_LoadName      = 0x00001003;   // reference to LoadClassName function;
-   const int lnVMAPI_Interprete    = 0x00001005;   // reference to Interprete function;
-   const int lnVMAPI_GetLastError  = 0x00001006;   // reference to GetLastError function;
-   const int lnVMAPI_LoadAddrInfo  = 0x00001007;   // reference to LoadAddressInfo function;
-   const int lnVMAPI_LoadSubjectName = 0x00001008;   // reference to LoadSubjectName function;
-   const int lnVMAPI_LoadSubject   = 0x00001009;   // reference to LoadSubject function;
 
   // ELENA run-time exceptions
    #define ELENA_ERR_OUTOF_MEMORY  0x190
@@ -488,6 +482,7 @@ namespace _ELENA_
    #define INTERNAL_MASK_LEN        12
    #define COREAPI_MASK_LEN         5 
 
+   #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
    #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
    #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it

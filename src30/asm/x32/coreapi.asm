@@ -5,7 +5,6 @@ define INIT_RND          10012h
 define INIT              10013h
 define NEWFRAME          10014h
 define INIT_ET           10015h
-define LOAD_CLASSNAME    10018h
 define OPENFRAME         10019h
 define CLOSEFRAME        1001Ah
 define NEWTHREAD         1001Bh
@@ -14,11 +13,7 @@ define EXIT              1001Dh
 define CALC_SIZE         1001Eh
 define SET_COUNT         1001Fh
 define GET_COUNT         10020h
-define LOAD_ADDRESSINFO  10023h
-define LOAD_CALLSTACK    10024h
 define PREPARE           10027h
-define LOAD_SUBJECT      10028h
-define LOAD_SUBJECTNAME  10029h
 define EXITTHREAD        1002Ah
 
 define CORE_OS_TABLE     20009h
@@ -35,6 +30,40 @@ define SUBJECT_MASK     000FFFFF0h
 define INV_SUBJECT_MASK 0FF00000Fh
 
 // ; --- API ---
+
+procedure coreapi'core_callstack_load
+
+  mov  edx, [esp]
+  xor  esi, esi                                                                             
+  mov  ebx, ebp
+
+labNext:
+  mov  edx, [ebx + 4]
+  cmp  [ebx], 0
+  jnz  short labSave
+  test edx, edx
+  jz   short labEnd
+  mov  ebx, edx
+  jmp  short labNext                              
+
+labSave:
+  mov  [eax + esi * 4], edx
+  add  esi, 1
+  cmp  esi, ecx
+  jge  short labEnd
+  mov  ebx, [ebx]
+  jmp  short labNext                              
+
+labEnd:
+  ret  
+
+end
+
+
+
+
+
+
 
 procedure coreapi'openframe
 
@@ -108,23 +137,6 @@ procedure coreapi'vm_console_entry
   pop  ebx
                                                            
   ret
-
-end
-
-// ; load_classname(object,out buffer, out length)
-procedure coreapi'load_classname
-
-  mov  eax, [esp + 12]
-  mov  esi, [eax]
-  mov  eax, [esp + 8]
-  mov  edi, [esp + 4]
-  
-  call code : % LOAD_CLASSNAME
-
-  mov  edi, [esp + 12]
-  mov  [edi], eax
-  
-  ret 12
 
 end
 
@@ -276,42 +288,6 @@ procedure coreapi'start_thread
 lErr:
   
   ret 4
-end
-
-// ; load_addressinfo(array,index,out buffer, out length)
-procedure coreapi'load_addressinfo
-
-  mov  eax, [esp + 4]
-  mov  ebx, [esp + 8]
-  mov  edx, [ebx]
-  mov  ecx, [eax + edx * 4]
-
-  mov  eax, [esp + 16]
-  mov  esi, [eax]
-  mov  eax, [esp + 12]
-
-  call code : % LOAD_ADDRESSINFO
-
-  mov  edi, [esp + 16]
-  mov  [edi], eax
-  
-  ret 16
-                                                     
-end
-
-// ; load_addressinfo(array,max length,out length)
-procedure coreapi'load_callstack
-
-  mov  eax, [esp + 4]
-  mov  ecx, [esp + 8]
-
-  call code : % LOAD_CALLSTACK
-
-  mov  edi, [esp + 12]
-  mov  [edi], esi
-
-  ret 12
-
 end
 
 // ; rcopyl (eax:src, edi:tgt)
@@ -4152,33 +4128,4 @@ labEnd:
    mov  esi, ebx
    ret  20
    
-end
-
-// ; load_classname(object), esi - subj index
-procedure coreapi'load_subject
-
-  mov  eax, [esp + 4]
-  
-  call code : % LOAD_SUBJECT
-
-  mov  esi, ecx
-  
-  ret 4
-
-end
-
-// ; load_subjname(out buffer, out length) , ecx - subject
-procedure coreapi'load_subjname
-
-  mov  eax, [esp + 8]
-  mov  esi, [eax]
-  mov  eax, [esp + 4]
-
-  call code : % LOAD_SUBJECTNAME
-
-  mov  edi, [esp + 8]
-  mov  [edi], eax
-  
-  ret 8
-
 end

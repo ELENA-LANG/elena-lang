@@ -30,13 +30,16 @@ public:
          _section = section;
          _length = length;
       }
-      void init(void* section)
+      void init(void* section, IdentifierString& package)
       {
          _section = section;
          _length = 4;
 
          MemoryReader reader(this);
          _length = reader.getDWord();
+
+         reader.getDWord();
+         reader.readString(package);
       }
 
       virtual size_t Length() const
@@ -99,7 +102,7 @@ public:
    void* loadSymbol(ident_t name);
    void* loadSubject(ident_t name);
 
-   void init(void* debugSection, ident_t package, path_t configPath);
+   void init(void* debugSection, path_t configPath);
 
    Instance(path_t rootPath);
 

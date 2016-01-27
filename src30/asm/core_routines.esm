@@ -3542,6 +3542,7 @@ procedure symbol_new
   aloadsi 3   // ; read aName parameter
   pusha
   callextr extern : LoadSymbol
+  pop
   ifn labError 0
   popb 
   nsave
@@ -3674,42 +3675,6 @@ procedure subject_equal
   nequal
   selectr const : system'false const : system'true
   quitn 2
-  
-end
-
-// ; callstack_load(array,length,out'length)
-procedure callstack_load
-
-  aloadsi 3
-  pusha
-  aloadsi 3
-  nload
-  pushd
-  aloadsi 3
-  pusha
-  callr api : coreapi'load_callstack
-  quitn 3
-
-end
-
-// ; callstack_readaddressinfo (index, shortarray, length)
-procedure callstack_readaddressinfo
-
-  pusha
-  aloadsi 5
-  pusha
-  aloadsi 5
-  pusha
-  aloadsi 5
-  pusha
-  aloadsi 5
-  aloadai 0
-  pusha
-
-  // ; load_addressinfo(array,index,out buffer, out length)
-  callr api : coreapi'load_addressinfo
-  popa
-  quitn 4
   
 end
 
@@ -4655,26 +4620,6 @@ labEnd:
         
 end
 
-procedure load_classname
-
-  aloadsi 4
-  pusha
-  aloadsi 4
-  pusha
-  aloadsi 4
-  pusha
-  callr api : coreapi'load_classname
-  ifr labErr 0
-  quitn 4
- 
-labErr:
-  open 1
-  pushr class : system'InvalidArgumentException
-  pushr const : %new[0]
-  throw
-
-end
-
 procedure arrptr_getLen
 
   ecopy 0
@@ -5250,7 +5195,8 @@ procedure subj_load
   pusha
   aloadsi 3
   pusha
-  callr api : coreapi'load_subject
+  callextr extern : LoadSubject
+  pop
   ifn labErr 0
   popb
   nsave
@@ -5265,27 +5211,6 @@ labErr:
   throw
 
   quitn 2
-
-end
-
-procedure load_subjname
-
-  aloadsi 4
-  pusha
-  aloadsi 4
-  pusha
-  aloadsi 4
-  nload
-  ecopyd
-  callr api : coreapi'load_subjname
-  ifr labErr 0
-  quitn 4
- 
-labErr:
-  open 1
-  pushr class : system'InvalidArgumentException
-  pushr const : %new[0]
-  throw
 
 end
 

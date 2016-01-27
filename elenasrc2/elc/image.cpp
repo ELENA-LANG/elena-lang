@@ -42,6 +42,9 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
 
+   // save root namespace
+   _debug.writeLiteral(_debug.Length(), getNamespace());
+
    helper.beforeLoad(compiler, *this);
 
    // initialize compiler inline code

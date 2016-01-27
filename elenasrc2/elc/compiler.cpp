@@ -3695,7 +3695,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
          scope.raiseError(errInvalidOperation, terminal);
 
-      if (classInfo.size == 0)
+      if (classInfo.size == 0 && !test(classInfo.header.flags, elWrapper))
          scope.raiseError(errInvalidOperation, terminal);
 
       flags = classInfo.header.flags;
@@ -3754,11 +3754,14 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
 
    bool rootMode = test(mode, HINT_ROOT);
    bool stdCall = false;
+   bool apiCall = false;
 
    ident_t dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
    if (emptystr(dllName)) {
       // if run time dll is used
       dllName = RTDLL_FORWARD;
+      if (StringHelper::compare(node.Terminal(), COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
    }
    else dllName = moduleScope->project->resolveExternalAlias(dllAlias, stdCall);
 
@@ -3766,10 +3769,18 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    if (emptystr(dllName))
       dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
 
-   ReferenceNs name(DLL_NAMESPACE);
-   name.combine(dllName);
-   name.append(".");
-   name.append(node.Terminal());
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(node.Terminal());
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(node.Terminal());
+   }
 
    ref_t reference = moduleScope->module->mapReference(name);
 
@@ -3782,7 +3793,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
    }
 
    // To tell apart coreapi calls, the name convention is used
-   if (StringHelper::compare(node.Terminal(), COREAPI_MASK, COREAPI_MASK_LEN)) {
+   if (apiCall) {
       scope.writer->newNode(lxCoreAPICall, reference);
    }
    else scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);

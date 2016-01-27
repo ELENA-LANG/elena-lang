@@ -7,7 +7,6 @@ define NEWFRAME             10014h
 define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
-define LOAD_CLASSNAME       10018h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
@@ -17,13 +16,9 @@ define CALC_SIZE            1001Eh
 define SET_COUNT            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
-define LOAD_ADDRESSINFO     10023h
-define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
-define LOAD_SUBJECT         10028h
-define LOAD_SUBJECTNAME     10029h
 define NEW_EVENT            10101h
 
 define CORE_EXCEPTION_TABLE 20001h
@@ -31,20 +26,9 @@ define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
 define CORE_STAT_COUNT      20004h
 define CORE_STATICROOT      20005h
-define CORE_RT_TABLE        20006h
 define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
 define CORE_OS_TABLE        20009h
-
-// CORE RT TABLE OFFSETS
-define rt_Instance      0000h
-define rt_loadName      0004h
-define rt_interprete    0008h
-define rt_lasterr       000Ch
-define rt_loadaddrinfo  0010h
-define rt_loadSubject   0014h
-define rt_loadSubjName  0018h
-define rt_loadMssgName  001Ch
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -1271,34 +1255,6 @@ procedure % RESTORE_ET
 
 end 
 
-// ; get class name
-// ; in:  esi - max length, eax - PSTR, edi - object
-// ; out: eax - PSTR, esi - length
-procedure % LOAD_CLASSNAME
-
-  push esi
-  push eax
-  mov  edx, [edi-elVMTOffset]
-  push edx
-
-  mov  esi, data : %CORE_RT_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call LoadClassName (instance, object,out buffer, maxlength)
-  push eax
-  mov  edx, [esi + rt_loadName] 
-  call edx
-  lea  esp, [esp+4]  
-
-labEnd:
-  lea  esp, [esp+0Ch]  
-  ret
-
-end
-
 // ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
 // ; does not affect eax
 procedure % OPENFRAME
@@ -1584,115 +1540,6 @@ procedure % GET_COUNT
 
   mov  esi, [eax - elCountOffset]
   shr  esi, 2
-  ret
-
-end
-
-// ; load address info
-// ; in:  esi - max length, eax - PSTR, ecx - address
-// ; out: eax - PSTR, esi - length
-procedure % LOAD_ADDRESSINFO
-
-  push esi
-  push eax
-  push ecx
-
-  mov  esi, data : %CORE_RT_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call LoadAddressInfo (instance, ret point,out buffer, maxlength)
-  push eax
-  mov  edx, [esi + rt_loadaddrinfo] 
-  call edx
-  lea  esp, [esp+4]  
-
-labEnd:
-  lea  esp, [esp+0Ch]  
-  ret
-  
-end
-
-// ; eax - buffer, ecx - max length ; esi - actual length
-procedure % LOAD_CALLSTACK
-
-  mov  edx, [esp]
-  xor  esi, esi                                                                             
-  mov  ebx, ebp
-
-labNext:
-  mov  edx, [ebx + 4]
-  cmp  [ebx], 0
-  jnz  short labSave
-  test edx, edx
-  jz   short labEnd
-  mov  ebx, edx
-  jmp  short labNext                              
-
-labSave:
-  mov  [eax + esi * 4], edx
-  add  esi, 1
-  cmp  esi, ecx
-  jge  short labEnd
-  mov  ebx, [ebx]
-  jmp  short labNext                              
-
-labEnd:
-  ret  
-
-end
-
-// ; get subject name
-// ; in:  esi - max length, eax - PSTR, ecx - message
-// ; out: eax - PSTR, esi - length
-procedure % LOAD_SUBJECTNAME
-
-  push esi
-  push eax
-  push ecx
-
-  mov  esi, data : %CORE_RT_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call LoadClassName (instance, object,out buffer, maxlength)
-  push eax
-  mov  edx, [esi + rt_loadSubjName] 
-  call edx
-  lea  esp, [esp+4]  
-
-labEnd:
-  lea  esp, [esp+0Ch]  
-  ret
-
-end
-
-// ; get class name
-// ; in:  eax - PSTR subject name
-// ; out: ecx - subject id
-procedure % LOAD_SUBJECT
-
-  push eax
-
-  mov  esi, data : %CORE_RT_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call LoadSubject (instance, name)
-  push eax
-  mov  edx, [esi + rt_loadSubject] 
-  call edx
-  lea  esp, [esp+4]  
-  mov  ecx, eax
-
-labEnd:
-  lea  esp, [esp+04]  
   ret
 
 end

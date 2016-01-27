@@ -26,7 +26,6 @@ const int elObjectOffset   = 0x0010;           // object header / offset constan
 #define INIT_ET              0x10015
 #define ENDFRAME             0x10016
 #define RESTORE_ET           0x10017
-#define LOAD_CLASSNAME       0x10018
 #define OPENFRAME            0x10019
 #define CLOSEFRAME           0x1001A
 #define NEWTHREAD            0x1001B
@@ -36,13 +35,9 @@ const int elObjectOffset   = 0x0010;           // object header / offset constan
 #define SET_COUNT            0x1001F
 #define GET_COUNT            0x10020
 #define THREAD_WAIT          0x10021
-#define LOAD_ADDRESSINFO     0x10023
-#define LOAD_CALLSTACK       0x10024
 #define NEW_HEAP             0x10025
 #define BREAK                0x10026
 #define PREPARE              0x10027
-#define LOAD_SUBJECT         0x10028
-#define LOAD_SUBJECTNAME     0x10029
 #define EXITTHREAD           0x1002A
 #define NEW_EVENT            0x10101
 
@@ -51,7 +46,6 @@ const int elObjectOffset   = 0x0010;           // object header / offset constan
 #define CORE_GC_SIZE         0x20003
 #define CORE_STAT_COUNT      0x20004
 #define CORE_STATICROOT      0x20005
-#define CORE_RT_TABLE        0x20006
 #define CORE_TLS_INDEX       0x20007
 #define CORE_THREADTABLE     0x20008
 #define CORE_OS_TABLE        0x20009
@@ -64,13 +58,13 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 27;
+const int coreFunctionNumber = 22;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
-   LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
-   CALC_SIZE, SET_COUNT, GET_COUNT, LOAD_ADDRESSINFO, THREAD_WAIT, EXITTHREAD,
-   LOAD_CALLSTACK, PREPARE, LOAD_SUBJECT, LOAD_SUBJECTNAME, NEW_EVENT
+   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
+   CALC_SIZE, SET_COUNT, GET_COUNT, THREAD_WAIT, EXITTHREAD,
+   PREPARE, NEW_EVENT
 };
 
 // preloaded gc commands
@@ -159,8 +153,6 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
 };
-
-//const int gcExtensionNumber = EXTENSION_COUNT;
 
 // --- x86JITCompiler commands ---
 
@@ -499,8 +491,12 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
 void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
 {
    // if it is internal native call
-   if (scope.argument & mskAnyRef == mskInternalRef) {      
-      opcode = bcCallR;
+   if ((scope.argument & mskAnyRef) == mskNativeCodeRef) {
+      compileCallR(opcode, scope);
+      // mov esi, eax
+      scope.code->writeWord(0xF08B);
+
+      return;
    }
 
    MemoryWriter* writer = scope.code;
@@ -1426,16 +1422,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    _preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
    rdataWriter.writeDWord(0);
 
-   // RT TABLE
-   _preloaded.add(CORE_RT_TABLE, helper.getVAddress(dataWriter, mskDataRef));
-
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadName));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Interprete));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadAddrInfo));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSubject));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSubjectName));
    
    x86JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0 ; i < coreFunctionNumber ; i++) {

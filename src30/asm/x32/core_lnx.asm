@@ -7,7 +7,6 @@ define NEWFRAME             10014h
 define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
-define LOAD_CLASSNAME       10018h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
@@ -18,7 +17,6 @@ define SET_COUNT            1001Fh
 define GET_COUNT            10020h
 define LOCK                 10021h
 define UNLOCK               10022h
-define LOAD_ADDRESSINFO     10023h
 define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h

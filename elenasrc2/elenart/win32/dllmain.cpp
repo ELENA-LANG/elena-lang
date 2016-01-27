@@ -24,25 +24,24 @@ void loadDLLPath(HMODULE hModule, Path& rootPath)
 
 // ==== DLL entries ====
 
-EXTERN_DLL_EXPORT void* Init(void* debugSection, ident_t package)
+void init(HMODULE hModule)
 {
-   if (instance) {
-      if (debugSection == NULL) {
-         Instance::ImageSection section;
-         section.init((void*)0x400000, 0x1000);
+   Path rootPath;
+   loadDLLPath(hModule, rootPath);
 
-         size_t ptr = 0;
-         PEHelper::seekSection(MemoryReader(&section), ".debug", ptr);
-         debugSection = (void*)ptr;
-      }
+   instance = new Instance(rootPath);
 
-      Path configPath;
-      Path::loadPath(configPath, CONFIG_PATH);
-      instance->init(debugSection, package, configPath);
+   void* debugSection = NULL;
+   Instance::ImageSection section;
+   section.init((void*)0x400000, 0x1000);
 
-      return instance;
-   }
-   else return 0;
+   size_t ptr = 0;
+   PEHelper::seekSection(MemoryReader(&section), ".debug", ptr);
+   debugSection = (void*)ptr;
+
+   Path configPath;
+   Path::loadPath(configPath, CONFIG_PATH);
+   instance->init(debugSection, configPath);
 }
 
 EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
@@ -50,36 +49,35 @@ EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t
    return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-EXTERN_DLL_EXPORT int LoadAddressInfo(void* instance, size_t retPoint, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, ident_c* lineInfo, int length)
 {
-   return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
+   return instance->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* buffer, int length)
+EXTERN_DLL_EXPORT int LoadClassName(void* object, ident_c* buffer, int length)
 {
-   return ((Instance*)instance)->loadClassName((size_t)object, buffer, length);
+   return instance->loadClassName((size_t)object, buffer, length);
 }
 
-EXTERN_DLL_EXPORT void* Interpreter(void* instance, void* tape)
+EXTERN_DLL_EXPORT void* Interpreter(void* tape)
 {
    // !! terminator code
    return NULL;
 }
 
-EXTERN_DLL_EXPORT void* GetRTLastError(void* instance, void* retVal)
+EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
 {
-   // !! terminator code
    return NULL;
 }
 
-EXTERN_DLL_EXPORT int LoadSubjectName(void* instance, void* subject, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, ident_c* lineInfo, int length)
 {
-   return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
+   return instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
+EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
 {
-   return ((Instance*)instance)->loadSubject((ident_t)subjectName);
+   return instance->loadSubject((ident_t)subjectName);
 }
 
 EXTERN_DLL_EXPORT int LoadMessageName(void* subject, ident_c* lineInfo, int length)
@@ -104,10 +102,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    {
    case DLL_PROCESS_ATTACH:
    {
-      Path rootPath;
-      loadDLLPath(hModule, rootPath);
-
-      instance = new Instance(rootPath);
+      init(hModule);
       return TRUE;
    }
    case DLL_THREAD_ATTACH:

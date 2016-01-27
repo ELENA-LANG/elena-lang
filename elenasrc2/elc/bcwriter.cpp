@@ -894,7 +894,7 @@ void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, 
 void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount)
 {
    // callextr ref
-   tape.write(bcCallExtR, functionReference | mskInternalRef, paramCount);
+   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
 }
 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
@@ -2720,7 +2720,7 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
 void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
 {
    bool stdCall = (node == lxStdExternalCall);
-   bool apiCall = (node == lxStdExternalCall);
+   bool apiCall = (node == lxCoreAPICall);
 
    // compile argument list
    ExternalScope externalScope;      
