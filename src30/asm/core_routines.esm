@@ -3541,7 +3541,7 @@ procedure symbol_new
   pusha
   aloadsi 3   // ; read aName parameter
   pusha
-  callr api : coreapi'load_symbol
+  callextr extern : 'dlls'$rt.LoadSymbol
   ifr labError 0
   popb 
   axsavebi 0

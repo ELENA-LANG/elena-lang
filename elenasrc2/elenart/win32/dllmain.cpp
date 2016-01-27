@@ -60,11 +60,6 @@ EXTERN_DLL_EXPORT int LoadClassName(void* instance, void* object, ident_c* buffe
    return ((Instance*)instance)->loadClassName((size_t)object, buffer, length);
 }
 
-EXTERN_DLL_EXPORT void* GetSymbolRef(void* instance, void* referenceName)
-{
-   return ((Instance*)instance)->loadSymbol((ident_t)referenceName);
-}
-
 EXTERN_DLL_EXPORT void* Interpreter(void* instance, void* tape)
 {
    // !! terminator code
@@ -90,6 +85,11 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
 EXTERN_DLL_EXPORT int LoadMessageName(void* subject, ident_c* lineInfo, int length)
 {
    return instance->loadMessageName((size_t)subject, lineInfo, length);
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
+{
+   return instance->loadSymbol((ident_t)referenceName);
 }
 
 // --- dllmain ---

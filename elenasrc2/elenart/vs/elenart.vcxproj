@@ -75,6 +75,9 @@
       <TargetMachine>MachineX86</TargetMachine>
       <Version>9.4</Version>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\..\engine</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -135,6 +138,10 @@
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\win32\pehelper.h" />
     <ClInclude Include="..\instance.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="elenart.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

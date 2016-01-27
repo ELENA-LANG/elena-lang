@@ -20,7 +20,6 @@ const int elObjectOffset   = 0x0010;           // object header / offset constan
 // --- ELENA CORE built-in routines
 #define GC_ALLOC	           0x10001
 #define HOOK                 0x10010
-#define LOAD_SYMBOL          0x10011
 #define INIT_RND             0x10012
 #define INIT                 0x10013
 #define NEWFRAME             0x10014
@@ -65,13 +64,13 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 28;
+const int coreFunctionNumber = 27;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    LOAD_CLASSNAME, OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
    CALC_SIZE, SET_COUNT, GET_COUNT, LOAD_ADDRESSINFO, THREAD_WAIT, EXITTHREAD,
-   LOAD_CALLSTACK, PREPARE, LOAD_SUBJECT, LOAD_SUBJECTNAME, LOAD_SYMBOL, NEW_EVENT
+   LOAD_CALLSTACK, PREPARE, LOAD_SUBJECT, LOAD_SUBJECTNAME, NEW_EVENT
 };
 
 // preloaded gc commands
@@ -1431,7 +1430,6 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    _preloaded.add(CORE_RT_TABLE, helper.getVAddress(dataWriter, mskDataRef));
 
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadSymbol));
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_LoadName));
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Interprete));
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_GetLastError));

@@ -321,9 +321,8 @@ namespace _ELENA_
    const int lnGCYGSize            = 0x00000002;
    const int lnThreadCount         = 0x00000003;
    const int lnObjectSize          = 0x00000004;
-   // used only for VM
+
    const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
-   const int lnVMAPI_LoadSymbol    = 0x00001002;   // reference to LoadSymbol function;
    const int lnVMAPI_LoadName      = 0x00001003;   // reference to LoadClassName function;
    const int lnVMAPI_Interprete    = 0x00001005;   // reference to Interprete function;
    const int lnVMAPI_GetLastError  = 0x00001006;   // reference to GetLastError function;

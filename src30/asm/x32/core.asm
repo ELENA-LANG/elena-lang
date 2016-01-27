@@ -1,7 +1,6 @@
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
-define LOAD_SYMBOL          10011h
 define INIT_RND             10012h
 define INIT                 10013h
 define NEWFRAME             10014h
@@ -36,14 +35,13 @@ define CORE_OS_TABLE        20009h
 
 // CORE RT TABLE OFFSETS
 define rt_Instance      0000h
-define rt_loadSymbol    0004h
-define rt_loadName      0008h
-define rt_interprete    000Ch
-define rt_lasterr       0010h
-define rt_loadaddrinfo  0014h
-define rt_loadSubject   0018h
-define rt_loadSubjName  001Ch
-define rt_loadMssgName  0020h
+define rt_loadName      0004h
+define rt_interprete    0008h
+define rt_lasterr       000Ch
+define rt_loadaddrinfo  0010h
+define rt_loadSubject   0014h
+define rt_loadSubjName  0018h
+define rt_loadMssgName  001Ch
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -1078,31 +1076,6 @@ procedure % LOAD_CLASSNAME
 
 labEnd:
   lea  esp, [esp+0Ch]  
-  ret
-
-end
-
-// ; get symbol ref
-// ; in:  eax - PSTR
-// ; out: eax - address
-procedure % LOAD_SYMBOL
-
-  push eax
-
-  mov  esi, data : %CORE_RT_TABLE
-  mov  eax, [esi]
-  // ; if vm instance is zero, the operation is not possible
-  test eax, eax
-  jz   short labEnd
-
-  // ; call LoadClassName (instance, object,out buffer, maxlength)
-  push eax
-  mov  edx, [esi + rt_loadSymbol] 
-  call edx
-  lea  esp, [esp+4]  
-
-labEnd:
-  lea  esp, [esp+4h]  
   ret
 
 end

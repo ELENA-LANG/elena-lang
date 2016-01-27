@@ -3,13 +3,12 @@ define CORE_RT_TABLE   20006h
 
 // CORE RT TABLE
 define rt_Instance      0000h
-define rt_loadSymbol    0004h
-define rt_loadName      0008h
-define rt_interprete    000Ch
-define rt_lasterr       0010h
-define rt_loadaddrinfo  0014h
-define rt_loadSubject   0018h
-define rt_loadSubjName  001Ch
+define rt_loadName      0004h
+define rt_interprete    0008h
+define rt_lasterr       000Ch
+define rt_loadaddrinfo  0010h
+define rt_loadSubject   0014h
+define rt_loadSubjName  0018h
 
 rstructure core_rt'dll_name
 
@@ -64,24 +63,6 @@ rstructure core_rt'LoadClassNameFunc
    db 097 // a
    db 109 // m
    db 101 // e
-   db 0
-
-end
-
-rstructure core_rt'GetSymbolRefFunc
-
-   db 071 // G
-   db 101 // e
-   db 116 // t
-   db 083 // S
-   db 121 // y
-   db 109 // m
-   db 098 // b
-   db 111 // o
-   db 108 // l
-   db 082 // R
-   db 101 // e
-   db 102 // f
    db 0
 
 end
@@ -207,18 +188,6 @@ procedure core_rt'init_rt_info
 
   mov  esi, data : %CORE_RT_TABLE
   mov  [esi + rt_loadName], eax
-
-  mov  eax, [esp]
-  mov  esi, rdata:"$native'core_rt'GetSymbolRefFunc" 
-  push esi
-  push eax
-  call extern 'dlls'KERNEL32.GetProcAddress
-  
-  test eax, eax
-  jz   lbCannotLoadRT
-
-  mov  esi, data : %CORE_RT_TABLE
-  mov  [esi + rt_loadSymbol], eax
 
   mov  eax, [esp]
   mov  esi, rdata:"$native'core_rt'InterpreterFunc" 

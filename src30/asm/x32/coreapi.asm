@@ -1,7 +1,6 @@
 // --- System Core API  --
 define GC_ALLOC	         10001h
 define HOOK              10010h
-define LOAD_SYMBOL       10011h
 define INIT_RND          10012h
 define INIT              10013h
 define NEWFRAME          10014h
@@ -4182,12 +4181,4 @@ procedure coreapi'load_subjname
   
   ret 8
 
-end
-
-procedure coreapi'load_symbol
-
-  mov  eax, [esp+4]
-  call code : % LOAD_SYMBOL
-  ret 4
-  
 end
