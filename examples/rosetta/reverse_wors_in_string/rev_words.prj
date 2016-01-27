@@ -1,0 +1,10 @@
+﻿[project]
+executable=rev_words.exe
+namespace=reverse_words
+template=console
+debuginfo=-1
+warn:unresolved=-1
+
+[files]
+main.l
+
