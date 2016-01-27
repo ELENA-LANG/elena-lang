@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -81,6 +81,7 @@ private:
    Path           _rootPath;
    ImageSection   _debugSection;
    LibraryManager _loader;
+   MessageMap     _verbs;
 
    bool loadConfig(path_t configPath);
 
@@ -93,6 +94,7 @@ public:
 
    int loadClassName(size_t classAddress, ident_c* buffer, size_t length);
    int loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length);
+   int loadMessageName(size_t subjectRef, ident_c* buffer, size_t length);
 
    void* loadSymbol(ident_t name);
    void* loadSubject(ident_t name);

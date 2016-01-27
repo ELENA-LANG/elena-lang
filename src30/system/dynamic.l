@@ -45,10 +45,8 @@
         
     #method(stacksafe)literal
     [
-        #var(type:int)aLength := 255.
-        #var(type:bytearray,size:256)aBuffer.
-        
-        system'external LoadMessageName &mssg:$self &bytearray:aBuffer &vint:aLength.        
+        #var(type:bytearray,size:256)aBuffer.        
+        #var(type:int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
         
         ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
     ]

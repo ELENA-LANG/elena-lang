@@ -73,6 +73,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <Version>9.4</Version>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -100,6 +101,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\common\altstrings.cpp" />
     <ClCompile Include="..\..\common\config.cpp" />
+    <ClCompile Include="..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\rtman.cpp" />
@@ -126,6 +128,7 @@
     <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\tools.h" />
+    <ClInclude Include="..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\rtman.h" />

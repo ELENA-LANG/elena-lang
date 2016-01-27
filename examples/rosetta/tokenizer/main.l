@@ -5,10 +5,10 @@
 [
     #var string := "Hello,How,Are,You,Today".
     
-    #var output := (string split &by:",") reverse.
+    #var output := string split &by:"," reverse.
 
-    (string split &by:",") run &each:o
+    string split &by:"," run &each:s
     [
-        console write:(o + ".").
+        console write:(s + ".").
     ].
 ].

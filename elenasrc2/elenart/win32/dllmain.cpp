@@ -89,9 +89,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* instance, void* subjectName)
 
 EXTERN_DLL_EXPORT int LoadMessageName(void* subject, ident_c* lineInfo, int length)
 {
-   return 0;
-
-   //return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
+   return instance->loadMessageName((size_t)subject, lineInfo, length);
 }
 
 // --- dllmain ---

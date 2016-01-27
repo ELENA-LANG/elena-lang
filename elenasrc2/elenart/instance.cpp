@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -9,6 +9,7 @@
 #include "instance.h"
 #include "rtman.h"
 #include "config.h"
+#include "bytecode.h"
 
 #define PROJECT_CATEGORY            "project"
 #define LIBRARY_PATH                "libpath"
@@ -35,8 +36,9 @@ bool Instance::ImageSection :: read(size_t position, void* s, size_t length)
 // --- Instance ---
 
 Instance :: Instance(path_t rootPath)
-   : _rootPath(rootPath)
+   : _rootPath(rootPath), _verbs(0)
 {
+   ByteCodeCompiler::loadVerbs(_verbs);
 }
 
 bool Instance :: loadConfig(path_t configFile)
@@ -121,6 +123,42 @@ int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
       decodeMessage(subjectRef, subject, verb, count);
 
       return manager.readSubjectName(reader, subject, buffer, length);
+   }
+   else return 0;
+}
+
+int Instance :: loadMessageName(size_t subjectRef, ident_c* buffer, size_t length)
+{
+   RTManager manager;
+
+   // initialize image section ;
+   // it directly follows debug section
+   ImageSection subjectSection;
+   if (initSubjectSection(subjectSection)) {
+      MemoryReader reader(&subjectSection);
+
+      ref_t verb, subject;
+      int count;
+      decodeMessage(subjectRef, subject, verb, count);
+
+      ident_t verbName = retrieveKey(_verbs.start(), verb, DEFAULT_STR);
+      size_t used = getlength(verbName);
+      StringHelper::copy(buffer, verbName, used, used);
+      
+      if (subject > 0) {
+         buffer[used++] = '&';
+         used += manager.readSubjectName(reader, subject, buffer + used, length - used);
+      }      
+
+      if (count > 0) {
+         buffer[used++] = '[';
+         StringHelper::intToStr(count, buffer + used, 10);
+         used = getlength(buffer);
+         buffer[used++] = ']';
+      }
+      buffer[used] = 0;
+
+      return used;
    }
    else return 0;
 }
