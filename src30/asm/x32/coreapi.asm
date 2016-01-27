@@ -33,6 +33,9 @@ define INV_SUBJECT_MASK 0FF00000Fh
 
 procedure coreapi'core_callstack_load
 
+  mov  eax, [esp+4]
+  mov  ecx, [esp+8]
+
   mov  edx, [esp]
   xor  esi, esi                                                                             
   mov  ebx, ebp
@@ -53,8 +56,9 @@ labSave:
   jge  short labEnd
   mov  ebx, [ebx]
   jmp  short labNext                              
-
+  
 labEnd:
+  mov  eax, esi
   ret  
 
 end
@@ -87,8 +91,6 @@ procedure coreapi'entry
   call code : % NEWFRAME
   mov  ebx, code : "$native'coreapi'default_handler"
   call code : % INIT_ET
-
-  call code : "$native'core_rt'init_rt_info"  
 
   // 'program start
   xor  edi, edi

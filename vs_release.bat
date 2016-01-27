@@ -79,7 +79,6 @@ md lib30
 %1\bin\asm2binx %1\src30\asm\x32\coreapi.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\mathapi.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core_vm.asm %1\bin\x32
-%1\bin\asm2binx %1\src30\asm\x32\core_rt.asm %1\bin\x32
 %1\bin\asm2binx %1\src30\asm\x32\core_win.asm %1\bin\x32
 
 echo ========== copying bin files.. ===============

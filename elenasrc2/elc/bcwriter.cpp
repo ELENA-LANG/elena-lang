@@ -3049,7 +3049,7 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
    else {
       generateObjectExpression(tape, source);
 
-      if (source == lxExternalCall || source == lxStdExternalCall) {
+      if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
          if (target == lxLocalAddress) {
             if (node.argument == 4) {
                saveInt(tape, target.type, target.argument);

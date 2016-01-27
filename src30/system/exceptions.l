@@ -13,10 +13,9 @@
         #var(type:intarray,size:64)aStack.
         #var(type:int)aLength.
         
-        system'external core_callstack_load
+        aLength := system'external core_callstack_load
             &intarray:aStack
-            &int:64
-            &vint:aLength.
+            &int:64.
             
         theStack := IntArray new &int:0 &int:aLength &intarray:aStack.            
     ]

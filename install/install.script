@@ -28,7 +28,6 @@ cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
 echo compiling core
 ../bin/elena-asm2binx ../src30/asm/x32/core.asm ./$RELEASE/usr/lib/elena/core/x32
 ../bin/elena-asm2binx ../src30/asm/x32/core_lnx.asm ./$RELEASE/usr/lib/elena/core/x32
-../bin/elena-asm2binx ../src30/asm/x32/core_rt_lnx.asm ./$RELEASE/usr/lib/elena/core/x32
 ../bin/elena-asm2binx ../src30/asm/x32/coreapi.asm ./$RELEASE/usr/lib/elena/core/x32
 
 echo compiling lib30
