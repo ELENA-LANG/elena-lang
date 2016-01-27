@@ -3541,10 +3541,10 @@ procedure symbol_new
   pusha
   aloadsi 3   // ; read aName parameter
   pusha
-  callextr extern : 'dlls'$rt.LoadSymbol
-  ifr labError 0
+  callextr extern : LoadSymbol
+  ifn labError 0
   popb 
-  axsavebi 0
+  nsave
   acopyb
   quitn 2
 

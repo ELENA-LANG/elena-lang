@@ -286,6 +286,17 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 
          return;
       }
+      else {
+         ReferenceNs function(DLL_NAMESPACE, RTDLL_FORWARD);
+         function.append(".");
+         function.append(token.value);
+
+         size_t reference = binary->mapReference(function) | mskImportRef;
+
+         writeCommand(ByteCommand(code, reference), writer);
+
+         return;
+      }
    }
    throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }

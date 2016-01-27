@@ -12,8 +12,8 @@
 namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
-   #define ENGINE_MAJOR_VERSION     0x0009            // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0x0004
+   #define ENGINE_MAJOR_VERSION     9                 // ELENA Engine version
+   #define ENGINE_MINOR_VERSION     4
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length

@@ -1,3 +1,5 @@
+#include "elenaconst.h"
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by elenart.rc
@@ -14,3 +16,16 @@
 #endif
 
 #define ELENART_REVISION_NUMBER        3
+
+#define STRINGIZE2(s) #s
+#define STRINGIZE(s) STRINGIZE2(s)
+ 
+#define VER_FILE_VERSION_STR        STRINGIZE(ENGINE_MAJOR_VERSION)        \
+                                    "." STRINGIZE(ENGINE_MINOR_VERSION)    \
+                                    "." STRINGIZE(ELENART_REVISION_NUMBER) \
+                                    ".0" 
+
+#define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
+                                    "." STRINGIZE(ENGINE_MINOR_VERSION)    \
+                                    ".0"                                   \
+                                    ".0"                                   
