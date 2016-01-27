@@ -3,15 +3,9 @@ In development:
 ------                      
 
               xdev - general implementation     
-                       * operation with system'external should be treated as an operation with $rtdll; routines declared in coreapi should be
-                         treated in special way
-                       * core_routines should be accessed directly, do drop system'internal mask; primitive modules should be marked in the project
-
-                       * redesign interaction with core - new elena opcode - syscall n - system routine
-                       * get rid of IMPORT_FORWARD, ext_routines, redesign core_routines
-                       * get rid of internal
-                       * implement #136
                        * callr api should not be supported, instead callext api should be used
+
+                       * implement #136, #134
                        
                        * fix #213 : system'MethodNotFoundException should provide the message name  
 

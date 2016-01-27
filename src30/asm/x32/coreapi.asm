@@ -63,234 +63,7 @@ labEnd:
 
 end
 
-
-
-
-
-
-
-procedure coreapi'openframe
-
-  mov ebx, code : % OPENFRAME
-  jmp ebx
-
-end
-
-procedure coreapi'closeframe
-
-  mov ebx, code : % CLOSEFRAME
-  jmp ebx
-
-end
-
-// ; entry()
-procedure coreapi'entry
-
-  call code : % PREPARE
-  call code : % INIT
-  call code : % NEWFRAME
-  mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-
-  // 'program start
-  xor  edi, edi
-  call code : "'startUp"
-
-  mov  ecx, START_MESSAGE_ID
-  mov  esi, [eax - 4]
-  call [esi + 4]
-
-  // ; exit code
-  call code : % EXIT
-
-  ret
-
-end
-
-procedure coreapi'default_handler                                                       
-
-  // ; exit code
-  call code : % EXIT
-
-end
-
-procedure coreapi'default_thread_handler
-
-  // ; exit code
-  call code : % EXITTHREAD
-
-end
-
-// ; console_vm_entry()
-procedure coreapi'vm_console_entry
-
-  push ebx
-  push ecx
-  push edi
-  push esi
-  push ebp
-  
-  call code : % INIT
-
-  pop  ebp
-  pop  esi
-  pop  edi
-  pop  ecx
-  pop  ebx
-                                                           
-  ret
-
-end
-
-// ; new ebx - size, 
-procedure coreapi'reallocate
-
-  push eax
-  call code : %CALC_SIZE
-
-  call code : %GET_COUNT  
-  mov  ecx, esi
-  
-  call code : %GC_ALLOC
-
-  mov  esi, ecx
-  call code : %SET_COUNT
-
-  mov  edi, eax
-  pop  esi
-
-labNext:
-  mov  edx, [edi]
-  mov  [esi], edx
-  add  edi, 4
-  add  esi, 4
-  sub  ecx, 1
-  jnz  short labNext
-
-  ret
-
-end
-
-procedure coreapi'alloc_index
-
-  mov  eax, [stat : "$elena'@referencetable"]
-  
-  test eax, eax
-  jnz  short labStart
-
-  mov  ebx, 020h
-  call code : %CALC_SIZE
-  nop
-  call code : %GC_ALLOC  
-  xor  esi, esi
-  call code : %SET_COUNT 
-
-  mov  [stat : "$elena'@referencetable"], eax
-
-labStart:
-  // ; try to increase eax
-  call code : %GET_COUNT  
-  add  esi, 1  
-  call code : %SET_COUNT   // ; if the object size cannot be expanded - returns 0    
-  test esi, esi
-  // ; if enough place jump to the indexing part
-  jnz  short labIndex
-
-  // ; try to reuse existing slots
-  call code : %GET_COUNT
-  mov  ecx, esi
-  xor  edx, edx
-  mov  esi, eax
-labNext:
-  cmp  [esi], 0
-  jz   short labReuse
-  add  esi, 4
-  add  edx, 1
-  sub  ecx, 1 
-  ja   short labNext                                                                                               
-
-  // ; if no place reallocate the reference table
-  call code : %GET_COUNT
-  mov  ebx, esi
-  add  ebx, 10h
-
-  call code : "$native'coreapi'reallocate"
-
-  mov  [stat : "$elena'@referencetable"], eax
-  jmp  labStart
-
-labReuse:
-  mov  [eax + esi * 4], const : "system'nil"
-  jmp  short labEnd
-  
-labIndex:
-  sub  esi, 1
-  mov  [eax + esi * 4], const : "system'nil"
-labEnd:
-
-  ret
-
-end
-
-// ; free_index
-procedure coreapi'free_index
-
-  mov  ebx, [stat : "$elena'@referencetable"]
-  mov  [ebx + esi * 4], 0
-  
-  ret
-
-end
-
-// ; resolve_index (index)
-procedure coreapi'resolve_index
-
-  mov  ebx, [esp + 4]
-  mov  edx, [ebx]
-  mov  esi, [stat : "$elena'@referencetable"]
-  mov  eax, [esi + edx * 4]
-  
-  ret 4
-
-end
-
-procedure coreapi'resolve_index_value
-
-  mov  ebx, [stat : "$elena'@referencetable"]
-  mov  eax, [ebx + esi * 4]
-  
-  ret
-
-end
-
-// ; start_thread(param)
-procedure coreapi'start_thread
-
-  mov  eax, [esp + 4]
-           
-  // ; init thread
-  call code : % NEWTHREAD
-  mov  ecx, 1
-  test eax, eax
-  jz   short lErr
-
-  mov  ebx, code : "$native'coreapi'default_thread_handler"
-  call code : % INIT_ET
-
-  push  eax
-  mov   ecx, EXEC_MESSAGE_ID
-  mov   esi, [eax - 4]
-  call [esi + 4]
-  
-  // ; close thread
-  call code : % CLOSETHREAD
-
-  xor  eax, eax
-
-lErr:
-  
-  ret 4
-end
+// ; --- internal ---
 
 // ; rcopyl (eax:src, edi:tgt)
 procedure coreapi'longtoreal
@@ -1260,6 +1033,241 @@ lab1:
    mov  [edi-elSizeOffset], 0FFFFFFFCh
    ret
 
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+procedure coreapi'openframe
+
+  mov ebx, code : % OPENFRAME
+  jmp ebx
+
+end
+
+procedure coreapi'closeframe
+
+  mov ebx, code : % CLOSEFRAME
+  jmp ebx
+
+end
+
+// ; entry()
+procedure coreapi'entry
+
+  call code : % PREPARE
+  call code : % INIT
+  call code : % NEWFRAME
+  mov  ebx, code : "$native'coreapi'default_handler"
+  call code : % INIT_ET
+
+  // 'program start
+  xor  edi, edi
+  call code : "'startUp"
+
+  mov  ecx, START_MESSAGE_ID
+  mov  esi, [eax - 4]
+  call [esi + 4]
+
+  // ; exit code
+  call code : % EXIT
+
+  ret
+
+end
+
+procedure coreapi'default_handler                                                       
+
+  // ; exit code
+  call code : % EXIT
+
+end
+
+procedure coreapi'default_thread_handler
+
+  // ; exit code
+  call code : % EXITTHREAD
+
+end
+
+// ; console_vm_entry()
+procedure coreapi'vm_console_entry
+
+  push ebx
+  push ecx
+  push edi
+  push esi
+  push ebp
+  
+  call code : % INIT
+
+  pop  ebp
+  pop  esi
+  pop  edi
+  pop  ecx
+  pop  ebx
+                                                           
+  ret
+
+end
+
+// ; new ebx - size, 
+procedure coreapi'reallocate
+
+  push eax
+  call code : %CALC_SIZE
+
+  call code : %GET_COUNT  
+  mov  ecx, esi
+  
+  call code : %GC_ALLOC
+
+  mov  esi, ecx
+  call code : %SET_COUNT
+
+  mov  edi, eax
+  pop  esi
+
+labNext:
+  mov  edx, [edi]
+  mov  [esi], edx
+  add  edi, 4
+  add  esi, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+  ret
+
+end
+
+procedure coreapi'alloc_index
+
+  mov  eax, [stat : "$elena'@referencetable"]
+  
+  test eax, eax
+  jnz  short labStart
+
+  mov  ebx, 020h
+  call code : %CALC_SIZE
+  nop
+  call code : %GC_ALLOC  
+  xor  esi, esi
+  call code : %SET_COUNT 
+
+  mov  [stat : "$elena'@referencetable"], eax
+
+labStart:
+  // ; try to increase eax
+  call code : %GET_COUNT  
+  add  esi, 1  
+  call code : %SET_COUNT   // ; if the object size cannot be expanded - returns 0    
+  test esi, esi
+  // ; if enough place jump to the indexing part
+  jnz  short labIndex
+
+  // ; try to reuse existing slots
+  call code : %GET_COUNT
+  mov  ecx, esi
+  xor  edx, edx
+  mov  esi, eax
+labNext:
+  cmp  [esi], 0
+  jz   short labReuse
+  add  esi, 4
+  add  edx, 1
+  sub  ecx, 1 
+  ja   short labNext                                                                                               
+
+  // ; if no place reallocate the reference table
+  call code : %GET_COUNT
+  mov  ebx, esi
+  add  ebx, 10h
+
+  call code : "$native'coreapi'reallocate"
+
+  mov  [stat : "$elena'@referencetable"], eax
+  jmp  labStart
+
+labReuse:
+  mov  [eax + esi * 4], const : "system'nil"
+  jmp  short labEnd
+  
+labIndex:
+  sub  esi, 1
+  mov  [eax + esi * 4], const : "system'nil"
+labEnd:
+
+  ret
+
+end
+
+// ; free_index
+procedure coreapi'free_index
+
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  [ebx + esi * 4], 0
+  
+  ret
+
+end
+
+// ; resolve_index (index)
+procedure coreapi'resolve_index
+
+  mov  ebx, [esp + 4]
+  mov  edx, [ebx]
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  eax, [esi + edx * 4]
+  
+  ret 4
+
+end
+
+procedure coreapi'resolve_index_value
+
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  eax, [ebx + esi * 4]
+  
+  ret
+
+end
+
+// ; start_thread(param)
+procedure coreapi'start_thread
+
+  mov  eax, [esp + 4]
+           
+  // ; init thread
+  call code : % NEWTHREAD
+  mov  ecx, 1
+  test eax, eax
+  jz   short lErr
+
+  mov  ebx, code : "$native'coreapi'default_thread_handler"
+  call code : % INIT_ET
+
+  push  eax
+  mov   ecx, EXEC_MESSAGE_ID
+  mov   esi, [eax - 4]
+  call [esi + 4]
+  
+  // ; close thread
+  call code : % CLOSETHREAD
+
+  xor  eax, eax
+
+lErr:
+  
+  ret 4
 end
 
 // ; eax - str, esi - index; eax = 0 if err ; ecx - out

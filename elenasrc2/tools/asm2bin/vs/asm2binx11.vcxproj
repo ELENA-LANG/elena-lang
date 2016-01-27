@@ -99,6 +99,9 @@
       <TargetMachine>MachineX86</TargetMachine>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\..\..\engine;..</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\common\altstrings.cpp" />

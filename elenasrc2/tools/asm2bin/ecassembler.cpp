@@ -154,13 +154,6 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       token.read();
       return binary->mapReference(token.value) | mskVMTRef;
    }
-   else if (StringHelper::compare(word, "api")) {
-      token.read(":", "Invalid operand");
-      token.read();
-
-      ReferenceNs functionName(NATIVE_MODULE, token.value);
-      return binary->mapReference(functionName) | mskNativeCodeRef;
-   }
    else if (StringHelper::compare(word, "intern")) {
       token.read(":", "Invalid operand");
       token.read();
@@ -297,6 +290,19 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 
          return;
       }
+   }
+   else if (StringHelper::compare(word, "api")) {
+      token.read(":", "Invalid operand");
+      token.read();
+
+      ReferenceNs functionName(NATIVE_MODULE, CORE_MODULE);
+      functionName.combine(token.value);
+
+      size_t reference = binary->mapReference(functionName) | mskNativeCodeRef;
+
+      writeCommand(ByteCommand(code, reference), writer);
+
+      return;
    }
    throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
