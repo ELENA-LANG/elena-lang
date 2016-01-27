@@ -30,7 +30,7 @@ public:
          _section = section;
          _length = length;
       }
-      void init(void* section, IdentifierString& package)
+      int init(void* section, IdentifierString& package)
       {
          _section = section;
          _length = 4;
@@ -40,6 +40,8 @@ public:
 
          reader.getDWord();
          reader.readString(package);
+
+         return reader.Position();
       }
 
       virtual size_t Length() const
@@ -83,6 +85,7 @@ public:
 private:
    Path           _rootPath;
    ImageSection   _debugSection;
+   size_t         _debugOffset;
    LibraryManager _loader;
    MessageMap     _verbs;
 

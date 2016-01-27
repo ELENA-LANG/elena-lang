@@ -4687,7 +4687,7 @@ end
 
 procedure class_getClass
 
-  bcopya
+  bloadsi 1
   class
   quitn 1
 

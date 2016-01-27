@@ -38,9 +38,11 @@
 
     #method className
     [
+        #var class := self::classROp class.
+        
         #var(type:bytearray,size:256)aBuffer.
         #var(type:int)aLength := system'external LoadClassName 
-            &ref:self
+            &ref:class
             &bytearray:aBuffer
             &int:255.
         

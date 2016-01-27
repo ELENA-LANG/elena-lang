@@ -65,7 +65,7 @@ void Instance :: init(void* debugSection, path_t configPath)
 {
    IdentifierString package;
 
-   _debugSection.init(debugSection, package);
+   _debugOffset = _debugSection.init(debugSection, package);
 
    loadConfig(configPath);
    _loader.setNamespace(package);
@@ -84,7 +84,7 @@ int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_
 int Instance :: loadAddressInfo(size_t retPoint, ident_c* buffer, size_t maxLength)
 {
    RTManager manager;
-   MemoryReader reader(&_debugSection, 8);
+   MemoryReader reader(&_debugSection, _debugOffset);
 
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
@@ -92,7 +92,7 @@ int Instance :: loadAddressInfo(size_t retPoint, ident_c* buffer, size_t maxLeng
 int Instance :: loadClassName(size_t classAddress, ident_c* buffer, size_t length)
 {
    RTManager manager;
-   MemoryReader reader(&_debugSection, 8);
+   MemoryReader reader(&_debugSection, _debugOffset);
 
    return manager.readClassName(reader, classAddress, buffer, length);
 }
@@ -168,7 +168,7 @@ int Instance :: loadMessageName(size_t subjectRef, ident_c* buffer, size_t lengt
 void* Instance :: loadSymbol(ident_t name)
 {
    RTManager manager;
-   MemoryReader reader(&_debugSection, 8);
+   MemoryReader reader(&_debugSection, _debugOffset);
 
    return manager.loadSymbol(reader, name);
 }
