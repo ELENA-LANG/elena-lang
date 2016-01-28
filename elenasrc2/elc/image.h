@@ -43,8 +43,6 @@ private:
    ident_t _signature;
    ident_t _verb;
 
-   ident_t _rtdll;
-
 public:
    virtual ref_t getEntryPoint()
    {
@@ -101,8 +99,6 @@ class VirtualMachineClientImage : public Image
 {
    ReferenceMap   _exportReferences;
    Project*       _project;
-
-   ident_t        _rtdll;
 
    class VMClientHelper : public _BinaryHelper
    {

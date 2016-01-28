@@ -74,6 +74,9 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\..\engine</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -98,6 +101,9 @@
       <OutputFile>..\..\..\bin\elenavm.dll</OutputFile>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\..\engine</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\altstrings.cpp" />
@@ -150,6 +156,10 @@
     <ClInclude Include="..\win32\x86elenamachine.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\win32\x86process.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="elenavm11.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

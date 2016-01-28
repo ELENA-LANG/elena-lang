@@ -26,17 +26,240 @@ void loadDLLPath(HMODULE hModule)
 
 Instance* getCurrentInstance()
 {
-   Instance* instance = machine ? machine->getInstance(::GetCurrentProcessId()) : NULL;
+   Instance* instance = machine ? machine->getInstance() : NULL;
 
    return instance;
 }
 
 // ==== DLL entries ====
 
+EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+{
+   return 0; // !! temporally
+}
+
+EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, ident_c* buffer, size_t maxLength)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      if (instance->loadAddressInfo(retPoint, buffer, maxLength)) {
+         return maxLength;
+      }
+      else return 0;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, ident_c* buffer, int maxLength)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ident_t className = instance->getClassName(vmtAddress);
+      size_t length = getlength(className);
+      if (length > 0) {
+         if (maxLength >= length) {
+            StringHelper::copy(buffer, className, length, length);
+         }
+         else buffer[0] = 0;
+      }
+
+      return length;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, ident_c* buffer, int maxLength)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      size_t verb_id, subj_id;
+      int param_count;
+      decodeMessage((size_t)subjectRef, subj_id, verb_id, param_count);
+
+      ident_t subjectName = instance->getSubject((ref_t)subj_id);
+      size_t length = getlength(subjectName);
+      if (length > 0) {
+         if (maxLength >= length) {
+            StringHelper::copy(buffer, subjectName, length, length);
+         }
+         else buffer[0] = 0;
+      }
+
+      return length;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ref_t subj_id = instance->getSubjectRef((ident_t)subjectName);
+
+      return (void*)(MESSAGE_MASK | encodeMessage(subj_id, 0, 0));
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadMessageName(void* message, ident_c* buffer, int maxLength)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      size_t verb_id, subj_id;
+      int param_count;
+      decodeMessage((size_t)message, subj_id, verb_id, param_count);
+
+      ident_t verbName = instance->getVerb(verb_id);
+      size_t used = getlength(verbName);
+      StringHelper::copy(buffer, verbName, used, used);
+
+      if (subj_id > 0) {
+         buffer[used++] = '&';
+
+         ident_t subjectName = instance->getSubject((ref_t)subj_id);
+         size_t length = getlength(subjectName) ;
+         if (length > 0) {
+            if (maxLength >= length + used) {
+               StringHelper::append(buffer, subjectName, length);
+
+               used += length;
+            }
+            else buffer[0] = 0;
+         }
+      }
+
+      if (param_count > 0) {
+         buffer[used++] = '[';
+         StringHelper::intToStr(param_count, buffer + used, 10);
+         used = getlength(buffer);
+         buffer[used++] = ']';
+      }
+      buffer[used] = 0;
+
+      return used;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return instance->getSymbolRef((ident_t)referenceName);
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException& e)
+   {
+      return 0;
+   }
+}
+
 EXTERN_DLL_EXPORT int Interpret(void* tape)
 {
-   //getchar();
-
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
       return 0;
@@ -64,8 +287,6 @@ EXTERN_DLL_EXPORT int Interpret(void* tape)
 
 EXTERN_DLL_EXPORT int Evaluate(void* tape)
 {
-   //getchar();
-
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
       return 0;
@@ -102,9 +323,9 @@ EXTERN_DLL_EXPORT size_t SetDebugMode()
    return (size_t)instance->loadDebugSection();
 }
 
-EXTERN_DLL_EXPORT ident_t GetLVMStatus()
+EXTERN_DLL_EXPORT ident_t GetVMLastError()
 {
-   Instance* instance = machine ? machine->getInstance(::GetCurrentProcessId()) : NULL;
+   Instance* instance = getCurrentInstance();
 
    return  instance ? instance->getStatus() : "Not initialized";
 }
@@ -118,23 +339,18 @@ void initMachine(path_t rootPath)
 
 // --- createInstace ---
 
-void createInstance(DWORD processId)
+void createInstance()
 {
-   x86Instance* instance = new x86Instance(machine);
-
-   machine->newInstance(processId, instance);
+   machine->newInstance(new x86Instance(machine));
 }
 
 // --- freeinstace ---
 
-void freeInstance(DWORD processId)
+void freeInstance()
 {
-   machine->deleteInstance(processId);
+   machine->deleteInstance();
 
-//   if (machine->getInstanceCount() == 0) {
-//      freeobj(machine);
-//      machine = NULL;
-//   }
+   freeobj(machine);
 }
 
 // --- dllmain ---
@@ -152,13 +368,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
          loadDLLPath(hModule);
          initMachine(rootPath);
       }
-      createInstance(::GetCurrentProcessId());
+      createInstance();
       return TRUE;
    case DLL_THREAD_ATTACH:
    case DLL_THREAD_DETACH:
       return TRUE;
    case DLL_PROCESS_DETACH:
-      freeInstance(::GetCurrentProcessId());
+      freeInstance();
       break;
    }
    return TRUE;

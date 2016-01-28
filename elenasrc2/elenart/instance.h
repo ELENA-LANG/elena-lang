@@ -7,8 +7,6 @@
 #ifndef elenamachineH
 #define elenamachineH 1
 
-#define ELENART_BUILD_NUMBER    0x0001             // ELENART build version
-
 #include "libman.h"
 
 namespace _ELENA_

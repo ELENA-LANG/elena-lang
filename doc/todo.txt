@@ -3,8 +3,6 @@ In development:
 ------                      
 
               xdev - general implementation     
-                       * callr api should not be supported, instead callext api should be used
-
                        * implement #136, #134
                        
                        * fix #213 : system'MethodNotFoundException should provide the message name  

@@ -17,9 +17,7 @@
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
 // --- ELENAVM common constants ---
-#define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2015 by Alex Rakov"
-
-#define ELENAVM_REVISION_NUMBER    0x0006             // ELENAVM revision version
+#define ELENAVM_GREETING        L"ELENA VM %d.%d (C)2005-2016 by Alex Rakov"
 
 namespace _ELENA_
 {
@@ -134,9 +132,6 @@ public:
 class Instance : public _ImageLoader
 {
 protected:
-   typedef void*(*VMAPI)(Instance*, void*);
-   typedef size_t(*VMAPI_NAME)(Instance*, void*,ident_c*,size_t);
-
    // --- ImageReferenceHelper ---
    // in most cases the references are already real ones
    // so only some of the methods are implemented
@@ -199,14 +194,7 @@ protected:
    ELENAMachine*   _machine;
    InstanceConfig  _config;
 
-   // vm interface
-   VMAPI_NAME _loadClassName;
-   VMAPI_NAME _loadSubjectName;
-   VMAPI      _loadSymbolPtr;
-   VMAPI      _loadSubject;
-   VMAPI      _interprete;
-   VMAPI      _getLastError;
-   VMAPI_NAME _loadAddrInfo;
+   MessageMap      _verbs;
 
    // status
    IdentifierString _status;
@@ -331,6 +319,11 @@ public:
    virtual ident_t getSubject(ref_t subjectRef)
    {
       return retrieveReference((void*)subjectRef, 0);
+   }
+
+   virtual ident_t getVerb(size_t verb_id)
+   {
+      return retrieveKey(_verbs.start(), verb_id, DEFAULT_STR);
    }
 
    //virtual void* getClassVMTRef(const wchar16_t* referenceName)

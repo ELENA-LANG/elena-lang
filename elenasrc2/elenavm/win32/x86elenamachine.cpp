@@ -136,6 +136,6 @@ bool x86Instance :: restart(bool debugMode)
 // --- x86ELENAMachine ---
 
 x86ELENAMachine :: x86ELENAMachine(path_t rootPath)
-   : ELENAMachine(rootPath), _instances(NULL, freeobj)
+   : ELENAMachine(rootPath)
 {
 }

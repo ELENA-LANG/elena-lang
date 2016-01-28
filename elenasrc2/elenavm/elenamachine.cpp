@@ -31,83 +31,6 @@ using namespace _ELENA_;
 #define LINKER_YGSIZE               "ygsize"
 #define LIBRARY_PATH                "path"
 
-// --- Wrapper Functions ---
-
-//void* __getClassVMTRef(Instance* instance, void* referenceName)
-//{
-//   return instance->getClassVMTRef((const wchar16_t*)referenceName);
-//}
-
-void* __getSymbolRef(Instance* instance, void* referenceName)
-{
-   return instance->getSymbolRef((ident_t)referenceName);
-}
-
-void* __getSubjectRef(Instance* instance, void* subjectName)
-{
-   ref_t subj_id = instance->getSubjectRef((ident_t)subjectName);
-
-   return (void*)(MESSAGE_MASK | encodeMessage(subj_id, 0, 0));
-}
-
-static size_t __getClassName(Instance* instance, void* vmtAddress, ident_c* buffer, size_t maxLength)
-{
-   ident_t className = instance->getClassName(vmtAddress);
-   size_t length = getlength(className);
-   if (length > 0) {
-      if (maxLength >= length) {
-         StringHelper::copy(buffer, className, length, length);
-      }
-      else buffer[0] = 0;
-   }
-
-   return length;
-}
-
-static size_t __getSubjectName(Instance* instance, void* subjectRef, ident_c* buffer, size_t maxLength)
-{
-   size_t verb_id, subj_id;
-   int param_count;
-   decodeMessage((size_t)subjectRef, subj_id, verb_id, param_count);
-
-   ident_t subjectName = instance->getSubject((ref_t)subj_id);
-   size_t length = getlength(subjectName);
-   if (length > 0) {
-      if (maxLength >= length) {
-         StringHelper::copy(buffer, subjectName, length, length);
-      }
-      else buffer[0] = 0;
-   }
-
-   return length;
-}
-
-static void* __interprete(Instance* instance, void* tape)
-{
-   return (void*)instance->interprete(tape, VM_INTERPRET);
-}
-
-static void* __getLastError(Instance* instance, void* retVal)
-{
-   ident_t error = instance->getStatus();
-   if (!emptystr(error)) {
-      size_t length = getlength(error);
-      StringHelper::copy((ident_c*)retVal, error, length, length);
-      ((ident_c*)retVal)[length] = 0;
-
-      return retVal;
-   }
-   else return NULL;
-}
-
-static size_t __loadAddressInfo(Instance* instance, void* address, ident_c* buffer, size_t maxLength)
-{
-   if (instance->loadAddressInfo(address, buffer, maxLength)) {
-      return maxLength;
-   }
-   else return 0;
-}
-
 // --- InstanceConfig ---
 
 void InstanceConfig :: loadForwardList(IniConfigFile& config)
@@ -267,14 +190,7 @@ Instance :: Instance(ELENAMachine* machine)
    _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
    _verbClass.copy(_config.forwards.get(VERB_FORWARD));
 
-   // init Run-Time API
-   _loadClassName = __getClassName;
-   _loadSymbolPtr = __getSymbolRef;
-   _interprete    = __interprete;
-   _getLastError  = __getLastError;
-   _loadAddrInfo  = __loadAddressInfo;
-   _loadSubject = __getSubjectRef;
-   _loadSubjectName = __getSubjectName;
+   ByteCodeCompiler::loadVerbs(_verbs);
 }
 
 Instance :: ~Instance()
@@ -317,20 +233,6 @@ size_t Instance :: getLinkerConstant(int id)
          return (size_t)_config.objSize;
       case lnVMAPI_Instance:
          return (size_t)this;
-      case lnVMAPI_LoadSymbol:
-         return (size_t)_loadSymbolPtr;
-      case lnVMAPI_LoadName:
-         return (size_t)_loadClassName;
-      case lnVMAPI_Interprete:
-         return (size_t)_interprete;
-      case lnVMAPI_GetLastError:
-         return (size_t)_getLastError;
-      case lnVMAPI_LoadAddrInfo:
-         return (size_t)_loadAddrInfo;
-      case lnVMAPI_LoadSubjectName:
-         return (size_t)_loadSubjectName;
-      case lnVMAPI_LoadSubject:
-         return (size_t)_loadSubject;
       default:
          return 0;
    }
@@ -519,7 +421,7 @@ bool Instance :: initLoader(InstanceConfig& config)
 
 bool Instance :: restart(bool debugMode)
 {
-   printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION_NUMBER);
+   printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
    printInfo(L"Initializing...");
 
    clearReferences();

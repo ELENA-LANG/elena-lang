@@ -48,27 +48,23 @@ public:
 
 class x86ELENAMachine : public ELENAMachine
 {
-   Map<int, x86Instance*> _instances;
+   x86Instance* _instance;
 
 public:
-//   int getInstanceCount() const
-//   {
-//      return _instances.Count();
-//   }
-
-   Instance* getInstance(int processID)
+   Instance* getInstance()
    {
-      return _instances.get(processID);
+      return _instance;
    }
 
-   void newInstance(int processID, x86Instance* instance)
+   void newInstance(x86Instance* instance)
    {
-      _instances.add(processID, instance);
+      _instance = instance;
    }
 
-   void deleteInstance(int processID)
+   void deleteInstance()
    {
-      _instances.erase(processID);
+      freeobj(_instance);
+      _instance = NULL;
    }
 
    x86ELENAMachine(path_t rootPath);
