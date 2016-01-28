@@ -55,7 +55,7 @@
     #method(stacksafe) respondsTo &message:aMessage
         => system'core_routines'class_indexOfMsg.
         
-    #method(stacksafe) read &mssg:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
+    #method(stacksafe) readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
     [
         #var class := self::classROp class.
 

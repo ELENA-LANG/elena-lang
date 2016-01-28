@@ -493,8 +493,6 @@ void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
    // if it is internal native call
    if ((scope.argument & mskAnyRef) == mskNativeCodeRef) {
       compileCallR(opcode, scope);
-      // mov esi, eax
-      scope.code->writeWord(0xF08B);
 
       return;
    }

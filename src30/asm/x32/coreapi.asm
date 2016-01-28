@@ -58,12 +58,186 @@ labSave:
   jmp  short labNext                              
   
 labEnd:
-  mov  eax, esi
   ret  
 
 end
 
-// ; --- internal ---
+procedure coreapi'core_thread_handler
+
+  // ; exit code
+  call code : % EXITTHREAD
+
+end
+
+// esi - index, ecx - result
+procedure coreapi'core_getargc
+
+  mov  ebx, [data : % CORE_OS_TABLE]
+  mov  esi, [ebx + esi * 4]
+  ret
+
+end
+
+procedure coreapi'core_getarg
+
+  mov  esi, [esp + 4]
+  mov  edi, [esp + 8]
+  mov  ecx, [esp + 12]
+
+  push edi
+  mov  ebx, [data : % CORE_OS_TABLE]
+  mov  eax, [ebx + esi * 4]
+
+labNext:
+  mov  ebx, [eax]
+  and  ebx, 0FFh
+  mov  byte ptr [edi], bl
+  add  eax, 1
+  add  edi, 1
+  test ebx, ebx
+  jz   short labEnd  
+  sub  ecx, 1
+  ja   short labNext
+
+labEnd:
+
+  mov  esi, edi
+  pop  edi
+  sub  esi, edi
+  
+  ret
+
+end
+
+// ; filter_vmt (filter,class,index,len,dump) = len
+procedure coreapi'core_filtervmt
+
+   xor  ebx, ebx
+   mov  eax, [esp+8]
+   mov  ecx, [eax - elVMTSizeOffset]
+   xor  esi, esi
+   mov  edi, [esp+20]   
+
+labNext:   
+   mov  edx, [eax + esi * 8]
+   and  edx, INV_SUBJECT_MASK
+   cmp  edx, [esp + 4]
+   jnz  labContinue
+   mov  edx, [esp+12]
+   test edx, edx
+   jz   short labAdding
+   sub  [esp+12], 1
+   jmp  labContinue
+
+labAdding:
+   mov  edx, [eax + esi * 8]
+   mov  [edi+ebx*4], edx
+   add  ebx, 1
+   mov  edx, [esp+16]
+   sub  edx, 1
+   jz   labEnd
+   mov  [esp+16], edx
+   
+labContinue:
+   add  esi, 1
+   sub  ecx, 1
+   jnz  labNext
+   
+labEnd:
+   mov  esi, ebx
+   ret
+   
+end
+
+procedure coreapi'core_rndnew
+
+  call code : % INIT_RND
+  mov  [edi], eax 
+  ret
+  
+end
+
+procedure coreapi'core_rndnext
+
+   xor  edx, edx
+   mov  ecx, esi
+   cmp  ecx, edx
+   jle  short labEnd
+
+   push eax
+   push esi
+
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   mul  esi
+   add  eax, ecx
+   xchg eax, esi
+   mul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx] , esi
+   cdq
+   pop  ecx
+   idiv ecx
+   pop  eax
+labEnd:
+   mov  [eax], edx
+   ret
+
+end
+
+procedure coreapi'core_rndnextint
+
+   push eax
+   
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   imul  esi
+   add  eax, ecx
+   xchg eax, esi
+   imul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx], esi
+   mov  edx, eax
+   pop  eax
+labEnd:
+   mov  [eax], edx
+   ret
+
+end
+
+// ; === internal ===
 
 // ; rcopyl (eax:src, edi:tgt)
 procedure coreapi'longtoreal
@@ -3859,13 +4033,6 @@ lErr:
   ret 4
 end
 
-procedure coreapi'core_thread_handler
-
-  // ; exit code
-  call code : % EXITTHREAD
-
-end
-
 procedure coreapi'openframe
 
   mov ebx, code : % OPENFRAME
@@ -3878,86 +4045,6 @@ procedure coreapi'closeframe
   mov ebx, code : % CLOSEFRAME
   jmp ebx
 
-end
-
-// esi - index, ecx - result
-procedure coreapi'core_getargc
-
-  mov  ebx, [data : % CORE_OS_TABLE]
-  mov  eax, [ebx + esi * 4]
-  ret
-
-end
-
-procedure coreapi'core_getarg
-
-  mov  esi, [esp + 4]
-  mov  edi, [esp + 8]
-  mov  ecx, [esp + 12]
-
-  push edi
-  mov  ebx, [data : % CORE_OS_TABLE]
-  mov  eax, [ebx + esi * 4]
-
-labNext:
-  mov  ebx, [eax]
-  and  ebx, 0FFh
-  mov  byte ptr [edi], bl
-  add  eax, 1
-  add  edi, 1
-  test ebx, ebx
-  jz   short labEnd  
-  sub  ecx, 1
-  ja   short labNext
-
-labEnd:
-
-  mov  eax, edi
-  pop  edi
-  sub  eax, edi
-  
-  ret
-
-end
-
-// ; filter_vmt (filter,class,index,len,dump) = len
-procedure coreapi'core_filtervmt
-
-   xor  ebx, ebx
-   mov  eax, [esp+8]
-   mov  ecx, [eax - elVMTSizeOffset]
-   xor  esi, esi
-   mov  edi, [esp+20]   
-
-labNext:   
-   mov  edx, [eax + esi * 8]
-   and  edx, INV_SUBJECT_MASK
-   cmp  edx, [esp + 4]
-   jnz  labContinue
-   mov  edx, [esp+12]
-   test edx, edx
-   jz   short labAdding
-   sub  [esp+12], 1
-   jmp  labContinue
-
-labAdding:
-   mov  edx, [eax + esi * 8]
-   mov  [edi+ebx*4], edx
-   add  ebx, 1
-   mov  edx, [esp+16]
-   sub  edx, 1
-   jz   labEnd
-   mov  [esp+16], edx
-   
-labContinue:
-   add  esi, 1
-   sub  ecx, 1
-   jnz  labNext
-   
-labEnd:
-   mov  eax, ebx
-   ret
-   
 end
 
 // ; entry()
@@ -4038,93 +4125,5 @@ labNext:
   jnz  short labNext
 
   ret
-
-end
-
-procedure coreapi'core_rndnew
-
-  call code : % INIT_RND
-  mov  [edi], eax 
-  ret
-  
-end
-
-procedure coreapi'core_rndnext
-
-   xor  edx, edx
-   mov  ecx, esi
-   cmp  ecx, edx
-   jle  short labEnd
-
-   push eax
-   push esi
-
-   mov  ebx, [edi+4] // NUM.RE
-   mov  esi, [edi]   // NUM.FR             
-   mov  eax, ebx
-   mov  ecx, 15Ah
-   mov  ebx, 4E35h                              
-   test eax, eax
-   jz   short Lab1
-   mul  ebx
-Lab1: 
-   xchg eax, ecx
-   mul  esi
-   add  eax, ecx
-   xchg eax, esi
-   mul  ebx
-   add  edx, esi
-   add  eax, 1
-   adc  edx, 0
-   mov  ebx, eax
-   mov  esi, edx
-   mov  ecx, edi
-   mov  [ecx+4], ebx
-   mov  eax, esi
-   and  eax, 7FFFFFFFh
-   mov  [ecx] , esi
-   cdq
-   pop  ecx
-   idiv ecx
-   pop  eax
-labEnd:
-   mov  [eax], edx
-   ret
-
-end
-
-procedure coreapi'core_rndnextint
-
-   push eax
-   
-   mov  ebx, [edi+4] // NUM.RE
-   mov  esi, [edi]   // NUM.FR             
-   mov  eax, ebx
-   mov  ecx, 15Ah
-   mov  ebx, 4E35h                              
-   test eax, eax
-   jz   short Lab1
-   mul  ebx
-Lab1: 
-   xchg eax, ecx
-   imul  esi
-   add  eax, ecx
-   xchg eax, esi
-   imul  ebx
-   add  edx, esi
-   add  eax, 1
-   adc  edx, 0
-   mov  ebx, eax
-   mov  esi, edx
-   mov  ecx, edi
-   mov  [ecx+4], ebx
-   mov  eax, esi
-   and  eax, 7FFFFFFFh
-   mov  [ecx], esi
-   mov  edx, eax
-   pop  eax
-labEnd:
-   mov  [eax], edx
-   ret
 
 end

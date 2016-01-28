@@ -664,7 +664,7 @@
     #var aProperties := MessageArray new &int:10.
     #var aLength := Integer new.
     
-    aDTO read &mssg_mask:%get &index:0 &mssgarray:aProperties &vint:aLength.
+    aDTO readMatchedEntries &mssg:%(get)(0) &int:0 &mssgarray:aProperties &vint:aLength.
 
     #var aCopy := DynamicStruct new.
     aProperties top:aLength run &each:(:aSubject)

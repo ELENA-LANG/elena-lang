@@ -7,11 +7,13 @@
 #ifndef winideconstH
 #define winideconstH
 
+#include "elenaconst.h"
+
 #ifndef IDC_STATIC
 #define IDC_STATIC (-1)
 #endif
 
-#define APP_VERSION                             "Version 1.9.25"
+#define IDE_REVISION_NUMBER 2
 
 // --- Command line arguments ---
 
@@ -236,5 +238,20 @@
 #define IDD_DEBUGGER_SETTINGS                   1300
 #define IDC_DEBUGGER_SRCPATH                    (IDD_DEBUGGER_SETTINGS + 1)
 #define IDC_DEBUGGER_LIBPATH                    (IDD_DEBUGGER_SETTINGS + 2)
+
+#define STRINGIZE2(s) #s
+#define STRINGIZE(s) STRINGIZE2(s)
+ 
+#define VER_FILE_VERSION_STR        STRINGIZE(ENGINE_MAJOR_VERSION)        \
+                                    "." STRINGIZE(ENGINE_MINOR_VERSION)    \
+                                    "." STRINGIZE(IDE_REVISION_NUMBER) \
+                                    ".0" 
+
+#define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
+                                    "." STRINGIZE(ENGINE_MINOR_VERSION)    \
+                                    ".0"                                   \
+                                    ".0"                                   
+                   
+#define APP_VERSION                 "Version 1.9.25"
 
 #endif // winideconstH
