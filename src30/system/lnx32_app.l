@@ -6,25 +6,17 @@
 
 #symbol $CommandLineFactory =
 {
-    #method(stacksafe) $getArgC &vint:aLength
-       => system'system'core_routines'lnx_getargc.
-
-    #method(stacksafe) $getArg &int:anIndex &bytearray:aBuffer &vint:aLength
-       => system'system'core_routines'lnx_getarg.
-
     new                                                                                                                                 
     [
         #var(type:bytearray,size:256)buf.
         #var(type:int)len.
-        #var(type:int)argc.
-        $self $getArgC &vint:argc.
+        #var(type:int)argc := system'external core_getargc.
 
         #var args := Array new &int:argc.
         #var(type:int)i := 0.
         #loop (i < argc)?
         [
-            len := 256.
-            $self $getArg &int:(i + 1) &bytearray:buf &vint:len.
+            len := system'external core_getarg &int:(i+1) &bytearray:buf &int:255.
 
             args setAt &int:i &object:(LiteralValue $new &int:0 &int:len &bytearray:buf).
 

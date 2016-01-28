@@ -3689,7 +3689,7 @@ labWait:
   trylock
   elser labWait 0 
 
-  callr api : coreapi'alloc_index
+  callextr api : alloc_index
   bcopya
   aloadsi 4
   set  
@@ -3715,7 +3715,7 @@ labWait:
 
   aloadsi 1
   nload
-  callr api : coreapi'free_index
+  callextr api : free_index
 
   freelock
 
@@ -3735,7 +3735,7 @@ end
 procedure ptr_get
 
   pusha
-  callr api : coreapi'resolve_index
+  callextr api : resolve_index
 
   quitn 1
 
@@ -3788,14 +3788,6 @@ procedure dptr_readbytearray
   callextr api : subcopy  
   
   quitn 3
-
-end
-
-procedure dptr_ret_double
-
-  bloadsi 2
-  callr api : coreapi'ret_double
-  quitn 2
 
 end
 
@@ -3939,7 +3931,7 @@ end
 procedure r_pi
 
   bloadsi 2
-  callr api : coreapi'rpi
+  callextr api : rpi
   
   quitn 1
   
@@ -3949,7 +3941,7 @@ procedure r_sqrt
 
   aloadsi 2  
   bloadsi 3
-  callr api : coreapi'rsqrt
+  callextr api : rsqrt
 
   quitn 3
 
@@ -4836,9 +4828,9 @@ procedure win_thread_start
 
   acopys 1  
   pusha
-  callr api : coreapi'resolve_index
+  callextr api : resolve_index
   pusha
-  callr api : coreapi'start_thread
+  callextr api : start_thread
   ifr labError 0
   quitn 1
 
@@ -4909,7 +4901,7 @@ labEnd:
   quitn 4
   
 labCreate:
-  callr api : coreapi'openframe
+  callextr api : openframe
 
   pushn 0
   bcopys 0
@@ -4926,7 +4918,7 @@ labCreate:
 
   aloadfi -7
   pusha
-  callr api : coreapi'resolve_index  
+  callextr api : resolve_index  
 
   pusha  
   xindexrm system'winforms'WindowCallback %eval&wm_create&hwnd$winforms&int$&int$&win_createstruct$winforms&vint$[5]
@@ -4935,12 +4927,12 @@ labCreate:
   acallvd
   popa
 
-  callr api : coreapi'closeframe
+  callextr api : closeframe
 
   quitn 4
   
 labDestroy:
-  callr api : coreapi'openframe
+  callextr api : openframe
 
   aloadsi 4
   pushn GWL_USERDATA
@@ -4948,7 +4940,7 @@ labDestroy:
   callextr extern : 'dlls'USER32.GetWindowLongW
   ifn labEnd2 0  
 
-  callr api : coreapi'resolve_index_value  
+  callextr api : resolve_index_value  
   pushn 0
   bcopys 0  
   pushb
@@ -4963,12 +4955,12 @@ labDestroy:
   acallvd
   popa
 
-  callr api : coreapi'closeframe
+  callextr api : closeframe
 
   quitn 4
   
 labCommand:
-  callr api : coreapi'openframe
+  callextr api : openframe
 
   aloadsi 4
   pushn GWL_USERDATA
@@ -4976,7 +4968,7 @@ labCommand:
   callextr extern : 'dlls'USER32.GetWindowLongW
   ifn labEnd2 0  
 
-  callr api : coreapi'resolve_index_value  
+  callextr api : resolve_index_value  
   pushn 0
   bcopys 0  
   pushb
@@ -4995,12 +4987,12 @@ labCommand:
   acallvd
   popa
 
-  callr api : coreapi'closeframe
+  callextr api : closeframe
 
   quitn 4
   
 labCursor:
-  callr api : coreapi'openframe
+  callextr api : openframe
 
   aloadsi 4
   pushn GWL_USERDATA
@@ -5008,7 +5000,7 @@ labCursor:
   callextr extern : 'dlls'USER32.GetWindowLongW
   ifn labEnd2 0  
 
-  callr api : coreapi'resolve_index_value  
+  callextr api : resolve_index_value  
   pushn 0
   bcopys 0  
   pushb
@@ -5027,12 +5019,12 @@ labCursor:
   acallvd
   popa
 
-  callr api : coreapi'closeframe
+  callextr api : closeframe
 
   quitn 4
   
 labPaint:
-  callr api : coreapi'openframe
+  callextr api : openframe
 
   aloadsi 4
   pushn GWL_USERDATA
@@ -5040,7 +5032,7 @@ labPaint:
   callextr extern : 'dlls'USER32.GetWindowLongW
   ifn labEnd2 0  
 
-  callr api : coreapi'resolve_index_value  
+  callextr api : resolve_index_value  
   pushn 0
   bcopys 0  
   pushb
@@ -5055,12 +5047,12 @@ labPaint:
   acallvd
   popa
 
-  callr api : coreapi'closeframe
+  callextr api : closeframe
 
   quitn 4
   
 labSize:
-  callr api : coreapi'openframe
+  callextr api : openframe
 
   aloadsi 4
   pushn GWL_USERDATA
@@ -5068,7 +5060,7 @@ labSize:
   callextr extern : 'dlls'USER32.GetWindowLongW
   ifn labEnd2 0  
 
-  callr api : coreapi'resolve_index_value  
+  callextr api : resolve_index_value  
   pushn 0
   bcopys 0  
   pushb
@@ -5087,74 +5079,14 @@ labSize:
   acallvd
   popa
 
-  callr api : coreapi'closeframe
+  callextr api : closeframe
 
   quitn 4
 
 labEnd2:
-  callr api : coreapi'closeframe
+  callextr api : closeframe
   jump  labEnd
   
-end
-
-procedure lnx_getargc
-
-  dcopy 0
-  callr api : coreapi'getnarg
-  dcopye
-  bloadsi 2
-  nsave
-  quitn 2
-
-end
-
-procedure lnx_getarg
-
-  pusha
-  aloadsi 5
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  bloadsi 4
-  callr api : coreapi'copysarg
-  dcopye
-  bloadsi 5
-  nsave
-  popa
-  quitn 4
-
-end
-
-procedure class_filterMsg
-
-  bloadsi 4
-  pushb
-  
-  aloadsi 6
-  nload
-  pushd
-
-  aloadsi 5
-  nload
-  pushd
-
-  bloadsi 4
-  class
-  pusha
-
-  aloadsi 6
-  nload
-  pushd
-  
-  // ; filter_vmt  (filter,class,index,len,dump)
-  callr api : coreapi'filter_vmt  
-
-  bloadsi 5
-  nsave
-
-  quitn 5
-
 end
 
 procedure subj_copymssg

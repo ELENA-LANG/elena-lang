@@ -55,8 +55,19 @@
     #method(stacksafe) respondsTo &message:aMessage
         => system'core_routines'class_indexOfMsg.
         
-    #method(stacksafe) read &mssg_mask:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
-        => system'core_routines'class_filterMsg.
+    #method(stacksafe) read &mssg:aMask &index:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
+    [
+        #var class := self::classROp class.
+
+        #var(type:int)retVal := system'external core_filtervmt
+           &mssg:aMask
+           &ref:class
+           &int:aVMTOffset
+           &int:aResultLength
+           &mssgarray:aResultArray.
+
+        aResultLength << retVal.
+    ]
 }
 
 // --- subjectOp ---

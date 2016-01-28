@@ -5,7 +5,6 @@ bin\og dat\og\rules.txt
 move dat\og\rules.dat bin
 
 bin\asm2binx src30\asm\core_routines.esm lib30\system
-bin\asm2binx src30\asm\ext_routines.esm lib30\system
 bin\asm2binx src30\asm\x32\commands.asm bin\x32
 bin\asm2binx src30\asm\x32\core.asm bin\x32
 bin\asm2binx src30\asm\x32\corex.asm bin\x32

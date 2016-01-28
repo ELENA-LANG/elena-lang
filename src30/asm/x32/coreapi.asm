@@ -3721,122 +3721,6 @@ lab3:
 
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-procedure coreapi'openframe
-
-  mov ebx, code : % OPENFRAME
-  jmp ebx
-
-end
-
-procedure coreapi'closeframe
-
-  mov ebx, code : % CLOSEFRAME
-  jmp ebx
-
-end
-
-// ; entry()
-procedure coreapi'entry
-
-  call code : % PREPARE
-  call code : % INIT
-  call code : % NEWFRAME
-  mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-
-  // 'program start
-  xor  edi, edi
-  call code : "'startUp"
-
-  mov  ecx, START_MESSAGE_ID
-  mov  esi, [eax - 4]
-  call [esi + 4]
-
-  // ; exit code
-  call code : % EXIT
-
-  ret
-
-end
-
-procedure coreapi'default_handler                                                       
-
-  // ; exit code
-  call code : % EXIT
-
-end
-
-procedure coreapi'default_thread_handler
-
-  // ; exit code
-  call code : % EXITTHREAD
-
-end
-
-// ; console_vm_entry()
-procedure coreapi'vm_console_entry
-
-  push ebx
-  push ecx
-  push edi
-  push esi
-  push ebp
-  
-  call code : % INIT
-
-  pop  ebp
-  pop  esi
-  pop  edi
-  pop  ecx
-  pop  ebx
-                                                           
-  ret
-
-end
-
-// ; new ebx - size, 
-procedure coreapi'reallocate
-
-  push eax
-  call code : %CALC_SIZE
-
-  call code : %GET_COUNT  
-  mov  ecx, esi
-  
-  call code : %GC_ALLOC
-
-  mov  esi, ecx
-  call code : %SET_COUNT
-
-  mov  edi, eax
-  pop  esi
-
-labNext:
-  mov  edx, [edi]
-  mov  [esi], edx
-  add  edi, 4
-  add  esi, 4
-  sub  ecx, 1
-  jnz  short labNext
-
-  ret
-
-end
-
 procedure coreapi'alloc_index
 
   mov  eax, [stat : "$elena'@referencetable"]
@@ -3929,6 +3813,23 @@ procedure coreapi'resolve_index_value
 
 end
 
+procedure coreapi'rpi
+
+  fldpi
+  fstp  qword ptr [edi]    // store result 
+  ret
+
+end
+
+procedure coreapi'rsqrt
+
+  fld   qword ptr [eax]  
+  fsqrt
+  fstp  qword ptr [edi]    // store result 
+  ret
+
+end
+
 // ; start_thread(param)
 procedure coreapi'start_thread
 
@@ -3940,7 +3841,7 @@ procedure coreapi'start_thread
   test eax, eax
   jz   short lErr
 
-  mov  ebx, code : "$native'coreapi'default_thread_handler"
+  mov  ebx, code : "$native'coreapi'core_thread_handler"
   call code : % INIT_ET
 
   push  eax
@@ -3958,8 +3859,189 @@ lErr:
   ret 4
 end
 
+procedure coreapi'core_thread_handler
 
-procedure coreapi'lrndnew
+  // ; exit code
+  call code : % EXITTHREAD
+
+end
+
+procedure coreapi'openframe
+
+  mov ebx, code : % OPENFRAME
+  jmp ebx
+
+end
+
+procedure coreapi'closeframe
+
+  mov ebx, code : % CLOSEFRAME
+  jmp ebx
+
+end
+
+// esi - index, ecx - result
+procedure coreapi'core_getargc
+
+  mov  ebx, [data : % CORE_OS_TABLE]
+  mov  eax, [ebx + esi * 4]
+  ret
+
+end
+
+procedure coreapi'core_getarg
+
+  mov  esi, [esp + 4]
+  mov  edi, [esp + 8]
+  mov  ecx, [esp + 12]
+
+  push edi
+  mov  ebx, [data : % CORE_OS_TABLE]
+  mov  eax, [ebx + esi * 4]
+
+labNext:
+  mov  ebx, [eax]
+  and  ebx, 0FFh
+  mov  byte ptr [edi], bl
+  add  eax, 1
+  add  edi, 1
+  test ebx, ebx
+  jz   short labEnd  
+  sub  ecx, 1
+  ja   short labNext
+
+labEnd:
+
+  mov  eax, edi
+  pop  edi
+  sub  eax, edi
+  
+  ret
+
+end
+
+// ; filter_vmt (filter,class,index,len,dump) = len
+procedure coreapi'core_filtervmt
+
+   xor  ebx, ebx
+   mov  eax, [esp+8]
+   mov  ecx, [eax - elVMTSizeOffset]
+   xor  esi, esi
+   mov  edi, [esp+20]   
+
+labNext:   
+   mov  edx, [eax + esi * 8]
+   and  edx, INV_SUBJECT_MASK
+   cmp  edx, [esp + 4]
+   jnz  labContinue
+   mov  edx, [esp+12]
+   test edx, edx
+   jz   short labAdding
+   sub  [esp+12], 1
+   jmp  labContinue
+
+labAdding:
+   mov  edx, [eax + esi * 8]
+   mov  [edi+ebx*4], edx
+   add  ebx, 1
+   mov  edx, [esp+16]
+   sub  edx, 1
+   jz   labEnd
+   mov  [esp+16], edx
+   
+labContinue:
+   add  esi, 1
+   sub  ecx, 1
+   jnz  labNext
+   
+labEnd:
+   mov  eax, ebx
+   ret
+   
+end
+
+// ; entry()
+procedure coreapi'entry
+
+  call code : % PREPARE
+  call code : % INIT
+  call code : % NEWFRAME
+  mov  ebx, code : "$native'coreapi'default_handler"
+  call code : % INIT_ET
+
+  // 'program start
+  xor  edi, edi
+  call code : "'startUp"
+
+  mov  ecx, START_MESSAGE_ID
+  mov  esi, [eax - 4]
+  call [esi + 4]
+
+  // ; exit code
+  call code : % EXIT
+
+  ret
+
+end
+
+procedure coreapi'default_handler                                                       
+
+  // ; exit code
+  call code : % EXIT
+
+end
+
+// ; console_vm_entry()
+procedure coreapi'vm_console_entry
+
+  push ebx
+  push ecx
+  push edi
+  push esi
+  push ebp
+  
+  call code : % INIT
+
+  pop  ebp
+  pop  esi
+  pop  edi
+  pop  ecx
+  pop  ebx
+                                                           
+  ret
+
+end
+
+// ; new ebx - size, 
+procedure coreapi'reallocate
+
+  push eax
+  call code : %CALC_SIZE
+
+  call code : %GET_COUNT  
+  mov  ecx, esi
+  
+  call code : %GC_ALLOC
+
+  mov  esi, ecx
+  call code : %SET_COUNT
+
+  mov  edi, eax
+  pop  esi
+
+labNext:
+  mov  edx, [edi]
+  mov  [esi], edx
+  add  edi, 4
+  add  esi, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+  ret
+
+end
+
+procedure coreapi'core_rndnew
 
   call code : % INIT_RND
   mov  [edi], eax 
@@ -3967,7 +4049,7 @@ procedure coreapi'lrndnew
   
 end
 
-procedure coreapi'lrndnext
+procedure coreapi'core_rndnext
 
    xor  edx, edx
    mov  ecx, esi
@@ -4011,7 +4093,7 @@ labEnd:
 
 end
 
-procedure coreapi'lrndnextint
+procedure coreapi'core_rndnextint
 
    push eax
    
@@ -4045,99 +4127,4 @@ labEnd:
    mov  [eax], edx
    ret
 
-end
-
-// esi - index, ecx - result
-procedure coreapi'getnarg
-
-  mov  ebx, [data : % CORE_OS_TABLE]
-  mov  ecx, [ebx + esi * 4]
-  ret
-
-end
-
-// esi - index, edi - taret, ecx - size
-procedure coreapi'copysarg
-
-  push edi
-  push eax
-  mov  ebx, [data : % CORE_OS_TABLE]
-  mov  eax, [ebx + esi * 4]
-
-labNext:
-  mov  ebx, [eax]
-  and  ebx, 0FFh
-  mov  byte ptr [edi], bl
-  add  eax, 1
-  add  edi, 1
-  test ebx, ebx
-  jz   short labEnd  
-  sub  ecx, 1
-  ja   short labNext
-
-labEnd:
-
-  pop  eax
-  mov  ecx, edi
-  pop  edi
-  sub  ecx, edi
-  ret
-
-end
-
-procedure coreapi'rpi
-
-  fldpi
-  fstp  qword ptr [edi]    // store result 
-  ret
-
-end
-
-procedure coreapi'rsqrt
-
-  fld   qword ptr [eax]  
-  fsqrt
-  fstp  qword ptr [edi]    // store result 
-  ret
-
-end
-
-// ; filter_vmt (filter,class,index,len,dump) = len
-procedure coreapi'filter_vmt
-
-   xor  ebx, ebx
-   mov  eax, [esp+8]
-   mov  ecx, [eax - elVMTSizeOffset]
-   xor  esi, esi
-   mov  edi, [esp+20]   
-
-labNext:   
-   mov  edx, [eax + esi * 8]
-   and  edx, INV_SUBJECT_MASK
-   cmp  edx, [esp + 4]
-   jnz  labContinue
-   mov  edx, [esp+12]
-   test edx, edx
-   jz   short labAdding
-   sub  [esp+12], 1
-   jmp  labContinue
-
-labAdding:
-   mov  edx, [eax + esi * 8]
-   mov  [edi+ebx*4], edx
-   add  ebx, 1
-   mov  edx, [esp+16]
-   sub  edx, 1
-   jz   labEnd
-   mov  [esp+16], edx
-   
-labContinue:
-   add  esi, 1
-   sub  ecx, 1
-   jnz  labNext
-   
-labEnd:
-   mov  esi, ebx
-   ret  20
-   
 end
