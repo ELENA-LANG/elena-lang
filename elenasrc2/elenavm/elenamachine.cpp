@@ -69,7 +69,11 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
       // add path if provided
       if (!emptystr(path)) {
          Path filePath(path);
-         Path::combinePath(filePath, value);
+
+         if (value[0] == '~') {
+            Path::loadPath(filePath, value + 1);
+         }
+         else Path::combinePath(filePath, value);
 
          list->add(key, IdentifierString::clonePath(filePath));
       }

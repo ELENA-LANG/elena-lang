@@ -76,7 +76,11 @@ ref_t x86Instance :: resolveExternal(ident_t external)
       ident_t function = external + StringHelper::findLast(external, '.') + 1;
 
       Path dll;
-      Path::loadPath(dll, external + getlength(DLL_NAMESPACE) + 1, function - (external + getlength(DLL_NAMESPACE)) - 2);
+      int len = function - (external + getlength(DLL_NAMESPACE)) - 2;
+      if (StringHelper::compare(external + getlength(DLL_NAMESPACE) + 1, RTDLL_FORWARD, len)) {
+         Path::loadPath(dll, _loader.resolvePrimitive(RTDLL_FORWARD));
+      }
+      else Path::loadPath(dll, external + getlength(DLL_NAMESPACE) + 1, len);
 
       // align memory
       MemoryWriter writer(&_dataProcess);
