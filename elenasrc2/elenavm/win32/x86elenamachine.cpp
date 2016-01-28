@@ -124,7 +124,11 @@ bool x86Instance :: restart(bool debugMode)
    _debugProcess.trim(0);
 
    // put debug size and entry point place holders
-   getTargetDebugSection()->writeBytes(0, 0, 8);
+   MemoryWriter debugWriter(&_debugProcess);
+   debugWriter.writeBytes(0, 8);
+   
+   // save default namespace
+   debugWriter.writeLiteral(_loader.getNamespace());
 
    // free compiler & linker
    freeobj(_compiler);
