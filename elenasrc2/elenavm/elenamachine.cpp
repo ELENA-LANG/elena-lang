@@ -791,9 +791,12 @@ int Instance::interprete(void* tape, ident_t interpreter)
 bool Instance :: loadAddressInfo(void* address, ident_c* buffer, size_t& maxLength)
 {
    RTManager manager;
-   MemoryReader reader(getTargetDebugSection(), 4);
+   MemoryReader reader(getTargetDebugSection(), 8);
+   reader.getLiteral(DEFAULT_STR);
 
-   return manager.readAddressInfo(reader, (size_t)address, &_loader, buffer, maxLength);
+   maxLength = manager.readAddressInfo(reader, (size_t)address, &_loader, buffer, maxLength);
+
+   return maxLength > 0;
 }
 
 // --- ELENAMachine::Config ---

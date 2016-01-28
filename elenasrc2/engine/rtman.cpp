@@ -259,6 +259,7 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Lib
          copy(buffer, row + 1, copied);
          buffer[copied++] = ')';
       }
+      buffer[copied] = 0;
 
       return copied;
    }

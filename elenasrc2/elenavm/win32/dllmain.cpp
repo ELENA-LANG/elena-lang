@@ -195,11 +195,11 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, ident_c* buffer, int maxLen
          size_t length = getlength(subjectName) ;
          if (length > 0) {
             if (maxLength >= length + used) {
-               StringHelper::append(buffer, subjectName, length);
+               StringHelper::copy(buffer + used, subjectName, length, length);
 
                used += length;
             }
-            else buffer[0] = 0;
+            else buffer[used] = 0;
          }
       }
 
