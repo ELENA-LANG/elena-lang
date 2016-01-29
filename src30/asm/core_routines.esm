@@ -29,9 +29,12 @@ end
 procedure dispatch
 
   bsredirect  
+  pushe
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
 
 end
@@ -3583,16 +3586,22 @@ procedure handle_message
   ajumpvi 0
 
 labEnd:
+  pushd
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
 
 labDefault:
   bsredirect  
+  pushe
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
   
 end
@@ -3612,16 +3621,22 @@ procedure handle_ext_message
   ajumpi 1
 
 labEnd:
+  pushd
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
 
 labDefault:
   bsredirect  
+  pushe
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
   
 end
@@ -3640,9 +3655,12 @@ procedure handle_verb
   
 labDefault:
   bsredirect  
+  pushe
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
   
 end
@@ -3661,9 +3679,12 @@ procedure qualify_message
   
 labDefault:
   bsredirect  
+  pushe
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
   
 end
@@ -4504,10 +4525,11 @@ labNext:
   len
   less labNext
 
-  pop
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
 
 labFound:
@@ -4591,12 +4613,12 @@ labReturn:
   equit
   
 labNotFound:  
-  dloadsi 3
+  dloadsi 5
   address labReturn
   else labContinueError
 
   close
-  pop
+  popi 2
   bloadfi 1
   jump labNext
 
@@ -4770,9 +4792,12 @@ labEnd:
 labDefault:
   ecopyd
   bsredirect  
+  pushe
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
 
 end
