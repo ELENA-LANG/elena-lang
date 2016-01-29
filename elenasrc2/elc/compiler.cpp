@@ -3547,7 +3547,7 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
    else {
       scope.writer->newNode(lxLooping, scope.moduleScope->trueReference);
 
-      ObjectInfo retVal = compileExpression(expr, scope, scope.moduleScope->boolType, 0);
+      ObjectInfo retVal = compileExpression(node.firstChild(), scope, scope.moduleScope->boolType, 0);
 
       scope.writer->closeNode();
    }

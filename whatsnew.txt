@@ -19,6 +19,7 @@
 [+] extensions : textwriter.write&args[1,], textwriter.writeLine&args[1,]
 [+] extensions'text : (literal/wide).toByteArray
 [+] system : Message.get&literal$
+[*] #213 : system'MethodNotFoundException providesx the message name now
 
 [Samples]
 [+] net sample : chat

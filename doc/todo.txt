@@ -2,11 +2,15 @@
 In development:
 ------                      
 
-              xdev - general implementation     
-                       * fix #213 : system'MethodNotFoundException should provide the message name  
-
-              fdev - db app
+              fdev - net app
                        * implement simple chat system to test socket api
+                       * in the following code:
+                             theListenThread := Thread new &func:
+                             [
+                                 #loop $self proceed.
+                             ]
+                         proceed message should be called directly, because the class is sealed
+
  
               xdev - general implementation     
                        * implement #167 : stack allocated variable and $nil                       
