@@ -6,6 +6,7 @@
 #import system'net.
 #import system'threading.
 
+#subject(class:TcpRemoteClient)tcp_remoteclient.
 #class(sealed)TcpRemoteClient
 {
     #field(type:socket)theSocket.
@@ -16,9 +17,15 @@
         theSocket := socket.
     ]
     
-    #method(stacksafe) read &bytearray:buffer &int:maxLength &int:flags &vint:received
+    #method(stacksafe) read &bytearray:buffer &int:maxLength &vint:received
     [
         theSocket read &bytearray:buffer &int:maxLength &int:0 &vint:received.
+    ]
+    
+    #method(stacksafe) write &bytearray:buffer &int:length
+    [
+        #var(type:int)sent.
+        theSocket write &bytearray:buffer &int:length &int:0 &vint:sent.
     ]
     
     #method tcp_remoteclient = $self.
@@ -93,7 +100,9 @@
         
         theListenSocket listen &int:SOMAXCONN.
     ]
-    
+
+    #method connections = theClients.
+            
     #method set &blocking:aValue
     [
         #var(type:int)aMode.
@@ -133,10 +142,13 @@
     ]
     
     #method closeClient : client
+        <= close &int:(theClients indexOf:client int).
+    
+    #method close &int:index
     [
-        #var n := theClients indexOf:client.
+        #var client := theClients getAt &int:index.
         
-        theClients remove &at:n.
+        theClients remove &int:index.
         
         client close.
     ]
@@ -148,7 +160,7 @@
         
         #loop (i < counter)?
         [
-            #var client := theClients getAt &int:i.
+            #var(type:tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
             #var(type:int)received.
             client read &bytearray:theBuffer &int:theMaxLength &vint:received.
             (received == 0)
@@ -182,4 +194,25 @@
         
         theListenThread start.
     ]
+    
+    #method(stacksafe) sendAll &bytearray:buffer &int:length
+    [
+        #var(type:int)i := 0.
+        #var(type:int)counter := theClients length.
+        
+        #loop (i < counter)?
+        [
+            #var(type:tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
+            
+            client write &bytearray:buffer &int:length.
+            
+            i := i + 1.
+        ].
+    ]
+    
+    #method(stacksafe) send &int:index &bytearray:buffer &int:length    
+    [
+        theClients getAt &int:index tcp_remoteclient write &bytearray:buffer &int:length.
+    ]
+    
 }
