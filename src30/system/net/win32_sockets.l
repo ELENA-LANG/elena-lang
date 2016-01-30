@@ -196,28 +196,32 @@
         ^ (SOCKET_ERROR != aRetVal).
     ]
 
-    #method(stacksafe)write &bytearray:aBuffer &int:aLength &int:aFlags
+    #method(stacksafe)write &bytearray:buffer &int:length &int:flags &vint:sent
     [
-        #var(type:int)aRetVal := system'external'WS2_32 send 
+        #var(type:int)retVal := system'external'WS2_32 send 
             &int:theHandle
-            &bytearray:aBuffer
-            &int:aLength
-            &int:aFlags.
+            &bytearray:buffer
+            &int:length
+            &int:flags.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        (SOCKET_ERROR == retVal)
+            ? [ #throw SocketException new:"Error at socket". ].            
+            
+        sent << retVal.            
     ]
 
-    #method(stacksafe) read &bytearray:aBuffer &int:aLength &int:aFlags
+    #method(stacksafe) read &bytearray:buffer &int:maxLength &int:flags &vint:received
     [
-        #var(type:int)aRetVal := system'external'WS2_32 recv
+        #var(type:int)retVal := system'external'WS2_32 recv
             &int:theHandle
-            &bytearray:aBuffer
-            &int:aLength
-            &int:aFlags.
+            &bytearray:buffer
+            &int:maxLength
+            &int:flags.
             
-        (SOCKET_ERROR == aRetVal)
-            ? [ #throw SocketException new:"Error at socket". ].
+        (SOCKET_ERROR == retVal)
+            ? [ #throw SocketException new:"Error at socket". ].            
+            
+        received << retVal.    
     ]
 
     #method accept  

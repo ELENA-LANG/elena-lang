@@ -14,10 +14,13 @@
     
     #method start
     [
-        theNetworkServer set &onNewClient: client
-        [
-            console writeLine:"new client".
-        ].
+        theNetworkServer set &tcp_server_listener:TcpServerListener
+        {
+            onConnect:client
+            [
+                console writeLine:"new client".
+            ]
+        }.
         
         theNetworkServer start.
     ]

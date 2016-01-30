@@ -2,19 +2,41 @@
 
 #import system.
 #import system'collections.
+#import system'routines.
 #import system'net.
 #import system'threading.
 
 #class(sealed)TcpRemoteClient
 {
     #field(type:socket)theSocket.
+    #field theParameter.
     
     #constructor new &socket:socket
     [
         theSocket := socket.
     ]
     
+    #method(stacksafe) read &bytearray:buffer &int:maxLength &int:flags &vint:received
+    [
+        theSocket read &bytearray:buffer &int:maxLength &int:0 &vint:received.
+    ]
+    
     #method tcp_remoteclient = $self.
+    
+    #method set &Parameter:object
+    [
+        theParameter := object.
+    ]
+    
+    #method Parameter = theParameter.
+}
+
+#subject(class:TcpServerListener) tcp_server_listener.
+#class(limited) TcpServerListener
+{
+    #method onConnect:client []
+    
+    #method(stacksafe)onReceived:client &bytearray:buffer &int:length []
 }
 
 #class(sealed)TcpServer
@@ -22,10 +44,19 @@
     #field(type:socket)theListenSocket.
     #field(type:array_list)theClients.
     #field(type:thread)theListenThread.
-    #field(type:func1)theNewClient.
+    #field(type:bytearray)theBuffer.
+    #field(type:int)theMaxLength.
     
-    #constructor new &port:aPort
+    #field(type:tcp_server_listener)theListener.
+    
+    #constructor new &port:port
+        <= new &port:port &bufferSize:1024.
+    
+    #constructor new &port:aPort &bufferSize:size
     [
+        theMaxLength := size int.
+        theBuffer := ByteArray new &int:theMaxLength.
+        
         theClients := ArrayList new.
         
         // winsock start up
@@ -80,9 +111,9 @@
     
     #method tcp_server = $self.
     
-    #method set &onNewClient:aFunction
+    #method set &tcp_server_listener:listener
     [
-        theNewClient := aFunction func1.
+        theListener := listener.
     ]
     
     #method newClient
@@ -101,14 +132,43 @@
         ^ client.
     ]
     
+    #method closeClient : client
+    [
+        #var n := theClients indexOf:client.
+        
+        theClients remove &at:n.
+        
+        client close.
+    ]
+    
+    #method readClients
+    [
+        #var(type:int)i := 0.
+        #var(type:int)counter := theClients length.
+        
+        #loop (i < counter)?
+        [
+            #var client := theClients getAt &int:i.
+            #var(type:int)received.
+            client read &bytearray:theBuffer &int:theMaxLength &vint:received.
+            (received == 0)
+                ? [ $self closeClient:client. ]
+                ! [ theListener onReceived:client &bytearray:theBuffer &int:received. ].
+            
+            i := i + 1.
+        ].
+    ]
+    
     #method proceed
     [
         #var client := $self newClient.
         ($nil != client)?
         [
-            ($nil != theNewClient)
-                ? [ theNewClient eval:client. ].
+            ($nil != theListener)
+                ? [ theListener onConnect:client. ].
         ].
+        
+        $self readClients.
         
         ^ true.
     ]
