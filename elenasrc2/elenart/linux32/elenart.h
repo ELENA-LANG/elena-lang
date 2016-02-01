@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //             Linux Shared Library Declaration
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENART_H_INCLUDED
@@ -17,23 +17,23 @@
 
 extern "C"
 {
-   DLL_PUBLIC void* Init(void* debugSection, const char* package);
+   DLL_PUBLIC int ReadCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+   DLL_PUBLIC int LoadAddressInfo(void* retPoint, char* lineInfo, size_t length);
 
-   DLL_PUBLIC int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length);
+   DLL_PUBLIC int LoadClassName(void* object, char* lineInfo, size_t length);
 
-   DLL_PUBLIC int LoadClassName(void* instance, void* object, char* lineInfo, int length);
+   DLL_PUBLIC void* LoadSymbol(void* referenceName);
 
-   DLL_PUBLIC void* GetSymbolRef(void* instance, void* referenceName);
+   DLL_PUBLIC void* Interpreter(void* tape);
 
-   DLL_PUBLIC void* Interpreter(void* instance, void* tape);
+   DLL_PUBLIC void* GetVMLastError(void* retVal);
 
-   DLL_PUBLIC void* GetRTLastError(void* instance, void* retVal);
+   DLL_PUBLIC int LoadSubjectName(void* subject, char* lineInfo, size_t length);
 
-   DLL_PUBLIC int LoadSubjectName(void* instance, void* subject, char* lineInfo, int length);
+   DLL_PUBLIC int LoadMessageName(void* subject, char* lineInfo, size_t length);
 
-   DLL_PUBLIC void* LoadSubject(void* instance, void* subjectName);
+   DLL_PUBLIC void* LoadSubject(void* subjectName);
 }
 
 #endif // ELENART_H_INCLUDED

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Settings class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "settings.h"
@@ -171,7 +171,7 @@ void Settings :: save(Model* model, _ELENA_::IniConfigFile& config)
    saveSetting(config, SETTINGS_SECTION, MESSAGES_SETTING, model->messages, true);
    saveSetting(config, SETTINGS_SECTION, PATH_REMEMBER_SETTING, model->lastPathRemember, true);
    saveSetting(config, SETTINGS_SECTION, PROJECT_REMEMBER_SETTING, model->lastProjectRemember, true);
-   saveSetting(config, SETTINGS_SECTION, AUTO_PROJECT_LOAD_SETTING, model->autoProjectLoad, true);
+   saveSetting(config, SETTINGS_SECTION, AUTO_PROJECT_LOAD_SETTING, model->autoProjectLoad, false);
    saveSetting(config, SETTINGS_SECTION, AUTO_DETECTING_SETTING, model->autoDetecting, true);
    saveSetting(config, SETTINGS_SECTION, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
    //saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, model->debugTape, false);

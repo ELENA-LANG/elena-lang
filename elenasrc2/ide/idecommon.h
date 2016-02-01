@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE common
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef idecommonH
@@ -399,7 +399,7 @@ public:
 
       lastProjectRemember = true;
       lastPathRemember = true;
-      autoProjectLoad = true;
+      autoProjectLoad = false;
 
       projectView = true;
       compilerOutput = true;

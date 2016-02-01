@@ -239,29 +239,35 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
    int index = 0;
    while (!p_it.Eof()) {
       _ELENA_::ident_t name = p_it.key();
-      _ELENA_::NamespaceName ns(name);
-      _ELENA_::ReferenceName caption(name);
-
       Gtk::TreeModel::Children children = _projectTree->children();
-      Gtk::TreeModel::iterator it = children.begin();
-      while (it != children.end()) {
-         Gtk::TreeModel::Row row = *it;
-         Glib::ustring current = row[_projectTreeColumns._reference];
 
-         if (ns.compare(current.c_str()))
-            break;
+      int start = 0;
+      int end = 0;
+      while (end != -1) {
+         end = _ELENA_::StringHelper::find(name + start, PATH_SEPARATOR);
 
-         it++;
+         _ELENA_::IdentifierString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
+         Gtk::TreeModel::iterator it = children.begin();
+         while (it != children.end()) {
+            Gtk::TreeModel::Row row = *it;
+            Glib::ustring current = row[_projectTreeColumns._caption];
+
+            if (nodeName.compare(current.c_str()))
+               break;
+
+            it++;
+         }
+         if (it == children.end()) {
+            Gtk::TreeModel::Row row = *(_projectTree->append(children));
+            row[_projectTreeColumns._caption] = (const char*)nodeName;
+            row[_projectTreeColumns._index] = end == -1 ? index : -1;
+
+            children = row.children();
+         }
+         else children = (*it).children();
+
+         start = end + 1;
       }
-
-      Gtk::TreeModel::Row row;
-      if (it != children.end()) {
-         row = *(_projectTree->insert(++it));
-      }
-      else row = *(_projectTree->append());
-      row[_projectTreeColumns._caption] = (const char*)caption;
-      row[_projectTreeColumns._reference] = (const char*)name;
-      row[_projectTreeColumns._index] = index;
 
       p_it++;
       index++;

@@ -21,13 +21,11 @@ class MainWindow : public SDIWindow
    {
    public:
       Gtk::TreeModelColumn<Glib::ustring> _caption;
-      Gtk::TreeModelColumn<Glib::ustring> _reference;
       Gtk::TreeModelColumn<int>           _index;
 
       ProjectTreeColumns()
       {
           add(_caption);
-          add(_reference);
           add(_index);
       }
    };
@@ -192,8 +190,9 @@ protected:
       Gtk::TreeModel::iterator iter = _projectTree->get_iter(path);
       if(iter) {
          Gtk::TreeModel::Row row = *iter;
-
-         _controller->selectProjectFile(row[_projectTreeColumns._index]);
+         int index = row[_projectTreeColumns._index];
+         if (index >= 0)
+            _controller->selectProjectFile(index);
       }
    }
 

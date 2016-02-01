@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -18,67 +18,88 @@ using namespace _ELENA_;
 
 static Instance* instance = NULL;
 
-void* Init(void* debugSection, const char* package)
+void* init()
 {
-   if (instance == NULL) {
-      instance = new Instance(CONFIG_PATH);
-   }
+   instance = new Instance(CONFIG_PATH);
 
-   if (debugSection == NULL) {
-      Instance::ImageSection section;
-      section.init((void*)IMAGE_BASE, 0x1000);
+   void* debugSection = NULL;
+   Instance::ImageSection section;
+   section.init((void*)IMAGE_BASE, 0x1000);
 
-      size_t ptr = 0;
-      MemoryReader reader(&section);
+   size_t ptr = 0;
+   MemoryReader reader(&section);
 
-      ELFHelper::seekDebugSegment(reader, ptr);
-      debugSection = (void*)ptr;
-   }
+   ELFHelper::seekDebugSegment(reader, ptr);
+   debugSection = (void*)ptr;
 
-   instance->init(debugSection, package, CONFIG_PATH);
+   instance->init(debugSection, CONFIG_PATH);
 
    return instance;
 }
 
-int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+int ReadCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 {
-   return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
+   //return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
+   return 0;
 }
 
-int LoadAddressInfo(void* instance, int retPoint, char* lineInfo, int length)
+int LoadAddressInfo(void* retPoint, char* lineInfo, size_t length)
 {
-   return ((Instance*)instance)->loadAddressInfo(retPoint, lineInfo, length);
+   if (instance == NULL)
+      init();
+
+   return instance->loadAddressInfo((size_t)retPoint, lineInfo, length);
 }
 
-int LoadClassName(void* instance, void* object, char* buffer, int length)
+int LoadClassName(void* object, char* buffer, size_t length)
 {
-   return ((Instance*)instance)->loadClassName((size_t)object, buffer, length);
+   if (instance == NULL)
+      init();
+
+   return instance->loadClassName((size_t)object, buffer, length);
 }
 
-void* GetSymbolRef(void* instance, void* referenceName)
-{
-   return ((Instance*)instance)->loadSymbol((ident_t)referenceName);
-}
-
-void* Interpreter(void* instance, void* tape)
+void* Interpreter(void* tape)
 {
    // !! terminator code
    return NULL;
 }
 
-void* GetRTLastError(void* instance, void* retVal)
+void* GetVMLastError(void* retVal)
 {
    // !! terminator code
    return NULL;
 }
 
-int LoadSubjectName(void* instance, void* subject, ident_c* lineInfo, int length)
+int LoadSubjectName(void* subject, ident_c* lineInfo, size_t length)
 {
-   return ((Instance*)instance)->loadSubjectName((size_t)subject, lineInfo, length);
+   if (instance == NULL)
+      init();
+
+   return instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
-void* LoadSubject(void* instance, void* subjectName)
+void* LoadSubject(void* subjectName)
 {
-   return ((Instance*)instance)->loadSubject((ident_t)subjectName);
+   if (instance == NULL)
+      init();
+
+   return instance->loadSubject((ident_t)subjectName);
+}
+
+int LoadMessageName(void* subject, ident_c* lineInfo, size_t length)
+{
+   if (instance == NULL)
+      init();
+
+   return instance->loadMessageName((size_t)subject, lineInfo, length);
+}
+
+void* LoadSymbol(void* referenceName)
+{
+   if (instance == NULL)
+      init();
+
+   return instance->loadSymbol((ident_t)referenceName);
 }
 
