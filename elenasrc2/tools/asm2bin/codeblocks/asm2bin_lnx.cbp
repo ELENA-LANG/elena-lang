@@ -35,6 +35,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-march=pentium2" />
+			<Add option="-m32" />
 			<Add option="-Wno-conversion-null" />
 			<Add option="-D_LINUX32" />
 			<Add directory=".." />
@@ -44,6 +45,7 @@
 			<Add directory="../../../elc" />
 		</Compiler>
 		<Linker>
+			<Add option="-m32" />
 			<Add option="-static-libgcc -static-libstdc++" />
 		</Linker>
 		<Unit filename="../../../common/altstrings.cpp" />

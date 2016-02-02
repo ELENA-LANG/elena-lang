@@ -32,6 +32,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-march=pentium2" />
+			<Add option="-m32" />
 			<Add option="-Wno-conversion-null" />
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
@@ -40,6 +41,7 @@
 			<Add directory="../win32" />
 		</Compiler>
 		<Linker>
+			<Add option="-m32" />
 			<Add option="-static-libgcc -static-libstdc++" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
@@ -102,6 +104,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

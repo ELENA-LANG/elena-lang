@@ -35,6 +35,7 @@
 		<Compiler>
 			<Add option="-march=pentium2" />
 			<Add option="-Wall" />
+			<Add option="-m32" />
 			<Add option="-fexceptions" />
 			<Add option="-fvisibility=hidden" />
 			<Add option="-fvisibility-inlines-hidden" />
@@ -45,6 +46,7 @@
 			<Add directory=".." />
 		</Compiler>
 		<Linker>
+			<Add option="-m32" />
 			<Add option="-fvisibility=hidden" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
@@ -72,6 +74,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -30,6 +30,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-m32" />
 			<Add option="`pkg-config gtkmm-3.0 --cflags`" />
 			<Add option="-Wno-reorder" />
 			<Add option="-D_LINUX32" />
@@ -39,6 +40,7 @@
 			<Add directory="../../engine" />
 		</Compiler>
 		<Linker>
+			<Add option="-m32" />
 			<Add option="`pkg-config gtkmm-3.0 --libs`" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
@@ -120,7 +122,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger />
-			<envvars />
+			<envvars set="default" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
