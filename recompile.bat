@@ -32,7 +32,7 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Script Engine compiling....
 ECHO ----------------------------
-"%MSBUILDDIR%msbuild.exe" elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
+REM "%MSBUILDDIR%msbuild.exe" elenasrc2\elenasm\vs\elenasm11.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Simplified Assembler compiling....
@@ -47,7 +47,7 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine Terminal compiling....
 ECHO --------------------------------------
-"%MSBUILDDIR%msbuild.exe" elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
+REM "%MSBUILDDIR%msbuild.exe" elenasrc2\tools\elt\vs\elt11.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Optimization Rule Generator compiling....

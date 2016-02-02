@@ -44,6 +44,8 @@
     #method onConnect:client []
     
     #method(stacksafe)onReceived:client &bytearray:buffer &int:length []
+    
+    #method tcp_server_listener = $self.
 }
 
 #class(sealed)TcpServer
