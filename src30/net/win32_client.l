@@ -4,12 +4,14 @@
 #import system'net.
 #import system'threading.
 
-#subject(class:TcplientListener) tcp_client_listener.
+#subject(class:TcpClientListener) tcp_client_listener.
 #class(limited) TcpClientListener
 {
     #method onConnect:client []
     
     #method(stacksafe)onReceived:client &bytearray:buffer &int:length []
+    
+    #method tcp_client_listener = $self.
 }
 
 // --- TcpClient ---
@@ -24,17 +26,20 @@
     
     #field(type:tcp_client_listener)theListener.
     
-    #constructor new &ip:address &port:port
-        <= new &ip:address &port:port &bufferSize:1024.
+    #constructor new
+        <= new &bufferSize:1024.
     
-    #constructor new &ip:anAddress &port:aPort &bufferSize:size
+    #constructor new &bufferSize:size
     [
         theMaxLength := size int.
         theBuffer := ByteArray new &int:theMaxLength.
         
         // winsock start up
-        WSAStartUp22.
-        
+        WSAStartUp22.        
+    ]
+
+    #method connect &ip:anAddress &port:aPort
+    [
         //resolve server address and port
         #var(type:addrinfo)addrinfo.
         
@@ -97,6 +102,8 @@
     
     #method close
     [
+        theSocket shutdown &int:SD_BOTH.
+        
         theSocket close.
     ]
     
@@ -113,7 +120,10 @@
         theSocket read &bytearray:theBuffer &int:theMaxLength &int:0 &vint:received.
         (received == 0)
             ? [ $self close. ]
-            ! [ theListener onReceived:$self &bytearray:theBuffer &int:received. ].
+            ! [ 
+                (received > 0)
+                    ? [ theListener onReceived:$self &bytearray:theBuffer &int:received. ].
+            ].
     ]
     
     #method(stacksafe) send &int:index &bytearray:buffer &int:length    

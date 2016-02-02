@@ -1817,7 +1817,7 @@ end
 
 procedure s_copyint_radix
 
-  dcopy 11
+  dcopy 32
   acopyr class : system'LiteralValue
   bcreate
   bcopya
@@ -1834,7 +1834,7 @@ end
 
 procedure ws_copyint_radix
 
-  dcopy 11
+  dcopy 32
   acopyr class : system'WideLiteralValue
   wcreate
   bcopya
@@ -1849,7 +1849,7 @@ end
 
 procedure s_copylong_radix
 
-  dcopy 25
+  dcopy 64
   acopyr class : system'LiteralValue
   bcreate
   bcopya
@@ -1865,7 +1865,7 @@ end
 
 procedure ws_copylong_radix
 
-  dcopy 25
+  dcopy 64
   acopyr class : system'WideLiteralValue
   wcreate
   bcopya

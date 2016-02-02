@@ -43,7 +43,11 @@
 {
     #method onConnect:client []
     
-    #method(stacksafe)onReceived:client &bytearray:buffer &int:length []
+    #method onLeave:client []
+    
+    #method(stacksafe)onReceived:client &bytearray:buffer &int:length []    
+    
+    #method tcp_server_listener = $self.
 }
 
 #class(sealed)TcpServer
@@ -151,6 +155,9 @@
         theClients remove &int:index.
         
         client close.
+                
+        ($nil != theListener)
+            ? [ theListener onLeave:client. ].        
     ]
     
     #method readClients
@@ -165,7 +172,10 @@
             client read &bytearray:theBuffer &int:theMaxLength &vint:received.
             (received == 0)
                 ? [ $self closeClient:client. ]
-                ! [ theListener onReceived:client &bytearray:theBuffer &int:received. ].
+                ! [ 
+                    (received > 0)
+                        ? [ theListener onReceived:client &bytearray:theBuffer &int:received. ].
+                ].
             
             i := i + 1.
         ].
@@ -215,4 +225,10 @@
         theClients getAt &int:index tcp_remoteclient write &bytearray:buffer &int:length.
     ]
     
+    #method close
+    [
+        theListenSocket shutdown &int:SD_BOTH.
+        
+        theListenSocket close.
+    ]
 }

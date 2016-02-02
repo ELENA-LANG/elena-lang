@@ -7,6 +7,5 @@ warn:unresolved=0
 
 [files]
 chatserver.l
-chatclient.l
 servermain.l
 

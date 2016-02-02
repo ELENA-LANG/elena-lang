@@ -217,9 +217,13 @@
             &bytearray:buffer
             &int:maxLength
             &int:flags.
-            
-        (SOCKET_ERROR == retVal)
-            ? [ #throw SocketException new:"Error at socket". ].            
+        
+        (SOCKET_ERROR == retVal)?
+        [
+            #var(type:int)err := system'external'WS2_32 WSAGetLastError.
+            (err != WSAEWOULDBLOCK)
+                ? [ #throw SocketException new:"Error at socket". ].
+        ].
             
         received << retVal.    
     ]
@@ -238,11 +242,11 @@
             ! [ ^ $nil. ].
     ]
 
-    #method(stacksafe) shutdown &int:aType
+    #method(stacksafe) shutdown &int:how
     [
         #var(type:int)aRetVal := system'external'WS2_32 shutdown
             &int:theHandle
-            &int:aType.
+            &int:how.
             
         (SOCKET_ERROR == aRetVal)
             ? [ #throw SocketException new:"Error at socket". ].

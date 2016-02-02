@@ -140,26 +140,26 @@
      #method toLiteral &base:aBase
         = self cast:%eval &to:
                    { 
-                      eval : aBase &byte : anInt = literalConvertor convert &byte:anInt &index:(aBase int).
+                      eval : aBase &byte : anInt = literalConvertor convert &byte:anInt &int:(aBase int).
                       
-                      eval : aBase &short : anInt = literalConvertor convert &short:anInt &index:(aBase int).
+                      eval : aBase &short : anInt = literalConvertor convert &short:anInt &int:(aBase int).
                       
-                      eval : aBase &int : anInt = literalConvertor convert &int:anInt &index:(aBase int).
+                      eval : aBase &int : anInt = literalConvertor convert &int:anInt &int:(aBase int).
                       
-                      eval : aBase &long : anInt = literalConvertor convert &long:anInt &index:(aBase int).
+                      eval : aBase &long : anInt = literalConvertor convert &long:anInt &int:(aBase int).
                       
                    }&with:aBase.
 
      #method toWide &base:aBase
         = self cast:%eval &to:
                    { 
-                      eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &index:(aBase int).
+                      eval : aBase &byte : anInt = wideConvertor convert &byte:anInt &int:(aBase int).
                       
-                      eval : aBase &short : anInt = wideConvertor convert &short:anInt &index:(aBase int).
+                      eval : aBase &short : anInt = wideConvertor convert &short:anInt &int:(aBase int).
                       
-                      eval : aBase &int : anInt = wideConvertor convert &int:anInt &index:(aBase int).
+                      eval : aBase &int : anInt = wideConvertor convert &int:anInt &int:(aBase int).
                       
-                      eval : aBase &long : anInt = wideConvertor convert &long:anInt &index:(aBase int).
+                      eval : aBase &long : anInt = wideConvertor convert &long:anInt &int:(aBase int).
                       
                    } &with:aBase.
             

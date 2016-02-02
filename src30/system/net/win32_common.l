@@ -15,7 +15,11 @@
 
 #symbol(type:int,const) FIONBIO = 8004667Eh.
 
+#symbol(type:int,const) WSAEWOULDBLOCK = 10035.
+
 #symbol(type:int,const) SOMAXCONN = 5.
+
+#symbol(type:int,const) SD_BOTH = 2.
 
 // --- types ---
 
