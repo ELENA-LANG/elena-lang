@@ -32,4 +32,9 @@
         
         theNetworkClient start.
     ]
+    
+    #method stop
+    [
+        theNetworkClient close.
+    ]
 }

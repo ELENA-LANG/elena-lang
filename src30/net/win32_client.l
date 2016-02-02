@@ -102,6 +102,8 @@
     
     #method close
     [
+        theSocket shutdown &int:SD_BOTH.
+        
         theSocket close.
     ]
     
@@ -118,7 +120,10 @@
         theSocket read &bytearray:theBuffer &int:theMaxLength &int:0 &vint:received.
         (received == 0)
             ? [ $self close. ]
-            ! [ theListener onReceived:$self &bytearray:theBuffer &int:received. ].
+            ! [ 
+                (received > 0)
+                    ? [ theListener onReceived:$self &bytearray:theBuffer &int:received. ].
+            ].
     ]
     
     #method(stacksafe) send &int:index &bytearray:buffer &int:length    

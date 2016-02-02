@@ -12,4 +12,6 @@
         | if &Error: e [ console writeLine:"Cannot esteblish connection!". ].
     
     console readChar.
+    
+    client stop.
 ].

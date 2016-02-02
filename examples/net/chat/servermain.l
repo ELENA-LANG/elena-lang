@@ -10,8 +10,6 @@
     
     #var server := ChatServer new &port:DEFAULT_PORT.
     
-    //#var client := ChatClient new &ip:"127.0.0.1" &port:DEFAULT_PORT.
-    
     server start.
     
     console readChar.

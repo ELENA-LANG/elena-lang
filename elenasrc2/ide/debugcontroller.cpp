@@ -1054,6 +1054,9 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 {
    if (_debugger.isStarted()) {
       DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
+      if (lineInfo == NULL)
+         return;
+
       int index = 0;
       while (lineInfo[index].symbol != dsProcedure) {
          if (lineInfo[index].symbol == dsLocal) {

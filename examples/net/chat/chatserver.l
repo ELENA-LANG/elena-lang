@@ -18,7 +18,12 @@
         {
             onConnect:client
             [
-                console writeLine:"new client".
+                console writeLine:"new client joint".
+            ]
+            
+            onLeave:client
+            [
+                console writeLine:"client left".
             ]
         }.
         
