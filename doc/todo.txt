@@ -22,8 +22,6 @@ In development:
                        * rosetta sample : Twelve statements
                        * rosetta sample : Undefined values
                        * rosetta sample : Unicode strings
-                       * rosetta sample : Unicode variable names
-                       * rosetta sample : User input/Text
                        * rosetta sample : Variable size/Get
                        * rosetta sample : Variable size/Set
                        * rosetta sample : Variables
@@ -62,6 +60,7 @@ In development:
                        * rosetta sample : Tree traversal                       
                        * rosetta sample : Stack traces
                        * rosetta sample : Set
+                       * Animate a pendulum
                        
                        * refactor cpu_sim : assembler
 
