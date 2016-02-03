@@ -35,6 +35,9 @@
         theParameter := object.
     ]
     
+    #method close
+        => theSocket.
+    
     #method Parameter = theParameter.
 }
 
@@ -44,6 +47,8 @@
     #method onConnect:client []
     
     #method onLeave:client []
+    
+    #method onError:e &for:client []
     
     #method(stacksafe)onReceived:client &bytearray:buffer &int:length []    
     
@@ -160,6 +165,16 @@
             ? [ theListener onLeave:client. ].        
     ]
     
+    #method onError:e &for:client
+    [
+        ($nil != theListener)
+            ? [ theListener onError:e &for:client. ].
+        
+        #var(type:int) err := e error_code.
+        (err == WSAECONNRESET)
+            ? [ $self closeClient:client. ].
+    ]
+    
     #method readClients
     [
         #var(type:int)i := 0.
@@ -169,7 +184,12 @@
         [
             #var(type:tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
             #var(type:int)received.
-            client read &bytearray:theBuffer &int:theMaxLength &vint:received.
+            client read &bytearray:theBuffer &int:theMaxLength &vint:received
+                | if &SocketError:e
+                [
+                    $self onError:e &for:client.
+                ].            
+            
             (received == 0)
                 ? [ $self closeClient:client. ]
                 ! [ 

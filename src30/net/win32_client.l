@@ -11,6 +11,8 @@
     
     #method(stacksafe)onReceived:client &bytearray:buffer &int:length []
     
+    #method onError:e &for:client []
+    
     #method tcp_client_listener = $self.
 }
 
@@ -114,10 +116,25 @@
         theListener := listener.
     ]
     
+    #method onError:e
+    [
+        ($nil != theListener)
+            ? [ theListener onError:e &for:$self. ].
+        
+        #var(type:int) err := e error_code.
+        (err == WSAECONNRESET)
+            ? [ $self close. ].
+    ]
+    
     #method readServer
     [
         #var(type:int)received.
-        theSocket read &bytearray:theBuffer &int:theMaxLength &int:0 &vint:received.
+        theSocket read &bytearray:theBuffer &int:theMaxLength &int:0 &vint:received
+                | if &SocketError:e
+                [
+                    $self onError:e.
+                ].
+
         (received == 0)
             ? [ $self close. ]
             ! [ 

@@ -1,4 +1,5 @@
 #import system.
+#import extensions.
 #import net.
 
 #class ChatServer
@@ -24,6 +25,11 @@
             onLeave:client
             [
                 console writeLine:"client left".
+            ]
+            
+            onError:e &for:client
+            [
+                console writeLine:"exception #":(e error_code).
             ]
         }.
         

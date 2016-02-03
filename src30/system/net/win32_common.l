@@ -16,6 +16,7 @@
 #symbol(type:int,const) FIONBIO = 8004667Eh.
 
 #symbol(type:int,const) WSAEWOULDBLOCK = 10035.
+#symbol(type:int,const) WSAECONNRESET  = 10054.
 
 #symbol(type:int,const) SOMAXCONN = 5.
 
@@ -45,6 +46,8 @@
     [
         theCode := IntNumber new &int:(system'external'WS2_32 WSAGetLastError).
     ]
+    
+    #method(type:int) error_code = theCode int.
     
     /// Returns the message and the call stack
     #method literal = theMessage add &literal:#10"Socket Error code:" add &literal:(theCode literal) add &literal:#10"Call stack:"#10 add &literal:(theCallStack literal).

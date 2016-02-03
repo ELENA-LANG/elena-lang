@@ -1,4 +1,5 @@
 #import system.
+#import extensions.
 #import net.
 
 #class ChatClient
@@ -27,6 +28,11 @@
             onConnect:client
             [
                 console writeLine:"new client".
+            ]
+            
+            onError:e &for:client
+            [
+                console writeLine:"Exception #":(e error_code).
             ]
         }.
         

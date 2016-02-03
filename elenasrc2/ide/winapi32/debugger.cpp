@@ -607,7 +607,8 @@ void Debugger :: stop()
    if (!started)
       return;
 
-   ::TerminateProcess(current->hProcess, 1);
+   if (current)
+      ::TerminateProcess(current->hProcess, 1);
 
    continueProcess();
 }
