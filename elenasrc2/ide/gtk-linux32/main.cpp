@@ -1,15 +1,8 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ program entry
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
-
-//#include "gtk-linux32/gtkcommon.h"
-////#include "gtk-linux32/gtksdi.h"
-////#include "gtk-linux32/gtkmenu.h"
-////#include "gtk-linux32/gtktoolbar.h"
-////#include "gtk-linux32/gtkstatusbar.h"
-////#include "gtkeditframe.h"
 
 #include "gtkide.h"
 ////#include "gtkideconst.h"
@@ -530,9 +523,7 @@ public:
 
    virtual bool compileProject(_ProjectManager* project, int postponedAction)
    {
-      //return appWindow.compileProject(project, postponedAction);
-
-      return false; // !! temporal
+      return appWindow.compileProject(project, postponedAction);
    }
 
    virtual void resetDebugWindows()

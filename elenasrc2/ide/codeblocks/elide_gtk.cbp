@@ -42,6 +42,7 @@
 		<Linker>
 			<Add option="-m32" />
 			<Add option="`pkg-config gtkmm-3.0 --libs`" />
+			<Add option="-lpthread" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />

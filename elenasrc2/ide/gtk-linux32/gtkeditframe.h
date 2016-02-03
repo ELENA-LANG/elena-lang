@@ -10,7 +10,6 @@
 #include "gtk-linux32/gtktabbar.h"
 #include "gtk-linux32/gtktextview.h"
 #include "gtk-linux32/gtkmenu.h"
-//#include "gtk-linux32/gtksdi.h"
 #include "../idecommon.h"
 
 namespace _GUI_
@@ -25,8 +24,6 @@ protected:
    size_t     _scheme;
 
    Model*       _model;
-
-//   SDIWindow* _owner;
 
 public:
    int newDocument(const char* name, Document* doc);
@@ -63,7 +60,7 @@ public:
 //   void init(Model* model);
    void refreshDocument();
 
-   EditFrame(Model* model/*SDIWindow* owner*/);
+   EditFrame(Model* model);
 };
 
 } // _GUI_

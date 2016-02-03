@@ -33,14 +33,16 @@ class MainWindow : public SDIWindow
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
-   _Controller*   _controller;
-   Model*         _model;
+   _Controller*        _controller;
+   Model*              _model;
 
-   Gtk::Toolbar*   _toolbar;
-   Gtk::TreeView*  _projectView;
-   Gtk::Statusbar* _statusbar;
-   Gtk::Notebook*  _bottomTab;
-   EditFrame*      _mainFrame;
+   Gtk::Toolbar        _toolbar;
+   Gtk::TreeView       _projectView;
+   Gtk::Statusbar      _statusbar;
+   Gtk::Notebook       _bottomTab;
+   Gtk::ScrolledWindow _outputScroller;
+   Gtk::TextView       _output;
+   EditFrame           _mainFrame;
 
 protected:
    Clipboard      _clipboard;
@@ -211,6 +213,8 @@ public:
    void selectDocument(int docIndex);
 
    void reloadProjectView(_ProjectManager* project);
+
+   bool compileProject(_ProjectManager* manager, int postponedAction);
 
    MainWindow(const char* caption, _Controller* controller, Model* model);
 };

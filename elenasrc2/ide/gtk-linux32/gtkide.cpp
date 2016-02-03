@@ -12,6 +12,7 @@
 //#include "gtkeditframe.h"
 
 #include "gtkide.h"
+#include<pthread.h>
 
 using namespace _GUI_;
 
@@ -171,40 +172,39 @@ void MainWindow :: populateMenu()
 void MainWindow :: populateToolbar()
 {
    //Create the toolbar and add it to a container widget:
-   _toolbar = Gtk::manage(new Gtk::Toolbar());
    Gtk::ToolButton* button = Gtk::manage(new Gtk::ToolButton());
    button->set_icon_name("document-new");
 
    //We can't do this until we can break the ToolButton ABI: button->set_detailed_action_name("example.new");
    gtk_actionable_set_detailed_action_name (GTK_ACTIONABLE (button->gobj()), "IDE.FileNewSource");
-   _toolbar->add(*button);
+   _toolbar.add(*button);
 
-   _box.pack_start(*_toolbar, Gtk::PACK_SHRINK);
+   _box.pack_start(_toolbar, Gtk::PACK_SHRINK);
 }
 
 int MainWindow :: newDocument(const char* name, Document* doc)
 {
-   return _mainFrame->newDocument(name, doc);
+   return _mainFrame.newDocument(name, doc);
 }
 
 int MainWindow :: getCurrentDocumentIndex()
 {
-   return _mainFrame->getCurrentIndex();
+   return _mainFrame.getCurrentIndex();
 }
 
 void MainWindow :: closeDocument(int index)
 {
-   _mainFrame->eraseDocumentTab(index);
+   _mainFrame.eraseDocumentTab(index);
 }
 
 void MainWindow :: selectDocument(int docIndex)
 {
-   _mainFrame->selectTab(docIndex);
+   _mainFrame.selectTab(docIndex);
 }
 
 void MainWindow :: refreshDocument()
 {
-   _mainFrame->refreshDocument();
+   _mainFrame.refreshDocument();
 }
 
 bool MainWindow :: copyToClipboard(Document* document)
@@ -277,8 +277,105 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
    show_all_children();
 }
 
+void* execute(void* args/*const char* szCommand, char* const aArguments[], char* const aEnvironment[], const char* szMessage*/)
+{
+/*  int aStdinPipe[2];
+  int aStdoutPipe[2];
+  int nChild;
+  char nChar;
+  int nResult;
+
+  if (pipe(aStdinPipe) < 0) {
+    perror("allocating pipe for child input redirect");
+    return -1;
+  }
+  if (pipe(aStdoutPipe) < 0) {
+    close(aStdinPipe[PIPE_READ]);
+    close(aStdinPipe[PIPE_WRITE]);
+    perror("allocating pipe for child output redirect");
+    return -1;
+  }
+
+  nChild = fork();
+  if (0 == nChild) {
+    // child continues here
+
+    // redirect stdin
+    if (dup2(aStdinPipe[PIPE_READ], STDIN_FILENO) == -1) {
+      perror("redirecting stdin");
+      return -1;
+    }
+
+    // redirect stdout
+    if (dup2(aStdoutPipe[PIPE_WRITE], STDOUT_FILENO) == -1) {
+      perror("redirecting stdout");
+      return -1;
+    }
+
+    // redirect stderr
+    if (dup2(aStdoutPipe[PIPE_WRITE], STDERR_FILENO) == -1) {
+      perror("redirecting stderr");
+      return -1;
+    }
+
+    // all these are for use by parent only
+    close(aStdinPipe[PIPE_READ]);
+    close(aStdinPipe[PIPE_WRITE]);
+    close(aStdoutPipe[PIPE_READ]);
+    close(aStdoutPipe[PIPE_WRITE]);
+
+    // run child process image
+    // replace this with any exec* function find easier to use ("man exec")
+    nResult = execve(szCommand, aArguments, aEnvironment);
+
+    // if we get here at all, an error occurred, but we are in the child
+    // process, so just exit
+    perror("exec of the child process");
+    exit(nResult);
+  } else if (nChild > 0) {
+    // parent continues here
+
+    // close unused file descriptors, these are for child only
+    close(aStdinPipe[PIPE_READ]);
+    close(aStdoutPipe[PIPE_WRITE]);
+
+    // Include error check here
+    if (NULL != szMessage) {
+      write(aStdinPipe[PIPE_WRITE], szMessage, strlen(szMessage));
+    }
+
+    // Just a char by char read here, you can change it accordingly
+    while (read(aStdoutPipe[PIPE_READ], &nChar, 1) == 1) {
+      write(STDOUT_FILENO, &nChar, 1);
+    }
+
+    // done with these in this example program, you would normally keep these
+    // open of course as long as you want to talk to the child
+    close(aStdinPipe[PIPE_WRITE]);
+    close(aStdoutPipe[PIPE_READ]);
+  } else {
+    // failed to create child
+    close(aStdinPipe[PIPE_READ]);
+    close(aStdinPipe[PIPE_WRITE]);
+    close(aStdoutPipe[PIPE_READ]);
+    close(aStdoutPipe[PIPE_WRITE]);
+  }
+  return nChild;*/
+
+  return NULL; // !! temporal
+}
+
+bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
+{
+   pthread_t tid;
+
+   int err = pthread_create(&tid, NULL, &execute, NULL);
+
+   return false; // !! temporal
+}
+
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
-   : SDIWindow(caption)
+   : SDIWindow(caption), _mainFrame(model)
 {
    _controller = controller;
    _model = model;
@@ -286,22 +383,19 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    populateMenu();
    populateToolbar();
 
-   _mainFrame = new EditFrame(model);
-   _projectView = Gtk::manage(new Gtk::TreeView());
-   _bottomTab = Gtk::manage(new Gtk::Notebook());
-   _statusbar = Gtk::manage(new Gtk::Statusbar());
-
    // !! temporal
-   _bottomTab->append_page(*Gtk::manage(new Gtk::Label("Output")), "Output");
-   _statusbar->push("Example");
+   _statusbar.push("Example");
 
    _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
-   _projectView->set_model(_projectTree);
+   _projectView.set_model(_projectTree);
 
-   _projectView->append_column("module", _projectTreeColumns._caption);
+   _projectView.append_column("module", _projectTreeColumns._caption);
 
-   _projectView->signal_row_activated().connect(sigc::mem_fun(*this,
+   _projectView.signal_row_activated().connect(sigc::mem_fun(*this,
               &MainWindow::on_projectview_row_activated));
 
-   populate(_mainFrame, _projectView, _bottomTab, _statusbar);
+   _outputScroller.add(_output);
+   _bottomTab.append_page(_outputScroller, "Output");
+
+   populate(&_mainFrame, &_projectView, &_bottomTab, &_statusbar);
 }
