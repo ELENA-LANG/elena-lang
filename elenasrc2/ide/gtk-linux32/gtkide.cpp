@@ -14,6 +14,10 @@
 #include "gtkide.h"
 #include<pthread.h>
 
+#define COMPILER_PATH "/usr/bin/elena-lc"
+#define PIPE_READ 0
+#define PIPE_WRITE 1
+
 using namespace _GUI_;
 
 //int AppToolBarButtonNumber = 12;
@@ -277,99 +281,109 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
    show_all_children();
 }
 
-void* execute(void* args/*const char* szCommand, char* const aArguments[], char* const aEnvironment[], const char* szMessage*/)
+struct ExecuteArg
 {
-/*  int aStdinPipe[2];
-  int aStdoutPipe[2];
-  int nChild;
-  char nChar;
-  int nResult;
+   _ProjectManager*              manager;
+   Glib::RefPtr<Gtk::TextBuffer> buffer;
+};
 
-  if (pipe(aStdinPipe) < 0) {
-    perror("allocating pipe for child input redirect");
-    return -1;
-  }
-  if (pipe(aStdoutPipe) < 0) {
-    close(aStdinPipe[PIPE_READ]);
-    close(aStdinPipe[PIPE_WRITE]);
-    perror("allocating pipe for child output redirect");
-    return -1;
-  }
+void* execute(void* args)
+{
+   ExecuteArg* earg = (ExecuteArg*)args;
 
-  nChild = fork();
-  if (0 == nChild) {
-    // child continues here
+   int  stdinPipe[2];
+   int  stdoutPipe[2];
+   char ch;
 
-    // redirect stdin
-    if (dup2(aStdinPipe[PIPE_READ], STDIN_FILENO) == -1) {
-      perror("redirecting stdin");
-      return -1;
-    }
+   if (pipe(stdinPipe) < 0) {
+      //perror("allocating pipe for child input redirect");
+      return (void*)-1;
+   }
+   if (pipe(stdoutPipe) < 0) {
+      close(stdinPipe[PIPE_READ]);
+      close(stdinPipe[PIPE_WRITE]);
+      //perror("allocating pipe for child output redirect");
+      return (void*)-1;
+   }
 
-    // redirect stdout
-    if (dup2(aStdoutPipe[PIPE_WRITE], STDOUT_FILENO) == -1) {
-      perror("redirecting stdout");
-      return -1;
-    }
+   int child = fork();
+   if (child == 0) {
+      // child continues here
 
-    // redirect stderr
-    if (dup2(aStdoutPipe[PIPE_WRITE], STDERR_FILENO) == -1) {
-      perror("redirecting stderr");
-      return -1;
-    }
+      // redirect stdin
+      if (dup2(stdinPipe[PIPE_READ], STDIN_FILENO) == -1) {
+         //perror("redirecting stdin");
+         return (void*)-1;
+      }
 
-    // all these are for use by parent only
-    close(aStdinPipe[PIPE_READ]);
-    close(aStdinPipe[PIPE_WRITE]);
-    close(aStdoutPipe[PIPE_READ]);
-    close(aStdoutPipe[PIPE_WRITE]);
+      // redirect stdout
+      if (dup2(stdoutPipe[PIPE_WRITE], STDOUT_FILENO) == -1) {
+         //perror("redirecting stdout");
+         return (void*)-1;
+      }
 
-    // run child process image
-    // replace this with any exec* function find easier to use ("man exec")
-    nResult = execve(szCommand, aArguments, aEnvironment);
+      // redirect stderr
+      if (dup2(stdoutPipe[PIPE_WRITE], STDERR_FILENO) == -1) {
+         //perror("redirecting stderr");
+         return (void*)-1;
+      }
 
-    // if we get here at all, an error occurred, but we are in the child
-    // process, so just exit
-    perror("exec of the child process");
-    exit(nResult);
-  } else if (nChild > 0) {
-    // parent continues here
+      // all these are for use by parent only
+      close(stdinPipe[PIPE_READ]);
+      close(stdinPipe[PIPE_WRITE]);
+      close(stdoutPipe[PIPE_READ]);
+      close(stdoutPipe[PIPE_WRITE]);
 
-    // close unused file descriptors, these are for child only
-    close(aStdinPipe[PIPE_READ]);
-    close(aStdoutPipe[PIPE_WRITE]);
+      int retVal = execl(COMPILER_PATH, /*option, */0);
 
-    // Include error check here
-    if (NULL != szMessage) {
-      write(aStdinPipe[PIPE_WRITE], szMessage, strlen(szMessage));
-    }
+      // if we get here at all, an error occurred, but we are in the child
+      // process, so just exit
+      //perror("exec of the child process");
+      exit(retVal);
+   }
+   else if (child > 0) {
+      // parent continues here
 
-    // Just a char by char read here, you can change it accordingly
-    while (read(aStdoutPipe[PIPE_READ], &nChar, 1) == 1) {
-      write(STDOUT_FILENO, &nChar, 1);
-    }
+      // close unused file descriptors, these are for child only
+      close(stdinPipe[PIPE_READ]);
+      close(stdoutPipe[PIPE_WRITE]);
 
-    // done with these in this example program, you would normally keep these
-    // open of course as long as you want to talk to the child
-    close(aStdinPipe[PIPE_WRITE]);
-    close(aStdoutPipe[PIPE_READ]);
-  } else {
-    // failed to create child
-    close(aStdinPipe[PIPE_READ]);
-    close(aStdinPipe[PIPE_WRITE]);
-    close(aStdoutPipe[PIPE_READ]);
-    close(aStdoutPipe[PIPE_WRITE]);
-  }
-  return nChild;*/
+      // Include error check here
+      //if (NULL != szMessage) {
+      //   write(stdinPipe[PIPE_WRITE], szMessage, strlen(szMessage));
+      //}
 
-  return NULL; // !! temporal
+      char buf[256];
+      Gtk::TextIter iter = earg->buffer->end();
+      int chars_read = 256;
+      while (chars_read == 256) {
+         chars_read = read(stdoutPipe[PIPE_READ], buf, 1024);
+         earg->buffer->insert(iter, buf, buf + chars_read);
+      }
+
+      // done with these in this example program, you would normally keep these
+      // open of course as long as you want to talk to the child
+      close(stdinPipe[PIPE_WRITE]);
+      close(stdoutPipe[PIPE_READ]);
+   }
+   else {
+      // failed to create child
+      close(stdinPipe[PIPE_READ]);
+      close(stdinPipe[PIPE_WRITE]);
+      close(stdoutPipe[PIPE_READ]);
+      close(stdoutPipe[PIPE_WRITE]);
+   }
+   return (void*)child;
 }
 
 bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
 {
-   pthread_t tid;
+   ExecuteArg arg;
+   arg.manager = manager;
+   arg.buffer = _output.get_buffer();
 
-   int err = pthread_create(&tid, NULL, &execute, NULL);
+   pthread_t tid;
+   int err = pthread_create(&tid, NULL, &execute, &arg);
 
    return false; // !! temporal
 }
