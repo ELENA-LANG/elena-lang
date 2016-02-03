@@ -21,6 +21,7 @@
 #class(sealed) TcpClient
 {
     #field(type:thread)theListenThread.
+    #field theLock.
     
     #field(type:socket)theSocket.
     #field(type:bytearray)theBuffer.
@@ -33,6 +34,8 @@
     
     #constructor new &bufferSize:size
     [
+        theLock := Object new.
+        
         theMaxLength := size int.
         theBuffer := ByteArray new &int:theMaxLength.
         
@@ -104,9 +107,13 @@
     
     #method close
     [
-        theSocket shutdown &int:SD_BOTH.
-        
-        theSocket close.
+        #lock (theLock)
+        [
+            theSocket shutdown &int:SD_BOTH.        
+            theSocket close.
+            
+            theSocket := $nil.
+        ].
     ]
     
     #method tcp_client = $self.
@@ -151,9 +158,16 @@
     
     #method proceed
     [
-        $self readServer.
+        #var retVal.
         
-        ^ true.
+        #lock (theLock)
+        [
+            $self readServer.
+            
+            retVal := $nil != theSocket.
+        ].
+        
+        ^ retVal.
     ]
     
     #method start
