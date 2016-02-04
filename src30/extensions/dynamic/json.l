@@ -64,7 +64,7 @@
         #var(type:int)len := 10.
         #var(type:int)offs := 0.
 
-        object read &mssg_mask:%get &index:0 &mssgarray:properties &vint:len.
+        object readMatchedEntries &mssg:%get(0) &int:0 &mssgarray:properties &vint:len.
         #loop (len > 0) ?
         [
             #var(type:int)i:=0.
@@ -83,7 +83,7 @@
             
             offs := offs + len.
             
-            object read &mssg_mask:%get &index:offs &mssgarray:properties &vint:len.
+            object readMatchedEntries &mssg:%get(0) &int:offs &mssgarray:properties &vint:len.
         ].
         
         #var(type:int)outputLen := output length.

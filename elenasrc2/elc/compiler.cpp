@@ -3705,6 +3705,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       switch (flags & elDebugMask) {
          case elDebugDWORD:
          case elDebugPTR:
+         case elDebugSubject:
             argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
             break;
          case elDebugReference:

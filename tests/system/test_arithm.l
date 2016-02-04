@@ -5,10 +5,39 @@
 #import system'calendar.
 #import extensions.
 
+#import extensions'dynamic.
+
+#class Teste :: DTO
+{
+     #field hello.
+     #field world.
+     #field space.
+
+     #constructor new
+     [
+         hello := "Hello".
+         space := " ".
+         world := "World".
+     ]
+
+     #method Hello = hello.
+     #method set &Hello:value [ hello := value. ]
+
+     #method World = world.
+     #method set &World:value [ world := value. ]
+
+     #method Space = space.
+     #method set &Space:value [ space := value. ]
+}
+
 #symbol XTester =
 {
     test
     [
+        #var class := Teste new.
+        #var lala := class toJson.        
+        
+        console writeLine:lala.
     ]
 }.
         
