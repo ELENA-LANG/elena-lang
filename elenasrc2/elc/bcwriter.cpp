@@ -3111,19 +3111,20 @@ void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
 
    generateCodeBlock(tape, block);
 
-   popObject(tape, lxResult);
-   freeLock(tape);
-
    // finally block - should free the lock if the exception was thrown
    declareCatch(tape);
 
+   loadBase(tape, lxResult);
    popObject(tape, lxResult);
    freeLock(tape);
-
+   assignBaseTo(tape, lxResult);
+   
    throwCurrent(tape);
 
    endCatch(tape);
 
+   popObject(tape, lxResult);
+   freeLock(tape);
 }
 
 void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)

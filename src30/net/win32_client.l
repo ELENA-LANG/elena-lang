@@ -105,14 +105,19 @@
         theSocket option &int:IPPROTO_TCP &int:TCP_NODELAY &bool:(aValue bool).
     ]
     
+    #method $close
+    [
+        theSocket shutdown &int:SD_BOTH.
+        theSocket close.
+        
+        theSocket := $nil.
+    ]
+    
     #method close
     [
         #lock (theLock)
         [
-            theSocket shutdown &int:SD_BOTH.        
-            theSocket close.
-            
-            theSocket := $nil.
+            $self $close.
         ].
     ]
     
@@ -130,7 +135,7 @@
         
         #var(type:int) err := e error_code.
         (err == WSAECONNRESET)
-            ? [ $self close. ].
+            ? [ $self $close. ].
     ]
     
     #method readServer
@@ -143,7 +148,7 @@
                 ].
 
         (received == 0)
-            ? [ $self close. ]
+            ? [ $self $close. ]
             ! [ 
                 (received > 0)
                     ? [ theListener onReceived:$self &bytearray:theBuffer &int:received. ].
@@ -158,13 +163,11 @@
     
     #method proceed
     [
-        #var retVal.
-        
+        #var retVal := false.
         #lock (theLock)
         [
-            $self readServer.
-            
-            retVal := $nil != theSocket.
+            ($nil != theSocket)
+                ? [ $self readServer. retVal := true. ].
         ].
         
         ^ retVal.
