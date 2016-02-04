@@ -17,6 +17,28 @@ namespace _GUI_
 
 class MainWindow : public SDIWindow
 {
+   class OutputProcess
+   {
+      char buffer[512];
+      int  buf_len;
+      bool stopped;
+
+      mutable Glib::Threads::Mutex _mutex;
+
+   public:
+      bool isStopped();
+
+      void writeOut(Gtk::TextView& view);
+
+      void compile(MainWindow* owner);
+
+      OutputProcess()
+      {
+         buf_len = 0;
+         stopped = true;
+      }
+   };
+
    class ProjectTreeColumns : public Gtk::TreeModel::ColumnRecord
    {
    public:
@@ -40,9 +62,14 @@ class MainWindow : public SDIWindow
    Gtk::TreeView       _projectView;
    Gtk::Statusbar      _statusbar;
    Gtk::Notebook       _bottomTab;
+
    Gtk::ScrolledWindow _outputScroller;
    Gtk::TextView       _output;
    EditFrame           _mainFrame;
+   OutputProcess       _outputProcess;
+
+   Glib::Threads::Thread* _outputThread;
+   Glib::Dispatcher       _outputDispatcher;
 
 protected:
    Clipboard      _clipboard;
@@ -198,6 +225,8 @@ protected:
       }
    }
 
+   void on_notification_from_output();
+
    void populateMenu();
    void populateToolbar();
 
@@ -211,6 +240,8 @@ public:
    void closeDocument(int index);
    int getCurrentDocumentIndex();
    void selectDocument(int docIndex);
+
+   void notifyOutput();
 
    void reloadProjectView(_ProjectManager* project);
 

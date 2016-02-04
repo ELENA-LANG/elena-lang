@@ -12,13 +12,128 @@
 //#include "gtkeditframe.h"
 
 #include "gtkide.h"
-#include<pthread.h>
+//#include<pthread.h>
 
 #define COMPILER_PATH "/usr/bin/elena-lc"
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
 using namespace _GUI_;
+
+bool MainWindow::OutputProcess :: isStopped()
+{
+   return stopped;
+}
+
+void MainWindow::OutputProcess :: writeOut(Gtk::TextView& view)
+{
+   Glib::Threads::Mutex::Lock lock(_mutex);
+
+   Gtk::TextIter iter = view.get_buffer()->end();
+   view.get_buffer()->insert(iter, buffer, buffer + buf_len);
+
+   buf_len = 0;
+}
+
+void MainWindow::OutputProcess :: compile(MainWindow* owner)
+{
+   stopped = false;
+
+   int  stdinPipe[2];
+   int  stdoutPipe[2];
+   char ch;
+
+   if (pipe(stdinPipe) < 0) {
+      //perror("allocating pipe for child input redirect");
+      return;
+   }
+   if (pipe(stdoutPipe) < 0) {
+      ::close(stdinPipe[PIPE_READ]);
+      ::close(stdinPipe[PIPE_WRITE]);
+      //perror("allocating pipe for child output redirect");
+      return;
+   }
+
+   int child = fork();
+   if (child == 0) {
+      // child continues here
+
+      // redirect stdin
+      if (dup2(stdinPipe[PIPE_READ], STDIN_FILENO) == -1) {
+         //perror("redirecting stdin");
+         return;
+      }
+
+      // redirect stdout
+      if (dup2(stdoutPipe[PIPE_WRITE], STDOUT_FILENO) == -1) {
+         //perror("redirecting stdout");
+         return;
+      }
+
+      // redirect stderr
+      if (dup2(stdoutPipe[PIPE_WRITE], STDERR_FILENO) == -1) {
+         //perror("redirecting stderr");
+         return;
+      }
+
+      // all these are for use by parent only
+      ::close(stdinPipe[PIPE_READ]);
+      ::close(stdinPipe[PIPE_WRITE]);
+      ::close(stdoutPipe[PIPE_READ]);
+      ::close(stdoutPipe[PIPE_WRITE]);
+
+      int retVal = execl(COMPILER_PATH, /*option, */0);
+
+      // if we get here at all, an error occurred, but we are in the child
+      // process, so just exit
+      //perror("exec of the child process");
+      ::exit(retVal);
+   }
+   else if (child > 0) {
+      // parent continues here
+
+      // close unused file descriptors, these are for child only
+      ::close(stdinPipe[PIPE_READ]);
+      ::close(stdoutPipe[PIPE_WRITE]);
+
+      // Include error check here
+      //if (NULL != szMessage) {
+      //   write(stdinPipe[PIPE_WRITE], szMessage, strlen(szMessage));
+      //}
+
+      while (true) {
+         buf_len = read(stdoutPipe[PIPE_READ], buffer, 512);
+         if (buf_len == 0)
+            break;
+
+         owner->notifyOutput();
+
+         // wait until the buffer is read
+         while (true) {
+            Glib::usleep(100);
+            {
+               Glib::Threads::Mutex::Lock lock(_mutex);
+               if (buf_len == 0)
+                  break;
+            }
+         }
+      }
+
+      // done with these in this example program, you would normally keep these
+      // open of course as long as you want to talk to the child
+      ::close(stdinPipe[PIPE_WRITE]);
+      ::close(stdoutPipe[PIPE_READ]);
+
+      stopped = true;
+   }
+   else {
+      // failed to create child
+      ::close(stdinPipe[PIPE_READ]);
+      ::close(stdinPipe[PIPE_WRITE]);
+      ::close(stdoutPipe[PIPE_READ]);
+      ::close(stdoutPipe[PIPE_WRITE]);
+   }
+}
 
 //int AppToolBarButtonNumber = 12;
 //ToolBarButton AppToolBarButtons[] =
@@ -281,115 +396,37 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
    show_all_children();
 }
 
-struct ExecuteArg
-{
-   _ProjectManager* manager;
-   Gtk::TextView*   output;
-};
-
-void* execute(void* args)
-{
-   ExecuteArg* earg = (ExecuteArg*)args;
-
-   int  stdinPipe[2];
-   int  stdoutPipe[2];
-   char ch;
-
-   if (pipe(stdinPipe) < 0) {
-      //perror("allocating pipe for child input redirect");
-      return (void*)-1;
-   }
-   if (pipe(stdoutPipe) < 0) {
-      close(stdinPipe[PIPE_READ]);
-      close(stdinPipe[PIPE_WRITE]);
-      //perror("allocating pipe for child output redirect");
-      return (void*)-1;
-   }
-
-   int child = fork();
-   if (child == 0) {
-      // child continues here
-
-      // redirect stdin
-      if (dup2(stdinPipe[PIPE_READ], STDIN_FILENO) == -1) {
-         //perror("redirecting stdin");
-         return (void*)-1;
-      }
-
-      // redirect stdout
-      if (dup2(stdoutPipe[PIPE_WRITE], STDOUT_FILENO) == -1) {
-         //perror("redirecting stdout");
-         return (void*)-1;
-      }
-
-      // redirect stderr
-      if (dup2(stdoutPipe[PIPE_WRITE], STDERR_FILENO) == -1) {
-         //perror("redirecting stderr");
-         return (void*)-1;
-      }
-
-      // all these are for use by parent only
-      close(stdinPipe[PIPE_READ]);
-      close(stdinPipe[PIPE_WRITE]);
-      close(stdoutPipe[PIPE_READ]);
-      close(stdoutPipe[PIPE_WRITE]);
-
-      int retVal = execl(COMPILER_PATH, /*option, */0);
-
-      // if we get here at all, an error occurred, but we are in the child
-      // process, so just exit
-      //perror("exec of the child process");
-      exit(retVal);
-   }
-   else if (child > 0) {
-      // parent continues here
-
-      // close unused file descriptors, these are for child only
-      close(stdinPipe[PIPE_READ]);
-      close(stdoutPipe[PIPE_WRITE]);
-
-      // Include error check here
-      //if (NULL != szMessage) {
-      //   write(stdinPipe[PIPE_WRITE], szMessage, strlen(szMessage));
-      //}
-
-      char buf[256];
-      Gtk::TextIter iter = earg->output->get_buffer()->end();
-      int chars_read = 256;
-      while (chars_read == 256) {
-         chars_read = read(stdoutPipe[PIPE_READ], buf, 1024);
-         earg->output->get_buffer()->insert(iter, buf, buf + chars_read);
-      }
-
-      // done with these in this example program, you would normally keep these
-      // open of course as long as you want to talk to the child
-      close(stdinPipe[PIPE_WRITE]);
-      close(stdoutPipe[PIPE_READ]);
-   }
-   else {
-      // failed to create child
-      close(stdinPipe[PIPE_READ]);
-      close(stdinPipe[PIPE_WRITE]);
-      close(stdoutPipe[PIPE_READ]);
-      close(stdoutPipe[PIPE_WRITE]);
-   }
-   return (void*)child;
-}
-
 bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
 {
-   ExecuteArg arg;
-   arg.manager = manager;
-   arg.output = &_output;
+   _outputThread = Glib::Threads::Thread::create(
+      sigc::bind(sigc::mem_fun(_outputProcess, &OutputProcess::compile), this));
 
-   pthread_t tid;
-   int err = pthread_create(&tid, NULL, &execute, &arg);
+//   ExecuteArg arg;
+//   arg.manager = manager;
+//   arg.output = &_output;
+//
+//   pthread_t tid;
+//   int err = pthread_create(&tid, NULL, &execute, &arg);
+//
+//   return false; // !! temporal
+}
 
-   return false; // !! temporal
+void MainWindow :: on_notification_from_output()
+{
+   if (_outputProcess.isStopped()) {
+      _outputThread->join();
+      _outputThread = NULL;
+   }
+   else _outputProcess.writeOut(_output);
+}
+
+void MainWindow :: notifyOutput()
+{
+   _outputDispatcher.emit();
 }
 
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
-   : SDIWindow(caption), _mainFrame(model)
+   : SDIWindow(caption), _mainFrame(model), _outputThread(NULL)
 {
    _controller = controller;
    _model = model;
@@ -412,4 +449,6 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    _bottomTab.append_page(_outputScroller, "Output");
 
    populate(&_mainFrame, &_projectView, &_bottomTab, &_statusbar);
+
+   _outputDispatcher.connect(sigc::mem_fun(*this, &MainWindow::on_notification_from_output));
 }
