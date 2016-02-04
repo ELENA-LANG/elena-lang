@@ -117,7 +117,8 @@
     [
         #lock (theLock)
         [
-            $self $close.
+            ($nil != theSocket)
+                ? [ $self $close. ].
         ].
     ]
     
