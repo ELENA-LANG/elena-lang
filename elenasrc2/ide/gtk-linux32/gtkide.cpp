@@ -283,8 +283,8 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
 
 struct ExecuteArg
 {
-   _ProjectManager*              manager;
-   Glib::RefPtr<Gtk::TextBuffer> buffer;
+   _ProjectManager* manager;
+   Gtk::TextView*   output;
 };
 
 void* execute(void* args)
@@ -354,11 +354,11 @@ void* execute(void* args)
       //}
 
       char buf[256];
-      Gtk::TextIter iter = earg->buffer->end();
+      Gtk::TextIter iter = earg->output->get_buffer()->end();
       int chars_read = 256;
       while (chars_read == 256) {
          chars_read = read(stdoutPipe[PIPE_READ], buf, 1024);
-         earg->buffer->insert(iter, buf, buf + chars_read);
+         earg->output->get_buffer()->insert(iter, buf, buf + chars_read);
       }
 
       // done with these in this example program, you would normally keep these
@@ -380,7 +380,7 @@ bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
 {
    ExecuteArg arg;
    arg.manager = manager;
-   arg.buffer = _output.get_buffer();
+   arg.output = &_output;
 
    pthread_t tid;
    int err = pthread_create(&tid, NULL, &execute, &arg);
