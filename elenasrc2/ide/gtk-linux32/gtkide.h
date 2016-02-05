@@ -19,6 +19,8 @@ class MainWindow : public SDIWindow
 {
    class OutputProcess
    {
+      _ELENA_::Path argument;
+
       char buffer[512];
       int  buf_len;
       bool stopped;
@@ -31,6 +33,14 @@ class MainWindow : public SDIWindow
       void writeOut(Gtk::TextView& view);
 
       void compile(MainWindow* owner);
+
+      void setArgument(const char* path, const char* name, const char* extension)
+      {
+         argument.copy("-c");
+         argument.append(path);
+         argument.combine(name);
+         argument.appendExtension(extension);
+      }
 
       OutputProcess()
       {

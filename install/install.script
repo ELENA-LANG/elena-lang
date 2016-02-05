@@ -1,3 +1,4 @@
+#!/bin/bash
 RELEASE=elena-1.9.23.i386-linux
 
 mkdir -p ./$RELEASE/etc/elena/

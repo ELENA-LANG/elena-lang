@@ -15,6 +15,7 @@
 //#include<pthread.h>
 
 #define COMPILER_PATH "/usr/bin/elena-lc"
+#define COMPILER_NAME "elena-lc"
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
@@ -41,7 +42,8 @@ void MainWindow::OutputProcess :: compile(MainWindow* owner)
 
    int  stdinPipe[2];
    int  stdoutPipe[2];
-   char ch;
+
+   const char* arg = argument;
 
    if (pipe(stdinPipe) < 0) {
       //perror("allocating pipe for child input redirect");
@@ -82,7 +84,7 @@ void MainWindow::OutputProcess :: compile(MainWindow* owner)
       ::close(stdoutPipe[PIPE_READ]);
       ::close(stdoutPipe[PIPE_WRITE]);
 
-      int retVal = execl(COMPILER_PATH, /*option, */0);
+      int retVal = execl(COMPILER_PATH, COMPILER_NAME, arg ,0);
 
       // if we get here at all, an error occurred, but we are in the child
       // process, so just exit
@@ -398,17 +400,12 @@ void MainWindow :: reloadProjectView(_ProjectManager* project)
 
 bool MainWindow :: compileProject(_ProjectManager* manager, int postponedAction)
 {
+   _output.get_buffer()->set_text("");
+
+   _outputProcess.setArgument(_model->project.path, _model->project.name, "project");
+
    _outputThread = Glib::Threads::Thread::create(
       sigc::bind(sigc::mem_fun(_outputProcess, &OutputProcess::compile), this));
-
-//   ExecuteArg arg;
-//   arg.manager = manager;
-//   arg.output = &_output;
-//
-//   pthread_t tid;
-//   int err = pthread_create(&tid, NULL, &execute, &arg);
-//
-//   return false; // !! temporal
 }
 
 void MainWindow :: on_notification_from_output()
@@ -449,6 +446,8 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    _bottomTab.append_page(_outputScroller, "Output");
 
    populate(&_mainFrame, &_projectView, &_bottomTab, &_statusbar);
+
+   //_output.set_editable(false);
 
    _outputDispatcher.connect(sigc::mem_fun(*this, &MainWindow::on_notification_from_output));
 }

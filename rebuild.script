@@ -1,3 +1,4 @@
+#!/bin/bash
 mkdir /usr/share/elena/
 mkdir /etc/elena/
 mkdir /etc/elena/templates
