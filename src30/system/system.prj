@@ -43,6 +43,7 @@ io\streamwriter.l
 io\win32_console.l
 io\win32_files.l
 io\files.l
+io\memorystream.l
 dynamic\groups.l
 dynamic\reflection.l
 dynamic\interpreters.l
@@ -58,3 +59,4 @@ winforms\win32_controls.l
 winforms\win32_windows.l
 winforms\win32_dialogs.l
 winforms\win32_app.l
+

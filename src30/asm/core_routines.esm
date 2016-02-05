@@ -4211,6 +4211,28 @@ procedure ns_move
   
 end
 
+procedure bs_move
+
+  pusha 
+
+  // ; insert
+  aloadsi 4
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi  0
+  aloadsi 5
+  pushai 0
+
+  callextr api : move
+
+  pop  
+  popa
+  quitn 4
+  
+end
+
 procedure s_encode
 
   aloadsi 3

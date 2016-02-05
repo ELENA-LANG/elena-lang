@@ -3317,6 +3317,52 @@ labNext2:
 
 end
 
+// ; [esp+4] -  offset, edi -target, esi - index, ecx - length
+procedure coreapi'move
+
+  test ecx, ecx
+  jz   short labEnd
+
+  mov  edx, [esp+4]
+  cmp  edx, 0
+  jl   short labDelete
+
+  add  esi, ecx
+  sub  esi, 1
+
+  add  edx, esi
+
+  add  edx, edi
+  add  esi, edi
+
+labNext:
+  mov  ebx, dword ptr [esi]
+  mov  dword ptr [edx], ebx
+  sub  esi, 1
+  sub  edx, 1
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+labDelete:
+  add  edx, esi
+
+  add  edx, edi
+  add  esi, edi
+
+labNext2:
+  mov  ebx, dword ptr [esi]
+  mov  dword ptr [edx], ebx
+  add  esi, 1
+  add  edx, 1
+  sub  ecx, 1
+  jnz  short labNext2
+  ret
+
+end
+
 // ; eax - sour, edi - dest, ecx - length, esi offset
 procedure coreapi's_encode
 

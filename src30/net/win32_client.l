@@ -2,6 +2,7 @@
 
 #import system.
 #import system'net.
+#import system'text.
 #import system'threading.
 
 #subject(class:TcpClientListener) tcp_client_listener.
@@ -74,6 +75,9 @@
                 ? [
                     aReader close.
                     
+                    ($nil != theListener)
+                        ? [ theListener onConnect:$self. ].
+            
                     ^ $self.
                 ].
             
@@ -156,10 +160,39 @@
             ].
     ]
     
-    #method(stacksafe) send &int:index &bytearray:buffer &int:length    
+    #method(stacksafe) write &int:index &bytearray:buffer &int:length
     [
         #var(type:int)sent.
         theSocket write &bytearray:buffer &int:length &int:0 &vint:sent.
+    ]
+    
+    #method(stacksafe) write &literal:s
+    [
+        #var(type:bytearray,size:256)buffer.
+        #var(type:int)len := s length.
+        #var(type:int)buf_len := 256.
+        #var(type:int)index := 0.
+        #loop (len > 0)?
+        [
+            (len < 256)
+                ? [ buf_len := len. ]
+                ! [ buf_len := 256. ].
+            
+            UTF8Encoding convert &int:index &int:buf_len &literal:s &bytearray:buffer.
+            
+            $self write &int:0 &bytearray:buffer &int:buf_len.
+            
+            len := len - buf_len.
+            index := index + buf_len.
+        ].
+    ]
+    
+    #method(stacksafe) write &int:n
+    [
+        #var(type:bytearray,size:4)buffer.
+        buffer write &int:0 &int:n.
+        
+        $self write &int:0 &bytearray:buffer &int:4.
     ]
     
     #method proceed

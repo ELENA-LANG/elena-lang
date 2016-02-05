@@ -128,6 +128,9 @@
     #method(stacksafe) read &int:anIndex &vreal:aLong
         => system'core_routines'bs_readqword.
 
+    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
+        => system'core_routines'bs_move.
+        
     /// Returns a byte at the specified position
     #method getAt : anIndex
     [
