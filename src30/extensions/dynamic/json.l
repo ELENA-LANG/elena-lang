@@ -43,6 +43,11 @@
         output::jsonSerializer jsonSerialize &dto:object.
     ]
     
+    eval:output &struct:object
+    [
+        output::jsonSerializer jsonSerialize &struct:object.
+    ]
+    
     eval:output &literal:s
     [
         output writeLiteral:"""":s:"""".
@@ -54,6 +59,32 @@
 
 #class(extension:textbuffer)jsonSerializer
 {
+    #method jsonSerialize &struct:object
+    [
+        #var(type:textbuffer)output := self textbuffer.
+        
+        output write:"{".
+
+        0 till:(object fieldCount) &by:2 &doEach:i
+        [
+            (0 == i) 
+                ! [ output write:"," ].
+            
+            #var prop := object getFieldAt:(i + 1).
+            output write:"""".
+            output write:(prop literal).
+            output write:""":".
+            
+            #var member := object getFieldAt:(i + 1).
+            
+            member cast:%eval &to:jsonDispatcher &with:output.
+        ].
+                                
+        output write:"}".
+        
+        ^ self.
+    ]
+    
     #method jsonSerialize &dto:object
     [
         #var(type:textbuffer)output := self textbuffer.
@@ -199,6 +230,19 @@
             ].        
     ]
     
+    #method deserializeStruct &object:object &enumerator:e
+        <= deserializeStruct &object:object &literal:($helper $readNext &enumerator:e literal) &enumerator:e.
+        
+    #method deserializeStruct &object:object &literal:token &enumerator:e
+    [
+        #var(type:char)ch.
+        token read &int:0 &vchar:ch.
+
+        (ch == #123)
+            ? [ ^ $helper deserializeStruct:object &enumerator:e. ]
+            ! [ #throw JsonException new. ].
+    ]
+    
     $readNext &enumerator:e
     [
         (e next)
@@ -241,4 +285,7 @@
         
     #method fromJson
         = $helper deserializeObject &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new)).
+        
+    #method readJson : object
+        = $helper deserializeStruct &object:object &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new)).
 }        

@@ -6,12 +6,18 @@
 #import extensions.
 
 #import extensions'dynamic.
+#import extensions'text.
+#import extensions'routines.
 
 #class Teste :: DTO
 {
      #field hello.
      #field world.
      #field space.
+
+     #constructor empty
+     [
+     ]
 
      #constructor new
      [
@@ -36,8 +42,10 @@
     [
         #var class := Teste new.
         #var lala := class toJson.        
-        
-        console writeLine:lala.
+                
+        #var generic_copy := lala fromJson.
+        #var copy := lala readJson:(Teste empty).        
+        #var copy2 := " { ""Hello"" : ""привет"" } " readJson:(Teste empty).
     ]
 }.
         

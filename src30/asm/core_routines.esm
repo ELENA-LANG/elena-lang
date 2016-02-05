@@ -4804,6 +4804,8 @@ end
 
 procedure handle_selector
 
+  bsredirect
+
   pushe
   dcopysubj
   pushd

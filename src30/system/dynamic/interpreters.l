@@ -3,6 +3,8 @@
 #import system.
 #import system'routines.
 
+#subject(class:Struct) struct.
+
 // --- CastOver ---
 
 #class(group) CastOver :: BaseArray
@@ -47,6 +49,14 @@
 
 #class(group) Struct :: BaseArray
 {
+    #method struct = $self.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &struct:$self.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:$self.
+    
     #method => system'core_routines'handle_selector.
 }
 
@@ -54,7 +64,7 @@
 
 #class Dynamic
 {
-    #field theStruct.
+    #field(type:struct) theStruct.
     
     #constructor new
     [
@@ -63,11 +73,17 @@
     
     #constructor new : aStruct
     [
-        theStruct := aStruct.
+        theStruct := aStruct struct.
     ]
 
     #method value = theStruct.
             
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &struct:theStruct.
+    
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:theStruct.
+    
     #method(generic)set : anObject
     [
         // looking for the current subject

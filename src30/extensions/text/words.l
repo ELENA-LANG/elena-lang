@@ -49,14 +49,14 @@
     #field(type:bool)theSpaceMode.
     #field(type:bool)theQuoteMode.
     #field(type:bool)theNewToken.
-    
-    #field theTokenType.
+    #field(type:bool)theOperatorMode.
     
     #constructor new
     [
         theSpaceMode := true.
-        theNewToken := true.
         theQuoteMode := false.
+        theNewToken := true.
+        theOperatorMode := false.
     ]
     
     #method proceed &char:aChar
@@ -64,7 +64,7 @@
         theQuoteMode?
             [
                 (aChar == #22h)
-                    ? [ theQuoteMode := false. theNewToken := false. ].
+                    ? [ theQuoteMode := false. theSpaceMode := false. theNewToken := false. theOperatorMode := true. ].
                     
                 ^ false.                
             ].
@@ -75,33 +75,37 @@
         whitespace
             ? [
                 theSpaceMode
-                    ! [ theNewToken := false. theSpaceMode := true. ^ true. ].
+                    ! [ theSpaceMode := true. theNewToken := true. ^ true. ].
             ]
             ! [
                 (aChar == #22h)
-                    ? [ 
+                    ? [
+                        theNewToken
+                            ! [ theNewToken := true. ^ true. ].
+                        
                         theQuoteMode := true.
                         theSpaceMode := false.
                         
                         ^ false.
                       ].
                                       
-                theSpaceMode
+                theNewToken
                     ? [ 
+                        theNewToken := false.
                         theSpaceMode := false. 
                         (letter or:digit)
-                            ! [ theNewToken := true. ].
+                            ? [ theOperatorMode := false. ]
+                            ! [ theOperatorMode := true. ].
                       ]
                     ! [                
                         (letter or:digit)
-                            ? [                     
-                                theNewToken
-                                    ? [ theNewToken := false. ^ true. ].
+                            ? [
+                                theOperatorMode
+                                    ? [ theNewToken := true. theOperatorMode := false. ^ true. ].
                             ]
                             ! [ 
-                                theNewToken
-                                    ? [ theNewToken := false. ]
-                                    ! [ theNewToken := true. ^ true. ].                                    
+                                theOperatorMode := true.
+                                theNewToken := true. ^ true.
                             ].
                     ].
             ].
