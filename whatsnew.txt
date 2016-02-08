@@ -20,7 +20,7 @@
 [+] extensions : textwriter.write&args[1,], textwriter.writeLine&args[1,]
 [+] extensions'text : (literal/wide).toByteArray
 [+] system : Message.get&literal$
-[+] system : MemoryBuffer
+[+] system'io : MemoryBuffer
 [*] #213 : system'MethodNotFoundException provides the message name now
 
 [Samples]

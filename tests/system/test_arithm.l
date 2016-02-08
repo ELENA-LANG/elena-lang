@@ -5,67 +5,37 @@
 #import system'calendar.
 #import extensions.
 
-#import extensions'dynamic.
-#import extensions'text.
-#import extensions'routines.
-
-#class Teste :: DTO
+#class XXXTT
 {
-     #field hello.
-     #field world.
-     #field space.
-     #field numbersArray.
-
-     #constructor empty
-     [
-     ]
-
-     #constructor new
-     [
-         hello := "Hello".
-         space := " ".
-         world := "World".   
-         numbersArray := Array new &int:5.   
-        
-         numbersArray@0 := 10.
-         numbersArray@1 := 20.
-         numbersArray@2 := 30.
-         numbersArray@3 := 40.
-         numbersArray@4 := 50.
-     ]
-
-     #method Hello = hello.
-     #method set &Hello:value [ hello := value. ]
-
-     #method World = world.
-     #method set &World:value [ world := value. ]
-
-     #method Space = space.
-     #method set &Space:value [ space := value. ]
-     
-     #method NumbersArray = numbersArray.
-     #method set &NumbersArray:value [ numbersArray := value. ]
+    #method subtest []
 }
+
+#class XXXT
+{    
+    #method selfSubTest
+    [
+    ]
+    
+    #method test
+    [
+        #var x := XXXT
+        {
+            subtest
+            [
+                this selfSubTest.
+            ]
+        }.
+        
+        x subtest.
+    ]
+}
+
 
 #symbol XTester =
 {
     test
     [
-//        #var class := Teste new.
-//        #var lala := class toJson.        
-//                
-//        #var generic_copy := lala fromJson.
-//        #var copy := lala readJson:(Teste empty).        
-//        #var copy2 := " { ""Hello"" : ""привет"" } " readJson:(Teste empty).
-        
-        #var class := Teste new.    
-        #var jsonString := class toJson.
-        console writeLine:jsonString.
-    
-        #var tmp := jsonString fromJson.
-        #var copy := jsonString readJson:(Teste empty).
-    
-        console writeLine:(copy Hello):(copy Space):(copy World).
+        XXXT new test.
     ]
 }.
         

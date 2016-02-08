@@ -35,7 +35,7 @@
             [
                 console writeLine:"connected".
                 
-                $self sendNickname.
+                $owner sendNickname.
             ]
             
             onError:e &for:client

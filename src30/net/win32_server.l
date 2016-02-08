@@ -111,7 +111,7 @@
     ]
 
     #method connections = theClients.
-            
+
     #method set &blocking:aValue
     [
         #var(type:int)aMode.

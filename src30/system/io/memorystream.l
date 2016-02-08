@@ -24,6 +24,8 @@
     
     #method membuffer = $self.
     
+    #method bytearray = theBuffer.
+    
     #method(stacksafe) reserve &int:len
     [
         theCapacity := theUsed + len.
@@ -59,6 +61,9 @@
     
     #method write &int:index &int:length &bytearray:array
     [
+        (index > theUsed)
+            ? [ #throw OutOfRangeException new. ].
+        
         (theUsed + length > theCapacity)?
             [ $self reserve:length. ].
             
@@ -70,6 +75,14 @@
             ! [
                 $self $write &int:index &int:length &bytearray:array
             ].
+    ]
+    
+    #method(stacksafe)read &int:index &vint:retVal
+    [
+        (index > theUsed)
+            ? [ #throw OutOfRangeException new. ].
+        
+        theBuffer read &int:index &vint:retVal.
     ]
     
     #method(stacksafe) delete &int:anIndex &int:aLength
