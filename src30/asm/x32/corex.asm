@@ -189,9 +189,9 @@ labYGCollect:
   call extern 'dlls'kernel32.WaitForSingleObject
 
   // ; restore registers and try again
-  pop  ebp
   pop  ebx
   pop  ecx
+  pop  ebp
   pop  edi
 
   jmp  labStart
@@ -244,10 +244,10 @@ labSkipReset:
   push ebx
   call extern 'dlls'kernel32.WaitForMultipleObjects
 
+labSkipWait:
   // ; remove list
   mov  esp, ebp     
 
-labSkipWait:
   // ==== GCXT end ==============
   
   // ; create set of roots
@@ -608,7 +608,6 @@ labClearWBar:
 	
   // ; free root set
   mov  esp, [esp]
-  pop  ebp
   pop  ebx
 
   // ; allocate
@@ -632,6 +631,7 @@ labClearWBar:
 
   mov  eax, edi
   pop  ecx
+  pop  ebp
   pop  edi  
   ret
 
