@@ -57,6 +57,8 @@
 		<Unit filename="../../common/dump.h" />
 		<Unit filename="../../common/files.cpp" />
 		<Unit filename="../../common/files.h" />
+		<Unit filename="../../engine/bytecode.cpp" />
+		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/libman.cpp" />
 		<Unit filename="../../engine/libman.h" />
 		<Unit filename="../../engine/linux32/elfhelper.cpp" />

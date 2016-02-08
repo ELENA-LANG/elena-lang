@@ -2,6 +2,7 @@
 mkdir /usr/share/elena/
 mkdir /etc/elena/
 mkdir /etc/elena/templates
+mkdir /usr/lib/elena
 
 cp bin/elc.config /etc/elena/
 cp -a bin/templates/*.config /etc/elena/templates/
@@ -12,8 +13,8 @@ cp dat/og/rules.dat /usr/share/elena
 bin/elena-sg dat/sg/syntax.txt
 cp dat/sg/syntax.dat /usr/share/elena
 
-cp bin/elena-lc /usr/bin
-cp bin/libelenart.so /usr/lib/elena
+cp bin/elena-lc /usr/bin/
+cp bin/libelenart.so /usr/lib/elena/
 
 echo core
 bin/elena-asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32

@@ -1422,7 +1422,7 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 {
    String<ident_c, 10> thisVar(THIS_VAR);
-      
+
    Outer owner = outers.get(thisVar);
    // if owner reference is not yet mapped, add it
    if (owner.outerObject.kind == okUnknown) {
@@ -3764,7 +3764,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
       if (StringHelper::compare(node.Terminal(), COREAPI_MASK, COREAPI_MASK_LEN))
          apiCall = true;
    }
-   else dllName = moduleScope->project->resolveExternalAlias(dllAlias, stdCall);
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
 
    // legacy : if dll is not mapped, use the name directly
    if (emptystr(dllName))
@@ -5303,7 +5303,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
 
             return;
          }
-      }      
+      }
    }
 
    bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
@@ -5315,9 +5315,9 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
          if (member == lxUnboxing) {
             SyntaxTree::Node assignExpr = SyntaxTree::findChild(member, lxAssigning);
 
-            if (assignExpr == lxAssigning && member.Tree()->matchPattern(assignExpr, lxObjectMask, 2, 
-               SyntaxTree::NodePattern(lxLocalAddress), 
-               SyntaxTree::NodePattern(lxFieldAddress))) 
+            if (assignExpr == lxAssigning && member.Tree()->matchPattern(assignExpr, lxObjectMask, 2,
+               SyntaxTree::NodePattern(lxLocalAddress),
+               SyntaxTree::NodePattern(lxFieldAddress)))
             {
                member = lxLocalUnboxing;
             }
@@ -5340,7 +5340,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
          if (target.argument == scope.signatureReference || target.argument == scope.verbReference) {
             boxing = lxExpression;
          }
-      }      
+      }
    }
 }
 
