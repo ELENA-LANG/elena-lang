@@ -1,5 +1,5 @@
-﻿[project]
-executable=associatearrays.exe
+[project]
+executable=associatearrays
 namespace=associatearrays
 template=console
 debuginfo=-1

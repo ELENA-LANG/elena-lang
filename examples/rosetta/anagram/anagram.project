@@ -1,5 +1,5 @@
-﻿[project]
-executable=anagram.exe
+[project]
+executable=anagram
 namespace=anagram
 template=console
 debuginfo=-1

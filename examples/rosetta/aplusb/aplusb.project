@@ -1,5 +1,5 @@
-﻿[project]
-executable=aplusb.exe
+[project]
+executable=aplusb
 namespace=aplusb
 template=console
 debuginfo=-1

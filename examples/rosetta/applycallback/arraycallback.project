@@ -1,5 +1,5 @@
-﻿[project]
-executable=arraycallback.exe
+[project]
+executable=arraycallback
 namespace=arraycallback
 template=console
 debuginfo=-1

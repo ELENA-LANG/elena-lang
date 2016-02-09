@@ -1,5 +1,5 @@
-﻿[project]
-executable=arraymode.exe
+[project]
+executable=arraymode
 namespace=arraymode
 template=console
 debuginfo=-1

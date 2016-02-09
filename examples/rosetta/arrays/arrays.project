@@ -1,5 +1,5 @@
-﻿[project]
-executable=arrays.exe
+[project]
+executable=arrays
 namespace=arrays
 template=console
 debuginfo=-1

@@ -1,20 +1,20 @@
 #!/bin/bash
-mkdir /usr/share/elena/
-mkdir /etc/elena/
-mkdir /etc/elena/templates
-mkdir /usr/lib/elena
+#mkdir /usr/share/elena/
+#mkdir /etc/elena/
+#mkdir /etc/elena/templates
+#mkdir /usr/lib/elena
 
-cp bin/elc.config /etc/elena/
-cp -a bin/templates/*.config /etc/elena/templates/
+#cp bin/elc.config /etc/elena/
+#cp -a bin/templates/*.config /etc/elena/templates/
 
-bin/elena-og dat/og/rules.txt
-cp dat/og/rules.dat /usr/share/elena
+#bin/elena-og dat/og/rules.txt
+#cp dat/og/rules.dat /usr/share/elena
 
-bin/elena-sg dat/sg/syntax.txt
-cp dat/sg/syntax.dat /usr/share/elena
+#bin/elena-sg dat/sg/syntax.txt
+#cp dat/sg/syntax.dat /usr/share/elena
 
-cp bin/elena-lc /usr/bin/
-cp bin/libelenart.so /usr/lib/elena/
+#cp bin/elena-lc /usr/bin/
+#cp bin/libelenart.so /usr/lib/elena/
 
 echo core
 bin/elena-asm2binx src30/asm/x32/core.asm /usr/lib/elena/core/x32
@@ -48,5 +48,17 @@ elena-lc -cexamples/console/datetime/dtcalculator.project
 elena-lc -cexamples/rosetta/accumulator/accumulator.project
 elena-lc -cexamples/rosetta/ackermann/ackerman.project
 elena-lc -cexamples/rosetta/addfield/addfield.project
+elena-lc -cexamples/rosetta/amb/amb.project
+elena-lc -cexamples/rosetta/anagram/anagram.project
+elena-lc -cexamples/rosetta/anonymrec/anonymrec.project
+elena-lc -cexamples/rosetta/aplusb/aplusb.project
+elena-lc -cexamples/rosetta/applycallback/arraycallback.project
+elena-lc -cexamples/rosetta/arithmeticint/arithmeticint.project
+elena-lc -cexamples/rosetta/arithmeval/arithmeval.project
+elena-lc -cexamples/rosetta/arithmmean/arithmmean.project
+elena-lc -cexamples/rosetta/arrayconcat/arrayconcat.project
+elena-lc -cexamples/rosetta/arraymode/arraymode.project
+elena-lc -cexamples/rosetta/arrays/arrays.project
+elena-lc -cexamples/rosetta/associativearrays/associativearrays.project
 
 exit 0
