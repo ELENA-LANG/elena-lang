@@ -49,6 +49,18 @@ mkdir -p ./$RELEASE/src30/extensions/text/
 mkdir -p ./$RELEASE/examples/rosetta/accumulator/
 mkdir -p ./$RELEASE/examples/rosetta/ackermann/
 mkdir -p ./$RELEASE/examples/rosetta/addfield/
+mkdir -p ./$RELEASE/examples/rosetta/amb/
+mkdir -p ./$RELEASE/examples/rosetta/aplusb/
+mkdir -p ./$RELEASE/examples/rosetta/applycallback/
+mkdir -p ./$RELEASE/examples/rosetta/arithmeticint/
+mkdir -p ./$RELEASE/examples/rosetta/arithmmean/
+mkdir -p ./$RELEASE/examples/rosetta/associativearrays/
+mkdir -p ./$RELEASE/examples/rosetta/arithmeval/
+mkdir -p ./$RELEASE/examples/rosetta/arrays/
+mkdir -p ./$RELEASE/examples/rosetta/arrayconcat/
+mkdir -p ./$RELEASE/examples/rosetta/arraymode/
+mkdir -p ./$RELEASE/examples/rosetta/anonymrec/
+mkdir -p ./$RELEASE/examples/rosetta/anagram/
 
 cp ../bin/elena-lc $RELEASE/bin/
 cp ../bin/elena-asm2binx $RELEASE/bin/
@@ -128,30 +140,31 @@ cp ../examples/rosetta/ackermann/*.project $RELEASE/examples/rosetta/ackermann/
 cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
 cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
 
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
-cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
-cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
-
+cp ../examples/rosetta/amb/*.l $RELEASE/examples/rosetta/amb/
+cp ../examples/rosetta/amb/*.project $RELEASE/examples/rosetta/amb/
+cp ../examples/rosetta/aplusb/*.l $RELEASE/examples/rosetta/aplusb/
+cp ../examples/rosetta/aplusb/*.project $RELEASE/examples/rosetta/aplusb/
+cp ../examples/rosetta/applycallback/*.l $RELEASE/examples/rosetta/applycallback/
+cp ../examples/rosetta/applycallback/*.project $RELEASE/examples/rosetta/applycallback/
+cp ../examples/rosetta/arithmeticint/*.l $RELEASE/examples/rosetta/arithmeticint/
+cp ../examples/rosetta/arithmeticint/*.project $RELEASE/examples/rosetta/arithmeticint/
+cp ../examples/rosetta/arithmmean/*.l $RELEASE/examples/rosetta/arithmmean/
+cp ../examples/rosetta/arithmmean/*.project $RELEASE/examples/rosetta/arithmmean/
+cp ../examples/rosetta/associativearrays/*.l $RELEASE/examples/rosetta/associativearrays/
+cp ../examples/rosetta/associativearrays/*.project $RELEASE/examples/rosetta/associativearrays/
+cp ../examples/rosetta/arithmeval/*.l $RELEASE/examples/rosetta/arithmeval/
+cp ../examples/rosetta/arithmeval/*.project $RELEASE/examples/rosetta/arithmeval/
+cp ../examples/rosetta/arrays/*.l $RELEASE/examples/rosetta/arrays/
+cp ../examples/rosetta/arrays/*.project $RELEASE/examples/rosetta/arrays/
+cp ../examples/rosetta/arrayconcat/*.l $RELEASE/examples/rosetta/arrayconcat/
+cp ../examples/rosetta/arrayconcat/*.project $RELEASE/examples/rosetta/arrayconcat/
+cp ../examples/rosetta/arraymode/*.l $RELEASE/examples/rosetta/arraymode/
+cp ../examples/rosetta/arraymode/*.project $RELEASE/examples/rosetta/arraymode/
+cp ../examples/rosetta/anonymrec/*.l $RELEASE/examples/rosetta/anonymrec/
+cp ../examples/rosetta/anonymrec/*.project $RELEASE/examples/rosetta/anonymrec/
+cp ../examples/rosetta/anagram/*.l $RELEASE/examples/rosetta/anagram/
+cp ../examples/rosetta/anagram/*.project $RELEASE/examples/rosetta/anagram/
+cp ../examples/rosetta/anagram/*.txt $RELEASE/examples/rosetta/anagram/
 
 echo coping src3 files
 
