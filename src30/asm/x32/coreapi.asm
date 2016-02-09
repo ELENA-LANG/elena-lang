@@ -73,7 +73,7 @@ end
 procedure coreapi'core_getargc
 
   mov  ebx, [data : % CORE_OS_TABLE]
-  mov  esi, [ebx + esi * 4]
+  mov  esi, [ebx]
   ret
 
 end
