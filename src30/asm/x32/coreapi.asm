@@ -149,15 +149,22 @@ labEnd:
    
 end
 
-procedure coreapi'core_rndnew
+procedure coreapi'core_rnd_init
 
+  mov  edi, [esp+4]
   call code : % INIT_RND
   mov  [edi], eax 
+  mov  [edi+4], edx
+  mov  esi, eax
   ret
   
 end
 
-procedure coreapi'core_rndnext
+procedure coreapi'core_rnd_next
+
+   mov  edi, [esp+4]
+   mov  eax, [esp+12]
+   mov  esi, [esp+8]
 
    xor  edx, edx
    mov  ecx, esi
@@ -201,7 +208,10 @@ labEnd:
 
 end
 
-procedure coreapi'core_rndnextint
+procedure coreapi'core_rnd_nextint
+
+   mov  edi, [esp+4]
+   mov  eax, [esp+8]
 
    push eax
    

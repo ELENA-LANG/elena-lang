@@ -5,37 +5,35 @@
 #import system'calendar.
 #import extensions.
 
-#class XXXTT
+#import sqlite.
+
+#class(sealed) DBCommand
 {
-    #method subtest []
-}
-
-#class XXXT
-{    
-    #method selfSubTest
-    [
-    ]
+    #field(type:sqlite_cnn)theConnection.
+    #field(type:handle)theCommandHandle.
     
-    #method test
+    #method $prepare &literal:aText
     [
-        #var x := XXXT
-        {
-            subtest
-            [
-                this selfSubTest.
-            ]
-        }.
+        #var(type:int) aHandle. 
+        #var(type:int)aTextLen.
+        aText readLength &vint:aTextLen.
         
-        x subtest.
+        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_prepare_v2
+                                                &int:(theConnection int)
+                                                &literal:aText
+                                                &int:aTextLen
+                                                &vint:aHandle
+                                                &int:0.
+        (aRetVal != SQLITE_OK)? [ #throw DBException new &message:(theConnection last_error_message). ].
+        
+        theCommandHandle := Handle new &int:aHandle.
     ]
 }
-
-
+    
 #symbol XTester =
 {
     test
     [
-        XXXT new test.
     ]
 }.
         

@@ -986,9 +986,11 @@ void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: endExternalBlock(CommandTape& tape)
+void ByteCodeWriter :: endExternalBlock(CommandTape& tape,  bool idle)
 {
-   tape.write(bcSCopyF, bsBranch);
+   if (!idle)
+      tape.write(bcSCopyF, bsBranch);
+
    tape.write(blEnd, bsBranch);
 }
 
@@ -2661,7 +2663,7 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
 
    SNode arg = node.firstChild();
    while (arg != lxNone) {
-      if (arg == lxExtInteranlRef) {
+      if (arg == lxExtInteranlRef) {         
          // skip for symbol reference
       }
       else {
@@ -2680,8 +2682,10 @@ void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, 
    }
 }
 
-void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
+int ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
 {
+   int paramCount = 0;
+
    // save function parameters
    Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
    SNode arg = node.lastChild();
@@ -2689,6 +2693,7 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
       if (arg == lxExtInteranlRef) {
          loadInternalReference(tape, arg.argument);
          pushObject(tape, lxResult);
+         paramCount++;
       }
       else {
          SNode object = arg.firstChild();
@@ -2709,12 +2714,15 @@ void ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
                   pushObject(tape, lxResultField);
                }
                else pushObject(tape, lxResult);
+               paramCount++;
             }
          }
       }
 
       arg = arg.prevNode();
    }
+
+   return paramCount;
 }
 
 void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
@@ -2733,19 +2741,23 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
       excludeFrame(tape);
 
    // save function parameters
-   saveExternalParameters(tape, node, externalScope);
+   int paramCount = saveExternalParameters(tape, node, externalScope);
    
    // call the function
    if (apiCall) {
+      // if it is an API call
+      // simply release parameters from the stack
+      // without setting stack pointer directly - due to optimization
       callCore(tape, node.argument, externalScope.frameSize);
-   }
-   else callExternal(tape, node.argument, externalScope.frameSize);
-   
-   if (!stdCall)
-      releaseObject(tape, externalScope.operands.Count());
 
-   if (!apiCall)
+      endExternalBlock(tape, true);
+      releaseObject(tape, paramCount);
+   }
+   else {
+      callExternal(tape, node.argument, externalScope.frameSize);
+
       endExternalBlock(tape);
+   }
 }
 
 ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)

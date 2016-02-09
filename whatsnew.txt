@@ -24,7 +24,18 @@
 [*] #213 : system'MethodNotFoundException provides the message name now
 
 [Samples]
-[+] net sample : chat
+[+] linux : anonymrec sample migrated
+[+] linux : aplusb sample migrated
+[+] linux : arraycallback sample migrated
+[+] linux : arithmeticint sample migrated
+[+] linux : arithmmean sample migrated
+[+] linux : arrayconcat sample migrated
+[+] linux : arraymode sample migrated
+[+] linux : arrays sample migrated
+[+] linux : associativearrays sample migrated
+[+] linux : amb sample migrated
+[+] linux : anagram sample migrated
+[+] linux : arithmeval sample migrated
 
 ******************************************************************************
                              What's New in 1.9.24

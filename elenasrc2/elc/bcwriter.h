@@ -190,7 +190,7 @@ public:
    void endThenBlock(CommandTape& tape, bool withStackContro = true);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
-   void endExternalBlock(CommandTape& tape);
+   void endExternalBlock(CommandTape& tape, bool idle = false);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
@@ -228,7 +228,7 @@ public:
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
-   void saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
+   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
