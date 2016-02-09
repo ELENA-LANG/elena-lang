@@ -1,0 +1,13 @@
+﻿[project]
+executable=arithmmean.exe
+namespace=arithmmean
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+arithmmean.l
+
+[forwards]
+'program=arithmmean'program
+

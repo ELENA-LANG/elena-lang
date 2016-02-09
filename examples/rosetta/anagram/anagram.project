@@ -1,0 +1,16 @@
+﻿[project]
+executable=anagram.exe
+namespace=anagram
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+anagram.l
+
+[linker]
+mgsize=80000
+
+[forwards]
+'program=anagram'program
+
