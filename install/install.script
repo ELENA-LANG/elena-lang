@@ -7,6 +7,7 @@ mkdir -p ./$RELEASE/usr/share/elena/
 mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
 mkdir -p ./$RELEASE/usr/lib/elena/lib30/system/
 mkdir -p ./$RELEASE/usr/bin/
+mkdir -p ./$RELEASE/home/elena-lang
 
 echo copying configuration
 
@@ -37,6 +38,8 @@ elena-lc -c../src30/system/system.project
 elena-lc -c../src30/extensions/extensions.project
 
 cp -r /usr/lib/elena/lib30 ./$RELEASE/usr/lib/elena/
+
+
 
 mkdir ./$RELEASE/DEBIAN
 cp ./control ./$RELEASE/DEBIAN

@@ -128,6 +128,31 @@ cp ../examples/rosetta/ackermann/*.project $RELEASE/examples/rosetta/ackermann/
 cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
 cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
 
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+cp ../examples/rosetta/addfield/*.l $RELEASE/examples/rosetta/addfield/
+cp ../examples/rosetta/addfield/*.project $RELEASE/examples/rosetta/addfield/
+
+
 echo coping src3 files
 
 cp ../src30/asm/x32/*.asm $RELEASE/src30/asm/x32/
