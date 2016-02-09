@@ -78,6 +78,6 @@
         => system'core_routines'subject_equal.
     
     /// obsolete
-    #method(stacksafe) name
+    #method name
         = self literal.
 }

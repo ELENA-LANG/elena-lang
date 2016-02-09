@@ -8,7 +8,7 @@
 #class TestClass
 {
     #field theVariables.
-    
+
     #constructor new
     [
         theVariables := DynamicStruct new.
