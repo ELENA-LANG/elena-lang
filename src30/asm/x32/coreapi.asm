@@ -3733,8 +3733,8 @@ lab1:
    jmp  short labSave
 
 labCH1:
-   mov  byte ptr [edi], bl
-   add  edi, 1
+   mov  word ptr [edi], bx
+   add  edi, 2
    sub  ecx, 1
       
 labSave:
@@ -3752,6 +3752,7 @@ err:
    mov  ecx, edi
    pop  edi
    sub  ecx, edi
+   shr  ecx, 1
 
    ret
   
