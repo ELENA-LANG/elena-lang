@@ -114,11 +114,11 @@
         aStruct write &int:0 &int:76.        
           
 //      hwndOwner;
-        ptr write &int:theParent.
+        ptr assign &int:theParent.
         aStruct write &int:4 &int:ptr.
           
 //      hInstance;
-        ptr write &int:CurrentInstance.
+        ptr assign &int:CurrentInstance.
         aStruct write &int:8 &int:ptr.
 
 //        lpstrFilter;

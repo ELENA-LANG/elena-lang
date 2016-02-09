@@ -3103,6 +3103,8 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
                assignLong(tape, target.type, target.argument);
             }
             else assignStruct(tape, target.type, target.argument, size);
+
+            assignBaseTo(tape, lxResult);
          }
       }
       else saveObject(tape, target.type, target.argument);

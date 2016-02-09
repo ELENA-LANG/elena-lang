@@ -2411,6 +2411,12 @@ bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo
       size = 4;
       classRef = scope.moduleScope->signatureReference;
    }
+   else if (boxing == lxBoxing && object.kind == okField) {
+      allocateStructure(scope, 0, object);
+      scope.writer->insertChild(lxLocalAddress, object.param);
+      scope.writer->insert(lxAssigning, size);
+      scope.writer->closeNode();
+   }
 
    // HOTFIX : prevent unboxing for returning expression
    if (test(mode, HINT_NOUNBOXING))

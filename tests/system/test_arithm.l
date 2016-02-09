@@ -5,31 +5,29 @@
 #import system'calendar.
 #import extensions.
 
-#import sqlite.
 
-#class(sealed) DBCommand
+#import system'winforms.
+
+#class BaseFileDialog
 {
-    #field(type:sqlite_cnn)theConnection.
-    #field(type:handle)theCommandHandle.
-    
-    #method $prepare &literal:aText
+    #field(type:hwnd)theParent.
+    #field(type:shortarray)theFilters.
+    #field(type:shortarray)theFileName.
+    #field(type:int)theFilterIndex.
+    #field(type:int)theMaxFile.
+    #field(type:wide)theCaption.
+    #field(type:int)theFlags.
+         
+    #method(stacksafe) $prepare &bytearray:aStruct
     [
-        #var(type:int) aHandle. 
-        #var(type:int)aTextLen.
-        aText readLength &vint:aTextLen.
+        #var(type:dirty_ptr)ptr.
         
-        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_prepare_v2
-                                                &int:(theConnection int)
-                                                &literal:aText
-                                                &int:aTextLen
-                                                &vint:aHandle
-                                                &int:0.
-        (aRetVal != SQLITE_OK)? [ #throw DBException new &message:(theConnection last_error_message). ].
-        
-        theCommandHandle := Handle new &int:aHandle.
+//      hwndOwner;
+        ptr write &int:theParent.
+        aStruct write &int:4 &int:ptr.
     ]
-}
-    
+}            
+                
 #symbol XTester =
 {
     test
