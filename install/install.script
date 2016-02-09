@@ -22,19 +22,19 @@ mkdir -p ./$RELEASE/home/elena-lang/examples/console/datetime/
 mkdir -p ./$RELEASE/home/elena-lang/examples/files/textfile/
 mkdir -p ./$RELEASE/home/elena-lang/examples/files/textdb/
 mkdir -p ./$RELEASE/home/elena-lang/examples/console/goods/
-mkdir -p ./$RELEASE/user/local/elena/src30/asm/x32/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/text/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/collections/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/routines/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/math/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/io/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/dynamic/
-mkdir -p ./$RELEASE/user/local/elena/src30/system/calendar/
-mkdir -p ./$RELEASE/user/local/elena/src30/extensions/
-mkdir -p ./$RELEASE/user/local/elena/src30/extensions/math/
-mkdir -p ./$RELEASE/user/local/elena/src30/extensions/routines/
-mkdir -p ./$RELEASE/user/local/elena/src30/extensions/text/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/asm/x32/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/text/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/collections/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/routines/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/math/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/io/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/dynamic/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/system/calendar/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/extensions/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/extensions/math/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/extensions/routines/
+mkdir -p ./$RELEASE/usr/local/src/elena/src30/extensions/text/
 
 mkdir -p ./$RELEASE/home/elena-lang/examples/rosetta/accumulator/
 mkdir -p ./$RELEASE/home/elena-lang/examples/rosetta/ackermann/
@@ -142,24 +142,24 @@ cp ../examples/rosetta/anagram/*.l $RELEASE/home/elena-lang/examples/rosetta/ana
 cp ../examples/rosetta/anagram/*.project $RELEASE/home/elena-lang/examples/rosetta/anagram/
 cp ../examples/rosetta/anagram/*.txt $RELEASE/home/elena-lang/examples/rosetta/anagram/
 
-cp ../src30/asm/x32/*.asm $RELEASE/user/local/elena/src30/asm/x32/
-cp ../src30/asm/*.esm $RELEASE/user/local/elena/src30/asm/
+cp ../src30/asm/x32/*.asm $RELEASE/usr/local/src/elena/src30/asm/x32/
+cp ../src30/asm/*.esm $RELEASE/usr/local/src/elena/src30/asm/
 
-cp ../src30/system/*.l $RELEASE/user/local/elena/src30/system/
-cp ../src30/system/*.project $RELEASE/user/local/elena/src30/system/
-cp ../src30/system/collections/*.l $RELEASE/user/local/elena/src30/system/collections/
-cp ../src30/system/dynamic/*.l $RELEASE/user/local/elena/src30/system/dynamic/
-cp ../src30/system/io/*.l $RELEASE/user/local/elena/src30/system/io/
-cp ../src30/system/math/*.l $RELEASE/user/local/elena/src30/system/math/
-cp ../src30/system/routines/*.l $RELEASE/user/local/elena/src30/system/routines/
-cp ../src30/system/text/*.l $RELEASE/user/local/elena/src30/system/text/
-cp ../src30/system/calendar/*.l $RELEASE/user/local/elena/src30/system/calendar/
+cp ../src30/system/*.l $RELEASE/usr/local/src/elena/src30/system/
+cp ../src30/system/*.project $RELEASE/usr/local/src/elena/src30/system/
+cp ../src30/system/collections/*.l $RELEASE/usr/local/src/elena/src30/system/collections/
+cp ../src30/system/dynamic/*.l $RELEASE/usr/local/src/elena/src30/system/dynamic/
+cp ../src30/system/io/*.l $RELEASE/usr/local/src/elena/src30/system/io/
+cp ../src30/system/math/*.l $RELEASE/usr/local/src/elena/src30/system/math/
+cp ../src30/system/routines/*.l $RELEASE/usr/local/src/elena/src30/system/routines/
+cp ../src30/system/text/*.l $RELEASE/usr/local/src/elena/src30/system/text/
+cp ../src30/system/calendar/*.l $RELEASE/usr/local/src/elena/src30/system/calendar/
 
-cp ../src30/extensions/*.l $RELEASE/user/local/elena/src30/extensions/
-cp ../src30/extensions/math/*.l $RELEASE/user/local/elena/src30/extensions/math/
-cp ../src30/extensions/text/*.l $RELEASE/user/local/elena/src30/extensions/text/
-cp ../src30/extensions/routines/*.l $RELEASE/user/local/elena/src30/extensions/routines/
-cp ../src30/extensions/*.project $RELEASE/user/local/elena/src30/extensions/
+cp ../src30/extensions/*.l $RELEASE/usr/local/src/elena/src30/extensions/
+cp ../src30/extensions/math/*.l $RELEASE/usr/local/src/elena/src30/extensions/math/
+cp ../src30/extensions/text/*.l $RELEASE/usr/local/src/elena/src30/extensions/text/
+cp ../src30/extensions/routines/*.l $RELEASE/usr/local/src/elena/src30/extensions/routines/
+cp ../src30/extensions/*.project $RELEASE/usr/local/src/elena/src30/extensions/
 
 mkdir ./$RELEASE/DEBIAN
 cp ./control ./$RELEASE/DEBIAN
