@@ -1,5 +1,5 @@
-﻿[project]
-executable=arithmeval.exe
+[project]
+executable=arithmeval
 namespace=arithmeval
 template=console
 debuginfo=-1

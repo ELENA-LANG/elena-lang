@@ -1,4 +1,4 @@
-﻿[project]
+[project]
 executable=addfield
 namespace=addfield
 template=console

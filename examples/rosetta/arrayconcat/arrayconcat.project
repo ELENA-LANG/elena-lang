@@ -1,5 +1,5 @@
-﻿[project]
-executable=arrayconcat.exe
+[project]
+executable=arrayconcat
 namespace=arrayconcat
 template=console
 debuginfo=-1

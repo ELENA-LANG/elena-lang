@@ -1,5 +1,5 @@
-﻿[project]
-executable=amb.exe
+[project]
+executable=amb
 namespace=amb
 template=console
 debuginfo=-1

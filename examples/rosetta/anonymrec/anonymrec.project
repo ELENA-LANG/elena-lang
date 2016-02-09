@@ -1,5 +1,5 @@
-﻿[project]
-executable=anonymrec.exe
+[project]
+executable=anonymrec
 namespace=anonymrec
 template=console
 debuginfo=-1
