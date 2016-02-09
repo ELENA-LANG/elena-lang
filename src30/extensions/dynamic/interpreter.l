@@ -31,10 +31,24 @@
     ]
     
     evaluateScript &literal:aScript
-        => system'internal'evaluate.
+    [
+        #var(type:int)retVal := system'external'elenasm EvaluateScript
+            &literal:aScript.
+            
+        (retVal == 0)
+            ? [ #throw ScriptEngineException new. ].
+    ]
 
     loadScriptFile &literal:aPath &int:anEncoding &int:anAutoDetect
-        => system'internal'load.
+    [
+        #var(type:int)retVal := system'external'elenasm EvaluateFile
+            &literal:aPath
+            &int:anEncoding
+            &int:anAutoDetect.
+            
+        (retVal == 0)
+            ? [ #throw ScriptEngineException new. ].
+    ]
         
     evaluate : aScript
         = $self evaluateScript &literal:(aScript literal).
@@ -48,6 +62,6 @@
     ]
 }.
 
-//// --- globlas ---
-//
+// --- globlas ---
+
 #static globals = DynamicStruct new.

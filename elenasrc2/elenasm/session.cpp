@@ -154,7 +154,7 @@ int Session :: translate(TextReader* source, bool standalone)
 
    // copy vm error if retVal is zero
    if (!retVal)
-      _lastError.copy(GetLVMStatus());
+      _lastError.copy(GetVMLastError());
 
    return retVal;
 }
