@@ -8,6 +8,6 @@
     
     string split &by:"," run &each:s
     [
-        console write:s:".".
+        console writeLiteral:s:".".
     ].
 ].

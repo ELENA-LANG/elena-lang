@@ -3,7 +3,7 @@ In development:
 ------                      
 
               xdev - general implementation     
-                       * fix reverse words, tokenizer, trigonometri
+                       * fix trigonometri
               fdev - net app
                        * implement simple chat system to test socket api
                        * review try-catch statement, make sure the closure is created only in case of the error
