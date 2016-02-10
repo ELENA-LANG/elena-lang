@@ -673,6 +673,18 @@ md examples\rosetta\manboy
 copy %1\examples\rosetta\manboy\*.l examples\rosetta\manboy
 copy %1\examples\rosetta\manboy\*.prj examples\rosetta\manboy
 
+md examples\rosetta\reverse_words_in_string
+copy %1\examples\rosetta\reverse_words_in_string\*.l examples\rosetta\reverse_words_in_string
+copy %1\examples\rosetta\reverse_words_in_string\*.prj examples\rosetta\reverse_words_in_string
+
+md examples\rosetta\tokenizer
+copy %1\examples\rosetta\tokenizer\*.l examples\rosetta\tokenizer
+copy %1\examples\rosetta\tokenizer\*.prj examples\rosetta\tokenizer
+
+md examples\rosetta\trigonometric
+copy %1\examples\rosetta\trigonometric\*.l examples\rosetta\trigonometric
+copy %1\examples\rosetta\trigonometric\*.prj examples\rosetta\trigonometric
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
