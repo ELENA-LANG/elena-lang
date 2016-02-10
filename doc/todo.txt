@@ -2,8 +2,10 @@
 In development:
 ------                      
 
-              xdev - general implementation     
-                       * fix trigonometri
+              idev - generic development                                          
+                       * IDE and Chinese characters #4 (win32 & gtk)
+                       * gtktextview : reimplement the cursor locating code if it is not a monofont
+
               fdev - net app
                        * implement simple chat system to test socket api
                        * review try-catch statement, make sure the closure is created only in case of the error
@@ -264,8 +266,6 @@ Pipeline:
                        * refresh / reload documents after changing encoding ??
                        * settings / project settings - could we simplify utf-8 <-> utf-16 conversion, maybe settings should store data in
                          utf-16 for windows?
-                       * chinese (or others two or more UTF8 ) characters should take two columns (similar like tab)
-                       * wintextview : reimplement the cursor locating code if it is not a monofont
                        * test with small page size intensive insert / delete operations
                        * test ide: goto error if the file is not opened
                        

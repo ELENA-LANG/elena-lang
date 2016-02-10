@@ -1,10 +1,8 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Implementation File
-//                                               (C)2005-2015, by Alexei Rakov
+//                                               (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
-
-#define TEXTVIEW_MONO_FONT 0
 
 #include "wintextview.h"
 
@@ -68,6 +66,8 @@ TextView :: TextView(Control* owner, int left, int top, int width, int height)
    _mouseCaptured = false;
    _lineNumbersVisible = true;
    _highlight = false;
+
+   _caret_x = 0;
 
    _handle = ::CreateWindowEx(
       WS_EX_CLIENTEDGE, EDIT_WND_CLASS, _T("TextView"), 
@@ -431,6 +431,7 @@ void TextView :: onLoseFocus()
 {
    destroyCaret();
    _caretVisible = _caretValid = false;
+   _caret_x = 0;
 }
 
 void TextView :: onPaint()
@@ -463,8 +464,11 @@ void TextView :: onPaint()
 
 void TextView :: onEditorChange()
 {
-   if (_document && _document->status.isViewChanged())
+   if (_document && _document->status.isViewChanged()) {
       _cached = false;
+
+      _caret_x = 0;
+   }
 
    update();
 
@@ -582,18 +586,7 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
             reader.bandStyle = false;
          }
 
-#if TEXTVIEW_MONO_FONT
-         width = (style.avgCharWidth) * length;
-#else
          width = canvas.TextWidth(&style, buffer, length);
-
-         //if (caret.y == reader.row) {
-         //   int col =  reader.bm.getColumn();
-         //   if (caret.x >= col && caret.x < col + length) {
-         //      _caret_x = x + canvas.TextWidth(&style, buffer, col - caret.x);
-         //   }
-         //}
-#endif         
 
          //if (defaultStyle._background != style._background) {
          if (length==0 && reader.style==STYLE_SELECTION) {
@@ -614,13 +607,26 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
    }
 
    if (caret.x >= 0 && caret.y >= 0) {
-//#if TEXTVIEW_MONO_FONT
-      _locateCaret(clientRect.topLeft.x + marginWidth + defaultStyle.avgCharWidth * caret.x,
+      if ((_caret_x == 0) || _document->status.caretChanged) {
+         _caret_x = 0;
+
+         wchar_t buffer[0x100];
+         _ELENA_::LiteralWriter<wchar_t> writer(buffer, 0xFF);
+
+         Document::Reader reader(_document);
+         reader.initCurrentLine();
+         reader.readCurrentLine(writer, 0xFF);
+         do {
+            _caret_x += canvas.TextWidth(&_styles[reader.style], buffer, writer.Position());
+
+            writer.reset();
+         } while (reader.readCurrentLine(writer, 0xFF));
+
+         _document->status.caretChanged = false;
+      }
+      
+      _locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,
           lineHeight * caret.y + 1);
-//#else
-//      _locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,
-//          lineHeight * caret.y + 1);      
-//#endif
 
       _caretVisible = true;
    }

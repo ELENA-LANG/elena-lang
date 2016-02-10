@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Document class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "document.h"
@@ -138,6 +138,48 @@ bool Document::Reader :: readFirst(_ELENA_::TextWriter& writer, size_t length)
       _doc->_text->copyLineTo(bm, writer, length, true);
    }
    return true;
+}
+
+void Document::Reader :: initCurrentLine()
+{
+   // init bookmark
+   step = 0;
+   style = 0;
+   newLine = true;
+   bandStyle = false;
+
+   bm = _doc->getCurrentTextBookmark();
+
+   Point caret = _doc->getCaret(false);
+   Point frame = _doc->getFrame();
+
+   _region.topLeft = Point(frame.x, caret.y);
+   _region.bottomRight = Point(caret.x, caret.y);
+
+   bm.moveTo(frame.x, caret.y);
+
+   _doc->_text->validateBookmark(bm);
+   row = bm.getRow();
+}
+
+bool Document::Reader ::readCurrentLine(_ELENA_::TextWriter& writer, size_t length)
+{
+   style = 0;
+   bandStyle = false;
+
+   _doc->_text->validateBookmark(bm);
+
+   int column = _region.bottomRight.x;
+   if ((bm.getColumn() < column) && !bm.isEOL()) {
+      size_t styleLen = _doc->defineStyle(*this);
+      if (styleLen < length)
+         length = styleLen;
+
+      _doc->_text->copyLineToX(bm, writer, length, column);
+
+      return true;
+   }
+   else return false;
 }
 
 bool Document::Reader :: readNext(_ELENA_::TextWriter& writer, size_t length)
@@ -445,6 +487,8 @@ void Document :: setCaret(int column, int row, bool selecting)
 
       _selection = 0;
    }
+
+   status.caretChanged = true;
 }
 
 void Document :: setCaret(HighlightInfo info, bool selecting)

@@ -13,7 +13,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDE_REVISION_NUMBER 3
+#define IDE_REVISION_NUMBER 4
 
 // --- Command line arguments ---
 
@@ -252,6 +252,6 @@
                                     ".0"                                   \
                                     ".0"                                   
                    
-#define APP_VERSION                 "Version 1.9.25"
+#define APP_VERSION                 "Version 1.9.26"
 
 #endif // winideconstH

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textH
@@ -285,6 +285,7 @@ public:
    void save(_ELENA_::path_t path, int encoding);
 
    void copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, bool stopOnEOL);
+   void copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, int x);
    void copyTo(TextBookmark bookmark, text_c* buffer, int length);
 
    text_t getLine(TextBookmark& bookmark, size_t& length);

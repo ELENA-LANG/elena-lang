@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Document class header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef documentH
@@ -114,6 +114,7 @@ struct DocStatus
    // view status
    bool frameChanged;
    bool selelectionChanged;
+   bool caretChanged;
    bool modifiedMode;
    bool unnamed;
    bool included;
@@ -157,6 +158,8 @@ struct DocStatus
       overwriteMode = false;
       oldOvewrite = true;     // to trigger mode change
 
+      caretChanged = false;
+
       rowDifference = 0;
    }
 };
@@ -169,8 +172,10 @@ public:
       Rectangle    _region;
       Document*    _doc;
 
-      bool readFirst(_ELENA_::TextWriter& writer, size_t length);
+      void initCurrentLine();
+      bool readCurrentLine(_ELENA_::TextWriter& writer, size_t length);
 
+      bool readFirst(_ELENA_::TextWriter& writer, size_t length);
       bool readNext(_ELENA_::TextWriter& writer, size_t length);
 
       Reader(Document* doc)

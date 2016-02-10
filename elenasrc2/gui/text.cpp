@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class implementation
-//                                              (C)2005-2013, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "text.h"
@@ -561,6 +561,63 @@ size_t Text :: getRowLength(size_t row)
    else return 0;
 }
 
+void Text :: copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, int x)
+{
+   validateBookmark(bookmark);
+
+   bookmark.normalize();
+   if (bookmark._status == BM_EOT)
+      return;
+
+   int diff = bookmark.getVirtualDiff();
+   if (diff > 0) {
+      writer.fillText(_T(" "), 1, diff);
+      diff = 0;
+   }
+
+   int col = bookmark._column;
+   while (length > 0 && col < x) {
+      size_t offset = bookmark._offset;
+      size_t count = (*bookmark._page).used - offset;
+      if (count > length) {
+         count = length;
+      }
+      text_t line = (*bookmark._page).text + offset;
+      size_t i = 0;
+      while (i < count && col < x) {
+         if (line[i] == _CF || line[i] == _LF) {
+            bookmark.moveOn(i);
+            return;
+         }
+         else if (line[i] == '\t') {
+            int disp = _ELENA_::calcTabShift(col, Text::TabSize);
+            writer.fillText(_T(" "), 1, disp + diff);
+            diff = 0;
+            col += disp;
+         }
+         else {
+            int chLen = TextBookmark::charLength(line, i);
+            if (chLen > 1) {
+               if (i + chLen < count) {
+                  i += (chLen - 1);
+                  writer.write(&line[i], chLen);
+               }
+               else break;
+            }
+            else writer.write(&line[i], 1);
+
+            col++;
+            i++;
+         }
+      }
+
+      if (!bookmark.moveOn(i))
+         break;
+
+      length -= i;
+   }
+}
+
 void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, size_t length, bool stopOnEOL)
 {
    validateBookmark(bookmark);
@@ -583,26 +640,38 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
          count = length;
       }
       text_t line = (*bookmark._page).text + offset;
-      for (size_t i = 0 ; i < count ; i++) {
-         if (stopOnEOL && (line[i]==_CF || line[i]==_LF)) {
+      size_t i = 0;
+      while (i < count) {
+         if (stopOnEOL && (line[i] == _CF || line[i] == _LF)) {
             bookmark.moveOn(i);
             return;
          }
-         else if (line[i]=='\t') {
+         else if (line[i] == '\t') {
             int disp = _ELENA_::calcTabShift(col, Text::TabSize);
             writer.fillText(_T(" "), 1, disp + diff);
             diff = 0;
             col += disp;
          }
          else {
-            writer.write(&line[i], 1);
-            col++/* += TextBookmark::charLength(line, offset)*/;
+            int chLen = TextBookmark::charLength(line, i);
+            if (chLen > 1) {
+               if (i + chLen < count) {
+                  i += (chLen - 1);
+                  writer.write(&line[i], chLen);
+               }
+               else break;
+            }
+            else writer.write(&line[i], 1);
+
+            col++;
+            i++;
          }
       }
-      if (!bookmark.moveOn(count))
+
+      if (!bookmark.moveOn(i))
          break;
 
-      length -= count;
+      length -= i;
    }
 }
 

@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 1.9.25
+                      ELENA Language Project V. 1.9.26
                         (C)2005-2015  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -65,7 +65,7 @@ Linux:
 To install just unzip all the files into a directory you want and execute 
 rebuild.script under the superuser. Alternatively install debian package
 
-To compile the program types : ./bin/elena-lc -c<path to .project file>
+To compile the program types : elena-lc -c<path to .project file>
 
 ****************************************************************************
 * Documentation
