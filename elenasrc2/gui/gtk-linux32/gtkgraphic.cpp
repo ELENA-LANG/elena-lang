@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI graphical tools Implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtkgraphic.h"
@@ -10,16 +10,25 @@ using namespace _GUI_;
 
 // --- Font ---
 
-_ELENA_::Map<const char*, Font*, false> Font :: Cache = _ELENA_::Map<const char*, Font*, false>(NULL, _ELENA_::freeobj);
+_ELENA_::List<Font*> Font :: Cache = _ELENA_::List<Font*>(NULL, _ELENA_::freeobj);
 
-Font* Font :: createFont(const char* fontName)
+Font* Font :: createFont(const char* fontName, int size, bool bold, bool italic)
 {
-   Font* font = Cache.get(fontName);
-   if (font == NULL) {
-      font = new Font(fontName);
+   _ELENA_::List<Font*>::Iterator it = Cache.start();
+   while (!it.Eof()) {
+      Font* font = *it;
 
-      Cache.add(fontName, font);
+      if (_ELENA_::StringHelper::compare(font->_fontName, fontName) && font->_size == size &&
+         font->_bold == bold && font->_italic==italic)
+      {
+         return font;
+      }
+      it++;
    }
+   Font* font = new Font(fontName, size, bold, italic);
+
+   Cache.add(font);
+
    return font;
 }
 
@@ -41,9 +50,20 @@ Font* Font :: createFont(const char* fontName)
 //   _fontName = NULL;
 //}
 
-Font :: Font(const char* fontName)
-   : _font(fontName)
+Font :: Font(const char* fontName, int size, bool bold, bool italic)
 {
+   _fontName = fontName;
+   _bold = bold;
+   _italic = italic;
+   _size = size;
+
+   _font.set_family(fontName);
+   _font.set_size(size * PANGO_SCALE);
+   if (bold)
+      _font.set_weight(Pango::WEIGHT_BOLD);
+
+   if (italic)
+      _font.set_style(Pango::STYLE_ITALIC);
 }
 
 //void Font :: release()
@@ -142,19 +162,24 @@ void Canvas :: drawText(int x, int y, const char* s, Style& style)
    cr->set_source_rgb(style.foreground.red, style.foreground.green, style.foreground.blue);
 
    cr->move_to(x, y);
-//
-//   //style.font->_descr = pango_font_description_from_string(style.font->_fontName);
 
    layout->set_font_description(style.font->_font);
    layout->set_text(s);
 
-//   //pango_font_description_free(style.font->_descr);
-
    layout->update_from_cairo_context(cr);
    layout->show_in_cairo_context(cr);
+}
 
-   //pangoLayout->add_to_cairo_context(cr);       //adds text to cairos stack of stuff to be drawn
-   //cr->stroke();
+int Canvas :: TextWidth(Style* style, const char* s)
+{
+   layout->set_font_description(style->font->_font);
+   layout->set_text(s);
+
+   int text_width;
+   int text_height;
+   layout->get_pixel_size(text_width, text_height);
+
+   return text_width;
 }
 
 void Canvas :: drawCursor(int x, int y, Style& style)

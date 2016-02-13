@@ -118,23 +118,23 @@ private:
    {
 #ifdef _UTF8
       if (_ELENA_::test((*_page).text[_offset], 0x80)) {
-         if ((*_page).text[_offset] >= 0xF0) {
+         if ((unsigned char)(*_page).text[_offset] >= 0xF0) {
             go(3);
-            disp += 3;
+            disp -= 3;
          }
-         else if ((*_page).text[_offset] >= 0xE0) {
+         else if ((unsigned char)(*_page).text[_offset] >= 0xE0) {
             go(2);
-            disp += 2;
+            disp -= 2;
          }
          else {
             go(1);
-            disp++;
+            disp--;
          }
       }
       return go(1);
 #else
-      if ((*_page).text[_offset] >= 0xD800) {
-         disp++;
+      if ((unsigned)(*_page).text[_offset] >= 0xD800) {
+         disp--;
          return go(2);
       }
       else return go(1);
@@ -154,8 +154,8 @@ private:
       }
       return go(-1);
 #else
-      if ((*_page).text[_offset] >= 0xDC00) {
-         disp--;
+      if ((unsigned)(*_page).text[_offset] >= 0xDC00) {
+         disp++;
          return go(-2);
       }
       else return go(-1);
@@ -167,10 +167,10 @@ public:
    {
 #ifdef _UTF8
       if (_ELENA_::test(s[offset], 0x80)) {
-         if (s[offset] >= 0xF0) {
+         if ((unsigned char)s[offset] >= 0xF0) {
             return 4;
          }
-         else if (s[offset] >= 0xE0) {
+         else if ((unsigned char)s[offset] >= 0xE0) {
             return 3;
          }
          else return 2;

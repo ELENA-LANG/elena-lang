@@ -59,7 +59,7 @@ const text_c* lexDFA[] =
 
 text_c makeStep(text_c ch, text_c state)
 {
-   return (text_c)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
+   return (unsigned text_c)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
 }
 
 size_t defineStyle(text_c state, size_t style)

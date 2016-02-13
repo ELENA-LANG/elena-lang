@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK TextView Control Header File
-//                                               (C)2005-2015, by Alexei Rakov
+//                                               (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtktextviewH
@@ -20,6 +20,9 @@ struct StyleInfo
    Colour      foreground;
    Colour      background;
    const char* faceName;
+   int         size;
+   bool        bold;
+   bool        italic;
 };
 
 // --- ViewStyle ---
@@ -118,6 +121,7 @@ protected:
 
 //   //bool         _cached;
 //   //DoubleBuffer _zbuffer;
+      size_t      _caret_x;
 
       bool        _caretVisible;
 

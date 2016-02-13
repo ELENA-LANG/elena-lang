@@ -599,8 +599,8 @@ void Text :: copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, si
             int chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
                if (i + chLen < count) {
-                  i += (chLen - 1);
                   writer.write(&line[i], chLen);
+                  i += (chLen - 1);
                }
                else break;
             }
@@ -656,8 +656,8 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
             int chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
                if (i + chLen < count) {
-                  i += (chLen - 1);
                   writer.write(&line[i], chLen);
+                  i += (chLen - 1);
                }
                else break;
             }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TextView Control Implementation File
-//                                               (C)2005-2015, by Alexei Rakov
+//                                               (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "gtktextview.h"
@@ -9,117 +9,6 @@
 
 using namespace _GUI_;
 
-//#define CURSOR_PEND_MULTIPLIER   3
-//#define CURSOR_ON_MULTIPLIER     2
-//#define CURSOR_OFF_MULTIPLIER    1
-//#define CURSOR_DIVIDER           3
-//
-//G_DEFINE_TYPE (TextViewWidget, text_view, /*GTK_TYPE_DRAWING_AREA*/ GTK_TYPE_WIDGET);
-//
-//enum {
-//  //SET_SCROLL_ADJUSTMENTS,
-//  //ACTIVATE,
-//  //POPULATE_POPUP,
-//  MOVE_CURSOR,
-////  INSERT_AT_CURSOR,
-////  DELETE_FROM_CURSOR,
-////  BACKSPACE,
-////  CUT_CLIPBOARD,
-////  COPY_CLIPBOARD,
-////  PASTE_CLIPBOARD,
-////  TOGGLE_OVERWRITE,
-////  ICON_PRESS,
-//   //  ICON_RELEASE,
-////  PREEDIT_CHANGED,
-//  EDITOR_CHANGED,
-//  CTRLTAB_PRESSED,
-//  LAST_SIGNAL
-//};
-
-//static guint signals[LAST_SIGNAL] = { 0 };
-//
-//static void add_move_binding(GtkBindingSet  *binding_set,
-//                  guint           keyval,
-//                  guint           modmask,
-//                  int             step)
-//{
-//   gtk_binding_entry_add_signal(binding_set, keyval, (GdkModifierType)modmask,
-//                                "move-cursor", 2,
-//                                G_TYPE_INT, step,
-//                                G_TYPE_INT, 0);
-//
-//   /* Selection-extending version */
-//   gtk_binding_entry_add_signal (binding_set, keyval, (GdkModifierType)(modmask | GDK_SHIFT_MASK),
-//                                "move-cursor", 2,
-//                                G_TYPE_INT, step,
-//                                G_TYPE_INT, -1);
-//}
-//
-//static void text_view_class_init(TextViewWidgetClass *cls)
-//{
-//	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (cls);
-//	GObjectClass* object_class =  G_OBJECT_CLASS (cls);
-//
-//   object_class->dispose = TextView::_dispose;
-//   object_class->finalize = TextView::_finalize;
-//
-//   widget_class->realize = TextView::_realize;
-//   widget_class->unrealize = TextView::_unrealize;
-//   widget_class->size_request = TextView::_size_request;
-//   widget_class->size_allocate = TextView::_size_allocate;
-//   widget_class->motion_notify_event = TextView::_motion_event;
-//   widget_class->key_release_event = TextView::_key_release_event;
-//   widget_class->focus_in_event = TextView::_focus_in_event;
-//   widget_class->focus_out_event = TextView::_focus_out_event;
-//
-//   ((GtkObjectClass*)cls)->destroy = TextView::_destroy;
-//
-//   // TextViewWidgetClass methods
-//   cls->move_cursor = TextView::_move_cursor;
-//
-//   signals[MOVE_CURSOR] =
-//      g_signal_new ("move-cursor",
-//		  G_OBJECT_CLASS_TYPE (GTK_OBJECT_CLASS(cls)),
-//		  (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-//		  G_STRUCT_OFFSET (TextViewWidgetClass, move_cursor),
-//		  NULL, NULL,
-//		  gtk_marshal_VOID__INT_INT,
-//		  G_TYPE_NONE, 2,
-//		  G_TYPE_INT,
-//		  G_TYPE_INT);
-//
-//   signals[EDITOR_CHANGED] =
-//      g_signal_new_class_handler ("editor-changed",
-//		  G_OBJECT_CLASS_TYPE (object_class),
-//		  (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-//		  NULL,
-//		  NULL, NULL,
-//		  g_cclosure_marshal_VOID__VOID,
-//		  G_TYPE_NONE, 0);
-//
-//   signals[CTRLTAB_PRESSED] =
-//      g_signal_new_class_handler ("ctrl-tab-pressed",
-//		  G_OBJECT_CLASS_TYPE (object_class),
-//		  (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-//		  NULL,
-//		  NULL, NULL,
-//		  g_cclosure_marshal_VOID__BOOLEAN,
-//		  G_TYPE_NONE, 1,
-//		  G_TYPE_INT);
-//
-////   signals[SET_SCROLL_ADJUSTMENTS] =
-////      g_signal_new ("set-scroll-adjustments",
-////		  G_OBJECT_CLASS_TYPE (object_class),
-////		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-////		  G_STRUCT_OFFSET (GtkTextViewClass, set_scroll_adjustments),
-////		  NULL, NULL,
-////		  _gtk_marshal_VOID__OBJECT_OBJECT,
-////		  G_TYPE_NONE, 2,
-////		  GTK_TYPE_ADJUSTMENT,
-////		  GTK_TYPE_ADJUSTMENT);
-////   widget_class->set_scroll_adjustments_signal = signals[SET_SCROLL_ADJUSTMENTS];
-//}
-//
 //static gint get_cursor_blink_timeout(TextViewWidget* textview)
 //{
 //   GtkSettings *settings = gtk_widget_get_settings(GTK_WIDGET(textview));
@@ -190,7 +79,7 @@ void ViewStyles :: assign(int count, StyleInfo* styles, int lineHeight, int marg
    _marginWidth = marginWidth;
 
    for (int i = 0 ; i < count ; i++) {
-      Font* font = Font::createFont(styles[i].faceName);
+      Font* font = Font::createFont(styles[i].faceName, styles[i].size, styles[i].bold, styles[i].italic);
 
       _styles[i] = Style(styles[i].foreground, styles[i].background, font);
    }
@@ -318,6 +207,7 @@ TextView::TextDrawingArea :: TextDrawingArea(TextView* view) :
    _lineNumbersVisible = true; // !! temporal
    _mouseCaptured = false;
    _highlight = false;
+   _caret_x = 0;
 
 //   _cached = false;
 }
@@ -803,7 +693,8 @@ void TextView::TextDrawingArea :: paint(Canvas& /*extCanvas*/canvas , int viewWi
             //}
          }
 
-         width = (style.avgCharWidth) * length;
+         //width = (style.avgCharWidth) * length;
+         width = canvas.TextWidth(&style, buffer);
 
          if (reader.bandStyle) {
             canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, marginStyle);
@@ -836,10 +727,31 @@ void TextView::TextDrawingArea :: paint(Canvas& /*extCanvas*/canvas , int viewWi
    // Draw cursor
    Point caret = _document->getCaret(false) - _document->getFrame();
    if (_caretVisible && caret.x >= 0 && caret.y >= 0) {
+      _caret_x = 0;
+
+      if (_document->status.caretChanged)
+         _caret_x = 0;
+
+      writer.reset();
+
+      reader.initCurrentLine();
+      reader.readCurrentLine(writer, 0xFF);
+      do {
+         Style style = _styles[reader.style];
+         // set the text length
+         buffer[writer.Position()] = 0;
+
+         _caret_x += canvas.TextWidth(&style, buffer);
+
+         writer.reset();
+      } while (reader.readCurrentLine(writer, 0xFF));
+
+      _document->status.caretChanged = false;
+
       if (!_document->status.overwriteMode) {
-         /*extC*/canvas.drawCursor(marginWidth + defaultStyle.avgCharWidth * caret.x, lineHeight * caret.y + 1, style);
+         /*extC*/canvas.drawCursor(marginWidth + _caret_x, lineHeight * caret.y + 1, style);
       }
-      else /*extC*/canvas.drawOverwriteCursor(marginWidth + defaultStyle.avgCharWidth * caret.x, lineHeight * caret.y + 1, style);
+      else /*extC*/canvas.drawOverwriteCursor(marginWidth + _caret_x, lineHeight * caret.y + 1, style);
    }
 }
 
