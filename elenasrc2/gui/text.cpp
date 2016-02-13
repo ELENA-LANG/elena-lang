@@ -145,23 +145,25 @@ bool TextBookmark :: move(int disp)
          if (!prevChar(disp))
             return false;
 
-         if ((*_page).text[_offset]==_LF) {
+         if ((*_page).text[_offset]==10) {
             _length = BM_INVALID;
             _row--;
 
             TextBookmark bm = *this;
+
+            // if it is a CRLF - skip LF
+            go(-1);
+            if ((*_page).text[_offset]==13) {
+               disp++;
+            }
+            else {
+               go(1);
+               bm.go(1); // HOTFIX : to properly define the current line length
+            }
+
             bm.moveToPrevBOL();
 
-            _column = _length = bm.getLength();
-
-            go(-1);
-            disp++;
-
-            //if (valid && (*_page).text[_offset]==_CF) {
-            //   go(-1, valid);
-            //   disp++;
-            //}
-
+           _column = _length = bm.getLength();
          }
          else if ((*_page).text[_offset]==0x09) {
             TextBookmark bm = *this;
@@ -185,7 +187,7 @@ bool TextBookmark :: move(int disp)
       while (valid && disp > 0) {
          disp--;
 
-         if ((*_page).text[_offset]==_CF) {
+         if ((*_page).text[_offset]==13) {
             _row++;
             _column = 0;
             _length = BM_INVALID;
@@ -193,13 +195,13 @@ bool TextBookmark :: move(int disp)
             if(!go(1))
                return false;
 
-            if ((*_page).text[_offset]==_LF) {
+            if ((*_page).text[_offset]==10) {
                valid = go(1);
 
                disp--;
             }
          }
-         else if ((*_page).text[_offset]==_LF) {
+         else if ((*_page).text[_offset]==10) {
             _row++;
             _column = 0;
             _length = BM_INVALID;
@@ -295,13 +297,13 @@ bool TextBookmark :: moveToPrevBOL()
    if (!go(-1))
       return false;
 
-   if ((*_page).text[_offset]==_LF) {
+   if ((*_page).text[_offset]==10) {
       _row--;
       if (!go(-1))
          return false;
    }
    // move until BOL
-   while ((*_page).text[_offset]!=_LF) {
+   while ((*_page).text[_offset]!=10) {
       if (!go(-1))
          return false;
    }
@@ -320,7 +322,7 @@ bool TextBookmark :: moveToNextBOL()
       return false;
 
    // move until EOL
-   while ((*_page).text[_offset]!=_LF) {
+   while ((*_page).text[_offset]!=10) {
       if (!go(1))
          return false;
    }
@@ -341,23 +343,14 @@ size_t TextBookmark :: seekEOL()
    if(bm._status == BM_EOT || (bm._status == BM_EOP && !bm.goToNextPage()))
       return 0;
 
-   if (_CF != 0) {
-      text_c ch = (*bm._page).text[bm._offset];
-      while (ch != _CF && ch != _LF) {
-         if (!bm.move(1))
-            break;
+   text_c ch = (*bm._page).text[bm._offset];
+   while (ch != 10 && ch != 13) {
+      if (!bm.move(1))
+         break;
 
-         ch = (*bm._page).text[bm._offset];
-      }
+      ch = (*bm._page).text[bm._offset];
    }
-   else {
-      bool valid = true;
-      while (valid && (*bm._page).text[bm._offset]!=_LF) {
-         valid = bm.move(1);
-      }
-      if (valid)
-         bm.move(-1);
-   }
+
    return bm._column - _column;
 }
 
@@ -445,10 +438,9 @@ text_t TextScanner :: getLine(size_t& length)
 
 // --- Text ---
 
-Text :: Text()
+Text :: Text(EOLMode mode)
 {
-   _LF = 0x0A;
-   _CF = 0x0D;
+   _mode = mode;
 
    _rowCount = 0;
 }
@@ -460,8 +452,7 @@ Text :: ~Text()
 void Text :: validateBookmark(TextBookmark& bookmark)
 {
    if (!bookmark.isValid()) {
-      bookmark._LF = _LF;
-      bookmark._CF = _CF;
+      bookmark._mode = _mode;
       bookmark.set(&_pages);
    }
 }
@@ -522,7 +513,7 @@ void Text :: refreshPage(Pages::Iterator page)
 
    (*page).rows = 0;
    for (int i = 0 ; i < used ; i++) {
-      if (text[i]==_LF) {
+      if (text[i]==10) {
          (*page).rows++;
       }
    }
@@ -585,7 +576,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, si
       text_t line = (*bookmark._page).text + offset;
       size_t i = 0;
       while (i < count && col < x) {
-         if (line[i] == _CF || line[i] == _LF) {
+         if (line[i] == 13 || line[i] == 10) {
             bookmark.moveOn(i);
             return;
          }
@@ -642,7 +633,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
       text_t line = (*bookmark._page).text + offset;
       size_t i = 0;
       while (i < count) {
-         if (stopOnEOL && (line[i] == _CF || line[i] == _LF)) {
+         if (stopOnEOL && (line[i] == 13 || line[i] == 10)) {
             bookmark.moveOn(i);
             return;
          }
@@ -874,13 +865,13 @@ bool Text :: insertNewLine(TextBookmark& bookmark)
    validateBookmark(bookmark);
 
    text_c ch[2];
-   if (_CF != 0) {
-      ch[0] = _CF;
-      ch[1] = _LF;
+   if (_mode == eolCRLF) {
+      ch[0] = 13;
+      ch[1] = 10;
       insert(bookmark, ch, 2, true);
    }
    else {
-      ch[0] = _LF;
+      ch[0] = 10;
       insert(bookmark, ch, 1, true);
    }
 
@@ -897,7 +888,10 @@ bool Text :: eraseChar(TextBookmark& bookmark)
 
    if (bookmark._column==bookmark.getLength()) {
       if (bookmark._row != _rowCount - 1) {
-         erase(bookmark, 2, true);
+         if ((*bookmark._page).text[bookmark._offset] == 13) {
+            erase(bookmark, 2, true);
+         }
+         else erase(bookmark, 1, true);
 
          _rowCount--;
       }

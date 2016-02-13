@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //                                              (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ static bool isLegalUTF8(const unsigned char* source, int length)
 bool StringHelper :: copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
    if(sourLength <= destLength) {
-      strncpy(dest, sour, sourLength);
+      memcpy(dest, sour, sourLength);
       destLength = sourLength;
 
       return true;
@@ -406,7 +406,7 @@ char* StringHelper :: allocate(size_t size, const char* value)
    char*s = (char*)malloc(size);
 
    if (!emptystr(value))
-      strncpy(s, value, size);
+      memcpy(s, value, size);
 
    return s;
 }
@@ -419,7 +419,7 @@ void StringHelper :: insert(char* s, int pos, const char* subs)
    for (int i = getlength(s) ; i >= pos ; i--) {
       s[i+len] = s[i];
    }
-   strncpy(s + pos, subs, len);
+   memcpy(s + pos, subs, len);
 }
 
 void StringHelper :: move(char* s1, const char* s2, size_t length)
@@ -545,7 +545,7 @@ long long StringHelper::strToLongLong(const char* s, int radix)
    char dump[10];
    int length = getlength(s);
    while (length > 9) {
-      strncpy(dump, (char*)s, 9);
+      memcpy(dump, (char*)s, 9);
       dump[9] = 0;
 
       long long temp = strToLong(dump, radix);
@@ -557,7 +557,7 @@ long long StringHelper::strToLongLong(const char* s, int radix)
       length -= 9;
       s += 9;
    }
-   strncpy(dump, s, length);
+   memcpy(dump, s, length);
    dump[length] = 0;
    long long temp = strToLong(dump, radix);
    number += temp;

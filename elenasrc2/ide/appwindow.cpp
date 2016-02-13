@@ -328,7 +328,12 @@ bool IDEController :: openFile(_ELENA_::path_t path)
       return true;
    }
 
-   _GUI_::Text* text = new _GUI_::Text();
+#ifdef _WIN32
+   _GUI_::Text* text = new _GUI_::Text(_GUI_::eolCRLF);
+#else
+   _GUI_::Text* text = new _GUI_::Text(_GUI_::eolLF);
+#endif
+
    bool opened = text->load(path, _model->defaultEncoding, _model->autoDetecting);
    if (opened) {
       _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);
@@ -620,7 +625,12 @@ void IDEController::doCreateFile()
    _ELENA_::String<text_c, 30> name(_T("unnamed"));
    name.appendInt(_model->unnamedIndex++);
 
-   _GUI_::Text* text = new _GUI_::Text();
+#ifdef _WIN32
+   _GUI_::Text* text = new _GUI_::Text(_GUI_::eolCRLF);
+#else
+   _GUI_::Text* text = new _GUI_::Text(_GUI_::eolLF);
+#endif
+
    text->create();
 
    _GUI_::Document* doc = new SourceDoc(text, new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), _model->defaultEncoding);

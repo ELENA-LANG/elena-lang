@@ -18,6 +18,13 @@
 
 namespace _GUI_
 {
+
+enum EOLMode
+{
+   eolLF,
+   eolCRLF
+};
+
 // --- forwards ---
 class Text;
 
@@ -71,7 +78,7 @@ struct TextBookmark
    friend struct TextScanner;
 
 private:
-   text_c         _LF, _CF;
+   EOLMode        _mode;
 
    // bookmark text position
    size_t         _column;
@@ -195,8 +202,7 @@ public:
       this->_offset = bookmark._offset;
 
       this->_length = bookmark._length;
-      this->_LF = bookmark._LF;
-      this->_CF = bookmark._CF;
+      this->_mode = bookmark._mode;
 
       return *this;
    }
@@ -257,7 +263,7 @@ public:
 
 class Text
 {
-   text_c       _LF, _CF;
+   EOLMode      _mode;
 
    Pages        _pages;
    size_t       _rowCount;
@@ -304,7 +310,7 @@ public:
    void attachWatcher(_TextWatcher* watcher);
    void detachWatcher(_TextWatcher* watcher);
 
-   Text();
+   Text(EOLMode mode);
    virtual ~Text();
 };
 
