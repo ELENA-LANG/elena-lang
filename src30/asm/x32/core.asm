@@ -1817,7 +1817,7 @@ inline % 72h
   setz bl
   cmp  esi, [edi+4]
   setz dl
-  or   bl, dl
+  and  bl, dl
 
 end
 

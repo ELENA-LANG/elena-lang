@@ -938,7 +938,11 @@ void x86Assembler :: compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWri
 		code->writeByte(0x21);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {
+   else if ((test(sour.type, x86Helper::otR8) || test(sour.type, x86Helper::otM8)) && test(dest.type, x86Helper::otR8)) {
+      code->writeByte(0x22);
+      x86Helper::writeModRM(code, dest, sour);
+   }
+   else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {
 		code->writeByte(0x81);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), sour);
 		if (overridden) {
