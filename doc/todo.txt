@@ -3,10 +3,10 @@ In development:
 ------                      
 
               idev - generic development                                          
-                       * use ebx, instead of esi
-                       
                        * #217 : optimization : integer / float / long / literal comparison
                          - optimize  lequal,lless,nequal,nless,requal,rless
+
+                       * replace nequal selectr ifr with shorter form nequal ifn, ...
 
                        * optimize snop
 

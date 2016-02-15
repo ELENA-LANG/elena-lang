@@ -1810,8 +1810,8 @@ end
 // ; blen
 inline % 31h
 
-  mov  esi, [eax-8]
-  neg  esi
+  mov  ebx, [eax-8]
+  neg  ebx
 
 end
 
@@ -1819,9 +1819,9 @@ end
 // ;in : eax - object, esi - size
 inline % 32h
 
-  mov  esi, [eax-8]
-  neg  esi
-  shr  esi, 1
+  mov  ebx, [eax-8]
+  neg  ebx
+  shr  ebx, 1
   
 end
 

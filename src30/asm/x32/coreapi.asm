@@ -1395,8 +1395,8 @@ Lab5:
    add  ecx, 1
 Lab7:
    neg  ecx
-   mov  ebx, edi
-   mov  [ebx-8], ecx
+   mov  esi, edi
+   mov  [esi-8], ecx
    mov  edx, 0FFh
    add  ecx, 1             // to skip zero
 Lab2:
@@ -1407,12 +1407,12 @@ Lab2:
 Lab8:
    add  eax, 30h
    and  eax, edx
-   mov  byte ptr [ebx], al
+   mov  byte ptr [esi], al
    add  esi, 1
    add  ecx, 1
    jnz  short Lab2
    xor  eax, eax
-   mov  byte ptr [ebx], al
+   mov  byte ptr [esi], al
    lea  esp, [esp+4]
    pop  ebp
 

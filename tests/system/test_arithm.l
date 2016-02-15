@@ -4,29 +4,6 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-
-
-#import system'winforms.
-
-#class BaseFileDialog
-{
-    #field(type:hwnd)theParent.
-    #field(type:shortarray)theFilters.
-    #field(type:shortarray)theFileName.
-    #field(type:int)theFilterIndex.
-    #field(type:int)theMaxFile.
-    #field(type:wide)theCaption.
-    #field(type:int)theFlags.
-         
-    #method(stacksafe) $prepare &bytearray:aStruct
-    [
-        #var(type:dirty_ptr)ptr.
-        
-//      hwndOwner;
-        ptr write &int:theParent.
-        aStruct write &int:4 &int:ptr.
-    ]
-}            
                 
 #symbol XTester =
 {
