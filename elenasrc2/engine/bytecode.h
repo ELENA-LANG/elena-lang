@@ -52,8 +52,6 @@ enum ByteCode
    bcDCopyE          = 0x21,
    bcPushD           = 0x22,
    bcPopD            = 0x23,
-   bcDReserve        = 0x24,
-   bcDRestore        = 0x25,
    bcExclude         = 0x26,   
    bcTryLock         = 0x27,
    bcFreeLock        = 0x28,

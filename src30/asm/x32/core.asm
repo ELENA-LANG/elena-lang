@@ -1153,23 +1153,23 @@ end
 inline % 0Eh // (eax - object, ecx - message)
 
   mov  edi, [eax-4]
-  xor  ebx, ebx
-  mov  edx, [edi - elVMTSizeOffset]
+  xor  edx, edx
+  mov  esi, [edi - elVMTSizeOffset]
 
 labSplit:
-  test edx, edx
+  test esi, esi
   jz   short labEnd
 
 labStart:
-  shr  edx, 1
-  setnc bl
-  cmp  ecx, [edi+edx*8]
+  shr  esi, 1
+  setnc dl
+  cmp  ecx, [edi+esi*8]
   jb   short labSplit
   nop
   nop
   jz   short labFound
-  lea  edi, [edi+edx*8+8]
-  sub  edx, ebx
+  lea  edi, [edi+esi*8+8]
+  sub  esi, edx
   jnz  short labStart
   nop
   nop
@@ -1177,7 +1177,7 @@ labStart:
   nop
   nop
 labFound:
-  jmp  [edi+edx*8+4]
+  jmp  [edi+esi*8+4]
   nop
   nop
 
@@ -1222,17 +1222,13 @@ end
 
 inline % 19h
                                 
-   mov  ebx, esi
-   shl  ebx, 2
-    
    // ; calculate write-barrier address
    mov  ecx, edi
+   mov  esi, [data : %CORE_GC_TABLE + gc_header]
    sub  ecx, [data : %CORE_GC_TABLE + gc_start]
-   mov  edx, [data : %CORE_GC_TABLE + gc_header]
    shr  ecx, page_size_order
-   mov  byte ptr [ecx + edx], 1  
-   mov  [edi + ebx], eax
-lEnd:
+   mov  byte ptr [ecx + esi], 1  
+   mov  [edi + ebx*4], eax
 
 end
 
@@ -1240,10 +1236,10 @@ end
 inline % 1Bh
 
   mov  edx, ecx
-  pop  ebx
+  pop  esi
   and  edx, 000000Fh
   lea  esp, [esp + edx * 4 + 4]
-  jmp  ebx
+  jmp  esi
   nop
   nop
  
@@ -1254,19 +1250,20 @@ inline % 1Dh
 
   mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
   mov  ebp, [data : %CORE_EXCEPTION_TABLE + 8]
-  pop  ebx
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebx
-  pop  edx
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], edx
-  pop  ebx
-  mov  [data : %CORE_EXCEPTION_TABLE], ebx
+
+  mov  edx, [esp]
+  mov  [data : %CORE_EXCEPTION_TABLE + 8], edx
+  mov  esi, [esp+4]
+  mov  [data : %CORE_EXCEPTION_TABLE + 4], esi
+  mov  edx, [esp+8]
+  mov  [data : %CORE_EXCEPTION_TABLE], edx
+  add  esp, 12
   
 end
 
 // ; create
 inline % 1Fh
 
-  mov  ebx, esi
   shl  ebx, 2  
   push eax  
   mov  ecx, ebx
@@ -1274,27 +1271,7 @@ inline % 1Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  ebx
-  mov  [eax-4], ebx
-
-end
-
-// ; dreserve
-inline % 24h
-
-  mov  ebx, ecx
-  shl  ebx, 2
-  sub  esp, ebx
-  push ebp
-  push 0
-  mov  ebp, esp
-
-end
-
-// ; drestore
-inline % 25h
-                                                              
-  mov  ebp, [ebp + 4]
+  pop  [eax-4]
 
 end
 
@@ -1309,7 +1286,7 @@ end
 // ; trylock
 inline % 27h
 
-  xor  eax, eax
+  xor  ebx, ebx
 
 end
 
@@ -1323,18 +1300,20 @@ end
 // ; eswap
 inline % 2Ch
 
-  mov  ebx, ecx
-  mov  ecx, esi
+  mov  edx, ecx
   mov  esi, ebx
+  mov  ebx, edx
+  mov  ecx, esi
   
 end
 
 // ; bswap
 inline % 2Dh
 
-  mov  ebx, edi
-  mov  edi, eax
-  mov  eax, ebx
+  mov  edx, eax
+  mov  esi, edi
+  mov  edi, edx
+  mov  eax, esi
 
 end
 
@@ -1394,8 +1373,8 @@ end
 
 inline % 33h
 
-  mov  ebx, [eax - 4]
-  mov  esi, [ebx - elVMTFlagOffset]
+  mov  esi, [eax - 4]
+  mov  ebx, [esi - elVMTFlagOffset]
   
 end
 
@@ -1422,29 +1401,27 @@ inline % 37h
 
   push edi
   mov  edi, [eax-4]
-  xor  ebx, ebx
-  mov  edx, [edi - elVMTSizeOffset]
+  xor  edx, edx
+  mov  ebx, [edi - elVMTSizeOffset]
 
 labSplit:
-  test edx, edx
+  test ebx, ebx
   jz   short labEnd
 
 labStart:
-  shr  edx, 1
-  setnc bl
-  cmp  ecx, [edi+edx*8]
+  shr  ebx, 1
+  setnc dl
+  cmp  ecx, [edi+ebx*8]
   jb   short labSplit
   nop
   nop
   jz   short labFound
-  lea  edi, [edi+edx*8+8]
-  sub  edx, ebx
+  lea  edi, [edi+ebx*8+8]
+  sub  ebx, edx
   jnz  short labStart
   nop
   nop
 labEnd:
-  mov  esi, -1  
-
 labFound:
   pop  edi  
 
@@ -1454,8 +1431,8 @@ end
 
 inline % 038h
 
-  mov  ebx, [eax]
-  call ebx
+  mov  esi, [eax]
+  call esi
 
 end
 
@@ -1463,7 +1440,7 @@ end
 inline % 039h
 
   mov  edx, [eax - 4]
-  call [edx + esi * 8 + 4]
+  call [edx + ebx * 8 + 4]
 
 end
 
@@ -1479,48 +1456,44 @@ end
 
 inline % 40h
 
-  mov  ebx, [eax]
-  cmp  ebx, [edi]
-  mov  esi, 1
-  jz   short labEnd
-  mov  esi, 0  
-labEnd:
+  xor  ebx, ebx
+  mov  edx, [eax]
+  cmp  edx, [edi]
+  setz bl, 1
 
 end
 
 // ; nless
 inline % 41h
 
-  mov  ebx, [eax]
-  cmp  ebx, [edi]
-  mov  esi, 1
-  jl   short labEnd
-  mov  esi, 0  
-labEnd:
+  xor  ebx, ebx
+  mov  edx, [eax]
+  cmp  edx, [edi]
+  setl bl, 1
 
 end
 
 // ; ncopy (src, tgt)
 inline % 42h
 
-  mov  ebx, [eax]
-  mov  [edi], ebx
+  mov  esi, [eax]
+  mov  [edi], esi
     
 end
 
 // ; nadd
 inline % 43h
 
-  mov  ecx, [eax]
-  add  [edi], ecx
+  mov  edx, [eax]
+  add  [edi], edx
 
 end
 
 // ; nsub
 inline % 44h
 
-  mov  ecx, [eax]
-  sub  [edi], ecx
+  mov  edx, [eax]
+  sub  [edi], edx
 
 end
 
@@ -1551,14 +1524,14 @@ end
 // ; nsave
 inline % 47h
 
-  mov [edi], esi
+  mov [edi], ebx
 
 end
 
 // ; nload
 inline % 48h
 
-  mov esi, [eax]
+  mov ebx, [eax]
 
 end
 
@@ -1568,64 +1541,63 @@ inline % 49h
   push 0
   mov  esi, esp
   fistp dword ptr [esi]
-  pop esi
+  pop ebx
 
 end
 
 // ; nand
 inline % 4Ah
 
-  mov  ecx, [eax]
-  and  [edi], ecx
+  mov  edx, [eax]
+  and  [edi], edx
 
 end
 
 // ; nor
 inline % 4Bh
 
-  mov  ecx, [eax]
-  or   [edi], ecx
+  mov  edx, [eax]
+  or   [edi], edx
 
 end
 
 // ; nxor
 inline % 4Ch
 
-  mov  ecx, [eax]
-  xor  [edi], ecx
+  mov  edx, [eax]
+  xor  [edi], edx
 
 end
 
 // ; nshift
 inline % 4Dh
 
-  mov ecx, esi
-  mov ebx, [eax]
-  and ecx, ecx
+  mov edx, [eax]
+  and ebx, ebx
   jns short lab1
+  mov ecx, ebx
   neg ecx
-  shl ebx, cl
+  shl edx, cl
   jmp short lab2
 lab1:
-  shr ebx, cl
+  shr edx, cl
 lab2:
-  mov [edi], ebx
+  mov [edi], edx
 
 end
 
 // ; nnot
 inline % 4Eh
 
-  mov  ebx, [eax]  
-  not  ebx
-  mov  [edi], ebx
+  mov  edx, [eax]  
+  not  edx
+  mov  [edi], edx
 
 end
 
 // ; ncreate
 inline % 4Fh
 
-  mov  ebx, esi
   shl  ebx, 2
   push eax  
   mov  ecx, ebx
@@ -1634,26 +1606,25 @@ inline % 4Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  ebx
-  mov  [eax-4], ebx
+  pop  [eax-4]
 
 end
 
 // ; ncopyb (src, tgt)
 inline % 50h
 
-  mov  ebx, [edi]
-  mov  [eax], ebx
+  mov  edx, [edi]
+  mov  [eax], edx
     
 end
 
 // ; lcopyb
 inline % 51h
 
-  mov  ecx, [edi]
-  mov  ebx, [edi+4]
-  mov  [eax], ecx
-  mov  [eax+4], ebx
+  mov  edx, [edi]
+  mov  esi, [edi+4]
+  mov  [eax], edx
+  mov  [eax+4], esi
     
 end
 
@@ -1677,36 +1648,34 @@ end
 // ; wread
 inline % 59h
 
-  mov ecx, [eax + esi * 2]
+  mov ecx, [eax + ebx * 2]
 
 end
 
 // ; wwrite
 inline % 5Ah
 
-  mov [edi + esi * 2], ecx
+  mov [edi + ebx * 2], ecx
   
 end
 
 // ; nread
 inline % 5Bh
 
-  mov ecx, [eax + esi * 4]
+  mov ecx, [eax + ebx * 4]
 
 end
 
 // ; nwrite
 inline % 5Ch
 
-  mov [edi + esi * 4], ecx
+  mov [edi + ebx * 4], ecx
   
 end
 
 // ; wcreate
 inline % 5Fh
 
-  //lea  ebx, [esi * 2 + 2]
-  mov  ebx, esi
   shl  ebx, 1
   push eax  
   mov  ecx, ebx
@@ -1715,15 +1684,14 @@ inline % 5Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  ebx
-  mov  [eax-4], ebx
+  pop  [eax-4]
 
 end
 
 // ; breadw
 inline % 60h
 
-  mov ecx, [eax + esi]
+  mov ecx, [eax + ebx]
   and ecx, 0FFFFh  
 
 end
@@ -1731,14 +1699,14 @@ end
 // ; bread
 inline % 61h
 
-  mov ecx, [eax + esi]
+  mov ecx, [eax + ebx]
 
 end
 
 // ; breadb
 inline % 65h
 
-  mov ecx, [eax + esi]
+  mov ecx, [eax + ebx]
   and ecx, 0FFh
 
 end
@@ -1747,11 +1715,7 @@ end
 
 inline % 66h
 
-//  fld   qword ptr [eax]  
-//  fsin
-//  fstp  qword ptr [edi]    // store result 
-
-  mov   ebx, eax
+  mov   edx, eax
   fld   qword ptr [eax]  
   fldpi
   fadd  st(0),st(0)       // ; ->2pi
@@ -1768,7 +1732,7 @@ lReduce:
   fstp  st(1)             // ; get rid of the 2pi
 
   fstp  qword ptr [edi]    // ; store result 
-  mov   eax, ebx
+  mov   eax, edx
 
 end
 
@@ -1796,28 +1760,27 @@ end
 // ; bwrite
 inline % 69h
 
-  mov [edi + esi], ecx
+  mov [edi + ebx], ecx
   
 end
 
 // ; bwriteb
 inline % 6Ch
 
-  mov byte ptr [edi + esi], cl
+  mov byte ptr [edi + ebx], cl
   
 end
 
 // ; bwritew
 inline % 6Dh
 
-  mov word ptr [edi + esi], cx
+  mov word ptr [edi + ebx], cx
   
 end
 
 // ; bcreate
 inline % 6Fh
 
-  mov  ebx, esi
   push eax  
   mov  ecx, ebx
   add  ebx, page_ceil
@@ -1825,18 +1788,17 @@ inline % 6Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  ebx
-  mov  [eax-4], ebx
+  pop  [eax-4]
 
 end
 
 // ; lcopy
 inline % 70h
 
-  mov  ecx, [eax]
-  mov  ebx, [eax+4]
-  mov  [edi], ecx
-  mov  [edi+4], ebx
+  mov  edx, [eax]
+  mov  esi, [eax+4]
+  mov  [edi], edx
+  mov  [edi+4], esi
     
 end
 
@@ -1844,34 +1806,28 @@ end
 
 inline % 72h
 
-  mov  ebx, [eax]
-  mov  edx, [eax+4]  
-  cmp  ebx, [edi]
-  mov  esi, 0
-  jnz  short labEnd
-  cmp  edx, [edi+4]
-  jnz  short labEnd
-  mov  esi, 1
-
-labEnd:
+  mov  edx, [eax]
+  xor  ebx, ebx
+  mov  esi, [eax+4]  
+  cmp  edx, [edi]
+  setz bl, 1
+  cmp  esi, [edi+4]
+  setz bl, 1
 
 end
 
 // ; lless(lo, ro, tr, fr)
 inline % 73h
 
-  mov  ebx, [eax]
-  mov  edx, [eax+4]  
+  xor  ebx, ebx
+  xor  edx, edx
+  mov  esi, [eax]
+  cmp  edx, [edi]
+  setl dl, 1  
+  mov  esi, [eax+4]  
   cmp  edx, [edi+4]
-  mov  esi, 1
-  jl   short Lab1
-  nop
-  jnz  short Lab2
-  cmp  ebx, [edi]
-  jl   short Lab1
-Lab2:
-  mov  esi, 0
-Lab1:
+  setl bl, 1
+  cmovz ebx, edx
 
 end
 
@@ -1879,20 +1835,20 @@ end
 inline % 74h
 
   mov  edx, [eax+4]
-  mov  ecx, [eax]
-  add [edi], ecx
+  mov  esi, [eax]
   adc [edi+4], edx
+  add [edi], esi
 
 end
 
 // ; lsub
 inline % 75h
 
+  mov  esi, [edi]
   mov  edx, [edi+4]
-  mov  ecx, [edi]
-  sub  ecx, [eax]
+  sub  esi, [eax]
   sbb  edx, [eax+4]
-  mov  [edi], ecx
+  mov  [edi], esi
   mov  [edi+4], edx
 
 end
@@ -2094,7 +2050,7 @@ end
 inline % 7Bh
 
   mov  edx, [eax]
-  mov  ecx, esi
+  mov  ecx, ebx
   mov  ebx, [eax+4]
 
   and  ecx, ecx
@@ -2149,23 +2105,23 @@ end
 // ; lnot
 inline % 7Ch
 
-  mov ebx, [eax]
-  mov ecx, [eax+4]
+  mov esi, [eax]
+  mov edx, [eax+4]
                                                                         
-  not ebx
-  not ecx
+  not esi
+  not edx
 
-  mov [edi], ebx
-  mov [edi+4], ecx
+  mov [edi], esi
+  mov [edi+4], edx
 
 end
 
 // ; rcopy (src, tgt)
 inline % 80h
 
-  push esi
+  push ebx
   fild dword ptr [esp]
-  pop  esi
+  pop  ebx
 
 end
 
@@ -2182,11 +2138,9 @@ inline % 83h
 
   fld    qword ptr [edi]
   fld    qword ptr [eax]
+  xor    ebx, ebx
   fcomip st, st(1)
-  mov    esi, 1
-  je     short lab1
-  mov    esi, 0
-lab1:
+  sete   bl, 1
   fstp  st(0)
 
 end
@@ -2196,11 +2150,9 @@ inline % 84h
 
   fld    qword ptr [edi]
   fld    qword ptr [eax]
+  xor    ebx, ebx
   fcomip st, st(1)
-  mov    esi, 1
-  jb     short lab1
-  mov    esi, 0
-lab1:
+  setb   bl, 1
   fstp  st(0)
 
 end
@@ -2244,7 +2196,7 @@ end
 // ; rexp
 inline % 8Ah
 
-  mov   esi, 0
+  mov   ebx, 0
   fld   qword ptr [eax]   // ; Src
 
   fldl2e                  // ; ->log2(e)
@@ -2275,7 +2227,7 @@ inline % 8Ah
   fstp  st(1)             // ; get rid of the characteristic
 
   fstp  qword ptr [edi]    // ; store result 
-  mov   esi, 1
+  mov   ebx, 1
   jmp   short labEnd
   
 lErr:
@@ -2288,7 +2240,7 @@ end
 // ; rln
 inline % 8Bh
 
-  mov   esi, 0
+  mov   ebx, 0
   fld   qword ptr [eax]  
   
   fldln2
@@ -2300,7 +2252,7 @@ inline % 8Bh
   jc    short lErr        // clean-up and return error
 
   fstp  qword ptr [edi]    // store result 
-  mov   esi, 1
+  mov   ebx, 1
   jmp   short labEnd
 
 lErr:
@@ -2322,7 +2274,7 @@ end
 // ; rround
 inline %8Dh
 
-  mov   esi, 0
+  mov   ebx, 0
   fld   qword ptr [eax]  
 
   push  eax               // ; reserve space on CPU stack
@@ -2343,7 +2295,7 @@ inline %8Dh
   jc    short lErr        // ; clean-up and return error
   
   fstp  qword ptr [edi]   // ; store result 
-  mov   esi, 1
+  mov   ebx, 1
   jmp   short labEnd
   
 lErr:
@@ -2357,20 +2309,20 @@ end
 
 inline % 8Eh
 
-  mov   esi, 0
+  mov   ebx, 0
   fld   qword ptr [eax]
 
   push  ebx                // reserve space on stack
   fstcw word ptr [esp]     // get current control word
-  mov   bx, [esp]
-  or    bx,0c00h           // code it for truncating
-  push  ebx
+  mov   dx, [esp]
+  or    dx,0c00h           // code it for truncating
+  push  edx
   fldcw word ptr [esp]    // change rounding code of FPU to truncate
 
   frndint                  // truncate the number
-  pop   ebx                // remove modified CW from CPU stack
+  pop   edx                // remove modified CW from CPU stack
   fldcw word ptr [esp]     // load back the former control word
-  pop   ebx                // clean CPU stack
+  pop   edx                // clean CPU stack
       
   fstsw ax                 // retrieve exception flags from FPU
   shr   al,1               // test for invalid operation
@@ -2378,7 +2330,7 @@ inline % 8Eh
 
 labSave:
   fstp  qword ptr [edi]    // store result
-  mov   esi, 1
+  mov   ebx, 1
   jmp   short labEnd
   
 lErr:
@@ -2399,8 +2351,6 @@ end
 
 inline % 92h
 
-  nop
-  nop
   add  ebp, __arg1
   
 end
@@ -2460,7 +2410,7 @@ end
 inline % 0A5h
 
   call extern __arg1
-  mov  esi, eax
+  mov  ebx, eax
 
 end
 
@@ -2491,8 +2441,8 @@ end
 // ; next
 inline % 0AFh
 
-  add  esi, 1
-  cmp  esi, ecx
+  add  ebx, 1
+  cmp  ebx, ecx
 
 end
 
@@ -2523,7 +2473,7 @@ end
 
 inline % 0B7h
 
-  mov  esi, [ebp + __arg1]
+  mov  ebx, [ebp + __arg1]
 
 end
 
@@ -2531,7 +2481,7 @@ end
 
 inline % 0B8h
 
-  mov  esi, [esp + __arg1]
+  mov  ebx, [esp + __arg1]
 
 end
 
@@ -2539,7 +2489,7 @@ end
 
 inline % 0B9h
 
-  mov  [ebp + __arg1], esi
+  mov  [ebp + __arg1], ebx
 
 end
 
@@ -2547,7 +2497,7 @@ end
 
 inline % 0BBh
 
-  mov  [esp + __arg1], esi
+  mov  [esp + __arg1], ebx
 
 end
 
@@ -2562,8 +2512,8 @@ end
 // ; pushf
 inline % 0BDh
 
-  lea  ebx, [ebp + __arg1]
-  push ebx
+  lea  edx, [ebp + __arg1]
+  push edx
 
 end
 
@@ -2602,10 +2552,10 @@ end
 // ; aswapsi
 inline % 0C2h
 
-  mov ebx, eax
-  mov ecx, [esp+__arg1]
-  mov [esp+__arg1], ebx
-  mov eax, ecx
+  mov edx, eax
+  mov esi, [esp+__arg1]
+  mov [esp+__arg1], edx
+  mov eax, esi
   
 end
 
@@ -2626,30 +2576,30 @@ end
 // ; bswapsi
 inline % 0C5h
 
-  mov ebx, edi
+  mov esi, edi
   mov edx, [esp+__arg1]
   mov edi, edx
-  mov [esp+__arg1], ebx
+  mov [esp+__arg1], esi
   
 end
 
 // ; eswapsi
 inline % 0C6h
 
-  mov ebx, ecx
+  mov esi, ecx
   mov edx, [esp+__arg1]
   mov ecx, edx
-  mov [esp+__arg1], ebx
+  mov [esp+__arg1], esi
   
 end
 
 // ; dswapsi
 inline % 0C7h
 
-  mov ebx, esi
+  mov esi, ebx
   mov edx, [esp+__arg1]
-  mov esi, edx
-  mov [esp+__arg1], ebx
+  mov ebx, edx
+  mov [esp+__arg1], esi
   
 end
 
@@ -2673,7 +2623,7 @@ end
 
 inline % 0CAh
 
-  mov  esi, [eax + __arg1]
+  mov  ebx, [eax + __arg1]
 
 end
 
@@ -2681,7 +2631,7 @@ end
 
 inline % 0CBh
 
-  mov  [edi + __arg1], esi
+  mov  [edi + __arg1], ebx
 
 end
 
@@ -2728,20 +2678,21 @@ inline % 0F3h
 
   test   eax, eax
   mov    eax, __arg1
-  cmovnz eax, ebx
+  cmovnz eax, edx
 
 end
 
 // ; xindexrm
 inline % 0F4h
 
-  mov  esi, __arg1
+  mov  ebx, __arg1
   
 end
 
 // ; xjumprm
 inline % 0F5h
 
+  cmp [eax], eax
   jmp __arg1
 
 end
@@ -2751,8 +2702,8 @@ end
 inline % 0F6h
 
   mov    ecx, __arg1
-  test   esi, esi
-  mov    eax, ebx
+  mov    eax, edx
+  test   ebx, ebx
   cmovnz eax, ecx
 
 end

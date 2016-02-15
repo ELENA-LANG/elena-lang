@@ -68,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 132;
+const int gcCommandNumber = 131;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -82,7 +82,7 @@ const int gcCommands[gcCommandNumber] =
    bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
    bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
-   bcNSub, bcNMul, bcNDiv, bcDReserve, bcDRestore,
+   bcNSub, bcNMul, bcNDiv, bcDRestore,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
    bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
@@ -851,8 +851,8 @@ void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)
    ref_t r1 = scope.argument;
    scope.argument = scope.tape->getDWord();
 
-   // mov  ebx, r1
-   scope.code->writeByte(0xBB);
+   // mov  edx, r1
+   scope.code->writeByte(0xBA); // !! replace with
    scope.writeReference(*scope.code, r1, 0);
 
    loadROp(opcode, scope);

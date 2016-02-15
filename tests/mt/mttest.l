@@ -1,5 +1,8 @@
-#define system.
-#define extensions.
+#import system.
+#import extensions.
+
+#import system'routines.
+#import system'threading.
 
 //#class LockTest
 //{
@@ -120,9 +123,72 @@
     console writeLine:"Main thread ended".
 ].
 
-#symbol program =
+#symbol _program =
 [
     system'console writeLine:"mt testing...".
     
     NewThreadTest eval.
+].
+
+#class GCXTester
+{
+    #field theSync.
+    
+    #constructor new
+    [
+        theSync := Object new.
+    ]
+    
+    #method proceed1
+    [
+        ("thread 1 line1", "thread 1 line2", "thread 1 line3", "thread 1 line4", "thread 1 line5", "thread 1 line6") run &each:word
+        [
+            #lock (theSync)
+            [
+                console writeLine:word.
+            ].
+        ].
+        
+        ^ true.
+    ]
+    
+    #method proceed2
+    [
+        ("thread 2 line1", "thread 2 line2", "thread 2 line3", "thread 2 line4", "thread 2 line5", "thread 2 line6") run &each:word
+        [
+            #lock (theSync)
+            [
+                console writeLine:word.
+            ].
+        ].
+        
+        ^ true.
+    ]
+    
+    #method start1
+    [
+        #var handle := Thread new &func:
+        [
+            #loop $self proceed1.
+        ].
+        
+        handle start.
+    ]
+    
+    #method start2
+    [
+        #var handle := Thread new &func:
+        [
+            #loop $self proceed2.
+        ].
+        
+        handle start.
+    ]
+}
+
+#symbol program =
+[
+    GCXTester new start1 start2.
+    
+    console readChar.
 ].

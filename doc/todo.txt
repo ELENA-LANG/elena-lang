@@ -3,8 +3,24 @@ In development:
 ------                      
 
               idev - generic development                                          
-                       * IDE and Chinese characters #4 (win32 & gtk)
-                       * gtktextview : reimplement the cursor locating code if it is not a monofont
+                       * use ebx, instead of esi
+                       
+                       * #217 : optimization : integer / float / long / literal comparison
+                         - optimize  lequal,lless,nequal,nless,requal,rless
+
+                       * optimize snop
+
+                       * #215 : Operations with structure fields
+                       * #201 : shorthand property settings
+                       * #223 : exiting the lock statement 
+                       * #200 : unboxing explicit local allocated extension  
+                       * #185 : Stack allocated structures are not correctly displayed
+                       * #190 : Closure : auto boxing / unboxing local variables  
+                       * #191 : IDE : block commenting
+                       * #219 : IDE : Callstack for vm console application 
+                       * #220 : s_copyint_radix / ws_copyint_radix
+                       * #221 : Breakpoints are triggered even after removing
+                       * 
 
               fdev - net app
                        * implement simple chat system to test socket api

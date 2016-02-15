@@ -101,7 +101,7 @@ ELENA byte codes (or ecodes)
  
  bwritew                    - base[index] << word[ext]
                   
- copy                       - {base} << {acc}, base.Length
+ copy                       - {base} << {acc}, base.Length (*index, ext affected)
 
  copyb                      - {base} >> {acc}, base.Length
 
@@ -127,7 +127,7 @@ ELENA byte codes (or ecodes)
  
  rsave                      - real[base] << real index
  
- set                        - acc => base[index] ;
+ set                        - acc => base[index] ; (*ext affected)
                               
  wread                      - [acc][index*2] >> [short]ext
 
@@ -236,8 +236,8 @@ ELENA byte codes (or ecodes)
  if label                   - jump to the label if index == ext                                                   
 
  ifb label                  - jump to the label if acc == base
-
- ifheap label               - jump to the label if acc is allocated in heap (more precisely - not in the stack)
+ 
+ ifheap label               - jump to the label if acc is allocated in heap (more precisely - not in the stack) (*index affected)
 
  ifm n, label               - jump to the label if ext == m
  
@@ -266,7 +266,7 @@ ELENA byte codes (or ecodes)
  
  ajumpi i                   - redirect to acc[i] address
  
- bcreate                    - create the object with size=index and vmt=acc, out : acc  
+ bcreate                    - create the object with size=index and vmt=acc, out : acc  (*index and ext affected)
  
  blen                       - [acc].Length >> index ; where acc is a object
 
@@ -275,7 +275,7 @@ ELENA byte codes (or ecodes)
 
  class                      - base::VMT >> acc 
  
- create                     - create the object with length=index and vmt=acc, out : acc  
+ create                     - create the object with length=index and vmt=acc, out : acc   (*index and ext affected)
  
  flag                       - acc::VMT::flag >> index 
 
@@ -283,7 +283,7 @@ ELENA byte codes (or ecodes)
  
  mindex                     - search for ext in acc:VMT; out: index or -1
  
- ncreate                    - create the object with size=index*4 and vmt=acc, out : acc  
+ ncreate                    - create the object with size=index*4 and vmt=acc, out : acc   (*index and ext affected)
 
  new vmt, i                 - create the object with the specified
                                number of fields;
@@ -296,7 +296,7 @@ ELENA byte codes (or ecodes)
 
  validate                   - validates if acc is not zero, otherwise break the code
                                                                                                                                                 
- wcreate                    - create the object with size=index*2 and vmt=acc, out : acc  
+ wcreate                    - create the object with size=index*2 and vmt=acc, out : acc   (*index and ext affected)
  
  wlen                       - [acc].Length / 2 >> index
 
@@ -314,7 +314,7 @@ ELENA byte codes (or ecodes)
  ---------------- 
  breakpoint                 - used for debugging
 
- hook label                 - assign a new exception handler ; ext affected
+ hook label                 - assign a new exception handler ; ext affected (*index and ext affected)
 
  throw                      - raise an exception (acc contains the exception object)
 
@@ -322,7 +322,7 @@ ELENA byte codes (or ecodes)
 
  snop                       - thread safe nop operation
  
- trylock                    - try to lock [esp], if not eax - 0
+ trylock                    - try to lock [esp], if already locked - index = 1, otherwise index = 0
  
  freelock                   - free eax
 
@@ -332,10 +332,6 @@ ELENA byte codes (or ecodes)
  close                      - restore the previous frame ;
                               should be paired with open
                               it should be only one command per procedure ; 
- 
- dreserve                   - exclude part of the stack from managed stack frame;
-                              should follow "open" byte code ;
-                              esp -= ext * 4
  
  equit                      - terminates the procedure ; clear the stack parameters, based
                               on ext
@@ -373,25 +369,25 @@ ELENA byte codes (or ecodes)
  
  ladd                       - long[base] += long[acc]
  
- land                       - long[base] && long[acc]
+ land                       - long[base] && long[acc]   (*index and ext affected)
  
  lcopy                      - long[base] << long[acc]
 
  lcopyb                     - long[base] >> long[acc]
 
- ldiv                       - long[base] /= long[acc]
+ ldiv                       - long[base] /= long[acc]   (*index and ext affected)
  
- lmul                       - long[base] *= long[acc]
+ lmul                       - long[base] *= long[acc]   (*index and ext affected)
  
  lnot                       - long[base] << not long[acc]
  
- lor                        - long[base] || long[acc]
+ lor                        - long[base] || long[acc]    (*index and ext affected)
  
- lshift                     - long[base] <<= index
+ lshift                     - long[base] <<= index       (*index and ext affected)
  
  lsub                       - long[base] -= long[acc]
  
- lxor                       - long[base] ~~ long[acc]
+ lxor                       - long[base] ~~ long[acc]     (*index and ext affected)
 
  muln n                     - index * n => index
  
@@ -428,8 +424,6 @@ ELENA byte codes (or ecodes)
  rexp                       - base << exp(real:acc)
  
  rint                       - base << int(real:acc)
-
- rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
                                                                                                      
  rln                        - base << ln(real:acc)
 
@@ -457,4 +451,6 @@ ELENA byte codes (or ecodes)
  nless                      - int[acc] < int[base] ; if true - index = 1, if false - index = 0
  
  requal                     - real[acc] == real[base] ; if true - index = 1, if false - index = 0
+ 
+ rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
 

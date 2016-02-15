@@ -20,7 +20,7 @@ const char* _fnOpcodes[256] =
    "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
    "get", "set", "inc", "equit", "unknown", "unhook", "add", "create",
 
-   "ecopyd", "dcopye", "pushd", "popd", "dreserve", "drestore", "exclude", "trylock",
+   "ecopyd", "dcopye", "pushd", "popd", "unknown", "unknown", "exclude", "trylock",
    "freelock", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
    "xlen", "blen", "wlen", "flag", "nlen", "unknown", "class", "mindex",

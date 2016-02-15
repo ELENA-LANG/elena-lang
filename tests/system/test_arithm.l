@@ -32,6 +32,10 @@
 {
     test
     [
+        #var(type:int)n := 4.
+        
+        (n == 4)
+            ? [ console writeLine:"do something". ].
     ]
 }.
         

@@ -2151,19 +2151,19 @@ void ByteCodeWriter :: tryLock(CommandTape& tape)
    // labWait:
    // snop
    // trylock
-   // elser labWait
+   // elsen labWait
 
    int labWait = tape.newLabel();
    tape.setLabel(true);
    tape.write(bcSNop);
    tape.write(bcTryLock);
-   tape.write(bcElseR, labWait, 0);
+   tape.write(bcElseN, labWait, 0);
    tape.releaseLabel();
 }
 
 void ByteCodeWriter::freeLock(CommandTape& tape)
 {
-   // freelock index
+   // freelock
    tape.write(bcFreeLock);
 }
 
