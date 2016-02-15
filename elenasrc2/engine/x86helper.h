@@ -142,6 +142,7 @@ public:
       JUMP_TYPE_JB  = 0x02,
       JUMP_TYPE_JAE = 0x03,
       JUMP_TYPE_JZ  = 0x04,
+      JUMP_TYPE_JE  = 0x04,
       JUMP_TYPE_JNZ = 0x05,
       JUMP_TYPE_JBE = 0x06,
       JUMP_TYPE_JA  = 0x07,

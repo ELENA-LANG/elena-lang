@@ -3447,7 +3447,11 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JNZ);
       return true;
 	}
-	else if (token.check("cmovl")) {
+   else if (token.check("cmovz")) {
+      compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JZ);
+      return true;
+   }
+   else if (token.check("cmovl")) {
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JL);
       return true;
 	}
@@ -4057,7 +4061,19 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 		compileSHRD(token, info, &writer);
       return true;
 	}
-	else if (token.check("setc")) {
+   else if (token.check("setz")) {
+      compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JZ);
+      return true;
+   }
+   else if (token.check("sete")) {
+      compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JE);
+      return true;
+   }
+   else if (token.check("setl")) {
+      compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JL);
+      return true;
+   }
+   else if (token.check("setc")) {
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JB);
       return true;
 	}
@@ -4069,7 +4085,10 @@ bool x86Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Memo
 		compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JAE);
       return true;
 	}
-
+   else if (token.check("setb")) {
+      compileSETCC(token, info, &writer, x86Helper::JUMP_TYPE_JB);
+      return true;
+   }
 	// SSE instructions
 	else if (token.check("subps")) {
 		compileSUBPS(token, info, &writer);

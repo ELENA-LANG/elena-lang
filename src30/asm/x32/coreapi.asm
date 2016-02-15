@@ -37,24 +37,24 @@ procedure coreapi'core_callstack_load
   mov  ecx, [esp+8]
 
   mov  edx, [esp]
-  xor  esi, esi                                                                             
-  mov  ebx, ebp
+  xor  ebx, ebx
+  mov  esi, ebp
 
 labNext:
-  mov  edx, [ebx + 4]
-  cmp  [ebx], 0
+  mov  edx, [esi + 4]
+  cmp  [esi], 0
   jnz  short labSave
   test edx, edx
   jz   short labEnd
-  mov  ebx, edx
+  mov  esi, edx
   jmp  short labNext                              
 
 labSave:
-  mov  [eax + esi * 4], edx
-  add  esi, 1
-  cmp  esi, ecx
+  mov  [eax + ebx * 4], edx
+  add  ebx, 1
+  cmp  ebx, ecx
   jge  short labEnd
-  mov  ebx, [ebx]
+  mov  esi, [esi]
   jmp  short labNext                              
   
 labEnd:
@@ -69,41 +69,41 @@ procedure coreapi'core_thread_handler
 
 end
 
-// esi - index, ecx - result
+// eb - index, ecx - result
 procedure coreapi'core_getargc
 
-  mov  ebx, [data : % CORE_OS_TABLE]
-  mov  esi, [ebx]
+  mov  esi, [data : % CORE_OS_TABLE]
+  mov  ebx, [esi]
   ret
 
 end
 
 procedure coreapi'core_getarg
 
-  mov  esi, [esp + 4]
+  mov  ebx, [esp + 4]
   mov  edi, [esp + 8]
   mov  ecx, [esp + 12]
 
   push edi
-  mov  ebx, [data : % CORE_OS_TABLE]
-  mov  eax, [ebx + esi * 4]
+  mov  esi, [data : % CORE_OS_TABLE]
+  mov  eax, [esi + ebx * 4]
 
 labNext:
-  mov  ebx, [eax]
-  and  ebx, 0FFh
-  mov  byte ptr [edi], bl
+  mov  edx, [eax]
+  and  edx, 0FFh
+  mov  byte ptr [edi], dl
   add  eax, 1
   add  edi, 1
-  test ebx, ebx
+  test edx, edx
   jz   short labEnd  
   sub  ecx, 1
   ja   short labNext
 
 labEnd:
 
-  mov  esi, edi
+  mov  ebx, edi
   pop  edi
-  sub  esi, edi
+  sub  ebx, edi
   
   ret
 
@@ -112,14 +112,14 @@ end
 // ; filter_vmt (filter,class,index,len,dump) = len
 procedure coreapi'core_filtervmt
 
-   xor  ebx, ebx
+   xor  esi, esi
    mov  eax, [esp+8]
    mov  ecx, [eax - elVMTSizeOffset]
-   xor  esi, esi
+   xor  ebx, ebx
    mov  edi, [esp+20]   
 
 labNext:   
-   mov  edx, [eax + esi * 8]
+   mov  edx, [eax + ebx * 8]
    and  edx, INV_SUBJECT_MASK
    cmp  edx, [esp + 4]
    jnz  labContinue
@@ -130,21 +130,21 @@ labNext:
    jmp  labContinue
 
 labAdding:
-   mov  edx, [eax + esi * 8]
-   mov  [edi+ebx*4], edx
-   add  ebx, 1
+   mov  edx, [eax + ebx * 8]
+   mov  [edi+esi*4], edx
+   add  esi, 1
    mov  edx, [esp+16]
    sub  edx, 1
    jz   labEnd
    mov  [esp+16], edx
    
 labContinue:
-   add  esi, 1
+   add  ebx, 1
    sub  ecx, 1
    jnz  labNext
    
 labEnd:
-   mov  esi, ebx
+   mov  ebx, esi
    ret
    
 end
@@ -155,7 +155,7 @@ procedure coreapi'core_rnd_init
   call code : % INIT_RND
   mov  [edi], eax 
   mov  [edi+4], edx
-  mov  esi, eax
+  mov  ebx, eax
   ret
   
 end
@@ -164,15 +164,15 @@ procedure coreapi'core_rnd_next
 
    mov  edi, [esp+4]
    mov  eax, [esp+12]
-   mov  esi, [esp+8]
+   mov  ebx, [esp+8]
 
    xor  edx, edx
-   mov  ecx, esi
+   mov  ecx, ebx
    cmp  ecx, edx
    jle  short labEnd
 
    push eax
-   push esi
+   push ebx
 
    mov  ebx, [edi+4] // NUM.RE
    mov  esi, [edi]   // NUM.FR             
@@ -297,7 +297,7 @@ lab11:
   jz   short Lab5
   neg  eax
 Lab5:
-  mov  esi, eax
+  mov  ebx, eax
   mov  eax, edi
   jmp  short Lab3
 Lab2:
@@ -347,7 +347,7 @@ lab11:
   jz   short Lab5
   neg  eax
 Lab5:
-  mov  esi, eax
+  mov  ebx, eax
   mov  eax, edi
   jmp  short Lab3
 Lab2:
@@ -420,12 +420,11 @@ labSave:
 
   mov  eax, edi
   mov  ecx, edx
-  mov  esi, ebx
   jmp  short labEnd
 
 labErr:
   xor  eax, eax
-  pop  esi
+  pop  ebx
   pop  edi
 
 labEnd:
@@ -496,12 +495,11 @@ labSave:
   mov  eax, edi
 
   mov  ecx, edx
-  mov  esi, ebx
   jmp  short labEnd
 
 labErr:
   xor  eax, eax
-  pop  esi
+  pop  ebx
   pop  edi
 
 labEnd:
@@ -509,7 +507,7 @@ labEnd:
 
 end
 
-// ; rcopyl (eax:src, ecx : base, esi - result)
+// ; rcopyl (eax:src, ecx : base, ebx - result)
 procedure coreapi'strtoreal
 
   mov   esi, eax
@@ -534,7 +532,7 @@ atof1:
 atoflerr:
   add   esp, 12
   pop   edi
-  xor   esi, esi
+  xor   ebx, ebx
   jmp   atoflend
 
   //----------------------
@@ -784,7 +782,7 @@ scient1:
 
 scienterr:
   pop   edi
-  xor   esi, esi
+  xor   ebx, ebx
   jmp   atoflerr         // no exponent
 
 atof100:
@@ -808,7 +806,7 @@ atof200:
   jmp   laststep  
 
 atoflend:
-   mov  eax, esi
+   mov  eax, ebx
    ret
 
 end
@@ -1222,17 +1220,17 @@ end
 // ; eax - str, esi - index; eax = 0 if err ; ecx - out
 procedure coreapi'strtochar
 
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax + esi]
-  cmp  ebx, 00000080h
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx]
+  cmp  edx, 00000080h
   jl   short lab1
-  cmp  ebx, 000000C2h
+  cmp  edx, 000000C2h
   jl   short err
-  cmp  ebx, 000000E0h
+  cmp  edx, 000000E0h
   jl   short lab2
-  cmp  ebx, 000000F0h
+  cmp  edx, 000000F0h
   jl   short lab3
-  cmp  ebx, 000000F5h
+  cmp  edx, 000000F5h
   jl   lab4
 
 err:
@@ -1240,27 +1238,27 @@ err:
   ret 
 
 lab1:
-  mov  ecx, ebx
+  mov  ecx, edx
   ret
 
 lab2:  
-  mov  ecx, ebx
-  mov  bl, byte ptr [eax + esi + 1]
-  mov  edx, ebx
-  and  edx, 0C0h
-  cmp  edx, 00000080h
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
   jnz  err
   shl  ecx, 6
-  add  ecx, ebx
+  add  ecx, edx
   sub  ecx, 3080h
   ret
   
 lab3:
-  mov  ecx, ebx
-  mov  bl, byte ptr [eax + esi + 1]
-  mov  edx, ebx
-  and  edx, 0C0h
-  cmp  edx, 00000080h
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
   jnz  err
   cmp  ecx, 000000E0h
   jnz  short lab3_1
@@ -1269,59 +1267,59 @@ lab3:
 
 lab3_1:
   shl  ecx, 12
-  shl  ebx, 6
-  add  ecx, ebx
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax + esi + 2]
-  mov  edx, ebx
-  and  edx, 0C0h
-  cmp  edx, 00000080h
+  shl  edx, 6
+  add  ecx, edx
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 2]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
   jnz  err
-  add  ecx, ebx
+  add  ecx, edx
   sub  ecx, 0E2080h
   ret
   
 lab4:
-  mov  ecx, ebx
-  mov  bl, byte ptr [eax + esi + 1]
-  mov  edx, ebx
-  and  edx, 0C0h
-  cmp  edx, 00000080h
+  mov  ecx, edx
+  mov  bl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
   jnz  err
   cmp  ecx, 000000F0h
   jnz  short lab4_1
-  cmp  ebx, 00000090h
+  cmp  edx, 00000090h
   jl   short err
 
 lab4_1:
   cmp  ecx, 000000F4h
   jnz  short lab4_2
-  cmp  ebx, 00000090h
+  cmp  edx, 00000090h
   jae  short err
 
 lab4_2:
   shl  ecx, 18
-  shl  ebx, 12
-  add  ecx, ebx
+  shl  edx, 12
+  add  ecx, edx
 
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax + esi + 2]
-  mov  edx, ebx
-  and  edx, 000000C0h
-  cmp  edx, 00000080h
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 2]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
   jnz  err
 
-  shl  ebx, 6
-  add  ecx, ebx
+  shl  edx, 6
+  add  ecx, edx
   
-  xor  ebx, ebx
-  mov  bl, byte ptr [eax + esi + 3]
-  mov  edx, ebx
-  and  edx, 000000C0h
-  cmp  edx, 00000080h
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 3]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
   jnz  err
 
-  add  ecx, ebx
+  add  ecx, edx
   sub  ecx, 3C82080h
   ret
   
@@ -1330,20 +1328,20 @@ end
 // ; eax - str, out esi - char, or eax = 0
 procedure coreapi'wstrtochar
 
-  mov  ebx, dword ptr [eax + esi * 2]
-  and  ebx, 0FFFFh
-  cmp  ebx, 0D800h
+  mov  esi, dword ptr [eax + ebx * 2]
+  and  esi, 0FFFFh
+  cmp  esi, 0D800h
   jl   short lab1
-  cmp  ebx, 0DBFFh
+  cmp  esi, 0DBFFh
   jg   short err
 
-  mov  ecx, ebx
+  mov  ecx, esi
   shl  ecx, 10
-  mov  ebx, dword ptr [eax + esi * 2 + 2]
-  and  ebx, 0FFFFh
-  cmp  ebx, 0DC00h
+  mov  esi, dword ptr [eax + ebx * 2 + 2]
+  and  esi, 0FFFFh
+  cmp  esi, 0DC00h
   jl   short lab2
-  cmp  ebx, 0DFFFh
+  cmp  esi, 0DFFFh
   jg   short err
   
 lab2:
@@ -1352,7 +1350,7 @@ lab2:
   ret  
 
 lab1:
-  mov   ecx, ebx
+  mov   ecx, esi
   ret
 
 err:
@@ -1363,32 +1361,32 @@ end
 
 procedure coreapi'inttostr
 
-   mov  ebx, esi   
+   mov  esi, ebx
    push ebp
    mov  eax, [eax]
    mov  ebp, esp
    xor  ecx, ecx
    push eax
    // ; take sign into account only for the decimal representation
-   cmp  ebx, 10        
+   cmp  esi, 10        
    jnz  short Lab6
    cmp  eax, 0
    jns  short Lab6
    neg  eax
 Lab6:
-   cmp  eax, ebx
+   cmp  eax, esi
    jb   short Lab5
 Lab1:
    xor  edx, edx
-   idiv ebx
+   idiv esi
    push edx
    add  ecx, 1
-   cmp  eax, ebx
+   cmp  eax, esi
    jae  short Lab1
 Lab5:   
    add  ecx, 2
    push eax
-   cmp  ebx, 10        
+   cmp  esi, 10        
    jnz  short Lab7
    mov  eax, [ebp-4]
    cmp  eax, 0
@@ -1397,8 +1395,8 @@ Lab5:
    add  ecx, 1
 Lab7:
    neg  ecx
-   mov  esi, edi
-   mov  [esi-8], ecx
+   mov  ebx, edi
+   mov  [ebx-8], ecx
    mov  edx, 0FFh
    add  ecx, 1             // to skip zero
 Lab2:
@@ -1409,12 +1407,12 @@ Lab2:
 Lab8:
    add  eax, 30h
    and  eax, edx
-   mov  byte ptr [esi], al
+   mov  byte ptr [ebx], al
    add  esi, 1
    add  ecx, 1
    jnz  short Lab2
    xor  eax, eax
-   mov  byte ptr [esi], al
+   mov  byte ptr [ebx], al
    lea  esp, [esp+4]
    pop  ebp
 
@@ -1424,7 +1422,6 @@ end
 
 procedure coreapi'inttowstr
 
-   mov  ebx, esi   
    push ebp
    mov  eax, [eax]
    mov  ebp, esp
@@ -1480,7 +1477,7 @@ end
 
 procedure coreapi'longtostr
 
-   mov  ecx, esi
+   mov  ecx, ebx
    push edi
    push ebp
    push [eax+4]
@@ -1561,7 +1558,7 @@ end
 
 procedure coreapi'longtowstr
 
-   mov  ecx, esi
+   mov  ecx, ebx
    push edi
    push ebp
    push [eax+4]
@@ -1643,7 +1640,6 @@ end
 
 procedure coreapi'realtostr
 
-   mov   ebx, esi                                 
    mov   ecx, eax
    push  ebp
    mov   ebp, esp
@@ -1993,7 +1989,6 @@ end
 
 procedure coreapi'realtowstr
 
-   mov   ebx, esi                                 
    mov   ecx, eax
    push  ebp
    mov   ebp, esp
@@ -2564,15 +2559,15 @@ end
 
 procedure coreapi'subcopy
 
-  mov  edx, edi
+  mov  esi, edi
   test ecx, ecx
   jz   short labEnd
 
 labNext:
-  mov  ebx, [eax + esi]
-  mov  byte ptr [edx], bl
+  mov  edx, [eax + ebx]
+  mov  byte ptr [esi], dl
+  add  ebx, 1
   add  esi, 1
-  add  edx, 1
   sub  ecx, 1
   jnz  short labNext
 
@@ -2583,15 +2578,15 @@ end
 
 procedure coreapi'insert
 
-  mov  edx, eax
+  mov  esi, eax
   test ecx, ecx
   jz   short labEnd
 
 labNext:
-  mov  ebx, [edx]
-  mov  byte ptr [edi + esi], bl
-  add  esi, 1
-  lea  edx, [edx + 1]
+  mov  edx, [esi]
+  mov  byte ptr [edi + ebx], dl
+  add  ebx, 1
+  lea  esi, [esi + 1]
   sub  ecx, 1
   jnz  short labNext
 
@@ -2602,15 +2597,15 @@ end
 
 procedure coreapi'wsubcopy
 
-  mov  edx, edi
+  mov  esi, edi
   test ecx, ecx
   jz   short labEnd
 
 labNext:
-  mov  ebx, [eax + esi*2]
-  mov  word ptr [edx], bx
-  add  esi, 1
-  lea  edx, [edx + 2]
+  mov  edx, [eax + ebx*2]
+  mov  word ptr [esi], dx
+  add  ebx, 1
+  lea  esi, [esi + 2]
   sub  ecx, 1
   jnz  short labNext
 
@@ -2621,15 +2616,15 @@ end
 
 procedure coreapi'winsert
 
-  mov  edx, eax
+  mov  esi, eax
   test ecx, ecx
   jz   short labEnd
 
 labNext:
-  mov  ebx, [edx]
-  mov  word ptr [edi + esi*2], bx
-  add  esi, 1
-  lea  edx, [edx + 2]
+  mov  edx, [esi]
+  mov  word ptr [edi + ebx*2], dx
+  add  ebx, 1
+  lea  esi, [esi + 2]
   sub  ecx, 1
   jnz  short labNext
 
@@ -2640,15 +2635,15 @@ end
 
 procedure coreapi'nsubcopy
 
-  mov  edx, edi
+  mov  esi, edi
   test ecx, ecx
   jz   short labEnd
 
 labNext:
-  mov  ebx, [eax + esi * 4]
-  mov  [edx], ebx
-  add  esi, 1
-  lea  edx, [edx + 4]
+  mov  edx, [eax + ebx * 4]
+  mov  [esi], edx
+  add  ebx, 1
+  lea  esi, [esi + 4]
   sub  ecx, 1
   jnz  short labNext
 
@@ -2659,15 +2654,15 @@ end
 
 procedure coreapi'ninsert
 
-  mov  edx, eax
+  mov  esi, eax
   test ecx, ecx
   jz   short labEnd
 
 labNext:
-  mov  ebx, [edx]
-  mov  [edi + esi*4], ebx
-  add  esi, 1
-  lea  edx, [edx + 4]
+  mov  edx, [esi]
+  mov  [edi + ebx*4], edx
+  add  ebx, 1
+  lea  esi, [esi + 4]
   sub  ecx, 1
   jnz  short labNext
 
@@ -2695,7 +2690,7 @@ Lab2:
   js   short Lab2
   mov  eax, 1
 Lab1:
-  mov  esi, eax
+  mov  ebx, eax
   mov  eax, edi
   ret
 
@@ -2720,7 +2715,7 @@ Lab2:
   js   short Lab2
   mov  eax, 1
 Lab1:
-  mov  esi, eax
+  mov  ebx, eax
   mov  eax, edi
   ret
 
@@ -2755,7 +2750,7 @@ Lab1:
   mov  eax, 1
 
 LabEnd:
-  mov  esi, eax
+  mov  ebx, eax
   mov  eax, edi
   ret
 
@@ -2790,7 +2785,7 @@ Lab1:
   mov  eax, 1
 
 LabEnd:
-  mov  esi, eax
+  mov  ebx, eax
   mov  eax, edi
   ret
 
@@ -2836,13 +2831,13 @@ labCheck:
   jnz  short labCheck
   pop  edi
   pop  eax
-  mov  esi, edx
+  mov  ebx, edx
   jmp  short labEnd2
 
 labEnd:
   pop  edi
   pop  eax
-  mov  esi, -1
+  mov  ebx, -1
 labEnd2:
   ret
 
@@ -2851,7 +2846,7 @@ end
 procedure coreapi'wseek
 
   push eax
-  mov  edx, esi     // index
+  mov  edx, ebx     // index
   mov  esi, eax     // subs
 
   push edi
@@ -2890,13 +2885,13 @@ labCheck:
   pop  edi
   pop  eax
   shr  edx, 1
-  mov  esi, edx
+  mov  ebx, edx
   jmp  short labEnd2
 
 labEnd:
   pop  edi
   pop  eax
-  mov  esi, -1
+  mov  ebx, -1
 labEnd2:
   ret
 
@@ -2904,7 +2899,7 @@ end
 
 procedure coreapi'sadd
 
-  mov  edx, esi         // ; dst index
+  mov  edx, ebx         // ; dst index
   mov  esi, ecx         // ; src index
   
   add  ecx, [eax-8]  
@@ -2929,7 +2924,7 @@ procedure coreapi'wadd
   shl  esi, 1
   shl  ecx, 1
 
-  mov  edx, esi         // ; dst index
+  mov  edx, ebx         // ; dst index
   mov  esi, ecx         // ; src index
   
   add  ecx, [eax-8]  
@@ -2952,21 +2947,21 @@ end
 // ; wslen_ch - ecx - len, eax - charr, esi - result 
 procedure coreapi'wslen_ch
 
-   xor  esi, esi
+   xor  ebx, ebx
 
 labNext:
-   mov  ebx, [eax]
-   cmp  ebx, 010000h
+   mov  edx, [eax]
+   cmp  edx, 010000h
    jl   short lab1
 
-   add  esi, 2
+   add  ebx, 2
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
    ret   
    
 lab1:
-   add  esi, 1
+   add  ebx, 1
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
@@ -2977,7 +2972,7 @@ end
 procedure coreapi'ws_copychars
 
   push edi
-  lea  esi, [eax + esi * 4]
+  lea  esi, [eax + ebx * 4]
 
 labNext:
   mov  ebx, [esi]
@@ -3000,10 +2995,10 @@ lab1:
   sub  ecx, 1
   jnz  short labNext
 
-  mov  esi,  edi
+  mov  ebx, edi
   pop  edi
-  sub  esi, edi
-  shr  esi, 1
+  sub  ebx, edi
+  shr  ebx, 1
 
   ret
 
@@ -3012,39 +3007,39 @@ end
 // ; slen_ch - ecx - len, eax - charr, esi - result 
 procedure coreapi'slen_ch
 
-   xor  esi, esi
+   xor  ebx, ebx
 
 labNext:
-   mov  ebx, [eax]
-   cmp  ebx, 00000080h
+   mov  edx, [eax]
+   cmp  edx, 00000080h
    jl   short lab1
-   cmp  ebx, 0800h
+   cmp  edx, 0800h
    jl   short lab2
-   cmp  ebx, 10000h
+   cmp  edx, 10000h
    jl   short lab3
    
-   add  esi, 4
+   add  ebx, 4
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
    ret
    
 lab1:
-   add  esi, 1
+   add  ebx, 1
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
    ret
 
 lab2:
-   add  esi, 2
+   add  ebx, 2
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
    ret
 
 lab3:
-   add  esi, 3
+   add  ebx, 3
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
@@ -3057,7 +3052,7 @@ end
 procedure coreapi's_copychars
 
   push edi
-  lea  esi, [eax + esi * 4]
+  lea  esi, [eax + ebx * 4]
 
 labNext:
   mov  ebx, [esi]
@@ -3140,9 +3135,9 @@ labSave:
   sub  ecx, 1
   jnz  labNext
 
-  mov  esi,  edi
+  mov  ebx,  edi
   pop  edi
-  sub  esi, edi
+  sub  ebx, edi
 
   ret
 
@@ -3152,8 +3147,8 @@ procedure coreapi'strtochararray
 
   push eax
   push edi
-  push esi
-  lea  edi, [edi + esi * 4]
+  push ebx
+  lea  edi, [edi + ebx * 4]
 
 labStart:
   xor  ebx, ebx
@@ -3223,12 +3218,12 @@ labSave:
   jnz  labStart
 
   mov  ecx, edi
-  pop  esi
+  pop  ebx
   pop  edi
   pop  eax
   sub  ecx, edi
   shr  ecx, 2
-  sub  ecx, esi
+  sub  ecx, ebx
 
   ret
 
@@ -3238,8 +3233,8 @@ procedure coreapi'wstrtochararray
 
   push eax
   push edi
-  push esi
-  lea  edi, [edi + esi * 4]
+  push ebx
+  lea  edi, [edi + ebx * 4]
 
 labStart:
   mov  ebx, dword ptr [eax]
@@ -3266,42 +3261,42 @@ labSave:
   jnz  labStart
 
   mov  ecx, edi
-  pop  esi
+  pop  ebx
   pop  edi
   pop  eax
   sub  ecx, edi
   shr  ecx, 2
-  sub  ecx, esi
+  sub  ecx, ebx
 
   ret
 
 end
 
-// ; [esp+4] -  offset, edi -target, esi - index, ecx - length
+// ; [esp+4] -  offset, edi -target, ebx - index, ecx - length
 procedure coreapi'nmove
 
   test ecx, ecx
   jz   short labEnd
 
-  mov  edx, [esp+4]
-  cmp  edx, 0
+  mov  esi, [esp+4]
+  cmp  esi, 0
   jl   short labDelete
 
-  add  esi, ecx
-  sub  esi, 1
+  add  ebx, ecx
+  sub  ebx, 1
 
-  add  edx, esi
-  shl  edx, 2
-
-  add  edx, edi
+  add  esi, ebx
   shl  esi, 2
-  add  esi, edi
 
+  add  esi, edi
+  shl  ebx, 2
+  add  ebx, edi
+  
 labNext:
-  mov  ebx, dword ptr [esi]
-  mov  dword ptr [edx], ebx
+  mov  edx, dword ptr [ebx]
+  mov  dword ptr [esi], edx
+  sub  ebx, 4
   sub  esi, 4
-  sub  edx, 4
   sub  ecx, 1
   jnz  short labNext
 
@@ -3309,18 +3304,18 @@ labEnd:
   ret
 
 labDelete:
-  add  edx, esi
-  shl  edx, 2
-
-  add  edx, edi
+  add  esi, ebx
   shl  esi, 2
+
   add  esi, edi
+  shl  ebx, 2
+  add  ebx, edi
 
 labNext2:
-  mov  ebx, dword ptr [esi]
-  mov  dword ptr [edx], ebx
+  mov  edx, dword ptr [ebx]
+  mov  dword ptr [esi], edx
+  add  ebx, 4
   add  esi, 4
-  add  edx, 4
   sub  ecx, 1
   jnz  short labNext2
   ret
@@ -3337,18 +3332,18 @@ procedure coreapi'move
   cmp  edx, 0
   jl   short labDelete
 
-  add  esi, ecx
-  sub  esi, 1
+  add  ebx, ecx
+  sub  ebx, 1
 
-  add  edx, esi
+  add  edx, ebx
 
   add  edx, edi
-  add  esi, edi
+  add  ebx, edi
 
 labNext:
-  mov  ebx, dword ptr [esi]
-  mov  dword ptr [edx], ebx
-  sub  esi, 1
+  mov  esi, dword ptr [esi]
+  mov  dword ptr [edx], esi
+  sub  ebx, 1
   sub  edx, 1
   sub  ecx, 1
   jnz  short labNext
@@ -3357,15 +3352,15 @@ labEnd:
   ret
 
 labDelete:
-  add  edx, esi
+  add  edx, ebx
 
   add  edx, edi
-  add  esi, edi
+  add  ebx, edi
 
 labNext2:
-  mov  ebx, dword ptr [esi]
-  mov  dword ptr [edx], ebx
-  add  esi, 1
+  mov  esi, dword ptr [ebx]
+  mov  dword ptr [edx], esi
+  add  ebx, 1
   add  edx, 1
   sub  ecx, 1
   jnz  short labNext2
@@ -3378,8 +3373,8 @@ procedure coreapi's_encode
 
   push edi
   push eax
-  push esi
-  add  eax, esi
+  push ebx
+  add  eax, ebx
   
 labNext:
   xor  ebx, ebx
@@ -3502,11 +3497,11 @@ labSave:
   jnz  labNext
 
 err:
-  pop  esi
+  pop  ebx
   mov  edx, eax
   pop  eax
   sub  edx, eax
-  add  esi, edx
+  add  ebx, edx
   mov  ecx, edi
   pop  edi
   sub  ecx, edi
@@ -3525,8 +3520,8 @@ procedure coreapi'ws_encode
 
   push edi
   push eax
-  push esi
-  add  eax, esi
+  push ebx
+  add  eax, ebx
 
 labNext:
   mov  ebx, dword ptr [eax]
@@ -3566,12 +3561,12 @@ labSave:
   jnz  labNext
 
 err:
-  pop  esi
+  pop  ebx
   mov  edx, eax
   pop  eax
   sub  edx, eax
   shr  edx, 1
-  add  esi, edx
+  add  ebx, edx
   mov  ecx, edi
   pop  edi
   sub  ecx, edi
@@ -3590,8 +3585,8 @@ procedure coreapi's_decode
 
    push edi
    push eax
-   push esi
-   lea  eax, [eax + esi * 4]
+   push ebx
+   lea  eax, [eax + ebx * 4]
 
 labNext:
    mov  ebx, [eax]
@@ -3681,12 +3676,12 @@ labSave:
    jnz  labNext
 
 err:
-   pop  esi
+   pop  ebx
    mov  edx, eax
    pop  eax
    sub  edx, eax
    shr  edx, 2
-   add  esi, edx
+   add  ebx, edx
    mov  ecx, edi
    pop  edi
    sub  ecx, edi
@@ -3699,8 +3694,8 @@ procedure coreapi'ws_decode
 
    push edi
    push eax
-   push esi
-   lea  eax, [eax + esi * 4]
+   push ebx
+   lea  eax, [eax + ebx * 4]
 
 labNext:
    mov  ebx, [eax]
@@ -3743,12 +3738,12 @@ labSave:
    jnz  labNext
 
 err:
-   pop  esi
+   pop  ebx
    mov  edx, eax
    pop  eax
    sub  edx, eax
    shr  edx, 2
-   add  esi, edx
+   add  ebx, edx
    mov  ecx, edi
    pop  edi
    sub  ecx, edi
@@ -3767,22 +3762,22 @@ procedure coreapi'strcharlen
 
   push eax
 
-  xor  esi, esi
+  xor  edx, edx
   xor  ebx, ebx
 
 labNext:
-  mov  bl, byte ptr [eax]
-  cmp  ebx, 00000080h
+  mov  dl, byte ptr [eax]
+  cmp  edx, 00000080h
   jl   short lab1
-  cmp  ebx, 000000E0h
+  cmp  edx, 000000E0h
   jl   short lab2
-  cmp  ebx, 000000F0h
+  cmp  edx, 000000F0h
   jl   short lab3
-  cmp  ebx, 000000F5h
+  cmp  edx, 000000F5h
   jl   short lab4
 
 lab1:
-  add  esi, 1
+  add  ebx, 1
   add  eax, 1
   sub  ecx, 1
   jnz  short labNext
@@ -3790,7 +3785,7 @@ lab1:
   ret
   
 lab2:
-  add  esi, 1
+  add  ebx, 1
   add  eax, 2
   sub  ecx, 2
   jnz  short labNext
@@ -3798,7 +3793,7 @@ lab2:
   ret
   
 lab3:
-  add  esi, 1
+  add  ebx, 1
   add  eax, 3
   sub  ecx, 3
   jnz  short labNext
@@ -3806,7 +3801,7 @@ lab3:
   ret
   
 lab4:
-  add  esi, 1
+  add  ebx, 1
   add  eax, 4
   sub  ecx, 4
   jnz  short labNext
@@ -3818,15 +3813,15 @@ end
 procedure coreapi'wstrcharlen
 
   push eax
-  xor  esi, esi
+  xor  ebx, ebx
 
 labNext:
-  mov  ebx, dword ptr [eax]
-  and  ebx, 0FFFFh
-  cmp  ebx, 0D800h
+  mov  edx, dword ptr [eax]
+  and  edx, 0FFFFh
+  cmp  edx, 0D800h
   jl   short lab1
   
-  add  esi, 1
+  add  ebx, 1
   add  eax, 4
   sub  ecx, 2
   jnz  short labNext
@@ -3834,7 +3829,7 @@ labNext:
   ret
 
 lab1:
-  add  esi, 1
+  add  ebx, 1
   add  eax, 2
   sub  ecx, 1
   jnz  short labNext
@@ -3852,20 +3847,20 @@ procedure coreapi'chartoshorts
    mov  edx, ecx
    shr  edx, 10
    add  edx, 0D7C0h
-   mov  word ptr [edi + esi * 2], dx
-   add  esi, 1
+   mov  word ptr [edi + ebx * 2], dx
+   add  ebx, 1
 
    mov  edx, ecx
    and  edx, 03FFh
    add  edx, 0DC00h
-   mov  word ptr [edi+esi * 2], dx
-   add  esi, 1
+   mov  word ptr [edi+ebx * 2], dx
+   add  ebx, 1
    mov  ecx, 2
    ret
    
 lab1:
-   mov  [edi + esi * 2], ecx
-   add  esi, 1
+   mov  [edi + ebx * 2], ecx
+   add  ebx, 1
    mov  ecx, 1
    ret
 
@@ -3884,34 +3879,34 @@ procedure coreapi'chartobytes
    mov  edx, ecx
    and  edx, 03Fh
    add  edx, 00000080h
-   mov  byte ptr [edi + esi], dl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
 
    mov  edx, ecx
    shr  edx, 12
    and  edx, 0000003Fh
    add  edx, 00000080h
-   mov  byte ptr [edi + esi], dl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
    
    mov  edx, ecx
    shr  edx, 6
    and  edx, 0000003Fh
    add  edx, 00000080h
-   mov  byte ptr [edi + esi], dl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
     
    mov  edx, ecx
    and  edx, 03Fh
    add  edx, 00000080h
-   mov  byte ptr [edi + esi], dl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
    mov  ecx, 4
    ret
    
 lab1:
-   mov  byte ptr [edi + esi], cl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], cl
+   add  ebx, 1
    mov  ecx, 1
    ret
 
@@ -3919,13 +3914,13 @@ lab2:
    mov  edx, ecx
    shr  edx, 6
    add  edx, 0C0h
-   mov  byte ptr [edi + esi], dl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
    
    and  ecx, 03Fh
    add  ecx, 00000080h
-   mov  byte ptr [edi+esi], cl
-   add  esi, 1
+   mov  byte ptr [edi+ebx], cl
+   add  ebx, 1
    mov  ecx, 2
    ret
 
@@ -3933,20 +3928,20 @@ lab3:
    mov  edx, ecx
    shr  edx, 12
    add  edx, 0E0h
-   mov  byte ptr [edi + esi], dl
-   add  esi, 1
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
    
    mov  edx, ecx
    shr  edx, 6
    and  edx, 03Fh
    add  edx, 00000080h
-   mov  byte ptr [edi+esi], dl
-   add  esi, 1
+   mov  byte ptr [edi+ebx], dl
+   add  ebx, 1
 
    and  ecx, 03Fh
    add  ecx, 00000080h
-   mov  byte ptr [edi+esi], cl
-   add  esi, 1
+   mov  byte ptr [edi+ebx], cl
+   add  ebx, 1
    mov  ecx, 3
    ret
 
@@ -3963,7 +3958,7 @@ procedure coreapi'alloc_index
   call code : %CALC_SIZE
   nop
   call code : %GC_ALLOC  
-  xor  esi, esi
+  xor  ebx, ebx
   call code : %SET_COUNT 
 
   mov  [stat : "$elena'@referencetable"], eax
@@ -3971,28 +3966,27 @@ procedure coreapi'alloc_index
 labStart:
   // ; try to increase eax
   call code : %GET_COUNT  
-  add  esi, 1  
+  add  ebx, 1  
   call code : %SET_COUNT   // ; if the object size cannot be expanded - returns 0    
-  test esi, esi
+  test ebx, ebx
   // ; if enough place jump to the indexing part
   jnz  short labIndex
 
   // ; try to reuse existing slots
   call code : %GET_COUNT
-  mov  ecx, esi
+  mov  ecx, ebx
   xor  edx, edx
-  mov  esi, eax
+  mov  ebx, eax
 labNext:
-  cmp  [esi], 0
+  cmp  [ebx], 0
   jz   short labReuse
-  add  esi, 4
+  add  ebx, 4
   add  edx, 1
   sub  ecx, 1 
   ja   short labNext                                                                                               
 
   // ; if no place reallocate the reference table
   call code : %GET_COUNT
-  mov  ebx, esi
   add  ebx, 10h
 
   call code : "$native'coreapi'reallocate"
@@ -4001,12 +3995,12 @@ labNext:
   jmp  labStart
 
 labReuse:
-  mov  [eax + esi * 4], const : "system'nil"
+  mov  [eax + ebx * 4], const : "system'nil"
   jmp  short labEnd
   
 labIndex:
-  sub  esi, 1
-  mov  [eax + esi * 4], const : "system'nil"
+  sub  ebx, 1
+  mov  [eax + ebx * 4], const : "system'nil"
 labEnd:
 
   ret
@@ -4016,8 +4010,8 @@ end
 // ; free_index
 procedure coreapi'free_index
 
-  mov  ebx, [stat : "$elena'@referencetable"]
-  mov  [ebx + esi * 4], 0
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  [esi + ebx * 4], 0
   
   ret
 
@@ -4026,10 +4020,10 @@ end
 // ; resolve_index (index)
 procedure coreapi'resolve_index
 
-  mov  ebx, [esp + 4]
-  mov  edx, [ebx]
-  mov  esi, [stat : "$elena'@referencetable"]
-  mov  eax, [esi + edx * 4]
+  mov  esi, [esp + 4]
+  mov  edx, [esi]
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  eax, [ebx + edx * 4]
   
   ret 4
 
@@ -4037,8 +4031,8 @@ end
 
 procedure coreapi'resolve_index_value
 
-  mov  ebx, [stat : "$elena'@referencetable"]
-  mov  eax, [ebx + esi * 4]
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  eax, [esi + ebx * 4]
   
   ret
 
@@ -4163,11 +4157,11 @@ procedure coreapi'reallocate
   call code : %CALC_SIZE
 
   call code : %GET_COUNT  
-  mov  ecx, esi
+  mov  ecx, ebx
   
   call code : %GC_ALLOC
 
-  mov  esi, ecx
+  mov  ebx, ecx
   call code : %SET_COUNT
 
   mov  edi, eax

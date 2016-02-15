@@ -1519,27 +1519,27 @@ end
 
 procedure % SET_COUNT
 
-  mov  ebx, [eax - elSizeOffset]
-  mov  edx, esi
-  lea  ebx, [ebx - elObjectOffset]
+  mov  esi, [eax - elSizeOffset]
+  mov  edx, ebx
+  lea  esi, [esi - elObjectOffset]
 
   shl  edx, 2
-  cmp  ebx, edx
+  cmp  esi, edx
   jl   short labErr
 
   mov  [eax - elCountOffset], edx
   ret
 
 labErr:
-  xor  esi, esi
+  xor  ebx, ebx
   ret
 
 end
 
 procedure % GET_COUNT
 
-  mov  esi, [eax - elCountOffset]
-  shr  esi, 2
+  mov  ebx, [eax - elCountOffset]
+  shr  ebx, 2
   ret
 
 end
@@ -1714,8 +1714,9 @@ inline % 1Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  [eax-4]
-
+  pop  edx
+  mov  [eax-4], edx
+  
 end
 
 // ; exclude
@@ -1737,8 +1738,8 @@ inline % 27h
   xor eax, eax
   mov ebx, 1
   lock cmpxchg dword ptr[esi - elSyncOffset], ebx
-  mov eax, esi
-  setz bl, 0
+  mov  ebx, eax
+  mov  eax, esi
 
 end
 
@@ -1914,7 +1915,7 @@ inline % 40h
   xor  ebx, ebx
   mov  edx, [eax]
   cmp  edx, [edi]
-  setz bl, 1
+  setz bl
 
 end
 
@@ -1924,7 +1925,7 @@ inline % 41h
   xor  ebx, ebx
   mov  edx, [eax]
   cmp  edx, [edi]
-  setl bl, 1
+  setl bl
 
 end
 
@@ -2060,7 +2061,8 @@ inline % 4Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  [eax-4]
+  pop  edx
+  mov  [eax-4], edx
 
 end
 
@@ -2138,7 +2140,8 @@ inline % 5Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  [eax-4]
+  pop  edx
+  mov  [eax-4], edx
 
 end
 
@@ -2242,7 +2245,8 @@ inline % 6Fh
   and  ebx, page_mask  
   call code : %GC_ALLOC
   mov  [eax-8], ecx
-  pop  [eax-4]
+  pop  edx
+  mov  [eax-4], edx
 
 end
 
@@ -2264,9 +2268,10 @@ inline % 72h
   xor  ebx, ebx
   mov  esi, [eax+4]  
   cmp  edx, [edi]
-  setz bl, 1
+  setz bl
   cmp  esi, [edi+4]
-  setz bl, 1
+  setz dl
+  or   bl, dl
 
 end
 
@@ -2277,10 +2282,10 @@ inline % 73h
   xor  edx, edx
   mov  esi, [eax]
   cmp  edx, [edi]
-  setl dl, 1  
+  setl dl
   mov  esi, [eax+4]  
   cmp  edx, [edi+4]
-  setl bl, 1
+  setl bl
   cmovz ebx, edx
 
 end
@@ -2594,7 +2599,7 @@ inline % 83h
   fld    qword ptr [eax]
   xor    ebx, ebx
   fcomip st, st(1)
-  sete   bl, 1
+  sete   bl
   fstp  st(0)
 
 end
@@ -2606,7 +2611,7 @@ inline % 84h
   fld    qword ptr [eax]
   xor    ebx, ebx
   fcomip st, st(1)
-  setb   bl, 1
+  setb   bl
   fstp  st(0)
 
 end
