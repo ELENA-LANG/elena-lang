@@ -68,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 131;
+const int gcCommandNumber = 130;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -82,7 +82,7 @@ const int gcCommands[gcCommandNumber] =
    bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
    bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
-   bcNSub, bcNMul, bcNDiv, bcDRestore,
+   bcNSub, bcNMul, bcNDiv,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
    bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
@@ -610,8 +610,8 @@ void _ELENA_::compilePopE(int, x86JITScope& scope)
 
 void _ELENA_::compilePopD(int, x86JITScope& scope)
 {
-   // pop esi
-   scope.code->writeByte(0x5E);
+   // pop ebx
+   scope.code->writeByte(0x5B);
 }
 
 void _ELENA_::compileSCopyF(int, x86JITScope& scope)
@@ -685,8 +685,8 @@ void _ELENA_::compileIfE(int, x86JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp ecx, esi
-   scope.code->writeWord(0xCE3B);
+   // cmp ecx, ebx
+   scope.code->writeWord(0xCB3B);
 
    // try to use short jump if offset small (< 0x10?)
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
@@ -697,8 +697,8 @@ void _ELENA_::compileElseE(int, x86JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp ecx, esi
-   scope.code->writeWord(0xCE3B);
+   // cmp ecx, ebx
+   scope.code->writeWord(0xCB3B);
 
    // try to use short jump if offset small (< 0x10?)
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
@@ -709,8 +709,8 @@ void _ELENA_::compileLessE(int, x86JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp esi, ecx
-   scope.code->writeWord(0xF13B);
+   // cmp ebx, ecx
+   scope.code->writeWord(0xD93B);
 
    // try to use short jump if offset small (< 0x10?)
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
@@ -721,8 +721,8 @@ void _ELENA_::compileNotLessE(int, x86JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp esi, ecx
-   scope.code->writeWord(0xF13B);
+   // cmp ebx, ecx
+   scope.code->writeWord(0xD93B);
 
    // try to use short jump if offset small (< 0x10?)
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
@@ -877,8 +877,8 @@ void _ELENA_::compileBCopyR(int, x86JITScope& scope)
 
 void _ELENA_::compileDCopy(int, x86JITScope& scope)
 {
-   // mov esi, i
-   scope.code->writeByte(0xBE);
+   // mov ebx, i
+   scope.code->writeByte(0xBB);
    scope.code->writeDWord(scope.argument);
 }
 
@@ -891,40 +891,40 @@ void _ELENA_::compileECopy(int, x86JITScope& scope)
 
 void _ELENA_::compileDAndN(int, x86JITScope& scope)
 {
-   // and esi, mask
-   scope.code->writeWord(0xE681);
+   // and ebx, mask
+   scope.code->writeWord(0xCB81);
    scope.code->writeDWord(scope.argument);
 }
 
 void _ELENA_::compileDOrN(int, x86JITScope& scope)
 {
-   // or esi, mask
+   // or ebx, mask
    scope.code->writeWord(0xCE81);
    scope.code->writeDWord(scope.argument);
 }
 
 void _ELENA_::compileDAddN(int, x86JITScope& scope)
 {
-   // add esi, n
-   scope.code->writeWord(0xC681);
+   // add ebx, n
+   scope.code->writeWord(0xC381);
    scope.code->writeDWord(scope.argument);
 }
 
 void _ELENA_::compileDMulN(int, x86JITScope& scope)
 {
-   // mov  ebx, scope.argument
-   scope.code->writeByte(0xBB);
+   // mov  esi, scope.argument
+   scope.code->writeByte(0xBE);
    scope.code->writeDWord(scope.argument);
 
-   // imul esi, ebx
+   // imul ebx, esi
    scope.code->writeWord(0xAF0F);
-   scope.code->writeByte(0xF3);
+   scope.code->writeByte(0xDE);
 }
 
 void _ELENA_::compileDSub(int, x86JITScope& scope)
 {
-   // sub esi, ecx
-   scope.code->writeWord(0xF12B);
+   // sub ebx, ecx
+   scope.code->writeWord(0xD92B);
 }
 
 void _ELENA_::compileEAddN(int, x86JITScope& scope)
@@ -936,28 +936,28 @@ void _ELENA_::compileEAddN(int, x86JITScope& scope)
 
 void _ELENA_::compileDCopyVerb(int, x86JITScope& scope)
 {
-   // mov esi, ecx
-   // and esi, VERB_MASK
-   scope.code->writeWord(0xF18B);
-   scope.code->writeWord(0xE681);
+   // mov ebx, ecx
+   // and ebx, VERB_MASK
+   scope.code->writeWord(0xD98B);
+   scope.code->writeWord(0xE381);
    scope.code->writeDWord(VERB_MASK | MESSAGE_MASK);   
 }
 
 void _ELENA_::compileDCopyCount(int, x86JITScope& scope)
 {
-   // mov esi, ecx
-   // and esi, VERB_MASK
-   scope.code->writeWord(0xF18B);
-   scope.code->writeWord(0xE681);
+   // mov ebx, ecx
+   // and ebx, VERB_MASK
+   scope.code->writeWord(0xD98B);
+   scope.code->writeWord(0xE381);
    scope.code->writeDWord(PARAM_MASK);   
 }
 
 void _ELENA_::compileDCopySubj(int, x86JITScope& scope)
 {
-   // mov esi, ecx
-   // and esi, VERB_MASK
-   scope.code->writeWord(0xF18B);
-   scope.code->writeWord(0xE681);
+   // mov ebx, ecx
+   // and ebx, VERB_MASK
+   scope.code->writeWord(0xD98B);
+   scope.code->writeWord(0xE381);
    scope.code->writeDWord(SIGN_MASK | MESSAGE_MASK);   
 }
 
@@ -1009,8 +1009,8 @@ void _ELENA_::compilePushE(int, x86JITScope& scope)
 
 void _ELENA_::compilePushD(int, x86JITScope& scope)
 {
-   // push esi
-   scope.code->writeByte(0x56);
+   // push ebx
+   scope.code->writeByte(0x53);
 }
 
 void _ELENA_::compileCallR(int, x86JITScope& scope)
@@ -1073,15 +1073,15 @@ void _ELENA_::compileASaveR(int, x86JITScope& scope)
 
 void _ELENA_::compileIndexInc(int, x86JITScope& scope)
 {
-   // add esi, 1
-   scope.code->writeWord(0xC683);
+   // add ebx, 1
+   scope.code->writeWord(0xC383);
    scope.code->writeByte(1);
 }
 
 void _ELENA_::compileIndexDec(int, x86JITScope& scope)
 {
-   // sub esi, 1
-   scope.code->writeWord(0xEE83);
+   // sub ebx, 1
+   scope.code->writeWord(0xEB83);
    scope.code->writeByte(1);
 }
 
@@ -1189,10 +1189,10 @@ void _ELENA_::compileIfN(int, x86JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
-   // cmp esi, n
+   // cmp ebx, n
    // jz lab
 
-   scope.code->writeWord(0xFE81);
+   scope.code->writeWord(0xFB81);
    scope.code->writeDWord(scope.argument);
    compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
@@ -1201,10 +1201,10 @@ void _ELENA_::compileElseN(int, x86JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
-   // cmp esi, n
+   // cmp ebx, n
    // jnz lab
 
-   scope.code->writeWord(0xFE81);
+   scope.code->writeWord(0xFB81);
    scope.code->writeDWord(scope.argument);
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
@@ -1213,10 +1213,10 @@ void _ELENA_::compileLessN(int, x86JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
-   // cmp esi, n
+   // cmp ebx, n
    // jz lab
 
-   scope.code->writeWord(0xFE81);
+   scope.code->writeWord(0xFB81);
    scope.code->writeDWord(scope.argument);
    compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
@@ -1249,14 +1249,14 @@ void _ELENA_::compilePopB(int, x86JITScope& scope)
 
 void _ELENA_::compileECopyD(int, x86JITScope& scope)
 {
-   // mov ecx, esi
-   scope.code->writeWord(0xCE8B);
+   // mov ecx, ebx
+   scope.code->writeWord(0xCB8B);
 }
 
 void _ELENA_::compileDCopyE(int, x86JITScope& scope)
 {
-   // mov esi, ecx
-   scope.code->writeWord(0xF18B);
+   // mov ebx, ecx
+   scope.code->writeWord(0xD98B);
 }
 
 void _ELENA_::compileBCopyF(int, x86JITScope& scope)
@@ -1283,34 +1283,34 @@ void _ELENA_::compileACopyF(int, x86JITScope& scope)
 
 void _ELENA_ :: compileNot(int, x86JITScope& scope)
 {
-   // not esi
-   scope.code->writeWord(0xD6F7);
+   // not ebx
+   scope.code->writeWord(0xD3F7);
 }
 
 void _ELENA_ :: compileDShiftN(int, x86JITScope& scope)
 {
    if (scope.argument < 0) {
-      // shl esi, n
-      scope.code->writeWord(0xE6C1);
+      // shl ebx, n
+      scope.code->writeWord(0xE3C1);
       scope.code->writeByte((unsigned char) - scope.argument);
    }
    else {
-      // shr esi, n
-      scope.code->writeWord(0xEEC1);
+      // shr ebx, n
+      scope.code->writeWord(0xEBC1);
       scope.code->writeByte((unsigned char)scope.argument);
    }
 }
 
 void _ELENA_::compileDAdd(int, x86JITScope& scope)
 {
-   // add esi, ecx
-   scope.code->writeWord(0xF103);
+   // add ebx, ecx
+   scope.code->writeWord(0xD903);
 }
 
 void _ELENA_::compileOr(int, x86JITScope& scope)
 {
-   // or esi, ecx
-   scope.code->writeWord(0xF10B);
+   // or ebx, ecx
+   scope.code->writeWord(0xD90B);
 }
 
 // --- x86JITScope ---
