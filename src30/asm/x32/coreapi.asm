@@ -2794,7 +2794,7 @@ end
 procedure coreapi'sseek
 
   push eax
-  mov  edx, esi     // index
+  mov  edx, ebx     // index
   mov  esi, eax     // subs
 
   push edi

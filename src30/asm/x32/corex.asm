@@ -1653,7 +1653,7 @@ end
 
 inline % 18h
 
-   mov  eax, [edi + esi * 4]
+   mov  eax, [edi + ebx * 4]
 
 end
 
@@ -1794,7 +1794,7 @@ end
 
 inline % 2Fh
                                 
-   mov  [edi + esi * 4], eax
+   mov  [edi + ebx * 4], eax
 
 end
 
@@ -1838,9 +1838,9 @@ end
 // ;in : eax - object, esi - size
 inline % 34h
 
-  mov  esi, [eax-8]
-  neg  esi
-  shr  esi, 2
+  mov  ebx, [eax-8]
+  neg  ebx
+  shr  ebx, 2
   
 end
 
@@ -2281,10 +2281,10 @@ inline % 73h
   xor  ebx, ebx
   xor  edx, edx
   mov  esi, [eax]
-  cmp  edx, [edi]
+  cmp  esi, [edi]
   setl dl
   mov  esi, [eax+4]  
-  cmp  edx, [edi+4]
+  cmp  esi, [edi+4]
   setl bl
   cmovz ebx, edx
 

@@ -9,11 +9,6 @@
 {
     test
     [
-        #var(type:long)l1 := 12345678l.
-        #var(type:long)l2 := 2l.
-        
-        #var b := l1 <= l2.        
-        
         #var(type:int)n := 4.
         
         (n == 4)
