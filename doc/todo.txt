@@ -4,8 +4,7 @@ In development:
 
               idev - generic development                                          
                        * #54 : implementing generics / templates    
-
-                       * optimize snop
+                       * #201 : shorthand property settings
 
                        * #215 : Operations with structure fields
                        * #201 : shorthand property settings
@@ -33,6 +32,7 @@ In development:
               xdev - general implementation     
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
+                       * optimize snop
                       
               sdev - samples
                        * rosetta sample : Top rank per group
