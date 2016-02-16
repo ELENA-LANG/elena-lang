@@ -3543,7 +3543,9 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
 
       int operator_id = _operators.get(loopNode.Terminal());
 
-      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
+      // HOTFIX : lxElse is used to be similar with branching code
+      // because of optimization rules
+      scope.writer->newNode(lxElse, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->falseReference : scope.moduleScope->trueReference);
       compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
       scope.writer->closeNode();
 

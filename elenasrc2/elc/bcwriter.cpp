@@ -3197,14 +3197,9 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxIf) {
-         jumpIfNotEqual(tape, current.argument);
+      if (current == lxElse) {
+         jumpIfEqual(tape, current.argument);
          
-         generateCodeBlock(tape, current);
-      }
-      else if (current == lxElse) {
-         declareElseBlock(tape);
-
          generateCodeBlock(tape, current);
       }
       else if (test(current.type, lxObjectMask)) {

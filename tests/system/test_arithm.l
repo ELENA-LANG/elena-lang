@@ -11,8 +11,15 @@
     [        
         #var(type:int)n := 1.
         
-        (n <= 4)?
+        (n <= 5)?
             [ console writeLine:"Working!!" ].
+            
+        #loop (n <= 5)?
+        [
+            console writeLine:"Working!!".
+            
+            n := n + 1.
+        ].
     ]
 }.
         

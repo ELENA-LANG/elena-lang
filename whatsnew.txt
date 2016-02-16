@@ -8,7 +8,7 @@
 ******************************************************************************
 
 [ELC]
-[!] binary incompatible due to implementing issues #217
+[!] binary incompatible due to implementing issues #217 and #54
 [!] #217 : output code optimization
 
 [IDE]
