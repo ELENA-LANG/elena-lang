@@ -15,9 +15,9 @@
 namespace _ELENA_
 {
 
-//// --- ByteCodeWriter class ---
-//class ByteCodeWriter
-//{
+// --- ByteCodeWriter class ---
+class ByteCodeWriter
+{
 //   struct Scope
 //   {
 //      ref_t         sourceRef;
@@ -89,9 +89,9 @@ namespace _ELENA_
 //   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
 //   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 //   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
-//
-//public:
-//   ref_t writeSourcePath(_Module* debugModule, ident_t path);
+
+public:
+   ref_t writeSourcePath(_Module* debugModule, ident_t path);
 //   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 //
 //   void declareClass(CommandTape& tape, ref_t reference);
@@ -267,8 +267,8 @@ namespace _ELENA_
 //   void generateTree(CommandTape& tape, MemoryDump& dump);
 //
 //   void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
-//};
-//
+};
+
 //bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 
 } // _ELENA_

@@ -1,17 +1,17 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA byte code compiler class implementation.
-////
-////                                              (C)2005-2016, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "bcwriter.h"
+//		This file contains ELENA byte code compiler class implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "bcwriter.h"
+
+using namespace _ELENA_;
+
 //typedef SyntaxTree::Node SNode;
 //
 //// check if the node contains only the simple nodes
@@ -61,23 +61,23 @@
 //      it++;
 //   }
 //}
-//
-//// --- ByteCodeWriter ---
-//
-//ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
-//{
-//   if (debugModule != NULL) {
-//      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
-//
-//      ref_t sourceRef = debugStringWriter.Position();
-//
-//      debugStringWriter.writeLiteral(path);
-//
-//      return sourceRef;
-//   }
-//   else return 0;
-//}
-//
+
+// --- ByteCodeWriter ---
+
+ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
+{
+   if (debugModule != NULL) {
+      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      ref_t sourceRef = debugStringWriter.Position();
+
+      debugStringWriter.writeLiteral(path);
+
+      return sourceRef;
+   }
+   else return 0;
+}
+
 //ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message)
 //{
 //   if (debugModule != NULL) {
