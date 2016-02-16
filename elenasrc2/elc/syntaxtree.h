@@ -27,6 +27,8 @@ enum LexicalType
    lxInvalid         = 0x0001,
    lxRoot            = 0x0002,
 
+   lxBaseClass       = 0x0010,
+
    //lxExpression      = 0x0301,
    //lxBoxing          = 0x0302,   // boxing of the argument
    //lxCondBoxing      = 0x0303,   // conditional boxing
@@ -117,13 +119,17 @@ enum LexicalType
    //lxEmbeddable      = 0x809,
 
    //lxBreakpoint      = 0x2001,
-   //lxCol             = 0x2002,
-   //lxRow             = 0x2003,
+   lxCol             = 0x2002,
+   lxRow             = 0x2003,
    //lxLength          = 0x2004,
-   //lxTerminal        = 0x2005,
+   lxTerminal        = 0x2005,
    //lxLevel           = 0x2006,
    //lxClassName       = 0x2007,
    //lxValue           = 0x2008,
+
+   lxClassFlag       = 0x4001,
+   lxClassSize       = 0x4002,
+   lxClassExtension  = 0x4003,
 };
 
 // --- SyntaxWriter ---

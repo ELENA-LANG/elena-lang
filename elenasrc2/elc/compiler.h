@@ -57,18 +57,18 @@ public:
 //         else this->sign_ref = ref;
 //      }
 //   };
-//
-//   // InheritResult
-//   enum InheritResult
-//   {
-//      irNone = 0,
-//      irSuccessfull,
-//      irUnsuccessfull,
-//      irSealed,
-//      irInvalid,
-//      irObsolete
-//   };
-//
+
+   // InheritResult
+   enum InheritResult
+   {
+      irNone = 0,
+      irSuccessfull,
+      irUnsuccessfull,
+      irSealed,
+      irInvalid,
+      irObsolete
+   };
+
 //   enum MethodHint
 //   {
 //      tpMask       = 0x0F,
@@ -223,11 +223,11 @@ private:
       ExtensionMap      extensions;
 
       // type hints
-//      ForwardMap        types;
+      ForwardMap        types;
       SubjectMap        typeHints;
-//
-//      // cached references
-//      ref_t superReference;
+
+      // cached references
+      ref_t superReference;
 //      ref_t intReference;
 //      ref_t longReference;
 //      ref_t realReference;
@@ -261,9 +261,11 @@ private:
 //         constantHints.add(reference, classReference);
 //      }
 
+      void raiseError(const char* message, int row, int col, ident_t terminal);
+      void raiseWarning(const char* message, int row, int col, ident_t terminal);
+
       void raiseError(const char* message, TerminalInfo terminal);
       void raiseWarning(const char* message, TerminalInfo terminal);
-      void raiseWarning(const char* message, int row, int col);
 
       bool checkReference(ident_t referenceName);
 
@@ -271,8 +273,8 @@ private:
 
       ref_t mapNewType(ident_t terminal);
 
-//      ref_t mapType(TerminalInfo terminal);
-//
+      ref_t mapType(TerminalInfo terminal);
+
 //      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool strongOnly = false);
 //      ref_t mapSubject(ident_t name)
 //      {
@@ -283,37 +285,37 @@ private:
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
 //      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
-//
-//      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//      ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
-//      {
-//         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
-//      }
+
+      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+      {
+         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      }
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
-//
-//      int defineStructSize(ref_t classReference, bool& variable);
-//      int defineStructSize(ref_t classReference)
-//      {
-//         bool dummy = false;
-//
-//         return defineStructSize(classReference, dummy);
-//      }
-//
-//      int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
-//      int defineTypeSize(ref_t type_ref)
-//      {
-//         ref_t dummy1;
-//         bool dummy2;
-//
-//         return defineTypeSize(type_ref, dummy1, dummy2);
-//      }
-//      int defineTypeSize(ref_t type_ref, ref_t& class_ref)
-//      {
-//         bool dummy2;
-//
-//         return defineTypeSize(type_ref, class_ref, dummy2);
-//      }
-//
+
+      int defineStructSize(ref_t classReference, bool& variable);
+      int defineStructSize(ref_t classReference)
+      {
+         bool dummy = false;
+
+         return defineStructSize(classReference, dummy);
+      }
+
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
+      int defineTypeSize(ref_t type_ref)
+      {
+         ref_t dummy1;
+         bool dummy2;
+
+         return defineTypeSize(type_ref, dummy1, dummy2);
+      }
+      int defineTypeSize(ref_t type_ref, ref_t& class_ref)
+      {
+         bool dummy2;
+
+         return defineTypeSize(type_ref, class_ref, dummy2);
+      }
+
 //      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
 //      int checkMethod(ref_t reference, ref_t message)
 //      {
@@ -337,8 +339,8 @@ private:
 //      int getClassFlags(ref_t reference);
 //
 //      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
-//
-//      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
+
+      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -359,22 +361,34 @@ private:
       Scope*       parent;
       int          warningMask;
 
-//      void raiseError(const char* message, TerminalInfo terminal)
-//      {
-//         moduleScope->raiseError(message, terminal);
-//      }
-//
-//      void raiseWarning(int level, const char* message, TerminalInfo terminal)
-//      {
-//         if (test(warningMask, level))
-//            moduleScope->raiseWarning(message, terminal);
-//      }
-//      void raiseWarning(int level, const char* message, int row, int col)
-//      {
-//         if (test(warningMask, level))
-//            moduleScope->raiseWarning(message, row, col);
-//      }
-//
+      void raiseError(const char* message, TerminalInfo terminal)
+      {
+         moduleScope->raiseError(message, terminal);
+      }
+      void raiseWarning(int level, const char* message, TerminalInfo terminal)
+      {
+         if (test(warningMask, level))
+            moduleScope->raiseWarning(message, terminal);
+      }
+      void raiseError(const char* message, SyntaxTree::Node node)
+      {
+         SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+         SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
+         SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+
+         moduleScope->raiseError(message, row.argument, col.argument, (ident_t)terminal.argument);
+      }
+      void raiseWarning(int level, const char* message, SyntaxTree::Node node)
+      {
+         if (test(warningMask, level)) {
+            SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+            SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
+            SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+
+            moduleScope->raiseWarning(message, row.argument, col.argument, (ident_t)terminal.argument);
+         }
+      }
+
 //      virtual ObjectInfo mapObject(TerminalInfo identifier)
 //      {
 //         if (parent) {
@@ -408,8 +422,10 @@ private:
    // - SourceScope -
    struct SourceScope : public Scope
    {
-//      CommandTape    tape;
-//      ref_t          reference;
+      MemoryDump syntaxTree;
+
+      //      CommandTape    tape;
+      ref_t          reference;
 
       SourceScope(ModuleScope* parent, ref_t reference);
    };
@@ -417,11 +433,12 @@ private:
    // - ClassScope -
    struct ClassScope : public SourceScope
    {
-//      ClassInfo info;
-//
+      ClassInfo info;
+
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      void compileClassHints(DNode hints);
+
+      void generateClassHints(SyntaxTree::Node hint);
+      void compileClassHints(SyntaxWriter& writer, DNode hints);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
 //
 //      virtual Scope* getScope(ScopeLevel level)
@@ -446,7 +463,6 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      MemoryDump syntaxTree;
 //
 //      bool  constant;
 //      ref_t typeRef;
@@ -716,13 +732,15 @@ private:
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 //
 //   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
-//
-//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-//
+
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+
 //   void declareParameterDebugInfo(MethodScope& scope, bool withThis, bool withSelf);
-//
-//   void compileParentDeclaration(DNode node, ClassScope& scope);
-//   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
+
+   void generateParentDeclaration(ClassScope& scope, SyntaxTree::Node baseNode);
+
+   void compileParentDeclaration(DNode node, SyntaxWriter& writer, ClassScope& scope);
+   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
 //
 //   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
 //
@@ -816,6 +834,8 @@ private:
 //
 //   void compileVMT(DNode member, ClassScope& scope);
 //
+   void generateClassStructure(ClassScope& scope);
+
 //   void compileFieldDeclarations(DNode& member, ClassScope& scope);
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
 //   void compileClassImplementation(DNode node, ClassScope& scope);
