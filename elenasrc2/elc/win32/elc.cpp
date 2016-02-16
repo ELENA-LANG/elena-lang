@@ -466,10 +466,6 @@ const char* showPlatform(int platform)
 
 int main()
 {
-   __asm {
-      or ebx, ecx
-   }
-
    int argc;
    wchar_t **argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 

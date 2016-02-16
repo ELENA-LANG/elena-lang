@@ -892,14 +892,14 @@ void _ELENA_::compileECopy(int, x86JITScope& scope)
 void _ELENA_::compileDAndN(int, x86JITScope& scope)
 {
    // and ebx, mask
-   scope.code->writeWord(0xCB81);
+   scope.code->writeWord(0xE381);
    scope.code->writeDWord(scope.argument);
 }
 
 void _ELENA_::compileDOrN(int, x86JITScope& scope)
 {
    // or ebx, mask
-   scope.code->writeWord(0xCE81);
+   scope.code->writeWord(0xCB81);
    scope.code->writeDWord(scope.argument);
 }
 
