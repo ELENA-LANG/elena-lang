@@ -8,6 +8,29 @@ In development:
 
                        * replace nequal selectr ifr with shorter form nequal ifn, ...
 
+n == m      ? []
+    40                         nequal       (1,0)                              nequal
+    F6 0100000C 0100000B       selectr system'false, system'true               elsen 0
+    FB 0100000B 00000025       elser system'true Lab00
+
+n == m      ! []
+    40                         nequal                                          nequal
+    F6 0100000C 0100000B       selectr system'false, system'true               ifn 0
+    FB 0100000C 00000025       elser system'false Lab00
+
+n != m      ? []
+    40                         nequal                                          nequal
+    F6 0100000B 0100000C       selectr system'true, system'false               ifn 0
+    FB 0100000B 00000025       elser system'true Lab00
+    
+n != m      ! []
+    40                         nequal
+    F6 0100000B 0100000C       selectr system'true, system'false               nequal
+    FB 0100000C 00000025       elser system'false Lab00                        elsen
+
+
+                       * #54 : implementing generics / templates    
+
                        * optimize snop
 
                        * #215 : Operations with structure fields

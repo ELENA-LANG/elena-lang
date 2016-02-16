@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,7 +14,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 1
+#define BUILD_VERSION 3
 
 typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
 typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;
@@ -81,7 +81,10 @@ ByteCodePattern decodeCommand(TextSourceReader& source, ident_c* token, LineInfo
    else if (StringHelper::compare(info.line, "=")) {
       info = source.read(token, IDENTIFIER_LEN);
 
-      pattern.argumentType = braValue;
+      if (pattern.code > MAX_DOUBLE_ECODE && ByteCodeCompiler::IsJump(pattern.code)) {
+         pattern.argumentType = braAditionalValue;
+      }
+      else pattern.argumentType = braValue;
       pattern.argument = StringHelper::strToInt(token);
 
       info = source.read(token, IDENTIFIER_LEN);
@@ -91,6 +94,26 @@ ByteCodePattern decodeCommand(TextSourceReader& source, ident_c* token, LineInfo
 
       pattern.argumentType = braMatch;
       pattern.argument = StringHelper::strToInt(token);
+
+      info = source.read(token, IDENTIFIER_LEN);
+   }
+   // TransformTape will set match the argument if the argument equals to the previous one
+   else if (StringHelper::compare(info.line, "~")) {
+      if (pattern.code > MAX_DOUBLE_ECODE && ByteCodeCompiler::IsJump(pattern.code)) {
+         pattern.argumentType = braAdditionalSame;
+      }
+      else pattern.argumentType = braSame;
+      pattern.argument = 1;            
+
+      info = source.read(token, IDENTIFIER_LEN);
+   }
+   // TransformTape will set match the argument if the argument does not equal to the previous one
+   else if (StringHelper::compare(info.line, "!")) {
+      if (pattern.code > MAX_DOUBLE_ECODE && ByteCodeCompiler::IsJump(pattern.code)) {
+         pattern.argumentType = braAdditionalSame;
+      }
+      else pattern.argumentType = braSame;
+      pattern.argument = 0;
 
       info = source.read(token, IDENTIFIER_LEN);
    }

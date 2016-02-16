@@ -13,6 +13,15 @@
         
         (n == 4)
             ? [ console writeLine:"do something". ].
+            
+        (n != 4)
+            ? [ console writeLine:"don't do it". ].
+            
+        (n == 4)
+            ! [ console writeLine:"don't do it". ].
+            
+        (n != 4)
+            ! [ console writeLine:"do something". ].
     ]
 }.
         

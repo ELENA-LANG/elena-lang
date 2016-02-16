@@ -851,9 +851,16 @@ void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)
    ref_t r1 = scope.argument;
    scope.argument = scope.tape->getDWord();
 
-   // mov  edx, r1
-   scope.code->writeByte(0xBA); // !! replace with
-   scope.writeReference(*scope.code, r1, 0);
+   if (opcode == bcSelectR) {
+      // mov  eax, r1
+      scope.code->writeByte(0xB8);
+      scope.writeReference(*scope.code, r1, 0);
+   }
+   else {
+      // mov  edx, r1
+      scope.code->writeByte(0xBA);
+      scope.writeReference(*scope.code, r1, 0);
+   }
 
    loadROp(opcode, scope);
 }

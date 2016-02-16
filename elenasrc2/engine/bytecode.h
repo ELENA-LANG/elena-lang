@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2015, by Alexei Rakov
+//                                              (C)2009-2016, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -565,9 +565,12 @@ enum PatternArgument
 {
    braNone = 0,
    braValue,
+   braAditionalValue,
    braAdd,
    braCopy,
-   braMatch
+   braMatch,
+   braSame,          // TransformTape should perform xor operation with the argument (1 if same, 0 if different)
+   braAdditionalSame // TransformTape should perform xor operation with the argument (1 if same, 0 if different)
 };
 
 struct ByteCodePattern
@@ -588,7 +591,13 @@ struct ByteCodePattern
 
    bool operator ==(ByteCommand command) const
    {
-      return this->code == command.code && (argumentType != braMatch || argument == command.argument);
+      if (this->code == command.code) {
+         if (argumentType == braSame || argumentType == braAdditionalSame) {
+            return argument == 0;
+         }
+         else return argumentType != braMatch || argument == command.argument;
+      }
+      else return false;
    }
 
    bool operator !=(ByteCommand command) const
@@ -633,7 +642,7 @@ struct TransformTape
    bool apply(CommandTape& tape);
    void transform(ByteCodeIterator& trans_it, Node replacement);
 
-   bool makeStep(Node& step, ByteCommand& command);
+   bool makeStep(Node& step, ByteCommand& command, int previousArg);
 
    void load(StreamReader* optimization)
    {

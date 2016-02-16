@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2015, by Alexei Rakov
+//                                                 (C)2009-2016, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -559,6 +559,9 @@ void TransformTape :: transform(ByteCodeIterator& trans_it, Node replacement)
          case braValue:
             (*trans_it).argument = pattern.argument;
             break;
+         case braAditionalValue:
+            (*trans_it).additional = pattern.argument;
+            break;
          case braCopy:
             if (pattern.argument == 1) {
                (*target_it).argument = (*trans_it).argument;
@@ -575,19 +578,26 @@ void TransformTape :: transform(ByteCodeIterator& trans_it, Node replacement)
    }
 }
 
-bool TransformTape :: makeStep(Node& step, ByteCommand& command)
+bool TransformTape :: makeStep(Node& step, ByteCommand& command, int previousArg)
 {
    Node::ChildEnumerator child = step.Children();
    Node defaultNode(&trie);
 
    while (!child.Eof()) {
       Node current = child.Node();
-      if (current.Value() == command) {
+      ByteCodePattern pattern = current.Value();
+      if (pattern.argumentType == braSame) {
+         pattern.argument ^= (previousArg == command.argument) ? 1 : 0;
+      }
+      else if (pattern.argumentType == braAdditionalSame) {
+         pattern.argument ^= (previousArg == command.additional) ? 1 : 0;
+      }
+      if (pattern == command) {
          step = current;
 
          return true;
       }
-      else if (current.Value().code == bcMatch) {
+      else if (pattern.code == bcMatch) {
          step = current;
 
          return true;
@@ -599,7 +609,7 @@ bool TransformTape :: makeStep(Node& step, ByteCommand& command)
    if (defaultNode != step) {
       step = defaultNode;
 
-      return makeStep(step, command);
+      return makeStep(step, command, previousArg);
    }
 
    return false;
@@ -615,11 +625,13 @@ bool TransformTape :: apply(CommandTape& commandTape)
       // skip meta commands (except labels)
       if (matchable(it)) {
          // make first step
-         if (makeStep(current, *it)) {
+         if (makeStep(current, *it, 0)) {
+            int previousArg = (*it).argument;
             it++;
 
             ByteCodeIterator word_it = it;
-            while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it))) {
+            while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it, previousArg))) {
+               previousArg = (*word_it).argument;
                // check if the end node is reached
                if (current.Value().code == bcMatch) {
                   it = word_it;
@@ -758,26 +770,3 @@ ident_t ByteCodeCompiler :: decode(ByteCode code, ident_c* s)
 
    return s;
 }
-
-//FunctionCode ByteCodeCompiler :: codeFunction(const wchar16_t* s)
-//{
-//   for(int i = 1 ; i < EXTENSION_COUNT ; i++) {
-//      if (ConstantIdentifier::compare(s, _fnExtensions[i])) {
-//         return (FunctionCode)i;
-//      }
-//   }
-//
-//   return fnUnknown;
-//}
-
-//const wchar16_t* ByteCodeCompiler :: decodeFunction(FunctionCode code, wchar16_t* s)
-//{
-//   size_t key = (size_t)code;
-//
-//   if (key < EXTENSION_COUNT) {
-//      copystr(s, _fnExtensions[(int)code]);
-//   }
-//   else copystr(s, _fnExtensions[0]);
-//
-//   return s;
-//}

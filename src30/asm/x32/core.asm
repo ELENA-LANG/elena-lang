@@ -2677,7 +2677,7 @@ inline % 0F1h
   
 end
 
-// ; xselectr (ebx - r1, __arg1 - r2)
+// ; xselectr (edx - r1, __arg1 - r2)
 
 inline % 0F3h
 
@@ -2702,12 +2702,11 @@ inline % 0F5h
 
 end
 
-// ; selectr (ebx - r1, __arg1 - r2)
+// ; selectr (eax - r1, __arg1 - r2)
 
 inline % 0F6h
 
   mov    ecx, __arg1
-  mov    eax, edx
   test   ebx, ebx
   cmovnz eax, ecx
 
