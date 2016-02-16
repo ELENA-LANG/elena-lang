@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2015, by Alexei Rakov
+//                                              (C)2012-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -320,6 +320,9 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _real;
       literalConstant = true;
    }
+   else if (reference == 0) {
+      referenceName = "$nil";
+   }
    else referenceName = module->resolveReference(reference & ~mskAnyRef);
 
    if (emptystr(referenceName)) {
@@ -563,6 +566,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printMessage(command, module, argument);
          break;
       case bcSelectR:
+      case bcXSelectR:
          command.append(opcode);
          command.append(' ');
          printReference(command, module, argument);

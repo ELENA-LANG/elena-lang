@@ -3,10 +3,6 @@ In development:
 ------                      
 
               idev - generic development                                          
-                       * fix pi sample
-
-                       * #217 : optimization : $nil == obj
-
                        * #54 : implementing generics / templates    
 
                        * optimize snop

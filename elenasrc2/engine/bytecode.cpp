@@ -631,7 +631,9 @@ bool TransformTape :: apply(CommandTape& commandTape)
 
             ByteCodeIterator word_it = it;
             while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it, previousArg))) {
-               previousArg = (*word_it).argument;
+               if(matchable(word_it))
+                  previousArg = (*word_it).argument;
+
                // check if the end node is reached
                if (current.Value().code == bcMatch) {
                   it = word_it;

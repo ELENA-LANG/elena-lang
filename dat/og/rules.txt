@@ -25,18 +25,41 @@ pusha popa => nop nop;
 pushb popa => acopyb nop;
 acopyf bcopya newn => bcopyf nop newn;
 acopyf bcopya acopyr => bcopyf nop acopyr;
+acopyf bcopya aloadfi => bcopyf nop aloadfi;
+acopyf bcopya aloadsi => bcopyf nop aloadsi;
+
 nequal selectr elser ! => nequal nop ifn = 0;
 nequal selectr elser ~ => nequal nop elsen = 0;
 nless selectr elser ! => nless nop ifn = 0;
 nless selectr elser ~ => nless nop elsen = 0;
+
+nless selectr ifr ! => nless nop elsen = 0;
+nless selectr ifr ~ => nless nop ifn = 0;
+nequal selectr ifr ! => nequal nop elsen = 0;
+nequal selectr ifr ~ => nequal nop ifn = 0;
+
 lequal selectr elser ! => lequal nop ifn = 0;
 lequal selectr elser ~ => lequal nop elsen = 0;
 lless selectr elser ! => lless nop ifn = 0;
 lless selectr elser ~ => lless nop elsen = 0;
+
+lless selectr ifr ! => lless nop elsen = 0;
+lless selectr ifr ~ => lless nop ifn = 0;
+lequal selectr ifr ! => lequal nop elsen = 0;
+lequal selectr ifr ~ => lequal nop ifn = 0;
+
 requal selectr elser ! => requal nop ifn = 0;
 requal selectr elser ~ => requal nop elsen = 0;
 rless selectr elser ! => rless nop ifn = 0;
 rless selectr elser ~ => rless nop elsen = 0;
+
+rless selectr ifr ! => rless nop elsen = 0;
+rless selectr ifr ~ => rless nop ifn = 0;
+requal selectr ifr ! => requal nop elsen = 0;
+requal selectr ifr ~ => requal nop ifn = 0;
+
+xselectr elser ! => nop elser = 0;
+xselectr elser ~ => nop ifr = 0;
 
 // m = $self
 open pusha aloadfi := 1 close quitn => nop nop nop nop quitn;
