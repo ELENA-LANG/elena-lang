@@ -8,20 +8,11 @@
 #symbol XTester =
 {
     test
-    [
-        #var(type:int)n := 4.
+    [        
+        #var(type:int)n := 1.
         
-        (n == 4)
-            ? [ console writeLine:"do something". ].
-            
-        (n != 4)
-            ? [ console writeLine:"don't do it". ].
-            
-        (n == 4)
-            ! [ console writeLine:"don't do it". ].
-            
-        (n != 4)
-            ! [ console writeLine:"do something". ].
+        (n <= 4)?
+            [ console writeLine:"Working!!" ].
     ]
 }.
         

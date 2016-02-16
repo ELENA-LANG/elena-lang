@@ -5,7 +5,7 @@
 
 #symbol(const) MAX = 1000000.
 
-#symbol Program =
+#symbol program =
 [
     #var aStart := now.
 
