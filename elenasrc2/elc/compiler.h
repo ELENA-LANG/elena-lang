@@ -659,43 +659,43 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-//   // - InlineClassScope -
-//
-//   struct InlineClassScope : public ClassScope
-//   {
-//      struct Outer
-//      {
-//         int        reference;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = -1;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//         }
-//      };
-//
-//      Map<ident_t, Outer>     outers;
-//      ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+   // - InlineClassScope -
+
+   struct InlineClassScope : public ClassScope
+   {
+      struct Outer
+      {
+         int        reference;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = -1;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+         }
+      };
+
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
+      Outer mapSelf();
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
 
    ByteCodeWriter _writer;
    Parser         _parser;
@@ -735,7 +735,7 @@ private:
    bool checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
-//   ref_t mapNestedExpression(CodeScope& scope);
+   ref_t mapNestedExpression(CodeScope& scope);
    ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
 //   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
@@ -762,11 +762,11 @@ private:
       return mapMessage(node, scope, count, dummy);
    }
 
-//   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
+   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
-//   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
+   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
@@ -802,13 +802,13 @@ private:
    void compileTry(DNode node, CodeScope& scope);
    void compileLock(DNode node, CodeScope& scope);
 
-//   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    void reserveSpace(CodeScope& scope, int size);
    bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
 
-//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
+   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
+   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
@@ -827,9 +827,9 @@ private:
    void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
 
 //   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function, CommandTape* tape);
-//
-//   void compileActionMethod(DNode member, MethodScope& scope);
-//   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
+
+   void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
+   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
 //   void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope, bool genericMethod);
 //   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
@@ -839,8 +839,8 @@ private:
 
    void compileSymbolCode(ClassScope& scope);
 
-//   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
-//   void compileNestedVMT(DNode node, InlineClassScope& scope);
+   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
+   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
 
    void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope);
 

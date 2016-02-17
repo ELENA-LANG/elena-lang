@@ -22,7 +22,7 @@ using namespace _ELENA_;
 #define HINT_NOUNBOXING       0x20000000
 //#define HINT_ALT              0x12000000
 #define HINT_RETEXPR          0x08000000
-//#define HINT_ACTION           0x00020000
+#define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
 
@@ -47,10 +47,10 @@ inline bool isSingleStatement(DNode expr)
    return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
 }
 
-//inline bool isSingleObject(DNode expr)
-//{
-//   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
-//}
+inline bool isSingleObject(DNode expr)
+{
+   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
+}
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
@@ -95,18 +95,18 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
    else return 0;
 }
 
-//inline void findUninqueName(_Module* module, ReferenceNs& name)
-//{
-//   size_t pos = getlength(name);
-//   int   index = 0;
-//   ref_t ref = 0;
-//   do {
-//      name[pos] = 0;
-//      name.appendHex(index++);
-//
-//      ref = module->mapReference(name, true);
-//   } while (ref != 0);
-//}
+inline void findUninqueName(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name, true);
+   } while (ref != 0);
+}
 
 // skip the hints and return the first hint node or none
 inline DNode skipHints(DNode& node)
@@ -1126,89 +1126,89 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 //      hints = hints.nextNode();
 //   }
 //}
-//
-//// --- Compiler::InlineClassScope ---
-//
-//Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
-//   : ClassScope(owner->moduleScope, reference), outers(Outer())
-//{
-//   this->parent = owner;
-//   info.header.flags |= elNestedClass;
-//}
-//
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-//{
-//   String<ident_c, 10> thisVar(THIS_VAR);
-//
-//   Outer owner = outers.get(thisVar);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.reference = info.fields.Count();
-//      owner.outerObject.kind = okThisParam;
-//      owner.outerObject.param = 1;
-//
-//      outers.add(thisVar, owner);
-//      mapKey(info.fields, thisVar, owner.reference);
-//   }
-//   return owner;
-//}
-//
-//ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
-//{
-//   if (StringHelper::compare(identifier, THIS_VAR) || StringHelper::compare(identifier, OWNER_VAR)) {
-//      Outer owner = mapSelf();
-//
-//      // map as an outer field (reference to outer object and outer object field index)
-//      return ObjectInfo(okOuter, owner.reference);
-//   }
-//   else {
-//      Outer outer = outers.get(identifier);
-//
-//      // if object already mapped
-//      if (outer.reference != -1) {
-//         if (outer.outerObject.kind == okSuper) {
-//            return ObjectInfo(okSuper, outer.reference);
-//         }
-//         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
-//      }
-//      else {
-//         outer.outerObject = parent->mapObject(identifier);
-//         // handle outer fields in a special way: save only self
-//         if (outer.outerObject.kind == okField) {
-//            Outer owner = mapSelf();
-//
-//            // save the outer field type if provided
-//            if (outer.outerObject.extraparam != 0) {
-//               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
-//            }
-//
-//            // map as an outer field (reference to outer object and outer object field index)
-//            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
-//         }
-//         // map if the object is outer one
-//         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal || outer.outerObject.kind == okField
-//            || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
-//            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
-//         {
-//            outer.reference = info.fields.Count();
-//
-//            outers.add(identifier, outer);
-//            mapKey(info.fields, identifier.value, outer.reference);
-//
-//            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
-//         }
-//         else if (outer.outerObject.kind == okUnknown) {
-//            // check if there is inherited fields
-//            outer.reference = info.fields.get(identifier);
-//            if (outer.reference != -1) {
-//               return ObjectInfo(okField, outer.reference);
-//            }
-//            else return outer.outerObject;
-//         }
-//         else return outer.outerObject;
-//      }
-//   }
-//}
+
+// --- Compiler::InlineClassScope ---
+
+Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
+   : ClassScope(owner->moduleScope, reference), outers(Outer())
+{
+   this->parent = owner;
+   info.header.flags |= elNestedClass;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   String<ident_c, 10> thisVar(THIS_VAR);
+
+   Outer owner = outers.get(thisVar);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.reference = info.fields.Count();
+      owner.outerObject.kind = okThisParam;
+      owner.outerObject.param = 1;
+
+      outers.add(thisVar, owner);
+      mapKey(info.fields, thisVar, owner.reference);
+   }
+   return owner;
+}
+
+ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
+{
+   if (StringHelper::compare(identifier, THIS_VAR) || StringHelper::compare(identifier, OWNER_VAR)) {
+      Outer owner = mapSelf();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference);
+   }
+   else {
+      Outer outer = outers.get(identifier);
+
+      // if object already mapped
+      if (outer.reference != -1) {
+         if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, outer.reference);
+         }
+         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+      }
+      else {
+         outer.outerObject = parent->mapObject(identifier);
+         // handle outer fields in a special way: save only self
+         if (outer.outerObject.kind == okField) {
+            Outer owner = mapSelf();
+
+            // save the outer field type if provided
+            if (outer.outerObject.extraparam != 0) {
+               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
+            }
+
+            // map as an outer field (reference to outer object and outer object field index)
+            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         }
+         // map if the object is outer one
+         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal || outer.outerObject.kind == okField
+            || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
+            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
+         {
+            outer.reference = info.fields.Count();
+
+            outers.add(identifier, outer);
+            mapKey(info.fields, identifier.value, outer.reference);
+
+            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+         }
+         else if (outer.outerObject.kind == okUnknown) {
+            // check if there is inherited fields
+            outer.reference = info.fields.get(identifier);
+            if (outer.reference != -1) {
+               return ObjectInfo(okField, outer.reference);
+            }
+            else return outer.outerObject;
+         }
+         else return outer.outerObject;
+      }
+   }
+}
 
 // --- Compiler ---
 
@@ -1279,17 +1279,17 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//ref_t Compiler :: mapNestedExpression(CodeScope& scope)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // otherwise auto generate the name
-//   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(moduleScope->module, name);
-//
-//   return moduleScope->module->mapReference(name);
-//}
+ref_t Compiler :: mapNestedExpression(CodeScope& scope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // otherwise auto generate the name
+   ReferenceNs name(moduleScope->module->Name(), INLINE_POSTFIX);
+
+   findUninqueName(moduleScope->module, name);
+
+   return moduleScope->module->mapReference(name);
+}
 
 bool Compiler :: checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object)
 {
@@ -1792,89 +1792,89 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
    }
 }
 
-//void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
-//{
-//   if (switchValue.kind == okObject) {
-//      scope.writer->insert(lxVariable);
-//      scope.writer->insert(lxSwitching);
-//      scope.writer->closeNode();
-//
-//      switchValue.kind = okBlockLocal;
-//      switchValue.param = 1;
-//   }
-//   else scope.writer->insert(lxSwitching);
-//
-//   DNode option = node.firstChild();
-//   while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
-//      scope.writer->newNode(lxOption);
-//      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
-//
-//      //      _writer.declareSwitchOption(*scope.tape);
-//
-//      int operator_id = EQUAL_MESSAGE_ID;
-//      if (option == nsBiggerSwitchOption) {
-//         operator_id = GREATER_MESSAGE_ID;
-//      }
-//      else if (option == nsLessSwitchOption) {
-//         operator_id = LESS_MESSAGE_ID;
-//      }
-//
-//      scope.writer->newBookmark();
-//
-//      writeTerminal(TerminalInfo(), scope, switchValue);
-//
-//      DNode operand = option.firstChild();
-//      ObjectInfo result = compileOperator(operand, scope, switchValue, 0, operator_id);
-//      if (!checkIfCompatible(scope, scope.moduleScope->boolType, result)) {
-//         scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-//
-//         appendCoordinate(scope.writer, node.FirstTerminal());
-//
-//         scope.writer->closeNode();
-//      }
-//
-//      scope.writer->removeBookmark();
-//
-//      scope.writer->newNode(lxElse, scope.moduleScope->falseReference);
-//
-//      CodeScope subScope(&scope);
-//      DNode thenCode = option.firstChild().nextNode();
-//
-//      //_writer.declareBlock(*scope.tape);
-//
-//      DNode statement = thenCode.firstChild();
-//      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
-//         compileCode(thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(statement, scope, 0);
-//
-//      scope.writer->closeNode();
-//
-//      scope.writer->closeNode();
-//
-//      option = option.nextNode();
-//   }
-//   if (option == nsLastSwitchOption) {
-//      scope.writer->newNode(lxElse);
-//
-//      CodeScope subScope(&scope);
-//      DNode thenCode = option.firstChild();
-//
-//      //_writer.declareBlock(*scope.tape);
-//
-//      DNode statement = thenCode.firstChild();
-//      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
-//         compileCode(thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(statement, scope, 0);
-//
-//      scope.writer->closeNode();
-//   }
-//
-//   scope.writer->closeNode();
-//}
+void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
+{
+   if (switchValue.kind == okObject) {
+      scope.writer->insert(lxVariable);
+      scope.writer->insert(lxSwitching);
+      scope.writer->closeNode();
+
+      switchValue.kind = okBlockLocal;
+      switchValue.param = 1;
+   }
+   else scope.writer->insert(lxSwitching);
+
+   DNode option = node.firstChild();
+   while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
+      scope.writer->newNode(lxOption);
+      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
+
+      //      _writer.declareSwitchOption(*scope.tape);
+
+      int operator_id = EQUAL_MESSAGE_ID;
+      if (option == nsBiggerSwitchOption) {
+         operator_id = GREATER_MESSAGE_ID;
+      }
+      else if (option == nsLessSwitchOption) {
+         operator_id = LESS_MESSAGE_ID;
+      }
+
+      scope.writer->newBookmark();
+
+      writeTerminal(TerminalInfo(), scope, switchValue);
+
+      DNode operand = option.firstChild();
+      ObjectInfo result = compileOperator(operand, scope, switchValue, 0, operator_id);
+      if (!checkIfCompatible(scope, scope.moduleScope->boolType, result)) {
+         scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+
+         appendTerminalInfo(scope.writer, node.FirstTerminal());
+
+         scope.writer->closeNode();
+      }
+
+      scope.writer->removeBookmark();
+
+      scope.writer->newNode(lxElse, scope.moduleScope->falseReference);
+
+      CodeScope subScope(&scope);
+      DNode thenCode = option.firstChild().nextNode();
+
+      //_writer.declareBlock(*scope.tape);
+
+      DNode statement = thenCode.firstChild();
+      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
+         compileCode(thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(statement, scope, 0);
+
+      scope.writer->closeNode();
+
+      scope.writer->closeNode();
+
+      option = option.nextNode();
+   }
+   if (option == nsLastSwitchOption) {
+      scope.writer->newNode(lxElse);
+
+      CodeScope subScope(&scope);
+      DNode thenCode = option.firstChild();
+
+      //_writer.declareBlock(*scope.tape);
+
+      DNode statement = thenCode.firstChild();
+      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
+         compileCode(thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(statement, scope, 0);
+
+      scope.writer->closeNode();
+   }
+
+   scope.writer->closeNode();
+}
 
 void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 {
@@ -3184,150 +3184,149 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
    }
 
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
-   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
-
-   writer.closeNode();
+   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
 
    return lazyExpression;
 }
 
-//void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
-//{
-//   _writer.declareClass(scope.tape, scope.reference);
-//
-//   ActionScope methodScope(&scope);
-//   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode, alreadyDeclared);
-//
-//   // if it is single expression
-//   if (!lazyExpression) {
-//      compileActionMethod(node, methodScope);
-//   }
-//   else compileLazyExpressionMethod(node.firstChild(), methodScope);
-//
-//   _writer.endClass(scope.tape);
-//
-//   // stateless inline class
-//   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
-//      scope.info.header.flags |= elStateless;
-//   }
-//   else scope.info.header.flags &= ~elStateless;
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   scope.save();
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
-//
-//void Compiler :: compileNestedVMT(DNode node, InlineClassScope& scope)
-//{
-//   _writer.declareClass(scope.tape, scope.reference);
-//
-//   DNode member = node.firstChild();
-//
-//   declareVMT(member, scope, nsMethod, test(scope.info.header.flags, elClosed));
-//
-//   // nested class is sealed if it has no parent
-//   if (!test(scope.info.header.flags, elClosed))
-//      scope.info.header.flags |= elSealed;
-//
-//   compileVMT(member, scope);
-//
-//   _writer.endClass(scope.tape);
-//
-//   // stateless inline class
-//   if (scope.info.fields.Count()==0 && !test(scope.info.header.flags, elStructureRole)) {
-//      scope.info.header.flags |= elStateless;
-//   }
-//   else scope.info.header.flags &= ~elStateless;
-//
-//   // optimize
-//   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   scope.save();
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
-//
-//ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
-//{
-//   if (test(scope.info.header.flags, elStateless)) {
-//      ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
-//
-//      // if it is a stateless class
-//      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-//   }
-//   else {
-//      // dynamic binary symbol
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         ownerScope.writer->newNode(lxStruct, scope.info.size);
-//         ownerScope.writer->appendNode(lxTarget, scope.reference);
-//
-//         if (scope.outers.Count() > 0)
-//            scope.raiseError(errInvalidInlineClass, node.Terminal());
-//      }
-//      else {
-//         // dynamic normal symbol
-//         ownerScope.writer->newNode(lxNested, scope.info.fields.Count());
-//         ownerScope.writer->appendNode(lxTarget, scope.reference);
-//      }
-//
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      //int toFree = 0;
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
-//         ownerScope.writer->newNode(lxMember, (*outer_it).reference);
-//         ownerScope.writer->newBookmark();
-//
-//         writeTerminal(TerminalInfo(), ownerScope, info);
-//         writeBoxing(node.FirstTerminal(), ownerScope, info, 0, 0);
-//
-//         ownerScope.writer->removeBookmark();
-//         ownerScope.writer->closeNode();
-//
-//         outer_it++;
-//      }
-//
-//      ownerScope.writer->closeNode();
-//
-//      return ObjectInfo(okObject, scope.reference);
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mode)
-//{
-//   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
-//
-//   // if it is a lazy expression / multi-statement closure without parameters
-//   if (node == nsSubCode || node == nsInlineClosure) {
-//      compileAction(node, scope, DNode(), mode);
-//   }
-//   // if it is a closure / labda function with a parameter
-//   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
-//      compileAction(node.firstChild(), scope, node, mode);
-//   }
-//   // if it is an action code block
-//   else if (node == nsMethodParameter || node == nsSubjectArg) {
-//      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
-//   }
-//   // if it is inherited nested class
-//   else if (node.Terminal() != nsNone) {
-//	   // inherit parent
-//      compileParentDeclaration(node, scope);
-//
-//      compileNestedVMT(node.firstChild(), scope);
-//   }
-//   // if it is normal nested class
-//   else {
-//      compileParentDeclaration(DNode(), scope);
-//
-//      compileNestedVMT(node, scope);
-//   }
-//
-//   return compileClosure(node, ownerScope, scope, mode);
-//}
+void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
+{
+   SyntaxWriter writer(&scope.syntaxTree);
+   writer.newNode(lxRoot, scope.reference);
+
+   ActionScope methodScope(&scope);
+   bool lazyExpression = declareActionScope(node, scope, argNode, writer, methodScope, mode, alreadyDeclared);
+
+   // if it is single expression
+   if (!lazyExpression) {
+      compileActionMethod(node, writer, methodScope);
+   }
+   else compileLazyExpressionMethod(node.firstChild(), writer, methodScope);
+
+   writer.closeNode();  // closing method
+
+   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
+      writer.appendNode(lxClassFlag, elStateless);
+   }
+
+   writer.closeNode();
+
+   if (!alreadyDeclared)
+      generateClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   scope.save();
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
+void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope)
+{
+   SyntaxWriter writer(&scope.syntaxTree);
+   writer.newNode(lxRoot, scope.reference);
+
+    if (parent != nsNone)
+       compileParentDeclaration(node, writer, scope);
+
+   DNode member = node.firstChild();
+
+   // nested class is sealed if it has no parent
+   if (!test(scope.info.header.flags, elClosed))
+      writer.appendNode(lxClassFlag, elSealed);
+
+   compileVMT(member, writer, scope);
+
+   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
+      writer.appendNode(lxClassFlag, elStateless);
+   }
+
+   writer.closeNode();
+
+   generateClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+   generateClassImplementation(scope);
+
+   // optimize
+   optimizeTape(scope.tape);
+
+   // create byte code sections
+   scope.save();
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
+
+ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+{
+   if (test(scope.info.header.flags, elStateless)) {
+      ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
+
+      // if it is a stateless class
+      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+   }
+   else {
+      // dynamic binary symbol
+      if (test(scope.info.header.flags, elStructureRole)) {
+         ownerScope.writer->newNode(lxStruct, scope.info.size);
+         ownerScope.writer->appendNode(lxTarget, scope.reference);
+
+         if (scope.outers.Count() > 0)
+            scope.raiseError(errInvalidInlineClass, node.Terminal());
+      }
+      else {
+         // dynamic normal symbol
+         ownerScope.writer->newNode(lxNested, scope.info.fields.Count());
+         ownerScope.writer->appendNode(lxTarget, scope.reference);
+      }
+
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      //int toFree = 0;
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         ownerScope.writer->newNode(lxMember, (*outer_it).reference);
+         ownerScope.writer->newBookmark();
+
+         writeTerminal(TerminalInfo(), ownerScope, info);
+         writeBoxing(node.FirstTerminal(), ownerScope, info, 0, 0);
+
+         ownerScope.writer->removeBookmark();
+         ownerScope.writer->closeNode();
+
+         outer_it++;
+      }
+
+      ownerScope.writer->closeNode();
+
+      return ObjectInfo(okObject, scope.reference);
+   }
+}
+
+ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mode)
+{
+   InlineClassScope scope(&ownerScope, mapNestedExpression(ownerScope));
+
+   // if it is a lazy expression / multi-statement closure without parameters
+   if (node == nsSubCode || node == nsInlineClosure) {
+      compileAction(node, scope, DNode(), mode);
+   }
+   // if it is a closure / labda function with a parameter
+   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
+      compileAction(node.firstChild(), scope, node, mode);
+   }
+   // if it is an action code block
+   else if (node == nsMethodParameter || node == nsSubjectArg) {
+      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
+   }
+   // if it is inherited nested class
+   else if (node.Terminal() != nsNone) {
+	   // inherit parent
+      compileNestedVMT(node.firstChild(), node, scope);
+   }
+   // if it is normal nested class
+   else compileNestedVMT(node, DNode(), scope);
+
+   return compileClosure(node, ownerScope, scope, mode);
+}
 
 ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
 {
@@ -3694,164 +3693,164 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
    return retVal;
 }
 
-//void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//
-//      ref_t subject = moduleScope->mapType(terminal);
-//      ref_t classReference = moduleScope->typeHints.get(subject);
-//      int flags = 0;
-//      ClassInfo classInfo;
-//      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
-//         scope.raiseError(errInvalidOperation, terminal);
-//
-//      if (classInfo.size == 0 && !test(classInfo.header.flags, elWrapper))
-//         scope.raiseError(errInvalidOperation, terminal);
-//
-//      flags = classInfo.header.flags;
-//
-//      LexicalType argType = lxNone;
-//      // if it is an integer number pass it directly
-//      switch (flags & elDebugMask) {
-//         case elDebugDWORD:
-//         case elDebugPTR:
-//         case elDebugSubject:
-//            argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
-//            break;
-//         case elDebugReference:
-//            argType = lxExtInteranlRef;
-//            break;
-//         default:
-//            argType = lxExtArgument;
-//            break;
-//      }
-//
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
-//         if (argType == lxExtInteranlRef) {
-//            if (isSingleObject(arg.firstChild())) {
-//               ObjectInfo target = compileTerminal(arg.firstChild(), scope, 0);
-//               if (target.kind == okInternal) {
-//                  scope.writer->appendNode(lxExtInteranlRef, target.param);
-//               }
-//               else scope.raiseError(errInvalidOperation, terminal);
-//            }
-//            else scope.raiseError(errInvalidOperation, terminal);
-//         }
-//         else {
-//            scope.writer->newNode(argType);
-//
-//            ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
-//            if (info.kind == okIntConstant) {
-//               int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
-//
-//               scope.writer->appendNode(lxValue, value);
-//            }
-//
-//            scope.writer->closeNode();
-//         }
-//
-//         arg = arg.nextNode();
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
-//{
-//   ObjectInfo retVal(okExternal);
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   bool rootMode = test(mode, HINT_ROOT);
-//   bool stdCall = false;
-//   bool apiCall = false;
-//
-//   ident_t dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//   if (emptystr(dllName)) {
-//      // if run time dll is used
-//      dllName = RTDLL_FORWARD;
-//      if (StringHelper::compare(node.Terminal(), COREAPI_MASK, COREAPI_MASK_LEN))
-//         apiCall = true;
-//   }
-//   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name;
-//   if (!apiCall) {
-//      name.copy(DLL_NAMESPACE);
-//      name.combine(dllName);
-//      name.append(".");
-//      name.append(node.Terminal());
-//   }
-//   else {
-//      name.copy(NATIVE_MODULE);
-//      name.combine(CORE_MODULE);
-//      name.combine(node.Terminal());
-//   }
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
-//   // save the operation result into temporal variable
-//   if (!rootMode) {
-//      scope.writer->newNode(lxAssigning, 4);
-//
-//      allocateStructure(scope, 0, retVal);
-//      scope.writer->appendNode(lxLocalAddress, retVal.param);
-//   }
-//
-//   // To tell apart coreapi calls, the name convention is used
-//   if (apiCall) {
-//      scope.writer->newNode(lxCoreAPICall, reference);
-//   }
-//   else scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-//
-//   compileExternalArguments(node.firstChild(), scope);
-//
-//   scope.writer->closeNode();
-//
-//   if (!rootMode)
-//      scope.writer->closeNode(); // lxAssigning
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // only eval message is allowed
-//   TerminalInfo     verb = node.Terminal();
-//   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
-//      scope.raiseError(errInvalidOperation, verb);
-//
-//   scope.writer->newNode(lxInternalCall, routine.param);
-//
-//   DNode arg = node.firstChild();
-//
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo terminal = arg.Terminal();
-//      ref_t type = moduleScope->mapType(terminal);
-//
-//      arg = arg.nextNode();
-//      if (arg == nsMessageParameter) {
-//         compileExpression(arg.firstChild(), scope, type, 0);
-//      }
-//      else scope.raiseError(errInvalidOperation, terminal);
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   scope.writer->closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
+void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+
+      ref_t subject = moduleScope->mapType(terminal);
+      ref_t classReference = moduleScope->typeHints.get(subject);
+      int flags = 0;
+      ClassInfo classInfo;
+      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+         scope.raiseError(errInvalidOperation, terminal);
+
+      if (classInfo.size == 0 && !test(classInfo.header.flags, elWrapper))
+         scope.raiseError(errInvalidOperation, terminal);
+
+      flags = classInfo.header.flags;
+
+      LexicalType argType = lxNone;
+      // if it is an integer number pass it directly
+      switch (flags & elDebugMask) {
+         case elDebugDWORD:
+         case elDebugPTR:
+         case elDebugSubject:
+            argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
+            break;
+         case elDebugReference:
+            argType = lxExtInteranlRef;
+            break;
+         default:
+            argType = lxExtArgument;
+            break;
+      }
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         if (argType == lxExtInteranlRef) {
+            if (isSingleObject(arg.firstChild())) {
+               ObjectInfo target = compileTerminal(arg.firstChild(), scope, 0);
+               if (target.kind == okInternal) {
+                  scope.writer->appendNode(lxExtInteranlRef, target.param);
+               }
+               else scope.raiseError(errInvalidOperation, terminal);
+            }
+            else scope.raiseError(errInvalidOperation, terminal);
+         }
+         else {
+            scope.writer->newNode(argType);
+
+            ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
+            if (info.kind == okIntConstant) {
+               int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
+
+               scope.writer->appendNode(lxValue, value);
+            }
+
+            scope.writer->closeNode();
+         }
+
+         arg = arg.nextNode();
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+   }
+}
+
+ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
+{
+   ObjectInfo retVal(okExternal);
+
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   bool rootMode = test(mode, HINT_ROOT);
+   bool stdCall = false;
+   bool apiCall = false;
+
+   ident_t dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+   if (emptystr(dllName)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+      if (StringHelper::compare(node.Terminal(), COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
+
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
+
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(node.Terminal());
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(node.Terminal());
+   }
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+   // save the operation result into temporal variable
+   if (!rootMode) {
+      scope.writer->newNode(lxAssigning, 4);
+
+      allocateStructure(scope, 0, retVal);
+      scope.writer->appendNode(lxLocalAddress, retVal.param);
+   }
+
+   // To tell apart coreapi calls, the name convention is used
+   if (apiCall) {
+      scope.writer->newNode(lxCoreAPICall, reference);
+   }
+   else scope.writer->newNode(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+
+   compileExternalArguments(node.firstChild(), scope);
+
+   scope.writer->closeNode();
+
+   if (!rootMode)
+      scope.writer->closeNode(); // lxAssigning
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectInfo routine)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // only eval message is allowed
+   TerminalInfo     verb = node.Terminal();
+   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
+      scope.raiseError(errInvalidOperation, verb);
+
+   scope.writer->newNode(lxInternalCall, routine.param);
+
+   DNode arg = node.firstChild();
+
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
+      ref_t type = moduleScope->mapType(terminal);
+
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+         compileExpression(arg.firstChild(), scope, type, 0);
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+
+      arg = arg.nextNode();
+   }
+
+   scope.writer->closeNode();
+
+   return ObjectInfo(okObject);
+}
 
 void Compiler :: reserveSpace(CodeScope& scope, int size)
 {
@@ -4123,75 +4122,49 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
 //
 //   _writer.endIdleMethod(*tape);
 //}
-//
-//void Compiler :: compileActionMethod(DNode node, MethodScope& scope)
-//{
-//   // check if the method is inhreited and update vmt size accordingly
-//   if(scope.include() && test(scope.getClassFlag(), elClosed))
-//      scope.raiseError(errClosedParent, node.Terminal());
-//
-//   SyntaxWriter writer(&scope.syntaxTree);
-//   // NOTE : top expression is required for propery translation
-//   writer.newNode(lxRoot);
-//
-//   CodeScope codeScope(&scope, &writer);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   _writer.declareMethod(*scope.tape, scope.message, false);
-//   codeScope.level++;
-//
-//   declareParameterDebugInfo(scope, false, true);
-//
-//   if (isReturnExpression(node.firstChild())) {
-//      compileRetExpression(node.firstChild(), codeScope, HINT_ROOT);
-//   }
-//   else if (node == nsInlineExpression) {
-//      // !! this check should be removed, as it is no longer used
-//      compileCode(node.firstChild(), codeScope);
-//   }
-//   else compileCode(node, codeScope);
-//
-//   // NOTE : close root node
-//   writer.closeNode();
-//
-//   analizeSyntaxTree(&scope, scope.syntaxTree);
-//   _writer.generateTree(*scope.tape, scope.syntaxTree);
-//
-//   _writer.endMethod(*scope.tape, scope.parameters.Count() + 1, scope.reserved);
-//}
-//
-//void Compiler :: compileLazyExpressionMethod(DNode node, MethodScope& scope)
-//{
-//   CommandTape* tape = scope.tape;
-//
-//   // check if the method is inhreited and update vmt size accordingly
-//   scope.include();
-//
-//   // stack already contains previous $self value
-//   SyntaxWriter writer(&scope.syntaxTree);
-//   // NOTE : top expression is required for propery translation
-//   writer.newNode(lxRoot);
-//
-//   CodeScope codeScope(&scope, &writer);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   _writer.declareMethod(*tape, scope.message, false);
-//   codeScope.level++;
-//
-//   declareParameterDebugInfo(scope, false, false);
-//
-//   compileRetExpression(node, codeScope, 0);
-//
-//   // NOTE : close root node
-//   writer.closeNode();
-//
-//   analizeSyntaxTree(&scope, scope.syntaxTree);
-//   _writer.generateTree(*tape, scope.syntaxTree);
-//
-//   _writer.endMethod(*tape, scope.parameters.Count() + 1, scope.reserved);
-//}
+
+void Compiler :: compileActionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
+{
+   CodeScope codeScope(&scope, &writer);
+
+   // new stack frame
+   // stack already contains previous $self value
+   writer.newNode(lxNewFrame);
+   codeScope.level++;
+
+   declareParameterDebugInfo(scope, false, true);
+
+   if (isReturnExpression(node.firstChild())) {
+      compileRetExpression(node.firstChild(), codeScope, HINT_ROOT);
+   }
+   else if (node == nsInlineExpression) {
+      // !! this check should be removed, as it is no longer used
+      compileCode(node.firstChild(), codeScope);
+   }
+   else compileCode(node, codeScope);
+
+   writer.closeNode();
+   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   writer.appendNode(lxReserved, scope.reserved);
+}
+
+void Compiler :: compileLazyExpressionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
+{
+   CodeScope codeScope(&scope, &writer);
+
+   // new stack frame
+   // stack already contains previous $self value
+   writer.newNode(lxNewFrame);
+   codeScope.level++;
+
+   declareParameterDebugInfo(scope, false, false);
+
+   compileRetExpression(node, codeScope, 0);
+
+   writer.closeNode();
+   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   writer.appendNode(lxReserved, scope.reserved);
+}
 
 void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape)
 {
@@ -5093,6 +5066,8 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, D
    if (objNode != nsNone) {
       ActionScope methodScope(&classScope);
       declareActionScope(objNode, classScope, expression, writer, methodScope, 0, false);
+
+      writer.closeNode();
    }
 
    writer.closeNode();
