@@ -316,13 +316,13 @@ private:
          return defineTypeSize(type_ref, class_ref, dummy2);
       }
 
-//      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
-//      int checkMethod(ref_t reference, ref_t message)
-//      {
-//         bool dummy;
-//         ref_t dummyRef;
-//         return checkMethod(reference, message, dummy, dummyRef);
-//      }
+      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
+      int checkMethod(ref_t reference, ref_t message)
+      {
+         bool dummy;
+         ref_t dummyRef;
+         return checkMethod(reference, message, dummy, dummyRef);
+      }
 
       void loadTypes(_Module* module);
       void loadExtensions(TerminalInfo terminal, _Module* module);
@@ -332,10 +332,10 @@ private:
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 
-//      ref_t getBaseFunctionClass(int paramCount);
-//      ref_t getBaseIndexFunctionClass(int paramCount);
-//      ref_t getBaseLazyExpressionClass();
-//
+      ref_t getBaseFunctionClass(int paramCount);
+      ref_t getBaseIndexFunctionClass(int paramCount);
+      ref_t getBaseLazyExpressionClass();
+
 //      int getClassFlags(ref_t reference);
 //
 //      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
@@ -508,7 +508,7 @@ private:
 //      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool         withOpenArg;
-//      bool         stackSafe;
+      bool         stackSafe;
 
 //      void compileWarningHints(DNode hints);
 
@@ -819,8 +819,8 @@ private:
 //   ObjectInfo compileCode(DNode node, CodeScope& scope);
 
    void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
-//   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
+   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
+   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
    void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
 //   void compileSingletonClass(DNode member, ClassScope& scope);
@@ -861,7 +861,7 @@ private:
    void compileType(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(DNode member, ModuleScope& scope);
-//   void compileImplementations(DNode member, ModuleScope& scope);
+   void compileImplementations(DNode member, ModuleScope& scope);
    void compileIncludeSection(DNode& node, ModuleScope& scope);
 
    virtual void compileModule(DNode node, ModuleScope& scope);
