@@ -12,44 +12,44 @@
 
 using namespace _ELENA_;
 
-//typedef SyntaxTree::Node SNode;
-//
-//// check if the node contains only the simple nodes
-//
-//bool isSimpleObject(SNode node, bool ignoreFields = false)
-//{
-//   if (test(node.type, lxObjectMask)) {
-//      if (node == lxExpression) {
-//         if (!isSimpleObjectExpression(node, ignoreFields))
-//            return false;
-//      }
-//      else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
-//         // ignore fields if required
-//      }
-//      else if (!test(node.type, lxSimpleMask))
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//bool _ELENA_::isSimpleObjectExpression(SNode node, bool ignoreFields)
-//{
-//   if (node == lxNone)
-//      return true;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (!isSimpleObject(current, ignoreFields))
-//         return false;
-//
-//      current = current.nextNode();
-//   }
-//
-//   return true;
-//}
-//
-//// --- Auxiliary declareVariable ---
+typedef SyntaxTree::Node SNode;
+
+// check if the node contains only the simple nodes
+
+bool isSimpleObject(SNode node, bool ignoreFields = false)
+{
+   if (test(node.type, lxObjectMask)) {
+      if (node == lxExpression) {
+         if (!isSimpleObjectExpression(node, ignoreFields))
+            return false;
+      }
+      else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
+         // ignore fields if required
+      }
+      else if (!test(node.type, lxSimpleMask))
+         return false;
+   }
+
+   return true;
+}
+
+bool _ELENA_::isSimpleObjectExpression(SNode node, bool ignoreFields)
+{
+   if (node == lxNone)
+      return true;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (!isSimpleObject(current, ignoreFields))
+         return false;
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
+//// --- Auxiliary  ---
 //
 //void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 //{
@@ -136,37 +136,37 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
 //   jumpIfNotEqual(tape, 0, true);
 //}
-//
-//void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
-//{
-//   // class-begin:
-//	tape.write(blBegin, bsClass, reference);
-//}
-//
+
+void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
+{
+   // class-begin:
+	tape.write(blBegin, bsClass, reference);
+}
+
 //void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
 //{
 //   // method-begin:
 //   tape.write(blBegin, bsMethod, message);
 //}
-//
-//void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
-//{
-//   // method-begin:
-//   //   { pope }?
-//   //   open
-//   //   pusha
-//   tape.write(blBegin, bsMethod, message);
-//
-//   if (withPresavedMessage)
-//      tape.write(bcPopE);
-//
-//   if (withNewFrame) {
-//      tape.write(bcOpen, 1);
-//      tape.write(bcPushA);
-//   }
-//   tape.newLabel();     // declare exit point
-//}
-//
+
+void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
+{
+   // method-begin:
+   //   { pope }?
+   //   open
+   //   pusha
+   tape.write(blBegin, bsMethod, message);
+
+   if (withPresavedMessage)
+      tape.write(bcPopE);
+
+   if (withNewFrame) {
+      tape.write(bcOpen, 1);
+      tape.write(bcPushA);
+   }
+   tape.newLabel();     // declare exit point
+}
+
 //void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
 //{
 //   tape.write(blDeclare, bsBranch);
@@ -177,56 +177,56 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   tape.write(bcExclude);
 //   tape.write(bcAllocStack, 1);
 //}
-//
-//void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStruct, (ref_t)localName, level);
-//      tape.write(bdLocalInfo, (ref_t)className);
-//   }      
-//}
-//
-//void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   if (!emptystr(localName))
-//      tape.write(bdLocal, (ref_t)localName, level);
-//}
-//
-//void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdLongLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdRealLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdByteArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   tape.write(bdParamsLocal, (ref_t)localName, level);
-//}
-//
+
+void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStruct, (ref_t)localName, level);
+      tape.write(bdLocalInfo, (ref_t)className);
+   }      
+}
+
+void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
+{
+   if (!emptystr(localName))
+      tape.write(bdLocal, (ref_t)localName, level);
+}
+
+void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdLongLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdRealLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdByteArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
+{
+   tape.write(bdParamsLocal, (ref_t)localName, level);
+}
+
 //void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 //{
 //   tape.write(bdSelf, 0, level);
@@ -236,49 +236,49 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //{
 //   tape.write(bdMessage, 0, nameRef);
 //}
-//
-//void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
-//{
-//   tape.write(bcBreakpoint);
-//
-//   tape.write(bdBreakpoint, stepType, row);
-//   tape.write(bdBreakcoord, disp, length);
-//}
-//
-//void ByteCodeWriter :: declareBlock(CommandTape& tape)
-//{
-//   tape.write(blBlock);
-//}
-//
-//void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
-//{
-//   // { pushn 0 } n
-//   for(int i = 0 ; i < count ; i++)
-//      tape.write(bcPushN, 0);
-//}
-//
-//void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
-//{
-//   // pushn  value
-//   tape.write(bcPushN, value);
-//}
-//
-//int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
-//{
-//   // loop-begin
-//
-//   tape.newLabel();                 // declare loop start label
-//   tape.setLabel(true);
-//
-//   int end = tape.newLabel();       // declare loop end label
-//
-////   // snop
-////   if (threadFriendly)
-////      tape.write(bcSNop);
-//
-//   return end;
-//}
-//
+
+void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
+{
+   tape.write(bcBreakpoint);
+
+   tape.write(bdBreakpoint, stepType, row);
+   tape.write(bdBreakcoord, disp, length);
+}
+
+void ByteCodeWriter :: declareBlock(CommandTape& tape)
+{
+   tape.write(blBlock);
+}
+
+void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
+{
+   // { pushn 0 } n
+   for(int i = 0 ; i < count ; i++)
+      tape.write(bcPushN, 0);
+}
+
+void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+{
+   // pushn  value
+   tape.write(bcPushN, value);
+}
+
+int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
+{
+   // loop-begin
+
+   tape.newLabel();                 // declare loop start label
+   tape.setLabel(true);
+
+   int end = tape.newLabel();       // declare loop end label
+
+//   // snop
+//   if (threadFriendly)
+//      tape.write(bcSNop);
+
+   return end;
+}
+
 //void ByteCodeWriter :: declareThenBlock(CommandTape& tape, bool withStackControl)
 //{
 //   if (withStackControl)
@@ -326,84 +326,84 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   tape.setLabel();
 //   tape.write(bcSCopyF, bsBranch);
 //}
-//
-//void ByteCodeWriter :: declareTry(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare end-label
-//   tape.newLabel();                  // declare alternative-label
-//
-//   // hook labAlt
-//
-//   tape.write(bcHook, baCurrentLabel);
-//}
-//
-//void ByteCodeWriter :: declareCatch(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   popa
-//   //   flag
-//   //   andn elMessage
-//   //   ifn labSkip
-//   //   nload
-//   //   ecopyd
-//   //   aloadsi 0
-//   //   acallvi 0
-//   // labSkip:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//
-//   tape.newLabel();
-//
-//   // HOT FIX: to compensate the unpaired pop
-//   tape.write(bcAllocStack, 1);
-//   tape.write(bcPopA);
-//   tape.write(bcFlag);
-//   tape.write(bcAndN, elMessage);
-//   tape.write(bcIfN, baCurrentLabel, 0);
-//   tape.write(bcNLoad);
-//   tape.write(bcECopyD);
-//   tape.write(bcALoadSI, 0);
-//   tape.write(bcACallVI, 0);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
-//
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
-//
-//void ByteCodeWriter :: newFrame(CommandTape& tape)
-//{
-//   //   open 1
-//   //   pusha
-//   tape.write(bcOpen, 1);
-//   tape.write(bcPushA);
-//}
-//
-//void ByteCodeWriter :: closeFrame(CommandTape& tape)
-//{
-//   // close
-//   tape.write(bcClose);
-//}
-//
+
+void ByteCodeWriter :: declareTry(CommandTape& tape)
+{
+   tape.newLabel();                  // declare end-label
+   tape.newLabel();                  // declare alternative-label
+
+   // hook labAlt
+
+   tape.write(bcHook, baCurrentLabel);
+}
+
+void ByteCodeWriter :: declareCatch(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   popa
+   //   flag
+   //   andn elMessage
+   //   ifn labSkip
+   //   nload
+   //   ecopyd
+   //   aloadsi 0
+   //   acallvi 0
+   // labSkip:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+
+   tape.newLabel();
+
+   // HOT FIX: to compensate the unpaired pop
+   tape.write(bcAllocStack, 1);
+   tape.write(bcPopA);
+   tape.write(bcFlag);
+   tape.write(bcAndN, elMessage);
+   tape.write(bcIfN, baCurrentLabel, 0);
+   tape.write(bcNLoad);
+   tape.write(bcECopyD);
+   tape.write(bcALoadSI, 0);
+   tape.write(bcACallVI, 0);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
+
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
+
+void ByteCodeWriter :: newFrame(CommandTape& tape)
+{
+   //   open 1
+   //   pusha
+   tape.write(bcOpen, 1);
+   tape.write(bcPushA);
+}
+
+void ByteCodeWriter :: closeFrame(CommandTape& tape)
+{
+   // close
+   tape.write(bcClose);
+}
+
 //void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
 //{
 //   if (itemSize != 1) {
@@ -432,14 +432,14 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //
 //   tape.write(bcNewN, reference | mskVMTRef, size);
 //}
-//
-//void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t reference)
-//{
-//   //   new fieldCount, vmt
-//
-//   tape.write(bcNew, reference | mskVMTRef, fieldCount);
-//}
-//
+
+void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t reference)
+{
+   //   new fieldCount, vmt
+
+   tape.write(bcNew, reference | mskVMTRef, fieldCount);
+}
+
 //void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument)
 //{
 //   tape.write(bcBCopyA);
@@ -449,16 +449,16 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //
 //   tape.write(bcACopyB);
 //}
-//
-//void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
-//{
-//   loadBase(tape, field, argument);
-//   newObject(tape, 1, reference);
-//   tape.write(bcBSwap);
-//   tape.write(bcAXSaveBI, 0);
-//   tape.write(bcACopyB);
-//}
-//
+
+void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
+{
+   loadBase(tape, field, argument);
+   newObject(tape, 1, reference);
+   tape.write(bcBSwap);
+   tape.write(bcAXSaveBI, 0);
+   tape.write(bcACopyB);
+}
+
 //void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
 //{
 //   // create
@@ -519,307 +519,307 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   switch (sourceType) {
-//      case lxCurrent:
-//         // bloadsi param
-//         tape.write(bcBLoadSI, sourceArgument);
-//         break;
-//      case lxLocal:
-//         // bloadfi param
-//         tape.write(bcBLoadFI, sourceArgument, bpFrame);
-//         break;
-//      case lxLocalAddress:
-//         // bcopyf n
-//         tape.write(bcBCopyF, sourceArgument);
-//         break;
-//      case lxResult:
-//         // bcopya
-//         tape.write(bcBCopyA);
-//         break;
-//      case lxField:
-//         // pusha
-//         // bloadfi 1
-//         // aloadbi
-//         // bcopya
-//         // popa
-//         tape.write(bcPushA);
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcALoadBI, sourceArgument);
-//         tape.write(bcBCopyA);
-//         tape.write(bcPopA);
-//         break;
-//      case lxFieldAddress:
-//         if (sourceArgument == 0) {
-//            // bloadfi 1
-//            tape.write(bcBLoadFI, 1, bpFrame);
-//         }
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxCurrent:
+         // bloadsi param
+         tape.write(bcBLoadSI, sourceArgument);
+         break;
+      case lxLocal:
+         // bloadfi param
+         tape.write(bcBLoadFI, sourceArgument, bpFrame);
+         break;
+      case lxLocalAddress:
+         // bcopyf n
+         tape.write(bcBCopyF, sourceArgument);
+         break;
+      case lxResult:
+         // bcopya
+         tape.write(bcBCopyA);
+         break;
+      case lxField:
+         // pusha
+         // bloadfi 1
+         // aloadbi
+         // bcopya
+         // popa
+         tape.write(bcPushA);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcALoadBI, sourceArgument);
+         tape.write(bcBCopyA);
+         tape.write(bcPopA);
+         break;
+      case lxFieldAddress:
+         if (sourceArgument == 0) {
+            // bloadfi 1
+            tape.write(bcBLoadFI, 1, bpFrame);
+         }
+         break;
+   }
+}
+
 //void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
 //{
 //   // acopyr reference
 //   tape.write(bcACopyR, reference | mskInternalRef);
 //}
-//
-//void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target, int offset)
-//{
-//   switch (target) {
-//      case lxResult:
-//         // acopyb
-//         tape.write(bcACopyB);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
-//{
-//   switch (size) {
-//      case 1:
-//      case 2:
-//      case 4:
-//         tape.write(bcNCopy);
-//         break;
-//      case 8:
-//         tape.write(bcLCopy);
-//         break;
-//      case -1:
-//      case -2:
-//      case -4:
-//         tape.write(bcCopy);
-//         break;
-//      default:
-//         // dcopy 0
-//         // ecopy count / 4
-//         // pushe
-//         // labCopy:
-//         // esavesi 0
-//         // nread
-//         // nwrite
-//         // eloadsi
-//         // next labCopy
-//         // pop
-//         tape.write(bcDCopy);
-//         tape.write(bcECopy, size >> 2);
-//         tape.write(bcPushE);
-//         tape.newLabel();
-//         tape.setLabel(true);
-//         tape.write(bcESaveSI);
-//         tape.write(bcNRead);
-//         tape.write(bcNWrite);
-//         tape.write(bcELoadSI);
-//         tape.write(bcNext, baCurrentLabel);
-//         tape.releaseLabel();
-//         tape.write(bcPop);         
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   switch (sourceType) {
-//      case lxResult:
-//         if (directOperation) {
-//            // axsavebi
-//            tape.write(bcAXSaveBI, sourceArgument);
-//         }
-//         else {
-//            // asavebi
-//            tape.write(bcASaveBI, sourceArgument);
-//         }
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing)
-//{
-//   // ifheap labSkip
-//   // bcopya
-//   // newn vmt, size
-//   // copyb
-//   // labSkip:
-//
-//   if (!alwaysBoxing) {
-//      tape.newLabel();
-//      tape.write(bcIfHeap, baCurrentLabel);
-//   }
-//
-//   if (size == -4) {
-//      tape.write(bcNLen);
-//      tape.write(bcBCopyA);
-//      tape.write(bcACopyR, vmtReference | mskVMTRef);
-//      tape.write(bcNCreate);
-//      tape.write(bcCopyB);
-//   }
-//   else if (size == -2) {
-//      tape.write(bcWLen);
-//      tape.write(bcBCopyA);
-//      tape.write(bcACopyR, vmtReference | mskVMTRef);
-//      tape.write(bcWCreate);
-//      tape.write(bcCopyB);
-//   }
-//   else if (size < 0) {
-//      tape.write(bcBLen);
-//      tape.write(bcBCopyA);
-//      tape.write(bcACopyR, vmtReference | mskVMTRef);
-//      tape.write(bcBCreate);
-//      tape.write(bcCopyB);
-//   }
-//   else {
-//      tape.write(bcBCopyA);
-//      tape.write(bcNewN, vmtReference | mskVMTRef, size);
-//
-//      if (size >0 && size <= 4) {
-//         tape.write(bcNCopyB);
-//      }
-//      else if (size == 8) {
-//         tape.write(bcLCopyB);
-//      }
-//      else tape.write(bcCopyB);
-//   }
-//
-//   if (!alwaysBoxing)
-//      tape.setLabel();
-//}
-//
-//void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
-//{
-//   // bcopya
-//   // dcopy 0
-//   // labSearch:
-//   // get
-//   // inc
-//   // elser labSearch
-//   // acopyr vmt
-//   // create
-//
-//   // pusha
-//   // xlen
-//   // dcopy 0
-//   // labCopy:
-//   // get
-//   // bswapsi 0
-//   // xset
-//   // bswapsi 0
-//   // next labCopy
-//   // popa
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcGet);
-//   tape.write(bcInc);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//
-//   tape.write(bcACopyR, vmtReference | mskVMTRef);
-//   tape.write(bcCreate);
-//
-//   tape.write(bcPushA);
-//   tape.write(bcXLen);
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcGet);
-//   tape.write(bcBSwapSI);
-//   tape.write(bcXSet);
-//   tape.write(bcBSwapSI);
-//   tape.write(bcNext, baCurrentLabel);
-//   tape.releaseLabel();
-//
-//   tape.write(bcPopA);
-//}
-//
-//void ByteCodeWriter :: unboxArgList(CommandTape& tape)
-//{
-//   // bcopya
-//   // dcopy 0
-//   // labSearch:
-//   // get
-//   // inc
-//   // elser labSearch
-//   // ecopyd
-//   // dec
-//   // pushn 0
-//
-//   // labNext:
-//   // dec
-//   // get
-//   // pusha
-//   // elsen labNext 0
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcGet);
-//   tape.write(bcInc);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//   tape.write(bcECopyD);
-//   tape.write(bcDec);
-//   tape.write(bcPushN, 0);
-//
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcDec);
-//   tape.write(bcGet);
-//   tape.write(bcPushA);
-//   tape.write(bcElseN, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   switch (sourceType) {
-//      case lxResult:
-//         // popa
-//         tape.write(bcPopA);
-//         break;
-//      case lxCurrentMessage:
-//         // pope
-//         tape.write(bcPopE);
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target, int offset)
+{
+   switch (target) {
+      case lxResult:
+         // acopyb
+         tape.write(bcACopyB);
+         break;
+   }
+}
+
+void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
+{
+   switch (size) {
+      case 1:
+      case 2:
+      case 4:
+         tape.write(bcNCopy);
+         break;
+      case 8:
+         tape.write(bcLCopy);
+         break;
+      case -1:
+      case -2:
+      case -4:
+         tape.write(bcCopy);
+         break;
+      default:
+         // dcopy 0
+         // ecopy count / 4
+         // pushe
+         // labCopy:
+         // esavesi 0
+         // nread
+         // nwrite
+         // eloadsi
+         // next labCopy
+         // pop
+         tape.write(bcDCopy);
+         tape.write(bcECopy, size >> 2);
+         tape.write(bcPushE);
+         tape.newLabel();
+         tape.setLabel(true);
+         tape.write(bcESaveSI);
+         tape.write(bcNRead);
+         tape.write(bcNWrite);
+         tape.write(bcELoadSI);
+         tape.write(bcNext, baCurrentLabel);
+         tape.releaseLabel();
+         tape.write(bcPop);         
+         break;
+   }
+}
+
+void ByteCodeWriter :: saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxResult:
+         if (directOperation) {
+            // axsavebi
+            tape.write(bcAXSaveBI, sourceArgument);
+         }
+         else {
+            // asavebi
+            tape.write(bcASaveBI, sourceArgument);
+         }
+         break;
+   }
+}
+
+void ByteCodeWriter :: boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing)
+{
+   // ifheap labSkip
+   // bcopya
+   // newn vmt, size
+   // copyb
+   // labSkip:
+
+   if (!alwaysBoxing) {
+      tape.newLabel();
+      tape.write(bcIfHeap, baCurrentLabel);
+   }
+
+   if (size == -4) {
+      tape.write(bcNLen);
+      tape.write(bcBCopyA);
+      tape.write(bcACopyR, vmtReference | mskVMTRef);
+      tape.write(bcNCreate);
+      tape.write(bcCopyB);
+   }
+   else if (size == -2) {
+      tape.write(bcWLen);
+      tape.write(bcBCopyA);
+      tape.write(bcACopyR, vmtReference | mskVMTRef);
+      tape.write(bcWCreate);
+      tape.write(bcCopyB);
+   }
+   else if (size < 0) {
+      tape.write(bcBLen);
+      tape.write(bcBCopyA);
+      tape.write(bcACopyR, vmtReference | mskVMTRef);
+      tape.write(bcBCreate);
+      tape.write(bcCopyB);
+   }
+   else {
+      tape.write(bcBCopyA);
+      tape.write(bcNewN, vmtReference | mskVMTRef, size);
+
+      if (size >0 && size <= 4) {
+         tape.write(bcNCopyB);
+      }
+      else if (size == 8) {
+         tape.write(bcLCopyB);
+      }
+      else tape.write(bcCopyB);
+   }
+
+   if (!alwaysBoxing)
+      tape.setLabel();
+}
+
+void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
+{
+   // bcopya
+   // dcopy 0
+   // labSearch:
+   // get
+   // inc
+   // elser labSearch
+   // acopyr vmt
+   // create
+
+   // pusha
+   // xlen
+   // dcopy 0
+   // labCopy:
+   // get
+   // bswapsi 0
+   // xset
+   // bswapsi 0
+   // next labCopy
+   // popa
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+
+   tape.write(bcACopyR, vmtReference | mskVMTRef);
+   tape.write(bcCreate);
+
+   tape.write(bcPushA);
+   tape.write(bcXLen);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcBSwapSI);
+   tape.write(bcXSet);
+   tape.write(bcBSwapSI);
+   tape.write(bcNext, baCurrentLabel);
+   tape.releaseLabel();
+
+   tape.write(bcPopA);
+}
+
+void ByteCodeWriter :: unboxArgList(CommandTape& tape)
+{
+   // bcopya
+   // dcopy 0
+   // labSearch:
+   // get
+   // inc
+   // elser labSearch
+   // ecopyd
+   // dec
+   // pushn 0
+
+   // labNext:
+   // dec
+   // get
+   // pusha
+   // elsen labNext 0
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcGet);
+   tape.write(bcInc);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+   tape.write(bcECopyD);
+   tape.write(bcDec);
+   tape.write(bcPushN, 0);
+
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcDec);
+   tape.write(bcGet);
+   tape.write(bcPushA);
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   switch (sourceType) {
+      case lxResult:
+         // popa
+         tape.write(bcPopA);
+         break;
+      case lxCurrentMessage:
+         // pope
+         tape.write(bcPopE);
+         break;
+   }
+}
+
 //void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
 //{
 //   tape.write(bcFreeStack, count);
 //}
-//
-//void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
-//{
-//   // popi n
-//   if (count == 1) {
-//      tape.write(bcPop);
-//   }
-//   else if (count > 1)
-//      tape.write(bcPopI, count);
-//}
-//
-//void ByteCodeWriter :: releaseArgList(CommandTape& tape)
-//{
-//   // bcopya
-//   // labSearch:
-//   // popa
-//   // elser labSearch
-//   // acopyb
-//
-//   tape.write(bcBCopyA);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcPopA);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//   tape.write(bcACopyB);
-//}
-//
+
+void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
+{
+   // popi n
+   if (count == 1) {
+      tape.write(bcPop);
+   }
+   else if (count > 1)
+      tape.write(bcPopI, count);
+}
+
+void ByteCodeWriter :: releaseArgList(CommandTape& tape)
+{
+   // bcopya
+   // labSearch:
+   // popa
+   // elser labSearch
+   // acopyb
+
+   tape.write(bcBCopyA);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcPopA);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.releaseLabel();
+   tape.write(bcACopyB);
+}
+
 //void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
 //{
 //   // setsubj subj
@@ -847,44 +847,44 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //
 //   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
 //}
-//
-//void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
-//{
-//   // validate
-//   // xcallrm r, m
-//
-//   if(withValidattion)
-//      tape.write(bcValidate);
-//
-//   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
-//
-//   tape.write(bcFreeStack, 1 + getParamCount(message));
-//}
-//
-//void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xindexrm r, m
-//   // acallvd
-//
-//   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
-//   tape.write(bcACallVD);
-//
-//   tape.write(bcFreeStack, 1 + getParamCount(message));
-//}
-//
+
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   if(withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xindexrm r, m
+   // acallvd
+
+   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
+   tape.write(bcACallVD);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
 //void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
 //{
 //   // bsredirect
 //
 //   tape.write(bcBSRedirect);
 //}
-//
-//void ByteCodeWriter :: resend(CommandTape& tape)
-//{
-//   // ajumpvi 0
-//   tape.write(bcAJumpVI);
-//}
-//
+
+void ByteCodeWriter :: resend(CommandTape& tape)
+{
+   // ajumpvi 0
+   tape.write(bcAJumpVI);
+}
+
 //void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
 //{
 //   // callextr ref
@@ -896,34 +896,34 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   // callextr ref
 //   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
 //}
-//
-//void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
-//{
-//   // ifr then-end, r
-//   tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
-//}
-//
-//void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd)
-//{
-//   // elser then-end, r
-//   if (comparingRef == 0) {
-//      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
-//   }
-//   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
-//}
-//
-//void ByteCodeWriter :: throwCurrent(CommandTape& tape)
-//{
-//   // throw
-//   tape.write(bcThrow);
-//}
-//
-//void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
-//{
-//   // jump labEnd
-//   tape.write(bcJump, label);
-//}
-//
+
+void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
+{
+   // ifr then-end, r
+   tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
+}
+
+void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd)
+{
+   // elser then-end, r
+   if (comparingRef == 0) {
+      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
+   }
+   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
+}
+
+void ByteCodeWriter :: throwCurrent(CommandTape& tape)
+{
+   // throw
+   tape.write(bcThrow);
+}
+
+void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+{
+   // jump labEnd
+   tape.write(bcJump, label);
+}
+
 //void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
 //{
 //   // exclude code should follow open command
@@ -942,21 +942,21 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //
 //   (*it).argument += size;
 //}
-//
-//void ByteCodeWriter :: endCatch(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//}
-//
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//}
-//
+
+void ByteCodeWriter :: endCatch(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+}
+
 //void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
 //{
 //   // then-end:
@@ -970,22 +970,22 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   }
 //      
 //}
-//
-//void ByteCodeWriter :: endLoop(CommandTape& tape)
-//{
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcIfR, baPreviousLabel, comparingRef | mskConstantRef);
-//
-//   tape.setLabel();
-//   tape.releaseLabel();
-//}
-//
+
+void ByteCodeWriter :: endLoop(CommandTape& tape)
+{
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter :: endLoop(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcIfR, baPreviousLabel, comparingRef | mskConstantRef);
+
+   tape.setLabel();
+   tape.releaseLabel();
+}
+
 //void ByteCodeWriter :: endExternalBlock(CommandTape& tape,  bool idle)
 //{
 //   if (!idle)
@@ -993,49 +993,49 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //
 //   tape.write(blEnd, bsBranch);
 //}
-//
-//void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bool withFrame)
-//{
-//   // labExit:
-//   //   restore reserved / nop
-//   //   close
-//   //   quitn n / quit
-//   // end
-//
-//   tape.setLabel();
-//   if (withFrame) {
-//      if (reserved > 0) {
-//         tape.write(bcRestore, 2 + reserved);
-//      }
-//      tape.write(bcClose);
-//   }
-//
-//   if (count > 0) {
-//      tape.write(bcQuitN, count);
-//   }
-//   else tape.write(bcQuit);
-//}
-//
-//void ByteCodeWriter :: endMethod(CommandTape& tape, int count, int reserved, bool withFrame)
-//{
-//   exitMethod(tape, count, reserved, withFrame);
-//
-//   tape.write(blEnd, bsMethod);
-//}
-//
+
+void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bool withFrame)
+{
+   // labExit:
+   //   restore reserved / nop
+   //   close
+   //   quitn n / quit
+   // end
+
+   tape.setLabel();
+   if (withFrame) {
+      if (reserved > 0) {
+         tape.write(bcRestore, 2 + reserved);
+      }
+      tape.write(bcClose);
+   }
+
+   if (count > 0) {
+      tape.write(bcQuitN, count);
+   }
+   else tape.write(bcQuit);
+}
+
+void ByteCodeWriter :: endMethod(CommandTape& tape, int count, int reserved, bool withFrame)
+{
+   exitMethod(tape, count, reserved, withFrame);
+
+   tape.write(blEnd, bsMethod);
+}
+
 //void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
 //{
 //   // end
 //
 //   tape.write(blEnd, bsMethod);
 //}
-//
-//void ByteCodeWriter :: endClass(CommandTape& tape)
-//{
-//   // end:
-//   tape.write(blEnd, bsClass);
-//}
-//
+
+void ByteCodeWriter :: endClass(CommandTape& tape)
+{
+   // end:
+   tape.write(blEnd, bsClass);
+}
+
 //void ByteCodeWriter :: endSymbol(CommandTape& tape)
 //{
 //   // symbol-end:
@@ -1616,347 +1616,347 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   if (scope.debug)
 //      writeDebugInfoStopper(scope.debug);
 //}
-//
-//void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argument)
-//{
-//   if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // nsave
-//      tape.write(bcBCopyF, argument);
-//      tape.write(bcNSave);
-//
-//      tape.write(bcACopyB);
-//   }
-//}
-//
-//void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
-//{
-//   if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // rload
-//      // nsave
-//      tape.write(bcBCopyF, argument);
-//      tape.write(bcRLoad);
-//      tape.write(bcNSave);
-//   }
-//   else if (target == lxLocal) {
-//      // bloadfi param
-//      // rload
-//      // nsave
-//      tape.write(bcBLoadFI, argument, bpFrame);
-//      tape.write(bcRLoad);
-//      tape.write(bcNSave);
-//   }
-//   else if (target == lxFieldAddress) {
-//      // rload
-//      // ecopyd
-//      // bloadfi 1
-//      // dcopy target.param
-//      // bwrite
-//      tape.write(bcRLoad);
-//      tape.write(bcECopyD);
-//      tape.write(bcBLoadFI, 1, bpFrame);
-//      tape.write(bcDCopy, argument);
-//      tape.write(bcBWrite);
-//   }
-//}
-//
+
+void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // nsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcNSave);
+
+      tape.write(bcACopyB);
+   }
+}
+
+void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // rload
+      // nsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target == lxLocal) {
+      // bloadfi param
+      // rload
+      // nsave
+      tape.write(bcBLoadFI, argument, bpFrame);
+      tape.write(bcRLoad);
+      tape.write(bcNSave);
+   }
+   else if (target == lxFieldAddress) {
+      // rload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param
+      // bwrite
+      tape.write(bcRLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, argument);
+      tape.write(bcBWrite);
+   }
+}
+
 //void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
 //{
 //   if (target == lxResult) {
 //      tape.write(bcNLoad);
 //   }
 //}
-//
-//void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
-//{
-//   if (target == lxFieldAddress) {
-//
-//      if (offset == 0) {
-//         // bloadfi 1
-//         // ncopy
-//
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcNCopy);
-//      }
-//      else {
-//         // nload
-//         // ecopyd
-//         // bloadfi 1
-//         // dcopy target.param
-//         // bwrite
-//
-//         tape.write(bcNLoad);
-//         tape.write(bcECopyD);
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBWrite);
-//      }
-//   }
-//   else if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // ncopy
-//      tape.write(bcBCopyF, offset);
-//      tape.write(bcNCopy);
-//   }
-//}
-//
-//void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int offset)
-//{
-//   if (target == lxFieldAddress) {
-//      // nload
-//      // ecopyd
-//      // bloadfi 1
-//      // dcopy target.param
-//      // bwritew
-//      tape.write(bcNLoad);
-//      tape.write(bcECopyD);
-//      tape.write(bcBLoadFI, 1, bpFrame);
-//      tape.write(bcDCopy, offset);
-//      tape.write(bcBWriteW);
-//   }
-//   else if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // ncopy
-//      tape.write(bcBCopyF, offset);
-//      tape.write(bcNCopy);
-//   }
-//}
-//
-//void ByteCodeWriter :: assignByte(CommandTape& tape, LexicalType target, int offset)
-//{
-//   if (target == lxFieldAddress) {
-//      // nload
-//      // ecopyd
-//      // bloadfi 1
-//      // dcopy target.param
-//      // bwriteb
-//
-//      tape.write(bcNLoad);
-//      tape.write(bcECopyD);
-//      tape.write(bcBLoadFI, 1, bpFrame);
-//      tape.write(bcDCopy, offset);
-//      tape.write(bcBWriteB);
-//   }
-//   else if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // ncopy
-//      tape.write(bcBCopyF, offset);
-//      tape.write(bcNCopy);
-//   }
-//}
-//
-//void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int offset)
-//{
-//   if (target == lxFieldAddress) {
-//      // bloadfi 1
-//      tape.write(bcBLoadFI, 1, bpFrame);
-//
-//      if (offset == 0) {
-//         // lcopy
-//
-//         tape.write(bcLCopy);
-//      }
-//      else {
-//         // dcopy 0
-//         // bread
-//         // dcopy prm
-//         // bwrite
-//         // dcopy 4
-//         // bread
-//         // dcopy prm + 4
-//         // bwrite
-//         tape.write(bcDCopy, 0);
-//         tape.write(bcBRead);
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBWrite);
-//         tape.write(bcDCopy, 4);
-//         tape.write(bcBRead);
-//         tape.write(bcDCopy, offset + 4);
-//         tape.write(bcBWrite);
-//      }
-//   }
-//   else if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // lcopy
-//      tape.write(bcBCopyF, offset);
-//      tape.write(bcLCopy);
-//   }
-//}
-//
-//void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int offset, int size)
-//{
-//   if (target == lxFieldAddress) {
-//      // bloadfi 1
-//
-//      copyStructure(tape, offset, size);
-//   }
-//   else if (target == lxLocalAddress) {
-//      // bcopyf param
-//      tape.write(bcBCopyF, offset);
-//
-//      copyStructure(tape, 0, size);
-//   }
-//
-//}
-//
-//void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
-//{
-//   // if it is alinged
-//   if ((offset & 3) == 0 && (size & 3) == 3) {
-//      if (size == 8) {
-//         // nloadi offset
-//         // nsavei 0
-//         // nloadi offset + 1
-//         // nsavei 1
-//         tape.write(bcNLoadI, offset);
-//         tape.write(bcNSaveI, 0);
-//         tape.write(bcNLoadI, offset + 1);
-//         tape.write(bcNSaveI, 1);
-//      }
-//      else if (size == 12) {
-//         // nloadi offset
-//         // nsavei 0
-//         // nloadi offset + 1
-//         // nsavei 1
-//         // nloadi offset + 2
-//         // nsavei 2
-//         tape.write(bcNLoadI, offset);
-//         tape.write(bcNSaveI, 0);
-//         tape.write(bcNLoadI, offset + 1);
-//         tape.write(bcNSaveI, 1);
-//         tape.write(bcNLoadI, offset + 2);
-//         tape.write(bcNSaveI, 2);
-//      }
-//      else if (size == 16) {
-//         // nloadi offset
-//         // nsavei 0
-//         // nloadi offset + 1
-//         // nsavei 1
-//         // nloadi offset + 2
-//         // nsavei 2
-//         // nloadi offset + 3
-//         // nsavei 3
-//         tape.write(bcNLoadI, offset);
-//         tape.write(bcNSaveI, 0);
-//         tape.write(bcNLoadI, offset + 1);
-//         tape.write(bcNSaveI, 1);
-//         tape.write(bcNLoadI, offset + 2);
-//         tape.write(bcNSaveI, 2);
-//         tape.write(bcNLoadI, offset + 3);
-//         tape.write(bcNSaveI, 3);
-//      }
-//      else {
-//         // dcopy 0
-//         // ecopy count / 4
-//         // pushe
-//         // labCopy:
-//         // esavesi 0
-//         // addn (offset / 4)
-//         // nread
-//         // addn -offset
-//         // nwrite
-//         // eloadsi
-//         // next labCopy
-//         // pop
-//
-//         tape.write(bcDCopy);
-//         tape.write(bcECopy, size >> 2);
-//         tape.write(bcPushE);
-//         tape.newLabel();
-//         tape.setLabel(true);
-//         tape.write(bcESaveSI);
-//         tape.write(bcAddN, offset >> 2);
-//         tape.write(bcNRead);
-//         tape.write(bcAddN, -(offset >> 2));
-//         tape.write(bcNWrite);
-//         tape.write(bcELoadSI);
-//         tape.write(bcNext, baCurrentLabel);
-//         tape.releaseLabel();
-//         tape.write(bcPop);
-//      }
-//   }
-//   else {
-//      // dcopy 0
-//      // ecopy count
-//      // pushe
-//      // labCopy:
-//      // esavesi 0
-//      // addn offset
-//      // breadb
-//      // addn -offset
-//      // bwriteb
-//      // eloadsi 0
-//      // next labCopy
-//      // pop
-//
-//      tape.write(bcDCopy);
-//      tape.write(bcECopy, size);
-//      tape.write(bcPushE);
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcESaveSI);
-//      tape.write(bcAddN, offset);
-//      tape.write(bcBReadB);
-//      tape.write(bcAddN, -offset);
-//      tape.write(bcBWriteB);
-//      tape.write(bcELoadSI);
-//      tape.write(bcNext, baCurrentLabel);
-//      tape.releaseLabel();
-//      tape.write(bcPop);
-//   }
-//}
-//
-//void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
-//{
-//   if (offset != 0) {
-//      // dcopy index
-//      // bread
-//      // dcopye
-//
-//      tape.write(bcDCopy, offset);
-//      tape.write(bcBRead);
-//      tape.write(bcDCopyE);
-//   }
-//   else {
-//      // nload
-//      tape.write(bcNLoad);
-//   }
-//
-//   // nsave
-//   // acopyb
-//
-//   tape.write(bcNSave);
-//   tape.write(bcACopyB);
-//}
-//
-//void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
-//{
-//   // dcopy index
-//   // breadw
-//   // dcopye
-//   // nsave
-//   // acopyb
-//
-//   tape.write(bcDCopy, offset);
-//   tape.write(bcBReadW);
-//   tape.write(bcDCopyE);
-//   tape.write(bcAndN, 0xFFFF);
-//   tape.write(bcNSave);
-//   tape.write(bcACopyB);
-//}
-//
-//void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
-//{
-//   // bcopya
-//   // dcopy value
-//   // nsave
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, value);
-//   tape.write(bcNSave);
-//}
-//
+
+void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
+{
+   if (target == lxFieldAddress) {
+
+      if (offset == 0) {
+         // bloadfi 1
+         // ncopy
+
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcNCopy);
+      }
+      else {
+         // nload
+         // ecopyd
+         // bloadfi 1
+         // dcopy target.param
+         // bwrite
+
+         tape.write(bcNLoad);
+         tape.write(bcECopyD);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcDCopy, offset);
+         tape.write(bcBWrite);
+      }
+   }
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, offset);
+      tape.write(bcNCopy);
+   }
+}
+
+void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int offset)
+{
+   if (target == lxFieldAddress) {
+      // nload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param
+      // bwritew
+      tape.write(bcNLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, offset);
+      tape.write(bcBWriteW);
+   }
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, offset);
+      tape.write(bcNCopy);
+   }
+}
+
+void ByteCodeWriter :: assignByte(CommandTape& tape, LexicalType target, int offset)
+{
+   if (target == lxFieldAddress) {
+      // nload
+      // ecopyd
+      // bloadfi 1
+      // dcopy target.param
+      // bwriteb
+
+      tape.write(bcNLoad);
+      tape.write(bcECopyD);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcDCopy, offset);
+      tape.write(bcBWriteB);
+   }
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      // ncopy
+      tape.write(bcBCopyF, offset);
+      tape.write(bcNCopy);
+   }
+}
+
+void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int offset)
+{
+   if (target == lxFieldAddress) {
+      // bloadfi 1
+      tape.write(bcBLoadFI, 1, bpFrame);
+
+      if (offset == 0) {
+         // lcopy
+
+         tape.write(bcLCopy);
+      }
+      else {
+         // dcopy 0
+         // bread
+         // dcopy prm
+         // bwrite
+         // dcopy 4
+         // bread
+         // dcopy prm + 4
+         // bwrite
+         tape.write(bcDCopy, 0);
+         tape.write(bcBRead);
+         tape.write(bcDCopy, offset);
+         tape.write(bcBWrite);
+         tape.write(bcDCopy, 4);
+         tape.write(bcBRead);
+         tape.write(bcDCopy, offset + 4);
+         tape.write(bcBWrite);
+      }
+   }
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      // lcopy
+      tape.write(bcBCopyF, offset);
+      tape.write(bcLCopy);
+   }
+}
+
+void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int offset, int size)
+{
+   if (target == lxFieldAddress) {
+      // bloadfi 1
+
+      copyStructure(tape, offset, size);
+   }
+   else if (target == lxLocalAddress) {
+      // bcopyf param
+      tape.write(bcBCopyF, offset);
+
+      copyStructure(tape, 0, size);
+   }
+
+}
+
+void ByteCodeWriter :: copyStructure(CommandTape& tape, int offset, int size)
+{
+   // if it is alinged
+   if ((offset & 3) == 0 && (size & 3) == 3) {
+      if (size == 8) {
+         // nloadi offset
+         // nsavei 0
+         // nloadi offset + 1
+         // nsavei 1
+         tape.write(bcNLoadI, offset);
+         tape.write(bcNSaveI, 0);
+         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNSaveI, 1);
+      }
+      else if (size == 12) {
+         // nloadi offset
+         // nsavei 0
+         // nloadi offset + 1
+         // nsavei 1
+         // nloadi offset + 2
+         // nsavei 2
+         tape.write(bcNLoadI, offset);
+         tape.write(bcNSaveI, 0);
+         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNSaveI, 1);
+         tape.write(bcNLoadI, offset + 2);
+         tape.write(bcNSaveI, 2);
+      }
+      else if (size == 16) {
+         // nloadi offset
+         // nsavei 0
+         // nloadi offset + 1
+         // nsavei 1
+         // nloadi offset + 2
+         // nsavei 2
+         // nloadi offset + 3
+         // nsavei 3
+         tape.write(bcNLoadI, offset);
+         tape.write(bcNSaveI, 0);
+         tape.write(bcNLoadI, offset + 1);
+         tape.write(bcNSaveI, 1);
+         tape.write(bcNLoadI, offset + 2);
+         tape.write(bcNSaveI, 2);
+         tape.write(bcNLoadI, offset + 3);
+         tape.write(bcNSaveI, 3);
+      }
+      else {
+         // dcopy 0
+         // ecopy count / 4
+         // pushe
+         // labCopy:
+         // esavesi 0
+         // addn (offset / 4)
+         // nread
+         // addn -offset
+         // nwrite
+         // eloadsi
+         // next labCopy
+         // pop
+
+         tape.write(bcDCopy);
+         tape.write(bcECopy, size >> 2);
+         tape.write(bcPushE);
+         tape.newLabel();
+         tape.setLabel(true);
+         tape.write(bcESaveSI);
+         tape.write(bcAddN, offset >> 2);
+         tape.write(bcNRead);
+         tape.write(bcAddN, -(offset >> 2));
+         tape.write(bcNWrite);
+         tape.write(bcELoadSI);
+         tape.write(bcNext, baCurrentLabel);
+         tape.releaseLabel();
+         tape.write(bcPop);
+      }
+   }
+   else {
+      // dcopy 0
+      // ecopy count
+      // pushe
+      // labCopy:
+      // esavesi 0
+      // addn offset
+      // breadb
+      // addn -offset
+      // bwriteb
+      // eloadsi 0
+      // next labCopy
+      // pop
+
+      tape.write(bcDCopy);
+      tape.write(bcECopy, size);
+      tape.write(bcPushE);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcESaveSI);
+      tape.write(bcAddN, offset);
+      tape.write(bcBReadB);
+      tape.write(bcAddN, -offset);
+      tape.write(bcBWriteB);
+      tape.write(bcELoadSI);
+      tape.write(bcNext, baCurrentLabel);
+      tape.releaseLabel();
+      tape.write(bcPop);
+   }
+}
+
+void ByteCodeWriter :: copyInt(CommandTape& tape, int offset)
+{
+   if (offset != 0) {
+      // dcopy index
+      // bread
+      // dcopye
+
+      tape.write(bcDCopy, offset);
+      tape.write(bcBRead);
+      tape.write(bcDCopyE);
+   }
+   else {
+      // nload
+      tape.write(bcNLoad);
+   }
+
+   // nsave
+   // acopyb
+
+   tape.write(bcNSave);
+   tape.write(bcACopyB);
+}
+
+void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
+{
+   // dcopy index
+   // breadw
+   // dcopye
+   // nsave
+   // acopyb
+
+   tape.write(bcDCopy, offset);
+   tape.write(bcBReadW);
+   tape.write(bcDCopyE);
+   tape.write(bcAndN, 0xFFFF);
+   tape.write(bcNSave);
+   tape.write(bcACopyB);
+}
+
+void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
+{
+   // bcopya
+   // dcopy value
+   // nsave
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, value);
+   tape.write(bcNSave);
+}
+
 //void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
 //{
 //   // pushr trueRef
@@ -1975,16 +1975,16 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   tape.setLabel();
 //   tape.write(bcPopA);
 //}
-//
-//void ByteCodeWriter :: saveSubject(CommandTape& tape)
-//{
-//   // dcopysubj
-//   // pushd
-//
-//   tape.write(bcDCopySubj);
-//   tape.write(bcPushD);
-//}
-//
+
+void ByteCodeWriter :: saveSubject(CommandTape& tape)
+{
+   // dcopysubj
+   // pushd
+
+   tape.write(bcDCopySubj);
+   tape.write(bcPushD);
+}
+
 //void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -2145,315 +2145,315 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //{
 //   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 //}
-//
-//void ByteCodeWriter :: tryLock(CommandTape& tape)
-//{
-//   // labWait:
-//   // snop
-//   // trylock
-//   // elsen labWait
-//
-//   int labWait = tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcSNop);
-//   tape.write(bcTryLock);
-//   tape.write(bcElseN, labWait, 0);
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter::freeLock(CommandTape& tape)
-//{
-//   // freelock
-//   tape.write(bcFreeLock);
-//}
-//
-//inline SNode getChild(SNode node, size_t index)
-//{
-//   SNode current = node.firstChild();
-//
-//   while (index > 0 && current != lxNone) {
-//      current = current.nextNode();
-//
-//      index--;
-//   }
-//
-//   return current;
-//}
-//
+
+void ByteCodeWriter :: tryLock(CommandTape& tape)
+{
+   // labWait:
+   // snop
+   // trylock
+   // elsen labWait
+
+   int labWait = tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcSNop);
+   tape.write(bcTryLock);
+   tape.write(bcElseN, labWait, 0);
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter::freeLock(CommandTape& tape)
+{
+   // freelock
+   tape.write(bcFreeLock);
+}
+
+inline SNode getChild(SNode node, size_t index)
+{
+   SNode current = node.firstChild();
+
+   while (index > 0 && current != lxNone) {
+      current = current.nextNode();
+
+      index--;
+   }
+
+   return current;
+}
+
 //inline bool existNode(SNode node, LexicalType type)
 //{
 //   return SyntaxTree::findChild(node, type) == type;
 //}
-//
-//inline size_t countChildren(SNode node)
-//{
-//   size_t counter = 0;
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      current = current.nextNode();
-//
-//      counter++;
-//   }
-//
-//   return counter;
-//}
-//
-//inline ref_t defineConstantMask(LexicalType type)
-//{
-//   switch(type) {
-//      case lxConstantClass:
-//         return mskVMTRef;
-//      case lxConstantString:
-//         return mskLiteralRef;
-//      case lxConstantWideStr:
-//         return mskWideLiteralRef;
-//      case lxConstantChar:
-//         return mskCharRef;
-//      case lxConstantInt:
-//         return mskInt32Ref;
-//      case lxConstantLong:
-//         return mskInt64Ref;
-//      case lxConstantReal:
-//         return mskRealRef;
-//      case lxMessageConstant:
-//         return mskMessage;
-//      case lxExtMessageConstant:
-//         return mskExtMessage;
-//      case lxSignatureConstant:
-//         return mskSignature;
-//      case lxVerbConstant:
-//         return mskVerb;
-//      default:
-//         return mskConstantRef;
-//   }
-//}
-//
-//void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
-//{
-//   if (node == lxBreakpoint) {
-//      declareBreakpoint(tape, 
-//         SyntaxTree::findChild(node, lxRow).argument, 
-//         SyntaxTree::findChild(node, lxCol).argument,
-//         SyntaxTree::findChild(node, lxLength).argument, node.argument);
-//   }
-//}
-//
-//void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
-//{
-//   switch (type)
-//   {
-//      case lxSymbol:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         tape.write(bcPushA);
-//         break;
-//      case lxConstantString:
-//      case lxConstantWideStr:
-//      case lxConstantClass:
-//      case lxConstantSymbol:
-//      case lxConstantChar:
-//      case lxConstantInt:
-//      case lxConstantLong:
-//      case lxConstantReal:
-//      case lxMessageConstant:
-//      case lxExtMessageConstant:
-//      case lxSignatureConstant:
-//      case lxVerbConstant:
-//         // pushr reference
-//         tape.write(bcPushR, argument | defineConstantMask(type));
-//         break;
-//      case lxLocal:
-//         // pushfi index
-//         tape.write(bcPushFI, argument, bpFrame);
-//         break;
-//      case lxLocalAddress:
-//         // pushf n
-//         tape.write(bcPushF, argument);
-//         break;
-//      case lxBlockLocalAddr:
-//         // pushf n
-//         tape.write(bcPushF, argument, bpFrame);
-//         break;
-//      case lxCurrent:
-//         // pushsi index
-//         tape.write(bcPushSI, argument);
-//         break;
-//      case lxField:
-//         // aloadfi 1
-//         // pushai offset / pusha
-//         tape.write(bcALoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcPushA);
-//         }
-//         else tape.write(bcPushAI, argument);
-//         break;
-//      case lxBlockLocal:
-//         // pushfi index
-//         tape.write(bcPushFI, argument, bpBlock);
-//         break;
-//      case lxNil:
-//         // pushn 0
-//         tape.write(bcPushN, 0);
-//         break;
-//      case lxResult:
-//         // pusha
-//         tape.write(bcPushA);
-//         break;
-//      case lxResultField:
-//         // pushai reference
-//         tape.write(bcPushAI, argument);
-//         break;
-//      case lxCurrentMessage:
-//         // pushe
-//         tape.write(bcPushE);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
-//{
-//   switch (type)
-//   {
-//      case lxSymbol:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         break;
-//      case lxConstantString:
-//      case lxConstantWideStr:
-//      case lxConstantClass:
-//      case lxConstantSymbol:
-//      case lxConstantChar:
-//      case lxConstantInt:
-//      case lxConstantLong:
-//      case lxConstantReal:
-//      case lxMessageConstant:
-//      case lxExtMessageConstant:
-//      case lxSignatureConstant:
-//      case lxVerbConstant:
-//            // pushr reference
-//         tape.write(bcACopyR, argument | defineConstantMask(type));
-//         break;
-//      case lxLocal:
-//         // aloadfi index
-//         tape.write(bcALoadFI, argument, bpFrame);
-//         break;
-//      case lxCurrent:
-//         // aloadsi index
-//         tape.write(bcALoadSI, argument);
-//         break;
-//      case lxNil:
-//         // acopyr 0
-//         tape.write(bcACopyR);
-//         break;
-//      case lxField:
-//         // bloadfi 1
-//         // aloadbi / acopyb
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcACopyB);
-//         }
-//         else tape.write(bcALoadBI, argument);
-//         break;
-//      case lxFieldAddress:
-//         // aloadfi 1
-//         tape.write(bcALoadFI, 1, bpFrame);
-//         break;
-//      case lxBlockLocal:
-//         // aloadfi n
-//         tape.write(bcALoadFI, argument, bpBlock);
-//         break;
-//      case lxLocalAddress:
-//         // acopyf n
-//         tape.write(bcACopyF, argument);
-//         break;
-//      case lxBlockLocalAddr:
-//         // acopyf n
-//         tape.write(bcACopyF, argument, bpFrame);
-//         break;
-//      case lxResultField:
-//         // aloadai
-//         tape.write(bcALoadAI, argument);
-//         break;
+
+inline size_t countChildren(SNode node)
+{
+   size_t counter = 0;
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      current = current.nextNode();
+
+      counter++;
+   }
+
+   return counter;
+}
+
+inline ref_t defineConstantMask(LexicalType type)
+{
+   switch(type) {
+      case lxConstantClass:
+         return mskVMTRef;
+      case lxConstantString:
+         return mskLiteralRef;
+      case lxConstantWideStr:
+         return mskWideLiteralRef;
+      case lxConstantChar:
+         return mskCharRef;
+      case lxConstantInt:
+         return mskInt32Ref;
+      case lxConstantLong:
+         return mskInt64Ref;
+      case lxConstantReal:
+         return mskRealRef;
+      case lxMessageConstant:
+         return mskMessage;
+      case lxExtMessageConstant:
+         return mskExtMessage;
+      case lxSignatureConstant:
+         return mskSignature;
+      case lxVerbConstant:
+         return mskVerb;
+      default:
+         return mskConstantRef;
+   }
+}
+
+void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
+{
+   if (node == lxBreakpoint) {
+      declareBreakpoint(tape, 
+         SyntaxTree::findChild(node, lxRow).argument, 
+         SyntaxTree::findChild(node, lxCol).argument,
+         SyntaxTree::findChild(node, lxLength).argument, node.argument);
+   }
+}
+
+void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
+{
+   switch (type)
+   {
+      case lxSymbol:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         tape.write(bcPushA);
+         break;
+      case lxConstantString:
+      case lxConstantWideStr:
+      case lxConstantClass:
+      case lxConstantSymbol:
+      case lxConstantChar:
+      case lxConstantInt:
+      case lxConstantLong:
+      case lxConstantReal:
+      case lxMessageConstant:
+      case lxExtMessageConstant:
+      case lxSignatureConstant:
+      case lxVerbConstant:
+         // pushr reference
+         tape.write(bcPushR, argument | defineConstantMask(type));
+         break;
+      case lxLocal:
+         // pushfi index
+         tape.write(bcPushFI, argument, bpFrame);
+         break;
+      case lxLocalAddress:
+         // pushf n
+         tape.write(bcPushF, argument);
+         break;
+      case lxBlockLocalAddr:
+         // pushf n
+         tape.write(bcPushF, argument, bpFrame);
+         break;
+      case lxCurrent:
+         // pushsi index
+         tape.write(bcPushSI, argument);
+         break;
+      case lxField:
+         // aloadfi 1
+         // pushai offset / pusha
+         tape.write(bcALoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcPushA);
+         }
+         else tape.write(bcPushAI, argument);
+         break;
+      case lxBlockLocal:
+         // pushfi index
+         tape.write(bcPushFI, argument, bpBlock);
+         break;
+      case lxNil:
+         // pushn 0
+         tape.write(bcPushN, 0);
+         break;
+      case lxResult:
+         // pusha
+         tape.write(bcPushA);
+         break;
+      case lxResultField:
+         // pushai reference
+         tape.write(bcPushAI, argument);
+         break;
+      case lxCurrentMessage:
+         // pushe
+         tape.write(bcPushE);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
+{
+   switch (type)
+   {
+      case lxSymbol:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         break;
+      case lxConstantString:
+      case lxConstantWideStr:
+      case lxConstantClass:
+      case lxConstantSymbol:
+      case lxConstantChar:
+      case lxConstantInt:
+      case lxConstantLong:
+      case lxConstantReal:
+      case lxMessageConstant:
+      case lxExtMessageConstant:
+      case lxSignatureConstant:
+      case lxVerbConstant:
+         // pushr reference
+         tape.write(bcACopyR, argument | defineConstantMask(type));
+         break;
+      case lxLocal:
+         // aloadfi index
+         tape.write(bcALoadFI, argument, bpFrame);
+         break;
+      case lxCurrent:
+         // aloadsi index
+         tape.write(bcALoadSI, argument);
+         break;
+      case lxNil:
+         // acopyr 0
+         tape.write(bcACopyR);
+         break;
+      case lxField:
+         // bloadfi 1
+         // aloadbi / acopyb
+         tape.write(bcBLoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcACopyB);
+         }
+         else tape.write(bcALoadBI, argument);
+         break;
+      case lxFieldAddress:
+         // aloadfi 1
+         tape.write(bcALoadFI, 1, bpFrame);
+         break;
+      case lxBlockLocal:
+         // aloadfi n
+         tape.write(bcALoadFI, argument, bpBlock);
+         break;
+      case lxLocalAddress:
+         // acopyf n
+         tape.write(bcACopyF, argument);
+         break;
+      case lxBlockLocalAddr:
+         // acopyf n
+         tape.write(bcACopyF, argument, bpFrame);
+         break;
+      case lxResultField:
+         // aloadai
+         tape.write(bcALoadAI, argument);
+         break;
 //      case lxInternalCall:
 //         tape.write(bcCallR, argument | mskInternalRef);
 //         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t argument)
-//{
-//   switch (type)
-//   {
-//      case lxLocal:
-//      //case lxParam:
-//         // asavefi index
-//         tape.write(bcASaveFI, argument, bpFrame);
-//         break;
-//      case lxCurrent:
-//         // asavesi index
-//         tape.write(bcASaveSI, argument);
-//         break;
-//      case lxField:
-//         // bloadfi 1
-//         // asavebi index
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcASaveBI, argument);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
-//{
-//   translateBreakpoint(tape, SyntaxTree::findChild(node, lxBreakpoint));
-//
-//   loadObject(tape, node.type, node.argument);
-//}
-//
-//void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
-//{
-//   translateBreakpoint(tape, SyntaxTree::findChild(node, lxBreakpoint));
-//
-//   pushObject(tape, node.type, node.argument);
-//}
-//
-//void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (larg == lxNone) {
-//            larg = current;
-//         }
-//         else rarg = current;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (larg == lxNone) {
-//            larg = current;
-//         }
-//         else if (rarg == lxNone) {
-//            rarg = current;
-//         }
-//         else rarg2 = current;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t argument)
+{
+   switch (type)
+   {
+      case lxLocal:
+      //case lxParam:
+         // asavefi index
+         tape.write(bcASaveFI, argument, bpFrame);
+         break;
+      case lxCurrent:
+         // asavesi index
+         tape.write(bcASaveSI, argument);
+         break;
+      case lxField:
+         // bloadfi 1
+         // asavebi index
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcASaveBI, argument);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
+{
+   translateBreakpoint(tape, SyntaxTree::findChild(node, lxBreakpoint));
+
+   loadObject(tape, node.type, node.argument);
+}
+
+void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
+{
+   translateBreakpoint(tape, SyntaxTree::findChild(node, lxBreakpoint));
+
+   pushObject(tape, node.type, node.argument);
+}
+
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (larg == lxNone) {
+            larg = current;
+         }
+         else rarg = current;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (larg == lxNone) {
+            larg = current;
+         }
+         else if (rarg == lxNone) {
+            rarg = current;
+         }
+         else rarg2 = current;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   bool setMode = node.argument == SET_REFER_MESSAGE_ID;
@@ -2759,49 +2759,49 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //      endExternalBlock(tape);
 //   }
 //}
-//
-//ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
-//{
-//   SNode bpNode = SyntaxTree::findChild(callNode, lxBreakpoint);
-//   if (bpNode != lxNone) {
-//      translateBreakpoint(tape, bpNode);
-//
-//      declareBlock(tape);
-//   }
-//
-//   SNode overridden = SyntaxTree::findChild(callNode, lxOverridden);
-//   if (overridden != lxNone) {
-//      generateExpression(tape, overridden);
-//   }
-//   else tape.write(bcALoadSI, 0);
-//
-//   // copym message
-//   ref_t message = callNode.argument;
-//   SNode msg = SyntaxTree::findChild(callNode, lxMessage);
-//   if (msg != lxNone)
-//      message = msg.argument;
-//
-//   tape.write(bcCopyM, message);
-//
-//   SNode target = SyntaxTree::findChild(callNode, lxTarget);
-//   if (callNode == lxDirectCalling) {
-//      callResolvedMethod(tape, target.argument, callNode.argument);
-//   }
-//   else if (callNode == lxSDirctCalling) {
-//      callVMTResolvedMethod(tape, target.argument, callNode.argument);
-//   }
-//   else {
-//      // acallvi offs
-//      tape.write(bcACallVI, 0);
-//      tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
-//   }
-//
-//   if (bpNode != lxNone)
-//      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//
-//   return message;
-//}
-//
+
+ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
+{
+   SNode bpNode = SyntaxTree::findChild(callNode, lxBreakpoint);
+   if (bpNode != lxNone) {
+      translateBreakpoint(tape, bpNode);
+
+      declareBlock(tape);
+   }
+
+   SNode overridden = SyntaxTree::findChild(callNode, lxOverridden);
+   if (overridden != lxNone) {
+      generateExpression(tape, overridden);
+   }
+   else tape.write(bcALoadSI, 0);
+
+   // copym message
+   ref_t message = callNode.argument;
+   SNode msg = SyntaxTree::findChild(callNode, lxMessage);
+   if (msg != lxNone)
+      message = msg.argument;
+
+   tape.write(bcCopyM, message);
+
+   SNode target = SyntaxTree::findChild(callNode, lxTarget);
+   if (callNode == lxDirectCalling) {
+      callResolvedMethod(tape, target.argument, callNode.argument);
+   }
+   else if (callNode == lxSDirctCalling) {
+      callVMTResolvedMethod(tape, target.argument, callNode.argument);
+   }
+   else {
+      // acallvi offs
+      tape.write(bcACallVI, 0);
+      tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+   }
+
+   if (bpNode != lxNone)
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+
+   return message;
+}
+
 //void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
 //{
 //   int paramCount = 0;
@@ -2838,387 +2838,387 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //   loadObject(tape, node);
 //   freeVirtualStack(tape, paramCount);
 //}
-//
-//void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
-//{
-//   bool directMode = true;
-//   bool argUnboxMode = false;
-//   bool unboxMode = false;
-//
-//   int paramCount = 0;
-//   int presavedCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxArgUnboxing) {
-//         argUnboxMode = true;
-//         generateExpression(tape, current);
-//         unboxArgList(tape);
-//      }
-//      else if (test(current.type, lxObjectMask)) {
-//         if (current.type == lxLocalUnboxing)
-//            unboxMode = true;
-//
-//         paramCount++;
-//      }
-//    
-//      // presave the boxed arguments if required
-//      if (current == lxUnboxing) {
-//         generateObjectExpression(tape, current);
-//         pushObject(tape, lxResult);
-//         presavedCount++;
-//         unboxMode = true;
-//      }
-//
-//      if (current == lxExpression && !isSimpleObjectExpression(current, true)) {
-//         // ignore nested expression
-//      }
-//      else if (test(current.type, lxExpressionMask) || current == lxResult) 
-//         directMode = false;
-//   
-//      current = current.nextNode();
-//   }
-//
-//   if (!directMode && (paramCount > 1 || unboxMode)) {
-//      declareArgumentList(tape, paramCount);
-//   }
-//   // if message has no arguments - direct mode is allowed
-//   else directMode = true;
-//
-//   size_t counter = countChildren(node);
-//   size_t index = 0;   
-//   for (int i = 0; i < counter; i++) {
-//      // get parameters in reverse order if required
-//      current = getChild(node, directMode ? counter - i - 1 : i);
-//
-//      if (current == lxArgUnboxing) {
-//         // argument list is already unboxed
-//      }
-//      else if (test(current.type, lxObjectMask)) {
-//         if (current == lxUnboxing) {
-//            SNode tempLocal = SyntaxTree::findChild(current, lxTempLocal);
-//            if (tempLocal == lxNone) {
-//               loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
-//               presavedCount--;
-//            }
-//            else loadObject(tape, lxLocal, tempLocal.argument);
-//         }
-//         else generateObjectExpression(tape, current);
-//
-//         if (directMode) {
-//            pushObject(tape, lxResult);
-//         }
-//         else saveObject(tape, lxCurrent, index);
-//
-//         index++;
-//      }
-//   }
-//
-//   ref_t message = generateCall(tape, node);
-//
-//   if (argUnboxMode) {
-//      releaseArgList(tape);
-//      releaseObject(tape);
-//   }
-//   else if (paramCount > getParamCount(message) + 1) {
-//      releaseObject(tape, paramCount - getParamCount(message) - 2);
-//   }
-//
-//   // unbox the arguments
-//   if(unboxMode)
-//      unboxCallParameters(tape, node);
-//}
-//
-//void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   loadBase(tape, lxResult);
-//
-//   size_t counter = countChildren(node);
-//   size_t index = 0;
-//   while (index < counter) {
-//      // get parameters in reverse order if required
-//      SNode current = getChild(node, counter - index - 1);
-//      if (current == lxUnboxing) {
-//         SNode target = SyntaxTree::findMatchedChild(current, lxObjectMask);
-//         SNode tempLocal = SyntaxTree::findChild(current, lxTempLocal);
-//         if (tempLocal != lxNone) {
-//            loadObject(tape, lxLocal, tempLocal.argument);
-//         }
-//         else popObject(tape, lxResult);
-//
-//         if (current.argument != 0) {
-//            tape.write(bcPushB);
-//            loadBase(tape, target.type, target.argument);
-//
-//            if (target == lxFieldAddress) {
-//               if (current.argument == 4) {
-//                  copyInt(tape, target.argument);
-//               }
-//               else if (current.argument == 2) {
-//                  copyShort(tape, target.argument);
-//               }
-//               else copyStructure(tape, target.argument, current.argument);
-//            }
-//            else copyBase(tape, current.argument);
-//
-//            tape.write(bcPopB);
-//         }
-//         else {
-//            loadObject(tape, lxResultField);
-//            saveObject(tape, target.type, target.argument);
-//         }
-//      }
-//      else if (current == lxLocalUnboxing) {
-//         SNode assignNode = SyntaxTree::findChild(current, lxAssigning);
-//         SNode larg;
-//         SNode rarg;
-//
-//         assignOpArguments(assignNode, larg, rarg);
-//
-//         tape.write(bcPushB);
-//         loadObject(tape, larg.type, larg.argument);
-//         loadBase(tape, rarg.type, 0);
-//
-//         if (assignNode.argument == 4) {
-//            assignInt(tape, lxFieldAddress, rarg.argument);
-//         }
-//         else if (assignNode.argument == 2) {
-//            assignLong(tape, lxFieldAddress, rarg.argument);
-//         }
-//         else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
-//
-//         tape.write(bcPopB);
-//      }
-//
-//      index++;
-//   }
-//
-//   assignBaseTo(tape, lxResult);
-//}
-//
-//void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
-//{
-//   generateExpression(tape, node);
-//
-//   gotoEnd(tape, baFirstLabel);
-//}
-//
-//void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
-//{
-//   generateExpression(tape, node);
-//
-//   pushObject(tape, lxResult);
-//   throwCurrent(tape);
-//
-//   gotoEnd(tape, baFirstLabel);
-//}
-//
-//void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
-//{
-//   generateExpression(tape, node);
-//
-//   SNode target = SyntaxTree::findChild(node, lxTarget);
-//
-//   if (node == lxArgBoxing) {
-//      boxArgList(tape, target.argument);
-//   }
-//   else if (node.argument == 0) {
-//      newVariable(tape, target.argument, lxResult);
-//   }
-//   else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
-//
-//   SNode temp = SyntaxTree::findChild(node, lxTempLocal);
-//   if (temp != lxNone) {
-//      saveObject(tape, lxLocal, temp.argument);
-//   }
-//}
-//
-//void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   int size = node.argument;
-//
-//   SNode target;
-//   SNode source;
-//
-//   SNode child = node.firstChild();
-//   while (child != lxNone) {
-//      if (test(child.type, lxObjectMask)) {
-//         if (target == lxNone) {
-//            target = child;
-//         }
-//         else source = child;
-//      }
-//
-//      child = child.nextNode();
-//   }
-//
-//   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.type == lxIntArrOp && source.argument == REFER_MESSAGE_ID))) {
-//      loadBase(tape, target.type, target.argument);
-//
-//      generateObjectExpression(tape, source);
-//   }
-//   else {
-//      generateObjectExpression(tape, source);
-//
-//      if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
-//         if (target == lxLocalAddress) {
-//            if (node.argument == 4) {
-//               saveInt(tape, target.type, target.argument);
-//            }
-//            else if (node.argument == 8) {
-//               saveReal(tape, target.type, target.argument);
-//            }
-//         }
-//      }
-//      else if (target == lxExpression) {
-//         SNode arg1, arg2;
-//
-//         assignOpArguments(target, arg1, arg2);
-//         loadBase(tape, arg1.type, arg1.argument);
-//         saveBase(tape, false, lxResult, arg2.argument);
-//      }
-//      else if (size != 0) {
-//         if (source == lxFieldAddress) {
-//            loadBase(tape, target.type, target.argument);
-//            if (size == 4) {
-//               copyInt(tape, source.argument);
-//            }
-//            else if (size == 2) {
-//               copyShort(tape, source.argument);
-//            }
-//            else copyStructure(tape, source.argument, size);
-//         }
-//         else {
-//            if (size == 4) {
-//               assignInt(tape, target.type, target.argument);
-//            }
-//            else if (size == 2) {
-//               assignShort(tape, target.type, target.argument);
-//            }
-//            else if (size == 1) {
-//               assignByte(tape, target.type, target.argument);
-//            }
-//            else if (size == 8) {
-//               assignLong(tape, target.type, target.argument);
-//            }
-//            else assignStruct(tape, target.type, target.argument, size);
-//
-//            assignBaseTo(tape, lxResult);
-//         }
-//      }
-//      else saveObject(tape, target.type, target.argument);
-//   }
-//}
-//
-//void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target;
-//   SNode block;
-//   assignOpArguments(node, target, block);
-//
-//   generateObjectExpression(tape, target);
-//   pushObject(tape, lxResult);
-//
-//   tryLock(tape);
-//   declareTry(tape);
-//
-//   generateCodeBlock(tape, block);
-//
-//   // finally block - should free the lock if the exception was thrown
-//   declareCatch(tape);
-//
-//   loadBase(tape, lxResult);
-//   popObject(tape, lxResult);
-//   freeLock(tape);
-//   assignBaseTo(tape, lxResult);
-//   
-//   throwCurrent(tape);
-//
-//   endCatch(tape);
-//
-//   popObject(tape, lxResult);
-//   freeLock(tape);
-//}
-//
-//void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExpressionMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareCatch(tape);
-//
-//            // ...
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endCatch(tape);
-//}
-//
-//void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExpressionMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareAlt(tape);
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endAlt(tape);
-//}
-//
-//void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   declareLoop(tape/*, true*/);
-//
-//   //declareBlock(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxElse) {
-//         jumpIfEqual(tape, current.argument);
-//         
-//         generateCodeBlock(tape, current);
-//      }
-//      else if (test(current.type, lxObjectMask)) {
-//         declareBlock(tape);
-//         generateObjectExpression(tape, current);
-//         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//      }
-//         
-//      current = current.nextNode();
-//   }
-//
-//   //declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//
-//   if (node.argument != 0) {
-//      endLoop(tape, node.argument);
-//   }
-//   else endLoop(tape);
-//}
-//
+
+void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
+{
+   bool directMode = true;
+   bool argUnboxMode = false;
+   bool unboxMode = false;
+
+   int paramCount = 0;
+   int presavedCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxArgUnboxing) {
+         argUnboxMode = true;
+         generateExpression(tape, current);
+         unboxArgList(tape);
+      }
+      else if (test(current.type, lxObjectMask)) {
+         if (current.type == lxLocalUnboxing)
+            unboxMode = true;
+
+         paramCount++;
+      }
+    
+      // presave the boxed arguments if required
+      if (current == lxUnboxing) {
+         generateObjectExpression(tape, current);
+         pushObject(tape, lxResult);
+         presavedCount++;
+         unboxMode = true;
+      }
+
+      if (current == lxExpression && !isSimpleObjectExpression(current, true)) {
+         // ignore nested expression
+      }
+      else if (test(current.type, lxExpressionMask) || current == lxResult) 
+         directMode = false;
+   
+      current = current.nextNode();
+   }
+
+   if (!directMode && (paramCount > 1 || unboxMode)) {
+      declareArgumentList(tape, paramCount);
+   }
+   // if message has no arguments - direct mode is allowed
+   else directMode = true;
+
+   size_t counter = countChildren(node);
+   size_t index = 0;   
+   for (int i = 0; i < counter; i++) {
+      // get parameters in reverse order if required
+      current = getChild(node, directMode ? counter - i - 1 : i);
+
+      if (current == lxArgUnboxing) {
+         // argument list is already unboxed
+      }
+      else if (test(current.type, lxObjectMask)) {
+         if (current == lxUnboxing) {
+            SNode tempLocal = SyntaxTree::findChild(current, lxTempLocal);
+            if (tempLocal == lxNone) {
+               loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
+               presavedCount--;
+            }
+            else loadObject(tape, lxLocal, tempLocal.argument);
+         }
+         else generateObjectExpression(tape, current);
+
+         if (directMode) {
+            pushObject(tape, lxResult);
+         }
+         else saveObject(tape, lxCurrent, index);
+
+         index++;
+      }
+   }
+
+   ref_t message = generateCall(tape, node);
+
+   if (argUnboxMode) {
+      releaseArgList(tape);
+      releaseObject(tape);
+   }
+   else if (paramCount > getParamCount(message) + 1) {
+      releaseObject(tape, paramCount - getParamCount(message) - 2);
+   }
+
+   // unbox the arguments
+   if(unboxMode)
+      unboxCallParameters(tape, node);
+}
+
+void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)
+{
+   loadBase(tape, lxResult);
+
+   size_t counter = countChildren(node);
+   size_t index = 0;
+   while (index < counter) {
+      // get parameters in reverse order if required
+      SNode current = getChild(node, counter - index - 1);
+      if (current == lxUnboxing) {
+         SNode target = SyntaxTree::findMatchedChild(current, lxObjectMask);
+         SNode tempLocal = SyntaxTree::findChild(current, lxTempLocal);
+         if (tempLocal != lxNone) {
+            loadObject(tape, lxLocal, tempLocal.argument);
+         }
+         else popObject(tape, lxResult);
+
+         if (current.argument != 0) {
+            tape.write(bcPushB);
+            loadBase(tape, target.type, target.argument);
+
+            if (target == lxFieldAddress) {
+               if (current.argument == 4) {
+                  copyInt(tape, target.argument);
+               }
+               else if (current.argument == 2) {
+                  copyShort(tape, target.argument);
+               }
+               else copyStructure(tape, target.argument, current.argument);
+            }
+            else copyBase(tape, current.argument);
+
+            tape.write(bcPopB);
+         }
+         else {
+            loadObject(tape, lxResultField);
+            saveObject(tape, target.type, target.argument);
+         }
+      }
+      else if (current == lxLocalUnboxing) {
+         SNode assignNode = SyntaxTree::findChild(current, lxAssigning);
+         SNode larg;
+         SNode rarg;
+
+         assignOpArguments(assignNode, larg, rarg);
+
+         tape.write(bcPushB);
+         loadObject(tape, larg.type, larg.argument);
+         loadBase(tape, rarg.type, 0);
+
+         if (assignNode.argument == 4) {
+            assignInt(tape, lxFieldAddress, rarg.argument);
+         }
+         else if (assignNode.argument == 2) {
+            assignLong(tape, lxFieldAddress, rarg.argument);
+         }
+         else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+
+         tape.write(bcPopB);
+      }
+
+      index++;
+   }
+
+   assignBaseTo(tape, lxResult);
+}
+
+void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
+{
+   generateExpression(tape, node);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
+void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
+{
+   generateExpression(tape, node);
+
+   pushObject(tape, lxResult);
+   throwCurrent(tape);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
+void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
+{
+   generateExpression(tape, node);
+
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   if (node == lxArgBoxing) {
+      boxArgList(tape, target.argument);
+   }
+   else if (node.argument == 0) {
+      newVariable(tape, target.argument, lxResult);
+   }
+   else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
+
+   SNode temp = SyntaxTree::findChild(node, lxTempLocal);
+   if (temp != lxNone) {
+      saveObject(tape, lxLocal, temp.argument);
+   }
+}
+
+void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   int size = node.argument;
+
+   SNode target;
+   SNode source;
+
+   SNode child = node.firstChild();
+   while (child != lxNone) {
+      if (test(child.type, lxObjectMask)) {
+         if (target == lxNone) {
+            target = child;
+         }
+         else source = child;
+      }
+
+      child = child.nextNode();
+   }
+
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.type == lxIntArrOp && source.argument == REFER_MESSAGE_ID))) {
+      loadBase(tape, target.type, target.argument);
+
+      generateObjectExpression(tape, source);
+   }
+   else {
+      generateObjectExpression(tape, source);
+
+      if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
+         if (target == lxLocalAddress) {
+            if (node.argument == 4) {
+               saveInt(tape, target.type, target.argument);
+            }
+            else if (node.argument == 8) {
+               saveReal(tape, target.type, target.argument);
+            }
+         }
+      }
+      else if (target == lxExpression) {
+         SNode arg1, arg2;
+
+         assignOpArguments(target, arg1, arg2);
+         loadBase(tape, arg1.type, arg1.argument);
+         saveBase(tape, false, lxResult, arg2.argument);
+      }
+      else if (size != 0) {
+         if (source == lxFieldAddress) {
+            loadBase(tape, target.type, target.argument);
+            if (size == 4) {
+               copyInt(tape, source.argument);
+            }
+            else if (size == 2) {
+               copyShort(tape, source.argument);
+            }
+            else copyStructure(tape, source.argument, size);
+         }
+         else {
+            if (size == 4) {
+               assignInt(tape, target.type, target.argument);
+            }
+            else if (size == 2) {
+               assignShort(tape, target.type, target.argument);
+            }
+            else if (size == 1) {
+               assignByte(tape, target.type, target.argument);
+            }
+            else if (size == 8) {
+               assignLong(tape, target.type, target.argument);
+            }
+            else assignStruct(tape, target.type, target.argument, size);
+
+            assignBaseTo(tape, lxResult);
+         }
+      }
+      else saveObject(tape, target.type, target.argument);
+   }
+}
+
+void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target;
+   SNode block;
+   assignOpArguments(node, target, block);
+
+   generateObjectExpression(tape, target);
+   pushObject(tape, lxResult);
+
+   tryLock(tape);
+   declareTry(tape);
+
+   generateCodeBlock(tape, block);
+
+   // finally block - should free the lock if the exception was thrown
+   declareCatch(tape);
+
+   loadBase(tape, lxResult);
+   popObject(tape, lxResult);
+   freeLock(tape);
+   assignBaseTo(tape, lxResult);
+   
+   throwCurrent(tape);
+
+   endCatch(tape);
+
+   popObject(tape, lxResult);
+   freeLock(tape);
+}
+
+void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExpressionMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareCatch(tape);
+
+            // ...
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endCatch(tape);
+}
+
+void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExpressionMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareAlt(tape);
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endAlt(tape);
+}
+
+void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
+{
+   declareLoop(tape/*, true*/);
+
+   //declareBlock(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxElse) {
+         jumpIfEqual(tape, current.argument);
+         
+         generateCodeBlock(tape, current);
+      }
+      else if (test(current.type, lxObjectMask)) {
+         declareBlock(tape);
+         generateObjectExpression(tape, current);
+         declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+      }
+         
+      current = current.nextNode();
+   }
+
+   //declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+
+   if (node.argument != 0) {
+      endLoop(tape, node.argument);
+   }
+   else endLoop(tape);
+}
+
 //void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   declareSwitchBlock(tape);
@@ -3274,97 +3274,107 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //
 //   endThenBlock(tape);
 //}
-//
-//void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = SyntaxTree::findChild(node, lxTarget);
-//
-//   // presave all the members which could create new objects
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            generateExpression(tape, current);
-//            pushObject(tape, lxResult);
-//         }
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   newObject(tape, node.argument, target.argument);
-//
-//   loadBase(tape, lxResult);
-//
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            popObject(tape, lxResult);
-//         }
-//         else generateExpression(tape, current);
-//
-//         saveBase(tape, true, lxResult, current.argument);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   assignBaseTo(tape, lxResult);
-//}
-//
+
+void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   // presave all the members which could create new objects
+   SNode current = node.lastChild();
+   while (current != lxNone) {
+      if (current.type == lxMember) {
+         if (!isSimpleObjectExpression(current)) {
+            generateExpression(tape, current);
+            pushObject(tape, lxResult);
+         }
+      }
+
+      current = current.prevNode();
+   }
+
+   newObject(tape, node.argument, target.argument);
+
+   loadBase(tape, lxResult);
+
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (current.type == lxMember) {
+         if (!isSimpleObjectExpression(current)) {
+            popObject(tape, lxResult);
+         }
+         else generateExpression(tape, current);
+
+         saveBase(tape, true, lxResult, current.argument);
+      }
+
+      current = current.nextNode();
+   }
+
+   assignBaseTo(tape, lxResult);
+}
+
 //void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = SyntaxTree::findChild(node, lxTarget);
 //
 //   newStructure(tape, node.argument, target.argument);
 //}
-//
-//void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   // new frame
-//   newFrame(tape);
-//
-//   // save message
-//   pushObject(tape, lxCurrentMessage);
-//
-//   generateExpression(tape, node);
-//
-//   // restore message
-//   popObject(tape, lxCurrentMessage);
-//
-//   // close frame
-//   closeFrame(tape);
-//
-//   resend(tape);
-//}
-//
-//void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
-//{
-//   switch (node.type)
-//   {
-//      case lxExpression:
-//      case lxLocalUnboxing:
-//         generateExpression(tape, node);
-//         break;
-//      case lxTypecasting:
+
+void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxNewFrame) {
+         // new frame
+         newFrame(tape);
+
+         // save message
+         pushObject(tape, lxCurrentMessage);
+
+         generateExpression(tape, current);
+
+         // restore message
+         popObject(tape, lxCurrentMessage);
+
+         // close frame
+         closeFrame(tape);
+      }
+      else if (current == lxExpression) {
+         generateExpression(tape, current);
+      }
+
+      current = current.nextNode();
+   }
+
+   resend(tape);
+}
+
+void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
+{
+   switch (node.type)
+   {
+      case lxExpression:
+      case lxLocalUnboxing:
+         generateExpression(tape, node);
+         break;
+      case lxTypecasting:
 //      case lxCalling:
-//      case lxDirectCalling:
-//      case lxSDirctCalling:
-//         generateCallExpression(tape, node);
-//         break;
-//      case lxTrying:
-//         generateTrying(tape, node);
-//         break;
-//      case lxAlt:
-//         generateAlt(tape, node);
-//         break;
-//      case lxReturning:
-//         generateReturnExpression(tape, node);
-//         break;
-//      case lxThrowing:
-//         generateThrowExpression(tape, node);
-//         break;
+      case lxDirectCalling:
+      case lxSDirctCalling:
+         generateCallExpression(tape, node);
+         break;
+      case lxTrying:
+         generateTrying(tape, node);
+         break;
+      case lxAlt:
+         generateAlt(tape, node);
+         break;
+      case lxReturning:
+         generateReturnExpression(tape, node);
+         break;
+      case lxThrowing:
+         generateThrowExpression(tape, node);
+         break;
 //      case lxCoreAPICall:
 //      case lxStdExternalCall:
 //      case lxExternalCall:
@@ -3373,33 +3383,33 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //      case lxInternalCall:
 //         generateInternalCall(tape, node);
 //         break;
-//      case lxBoxing:
-//      case lxCondBoxing:
-//      case lxArgBoxing:
-//      case lxUnboxing:
-//         generateBoxingExpression(tape, node);
-//         break;
-//      case lxAssigning:
-//         generateAssigningExpression(tape, node);
-//         break;
+      case lxBoxing:
+      case lxCondBoxing:
+      case lxArgBoxing:
+      case lxUnboxing:
+         generateBoxingExpression(tape, node);
+         break;
+      case lxAssigning:
+         generateAssigningExpression(tape, node);
+         break;
 //      case lxBranching:
 //         generateBranching(tape, node);
 //         break;
 //      case lxSwitching:
 //         generateSwitching(tape, node);
 //         break;
-//      case lxLooping:
-//         generateLooping(tape, node);
-//         break;
-//      case lxLocking:
-//         generateLocking(tape, node);
-//         break;
+      case lxLooping:
+         generateLooping(tape, node);
+         break;
+      case lxLocking:
+         generateLocking(tape, node);
+         break;
 //      case lxStruct:
 //         generateStructExpression(tape, node);
 //         break;
-//      case lxNested:
-//         generateNestedExpression(tape, node);
-//         break;
+      case lxNested:
+         generateNestedExpression(tape, node);
+         break;
 //      case lxBoolOp:
 //         generateBoolOperation(tape, node);
 //         break;
@@ -3415,152 +3425,203 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 //      case lxArrOp:
 //         generateArrOperation(tape, node);
 //         break;
-//      case lxResending:
-//         generateResendingExpression(tape, node);
-//         break;
-//      case lxVariable:
-//         generateExpression(tape, node);
-//         pushObject(tape, lxResult);
-//         break;
+      case lxResending:
+         generateResendingExpression(tape, node);
+         break;
+      case lxVariable:
+         generateExpression(tape, node);
+         pushObject(tape, lxResult);
+         break;
 //      case lxIf:
 //         jumpIfNotEqual(tape, node.argument);
 //         generateCodeBlock(tape, node);
 //         break;
-//      case lxElse:
-//         if (node.argument != 0)
-//            jumpIfEqual(tape, node.argument);
-//
-//         generateCodeBlock(tape, node);
-//         break;
-//      default:
-//         loadObject(tape, node);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
-//{
-//   SNode child = node.firstChild();
-//   while (child != lxNone) {
-//      if (test(child.type, lxObjectMask)) {
-//         generateObjectExpression(tape, child);
-//      }
-//      else if (child == lxVariable) {
-//         generateObjectExpression(tape, child);
-//      }
-//      else if (child == lxReleasing) {
-//         releaseObject(tape, child.argument);
-//      }
-//
-//      child = child.nextNode();
-//   }      
-//}
-//
-//void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
-//{
-//   loadObject(tape, lxLocalAddress, offset + 2);
-//   saveIntConstant(tape, -node.argument);
-//}
-//
-//void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SyntaxTree::Node current = node.firstChild();
-//   while (current != lxNone) {
-//      LexicalType type = current.type;
-//      switch (type)
-//      {
-//         case lxExpression:
-//            declareBlock(tape);
-//            generateExpression(tape, current);
-//            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//            break;
-//         case lxAssigning:
-//         case lxReturning:
-//            declareBlock(tape);
-//            generateObjectExpression(tape, current);
-//            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//            break;
-//         case lxBreakpoint:
-//            translateBreakpoint(tape, current);
-//            break;
-//         case lxVariable:
-//            declareVariable(tape, current.argument);
-//            declareLocalInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               SyntaxTree::findChild(current, lxLevel).argument);
-//            break;
-//         case lxIntVariable:
-//            declareLocalIntInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               SyntaxTree::findChild(current, lxLevel).argument, false);
-//            break;
-//         case lxLongVariable:
-//            declareLocalLongInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               SyntaxTree::findChild(current, lxLevel).argument, false);
-//            break;
-//         case lxReal64Variable:
-//            declareLocalRealInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               SyntaxTree::findChild(current, lxLevel).argument, false);
-//            break;
-//         case lxBytesVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalByteArrayInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               level, false);
-//            break;
-//         }
-//         case lxShortsVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalShortArrayInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               level, false);
-//            break;
-//         }
-//         case lxIntsVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalIntArrayInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               level, false);
-//            break;
-//         }
-//         case lxBinaryVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//            
-//            // HOTFIX : only for dynamic objects
-//            if (current.argument != 0)
-//               generateBinary(tape, current, level);
-//
-//            declareStructInfo(tape,
-//               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-//               level, (ident_t)SyntaxTree::findChild(current, lxClassName).argument);
-//            break;
-//         }
-//         case lxReleasing:
-//            releaseObject(tape, current.argument);
-//            break;
-//         default:
-//            generateObjectExpression(tape, current);
-//            break;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//void ByteCodeWriter :: generateTree(CommandTape& tape, MemoryDump& dump)
-//{
-//   SyntaxTree reader(&dump);
-//
-//   generateCodeBlock(tape, reader.readRoot());
-//}
+      case lxElse:
+         if (node.argument != 0)
+            jumpIfEqual(tape, node.argument);
+
+         generateCodeBlock(tape, node);
+         break;
+      default:
+         loadObject(tape, node);
+         break;
+   }
+}
+
+void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
+{
+   SNode child = node.firstChild();
+   while (child != lxNone) {
+      if (test(child.type, lxObjectMask)) {
+         generateObjectExpression(tape, child);
+      }
+      else if (child == lxVariable) {
+         generateObjectExpression(tape, child);
+      }
+      else if (child == lxReleasing) {
+         releaseObject(tape, child.argument);
+      }
+
+      child = child.nextNode();
+   }      
+}
+
+void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
+{
+   loadObject(tape, lxLocalAddress, offset + 2);
+   saveIntConstant(tape, -node.argument);
+}
+
+void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      LexicalType type = current.type;
+      switch (type)
+      {
+         case lxExpression:
+            declareBlock(tape);
+            generateExpression(tape, current);
+            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            break;
+         case lxAssigning:
+         case lxReturning:
+            declareBlock(tape);
+            generateObjectExpression(tape, current);
+            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            break;
+         case lxBreakpoint:
+            translateBreakpoint(tape, current);
+            break;
+         case lxVariable:
+            declareVariable(tape, current.argument);
+            declareLocalInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument);
+            break;
+         case lxIntVariable:
+            declareLocalIntInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxLongVariable:
+            declareLocalLongInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxReal64Variable:
+            declareLocalRealInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument, false);
+            break;
+         case lxBytesVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            generateBinary(tape, current, level);
+            declareLocalByteArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               level, false);
+            break;
+         }
+         case lxShortsVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            generateBinary(tape, current, level);
+            declareLocalShortArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               level, false);
+            break;
+         }
+         case lxIntsVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+
+            generateBinary(tape, current, level);
+            declareLocalIntArrayInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               level, false);
+            break;
+         }
+         case lxBinaryVariable:
+         {
+            int level = SyntaxTree::findChild(current, lxLevel).argument;
+            
+            // HOTFIX : only for dynamic objects
+            if (current.argument != 0)
+               generateBinary(tape, current, level);
+
+            declareStructInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               level, (ident_t)SyntaxTree::findChild(current, lxClassName).argument);
+            break;
+         }
+         case lxReleasing:
+            releaseObject(tape, current.argument);
+            break;
+         default:
+            generateObjectExpression(tape, current);
+            break;
+      }
+      current = current.nextNode();
+   }
+}
+
+void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
+{
+   int reserved = SyntaxTree::findChild(node, lxReserved).argument;
+   int paramCount = SyntaxTree::findChild(node, lxParamCount).argument;
+
+   //bool withPresavedMessage = 
+
+   bool withNewFrame = false;
+   bool open = false;
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxNewFrame) {
+         withNewFrame = true;
+         if (!open) {
+            if (current.argument == -1)
+               saveSubject(tape);
+
+            declareMethod(tape, node.argument, current.argument == -1);
+            open = true;
+         }    
+
+         generateCodeBlock(tape, current);
+      }
+      else if (test(current.type, lxExpressionMask)) {
+         if (!open) {
+            open = true;
+
+            declareMethod(tape, node.argument, false, false);
+         }
+
+         generateObjectExpression(tape, current);
+      }
+
+      current = current.nextNode();
+   }
+   if (open) {
+      endMethod(tape, paramCount, reserved, withNewFrame);
+   }      
+}
+
+void ByteCodeWriter :: generateClass(CommandTape& tape, MemoryDump& dump)
+{
+   SyntaxTree reader(&dump);
+   SNode root = reader.readRoot();
+
+   declareClass(tape, root.argument);
+   SyntaxTree::Node current = root.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         generateMethod(tape, current);
+      }
+
+      current = current.nextNode();
+   }
+
+   endClass(tape);
+}

@@ -105,94 +105,94 @@ public:
       }
    };
 
-//   enum ObjectKind
-//   {
-//      okUnknown = 0,
-//   
-//      okObject,                       // param - class reference
-//      okSymbol,                       // param - reference
-//      okConstantSymbol,               // param - reference, extraparam - class reference
-//      okConstantClass,                // param - reference, extraparam - class reference
-//      okLiteralConstant,              // param - reference 
-//      okWideLiteralConstant,          // param - reference 
-//      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference 
-//      okLongConstant,                 // param - reference 
-//      okRealConstant,                 // param - reference 
-//      okMessageConstant,              // param - reference 
-//      okExtMessageConstant,           // param - reference 
-//      okSignatureConstant,            // param - reference 
-//      okVerbConstant,                 // param - reference 
-//      okField,                        // param - field offset
-//      okFieldAddress,                 // param - field offset
-//      okOuter,                        // param - field offset
-//      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
-//      okParam,                        // param - parameter offset
-//      okSubject,                      // param - parameter offset
-//      okSubjectDispatcher,
-//      okThisParam,                    // param - parameter offset
-//      okNil,
-//      okSuper,
-//      okLocalAddress,                  // param - local offset, extraparam - class reference
-//      okParams,                        // param - local offset
-//      okBlockLocal,                    // param - local offset
-//      okConstantRole,                 // param - role reference
-//   
-//      okExternal,
-//      okInternal,
-//   };
-//   
-//   struct ObjectInfo
-//   {
-//      ObjectKind kind;
-//      ref_t      param;
-//      ref_t      extraparam;
-//      ref_t      type;
-//   
-//      ObjectInfo()
-//      {
-//         this->kind = okUnknown;
-//         this->param = 0;
-//         this->extraparam = 0;
-//         this->type = 0;
-//      }
-//      ObjectInfo(ObjectKind kind)
-//      {
-//         this->kind = kind;
-//         this->param = 0;
-//         this->extraparam = 0;
-//         this->type = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ObjectInfo copy)
-//      {
-//         this->kind = kind;
-//         this->param = copy.param;
-//         this->extraparam = copy.extraparam;
-//         this->type = copy.type;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = 0;
-//         this->type = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = type;
-//      }
-//   };
+   enum ObjectKind
+   {
+      okUnknown = 0,
+   
+      okObject,                       // param - class reference
+      okSymbol,                       // param - reference
+      okConstantSymbol,               // param - reference, extraparam - class reference
+      okConstantClass,                // param - reference, extraparam - class reference
+      okLiteralConstant,              // param - reference 
+      okWideLiteralConstant,          // param - reference 
+      okCharConstant,                 // param - reference
+      okIntConstant,                  // param - reference 
+      okLongConstant,                 // param - reference 
+      okRealConstant,                 // param - reference 
+      okMessageConstant,              // param - reference 
+      okExtMessageConstant,           // param - reference 
+      okSignatureConstant,            // param - reference 
+      okVerbConstant,                 // param - reference 
+      okField,                        // param - field offset
+      okFieldAddress,                 // param - field offset
+      okOuter,                        // param - field offset
+      okOuterField,                   // param - field offset, extraparam - outer field offset
+      okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
+      okParam,                        // param - parameter offset
+      okSubject,                      // param - parameter offset
+      okSubjectDispatcher,
+      okThisParam,                    // param - parameter offset
+      okNil,
+      okSuper,
+      okLocalAddress,                 // param - local offset, extraparam - class reference
+      okParams,                       // param - local offset
+      okBlockLocal,                   // param - local offset
+      okConstantRole,                 // param - role reference
+   
+      okExternal,
+      okInternal,
+   };
+   
+   struct ObjectInfo
+   {
+      ObjectKind kind;
+      ref_t      param;
+      ref_t      extraparam;
+      ref_t      type;
+   
+      ObjectInfo()
+      {
+         this->kind = okUnknown;
+         this->param = 0;
+         this->extraparam = 0;
+         this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind)
+      {
+         this->kind = kind;
+         this->param = 0;
+         this->extraparam = 0;
+         this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind, ObjectInfo copy)
+      {
+         this->kind = kind;
+         this->param = copy.param;
+         this->extraparam = copy.extraparam;
+         this->type = copy.type;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = 0;
+         this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         this->type = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         this->type = type;
+      }
+   };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
@@ -215,8 +215,8 @@ private:
       List<ident_t> defaultNs;
       ForwardMap    forwards;       // forward declarations
 
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
 
       // extensions
       SubjectMap        extensionHints; 
@@ -228,20 +228,20 @@ private:
 
       // cached references
       ref_t superReference;
-//      ref_t intReference;
-//      ref_t longReference;
-//      ref_t realReference;
-//      ref_t literalReference;
-//      ref_t wideReference;
-//      ref_t charReference;
-//      ref_t trueReference;
-//      ref_t falseReference;
+      ref_t intReference;
+      ref_t longReference;
+      ref_t realReference;
+      ref_t literalReference;
+      ref_t wideReference;
+      ref_t charReference;
+      ref_t trueReference;
+      ref_t falseReference;
       ref_t paramsReference;
-//      ref_t signatureReference;
+      ref_t signatureReference;
 //      ref_t verbReference;
-//      ref_t arrayReference;
-//
-//      ref_t boolType;
+      ref_t arrayReference;
+
+      ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -250,12 +250,12 @@ private:
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
 
-//      ObjectInfo mapObject(TerminalInfo identifier);
+      ObjectInfo mapObject(TerminalInfo identifier);
 
       ref_t mapReference(ident_t reference, bool existing = false);
 
-//      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
-//
+      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
+
 //      void defineConstantSymbol(ref_t reference, ref_t classReference)
 //      {
 //         constantHints.add(reference, classReference);
@@ -284,14 +284,14 @@ private:
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
       {
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       int defineStructSize(ref_t classReference, bool& variable);
       int defineStructSize(ref_t classReference)
@@ -328,7 +328,7 @@ private:
       void loadExtensions(TerminalInfo terminal, _Module* module);
 
       void saveType(ref_t type_ref, ref_t classReference, bool internalType);
-//      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      bool saveExtension(ref_t message, ref_t type, ref_t role);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 
@@ -336,9 +336,9 @@ private:
       ref_t getBaseIndexFunctionClass(int paramCount);
       ref_t getBaseLazyExpressionClass();
 
-//      int getClassFlags(ref_t reference);
-//
-//      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
+      int getClassFlags(ref_t reference);
+
+      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
@@ -389,13 +389,13 @@ private:
          }
       }
 
-//      virtual ObjectInfo mapObject(TerminalInfo identifier)
-//      {
-//         if (parent) {
-//            return parent->mapObject(identifier);
-//         }
-//         else return moduleScope->mapObject(identifier);
-//      }
+      virtual ObjectInfo mapObject(TerminalInfo identifier)
+      {
+         if (parent) {
+            return parent->mapObject(identifier);
+         }
+         else return moduleScope->mapObject(identifier);
+      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -424,7 +424,7 @@ private:
    {
       MemoryDump syntaxTree;
 
-      //      CommandTape    tape;
+      CommandTape    tape;
       ref_t          reference;
 
       SourceScope(ModuleScope* parent, ref_t reference);
@@ -435,7 +435,7 @@ private:
    {
       ClassInfo info;
 
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       void compileClassHint(SyntaxTree::Node hint);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
@@ -484,7 +484,7 @@ private:
 
       void compileHints(DNode hints);
 
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -500,17 +500,16 @@ private:
    // - MethodScope -
    struct MethodScope : public Scope
    {
-//      MemoryDump   syntaxTree;
-//      CommandTape* tape;
+      CommandTape* tape;
 
       ref_t        message;
       LocalMap     parameters;
-//      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool         withOpenArg;
       bool         stackSafe;
 
-//      void compileWarningHints(DNode hints);
+      void compileWarningHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -555,8 +554,8 @@ private:
 //
 //         return test(hint, tpGeneric);
 //      }
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       MethodScope(ClassScope* parent);
    };
@@ -566,100 +565,100 @@ private:
    {
       ActionScope(ClassScope* parent);
 
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
    };
 
-//   // - CodeScope -
-//   struct CodeScope : public Scope
-//   {
-//      SyntaxWriter* writer;
-//      int           rootBookmark;
-//
-//      // scope local variables
-//      LocalMap     locals;
-//      int          level;
-//
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
-//
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
-//
-//      void mapLocal(ident_t local, int level, ref_t type)
-//      {
-//         locals.add(local, Parameter(level, type));
-//      }
-//
-//      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
-//      {
-//         locals.add(local, Parameter(level, ref, stackAllocated));
-//      }
-//
-//      int newSpace(size_t size)
-//      {
-//         int retVal = reserved;
-//
-//         reserved += size;
-//
-//         // the offset should include frame header offset
-//         return -2 - retVal;
-//      }
-//
-//      void freeSpace()
-//      {
-//         reserved = saved;
-//      }
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slCode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
-//      int getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->message : 0;
-//      }
-//
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
-//
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
-//
-//      ref_t getExtensionType()
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(slClass);
-//
-//         return scope ? scope->info.extensionTypeRef : 0;
-//      }
-//
+   // - CodeScope -
+   struct CodeScope : public Scope
+   {
+      SyntaxWriter* writer;
+      int           rootBookmark;
+
+      // scope local variables
+      LocalMap     locals;
+      int          level;
+
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
+
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
+      void mapLocal(ident_t local, int level, ref_t type)
+      {
+         locals.add(local, Parameter(level, type));
+      }
+
+      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
+      {
+         locals.add(local, Parameter(level, ref, stackAllocated));
+      }
+
+      int newSpace(size_t size)
+      {
+         int retVal = reserved;
+
+         reserved += size;
+
+         // the offset should include frame header offset
+         return -2 - retVal;
+      }
+
+      void freeSpace()
+      {
+         reserved = saved;
+      }
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
+      int getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->message : 0;
+      }
+
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
+
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
+
+      ref_t getExtensionType()
+      {
+         ClassScope* scope = (ClassScope*)getScope(slClass);
+
+         return scope ? scope->info.extensionTypeRef : 0;
+      }
+
 //      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
 //
 //      CodeScope(SymbolScope* parent, SyntaxWriter* writer);
-//      CodeScope(MethodScope* parent, SyntaxWriter* writer);
-//      CodeScope(CodeScope* parent);
-//   };
-//
+      CodeScope(MethodScope* parent, SyntaxWriter* writer);
+      CodeScope(CodeScope* parent);
+   };
+
 //   // - InlineClassScope -
 //
 //   struct InlineClassScope : public ClassScope
@@ -702,7 +701,7 @@ private:
    Parser         _parser;
 
    MessageMap     _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
+   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
 
@@ -714,31 +713,31 @@ private:
 //   bool optimizeIdleBreakpoints(CommandTape& tape);
 //   bool optimizeJumps(CommandTape& tape);
 //   void optimizeTape(CommandTape& tape);
-//   
-//   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
-//   {
-//      if (terminal != nsNone) {
-//         scope.writer->newNode(lxBreakpoint, stepType);
-//         scope.writer->appendNode(lxRow, terminal.row);
-//         scope.writer->appendNode(lxCol, terminal.disp);
-//         scope.writer->appendNode(lxLength, terminal.length);
-//         scope.writer->closeNode();
-//      }
-//   }
-//   void recordDebugVirtualStep(CodeScope& scope, int stepType)
-//   {
-//      scope.writer->newNode(lxBreakpoint, stepType);
-//      scope.writer->closeNode();
-//   }
-//
-//   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
-//
-//   bool checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object);
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
-//
+   
+   void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
+   {
+      if (terminal != nsNone) {
+         scope.writer->newNode(lxBreakpoint, stepType);
+         scope.writer->appendNode(lxRow, terminal.row);
+         scope.writer->appendNode(lxCol, terminal.disp);
+         scope.writer->appendNode(lxLength, terminal.length);
+         scope.writer->closeNode();
+      }
+   }
+   void recordDebugVirtualStep(CodeScope& scope, int stepType)
+   {
+      scope.writer->newNode(lxBreakpoint, stepType);
+      scope.writer->closeNode();
+   }
+
+   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
+
+   bool checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object);
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+
 //   ref_t mapNestedExpression(CodeScope& scope);
-//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
-//
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+
 //   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
@@ -754,69 +753,69 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool& embeddable);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol);
 
-//   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
-//
-//   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
-//   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
-//   {
-//      bool dummy = false;
-//      return mapMessage(node, scope, count, dummy);
-//   }
-//
+   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
+
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
+   {
+      bool dummy = false;
+      return mapMessage(node, scope, count, dummy);
+   }
+
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
-//   void compileVariable(DNode node, CodeScope& scope, DNode hints);
-//
+   void compileVariable(DNode node, CodeScope& scope, DNode hints);
+
 //   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
 //   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-//
-//   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-//   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
-//
-//   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
-//
+   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+
+   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
+   void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
+
+   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
+
 //   int mapOperandType(CodeScope& scope, ObjectInfo operand);
 //   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
 //
 //   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 //   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-//
-//   ref_t compileMessageParameters(DNode node, CodeScope& scope/*, bool stacksafe*/);
-//
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
+
+   ref_t compileMessageParameters(DNode node, CodeScope& scope/*, bool stacksafe*/);
+
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
+   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 //
 //   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-//   ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
-//   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
-//
-//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
-//   void compileLoop(DNode node, CodeScope& scope);
-//   void compileThrow(DNode node, CodeScope& scope, int mode);
-//   void compileTry(DNode node, CodeScope& scope);
-//   void compileLock(DNode node, CodeScope& scope);
-//
+   ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
+   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
+
+   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
+   void compileLoop(DNode node, CodeScope& scope);
+   void compileThrow(DNode node, CodeScope& scope, int mode);
+   void compileTry(DNode node, CodeScope& scope);
+   void compileLock(DNode node, CodeScope& scope);
+
 //   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
-//
-//   void reserveSpace(CodeScope& scope, int size);
-//   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
-//
+
+   void reserveSpace(CodeScope& scope, int size);
+   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
+
 //   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 //
 //   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
-//   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
-//   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
-//
-//   ObjectInfo compileCode(DNode node, CodeScope& scope);
+   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
+   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
+
+   ObjectInfo compileCode(DNode node, CodeScope& scope);
 
    void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
@@ -832,7 +831,7 @@ private:
 //   void compileActionMethod(DNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, MethodScope& scope);
 //   void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
-//   void compileMethod(DNode node, MethodScope& scope, bool genericMethod);
+   void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope, bool genericMethod);
 //   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
@@ -842,8 +841,8 @@ private:
 //
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, InlineClassScope& scope);
-//
-//   void compileVMT(DNode member, ClassScope& scope);
+
+   void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
@@ -851,8 +850,10 @@ private:
    void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
    void generateClassDeclaration(ClassScope& scope, bool closed);
    
+   void generateClassImplementation(ClassScope& scope);
+
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
-//   void compileClassImplementation(DNode node, ClassScope& scope);
+   void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
