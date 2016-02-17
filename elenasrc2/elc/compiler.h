@@ -206,7 +206,7 @@ private:
    {
       Project*       project;
       _Module*       module;
-//      _Module*       debugModule;
+      _Module*       debugModule;
 
       ident_t        sourcePath;
       ref_t          sourcePathRef;
@@ -708,11 +708,11 @@ private:
    // optimization rules
    TransformTape _rules;
 
-//   // optmimization routines
-//   bool applyRules(CommandTape& tape);
-//   bool optimizeIdleBreakpoints(CommandTape& tape);
-//   bool optimizeJumps(CommandTape& tape);
-//   void optimizeTape(CommandTape& tape);
+   // optmimization routines
+   bool applyRules(CommandTape& tape);
+   bool optimizeIdleBreakpoints(CommandTape& tape);
+   bool optimizeJumps(CommandTape& tape);
+   void optimizeTape(CommandTape& tape);
    
    void recordDebugStep(CodeScope& scope, TerminalInfo terminal, int stepType)
    {
@@ -836,9 +836,9 @@ private:
 //   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
 //   void compileConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 //   void compileEmbeddableConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope);
-//
-//   void compileSymbolCode(ClassScope& scope);
-//
+
+   void compileSymbolCode(ClassScope& scope);
+
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, InlineClassScope& scope);
 

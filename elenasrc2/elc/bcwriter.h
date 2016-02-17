@@ -18,22 +18,22 @@ namespace _ELENA_
 // --- ByteCodeWriter class ---
 class ByteCodeWriter
 {
-//   struct Scope
-//   {
-//      ref_t         sourceRef;
-//      MemoryWriter* vmt;
-//      MemoryWriter* code;
-//      MemoryWriter* debug;
-//      MemoryWriter* debugStrings;
-//
-//      Scope()
-//      {
-//         vmt = code = NULL;
-//         debug = debugStrings = NULL;
-//         sourceRef = 0;
-//      }
-//   };
-//
+   struct Scope
+   {
+      ref_t         sourceRef;
+      MemoryWriter* vmt;
+      MemoryWriter* code;
+      MemoryWriter* debug;
+      MemoryWriter* debugStrings;
+
+      Scope()
+      {
+         vmt = code = NULL;
+         debug = debugStrings = NULL;
+         sourceRef = 0;
+      }
+   };
+
 //   struct ExternalScope
 //   {
 //      struct ParamInfo
@@ -55,45 +55,45 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   ByteCode peekNext(ByteCodeIterator it)
-//   {
-//      it++;
-//
-//      return (*it).code;
-//   }
-//
-//   ByteCode peekPrevious(ByteCodeIterator it)
-//   {
-//      it--;
-//
-//      return (*it).code;
-//   }
-//
-//   void writeNewStatement(MemoryWriter* debug);
-//   void writeNewBlock(MemoryWriter* debug);
-//   void writeSelf(Scope& scope, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
-//   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
-//   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
-//   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
-//
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
-//   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
-//   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-//   void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
-//   void writeDebugInfoStopper(MemoryWriter* debug);
-//
-//   void writeProcedure(ByteCodeIterator& it, Scope& scope);
-//   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-//   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
-//   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
+
+   ByteCode peekNext(ByteCodeIterator it)
+   {
+      it++;
+
+      return (*it).code;
+   }
+
+   ByteCode peekPrevious(ByteCodeIterator it)
+   {
+      it--;
+
+      return (*it).code;
+   }
+
+   void writeNewStatement(MemoryWriter* debug);
+   void writeNewBlock(MemoryWriter* debug);
+   void writeSelf(Scope& scope, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
+   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
+   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
+
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
+   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
+   void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
+   void writeDebugInfoStopper(MemoryWriter* debug);
+
+   void writeProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
 
 //   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
 
    void declareClass(CommandTape& tape, ref_t reference);
-//   void declareSymbol(CommandTape& tape, ref_t reference);
+   void declareSymbol(CommandTape& tape, ref_t reference);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void declareIdleMethod(CommandTape& tape, ref_t message);
    void declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame = true);
@@ -190,7 +190,7 @@ class ByteCodeWriter
    void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
-//   void endSymbol(CommandTape& tape);
+   void endSymbol(CommandTape& tape);
 //   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
@@ -267,11 +267,12 @@ public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
 
    void generateClass(CommandTape& tape, MemoryDump& dump);
+   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+
+   void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
    
    //void insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size);
    //void updateStackAlloc(ByteCodeIterator it, int size);
-
-//   void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
 };
 
 bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);

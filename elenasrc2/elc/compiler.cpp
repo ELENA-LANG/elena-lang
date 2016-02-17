@@ -230,7 +230,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    this->project = project;
    this->sourcePath = sourcePath;
    this->module = module;
-//   this->debugModule = debugModule;
+   this->debugModule = debugModule;
 
    this->forwardsUnresolved = forwardsUnresolved;
    this->sourcePathRef = 0;
@@ -1237,48 +1237,48 @@ void Compiler :: loadRules(StreamReader* optimization)
    _rules.load(optimization);
 }
 
-//bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
-//{
-//   return CommandTape::optimizeIdleBreakpoints(tape);
-//}
-//
-//bool Compiler :: optimizeJumps(CommandTape& tape)
-//{
-//   return CommandTape::optimizeJumps(tape);
-//}
-//
-//bool Compiler :: applyRules(CommandTape& tape)
-//{
-//   if (!_rules.loaded)
-//      return false;
-//
-//   if (_rules.apply(tape)) {
-//      while (_rules.apply(tape));
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//void Compiler :: optimizeTape(CommandTape& tape)
-//{
-//   // HOTFIX : remove all breakpoints which follows jumps
-//   while (optimizeIdleBreakpoints(tape));
-//
-//   // optimize unused and idle jumps
-//   while (optimizeJumps(tape));
-//
-//   // optimize the code
-//   bool modified = false;
-//   while (applyRules(tape)) {
-//      modified = true;
-//   }
-//
-//   if (modified) {
-//      optimizeTape(tape);
-//   }
-//}
-//
+bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
+{
+   return CommandTape::optimizeIdleBreakpoints(tape);
+}
+
+bool Compiler :: optimizeJumps(CommandTape& tape)
+{
+   return CommandTape::optimizeJumps(tape);
+}
+
+bool Compiler :: applyRules(CommandTape& tape)
+{
+   if (!_rules.loaded)
+      return false;
+
+   if (_rules.apply(tape)) {
+      while (_rules.apply(tape));
+
+      return true;
+   }
+   else return false;
+}
+
+void Compiler :: optimizeTape(CommandTape& tape)
+{
+   // HOTFIX : remove all breakpoints which follows jumps
+   while (optimizeIdleBreakpoints(tape));
+
+   // optimize unused and idle jumps
+   while (optimizeJumps(tape));
+
+   // optimize the code
+   bool modified = false;
+   while (applyRules(tape)) {
+      modified = true;
+   }
+
+   if (modified) {
+      optimizeTape(tape);
+   }
+}
+
 //ref_t Compiler :: mapNestedExpression(CodeScope& scope)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -4681,20 +4681,18 @@ void Compiler :: compileFieldDeclarations(DNode& member, SyntaxWriter& writer, C
    //}
 }
 
-//void Compiler :: compileSymbolCode(ClassScope& scope)
-//{
-//   CommandTape tape;
-//
-//   // creates implicit symbol
-//   SymbolScope symbolScope(scope.moduleScope, scope.reference);
-//
-//   _writer.declareSymbol(tape, symbolScope.reference);
-//   _writer.loadObject(tape, lxConstantClass, scope.reference);
-//   _writer.endSymbol(tape);
-//
-//   // create byte code sections
-//   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
-//}
+void Compiler :: compileSymbolCode(ClassScope& scope)
+{
+   CommandTape tape;
+
+   // creates implicit symbol
+   SymbolScope symbolScope(scope.moduleScope, scope.reference);
+
+   _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
+
+   // create byte code sections
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+}
 
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
@@ -5049,6 +5047,8 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
 
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
+
    SyntaxWriter writer(&scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
@@ -5059,8 +5059,6 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 
    generateClassImplementation(scope);
 
-
-
    // compile explicit symbol
    compileSymbolCode(scope);
 
@@ -5068,8 +5066,8 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    optimizeTape(scope.tape);
 
    // create byte code sections
-   scope.save();
-   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   _writer.save(scope.tape, moduleScope->module, moduleScope->debugModule, moduleScope->sourcePathRef);
+   scope.save();   
 }
 
 void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope)
