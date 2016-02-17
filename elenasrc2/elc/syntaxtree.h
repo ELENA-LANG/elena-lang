@@ -109,7 +109,7 @@ enum LexicalType
    //lxReleasing       = 0x40F,
 
    //lxTarget          = 0x801,
-   //lxType            = 0x802,
+   lxType            = 0x802,
    //lxStacksafe       = 0x803,
    //lxTempLocal       = 0x804,
    //lxOverridden      = 0x805,
@@ -117,6 +117,7 @@ enum LexicalType
    //lxElseValue       = 0x807,
    //lxMessage         = 0x808,
    //lxEmbeddable      = 0x809,
+   lxSize            = 0x80A,
 
    //lxBreakpoint      = 0x2001,
    lxCol             = 0x2002,
@@ -127,9 +128,13 @@ enum LexicalType
    //lxClassName       = 0x2007,
    //lxValue           = 0x2008,
 
-   lxClassFlag       = 0x4001,
-   lxClassSize       = 0x4002,
-   lxClassExtension  = 0x4003,
+   lxClassFlag       = 0x4001,      // class fields
+   lxClassStructure  = 0x4002,      
+   lxClassArray      = 0x4003,
+   lxClassExtension  = 0x4004,
+   lxClassField      = 0x4005,
+   lxClassMethod     = 0x4006,
+   lxClassMethodAttr = 0x4007,
 };
 
 // --- SyntaxWriter ---
@@ -359,6 +364,21 @@ private:
    Node read();
 
 public:
+   static int countChild(Node node, LexicalType type)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
    static Node findChild(Node node, LexicalType type)
    {
       Node current = node.firstChild();

@@ -20,43 +20,43 @@ namespace _ELENA_
 class Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int        offset;
-//      bool       stackAllocated;
-//      union {
-//         ref_t   sign_ref;   // if not stack allocated - contains type reference
-//         ref_t   class_ref;  // if stack allocated - contains class reference
-//      };
-//
-//      Parameter()
-//      {
-//         offset = -1;
-//         sign_ref = 0;
-//         stackAllocated = false;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
-//         this->sign_ref = 0;
-//         stackAllocated = false;
-//      }
-//      Parameter(int offset, ref_t sign_ref)
-//      {
-//         this->offset = offset;
-//         this->sign_ref = sign_ref;
-//         stackAllocated = false;
-//      }
-//      Parameter(int offset, ref_t ref, bool stackAllocated)
-//      {
-//         this->offset = offset;
-//         this->stackAllocated = stackAllocated;
-//         if (stackAllocated) {
-//            this->class_ref = ref;
-//         }
-//         else this->sign_ref = ref;
-//      }
-//   };
+   struct Parameter
+   {
+      int        offset;
+      bool       stackAllocated;
+      union {
+         ref_t   sign_ref;   // if not stack allocated - contains type reference
+         ref_t   class_ref;  // if stack allocated - contains class reference
+      };
+
+      Parameter()
+      {
+         offset = -1;
+         sign_ref = 0;
+         stackAllocated = false;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
+         this->sign_ref = 0;
+         stackAllocated = false;
+      }
+      Parameter(int offset, ref_t sign_ref)
+      {
+         this->offset = offset;
+         this->sign_ref = sign_ref;
+         stackAllocated = false;
+      }
+      Parameter(int offset, ref_t ref, bool stackAllocated)
+      {
+         this->offset = offset;
+         this->stackAllocated = stackAllocated;
+         if (stackAllocated) {
+            this->class_ref = ref;
+         }
+         else this->sign_ref = ref;
+      }
+   };
 
    // InheritResult
    enum InheritResult
@@ -69,19 +69,19 @@ public:
       irObsolete
    };
 
-//   enum MethodHint
-//   {
-//      tpMask       = 0x0F,
-//
-//      tpUnknown    = 0x00,
-//      tpSealed     = 0x01,
-//      tpClosed     = 0x02,
-//      tpNormal     = 0x03,
-//      tpDispatcher = 0x04,
-//      tpStackSafe  = 0x10,
-//      tpEmbeddable = 0x20,
-//      tpGeneric    = 0x40,
-//   };
+   enum MethodHint
+   {
+      tpMask       = 0x0F,
+
+      tpUnknown    = 0x00,
+      tpSealed     = 0x01,
+      tpClosed     = 0x02,
+      tpNormal     = 0x03,
+      tpDispatcher = 0x04,
+      tpStackSafe  = 0x10,
+      tpEmbeddable = 0x20,
+      tpGeneric    = 0x40,
+   };
 
    struct Unresolved
    {
@@ -195,7 +195,7 @@ public:
 //   };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
-//   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef List<Unresolved>               Unresolveds;
    typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -236,7 +236,7 @@ private:
 //      ref_t charReference;
 //      ref_t trueReference;
 //      ref_t falseReference;
-//      ref_t paramsReference;
+      ref_t paramsReference;
 //      ref_t signatureReference;
 //      ref_t verbReference;
 //      ref_t arrayReference;
@@ -275,12 +275,12 @@ private:
 
       ref_t mapType(TerminalInfo terminal);
 
-//      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool strongOnly = false);
-//      ref_t mapSubject(ident_t name)
-//      {
-//         IdentifierString wsName(name);
-//         return module->mapSubject(wsName, false);
-//      }
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool strongOnly = false);
+      ref_t mapSubject(ident_t name)
+      {
+         IdentifierString wsName(name);
+         return module->mapSubject(wsName, false);
+      }
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
@@ -437,8 +437,7 @@ private:
 
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
 
-      void generateClassHints(SyntaxTree::Node hint);
-      void compileClassHints(SyntaxWriter& writer, DNode hints);
+      void compileClassHint(SyntaxTree::Node hint);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
 //
 //      virtual Scope* getScope(ScopeLevel level)
@@ -482,20 +481,19 @@ private:
       SymbolScope(ModuleScope* parent, ref_t reference);
    };
 
-//   // - MethodScope -
-//   struct MethodScope : public Scope
-//   {
+   // - MethodScope -
+   struct MethodScope : public Scope
+   {
 //      MemoryDump   syntaxTree;
 //      CommandTape* tape;
-//
-//      ref_t        message;
-//      LocalMap     parameters;
+
+      ref_t        message;
+      LocalMap     parameters;
 //      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
-//      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      bool         withOpenArg;
+      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
+      bool         withOpenArg;
 //      bool         stackSafe;
-//
-//      int compileHints(DNode hints);
+
 //      void compileWarningHints(DNode hints);
 //
 //      virtual Scope* getScope(ScopeLevel level)
@@ -549,10 +547,10 @@ private:
 //      }
 //
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      MethodScope(ClassScope* parent);
-//   };
-//
+
+      MethodScope(ClassScope* parent);
+   };
+
 //   // - ActionScope -
 //   struct ActionScope : public MethodScope
 //   {
@@ -693,7 +691,7 @@ private:
    ByteCodeWriter _writer;
    Parser         _parser;
 
-//   MessageMap     _verbs;                            // list of verbs
+   MessageMap     _verbs;                            // list of verbs
 //   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
@@ -737,11 +735,15 @@ private:
 
 //   void declareParameterDebugInfo(MethodScope& scope, bool withThis, bool withSelf);
 
-   void generateParentDeclaration(ClassScope& scope, SyntaxTree::Node baseNode);
+   void generateParentDeclaration(ClassScope& scope, SyntaxTree::Node baseNode, bool ignoreSealed = false);
 
    void compileParentDeclaration(DNode node, SyntaxWriter& writer, ClassScope& scope);
-   InheritResult compileParentDeclaration(ref_t parentRef, ClassScope& scope, bool ignoreSealed = false);
-//
+   void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
+   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
+   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool closed);
+
 //   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
 //
 //   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
@@ -805,11 +807,10 @@ private:
 //   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 //
 //   ObjectInfo compileCode(DNode node, CodeScope& scope);
-//
-//   void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
+
+   void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 //   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
-//   void declareVMT(DNode member, ClassScope& scope, Symbol methodSymbol, bool closed);
 //
 //   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
 //   void compileSingletonClass(DNode member, ClassScope& scope);
@@ -833,10 +834,12 @@ private:
 //   void compileNestedVMT(DNode node, InlineClassScope& scope);
 //
 //   void compileVMT(DNode member, ClassScope& scope);
-//
-   void generateClassStructure(ClassScope& scope);
 
-//   void compileFieldDeclarations(DNode& member, ClassScope& scope);
+   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
+   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
+   void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root);
+   void generateClassDeclaration(ClassScope& scope);
+   
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
 //   void compileClassImplementation(DNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
