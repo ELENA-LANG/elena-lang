@@ -396,14 +396,14 @@ private:
 //         }
 //         else return moduleScope->mapObject(identifier);
 //      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (parent) {
-//            return parent->getScope(level);
-//         }
-//         else return NULL;
-//      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (parent) {
+            return parent->getScope(level);
+         }
+         else return NULL;
+      }
 
       Scope(ModuleScope* moduleScope)
       {
@@ -439,14 +439,14 @@ private:
 
       void compileClassHint(SyntaxTree::Node hint);
 //      void compileFieldHints(DNode hints, int& size, ref_t& type);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass || level == slOwnerClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass || level == slOwnerClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
 
       void save()
       {
@@ -479,20 +479,20 @@ private:
    struct SymbolScope : public SourceScope
    {
 //
-//      bool  constant;
-//      ref_t typeRef;
-//
-//      void compileHints(DNode hints);
-//
+      bool  constant;
+      ref_t typeRef;
+
+      void compileHints(DNode hints);
+
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slSymbol) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slSymbol) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
 
       SymbolScope(ModuleScope* parent, ref_t reference);
    };
@@ -511,15 +511,15 @@ private:
 //      bool         stackSafe;
 
 //      void compileWarningHints(DNode hints);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slMethod) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slMethod) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      void setClassFlag(int flag)
 //      {
 //         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
@@ -561,14 +561,14 @@ private:
       MethodScope(ClassScope* parent);
    };
 
-//   // - ActionScope -
-//   struct ActionScope : public MethodScope
-//   {
-//      ActionScope(ClassScope* parent);
-//
+   // - ActionScope -
+   struct ActionScope : public MethodScope
+   {
+      ActionScope(ClassScope* parent);
+
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//   };
-//
+   };
+
 //   // - CodeScope -
 //   struct CodeScope : public Scope
 //   {
@@ -820,13 +820,13 @@ private:
 
    void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-//   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
-//
-//   void declareSingletonClass(DNode member, ClassScope& scope, bool closed);
+   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
+
+   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
 //   void compileSingletonClass(DNode member, ClassScope& scope);
-//
-//   void declareSingletonAction(ClassScope& scope, ActionScope& methodScope);
-//
+
+   void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
+
 //   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function, CommandTape* tape);
 //
 //   void compileActionMethod(DNode member, MethodScope& scope);
@@ -855,7 +855,7 @@ private:
 //   void compileClassImplementation(DNode node, ClassScope& scope);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
+   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
 //   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
    void compileType(DNode& member, ModuleScope& scope, DNode hints);

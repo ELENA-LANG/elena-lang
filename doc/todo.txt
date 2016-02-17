@@ -4,6 +4,8 @@ In development:
 
               idev - generic development                                          
                        * #54 : implementing generics / templates    
+                       * make sure that if stateless flag is set, class cannot have fields / data fields
+
                        * #201 : shorthand property settings
 
                        * #215 : Operations with structure fields

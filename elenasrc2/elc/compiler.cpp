@@ -30,23 +30,23 @@ using namespace _ELENA_;
 //typedef Compiler::ObjectKind ObjectKind;
 typedef ClassInfo::Attribute Attribute;
 
-//// --- Auxiliary routines ---
-//
+// --- Auxiliary routines ---
+
 //inline bool isCollection(DNode node)
 //{
 //   return (node == nsExpression && node.nextNode()==nsExpression);
 //}
-//
-//inline bool isReturnExpression(DNode expr)
-//{
-//   return (expr == nsExpression && expr.nextNode() == nsNone);
-//}
-//
-//inline bool isSingleStatement(DNode expr)
-//{
-//   return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
-//}
-//
+
+inline bool isReturnExpression(DNode expr)
+{
+   return (expr == nsExpression && expr.nextNode() == nsNone);
+}
+
+inline bool isSingleStatement(DNode expr)
+{
+   return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
+}
+
 //inline bool isSingleObject(DNode expr)
 //{
 //   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
@@ -875,32 +875,32 @@ Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
 Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
-//   typeRef = 0;
-//   constant = false;
+   typeRef = 0;
+   constant = false;
 }
 
-//void Compiler::SymbolScope :: compileHints(DNode hints)
-//{
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      if (StringHelper::compare(terminal, HINT_CONSTANT)) {
-//         constant = true;
-//      }
-//      else if (StringHelper::compare(terminal, HINT_TYPE)) {
-//         DNode value = hints.select(nsHintValue);
-//         TerminalInfo typeTerminal = value.Terminal();
-//
-//         typeRef = moduleScope->mapType(typeTerminal);
-//         if (typeRef == 0)
-//            raiseError(wrnInvalidHint, terminal);
-//      }
-//      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
-//
-//      hints = hints.nextNode();
-//   }
-//}
-//
+void Compiler::SymbolScope :: compileHints(DNode hints)
+{
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_CONSTANT)) {
+         constant = true;
+      }
+      else if (StringHelper::compare(terminal, HINT_TYPE)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo typeTerminal = value.Terminal();
+
+         typeRef = moduleScope->mapType(typeTerminal);
+         if (typeRef == 0)
+            raiseError(wrnInvalidHint, terminal);
+      }
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
+
+      hints = hints.nextNode();
+   }
+}
+
 //ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
 //{
 //   return Scope::mapObject(identifier);
@@ -1029,13 +1029,13 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   }
 //}
 
-//// --- Compiler::ActionScope ---
-//
-//Compiler::ActionScope :: ActionScope(ClassScope* parent)
-//   : MethodScope(parent)
-//{
-//}
-//
+// --- Compiler::ActionScope ---
+
+Compiler::ActionScope :: ActionScope(ClassScope* parent)
+   : MethodScope(parent)
+{
+}
+
 //ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
 //{
 //   // HOTFIX : self / $self : closure should refer to the owner ones
@@ -3146,50 +3146,50 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
 //
 //   return retVal;
 //}
-//
-//bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared)
-//{
-//   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
-//
-//   methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
-//
-//   if (argNode != nsNone) {
-//      // define message parameter
-//      methodScope.message = declareInlineArgumentList(argNode, methodScope);
-//
-//      node = node.select(nsSubCode);
-//   }
-//
-//   if (!alreadyDeclared) {
-//      ref_t parentRef = scope.info.header.parentRef;
-//      if (lazyExpression) {
-//         parentRef = scope.moduleScope->getBaseLazyExpressionClass();
-//      }
-//      else if (getSignature(methodScope.message) == 0) {
-//         parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
-//      }
-//      else {
-//         // check if it is nfunc
-//         ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
-//         if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
-//            parentRef = nfuncRef;
-//         }
-//      }
-//
-//      InheritResult res = compileParentDeclaration(parentRef, scope, true);
-//      if (res == irInvalid) {
-//         scope.raiseError(errInvalidParent, node.Terminal());
-//      }
-//      else if (res == irUnsuccessfull)
-//         scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
-//   }
-//
-//   // HOT FIX : mark action as stack safe if the hint was declared in the parent class
-//   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
-//
-//   return lazyExpression;
-//}
-//
+
+bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared)
+{
+   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
+
+   methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
+
+   if (argNode != nsNone) {
+      // define message parameter
+      methodScope.message = declareInlineArgumentList(argNode, methodScope);
+
+      node = node.select(nsSubCode);
+   }
+
+   if (!alreadyDeclared) {
+      ref_t parentRef = scope.info.header.parentRef;
+      if (lazyExpression) {
+         parentRef = scope.moduleScope->getBaseLazyExpressionClass();
+      }
+      else if (getSignature(methodScope.message) == 0) {
+         parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
+      }
+      else {
+         // check if it is nfunc
+         ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
+         if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
+            parentRef = nfuncRef;
+         }
+      }
+
+      InheritResult res = compileParentDeclaration(parentRef, scope, true);
+      if (res == irInvalid) {
+         scope.raiseError(errInvalidParent, node.Terminal());
+      }
+      else if (res == irUnsuccessfull)
+         scope.raiseError(/*node != nsNone ? errUnknownClass : */errUnknownBaseClass, node.Terminal());
+   }
+
+   // HOT FIX : mark action as stack safe if the hint was declared in the parent class
+   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
+
+   return lazyExpression;
+}
+
 //void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
 //{
 //   _writer.declareClass(scope.tape, scope.reference);
@@ -5077,31 +5077,48 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 //   scope.save();
 //   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 //}
-//
-//void Compiler :: declareSingletonClass(DNode node, ClassScope& scope, bool closed)
-//{
-//   // nested class is sealed if it has no parent
-//   if (!test(scope.info.header.flags, elClosed))
-//      scope.info.header.flags |= elSealed;
-//
-//   // singleton is always stateless
-//   scope.info.header.flags |= elStateless;
-//
-//   declareVMT(node.firstChild(), scope, nsMethod, closed);
-//
-//   scope.save();
-//}
-//
-//void Compiler :: declareSingletonAction(ClassScope& scope, ActionScope& methodScope)
-//{
-//   // singleton is always stateless
-//   scope.info.header.flags |= elStateless;
-//
-//   methodScope.include();
-//
-//   scope.save();
-//}
-//
+
+void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope)
+{
+   SyntaxWriter writer(&scope.syntaxTree);
+   writer.newNode(lxRoot);
+
+   // inherit parent
+   if (parentNode != nsNone) {
+      compileParentDeclaration(parentNode, writer, scope);
+   }
+   // nested class is sealed if it has no parent
+   else writer.appendNode(lxClassFlag, elSealed);
+
+   declareVMT(node.firstChild(), writer, scope, nsMethod);
+
+   writer.closeNode();
+
+   generateClassDeclaration(scope, test(scope.info.header, elClosed));
+
+   scope.save();
+}
+
+void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, DNode expression)
+{
+   SyntaxWriter writer(&classScope.syntaxTree);
+   writer.newNode(lxRoot);
+
+   // singleton is always stateless
+   writer.appendNode(lxClassFlag, elStateless);
+
+   ActionScope methodScope(&classScope);
+   declareActionScope(objNode, classScope, expression, methodScope, 0, false);
+
+   writer.closeNode();
+
+   generateClassDeclaration(classScope, test(classScope.info.header, elClosed));
+
+   classScope.save();
+
+
+}
+
 //void Compiler::compileSingletonClass(DNode node, ClassScope& scope)
 //{
 //   _writer.declareClass(scope.tape, scope.reference);
@@ -5118,81 +5135,69 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 //   // create byte code sections
 //   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 //}
-//
-//void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints)
-//{
-//   bool singleton = false;
-//
-//   scope.compileHints(hints);
-//
-//   DNode expression = node.firstChild();
-//   // if it is a singleton
-//   if (isSingleStatement(expression)) {
-//      DNode objNode = expression.firstChild().firstChild();
-//      if (objNode == nsNestedClass) {
-//         DNode classNode = expression.firstChild();
-//
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//
-//         if (classNode.Terminal() != nsNone) {
-//            // inherit parent
-//            compileParentDeclaration(classNode, classScope);
-//            if (classScope.info.fields.Count() > 0 || testany(classScope.info.header.flags, elStructureRole | elDynamicRole))
-//               scope.raiseError(errInvalidSymbolExpr, expression.Terminal());
-//
-//            declareSingletonClass(classNode.firstChild(), classScope, test(classScope.info.header.flags, elClosed));
-//            singleton = true;
-//         }
-//         // if it is normal nested class
-//         else {
-//            classScope.info.header.flags |= elSealed;
-//
-//            compileParentDeclaration(DNode(), classScope);
-//
-//            declareSingletonClass(classNode.firstChild(), classScope, false);
-//            singleton = true;
-//         }
-//      }
-//      else if (objNode == nsSubCode) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//         ActionScope methodScope(&classScope);
-//
-//         declareActionScope(objNode, classScope, DNode(), methodScope, 0, false);
-//
-//         declareSingletonAction(classScope, methodScope);
-//         singleton = true;
-//      }
-//      else if (objNode == nsInlineExpression) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//         ActionScope methodScope(&classScope);
-//
-//         declareActionScope(objNode, classScope, expression.firstChild(), methodScope, 0, false);
-//
-//         declareSingletonAction(classScope, methodScope);
-//         singleton = true;
-//      }
-//      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//         ActionScope methodScope(&classScope);
-//
-//         declareActionScope(objNode, classScope, objNode, methodScope, 0, false);
-//
-//         declareSingletonAction(classScope, methodScope);
-//         singleton = true;
-//      }
-//   }
-//
-//   if (!singleton && (scope.typeRef != 0 || scope.constant)) {
-//      SymbolExpressionInfo info;
-//      info.expressionTypeRef = scope.typeRef;
-//      info.constant = scope.constant;
-//
-//      // save class meta data
-//      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//      info.save(&metaWriter);
-//   }
-//}
-//
+
+void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints)
+{
+   bool singleton = false;
+
+   scope.compileHints(hints);
+
+   DNode expression = node.firstChild();
+   // if it is a singleton
+   if (isSingleStatement(expression)) {
+      DNode objNode = expression.firstChild().firstChild();
+      if (objNode == nsNestedClass) {
+         DNode classNode = expression.firstChild();
+
+         ClassScope classScope(scope.moduleScope, scope.reference);
+
+         if (classNode.Terminal() != nsNone) {
+            declareSingletonClass(classNode.firstChild(), classNode, classScope);
+            singleton = true;
+         }
+         // if it is normal nested class
+         else {
+            declareSingletonClass(classNode.firstChild(), DNode(), classScope);
+            singleton = true;
+         }
+      }
+      else if (objNode == nsSubCode) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         ActionScope methodScope(&classScope);
+
+         declareActionScope(objNode, classScope, DNode(), methodScope, 0, false);
+
+         declareSingletonAction(classScope, objNode, DNode());
+         singleton = true;
+      }
+      else if (objNode == nsInlineExpression) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+
+         declareSingletonAction(classScope, methodScope);
+         singleton = true;
+      }
+      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         ActionScope methodScope(&classScope);
+
+         declareActionScope(objNode, classScope, objNode, methodScope, 0, false);
+
+         declareSingletonAction(classScope, methodScope);
+         singleton = true;
+      }
+   }
+
+   if (!singleton && (scope.typeRef != 0 || scope.constant)) {
+      SymbolExpressionInfo info;
+      info.expressionTypeRef = scope.typeRef;
+      info.constant = scope.constant;
+
+      // save class meta data
+      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+      info.save(&metaWriter);
+   }
+}
+
 //void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
 //{
 //   scope.compileHints(hints);
