@@ -447,14 +447,30 @@ private:
 //         }
 //         else return Scope::getScope(level);
 //      }
-//
-//      void save()
-//      {
-//         // save class meta data
-//         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
-//         metaWriter.Memory()->trim(0);
-//         info.save(&metaWriter);
-//      }
+
+      void save()
+      {
+         // save class meta data
+         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+         metaWriter.Memory()->trim(0);
+         info.save(&metaWriter);
+      }
+
+      bool include(ref_t message)
+      {
+         // check if the method is inhreited and update vmt size accordingly
+         ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
+         if (it.Eof()) {
+            info.methods.add(message, true);
+         
+            return true;
+         }
+         else {
+            (*it) = true;
+         
+            return false;
+         }
+      }
 
       ClassScope(ModuleScope* parent, ref_t reference);
    };
@@ -538,12 +554,6 @@ private:
 //         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
 //
 //         return test(hint, tpGeneric);
-//      }
-//
-//      bool include(ClassScope* classScope);
-//      bool include()
-//      {
-//         return include((ClassScope*)getScope(Scope::slClass));
 //      }
 //
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -741,8 +751,8 @@ private:
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
-   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
-   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool closed);
+   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool& embeddable);
+   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol);
 
 //   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
 //
@@ -837,12 +847,13 @@ private:
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
-   void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root);
-   void generateClassDeclaration(ClassScope& scope);
+   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node);
+   void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
+   void generateClassDeclaration(ClassScope& scope, bool closed);
    
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
 //   void compileClassImplementation(DNode node, ClassScope& scope);
-//   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
 //   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);

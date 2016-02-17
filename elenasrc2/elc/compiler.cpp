@@ -121,17 +121,17 @@ inline DNode skipHints(DNode& node)
    return hints;
 }
 
-//inline bool findSymbol(DNode node, Symbol symbol)
-//{
-//   while (node != nsNone) {
-//      if (node==symbol)
-//         return true;
-//
-//      node = node.nextNode();
-//   }
-//   return false;
-//}
-//
+inline bool findSymbol(DNode node, Symbol symbol)
+{
+   while (node != nsNone) {
+      if (node==symbol)
+         return true;
+
+      node = node.nextNode();
+   }
+   return false;
+}
+
 //inline DNode goToSymbol(DNode node, Symbol symbol)
 //{
 //   while (node != nsNone) {
@@ -983,22 +983,6 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->tape = &parent->tape;
 }
 
-//bool Compiler::MethodScope :: include(ClassScope* classScope)
-//{
-//   // check if the method is inhreited and update vmt size accordingly
-//   ClassInfo::MethodMap::Iterator it = classScope->info.methods.getIt(message);
-//   if (it.Eof()) {
-//      classScope->info.methods.add(message, true);
-//
-//      return true;
-//   }
-//   else {
-//      (*it) = true;
-//
-//      return false;
-//   }
-//}
-//
 //ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 //{
 //   if (StringHelper::compare(identifier, THIS_VAR)) {
@@ -1766,7 +1750,7 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
    }
 }
 
-void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope)
+void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool& embeddable)
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
@@ -1789,6 +1773,8 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
          writer.appendNode(lxClassMethodAttr, tpStackSafe);
       }
       else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
+         embeddable = true;
+
          writer.appendNode(lxClassMethodAttr, tpEmbeddable);
          writer.appendNode(lxClassMethodAttr, tpSealed);
       }
@@ -4727,45 +4713,37 @@ void Compiler :: compileFieldDeclarations(DNode& member, SyntaxWriter& writer, C
 //   // create byte code sections
 //   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 //}
-//
-//void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
-//   // if no construtors are defined inherits the parent one
-//   if (!findSymbol(node.firstChild(), nsConstructor)) {
-//      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
-//      classClassParentName.append(CLASSCLASS_POSTFIX);
-//
-//      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-//   }
-//
-//   InheritResult res = inheritClass(classClassScope, classClassScope.info.header.parentRef, false);
-//   //if (res == irObsolete) {
-//   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
-//   //}
-//   if (res == irInvalid) {
-//      classClassScope.raiseError(errInvalidParent, node.Terminal());
-//   }
-//   else if (res == irSealed) {
-//      classClassScope.raiseError(errSealedParent, node.Terminal());
-//   }
-//   else if (res == irUnsuccessfull)
-//      classClassScope.raiseError(node != nsNone ? errUnknownClass : errUnknownBaseClass, node.Terminal());
-//
-//   // class class is always stateless
-//   classClassScope.info.header.flags |= elStateless;
-//
-//   DNode member = node.firstChild();
-//   declareVMT(member, classClassScope, nsConstructor, false);
-//
-//   // add virtual constructor
-//   MethodScope defaultScope(&classClassScope);
-//   defaultScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
-//   defaultScope.include();
-//
-//   // save declaration
-//   classClassScope.save();
-//}
-//
+
+void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
+   SyntaxWriter writer(&classClassScope.syntaxTree);
+   writer.newNode(lxRoot);
+
+   // if no construtors are defined inherits the parent one
+   if (!findSymbol(node.firstChild(), nsConstructor)) {
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
+
+      writer.appendNode(lxBaseClass, classClassScope.moduleScope->module->mapReference(classClassParentName));
+   }
+   
+   // class class is always stateless
+   writer.appendNode(lxClassField, elStateless);
+
+   DNode member = node.firstChild();
+   declareVMT(member, writer, classClassScope, nsConstructor);
+   
+   // add virtual constructor
+   writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
+
+   writer.closeNode();
+
+   generateClassDeclaration(classClassScope, false);
+
+   // save declaration
+   classClassScope.save();
+}
+
 //void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 //{
 //   _writer.declareClass(classClassScope.tape, classClassScope.reference);
@@ -4818,7 +4796,7 @@ void Compiler :: compileFieldDeclarations(DNode& member, SyntaxWriter& writer, C
 //   _writer.save(classClassScope.tape, classClassScope.moduleScope->module, classClassScope.moduleScope->debugModule, classClassScope.moduleScope->sourcePathRef);
 //}
 
-void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool closed)
+void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
@@ -4839,13 +4817,31 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
             writer.appendNode(lxClassFlag, elWithGenerics);
          }
          else declareArgumentList(member, methodScope, hints);
-         
+
          writer.newNode(lxClassMethod, methodScope.message);
          appendTerminalInfo(&writer, member.Terminal());
 
-         compileMethodHints(hints, writer, methodScope);
+         bool embeddable = false;
+         compileMethodHints(hints, writer, methodScope, embeddable);
 
          writer.closeNode();
+
+         // if the constructor is embeddable
+         // the special method should be declared as well
+         if (member == nsConstructor && embeddable) {
+            MethodScope specialMethodScope(&scope);
+
+            IdentifierString signature(scope.moduleScope->module->resolveSubject(getSignature(methodScope.message)));
+            signature.append(EMBEDDED_PREFIX);
+
+            specialMethodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(signature, false));
+
+            writer.newNode(lxClassMethod, specialMethodScope.message);
+            writer.newNode(lxClassMethodOpt, maEmbeddedInit);
+            writer.appendNode(lxMessage, specialMethodScope.message);
+            writer.closeNode();
+            writer.closeNode();
+         }
       }
       member = member.nextNode();
    }
@@ -4943,45 +4939,70 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
    }
 }
 
-void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root)
+void Compiler :: generateMethodHints(ClassScope& scope, SyntaxTree::Node node)
+{
+   ref_t outputType = 0;
+   bool hintChanged = false;
+   int hint = scope.info.methodHints.get(Attribute(node.argument, maHint));
+
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethodAttr) {
+         hint |= current.argument;
+
+         hintChanged = true;
+      }
+      else if (current == lxType) {
+         outputType = current.argument;
+      }
+      else if (current == lxClassMethodOpt) {
+         SyntaxTree::Node mssgAttr = SyntaxTree::findChild(current, lxMessage);
+         if (mssgAttr != lxNone) {
+            scope.info.methodHints.add(Attribute(node.argument, current.argument), getSignature(mssgAttr.argument));
+         }         
+      }
+      current = current.nextNode();
+   }
+
+   if (outputType != 0) {
+      scope.info.methodHints.exclude(Attribute(node.argument, maType));
+      scope.info.methodHints.add(Attribute(node.argument, maType), outputType);
+   }
+
+   if (hintChanged) {
+      scope.info.methodHints.exclude(Attribute(node.argument, maHint));
+      scope.info.methodHints.add(Attribute(node.argument, maHint), hint);
+   }
+}
+
+void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed)
 {
    SyntaxTree::Node current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         //int methodHints = methodScope.compileHints(hints);
+         generateMethodHints(scope, current);
+
+         int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint));
 
          // check if there is no duplicate method
          if (scope.info.methods.exist(current.argument, true))
-            scope.raiseError(errDuplicatedMethod, member.Terminal());
+            scope.raiseError(errDuplicatedMethod, current);
 
-         //bool included = methodScope.include();
-         //bool sealedMethod = methodScope.isSealed();
-         //// if the class is closed, no new methods can be declared
-         //if (included && closed)
-         //   scope.raiseError(errClosedParent, member.Terminal());
+         bool included = scope.include(current.argument);
+         bool sealedMethod = (methodHints & tpMask) == tpSealed;
+         // if the class is closed, no new methods can be declared
+         if (included && closed)
+            scope.raiseError(errClosedParent, current);
 
-         //// if the method is sealed, it cannot be overridden
-         //if (!included && sealedMethod)
-         //   scope.raiseError(errClosedMethod, member.Terminal());
-
-         //// if the constructor is embeddable
-         //// the special method should be declared as well
-         //if (member == nsConstructor && test(methodHints, tpEmbeddable)) {
-         //   MethodScope specialMethodScope(&scope);
-
-         //   IdentifierString signature(scope.moduleScope->module->resolveSubject(getSignature(methodScope.message)));
-         //   signature.append(EMBEDDED_PREFIX);
-
-         //   specialMethodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(signature, false));
-
-         //   scope.info.methodHints.add(Attribute(methodScope.message, maEmbeddedInit), getSignature(specialMethodScope.message));
-         //   specialMethodScope.include();
+         // if the method is sealed, it cannot be overridden
+         if (!included && sealedMethod)
+            scope.raiseError(errClosedMethod, current);
       }
       current = current.nextNode();
    }
 }
 
-void Compiler :: generateClassDeclaration(ClassScope& scope)
+void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
 {
    SyntaxTree reader(&scope.syntaxTree);
    SyntaxTree::Node root = reader.readRoot();
@@ -4995,7 +5016,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope)
    generateClassFields(scope, root.firstChild());
 
    // generate methods
-   generateMethodDeclarations(scope, root.firstChild());
+   generateMethodDeclarations(scope, root.firstChild(), closed);
 }
 
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
@@ -5014,27 +5035,27 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    compileClassHints(hints, writer, scope);   
    compileFieldDeclarations(member, writer, scope);
-   declareVMT(member, writer, scope, nsMethod, test(flagCopy, elClosed));
+   declareVMT(member, writer, scope, nsMethod);
 
    writer.closeNode();
 
-   generateClassDeclaration(scope);
+   generateClassDeclaration(scope, test(flagCopy, elClosed));
 
-//   // if it is a role
-//   if (test(scope.info.header.flags, elRole)) {
-//      // class is its own class class
-//      scope.info.classClassRef = scope.reference;
-//   }
-//   else {
-//      // define class class name
-//      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
-//      classClassName.append(CLASSCLASS_POSTFIX);
-//
-//      scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
-//   }
-//
-//   // save declaration
-//   scope.save();
+   // if it is a role
+   if (test(scope.info.header.flags, elRole)) {
+      // class is its own class class
+      scope.info.classClassRef = scope.reference;
+   }
+   else {
+      // define class class name
+      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
+      classClassName.append(CLASSCLASS_POSTFIX);
+
+      scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
+   }
+
+   // save declaration
+   scope.save();
 }
 
 //void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)

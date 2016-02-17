@@ -115,7 +115,7 @@ enum LexicalType
    //lxOverridden      = 0x805,
    //lxIfValue         = 0x806,
    //lxElseValue       = 0x807,
-   //lxMessage         = 0x808,
+   lxMessage         = 0x808,
    //lxEmbeddable      = 0x809,
    lxSize            = 0x80A,
 
@@ -135,6 +135,7 @@ enum LexicalType
    lxClassField      = 0x4005,
    lxClassMethod     = 0x4006,
    lxClassMethodAttr = 0x4007,
+   lxClassMethodOpt  = 0x4008,
 };
 
 // --- SyntaxWriter ---
