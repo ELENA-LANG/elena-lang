@@ -102,9 +102,9 @@ class ByteCodeWriter
    void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape/*, bool threadFriendly*/);  // thread friendly means the loop contains safe point
-//   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
-//   void declareThenElseBlock(CommandTape& tape);
-//   void declareElseBlock(CommandTape& tape);
+   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
+   void declareThenElseBlock(CommandTape& tape);
+   void declareElseBlock(CommandTape& tape);
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
@@ -142,7 +142,7 @@ class ByteCodeWriter
 //   void initBase(CommandTape& tape, int fieldCount);
 //   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
@@ -176,13 +176,13 @@ class ByteCodeWriter
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+
 //   void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);
-//   void endThenBlock(CommandTape& tape, bool withStackContro = true);
+   void endThenBlock(CommandTape& tape, bool withStackContro = true);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
@@ -211,11 +211,11 @@ class ByteCodeWriter
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
 //   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
-//   void doLongOperation(CommandTape& tape, int operator_id);
-//   void doRealOperation(CommandTape& tape, int operator_id);
-//   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doLongOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id);
+   void doArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
@@ -232,9 +232,9 @@ class ByteCodeWriter
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
@@ -246,7 +246,7 @@ class ByteCodeWriter
    void generateTrying(CommandTape& tape, SyntaxTree::Node node);
    void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
+   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
