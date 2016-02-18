@@ -238,7 +238,7 @@ private:
       ref_t falseReference;
       ref_t paramsReference;
       ref_t signatureReference;
-//      ref_t verbReference;
+      ref_t verbReference;
       ref_t arrayReference;
 
       ref_t boolType;
@@ -256,10 +256,10 @@ private:
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(const char* message, int row, int col, ident_t terminal);
@@ -478,7 +478,6 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//
       bool  constant;
       ref_t typeRef;
 
@@ -528,26 +527,26 @@ private:
 //      {
 //         return ((ClassScope*)parent)->info.header.flags;
 //      }
-//      
-//      ref_t getReturningType() const
-//      {
-//         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
-//      }
-//
+      
+      ref_t getReturningType() const
+      {
+         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
+      }
+
 //      bool isSealed() const
 //      {
 //         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
 //
 //         return (hint & tpMask) == tpSealed;
 //      }
-//
-//      bool isEmbeddable() const
-//      {
-//         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
-//
-//         return test(hint, tpEmbeddable);
-//      }
-//
+
+      bool isEmbeddable() const
+      {
+         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
+
+         return test(hint, tpEmbeddable);
+      }
+
 //      bool isGeneric() const
 //      {
 //         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
@@ -652,9 +651,9 @@ private:
          return scope ? scope->info.extensionTypeRef : 0;
       }
 
-//      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
-//
-//      CodeScope(SymbolScope* parent, SyntaxWriter* writer);
+      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
+
+      CodeScope(SymbolScope* parent, SyntaxWriter* writer);
       CodeScope(MethodScope* parent, SyntaxWriter* writer);
       CodeScope(CodeScope* parent);
    };
@@ -738,11 +737,11 @@ private:
    ref_t mapNestedExpression(CodeScope& scope);
    ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
-//   void importCode(DNode node, ModuleScope& scope, CommandTape* tape, ident_t reference);
+   void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
-//   void declareParameterDebugInfo(MethodScope& scope, bool withThis, bool withSelf);
+   void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 
    void generateParentDeclaration(ClassScope& scope, SyntaxTree::Node baseNode, bool ignoreSealed = false);
 
@@ -811,7 +810,7 @@ private:
    ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
+   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
    void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
    void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 
@@ -822,20 +821,18 @@ private:
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
    void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
-//   void compileSingletonClass(DNode member, ClassScope& scope);
+   void compileSingletonClass(DNode member, ClassScope& scope);
 
    void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
 
-//   void compileImportCode(DNode node, CodeScope& scope, ref_t message, ident_t function, CommandTape* tape);
-
    void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
-//   void compileDispatcher(DNode node, MethodScope& scope, bool withGenericMethods = false);
+   void compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope, bool genericMethod);
-//   void compileDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
-//   void compileDynamicDefaultConstructor(MethodScope& scope, ClassScope& classClassScope);
+   void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
+   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
    void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
-//   void compileEmbeddableConstructor(DNode node, MethodScope& scope, ClassScope& classClassScope);
+   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
    void compileSymbolCode(ClassScope& scope);
 
@@ -857,7 +854,7 @@ private:
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
-//   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
+   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
    void compileType(DNode& member, ModuleScope& scope, DNode hints);
 
@@ -871,22 +868,22 @@ private:
 
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
-//
-//   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);   
-//   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
-//   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
-//   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
-//   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-//   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
-//
-//   void analizeBoxing(Scope* scope, SyntaxTree::Node node);
-//   void analizeTypecast(Scope* scope, SyntaxTree::Node node);
-//   void analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node);
-//   void analizeSyntaxTree(Scope* scope, MemoryDump& dump);
-//
-//   bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
-//   bool recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node);
-//   void defineEmbeddableAttributes(MethodScope& scope, MemoryDump& dump);
+
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);   
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
+
+   void analizeBoxing(Scope* scope, SyntaxTree::Node node);
+   void analizeTypecast(Scope* scope, SyntaxTree::Node node);
+   void analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node);
+   void analizeSyntaxTree(Scope* scope, MemoryDump& dump);
+
+   bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
+   bool recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node);
+   void defineEmbeddableAttributes(MethodScope& scope, SyntaxTree::Node node);
 
 public:
    void loadRules(StreamReader* optimization);

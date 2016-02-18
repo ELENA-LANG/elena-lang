@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree class implementation
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,6 +14,11 @@
 using namespace _ELENA_;
 
 // --- SyntaxWriter ---
+
+size_t SyntaxWriter :: Position(int bookmark)
+{
+   return (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+}
 
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {

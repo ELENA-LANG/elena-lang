@@ -39,38 +39,41 @@ enum LexicalType
    lxDirectCalling   = 0x0308,
    lxSDirctCalling   = 0x0309,
    lxResending       = 0x030A,
-   lxTrying          = 0x030B,
-   lxAlt             = 0x030C,
-   lxLocking         = 0x030D,
-   lxBranching       = 0x030E,
-   lxSwitching       = 0x030F,
-   lxLooping         = 0x0310,
-   lxReturning       = 0x0311,
-   lxThrowing        = 0x0312,
-   lxStdExternalCall = 0x0313,
-   lxExternalCall    = 0x0314,
-   lxCoreAPICall     = 0x0315,
-   lxIntExtArgument  = 0x0316,
-   lxExtArgument     = 0x0317,
-   lxExtInteranlRef  = 0x0318,
-   lxInternalCall    = 0x0319,
-   lxMember          = 0x031A,
-   lxAssigning       = 0x031B,
-   lxArgUnboxing     = 0x031C,
-   lxIf              = 0x031D,
-   lxElse            = 0x031E,
-   lxOption          = 0x031F,
-   lxBody            = 0x0320,
-   lxLocalUnboxing   = 0x0321,
-   lxNewFrame        = 0x322,       // if argument -1 - than with presaved message
+   lxDispatching     = 0x030B,
+   lxTrying          = 0x030C,
+   lxAlt             = 0x030D,
+   lxLocking         = 0x030E,
+   lxBranching       = 0x030F,
+   lxSwitching       = 0x0310,
+   lxLooping         = 0x0311,
+   lxReturning       = 0x0312,
+   lxThrowing        = 0x0313,
+   lxStdExternalCall = 0x0314,
+   lxExternalCall    = 0x0315,
+   lxCoreAPICall     = 0x0316,
+   lxIntExtArgument  = 0x0317,
+   lxExtArgument     = 0x0318,
+   lxExtInteranlRef  = 0x0319,
+   lxInternalCall    = 0x031A,
+   lxMember          = 0x031B,
+   lxAssigning       = 0x031C,
+   lxArgUnboxing     = 0x031D,
+   lxIf              = 0x031E,
+   lxElse            = 0x031F,
+   lxOption          = 0x0320,
+   lxBody            = 0x0321,
+   lxLocalUnboxing   = 0x0322,
+   lxNewFrame        = 0x0323,       // if argument -1 - than with presaved message
+   lxCreatingClass   = 0x0324,
+   lxCreatingStruct  = 0x0325,
 
-   lxBoolOp          = 0x0322,
-   lxNilOp           = 0x0323,
-   lxIntOp           = 0x1324,
-   lxLongOp          = 0x1325,
-   lxRealOp          = 0x1326,
-   lxIntArrOp        = 0x1327,
-   lxArrOp           = 0x1328,
+   lxBoolOp          = 0x0326,
+   lxNilOp           = 0x0327,
+   lxIntOp           = 0x1328,
+   lxLongOp          = 0x1329,
+   lxRealOp          = 0x132A,
+   lxIntArrOp        = 0x132B,
+   lxArrOp           = 0x132C,
 
    lxNested          = 0x0101,
    lxStruct          = 0x0102,
@@ -99,7 +102,7 @@ enum LexicalType
    lxResultField     = 0x4119,
    lxCurrentMessage  = 0x411A,
 
-   lxVariable        = 0x407,
+   lxVariable        = 0x407, // debug info only if lxFrameAttr is included
    lxIntVariable     = 0x408,
    lxLongVariable    = 0x409,
    lxReal64Variable  = 0x40A,
@@ -107,7 +110,11 @@ enum LexicalType
    lxShortsVariable  = 0x40C,
    lxIntsVariable    = 0x40D,
    lxBinaryVariable  = 0x40E,
-   lxReleasing       = 0x40F,
+   lxParamsVariable  = 0x40F,
+   lxMessageVariable = 0x410, // debug info only
+   lxSelfVariable    = 0x411, // debug info only
+   lxReleasing       = 0x412,
+   lxImporting       = 0x413,
 
    lxTarget          = 0x801,
    lxType            = 0x802,
@@ -130,6 +137,7 @@ enum LexicalType
    lxLevel           = 0x2006,
    lxClassName       = 0x2007,
    lxValue           = 0x2008,
+   lxFrameAttr       = 0x2009,
 
    lxClassFlag       = 0x4001,      // class fields
    lxClassStructure  = 0x4002,      
@@ -149,6 +157,10 @@ class SyntaxWriter
    Stack<size_t> _bookmarks;
 
 public:
+   _Memory* Source() { return _writer.Memory(); }
+
+   size_t Position(int bookmark);
+
    int setBookmark(size_t position)
    {
       _bookmarks.push(position);
@@ -459,6 +471,12 @@ public:
 
    SyntaxTree(_Memory* dump)
       : _reader(dump)
+   {
+      _dump = dump;
+   }
+
+   SyntaxTree(_Memory* dump, int position)
+      : _reader(dump, position)
    {
       _dump = dump;
    }

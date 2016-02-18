@@ -78,32 +78,32 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
    else return 0;
 }
 
-//ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message)
-//{
-//   if (debugModule != NULL) {
-//      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
-//
-//      ref_t sourceRef = debugStringWriter.Position();
-//
-//      ref_t subjectRef, verb;
-//      int paramCount;
-//      decodeMessage(message, subjectRef, verb, paramCount);
-//
-//      IdentifierString name(retrieveKey(verbs.start(), verb, DEFAULT_STR));
-//      if (subjectRef != 0) {
-//         name.append('&');
-//         name.append(module->resolveSubject(subjectRef));
-//      }
-//      name.append('[');
-//      name.appendInt(paramCount);
-//      name.append(']');
-//
-//      debugStringWriter.writeLiteral(name);
-//
-//      return sourceRef;
-//   }
-//   else return 0;
-//}
+ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message)
+{
+   if (debugModule != NULL) {
+      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      ref_t sourceRef = debugStringWriter.Position();
+
+      ref_t subjectRef, verb;
+      int paramCount;
+      decodeMessage(message, subjectRef, verb, paramCount);
+
+      IdentifierString name(retrieveKey(verbs.start(), verb, DEFAULT_STR));
+      if (subjectRef != 0) {
+         name.append('&');
+         name.append(module->resolveSubject(subjectRef));
+      }
+      name.append('[');
+      name.appendInt(paramCount);
+      name.append(']');
+
+      debugStringWriter.writeLiteral(name);
+
+      return sourceRef;
+   }
+   else return 0;
+}
 
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeType scope*/)
 {
@@ -111,31 +111,31 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeT
    tape.write(blBegin, bsSymbol, reference);
 }
 
-//void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference)
-//{
-//   // symbol-begin:
-//
-//   // aloadr static
-//   // elser procedure-end
-//   // acopyr ref
-//   // pusha
-//
-//   tape.newLabel();     // declare symbol-end label
-//
-//   tape.write(blBegin, bsSymbol, staticReference);
-//   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.write(bcACopyR, staticReference | mskLockVariable);
-//   tape.write(bcPushA);
-//
-//   tryLock(tape);
-//   declareTry(tape);
-//
-//   // check if the symbol was not created while in the lock
-//   // aloadr static
-//   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
-//   jumpIfNotEqual(tape, 0, true);
-//}
+void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference)
+{
+   // symbol-begin:
+
+   // aloadr static
+   // elser procedure-end
+   // acopyr ref
+   // pusha
+
+   tape.newLabel();     // declare symbol-end label
+
+   tape.write(blBegin, bsSymbol, staticReference);
+   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.write(bcACopyR, staticReference | mskLockVariable);
+   tape.write(bcPushA);
+
+   tryLock(tape);
+   declareTry(tape);
+
+   // check if the symbol was not created while in the lock
+   // aloadr static
+   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
+   jumpIfNotEqual(tape, 0, true);
+}
 
 void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 {
@@ -143,17 +143,18 @@ void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 	tape.write(blBegin, bsClass, reference);
 }
 
-//void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
-//{
-//   // method-begin:
-//   tape.write(blBegin, bsMethod, message);
-//}
+void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
+{
+   // method-begin:
+   tape.write(blBegin, bsMethod, message);
+}
 
-void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool withPresavedMessage, bool withNewFrame)
+void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, int reserved, bool withPresavedMessage, bool withNewFrame)
 {
    // method-begin:
    //   { pope }?
    //   open
+   //   { reserve }?
    //   pusha
    tape.write(blBegin, bsMethod, message);
 
@@ -161,7 +162,13 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, bool with
       tape.write(bcPopE);
 
    if (withNewFrame) {
-      tape.write(bcOpen, 1);
+      if (reserved > 0) {
+         // to include new frame header
+         tape.write(bcOpen, 3 + reserved);
+         tape.write(bcReserve, reserved);
+      }
+      else tape.write(bcOpen, 1);
+
       tape.write(bcPushA);
    }
    tape.newLabel();     // declare exit point
@@ -227,15 +234,15 @@ void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localNa
    tape.write(bdParamsLocal, (ref_t)localName, level);
 }
 
-//void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
-//{
-//   tape.write(bdSelf, 0, level);
-//}
-//
-//void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t nameRef)
-//{
-//   tape.write(bdMessage, 0, nameRef);
-//}
+void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
+{
+   tape.write(bdSelf, 0, level);
+}
+
+void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t nameRef)
+{
+   tape.write(bdMessage, 0, nameRef);
+}
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
@@ -404,27 +411,27 @@ void ByteCodeWriter :: closeFrame(CommandTape& tape)
    tape.write(bcClose);
 }
 
-//void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
-//{
-//   if (itemSize != 1) {
-//      // muln itemSize
-//      tape.write(bcMulN, itemSize);
-//   }
-//   // bcreate
-//   tape.write(bcBCreate);
-//}
-//
-//void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
-//{
-//   // wcreate
-//   tape.write(bcWCreate);
-//}
-//
-//void ByteCodeWriter :: newDynamicNStructure(CommandTape& tape)
-//{
-//   // ncreate
-//   tape.write(bcNCreate);
-//}
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
+{
+   if (itemSize != 1) {
+      // muln itemSize
+      tape.write(bcMulN, itemSize);
+   }
+   // bcreate
+   tape.write(bcBCreate);
+}
+
+void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
+{
+   // wcreate
+   tape.write(bcWCreate);
+}
+
+void ByteCodeWriter :: newDynamicNStructure(CommandTape& tape)
+{
+   // ncreate
+   tape.write(bcNCreate);
+}
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
 {
@@ -440,15 +447,15 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
    tape.write(bcNew, reference | mskVMTRef, fieldCount);
 }
 
-//void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   tape.write(bcBCopyA);
-//
-//   loadObject(tape, sourceType, sourceArgument);
-//   initBase(tape, fieldCount);
-//
-//   tape.write(bcACopyB);
-//}
+void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument)
+{
+   tape.write(bcBCopyA);
+
+   loadObject(tape, sourceType, sourceArgument);
+   initBase(tape, fieldCount);
+
+   tape.write(bcACopyB);
+}
 
 void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
 {
@@ -459,66 +466,66 @@ void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalTy
    tape.write(bcACopyB);
 }
 
-//void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
-//{
-//   // create
-//   tape.write(bcCreate);
-//}
-//
-//void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
-//{
-//   //   dcopy 0                  |   { axsavebi i }n
-//   //   ecopy fieldCount
-//   // labNext:
-//   //   xset
-//   //   next labNext
-//   switch (fieldCount) {
-//      case 0:
-//         break;
-//      case 1:
-//         tape.write(bcAXSaveBI, 0);
-//         break;
-//      case 2:
-//         tape.write(bcAXSaveBI, 0);
-//         tape.write(bcAXSaveBI, 1);
-//         break;
-//      case 3:
-//         tape.write(bcAXSaveBI, 0);
-//         tape.write(bcAXSaveBI, 1);
-//         tape.write(bcAXSaveBI, 2);
-//         break;
-//      case 4:
-//         tape.write(bcAXSaveBI, 0);
-//         tape.write(bcAXSaveBI, 1);
-//         tape.write(bcAXSaveBI, 2);
-//         tape.write(bcAXSaveBI, 3);
-//         break;
-//      case 5:
-//         tape.write(bcAXSaveBI, 0);
-//         tape.write(bcAXSaveBI, 1);
-//         tape.write(bcAXSaveBI, 2);
-//         tape.write(bcAXSaveBI, 3);
-//         tape.write(bcAXSaveBI, 4);
-//         break;
-//      case 6:
-//         tape.write(bcAXSaveBI, 0);
-//         tape.write(bcAXSaveBI, 1);
-//         tape.write(bcAXSaveBI, 2);
-//         tape.write(bcAXSaveBI, 3);
-//         tape.write(bcAXSaveBI, 4);
-//         tape.write(bcAXSaveBI, 5);
-//         break;
-//      default:
-//         tape.write(bcDCopy, 0);
-//         tape.write(bcECopy, fieldCount);
-//         tape.newLabel();
-//         tape.setLabel(true);
-//         tape.write(bcXSet);
-//         tape.write(bcNext, baCurrentLabel);
-//         tape.releaseLabel();
-//         break;
-//   }
-//}
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
+{
+   // create
+   tape.write(bcCreate);
+}
+
+void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
+{
+   //   dcopy 0                  |   { axsavebi i }n
+   //   ecopy fieldCount
+   // labNext:
+   //   xset
+   //   next labNext
+   switch (fieldCount) {
+      case 0:
+         break;
+      case 1:
+         tape.write(bcAXSaveBI, 0);
+         break;
+      case 2:
+         tape.write(bcAXSaveBI, 0);
+         tape.write(bcAXSaveBI, 1);
+         break;
+      case 3:
+         tape.write(bcAXSaveBI, 0);
+         tape.write(bcAXSaveBI, 1);
+         tape.write(bcAXSaveBI, 2);
+         break;
+      case 4:
+         tape.write(bcAXSaveBI, 0);
+         tape.write(bcAXSaveBI, 1);
+         tape.write(bcAXSaveBI, 2);
+         tape.write(bcAXSaveBI, 3);
+         break;
+      case 5:
+         tape.write(bcAXSaveBI, 0);
+         tape.write(bcAXSaveBI, 1);
+         tape.write(bcAXSaveBI, 2);
+         tape.write(bcAXSaveBI, 3);
+         tape.write(bcAXSaveBI, 4);
+         break;
+      case 6:
+         tape.write(bcAXSaveBI, 0);
+         tape.write(bcAXSaveBI, 1);
+         tape.write(bcAXSaveBI, 2);
+         tape.write(bcAXSaveBI, 3);
+         tape.write(bcAXSaveBI, 4);
+         tape.write(bcAXSaveBI, 5);
+         break;
+      default:
+         tape.write(bcDCopy, 0);
+         tape.write(bcECopy, fieldCount);
+         tape.newLabel();
+         tape.setLabel(true);
+         tape.write(bcXSet);
+         tape.write(bcNext, baCurrentLabel);
+         tape.releaseLabel();
+         break;
+   }
+}
 
 void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
 {
@@ -788,10 +795,10 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType, ref_
    }
 }
 
-//void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
-//{
-//   tape.write(bcFreeStack, count);
-//}
+void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
+{
+   tape.write(bcFreeStack, count);
+}
 
 void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 {
@@ -820,33 +827,33 @@ void ByteCodeWriter :: releaseArgList(CommandTape& tape)
    tape.write(bcACopyB);
 }
 
-//void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
-//{
-//   // setsubj subj
-//   tape.write(bcSetSubj, subject);
-//}
-//
-//void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
-//{
-//   // acallvi offs
-//
-//   tape.write(bcACallVI, vmtOffset);
-//   tape.write(bcFreeStack, 1 + paramCount);
-//}
-//
+void ByteCodeWriter::setSubject(CommandTape& tape, ref_t subject)
+{
+   // setsubj subj
+   tape.write(bcSetSubj, subject);
+}
+
+void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
+{
+   // acallvi offs
+
+   tape.write(bcACallVI, vmtOffset);
+   tape.write(bcFreeStack, 1 + paramCount);
+}
+
 //void ByteCodeWriter :: callRoleMessage(CommandTape& tape, int paramCount)
 //{
 //   // acallvi 0
 //   tape.write(bcACallVI);
 //   tape.write(bcFreeStack, 1 + paramCount);
 //}
-//
-//void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xjumprm r, m
-//
-//   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
-//}
+
+void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xjumprm r, m
+
+   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
+}
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
 {
@@ -872,12 +879,12 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
    tape.write(bcFreeStack, 1 + getParamCount(message));
 }
 
-//void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
-//{
-//   // bsredirect
-//
-//   tape.write(bcBSRedirect);
-//}
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
+{
+   // bsredirect
+
+   tape.write(bcBSRedirect);
+}
 
 void ByteCodeWriter :: resend(CommandTape& tape)
 {
@@ -923,25 +930,6 @@ void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
    // jump labEnd
    tape.write(bcJump, label);
 }
-
-//void ByteCodeWriter :: insertStackAlloc(ByteCodeIterator it, CommandTape& tape, int size)
-//{
-//   // exclude code should follow open command
-//   it++;
-//
-//   // reserve
-//
-//   tape.insert(it, ByteCommand(bcReserve, size));
-//}
-//
-//void ByteCodeWriter :: updateStackAlloc(ByteCodeIterator it, int size)
-//{
-//   while (*it != bcReserve)  {
-//      it++;
-//   }
-//
-//   (*it).argument += size;
-//}
 
 void ByteCodeWriter :: endCatch(CommandTape& tape)
 {
@@ -1023,12 +1011,12 @@ void ByteCodeWriter :: endMethod(CommandTape& tape, int count, int reserved, boo
    tape.write(blEnd, bsMethod);
 }
 
-//void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
-//{
-//   // end
-//
-//   tape.write(blEnd, bsMethod);
-//}
+void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
+{
+   // end
+
+   tape.write(blEnd, bsMethod);
+}
 
 void ByteCodeWriter :: endClass(CommandTape& tape)
 {
@@ -1042,34 +1030,34 @@ void ByteCodeWriter :: endSymbol(CommandTape& tape)
    tape.write(blEnd, bsSymbol);
 }
 
-//void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
-//{
-//   // finally block - should free the lock if the exception was thrown
-//   declareCatch(tape);
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcPopA);
-//   freeLock(tape);
-//   tape.write(bcACopyB);
-//
-//   // throw
-//   tape.write(bcThrow);
-//
-//   endCatch(tape);
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcPopA);
-//   freeLock(tape);
-//   tape.write(bcACopyB);
-//
-//   // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
-//   // asaver static
-//   tape.write(bcASaveR, staticReference | mskStatSymbolRef);
-//   tape.setLabel();
-//
-//   // symbol-end:
-//   tape.write(blEnd, bsSymbol);
-//}
+void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
+{
+   // finally block - should free the lock if the exception was thrown
+   declareCatch(tape);
+
+   tape.write(bcBCopyA);
+   tape.write(bcPopA);
+   freeLock(tape);
+   tape.write(bcACopyB);
+
+   // throw
+   tape.write(bcThrow);
+
+   endCatch(tape);
+
+   tape.write(bcBCopyA);
+   tape.write(bcPopA);
+   freeLock(tape);
+   tape.write(bcACopyB);
+
+   // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
+   // asaver static
+   tape.write(bcASaveR, staticReference | mskStatSymbolRef);
+   tape.setLabel();
+
+   // symbol-end:
+   tape.write(blEnd, bsSymbol);
+}
 
 void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* debug, ref_t sourceNameRef)
 {
@@ -2802,42 +2790,42 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
    return message;
 }
 
-//void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
-//{
-//   int paramCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   declareArgumentList(tape, paramCount);
-//
-//   int index = 0;
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      if (test(current.type, lxObjectMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         saveObject(tape, lxCurrent, index);
-//         index++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   loadObject(tape, node);
-//   freeVirtualStack(tape, paramCount);
-//}
+void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
+{
+   int paramCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      current = current.nextNode();
+   }
+
+   declareArgumentList(tape, paramCount);
+
+   int index = 0;
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      if (test(current.type, lxObjectMask)) {
+         generateObjectExpression(tape, current);
+
+         saveObject(tape, lxCurrent, index);
+         index++;
+      }
+
+      current = current.nextNode();
+   }
+
+   loadObject(tape, node);
+   freeVirtualStack(tape, paramCount);
+}
 
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 {
@@ -3322,31 +3310,44 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
 
 void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
 {
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current == lxNewFrame) {
-         // new frame
-         newFrame(tape);
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+   if (node.argument == 0) {
+      SNode message = SyntaxTree::findChild(node, lxMessage);
 
-         // save message
-         pushObject(tape, lxCurrentMessage);
-
-         generateExpression(tape, current);
-
-         // restore message
-         popObject(tape, lxCurrentMessage);
-
-         // close frame
-         closeFrame(tape);
-      }
-      else if (current == lxExpression) {
-         generateExpression(tape, current);
-      }
-
-      current = current.nextNode();
+      pushObject(tape, lxCurrentMessage);
+      setSubject(tape, message.argument);
+      resendResolvedMethod(tape, target.argument, SyntaxTree::findChild(target, lxMessage).argument);
    }
+   else {
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxNewFrame) {
+            // new frame
+            newFrame(tape);
 
-   resend(tape);
+            // save message
+            pushObject(tape, lxCurrentMessage);
+
+            generateExpression(tape, current);
+
+            // restore message
+            popObject(tape, lxCurrentMessage);
+
+            // close frame
+            closeFrame(tape);
+         }
+         else if (current == lxExpression) {
+            generateExpression(tape, current);
+         }
+
+         current = current.nextNode();
+      }
+
+      if (target.argument != 0) {
+         resendResolvedMethod(tape, target.argument, node.argument);
+      }
+      else resend(tape);
+   }
 }
 
 void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
@@ -3428,6 +3429,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxResending:
          generateResendingExpression(tape, node);
          break;
+      case lxDispatching:
+         generateDispatching(tape, node);
+         break;
       case lxVariable:
          generateExpression(tape, node);
          pushObject(tape, lxResult);
@@ -3494,7 +3498,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             translateBreakpoint(tape, current);
             break;
          case lxVariable:
-            declareVariable(tape, current.argument);
+            // if the FrameAttr included, than it is a method parameter
+            // so no need to allocate the place
+            if (!SyntaxTree::existChild(current, lxFrameAttr))
+               declareVariable(tape, current.argument);
+
             declareLocalInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
                SyntaxTree::findChild(current, lxLevel).argument);
@@ -3502,17 +3510,25 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxIntVariable:
             declareLocalIntInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               SyntaxTree::findChild(current, lxLevel).argument, false);
+               SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
             break;
          case lxLongVariable:
             declareLocalLongInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               SyntaxTree::findChild(current, lxLevel).argument, false);
+               SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
             break;
          case lxReal64Variable:
             declareLocalRealInfo(tape,
                (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
-               SyntaxTree::findChild(current, lxLevel).argument, false);
+               SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
+            break;
+         case lxMessageVariable:
+            declareMessageInfo(tape, current.argument);
+            break;
+         case lxParamsVariable:
+            declareLocalParamsInfo(tape,
+               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxLevel).argument);
             break;
          case lxBytesVariable:
          {
@@ -3560,6 +3576,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxReleasing:
             releaseObject(tape, current.argument);
             break;
+         case lxSelfVariable:
+            declareSelfInfo(tape, current.argument);
+            break;
          default:
             generateObjectExpression(tape, current);
             break;
@@ -3568,28 +3587,117 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
    }
 }
 
+void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope)
+{
+   ByteCodeIterator it = tape.end();
+
+   tape.import(scope.section, true);
+
+   // goes to the first imported command
+   it++;
+
+   // import references
+   while (!it.Eof()) {
+      CommandTape::import(*it, scope.sour, scope.dest);
+      it++;
+   }
+}
+
+void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
+{
+   if (node.argument != 0) {
+      pushObject(tape, lxCurrentMessage);
+      setSubject(tape, node.argument);
+      doGenericHandler(tape);
+      popObject(tape, lxCurrentMessage);
+   }
+   else doGenericHandler(tape);
+
+   generateExpression(tape, node);
+}
+
+void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   if (node == lxCreatingClass) {
+      if (node.argument < 0) {
+         loadObject(tape, lxConstantClass, target.argument);
+         newDynamicObject(tape);
+      }
+      else newObject(tape, node.argument, target.argument);
+
+      if (node.argument > 0) {
+         initObject(tape, node.argument, lxNil);
+      }
+   }
+   else if (node == lxCreatingStruct) {
+      if (node.argument < 0) {
+         loadObject(tape, lxConstantClass, target.argument);
+         switch (node.argument) {
+            case -1:
+               newDynamicStructure(tape, 1);
+               break;
+            case -2:
+               newDynamicWStructure(tape);
+               break;
+            case -4:
+               newDynamicNStructure(tape);
+               break;
+            default:
+               newDynamicStructure(tape, -((int)node.argument));
+               break;
+         }
+      }
+      else newStructure(tape, node.argument, target.argument);
+   }
+}
+
 void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 {
    int reserved = SyntaxTree::findChild(node, lxReserved).argument;
    int paramCount = SyntaxTree::findChild(node, lxParamCount).argument;
 
-   //bool withPresavedMessage = 
-
    bool withNewFrame = false;
    bool open = false;
+   bool exit = false;
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxNewFrame) {
+      if (current == lxImporting) {
+         if (!open)
+            declareIdleMethod(tape, node.argument);
+
+         importCode(tape, *imports.get(current.argument - 1));
+      }
+      else if (current == lxNewFrame) {
          withNewFrame = true;
          if (!open) {
             if (current.argument == -1)
                saveSubject(tape);
 
-            declareMethod(tape, node.argument, current.argument == -1);
+            declareMethod(tape, node.argument, reserved, current.argument == -1);
             open = true;
          }    
 
          generateCodeBlock(tape, current);
+      }
+      else if (current == lxCalling && current.argument == -1) {
+         // HOTFIX: -1 indicates the stack is not consumed by the constructor
+         callMethod(tape, 1, -1);
+      }
+      else if (current == lxDispatching) {
+         exit = true;
+
+         if (!open)
+            declareIdleMethod(tape, node.argument);
+
+         generateDispatching(tape, current);
+      }
+      else if (current == lxCreatingClass || current == lxCreatingStruct) {
+         if (!open)
+            declareIdleMethod(tape, node.argument);
+
+         generateCreating(tape, current);
       }
       else if (test(current.type, lxExpressionMask)) {
          if (!open) {
@@ -3603,9 +3711,13 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 
       current = current.nextNode();
    }
-   if (open) {
-      endMethod(tape, paramCount, reserved, withNewFrame);
-   }      
+   if (!open) {
+      if (!exit)
+         exitMethod(tape, paramCount, reserved, false);
+
+      endIdleMethod(tape);
+   }
+   else endMethod(tape, paramCount, reserved, withNewFrame);
 }
 
 void ByteCodeWriter :: generateClass(CommandTape& tape, MemoryDump& dump)
@@ -3631,4 +3743,22 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, ref_t reference, Lexica
    declareSymbol(tape, reference);
    loadObject(tape, type, argument);
    endSymbol(tape);
+}
+
+void ByteCodeWriter :: generateSymbol(CommandTape& tape, MemoryDump& dump, bool isStatic)
+{
+   SyntaxTree reader(&dump);
+   SNode root = reader.readRoot();
+
+   if (isStatic) {
+      declareStaticSymbol(tape, root.argument);
+   }
+   else declareSymbol(tape, root.argument);
+
+   generateCodeBlock(tape, root);
+
+   if (isStatic) {
+      endStaticSymbol(tape, root.argument);
+   }
+   else endSymbol(tape);
 }
