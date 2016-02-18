@@ -218,8 +218,8 @@ void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
 {
    writer->appendNode(lxCol, terminal.Col());
    writer->appendNode(lxRow, terminal.Row());
-   writer->appendNode(lxLength, terminal.Row());
-   writer->appendNode(lxTerminal, terminal.length);
+   writer->appendNode(lxLength, terminal.length);
+   writer->appendNode(lxTerminal, (int)terminal.value);
 }
 
 // --- Compiler::ModuleScope ---
@@ -4634,7 +4634,7 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
    SyntaxWriter writer(&classClassScope.syntaxTree);
-   writer.newNode(lxRoot);
+   writer.newNode(lxRoot, classClassScope.reference);
 
    // if no construtors are defined inherits the parent one
    if (!findSymbol(node.firstChild(), nsConstructor)) {
@@ -4767,7 +4767,9 @@ void Compiler :: generateClassFlags(ClassScope& scope, SyntaxTree::Node root)
    SyntaxTree::Node current = root.firstChild();
    while (current != lxNone) {
       scope.compileClassHint(current);
-      generateClassFlags(scope, current);
+      if (current == lxClassStructure) {
+         generateClassFlags(scope, current);
+      }         
 
       current = current.nextNode();
    }
@@ -4925,19 +4927,19 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    generateParentDeclaration(scope, SyntaxTree::findChild(root, lxBaseClass));
 
    // generate flags
-   generateClassFlags(scope, root.firstChild());
+   generateClassFlags(scope, root);
 
    // generate fields
-   generateClassFields(scope, root.firstChild());
+   generateClassFields(scope, root);
 
    // generate methods
-   generateMethodDeclarations(scope, root.firstChild(), closed);
+   generateMethodDeclarations(scope, root, closed);
 }
 
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
 {
    SyntaxWriter writer(&scope.syntaxTree);
-   writer.newNode(lxRoot);
+   writer.newNode(lxRoot, scope.reference);
 
    DNode member = node.firstChild();
    if (member==nsBaseClass) {
@@ -5008,7 +5010,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope)
 {
    SyntaxWriter writer(&scope.syntaxTree);
-   writer.newNode(lxRoot);
+   writer.newNode(lxRoot, scope.reference);
 
    // inherit parent
    if (parentNode != nsNone) {
@@ -5029,7 +5031,7 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
 void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, DNode expression)
 {
    SyntaxWriter writer(&classScope.syntaxTree);
-   writer.newNode(lxRoot);
+   writer.newNode(lxRoot, classScope.reference);
 
    // singleton is always stateless
    writer.appendNode(lxClassFlag, elStateless);
@@ -5051,7 +5053,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, D
 void Compiler::compileSingletonClass(DNode node, ClassScope& scope)
 {
    SyntaxWriter writer(&scope.syntaxTree);
-   writer.newNode(lxRoot);
+   writer.newNode(lxRoot, scope.reference);
 
    DNode member = node.firstChild();
 
@@ -5575,7 +5577,7 @@ void Compiler :: analizeSyntaxTree(Scope* scope, MemoryDump& dump)
       return;
 
    SyntaxTree reader(&dump);
-   SyntaxTree::Node current = reader.readRoot();
+   SyntaxTree::Node current = reader.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
          analizeSyntaxExpression(scope, current);
@@ -5583,6 +5585,8 @@ void Compiler :: analizeSyntaxTree(Scope* scope, MemoryDump& dump)
       else if (test(current.type, lxExpressionMask)) {
          analizeSyntaxExpression(scope, current);
       }
+
+      current = current.nextNode();
    }
 }
 
