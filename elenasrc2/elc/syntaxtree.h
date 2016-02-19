@@ -147,6 +147,7 @@ enum LexicalType
    lxClassMethod     = 0x4006,
    lxClassMethodAttr = 0x4007,
    lxClassMethodOpt  = 0x4008,
+   lxWarningMask     = 0x4009,
 };
 
 // --- SyntaxWriter ---

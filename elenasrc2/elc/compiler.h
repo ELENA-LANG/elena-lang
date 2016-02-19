@@ -246,6 +246,7 @@ private:
       // warning mapiing
       bool warnOnUnresolved;
       bool warnOnWeakUnresolved;
+      int  warningMask;
 
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
@@ -262,10 +263,10 @@ private:
       }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
-      void raiseWarning(const char* message, int row, int col, ident_t terminal);
+      void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
 
       void raiseError(const char* message, TerminalInfo terminal);
-      void raiseWarning(const char* message, TerminalInfo terminal);
+      void raiseWarning(int level, const char* message, TerminalInfo terminal);
 
       bool checkReference(ident_t referenceName);
 
@@ -359,7 +360,6 @@ private:
 
       ModuleScope* moduleScope;
       Scope*       parent;
-      int          warningMask;
 
       void raiseError(const char* message, TerminalInfo terminal)
       {
@@ -367,8 +367,7 @@ private:
       }
       void raiseWarning(int level, const char* message, TerminalInfo terminal)
       {
-         if (test(warningMask, level))
-            moduleScope->raiseWarning(message, terminal);
+         moduleScope->raiseWarning(level, message, terminal);
       }
       void raiseError(const char* message, SyntaxTree::Node node)
       {
@@ -380,13 +379,11 @@ private:
       }
       void raiseWarning(int level, const char* message, SyntaxTree::Node node)
       {
-         if (test(warningMask, level)) {
-            SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
-            SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
-            SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+         SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+         SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
+         SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
 
-            moduleScope->raiseWarning(message, row.argument, col.argument, (ident_t)terminal.argument);
-         }
+         moduleScope->raiseWarning(level, message, row.argument, col.argument, (ident_t)terminal.argument);
       }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier)
@@ -409,13 +406,11 @@ private:
       {
          this->parent = NULL;
          this->moduleScope = moduleScope;
-         this->warningMask = moduleScope->project->getWarningMask();
       }
       Scope(Scope* parent)
       {
          this->parent = parent;
          this->moduleScope = parent->moduleScope;
-         this->warningMask = parent->warningMask;
       }
    };
 
@@ -434,6 +429,7 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo info;
+      ref_t     extensionTypeRef;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -507,8 +503,6 @@ private:
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool         withOpenArg;
       bool         stackSafe;
-
-      void compileWarningHints(DNode hints);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -642,13 +636,6 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope ? scope->info.header.flags : 0;
-      }
-
-      ref_t getExtensionType()
-      {
-         ClassScope* scope = (ClassScope*)getScope(slClass);
-
-         return scope ? scope->info.extensionTypeRef : 0;
       }
 
       void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
@@ -846,6 +833,7 @@ private:
    void generateMethodHints(ClassScope& scope, SyntaxTree::Node node);
    void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
    void generateClassDeclaration(ClassScope& scope, bool closed);
+   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
    
    void generateClassImplementation(ClassScope& scope);
 
@@ -869,6 +857,8 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
+   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
+
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);   
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
@@ -876,10 +866,10 @@ private:
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
 
-   void analizeBoxing(Scope* scope, SyntaxTree::Node node);
-   void analizeTypecast(Scope* scope, SyntaxTree::Node node);
-   void analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node);
-   void analizeSyntaxTree(Scope* scope, MemoryDump& dump);
+   void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void analizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
 
    bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
    bool recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node);

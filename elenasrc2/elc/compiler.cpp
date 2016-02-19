@@ -237,6 +237,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 
    warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
    warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
+   warningMask = project->getWarningMask();
 
    // cache the frequently used references
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
@@ -530,7 +531,6 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
 {
    target.header = copy.header;
    target.classClassRef = copy.classClassRef;
-   target.extensionTypeRef = copy.extensionTypeRef;
    target.size = copy.size;
 
    if (!headerOnly) {
@@ -726,24 +726,25 @@ void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t ref
          if (!refModule || refModule == module) {
             forwardsUnresolved->add(Unresolved(sourcePath, reference | mask, module, terminal.Row(), terminal.Col()));
          }
-         else raiseWarning(wrnUnresovableLink, terminal);
+         else raiseWarning(WARNING_LEVEL_1, wrnUnresovableLink, terminal);
       }
    }
 }
 
 void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo terminal)
 {
-   project->raiseError(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+   raiseError(message, terminal.Row(), terminal.Col(), terminal.value);
 }
 
-void Compiler::ModuleScope :: raiseWarning(const char* message, TerminalInfo terminal)
+void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
 {
-   project->raiseWarning(message, sourcePath, terminal.Row(), terminal.Col(), terminal.value);
+   raiseWarning(level, message, terminal.Row(), terminal.Col(), terminal.value);
 }
 
-void Compiler::ModuleScope :: raiseWarning(const char* message, int row, int col, ident_t terminal)
+void Compiler::ModuleScope :: raiseWarning(int level, const char* message, int row, int col, ident_t terminal)
 {
-   project->raiseWarning(message, sourcePath, row, col, terminal);
+   if (test(warningMask, level))
+      project->raiseWarning(message, sourcePath, row, col, terminal);
 }
 
 void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t terminal)
@@ -795,7 +796,7 @@ void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* ext
 
                typeExtensions->add(message, role_ref);
             }
-            else raiseWarning(wrnDuplicateExtension, terminal);
+            else raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, terminal);
          }
       }
    }
@@ -917,7 +918,7 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.count = 0;
    info.size = 0;
    info.classClassRef = 0;
-   info.extensionTypeRef = 0;
+   extensionTypeRef = 0;
 }
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
@@ -964,7 +965,7 @@ void Compiler::ClassScope :: compileClassHint(SyntaxTree::Node hint)
          break;
       }
       case lxClassExtension:
-         info.extensionTypeRef == hint.argument;
+         extensionTypeRef = hint.argument;
          break;
    }
 }
@@ -1007,26 +1008,6 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
          return retVal;
       }
-   }
-}
-
-void Compiler::MethodScope ::compileWarningHints(DNode hints)
-{
-   while (hints == nsHint) {
-      TerminalInfo terminal = hints.Terminal();
-      if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
-         DNode value = hints.select(nsHintValue);
-         TerminalInfo level = value.Terminal();
-         if (StringHelper::compare(level, "w2")) {
-            warningMask = WARNING_MASK_1;
-         }
-         else if (StringHelper::compare(level, "w3")) {
-            warningMask = WARNING_MASK_2;
-         }
-         else raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      }
-
-      hints = hints.nextNode();
    }
 }
 
@@ -1702,7 +1683,7 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
          DNode value = hints.select(nsHintValue);
          if (value != nsNone) {
             ref_t extensionTypeRef = scope.moduleScope->mapType(value.Terminal());
-            if (extensionTypeRef)
+            if (extensionTypeRef == 0)
                scope.raiseError(errUnknownSubject, value.Terminal());
 
             writer.appendNode(lxClassExtension, extensionTypeRef);
@@ -3215,14 +3196,10 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int
 
    writer.closeNode();  // closing method
 
-   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
-      writer.appendNode(lxClassFlag, elStateless);
-   }
-
    writer.closeNode();
 
    if (!alreadyDeclared)
-      generateClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+      generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
 
    // optimize
    optimizeTape(scope.tape);
@@ -3238,7 +3215,7 @@ void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& sc
    writer.newNode(lxRoot, scope.reference);
 
     if (parent != nsNone)
-       compileParentDeclaration(node, writer, scope);
+       compileParentDeclaration(parent, writer, scope);
 
    DNode member = node.firstChild();
 
@@ -3248,13 +3225,9 @@ void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& sc
 
    compileVMT(member, writer, scope);
 
-   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
-      writer.appendNode(lxClassFlag, elStateless);
-   }
-
    writer.closeNode();
 
-   generateClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+   generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
    generateClassImplementation(scope);
 }
 
@@ -4299,11 +4272,6 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
 
    CommandTape* tape = scope.tape;
 
-   // save extensions if any
-   if (test(codeScope.getClassFlags(false), elExtension)) {
-      codeScope.moduleScope->saveExtension(scope.message, codeScope.getExtensionType(), codeScope.getClassRefId());
-   }
-
    int methodBookmark = -1;
    if (scope.isEmbeddable())
       methodBookmark = writer.newBookmark();
@@ -4536,7 +4504,7 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          case nsMethod:
          {
             MethodScope methodScope(&scope);
-            methodScope.compileWarningHints(hints);
+            compileWarningHints(*scope.moduleScope, hints, writer);
 
             // if it is a dispatch handler
             if (member.firstChild() == nsDispatchHandler) {
@@ -4593,9 +4561,11 @@ void Compiler :: compileFieldDeclarations(DNode& member, SyntaxWriter& writer, C
 
       if (member==nsField) {
          writer.newNode(lxClassField);
-         appendTerminalInfo(&writer, member.Terminal());
 
+         appendTerminalInfo(&writer, member.Terminal());
          compileFieldHints(hints, writer, scope);
+
+         writer.closeNode();
       }
       else {
          // due to current syntax we need to reset hints back, otherwise they will be skipped
@@ -4606,16 +4576,6 @@ void Compiler :: compileFieldDeclarations(DNode& member, SyntaxWriter& writer, C
       }
       member = member.nextNode();
    }
-
-   //// mark the class as a wrapper if it is appropriate
-   //if (test(scope.info.header.flags, elStructureRole | elSealed | elEmbeddable) && (scope.info.fieldTypes.Count() == 1) && scope.info.size > 0) {
-   //   int type = scope.info.header.flags & elDebugMask;
-   //   int fieldType = scope.moduleScope->getClassFlags(scope.moduleScope->typeHints.get(*scope.info.fieldTypes.start())) & elDebugMask;
-   //   if (type == 0 && fieldType != 0) {
-   //      scope.info.header.flags |= elStructureWrapper;
-   //      scope.info.header.flags |= fieldType;
-   //   }
-   //}
 }
 
 void Compiler :: compileSymbolCode(ClassScope& scope)
@@ -4740,6 +4700,11 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          compileMethodHints(hints, writer, methodScope, embeddable);
 
          writer.closeNode();
+
+         // save extensions if any
+         if (test(scope.info.header.flags, elExtension)) {
+            scope.moduleScope->saveExtension(methodScope.message, scope.extensionTypeRef, scope.reference);
+         }
 
          // if the constructor is embeddable
          // the special method should be declared as well
@@ -4932,8 +4897,29 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    // generate fields
    generateClassFields(scope, root);
 
+   // mark the class as a wrapper if it is appropriate
+   if (test(scope.info.header.flags, elStructureRole | elSealed | elEmbeddable) && (scope.info.fieldTypes.Count() == 1) && scope.info.size > 0) {
+      int type = scope.info.header.flags & elDebugMask;
+      int fieldType = scope.moduleScope->getClassFlags(scope.moduleScope->typeHints.get(*scope.info.fieldTypes.start())) & elDebugMask;
+      if (type == 0 && fieldType != 0) {
+         scope.info.header.flags |= elStructureWrapper;
+         scope.info.header.flags |= fieldType;
+      }
+   }
+
    // generate methods
    generateMethodDeclarations(scope, root, closed);
+}
+
+void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
+{
+   generateClassDeclaration(scope, closed);
+
+   // stateless inline class
+   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
+      scope.info.header.flags |= elStateless;
+   }
+   else scope.info.header.flags &= ~elStateless;
 }
 
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
@@ -4977,7 +4963,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
 void Compiler :: generateClassImplementation(ClassScope& scope)
 {
-   analizeSyntaxTree(&scope, scope.syntaxTree);
+   analizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
 
    _writer.generateClass(scope.tape, scope.syntaxTree);
 
@@ -5023,7 +5009,7 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
 
    writer.closeNode();
 
-   generateClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+   generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
 
    scope.save();
 }
@@ -5032,9 +5018,6 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, D
 {
    SyntaxWriter writer(&classScope.syntaxTree);
    writer.newNode(lxRoot, classScope.reference);
-
-   // singleton is always stateless
-   writer.appendNode(lxClassFlag, elStateless);
 
    if (objNode != nsNone) {
       ActionScope methodScope(&classScope);
@@ -5045,7 +5028,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, D
 
    writer.closeNode();
 
-   generateClassDeclaration(classScope, test(classScope.info.header.flags, elClosed));
+   generateInlineClassDeclaration(classScope, test(classScope.info.header.flags, elClosed));
 
    classScope.save();
 }
@@ -5282,7 +5265,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    // NOTE : close root node
    writer.closeNode();
 
-   analizeSyntaxTree(&scope, scope.syntaxTree);
+   analizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
 
    _writer.generateSymbol(scope.tape, scope.syntaxTree, isStatic);
 
@@ -5476,24 +5459,50 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: analizeBoxing(Scope* scope, SyntaxTree::Node node)
+void Compiler :: compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer)
 {
-   SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
-   SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
-   if (col != lxNone && row != lxNone) {
-      scope->raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, node);
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo level = value.Terminal();
+         if (StringHelper::compare(level, "w2")) {
+            writer.appendNode(lxWarningMask, WARNING_MASK_1);
+         }
+         else if (StringHelper::compare(level, "w3")) {
+            writer.appendNode(lxWarningMask, WARNING_MASK_2);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+      }
+
+      hints = hints.nextNode();
    }
 }
 
-void Compiler :: analizeTypecast(Scope* scope, SyntaxTree::Node node)
+void Compiler :: analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel)
 {
-   SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
-   SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
-   if (col != lxNone && row != lxNone)
-      scope->raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, node);
+   if (test(warningLevel, WARNING_LEVEL_3)) {
+      SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+      SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
+      SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+      if (col != lxNone && row != lxNone) {
+         scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, (ident_t)terminal.argument);
+      }
+   }
 }
 
-void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
+void Compiler :: analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel)
+{
+   if (test(warningLevel, WARNING_LEVEL_2)) {
+      SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
+      SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
+      SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+      if (col != lxNone && row != lxNone)
+         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, (ident_t)terminal.argument);
+   }
+}
+
+void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningMask)
 {
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
@@ -5501,8 +5510,8 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
       {
          case lxAssigning:
          {
-            optimizeAssigning(*scope->moduleScope, current);
-            analizeSyntaxExpression(scope, current);
+            optimizeAssigning(scope, current);
+            analizeSyntaxExpression(scope, current, warningMask);
 
             // assignment operation
             SyntaxTree::Node assignNode = findSubNode(current, lxAssigning);
@@ -5525,21 +5534,21 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
             break;
          }
          case lxTypecasting:
-            analizeTypecast(scope, current);
-            analizeSyntaxExpression(scope, current);
+            analizeTypecast(scope, current, warningMask);
+            analizeSyntaxExpression(scope, current, warningMask);
             break;
          case lxBoxing:
          case lxCondBoxing:
          case lxArgBoxing:
          case lxUnboxing:
-            analizeBoxing(scope, current);
-            analizeSyntaxExpression(scope, current);
+            analizeBoxing(scope, current, warningMask);
+            analizeSyntaxExpression(scope, current, warningMask);
             break;
          case lxDirectCalling:
          case lxSDirctCalling:
          {
-            optimizeDirectCall(*scope->moduleScope, current);
-            analizeSyntaxExpression(scope, current);
+            optimizeDirectCall(scope, current);
+            analizeSyntaxExpression(scope, current, warningMask);
          }
          break;
          case lxIntOp:
@@ -5547,22 +5556,22 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
          case lxRealOp:
          case lxIntArrOp:
          case lxArrOp:
-            optimizeOp(*scope->moduleScope, current);
-            analizeSyntaxExpression(scope, current);
+            optimizeOp(scope, current);
+            analizeSyntaxExpression(scope, current, warningMask);
             break;
          case lxStdExternalCall:
          case lxExternalCall:
          case lxCoreAPICall:
-            optimizeExtCall(*scope->moduleScope, current);
-            analizeSyntaxExpression(scope, current);
+            optimizeExtCall(scope, current);
+            analizeSyntaxExpression(scope, current, warningMask);
             break;
          case lxInternalCall:
-            optimizeInternalCall(*scope->moduleScope, current);
-            analizeSyntaxExpression(scope, current);
+            optimizeInternalCall(scope, current);
+            analizeSyntaxExpression(scope, current, warningMask);
             break;
          default:
             if (test(current.type, lxExpressionMask)/* && current.nextNode() != lxAssigning*/) {
-               analizeSyntaxExpression(scope, current);
+               analizeSyntaxExpression(scope, current, warningMask);
             }
             break;
       }
@@ -5571,19 +5580,23 @@ void Compiler :: analizeSyntaxExpression(Scope* scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: analizeSyntaxTree(Scope* scope, MemoryDump& dump)
+void Compiler :: analizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
 {
    if (!test(_optFlag, 1))
       return;
 
+   int warningMask = 0;
    SyntaxTree reader(&dump);
    SyntaxTree::Node current = reader.readRoot().firstChild();
    while (current != lxNone) {
-      if (current == lxClassMethod) {
-         analizeSyntaxExpression(scope, current);
+      if (current == lxWarningMask) {
+         warningMask = current.argument;
+      }
+      else if (current == lxClassMethod) {
+         analizeSyntaxExpression(scope, current, warningMask);
       }
       else if (test(current.type, lxExpressionMask)) {
-         analizeSyntaxExpression(scope, current);
+         analizeSyntaxExpression(scope, current, warningMask);
       }
 
       current = current.nextNode();
@@ -5670,7 +5683,7 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hi
    // check if the module exists
    _Module* module = scope.project->loadModule(ns, true);
    if (!module)
-      scope.raiseWarning(wrnUnknownModule, ns);
+      scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
 
    ident_t value = retrieve(scope.defaultNs.start(), ns, NULL);
    if (value == NULL) {
@@ -5705,7 +5718,7 @@ void Compiler :: compileType(DNode& member, ModuleScope& scope, DNode hints)
 
          scope.saveType(typeRef, classRef, internalType);
       }
-      else scope.raiseWarning(wrnUnknownHint, hints.Terminal());
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
