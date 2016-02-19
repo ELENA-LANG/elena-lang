@@ -3170,8 +3170,6 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
       }
 
       writer.appendNode(lxBaseClass, parentRef);
-
-      writer.appendNode(lxClassMethod, methodScope.message);
    }
 
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
@@ -3187,6 +3185,8 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int
 
    ActionScope methodScope(&scope);
    bool lazyExpression = declareActionScope(node, scope, argNode, writer, methodScope, mode, alreadyDeclared);
+
+   writer.newNode(lxClassMethod, methodScope.message);
 
    // if it is single expression
    if (!lazyExpression) {
@@ -5022,6 +5022,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, D
    if (objNode != nsNone) {
       ActionScope methodScope(&classScope);
       declareActionScope(objNode, classScope, expression, writer, methodScope, 0, false);
+      writer.newNode(lxClassMethod, methodScope.message);
 
       writer.closeNode();
    }
