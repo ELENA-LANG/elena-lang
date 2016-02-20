@@ -145,7 +145,7 @@ class ByteCodeWriter
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-   void newFrame(CommandTape& tape);
+   void newFrame(CommandTape& tape, int reserved);
    void newStructure(CommandTape& tape, int size, ref_t reference);
    void newDynamicStructure(CommandTape& tape, int itemSize);
    void newDynamicWStructure(CommandTape& tape);

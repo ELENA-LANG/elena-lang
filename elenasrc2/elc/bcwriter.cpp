@@ -397,12 +397,19 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-void ByteCodeWriter :: newFrame(CommandTape& tape)
+void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved)
 {
    //   open 1
    //   pusha
-   tape.write(bcOpen, 1);
+   if (reserved > 0) {
+      // to include new frame header
+      tape.write(bcOpen, 3 + reserved);
+      tape.write(bcReserve, reserved);
+   }
+   else tape.write(bcOpen, 1);
+
    tape.write(bcPushA);
+
 }
 
 void ByteCodeWriter :: closeFrame(CommandTape& tape)
@@ -3323,7 +3330,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       while (current != lxNone) {
          if (current == lxNewFrame) {
             // new frame
-            newFrame(tape);
+            newFrame(tape, 0);
 
             // save message
             pushObject(tape, lxCurrentMessage);
@@ -3677,11 +3684,18 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 
             declareMethod(tape, node.argument, reserved, current.argument == -1);
             open = true;
-         }    
+         }  
+         else newFrame(tape, reserved);
 
          generateCodeBlock(tape, current);
       }
       else if (current == lxCalling && current.argument == -1) {
+         if (!open) {
+            declareMethod(tape, node.argument, 0, false, false);
+
+            open = true;
+         }
+            
          // HOTFIX: -1 indicates the stack is not consumed by the constructor
          callMethod(tape, 1, -1);
       }
@@ -3703,7 +3717,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          if (!open) {
             open = true;
 
-            declareMethod(tape, node.argument, false, false);
+            declareMethod(tape, node.argument, 0, false, false);
          }
 
          generateObjectExpression(tape, current);
