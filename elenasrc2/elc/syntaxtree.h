@@ -140,7 +140,6 @@ enum LexicalType
    lxClassFlag       = 0x4001,      // class fields
    lxClassStructure  = 0x4002,      
    lxClassArray      = 0x4003,
-   lxClassExtension  = 0x4004,
    lxClassField      = 0x4005,
    lxClassMethod     = 0x4006,
    lxClassMethodAttr = 0x4007,

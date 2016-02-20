@@ -918,7 +918,6 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.count = 0;
    info.size = 0;
    info.classClassRef = 0;
-   extensionTypeRef = 0;
 }
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
@@ -952,21 +951,20 @@ void Compiler::ClassScope :: compileClassHint(SyntaxTree::Node hint)
          info.header.flags |= hint.argument;
          break;
       case lxClassStructure:
+      case lxClassArray:
       {
          if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
             raiseError(wrnInvalidHint, hint);
 
-         info.size = hint.argument;
+         if (hint.type == lxClassStructure) {
+            info.size = hint.argument;
 
-         SyntaxTree::Node typeNode = SyntaxTree::findChild(hint, lxType);
-         if (typeNode.argument != 0)
-            info.fieldTypes.add(-1, typeNode.argument);
-
+            SyntaxTree::Node typeNode = SyntaxTree::findChild(hint, lxType);
+            if (typeNode.argument != 0)
+               info.fieldTypes.add(-1, typeNode.argument);
+         }
          break;
       }
-      case lxClassExtension:
-         extensionTypeRef = hint.argument;
-         break;
    }
 }
 
@@ -1496,7 +1494,7 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
+void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType)
 {
    // define class flags
    while (hints == nsHint) {
@@ -1673,16 +1671,17 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
          writer.closeNode();
       }
       else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
+         
+
          DNode value = hints.select(nsHintValue);
          if (value != nsNone) {
-            ref_t extensionTypeRef = scope.moduleScope->mapType(value.Terminal());
-            if (extensionTypeRef == 0)
+            extensionType = scope.moduleScope->mapType(value.Terminal());
+            if (extensionType == 0)
                scope.raiseError(errUnknownSubject, value.Terminal());
-
-            writer.appendNode(lxClassExtension, extensionTypeRef);
-            writer.appendNode(lxClassFlag, elExtension);
-            writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
          }
+         isExtension = true;
+         writer.appendNode(lxClassFlag, elExtension);
+         writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
       }
       else if (StringHelper::compare(terminal, HINT_STRUCT)) {
          writer.appendNode(lxClassFlag, elStructureRole);
@@ -4596,7 +4595,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    writer.appendNode(lxClassField, elStateless);
 
    DNode member = node.firstChild();
-   declareVMT(member, writer, classClassScope, nsConstructor);
+   declareVMT(member, writer, classClassScope, nsConstructor, false, 0);
    
    // add virtual constructor
    writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
@@ -4659,7 +4658,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    generateClassImplementation(classClassScope);
 }
 
-void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol)
+void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
@@ -4690,8 +4689,8 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          writer.closeNode();
 
          // save extensions if any
-         if (test(scope.info.header.flags, elExtension)) {
-            scope.moduleScope->saveExtension(methodScope.message, scope.extensionTypeRef, scope.reference);
+         if (isExtension) {
+            scope.moduleScope->saveExtension(methodScope.message, extensionType, scope.reference);
          }
 
          // if the constructor is embeddable
@@ -4720,7 +4719,7 @@ void Compiler :: generateClassFlags(ClassScope& scope, SyntaxTree::Node root)
    SyntaxTree::Node current = root.firstChild();
    while (current != lxNone) {
       scope.compileClassHint(current);
-      if (current == lxClassStructure) {
+      if (current == lxClassStructure || current == lxClassArray) {
          generateClassFlags(scope, current);
       }         
 
@@ -4877,8 +4876,6 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    SyntaxTree reader(&scope.syntaxTree);
    SyntaxTree::Node root = reader.readRoot();
 
-   
-
    // generate flags
    generateClassFlags(scope, root);
 
@@ -4925,9 +4922,11 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    int flagCopy = scope.info.header.flags;
 
-   compileClassHints(hints, writer, scope);
+   bool isExtension = false;
+   ref_t extensionType = 0;
+   compileClassHints(hints, writer, scope, isExtension, extensionType);
    compileFieldDeclarations(member, writer, scope);
-   declareVMT(member, writer, scope, nsMethod);
+   declareVMT(member, writer, scope, nsMethod, isExtension, extensionType);
 
    writer.closeNode();
 
@@ -4998,7 +4997,7 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
       writer.appendNode(lxClassFlag, elSealed);
    }
 
-   declareVMT(node.firstChild(), writer, scope, nsMethod);
+   declareVMT(node.firstChild(), writer, scope, nsMethod, false, 0);
 
    writer.closeNode();
 
@@ -5430,8 +5429,7 @@ SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type)
 SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask)
 {
    SyntaxTree::Node child = SyntaxTree::findMatchedChild(node, mask);
-   if (child == lxExpression)
-   {
+   if (child == lxExpression) {
       return SyntaxTree::findMatchedChild(child, mask);
    }
    else return child;

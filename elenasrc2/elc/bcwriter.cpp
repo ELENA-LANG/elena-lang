@@ -3627,21 +3627,22 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
 {
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
+   int size = node.argument;
    if (node == lxCreatingClass) {
-      if (node.argument < 0) {
+      if (size < 0) {
          loadObject(tape, lxConstantClass, target.argument);
          newDynamicObject(tape);
       }
-      else newObject(tape, node.argument, target.argument);
+      else newObject(tape, size, target.argument);
 
-      if (node.argument > 0) {
-         initObject(tape, node.argument, lxNil);
+      if (size > 0) {
+         initObject(tape, size, lxNil);
       }
    }
    else if (node == lxCreatingStruct) {
-      if (node.argument < 0) {
+      if (size < 0) {
          loadObject(tape, lxConstantClass, target.argument);
-         switch (node.argument) {
+         switch (size) {
             case -1:
                newDynamicStructure(tape, 1);
                break;
@@ -3652,11 +3653,11 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
                newDynamicNStructure(tape);
                break;
             default:
-               newDynamicStructure(tape, -((int)node.argument));
+               newDynamicStructure(tape, -size);
                break;
          }
       }
-      else newStructure(tape, node.argument, target.argument);
+      else newStructure(tape, size, target.argument);
    }
 }
 

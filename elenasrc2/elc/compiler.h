@@ -429,7 +429,6 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo info;
-      ref_t     extensionTypeRef;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -733,10 +732,10 @@ private:
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
-   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool& embeddable);
-   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol);
+   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
 
    bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
 
