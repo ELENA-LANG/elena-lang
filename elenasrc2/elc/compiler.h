@@ -730,9 +730,8 @@ private:
 
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 
-   void generateParentDeclaration(ClassScope& scope, SyntaxTree::Node baseNode, bool ignoreSealed = false);
-
-   void compileParentDeclaration(DNode node, SyntaxWriter& writer, ClassScope& scope);
+   void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
+   void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);

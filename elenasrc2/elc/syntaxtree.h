@@ -27,8 +27,6 @@ enum LexicalType
    lxInvalid         = 0x0001,
    lxRoot            = 0x0002,
 
-   lxBaseClass       = 0x0010,
-
    lxExpression      = 0x0301,
    lxBoxing          = 0x0302,   // boxing of the argument
    lxCondBoxing      = 0x0303,   // conditional boxing

@@ -1451,21 +1451,8 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    else return irUnsuccessfull;
 }
 
-void Compiler ::generateParentDeclaration(ClassScope& scope, SyntaxTree::Node baseNode, bool ignoreSealed)
+void Compiler :: compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed)
 {
-   // base class system'object must not to have a parent
-   ref_t parentRef = scope.info.header.parentRef;
-   if (scope.info.header.parentRef == scope.reference) {
-      if (baseNode.argument != 0) {
-         scope.raiseError(errInvalidSyntax, baseNode);
-      }
-      else parentRef = 0;
-   }
-   // if the class has an implicit parent
-   else if (baseNode != lxNone) {
-      parentRef = baseNode.argument;
-   }
-
    scope.info.header.parentRef = parentRef;
    InheritResult res = irSuccessfull;
    if (scope.info.header.parentRef != 0) {
@@ -1476,31 +1463,37 @@ void Compiler ::generateParentDeclaration(ClassScope& scope, SyntaxTree::Node ba
    //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
    //}
    if (res == irInvalid) {
-      scope.raiseError(errInvalidParent, baseNode);
+      scope.raiseError(errInvalidParent, baseNode.Terminal());
    }
    if (res == irSealed) {
-      scope.raiseError(errSealedParent, baseNode);
+      scope.raiseError(errSealedParent, baseNode.Terminal());
    }
    else if (res == irUnsuccessfull)
-      scope.raiseError(baseNode != lxNone ? errUnknownClass : errUnknownBaseClass, baseNode);
+      scope.raiseError(errUnknownBaseClass, baseNode.Terminal());
 }
 
-void Compiler :: compileParentDeclaration(DNode node, SyntaxWriter& writer, ClassScope& scope)
+void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
 {
-   ref_t parentRef = 0;
+   ref_t parentRef = scope.info.header.parentRef;
 
    TerminalInfo identifier = node.Terminal();
-   if (identifier == tsIdentifier || identifier == tsPrivate) {
-      parentRef = scope.moduleScope->mapTerminal(node.Terminal(), true);
+   if (scope.info.header.parentRef == scope.reference) {
+      if (identifier != nsNone) {
+         scope.raiseError(errInvalidSyntax, identifier);
+      }
+      else parentRef = 0;
    }
-   else parentRef = scope.moduleScope->mapReference(identifier);
+   else if (identifier != nsNone) {
+      if (identifier == tsIdentifier || identifier == tsPrivate) {
+         parentRef = scope.moduleScope->mapTerminal(node.Terminal(), true);
+      }
+      else parentRef = scope.moduleScope->mapReference(identifier);
 
-   if (parentRef != 0) {
-      writer.newNode(lxBaseClass, parentRef);
-      appendTerminalInfo(&writer, identifier);
-      writer.closeNode();
+      if (parentRef == 0)
+         scope.raiseError(errUnknownClass, identifier);
    }
-   else scope.raiseError(errUnknownClass, node.Terminal());
+
+   compileParentDeclaration(node, scope, parentRef);
 }
 
 void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
@@ -3169,7 +3162,7 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
          }
       }
 
-      writer.appendNode(lxBaseClass, parentRef);
+      compileParentDeclaration(DNode(), scope, parentRef);
    }
 
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
@@ -3201,12 +3194,7 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int
    if (!alreadyDeclared)
       generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
 
-   // optimize
-   optimizeTape(scope.tape);
-
-   // create byte code sections
-   scope.save();
-   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   generateClassImplementation(scope);
 }
 
 void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope)
@@ -3214,8 +3202,7 @@ void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& sc
    SyntaxWriter writer(&scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
-    if (parent != nsNone)
-       compileParentDeclaration(parent, writer, scope);
+   compileParentDeclaration(parent, scope);
 
    DNode member = node.firstChild();
 
@@ -4601,8 +4588,9 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
       IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
       classClassParentName.append(CLASSCLASS_POSTFIX);
 
-      writer.appendNode(lxBaseClass, classClassScope.moduleScope->module->mapReference(classClassParentName));
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
    }
+   compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef);
    
    // class class is always stateless
    writer.appendNode(lxClassField, elStateless);
@@ -4889,7 +4877,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    SyntaxTree reader(&scope.syntaxTree);
    SyntaxTree::Node root = reader.readRoot();
 
-   generateParentDeclaration(scope, SyntaxTree::findChild(root, lxBaseClass));
+   
 
    // generate flags
    generateClassFlags(scope, root);
@@ -4929,14 +4917,15 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    DNode member = node.firstChild();
    if (member==nsBaseClass) {
-      compileParentDeclaration(member, writer, scope);
+      compileParentDeclaration(member, scope);
 
       member = member.nextNode();
    }
+   else compileParentDeclaration(DNode(), scope);
 
    int flagCopy = scope.info.header.flags;
 
-   compileClassHints(hints, writer, scope);   
+   compileClassHints(hints, writer, scope);
    compileFieldDeclarations(member, writer, scope);
    declareVMT(member, writer, scope, nsMethod);
 
@@ -5000,10 +4989,14 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
 
    // inherit parent
    if (parentNode != nsNone) {
-      compileParentDeclaration(parentNode, writer, scope);
+      compileParentDeclaration(parentNode, scope);
    }
-   // nested class is sealed if it has no parent
-   else writer.appendNode(lxClassFlag, elSealed);
+   else {
+      compileParentDeclaration(DNode(), scope);
+
+      // nested class is sealed if it has no parent
+      writer.appendNode(lxClassFlag, elSealed);
+   }
 
    declareVMT(node.firstChild(), writer, scope, nsMethod);
 

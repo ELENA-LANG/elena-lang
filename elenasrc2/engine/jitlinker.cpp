@@ -460,8 +460,8 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
       if (_withDebugInfo)
          endNativeDebugInfo(sizePtr);
 
-      //if (count != header.count)
-      //   count = 0;
+      if (count != header.count)
+         count = 0;
 
       // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, classClassRef, references);
