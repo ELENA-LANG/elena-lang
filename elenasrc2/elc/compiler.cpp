@@ -978,6 +978,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->rootToFree = 1;
    this->withOpenArg = false;
    this->stackSafe = false;
+   this->embeddable = false;
+   this->generic = false;
 
    //NOTE : tape has to be overridden in the constructor
    this->tape = &parent->tape;
@@ -1734,12 +1736,12 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
    }
 }
 
-void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool& embeddable)
+void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope)
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
       if (StringHelper::compare(terminal, HINT_GENERIC)) {
-         writer.appendNode(lxClassFlag, elWithGenerics);
+         scope.generic = true;         
 
          writer.appendNode(lxClassMethodAttr, tpGeneric);
       }
@@ -1757,7 +1759,7 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
          writer.appendNode(lxClassMethodAttr, tpStackSafe);
       }
       else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
-         embeddable = true;
+         scope.embeddable = true;
 
          writer.appendNode(lxClassMethodAttr, tpEmbeddable);
          writer.appendNode(lxClassMethodAttr, tpSealed);
@@ -4122,12 +4124,14 @@ void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, Command
 
    if (target.kind == okConstantSymbol || target.kind == okField) {
       scope.writer->newNode(lxResending, methodScope->message);
+      scope.writer->newNode(lxExpression);
 
       if (target.kind == okField) {
          scope.writer->appendNode(lxResultField, target.param);
       }
       else scope.writer->appendNode(lxConstantSymbol, target.param);
 
+      scope.writer->closeNode();
       scope.writer->closeNode();
    }
    else {
@@ -4250,7 +4254,7 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope, CommandTa
 //   _writer.endIdleMethod(*tape);
 //}
 
-void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope, bool genericMethod)
+void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
 {
    int paramCount = getParamCount(scope.message);
 
@@ -4282,11 +4286,11 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
       // new stack frame
       // stack already contains current $self reference
       // the original message should be restored if it is a generic method
-      writer.newNode(lxNewFrame, genericMethod ? -1 : 0);
+      writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
 
       codeScope.level++;
       // declare the current subject for a generic method
-      if (genericMethod) {
+      if (scope.generic) {
          codeScope.level++;
          codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
       }
@@ -4344,7 +4348,7 @@ void Compiler :: compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, 
    // HOTFIX: embedded constructor is declared in class class but should be executed if the class scope
    scope.tape = &classClassScope.tape;
    scope.message = embedddedMethodRef;
-   compileMethod(node, writer, scope, false);
+   compileMethod(node, writer, scope);
 
    // compile a constructor calling the embedded method
    scope.message = originalMethodRef;
@@ -4508,8 +4512,9 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
                int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
                methodScope.stackSafe = test(hint, tpStackSafe);
+               methodScope.generic = test(hint, tpGeneric);
 
-               compileMethod(member, writer, methodScope, test(hint, tpGeneric));
+               compileMethod(member, writer, methodScope);
             }
             break;
          }
@@ -4523,8 +4528,9 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
             // mark as having generic methods
             scope.info.header.flags |= elWithGenerics;
+            methodScope.generic = true;
 
-            compileMethod(member, writer, methodScope, true);
+            compileMethod(member, writer, methodScope);
             break;
          }
       }
@@ -4683,10 +4689,12 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          writer.newNode(lxClassMethod, methodScope.message);
          appendTerminalInfo(&writer, member.Terminal());
 
-         bool embeddable = false;
-         compileMethodHints(hints, writer, methodScope, embeddable);
+         compileMethodHints(hints, writer, methodScope);
 
          writer.closeNode();
+
+         if (methodScope.generic)
+            writer.appendNode(lxClassFlag, elWithGenerics);
 
          // save extensions if any
          if (isExtension) {
@@ -4695,7 +4703,7 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
          // if the constructor is embeddable
          // the special method should be declared as well
-         if (member == nsConstructor && embeddable) {
+         if (member == nsConstructor && methodScope.embeddable) {
             MethodScope specialMethodScope(&scope);
 
             IdentifierString signature(scope.moduleScope->module->resolveSubject(getSignature(methodScope.message)));

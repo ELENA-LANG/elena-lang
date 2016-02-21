@@ -3680,13 +3680,13 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
       else if (current == lxNewFrame) {
          withNewFrame = true;
          if (!open) {
-            if (current.argument == -1)
-               saveSubject(tape);
-
             declareMethod(tape, node.argument, reserved, current.argument == -1);
             open = true;
          }  
          else newFrame(tape, reserved);
+
+         if (current.argument == -1)
+            saveSubject(tape);
 
          generateCodeBlock(tape, current);
       }

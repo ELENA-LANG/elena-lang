@@ -502,6 +502,8 @@ private:
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool         withOpenArg;
       bool         stackSafe;
+      bool         embeddable;
+      bool         generic;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -734,7 +736,7 @@ private:
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
-   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool& embeddable);
+   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
 
    bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
@@ -813,7 +815,7 @@ private:
    void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope& scope, bool withGenericMethods = false);
-   void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope, bool genericMethod);
+   void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
    void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
    void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
    void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
