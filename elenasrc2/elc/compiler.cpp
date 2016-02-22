@@ -749,7 +749,7 @@ void Compiler::ModuleScope :: raiseWarning(int level, const char* message, int r
 
 void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t terminal)
 {
-   project->raiseWarning(message, sourcePath, row, col, terminal);
+   project->raiseError(message, sourcePath, row, col, terminal);
 }
 
 void Compiler::ModuleScope :: loadTypes(_Module* extModule)

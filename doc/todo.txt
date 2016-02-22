@@ -2,6 +2,11 @@
 In development:
 ------                      
 
+              sdev - samples
+                       * rosetta sample : Top rank per group
+                       * rosetta sample : Truncate a file
+                       * rosetta sample : Twelve statements
+                      
               idev - generic development                                          
                        * test all basic class hints if they correctly works
                        * make sure that if stateless flag is set, class cannot have fields / data fields
@@ -38,12 +43,9 @@ In development:
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
                        * optimize snop
-                      
+
               sdev - samples
-                       * rosetta sample : Top rank per group
                        * rosetta sample : Truncatable primes
-                       * rosetta sample : Truncate a file
-                       * rosetta sample : Twelve statements
                        * rosetta sample : Undefined values
                        * rosetta sample : Unicode strings
                        * rosetta sample : Variable size/Get

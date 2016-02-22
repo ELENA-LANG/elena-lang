@@ -46,3 +46,4 @@
 ..\..\bin\elc -creverse_words_in_string\rev_words.prj
 ..\..\bin\elc -ctokenizer\tokenizer.prj
 ..\..\bin\elc -ctrigonometric\trigonometric.prj
+..\..\bin\elc -ctoppergroup\toppergroup.prj

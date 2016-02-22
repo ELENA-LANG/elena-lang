@@ -684,6 +684,10 @@ md examples\rosetta\trigonometric
 copy %1\examples\rosetta\trigonometric\*.l examples\rosetta\trigonometric
 copy %1\examples\rosetta\trigonometric\*.prj examples\rosetta\trigonometric
 
+md examples\rosetta\toppergroup
+copy %1\examples\rosetta\toppergroup\*.l examples\rosetta\toppergroup
+copy %1\examples\rosetta\toppergroup\*.prj examples\rosetta\toppergroup
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj

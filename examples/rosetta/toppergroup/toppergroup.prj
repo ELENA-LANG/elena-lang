@@ -1,0 +1,10 @@
+﻿[project]
+executable=toppergroup.exe
+namespace=toppergroup
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+toppergroup.l
+
