@@ -27,6 +27,8 @@
 {
     #method stream = $self.
     
+    #method(stacksafe) writeLength &int:aLength [ ] // !! default implementation
+        
     #method(stacksafe) readLength &vint:aLength [ aLength << 0. ] // !! default implementation
         
     #method(type:int,stacksafe,embeddable,suppress:w2) length
@@ -35,6 +37,11 @@
         $self readLength &vint:aLength.
         
         ^ IntNumber new &int:aLength.
+    ]
+    
+    #method(stacksafe) set &length:length
+    [
+        $self writeLength &int:(length int).
     ]
     
     #method(stacksafe) readIndex &vint:anIndex []

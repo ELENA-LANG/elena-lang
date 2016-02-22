@@ -3,8 +3,6 @@ In development:
 ------                      
 
               sdev - samples
-                       * rosetta sample : Top rank per group
-                       * rosetta sample : Truncate a file
                        * rosetta sample : Twelve statements
                       
               idev - generic development                                          

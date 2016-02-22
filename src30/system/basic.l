@@ -2555,9 +2555,9 @@
     ]
     
     /// Creates a variable with a specified value
-    #constructor new : aValue   
+    #constructor new : aValue  
     [
-        theValue := aValue char.
+        aValue cast:%write &to:$self.
     ]
     
     /// Creates a variable with a specified value
@@ -2582,6 +2582,12 @@
     #method(stacksafe) write &char:anOperand
     [
         theValue := anOperand.
+    ]
+    
+    /// Copies the character value
+    #method(stacksafe) write &int:value
+    [
+        theValue := charConvertor convert &int:value.
     ]
     
     /// Reads the character value

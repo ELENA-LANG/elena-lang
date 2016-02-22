@@ -37,6 +37,9 @@
     #constructor openForAppend &path:aPath
         <= %new &wide:(aPath wide) &int:$FILE_APPEND_DATA &int:$FILE_SHARE_READ &int:$OPEN_ALWAYS &int:0.
     
+    #constructor openForEdit &path:aPath
+        <= %new &wide:(aPath wide) &int:$FILE_GENERIC_WRITE &int:$FILE_SHARE_READ &int:$OPEN_EXISTING &int:0.
+    
     #constructor new &wide:aPath &int:dwDesiredAccess &int:dwShareMode &int:dwCreationDisposition &int:dwFlagsAndAttributes
     [
         theHandle := system'external'KERNEL32 CreateFileW
@@ -100,6 +103,18 @@
             &int:0.
     
         aLength << n. 
+    ]
+    
+    #method writeLength &int:length
+    [
+        #var(type:int)pos.
+        $self readIndex &vint:pos.
+        
+        $self writeIndex &int:length.
+        system'external'KERNEL32 SetEndOfFile &int:theHandle.
+        
+        (length > pos)
+            ? [ $self writeIndex &int:pos. ].
     ]
     
     #method close
@@ -250,6 +265,8 @@
     #method openForRead = FileStream openForRead &path:self.
     
     #method openForReWrite = FileStream openForReWrite &path:self.
+    
+    #method openForEdit = FileStream openForEdit &path:self.
     
     #method openForAppend = FileStream openForAppend &path:self.    
         
