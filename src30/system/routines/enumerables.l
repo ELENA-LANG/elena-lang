@@ -146,19 +146,7 @@
 
     #method ifExists : aValue
         = $nil != self::enumerableOp safeSeek:aValue.
-
-    #method top:aCounter
-        = system'routines'TopFilter new:aCounter &enumerator:(self enumerator).
-
-    #method filter &each:aFilter
-        = system'routines'Filter new &each:aFilter &enumerator:(self enumerator).
-
-    #method select &each:aSelector
-        = system'routines'Selector new &each:aSelector &enumerator:(self enumerator).
-
-    #method zip:anEnumerable &into:aZipper
-        = system'routines'ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
-             
+        
     #method equal &enumerable:list
     [
         (self length == list length)
@@ -200,13 +188,6 @@
             
         ^ aLastItem.
     ]
-    
-    /// obosolete
-    #method repeat &each:aRepeater    
-        = system'routines'Repeater new &till:self &each:aRepeater.
-        
-    #method repeat &till:max &each:aRepeater
-        = system'routines'Repeater new &from:self &till:max &each:aRepeater.
 }
 
 // --- indexableOp ---

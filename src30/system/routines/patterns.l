@@ -1,6 +1,7 @@
 // ==== ver 3.4.2 ===
 
 #import system.
+#import system'collections.
 
 // === pattern enumerators ==
 
@@ -258,6 +259,85 @@
     ]
 }
 
+// --- GroupingEnumerator ---
+
+#class GroupingEnumerator :: Enumerator
+{
+    #field(type:dictionary) theDictionary.
+    #field(type:enumerator) theEnumerator.
+    #field(type:func1)      theGroupFunc.    
+    #field(type:enumerator) theGroupEnumerator.
+    
+    #constructor new &func1:grouper &enumerator:enumerator
+    [
+        theGroupFunc := grouper.
+        theDictionary := Dictionary new.
+        theEnumerator := enumerator.
+        
+        $self reset.
+    ]
+    
+    #method reset
+    [
+        theEnumerator reset.
+        
+        #loop (theEnumerator next)?
+        [
+            #var item := theEnumerator get.
+            #var key := theGroupFunc eval:item.
+            
+            #var groupItem := theDictionary@key.
+            ($nil == groupItem)?
+            [
+                groupItem := ArrayList new.
+                
+                theDictionary@key := groupItem.
+            ].
+            
+            groupItem += item.
+        ].
+        
+        theGroupEnumerator := theDictionary enumerator.
+    ]
+    
+    #method get = theGroupEnumerator get.
+    
+    #method next
+        = theGroupEnumerator next.
+}
+
+// --- OrderingEnumerator ---
+
+#class OrderingEnumerator :: Enumerator
+{
+    #field(type:enumerator) theEnumerator.
+    #field(type:func2)      theOrderFunc.    
+    #field(type:enumerator) theListEnumerator.
+    
+    #constructor new &func2:orderFunc &enumerator:enumerator
+    [
+        theOrderFunc := orderFunc.
+        theEnumerator := enumerator.
+        
+        $self reset.
+    ]
+    
+    #method reset
+    [
+        theEnumerator reset.
+        
+        #var(type:array) list := Summing new:(ArrayList new) run &enumerator:theEnumerator.
+        list sort &func2:theOrderFunc.
+        
+        theListEnumerator := list enumerator.
+    ]
+    
+    #method get = theListEnumerator get.
+    
+    #method next
+        = theListEnumerator next.
+}
+
 // === patterns ===
 
 // --- BasePattern ---
@@ -324,4 +404,29 @@
     
     #method accumulate &with:operation 
         = self::patternOp accumulate:(Variable new) &with:operation.
+
+    #method top:aCounter
+        = TopFilter new:aCounter &enumerator:(self enumerator).
+
+    #method filter &each:aFilter
+        = Filter new &each:aFilter &enumerator:(self enumerator).
+
+    #method select &each:aSelector
+        = Selector new &each:aSelector &enumerator:(self enumerator).
+
+    #method zip:anEnumerable &into:aZipper
+        = ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
+
+    #method group &by:groupFunc
+        = GroupingEnumerator new &func1:(groupFunc func1) &enumerator:(self enumerator).                                       
+
+    #method order &by:orderFunc
+        = OrderingEnumerator new &func2:(orderFunc func2) &enumerator:(self enumerator).                                       
+    
+    /// obosolete
+    #method repeat &each:aRepeater    
+        = Repeater new &till:self &each:aRepeater.
+        
+    #method repeat &till:max &each:aRepeater
+        = Repeater new &from:self &till:max &each:aRepeater.
 }

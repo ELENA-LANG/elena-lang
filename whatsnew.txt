@@ -11,8 +11,15 @@
 [!] binary incompatible due to implementing issues #217 and #54
 [!] #217 : output code optimization
 
+[LIB]
+[+] system'routines : enumerable.group&by[1]
+[+] system'routines : enumerable.order&by[1]
+
 [IDE]
 [-] issue #4 : IDE and Chinese characters
+
+[Samples]
+[+] rosetta sample : Top rank per group
 
 ******************************************************************************
                              What's New in 1.9.25

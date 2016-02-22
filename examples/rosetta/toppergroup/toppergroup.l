@@ -1,6 +1,9 @@
 #import system.
+#import system'collections.
 #import system'routines.
 #import extensions.
+#import extensions'routines.
+#import extensions'text.
 
 #class Employee
 {
@@ -24,19 +27,25 @@
     #method Department = theDepartment.
     
     #method literal
-        = String 
+        = StringWriter new
             write:theName &paddingRight:25
             write:theID &paddingRight:12
             write:theSalary &paddingRight:12
-            writeLine:theDepartment.
+            write:theDepartment.
 }
                                 
 #class(extension)reportOp
 {
     #method topNPerDepartment &n:n
-    [
-        
-    ]
+        = self group &by:x [ x Department ] select &each: x
+        [
+            ^ {
+                Department = x key.
+                
+                Employees
+                    = x order &by:(:f:l)[ f Salary > l Salary ] top:n summarize:(ArrayList new).
+            }.
+        ].
 }
 
 #symbol program =
@@ -60,10 +69,12 @@
     
     employees topNPerDepartment &n:2 run &each:info
     [
-        console writeLine:"Department: ":(info department).
+        console writeLine:"Department: ":(info Department).
         
-        info employees run &each:printingLn.
+        info Employees run &each:printingLn.
         
         console writeLine:"---------------------------------------------".
     ].
+    
+    console readChar.
 ].
