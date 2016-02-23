@@ -9,21 +9,40 @@
 
 #class TopFilter :: Enumerator
 {
-    #field(type:vint)theCounter.
+    #field(type:vint)theOffset.    
+    #field(type:vint)theCounter.    
     #field(type:enumerator)theEnumerator.
     
     #constructor new : aCounter &enumerator:anEnumerator
     [
         theCounter := Integer new &int:(aCounter int).
+        theOffset := Integer new &int:0.
         theEnumerator := anEnumerator.
+    ]
+    
+    #constructor new : counter &skipping:offset &enumerator:enumerator
+    [
+        theCounter := Integer new &int:(counter int).
+        theOffset := Integer new &int:(offset int).
+        
+        theEnumerator := enumerator.
     ]
     
     #method get = theEnumerator get.
     
     #method next
     [
-        ((theCounter > 0)and:[ theEnumerator next ])
-            ? [ theCounter -= 1. ^ true. ].
+        (theCounter != 0)?
+        [
+            #loop (theEnumerator next)?
+            [
+                (theOffset == 0)
+                    ? [  
+                        theCounter -= 1. ^ true.
+                    ]
+                    ! [ theOffset -= 1. ]
+            ].
+        ].
         
         ^ false.
     ]
@@ -407,6 +426,9 @@
 
     #method top:aCounter
         = TopFilter new:aCounter &enumerator:(self enumerator).
+
+    #method last:counter
+        = TopFilter new:counter &skipping:(self length - counter) &enumerator:(self enumerator).
 
     #method filter &each:aFilter
         = Filter new &each:aFilter &enumerator:(self enumerator).

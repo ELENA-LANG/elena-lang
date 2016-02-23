@@ -438,7 +438,7 @@
         #var(type:int)bits.
         theArray read &int:arr_index &vint:bits.
         
-        ^ bits && bit_mask.
+        ^ (bits && bit_mask) != 0.
     ]
     
     #method setAt:index:value
@@ -496,6 +496,9 @@
         theValue := value.
     ]
     
+    #constructor new:value
+        <= new &int:(value int).
+    
     #method(type:int) length = 32.
     
     #method write &int:value
@@ -518,7 +521,7 @@
         #var(type:int)bit_mask := 1.
         bit_mask shift &int:bit_index.
         
-        ^ theValue && bit_mask.
+        ^ (theValue && bit_mask) != 0.
     ]
     
     #method setAt:index:value
