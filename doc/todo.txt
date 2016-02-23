@@ -2,10 +2,15 @@
 In development:
 ------                      
 
+              adev - lib30     
+                       * bitarray
+                       * implement #33 (tcp/ip socket)
+
               sdev - samples
                        * rosetta sample : Twelve statements
                       
               idev - generic development                                          
+                       * warn on boxing (BitArray.get&length)
                        * test if sealed hint works
                        * make sure that if stateless flag is set, class cannot have fields / data fields
                        * test if embeddable constructor works
@@ -289,8 +294,6 @@ Pipeline:
                        * test ide: goto error if the file is not opened
                        
               idev - unicode
-                       * textview : support chinese symbols - cursor location (chines symbols should take two symbol?)
-                       
                        * output window
                        * project compile
                        * project run
@@ -341,7 +344,6 @@ Pipeline:
                        * a lot of operations with controls should be implemented directly
                        
               adev - lib30     
-                       * implement #33 (tcp/ip socket)
                        * implement sorting for locale
                        * extensions'text'ReaderEnumerator - currently converts the result into UTF-8, should we have an alternative one?                       
                        * review http://www.angelfire.com/tx4/cus/notes/smalltalk.html:  add missing implementation for ELENA

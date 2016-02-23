@@ -41,6 +41,8 @@
 #subject(class:system'OpenArgs)     params.
 #subject(class:system'OpenArgs)     args.
 #subject(class:system'MessageArray) mssgarray.
+#subject(class:system'BitArray)     bitarray.
+#subject(class:system'BitArray32)   bitset.
 
 #subject(class:system'LiteralValue) literal.
 #subject(class:system'WideLiteralValue) wide.

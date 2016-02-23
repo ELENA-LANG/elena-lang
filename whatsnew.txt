@@ -12,9 +12,11 @@
 [!] #217 : output code optimization
 
 [LIB]
+[+] system : BitArray, BitArray32
 [+] system'routines : enumerable.group&by[1]
 [+] system'routines : enumerable.order&by[1]
 [+] system'io : stream.set&length[1]
+[*] system : Char#class.new[1] supports now an integer parameter
 
 [IDE]
 [-] issue #4 : IDE and Chinese characters
