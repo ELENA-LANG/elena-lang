@@ -27,6 +27,12 @@
     #method(type:bool)is &available
         = thePath::fileExtOp is &available.
     
+    #method(type:literal) literalContent
+        = thePath::fileOp literalContent.
+    
+    #method(type:wide) wideContent
+        = thePath::fileOp wideContent.
+    
     #method(type:int)length
         = thePath::fileOp length.
 }
@@ -37,7 +43,7 @@
 {
     #method read &textbuffer:anOutput
     [
-        #var(type:textreader)aReader := self textreader.
+        #var(type:textreader)aReader := self::fileExtOp textreader.
         #var(type:chararray,size:128)buffer.
         #var(type:int)read.
         #loop (aReader available)?
