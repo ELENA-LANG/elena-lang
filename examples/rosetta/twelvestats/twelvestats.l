@@ -41,13 +41,21 @@
     [
         #var bits := BitArray32 new:n top:12 toArray.
         
+//        console writeLine:(bits toBitArray).
+
+//        puzzle run &each:puzzle
+//        [
+//            console writeLiteral:(puzzle eval:bits):" ".
+//        ].
+//        console writeLine.
+//                        
         #var counts := puzzle select 
             &each:puzzle [ puzzle eval:bits iif:1:0 ] summarize.
         
         counts =>
-            12 ? [ console writeLine:"Total hit":(bits toBitArray). ]
-            11 ? [ console writeLine:"Near miss":(bits toBitArray). ]
-            0 ? [ console writeLine:"Total miss":(bits toBitArray). ].
+            12 ? [ console writeLine:"Total hit:":(bits toBitArray). ]
+            11 ? [ console writeLine:"Near miss:":(bits toBitArray). ]
+            1 ? [ console writeLine:"Total miss:":(bits toBitArray). ].
     ].
     
     console readChar.

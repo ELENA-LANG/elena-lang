@@ -85,6 +85,236 @@
     ]    
 }
 
+// --- PatternFilter2 ---
+
+#class PatternFilter2 :: Enumerator
+{
+    #field(type:func2)theFilter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &func2:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var previous := theEnumerator get.
+        
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:previous:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            previous := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter3 ---
+
+#class PatternFilter3 :: Enumerator
+{
+    #field(type:func3)theFilter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &func3:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var previous := theEnumerator get.
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:beforeprev:previous:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            beforeprev := previous.
+            previous := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter4 ---
+
+#class PatternFilter4 :: Enumerator
+{
+    #field(type:func4)theFilter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &func4:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforebeforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var previous := theEnumerator get.
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:beforebeforeprev:beforeprev:previous:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            beforebeforeprev := beforebeforeprev.
+            beforeprev := previous.
+            previous := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter5 ---
+
+#class PatternFilter5 :: Enumerator
+{
+    #field(type:func5)theFilter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &func5:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var before3prev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforebeforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var previous := theEnumerator get.
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:before3prev:beforebeforeprev:beforeprev:previous:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            before3prev := beforebeforeprev.
+            beforebeforeprev := beforebeforeprev.
+            beforeprev := previous.
+            previous := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter6 ---
+
+#class PatternFilter6 :: Enumerator
+{
+    #field(type:func6)theFilter.
+    #field(type:enumerator)theEnumerator.
+    
+    #constructor new &func6:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var before4prev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var before3prev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforebeforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var beforeprev := theEnumerator get.
+
+        (theEnumerator next)
+            ! [ ^ false. ].
+        
+        #var previous := theEnumerator get.
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:before4prev:before3prev:beforebeforeprev:beforeprev:previous:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            before4prev := before3prev.
+            before3prev := beforebeforeprev.
+            beforebeforeprev := beforebeforeprev.
+            beforeprev := previous.
+            previous := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
 // --- Selecting ---
 
 #class Selector :: Enumerator
@@ -444,7 +674,30 @@
 
     #method order &by:orderFunc
         = OrderingEnumerator new &func2:(orderFunc func2) &enumerator:(self enumerator).                                       
-    
+
+    #method filter &pattern:patternFun
+        = patternFun cast:%eval &to:
+        {
+            eval:enumerable &func1:func1
+                = Filter new &each:func1 &enumerator:(enumerable enumerator).
+            
+            eval:enumerable &func2:func2
+                = PatternFilter2 new &func2:func2 &enumerator:(enumerable enumerator).
+                
+            eval:enumerable &func3:func3
+                = PatternFilter3 new &func3:func3 &enumerator:(enumerable enumerator).
+
+            eval:enumerable &func4:func4
+                = PatternFilter4 new &func4:func4 &enumerator:(enumerable enumerator).
+
+            eval:enumerable &func5:func5
+                = PatternFilter5 new &func5:func5 &enumerator:(enumerable enumerator).
+
+            eval:enumerable &func6:func6
+                = PatternFilter6 new &func6:func6 &enumerator:(enumerable enumerator).
+
+        } &with:self.
+            
     /// obosolete
     #method repeat &each:aRepeater    
         = Repeater new &till:self &each:aRepeater.

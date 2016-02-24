@@ -433,7 +433,8 @@
         bit_index := 0 - bit_index.
         
         #var(type:int)bit_mask := 1.
-        bit_mask shift &int:bit_index.
+        (bit_index != 0)
+            ? [ bit_mask shift &int:bit_index &vint:bit_mask. ].
         
         #var(type:int)bits.
         theArray read &int:arr_index &vint:bits.
@@ -454,7 +455,8 @@
         bit_index := 0 - bit_index.
         
         #var(type:int)bit_mask := 1.
-        bit_mask shift &int:bit_index.
+        (bit_index != 0)
+            ? [ bit_mask shift &int:bit_index &vint:bit_mask. ].
         
         #var(type:int)bits.
         theArray read &int:arr_index &vint:bits.
@@ -519,7 +521,8 @@
         #var(type:int)bit_index := 0 - index.
         
         #var(type:int)bit_mask := 1.
-        bit_mask shift &int:bit_index.
+        (bit_index != 0)
+            ? [ bit_mask shift &int:bit_index &vint:bit_mask. ].
         
         ^ (theValue && bit_mask) != 0.
     ]
@@ -534,7 +537,8 @@
         #var(type:int)bit_index := 0 - index.
         
         #var(type:int)bit_mask := 1.
-        bit_mask shift &int:bit_index.
+        (bit_index != 0)
+            ? [ bit_mask shift &int:bit_index &vint:bit_mask. ].
         
         value
             ? [ theValue := theValue || bit_mask. ]
@@ -674,9 +678,7 @@
         #var(type:int)aBinLen.
         theBinaryArray readLength &vint:aBinLen.
         
-        aBinLen shift &int:3.
-        
-        aLength << aBinLen.
+        aBinLen shift &int:3 &vint:aLength.
     ]
 
     /// Returns the array length

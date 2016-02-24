@@ -188,6 +188,18 @@
             
         ^ aLastItem.
     ]
+    
+    #method(type:int) count
+    [
+        #var(type:enumerator)en := self enumerator.
+        #var(type:int)counter := 0.
+        #loop (en next)?
+        [
+            counter := counter + 1.
+        ].
+        
+        ^ counter.
+    ]
 }
 
 // --- indexableOp ---

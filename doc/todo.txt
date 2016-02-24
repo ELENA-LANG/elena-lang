@@ -2,15 +2,12 @@
 In development:
 ------                      
 
-              adev - lib30     
-                       * bitarray
-                       * implement #33 (tcp/ip socket)
-
               sdev - samples
                        * rosetta sample : Twelve statements
                       
-              idev - generic development                                          
-                       * warn on boxing (BitArray.get&length)
+              xdev - generic development                                           
+                       * idle typecasting optimization does not work
+                       * warn on boxing (BitArray.get&length) / typecasting
                        * test if sealed hint works
                        * make sure that if stateless flag is set, class cannot have fields / data fields
                        * test if embeddable constructor works
@@ -30,7 +27,9 @@ In development:
                        * #219 : IDE : Callstack for vm console application 
                        * #220 : s_copyint_radix / ws_copyint_radix
                        * #221 : Breakpoints are triggered even after removing
-                       * 
+
+              adev - lib30     
+                       * implement #33 (tcp/ip socket)
 
               fdev - net app
                        * implement simple chat system to test socket api

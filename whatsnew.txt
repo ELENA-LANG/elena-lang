@@ -13,8 +13,12 @@
 
 [LIB]
 [+] system : BitArray, BitArray32
+[+] system'routines : PatternFilter2,PatternFilter3,PatternFilter4,
+                      PatternFilter5, PatternFilter6
+[+] system'routines : enumerable.filter&pattern[1]
 [+] system'routines : enumerable.group&by[1]
 [+] system'routines : enumerable.order&by[1]
+[+] system'routines : enumerable.get&count
 [+] system'io : stream.set&length[1]
 [*] system : Char#class.new[1] supports now an integer parameter
 
