@@ -1466,6 +1466,8 @@ procedure % THREAD_WAIT
 
   push eax
   push edi
+  push ebp
+  mov  edi, esp
 
   push 0FFFFFFFFh // -1     // WaitForSingleObject::dwMilliseconds
   push edx                  // hHandle
@@ -1481,13 +1483,11 @@ procedure % THREAD_WAIT
   mov  edx, eax
 
   // ; lock frame
-  sub  edx, esp
-  lea  edx, [edx-0Ch]        // ; to skip ret point and waitforsingleobject params
-  mov  [eax], edx
+  mov  [eax], edi
 
   // ; signal the collecting thread that it is stopped
-  mov  edi, data : %CORE_GC_TABLE + gc_lock
   push esi
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
 
   // ; signal the collecting thread that it is stopped
   call extern 'dlls'kernel32.SetEvent
@@ -1500,6 +1500,7 @@ procedure % THREAD_WAIT
   // ; stop until GC is ended
   call extern 'dlls'kernel32.WaitForSingleObject
 
+  add  esp, 4
   pop  edi
   pop  eax
 
