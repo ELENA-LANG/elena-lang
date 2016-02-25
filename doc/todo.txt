@@ -2,13 +2,10 @@
 In development:
 ------                      
               xdev - generic development                                           
-                       * idle typecasting optimization does not work
                        * warn on boxing (BitArray.get&length) / typecasting
                        * test if sealed hint works
                        * make sure that if stateless flag is set, class cannot have fields / data fields
                        * test if embeddable constructor works
-                       * test if embeddable method works
-                       * test if direct call works
 
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings

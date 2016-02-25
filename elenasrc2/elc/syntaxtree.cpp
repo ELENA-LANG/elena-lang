@@ -15,11 +15,6 @@ using namespace _ELENA_;
 
 // --- SyntaxWriter ---
 
-size_t SyntaxWriter :: Position(int bookmark)
-{
-   return (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
-}
-
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {
    size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
@@ -188,22 +183,45 @@ SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
    va_list argptr;
    va_start(argptr, counter);
 
-   Node member = node;
-   for (int i = 0; i < counter; i++) {
-      member = member.firstChild();
-      if (member == lxNone)
-         break;
+   size_t level = 1;
+   Node nodes[0x10];
+   nodes[0] = node;
 
+   for (int i = 0; i < counter; i++) {
       // get the next pattern
       NodePattern pattern = va_arg(argptr, NodePattern);
 
-      // find the matched member
-      while (member != lxNone && !pattern.match(member)) {
-         member = member.nextNode();
+      size_t newLevel = level;
+      for (int j = 0; j < level; j++) {
+         Node member = nodes[j].firstChild();
+
+         if (member != lxNone) {
+            // find the matched member
+            while (member != lxNone) {
+               if (pattern.match(member)) {
+                  nodes[newLevel] = member;
+                  newLevel++;
+               }
+
+               member = member.nextNode();
+            }
+         }
       }
+
+      size_t oldLevel = level;
+      level = 0;
+      for (size_t j = oldLevel; j < newLevel; j++) {
+         nodes[level] = nodes[j];
+         level++;
+      }
+
+      if (level == 0) {
+         nodes[0] = Node();
+
+         break;
+      }
+         
    }
 
-   va_end(argptr);
-
-   return member;
+   return nodes[0];
 }

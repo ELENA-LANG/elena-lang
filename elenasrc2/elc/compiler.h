@@ -513,41 +513,10 @@ private:
          else return parent->getScope(level);
       }
 
-//      void setClassFlag(int flag)
-//      {
-//         ((ClassScope*)parent)->info.header.flags = ((ClassScope*)parent)->info.header.flags | flag;
-//      }
-//
-//      int getClassFlag()
-//      {
-//         return ((ClassScope*)parent)->info.header.flags;
-//      }
-      
       ref_t getReturningType() const
       {
          return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
       }
-
-//      bool isSealed() const
-//      {
-//         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
-//
-//         return (hint & tpMask) == tpSealed;
-//      }
-
-      bool isEmbeddable() const
-      {
-         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
-
-         return test(hint, tpEmbeddable);
-      }
-
-//      bool isGeneric() const
-//      {
-//         int hint = ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maHint));
-//
-//         return test(hint, tpGeneric);
-//      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -869,11 +838,12 @@ private:
    void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void analizeSyntaxTree(ModuleScope& scope, MemoryDump& dump);
+   void analizeClassTree(ClassScope& scope, MemoryDump& dump);
+   void analizeSymbolTree(SymbolScope& scope, MemoryDump& dump);
 
-   bool recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t& subject);
-   bool recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node node);
-   void defineEmbeddableAttributes(MethodScope& scope, SyntaxTree::Node node);
+   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
+   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
+   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
 public:
    void loadRules(StreamReader* optimization);

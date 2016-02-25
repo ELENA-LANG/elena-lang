@@ -4262,10 +4262,6 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
 
    CommandTape* tape = scope.tape;
 
-   int methodBookmark = -1;
-   if (scope.isEmbeddable())
-      methodBookmark = writer.newBookmark();
-
    writer.newNode(lxClassMethod, scope.message);
 
    DNode resendBody = node.select(nsResendExpression);
@@ -4328,15 +4324,6 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
    writer.appendNode(lxReserved, scope.reserved);
 
    writer.closeNode();
-
-   if (scope.isEmbeddable()) {
-      SyntaxTree tree(writer.Source(), writer.Position(methodBookmark));
-
-      defineEmbeddableAttributes(scope, tree.readRoot());
-   }
-
-   if (methodBookmark >= 0)
-      writer.removeBookmark();
 }
 
 void Compiler :: compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope)
@@ -4959,7 +4946,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
 void Compiler :: generateClassImplementation(ClassScope& scope)
 {
-   analizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   analizeClassTree(scope, scope.syntaxTree);
 
    _writer.generateClass(scope.tape, scope.syntaxTree);
 
@@ -5266,7 +5253,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    // NOTE : close root node
    writer.closeNode();
 
-   analizeSyntaxTree(*scope.moduleScope, scope.syntaxTree);
+   analizeSymbolTree(scope, scope.syntaxTree);
 
    _writer.generateSymbol(scope.tape, scope.syntaxTree, isStatic);
 
@@ -5580,7 +5567,7 @@ void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node no
    }
 }
 
-void Compiler :: analizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
+void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
 {
    if (!test(_optFlag, 1))
       return;
@@ -5593,21 +5580,47 @@ void Compiler :: analizeSyntaxTree(ModuleScope& scope, MemoryDump& dump)
          warningMask = current.argument;
       }
       else if (current == lxClassMethod) {
-         analizeSyntaxExpression(scope, current, warningMask);
-      }
-      else if (test(current.type, lxExpressionMask)) {
-         analizeSyntaxExpression(scope, current, warningMask);
+         analizeSyntaxExpression(*scope.moduleScope, current, warningMask);
+
+         if (test(scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint)), tpEmbeddable)) {
+            defineEmbeddableAttributes(scope, current);
+         }
       }
 
       current = current.nextNode();
    }
 }
 
-bool Compiler :: recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node root, ref_t& subject)
+void Compiler :: analizeSymbolTree(SymbolScope& scope, MemoryDump& dump)
 {
-   ref_t returnType = scope.getReturningType();
-   if (returnType != 0 && scope.moduleScope->defineTypeSize(returnType) > 0) {
-      if (tree.matchPattern(root, lxObjectMask, 2, SyntaxTree::NodePattern(lxExpression), SyntaxTree::NodePattern(lxReturning))) {
+   if (!test(_optFlag, 1))
+      return;
+
+   int warningMask = 0;
+   SyntaxTree reader(&dump);
+   SyntaxTree::Node current = reader.readRoot().firstChild();
+   while (current != lxNone) {
+      if (current == lxWarningMask) {
+         warningMask = current.argument;
+      }
+      else if (test(current.type, lxExpressionMask)) {
+         analizeSyntaxExpression(*scope.moduleScope, current, warningMask);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node root, ref_t returningType, ref_t& subject)
+{
+   if (returningType != 0 && scope.defineTypeSize(returningType) > 0) {
+      if (root.firstChild() == lxNewFrame)
+         root = root.firstChild();
+
+      if (tree.matchPattern(root, lxObjectMask, 2,
+            SyntaxTree::NodePattern(lxExpression), 
+            SyntaxTree::NodePattern(lxReturning))) 
+      {
          SyntaxTree::Node message = tree.findPattern(root, 2,
             SyntaxTree::NodePattern(lxExpression),
             SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling));
@@ -5620,7 +5633,12 @@ bool Compiler :: recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, Sy
          SyntaxTree::Node target = tree.findPattern(root, 3,
             SyntaxTree::NodePattern(lxExpression),
             SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling),
-            SyntaxTree::NodePattern(lxLocal));
+            SyntaxTree::NodePattern(lxLocal, lxExpression));
+
+         // if the target was optimized
+         if (target == lxExpression) {
+            target = SyntaxTree::findChild(target, lxLocal);
+         }
 
          if (target == lxNone || target.argument != 1)
             return false;
@@ -5648,28 +5666,28 @@ bool Compiler :: recognizeEmbeddableGet(MethodScope& scope, SyntaxTree& tree, Sy
    return false;
 }
 
-bool Compiler :: recognizeEmbeddableIdle(MethodScope& scope, SyntaxTree& tree, SyntaxTree::Node root)
+bool Compiler :: recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node methodNode)
 {
-   SyntaxTree::Node object = tree.findPattern(root, 2,
+   SyntaxTree::Node object = tree.findPattern(methodNode, 3,
+      SyntaxTree::NodePattern(lxNewFrame),
       SyntaxTree::NodePattern(lxReturning),
       SyntaxTree::NodePattern(lxLocal));
 
    return (object == lxLocal && object.argument == -1);
 }
 
-void Compiler :: defineEmbeddableAttributes(MethodScope& scope, SyntaxTree::Node root)
+void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SyntaxTree::Node methodNode)
 {
-   ClassScope* classScope = ((ClassScope*)scope.parent);
-
    // Optimization : var = get&subject => eval&subject2:var[1]
    ref_t type = 0;
-   if (recognizeEmbeddableGet(scope, *root.Tree(), root, type)) {
-      classScope->info.methodHints.add(Attribute(scope.message, maEmbeddableGet), type);
+   ref_t returnType = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maType));
+   if (recognizeEmbeddableGet(*classScope.moduleScope, *methodNode.Tree(), methodNode, returnType, type)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
    }
 
    // Optimization : subject'get = self
-   if (recognizeEmbeddableIdle(scope, *root.Tree(), root)) {
-      classScope->info.methodHints.add(Attribute(scope.message, maEmbeddableIdle), -1);
+   if (recognizeEmbeddableIdle(*methodNode.Tree(), methodNode)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), -1);
    }
 }
 

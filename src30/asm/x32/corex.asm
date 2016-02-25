@@ -1183,6 +1183,7 @@ procedure % NEWFRAME
   mov  esi, [esi+ecx*4]
 
   xor  ebx, ebx
+
   push ebp
   push ebx
   push ebx

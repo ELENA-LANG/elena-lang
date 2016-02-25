@@ -155,10 +155,6 @@ class SyntaxWriter
    Stack<size_t> _bookmarks;
 
 public:
-   _Memory* Source() { return _writer.Memory(); }
-
-   size_t Position(int bookmark);
-
    int setBookmark(size_t position)
    {
       _bookmarks.push(position);
@@ -469,12 +465,6 @@ public:
 
    SyntaxTree(_Memory* dump)
       : _reader(dump)
-   {
-      _dump = dump;
-   }
-
-   SyntaxTree(_Memory* dump, int position)
-      : _reader(dump, position)
    {
       _dump = dump;
    }
