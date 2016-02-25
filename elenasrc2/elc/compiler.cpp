@@ -5572,7 +5572,7 @@ void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
    if (!test(_optFlag, 1))
       return;
 
-   int warningMask = 0;
+   int warningMask = scope.moduleScope->warningMask;
    SyntaxTree reader(&dump);
    SyntaxTree::Node current = reader.readRoot().firstChild();
    while (current != lxNone) {

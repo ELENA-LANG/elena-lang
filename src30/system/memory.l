@@ -414,7 +414,7 @@
         retVal << theLength.
     ]
     
-    #method(stacksafe,type:int,embeddable)length
+    #method(stacksafe,type:int,embeddable,suppress:w3)length
     [
         #var(type:int)retVal.
         $self readLength &vint:retVal.

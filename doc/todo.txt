@@ -3,9 +3,6 @@ In development:
 ------                      
               xdev - generic development                                           
                        * warn on boxing (BitArray.get&length) / typecasting
-                       * test if sealed hint works
-                       * make sure that if stateless flag is set, class cannot have fields / data fields
-                       * test if embeddable constructor works
 
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
@@ -39,6 +36,7 @@ In development:
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
                        * optimize snop
+                       * test if embeddable constructor works
 
               sdev - samples
                        * rosetta sample : Truncatable primes
