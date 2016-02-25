@@ -91,6 +91,7 @@
 {
     #field(type:func2)theFilter.
     #field(type:enumerator)theEnumerator.
+    #field thePrevious.
     
     #constructor new &func2:aFilter &enumerator:anEnumerator
     [
@@ -102,17 +103,20 @@
     
     #method(suppress:w2) next
     [
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var previous := theEnumerator get.
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
         
         #loop (theEnumerator next)?
         [
-            (theFilter eval:previous:(theEnumerator get))
+            (theFilter eval:thePrevious:(theEnumerator get))
                 ? [ ^ true. ].
             
-            previous := theEnumerator get.
+            thePrevious := theEnumerator get.
         ].
         
         ^ false.
@@ -125,6 +129,8 @@
 {
     #field(type:func3)theFilter.
     #field(type:enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
     
     #constructor new &func3:aFilter &enumerator:anEnumerator
     [
@@ -136,23 +142,26 @@
     
     #method(suppress:w2) next
     [
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var previous := theEnumerator get.
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
                 
         #loop (theEnumerator next)?
         [
-            (theFilter eval:beforeprev:previous:(theEnumerator get))
+            (theFilter eval:theBeforePrev:thePrevious:(theEnumerator get))
                 ? [ ^ true. ].
             
-            beforeprev := previous.
-            previous := theEnumerator get.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
         ].
         
         ^ false.
@@ -165,6 +174,9 @@
 {
     #field(type:func4)theFilter.
     #field(type:enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    #field theBefore2Prev.
     
     #constructor new &func4:aFilter &enumerator:anEnumerator
     [
@@ -176,29 +188,32 @@
     
     #method(suppress:w2) next
     [
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforebeforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var previous := theEnumerator get.
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
                 
         #loop (theEnumerator next)?
         [
-            (theFilter eval:beforebeforeprev:beforeprev:previous:(theEnumerator get))
+            (theFilter eval:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
                 ? [ ^ true. ].
             
-            beforebeforeprev := beforebeforeprev.
-            beforeprev := previous.
-            previous := theEnumerator get.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
         ].
         
         ^ false.
@@ -211,6 +226,10 @@
 {
     #field(type:func5)theFilter.
     #field(type:enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    #field theBefore2Prev.
+    #field theBefore3Prev.
     
     #constructor new &func5:aFilter &enumerator:anEnumerator
     [
@@ -222,35 +241,38 @@
     
     #method(suppress:w2) next
     [
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var before3prev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforebeforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var previous := theEnumerator get.
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore3Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
                 
         #loop (theEnumerator next)?
         [
-            (theFilter eval:before3prev:beforebeforeprev:beforeprev:previous:(theEnumerator get))
+            (theFilter eval:theBefore3Prev:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
                 ? [ ^ true. ].
             
-            before3prev := beforebeforeprev.
-            beforebeforeprev := beforebeforeprev.
-            beforeprev := previous.
-            previous := theEnumerator get.
+            theBefore3Prev := theBefore2Prev.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
         ].
         
         ^ false.
@@ -263,6 +285,11 @@
 {
     #field(type:func6)theFilter.
     #field(type:enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    #field theBefore2Prev.
+    #field theBefore3Prev.
+    #field theBefore4Prev.
     
     #constructor new &func6:aFilter &enumerator:anEnumerator
     [
@@ -274,41 +301,45 @@
     
     #method(suppress:w2) next
     [
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var before4prev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var before3prev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforebeforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var beforeprev := theEnumerator get.
-
-        (theEnumerator next)
-            ! [ ^ false. ].
-        
-        #var previous := theEnumerator get.
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore4Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore3Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
                 
         #loop (theEnumerator next)?
         [
-            (theFilter eval:before4prev:before3prev:beforebeforeprev:beforeprev:previous:(theEnumerator get))
+            (theFilter eval:theBefore4Prev:theBefore3Prev:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
                 ? [ ^ true. ].
             
-            before4prev := before3prev.
-            before3prev := beforebeforeprev.
-            beforebeforeprev := beforebeforeprev.
-            beforeprev := previous.
-            previous := theEnumerator get.
+            theBefore4Prev := theBefore3Prev.
+            theBefore3Prev := theBefore2Prev.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
         ].
         
         ^ false.

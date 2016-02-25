@@ -1,10 +1,6 @@
 ------                                 
 In development:
 ------                      
-
-              sdev - samples
-                       * rosetta sample : Twelve statements
-                      
               xdev - generic development                                           
                        * idle typecasting optimization does not work
                        * warn on boxing (BitArray.get&length) / typecasting

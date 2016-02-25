@@ -4,8 +4,9 @@
 
 #class(extension)op
 {
-    #method toBitArray
-        = self select &each: b[ b iif:"T ":"F " ] summarize:(String new).
+    #method printSolution : bits
+        = self zip:bits &into:
+            (:s:b) [ s iif:"T":"F" + (s xor:b) iif:"* ":"  " ] summarize:(String new).
 }
 
 #symbol puzzle =
@@ -14,13 +15,15 @@
     
     bits [ bits last:6 select &each:x [ x iif:1:0 ] summarize == 3 ],
     
-    bits [ bits zip:(RangeEnumerator new &from:1 &to:12) &into:(:x:i) [ (i int is &even)and:x iif:1:0 ] summarize == 2 ],
+    bits [ bits zip:(RangeEnumerator new &from:1 &to:12) 
+                        &into:(:x:i) [ (i int is &even)and:x iif:1:0 ] summarize == 2 ],
     
     bits [ bits@4 iif:(bits@5 && bits@6):true ],
     
-    bits [ bits filter &pattern:(:a:b:c) [ (a && b && c) not ] count > 0 ],
+    bits [ (bits@1 || bits@2 || bits@3) not ],
     
-    bits [ bits zip:(RangeEnumerator new &from:1 &to:12) &into:(:x:i) [ (i int is &odd)and:x iif:1:0 ] summarize == 4 ],
+    bits [ bits zip:(RangeEnumerator new &from:1 &to:12) 
+                        &into:(:x:i) [ (i int is &odd)and:x iif:1:0 ] summarize == 4 ],
     
     bits [ (bits@1) xor:(bits@2) ],
     
@@ -28,34 +31,28 @@
     
     bits [ bits top:6 select &each:x [ x iif:1:0 ] summarize == 3 ],
     
-    bits [ bits filter &pattern:(:a:b) [ a && b ] count > 0 ],
+    bits [ bits@10 && bits@11 ],
     
-    bits [ (bits@6) xor:(bits@7) xor:(bits@8) ],
+    bits [ ((bits@6) iif:1:0 + (bits@7) iif:1:0 + (bits@8) iif:1:0)==1 ],
     
-    bits [ bits filter &pattern:(:a:b:c:d) [ a && b && c && d ] count > 0 ]
+    bits [ bits top:11 select &each:x [ x iif:1:0 ] summarize == 4 ]
 ).
 
 #symbol program =
 [
+    console writeLine:"".
+    
     0 till:(2 power &int:12) &doEach:n
     [
         #var bits := BitArray32 new:n top:12 toArray.
+        #var results := puzzle select &each: r [ r eval:bits ] toArray.
         
-//        console writeLine:(bits toBitArray).
+        #var counts := bits zip:results &into:(:b:r) [ b xor:r iif:1:0 ] summarize.
 
-//        puzzle run &each:puzzle
-//        [
-//            console writeLiteral:(puzzle eval:bits):" ".
-//        ].
-//        console writeLine.
-//                        
-        #var counts := puzzle select 
-            &each:puzzle [ puzzle eval:bits iif:1:0 ] summarize.
-        
         counts =>
-            12 ? [ console writeLine:"Total hit:":(bits toBitArray). ]
-            11 ? [ console writeLine:"Near miss:":(bits toBitArray). ]
-            1 ? [ console writeLine:"Total miss:":(bits toBitArray). ].
+            0  ? [ console writeLine:"Total hit :":(results printSolution:bits). ]
+            1  ? [ console writeLine:"Near miss :":(results printSolution:bits). ]
+            12 ? [ console writeLine:"Total miss:":(results printSolution:bits). ].
     ].
     
     console readChar.
