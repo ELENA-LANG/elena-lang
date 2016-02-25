@@ -688,6 +688,10 @@ md examples\rosetta\toppergroup
 copy %1\examples\rosetta\toppergroup\*.l examples\rosetta\toppergroup
 copy %1\examples\rosetta\toppergroup\*.prj examples\rosetta\toppergroup
 
+md examples\rosetta\twelvestats
+copy %1\examples\rosetta\twelvestats\*.l examples\rosetta\twelvestats
+copy %1\examples\rosetta\twelvestats\*.prj examples\rosetta\twelvestats
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj

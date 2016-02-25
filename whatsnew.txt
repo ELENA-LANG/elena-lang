@@ -10,6 +10,7 @@
 [ELC]
 [!] binary incompatible due to implementing issues #217 and #54
 [!] #217 : output code optimization
+[-] critical bug fix in COREX
 
 [LIB]
 [+] system : BitArray, BitArray32

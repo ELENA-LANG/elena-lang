@@ -3708,7 +3708,7 @@ procedure api_alloc_index
 labWait:
   snop
   trylock
-  elser labWait 0 
+  elsen labWait 0 
 
   callextr api : alloc_index
   bcopya

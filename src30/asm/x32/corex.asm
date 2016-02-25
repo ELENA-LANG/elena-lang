@@ -3170,7 +3170,6 @@ end
 inline % 0F6h
 
   mov    ecx, __arg1
-  mov    eax, edx
   test   ebx, ebx
   cmovnz eax, ecx
 
