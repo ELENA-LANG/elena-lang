@@ -228,18 +228,19 @@ labSkipSave:
 
   mov  esi, data : %CORE_GC_TABLE + gc_lock
   mov  edx, 0FFFFFFFFh
-  mov  ebx, [data : %CORE_GC_TABLE + tt_ptr]
+  mov  ebx, ebp
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
   lock xadd [esi], edx
 
   mov  ecx, esp
-  sub  ebx, 1
+  sub  ebx, esp
   jz   short labSkipWait
 
   // ; wait until they all stopped
   push 0FFFFFFFFh // -1
+  shr  ebx, 2
   push 0FFFFFFFFh // -1
   push ecx
   push ebx

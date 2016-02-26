@@ -3,6 +3,7 @@ In development:
 ------                      
               xdev - generic development                                           
                        * safe region
+                       * threadhandle - provide safe region like it was in 1.7
                        * fix GCX bug : mt test
 
                        * #54 : implementing generics / templates    
@@ -36,7 +37,7 @@ In development:
               xdev - general implementation     
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
-                       * optimize snop
+                       * optimize thread_wait
                        * test if embeddable constructor works
 
               sdev - samples
@@ -112,7 +113,6 @@ Pipeline:
                        * variable: no need to store nil if the variable statement has initializing part
                        * constant array
                        * drop message flag for message ids, messages should be saved in raw data stack frame
-                       * loop should contain snop
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states
                          one for single constant #10 and another for several constant or literal + constant - #10#13)
@@ -207,14 +207,10 @@ Pipeline:
                        * reference table should be created on the program start for multy thread version
                        * thread table contains reference to the thread TLS, it looks unsafe if the system reallocate the
                          storage ; maybe better to store there data duplication? 
-                       * static object should be thread safe
                        * architecture overview ; tls allocated for every thread and accessed by  FS:[2Ch] ; thread enumeration
-                       * reimplement thread safe variable, safe points, safe regions
-                       * threadhandle - provide safe region like it was in 1.7
+                       * reimplement thread safe variable
                        * elenavm : support multithreading, either use explicit or implicit TLS allocation
                        * compile pi with mt
-                       * compile anagram with mt
-                       * port rosetta samples                                                                               
                        
                xdev - script engine
                        * cfparser : there should be two mappings so we could support both local and function variables

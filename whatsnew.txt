@@ -10,7 +10,9 @@
 [ELC]
 [!] binary incompatible due to implementing issues #217 and #54
 [!] #217 : output code optimization
-[-] critical bug fix in COREX
+[-] critical bug fixes in COREX
+[-] critical bug fixes in GCX
+[+] new method hint "noblock" : unblocking GC
 
 [LIB]
 [+] system : BitArray, BitArray32
