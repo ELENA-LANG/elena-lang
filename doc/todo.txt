@@ -2,7 +2,8 @@
 In development:
 ------                      
               xdev - generic development                                           
-                       * warn on boxing (BitArray.get&length) / typecasting
+                       * safe region
+                       * fix GCX bug : mt test
 
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings

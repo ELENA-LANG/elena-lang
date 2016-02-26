@@ -270,7 +270,7 @@ void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
    tape.write(bcPushN, value);
 }
 
-int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
+int ByteCodeWriter :: declareLoop(CommandTape& tape, bool threadFriendly)
 {
    // loop-begin
 
@@ -279,9 +279,9 @@ int ByteCodeWriter :: declareLoop(CommandTape& tape/*, bool threadFriendly*/)
 
    int end = tape.newLabel();       // declare loop end label
 
-//   // snop
-//   if (threadFriendly)
-//      tape.write(bcSNop);
+   if (threadFriendly)
+      // snop
+      tape.write(bcSNop);
 
    return end;
 }
@@ -3186,7 +3186,7 @@ void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
-   declareLoop(tape/*, true*/);
+   declareLoop(tape, true);
 
    //declareBlock(tape);
 

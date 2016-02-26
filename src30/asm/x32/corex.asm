@@ -156,7 +156,7 @@ labYGCollect:
   mov  eax, [edx+eax*4]
   push ebp
 
-  // ; GCXT: lock frame
+  // ; GCXT: lock stack frame
   // ; get current thread event
   mov  esi, [eax + tls_sync_event]         
   mov  [eax + tls_stack_frame], esp
@@ -210,16 +210,17 @@ labConinue:
   mov  esi, data : %THREAD_TABLE
 labNext:
   mov  edx, [esi]
-  push [edx+4]
-  test [edx+8], 1
-  jnz  short labSkipReset 
-  cmp  [edx+4], eax
+  mov  ecx, [edx + tls_sync_event]  
+  cmp  ecx, eax
+  // ; skip current thread signal from wait list
   jz   short labSkipSave
-  push [edx+4]
+  push ecx
 labSkipSave:
+
   // ; reset all signal events
+  push ecx  
   call extern 'dlls'kernel32.ResetEvent      
-labSkipReset:
+
   lea  esi, [esi+4]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
   sub  edi, 1
@@ -1156,7 +1157,7 @@ labNext:
   mov  esi, [ecx + ebx*4]
 
   // ; init thread flags  
-  // mov  [esi + tls_flags], 0       
+  mov  [esi + tls_flags], 0       
 
   call code : %NEW_EVENT
   mov  [esi + tls_sync_event], eax     
@@ -1473,18 +1474,21 @@ procedure % THREAD_WAIT
   push 0FFFFFFFFh // -1     // WaitForSingleObject::dwMilliseconds
   push edx                  // hHandle
 
+  // ; set lock
+  mov  ebx, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov edx, 1
+  xor eax, eax  
+  lock cmpxchg dword ptr[ebx], edx
+  jnz  short labWait
+
   // ; find the current thread entry
   mov  edx, fs:[2Ch]
-  mov  eax, [data : %CORE_TLS_INDEX]
-
+  mov  eax, [data : %CORE_TLS_INDEX]  
   mov  eax, [edx+eax*4]
 
-  mov  esi, [eax+4]         // ; get current thread event
-  mov  eax, [eax]           // ; get current frame
-  mov  edx, eax
-
-  // ; lock frame
-  mov  [eax], edi
+  mov  esi, [eax+tls_sync_event]   // ; get current thread event
+  mov  [eax], edi                  // ; lock stack frame
 
   // ; signal the collecting thread that it is stopped
   push esi
@@ -1551,30 +1555,16 @@ end
 // ; snop
 inline % 4
 
-  // ; set lock
-  mov  ebx, data : %CORE_GC_TABLE + gc_lock
-labWait:
-  mov edx, 1
-  xor eax, eax  
-  lock cmpxchg dword ptr[ebx], edx
-  jnz  short labWait
-
   // ; safe point
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   test edx, edx                       // ; if it is a collecting thread, waits
   jz   short labConinue               // ; otherwise goes on
-  nop  
+
+  nop
+  nop
   call code : %THREAD_WAIT            // ; waits until the GC is stopped
-  nop
-  nop
-  jmp  short labEnd
 
 labConinue:
-  mov  ebx, data : %CORE_GC_TABLE + gc_lock
-  mov  edx, 0FFFFFFFFh
-  lock xadd [ebx], edx
-
-labEnd:
 
 end
 
