@@ -210,15 +210,17 @@ labConinue:
   mov  esi, data : %THREAD_TABLE
 labNext:
   mov  edx, [esi]
-  mov  ecx, [edx + tls_sync_event]  
-  cmp  ecx, eax
-  // ; skip current thread signal from wait list
-  jz   short labSkipSave
-  push ecx
+  cmp  eax, [edx + tls_sync_event]
+  setz cl
+  or  ecx, [edx + tls_flags]
+  test ecx, 1
+  // ; skip current thread signal / thread in safe region from wait list
+  jnz  short labSkipSave
+  push [edx + tls_sync_event]
 labSkipSave:
 
   // ; reset all signal events
-  push ecx  
+  push [edx + tls_sync_event]
   call extern 'dlls'kernel32.ResetEvent      
 
   lea  esi, [esi+4]
@@ -1712,14 +1714,23 @@ inline % 1Fh
   
 end
 
+// ; include
+inline % 25h
+       
+  add  esp, 4
+  mov  [esi + tls_flags], 0
+
+end
+
 // ; exclude
 inline % 26h
                                                        
   mov  edx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  eax, [edx+eax*4]
+  mov  esi, [edx+eax*4]
+  mov  [esi + tls_flags], 1
   push ebp     
-  mov  [eax + tls_stack_frame], esp
+  mov  [esi + tls_stack_frame], esp
 
 end
 

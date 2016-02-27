@@ -185,6 +185,12 @@ void ByteCodeWriter :: excludeFrame(CommandTape& tape)
    tape.write(bcAllocStack, 1);
 }
 
+void ByteCodeWriter :: includeFrame(CommandTape& tape)
+{
+   tape.write(bcInclude);
+   tape.write(bcFreeStack, 1);
+}
+
 void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
 {
    if (!emptystr(localName)) {
@@ -2750,6 +2756,8 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
    }
    else {
       callExternal(tape, node.argument, externalScope.frameSize);
+
+      includeFrame(tape);
 
       endExternalBlock(tape);
    }

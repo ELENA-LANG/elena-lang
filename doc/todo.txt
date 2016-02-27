@@ -2,10 +2,6 @@
 In development:
 ------                      
               xdev - generic development                                           
-                       * safe region
-                       * threadhandle - provide safe region like it was in 1.7
-                       * fix GCX bug : mt test
-
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
 

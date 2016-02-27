@@ -1276,6 +1276,13 @@ inline % 1Fh
 
 end
 
+// ; include
+inline % 25h
+
+  add  esp, 4                                                       
+
+end
+
 // ; exclude
 inline % 26h
                                                        

@@ -12,7 +12,7 @@
 [!] #217 : output code optimization
 [-] critical bug fixes in COREX
 [-] critical bug fixes in GCX
-[+] new method hint "noblock" : unblocking GC
+[+] #228 : safe region
 
 [LIB]
 [+] system : BitArray, BitArray32

@@ -52,6 +52,7 @@ enum ByteCode
    bcDCopyE          = 0x21,
    bcPushD           = 0x22,
    bcPopD            = 0x23,
+   bcInclude         = 0x25,     // should immediately follow exclude (after callextr)
    bcExclude         = 0x26,   
    bcTryLock         = 0x27,
    bcFreeLock        = 0x28,

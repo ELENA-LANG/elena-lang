@@ -119,6 +119,7 @@ class ByteCodeWriter
    void declareMethod(CommandTape& tape, ref_t message, int reserved, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
+   void includeFrame(CommandTape& tape);
    void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
