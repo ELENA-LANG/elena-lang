@@ -225,7 +225,7 @@ void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
-   : constantHints((ref_t)-1), extensions(NULL, freeobj)
+   : constantHints((ref_t)-1), extensions(NULL, freeobj), importedTemplates(TemplateInfo())
 {
    this->project = project;
    this->sourcePath = sourcePath;
@@ -571,7 +571,6 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
    if (target.classClassRef != 0)
       target.classClassRef = importReference(exporter, target.classClassRef, module);
 
-
    // import parent reference
    target.header.parentRef = importReference(exporter, target.header.parentRef, module);
 }
@@ -638,6 +637,21 @@ ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& in
       info.expressionTypeRef = importSubject(argModule, info.expressionTypeRef, module);
    }
    return moduleRef;
+}
+
+_Memory* Compiler::ModuleScope ::loadTemplateInfo(ident_t symbol, _Module* &argModule)
+{
+   if (emptystr(symbol))
+      return NULL;
+
+   // load class meta data
+   ref_t moduleRef = 0;
+   argModule = project->resolveModule(symbol, moduleRef);
+
+   if (argModule == NULL || moduleRef == 0)
+      return NULL;
+
+   return argModule->mapSection(moduleRef | mskSyntaxTreeRef, true);
 }
 
 int Compiler::ModuleScope::defineStructSize(ref_t classReference, bool& variable)
@@ -1730,7 +1744,25 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
       }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      else {
+         ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
+         _Module* dummy;
+         _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, dummy);
+         if (section != NULL) {
+            SyntaxTree tree(section);
+            SyntaxTree::Node node = tree.readRoot();
+            if (node == lxFieldTemplate) {
+               writer.newNode(lxFieldTemplate, templateRef);
+
+               TerminalInfo typeTerminal = hints.firstChild().Terminal();
+               writer.appendNode(lxSubject, scope.moduleScope->mapSubject(typeTerminal));
+
+               writer.closeNode();
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      }
 
       hints = hints.nextNode();
    }
@@ -4722,6 +4754,29 @@ void Compiler :: generateClassFlags(ClassScope& scope, SyntaxTree::Node root)
    }
 }
 
+void Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxTree::Node node, int fieldOffset)
+{
+   _Module* extModule = NULL;
+   SyntaxTree tree(scope.moduleScope->loadTemplateInfo(node.argument, extModule));
+
+   ref_t subject = SyntaxTree::findChild(node, lxSubject).argument;
+
+   scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, fieldOffset, node.argument));
+
+   SyntaxTree::Node current = tree.readRoot();
+   if (current == lxFieldTemplate) {
+      current = current.firstChild();
+      while (current != lxNone) {
+         if (current == lxClassMethod) {
+            ref_t message = overwriteSubject(current.argument, subject);
+            scope.include(message);
+         }
+
+         current = current.nextNode();
+      }
+   }
+}
+
 void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
 {
    bool singleField = SyntaxTree::countChild(root, lxClassField);
@@ -4729,6 +4784,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
    SyntaxTree::Node current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassField) {
+         int offset = 0;
          ident_t terminal = (ident_t)SyntaxTree::findChild(current, lxTerminal).argument;
 
          // a role cannot have fields
@@ -4775,7 +4831,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
             if (scope.info.size != 0 && scope.info.fields.Count() == 0)
                scope.raiseError(errIllegalField, current);
 
-            int offset = scope.info.size;
+            offset = scope.info.size;
             scope.info.size += size;
 
             scope.info.fields.add(terminal, offset);
@@ -4785,7 +4841,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
          else {
             scope.info.header.flags |= elNonStructureRole;
 
-            int offset = scope.info.fields.Count();
+            offset = scope.info.fields.Count();
             scope.info.fields.add(terminal, offset);
 
             if (typeHint != 0)
@@ -4796,6 +4852,12 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
                if (scope.info.fields.Count() > 1)
                   scope.raiseError(errIllegalField, current);
             }
+         }
+
+         // check for field templates
+         SyntaxTree::Node templ = SyntaxTree::findChild(current, lxFieldTemplate);
+         if (templ != lxNone) {
+            declareImportedTemplate(scope, templ, offset);
          }
       }
 
@@ -4958,12 +5020,70 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxMessageMask)) {
+         writer.newNode(current.type, importMessage(sour, current.argument, dest));
+      }
+      else if (test(current.type, lxReferenceMask)) {
+         writer.newNode(current.type, importReference(sour, current.argument, dest));
+      }
+      else if (test(current.type, lxSubjectMask)) {
+         writer.newNode(current.type, importSubject(sour, current.argument, dest));
+      }
+      else writer.newNode(current.type, current.argument);
+
+      importTree(current, writer, sour, dest);
+
+      writer.closeNode();
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, ref_t subject, _Module* templateModule)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         writer.newNode(lxClassMethod, overwriteSubject(current.argument, subject));
+
+         importTree(current, writer, templateModule, scope.moduleScope->module);
+
+         writer.closeNode();
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo)
+{
+   _Module* extModule = NULL;
+   SyntaxTree tree(scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule));
+
+   SyntaxTree::Node root = tree.readRoot();
+   if (root == lxFieldTemplate) {
+      importFieldTemplate(scope, writer, root, templateInfo.subject, extModule);
+   }
+}
+
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
    SyntaxWriter writer(&scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
+
+   // import templates
+   TemplateMap::Iterator it = moduleScope->importedTemplates.getIt(scope.reference);
+   while (!it.Eof() && it.key() == scope.reference) {
+      importTemplate(scope, writer, *it);
+
+      it++;
+   }
 
    DNode member = node.firstChild();
    compileVMT(member, writer, scope);

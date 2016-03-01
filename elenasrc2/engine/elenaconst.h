@@ -165,6 +165,7 @@ namespace _ELENA_
       mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000,   // meta data
       mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
+      mskSyntaxTreeRef       = 0x46000000,
 
       mskConstantRef         = 0x01000000,   // reference to constant
       mskLiteralRef          = 0x02000000,   // reference to constant literal

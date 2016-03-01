@@ -194,11 +194,32 @@ public:
       }
    };
 
+   struct TemplateInfo
+   {
+      ref_t subject;
+      int   offset;
+      ref_t templateRef;
+
+      TemplateInfo()
+      {
+         templateRef = subject = 0;
+         offset = 0;
+      }
+
+      TemplateInfo(ref_t subject, int offset, ref_t templateRef)
+      {
+         this->subject = subject;
+         this->offset = offset;
+         this->templateRef = templateRef;
+      }
+   };
+
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef List<Unresolved>               Unresolveds;
    typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+   typedef Map<ref_t, TemplateInfo>       TemplateMap;
 
 private:
    // - ModuleScope -
@@ -225,6 +246,9 @@ private:
       // type hints
       ForwardMap        types;
       SubjectMap        typeHints;
+
+      // importing templates
+      TemplateMap       importedTemplates;
 
       // cached references
       ref_t superReference;
@@ -293,6 +317,12 @@ private:
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+
+      _Memory* loadTemplateInfo(ref_t reference, _Module* &module)
+      {
+         return loadTemplateInfo(module->resolveReference(reference), module);
+      }
+      _Memory* loadTemplateInfo(ident_t symbol, _Module* &module);
 
       int defineStructSize(ref_t classReference, bool& variable);
       int defineStructSize(ref_t classReference)
@@ -707,6 +737,11 @@ private:
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
+
+   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset);
+   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+   void importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, ref_t subject, _Module* templateModule);
+   void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest);
 
    bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
 
