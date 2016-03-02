@@ -852,17 +852,18 @@ private:
    void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
-   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 
    void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    // !! obsolete
    void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void analizeClassTree(ClassScope& scope, MemoryDump& dump);
    void analizeSymbolTree(SymbolScope& scope, MemoryDump& dump);

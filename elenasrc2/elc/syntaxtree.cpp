@@ -147,14 +147,14 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 
 SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
 {
-   _reader.seek(position - 8);
+   position -= 16;
+
+   _reader.seek(position);
    if (_reader.getDWord() != -1) {
-      _reader.seek(position - 8);
+      _reader.seek(position);
 
       return read();
    }
-
-   position -= 16;
 
    int level = 0;
    while (position > 7) {

@@ -2,14 +2,14 @@
 In development:
 ------                      
               xdev - generic development
-                       * boxing value
-                       * unboxing variable
-                       * boxing / unboxing into variable
+                       * unboxing fields : stacksafe and generic
+                       * boxing / unboxing into wrapper variable
                        * unbox open argument list                       
                        * check if boxing / unboxing works
                        * check if syntax tree optimization works (embeddable hint)
                        * make sure that $subject is not boxed when it is used for dispatching operations
                        * boxing / unboxing open argument list
+                       * no boxing for external / internal operations
 	               * warn on boxing                                              
 
                        * #54 : implementing generics / templates    
@@ -17,6 +17,7 @@ In development:
 
                        * #215 : Operations with structure fields
                        * #201 : shorthand property settings
+                       * #229 : unboxing optimization
                        * #223 : exiting the lock statement 
                        * #200 : unboxing explicit local allocated extension  
                        * #185 : Stack allocated structures are not correctly displayed

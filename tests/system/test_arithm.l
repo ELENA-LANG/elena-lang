@@ -4,12 +4,11 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-    
+            
 #symbol XTester =
 {
     test
     [
-        BitArray new &int:3.
     ]
 }.
         

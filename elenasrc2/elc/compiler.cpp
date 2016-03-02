@@ -5226,38 +5226,20 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node)
+void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask)
 {
    SNode arg = node.firstChild();
    while (arg != lxNone) {
       if (arg == lxIntExtArgument || arg == lxExtArgument) {
-         SNode member = arg.firstChild();
-         while (member != lxNone) {
-            // if boxing used for external call
-            // remove it
-            if (member == lxBoxing || member == lxCondBoxing || member == lxUnboxing) {
-               member = lxExpression;
-            }
-
-            member = member.nextNode();
-         }
+         analizeSyntaxExpression(scope, arg, warningMask, HINT_NOBOXING);
       }
       arg = arg.nextNode();
    }
 }
 
-void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node)
+void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, int warningMask)
 {
-   SNode arg = node.firstChild();
-   while (arg != lxNone) {
-      // if boxing used for external call
-      // remove it
-      if (arg == lxBoxing || arg == lxCondBoxing || arg == lxUnboxing) {
-         arg = lxExpression;
-      }
-
-      arg = arg.nextNode();
-   }
+   analizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
 }
 
 void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningMask)
@@ -5289,18 +5271,9 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningM
    analizeSyntaxExpression(scope, node, warningMask, mode);
 }
 
-void Compiler :: optimizeOp(ModuleScope& scope, SNode node)
+void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningMask)
 {
-   SNode member = node.firstChild();
-   while (member != lxNone) {
-      // if boxing used for primitive operation
-      // remove it
-      if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing || member == lxUnboxing) {
-         member = lxExpression;
-      }
-
-      member = member.nextNode();
-   }
+   analizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
 }
 
 void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, SNode& callNode)
@@ -5375,8 +5348,19 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
       }
    }
 
-   analizeSyntaxExpression(scope, node, warningLevel, mode);
+   bool target = true;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (!target) {
+            analizeSyntaxNode(scope, current, warningLevel, mode);
+         }
+         else target = false;
+      }
+      current = current.nextNode();
+   }
 
+   // !! should be removed??
    // assignment operation
    SNode assignNode = findSubNode(node, lxAssigning);
    if (assignNode != lxNone) {
@@ -5462,6 +5446,9 @@ void Compiler :: analizBoxableObject(ModuleScope& scope, SNode node, int warning
          // allocating space
          int offset = allocateStructure(scope, false, size, reserved);
 
+         // HOT FIX : size should be in bytes
+         size *= 4;
+
          reserveNode.setArgument(reserved);
 
          // injecting assinging, boxing / unboxing operation
@@ -5504,69 +5491,70 @@ void Compiler :: analizBoxableObject(ModuleScope& scope, SNode node, int warning
    }
 }
 
+void Compiler :: analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
+{
+   switch (current.type) {
+      case lxLocalAddress:
+      case lxFieldAddress:
+      case lxSubject:
+      case lxBoxableLocal:
+      case lxBlockLocalAddr:
+         analizBoxableObject(scope, current, warningMask, mode);
+         break;
+      case lxAssigning:
+         optimizeAssigning(scope, current, warningMask);
+         break;
+      case lxTypecasting:
+         analizeTypecast(scope, current, warningMask);
+         analizeSyntaxExpression(scope, current, warningMask);
+         break;
+         // !! temporal should be removed
+      case lxBoxing:
+      case lxCondBoxing:
+      case lxArgBoxing:
+      case lxUnboxing:
+         analizeBoxing(scope, current, warningMask);
+         analizeSyntaxExpression(scope, current, warningMask);
+         break;
+      case lxDirectCalling:
+      case lxSDirctCalling:
+         optimizeDirectCall(scope, current, warningMask);
+         break;
+      case lxIntOp:
+      case lxLongOp:
+      case lxRealOp:
+      case lxIntArrOp:
+      case lxArrOp:
+         optimizeOp(scope, current, warningMask);
+         break;
+      case lxStdExternalCall:
+      case lxExternalCall:
+      case lxCoreAPICall:
+         optimizeExtCall(scope, current, warningMask);
+         break;
+      case lxInternalCall:
+         optimizeInternalCall(scope, current, warningMask);
+         break;
+      case lxExpression:
+         // HOT FIX : to pass the optimization mode into sub expression
+         analizeSyntaxExpression(scope, current, warningMask, mode);
+         break;
+      case lxReturning:
+         analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
+         break;
+      default:
+         if (test(current.type, lxExpressionMask)) {
+            analizeSyntaxExpression(scope, current, warningMask);
+         }
+         break;
+   }
+}
+
 void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      switch (current.type)
-      {
-         case lxLocalAddress:
-         case okFieldAddress:
-         case okSubject:
-         case lxBoxableLocal:
-         case lxBlockLocalAddr:
-            analizBoxableObject(scope, current, warningMask, mode);
-            break;
-         case lxAssigning:
-            optimizeAssigning(scope, current, warningMask);
-            break;
-         case lxTypecasting:
-            analizeTypecast(scope, current, warningMask);
-            analizeSyntaxExpression(scope, current, warningMask);
-            break;
-         // !! temporal should be removed
-         case lxBoxing:
-         case lxCondBoxing:
-         case lxArgBoxing:
-         case lxUnboxing:
-            analizeBoxing(scope, current, warningMask);
-            analizeSyntaxExpression(scope, current, warningMask);
-            break;
-         case lxDirectCalling:
-         case lxSDirctCalling:
-            optimizeDirectCall(scope, current, warningMask);            
-            break;
-         case lxIntOp:
-         case lxLongOp:
-         case lxRealOp:
-         case lxIntArrOp:
-         case lxArrOp:
-            optimizeOp(scope, current);
-            analizeSyntaxExpression(scope, current, warningMask);
-            break;
-         case lxStdExternalCall:
-         case lxExternalCall:
-         case lxCoreAPICall:
-            optimizeExtCall(scope, current);
-            analizeSyntaxExpression(scope, current, warningMask);
-            break;
-         case lxInternalCall:
-            optimizeInternalCall(scope, current);
-            analizeSyntaxExpression(scope, current, warningMask);
-            break;
-         case lxExpression:
-            // HOT FIX : to pass the optimization mode into sub expression
-            analizeSyntaxExpression(scope, current, warningMask, mode);
-            break;
-         case lxReturning:
-            analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
-            break;
-         default:
-            if (test(current.type, lxExpressionMask)) {
-               analizeSyntaxExpression(scope, current, warningMask);
-            }
-            break;
-      }
+      analizeSyntaxNode(scope, current, warningMask, mode);
 
       current = current.nextNode();
    }

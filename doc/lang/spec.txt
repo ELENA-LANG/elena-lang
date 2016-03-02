@@ -10,32 +10,33 @@ a script engine / interpreter and group object support.
 
 Any  ELENA  program  or library consists of modules ( files with .NL extension ) 
 containing  classes  and  symbols. Every member of the module is referred by its 
-fully qualified name which consists of namespace and a propery name separated by
-an  apostrophe.  The  namespace  itself may contain sub elements separated by an 
-apostrophe.
+fully qualified name which consists of namespace and a proper name separated by
+an  apostrophe.  The  namespace  itself  may  contain  sub elements separated by 
+apostrophes.
 
 All  source  files  (files  with .L extension)  located  in  the same folder are 
 compiled  into  the  corresponding  module.  A  project  file ( a file with .PRJ 
 extension )  defines  the  root  namespace  and  the  output  type  (stand-alone 
 executable, VM executable or a library). The project may produce several modules
 if  it  contains  the  files  located  in  sub folders (the new module namespace 
-consists of the root one and the folder relative path splitted by apostrophes).
+consists of the root one and the folder relative path is split by apostrophes).
 
 
 1.2 Messaging
 
-The main way to interact with objects in ELENA is sending a message. The message name 
-is structured and consists of a verb, a signature and a parameter counter. The verb defines 
-a message action, for example read or write. There are only limited set of possible verbs 
-(e.g. eval[uate], add, set, get, run, seek and so on). The signature is 
-user defined and describes the message parameters. It can be used to define some custom 
-action as well (e.g. writeLine, which in fact is eval&writeLine(1)). If the signature is 
-not provided the message is considered to be generic and can be qualified (for example 
-by dispatching).
+The main way to interact with objects in ELENA is sending a message. The message 
+name  is structured and consists of a verb, a signature and a parameter counter. 
+The  verb  defines a message action, for example eval[uate], add, set, get, run, 
+seek  and  so on. There are only limited set of possible verbs. The signature is 
+user defined and describes the message parameters. It can be used to define some 
+custom  action  as well (e.g. writeLine, which in fact is eval&writeLine(1)). If 
+the signature is not provided the message is considered to be generic and can be
+qualified (for example by dispatching).
 
-If the object wants to handle the message it has to contain the method with the same name. 
-If no method mapping was found the flow is considered to be broken and the control goes to 
-the next alternative flow (exception handler) or the program is stopped.
+If  the object wants to handle the message it has to contain the method with the 
+same  name.  If  no method mapping was found the flow is considered to be broken 
+and  the  control  goes  to the next alternative flow (exception handler) or the 
+program is stopped.
 
 The simple code to send a message looks like this:
 
@@ -43,8 +44,8 @@ The simple code to send a message looks like this:
 
 Note: "write" is a generic message; a literal constant is a parameter. 
 
-Several messages can be send in one statement, the parameter itself may be result of 
-object interactions:
+Several  messages  can  be  send  in  one statement, the parameter itself may be 
+result of object interactions as well:
 
     console write "2 + 2 =" write:(2 add:2).
 
@@ -56,14 +57,14 @@ Note: In most cases "<<" is a synonym to "write" and "+" to "add".
 
 Several parameters can be passed in the message as well:
 
-    control foreach: (1,2,3) &do:printingLn.
+    console write:"Hello World" &paddingLeft:10 &with:#32
 
 Ampersand is used to indicate that the signature has several arguments (subjects). The actual 
-message name is eval&foreach&do(2).
+message name is write&paddingLeft&with(2).
 
 The generic message can have several parameters as well:
 
-    consoleEx writeLine:”a+b=”: (a + b).
+    console writeLine:"a+b=":(a + b).
     
 
 1.3. Classes, Roles and Symbols

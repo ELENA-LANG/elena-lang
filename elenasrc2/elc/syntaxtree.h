@@ -334,8 +334,10 @@ public:
       void appendNode(LexicalType type, int argument = 0)
       {
          Node lastNode = lastChild();
-
-         tree->insertNode(lastNode.position + 8, type, argument);
+         if (lastNode != lxNone) {
+            tree->insertNode(lastNode.position + 8, type, argument);
+         }
+         else tree->insertNode(position, type, argument);
       }
 
       Node findPattern(NodePattern pattern)
