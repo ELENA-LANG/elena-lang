@@ -85,23 +85,24 @@ enum LexicalType
    lxLocalAddress    = 0x04107, // arg - offset
    lxBlockLocalAddr  = 0x04108, // arg - offset
    lxLocal           = 0x04109, // arg - offset
-   lxBlockLocal      = 0x0410A, // arg - offset
-   lxConstantString  = 0x2410B, // arg - reference
-   lxConstantWideStr = 0x2410C, // arg - reference
-   lxConstantChar    = 0x2410D, // arg - reference
-   lxConstantInt     = 0x2410E, // arg - reference
-   lxConstantLong    = 0x2410F, // arg - reference
-   lxConstantReal    = 0x24110, // arg - reference
-   lxConstantClass   = 0x24111, // arg - reference
-   lxMessageConstant = 0x24112, // arg - rererence
-   lxExtMessageConstant = 0x24113, // arg -reference
-   lxSignatureConstant  = 0x24114, // arg - reference
-   lxVerbConstant    = 0x24115, // arg - reference
-   lxNil             = 0x04116,
-   lxCurrent         = 0x04117, // arg -offset
-   lxResult          = 0x04118, // arg -offset
-   lxResultField     = 0x04119, // arg -offset
-   lxCurrentMessage  = 0x0411A,
+   lxBoxableLocal    = 0x0410A, // arg - offset
+   lxBlockLocal      = 0x0410B, // arg - offset
+   lxConstantString  = 0x2410C, // arg - reference
+   lxConstantWideStr = 0x2410D, // arg - reference
+   lxConstantChar    = 0x2410E, // arg - reference
+   lxConstantInt     = 0x2410F, // arg - reference
+   lxConstantLong    = 0x24110, // arg - reference
+   lxConstantReal    = 0x24111, // arg - reference
+   lxConstantClass   = 0x24112, // arg - reference
+   lxMessageConstant = 0x24113, // arg - rererence
+   lxExtMessageConstant = 0x24114, // arg -reference
+   lxSignatureConstant  = 0x24115, // arg - reference
+   lxVerbConstant    = 0x24116, // arg - reference
+   lxNil             = 0x04117,
+   lxCurrent         = 0x04118, // arg -offset
+   lxResult          = 0x04119, // arg -offset
+   lxResultField     = 0x0411A, // arg -offset
+   lxCurrentMessage  = 0x0411B,
 
    lxVariable        = 0x00407, // debug info only if lxFrameAttr is included
    lxIntVariable     = 0x00408,
@@ -320,6 +321,11 @@ public:
          return tree->readPreviousNode(position);
       }
 
+      Node parentNode() const
+      {
+         return tree->readParentNode(position);
+      }
+
       void insertNode(LexicalType type, int argument = 0)
       {
          tree->insertNode(position, type, argument);
@@ -463,6 +469,7 @@ public:
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
    Node readPreviousNode(size_t position);
+   Node readParentNode(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
 

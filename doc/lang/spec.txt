@@ -1,30 +1,33 @@
 
 1. Introduction
 
-ELENA is a general-purpose, object-oriented, polymorphic language with late binding. 
-It features message dispatching / manipulation, dynamic object mutation, a script 
-engine / interpreter and group object support.
+ELENA  is  a  general-purpose,  object-oriented,  polymorphic language with late 
+binding.  It features message dispatching/manipulation, dynamic object mutation,
+a script engine / interpreter and group object support.
+
 
 1.1 Namespaces
 
-Any ELENA program or library consists of modules (files with .NL extension) containing 
-classes and symbols. Every class or symbol may be referred by its namespace 
-(or to put it other way around a symbol namespace is a path to the symbol module). 
+Any  ELENA  program  or library consists of modules ( files with .NL extension ) 
+containing  classes  and  symbols. Every member of the module is referred by its 
+fully qualified name which consists of namespace and a propery name separated by
+an  apostrophe.  The  namespace  itself may contain sub elements separated by an 
+apostrophe.
 
-All source files (files with .L extension) located in the same folder are compiled into 
-the corresponding module. A project file (a file with .PRJ extension) defines the root 
-namespace and the output type (stand-alone executable, VM executable or a library). 
-The project may produce several modules if it contains the files located in sub folders 
-(the new module namespace consists of the root one plus the folder relative path)
+All  source  files  (files  with .L extension)  located  in  the same folder are 
+compiled  into  the  corresponding  module.  A  project  file ( a file with .PRJ 
+extension )  defines  the  root  namespace  and  the  output  type  (stand-alone 
+executable, VM executable or a library). The project may produce several modules
+if  it  contains  the  files  located  in  sub folders (the new module namespace 
+consists of the root one and the folder relative path splitted by apostrophes).
 
 
 1.2 Messaging
 
-As in the most of dynamic object-oriented languages the main way to interact with objects 
-in ELENA is sending a message. Unlike others the message name is structured and consists 
-of a verb, a signature and a parameter counter. The verb defines a message action, 
-for example read or write some data. There are only limited set of possible verbs (
-e.g. eval[uate], add, set, get, run, seek and so on). In general the signature is 
+The main way to interact with objects in ELENA is sending a message. The message name 
+is structured and consists of a verb, a signature and a parameter counter. The verb defines 
+a message action, for example read or write. There are only limited set of possible verbs 
+(e.g. eval[uate], add, set, get, run, seek and so on). The signature is 
 user defined and describes the message parameters. It can be used to define some custom 
 action as well (e.g. writeLine, which in fact is eval&writeLine(1)). If the signature is 
 not provided the message is considered to be generic and can be qualified (for example 

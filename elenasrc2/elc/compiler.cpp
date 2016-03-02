@@ -14,13 +14,15 @@
 
 using namespace _ELENA_;
 
+typedef SyntaxTree::Node         SNode;
+typedef SyntaxTree::NodePattern  SNodePattern;
+
 // --- Hint constants ---
 #define HINT_MASK             0xFFFF0000
 
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
-//#define HINT_ALT              0x12000000
 #define HINT_RETEXPR          0x08000000
 #define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
@@ -957,7 +959,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
    }
 }
 
-void Compiler::ClassScope :: compileClassHint(SyntaxTree::Node hint)
+void Compiler::ClassScope :: compileClassHint(SNode hint)
 {
    switch (hint.type)
    {
@@ -973,7 +975,7 @@ void Compiler::ClassScope :: compileClassHint(SyntaxTree::Node hint)
          if (hint.type == lxClassStructure) {
             info.size = hint.argument;
 
-            SyntaxTree::Node typeNode = SyntaxTree::findChild(hint, lxType);
+            SNode typeNode = SyntaxTree::findChild(hint, lxType);
             if (typeNode.argument != 0)
                info.fieldTypes.add(-1, typeNode.argument);
          }
@@ -1342,6 +1344,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return object.param;
       case okParams:
          return scope.moduleScope->paramsReference;
+      case okExternal:
+         return scope.moduleScope->intReference;
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -1750,7 +1754,7 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
          _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, dummy);
          if (section != NULL) {
             SyntaxTree tree(section);
-            SyntaxTree::Node node = tree.readRoot();
+            SNode node = tree.readRoot();
             if (node == lxFieldTemplate) {
                writer.newNode(lxFieldTemplate, templateRef);
 
@@ -2033,7 +2037,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLocal:
       case okParam:
       case okThisParam:
-         scope.writer->newNode(lxLocal, object.param);
+         scope.writer->newNode(object.extraparam == -1 ? lxBoxableLocal : lxLocal, object.param);
          break;
       case okSuper:
          scope.writer->newNode(lxLocal, 1);
@@ -2095,7 +2099,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
    scope.writer->closeNode();
 }
 
-ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope)
 {
    TerminalInfo terminal = node.Terminal();
 
@@ -2209,7 +2213,7 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
          result = compileMessageReference(member, scope);
          break;
       default:
-         result = compileTerminal(objectNode, scope, mode);
+         result = compileTerminal(objectNode, scope);
    }
 
    return result;
@@ -2322,149 +2326,6 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
    writeTerminal(TerminalInfo(), scope, retVal);
 
    return retVal;
-}
-
-bool Compiler :: writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode)
-{
-   if (test(mode, HINT_NOBOXING))
-      return false;
-
-   switch (object.kind)
-   {
-      case okLocalAddress:
-      case okParams:
-      case okLocal:
-      case okParam:
-      case okThisParam:
-      case okFieldAddress:
-      case okSubject:
-         break;
-      default:
-         if (targetTypeRef == 0) {
-            // filter out unnessesary cases
-            return false;
-         }
-         else break;
-   }
-
-   ModuleScope* moduleScope = scope.moduleScope;
-
-   int size = 0;
-   ref_t classRef = 0;
-   bool unboxRequired = false;
-   if (object.type != 0) {
-      classRef = moduleScope->typeHints.get(object.type);
-   }
-   else classRef = resolveObjectReference(scope, object);
-
-   ClassInfo sourceInfo;
-   if (classRef != 0)
-      moduleScope->loadClassInfo(sourceInfo, scope.moduleScope->module->resolveReference(classRef), false);
-
-   if (test(sourceInfo.header.flags, elStructureRole) && test(sourceInfo.header.flags, elEmbeddable))
-      size = sourceInfo.size;
-
-   LexicalType boxing = lxNone;
-   if (targetTypeRef != 0) {
-      ref_t targetClassReference = moduleScope->typeHints.get(targetTypeRef);
-      ClassInfo targetInfo;
-      moduleScope->loadClassInfo(targetInfo, scope.moduleScope->module->resolveReference(targetClassReference), false);
-
-      // if the target is structure
-      if (test(targetInfo.header.flags, elStructureRole)) {
-         // NOTE : compiler magic!
-         // if the source is structure
-         if (test(sourceInfo.header.flags, elStructureRole)) {
-            // if target is source wrapper (i.e. target is a source container)
-            if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable) && moduleScope->typeHints.exist(targetInfo.fieldTypes.get(0), classRef)) {
-               boxing = lxBoxing;
-
-               classRef = targetClassReference;
-               object.type = targetTypeRef;
-            }
-            // if source is target wrapper (i.e. source is a target container)
-            // virtually copy the value into the stack allocated local
-            else if (test(sourceInfo.header.flags, elStructureWrapper) && moduleScope->typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassReference)) {
-               boxing = lxBoxing;
-
-               classRef = targetClassReference;
-               object.type = targetTypeRef;
-            }
-         }
-
-         if (!test(targetInfo.header.flags, elReadOnlyRole))
-            unboxRequired = (object.kind == okLocalAddress || object.kind == okFieldAddress);
-      }
-      // NOTE : compiler magic!
-      // if the target is generic wrapper (container) and the object is a local
-      else if (test(targetInfo.header.flags, elWrapper)) {
-         classRef = targetClassReference;
-         boxing = lxBoxing;
-         size = 0;
-         unboxRequired = (object.kind == okLocal || object.kind == okField);
-      }
-   }
-   else if (!test(sourceInfo.header.flags, elReadOnlyRole)) {
-      unboxRequired = (object.kind != okParams);
-   }
-
-   if (object.kind == okLocalAddress) {
-      boxing = lxBoxing;
-   }
-   else if (object.kind == okParams) {
-      boxing = lxArgBoxing;
-      classRef = scope.moduleScope->paramsReference;
-      size = -1;
-   }
-   else if ((object.kind == okLocal || object.kind == okParam || object.kind == okThisParam) && object.extraparam == -1 && size != 0) {
-      boxing = lxCondBoxing;
-   }
-   else if (object.kind == okFieldAddress) {
-      if (object.param > 0) {
-         allocateStructure(scope, 0, object);
-         scope.writer->insertChild(lxLocalAddress, object.param);
-         scope.writer->insert(lxAssigning, size);
-         scope.writer->closeNode();
-      }
-      boxing = lxBoxing;
-   }
-   else if (object.kind == okSubject) {
-      boxing = lxBoxing;
-      size = 4;
-      classRef = scope.moduleScope->signatureReference;
-   }
-   else if (boxing == lxBoxing && object.kind == okField) {
-      allocateStructure(scope, 0, object);
-      scope.writer->insertChild(lxLocalAddress, object.param);
-      scope.writer->insert(lxAssigning, size);
-      scope.writer->closeNode();
-   }
-
-   // HOTFIX : prevent unboxing for returning expression
-   if (test(mode, HINT_NOUNBOXING))
-      unboxRequired = false;
-
-   if (boxing != lxNone) {
-      scope.writer->insert(unboxRequired ? lxUnboxing : boxing, size);
-      scope.writer->appendNode(lxTarget, classRef);
-      appendTerminalInfo(scope.writer, terminal);
-
-      if (unboxRequired) {
-         if (test(mode, HINT_ALTBOXING)) {
-            int level = scope.newLocal();
-            scope.writer->insertChild(scope.rootBookmark, lxVariable, 0);
-            scope.writer->appendNode(lxTempLocal, level);
-         }
-      }
-
-      scope.writer->closeNode();
-
-      object.kind = okObject;
-      object.param = classRef;
-
-      return true;
-   }
-   else return false;
 }
 
 ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount, bool& argsUnboxing)
@@ -3072,10 +2933,6 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          || member == nsL7Operation || member == nsL0Operation)
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
-         // HOTFIX : if the primitive operation is followed by another operation
-         // the result may be boxed
-         if (member.nextNode() != nsNone && currentObject.kind == okLocalAddress)
-            writeBoxing(node.FirstTerminal(), scope, currentObject, 0, 0);
       }
       else if (member == nsAltMessageOperation) {
          scope.writer->newBookmark();
@@ -3283,7 +3140,6 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
          ownerScope.writer->newBookmark();
 
          writeTerminal(TerminalInfo(), ownerScope, info);
-         writeBoxing(node.FirstTerminal(), ownerScope, info, 0, 0);
 
          ownerScope.writer->removeBookmark();
          ownerScope.writer->closeNode();
@@ -3436,11 +3292,6 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
          if (member == nsObject) {
             if (!altMode) {
                objectInfo = compileObject(member, scope, mode);
-
-               // skip boxing for assigning target
-               // HOTFIX : the target should be boxed despite HINT_NOBOXING if it's followed by an operation
-               if (!findSymbol(member, nsAssigning))
-                  writeBoxing(node.FirstTerminal(), scope, objectInfo, 0, 0);
             }
             else scope.writer->appendNode(lxResult);
          }
@@ -3451,8 +3302,6 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
       else objectInfo = compileObject(member, scope, mode);
    }
    else objectInfo = compileObject(node, scope, mode);
-
-   writeBoxing(node.FirstTerminal(), scope, objectInfo, targetType, retExpr ? mode | HINT_NOUNBOXING : mode);
 
    if (targetType != 0 && !checkIfCompatible(scope, targetType, objectInfo)) {
       scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
@@ -3728,7 +3577,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       if (arg == nsMessageParameter) {
          if (argType == lxExtInteranlRef) {
             if (isSingleObject(arg.firstChild())) {
-               ObjectInfo target = compileTerminal(arg.firstChild(), scope, 0);
+               ObjectInfo target = compileTerminal(arg.firstChild(), scope);
                if (target.kind == okInternal) {
                   scope.writer->appendNode(lxExtInteranlRef, target.param);
                }
@@ -3848,61 +3697,54 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
    return ObjectInfo(okObject);
 }
 
-void Compiler :: reserveSpace(CodeScope& scope, int size)
+int Compiler :: allocateStructure(ModuleScope& scope, bool bytearray, int& allocatedSize, int& reserved)
 {
+   if (bytearray) {
+      // plus space for size
+      allocatedSize = ((allocatedSize + 3) >> 2) + 2;
+   }
+   else allocatedSize = (allocatedSize + 3) >> 2;
+
+   int retVal = reserved;
+   reserved += allocatedSize;
+
+   // the offset should include frame header offset
+   retVal = -2 - retVal;
+
+   // reserve place for byte array header if required
+   if (bytearray)
+      retVal -= 2;
+
+   return retVal;
+}
+
+bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand)
+{
+   ref_t classReference = resolveObjectReference(scope, exprOperand);
+   int size = scope.moduleScope->defineStructSize(classReference);
+   bool bytearray = false;
+   if (size < 0) {
+      bytearray = true;
+
+      size = dynamicSize;
+   }
+   else if (size == 0)
+      return false;
+      
+   int offset = allocateStructure(*scope.moduleScope, bytearray, size, scope.reserved);
+
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
    // if it is not enough place to allocate
    if (methodScope->reserved < scope.reserved) {
       methodScope->reserved += size;
    }
-}
 
-bool Compiler :: allocateStructure(CodeScope& scope, int dynamicSize, ObjectInfo& exprOperand/*, bool presavedAccumulator*/)
-{
-   bool bytearray = false;
-   int size = 0;
-   ref_t classReference = 0;
-   if (exprOperand.kind == okObject && exprOperand.param != 0) {
-      classReference = exprOperand.param;
-      size = scope.moduleScope->defineStructSize(classReference);
-   }
-   else if (exprOperand.kind == okExternal && exprOperand.type == 0) {
-      // typecast index to int if no type provided
-      classReference = scope.moduleScope->intReference;
-   }
-   else size = scope.moduleScope->defineTypeSize(exprOperand.type, classReference);
+   exprOperand.kind = okLocalAddress;
+   exprOperand.param = offset;
+   exprOperand.extraparam = classReference;
 
-   if (size < 0) {
-      bytearray = true;
-
-      // plus space for size
-      size = ((dynamicSize + 3) >> 2) + 2;
-   }
-   else if (exprOperand.kind == okExternal) {
-      size = 1;
-   }
-   else if (size == 0) {
-      return false;
-   }
-   else size = (size + 3) >> 2;
-
-   if (size > 0) {
-      exprOperand.kind = okLocalAddress;
-      exprOperand.param = scope.newSpace(size);
-      exprOperand.extraparam = classReference;
-
-      // allocate
-      reserveSpace(scope, size);
-
-      // reserve place for byte array header if required
-      if (bytearray) {
-         exprOperand.param -= 2;
-      }
-
-      return true;
-   }
-   else return false;
+   return true;
 }
 
 ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
@@ -4741,9 +4583,9 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
    }
 }
 
-void Compiler :: generateClassFlags(ClassScope& scope, SyntaxTree::Node root)
+void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
-   SyntaxTree::Node current = root.firstChild();
+   SNode current = root.firstChild();
    while (current != lxNone) {
       scope.compileClassHint(current);
       if (current == lxClassStructure || current == lxClassArray) {
@@ -4754,7 +4596,7 @@ void Compiler :: generateClassFlags(ClassScope& scope, SyntaxTree::Node root)
    }
 }
 
-void Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxTree::Node node, int fieldOffset)
+void Compiler :: declareImportedTemplate(ClassScope& scope, SNode node, int fieldOffset)
 {
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(node.argument, extModule));
@@ -4763,7 +4605,7 @@ void Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxTree::Node nod
 
    scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, fieldOffset, node.argument));
 
-   SyntaxTree::Node current = tree.readRoot();
+   SNode current = tree.readRoot();
    if (current == lxFieldTemplate) {
       current = current.firstChild();
       while (current != lxNone) {
@@ -4777,11 +4619,11 @@ void Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxTree::Node nod
    }
 }
 
-void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
+void Compiler :: generateClassFields(ClassScope& scope, SNode root)
 {
    bool singleField = SyntaxTree::countChild(root, lxClassField);
 
-   SyntaxTree::Node current = root.firstChild();
+   SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassField) {
          int offset = 0;
@@ -4855,7 +4697,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
          }
 
          // check for field templates
-         SyntaxTree::Node templ = SyntaxTree::findChild(current, lxFieldTemplate);
+         SNode templ = SyntaxTree::findChild(current, lxFieldTemplate);
          if (templ != lxNone) {
             declareImportedTemplate(scope, templ, offset);
          }
@@ -4865,13 +4707,13 @@ void Compiler :: generateClassFields(ClassScope& scope, SyntaxTree::Node root)
    }
 }
 
-void Compiler :: generateMethodHints(ClassScope& scope, SyntaxTree::Node node)
+void Compiler :: generateMethodHints(ClassScope& scope, SNode node)
 {
    ref_t outputType = 0;
    bool hintChanged = false;
    int hint = scope.info.methodHints.get(Attribute(node.argument, maHint));
 
-   SyntaxTree::Node current = node.firstChild();
+   SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethodAttr) {
          hint |= current.argument;
@@ -4882,7 +4724,7 @@ void Compiler :: generateMethodHints(ClassScope& scope, SyntaxTree::Node node)
          outputType = current.argument;
       }
       else if (current == lxClassMethodOpt) {
-         SyntaxTree::Node mssgAttr = SyntaxTree::findChild(current, lxMessage);
+         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
          if (mssgAttr != lxNone) {
             scope.info.methodHints.add(Attribute(node.argument, current.argument), getSignature(mssgAttr.argument));
          }         
@@ -4901,9 +4743,9 @@ void Compiler :: generateMethodHints(ClassScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed)
+void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool closed)
 {
-   SyntaxTree::Node current = root.firstChild();
+   SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
          generateMethodHints(scope, current);
@@ -4931,7 +4773,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node 
 void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
 {
    SyntaxTree reader(&scope.syntaxTree);
-   SyntaxTree::Node root = reader.readRoot();
+   SNode root = reader.readRoot();
 
    // generate flags
    generateClassFlags(scope, root);
@@ -5020,9 +4862,9 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest)
+void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Module* dest)
 {
-   SyntaxTree::Node current = node.firstChild();
+   SNode current = node.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxMessageMask)) {
          writer.newNode(current.type, importMessage(sour, current.argument, dest));
@@ -5043,9 +4885,9 @@ void Compiler :: importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module
    }
 }
 
-void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, ref_t subject, _Module* templateModule)
+void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SNode node, ref_t subject, _Module* templateModule)
 {
-   SyntaxTree::Node current = node.firstChild();
+   SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
          writer.newNode(lxClassMethod, overwriteSubject(current.argument, subject));
@@ -5064,7 +4906,7 @@ void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, Templat
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule));
 
-   SyntaxTree::Node root = tree.readRoot();
+   SNode root = tree.readRoot();
    if (root == lxFieldTemplate) {
       importFieldTemplate(scope, writer, root, templateInfo.subject, extModule);
    }
@@ -5384,12 +5226,12 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node)
 {
-   SyntaxTree::Node arg = node.firstChild();
+   SNode arg = node.firstChild();
    while (arg != lxNone) {
       if (arg == lxIntExtArgument || arg == lxExtArgument) {
-         SyntaxTree::Node member = arg.firstChild();
+         SNode member = arg.firstChild();
          while (member != lxNone) {
             // if boxing used for external call
             // remove it
@@ -5404,9 +5246,9 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node)
 {
-   SyntaxTree::Node arg = node.firstChild();
+   SNode arg = node.firstChild();
    while (arg != lxNone) {
       // if boxing used for external call
       // remove it
@@ -5418,12 +5260,16 @@ void Compiler :: optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningMask)
 {
+   int mode = 0;
+
+   bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
+
    if (node == lxDirectCalling && SyntaxTree::existChild(node, lxEmbeddable)) {
       // check if it is a virtual call
       if (getVerb(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
-         SyntaxTree::Node callTarget = SyntaxTree::findChild(node, lxTarget);
+         SNode callTarget = SyntaxTree::findChild(node, lxTarget);
 
          ClassInfo info;
          scope.loadClassInfo(info, callTarget.argument);
@@ -5437,47 +5283,15 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node)
       }
    }
 
-   bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
-   if (stackSafe) {
-      SyntaxTree::Node member = node.firstChild();
-      while (member != lxNone) {
-         // if boxing used for direct stack safe call
-         // remove it
-         if (member == lxUnboxing) {
-            SyntaxTree::Node assignExpr = SyntaxTree::findChild(member, lxAssigning);
+   if (stackSafe)
+      mode |= HINT_NOBOXING;
 
-            if (assignExpr == lxAssigning && member.Tree()->matchPattern(assignExpr, lxObjectMask, 2,
-               SyntaxTree::NodePattern(lxLocalAddress),
-               SyntaxTree::NodePattern(lxFieldAddress)))
-            {
-               member = lxLocalUnboxing;
-            }
-            else member = lxExpression;
-         }
-         else if (member == lxBoxing || member == lxCondBoxing || member == lxArgBoxing) {
-            member = lxExpression;
-         }
-
-         member = member.nextNode();
-      }
-   }
-
-   // if target is overridden with stack allocated subject / messager / verb
-   SyntaxTree::Node overriddenTarget = SyntaxTree::findChild(node, lxOverridden);
-   if (node == lxDirectCalling && overriddenTarget != lxNone) {
-      SyntaxTree::Node boxing = SyntaxTree::findChild(overriddenTarget, lxBoxing, lxCondBoxing);
-      if (boxing != lxNone) {
-         SyntaxTree::Node target = SyntaxTree::findChild(boxing, lxTarget);
-         if (target.argument == scope.signatureReference || target.argument == scope.verbReference) {
-            boxing = lxExpression;
-         }
-      }
-   }
+   analizeSyntaxExpression(scope, node, warningMask, mode);
 }
 
-void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: optimizeOp(ModuleScope& scope, SNode node)
 {
-   SyntaxTree::Node member = node.firstChild();
+   SNode member = node.firstChild();
    while (member != lxNone) {
       // if boxing used for primitive operation
       // remove it
@@ -5489,9 +5303,9 @@ void Compiler :: optimizeOp(ModuleScope& scope, SyntaxTree::Node node)
    }
 }
 
-void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode)
+void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, SNode& callNode)
 {
-   SyntaxTree::Node callTarget = SyntaxTree::findChild(callNode, lxTarget);
+   SNode callTarget = SyntaxTree::findChild(callNode, lxTarget);
 
    ClassInfo info;
    scope.loadClassInfo(info, callTarget.argument);
@@ -5503,7 +5317,7 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& as
       assignNode = lxExpression;
 
       // move assigning target into the call node
-      SyntaxTree::Node assignTarget = assignNode.findPattern(SyntaxTree::NodePattern(lxLocalAddress));
+      SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
       if (assignTarget != lxNone) {
          callNode.appendNode(assignTarget.type, assignTarget.argument);
          assignTarget = lxExpression;
@@ -5515,8 +5329,8 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& as
    // if it is possible to replace constructor call with embeddaded initialization without creating a temporal dynamic object
    if (subject != 0) {
       // move assigning target into the call node
-      SyntaxTree::Node assignTarget = assignNode.findPattern(SyntaxTree::NodePattern(lxLocalAddress));
-      SyntaxTree::Node callTarget = callNode.findPattern(SyntaxTree::NodePattern(lxConstantClass));
+      SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+      SNode callTarget = callNode.findPattern(SNodePattern(lxConstantClass));
       if (callTarget != lxNone && assignTarget != lxNone) {
          // removing assinging operation
          assignNode = lxExpression;
@@ -5531,9 +5345,9 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& as
    }
 }
 
-SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type)
+SNode findSubNode(SNode node, LexicalType type)
 {
-   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
+   SNode child = SyntaxTree::findChild(node, type, lxExpression);
    if (child == lxExpression)
    {
       return SyntaxTree::findChild(child, type);
@@ -5541,27 +5355,44 @@ SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type)
    else return child;
 }
 
-SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask)
+SNode findSubNodeMask(SNode node, int mask)
 {
-   SyntaxTree::Node child = SyntaxTree::findMatchedChild(node, mask);
+   SNode child = SyntaxTree::findMatchedChild(node, mask);
    if (child == lxExpression) {
       return SyntaxTree::findMatchedChild(child, mask);
    }
    else return child;
 }
 
-void Compiler :: optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node)
+void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLevel)
 {
+   int mode = HINT_NOUNBOXING;
    if (node.argument != 0) {
-      // assigning (local address boxing) => assigning (local address expression)
-      SyntaxTree::Node boxing = SyntaxTree::findChild(node, lxBoxing, lxCondBoxing, lxUnboxing);
-      if (boxing != lxNone && boxing.argument == node.argument) {
-         boxing = lxExpression;
-      }
-
-      SyntaxTree::Node directCall = SyntaxTree::findChild(node, lxDirectCalling);
+      mode |= HINT_NOBOXING;
+      SNode directCall = SyntaxTree::findChild(node, lxDirectCalling);
       if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
          optimizeEmbeddableCall(scope, node, directCall);
+      }
+   }
+
+   analizeSyntaxExpression(scope, node, warningLevel, mode);
+
+   // assignment operation
+   SNode assignNode = findSubNode(node, lxAssigning);
+   if (assignNode != lxNone) {
+      SNode operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
+      if (operationNode != lxNone) {
+         SNode larg = findSubNodeMask(operationNode, lxObjectMask);
+         SNode target = SyntaxTree::findMatchedChild(node, lxObjectMask);
+         if (larg.type == target.type && larg.argument == target.argument) {
+            // remove an extra assignment
+            larg = findSubNodeMask(assignNode, lxObjectMask);
+
+            larg = target.type;
+            larg.setArgument(target.argument);
+            node = lxExpression;
+            target = lxExpression;
+         }
       }
    }
 }
@@ -5586,64 +5417,114 @@ void Compiler :: compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWrit
    }
 }
 
-void Compiler :: analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel)
+void Compiler :: analizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
 {
    if (test(warningLevel, WARNING_LEVEL_3)) {
-      SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
-      SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
-      SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+      SNode row = SyntaxTree::findChild(node, lxRow);
+      SNode col = SyntaxTree::findChild(node, lxCol);
+      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
       if (col != lxNone && row != lxNone) {
          scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, (ident_t)terminal.argument);
       }
    }
 }
 
-void Compiler :: analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel)
+void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningLevel)
 {
    if (test(warningLevel, WARNING_LEVEL_2)) {
-      SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
-      SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
-      SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
+      SNode row = SyntaxTree::findChild(node, lxRow);
+      SNode col = SyntaxTree::findChild(node, lxCol);
+      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
       if (col != lxNone && row != lxNone)
          scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, (ident_t)terminal.argument);
    }
 }
 
-void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningMask)
+void Compiler :: analizBoxableObject(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {
-   SyntaxTree::Node current = node.firstChild();
+   if (!test(mode, HINT_NOBOXING) || (node == lxFieldAddress && node.argument > 0)) {
+      SNode target = SyntaxTree::findChild(node, lxTarget);
+      bool variable = false;
+      int size = scope.defineStructSize(target.argument, variable);
+      if (size == 0)
+         return;
+
+      // allocating temporal stack allocated variable for structure field if required
+      if (node == lxFieldAddress && node.argument > 0) {
+         // finding method's reserved attribute
+         SNode methodNode = node.parentNode();
+         while (methodNode != lxClassMethod)
+            methodNode = methodNode.parentNode();
+
+         SNode reserveNode = SyntaxTree::findChild(methodNode, lxReserved);
+         int reserved = reserveNode.argument;
+
+         // allocating space
+         int offset = allocateStructure(scope, false, size, reserved);
+
+         reserveNode.setArgument(reserved);
+
+         // injecting assinging, boxing / unboxing operation
+         LexicalType nodeType = lxAssigning;
+         SNode assignNode = node;
+         if (test(mode, HINT_NOBOXING)) {
+            if (variable && !test(mode, HINT_NOUNBOXING)) {
+               node.appendNode(lxAssigning, size);
+               assignNode = SyntaxTree::findChild(node, lxAssigning);
+
+               nodeType = lxLocalUnboxing;
+            }
+         }
+         else {
+            node.appendNode(lxAssigning, size);
+            assignNode = SyntaxTree::findChild(node, lxAssigning);
+
+            nodeType = variable && !test(mode, HINT_NOUNBOXING) ? lxUnboxing : lxBoxing;
+         }
+         assignNode.appendNode(lxLocalAddress, offset);
+         assignNode.appendNode(lxFieldAddress, node.argument);
+
+         node = nodeType;
+         node.setArgument(size);
+      }
+      else {
+         // inject boxing node
+         node.appendNode(node.type, node.argument);
+
+         if (node == lxBlockLocalAddr && size == -1) {
+            node = lxArgBoxing;
+         }
+         else if (variable && !test(mode, HINT_NOUNBOXING)) {
+            node = lxUnboxing;
+         }
+         else node = (node == lxBoxableLocal) ? lxCondBoxing : lxBoxing;
+
+         node.setArgument(size);
+      }
+   }
+}
+
+void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SNode node, int warningMask, int mode)
+{
+   SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type)
       {
-         case lxAssigning:
-         {
-            optimizeAssigning(scope, current);
-            analizeSyntaxExpression(scope, current, warningMask);
-
-            // assignment operation
-            SyntaxTree::Node assignNode = findSubNode(current, lxAssigning);
-            if (assignNode != lxNone) {
-               SyntaxTree::Node operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
-               if (operationNode != lxNone) {
-                  SyntaxTree::Node larg = findSubNodeMask(operationNode, lxObjectMask);
-                  SyntaxTree::Node target = SyntaxTree::findMatchedChild(current, lxObjectMask);
-                  if (larg.type == target.type && larg.argument == target.argument) {
-                     // remove an extra assignment
-                     larg = findSubNodeMask(assignNode, lxObjectMask);
-
-                     larg = target.type;
-                     larg.setArgument(target.argument);
-                     current = lxExpression;
-                     target = lxExpression;
-                  }
-               }
-            }
+         case lxLocalAddress:
+         case okFieldAddress:
+         case okSubject:
+         case lxBoxableLocal:
+         case lxBlockLocalAddr:
+            analizBoxableObject(scope, current, warningMask, mode);
             break;
-         }
+         case lxAssigning:
+            optimizeAssigning(scope, current, warningMask);
+            break;
          case lxTypecasting:
             analizeTypecast(scope, current, warningMask);
             analizeSyntaxExpression(scope, current, warningMask);
             break;
+         // !! temporal should be removed
          case lxBoxing:
          case lxCondBoxing:
          case lxArgBoxing:
@@ -5653,11 +5534,8 @@ void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node no
             break;
          case lxDirectCalling:
          case lxSDirctCalling:
-         {
-            optimizeDirectCall(scope, current);
-            analizeSyntaxExpression(scope, current, warningMask);
-         }
-         break;
+            optimizeDirectCall(scope, current, warningMask);            
+            break;
          case lxIntOp:
          case lxLongOp:
          case lxRealOp:
@@ -5676,8 +5554,15 @@ void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node no
             optimizeInternalCall(scope, current);
             analizeSyntaxExpression(scope, current, warningMask);
             break;
+         case lxExpression:
+            // HOT FIX : to pass the optimization mode into sub expression
+            analizeSyntaxExpression(scope, current, warningMask, mode);
+            break;
+         case lxReturning:
+            analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
+            break;
          default:
-            if (test(current.type, lxExpressionMask)/* && current.nextNode() != lxAssigning*/) {
+            if (test(current.type, lxExpressionMask)) {
                analizeSyntaxExpression(scope, current, warningMask);
             }
             break;
@@ -5689,12 +5574,9 @@ void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node no
 
 void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
 {
-   if (!test(_optFlag, 1))
-      return;
-
    int warningMask = scope.moduleScope->warningMask;
    SyntaxTree reader(&dump);
-   SyntaxTree::Node current = reader.readRoot().firstChild();
+   SNode current = reader.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxWarningMask) {
          warningMask = current.argument;
@@ -5702,8 +5584,10 @@ void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
       else if (current == lxClassMethod) {
          analizeSyntaxExpression(*scope.moduleScope, current, warningMask);
 
-         if (test(scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint)), tpEmbeddable)) {
-            defineEmbeddableAttributes(scope, current);
+         if (test(_optFlag, 1)) {
+            if (test(scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint)), tpEmbeddable)) {
+               defineEmbeddableAttributes(scope, current);
+            }
          }
       }
 
@@ -5713,12 +5597,9 @@ void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
 
 void Compiler :: analizeSymbolTree(SymbolScope& scope, MemoryDump& dump)
 {
-   if (!test(_optFlag, 1))
-      return;
-
    int warningMask = 0;
    SyntaxTree reader(&dump);
-   SyntaxTree::Node current = reader.readRoot().firstChild();
+   SNode current = reader.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxWarningMask) {
          warningMask = current.argument;
@@ -5731,29 +5612,29 @@ void Compiler :: analizeSymbolTree(SymbolScope& scope, MemoryDump& dump)
    }
 }
 
-bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node root, ref_t returningType, ref_t& subject)
+bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SNode root, ref_t returningType, ref_t& subject)
 {
    if (returningType != 0 && scope.defineTypeSize(returningType) > 0) {
       if (root.firstChild() == lxNewFrame)
          root = root.firstChild();
 
       if (tree.matchPattern(root, lxObjectMask, 2,
-            SyntaxTree::NodePattern(lxExpression), 
-            SyntaxTree::NodePattern(lxReturning))) 
+            SNodePattern(lxExpression), 
+            SNodePattern(lxReturning))) 
       {
-         SyntaxTree::Node message = tree.findPattern(root, 2,
-            SyntaxTree::NodePattern(lxExpression),
-            SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling));
+         SNode message = tree.findPattern(root, 2,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is eval&subject2:var[1] message
          if (getParamCount(message.argument) != 1)
             return false;
 
          // check if it is operation with $self
-         SyntaxTree::Node target = tree.findPattern(root, 3,
-            SyntaxTree::NodePattern(lxExpression),
-            SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling),
-            SyntaxTree::NodePattern(lxLocal, lxExpression));
+         SNode target = tree.findPattern(root, 3,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxLocal, lxExpression));
 
          // if the target was optimized
          if (target == lxExpression) {
@@ -5764,16 +5645,16 @@ bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, Sy
             return false;
 
          // check if the argument is returned
-         SyntaxTree::Node arg = tree.findPattern(root, 4,
-            SyntaxTree::NodePattern(lxExpression),
-            SyntaxTree::NodePattern(lxDirectCalling, lxSDirctCalling),
-            SyntaxTree::NodePattern(lxExpression),
-            SyntaxTree::NodePattern(lxLocalAddress));
+         SNode arg = tree.findPattern(root, 4,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxExpression),
+            SNodePattern(lxLocalAddress));
 
-         SyntaxTree::Node ret = tree.findPattern(root, 3,
-            SyntaxTree::NodePattern(lxReturning),
-            SyntaxTree::NodePattern(lxBoxing),
-            SyntaxTree::NodePattern(lxLocalAddress));
+         SNode ret = tree.findPattern(root, 3,
+            SNodePattern(lxReturning),
+            SNodePattern(lxBoxing),
+            SNodePattern(lxLocalAddress));
 
          if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
             subject = getSignature(message.argument);
@@ -5786,17 +5667,17 @@ bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, Sy
    return false;
 }
 
-bool Compiler :: recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node methodNode)
+bool Compiler :: recognizeEmbeddableIdle(SyntaxTree& tree, SNode methodNode)
 {
-   SyntaxTree::Node object = tree.findPattern(methodNode, 3,
-      SyntaxTree::NodePattern(lxNewFrame),
-      SyntaxTree::NodePattern(lxReturning),
-      SyntaxTree::NodePattern(lxLocal));
+   SNode object = tree.findPattern(methodNode, 3,
+      SNodePattern(lxNewFrame),
+      SNodePattern(lxReturning),
+      SNodePattern(lxLocal));
 
    return (object == lxLocal && object.argument == -1);
 }
 
-void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SyntaxTree::Node methodNode)
+void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 {
    // Optimization : var = get&subject => eval&subject2:var[1]
    ref_t type = 0;

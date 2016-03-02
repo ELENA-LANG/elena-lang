@@ -565,7 +565,7 @@ private:
    struct CodeScope : public Scope
    {
       SyntaxWriter* writer;
-      int           rootBookmark;
+      int           rootBookmark;   // !! should be removed??
 
       // scope local variables
       LocalMap     locals;
@@ -590,16 +590,6 @@ private:
       void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
       {
          locals.add(local, Parameter(level, ref, stackAllocated));
-      }
-
-      int newSpace(size_t size)
-      {
-         int retVal = reserved;
-
-         reserved += size;
-
-         // the offset should include frame header offset
-         return -2 - retVal;
       }
 
       void freeSpace()
@@ -743,8 +733,6 @@ private:
    void importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, ref_t subject, _Module* templateModule);
    void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest);
 
-   bool writeBoxing(TerminalInfo terminal, CodeScope& scope, ObjectInfo& object, ref_t targetTypeRef, int mode);
-
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
    {
@@ -763,7 +751,7 @@ private:
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
-   ObjectInfo compileTerminal(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileTerminal(DNode node, CodeScope& scope);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
    int mapOperandType(CodeScope& scope, ObjectInfo operand);
@@ -794,8 +782,8 @@ private:
 
    void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
-   void reserveSpace(CodeScope& scope, int size);
-   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand/*, bool presavedAccumulator = false*/);
+   int allocateStructure(ModuleScope& scope, bool bytearray, int& allocatedSize, int& reserved);
+   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand);
 
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
    ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
@@ -863,16 +851,19 @@ private:
 
    void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
-   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node);   
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node);
-   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node);
+   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node);
 
+   void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+
+   // !! obsolete
    void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void analizeClassTree(ClassScope& scope, MemoryDump& dump);
    void analizeSymbolTree(SymbolScope& scope, MemoryDump& dump);
 

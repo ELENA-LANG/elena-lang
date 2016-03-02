@@ -92,6 +92,9 @@ http://github.com/ELENA-LANG/elena-lang/issues
 http://elenalang.blogspot.com/
     - tutorials
 
+elenaprolang@gmail.com
+    - questions / bug reports
+
 ****************************************************************************
 * ELENA Language modules and programs
 ****************************************************************************

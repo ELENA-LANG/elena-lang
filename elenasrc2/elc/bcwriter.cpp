@@ -548,6 +548,7 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          tape.write(bcBLoadSI, sourceArgument);
          break;
       case lxLocal:
+      case lxBoxableLocal:
          // bloadfi param
          tape.write(bcBLoadFI, sourceArgument, bpFrame);
          break;
@@ -1640,7 +1641,7 @@ void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argum
       tape.write(bcRLoad);
       tape.write(bcNSave);
    }
-   else if (target == lxLocal) {
+   else if (target == lxLocal || target == lxBoxableLocal) {
       // bloadfi param
       // rload
       // nsave
@@ -2264,6 +2265,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
       case lxLocal:
+      case lxBoxableLocal:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
          break;
@@ -2336,6 +2338,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
       case lxLocal:
+      case lxBoxableLocal:
          // aloadfi index
          tape.write(bcALoadFI, argument, bpFrame);
          break;
@@ -2389,7 +2392,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    switch (type)
    {
       case lxLocal:
-      //case lxParam:
+      case lxBoxableLocal:
          // asavefi index
          tape.write(bcASaveFI, argument, bpFrame);
          break;

@@ -1,7 +1,17 @@
 ------                                 
 In development:
 ------                      
-              xdev - generic development                                           
+              xdev - generic development
+                       * boxing value
+                       * unboxing variable
+                       * boxing / unboxing into variable
+                       * unbox open argument list                       
+                       * check if boxing / unboxing works
+                       * check if syntax tree optimization works (embeddable hint)
+                       * make sure that $subject is not boxed when it is used for dispatching operations
+                       * boxing / unboxing open argument list
+	               * warn on boxing                                              
+
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
 

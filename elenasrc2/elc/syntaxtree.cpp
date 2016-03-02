@@ -117,14 +117,14 @@ SyntaxTree::Node SyntaxTree:: readNextNode(size_t position)
 
 SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 {
-   position = position - 16;
+   position -= 16;
 
    int level = 0;
    while (position > 7) {
       _reader.seek(position);
 
       int type = _reader.getDWord();
-         _reader.getDWord();
+      _reader.getDWord();
 
       if (type != -1) {
          if (level == 0)
@@ -136,6 +136,40 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 
             return read();
          }
+      }
+      else level--;
+
+      position -= 8;
+   }
+
+   return Node();
+}
+
+SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
+{
+   _reader.seek(position - 8);
+   if (_reader.getDWord() != -1) {
+      _reader.seek(position - 8);
+
+      return read();
+   }
+
+   position -= 16;
+
+   int level = 0;
+   while (position > 7) {
+      _reader.seek(position);
+
+      int type = _reader.getDWord();
+
+      if (type != -1) {
+         if (level == 0) {
+            _reader.seek(position);
+
+            return read();
+         }
+
+         level++;
       }
       else level--;
 
