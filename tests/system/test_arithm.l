@@ -5,46 +5,18 @@
 #import system'calendar.
 #import extensions.
 
-#class(sealed,struct:embeddable)MyStruct
-{
-    #field(type:int)n.
-    #field(type:int)m.
-    
-    #field(type:vint)p.
-    
-    #constructor new
-    [
-        n := 0.
-        m := 2.
-    ]
-    
-    #method test
-    [
-        p << 4.        
-    ]
-    
-    #method set &m:i
-    [
-        m := i.
-    ]
-    
-    #method set &n:i
-    [
-        n := i.
-    ]    
-}
-            
 #symbol XTester =
 {
+    test &ref:out
+    [
+        out << "abc".
+    ]
+    
     test
     [
-        #var r := MyStruct new.
+        #var ret := $nil.
         
-        r set &m:1.
-
-        r set &n:3.
-        
-        #var rr := r test.
+        XTester test &ref:ret.
     ]
 }.
         

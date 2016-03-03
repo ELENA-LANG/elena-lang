@@ -2654,6 +2654,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       if (retVal.param != 0 ||retVal.type != 0) {
          allocateStructure(scope, 0, retVal);
 
+         scope.writer->insertChild(lxTarget, retVal.extraparam);
          scope.writer->insertChild(lxLocalAddress, retVal.param);
          scope.writer->insert(lxAssigning, size);
          scope.writer->closeNode();
@@ -5377,7 +5378,6 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
       current = current.nextNode();
    }
 
-   // !! should be removed??
    // assignment operation
    SNode assignNode = findSubNode(node, lxAssigning);
    if (assignNode != lxNone) {
@@ -5430,9 +5430,82 @@ void Compiler :: analizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
    }
 }
 
-void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningLevel)
+void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
-   if (test(warningLevel, WARNING_LEVEL_2)) {
+   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+   ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
+   if (sourceClassRef == 0) {
+      ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
+      sourceClassRef = (sourceType != 0) ? scope.typeHints.get(sourceType) : 0;
+   }
+
+   // NOTE : compiler magic!
+   // if the target is wrapper (container) around the source
+   ref_t targetClassRef = scope.typeHints.get(getSignature(node.argument));
+   if (targetClassRef != 0) {
+      ClassInfo targetInfo;
+      scope.loadClassInfo(targetInfo, targetClassRef, false);
+
+      if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
+         // if target is source wrapper (i.e. target is a source container)
+         if (sourceClassRef != 0 && scope.typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
+            // if boxing is not required (stack safe) and can be passed directly
+            if (test(mode, HINT_NOBOXING)) {
+               node = lxExpression;
+            }
+            else {
+               // if unboxing is not required
+               if (test(targetInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
+                  node = lxBoxing;
+               }
+               else node = lxUnboxing;
+
+               node.setArgument(targetInfo.size);
+
+               node.appendNode(lxTarget, targetClassRef);
+            }
+
+            mode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+         }
+      }
+      else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
+         ClassInfo sourceInfo;
+         scope.loadClassInfo(sourceInfo, sourceClassRef, false);
+         // if source is target wrapper (i.e. source is a target container)
+         if (test(sourceInfo.header.flags, elStructureWrapper | elEmbeddable) && scope.typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
+            // if boxing is not required (stack safe) and can be passed directly
+            if (test(mode, HINT_NOBOXING)) {
+               node = lxExpression;
+            }
+            else {
+               // if unboxing is not required
+               if (test(sourceInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
+                  node = lxBoxing;
+               }
+               else node = lxUnboxing;
+
+               node.setArgument(sourceInfo.size);
+
+               node.appendNode(lxTarget, sourceClassRef);
+            }
+
+            mode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+         }
+      }
+      else if (test(targetInfo.header.flags, elWrapper)) {
+         // if the target is generic wrapper (container)
+         node.setArgument(0);
+         node = lxUnboxing;
+         node.appendNode(lxTarget, targetClassRef);
+
+         mode = 0;
+      }
+   }
+
+   analizeSyntaxExpression(scope, node, warningMask, mode);
+
+   if (test(warningMask, WARNING_LEVEL_2)) {
       SNode row = SyntaxTree::findChild(node, lxRow);
       SNode col = SyntaxTree::findChild(node, lxCol);
       SNode terminal = SyntaxTree::findChild(node, lxTerminal);
@@ -5522,8 +5595,7 @@ void Compiler :: analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current,
          optimizeAssigning(scope, current, warningMask);
          break;
       case lxTypecasting:
-         analizeTypecast(scope, current, warningMask);
-         analizeSyntaxExpression(scope, current, warningMask);
+         analizeTypecast(scope, current, warningMask, mode);
          break;
          // !! temporal should be removed
       case lxBoxing:

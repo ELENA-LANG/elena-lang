@@ -2,13 +2,14 @@
 In development:
 ------                      
               xdev - generic development
-                       * boxing / unboxing into wrapper variable : typed
-                       * boxing / unboxing into wrapper variable : generic
+                       * boxing / unboxing into wrapper variable : generic                       
 
-                       * check if syntax tree optimization works (embeddable hint)
-                       * make sure that $subject is not boxed when it is used for dispatching operations
                        * boxing / unboxing open argument list
 	               * warn on boxing                                              
+                       * make sure that $subject is not boxed when it is used for dispatching operations
+                       * make basic tests
+
+                       * check if syntax tree optimization works (embeddable hint)
 
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings

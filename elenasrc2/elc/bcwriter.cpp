@@ -3044,10 +3044,8 @@ void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
    gotoEnd(tape, baFirstLabel);
 }
 
-void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
+void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
 {
-   generateExpression(tape, node);
-
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
    if (node == lxArgBoxing) {
@@ -3062,6 +3060,12 @@ void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
    if (temp != lxNone) {
       saveObject(tape, lxLocal, temp.argument);
    }
+}
+
+void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
+{
+   generateExpression(tape, node);
+   generateBoxing(tape, node);
 }
 
 void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
@@ -3137,7 +3141,15 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
             assignBaseTo(tape, lxResult);
          }
       }
-      else saveObject(tape, target.type, target.argument);
+      else {
+         // if assinging the result of primitive assigning operation
+         // it should be boxed before
+         if (source == lxAssigning && source.argument > 0) {
+            generateBoxing(tape, source);
+         }
+
+         saveObject(tape, target.type, target.argument);
+      }
    }
 }
 
