@@ -2,14 +2,12 @@
 In development:
 ------                      
               xdev - generic development
-                       * unboxing fields : stacksafe and generic
-                       * boxing / unboxing into wrapper variable
-                       * unbox open argument list                       
-                       * check if boxing / unboxing works
+                       * boxing / unboxing into wrapper variable : typed
+                       * boxing / unboxing into wrapper variable : generic
+
                        * check if syntax tree optimization works (embeddable hint)
                        * make sure that $subject is not boxed when it is used for dispatching operations
                        * boxing / unboxing open argument list
-                       * no boxing for external / internal operations
 	               * warn on boxing                                              
 
                        * #54 : implementing generics / templates    

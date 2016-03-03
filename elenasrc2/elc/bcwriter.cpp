@@ -2634,6 +2634,21 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
    else assignBaseTo(tape, lxResult);
 
+   if (larg == lxLocalUnboxing) {
+      SNode assignNode = SyntaxTree::findChild(larg, lxAssigning);
+      assignOpArguments(assignNode, larg, rarg);
+
+      loadBase(tape, rarg.type, 0);
+
+      if (assignNode.argument == 4) {
+         assignInt(tape, lxFieldAddress, rarg.argument);
+      }
+      else if (assignNode.argument == 2) {
+         assignLong(tape, lxFieldAddress, rarg.argument);
+      }
+      else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+   }
+
    releaseObject(tape, level);
 }
 
@@ -2955,18 +2970,27 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
 
          if (current.argument != 0) {
             tape.write(bcPushB);
-            loadBase(tape, target.type, target.argument);
+            if (target == lxAssigning) {
+               // unboxing field address
+               SNode larg, rarg;
+               assignOpArguments(target, larg, rarg);
+
+               target = rarg;
+            }
 
             if (target == lxFieldAddress) {
                if (current.argument == 4) {
-                  copyInt(tape, target.argument);
+                  assignInt(tape, lxFieldAddress, target.argument);
                }
                else if (current.argument == 2) {
-                  copyShort(tape, target.argument);
+                  assignLong(tape, lxFieldAddress, target.argument);
                }
-               else copyStructure(tape, target.argument, current.argument);
+               else assignStruct(tape, lxFieldAddress, target.argument, current.argument);
             }
-            else copyBase(tape, current.argument);
+            else {
+               loadBase(tape, target.type, target.argument);
+               copyBase(tape, current.argument);
+            }
 
             tape.write(bcPopB);
          }

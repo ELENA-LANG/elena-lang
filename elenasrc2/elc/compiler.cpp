@@ -5271,9 +5271,26 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningM
    analizeSyntaxExpression(scope, node, warningMask, mode);
 }
 
-void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningMask)
+void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel)
 {
-   analizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
+   bool target = true;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (!target) {
+            analizeSyntaxNode(scope, current, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
+         }
+         else {
+            if (IsVarOperator(node.argument)) {
+               analizeSyntaxNode(scope, current, warningLevel, HINT_NOBOXING);
+            }
+            else analizeSyntaxNode(scope, current, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
+
+            target = false;
+         }
+      }
+      current = current.nextNode();
+   }
 }
 
 void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, SNode& callNode)
