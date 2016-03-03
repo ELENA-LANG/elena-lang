@@ -199,6 +199,11 @@ public:
    {
       insert(0, type, 0);
    }
+   void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
+   {
+      insert(end_bookmark, lxEnding, 0);
+      insert(start_bookmark, type, argument);
+   }
    void insertChild(int bookmark, LexicalType type, ref_t argument)
    {
       insert(bookmark, lxEnding, 0);
@@ -340,6 +345,16 @@ public:
          else tree->insertNode(position, type, argument);
       }
 
+      void injectNode(LexicalType type, int argument = 0)
+      {
+         Node lastNode = lastChild();
+
+         int start_position = position;
+         int end_position = lastNode == lxNone ? position : lastNode.position + 8;
+         
+         tree->insertNode(start_position, end_position, type, argument);
+      }
+
       Node findPattern(NodePattern pattern)
       {
          return tree->findPattern(*this, 1, pattern);
@@ -474,6 +489,7 @@ public:
    Node readParentNode(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
+   Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 
    bool matchPattern(Node node, int mask, int counter, ...);
    Node findPattern(Node node, int counter, ...);

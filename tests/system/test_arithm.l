@@ -7,16 +7,8 @@
 
 #symbol XTester =
 {
-    test &ref:out
-    [
-        out << "abc".
-    ]
-    
     test
     [
-        #var ret := $nil.
-        
-        XTester test &ref:ret.
     ]
 }.
         

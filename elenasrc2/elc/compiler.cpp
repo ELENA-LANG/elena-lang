@@ -3648,6 +3648,7 @@ ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t
       scope.writer->newNode(lxAssigning, 4);
 
       allocateStructure(scope, 0, retVal);
+      scope.writer->appendNode(lxTarget, moduleScope->intReference);
       scope.writer->appendNode(lxLocalAddress, retVal.param);
    }
 
@@ -5503,6 +5504,20 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
       }
    }
 
+   if (node == lxBoxing || node == lxUnboxing) {
+      analizeBoxing(scope, node, warningMask);
+   }
+   else if (node == lxTypecasting && object == lxAssigning && object.argument > 0) {
+      object = SyntaxTree::findMatchedChild(object, lxObjectMask);
+
+      if (object == lxLocalAddress || object == lxFieldAddress) {
+         node.injectNode(lxBoxing, object.argument);
+
+         SNode boxingNode = SyntaxTree::findChild(node, lxBoxing);
+         boxingNode.appendNode(lxTarget, sourceClassRef);
+      }
+   }
+
    analizeSyntaxExpression(scope, node, warningMask, mode);
 
    if (test(warningMask, WARNING_LEVEL_2)) {
@@ -5579,6 +5594,10 @@ void Compiler :: analizBoxableObject(ModuleScope& scope, SNode node, int warning
          node.setArgument(size);
       }
    }
+
+   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
+      analizeBoxing(scope, node, warningLevel);
+   }
 }
 
 void Compiler :: analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
@@ -5596,14 +5615,6 @@ void Compiler :: analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current,
          break;
       case lxTypecasting:
          analizeTypecast(scope, current, warningMask, mode);
-         break;
-         // !! temporal should be removed
-      case lxBoxing:
-      case lxCondBoxing:
-      case lxArgBoxing:
-      case lxUnboxing:
-         analizeBoxing(scope, current, warningMask);
-         analizeSyntaxExpression(scope, current, warningMask);
          break;
       case lxDirectCalling:
       case lxSDirctCalling:
