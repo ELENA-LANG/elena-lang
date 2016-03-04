@@ -13,6 +13,25 @@
 
 using namespace _ELENA_;
 
+SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type)
+{
+   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
+   if (child == lxExpression)
+   {
+      return SyntaxTree::findChild(child, type);
+   }
+   else return child;
+}
+
+SyntaxTree::Node _ELENA_::findSubNodeMask(SyntaxTree::Node node, int mask)
+{
+   SyntaxTree::Node child = SyntaxTree::findMatchedChild(node, mask);
+   if (child == lxExpression) {
+      return SyntaxTree::findMatchedChild(child, mask);
+   }
+   else return child;
+}
+
 // --- SyntaxWriter ---
 
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)

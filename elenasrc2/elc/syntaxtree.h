@@ -119,18 +119,19 @@ enum LexicalType
    lxImporting       = 0x00413,
 
    lxTarget          = 0x20801, // arg - reference
-   lxType            = 0x40802, // arg - subject
-   lxSubject         = 0x4803,  // arg - subject
-   lxStacksafe       = 0x00804,
-   lxTempLocal       = 0x00805,
-   lxOverridden      = 0x00806,
-   lxIfValue         = 0x20807, // arg - reference
-   lxElseValue       = 0x20808, // arg - reference
-   lxMessage         = 0x10809, // arg - message
-   lxEmbeddable      = 0x0080A,
-   lxSize            = 0x0080B,
-   lxReserved        = 0x0080C,
-   lxParamCount      = 0x0080D,
+   lxCallTarget      = 0x20802, // arg - reference
+   lxType            = 0x40803, // arg - subject
+   lxSubject         = 0x40804, // arg - subject
+   lxStacksafe       = 0x00805,
+   lxTempLocal       = 0x00806,
+   lxOverridden      = 0x00807,
+   lxIfValue         = 0x20808, // arg - reference
+   lxElseValue       = 0x20809, // arg - reference
+   lxMessage         = 0x1080A, // arg - message
+   lxEmbeddable      = 0x0080B,
+   lxSize            = 0x0080C,
+   lxReserved        = 0x0080D,
+   lxParamCount      = 0x0080E,
 
    lxBreakpoint      = 0x02001,
    lxCol             = 0x02002,
@@ -464,6 +465,34 @@ public:
       return current;
    }
 
+   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+   {
+      Node current = node.firstChild();
+
+      while (current != lxNone && current != type1) {
+         if (current == type2 || current == type3 || current == type4)
+            return current;
+
+         current = current.nextNode();
+      }
+
+      return current;
+   }
+
+   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+   {
+      Node current = node.firstChild();
+
+      while (current != lxNone && current != type1) {
+         if (current == type2 || current == type3 || current == type4 || current == type5)
+            return current;
+
+         current = current.nextNode();
+      }
+
+      return current;
+   }
+
    static bool existChild(Node node, LexicalType type)
    {
       Node child = findChild(node, type);
@@ -498,6 +527,10 @@ public:
       _dump = dump;
    }
 };
+
+SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
+SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
+
 
 } // _ELENA_
 

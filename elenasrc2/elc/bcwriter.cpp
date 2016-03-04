@@ -2804,7 +2804,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
-   SNode target = SyntaxTree::findChild(callNode, lxTarget);
+   SNode target = SyntaxTree::findChild(callNode, lxCallTarget);
    if (callNode == lxDirectCalling) {
       callResolvedMethod(tape, target.argument, callNode.argument);
    }
@@ -3080,6 +3080,9 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
       if (test(child.type, lxObjectMask)) {
          if (target == lxNone) {
             target = child;
+         }
+         else if (child == lxExpression) {
+            source = findSubNodeMask(child, lxObjectMask);
          }
          else source = child;
       }

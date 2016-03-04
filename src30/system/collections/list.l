@@ -34,6 +34,8 @@
     /// Returns the next item
     #method(type:list_item) nextItem = theNext.
 
+    #method list_item = $self.
+
     /// Sets the next item
     #method setNextItem &list_item:aNext
     [

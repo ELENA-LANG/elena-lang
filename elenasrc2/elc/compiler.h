@@ -262,6 +262,7 @@ private:
       ref_t falseReference;
       ref_t paramsReference;
       ref_t signatureReference;
+      ref_t messageReference;
       ref_t verbReference;
       ref_t arrayReference;
 

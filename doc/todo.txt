@@ -2,11 +2,10 @@
 In development:
 ------                      
               xdev - generic development
-                       * make basic tests
-
+                       * optimize : n := n + 3. 
+                       * unboxing open argument list
                        * make sure that $subject is not boxed when it is used for dispatching operations
-                       * boxing / unboxing open argument list
-
+                       
                        * check if syntax tree optimization works (embeddable hint)
 	               * warn on boxing
 	               * warn on typecasting

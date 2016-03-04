@@ -23,6 +23,7 @@ typedef SyntaxTree::NodePattern  SNodePattern;
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
+#define HINT_EXTERNALOP       0x10000000
 #define HINT_RETEXPR          0x08000000
 #define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
@@ -250,6 +251,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
    charReference = mapReference(project->resolveForward(CHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
+   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
@@ -1349,6 +1351,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return scope.moduleScope->paramsReference;
       case okExternal:
          return scope.moduleScope->intReference;
+      case okMessageConstant:
+         return scope.moduleScope->messageReference;
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -2724,19 +2728,19 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
       scope.writer->insert(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
 
       scope.writer->appendNode(lxMessage, messageRef);
-      scope.writer->appendNode(lxTarget, classReference);
+      scope.writer->appendNode(lxCallTarget, classReference);
    }
    else if (callType == tpClosed) {
       scope.writer->insert(lxSDirctCalling, messageRef);
 
-      scope.writer->appendNode(lxTarget, classReference);
+      scope.writer->appendNode(lxCallTarget, classReference);
       if (test(methodHint, tpStackSafe))
          scope.writer->appendNode(lxStacksafe);
    }
    else if (callType == tpSealed) {
       scope.writer->insert(lxDirectCalling, messageRef);
 
-      scope.writer->appendNode(lxTarget, classReference);
+      scope.writer->appendNode(lxCallTarget, classReference);
       if (test(methodHint, tpStackSafe))
          scope.writer->appendNode(lxStacksafe);
       if (test(methodHint, tpEmbeddable))
@@ -4783,6 +4787,9 @@ void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
    // stateless inline class
    if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
       scope.info.header.flags |= elStateless;
+
+      // stateless inline class is its own class class
+      scope.info.classClassRef = scope.reference;
    }
    else scope.info.header.flags &= ~elStateless;
 }
@@ -5241,12 +5248,19 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mo
 
 void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
-   boxPrimitive(scope, node, mode);
+   SNode parentNode = node.parentNode();
+   while (parentNode == lxExpression)
+      parentNode = parentNode.parentNode();
+
+   if (parentNode == lxAssigning && parentNode.argument == 4) {
+
+   }
+   else boxPrimitive(scope, node, mode);
 
    SNode arg = node.firstChild();
    while (arg != lxNone) {
       if (arg == lxIntExtArgument || arg == lxExtArgument) {
-         analizeSyntaxExpression(scope, arg, warningMask, HINT_NOBOXING);
+         analizeSyntaxExpression(scope, arg, warningMask, HINT_NOBOXING | HINT_EXTERNALOP);
       }
       arg = arg.nextNode();
    }
@@ -5353,25 +5367,6 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 //      }
 //   }
 //}
-//
-//SNode findSubNode(SNode node, LexicalType type)
-//{
-//   SNode child = SyntaxTree::findChild(node, type, lxExpression);
-//   if (child == lxExpression)
-//   {
-//      return SyntaxTree::findChild(child, type);
-//   }
-//   else return child;
-//}
-//
-//SNode findSubNodeMask(SNode node, int mask)
-//{
-//   SNode child = SyntaxTree::findMatchedChild(node, mask);
-//   if (child == lxExpression) {
-//      return SyntaxTree::findMatchedChild(child, mask);
-//   }
-//   else return child;
-//}
 
 void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLevel)
 {
@@ -5396,7 +5391,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
       current = current.nextNode();
    }
 
-//   // assignment operation
+   // assignment operation
 //   SNode assignNode = findSubNode(node, lxAssigning);
 //   if (assignNode != lxNone) {
 //      SNode operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
@@ -5517,9 +5512,17 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
          }
          else if (test(targetInfo.header.flags, elWrapper)) {
             // if the target is generic wrapper (container)
-            node.setArgument(0);
-            node = lxUnboxing;
-            node.appendNode(lxTarget, targetClassRef);
+            if (!test(mode, HINT_EXTERNALOP)) {
+               node.setArgument(0);
+               node = lxUnboxing;
+               node.appendNode(lxTarget, targetClassRef);
+            }
+            else {
+               // HOTFIX : allow to pass the reference to the object directly 
+               // for an external operation
+               node = lxExpression;
+               typecastMode = mode;
+            }
          }
       }
    }
@@ -5570,7 +5573,7 @@ void Compiler :: analizBoxableObject(ModuleScope& scope, SNode node, int warning
    if (!test(mode, HINT_NOBOXING) || (node == lxFieldAddress && node.argument > 0)) {
       SNode target = SyntaxTree::findChild(node, lxTarget);
       bool variable = false;
-      int size = scope.defineStructSize(target.argument, variable);
+      int size = (target.argument == scope.paramsReference) ? -1 : scope.defineStructSize(target.argument, variable);
       if (size == 0)
          return;
 
