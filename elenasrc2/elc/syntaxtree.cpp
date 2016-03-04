@@ -126,6 +126,26 @@ SyntaxTree::Node SyntaxTree:: readNextNode(size_t position)
 }
 
 
+size_t SyntaxTree :: seekNodeEnd(size_t position)
+{
+   _reader.seek(position);
+
+   int level = 1;
+
+   do {
+      int type = _reader.getDWord();
+      ref_t arg = _reader.getDWord();
+
+      if (type == -1) {
+         level--;
+      }
+      else level++;
+
+   } while (level > 0);
+
+   return _reader.Position() - 8;
+}
+
 SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 {
    position -= 16;

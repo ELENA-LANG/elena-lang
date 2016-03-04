@@ -2,6 +2,25 @@
 In development:
 ------                      
               xdev - generic development
+                       * test boxing : generic generic_message:boxable
+                       * test boxing : typesafe generic_message:boxable
+                       * test boxing : typesafe message:boxable
+
+                       * test boxing : local address
+                       * test boxing : field address
+
+                       * test boxing : int => vint
+                       * test boxing : vint => int
+                       * test boxing : object => ref
+
+                       * test assinging
+                       * test unboxing
+                       * test primitive operations  (arithmetic, logical, variable)
+                       * test external operations
+                       * test internal operations
+
+
+
                        * make basic tests
                        * make sure that $subject is not boxed when it is used for dispatching operations
                        * boxing / unboxing open argument list

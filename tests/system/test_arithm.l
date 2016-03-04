@@ -9,6 +9,19 @@
 {
     test
     [
+        #var a := 2.
+        #var(type:int) b := 3.
+        
+//        b add &int:(b + 3).        
+        #var c := a int add:(b + 3).
+//        a int add &int:(b + 3).
+//      b + 3.
+        
+//        #var a := 2.
+//        #var(type:int) b := 3.
+//        
+//        #var c := a add:(b + 3).
+
     ]
 }.
         

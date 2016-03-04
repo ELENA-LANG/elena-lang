@@ -338,19 +338,15 @@ public:
 
       void appendNode(LexicalType type, int argument = 0)
       {
-         Node lastNode = lastChild();
-         if (lastNode != lxNone) {
-            tree->insertNode(lastNode.position + 8, type, argument);
-         }
-         else tree->insertNode(position, type, argument);
+         int end_position = tree->seekNodeEnd(position);
+
+         tree->insertNode(end_position, type, argument);
       }
 
       void injectNode(LexicalType type, int argument = 0)
       {
-         Node lastNode = lastChild();
-
          int start_position = position;
-         int end_position = lastNode == lxNone ? position : lastNode.position + 8;
+         int end_position = tree->seekNodeEnd(position);
          
          tree->insertNode(start_position, end_position, type, argument);
       }
@@ -487,6 +483,8 @@ public:
    Node readNextNode(size_t position);
    Node readPreviousNode(size_t position);
    Node readParentNode(size_t position);
+
+   size_t seekNodeEnd(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
    Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);

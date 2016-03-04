@@ -708,7 +708,7 @@ private:
 
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
 
-   bool checkIfCompatible(CodeScope& scope, ref_t typeRef, ObjectInfo object);
+   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
    ref_t mapNestedExpression(CodeScope& scope);
@@ -783,6 +783,7 @@ private:
    void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(ModuleScope& scope, bool bytearray, int& allocatedSize, int& reserved);
+   int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
    bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand);
 
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
@@ -852,25 +853,25 @@ private:
    void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   //void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   //void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   //void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
-   // !! obsolete
-   void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   //// !! obsolete
+   //void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void analizeClassTree(ClassScope& scope, MemoryDump& dump);
    void analizeSymbolTree(SymbolScope& scope, MemoryDump& dump);
 
-   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
-   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
-   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+   //bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
+   //bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
+   //void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
 public:
    void loadRules(StreamReader* optimization);
