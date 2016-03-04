@@ -5433,20 +5433,22 @@ void Compiler :: compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWrit
    }
 }
 
-//void Compiler :: analizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
-//{
-//   if (test(warningLevel, WARNING_LEVEL_3)) {
-//      SNode row = SyntaxTree::findChild(node, lxRow);
-//      SNode col = SyntaxTree::findChild(node, lxCol);
-//      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
-//      if (col != lxNone && row != lxNone) {
-//         scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, (ident_t)terminal.argument);
-//      }
-//   }
-//}
+void Compiler :: analizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
+{
+   if (test(warningLevel, WARNING_LEVEL_3)) {
+      SNode row = SyntaxTree::findChild(node, lxRow);
+      SNode col = SyntaxTree::findChild(node, lxCol);
+      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
+      if (col != lxNone && row != lxNone) {
+         scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, (ident_t)terminal.argument);
+      }
+   }
+}
 
 void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
+   bool typecasted = true;
+
    ref_t targetType = getSignature(node.argument);
 
    SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
@@ -5486,6 +5488,7 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
                }
       
                typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+               typecasted = false;
             }
          }
          else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
@@ -5510,6 +5513,7 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
                }
       
                typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+               typecasted = false;
             }
          }
          else if (test(targetInfo.header.flags, elWrapper)) {
@@ -5525,6 +5529,8 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
                node = lxExpression;
                typecastMode = mode;
             }
+
+            typecasted = false;
          }
       }
    }
@@ -5532,21 +5538,23 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
       typecastMode = mode;
 
       node = lxExpression;
+
+      typecasted = false;
    }
 
-//   if (node == lxBoxing || node == lxUnboxing) {
-//      analizeBoxing(scope, node, warningMask);
-//   }
+   if (node == lxBoxing || node == lxUnboxing) {
+      analizeBoxing(scope, node, warningMask);
+   }
 
    analizeSyntaxExpression(scope, node, warningMask, typecastMode);
 
-//   if (test(warningMask, WARNING_LEVEL_2)) {
-//      SNode row = SyntaxTree::findChild(node, lxRow);
-//      SNode col = SyntaxTree::findChild(node, lxCol);
-//      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
-//      if (col != lxNone && row != lxNone)
-//         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, (ident_t)terminal.argument);
-//   }
+   if (test(warningMask, WARNING_LEVEL_2) && typecasted) {
+      SNode row = SyntaxTree::findChild(node, lxRow);
+      SNode col = SyntaxTree::findChild(node, lxCol);
+      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
+      if (col != lxNone && row != lxNone)
+         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, (ident_t)terminal.argument);
+   }
 }
 
 int Compiler :: allocateStructure(ModuleScope& scope, SNode node, int& size)
@@ -5622,9 +5630,9 @@ void Compiler :: analizBoxableObject(ModuleScope& scope, SNode node, int warning
       }
    }
 
-   //if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
-   //   analizeBoxing(scope, node, warningLevel);
-   //}
+   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
+      analizeBoxing(scope, node, warningLevel);
+   }
 }
 
 void Compiler :: analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)

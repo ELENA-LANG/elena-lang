@@ -863,8 +863,7 @@ private:
 
    void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
-   //// !! obsolete
-   //void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
