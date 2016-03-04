@@ -853,8 +853,9 @@ private:
    void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   //void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   //void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    //void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
