@@ -2,17 +2,17 @@
 In development:
 ------                      
               xdev - generic development
-                       * optimize : n := n + 3. 
-                       * unboxing open argument list
-                       * make sure that $subject is not boxed when it is used for dispatching operations
-                       
-                       * check if syntax tree optimization works (embeddable hint)
+                       * check if syntax tree optimization works (embeddable get)
+
 	               * warn on boxing
 	               * warn on typecasting
 	               * test external call : return real value
 
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
+                       
+                       * unboxing open argument list
+                       * make sure that $subject is not boxed when it is used for dispatching operations
 
                        * #215 : Operations with structure fields
                        * #201 : shorthand property settings

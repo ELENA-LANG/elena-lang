@@ -2596,20 +2596,38 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    if (level > 0 && assignMode)
       loadBase(tape, lxCurrent, level - 1);
 
-   if (!largSimple) {
-      loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
-   }
-   else generateObjectExpression(tape, larg);
-
+   // if operation result is assigned to the same variable
+   bool targetSet = false;
    if (assignMode) {
-      if (node.type == lxIntOp) {
-         copyBase(tape, 4);
-      }
-      else if (node.type == lxLongOp || node == lxRealOp) {
-         copyBase(tape, 8);
+      SNode parent = node.parentNode();
+      while (parent == lxExpression)
+         parent = node.parentNode();
+
+      if (parent == lxAssigning) {
+         SNode target = findSubNodeMask(parent, lxObjectMask);
+         if (target.type == larg.type && target.argument == larg.argument)
+            targetSet = true;
       }
    }
-   else loadBase(tape, lxResult);
+
+   if (targetSet) {
+   }
+   else {
+      if (!largSimple) {
+         loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
+      }
+      else generateObjectExpression(tape, larg);
+
+      if (assignMode) {
+         if (node.type == lxIntOp) {
+            copyBase(tape, 4);
+         }
+         else if (node.type == lxLongOp || node == lxRealOp) {
+            copyBase(tape, 8);
+         }
+      }
+      else loadBase(tape, lxResult);
+   }
 
    if (!rargSimple) {
       popObject(tape, lxResult);
