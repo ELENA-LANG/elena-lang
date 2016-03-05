@@ -5,9 +5,10 @@ In development:
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
                        
+                       * review warnings
                        * unboxing open argument list
                        * make sure that $subject is not boxed when it is used for dispatching operations
-	               * test external call : return real value
+	               * test external call : return real value	               
 
                        * #215 : Operations with structure fields
                        * #201 : shorthand property settings
@@ -23,6 +24,7 @@ In development:
 
               adev - lib30     
                        * implement #33 (tcp/ip socket)
+                       * breaking int loop method
 
               fdev - net app
                        * implement simple chat system to test socket api
@@ -42,12 +44,6 @@ In development:
                        * test if embeddable constructor works
 
               sdev - samples
-                       * rosetta sample : Truncatable primes
-                       * rosetta sample : Undefined values
-                       * rosetta sample : Unicode strings
-                       * rosetta sample : Variable size/Get
-                       * rosetta sample : Variable size/Set
-                       * rosetta sample : Variables
                        * rosetta sample : Visualize a tree
                        * rosetta sample : Vogel's approximation method
                        * rosetta sample : Voronoi diagram
@@ -84,7 +80,10 @@ In development:
                        * rosetta sample : Stack traces
                        * rosetta sample : Set
                        * Animate a pendulum
-                       
+                       * rosetta sample : Undefined values                       
+                       * rosetta sample : Variable size/Get
+                       * rosetta sample : Variable size/Set
+
                        * refactor cpu_sim : assembler
 
 ------                                 

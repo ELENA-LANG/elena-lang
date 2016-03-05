@@ -12,6 +12,13 @@
 {
     test
     [
+    #var 四十二 := "♥♦♣♠".     // UTF8 string
+    #var строка := "Привет"w.  // UTF16 string
+        
+    console writeLine:строка.
+    console writeLine:四十二.
+            
+        console readChar.
     ]
 }.
         

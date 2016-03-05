@@ -1,0 +1,10 @@
+﻿[project]
+executable=truncprime.exe
+namespace=truncprime
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+truncprime.l
+

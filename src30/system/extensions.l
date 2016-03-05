@@ -256,6 +256,24 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
+    #method(type:int) sqrt
+    [
+        #var(type:int)num := self int.
+        
+        (num == 0)
+            ? [ ^ 0. ].
+            
+        #var(type:int)n := num / 2 + 1.
+        #var(type:int)n1 := (n + (num / n)) / 2.
+        #loop (n1 < n)?
+        [
+            n := n1.
+            n1 := (n + (num / n)) / 2.
+        ].
+        
+        ^ IntNumber new &int:n.
+    ]
+
     #method power : aPower
         = self::intOp power &int:(aPower int).
                 

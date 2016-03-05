@@ -692,6 +692,10 @@ md examples\rosetta\twelvestats
 copy %1\examples\rosetta\twelvestats\*.l examples\rosetta\twelvestats
 copy %1\examples\rosetta\twelvestats\*.prj examples\rosetta\twelvestats
 
+md examples\rosetta\truncprime
+copy %1\examples\rosetta\truncprime\*.l examples\rosetta\truncprime
+copy %1\examples\rosetta\truncprime\*.prj examples\rosetta\truncprime
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
