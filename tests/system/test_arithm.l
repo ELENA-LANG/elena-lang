@@ -8,13 +8,12 @@
 #subject(class:MyStruct)my_struct.
 #class(struct:embeddable,sealed)MyStruct
 {
-    #field(type:int) theX.
-    #field(type:int) theY.
-    
-    #constructor(embeddable,stacksafe) new
+    #field(type:dirty_ptr)paddrinfo.
+    #field(type:dirty_ptr)prootinfo.
+        
+    #constructor(stacksafe) new
     [
-        theX := 2.
-        theY := 3.
+        prootinfo := paddrinfo.
     ]
 }
 

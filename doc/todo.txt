@@ -2,12 +2,10 @@
 In development:
 ------                      
               xdev - generic development
-                       * embeddable constructor
-                       * review pi performance
-
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
                        
+                       * review pi performance
                        * review warnings
                        * unboxing open argument list
                        * make sure that $subject is not boxed when it is used for dispatching operations
