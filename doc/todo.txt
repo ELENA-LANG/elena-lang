@@ -2,6 +2,9 @@
 In development:
 ------                      
               xdev - generic development
+                       * embeddable constructor
+                       * review pi performance
+
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
                        

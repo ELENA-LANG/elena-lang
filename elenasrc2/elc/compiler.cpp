@@ -4537,17 +4537,8 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
          compileMethodHints(hints, writer, methodScope);
 
-         writer.closeNode();
-
-         if (methodScope.generic)
-            writer.appendNode(lxClassFlag, elWithGenerics);
-
-         // save extensions if any
-         if (isExtension) {
-            scope.moduleScope->saveExtension(methodScope.message, extensionType, scope.reference);
-         }
-
          // if the constructor is embeddable
+         // method hint should be added
          // the special method should be declared as well
          if (member == nsConstructor && methodScope.embeddable) {
             MethodScope specialMethodScope(&scope);
@@ -4557,12 +4548,24 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
             specialMethodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(signature, false));
 
-            writer.newNode(lxClassMethod, specialMethodScope.message);
             writer.newNode(lxClassMethodOpt, maEmbeddedInit);
             writer.appendNode(lxMessage, specialMethodScope.message);
             writer.closeNode();
             writer.closeNode();
+
+            writer.newNode(lxClassMethod, specialMethodScope.message);
+            writer.closeNode();
          }
+         else writer.closeNode();
+
+         if (methodScope.generic)
+            writer.appendNode(lxClassFlag, elWithGenerics);
+
+         // save extensions if any
+         if (isExtension) {
+            scope.moduleScope->saveExtension(methodScope.message, extensionType, scope.reference);
+         }
+
       }
       member = member.nextNode();
    }

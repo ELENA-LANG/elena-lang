@@ -4,21 +4,25 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-        
-        
-#import system'io.
+
+#subject(class:MyStruct)my_struct.
+#class(struct:embeddable,sealed)MyStruct
+{
+    #field(type:int) theX.
+    #field(type:int) theY.
+    
+    #constructor(embeddable,stacksafe) new
+    [
+        theX := 2.
+        theY := 3.
+    ]
+}
 
 #symbol XTester =
 {
     test
     [
-    #var 四十二 := "♥♦♣♠".     // UTF8 string
-    #var строка := "Привет"w.  // UTF16 string
-        
-    console writeLine:строка.
-    console writeLine:四十二.
-            
-        console readChar.
+        #var(type:my_struct)struct := MyStruct new.
     ]
 }.
         

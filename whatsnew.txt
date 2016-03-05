@@ -30,6 +30,7 @@
 
 [Samples]
 [+] rosetta sample : Top rank per group
+[+] rosetta sample : Truncatable primes
 
 ******************************************************************************
                              What's New in 1.9.25
