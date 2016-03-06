@@ -42,4 +42,5 @@
     ByRefTest eval.
     SuperTest eval.
     EmbedConstTest eval.
+    jsonTest eval.
 ].

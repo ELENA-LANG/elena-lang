@@ -25,6 +25,7 @@ typedef SyntaxTree::NodePattern  SNodePattern;
 #define HINT_NOUNBOXING       0x20000000
 #define HINT_EXTERNALOP       0x10000000
 #define HINT_RETEXPR          0x08000000
+#define HINT_EXTENSION_MODE   0x04000000
 #define HINT_ACTION           0x00020000
 #define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
@@ -1342,7 +1343,6 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
       case okThisParam:
          return scope.getClassRefId(false);
       case okSubject:
-      case okSubjectDispatcher:
       case okSignatureConstant:
          return scope.moduleScope->signatureReference;
       case okSuper:
@@ -2076,7 +2076,6 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxSignatureConstant, object.param);
          break;
       case okSubject:
-      case okSubjectDispatcher:
          scope.writer->newNode(lxLocalAddress, object.param);
          break;
       case okBlockLocal:
@@ -2717,7 +2716,10 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
       callType = tpSealed;
    }
    else if (classReference == scope.moduleScope->signatureReference) {
-      dispatchCall = true;
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
+   else if (classReference == scope.moduleScope->messageReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
    }
    else if (target.kind == okSuper) {
       // parent methods are always sealed
@@ -2729,6 +2731,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 
       scope.writer->appendNode(lxMessage, messageRef);
       scope.writer->appendNode(lxCallTarget, classReference);
+      scope.writer->appendNode(lxStacksafe);
    }
    else if (callType == tpClosed) {
       scope.writer->insert(lxSDirctCalling, messageRef);
@@ -2765,7 +2768,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    appendObjectInfo(scope, retVal);
 
    // define the message target if required
-   if (target.kind == okConstantRole || target.kind == okSubjectDispatcher) {
+   if (target.kind == okConstantRole) {
       scope.writer->newNode(lxOverridden);
       writeTerminal(TerminalInfo(), scope, target);
       scope.writer->closeNode();
@@ -2983,18 +2986,14 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
             flags = roleClass.header.flags;
          }
       }
-      if (role.kind == okSubject) {
-         // if subject variable is used
-         role = ObjectInfo(okSubjectDispatcher, role.param);
-      }
       // if the symbol VMT can be used as an external role
-      else if (test(flags, elStateless)) {
+      if (test(flags, elStateless)) {
          role = ObjectInfo(okConstantRole, role.param);
       }
    }
 
    // if it is a generic role
-   if (role.kind != okSubjectDispatcher && role.kind != okConstantRole) {
+   if (role.kind != okConstantRole) {
       scope.writer->newNode(lxOverridden);
       role = compileExpression(roleNode, scope, 0, 0);
       scope.writer->closeNode();
@@ -3003,14 +3002,14 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    // override standard message compiling routine
    node = node.nextNode();
 
-   return compileExtensionMessage(node, scope, object, role/*, HINT_EXTENSION_MODE*/);
+   return compileExtensionMessage(node, scope, object, role);
 }
 
-ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/)
+ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role)
 {
    ref_t messageRef = compileMessageParameters(node, scope);
 
-   ObjectInfo retVal = compileMessage(node, scope, role, messageRef, 0);
+   ObjectInfo retVal = compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
 
    return retVal;
 }
@@ -5679,6 +5678,9 @@ void Compiler :: analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current,
          break;
       case lxReturning:
          analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
+         break;
+      case lxOverridden:
+         analizeSyntaxExpression(scope, current, warningMask, mode);
          break;
       default:
          if (test(current.type, lxExpressionMask)) {

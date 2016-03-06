@@ -4,22 +4,15 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-
-#class(sealed,struct:embeddable) XAddrInfoReader
-{
-    #field(type:dirty_ptr)paddrinfo.
-    #field(type:dirty_ptr)prootinfo.
-    
-    #constructor(stacksafe,embeddable) new &literal:aService &addrinfo:aHint
-    [
-        prootinfo := paddrinfo.
-    ]
-}        
+#import extensions'dynamic.
             
 #symbol XTester =
 {
     test
     [
+        #var(type:mssg) mssg := %(eval&writeLine)(1).
+        
+        console::mssg eval:2.
     ]
 }.
         
@@ -788,4 +781,11 @@
 #symbol EmbedConstTest =
 [
     #var(type:test_var)var := TestVar new &int:2.
+].
+
+#symbol jsonTest =
+[
+    #var dto := DTO{ X = 2. Y = "Value". }.
+    
+    #var(type:literal)json := dto toJson literal.
 ].

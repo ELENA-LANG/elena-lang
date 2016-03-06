@@ -8,7 +8,6 @@ In development:
                        * review pi performance
                        * review warnings
                        * unboxing open argument list
-                       * make sure that $subject is not boxed when it is used for dispatching operations
 	               * test external call : return real value	               
 
                        * #215 : Operations with structure fields

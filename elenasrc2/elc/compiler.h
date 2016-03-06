@@ -130,7 +130,6 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
       okSubject,                      // param - parameter offset
-      okSubjectDispatcher,
       okThisParam,                    // param - parameter offset
       okNil,
       okSuper,
