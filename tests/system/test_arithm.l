@@ -5,14 +5,30 @@
 #import system'calendar.
 #import extensions.
 #import extensions'dynamic.
-            
+
+#class(struct:embeddable,sealed) XThreadHandle
+{
+    #field(type:int) theHandle.
+    #field(type:rt_ptr) theActionPtr.
+    
+    #constructor new &func:anAction
+    [
+//        theActionPtr := RTPointer new:anAction.
+
+        theHandle := system'external'KERNEL32 CreateThread
+//                        &int:0
+//                        &int:0
+                        &symbol_ref:system'core_routines'win_thread_start
+/*                        &int:theActionPtr
+                        &int:4
+                        &int:0*/.
+    ]            
+}
+    
 #symbol XTester =
 {
     test
     [
-        #var(type:mssg) mssg := %(eval&writeLine)(1).
-        
-        console::mssg eval:2.
     ]
 }.
         

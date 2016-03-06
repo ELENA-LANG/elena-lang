@@ -1627,37 +1627,55 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
 
       tape.write(bcACopyB);
    }
+   else if (target == lxFieldAddress) {
+      loadBase(tape, target, 0);
+
+      // nsave
+      tape.write(bcNSave);
+
+      tape.write(bcACopyB);
+   }
 }
 
 void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
 {
    if (target == lxLocalAddress) {
       // bcopyf param
-      // rload
-      // nsave
+      // rsave
       tape.write(bcBCopyF, argument);
-      tape.write(bcRLoad);
-      tape.write(bcNSave);
+      tape.write(bcRSave);
    }
    else if (target == lxLocal || target == lxBoxableLocal) {
       // bloadfi param
-      // rload
-      // nsave
+      // rsave
       tape.write(bcBLoadFI, argument, bpFrame);
-      tape.write(bcRLoad);
-      tape.write(bcNSave);
+      tape.write(bcRSave);
    }
    else if (target == lxFieldAddress) {
-      // rload
-      // ecopyd
+      // push 0
+      // push 0
+      // bcopys 0
+      // rsave
       // bloadfi 1
+      // pope
       // dcopy target.param
       // bwrite
-      tape.write(bcRLoad);
-      tape.write(bcECopyD);
+      // pope
+      // dcopy target.param+4
+      // bwrite
+      // popi 2
+      tape.write(bcPushN);
+      tape.write(bcPushN);
+      tape.write(bcBCopyS, 0);
+      tape.write(bcRSave);
       tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcPopE);
       tape.write(bcDCopy, argument);
       tape.write(bcBWrite);
+      tape.write(bcPopE);
+      tape.write(bcDCopy, argument + 4);
+      tape.write(bcBWrite);
+      tape.write(bcPopI, 2);
    }
 }
 
@@ -3278,13 +3296,11 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
       generateObjectExpression(tape, source);
 
       if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
-         if (target == lxLocalAddress) {
-            if (node.argument == 4) {
-               saveInt(tape, target.type, target.argument);
-            }
-            else if (node.argument == 8) {
-               saveReal(tape, target.type, target.argument);
-            }
+         if (node.argument == 4) {
+            saveInt(tape, target.type, target.argument);
+         }
+         else if (node.argument == 8) {
+            saveReal(tape, target.type, target.argument);
          }
       }
       else if (target == lxExpression) {
