@@ -4244,7 +4244,7 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
       }
       else {
          writer.newNode(lxAssigning);
-         writer.appendNode(lxLocal, -1);
+         writer.appendNode(lxLocal, 1);
          writer.appendNode(lxResult);
          writer.closeNode();
       }

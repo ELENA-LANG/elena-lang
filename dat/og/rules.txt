@@ -8,6 +8,7 @@ acopyb acopyf => nop acopyf;
 acopyb aloadfi => nop aloadfi;
 acopyr aloadfi => nop aloadfi;
 acopyb bcopya => acopyb nop;
+acopyb pusha acopyr => pushb nop acopyr;
 bcopya acopyb => bcopya nop;
 acopyr acopyb => nop acopyb;
 acopyr acopyr => nop acopyr;

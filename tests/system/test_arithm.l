@@ -4,24 +4,11 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-
-#subject(class:MyStruct)my_struct.
-#class(struct:embeddable,sealed)MyStruct
-{
-    #field(type:dirty_ptr)paddrinfo.
-    #field(type:dirty_ptr)prootinfo.
-        
-    #constructor(stacksafe) new
-    [
-        prootinfo := paddrinfo.
-    ]
-}
-
+    
 #symbol XTester =
 {
     test
     [
-        #var(type:my_struct)struct := MyStruct new.
     ]
 }.
         
