@@ -4,7 +4,18 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
+
+#class(sealed,struct:embeddable) XAddrInfoReader
+{
+    #field(type:dirty_ptr)paddrinfo.
+    #field(type:dirty_ptr)prootinfo.
     
+    #constructor(stacksafe,embeddable) new &literal:aService &addrinfo:aHint
+    [
+        prootinfo := paddrinfo.
+    ]
+}        
+            
 #symbol XTester =
 {
     test

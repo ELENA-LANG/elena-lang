@@ -229,6 +229,7 @@ class ByteCodeWriter
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
    void copyStructure(CommandTape& tape, int offset, int size);
+   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
    void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
