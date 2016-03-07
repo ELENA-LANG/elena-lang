@@ -917,7 +917,7 @@ void MainWindow :: displayErrors()
    _ELENA_::String<wchar_t, 266> message, file;
    _ELENA_::String<wchar_t, 15> colStr, rowStr;
 
-   wchar_t* buffer = ((Output*)_controls[CTRL_OUTPUT])->getOutput();
+   wchar_t* buffer = ((CompilerOutput*)_controls[CTRL_OUTPUT])->getOutput();
 
    const wchar_t* s = buffer;
    while (s) {
@@ -1046,7 +1046,7 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _controls[CTRL_TOOLBAR] = new ToolBar(this, 16, AppToolBarButtonNumber, AppToolBarButtons);
    _controls[CTRL_EDITFRAME] = new EditFrame(this, true, contextMenu, model);
    _controls[CTRL_TABBAR] = new TabBar(this, _model->tabWithAboveScore);
-   _controls[CTRL_OUTPUT] = new Output((Control*)_controls[CTRL_TABBAR], this);
+   _controls[CTRL_OUTPUT] = new CompilerOutput((Control*)_controls[CTRL_TABBAR], this);
    _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
@@ -1336,7 +1336,7 @@ bool MainWindow :: compileProject(_ProjectManager* project, int postponedAction)
    cmdLine.append(_T(" -xtab"));
    cmdLine.appendInt(_model->tabSize);
 
-   return ((Output*)_controls[CTRL_OUTPUT])->execute(appPath, cmdLine, curDir, postponedAction);
+   return ((CompilerOutput*)_controls[CTRL_OUTPUT])->execute(appPath, cmdLine, curDir, postponedAction);
 }
 
 void MainWindow :: _notify(int code)

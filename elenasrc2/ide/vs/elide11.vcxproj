@@ -117,6 +117,7 @@
     <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winlistview.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winmenu.cpp" />
+    <ClCompile Include="..\..\gui\winapi32\winredirect.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winsplitter.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winstatusbar.cpp" />
     <ClCompile Include="..\..\gui\winapi32\wintabbar.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="..\..\gui\winapi32\wincommon.h" />
     <ClInclude Include="..\..\gui\winapi32\winlistview.h" />
     <ClInclude Include="..\..\gui\winapi32\winmenu.h" />
+    <ClInclude Include="..\..\gui\winapi32\winredirect.h" />
     <ClInclude Include="..\..\gui\winapi32\winsdi.h" />
     <ClInclude Include="..\..\gui\winapi32\winsplitter.h" />
     <ClInclude Include="..\..\gui\winapi32\winstatusbar.h" />

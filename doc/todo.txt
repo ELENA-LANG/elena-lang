@@ -1,26 +1,50 @@
 ------                                 
 In development:
 ------                      
+              fdev - live programming
+                       * ide new window : immediate  - #58
+
               xdev - generic development
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
+                       * #215 : Operations with structure fields
+                       * #223 : exiting the lock statement 
+                       * #190 : Closure : auto boxing / unboxing local variables  
+                       * review try-catch statement, make sure the closure is created only in case of the error
                        
+              xdev - general implementation     
+                       * fix #12 : Extension with stack allocated object
+                       * implement #167 : stack allocated variable and $nil                       
+                       * optimize thread_wait
+                       * test if embeddable constructor works
+
                        * review pi performance
                        * review warnings
                        * unboxing open argument list
 	               * test external call : return real value	               
 
-                       * #215 : Operations with structure fields
-                       * #201 : shorthand property settings
                        * #229 : unboxing optimization
-                       * #223 : exiting the lock statement 
                        * #200 : unboxing explicit local allocated extension  
-                       * #185 : Stack allocated structures are not correctly displayed
-                       * #190 : Closure : auto boxing / unboxing local variables  
-                       * #191 : IDE : block commenting
-                       * #219 : IDE : Callstack for vm console application 
                        * #220 : s_copyint_radix / ws_copyint_radix
                        * #221 : Breakpoints are triggered even after removing
+                       * in the following code:
+                             theListenThread := Thread new &func:
+                             [
+                                 #loop $self proceed.
+                             ]
+                         proceed message should be called directly, because the class is sealed
+                       
+              idev - generic development                                          
+                       * #185 : Stack allocated structures are not correctly displayed
+                       * #191 : IDE : block commenting
+                       * #219 : IDE : Callstack for vm console application 
+
+             xdev - linux
+                       * implement debugger
+                       * port elide to linux
+                       
+              fdev - live programming
+                       * interact with the current project objects
 
               adev - lib30     
                        * implement #33 (tcp/ip socket)
@@ -28,20 +52,16 @@ In development:
 
               fdev - net app
                        * implement simple chat system to test socket api
-                       * review try-catch statement, make sure the closure is created only in case of the error
-                       * in the following code:
-                             theListenThread := Thread new &func:
-                             [
-                                 #loop $self proceed.
-                             ]
-                         proceed message should be called directly, because the class is sealed
-
  
-              xdev - general implementation     
-                       * fix #12 : Extension with stack allocated object
-                       * implement #167 : stack allocated variable and $nil                       
-                       * optimize thread_wait
-                       * test if embeddable constructor works
+              fdev - samples
+                       * calculator : parse -2+3
+                       * calculator : operations with brackets
+                       * calculator : move lexicalOp to the script
+                       * reimplement script samples: interpreter, helloworld, vmconsole
+
+              fdev - eldoc
+                       * design
+                       * implement basic parsing : only classes                       
 
               sdev - samples
                        * rosetta sample : Visualize a tree
@@ -86,16 +106,12 @@ In development:
 
                        * refactor cpu_sim : assembler
 
-------                                 
-Pipeline:
-------                                                                                         
-             idev - linux
-                       * redirect output to the window
-                       * output window
-                       
               sdev - rosetta code samples
                        * linux : migrate two rosetta samples to linux
 
+------                                 
+Pipeline:
+------                                                                                         
               xdev - usability
                        * ecv : dynamically define the page size
 
@@ -188,9 +204,6 @@ Pipeline:
                          in adjucment
                        
              xdev - linux
-                       * create debian package
-                       * port elide to linux
-                       * implement debugger
                        * port multi-threading
                        * port elc to linux
                        * port ecv to linux
@@ -213,6 +226,8 @@ Pipeline:
                        * compile pi with mt
                        
                xdev - script engine
+                       * current implementation is done in two passes, simplify to one
+                       * redesign cfparser, to use breadth-first model (current one - deep first)
                        * cfparser : there should be two mappings so we could support both local and function variables
                        * cfparser : methods variable
                        * support if, foreach, while constructions,
@@ -232,9 +247,7 @@ Pipeline:
                        * use script to build objects
                        * use script to parse
                        * use script generate code
-                       * current implementation is done in two passes, simplify to one
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
-
+                      
               xdev - test
                        * unbox field when passed as ref
                        * test math functions
@@ -268,7 +281,7 @@ Pipeline:
                        * library explorer: make possible to navigate and disassemble ELENA API
                        * test compilation with a very long identifier names                       
                        * class view - make possible to browse the class methods
-
+                       
               idev - generic development                                          
                        * ide : test with utf8, win1252, ...
                        * elc : test with utf8, win1252, ...
@@ -364,20 +377,14 @@ Pipeline:
                        * optimize TextBuffer.indexOf&index&char&vint
                        * console.writeLine : every time theNewLineConstant is converted to utf16, optimize the performance
                        * linux : review console operation, optimize the code
+                       * migrate to linux
                        
               sdev - rosetta code samples
                        * implement
                        * migrate to linux
       
               sdev - samples
-                       * calculator : parse -2+3
-                       * calculator : operations with brackets
-                       * test all samples
-                       * test all rosetta samples
-                       * migrate to linux
-                       * calculator : move lexicalOp to the script
                        * calculator : gui
-                       * reimplement script samples: interpreter, helloworld, vmconsole
                        * get rid of reverse command
                        * migrate calc, interpreter samples
                        * vmconsole
@@ -393,14 +400,6 @@ Pipeline:
                        * play with chaotic computer player
                        * add network players
 
-              fdev - eldoc
-                       * design
-                       * implement basic parsing : only classes
-
-                       * implement
-
               fdev - evolution
                        * game of life
 
-              fdev - workshop
-                       * script

@@ -1,46 +1,47 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Output class header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef winoutputH
 #define winoutputH
 
-#include "winapi32\wincommon.h"
+#include "winapi32\winredirect.h"
 
 namespace _GUI_
 {
 
-class Output : public Control
+class Output : public Control, public RedirectorListener
 {
 protected:
-   int    _postponedAction;
-
-   HANDLE _hStdoutRead;
-   HANDLE _hProcess;
-   HANDLE _hEvtStop;		// event to notify the redir thread to exit
-   HANDLE _hThread;		// thread to receive the output of the child process
-   DWORD  _dwThreadId;		// id of the redir thread
-
-   HWND   _receptor;    // notify receptor
-
-   static DWORD WINAPI OutputThread(LPVOID lpvThreadParam);
-
-   bool execute(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir, 
-					HANDLE hStdOut);
-
-   int redirectStdout();
+   WindowRedirector* _redirector;
    
 public:
-   bool execute(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir, int postponedAction);
-   void close();
+   virtual void clear();
+   virtual void onOutput(const char* text);
+   virtual void afterExecution(DWORD exitCode)
+   {
+
+   }
 
    wchar_t* getOutput();
-   void clear();
    
-   Output(Control* owner, Control* receptor);
+   Output(Control* owner, bool readOnly, const wchar_t* name);
    ~Output();
+};
+
+class CompilerOutput : public Output
+{
+   int  _postponedAction;
+   HWND _receptor;    // notify receptor
+
+public:
+   bool execute(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir, int postponedAction);
+
+   virtual void afterExecution(DWORD exitCode);
+
+   CompilerOutput(Control* owner, Control* receptor);
 };
 
 } // _GUI_
