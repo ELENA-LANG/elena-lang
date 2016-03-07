@@ -27,6 +27,7 @@
 
 [IDE]
 [-] issue #4 : IDE and Chinese characters
+[+] Menu - View - ELENA Interactive (#58: vm console)
 
 [Samples]
 [+] rosetta sample : Top rank per group

@@ -17,13 +17,19 @@ Output :: Output(Control* owner, bool readOnly, const wchar_t* name)
    : Control(0, 0, 40, 40)
 {
    _instance = owner->_getInstance();
+   _readOnly = readOnly;
+
+   DWORD styles = WS_CHILD | WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
+   if (readOnly)
+      styles |= ES_READONLY;
 
    _handle = ::CreateWindowEx(
-      0, _T("edit"), name,
-      WS_CHILD | WS_BORDER | WS_HSCROLL | WS_VSCROLL | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_READONLY,
+      0, _T("edit"), name, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, _instance, (LPVOID)this);
 
    _redirector = new WindowRedirector(this, readOnly, 50);
+
+   clear();
 }
 
 Output :: ~Output()
@@ -33,10 +39,14 @@ Output :: ~Output()
 
 void Output :: clear()
 {
-   ::SendMessage(_handle, EM_SETREADONLY, FALSE, 1);
+   if (_readOnly)
+      ::SendMessage(_handle, EM_SETREADONLY, FALSE, 1);
+
    ::SendMessage(_handle, EM_SETSEL, 0, -1);
    ::SendMessage(_handle, WM_CLEAR, 0, 0);
-   ::SendMessage(_handle, EM_SETREADONLY, TRUE, 1);
+
+   if (_readOnly)
+      ::SendMessage(_handle, EM_SETREADONLY, TRUE, 1);
 }
 
 void Output :: onOutput(const char* text)
@@ -103,4 +113,22 @@ void CompilerOutput :: afterExecution(DWORD error)
    else _notify(_receptor, IDM_COMPILER_UNSUCCESSFUL, _postponedAction);
 
    _postponedAction = 0;
+}
+
+// --- VMConsoleInteractive ---
+
+VMConsoleInteractive::VMConsoleInteractive(Control* owner)
+   : Output(owner, false, L"interactive")
+{
+
+}
+
+bool VMConsoleInteractive :: start(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir)
+{
+   return _redirector->execute(path, cmdLine, curDir);
+}
+
+void VMConsoleInteractive :: stop()
+{
+   _redirector->close();
 }

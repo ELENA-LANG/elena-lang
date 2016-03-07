@@ -168,9 +168,17 @@ public:
    bool copyToClipboard(Document* document);
    void pasteFrameClipboard(Document* document);
 
+   void openTab(const wchar_t* caption, int ctrl);
+   void switchToTab(int ctrl);
+   void closeTab(int ctrl);
+
    void openOutput();
    void switchToOutput();
    void closeOutput();
+
+   void openVMConsole();
+   void switchToVMConsole();
+   void closeVMConsole();
 
    void openMessageList();
    void clearMessageList();

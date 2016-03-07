@@ -1317,6 +1317,22 @@ void IDEController :: doShowCompilerOutput(bool checked, bool forced)
    }
 }
 
+void IDEController :: doShowVMConsole(bool checked, bool forced)
+{
+   if (_model->vmConsole != checked || forced) {
+      _model->vmConsole = checked;
+
+      _view->checkMenuItemById(IDM_VIEW_VMCONSOLE, _model->vmConsole);
+
+      if (checked) {
+         _view->openVMConsole();
+      }
+      else _view->closeVMConsole();
+
+      _view->refresh(false);
+   }
+}
+
 void IDEController :: doShowCallStack(bool checked, bool forced)
 {
    if (_model->callStack != checked || forced) {
@@ -1369,6 +1385,7 @@ void IDEController :: onIDEInit()
    doShowProjectView(_model->projectView, true);
    doShowCallStack(_model->callStack, true);
    doShowCompilerOutput(_model->compilerOutput, true);
+   doShowVMConsole(_model->vmConsole, true);
    doShowMessages(_model->messages, true);
 
    _view->showStatus(0, EDITOR_READY);

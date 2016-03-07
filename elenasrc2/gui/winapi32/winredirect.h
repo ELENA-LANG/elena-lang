@@ -46,12 +46,11 @@ protected:
    virtual void writeStdOut(const char* output) = 0;
    virtual void writeStdError(const char* error) = 0;
 
-   virtual void close();
-
    virtual void afterExecution(DWORD exitCode) = 0;
 
 public:
    bool execute(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir);
+   virtual void close();
 
    bool write(const wchar_t* line);
 

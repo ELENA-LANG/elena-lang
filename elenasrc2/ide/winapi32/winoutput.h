@@ -12,9 +12,12 @@
 namespace _GUI_
 {
 
+// --- Output ---
+
 class Output : public Control, public RedirectorListener
 {
 protected:
+   bool _readOnly;
    WindowRedirector* _redirector;
    
 public:
@@ -31,6 +34,8 @@ public:
    ~Output();
 };
 
+// --- CompilerOutput ---
+
 class CompilerOutput : public Output
 {
    int  _postponedAction;
@@ -42,6 +47,17 @@ public:
    virtual void afterExecution(DWORD exitCode);
 
    CompilerOutput(Control* owner, Control* receptor);
+};
+
+// --- VMConsoleInteractive ---
+
+class VMConsoleInteractive : public Output
+{
+public:
+   bool start(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir);
+   void stop();
+
+   VMConsoleInteractive(Control* owner);
 };
 
 } // _GUI_

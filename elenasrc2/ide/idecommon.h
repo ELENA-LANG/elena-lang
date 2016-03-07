@@ -241,6 +241,7 @@ public:
    bool callStack;
    bool messages;
    bool projectView;
+   bool vmConsole;
 
    // policy
    bool lastProjectRemember;
@@ -410,6 +411,7 @@ public:
       //debugTape = false;
       hexNumberMode = true;
       //testMode = false;
+      vmConsole = false;
    }
 };
 
@@ -489,6 +491,7 @@ public:
    virtual void doDebugRunTo() = 0;
 
    virtual void doShowCompilerOutput(bool checked, bool forced = false) = 0;
+   virtual void doShowVMConsole(bool checked, bool forced = false) = 0;
    virtual void doShowProjectView(bool checked, bool forced = false) = 0;
    virtual void doShowMessages(bool checked, bool forced = false) = 0;
    virtual void doShowDebugWatch(bool visible) = 0;
@@ -575,6 +578,9 @@ public:
    virtual void openOutput() = 0;
    virtual void closeOutput() = 0;
    virtual void switchToOutput() = 0;
+
+   virtual void openVMConsole() = 0;
+   virtual void closeVMConsole() = 0;
 
    virtual void openMessageList() = 0;
    virtual void clearMessageList() = 0;

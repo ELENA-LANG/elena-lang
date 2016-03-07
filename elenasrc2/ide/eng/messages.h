@@ -17,6 +17,7 @@
 #define MESSAGES_TAB                            _T("Messages")
 #define WATCH_TAB                               _T("Auto Watch")
 #define CALLSTACK_TAB                           _T("Call stack")
+#define VMCONSOLE_TAB                           _T("ELENA Interactive")
 
 #define EDITOR_MODIFIED                         _T("Modified")
 #define EDITOR_READY                            _T("Ready")

@@ -94,6 +94,7 @@ BEGIN
         MENUITEM "&Messages",                       IDM_VIEW_MESSAGES
         MENUITEM "&Debug watch",                    IDM_VIEW_WATCH
         MENUITEM "Call &stack",                     IDM_VIEW_CALLSTACK
+        MENUITEM "ELENA &Interactive",              IDM_VIEW_VMCONSOLE
     END
     POPUP "&Search"
     BEGIN

@@ -30,6 +30,7 @@ using namespace _GUI_;
 #define CTRL_HSPLITTER     11
 #define CTRL_CONTEXTBOWSER 12
 #define CTRL_PROJECTVIEW   13
+#define CTRL_VMCONSOLE     14
 
 int AppToolBarButtonNumber = 19;
 
@@ -663,6 +664,9 @@ void MainWindow :: _onMenuCommand(int optionID)
       case IDM_VIEW_OUTPUT:
          _controller->doShowCompilerOutput(!_model->compilerOutput);
          break;
+      case IDM_VIEW_VMCONSOLE:
+         _controller->doShowVMConsole(!_model->vmConsole);
+         break;
       case IDM_VIEW_MESSAGES:
          _controller->doShowMessages(!_model->messages);
          break;
@@ -1027,7 +1031,7 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _model = model;
    _tabTTHandle = NULL;
 
-   _controlCount = 14;
+   _controlCount = 15;
    _controls = (_BaseControl**)malloc(_controlCount << 2);
 
    _controls[0] = NULL;
@@ -1047,6 +1051,7 @@ MainWindow :: MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller
    _controls[CTRL_EDITFRAME] = new EditFrame(this, true, contextMenu, model);
    _controls[CTRL_TABBAR] = new TabBar(this, _model->tabWithAboveScore);
    _controls[CTRL_OUTPUT] = new CompilerOutput((Control*)_controls[CTRL_TABBAR], this);
+   _controls[CTRL_VMCONSOLE] = new VMConsoleInteractive((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
@@ -1158,39 +1163,39 @@ void MainWindow :: hideFrame()
    frame->hide();
 }
 
-void MainWindow :: selectDocument(int docIndex)
+void MainWindow::selectDocument(int docIndex)
 {
    ((EditFrame*)_controls[CTRL_EDITFRAME])->setFocus();
 
    ((EditFrame*)_controls[CTRL_EDITFRAME])->selectTab(docIndex);
 }
 
-void MainWindow :: closeDocument(int docIndex)
+void MainWindow::closeDocument(int docIndex)
 {
    ((EditFrame*)_controls[CTRL_EDITFRAME])->eraseDocumentTab(docIndex);
 }
 
-void MainWindow :: markDocumentTitle(int docIndex, bool changed)
+void MainWindow::markDocumentTitle(int docIndex, bool changed)
 {
    ((EditFrame*)_controls[CTRL_EDITFRAME])->markDocument(docIndex, changed);
 }
 
-void MainWindow :: refreshDocument()
+void MainWindow::refreshDocument()
 {
    ((EditFrame*)_controls[CTRL_EDITFRAME])->refreshDocument();
 }
 
-void MainWindow :: setStatusBarText(int index, text_t message)
+void MainWindow::setStatusBarText(int index, text_t message)
 {
    ((StatusBar*)_statusBar)->setText(index, message);
 }
 
-void MainWindow :: renameDocument(int index, text_t name)
+void MainWindow::renameDocument(int index, text_t name)
 {
    ((EditFrame*)_controls[CTRL_EDITFRAME])->renameDocumentTab(index, name);
 }
 
-void MainWindow :: addToWindowList(const wchar_t* path)
+void MainWindow::addToWindowList(const wchar_t* path)
 {
    _windowList.add(path);
 }
@@ -1200,22 +1205,22 @@ void MainWindow::removeFromWindowList(const wchar_t* path)
    _windowList.remove(path);
 }
 
-void MainWindow :: addToRecentFileList(const wchar_t* path)
+void MainWindow::addToRecentFileList(const wchar_t* path)
 {
    _recentFiles.add(path);
 }
 
-void MainWindow :: addToRecentProjectList(const wchar_t* path)
+void MainWindow::addToRecentProjectList(const wchar_t* path)
 {
    _recentProjects.add(path);
 }
 
-void MainWindow :: reloadSettings()
+void MainWindow::reloadSettings()
 {
    ((EditFrame*)_controls[CTRL_EDITFRAME])->init(_model);
 }
 
-void MainWindow :: openHelp()
+void MainWindow::openHelp()
 {
    _ELENA_::Path apiPath(_model->paths.appPath);
    apiPath.combine(_T("..\\doc\\api\\index.html"));
@@ -1223,73 +1228,95 @@ void MainWindow :: openHelp()
    ShellExecute(NULL, _T("open"), apiPath, NULL, NULL, SW_SHOW);
 }
 
-void MainWindow :: openOutput()
+void MainWindow::openOutput()
 {
-   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
-
-   tabBar->addTabChild(OUTPUT_TAB, (Control*)_controls[CTRL_OUTPUT]);
-   tabBar->selectTabChild((Control*)_controls[CTRL_OUTPUT]);
-   tabBar->show();
+   openTab(OUTPUT_TAB, CTRL_OUTPUT);
 }
 
 void MainWindow::switchToOutput()
 {
-   ((TabBar*)_controls[CTRL_TABBAR])->selectTabChild((Control*)_controls[CTRL_OUTPUT]);
+   switchToTab(CTRL_OUTPUT);
 }
 
-void MainWindow :: clearMessageList()
+void MainWindow::clearMessageList()
 {
    ((MessageLog*)_controls[CTRL_MESSAGELIST])->clear();
 }
 
-void MainWindow :: closeOutput()
+void MainWindow::closeOutput()
+{
+   closeTab(CTRL_OUTPUT);
+}
+
+void MainWindow :: openVMConsole()
+{
+   _ELENA_::Path appPath(_model->paths.appPath);
+   appPath.combine(_T("elt.exe"));
+
+   _ELENA_::Path curDir(_model->paths.appPath);
+
+   _ELENA_::Path cmdLine(_T("elt.exe"));
+
+   if (((VMConsoleInteractive*)_controls[CTRL_VMCONSOLE])->start(appPath, cmdLine, curDir)) {
+      openTab(VMCONSOLE_TAB, CTRL_VMCONSOLE);
+   }
+}
+
+void MainWindow :: closeVMConsole()
+{
+   ((VMConsoleInteractive*)_controls[CTRL_VMCONSOLE])->stop();
+
+   closeTab(CTRL_VMCONSOLE);
+}
+
+void MainWindow::switchToVMConsole()
+{
+   switchToTab(CTRL_VMCONSOLE);
+}
+
+void MainWindow :: openTab(const wchar_t* caption, int ctrl)
 {
    TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
 
-   tabBar->removeTabChild((Control*)_controls[CTRL_OUTPUT]);
+   tabBar->addTabChild(caption, (Control*)_controls[ctrl]);
+   tabBar->selectTabChild((Control*)_controls[ctrl]);
+   tabBar->show();
+}
+
+void MainWindow :: switchToTab(int ctrl)
+{
+   ((TabBar*)_controls[CTRL_TABBAR])->selectTabChild((Control*)_controls[ctrl]);
+}
+
+void MainWindow :: closeTab(int ctrl)
+{
+   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
+
+   tabBar->removeTabChild((Control*)_controls[ctrl]);
    if (tabBar->getTabCount() == 0) {
       tabBar->hide();
    }
+   else tabBar->selectLastTabChild();
 }
 
 void MainWindow :: openMessageList()
 {
-   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
-
-   tabBar->addTabChild(MESSAGES_TAB, (Control*)_controls[CTRL_MESSAGELIST]);
-   tabBar->show();
-   tabBar->selectTabChild((Control*)_controls[CTRL_MESSAGELIST]);
+   openTab(MESSAGES_TAB, CTRL_MESSAGELIST);
 }
 
 void MainWindow :: closeMessageList()
 {
-   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
-
-   tabBar->removeTabChild((Control*)_controls[CTRL_MESSAGELIST]);
-
-   if (tabBar->getTabCount() == 0) {
-      tabBar->hide();
-   }
+   closeTab(CTRL_MESSAGELIST);
 }
 
 void MainWindow :: openCallList()
 {
-   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
-
-   tabBar->addTabChild(CALLSTACK_TAB, (Control*)_controls[CTRL_CALLLIST]);
-   tabBar->show();
-   tabBar->selectTabChild((Control*)_controls[CTRL_CALLLIST]);
+   openTab(CALLSTACK_TAB, CTRL_CALLLIST);
 }
 
-void MainWindow::closeCallList()
+void MainWindow :: closeCallList()
 {
-   TabBar* tabBar = ((TabBar*)_controls[CTRL_TABBAR]);
-
-   tabBar->removeTabChild((Control*)_controls[CTRL_CALLLIST]);
-
-   if (tabBar->getTabCount() == 0) {
-      tabBar->hide();
-   }
+   closeTab(CTRL_CALLLIST);
 }
 
 void MainWindow :: openProjectView()

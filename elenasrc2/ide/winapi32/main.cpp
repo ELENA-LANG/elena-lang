@@ -362,6 +362,16 @@ public:
       appWindow.closeOutput();
    }
 
+   virtual void openVMConsole()
+   {
+      appWindow.openVMConsole();
+   }
+
+   virtual void closeVMConsole()
+   {
+      appWindow.closeVMConsole();
+   }
+
    virtual void openMessageList()
    {
       appWindow.openMessageList();
