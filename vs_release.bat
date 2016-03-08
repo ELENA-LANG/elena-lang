@@ -696,6 +696,10 @@ md examples\rosetta\truncprime
 copy %1\examples\rosetta\truncprime\*.l examples\rosetta\truncprime
 copy %1\examples\rosetta\truncprime\*.prj examples\rosetta\truncprime
 
+md examples\rosetta\treeview
+copy %1\examples\rosetta\treeview\*.l examples\rosetta\treeview
+copy %1\examples\rosetta\treeview\*.prj examples\rosetta\treeview
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj

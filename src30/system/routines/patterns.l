@@ -3,6 +3,8 @@
 #import system.
 #import system'collections.
 
+#symbol idleFunc1 = x [].
+
 // === pattern enumerators ==
 
 // --- Toping ---
@@ -409,7 +411,7 @@
     ]
 }
 
-// --- PairEnumerator ---
+// --- ZipEnumerator ---
 
 #class ZipEnumerator :: Enumerator
 {
@@ -699,6 +701,9 @@
 
     #method zip:anEnumerable &into:aZipper
         = ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
+
+    #method zip:anEnumerable &eachPair:func2
+        = ZipEnumerator new:(:x:y)[ func2 eval:x:y ] &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator) run &each:idleFunc1.
 
     #method group &by:groupFunc
         = GroupingEnumerator new &func1:(groupFunc func1) &enumerator:(self enumerator).                                       

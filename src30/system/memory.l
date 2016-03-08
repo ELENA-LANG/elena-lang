@@ -1881,6 +1881,12 @@
     #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
         => system'core_routines'arr_copysubarr.
         
+    #constructor new &object:singleItem
+        <= (new &int:1)
+    [
+        $self setAt &int:0 &object:singleItem.
+    ]
+        
     /// Returns the specified array member
     #method getAt : anIndex
         = $self getAt &int:(anIndex int).

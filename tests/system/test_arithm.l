@@ -6,22 +6,19 @@
 #import extensions.
 #import extensions'dynamic.
 
-#class(struct) MyClass
+#class(extension)XOp
 {
-    #field(prop:MyField,type:int)myField.
-    
-    #method get = myField.
+    #method testWrite:p
+    [
+        self writeLine:"XOp:":p.
+    ]
 }
 
 #symbol XTester =
 {
     test
     [
-        #var x := MyClass new.
-        
-        x MyField := 12. // the same as x set &MyField:12
-        
-        #var f := x MyField.
+        console testWrite:2.
     ]
 }.
         

@@ -75,6 +75,9 @@
                     
                 enumerator : anEnumerator
                     = arrayExConvertor convert &enumerable:anEnumerator.
+                    
+                void : val
+                    = Array min.                    
             }.
     
     #method toLiteral

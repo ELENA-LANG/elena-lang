@@ -49,3 +49,4 @@
 ..\..\bin\elc -ctoppergroup\toppergroup.prj
 ..\..\bin\elc -ctwelvestats\twelvestats.prj
 ..\..\bin\elc -ctruncprime\truncprime.prj
+..\..\bin\elc -ctreeview\treeview.prj
