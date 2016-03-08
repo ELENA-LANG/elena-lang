@@ -6,19 +6,11 @@
 #import extensions.
 #import extensions'dynamic.
 
-#template(target:field) prop
+#class(struct) MyClass
 {
-    #method set : value
-    [
-        $target := value.
-    ]
+    #field(prop:MyField,type:int)myField.
     
-    #method get = $target.
-}
-
-#class MyClass
-{
-    #field(prop:MyField)myField.
+    #method get = myField.
 }
 
 #symbol XTester =
@@ -27,8 +19,7 @@
     [
         #var x := MyClass new.
         
-        //x set &MyField:12.        
-        x MyField := 12.
+        x MyField := 12. // the same as x set &MyField:12
         
         #var f := x MyField.
     ]

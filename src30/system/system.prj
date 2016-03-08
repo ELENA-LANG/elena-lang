@@ -11,6 +11,7 @@ types.l
 object.l
 basic.l
 control.l
+templates.l
 memory.l
 dynamic.l
 win32_strings.l
@@ -59,4 +60,3 @@ winforms\win32_controls.l
 winforms\win32_windows.l
 winforms\win32_dialogs.l
 winforms\win32_app.l
-

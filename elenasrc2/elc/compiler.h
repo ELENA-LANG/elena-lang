@@ -200,18 +200,24 @@ public:
       ref_t subject;
       int   offset;
       ref_t templateRef;
+      ref_t type;
+      int   size;
+      ref_t targetRef;
 
       TemplateInfo()
       {
-         templateRef = subject = 0;
-         offset = 0;
+         targetRef = templateRef = subject = type = 0;
+         size = offset = 0;
       }
 
-      TemplateInfo(ref_t subject, int offset, ref_t templateRef)
+      TemplateInfo(ref_t subject, int offset, ref_t type, int size, ref_t targetRef, ref_t templateRef)
       {
          this->subject = subject;
          this->offset = offset;
          this->templateRef = templateRef;
+         this->type = type;
+         this->size = size;
+         this->targetRef = targetRef;
       }
    };
 
@@ -746,9 +752,10 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
 
-   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset);
+   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
    void importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+   void importNode(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
    void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);

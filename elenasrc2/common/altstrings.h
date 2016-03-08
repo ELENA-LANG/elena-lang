@@ -3,7 +3,7 @@
 //
 //		This header contains String classes declarations
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef altstringsH

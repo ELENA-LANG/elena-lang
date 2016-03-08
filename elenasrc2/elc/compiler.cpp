@@ -2935,6 +2935,7 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
    else {
       ObjectInfo currentObject = object;
 
+      LexicalType assignType = lxAssigning;
       ref_t classReference = 0;
       int size = 0;
       if (object.kind == okLocalAddress) {
@@ -2952,13 +2953,15 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
          // if it is a template field
          // treates it like a normal field
          currentObject.kind = okField;
+
+         assignType = lxTemplAssigning;
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
 
       currentObject = compileAssigningExpression(node, member, scope, currentObject);
 
       if (size >= 0) {
-         scope.writer->insert(lxAssigning, size);
+         scope.writer->insert(assignType, size);
          scope.writer->closeNode();
       }
 
@@ -4662,14 +4665,15 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    }
 }
 
-void Compiler :: declareImportedTemplate(ClassScope& scope, SNode node, int fieldOffset)
+void Compiler :: declareImportedTemplate(ClassScope& scope, SNode node, int fieldOffset, ref_t fieldType, int size)
 {
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(node.argument, extModule));
 
    ref_t subject = SyntaxTree::findChild(node, lxSubject).argument;
+   ref_t targetRef = fieldType != 0 ? scope.moduleScope->typeHints.get(fieldType) : 0;
 
-   scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, fieldOffset, node.argument));
+   scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, fieldOffset, fieldType, size, targetRef, node.argument));
 
    SNode current = tree.readRoot();
    if (current == lxFieldTemplate) {
@@ -4760,12 +4764,17 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
                if (scope.info.fields.Count() > 1)
                   scope.raiseError(errIllegalField, current);
             }
+
+            
          }
 
          // check for field templates
          SNode templ = SyntaxTree::findChild(current, lxFieldTemplate);
          if (templ != lxNone) {
-            declareImportedTemplate(scope, templ, offset);
+            if (!test(scope.info.header.flags, elStructureRole))
+               size = 0; // for normal field size should be ignored in the template
+
+            declareImportedTemplate(scope, templ, offset, typeHint, size);
          }
       }
 
@@ -4956,27 +4965,65 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
+{
+   if (current.type == lxTemplateField) {
+      writer.newNode(info.size != 0? lxFieldAddress : lxField, info.offset);
+
+      if (info.targetRef != 0)
+         writer.appendNode(lxTarget, info.targetRef);
+      
+      if (info.type != 0)
+         writer.appendNode(lxType, info.targetRef);
+
+   }
+   else if (current.type == lxTemplAssigning) {
+      // HOT FIX : add a typecasting for field assigning if it is required
+      writer.newNode(lxAssigning, info.size);
+
+      if (info.targetRef != 0)
+         writer.appendNode(lxTarget, info.targetRef);
+
+      SNode subNode = current.firstChild();
+      while (subNode != lxNone) {
+         if (info.type != 0 && subNode != lxTemplateField && test(subNode.type, lxObjectMask)) {
+            writer.newNode(lxTypecasting, encodeMessage(info.type, GET_MESSAGE_ID, 0));
+            importNode(subNode, writer, sour, dest, info);
+            writer.closeNode();
+         }
+         else importNode(subNode, writer, sour, dest, info);
+
+         subNode = subNode.nextNode();
+      }
+
+      writer.closeNode();
+      return;
+   }
+   else if (current == lxTerminal) {
+      // !! temporal : ignore terminal info
+      return;
+   }
+   else if (test(current.type, lxMessageMask)) {
+      writer.newNode(current.type, importMessage(sour, current.argument, dest));
+   }
+   else if (test(current.type, lxReferenceMask)) {
+      writer.newNode(current.type, importReference(sour, current.argument, dest));
+   }
+   else if (test(current.type, lxSubjectMask)) {
+      writer.newNode(current.type, importSubject(sour, current.argument, dest));
+   }
+   else writer.newNode(current.type, current.argument);
+
+   importTree(current, writer, sour, dest, info);
+
+   writer.closeNode();
+}
+
 void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current.type == lxTemplateField) {
-         writer.newNode(lxField, info.offset);
-      }
-      else if (test(current.type, lxMessageMask)) {
-         writer.newNode(current.type, importMessage(sour, current.argument, dest));
-      }
-      else if (test(current.type, lxReferenceMask)) {
-         writer.newNode(current.type, importReference(sour, current.argument, dest));
-      }
-      else if (test(current.type, lxSubjectMask)) {
-         writer.newNode(current.type, importSubject(sour, current.argument, dest));
-      }
-      else writer.newNode(current.type, current.argument);
-
-      importTree(current, writer, sour, dest, info);
-
-      writer.closeNode();
+      importNode(current, writer, sour, dest, info);
 
       current = current.nextNode();
    }
@@ -4995,7 +5042,13 @@ void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SN
          }
          else subject = info.subject;
 
-         writer.newNode(lxClassMethod, overwriteSubject(current.argument, subject));
+         ref_t messageRef = overwriteSubject(current.argument, subject);
+         writer.newNode(lxClassMethod, messageRef);
+
+         // HOT FIX : if the field is typified provide a method hint
+         if (current.argument == encodeVerb(GET_MESSAGE_ID)) {
+            scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
+         }
 
          importTree(current, writer, templateModule, scope.moduleScope->module, info);
 

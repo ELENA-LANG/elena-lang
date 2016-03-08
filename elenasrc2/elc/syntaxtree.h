@@ -76,6 +76,8 @@ enum LexicalType
    lxIntArrOp        = 0x0132B, // arg - operation id
    lxArrOp           = 0x0132C, // arg - operation id
 
+   lxTemplAssigning  = 0x0032D, // arg - size
+
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count
    lxSymbol          = 0x20103, // arg - reference
