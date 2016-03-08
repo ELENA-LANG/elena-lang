@@ -27,7 +27,8 @@
     [
         #var x := MyClass new.
         
-        x set &MyField:12.
+        //x set &MyField:12.        
+        x MyField := 12.
         
         #var f := x MyField.
     ]

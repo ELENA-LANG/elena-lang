@@ -785,7 +785,8 @@ private:
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 
-   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileAssigning(DNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);   
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);

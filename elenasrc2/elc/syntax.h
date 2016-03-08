@@ -78,6 +78,7 @@ enum Symbol
    nsImport                     = 0x01035,
    nsDispatchHandler            = 0x01036,
    nsLock                       = 0x01037,
+   nsRootExpression             = 0x01038,
    nsSwitching                  = 0x0103B,
    nsSwitchOption               = 0x0103C,
    nsLastSwitchOption           = 0x0103D,

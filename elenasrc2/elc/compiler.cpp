@@ -43,7 +43,7 @@ inline bool isCollection(DNode node)
 
 inline bool isReturnExpression(DNode expr)
 {
-   return (expr == nsExpression && expr.nextNode() == nsNone);
+   return ((expr == nsExpression || expr == nsRootExpression) && expr.nextNode() == nsNone);
 }
 
 inline bool isSingleStatement(DNode expr)
@@ -2896,9 +2896,74 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo o
       }
    }
 
-   ObjectInfo retVal = compileMessage(node, scope, object, messageRef, 0);
+   return compileMessage(node, scope, object, messageRef, 0);
+}
 
-   return retVal;
+ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   DNode member = node.nextNode();
+
+   // if it setat operator
+   if (member == nsL0Operation) {
+      return compileOperations(node, scope, object, mode);
+   }
+   else if (member == nsMessageOperation) {
+      // if it is shorthand property settings
+      DNode arg = member.firstChild();
+      if (arg != nsNone || member.nextNode() != nsAssigning)
+         scope.raiseError(errInvalidSyntax, member.FirstTerminal());
+
+      ref_t subject = scope.moduleScope->mapSubject(member.Terminal());
+      ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+
+      ref_t extensionRef = mapExtension(scope, messageRef, object);
+
+      if (extensionRef != 0) {
+         //HOTFIX: A proper method should have a precedence over an extension one
+         if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
+            object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+         }
+      }
+
+      if (scope.moduleScope->typeHints.exist(subject)) {
+         compileExpression(member.nextNode().firstChild(), scope, subject, 0);
+      }
+      else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
+
+      return compileMessage(node, scope, object, messageRef, 0);
+   }
+   else {
+      ObjectInfo currentObject = object;
+
+      ref_t classReference = 0;
+      int size = 0;
+      if (object.kind == okLocalAddress) {
+         classReference = object.extraparam;
+
+         size = scope.moduleScope->defineStructSize(classReference);
+      }
+      else if (object.kind == okFieldAddress) {
+         size = scope.moduleScope->defineTypeSize(object.type, classReference);
+      }
+      else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
+
+      }
+      else if (object.kind == okTemplateField) {
+         // if it is a template field
+         // treates it like a normal field
+         currentObject.kind = okField;
+      }
+      else scope.raiseError(errInvalidOperation, node.Terminal());
+
+      currentObject = compileAssigningExpression(node, member, scope, currentObject);
+
+      if (size >= 0) {
+         scope.writer->insert(lxAssigning, size);
+         scope.writer->closeNode();
+      }
+
+      return currentObject;
+   }   
 }
 
 ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInfo object, int mode)
@@ -2924,35 +2989,7 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    }
 
    while (member != nsNone) {
-      if (member == nsAssigning) {
-         ref_t classReference = 0;
-         int size = 0;
-         if (object.kind == okLocalAddress) {
-            classReference = object.extraparam;
-
-            size = scope.moduleScope->defineStructSize(classReference);
-         }
-         else if (object.kind == okFieldAddress) {
-            size = scope.moduleScope->defineTypeSize(object.type, classReference);
-         }
-         else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
-
-         }
-         else if (object.kind == okTemplateField) {
-            // if it is a template field
-            // treates it like a normal field
-            currentObject.kind = okField;
-         }
-         else scope.raiseError(errInvalidOperation, node.Terminal());
-
-         currentObject = compileAssigningExpression(node, member, scope, currentObject);
-
-         if (size >= 0) {
-            scope.writer->insert(lxAssigning, size);
-            scope.writer->closeNode();
-         }
-      }
-      else if (member == nsMessageOperation) {
+      if (member == nsMessageOperation) {
          currentObject = compileMessage(member, scope, currentObject);
       }
       else if (member == nsMessageParameter) {
@@ -3327,9 +3364,10 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
             }
             else scope.writer->appendNode(lxResult);
          }
-         if (member != nsNone) {
-            objectInfo = compileOperations(member, scope, objectInfo, mode);
+         if (findSymbol(member, nsAssigning)) {
+            objectInfo = compileAssigning(member, scope, objectInfo, mode);
          }
+         else objectInfo = compileOperations(member, scope, objectInfo, mode);
       }
       else objectInfo = compileObject(member, scope, mode);
    }
@@ -3511,6 +3549,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 
       switch(statement) {
          case nsExpression:
+         case nsRootExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             scope.writer->newNode(lxExpression);
             compileExpression(statement, scope, 0, HINT_ROOT);
