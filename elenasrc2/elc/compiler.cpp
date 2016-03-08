@@ -1210,6 +1210,21 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
    }
 }
 
+// --- Compiler::TemplateScope ---
+
+Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
+   : ClassScope(parent, reference)
+{
+}
+
+ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
+{
+   if (StringHelper::compare(identifier, TARGET_VAR)) {
+      return ObjectInfo(okTemplateField);
+   }
+   else return ClassScope::mapObject(identifier);
+}
+
 // --- Compiler ---
 
 Compiler :: Compiler(StreamReader* syntax)
@@ -1698,8 +1713,6 @@ void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope&
          writer.closeNode();
       }
       else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
-         
-
          DNode value = hints.select(nsHintValue);
          if (value != nsNone) {
             extensionType = scope.moduleScope->mapType(value.Terminal());
@@ -1720,6 +1733,25 @@ void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope&
             }
             else scope.raiseError(wrnInvalidHint, terminal);
          }
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+
+      hints = hints.nextNode();
+   }
+}
+
+void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope, LexicalType& templateType)
+{
+   // define class flags
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+
+      if (StringHelper::compare(terminal, HINT_TARGET)) {
+         TerminalInfo target = hints.select(nsHintValue).Terminal();
+         if (StringHelper::compare(target.value, HINT_TARGET_FIELD)) {
+            templateType = lxFieldTemplate;
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
@@ -2089,6 +2121,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okConstantRole:
          scope.writer->newNode(lxConstantSymbol, object.param);
+         break;
+      case okTemplateField:
+         scope.writer->newNode(lxTemplateField, object.param);
          break;
       case okExternal:
       case okInternal:
@@ -2902,6 +2937,11 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          }
          else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
 
+         }
+         else if (object.kind == okTemplateField) {
+            // if it is a template field
+            // treates it like a normal field
+            currentObject.kind = okField;
          }
          else scope.raiseError(errInvalidOperation, node.Terminal());
 
@@ -4796,6 +4836,31 @@ void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
    else scope.info.header.flags &= ~elStateless;
 }
 
+void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints)
+{
+   SyntaxWriter writer(&scope.syntaxTree);
+   writer.newNode(lxRoot, scope.reference);
+
+   LexicalType templateType = lxNone;
+   compileTemplateHints(hints, writer, scope, templateType);
+
+   DNode member = node.firstChild();
+   compileVMT(member, writer, scope);
+
+   writer.closeNode();
+
+   // update template tree
+   if (templateType != lxNone) {
+      SyntaxTree tree(&scope.syntaxTree);
+
+      tree.readRoot() = templateType;
+   }
+   else scope.raiseError(errInvalidSyntax, node.FirstTerminal());
+
+   // save declaration
+   scope.save();
+}
+
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
 {
    SyntaxWriter writer(&scope.syntaxTree);
@@ -4852,11 +4917,14 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Module* dest)
+void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxMessageMask)) {
+      if (current.type == lxTemplateField) {
+         writer.newNode(lxField, info.offset);
+      }
+      else if (test(current.type, lxMessageMask)) {
          writer.newNode(current.type, importMessage(sour, current.argument, dest));
       }
       else if (test(current.type, lxReferenceMask)) {
@@ -4867,7 +4935,7 @@ void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Mo
       }
       else writer.newNode(current.type, current.argument);
 
-      importTree(current, writer, sour, dest);
+      importTree(current, writer, sour, dest, info);
 
       writer.closeNode();
 
@@ -4875,14 +4943,22 @@ void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Mo
    }
 }
 
-void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SNode node, ref_t subject, _Module* templateModule)
+void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
+         ref_t subject = getSignature(current.argument);
+         if (subject) {
+            IdentifierString subjName(templateModule->resolveSubject(subject));
+            subjName.insert("&", 0);
+            subjName.insert(scope.moduleScope->module->resolveSubject(info.subject), 0);
+         }
+         else subject = info.subject;
+
          writer.newNode(lxClassMethod, overwriteSubject(current.argument, subject));
 
-         importTree(current, writer, templateModule, scope.moduleScope->module);
+         importTree(current, writer, templateModule, scope.moduleScope->module, info);
 
          writer.closeNode();
       }
@@ -4898,7 +4974,7 @@ void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, Templat
 
    SNode root = tree.readRoot();
    if (root == lxFieldTemplate) {
-      importFieldTemplate(scope, writer, root, templateInfo.subject, extModule);
+      importFieldTemplate(scope, writer, root, templateInfo, extModule);
    }
 }
 
@@ -5912,6 +5988,22 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
                ClassScope classClassScope(&scope, classScope.info.classClassRef);
                compileClassClassDeclaration(member, classClassScope, classScope);
             }
+
+            break;
+         }
+         case nsTemplate:
+         {
+            ref_t reference = scope.mapTerminal(name);
+
+            // check for duplicate declaration
+            if (scope.module->mapSection(reference | mskSyntaxTreeRef, true))
+               scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(reference | mskSyntaxTreeRef, false);
+
+            // compile class
+            TemplateScope classScope(&scope, reference);
+            compileTemplateDeclaration(member, classScope, hints);
 
             break;
          }

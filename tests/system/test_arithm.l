@@ -6,29 +6,30 @@
 #import extensions.
 #import extensions'dynamic.
 
-#class(struct:embeddable,sealed) XThreadHandle
+#template(target:field) prop
 {
-    #field(type:int) theHandle.
-    #field(type:rt_ptr) theActionPtr.
-    
-    #constructor new &func:anAction
+    #method set : value
     [
-//        theActionPtr := RTPointer new:anAction.
-
-        theHandle := system'external'KERNEL32 CreateThread
-//                        &int:0
-//                        &int:0
-                        &symbol_ref:system'core_routines'win_thread_start
-/*                        &int:theActionPtr
-                        &int:4
-                        &int:0*/.
-    ]            
-}
+        $target := value.
+    ]
     
+    #method get = $target.
+}
+
+#class MyClass
+{
+    #field(prop:MyField)myField.
+}
+
 #symbol XTester =
 {
     test
     [
+        #var x := MyClass new.
+        
+        x set &MyField:12.
+        
+        #var f := x MyField.
     ]
 }.
         

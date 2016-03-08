@@ -165,7 +165,7 @@ namespace _ELENA_
       mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000,   // meta data
       mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
-      mskSyntaxTreeRef       = 0x46000000,
+      mskSyntaxTreeRef       = 0x46000000,   // template
 
       mskConstantRef         = 0x01000000,   // reference to constant
       mskLiteralRef          = 0x02000000,   // reference to constant literal
@@ -432,6 +432,7 @@ namespace _ELENA_
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
+   #define TARGET_VAR              "$target"          // template target pseudo-variable
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
@@ -445,7 +446,6 @@ namespace _ELENA_
 
   // --- ELENA hints ---
    #define HINT_CONSTANT           "const"
-   #define HINT_ROLE               "role"
    #define HINT_TYPE               "type"              // type hint
    #define HINT_SIZE               "size"
    #define HINT_STRUCT             "struct"
@@ -474,6 +474,8 @@ namespace _ELENA_
    #define HINT_NONSTRUCTURE       "nonstructural"
    #define HINT_STACKSAFE          "stacksafe"
    #define HINT_SUPPRESS_WARNINGS  "suppress"
+   #define HINT_TARGET             "target"
+   #define HINT_TARGET_FIELD       "field"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

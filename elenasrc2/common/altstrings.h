@@ -153,6 +153,11 @@ public:
       }
    }
 
+   void insert(const T* s, size_t index)
+   {
+      StringHelper::insert(_string, index, s);
+   }
+
    void append(const T* s, size_t length)
    {
       size_t newLength = getlength(_string) + length;

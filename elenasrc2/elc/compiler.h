@@ -138,6 +138,8 @@ public:
       okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
    
+      okTemplateField,
+
       okExternal,
       okInternal,
    };
@@ -318,11 +320,11 @@ private:
       }
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
-      _Memory* loadTemplateInfo(ref_t reference, _Module* &module)
+      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
       {
-         return loadTemplateInfo(module->resolveReference(reference), module);
+         return loadTemplateInfo(module->resolveReference(reference), argModule);
       }
-      _Memory* loadTemplateInfo(ident_t symbol, _Module* &module);
+      _Memory* loadTemplateInfo(ident_t symbol, _Module* &argModule);
 
       int defineStructSize(ref_t classReference, bool& variable);
       int defineStructSize(ref_t classReference)
@@ -673,6 +675,21 @@ private:
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
 
+   // --- TemplateScope ---
+   struct TemplateScope : public ClassScope
+   {
+      TemplateScope(ModuleScope* parent, ref_t reference);
+
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      void save()
+      {
+         _Memory* section = moduleScope->module->mapSection(reference | mskSyntaxTreeRef, false);
+         section->trim(0);
+         section->write(0, syntaxTree.get(0), syntaxTree.Length());
+      }
+   };
+
    ByteCodeWriter _writer;
    Parser         _parser;
 
@@ -724,14 +741,15 @@ private:
    void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType);
+   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope, LexicalType& templateType);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
 
    void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
-   void importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, ref_t subject, _Module* templateModule);
-   void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest);
+   void importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+   void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
@@ -832,6 +850,7 @@ private:
 
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
    void compileClassImplementation(DNode node, ClassScope& scope);
+   void compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);

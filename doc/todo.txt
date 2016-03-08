@@ -2,8 +2,13 @@
 In development:
 ------                      
               xdev - generic development
-                       * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
+                       * #54 : field template
+                       * #54 : typed field template
+                       * #54 : structure field template
+
+                       * #54 : implementing generics / templates : method
+                       * #54 : implementing generics / templates : class
                        * #215 : Operations with structure fields
                        * #223 : exiting the lock statement 
                        * #190 : Closure : auto boxing / unboxing local variables  

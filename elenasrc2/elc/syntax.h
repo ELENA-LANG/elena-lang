@@ -37,6 +37,7 @@ enum Symbol
    tsWide                       = 0x0300D,
 
    nsClass                      = 0x0100E,               // non-terminals
+   nsTemplate                   = 0x0100F,
    nsSubjectArg                 = 0x01010,
    nsSymbol                     = 0x01011,
    nsExpression                 = 0x01012,
