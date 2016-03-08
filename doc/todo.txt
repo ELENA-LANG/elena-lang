@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                      
-              fdev - live programming
-                       * ide new window : immediate  - #58
-
               xdev - generic development
                        * #54 : implementing generics / templates    
                        * #201 : shorthand property settings
@@ -44,6 +41,10 @@ In development:
                        * port elide to linux
                        
               fdev - live programming
+                       * test simple operation : system'console.writeLine("Hello"); - no result is displayed. It is broken and second
+                         time does not work
+                       * change syntax to be standart one
+                       * test unicode symbols
                        * interact with the current project objects
 
               adev - lib30     

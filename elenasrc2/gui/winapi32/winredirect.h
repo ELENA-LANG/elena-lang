@@ -20,6 +20,8 @@ public:
    virtual void onOutput(const char* text) = 0;
 
    virtual void clear() = 0;
+
+   virtual ~RedirectorListener() {}
 };
 
 class Redirector
@@ -48,11 +50,14 @@ protected:
 
    virtual void afterExecution(DWORD exitCode) = 0;
 
-public:
-   bool execute(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir);
-   virtual void close();
+   void close();
 
-   bool write(const wchar_t* line);
+public:
+   bool start(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir);   
+   void stop(int exitCode = 0);
+
+   bool write(const char* line, size_t length);
+   bool write(wchar_t ch);
 
    Redirector(bool readOnly, size_t waitTime);
    virtual ~Redirector();

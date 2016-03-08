@@ -19,7 +19,14 @@ class Output : public Control, public RedirectorListener
 protected:
    bool _readOnly;
    WindowRedirector* _redirector;
+   WNDPROC           _editProc;
    
+   static LRESULT CALLBACK _Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+
+   virtual LRESULT _OutputProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam);
+
+   virtual void destroy();
+
 public:
    virtual void clear();
    virtual void onOutput(const char* text);
@@ -31,7 +38,7 @@ public:
    wchar_t* getOutput();
    
    Output(Control* owner, bool readOnly, const wchar_t* name);
-   ~Output();
+   virtual ~Output();
 };
 
 // --- CompilerOutput ---

@@ -1652,6 +1652,9 @@ void IDEController :: onProjectClose()
 
 bool IDEController :: onClose()
 {
+   if (_model->vmConsole)
+      _view->closeVMConsole();
+
    bool result = closeAll();
 
    onChange();

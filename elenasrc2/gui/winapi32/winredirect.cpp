@@ -36,7 +36,7 @@ Redirector :: ~Redirector()
    close();
 }
 
-bool Redirector :: execute(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir)
+bool Redirector :: start(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir)
 {
    HANDLE hStdoutReadTmp;				// parent stdout read handle
    HANDLE hStdoutWrite, hStderrWrite;	// child stdout write handle
@@ -131,6 +131,15 @@ bool Redirector :: execute(const wchar_t* path, const wchar_t* cmdLine, const wc
    return bOk;
 }
 
+void Redirector :: stop(int exitCode)
+{
+   if (_hChildProcess) {
+      TerminateProcess(_hChildProcess, exitCode);
+
+      WaitForSingleObject(_hChildProcess, INFINITE);
+   }      
+}
+
 void Redirector :: close()
 {
    if (_hThread != NULL) {
@@ -180,14 +189,18 @@ bool Redirector :: start(const wchar_t* path, const wchar_t* cmdLine, const wcha
    return true;
 }
 
-bool Redirector :: write(const wchar_t* line)
+bool Redirector :: write(const char* line, size_t length)
 {
    if (!_hStdinWrite)
       return false;
 
    DWORD dwWritten;
-   return ::WriteFile(_hStdinWrite, (const char*)line,
-      _ELENA_::getlength(line) << 1, &dwWritten, NULL);
+   return ::WriteFile(_hStdinWrite, line, length, &dwWritten, NULL);
+}
+
+bool Redirector :: write(wchar_t ch)
+{
+   return write((const char*)&ch, 1);
 }
 
 int Redirector :: redirectStdout()
@@ -275,15 +288,18 @@ WindowRedirector :: WindowRedirector(RedirectorListener* target, bool readOnly, 
 
 void WindowRedirector :: writeStdOut(const char* output)
 {
-   _target->onOutput(output);
+   if(_target)
+      _target->onOutput(output);
 }
 
 void WindowRedirector :: writeStdError(const char* error)
 {
-   _target->onOutput(error);
+   if (_target)
+      _target->onOutput(error);
 }
 
 void WindowRedirector :: afterExecution(DWORD exitCode)
 {
-   _target->afterExecution(exitCode);
+   if (_target)
+      _target->afterExecution(exitCode);
 }

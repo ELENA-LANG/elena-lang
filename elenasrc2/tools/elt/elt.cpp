@@ -1,23 +1,34 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line DSA script terminal main file
-//                                              (C)2011-2015, by Alexei Rakov
+//                                              (C)2011-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 //---------------------------------------------------------------------------
-////#include "config.h"
+#include <stdarg.h>
 #include "elenasm.h"
 
 using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   2
+#define ELT_BUILD_NUMBER   3
  
 // global variables
 int   _encoding = feAnsi;
 bool _loaded = false;
+
+void print(const char* str, ...)
+{
+   va_list argptr;
+   va_start(argptr, str);
+
+   vprintf(str, argptr);
+   va_end(argptr);
+
+   fflush(stdout);
+}
 
 const char* trim(const char* s)
 {
@@ -28,10 +39,10 @@ const char* trim(const char* s)
 
 void printHelp()
 {
-   printf("-q                   - quit\n");
-   printf("-h                   - help\n");
-   printf("-l <path>            - execute a script from file\n");
-   printf("<script>             - execute script\n");
+   print("-q                   - quit\n");
+   print("-h                   - help\n");
+   print("-l <path>            - execute a script from file\n");
+   print("<script>             - execute script\n");
 }
 
 void executeScript(const char* script)
@@ -104,7 +115,7 @@ void runSession()
 
    do {
       try {
-         printf("\n>");
+         print("\n>");
 
          fgetws(buffer, MAX_LINE, stdin);
          IdentifierString line(buffer, getlength(buffer));
@@ -117,14 +128,14 @@ void runSession()
 
          if (line[0]=='-') {
             if(!executeCommand(line, running))
-               printf("Invalid command, use -h to get the list of the commands\n");
+               print("Invalid command, use -h to get the list of the commands\n");
          }
          else if (!emptystr(line) && line[getlength(line) - 1]!=','){
             executeScript(line);
          }
       }
       catch(...) {
-         printf("Invalid operation");
+         print("Invalid operation");
       }
    }
    while(running);
@@ -132,8 +143,7 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line VM terminal %d.%d.%d (C)2011-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
-
+   print("ELENA command line VM terminal %d.%d.%d (C)2011-2016 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
    
    // load script passed via command line arguments
    if (argc > 1) {

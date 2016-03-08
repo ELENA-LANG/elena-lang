@@ -27,14 +27,50 @@ Output :: Output(Control* owner, bool readOnly, const wchar_t* name)
       0, _T("edit"), name, styles,
       _left, _top, _width, _height, owner->getHandle(), NULL, _instance, (LPVOID)this);
 
+   _editProc = (WNDPROC)SetWindowLong(_handle, GWL_WNDPROC, (LONG)_Proc);
+   ::SetWindowLong(_handle, GWL_USERDATA, (LONG)this);
+
    _redirector = new WindowRedirector(this, readOnly, 50);
 
    clear();
 }
 
+void Output :: destroy()
+{
+   _redirector->stop();
+
+   freeobj(_redirector);
+}
+
 Output :: ~Output()
 {
-   freeobj(_redirector);
+   destroy();
+}
+
+LRESULT CALLBACK Output::_Proc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+{
+   Output* window = (Output*)::GetWindowLong(hWnd, GWL_USERDATA);
+   return window->_OutputProc(hWnd, Message, wParam, lParam);
+}
+
+LRESULT Output ::_OutputProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lParam)
+{
+   switch (Message)
+   {
+      case WM_CHAR:
+      {
+         int eol = GetWindowTextLength(_handle);
+         SendMessage(_handle, EM_SETSEL, (WPARAM)eol, (LPARAM)eol);
+
+         if ((wchar_t)wParam == 13) {
+            _redirector->write("\r\n", 2);
+         }
+         else _redirector->write((wchar_t)wParam);
+
+         break;
+      }
+   }
+   return _editProc(hWnd, Message, wParam, lParam);
 }
 
 void Output :: clear()
@@ -99,7 +135,7 @@ bool CompilerOutput :: execute(const wchar_t* path, const wchar_t* cmdLine, cons
 
    _postponedAction = postponedAction;
 
-   return _redirector->execute(path, cmdLine, curDir);
+   return _redirector->start(path, cmdLine, curDir);
 }
 
 void CompilerOutput :: afterExecution(DWORD error)
@@ -125,10 +161,10 @@ VMConsoleInteractive::VMConsoleInteractive(Control* owner)
 
 bool VMConsoleInteractive :: start(const wchar_t* path, const wchar_t* cmdLine, const wchar_t* curDir)
 {
-   return _redirector->execute(path, cmdLine, curDir);
+   return _redirector->start(path, cmdLine, curDir);
 }
 
 void VMConsoleInteractive :: stop()
 {
-   _redirector->close();
+   _redirector->stop();
 }

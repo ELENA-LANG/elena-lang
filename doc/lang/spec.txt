@@ -67,23 +67,27 @@ The generic message can have several parameters as well:
     console writeLine:"a+b=":(a + b).
     
 
-1.3. Classes, Roles and Symbols
+1.3. Classes, Symbols, Nested classes and Closures
 
-ELENA is an object-oriented language, so to create a program we have to declare new classes.
+ELENA  is  an  object-oriented  language. To create a program we have to declare
+new classes and symbols.
 
-A class encapsulates data (fields) with code (methods) to access it. In most cases it is not possible
-to get a direct access to the class content (it makes sense for dynamic languages when in the most cases
-code is generic and can be applied for different "types"). Usually the fields refer to another classes and so on
-until we reach "primitive" ones which content are considered as raw data (e.g. numeric or literal values).
+A  class  encapsulates  data  (fields) with code (methods) to access it. In most 
+cases  it  is  not possible to get a direct access to the class content. Usually 
+the  field  refers  to  another  class and so on until we reach "primitive" ones 
+which content are considered as raw data (e.g. numeric or literal values).
 
-To work with the class we have to create its instance with the help of the special methods - constructors. A constructor
-is used mostly to initialize the class fields. There are special type of classes which do not have fields and constructors
-and can be used directly (roles).
+Classes  form  the  inheritance  tree .  There  is  the  common  super  class  -  
+system'Object.  ELENA  does  not  support  multiple  inheritance,  though  it is 
+possible  to inherit the code using a dispatch handler (mixins / group objects). 
+When  the  parent is not provided the class inherits directly system'Object (the 
+super class).
 
-Classes form the inheritance tree. There is the common super class - system'Object.
-ELENA does not support multiple inheritance, though it is possible to inherit the code using redirect handler 
-(so called "horizontal inheritance"). When the parent is not provided the class inherits directly system'Object 
-(the super class).
+A  class  instance  can  be  created  with  the  help  of  the special methods - 
+constructors.  A  constructor  is  used  mostly  to initialize the class fields. 
+There  are  special  types  of classes which do not have constructors and can be 
+used  directly  ( nested classes,  extensions,  closures ).  A  class  itself is 
+considered as a stateless object.
 
 #class BaseClass
 {
@@ -98,47 +102,55 @@ ELENA does not support multiple inheritance, though it is possible to inherit th
 
 #class DerivedClass : BaseClass
 {
-  #constructor new &field1:aField2 &field2:aField2
+  #constructor new &field1:object1 &field2:object2
   [  
-     theField1 := aField1.
-     theField2 := aField2.
+     theField1 := object1.
+     theField2 := object2.
   ]
 
-  #method add &field1:aField2 &field2:aField2
-     = MyClass new &Field1:(theField1 + aField1) &Field2:(theField2 + aField2).
+  #method add &field1:object1 &field2:object2
+     = MyClass new &field1:(theField1 + object1) &field2:(theField2 + object1).
 }
 
-To create a class instance we have to send a message (usually new) to its symbol (a class symbol is declared 
-implicitly for every class and can be used as a normal one)
+To create a class instance we have to send a message (usually new) to its class.
 
-#var anObject := DerivedClass new &field1:1 &field2:1. // DerivedClass is a symbol
+#var anObject := DerivedClass new &field1:1 &field2:1.
 
-Roles cannot have constructors and their symbols can be used directly
+A  symbol  is a named expression and can be used to declare initialized objects, 
+constants, reusable expressions and so on.
 
-#class(role)ClassHelper
+#symbol N = 1. 
+ 
+#symbol ZeroClass = DerivedClass new &field:0 &field:0.
+
+A static symbol is the named expression which state is preserved. There could be 
+only one instance of static symbol.
+
+#static SingletonClass = DerivedClass new &field:0 &field:0.
+
+Nested classes can be declared in the code and used directly.
+
+#symbol ClassHelper =
 {
-   #method sumOf:anObject1:anObject2
+   sumOf:anObject1:anObject2
       = anObject1 add &field1::anObject2 &field2::anObject1.
-}
+}.
 
 ...
 
 #var aSum := ClassHelper sumOf:anObject1:anObject2.
 
-In general the symbol is a named expression and can be used to declare initialized objects, constants, reusable expressions
-and so on.
+Closure  is a special case of the nested class and consists of the code enclosed 
+into square brackets (with optional parameter declaration).
 
-#symbol ZeroClass = DerivedClass new &field:0 &field:0.
-
-A static symbol is the class instance which state is preserved. There could be only one instance of static symbol.
-
-#static SingletonClass = DerivedClass new &field:0 &field:0.
-
+str run &each:
+   ch [ console write:ch. ].
+   
 
 1.4. Code blocks
 
 ELENA code block consists of a sequence of statements. The block is enclosed in square brackets and may contain nested sub code blocks 
-(which in fact are inline action classes). The statement terminator is a dot.
+(which in fact are closures). The statement terminator is a dot.
 
 #method printAckermann &n:n &m:m
 [
@@ -184,7 +196,7 @@ unique within the code block scope.
 ...
 
 
-1.5. Conditional branching
+1.5. Conditional branching / loops
 
 ELENA like Smalltalk does not support any special language constructs to implement the conditional branching. Instead special Boolean symbols 
 (system’true and system’false) are used. All conditional operations should return these symbols as a result.
