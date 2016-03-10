@@ -10,6 +10,7 @@
 [ELENA]
 [+] #201 : shorthand property settings
 [+] #54 : templates 
+[+] new statement #extern - exclude the code from GC
 
 [ELC]
 [!] binary incompatible due to implementing issues #217 and #54
@@ -37,6 +38,7 @@
 [Samples]
 [+] rosetta sample : Top rank per group
 [+] rosetta sample : Truncatable primes
+[+] rosetta sample : Visualize a tree
 
 ******************************************************************************
                              What's New in 1.9.25

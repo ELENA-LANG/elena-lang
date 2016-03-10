@@ -6,19 +6,10 @@
 #import extensions.
 #import extensions'dynamic.
 
-#class(extension)XOp
-{
-    #method testWrite:p
-    [
-        self writeLine:"XOp:":p.
-    ]
-}
-
 #symbol XTester =
 {
     test
     [
-        console testWrite:2.
     ]
 }.
         

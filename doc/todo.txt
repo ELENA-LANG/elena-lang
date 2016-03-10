@@ -6,10 +6,12 @@ In development:
                        * #54 : implementing generics / templates : class
                        * #190 : Closure : auto boxing / unboxing local variables  
                        * #215 : Operations with structure fields
-                       * #223 : exiting the lock statement 
+                       * #223 : exiting the lock / extern statement 
                        * review source code to use templates
                        * provide debug info for templates (terminal token should be stored, ...)
                        * review try-catch statement, make sure the closure is created only in case of the error
+                       * breaking int loop method (both #loop and pattern code), exiting closure (different behaviour between
+                         explicit and pseudo closures (? operator))
                        
               xdev - general implementation     
                        * fix #12 : Extension with stack allocated object
@@ -51,7 +53,6 @@ In development:
 
               adev - lib30     
                        * implement #33 (tcp/ip socket)
-                       * breaking int loop method
 
               fdev - net app
                        * implement simple chat system to test socket api
@@ -67,23 +68,6 @@ In development:
                        * implement basic parsing : only classes                       
 
               sdev - samples
-                       * rosetta sample : Visualize a tree
-                       * rosetta sample : Vogel's approximation method
-                       * rosetta sample : Voronoi diagram
-                       * rosetta sample : Walk a directory/Non-recursively
-                       * rosetta sample : Walk a directory/Recursively
-                       * rosetta sample : Word wrap
-                       * rosetta sample : World Cup group stage
-                       * rosetta sample : Write entire file
-                       * rosetta sample : Write float arrays to a text file
-                       * rosetta sample : XML/DOM serialization
-                       * rosetta sample : XML/Input
-                       * rosetta sample : XML/Output
-                       * rosetta sample : XML/XPath
-                       * rosetta sample : Yin and yang
-                       * rosetta sample : Zig-zag matrix
-                       * rosetta sample : Zebra puzzle
-                       * rosetta sample : Zeckendorf arithmetic
                        * rosetta sample : Short-circuit evaluation
                        * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
@@ -106,6 +90,22 @@ In development:
                        * rosetta sample : Undefined values                       
                        * rosetta sample : Variable size/Get
                        * rosetta sample : Variable size/Set
+                       * rosetta sample : Vogel's approximation method
+                       * rosetta sample : Voronoi diagram
+                       * rosetta sample : Write entire file
+                       * rosetta sample : Walk a directory/Non-recursively
+                       * rosetta sample : Walk a directory/Recursively
+                       * rosetta sample : Word wrap
+                       * rosetta sample : World Cup group stage
+                       * rosetta sample : Write float arrays to a text file
+                       * rosetta sample : XML/DOM serialization
+                       * rosetta sample : XML/Input
+                       * rosetta sample : XML/Output
+                       * rosetta sample : XML/XPath
+                       * rosetta sample : Yin and yang
+                       * rosetta sample : Zig-zag matrix
+                       * rosetta sample : Zebra puzzle
+                       * rosetta sample : Zeckendorf arithmetic
 
                        * refactor cpu_sim : assembler
 

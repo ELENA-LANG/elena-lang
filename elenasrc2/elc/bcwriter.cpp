@@ -188,6 +188,7 @@ void ByteCodeWriter :: excludeFrame(CommandTape& tape)
 void ByteCodeWriter :: includeFrame(CommandTape& tape)
 {
    tape.write(bcInclude);
+   tape.write(bcSNop);
    tape.write(bcFreeStack, 1);
 }
 
@@ -2952,10 +2953,6 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
    
    generateExternalArguments(tape, node, externalScope);
 
-   // exclude stack if necessary
-   if (!apiCall)
-      excludeFrame(tape);
-
    // save function parameters
    int paramCount = saveExternalParameters(tape, node, externalScope);
    
@@ -2971,8 +2968,6 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
    }
    else {
       callExternal(tape, node.argument, externalScope.frameSize);
-
-      includeFrame(tape);
 
       endExternalBlock(tape);
    }
@@ -3352,6 +3347,15 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
          saveObject(tape, target.type, target.argument);
       }
    }
+}
+
+void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
+{
+   excludeFrame(tape);
+
+   generateCodeBlock(tape, node);
+
+   includeFrame(tape);
 }
 
 void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
@@ -3748,6 +3752,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             declareBlock(tape);
             generateObjectExpression(tape, current);
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            break;
+         case lxExternFrame:
+            generateExternFrame(tape, current);
             break;
          case lxBreakpoint:
             translateBreakpoint(tape, current);

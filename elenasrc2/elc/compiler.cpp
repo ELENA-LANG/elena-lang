@@ -3591,6 +3591,11 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileVariable(statement, scope, hints);
             break;
+         case nsExtern:
+            scope.writer->newNode(lxExternFrame);
+            compileCode(statement, scope);
+            scope.writer->closeNode();
+            break;
          case nsCodeEnd:
             needVirtualEnd = false;
             recordDebugStep(scope, statement.Terminal(), dsEOP);

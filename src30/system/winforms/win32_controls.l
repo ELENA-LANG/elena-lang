@@ -62,7 +62,7 @@
         system'external'USER32 ShowWindow &int:theHandle &int:aValue.
     ]
     
-    #method(type:bool) isVisible
+    #method(type:bool,stacksafe) isVisible
     [
         #var(type:int)visible := system'external'USER32 IsWindowVisible &int:theHandle.
         

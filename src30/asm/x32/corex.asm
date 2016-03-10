@@ -155,12 +155,12 @@ labYGCollect:
   push edi
   mov  eax, [edx+eax*4]
   push ebp
-
+  
   // ; GCXT: lock stack frame
   // ; get current thread event
   mov  esi, [eax + tls_sync_event]         
   mov  [eax + tls_stack_frame], esp
-
+  
   push ecx
   push ebx
 
@@ -1491,7 +1491,7 @@ labWait:
   mov  eax, [edx+eax*4]
 
   mov  esi, [eax+tls_sync_event]   // ; get current thread event
-  mov  [eax], edi                  // ; lock stack frame
+  mov  [eax+tls_stack_frame], edi                  // ; lock stack frame
 
   // ; signal the collecting thread that it is stopped
   push esi
@@ -1718,6 +1718,9 @@ end
 inline % 25h
        
   add  esp, 4
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+  mov  esi, [edx+eax*4]
   mov  [esi + tls_flags], 0
 
 end

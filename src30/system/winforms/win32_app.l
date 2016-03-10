@@ -26,54 +26,60 @@
     
     #method start
     [
-        #var(type:win_msg)aMsg.
-        #var(type:int)proceeded.
-        
         theMainWindow open.
-        theHandle := theMainWindow hwnd.
-        
-        #var(type:int)aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:theHandle &int:0 &int:0.
-        #loop (aResult != 0)?
-        [
-            proceeded := system'external'USER32 IsDialogMessageW &int:theHandle &win_msg:aMsg.
-            (proceeded == 0) ?
-                [
-                    system'external'USER32 TranslateMessage &win_msg:aMsg.
-                    system'external'USER32 DispatchMessageW &win_msg:aMsg.
-                ].
 
-            aResult := system'external'USER32 GetMessageW &win_msg:aMsg &int:theHandle &int:0 &int:0.
+        #var(type:win_msg)msg.
+        #var(type:int)proceeded.
+        #var(type:int)result.
+        #var(type:int)handle := theMainWindow hwnd.
+        
+        #extern
+        [
+            result := system'external'USER32 GetMessageW &win_msg:msg &int:handle &int:0 &int:0.
+            #loop (result != 0)?
+            [
+                proceeded := system'external'USER32 IsDialogMessageW &int:handle &win_msg:msg.
+                (proceeded == 0) ?
+                [
+                    system'external'USER32 TranslateMessage &win_msg:msg.
+                    system'external'USER32 DispatchMessageW &win_msg:msg.
+                ].
+                result := system'external'USER32 GetMessageW &win_msg:msg &int:handle &int:0 &int:0.
+            ].
+            
         ].
     ]
 
-    #method run &hwnd:aHandle
+    #method run &hwnd:handle
     [
-        #var(type:win_msg)aMsg.
+        #var(type:win_msg)msg.
         #var(type:int)proceeded.
-        #var(type:int)aResult.
+        #var(type:int)result.
+        #var(type:hwnd)handleCopy := handle.
 
-        #loop (aHandle isVisible)?
+        #extern
         [
-            aResult := system'external'USER32 PeekMessageW &win_msg:aMsg &int:0 &int:0 &int:0 &int:1.
-                (aResult != 0)
-                    ? [
-                        proceeded := system'external'USER32 IsDialogMessageW &int:aHandle &win_msg:aMsg.
-                        (proceeded == 0) ?
-                            [
-                                system'external'USER32 TranslateMessage &win_msg:aMsg.
-                                system'external'USER32 DispatchMessageW &win_msg:aMsg.
-                            ].
-                    ]
-                    ! [
-                        system'external'USER32 WaitMessage.
-                    ].
+            #loop (handleCopy isVisible)?
+            [
+                result := system'external'USER32 PeekMessageW &win_msg:msg &int:0 &int:0 &int:0 &int:1.
+                (result != 0) ?
+                [
+                    proceeded := system'external'USER32 IsDialogMessageW &int:handleCopy &win_msg:msg.
+                    (proceeded == 0) ?
+                        [
+                            system'external'USER32 TranslateMessage &win_msg:msg.
+                            system'external'USER32 DispatchMessageW &win_msg:msg.
+                        ].
+                ]
+                ! [
+                    system'external'USER32 WaitMessage.
+                ].
+            ].
         ].
     ]
             
     #method stop
     [
-        theHandle := WindowHandle min.
-        
         system'external'USER32 PostQuitMessage &int:0.
     ]
 }

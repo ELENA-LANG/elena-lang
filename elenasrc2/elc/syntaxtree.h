@@ -67,6 +67,7 @@ enum LexicalType
    lxNewFrame        = 0x00323, // if argument -1 - than with presaved message
    lxCreatingClass   = 0x00324, // arg - count
    lxCreatingStruct  = 0x00325, // arg - size
+   lxExternFrame     = 0x00326,
 
    lxBoolOp          = 0x00326, // arg - operation id
    lxNilOp           = 0x00327, // arg - operation id

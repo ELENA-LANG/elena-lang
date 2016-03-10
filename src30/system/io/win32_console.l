@@ -137,15 +137,19 @@
         #var(type:int)aNumberRead.
         #var(type:short)anEventType.
         #var(type:int)aKeyDown.
+        #var(type:int)aHandle := theHandle.
         
         #var found := false.
         #loop found !
         [
-            system'external'KERNEL32 ReadConsoleInputW
-                &int           : theHandle
-                &bytearray     : aDump
-                &int           : 1
-                &vint          : aNumberRead.
+            #extern
+            [
+                system'external'KERNEL32 ReadConsoleInputW
+                    &int           : aHandle
+                    &bytearray     : aDump
+                    &int           : 1
+                    &vint          : aNumberRead.
+            ].
 
             aDump read &int:0 &vshort:anEventType.
             (anEventType == 1)
@@ -170,11 +174,14 @@
         #var found := false.
         #loop found !
         [
-            system'external'KERNEL32 ReadConsoleInputW
-                &int           : theHandle
-                &bytearray     : aDump
-                &int           : 1
-                &vint          : aNumberRead.
+            #extern
+            [
+                system'external'KERNEL32 ReadConsoleInputW
+                    &int           : theHandle
+                    &bytearray     : aDump
+                    &int           : 1
+                    &vint          : aNumberRead.
+            ].
 
             aDump read &int:0 &vshort:anEventType.
             (anEventType == 1)
@@ -191,12 +198,15 @@
 
     #method(stacksafe) read &shortarray:aBuffer &vint:aRetVal
     [
-        system'external'KERNEL32 ReadConsoleW
-            &int        : theHandle
-            &shortarray : aBuffer
-            &int        : aRetVal
-            &vint       : aRetVal
-            &int        : 0.
+        #extern
+        [
+            system'external'KERNEL32 ReadConsoleW
+                &int        : theHandle
+                &shortarray : aBuffer
+                &int        : aRetVal
+                &vint       : aRetVal
+                &int        : 0.
+        ].            
     ]
     
     #method read &wide
