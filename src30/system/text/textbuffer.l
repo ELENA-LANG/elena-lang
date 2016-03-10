@@ -4,11 +4,11 @@
 
 #symbol(const,type:int)$TextPageSize = 128.
 
-#subject(class:system'text'TextBuffer) textbuffer.
+#subject(class:system'text'TextBuilder) textbuffer.
 
 // --- TextBuffer ---
 
-#class(sealed) TextBuffer
+#class(sealed) TextBuilder
 {
     #field(type:chararray) theBuffer.
     #field(type:vint)      theLength.
@@ -356,3 +356,5 @@
         theLength -= aLength.
     ]
 }
+
+#symbol TextBuffer = TextBuilder.

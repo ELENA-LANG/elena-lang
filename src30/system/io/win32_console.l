@@ -1,8 +1,11 @@
 // ==== ver 3.4.1 ===
 
 #import system.
+#import system'text.
 
 #subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
+
+#symbol(type:int,const)FILE_TYPE_CHAR = 2.
 
 #class(struct:embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
 {
@@ -57,6 +60,15 @@
         
         ^ Handle new &handle:aHandle.
     ]
+    
+    #method newWriter
+    [
+        #var(type:handle)handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
+        #var(type:int)dwMode := system'external'KERNEL32 GetFileType &int:handle.
+        (dwMode == FILE_TYPE_CHAR)
+            ? [ ^ $ConsoleWriter new &handle:handle. ]
+            ! [ ^ $FileWriter new &handle:handle. ].
+    ]
 }.
 
 // --- ConsoleWriter ---
@@ -107,6 +119,89 @@
         system'external'KERNEL32 FillConsoleOutputCharacterW &int:theHandle &short:32 &int:aLength &int:0 &vint:aRetVal.
         
         system'external'KERNEL32 SetConsoleCursorPosition &int:0.
+    ]
+
+    #method refresh
+    [
+    ]
+
+    #method free
+    [
+        system'external'KERNEL32 CloseHandle
+            &int:theHandle.
+    ]
+}
+
+// --- $FileWriter ---
+
+#class(sealed,struct:embeddable) $FileWriter
+{
+    #field(type:handle) theHandle.
+
+    #constructor new &handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
+    #method(stacksafe) write &bytearray:buffer &int:length
+    [
+        #var(type:int)written := 0.
+        system'external'KERNEL32 WriteFile
+            &int       : theHandle
+            &bytearray : buffer
+            &int       : length
+            &vint      : written
+            &int       : 0.
+    ]
+
+    #method write &wide : literal
+    [
+        #var(type:bytearray,size:255)buffer.
+        #var(type:int)length := literal length.
+        #var(type:int)index := 0.
+        #var(type:int)buf_len := 255.
+        #var(type:int)subs_len := 255.
+        #loop (index < length)?
+        [
+            buf_len := 255.
+            
+            (length < 128)
+                ? [ subs_len := length. ]  
+                ! [ subs_len := 128. ].
+            
+            OEMEncoder convert &int:index &vint:subs_len &wide:literal &bytearray:buffer &vint:buf_len.
+            
+            $self write &bytearray:buffer &int:buf_len.
+            
+            index := index + subs_len.
+        ].
+    ]
+    
+    #method write &literal : literal
+    [
+        #var(type:bytearray,size:255)buffer.
+        #var(type:int)length := literal length.
+        #var(type:int)index := 0.
+        #var(type:int)buf_len := 255.
+        #var(type:int)subs_len := 255.
+        #loop (index < length)?
+        [
+            buf_len := 255.
+            
+            (length < 128)
+                ? [ subs_len := length. ]  
+                ! [ subs_len := 128. ].
+            
+            OEMEncoder convert &int:index &vint:subs_len &literal:literal &bytearray:buffer &vint:buf_len.
+            
+            $self write &bytearray:buffer &int:buf_len.
+            
+            index := index + subs_len.
+        ].
+    ]
+    
+    #method clear
+    [
     ]
 
     #method refresh
@@ -266,6 +361,6 @@
 
 // --- Console Standard Symbols
 
-#symbol stdConsoleWriter = $ConsoleWriter new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF5h).
+#symbol stdConsoleWriter = $ConsoleHandleFactory newWriter.
 
 #symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h).

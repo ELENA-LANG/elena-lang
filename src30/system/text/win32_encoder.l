@@ -42,6 +42,33 @@
 
     #method convert &int:anIndex &vint:aLength &chararray:aByteArray &bytearray:anOutput &vint:anOutputLength 
     [
+        #var(type:shortarray,size:127)temp_buf.
+        #var(type:int)temp_len := 127.
+
+        UTF16Encoding convert &int:anIndex &int:aLength &chararray:aByteArray &shortarray:temp_buf &vint:temp_len.
+        
+        #var(type:int)retVal := system'external'KERNEL32 WideCharToMultiByte 
+            &int:theCodePage 
+            &int:0
+            &shortarray:temp_buf 
+            &int:temp_len
+            &int:0
+            &int:0
+            &int:0 &int:0.
+
+        (retVal > anOutputLength)
+            ? [ #throw InvalidArgumentException new. ].
+                
+        system'external'KERNEL32 WideCharToMultiByte 
+            &int:theCodePage 
+            &int:0 
+            &shortarray:temp_buf 
+            &int:temp_len
+            &bytearray:anOutput
+            &int:retVal
+            &int:0 &int:0.
+        
+        anOutputLength << retVal.
     ]    
 }
 
@@ -51,7 +78,11 @@
 
 // --- Win1251Encoder ---
 
-#static(type:encoder) WIN1251Encoder = WinEncoder new &int:1251.
+#static(type:encoder) WIN1251Enc = WinEncoder new &int:1251.
+
+// --- OEMEncoder ---
+
+#static(type:encoder) OEMEncoder = WinEncoder new &int:1.
 
 // --- AnsiEncoder ---
 

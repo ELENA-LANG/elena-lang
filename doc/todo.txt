@@ -39,14 +39,12 @@ In development:
                        * #185 : Stack allocated structures are not correctly displayed
                        * #191 : IDE : block commenting
                        * #219 : IDE : Callstack for vm console application 
-
+                       
              xdev - linux
                        * implement debugger
                        * port elide to linux
                        
               fdev - live programming
-                       * test simple operation : system'console.writeLine("Hello"); - no result is displayed. It is broken and second
-                         time does not work
                        * change syntax to be standart one
                        * test unicode symbols
                        * interact with the current project objects

@@ -282,7 +282,7 @@
 #class(extension)jsonOp
 {
     #method toJson
-        = TextBuffer new jsonSerialize:self literal.
+        = TextBuilder new jsonSerialize:self literal.
         
     #method fromJson
         = $helper deserializeObject &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new)).
