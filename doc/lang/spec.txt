@@ -149,51 +149,42 @@ str run &each:
 
 1.4. Code blocks
 
-ELENA code block consists of a sequence of statements. The block is enclosed in square brackets and may contain nested sub code blocks 
-(which in fact are closures). The statement terminator is a dot.
+ELENA  code block consists of one or more declarations and statements. The block 
+is  enclosed  in  square  brackets  and  may contain nested sub code blocks. The 
+statement terminator is a dot.
 
-#method printAckermann &n:n &m:m
-[
-    control forrange &int:0 &int:n &do: (&int:i)
+    control run &int:0 &int:MAX &every: (&int:i)
     [
-        control forrange &int:0 &int:m &do: (&int:j)
-        [
-            ...
-            
-            console writeLine.
-        ].
+        pi += -1.0r power &int:i / (2*i+1) * 4.
     ].
-]
 
-When a method should return a result (other than self) return statement is used. It should be the
-last statement in the block.
+    console writeLine:pi.
+    console writeLine:"Time elapsed in msec:":(aDiff milliseconds).
 
-[
-    ...
+When  a  method  should  return  a result (other than $self) return statement is 
+used. It should be the last statement in the block.
 
-    ^ aRetVal / anArray length.
-]
+    [
+        ...
+    
+        ^ aRetVal / anArray length.
+    ]
 
-...
+If  the  code  block contains only return statement the simplified syntax can be 
+used:
 
-If the code block contains only return statement the simplified syntax can be used:
-
-...
-#method Number = convertor toReal:theValue.    
-...
+    #method Number = convertor toReal:theValue.    
 
 or there is an alternative block expression
 
-[ convertor toReal:theValue ]
+    [ convertor toReal:theValue ]
 
 Note: it should not end with the terminator symbol
 
-It is possible to declare the block variable and assigns the value to it. The variable name must be 
-unique within the code block scope.
+It  is  possible  to declare the block variable and assigns the value to it. The 
+variable name must be unique within the code block scope.
 
-...
-#var aRetVal := Integer new:0.
-...
+    #var aRetVal := Integer new:0.
 
 
 1.5. Conditional branching / loops

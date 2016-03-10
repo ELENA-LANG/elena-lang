@@ -146,6 +146,7 @@ enum LexicalType
    lxClassName       = 0x22007, // arg - reference
    lxValue           = 0x02008,
    lxFrameAttr       = 0x02009,
+   lxSourcePath      = 0x0200A,
 
    lxClassFlag       = 0x04001,      // class fields
    lxClassStructure  = 0x04002,      
@@ -159,96 +160,110 @@ enum LexicalType
    lxFieldTemplate   = 0x2400A,
 };
 
-// --- SyntaxWriter ---
-
-class SyntaxWriter
-{
-   MemoryWriter  _writer;
-   Stack<size_t> _bookmarks;
-
-public:
-   int setBookmark(size_t position)
-   {
-      _bookmarks.push(position);
-      return _bookmarks.Count();
-   }
-
-   int newBookmark()
-   {
-      _bookmarks.push(_writer.Position());
-
-      return _bookmarks.Count();
-   }
-
-   void removeBookmark()
-   {
-      _bookmarks.pop();
-   }
-
-   void clear()
-   {
-      _writer.seek(0);
-      _bookmarks.clear();
-   }
-
-   void insert(int bookmark, LexicalType type, ref_t argument);
-   void insert(int bookmark, LexicalType type)
-   {
-      insert(type, 0);
-   }
-   void insert(LexicalType type, ref_t argument)
-   {
-      insert(0, type, argument);
-   }
-   void insert(LexicalType type)
-   {
-      insert(0, type, 0);
-   }
-   void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
-   {
-      insert(end_bookmark, lxEnding, 0);
-      insert(start_bookmark, type, argument);
-   }
-   void insertChild(int bookmark, LexicalType type, ref_t argument)
-   {
-      insert(bookmark, lxEnding, 0);
-      insert(bookmark, type, argument);
-   }
-   void insertChild(LexicalType type, ref_t argument)
-   {
-      insert(lxEnding, 0);
-      insert(type, argument);
-   }
-
-   void newNode(LexicalType type, ref_t argument);
-   void newNode(LexicalType type)
-   {
-      newNode(type, 0);
-   }
-   void appendNode(LexicalType type, ref_t argument)
-   {
-      newNode(type, argument);
-      closeNode();
-   }
-   void appendNode(LexicalType type)
-   {
-      newNode(type);
-      closeNode();
-   }
-
-   void closeNode();
-
-   SyntaxWriter(_Memory* dump)
-      : _writer(dump)
-   {
-   }
-};
-
 // --- SyntaxTree ---
 
 class SyntaxTree
 {
+   MemoryDump _body;
+   MemoryDump _strings;
+
 public:
+   // --- SyntaxWriter ---
+
+   class Writer
+   {
+      MemoryWriter  _writer;
+      MemoryWriter  _stringWriter;
+      Stack<size_t> _bookmarks;
+
+   public:
+      int setBookmark(size_t position)
+      {
+         _bookmarks.push(position);
+         return _bookmarks.Count();
+      }
+
+      int newBookmark()
+      {
+         _bookmarks.push(_writer.Position());
+
+         return _bookmarks.Count();
+      }
+
+      void removeBookmark()
+      {
+         _bookmarks.pop();
+      }
+
+      void clear()
+      {
+         _writer.seek(0);
+         _bookmarks.clear();
+      }
+
+      void insert(int bookmark, LexicalType type, ref_t argument);
+      void insert(int bookmark, LexicalType type)
+      {
+         insert(type, 0);
+      }
+      void insert(LexicalType type, ref_t argument)
+      {
+         insert(0, type, argument);
+      }
+      void insert(LexicalType type)
+      {
+         insert(0, type, 0);
+      }
+      void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
+      {
+         insert(end_bookmark, lxEnding, 0);
+         insert(start_bookmark, type, argument);
+      }
+      void insertChild(int bookmark, LexicalType type, ref_t argument)
+      {
+         insert(bookmark, lxEnding, 0);
+         insert(bookmark, type, argument);
+      }
+      void insertChild(LexicalType type, ref_t argument)
+      {
+         insert(lxEnding, 0);
+         insert(type, argument);
+      }
+
+      void newNode(LexicalType type, ref_t argument);
+      void newNode(LexicalType type, ident_t argument)
+      {
+         newNode(type, _stringWriter.Position());
+         _stringWriter.writeLiteral(argument);
+      }
+      void newNode(LexicalType type)
+      {
+         newNode(type, 0u);
+      }
+      void appendNode(LexicalType type, ref_t argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
+      void appendNode(LexicalType type, ident_t argument)
+      {
+         appendNode(type, _stringWriter.Position());
+         _stringWriter.writeLiteral(argument);
+      }
+      void appendNode(LexicalType type)
+      {
+         newNode(type);
+         closeNode();
+      }
+
+      void closeNode();
+
+      Writer(SyntaxTree& tree)
+         : _writer(&tree._body), _stringWriter(&tree._strings)
+      {
+      }
+   };
+
    struct NodePattern;
 
    // --- Node ---
@@ -270,6 +285,14 @@ public:
          return tree;
       }
 
+      ident_t identifier()
+      {
+         if (type != lxNone) {
+            return (ident_t)tree->_strings.get(argument);
+         }
+         else NULL;
+      }
+
       bool operator == (LexicalType type)
       {
          return this->type == type;
@@ -283,23 +306,17 @@ public:
       {
          this->type = type;
 
-         int prevPos = tree->_reader.Position();
+         MemoryReader reader(&tree->_body, position - 8);
 
-         tree->_reader.seek(position - 8);
-         *(int*)(tree->_reader.Address()) = (int)type;
-         tree->_reader.seek(prevPos);
+         *(int*)(reader.Address()) = (int)type;
       }
 
       void setArgument(ref_t argument)
       {
          this->argument = argument;
 
-         int prevPos = tree->_reader.Position();
-
-         tree->_reader.seek(position - 4);
-         *(int*)(tree->_reader.Address()) = (int)argument;
-
-         tree->_reader.seek(prevPos);
+         MemoryReader reader(&tree->_body, position - 4);
+         *(int*)(reader.Address()) = (int)argument;
       }
 
       Node firstChild() const
@@ -398,10 +415,7 @@ public:
    };
 
 private:
-   _Memory*     _dump;
-   MemoryReader _reader;
-
-   Node read();
+   Node read(StreamReader& reader);
 
 public:
    static int countChild(Node node, LexicalType type)
@@ -511,6 +525,8 @@ public:
       return child != lxNone;
    }
 
+   _Memory* Strings() { return &_strings; }
+
    Node readRoot();
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
@@ -525,15 +541,45 @@ public:
    bool matchPattern(Node node, int mask, int counter, ...);
    Node findPattern(Node node, int counter, ...);
 
-   SyntaxTree(_Memory* dump)
-      : _reader(dump)
+   ref_t writeString(ident_t string)
    {
-      _dump = dump;
+      MemoryWriter writer(&_strings);
+      ref_t position = writer.Position();
+
+      writer.writeLiteral(string);
+
+      return position;
+   }
+
+   void save(_Memory* section)
+   {
+      MemoryWriter writer(section);
+
+      writer.writeDWord(_body.Length());
+      writer.write(_body.get(0), _body.Length());
+
+      writer.writeDWord(_strings.Length());
+      writer.write(_strings.get(0), _strings.Length());
+   }
+
+   SyntaxTree()
+   {
+   }
+   SyntaxTree(_Memory* dump)
+   {
+      MemoryReader reader(dump);
+
+      _body.load(&reader, reader.getDWord());
+      _strings.load(&reader, reader.getDWord());
    }
 };
 
 SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
 SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
+
+typedef SyntaxTree::Writer       SyntaxWriter;
+typedef SyntaxTree::Node         SNode;
+typedef SyntaxTree::NodePattern  SNodePattern;
 
 
 } // _ELENA_

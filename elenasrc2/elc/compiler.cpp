@@ -14,9 +14,6 @@
 
 using namespace _ELENA_;
 
-typedef SyntaxTree::Node         SNode;
-typedef SyntaxTree::NodePattern  SNodePattern;
-
 // --- Hint constants ---
 #define HINT_MASK             0xFFFF0000
 
@@ -223,7 +220,7 @@ void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
    writer->appendNode(lxCol, terminal.Col());
    writer->appendNode(lxRow, terminal.Row());
    writer->appendNode(lxLength, terminal.length);
-   writer->appendNode(lxTerminal, (int)terminal.value);
+   writer->appendNode(lxTerminal, terminal.value);
 }
 
 // --- Compiler::ModuleScope ---
@@ -237,7 +234,6 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    this->debugModule = debugModule;
 
    this->forwardsUnresolved = forwardsUnresolved;
-   this->sourcePathRef = 0;
 
    warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
    warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
@@ -898,6 +894,8 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
 {
    typeRef = 0;
    constant = false;
+
+   syntaxTree.writeString(parent->sourcePath);
 }
 
 void Compiler::SymbolScope :: compileHints(DNode hints)
@@ -937,6 +935,8 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.count = 0;
    info.size = 0;
    info.classClassRef = 0;
+
+   syntaxTree.writeString(parent->sourcePath);
 }
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
@@ -1236,6 +1236,24 @@ Compiler :: Compiler(StreamReader* syntax)
    ByteCodeCompiler::loadOperators(_operators);
 }
 
+void Compiler :: writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t messageRef)
+{
+   ref_t subjectRef, verb;
+   int paramCount;
+   decodeMessage(messageRef, subjectRef, verb, paramCount);
+
+   IdentifierString name(retrieveKey(_verbs.start(), verb, DEFAULT_STR));
+   if (subjectRef != 0) {
+      name.append('&');
+      name.append(scope.module->resolveSubject(subjectRef));
+   }
+   name.append('[');
+   name.appendInt(paramCount);
+   name.append(']');
+
+   writer.appendNode(lxMessageVariable, name);
+}
+
 void Compiler :: appendObjectInfo(CodeScope& scope, ObjectInfo object)
 {
    if (object.type != 0) {
@@ -1385,34 +1403,34 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
    while (!it.Eof()) {
       if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->paramsReference)) {
          writer.newNode(lxParamsVariable);
-         writer.appendNode(lxTerminal, (ref_t)it.key());
+         writer.appendNode(lxTerminal, it.key());
          writer.appendNode(lxLevel, -1 - (*it).offset);
          writer.closeNode();
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->intReference)) {
          writer.newNode(lxIntVariable);
-         writer.appendNode(lxTerminal, (ref_t)it.key());
+         writer.appendNode(lxTerminal, it.key());
          writer.appendNode(lxLevel, -1 - (*it).offset);
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->longReference)) {
          writer.newNode(lxLongVariable);
-         writer.appendNode(lxTerminal, (ref_t)it.key());
+         writer.appendNode(lxTerminal, it.key());
          writer.appendNode(lxLevel, -1 - (*it).offset);
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
       }
       else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
          writer.newNode(lxReal64Variable);
-         writer.appendNode(lxTerminal, (ref_t)it.key());
+         writer.appendNode(lxTerminal, it.key());
          writer.appendNode(lxLevel, -1 - (*it).offset);
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
       }
       else {
          writer.newNode(lxVariable, -1);
-         writer.appendNode(lxTerminal, (ref_t)it.key());
+         writer.appendNode(lxTerminal, it.key());
          writer.appendNode(lxLevel, -1 - (*it).offset);
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
@@ -1426,7 +1444,7 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
    if (withSelf)
       writer.appendNode(lxSelfVariable, -1);
 
-   writer.appendNode(lxMessageVariable, _writer.writeMessage(moduleScope->debugModule, moduleScope->module, _verbs, scope.message));
+   writeMessage(*scope.moduleScope, writer, scope.message);
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t referenceProperName)
@@ -1688,7 +1706,7 @@ void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope&
          writer.appendNode(lxClassFlag, elWrapper);
       }
       else if (StringHelper::compare(terminal, HINT_XDYNAMIC)) {
-         writer.newNode(lxClassArray, 0);
+         writer.newNode(lxClassArray);
 
          appendTerminalInfo(&writer, terminal);
          writer.appendNode(lxClassFlag, elDynamicRole);
@@ -1697,7 +1715,7 @@ void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope&
          writer.closeNode();
       }
       else if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
-         writer.newNode(lxClassStructure, 0);
+         writer.newNode(lxClassStructure);
          appendTerminalInfo(&writer, terminal);
 
          writer.appendNode(lxClassFlag, elDynamicRole);
@@ -1955,38 +1973,38 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
          switch (flags & elDebugMask)
          {
             case elDebugDWORD:
-               scope.writer->newNode(lxIntVariable, 0);
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->newNode(lxIntVariable);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
             case elDebugQWORD:
-               scope.writer->newNode(lxLongVariable, 0);
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->newNode(lxLongVariable);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
             case elDebugReal64:
-               scope.writer->newNode(lxReal64Variable, 0);
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->newNode(lxReal64Variable);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
             case elDebugBytes:
                scope.writer->newNode(lxBytesVariable, size);
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
             case elDebugShorts:
                scope.writer->newNode(lxShortsVariable, size);
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
             case elDebugIntegers:
                scope.writer->newNode(lxIntsVariable, size);
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
@@ -1997,7 +2015,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
                }
                else scope.writer->newNode(lxBinaryVariable);
 
-               scope.writer->appendNode(lxTerminal, (int)terminal.value);
+               scope.writer->appendNode(lxTerminal, terminal.value);
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->appendNode(lxClassName, (int)scope.moduleScope->module->resolveReference(classReference));
                scope.writer->closeNode();
@@ -2007,8 +2025,8 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       else {
          int level = scope.newLocal();
 
-         scope.writer->newNode(lxVariable, 0);
-         scope.writer->appendNode(lxTerminal, (int)terminal.value);
+         scope.writer->newNode(lxVariable);
+         scope.writer->appendNode(lxTerminal, terminal.value);
          scope.writer->appendNode(lxLevel, level);
          scope.writer->closeNode();
 
@@ -3135,13 +3153,14 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
 
 void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
 {
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    ActionScope methodScope(&scope);
    bool lazyExpression = declareActionScope(node, scope, argNode, writer, methodScope, mode, alreadyDeclared);
 
    writer.newNode(lxClassMethod, methodScope.message);
+   writer.appendNode(lxSourcePath); // the source path is first string
 
    // if it is single expression
    if (!lazyExpression) {
@@ -3161,7 +3180,7 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int
 
 void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope)
 {
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    compileParentDeclaration(parent, scope);
@@ -3984,6 +4003,7 @@ void Compiler :: compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope
    CommandTape* tape = scope.tape;
 
    writer.newNode(lxClassMethod, scope.message);
+   writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (isImportRedirect(node)) {
       importCode(node, *scope.moduleScope, writer, node.Terminal());
@@ -4208,6 +4228,7 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
    CommandTape* tape = scope.tape;
 
    writer.newNode(lxClassMethod, scope.message);
+   writer.appendNode(lxSourcePath);  // the source path is first string
 
    DNode resendBody = node.select(nsResendExpression);
    DNode dispatchBody = node.select(nsDispatchExpression);
@@ -4295,6 +4316,7 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
    scope.tape = &classClassScope.tape;
 
    writer.newNode(lxClassMethod, scope.message);
+   writer.appendNode(lxSourcePath);  // the source path is first string
 
    DNode body = node.select(nsSubCode);
    DNode resendBody = node.select(nsResendExpression);
@@ -4377,6 +4399,7 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, SyntaxWriter& wri
    scope.tape = &classClassScope.tape;
 
    writer.newNode(lxClassMethod, scope.message);
+   writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (test(classScope->info.header.flags, elStructureRole)) {
       if (!test(classScope->info.header.flags, elDynamicRole)) {
@@ -4402,6 +4425,7 @@ void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWrit
    scope.tape = &classClassScope.tape;
 
    writer.newNode(lxClassMethod, scope.message);
+   writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (test(classScope->info.header.flags, elStructureRole)) {
       writer.newNode(lxCreatingStruct, classScope->info.size);
@@ -4512,12 +4536,12 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
 
    // create byte code sections
-   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.syntaxTree.Strings());
 }
 
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   SyntaxWriter writer(&classClassScope.syntaxTree);
+   SyntaxWriter writer(classClassScope.syntaxTree);
    writer.newNode(lxRoot, classClassScope.reference);
 
    // if no construtors are defined inherits the parent one
@@ -4530,13 +4554,14 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef);
    
    // class class is always stateless
-   writer.appendNode(lxClassField, elStateless);
+   writer.appendNode(lxClassFlag, elStateless);
 
    DNode member = node.firstChild();
    declareVMT(member, writer, classClassScope, nsConstructor, false, 0);
    
    // add virtual constructor
    writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
+   writer.appendNode(lxSourcePath);  // the source path is first string
 
    writer.closeNode();
 
@@ -4550,7 +4575,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 {
    ModuleScope* moduleScope = classClassScope.moduleScope;
 
-   SyntaxWriter writer(&classClassScope.syntaxTree);
+   SyntaxWriter writer(classClassScope.syntaxTree);
    writer.newNode(lxRoot, classClassScope.reference);
 
    DNode member = node.firstChild();
@@ -4702,7 +4727,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
    while (current != lxNone) {
       if (current == lxClassField) {
          int offset = 0;
-         ident_t terminal = (ident_t)SyntaxTree::findChild(current, lxTerminal).argument;
+         ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
 
          // a role cannot have fields
          if (test(scope.info.header.flags, elStateless))
@@ -4852,8 +4877,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
 
 void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
 {
-   SyntaxTree reader(&scope.syntaxTree);
-   SNode root = reader.readRoot();
+   SNode root = scope.syntaxTree.readRoot();
 
    // generate flags
    generateClassFlags(scope, root);
@@ -4891,7 +4915,7 @@ void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
 
 void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints)
 {
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    LexicalType templateType = lxNone;
@@ -4904,9 +4928,7 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
    // update template tree
    if (templateType != lxNone) {
-      SyntaxTree tree(&scope.syntaxTree);
-
-      tree.readRoot() = templateType;
+      scope.syntaxTree.readRoot() = templateType;
    }
    else scope.raiseError(errInvalidSyntax, node.FirstTerminal());
 
@@ -4916,7 +4938,7 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
 {
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    DNode member = node.firstChild();
@@ -4958,7 +4980,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
 void Compiler :: generateClassImplementation(ClassScope& scope)
 {
-   analizeClassTree(scope, scope.syntaxTree);
+   analizeClassTree(scope);
 
    _writer.generateClass(scope.tape, scope.syntaxTree);
 
@@ -4967,7 +4989,7 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
 
    // create byte code sections
    scope.save();
-   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.syntaxTree.Strings());
 }
 
 void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
@@ -5005,7 +5027,13 @@ void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Mod
       return;
    }
    else if (current == lxTerminal) {
-      // !! temporal : ignore terminal info
+      writer.newNode(lxTerminal, current.identifier());
+   }
+   else if (current == lxSourcePath) {
+      writer.newNode(lxSourcePath, current.identifier());
+   }
+   else if (current == lxMessageVariable) {
+      // message variable should be already set
       return;
    }
    else if (test(current.type, lxMessageMask)) {
@@ -5048,7 +5076,12 @@ void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SN
          else subject = info.subject;
 
          ref_t messageRef = overwriteSubject(current.argument, subject);
+
          writer.newNode(lxClassMethod, messageRef);
+
+         // NOTE : source path reference should be imported
+         // but the message name should be overwritten
+         writeMessage(*scope.moduleScope, writer, messageRef);
 
          // HOT FIX : if the field is typified provide a method hint
          if (current.argument == encodeVerb(GET_MESSAGE_ID)) {
@@ -5079,7 +5112,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    // import templates
@@ -5103,7 +5136,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 
 void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope)
 {
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    // inherit parent
@@ -5128,7 +5161,7 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
 
 void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, DNode expression)
 {
-   SyntaxWriter writer(&classScope.syntaxTree);
+   SyntaxWriter writer(classScope.syntaxTree);
    writer.newNode(lxRoot, classScope.reference);
 
    if (objNode != nsNone) {
@@ -5148,7 +5181,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, D
 
 void Compiler::compileSingletonClass(DNode node, ClassScope& scope)
 {
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
    DNode member = node.firstChild();
@@ -5276,7 +5309,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
    // compile symbol into byte codes
 
-   SyntaxWriter writer(&scope.syntaxTree);
+   SyntaxWriter writer(scope.syntaxTree);
    // NOTE : top expression is required for propery translation
    writer.newNode(lxRoot, scope.reference);
 
@@ -5378,7 +5411,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    // NOTE : close root node
    writer.closeNode();
 
-   analizeSymbolTree(scope, scope.syntaxTree);
+   analizeSymbolTree(scope);
 
    _writer.generateSymbol(scope.tape, scope.syntaxTree, isStatic);
 
@@ -5386,7 +5419,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    optimizeTape(scope.tape);
 
    // create byte code sections
-   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.moduleScope->sourcePathRef);
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.syntaxTree.Strings());
 }
 
 void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode)
@@ -5615,7 +5648,7 @@ void Compiler :: analizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
       SNode col = SyntaxTree::findChild(node, lxCol);
       SNode terminal = SyntaxTree::findChild(node, lxTerminal);
       if (col != lxNone && row != lxNone) {
-         scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, (ident_t)terminal.argument);
+         scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, terminal.identifier());
       }
    }
 }
@@ -5728,7 +5761,7 @@ void Compiler :: analizeTypecast(ModuleScope& scope, SNode node, int warningMask
       SNode col = SyntaxTree::findChild(node, lxCol);
       SNode terminal = SyntaxTree::findChild(node, lxTerminal);
       if (col != lxNone && row != lxNone)
-         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, (ident_t)terminal.argument);
+         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, terminal.identifier());
    }
 }
 
@@ -5873,11 +5906,10 @@ void Compiler :: analizeSyntaxExpression(ModuleScope& scope, SNode node, int war
    }
 }
 
-void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
+void Compiler :: analizeClassTree(ClassScope& scope)
 {
    int warningMask = scope.moduleScope->warningMask;
-   SyntaxTree reader(&dump);
-   SNode current = reader.readRoot().firstChild();
+   SNode current = scope.syntaxTree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxWarningMask) {
          warningMask = current.argument;
@@ -5896,11 +5928,10 @@ void Compiler :: analizeClassTree(ClassScope& scope, MemoryDump& dump)
    }
 }
 
-void Compiler :: analizeSymbolTree(SymbolScope& scope, MemoryDump& dump)
+void Compiler :: analizeSymbolTree(SourceScope& scope)
 {
    int warningMask = 0;
-   SyntaxTree reader(&dump);
-   SNode current = reader.readRoot().firstChild();
+   SNode current = scope.syntaxTree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxWarningMask) {
          warningMask = current.argument;
@@ -6274,7 +6305,6 @@ bool Compiler :: run(Project& project)
          }
 
          ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
-         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
          project.printInfo("%s", it.key());
 

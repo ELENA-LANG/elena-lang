@@ -20,7 +20,7 @@ class ByteCodeWriter
 {
    struct Scope
    {
-      ref_t         sourceRef;
+      _Memory*      codeStrings;
       MemoryWriter* vmt;
       MemoryWriter* code;
       MemoryWriter* debug;
@@ -30,7 +30,7 @@ class ByteCodeWriter
       {
          vmt = code = NULL;
          debug = debugStrings = NULL;
-         sourceRef = 0;
+         codeStrings = NULL;
       }
    };
 
@@ -97,26 +97,26 @@ class ByteCodeWriter
    void writeSelf(Scope& scope, int level, int frameLevel);
    void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
    void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
-   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
    void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
    void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
    void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-   void writeProcedureDebugInfo(MemoryWriter* writer, ref_t sourceNameRef);
+   void writeProcedureDebugInfo(MemoryWriter* writer, MemoryWriter* debugStrings, ident_t path);
    void writeDebugInfoStopper(MemoryWriter* debug);
 
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
    void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
-   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings);
 
    void declareClass(CommandTape& tape, ref_t reference);
-   void declareSymbol(CommandTape& tape, ref_t reference);
-   void declareStaticSymbol(CommandTape& tape, ref_t staticReference);
-   void declareIdleMethod(CommandTape& tape, ref_t message);
-   void declareMethod(CommandTape& tape, ref_t message, int reserved, bool withPresavedMessage, bool withNewFrame = true);
+   void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
+   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
+   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
+   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame = true);
    void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
    void includeFrame(CommandTape& tape);
@@ -142,7 +142,7 @@ class ByteCodeWriter
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
-   void declareMessageInfo(CommandTape& tape, ref_t nameRef);
+   void declareMessageInfo(CommandTape& tape, ref_t stringRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
@@ -290,14 +290,13 @@ class ByteCodeWriter
    void importCode(CommandTape& tape, ImportScope& scope);
 
 public:
-   ref_t writeSourcePath(_Module* debugModule, ident_t path);
-   ref_t writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message);
+   //ref_t writeSourcePath(_Module* debugModule, ident_t path);
 
-   void generateClass(CommandTape& tape, MemoryDump& dump);
+   void generateClass(CommandTape& tape, SyntaxTree& tree);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-   void generateSymbol(CommandTape& tape, MemoryDump& dump, bool isStatic);
+   void generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic);
 
-   void save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef);
+   void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings);
 
    int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
    {

@@ -79,60 +79,58 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
 
 SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
 {
-   SyntaxWriter writer(_dump);
+   SyntaxWriter writer(*this);
 
    writer.insertChild(writer.setBookmark(position), type, argument);
 
-   _reader.seek(position);
-
-   return read();
+   MemoryReader reader(&_body, position);
+   return read(reader);
 }
 
 SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
 {
-   SyntaxWriter writer(_dump);
+   SyntaxWriter writer(*this);
 
    writer.insertChild(writer.setBookmark(start_position), writer.setBookmark(end_position), type, argument);
 
-   _reader.seek(start_position);
-
-   return read();
+   MemoryReader reader(&_body, start_position);
+   return read(reader);
 }
 
-SyntaxTree::Node SyntaxTree:: read()
+SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {
-   int type = _reader.getDWord();
-   ref_t arg = _reader.getDWord();
+   int type = reader.getDWord();
+   ref_t arg = reader.getDWord();
 
    if (type == -1) {
       return Node();
    }
-   else return Node(this, _reader.Position(), (LexicalType)type, arg);
+   else return Node(this, reader.Position(), (LexicalType)type, arg);
 }
 
 SyntaxTree::Node SyntaxTree:: readRoot()
 {
-   _reader.seek(0);
+   MemoryReader reader(&_body, 0);
 
-   return read();
+   return read(reader);
 }
 
 SyntaxTree::Node SyntaxTree:: readFirstNode(size_t position)
 {
-   _reader.seek(position);
+   MemoryReader reader(&_body, position);
 
-   return read();
+   return read(reader);
 }
 
 SyntaxTree::Node SyntaxTree:: readNextNode(size_t position)
 {
-   _reader.seek(position);
+   MemoryReader reader(&_body, position);
 
    int level = 1;
 
    do {
-      int type = _reader.getDWord();
-      ref_t arg = _reader.getDWord();
+      int type = reader.getDWord();
+      ref_t arg = reader.getDWord();
 
       if (type == -1) {
          level--;
@@ -141,19 +139,19 @@ SyntaxTree::Node SyntaxTree:: readNextNode(size_t position)
 
    } while (level > 0);
 
-   return read();
+   return read(reader);
 }
 
 
 size_t SyntaxTree :: seekNodeEnd(size_t position)
 {
-   _reader.seek(position);
+   MemoryReader reader(&_body, position);
 
    int level = 1;
 
    do {
-      int type = _reader.getDWord();
-      ref_t arg = _reader.getDWord();
+      int type = reader.getDWord();
+      ref_t arg = reader.getDWord();
 
       if (type == -1) {
          level--;
@@ -162,19 +160,21 @@ size_t SyntaxTree :: seekNodeEnd(size_t position)
 
    } while (level > 0);
 
-   return _reader.Position() - 8;
+   return reader.Position() - 8;
 }
 
 SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 {
+   MemoryReader reader(&_body);
+
    position -= 16;
 
    int level = 0;
    while (position > 7) {
-      _reader.seek(position);
+      reader.seek(position);
 
-      int type = _reader.getDWord();
-      _reader.getDWord();
+      int type = reader.getDWord();
+      reader.getDWord();
 
       if (type != -1) {
          if (level == 0)
@@ -182,9 +182,9 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 
          level++;
          if (level == 0) {
-            _reader.seek(position);
+            reader.seek(position);
 
-            return read();
+            return read(reader);
          }
       }
       else level--;
@@ -197,26 +197,27 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 
 SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
 {
+   MemoryReader reader(&_body);
    position -= 16;
 
-   _reader.seek(position);
-   if (_reader.getDWord() != -1) {
-      _reader.seek(position);
+   reader.seek(position);
+   if (reader.getDWord() != -1) {
+      reader.seek(position);
 
-      return read();
+      return read(reader);
    }
 
    int level = 0;
    while (position > 7) {
-      _reader.seek(position);
+      reader.seek(position);
 
-      int type = _reader.getDWord();
+      int type = reader.getDWord();
 
       if (type != -1) {
          if (level == 0) {
-            _reader.seek(position);
+            reader.seek(position);
 
-            return read();
+            return read(reader);
          }
 
          level++;

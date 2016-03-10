@@ -256,6 +256,7 @@ enum ByteCode
    bdSelf           = 0x8404,
    bdMessage        = 0x8405,
    bdLocalInfo      = 0x8406,
+   bdSourcePath     = 0x8407,
    bdIntLocal       = 0x8413,
    bdLongLocal      = 0x8423,
    bdRealLocal      = 0x8433,

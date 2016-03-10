@@ -237,7 +237,6 @@ private:
       _Module*       debugModule;
 
       ident_t        sourcePath;
-      ref_t          sourcePathRef;
 
       // default namespaces
       List<ident_t> defaultNs;
@@ -455,7 +454,7 @@ private:
    // - SourceScope -
    struct SourceScope : public Scope
    {
-      MemoryDump syntaxTree;
+      SyntaxTree syntaxTree;
 
       CommandTape    tape;
       ref_t          reference;
@@ -692,7 +691,8 @@ private:
       {
          _Memory* section = moduleScope->module->mapSection(reference | mskSyntaxTreeRef, false);
          section->trim(0);
-         section->write(0, syntaxTree.get(0), syntaxTree.Length());
+
+         syntaxTree.save(section);
       }
    };
 
@@ -730,6 +730,7 @@ private:
    }
 
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
+   void writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t messageRef);
 
    bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -893,8 +894,8 @@ private:
    void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
-   void analizeClassTree(ClassScope& scope, MemoryDump& dump);
-   void analizeSymbolTree(SymbolScope& scope, MemoryDump& dump);
+   void analizeClassTree(ClassScope& scope);
+   void analizeSymbolTree(SourceScope& scope);
 
    bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
    bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);

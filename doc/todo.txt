@@ -2,13 +2,14 @@
 In development:
 ------                      
               xdev - generic development
+                       * provide debug info for templates (terminal token should be stored, ...)
+
                        * #54 : implementing generics / templates : method
                        * #54 : implementing generics / templates : class
                        * #190 : Closure : auto boxing / unboxing local variables  
                        * #215 : Operations with structure fields
                        * #223 : exiting the lock / extern statement 
                        * review source code to use templates
-                       * provide debug info for templates (terminal token should be stored, ...)
                        * review try-catch statement, make sure the closure is created only in case of the error
                        * breaking int loop method (both #loop and pattern code), exiting closure (different behaviour between
                          explicit and pseudo closures (? operator))

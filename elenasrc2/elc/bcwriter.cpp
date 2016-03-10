@@ -12,8 +12,6 @@
 
 using namespace _ELENA_;
 
-typedef SyntaxTree::Node SNode;
-
 // check if the node contains only the simple nodes
 
 bool isSimpleObject(SNode node, bool ignoreFields = false)
@@ -64,54 +62,16 @@ void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 
 // --- ByteCodeWriter ---
 
-ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
-{
-   if (debugModule != NULL) {
-      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
-
-      ref_t sourceRef = debugStringWriter.Position();
-
-      debugStringWriter.writeLiteral(path);
-
-      return sourceRef;
-   }
-   else return 0;
-}
-
-ref_t ByteCodeWriter :: writeMessage(_Module* debugModule, _Module* module, MessageMap& verbs, ref_t message)
-{
-   if (debugModule != NULL) {
-      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
-
-      ref_t sourceRef = debugStringWriter.Position();
-
-      ref_t subjectRef, verb;
-      int paramCount;
-      decodeMessage(message, subjectRef, verb, paramCount);
-
-      IdentifierString name(retrieveKey(verbs.start(), verb, DEFAULT_STR));
-      if (subjectRef != 0) {
-         name.append('&');
-         name.append(module->resolveSubject(subjectRef));
-      }
-      name.append('[');
-      name.appendInt(paramCount);
-      name.append(']');
-
-      debugStringWriter.writeLiteral(name);
-
-      return sourceRef;
-   }
-   else return 0;
-}
-
-void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference/*, CodeType scope*/)
+void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
 {
    // symbol-begin:
    tape.write(blBegin, bsSymbol, reference);
+
+   if (sourcePathRef != (size_t)-1)
+      tape.write(bdSourcePath, sourcePathRef);
 }
 
-void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference)
+void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef)
 {
    // symbol-begin:
 
@@ -122,7 +82,11 @@ void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticRefere
 
    tape.newLabel();     // declare symbol-end label
 
-   tape.write(blBegin, bsSymbol, staticReference);
+   if (sourcePathRef != (size_t)-1)
+      tape.write(blBegin, bsSymbol, staticReference);
+
+   tape.write(bdSourcePath, sourcePathRef);
+
    tape.write(bcALoadR, staticReference | mskStatSymbolRef);
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.write(bcACopyR, staticReference | mskLockVariable);
@@ -143,13 +107,16 @@ void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 	tape.write(blBegin, bsClass, reference);
 }
 
-void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message)
+void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef)
 {
    // method-begin:
    tape.write(blBegin, bsMethod, message);
+
+   if (sourcePathRef != (size_t)-1)
+      tape.write(bdSourcePath, sourcePathRef);
 }
 
-void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, int reserved, bool withPresavedMessage, bool withNewFrame)
+void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame)
 {
    // method-begin:
    //   { pope }?
@@ -157,6 +124,9 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, int reser
    //   { reserve }?
    //   pusha
    tape.write(blBegin, bsMethod, message);
+
+   if (sourcePathRef != (size_t)-1)
+      tape.write(bdSourcePath, sourcePathRef);
 
    if (withPresavedMessage)
       tape.write(bcPopE);
@@ -246,9 +216,9 @@ void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
    tape.write(bdSelf, 0, level);
 }
 
-void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t nameRef)
+void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t stringRef)
 {
-   tape.write(bdMessage, 0, nameRef);
+   tape.write(bdMessage, 0, stringRef);
 }
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
@@ -1072,12 +1042,16 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
    tape.write(blEnd, bsSymbol);
 }
 
-void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* debug, ref_t sourceNameRef)
+void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* writer, MemoryWriter* debugStrings, ident_t path)
 {
-   DebugLineInfo symbolInfo(dsProcedure, 0, 0, 0);
-   symbolInfo.addresses.source.nameRef = sourceNameRef;
+   ref_t sourceRef = debugStrings->Position();
 
-   debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+   debugStrings->writeLiteral(path);
+
+   DebugLineInfo symbolInfo(dsProcedure, 0, 0, 0);
+   symbolInfo.addresses.source.nameRef = sourceRef;
+
+   writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
 void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
@@ -1151,10 +1125,13 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, De
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ref_t nameRef)
+void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message)
 {
    if (!scope.debug)
       return;
+
+   ref_t nameRef = scope.debugStrings->Position();
+   scope.debugStrings->writeLiteral(message);
 
    DebugLineInfo info;
    info.symbol = symbol;
@@ -1263,13 +1240,13 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef)
+void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
 
    Scope scope;
-   scope.sourceRef = sourceRef;
+   scope.codeStrings = strings;
    scope.code = &codeWriter;
 
    // create debug info if debugModule available
@@ -1298,24 +1275,24 @@ void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: save(CommandTape& tape, _Module* module, _Module* debugModule, ref_t sourceRef)
+void ByteCodeWriter :: save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings)
 {
    ByteCodeIterator it = tape.start();
    while (!it.Eof()) {
       if (*it == blBegin) {
          ref_t reference = (*it).additional;
          if ((*it).Argument() == bsClass) {
-            writeClass(reference, ++it, module, debugModule, sourceRef);
+            writeClass(reference, ++it, module, debugModule, strings);
          }
          else if ((*it).Argument() == bsSymbol) {
-            writeSymbol(reference, ++it, module, debugModule, sourceRef);
+            writeSymbol(reference, ++it, module, debugModule, strings);
          }
       }
       it++;
    }
 }
 
-void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, ref_t sourceRef)
+void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskClassRef, false));
@@ -1338,7 +1315,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    vmtWriter.write((void*)&info.header, sizeof(ClassHeader));  // header
 
    Scope scope;
-   scope.sourceRef = sourceRef;
+   scope.codeStrings = strings;
    scope.code = &codeWriter;
    scope.vmt = &vmtWriter;
 
@@ -1384,8 +1361,12 @@ void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scop
 
 void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 {
-   if (scope.debug)
-      writeProcedureDebugInfo(scope.debug, scope.sourceRef);
+   if (*it == bdSourcePath) {
+      if (scope.debug)
+         writeProcedureDebugInfo(scope.debug, scope.debugStrings, (ident_t)scope.codeStrings->get((*it).Argument()));
+
+      it++;
+   }
 
    scope.code->writeDWord(0);                                // write size place holder
    size_t procPosition = scope.code->Position();
@@ -1526,7 +1507,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsParamsLocal, frameLevel);
             break;
          case bdMessage:
-            writeMessageInfo(scope, dsMessage, (*it).additional);
+            writeMessageInfo(scope, dsMessage, (ident_t)scope.codeStrings->get((*it).additional));
             break;
          case bdStruct:
             writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsStructPtr, 0);
@@ -3766,22 +3747,22 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                declareVariable(tape, current.argument);
 
             declareLocalInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                SyntaxTree::findChild(current, lxLevel).argument);
             break;
          case lxIntVariable:
             declareLocalIntInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
             break;
          case lxLongVariable:
             declareLocalLongInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
             break;
          case lxReal64Variable:
             declareLocalRealInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
             break;
          case lxMessageVariable:
@@ -3789,7 +3770,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxParamsVariable:
             declareLocalParamsInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                SyntaxTree::findChild(current, lxLevel).argument);
             break;
          case lxBytesVariable:
@@ -3798,7 +3779,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 
             generateBinary(tape, current, level);
             declareLocalByteArrayInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                level, false);
             break;
          }
@@ -3808,7 +3789,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 
             generateBinary(tape, current, level);
             declareLocalShortArrayInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                level, false);
             break;
          }
@@ -3818,7 +3799,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 
             generateBinary(tape, current, level);
             declareLocalIntArrayInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                level, false);
             break;
          }
@@ -3831,7 +3812,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                generateBinary(tape, current, level);
 
             declareStructInfo(tape,
-               (ident_t)SyntaxTree::findChild(current, lxTerminal).argument,
+               SyntaxTree::findChild(current, lxTerminal).identifier(),
                level, (ident_t)SyntaxTree::findChild(current, lxClassName).argument);
             break;
          }
@@ -3920,6 +3901,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 {
    int reserved = SyntaxTree::findChild(node, lxReserved).argument;
    int paramCount = SyntaxTree::findChild(node, lxParamCount).argument;
+   ref_t sourcePathRef = SyntaxTree::findChild(node, lxSourcePath).argument;
 
    bool withNewFrame = false;
    bool open = false;
@@ -3928,14 +3910,14 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    while (current != lxNone) {
       if (current == lxImporting) {
          if (!open)
-            declareIdleMethod(tape, node.argument);
+            declareIdleMethod(tape, node.argument, sourcePathRef);
 
          importCode(tape, *imports.get(current.argument - 1));
       }
       else if (current == lxNewFrame) {
          withNewFrame = true;
          if (!open) {
-            declareMethod(tape, node.argument, reserved, current.argument == -1);
+            declareMethod(tape, node.argument, sourcePathRef, reserved, current.argument == -1);
             open = true;
          }  
          else newFrame(tape, reserved);
@@ -3947,7 +3929,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
       }
       else if (current == lxCalling && current.argument == -1) {
          if (!open) {
-            declareMethod(tape, node.argument, 0, false, false);
+            declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
 
             open = true;
          }
@@ -3959,13 +3941,13 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          exit = true;
 
          if (!open)
-            declareIdleMethod(tape, node.argument);
+            declareIdleMethod(tape, node.argument, sourcePathRef);
 
          generateDispatching(tape, current);
       }
       else if (current == lxCreatingClass || current == lxCreatingStruct) {
          if (!open)
-            declareIdleMethod(tape, node.argument);
+            declareIdleMethod(tape, node.argument, sourcePathRef);
 
          generateCreating(tape, current);
       }
@@ -3973,7 +3955,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          if (!open) {
             open = true;
 
-            declareMethod(tape, node.argument, 0, false, false);
+            declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
          }
 
          generateObjectExpression(tape, current);
@@ -3990,10 +3972,9 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    else endMethod(tape, paramCount, reserved, withNewFrame);
 }
 
-void ByteCodeWriter :: generateClass(CommandTape& tape, MemoryDump& dump)
+void ByteCodeWriter :: generateClass(CommandTape& tape, SyntaxTree& tree)
 {
-   SyntaxTree reader(&dump);
-   SNode root = reader.readRoot();
+   SNode root = tree.readRoot();
 
    declareClass(tape, root.argument);
    SyntaxTree::Node current = root.firstChild();
@@ -4010,20 +3991,21 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, MemoryDump& dump)
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
 {
-   declareSymbol(tape, reference);
+   declareSymbol(tape, reference, (size_t)-1);
    loadObject(tape, type, argument);
    endSymbol(tape);
 }
 
-void ByteCodeWriter :: generateSymbol(CommandTape& tape, MemoryDump& dump, bool isStatic)
+void ByteCodeWriter :: generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic)
 {
-   SyntaxTree reader(&dump);
-   SNode root = reader.readRoot();
+   SNode root = tree.readRoot();
+
+   SNode sourceNode = SyntaxTree::findChild(root, lxSourcePath);
 
    if (isStatic) {
-      declareStaticSymbol(tape, root.argument);
+      declareStaticSymbol(tape, root.argument, sourceNode.argument);
    }
-   else declareSymbol(tape, root.argument);
+   else declareSymbol(tape, root.argument, sourceNode.argument);
 
    generateCodeBlock(tape, root);
 
