@@ -1262,7 +1262,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 ////   watch->write(this, _debugger.Context()->EIP(), _T("EIP"), EMPTY_STRING);
 ////}
 
-void DebugController::showCurrentModule(DebugLineInfo* lineInfo, ident_t moduleName, ident_t sourcePath)
+void DebugController :: showCurrentModule(DebugLineInfo* lineInfo, ident_t moduleName, ident_t sourcePath)
 {
    if (lineInfo) {
       if (!StringHelper::compare(_currentModule, moduleName) || StringHelper::compare(_currentSource, sourcePath)) {

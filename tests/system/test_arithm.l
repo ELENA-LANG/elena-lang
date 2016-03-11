@@ -6,21 +6,11 @@
 #import extensions.
 #import extensions'dynamic.
 
-#template(target:field) xprop
-{
-    #method set : value
-    [
-        $target := value.
-    ]
-    
-    #method get = $target.
-}
-
 #class MyClass
 {
     #field(prop:X)x.
     
-    #field(xprop:Y)y.
+    #field(prop:Y)y.
 }
 
 #symbol XTester =

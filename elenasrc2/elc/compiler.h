@@ -237,6 +237,7 @@ private:
       _Module*       debugModule;
 
       ident_t        sourcePath;
+      int            sourcePathRef;
 
       // default namespaces
       List<ident_t> defaultNs;

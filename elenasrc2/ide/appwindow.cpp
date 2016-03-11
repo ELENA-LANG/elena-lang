@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "appwindow.h"
@@ -1895,7 +1895,17 @@ bool IDEController :: loadModule(text_t ns, text_t source)
    if (!_debugController.isStarted())
       return false;
 
-   if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
+   // HOTFIX : if it is template code
+   int pos = _ELENA_::StringHelper::findLast(source, '\'');
+   if (pos >= 0) {
+      text_c templateNs[IDENTIFIER_LEN];
+      size_t dummy = pos;
+      _ELENA_::StringHelper::copy(templateNs, source, (size_t)pos, dummy);
+      templateNs[pos] = 0;
+
+      return loadModule(templateNs, source + pos + 1);
+   }
+   else if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
       _ELENA_::Path path(_model->project.path);
       path.combine(source);
 

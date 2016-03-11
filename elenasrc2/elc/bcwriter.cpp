@@ -62,6 +62,20 @@ void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 
 // --- ByteCodeWriter ---
 
+ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
+{
+   if (debugModule != NULL) {
+      MemoryWriter debugStringWriter(debugModule->mapSection(DEBUG_STRINGS_ID, false));
+
+      ref_t sourceRef = debugStringWriter.Position();
+
+      debugStringWriter.writeLiteral(path);
+
+      return sourceRef;
+   }
+   else return 0;
+}
+
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
 {
    // symbol-begin:
@@ -1042,16 +1056,20 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
    tape.write(blEnd, bsSymbol);
 }
 
-void ByteCodeWriter :: writeProcedureDebugInfo(MemoryWriter* writer, MemoryWriter* debugStrings, ident_t path)
+void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ident_t path)
 {
-   ref_t sourceRef = debugStrings->Position();
+   ref_t sourceRef = scope.debugStrings->Position();
+   ident_t defaultPath = scope.defaultNameRef != -1 ? (ident_t)scope.debugStrings->Memory()->get(scope.defaultNameRef) : NULL;
 
-   debugStrings->writeLiteral(path);
+   if (!StringHelper::compare(path, defaultPath)) {
+      scope.debugStrings->writeLiteral(path);      
+   }
+   else sourceRef = scope.defaultNameRef;
 
    DebugLineInfo symbolInfo(dsProcedure, 0, 0, 0);
    symbolInfo.addresses.source.nameRef = sourceRef;
 
-   writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+   scope.debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
 void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
@@ -1240,7 +1258,8 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings)
+void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, 
+   _Memory* strings, int sourcePathRef)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
@@ -1257,6 +1276,7 @@ void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Modul
 
       scope.debugStrings = &debugStringWriter;
       scope.debug = &debugWriter;
+      scope.defaultNameRef = sourcePathRef;
 
       // save symbol debug line info
       writeSymbolDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef));
@@ -1275,24 +1295,26 @@ void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings)
+void ByteCodeWriter :: save(CommandTape& tape, _Module* module, _Module* debugModule, 
+   _Memory* strings, int sourcePathRef)
 {
    ByteCodeIterator it = tape.start();
    while (!it.Eof()) {
       if (*it == blBegin) {
          ref_t reference = (*it).additional;
          if ((*it).Argument() == bsClass) {
-            writeClass(reference, ++it, module, debugModule, strings);
+            writeClass(reference, ++it, module, debugModule, strings, sourcePathRef);
          }
          else if ((*it).Argument() == bsSymbol) {
-            writeSymbol(reference, ++it, module, debugModule, strings);
+            writeSymbol(reference, ++it, module, debugModule, strings, sourcePathRef);
          }
       }
       it++;
    }
 }
 
-void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings)
+void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, 
+   _Memory* strings, int sourcePathRef)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskClassRef, false));
@@ -1326,6 +1348,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
 
       scope.debugStrings = &debugStringWriter;
       scope.debug = &debugWriter;
+      scope.defaultNameRef = sourcePathRef;
 
      // save class debug info
       writeClassDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef), info.header.flags);
@@ -1363,7 +1386,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 {
    if (*it == bdSourcePath) {
       if (scope.debug)
-         writeProcedureDebugInfo(scope.debug, scope.debugStrings, (ident_t)scope.codeStrings->get((*it).Argument()));
+         writeProcedureDebugInfo(scope, (ident_t)scope.codeStrings->get((*it).Argument()));
 
       it++;
    }
@@ -3950,6 +3973,9 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
             declareIdleMethod(tape, node.argument, sourcePathRef);
 
          generateCreating(tape, current);
+      }
+      else if (current == lxMessageVariable) {
+         declareMessageInfo(tape, current.argument);
       }
       else if (test(current.type, lxExpressionMask)) {
          if (!open) {

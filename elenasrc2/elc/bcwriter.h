@@ -25,12 +25,14 @@ class ByteCodeWriter
       MemoryWriter* code;
       MemoryWriter* debug;
       MemoryWriter* debugStrings;
+      int           defaultNameRef;
 
       Scope()
       {
          vmt = code = NULL;
          debug = debugStrings = NULL;
          codeStrings = NULL;
+         defaultNameRef = -1;
       }
    };
 
@@ -104,13 +106,13 @@ class ByteCodeWriter
    void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
    void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-   void writeProcedureDebugInfo(MemoryWriter* writer, MemoryWriter* debugStrings, ident_t path);
+   void writeProcedureDebugInfo(Scope& scope, ident_t path);
    void writeDebugInfoStopper(MemoryWriter* debug);
 
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
    void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings);
-   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
 
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
@@ -290,13 +292,13 @@ class ByteCodeWriter
    void importCode(CommandTape& tape, ImportScope& scope);
 
 public:
-   //ref_t writeSourcePath(_Module* debugModule, ident_t path);
+   ref_t writeSourcePath(_Module* debugModule, ident_t path);
 
    void generateClass(CommandTape& tape, SyntaxTree& tree);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic);
 
-   void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings);
+   void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
 
    int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
    {

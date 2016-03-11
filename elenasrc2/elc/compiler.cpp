@@ -232,6 +232,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    this->sourcePath = sourcePath;
    this->module = module;
    this->debugModule = debugModule;
+   this->sourcePathRef = -1;
 
    this->forwardsUnresolved = forwardsUnresolved;
 
@@ -1215,6 +1216,15 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
    : ClassScope(parent, reference)
 {
+   // HOT FIX : overwrite source path to provide explicit namespace
+   _Memory* strings = syntaxTree.Strings();
+   strings->trim(0);
+
+   MemoryWriter writer(strings);
+   writer.writeLiteral(parent->module->Name());
+   writer.seek(writer.Position() - 1);
+   writer.writeChar('\'');
+   writer.writeLiteral(parent->sourcePath);
 }
 
 ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
@@ -2948,7 +2958,7 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
       }
       else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
 
-      return compileMessage(node, scope, object, messageRef, 0);
+      return compileMessage(member, scope, object, messageRef, 0);
    }
    else {
       ObjectInfo currentObject = object;
@@ -4536,7 +4546,8 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
 
    // create byte code sections
-   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.syntaxTree.Strings());
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
+      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
@@ -4989,7 +5000,8 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
 
    // create byte code sections
    scope.save();
-   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.syntaxTree.Strings());
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
+      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
@@ -5419,7 +5431,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    optimizeTape(scope.tape);
 
    // create byte code sections
-   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, scope.syntaxTree.Strings());
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
+      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
 void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode)
@@ -6305,6 +6318,8 @@ bool Compiler :: run(Project& project)
          }
 
          ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
+         // HOTFIX : the module path should be presaved
+         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
          project.printInfo("%s", it.key());
 
