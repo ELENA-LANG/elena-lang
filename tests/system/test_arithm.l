@@ -6,11 +6,26 @@
 #import extensions.
 #import extensions'dynamic.
 
-#class MyClass
+#template(target:method) accessor
 {
-    #field(prop:X)x.
+   #method(stacksafe,type:int,embeddable,suppress:w3) get
+   [
+        #var(type:int)aLength.
+        $target eval &vint:aLength.
+        
+        ^ aLength.
+   ]
+}
+
+#class(sealed) MyClass
+{
+    #field(type:int,prop:X)x.
+    #field(type:int,prop:Y)y.
     
-    #field(prop:Y)y.
+    #method(stacksafe,accessor:Length) readLength &vint:aLength
+    [
+        aLength << -1.
+    ]
 }
 
 #symbol XTester =
@@ -20,7 +35,8 @@
         #var m := MyClass new.
         
         m X := 2.
-        m Y := 1.
+        
+        #var l := m Length.
     ]
 }.
         

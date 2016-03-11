@@ -476,6 +476,7 @@ namespace _ELENA_
    #define HINT_SUPPRESS_WARNINGS  "suppress"
    #define HINT_TARGET             "target"
    #define HINT_TARGET_FIELD       "field"
+   #define HINT_TARGET_METHOD      "method"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

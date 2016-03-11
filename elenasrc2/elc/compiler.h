@@ -200,7 +200,7 @@ public:
       ref_t subject;
       int   offset;
       ref_t templateRef;
-      ref_t type;
+      ref_t type;          // field template : the field type; method template : the target method signature
       int   size;
       ref_t targetRef;
 
@@ -756,7 +756,7 @@ private:
 
    void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
-   void importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
    void importNode(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
    void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
 

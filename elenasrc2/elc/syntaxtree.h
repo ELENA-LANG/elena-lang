@@ -68,6 +68,7 @@ enum LexicalType
    lxCreatingClass   = 0x00324, // arg - count
    lxCreatingStruct  = 0x00325, // arg - size
    lxExternFrame     = 0x00326,
+   lxTemplateCalling = 0x10327,
 
    lxBoolOp          = 0x00326, // arg - operation id
    lxNilOp           = 0x00327, // arg - operation id
@@ -158,6 +159,7 @@ enum LexicalType
    lxWarningMask     = 0x04009,
 
    lxFieldTemplate   = 0x2400A,
+   lxMethodTemplate  = 0x2400B,
 };
 
 // --- SyntaxTree ---

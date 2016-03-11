@@ -1779,6 +1779,9 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
          if (StringHelper::compare(target.value, HINT_TARGET_FIELD)) {
             templateType = lxFieldTemplate;
          }
+         else if (StringHelper::compare(target.value, HINT_TARGET_METHOD)) {
+            templateType = lxMethodTemplate;
+         }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
@@ -1874,7 +1877,43 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
          // HOTFIX : ignore for the first pass
          // should be recognized on the second pass
       }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      else {
+         ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
+         _Module* extModule;
+         _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, extModule);
+         if (section != NULL) {
+            SyntaxTree tree(section);
+            SNode node = tree.readRoot();
+            if (node == lxMethodTemplate) {
+               // validate if the template can be applied
+               ref_t targetMessage = importMessage(extModule, SyntaxTree::findChild(node, lxMessage).argument, scope.moduleScope->module);
+
+               bool invalid = true;
+               if (getParamCount(scope.message) == getParamCount(targetMessage) && getVerb(scope.message) == getVerb(targetMessage)) {
+                  ident_t sourSign = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
+                  ident_t targetSign = scope.moduleScope->module->resolveSubject(getSignature(targetMessage));
+
+                  int sourLen = getlength(sourSign);
+                  int targetLen = getlength(targetSign);
+
+                  if (sourLen >= targetLen && StringHelper::compare(targetSign, sourSign + sourLen - targetLen))
+                     invalid = false;
+               }
+
+               if (!invalid) {
+                  writer.newNode(lxMethodTemplate, templateRef);
+
+                  TerminalInfo typeTerminal = hints.firstChild().Terminal();
+                  writer.appendNode(lxSubject, scope.moduleScope->mapSubject(typeTerminal));
+
+                  writer.closeNode();
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      }
 
       hints = hints.nextNode();
    }
@@ -4706,27 +4745,31 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    }
 }
 
-void Compiler :: declareImportedTemplate(ClassScope& scope, SNode node, int fieldOffset, ref_t fieldType, int size)
+void Compiler :: declareImportedTemplate(ClassScope& scope, SNode node, int offset, ref_t type, int size)
 {
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(node.argument, extModule));
 
    ref_t subject = SyntaxTree::findChild(node, lxSubject).argument;
-   ref_t targetRef = fieldType != 0 ? scope.moduleScope->typeHints.get(fieldType) : 0;
-
-   scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, fieldOffset, fieldType, size, targetRef, node.argument));
 
    SNode current = tree.readRoot();
    if (current == lxFieldTemplate) {
-      current = current.firstChild();
-      while (current != lxNone) {
-         if (current == lxClassMethod) {
-            ref_t message = overwriteSubject(current.argument, subject);
-            scope.include(message);
-         }
+      ref_t targetRef = type != 0 ? scope.moduleScope->typeHints.get(type) : 0;
 
-         current = current.nextNode();
+      scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, offset, type, size, targetRef, node.argument));
+   }
+   else if (current == lxMethodTemplate) {
+      scope.moduleScope->importedTemplates.add(scope.reference, TemplateInfo(subject, offset, type, size, 0, node.argument));
+   }
+
+   current = current.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         ref_t message = overwriteSubject(current.argument, subject);
+         scope.include(message);
       }
+
+      current = current.nextNode();
    }
 }
 
@@ -4845,6 +4888,9 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node)
             scope.info.methodHints.add(Attribute(node.argument, current.argument), getSignature(mssgAttr.argument));
          }         
       }
+      else if (current == lxMethodTemplate) {
+         declareImportedTemplate(scope, current, 0, getSignature(node.argument), 0);
+      }
       current = current.nextNode();
    }
 
@@ -4937,6 +4983,9 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
    writer.closeNode();
 
+   // validate template
+
+
    // update template tree
    if (templateType != lxNone) {
       scope.syntaxTree.readRoot() = templateType;
@@ -5016,6 +5065,12 @@ void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Mod
          writer.appendNode(lxType, info.targetRef);
 
    }
+   else if (current.type == lxTemplateCalling) {
+      writer.newNode(lxCalling, overwriteSubject(current.argument, info.type));
+
+      if (info.targetRef != 0)
+         writer.appendNode(lxTarget, info.targetRef);
+   }
    else if (current.type == lxTemplAssigning) {
       // HOT FIX : add a typecasting for field assigning if it is required
       writer.newNode(lxAssigning, info.size);
@@ -5074,7 +5129,7 @@ void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Mo
    }
 }
 
-void Compiler :: importFieldTemplate(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule)
+void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -5116,7 +5171,10 @@ void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, Templat
 
    SNode root = tree.readRoot();
    if (root == lxFieldTemplate) {
-      importFieldTemplate(scope, writer, root, templateInfo, extModule);
+      importTemplateTree(scope, writer, root, templateInfo, extModule);
+   }
+   else if (root == lxMethodTemplate) {
+      importTemplateTree(scope, writer, root, templateInfo, extModule);
    }
 }
 
