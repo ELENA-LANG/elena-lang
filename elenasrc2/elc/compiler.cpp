@@ -1216,6 +1216,8 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
 Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
    : ClassScope(parent, reference)
 {
+   templateType = lxNone;
+
    // HOT FIX : overwrite source path to provide explicit namespace
    _Memory* strings = syntaxTree.Strings();
    strings->trim(0);
@@ -1230,7 +1232,10 @@ Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
 ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
 {
    if (StringHelper::compare(identifier, TARGET_VAR)) {
-      return ObjectInfo(okTemplateField);
+      if (templateType == lxFieldTemplate) {
+         return ObjectInfo(okTemplateField);
+      }
+      else return ObjectInfo(okTemplateTarget, 1);
    }
    else return ClassScope::mapObject(identifier);
 }
@@ -1768,7 +1773,7 @@ void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope&
    }
 }
 
-void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope, LexicalType& templateType)
+void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope)
 {
    // define class flags
    while (hints == nsHint) {
@@ -1777,10 +1782,10 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
       if (StringHelper::compare(terminal, HINT_TARGET)) {
          TerminalInfo target = hints.select(nsHintValue).Terminal();
          if (StringHelper::compare(target.value, HINT_TARGET_FIELD)) {
-            templateType = lxFieldTemplate;
+            scope.templateType = lxFieldTemplate;
          }
          else if (StringHelper::compare(target.value, HINT_TARGET_METHOD)) {
-            templateType = lxMethodTemplate;
+            scope.templateType = lxMethodTemplate;
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
@@ -2139,6 +2144,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLocal:
       case okParam:
       case okThisParam:
+      case okTemplateTarget:
          scope.writer->newNode(object.extraparam == -1 ? lxBoxableLocal : lxLocal, object.param);
          break;
       case okSuper:
@@ -2808,6 +2814,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    ref_t classReference = resolveObjectReference(scope, target);
    bool classFound = false;
    bool dispatchCall = false;
+   bool templateCall = false;
    int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
    int callType = methodHint & tpMask;
 
@@ -2826,6 +2833,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    else if (target.kind == okSuper) {
       // parent methods are always sealed
       callType = tpSealed;
+   }
+   else if (target.kind == okTemplateTarget) {
+      templateCall = true;
    }
 
    if (dispatchCall) {
@@ -2850,6 +2860,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
          scope.writer->appendNode(lxStacksafe);
       if (test(methodHint, tpEmbeddable))
          scope.writer->appendNode(lxEmbeddable);
+   }
+   else if (templateCall) {
+      scope.writer->insert(lxTemplateCalling, messageRef);
    }
    else {
       scope.writer->insert(lxCalling, messageRef);
@@ -4970,13 +4983,32 @@ void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
    else scope.info.header.flags &= ~elStateless;
 }
 
+bool Compiler :: validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplateCalling) {
+         if (targetMethod == 0) {
+            targetMethod = current.argument;
+         }
+         else if (targetMethod != current.argument)
+            return false;
+      }
+
+      if (!validateMethodTemplate(current, targetMethod))
+         return false;
+
+      current = current.nextNode();
+   }
+   return true;
+}
+
 void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints)
 {
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
-   LexicalType templateType = lxNone;
-   compileTemplateHints(hints, writer, scope, templateType);
+   compileTemplateHints(hints, writer, scope);
 
    DNode member = node.firstChild();
    compileVMT(member, writer, scope);
@@ -4984,11 +5016,17 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    writer.closeNode();
 
    // validate template
-
+   if (scope.templateType == lxMethodTemplate) {
+      ref_t targetMessage = 0;
+      if (validateMethodTemplate(scope.syntaxTree.readRoot(), targetMessage)) {
+         scope.syntaxTree.readRoot().insertNode(lxMessage, targetMessage);
+      }
+      else scope.raiseError(errInvalidSyntax, node.FirstTerminal());
+   }
 
    // update template tree
-   if (templateType != lxNone) {
-      scope.syntaxTree.readRoot() = templateType;
+   if (scope.templateType != lxNone) {
+      scope.syntaxTree.readRoot() = scope.templateType;
    }
    else scope.raiseError(errInvalidSyntax, node.FirstTerminal());
 

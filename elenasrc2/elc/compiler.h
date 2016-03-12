@@ -139,6 +139,7 @@ public:
       okConstantRole,                 // param - role reference
    
       okTemplateField,
+      okTemplateTarget,
 
       okExternal,
       okInternal,
@@ -684,6 +685,8 @@ private:
    // --- TemplateScope ---
    struct TemplateScope : public ClassScope
    {
+      LexicalType templateType;
+
       TemplateScope(ModuleScope* parent, ref_t reference);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -749,7 +752,7 @@ private:
    void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType);
-   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope, LexicalType& templateType);
+   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
@@ -759,6 +762,7 @@ private:
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
    void importNode(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
    void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
+   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
