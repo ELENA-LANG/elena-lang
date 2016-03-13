@@ -2,10 +2,8 @@
 In development:
 ------                      
               xdev - generic development
-                       * #54 : implementing generics / templates : method
-                       * verify if methods can be added for sealed, limited, method duplications
-
                        * #54 : implementing generics / templates : class
+                       * verify if methods can be added for sealed, limited, method duplications                       
                        * #190 : Closure : auto boxing / unboxing local variables  
                        * #215 : Operations with structure fields
                        * #223 : exiting the lock / extern statement 

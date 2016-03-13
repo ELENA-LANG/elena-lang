@@ -6,23 +6,13 @@
 #import extensions.
 #import extensions'dynamic.
 
-#template(target:method) accessor
-{
-   #method(stacksafe,type:int,embeddable,suppress:w3) get
-   [
-        #var(type:int)aLength.
-        $target eval &vint:aLength.
-        
-        ^ aLength.
-   ]
-}
-
+#subject(class:MyClass)my_class.
 #class(sealed) MyClass
 {
     #field(type:int,prop:X)x.
     #field(type:int,prop:Y)y.
     
-    #method(stacksafe,accessor:Length) readLength &vint:aLength
+    #method(stacksafe,vrnprop:Length) readLength &vint:aLength
     [
         aLength << -1.
     ]
@@ -32,11 +22,12 @@
 {
     test
     [
-        #var m := MyClass new.
+        #var(type:my_class) m := MyClass new.
         
-        m X := 2.
-        
-        #var l := m Length.
+//        m X := 2.
+//        
+//        #var l := m Length.
+        #var(type:int) l2 := m Length.
     ]
 }.
         

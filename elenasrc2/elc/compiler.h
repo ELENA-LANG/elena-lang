@@ -754,14 +754,14 @@ private:
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType);
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
-   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope);
+   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
 
    void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
-   void importNode(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
-   void importTree(SyntaxTree::Node node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info);
+   void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+   void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
    bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
@@ -851,11 +851,11 @@ private:
    void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
    void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
 
-   void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope);
+   void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
-   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node);
+   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
    void generateClassDeclaration(ClassScope& scope, bool closed);
    void generateInlineClassDeclaration(ClassScope& scope, bool closed);

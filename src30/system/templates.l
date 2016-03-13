@@ -9,3 +9,14 @@
     
     #method get = $target.
 }
+
+#template(target:method) vrnprop
+{
+   #method(stacksafe,type:int,embeddable,suppress:w3) get
+   [
+        #var(type:int)aLength.
+        $target eval &vint:aLength.
+        
+        ^ aLength.
+   ]
+}

@@ -1847,11 +1847,25 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
    }
 }
 
-void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope)
+void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly)
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
-      if (StringHelper::compare(terminal, HINT_GENERIC)) {
+      if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo level = value.Terminal();
+         if (StringHelper::compare(level, "w2")) {
+            writer.appendNode(lxWarningMask, WARNING_MASK_1);
+         }
+         else if (StringHelper::compare(level, "w3")) {
+            writer.appendNode(lxWarningMask, WARNING_MASK_2);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+      }
+      else if (warningsOnly) {
+
+      }
+      else if (StringHelper::compare(terminal, HINT_GENERIC)) {
          scope.generic = true;         
 
          writer.appendNode(lxClassMethodAttr, tpGeneric);
@@ -1877,10 +1891,6 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       }
       else if (StringHelper::compare(terminal, HINT_SEALED)) {
          writer.appendNode(lxClassMethodAttr, tpSealed);
-      }
-      else if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
-         // HOTFIX : ignore for the first pass
-         // should be recognized on the second pass
       }
       else {
          ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
@@ -4064,7 +4074,7 @@ void Compiler :: compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope
 
    CommandTape* tape = scope.tape;
 
-   writer.newNode(lxClassMethod, scope.message);
+   writer.insert(lxClassMethod, scope.message);
    writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (isImportRedirect(node)) {
@@ -4289,7 +4299,7 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
 
    CommandTape* tape = scope.tape;
 
-   writer.newNode(lxClassMethod, scope.message);
+   writer.insert(lxClassMethod, scope.message);
    writer.appendNode(lxSourcePath);  // the source path is first string
 
    DNode resendBody = node.select(nsResendExpression);
@@ -4363,7 +4373,9 @@ void Compiler :: compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, 
    // HOTFIX: embedded constructor is declared in class class but should be executed if the class scope
    scope.tape = &classClassScope.tape;
    scope.message = embedddedMethodRef;
+   writer.newBookmark();
    compileMethod(node, writer, scope);
+   writer.removeBookmark();
 
    // compile a constructor calling the embedded method
    scope.message = originalMethodRef;
@@ -4503,16 +4515,18 @@ void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWrit
    writer.closeNode();
 }
 
-void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope)
+void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
+
+      writer.newBookmark();
 
       switch(member) {
          case nsMethod:
          {
             MethodScope methodScope(&scope);
-            compileWarningHints(*scope.moduleScope, hints, writer);
+            compileMethodHints(hints, writer, methodScope, warningsOnly);
 
             // if it is a dispatch handler
             if (member.firstChild() == nsDispatchHandler) {
@@ -4552,6 +4566,8 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
             break;
          }
       }
+      writer.removeBookmark();
+
       member = member.nextNode();
    }
 
@@ -4560,7 +4576,9 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
       MethodScope methodScope(&scope);
       methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 
+      writer.newBookmark();
       compileDispatcher(DNode(), writer, methodScope, true);
+      writer.removeBookmark();
    }
 }
 
@@ -4709,7 +4727,7 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          writer.newNode(lxClassMethod, methodScope.message);
          appendTerminalInfo(&writer, member.Terminal());
 
-         compileMethodHints(hints, writer, methodScope);
+         compileMethodHints(hints, writer, methodScope, false);
 
          // if the constructor is embeddable
          // method hint should be added
@@ -4779,6 +4797,9 @@ void Compiler :: declareImportedTemplate(ClassScope& scope, SNode node, int offs
    while (current != lxNone) {
       if (current == lxClassMethod) {
          ref_t message = overwriteSubject(current.argument, subject);
+         
+         generateMethodHints(scope, current, message);
+
          scope.include(message);
       }
 
@@ -4879,11 +4900,11 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
    }
 }
 
-void Compiler :: generateMethodHints(ClassScope& scope, SNode node)
+void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t message)
 {
    ref_t outputType = 0;
    bool hintChanged = false;
-   int hint = scope.info.methodHints.get(Attribute(node.argument, maHint));
+   int hint = scope.info.methodHints.get(Attribute(message, maHint));
 
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -4898,23 +4919,23 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node)
       else if (current == lxClassMethodOpt) {
          SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
          if (mssgAttr != lxNone) {
-            scope.info.methodHints.add(Attribute(node.argument, current.argument), getSignature(mssgAttr.argument));
+            scope.info.methodHints.add(Attribute(message, current.argument), getSignature(mssgAttr.argument));
          }         
       }
       else if (current == lxMethodTemplate) {
-         declareImportedTemplate(scope, current, 0, getSignature(node.argument), 0);
+         declareImportedTemplate(scope, current, 0, getSignature(message), 0);
       }
       current = current.nextNode();
    }
 
    if (outputType != 0) {
-      scope.info.methodHints.exclude(Attribute(node.argument, maType));
-      scope.info.methodHints.add(Attribute(node.argument, maType), outputType);
+      scope.info.methodHints.exclude(Attribute(message, maType));
+      scope.info.methodHints.add(Attribute(message, maType), outputType);
    }
 
    if (hintChanged) {
-      scope.info.methodHints.exclude(Attribute(node.argument, maHint));
-      scope.info.methodHints.add(Attribute(node.argument, maHint), hint);
+      scope.info.methodHints.exclude(Attribute(message, maHint));
+      scope.info.methodHints.add(Attribute(message, maHint), hint);
    }
 }
 
@@ -4923,7 +4944,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         generateMethodHints(scope, current);
+         generateMethodHints(scope, current, current.argument);
 
          int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint));
 
@@ -5011,7 +5032,7 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    compileTemplateHints(hints, writer, scope);
 
    DNode member = node.firstChild();
-   compileVMT(member, writer, scope);
+   compileVMT(member, writer, scope, false);
 
    writer.closeNode();
 
@@ -5091,7 +5112,7 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
+void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
 {
    if (current.type == lxTemplateField) {
       writer.newNode(info.size != 0? lxFieldAddress : lxField, info.offset);
@@ -5104,10 +5125,21 @@ void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Mod
 
    }
    else if (current.type == lxTemplateCalling) {
-      writer.newNode(lxCalling, overwriteSubject(current.argument, info.type));
+      ref_t message = overwriteSubject(current.argument, info.type);
+      if (test(scope.info.header.flags, elSealed)) {
+         writer.newNode(lxDirectCalling, message);
+      }
+      else if (test(scope.info.header.flags, elClosed)) {
+         writer.newNode(lxSDirctCalling, message);
+      }
+      else writer.newNode(lxCalling, message);
 
-      if (info.targetRef != 0)
-         writer.appendNode(lxTarget, info.targetRef);
+      writer.appendNode(lxCallTarget, scope.reference);
+
+      int methodHint = scope.info.methodHints.get(Attribute(message, maHint));
+
+      if (test(methodHint, tpStackSafe))
+         writer.appendNode(lxStacksafe);
    }
    else if (current.type == lxTemplAssigning) {
       // HOT FIX : add a typecasting for field assigning if it is required
@@ -5120,10 +5152,10 @@ void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Mod
       while (subNode != lxNone) {
          if (info.type != 0 && subNode != lxTemplateField && test(subNode.type, lxObjectMask)) {
             writer.newNode(lxTypecasting, encodeMessage(info.type, GET_MESSAGE_ID, 0));
-            importNode(subNode, writer, sour, dest, info);
+            importNode(scope, subNode, writer, templateModule, info);
             writer.closeNode();
          }
-         else importNode(subNode, writer, sour, dest, info);
+         else importNode(scope, subNode, writer, templateModule, info);
 
          subNode = subNode.nextNode();
       }
@@ -5142,26 +5174,26 @@ void Compiler :: importNode(SyntaxTree::Node current, SyntaxWriter& writer, _Mod
       return;
    }
    else if (test(current.type, lxMessageMask)) {
-      writer.newNode(current.type, importMessage(sour, current.argument, dest));
+      writer.newNode(current.type, importMessage(templateModule, current.argument, scope.moduleScope->module));
    }
    else if (test(current.type, lxReferenceMask)) {
-      writer.newNode(current.type, importReference(sour, current.argument, dest));
+      writer.newNode(current.type, importReference(templateModule, current.argument, scope.moduleScope->module));
    }
    else if (test(current.type, lxSubjectMask)) {
-      writer.newNode(current.type, importSubject(sour, current.argument, dest));
+      writer.newNode(current.type, importSubject(templateModule, current.argument, scope.moduleScope->module));
    }
    else writer.newNode(current.type, current.argument);
 
-   importTree(current, writer, sour, dest, info);
+   importTree(scope, current, writer, templateModule, info);
 
    writer.closeNode();
 }
 
-void Compiler :: importTree(SNode node, SyntaxWriter& writer, _Module* sour, _Module* dest, TemplateInfo& info)
+void Compiler :: importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      importNode(current, writer, sour, dest, info);
+      importNode(scope, current, writer, templateModule, info);
 
       current = current.nextNode();
    }
@@ -5193,7 +5225,7 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
             scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
          }
 
-         importTree(current, writer, templateModule, scope.moduleScope->module, info);
+         importTree(scope, current, writer, templateModule, info);
 
          writer.closeNode();
       }
@@ -5730,26 +5762,6 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    }
 }
 
-void Compiler :: compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer)
-{
-   while (hints == nsHint) {
-      TerminalInfo terminal = hints.Terminal();
-      if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
-         DNode value = hints.select(nsHintValue);
-         TerminalInfo level = value.Terminal();
-         if (StringHelper::compare(level, "w2")) {
-            writer.appendNode(lxWarningMask, WARNING_MASK_1);
-         }
-         else if (StringHelper::compare(level, "w3")) {
-            writer.appendNode(lxWarningMask, WARNING_MASK_2);
-         }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      }
-
-      hints = hints.nextNode();
-   }
-}
-
 void Compiler :: analizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
 {
    if (test(warningLevel, WARNING_LEVEL_3)) {
@@ -6056,11 +6068,10 @@ void Compiler :: analizeSymbolTree(SourceScope& scope)
 bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SNode root, ref_t returningType, ref_t& subject)
 {
    if (returningType != 0 && scope.defineTypeSize(returningType) > 0) {
-      if (root.firstChild() == lxNewFrame)
-         root = root.firstChild();
+      root = SyntaxTree::findChild(root, lxNewFrame);
 
       if (tree.matchPattern(root, lxObjectMask, 2,
-            SNodePattern(lxExpression), 
+            SNodePattern(lxExpression),
             SNodePattern(lxReturning))) 
       {
          SNode message = tree.findPattern(root, 2,
