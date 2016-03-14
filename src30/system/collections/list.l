@@ -355,8 +355,18 @@
     ]
     
     /// Creates the list
-    #constructor new : aCapacity
-        <= new &int:(aCapacity int).
+    #constructor new : param
+        <= (new &int:(param cast:%eval &to:
+                        { 
+                            int : n = n. 
+                            
+                            array : a = a length.
+                            
+                            ! : n = 32. 
+                        }))
+    [
+        $self append &array:(param cast:%eval &to:{ array : a = a. ! : o = $nil. }).
+    ]
     
     #constructor new &int:aCapacity
     [
@@ -421,8 +431,22 @@
         ].
     ]
     
+    #method append &array:subarray
+    [
+        ($nil != subarray) ?
+        [
+            #var(type:int)len := subarray length.
+            #var(type:int)i := 0.
+            #loop (i < len)?
+            [
+                $self append &object:(subarray@i).
+                i := i + 1.
+            ].
+        ].        
+    ]
+        
     /// Appends a new object to the end of the list
-    #method append : anObject
+    #method append &object:anObject
     [
         $self $expand.
         
@@ -430,6 +454,9 @@
         
         theLength += 1.
     ]
+    
+    #method append : object
+        <= append &object:object.
     
     /// Inserts a new object to the specified position
     #method insert &int:anIndex &object:anObject
@@ -469,6 +496,8 @@
         #loop (i < theLength)?
         [
             theArray setAt &int:i &object:(theArray getAt &int:(i + 1)).
+            
+            i := i + 1.
         ].
     ]
         

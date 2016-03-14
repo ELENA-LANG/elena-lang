@@ -70,15 +70,15 @@ enum LexicalType
    lxExternFrame     = 0x00326,
    lxTemplateCalling = 0x10327,
 
-   lxBoolOp          = 0x00326, // arg - operation id
-   lxNilOp           = 0x00327, // arg - operation id
-   lxIntOp           = 0x01328, // arg - operation id
-   lxLongOp          = 0x01329, // arg - operation id
-   lxRealOp          = 0x0132A, // arg - operation id
-   lxIntArrOp        = 0x0132B, // arg - operation id
-   lxArrOp           = 0x0132C, // arg - operation id
+   lxBoolOp          = 0x00328, // arg - operation id
+   lxNilOp           = 0x00329, // arg - operation id
+   lxIntOp           = 0x0132A, // arg - operation id
+   lxLongOp          = 0x0132B, // arg - operation id
+   lxRealOp          = 0x0132C, // arg - operation id
+   lxIntArrOp        = 0x0132D, // arg - operation id
+   lxArrOp           = 0x0132E, // arg - operation id
 
-   lxTemplAssigning  = 0x0032D, // arg - size
+   lxTemplAssigning  = 0x0032F, // arg - size
 
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count

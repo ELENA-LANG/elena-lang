@@ -859,6 +859,24 @@ bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t rol
    else return false;
 }
 
+ref_t Compiler::ModuleScope :: defineType(ref_t classRef)
+{
+   while (classRef != 0) {
+      ref_t type = retrieveKey(typeHints.start(), classRef, 0);
+
+      if (type != 0)
+         return type;
+
+      ClassInfo sourceInfo;
+      if (loadClassInfo(sourceInfo, module->resolveReference(classRef), true) == 0)
+         break;
+
+      classRef = sourceInfo.header.parentRef;
+   }
+
+   return 0;
+}
+
 bool Compiler::ModuleScope :: checkIfCompatible(ref_t typeRef, ref_t classRef)
 {
    ClassInfo sourceInfo;
@@ -3277,7 +3295,7 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
       ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
 
       // if it is a stateless class
-      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference, scope.moduleScope->defineType(scope.reference));
    }
    else {
       // dynamic binary symbol
@@ -3312,7 +3330,7 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
 
       ownerScope.writer->closeNode();
 
-      return ObjectInfo(okObject, scope.reference);
+      return ObjectInfo(okObject, scope.reference, 0, scope.moduleScope->defineType(scope.reference));
    }
 }
 

@@ -84,3 +84,11 @@
 // --- printingLn ---
 
 #symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+
+// --- func1Op ---
+
+#class(extension:func1)func1Op
+{
+    #method asComparer
+        = { equal : object = self eval:object. }.
+}

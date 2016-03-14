@@ -65,8 +65,6 @@ In development:
                        * implement basic parsing : only classes                       
 
               sdev - samples
-                       * rosetta sample : Short-circuit evaluation
-                       * rosetta sample : ABC_Problem
                        * rosetta sample : Deepcopy
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game

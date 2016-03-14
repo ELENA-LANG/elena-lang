@@ -379,6 +379,7 @@ private:
       int getClassFlags(ref_t reference);
 
       bool checkIfCompatible(ref_t typeRef, ref_t classRef);
+      ref_t defineType(ref_t classRef);
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
