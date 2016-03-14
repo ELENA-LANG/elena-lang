@@ -585,6 +585,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, _ELENA_::TextWriter& writer, si
             writer.fillText(_T(" "), 1, disp + diff);
             diff = 0;
             col += disp;
+            i++;
          }
          else {
             int chLen = TextBookmark::charLength(line, i);
@@ -642,6 +643,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, _ELENA_::TextWriter& writer, siz
             writer.fillText(_T(" "), 1, disp + diff);
             diff = 0;
             col += disp;
+            i++;
          }
          else {
             int chLen = TextBookmark::charLength(line, i);
