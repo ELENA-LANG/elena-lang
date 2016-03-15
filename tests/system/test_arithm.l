@@ -785,4 +785,6 @@
     #var dto := DTO{ X = 2. Y = "Value". }.
     
     #var(type:literal)json := dto toJson literal.
+    
+    #var ori := json fromJson.
 ].

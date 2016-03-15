@@ -110,7 +110,10 @@
         theListenSocket listen &int:SOMAXCONN.
     ]
 
-    #method connections = theClients.
+    #method run &eachConnection:func1
+    [
+        theClients run &each:func1.
+    ]
 
     #method set &blocking:aValue
     [

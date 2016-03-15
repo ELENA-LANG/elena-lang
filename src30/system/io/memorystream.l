@@ -94,7 +94,7 @@
         
         theBuffer move &int:(anIndex + aLength) &int:l &int:n.
         
-        theUsed -= aLength.
+        theUsed := theUsed - aLength.
     ]
     
     #method(stacksafe)readLength &vint:retVal

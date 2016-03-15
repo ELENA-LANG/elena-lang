@@ -2,21 +2,25 @@
 In development:
 ------                      
               xdev - generic development
+                       * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be as light as
+
                        * #54 : implementing generics / templates : class
                        * verify if methods can be added for sealed, limited, method duplications                       
                        * #190 : Closure : auto boxing / unboxing local variables  
                        * #215 : Operations with structure fields
-                       * #223 : exiting the lock / extern statement 
+                         possible, no exception boxing
                        * review source code to use templates
                        * review try-catch statement, make sure the closure is created only in case of the error
                        * breaking int loop method (both #loop and pattern code), exiting closure (different behaviour between
                          explicit and pseudo closures (? operator))
                        
               xdev - general implementation     
+                       * chatserver : #var(type:int)len := theBuffer length. - embeddable get should be used
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
                        * optimize thread_wait
                        * test if embeddable constructor works
+                       * test raising exception inside lock statement
 
                        * review pi performance
                        * review warnings
@@ -65,10 +69,9 @@ In development:
                        * implement basic parsing : only classes                       
 
               sdev - samples
-                       * rosetta sample : Deepcopy
+                       * rosetta sample : 9 bil names
                        * rosetta sample : Ethiopian multiplication
                        * rosetta sample : Flipping bits game
-                       * rosetta sample : 9 bil names
                        * rosetta sample : Longest string challenge
                        * rosetta sample : Magic squares of odd order
                        * rosetta sample : Morse code
@@ -76,7 +79,6 @@ In development:
                        * rosetta sample : Object serialization
                        * rosetta sample : Pascal's triangle
                        * rosetta sample : Pig the dice game
-                       * rosetta sample : Program name
                        * rosetta sample : Program termination
                        * rosetta sample : Tree traversal                       
                        * rosetta sample : Stack traces
@@ -96,12 +98,13 @@ In development:
                        * rosetta sample : XML/DOM serialization
                        * rosetta sample : XML/Input
                        * rosetta sample : XML/Output
-                       * rosetta sample : XML/XPath
+                       * rosetta sample : XML/XPath x
                        * rosetta sample : Yin and yang
                        * rosetta sample : Zig-zag matrix
                        * rosetta sample : Zebra puzzle
                        * rosetta sample : Zeckendorf arithmetic
-
+                       * rosetta sample : Deepcopy 
+                       
                        * refactor cpu_sim : assembler
 
               sdev - rosetta code samples

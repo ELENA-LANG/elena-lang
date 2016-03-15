@@ -3634,7 +3634,15 @@ void Compiler :: compileLock(DNode node, CodeScope& scope)
    scope.writer->newNode(lxBody);
 
    // implement critical section
-   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+   CodeScope subScope(&scope);
+   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
+
+   compileCode(goToSymbol(node.firstChild(), nsSubCode), subScope);
+
+   // HOT FIX : clear the sub block local variables
+   if (subScope.level - 4 > scope.level) {
+      scope.writer->appendNode(lxReleasing, subScope.level - scope.level - 4);
+   }
 
    scope.writer->closeNode();
    scope.writer->closeNode();

@@ -4486,7 +4486,7 @@ procedure s_copybuf
   nload
   aloadsi 4
   
-  callextr api : insert
+  callextr api : subcopy
   
   acopyb
   quitn 4
@@ -4509,7 +4509,7 @@ procedure ws_copybuf
   nload
   aloadsi 4
   
-  callextr api : winsert
+  callextr api : wsubcopy
   
   acopyb
   quitn 4

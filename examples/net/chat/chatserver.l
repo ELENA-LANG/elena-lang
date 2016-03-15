@@ -4,6 +4,7 @@
 #import system'io.
 #import system'threading.
 #import extensions.
+#import extensions'dynamic.
 #import net.
 
 #subject(class:ChatMember)chatter.
@@ -12,6 +13,8 @@
 {
     #field(type:membuffer)theBuffer.
     #field(type:tcp_remoteclient) theOwner.
+
+    #field(prop:Name) theName.
 
     #constructor new : owner
     [
@@ -33,13 +36,15 @@
             #var(type:int)package_len.
             theBuffer read &int:0 &vint:package_len.
             
-            (package_len + 4 < len)?
+            (package_len + 4 <= len)?
             [
                 #var literal := UTF8Encoding toLiteral &int:4 &int:package_len &bytearray:(theBuffer bytearray).
                 
-                theBuffer delete &int:0 &int:(package_len).
+                #var llen := literal length.
                 
-                ^ literal toJson.
+                theBuffer delete &int:0 &int:(package_len + 4).
+                
+                ^ literal fromJson.
             ].
         ].
         
@@ -67,21 +72,25 @@
     
     #method proceed
     [
-        theNetworkServer connections run &each:client
+        theNetworkServer run &eachConnection:client
         [
             #lock (theLock)
             [
-                #var command := client Parameter readCommand.
-                ($nil != command)
-                    ? [
-                        (command Command) =>
-                            INTRODUCTION ? 
-                            [
-                                client Parameter set &Name:(command Value).
-                                
-                                console writeLine:"command Value":" joined".
-                            ].
-                    ].                
+                #var member := client Parameter.
+                ($nil != member)? 
+                [
+                    #var command := member readCommand.
+                    ($nil != command)
+                        ? [
+                            (command Command) =>
+                                INTRODUCTION ? 
+                                [
+                                    member set &Name:(command Value).
+                                    
+                                    console writeLine:(command Value):" joined".
+                                ].
+                        ].                
+                ].
             ].
         ].        
         
@@ -94,19 +103,28 @@
         {
             onConnect:client
             [
-                console writeLine:"new client joint".
+                #lock (theLock)
+                [
+                    console writeLine:"new client joint".
                 
-                client set &Parameter:(ChatMember new:client).
+                    client set &Parameter:(ChatMember new:client).
+                ].                    
             ]
             
             onLeave:client
             [
-                console writeLine:"client left".
+                #lock (theLock)
+                [
+                    console writeLine:"client left".
+                ].
             ]
             
             onError:e &for:client
             [
-                console writeLine:"exception #":(e error_code).
+                #lock (theLock)
+                [
+                    console writeLine:"exception #":(e error_code).
+                ].
             ]
             
             onReceived:client &bytearray:buffer &int:length 
