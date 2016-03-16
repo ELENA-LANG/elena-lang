@@ -25,7 +25,7 @@ namespace _ELENA_
    #define MESSAGE_MASK            0x80000000
    #define OPEN_ARG_COUNT          0x0C
 
-   #define DISPATCH_MESSAGE_ID     0x0001
+   #define DISPATCH_MESSAGE_ID     0x0001             // NOTE : verb id should not be bigger than 0xE0 due to message constant implementation
    #define NEWOBJECT_MESSAGE_ID    0x0003
 
    #define NEW_MESSAGE_ID          0x0004
@@ -94,7 +94,7 @@ namespace _ELENA_
    #define CREATE_MESSAGE_ID       0x003F
    #define IS_MESSAGE_ID           0x0040
    #define ROLLBACK_MESSAGE_ID     0x0041
-   #define REPLACE_MESSAGE_ID      0x0043
+   #define REPLACE_MESSAGE_ID      0x0043          
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask

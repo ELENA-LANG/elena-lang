@@ -2,8 +2,34 @@
 In development:
 ------                      
               xdev - generic development
-                       * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be as light as
+                       * messages, signatures - redesign literal constant type
 
+                         %(getAt&args)(1)
+
+                         %"getAt&args[1]"
+
+                         so extension
+
+                         %(mathOp get&arccos)(0)
+
+                         %"mathOp.get&argcos"
+                         %"x&y"
+                         %x
+
+                         %"get&writeLine"
+
+
+                       * extension message
+                       * special verb to work with open argument list
+                       * extension message can be used to work with the tape
+                       * test StructTest
+                       * DTOToStructTest
+
+                       * #23, #126 : Strong types : dynamic / constant messages, signatures cannot have strong types (symbol $ should be illegal)
+                       * #63 : Tape implementation
+
+                       * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
+                         as light as possible
                        * #54 : implementing generics / templates : class
                        * verify if methods can be added for sealed, limited, method duplications                       
                        * #190 : Closure : auto boxing / unboxing local variables  

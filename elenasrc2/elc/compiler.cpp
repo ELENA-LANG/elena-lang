@@ -2361,103 +2361,104 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
 {
    DNode arg = node.firstChild();
 
-   IdentifierString message;
-
-   // if it is an extension message
-   bool extensionMessage = false;
-   if (arg.nextNode() == nsExtensionReference) {
-      ref_t extensionRef = scope.moduleScope->mapTerminal(arg.Terminal(), true);
-      if (extensionRef == 0)
-         scope.raiseError(errUnknownClass, arg.Terminal());
-
-      message.copy(scope.moduleScope->module->resolveReference(extensionRef));
-      message.append('.');
-
-      extensionMessage = true;
-   }
-
-   // reserve place for param counter
-   int start = message.Length();
-   message.append('0');
-   message.append('#');
-
-   ObjectInfo retVal;
-   if (arg == nsNone) {
-      ref_t verb_id = _verbs.get(node.Terminal().value);
-      if (verb_id != 0) {
-         retVal.kind = okVerbConstant;
-
-         message.append((char)verb_id + 0x20);
-      }
-      else {
-         retVal.kind = okSignatureConstant;
-
-         message.append(0x20);
-         message.append('&');
-
-         scope.moduleScope->mapSubject(node.Terminal(), message);
+   TerminalInfo terminal = node.Terminal();
+   IdentifierString signature;
+   ref_t verb_id = 0;
+   int paramCount = -1;
+   ref_t extensionRef = 0;
+   if (terminal == tsIdentifier) {
+      verb_id = _verbs.get(terminal.value);
+      if (verb_id == 0) {
+         signature.copy(terminal.value);
       }
    }
    else {
-      int count = 0;
-      if (!findSymbol(arg, nsSizeValue)) {
-         retVal.kind = okSignatureConstant;
+      ident_t message = terminal.value;
 
-         message.append(0x20);
-         message.append('&');
-         scope.moduleScope->mapSubject(arg.Terminal(), message);
-      }
-      else {
-         if (extensionMessage) {
-            retVal.kind = okExtMessageConstant;
-
-            arg = arg.nextNode().firstChild();
+      int subject = 0;
+      int param = 0;
+      for (int i = 0; i < getlength(message); i++) {
+         if (message[i] == '&' && subject == 0) {
+            signature.copy(message, i);
+            verb_id = _verbs.get(signature);
+            if (verb_id != 0) {
+               subject = i + 1;
+            }
          }
-         else retVal.kind = okMessageConstant;
+         else if (message[i] == '.' && extensionRef == 0) {
+            signature.copy(message + subject, i - subject);
+            subject = i + 1;
 
-         TerminalInfo token = (arg == nsSizeValue) ? node.Terminal() : arg.Terminal();
-
-         ref_t verb_id = _verbs.get(token);
-         if (verb_id == 0) {
-            message.append(EVAL_MESSAGE_ID + 0x20);
-            message.append('&');
-            scope.moduleScope->mapSubject(token, message);
+            extensionRef = scope.moduleScope->resolveIdentifier(signature);
+            if (extensionRef == 0)
+               scope.raiseError(errInvalidSubject, terminal);
          }
-         else message.append((char)verb_id + 0x20);
-      }
-
-      if (arg == nsSubjectArg)
-         arg = arg.nextNode();
-
-      // if method has argument list
-      while (arg == nsSubjectArg) {
-         TerminalInfo subject = arg.Terminal();
-
-         message.append('&');
-         ref_t subjRef = scope.moduleScope->mapSubject(subject, message);
-         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->typeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-            count = OPEN_ARG_COUNT;
+         else if (message[i] == '[') {
+            if (message[getlength(message) - 1] == ']') {
+               param = i;
+               signature.copy(message + i + 1, getlength(message) - param - 2);
+               paramCount = StringHelper::strToInt(signature);
+               if (paramCount > 12)
+                  scope.raiseError(errInvalidSubject, terminal);
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
          }
-
-         arg = arg.nextNode();
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else if (message[i] == ']' && i == (getlength(message) - 1)) {
+         }
+         else scope.raiseError(errInvalidSubject, terminal);
       }
 
-      if (extensionMessage)
-         arg = goToSymbol(node.firstChild(), nsSizeValue);
-
-      if (arg == nsSizeValue) {
-         TerminalInfo size = arg.Terminal();
-         if (size == tsInteger) {
-            count += StringHelper::strToInt(size.value);
-            if (count > 0x0F)
-               scope.raiseError(errNotApplicable, size);
-         }
-         else scope.raiseError(errInvalidOperation, size);
-
-         // define the number of parameters
-         message[start] = message[start] + (char)count;
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
       }
+      else signature.copy(message + subject);
    }
+
+   if (verb_id == 0 && paramCount != -1) {
+      if (paramCount == 0) {
+         verb_id = GET_MESSAGE_ID;
+      }
+      else verb_id = EVAL_MESSAGE_ID;
+   }
+
+   ObjectInfo retVal;
+   IdentifierString message;
+   if (extensionRef != 0) {
+      if (verb_id == 0) {
+         scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
+
+   if (paramCount == -1) {
+      message.append('0');
+   }
+   else message.append('0' + paramCount);
+   message.append('#');
+   if (verb_id != 0) {
+      message.append(0x20 + verb_id);
+   }
+   else message.append(0x20);
+
+   if (!emptystr(signature)) {
+      message.append('&');
+      message.append(signature);
+   }
+   
+   if (verb_id != 0) {
+      if (extensionRef != 0) {
+         retVal.kind = okExtMessageConstant;
+      }
+      else if (paramCount == -1 && emptystr(signature)) {
+         retVal.kind = okVerbConstant;
+      }
+      else retVal.kind = okMessageConstant;
+   }
+   else retVal.kind = okSignatureConstant;
 
    retVal.param = scope.moduleScope->module->mapReference(message);
 

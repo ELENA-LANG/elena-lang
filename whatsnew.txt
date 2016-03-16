@@ -11,6 +11,7 @@
 [+] #201 : shorthand property settings
 [+] #54 : templates 
 [+] new statement #extern - exclude the code from GC
+[+] #231 - new syntax : Signature / Message constants
 
 [ELC]
 [!] binary incompatible due to implementing issues #217 and #54

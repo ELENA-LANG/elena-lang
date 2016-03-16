@@ -56,7 +56,6 @@ __define L0_OPERATION           4163
 __define DEFAULT                4166
 __define TYPE                   4167
 __define INLINE_CLOSURE         4168
-__define EXTENSION_REFERENCE    4170
 
 __define eof            	12291
 __define literal		12292
@@ -568,24 +567,8 @@ CATCH_MESSAGE ->
 	| reference MESSAGE_BODY
 
 MESSAGE_REFERENCE ->
-	identifier MESSAGE_REFERENCE_BODY
-	| ( SUBJECT_ARG SIGNATURE_BODY ) MESSAGE_REFERENCE_BODY
-
-SIGNATURE_BODY ->
-	& SUBJECT_ARG SUBJECT_ARGS
-	| EXTENSION_REFERENCE
-	| eps
-
-EXTENSION_REFERENCE ->
-	SUBJECT_ARG SUBJECT_ARGS
-
-MESSAGE_REFERENCE_BODY ->
-	( SIZE_VALUE_OPTION )
-	| eps
-
-SIZE_VALUE_OPTION ->
-	SIZE_VALUE
-	| eps
+	identifier
+	| literal
 	
 MESSAGE_PARAMETER ->
 	OBJECT
