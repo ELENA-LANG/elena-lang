@@ -12,6 +12,11 @@
 {
     test
     [
+        #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
+    
+        #var x := a x.
+    
+        a eval&print:"Struct method works".
     ]
 }.
         

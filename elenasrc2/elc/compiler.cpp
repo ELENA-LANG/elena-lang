@@ -2394,7 +2394,11 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
                scope.raiseError(errInvalidSubject, terminal);
          }
          else if (message[i] == '[') {
-            if (message[getlength(message) - 1] == ']') {
+            if (message[i+1] == ']') {
+               //HOT FIX : support open argument list
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[getlength(message) - 1] == ']') {
                param = i;
                signature.copy(message + i + 1, getlength(message) - param - 2);
                paramCount = StringHelper::strToInt(signature);
@@ -2414,6 +2418,15 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
          signature.copy(message + subject, param - subject);
       }
       else signature.copy(message + subject);
+
+      if (paramCount == OPEN_ARG_COUNT) {
+         // HOT FIX : support open argument list
+         ref_t openArgType = scope.moduleScope->defineType(scope.moduleScope->paramsReference);
+         if (!emptystr(signature))
+            signature.append('&');
+
+         signature.append(scope.moduleScope->module->resolveSubject(openArgType));
+      }
    }
 
    if (verb_id == 0 && paramCount != -1) {

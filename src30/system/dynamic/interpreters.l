@@ -35,15 +35,17 @@
 
 // --- tapeControl ---
 
-#symbol tapeControl =
+#class(extension)tapeOp
 {
-    getAt :anIndex &args:Params
+    #method var &args:params
     [
-        #var(type:int)aLength := Params length.
-
-        ^ Params@(aLength - anIndex int).
+        #var(type:int)len := params length.
+        #var(type:int)n := len.
+        n := n - self int.
+       
+        ^ params@n.
     ]
-}.
+}
 
 // --- Struct ---
 

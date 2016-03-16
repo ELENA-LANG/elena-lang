@@ -2,29 +2,13 @@
 In development:
 ------                      
               xdev - generic development
-                       * messages, signatures - redesign literal constant type
-
-                         %(getAt&args)(1)
-
-                         %"getAt&args[1]"
-
-                         so extension
-
-                         %(mathOp get&arccos)(0)
-
-                         %"mathOp.get&argcos"
-                         %"x&y"
-                         %x
-
-                         %"get&writeLine"
-
-
-                       * extension message
-                       * special verb to work with open argument list
                        * extension message can be used to work with the tape
+                       * simplify vm script syntax
+                       * test elena script
+                       * test live eson scipr
+
                        * test StructTest
                        * DTOToStructTest
-
                        * #23, #126 : Strong types : dynamic / constant messages, signatures cannot have strong types (symbol $ should be illegal)
                        * #63 : Tape implementation
 
@@ -41,6 +25,7 @@ In development:
                          explicit and pseudo closures (? operator))
                        
               xdev - general implementation     
+                       * rename console to STA, consolex to MTO, consolevm to STA VM Client, gui to STAGUI, guix to MTAGUI
                        * chatserver : #var(type:int)len := theBuffer length. - embeddable get should be used
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
