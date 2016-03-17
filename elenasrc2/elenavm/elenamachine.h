@@ -338,6 +338,12 @@ public:
 
    virtual ref_t getSubjectRef(ident_t subjectName)
    {
+      if (StringHelper::find(subjectName, '$') != -1) {
+         setStatus("Invalid subject");
+
+         return 0;
+      }         
+
       return (ref_t)resolveReference(subjectName, 0);
    }
 

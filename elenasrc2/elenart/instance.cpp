@@ -175,6 +175,12 @@ void* Instance :: loadSymbol(ident_t name)
 
 void* Instance :: loadSubject(ident_t name)
 {
+   if (StringHelper::find(name, '$') != -1) {
+      //setStatus("Invalid subject");
+
+      return 0;
+   }
+
    RTManager manager;
 
    // initialize image section ;

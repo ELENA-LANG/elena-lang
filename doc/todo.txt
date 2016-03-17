@@ -2,15 +2,14 @@
 In development:
 ------                      
               xdev - generic development
-                       * tape : support extension message
+                       * #23, #126 : Strong types : dynamic / constant messages, signatures cannot have strong types (symbol $ should be illegal)
+
                        * simplify vm script syntax
                        * test elena script
                        * test live eson scipr
 
                        * test StructTest
                        * DTOToStructTest
-                       * #23, #126 : Strong types : dynamic / constant messages, signatures cannot have strong types (symbol $ should be illegal)
-                       * #62 : Tape implementation
 
                        * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                          as light as possible
@@ -23,6 +22,7 @@ In development:
                        * review try-catch statement, make sure the closure is created only in case of the error
                        * breaking int loop method (both #loop and pattern code), exiting closure (different behaviour between
                          explicit and pseudo closures (? operator))
+                       * #62 : Tape implementation
                        
               xdev - general implementation     
                        * rename console to STA, consolex to MTO, consolevm to STA VM Client, gui to STAGUI, guix to MTAGUI
