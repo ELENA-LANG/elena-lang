@@ -2,7 +2,7 @@
 In development:
 ------                      
               xdev - generic development
-                       * extension message can be used to work with the tape
+                       * tape : support extension message
                        * simplify vm script syntax
                        * test elena script
                        * test live eson scipr
@@ -10,7 +10,7 @@ In development:
                        * test StructTest
                        * DTOToStructTest
                        * #23, #126 : Strong types : dynamic / constant messages, signatures cannot have strong types (symbol $ should be illegal)
-                       * #63 : Tape implementation
+                       * #62 : Tape implementation
 
                        * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                          as light as possible

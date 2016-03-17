@@ -6,8 +6,6 @@
 #import extensions.
 #import extensions'dynamic.
 
-#import system'math.
-
 #symbol XTester =
 {
     test
@@ -16,7 +14,7 @@
     
         #var x := a x.
     
-        a eval&print:"Struct method works".
+        a print:"Struct method works".
     ]
 }.
         

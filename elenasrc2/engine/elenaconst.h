@@ -300,8 +300,8 @@ namespace _ELENA_
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
+   const int elExtMessage          = 0x00208000;
    const int elSymbol              = 0x00100000;
-//   const int elWithLocker          = 0x00200000;
    const int elDebugMask           = 0x000F0000;
 
    const int elDebugDWORD          = 0x00010000;

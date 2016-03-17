@@ -68,7 +68,6 @@ enum ByteCode
    bcNLen            = 0x34,
    bcClass           = 0x36,
    bcMIndex          = 0x37,
-   bcCall            = 0x38,
    bcACallVD         = 0x39,
    bcValidate        = 0x3A,
 
@@ -163,6 +162,7 @@ enum ByteCode
    bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
    bcAddress         = 0xA7,
+   bcACallI          = 0xA8,
    bcLess            = 0xA9,
    bcNotLess         = 0xAA,
    bcIfB             = 0xAB,

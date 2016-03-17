@@ -78,7 +78,7 @@ const int gcCommands[gcCommandNumber] =
    bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
    bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
    bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
-   bcGet, bcSet, bcXSet, bcCall, bcBReadB,
+   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
    bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
    bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
@@ -115,7 +115,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
@@ -136,7 +136,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileOpen, &compileQuitN, &compileBCopyR, &compileBCopyF, &compileACopyF, &compileACopyS, &compileACopyR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &loadFunction, &compileHook, &compileHook,
-   &compileNop, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
+   &loadIndexOp, &compileLessE, &compileNotLessE, &compileIfB, &compileElseB, &compileIfE, &compileElseE, &compileNext,
 
    &compilePush, &loadFPOp, &compilePush, &compileNop, &loadIndexOp, &loadFPOp, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &loadIndexOp, &compilePushF, &loadIndexOp, &loadIndexOp,

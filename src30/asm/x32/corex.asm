@@ -1890,15 +1890,6 @@ labFound:
 
 end
 
-// ; call
-
-inline % 038h
-
-  mov  esi, [eax]
-  call esi
-
-end
-
 // ; acallvd (ecx - offset to VMT entry)
 inline % 039h
 
@@ -2911,6 +2902,15 @@ inline % 0A7h
 
   call code : %HOOK
   
+end
+
+// ; acalli
+
+inline % 0A8h
+
+  mov  esi, [eax + __arg1]
+  call esi
+
 end
 
 // ; next

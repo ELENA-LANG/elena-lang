@@ -2,6 +2,7 @@
 //      inline system library
 
 define elMessage            000008000h
+define elExtMessage         000200000h
 define elRole               000004000h
 define elSubject            000002000h
 define elStructure          000000008h
@@ -3564,7 +3565,7 @@ end
 procedure symbol_redirect
 
   pushe
-  call
+  acalli 0
   pope
   ajumpvi 0
 
@@ -4787,16 +4788,29 @@ labNext:
   dsavefi -2
 
   flag
+  ecopyd
   andn elMessage
   elsen labMessage 0
   pusha
   jump labNext
 
 labMessage:
+  dcopye
+  andn elExtMessage
+  elsen labExtMessage 0
+
   nload
   ecopyd
   aloadsi 0  
   acallvi 0
+  pusha
+  bloadfi 1
+  jump labNext
+
+labExtMessage:
+  nload
+  ecopyd
+  acalli 1
   pusha
   bloadfi 1
   jump labNext

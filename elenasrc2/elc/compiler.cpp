@@ -1618,7 +1618,7 @@ void Compiler ::compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope&
          writer.newNode(lxClassStructure, 8);
 
          appendTerminalInfo(&writer, terminal);
-         writer.appendNode(lxClassFlag, elStructureRole | elMessage | elReadOnlyRole);
+         writer.appendNode(lxClassFlag, elStructureRole | elExtMessage | elReadOnlyRole);
 
          writer.closeNode();
       }
@@ -2399,13 +2399,14 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
                paramCount = OPEN_ARG_COUNT;
             }
             else if (message[getlength(message) - 1] == ']') {
-               param = i;
                signature.copy(message + i + 1, getlength(message) - param - 2);
                paramCount = StringHelper::strToInt(signature);
                if (paramCount > 12)
                   scope.raiseError(errInvalidSubject, terminal);
             }
             else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
          }
          else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
          }
