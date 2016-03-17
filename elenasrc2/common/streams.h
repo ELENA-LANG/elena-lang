@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef streamsH
@@ -206,6 +206,12 @@ public:
 class TextReader
 {
 public:
+   virtual size_t Position() = 0;
+
+   virtual bool seek(size_t position) = 0;
+
+   virtual void reset() = 0;
+
    virtual bool read(ident_c* s, size_t length) = 0;
 
    template<class String, class T> bool readLine(String& s, T* buffer, size_t size = BLOCK_SIZE)
@@ -401,6 +407,23 @@ template<class CHAR> class LiteralTextReader : public TextReader
    size_t      _length;
 
 public:
+   virtual size_t Position() { return _offset; }
+
+   virtual bool seek(size_t position)
+   {
+      if (position < _length) {
+         _offset = position;
+
+         return true;
+      }
+      else return false;
+   }
+
+   virtual void reset()
+   {
+      _offset = 0;
+   }
+
    virtual bool read(char* s, size_t length)
    {
       if (_offset + length > _length) {

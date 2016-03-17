@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Text Reader class implementation.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -82,7 +82,8 @@ LineInfo TextSourceReader :: read(ident_c* token, size_t length)
    if (info.state == dfaQuote) {
       copyQuote(info);
    }
-   else copyToken(info, token, length);
+   else if(token != NULL) 
+      copyToken(info, token, length);
 
    return info;
 }

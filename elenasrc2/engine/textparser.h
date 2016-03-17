@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textparserH
@@ -144,6 +144,16 @@ public:
 
       info.state = state;
       return terminateState;
+   }
+
+   void reset()
+   {
+      _source->reset();
+
+      if (!cacheLine()) {
+         _position = 0;
+         _line[0] = 0;
+      }
    }
 
    _TextParser(const char** dfa, int tabSize, TextReader* source)

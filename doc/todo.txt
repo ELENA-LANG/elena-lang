@@ -2,8 +2,6 @@
 In development:
 ------                      
               xdev - generic development
-                       * #23, #126 : Strong types : dynamic / constant messages, signatures cannot have strong types (symbol $ should be illegal)
-
                        * simplify vm script syntax
                        * test elena script
                        * test live eson scipr

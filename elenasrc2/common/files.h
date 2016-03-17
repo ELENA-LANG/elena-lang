@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class declarations.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef filesH
@@ -372,6 +372,15 @@ class TextFileReader : public TextReader
    File _file;
 
 public:
+   virtual void reset()
+   {
+      _file.rewind();
+   }
+
+   virtual size_t Position() { return _file.Position(); }
+
+   virtual bool seek(size_t position) { return _file.seek(position); }
+
    int getEncoding() const { return _file.getEncoding(); }
 
    bool isOpened() const { return _file.isOpened(); }

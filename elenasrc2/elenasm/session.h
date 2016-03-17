@@ -22,7 +22,7 @@ class Session
    String<ident_c, 512> _lastError;
 
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);
-   void parseMetaScript(MemoryDump& tape, CachedScriptReader& reader);
+   void parseMetaScript(MemoryDump& tape, _ScriptReader& reader);
    void parseScript(MemoryDump& tape, _ScriptReader& reader);
 
    int translate(TextReader* source, bool standalone);
