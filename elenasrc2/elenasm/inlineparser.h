@@ -47,7 +47,7 @@ class InlineScriptParser : public _Parser
 //   void copyDump(MemoryDump& dump, MemoryDump& line, Stack<int>& arguments);
 //   void writeLine(MemoryDump& line, TapeWriter& writer);
    int parseExpression(_ScriptReader& reader, TapeWriter& writer);
-   int parseStatement(_ScriptReader& reader, TapeWriter& writer);
+   int parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
 public:
    virtual bool parseGrammarRule(_ScriptReader& reader)

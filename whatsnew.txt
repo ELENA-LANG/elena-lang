@@ -42,6 +42,9 @@
 [+] rosetta sample : Truncatable primes
 [+] rosetta sample : Visualize a tree
 
+[ElenaScript]
+[!] #65 issue : script engine is optimized
+
 ******************************************************************************
                              What's New in 1.9.25
 ******************************************************************************

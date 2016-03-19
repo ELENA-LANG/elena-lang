@@ -1,6 +1,9 @@
 ------                                 
 In development:
 ------                      
+               xdev - script engine
+                       * #65 : redesign cfparser, to use breadth-first model (current one - deep first)
+
               xdev - generic development
                        * simplify vm script syntax
                        * test elena script
@@ -236,8 +239,6 @@ Pipeline:
                        * compile pi with mt
                        
                xdev - script engine
-                       * current implementation is done in two passes, simplify to one
-                       * redesign cfparser, to use breadth-first model (current one - deep first)
                        * cfparser : there should be two mappings so we could support both local and function variables
                        * cfparser : methods variable
                        * support if, foreach, while constructions,

@@ -454,10 +454,13 @@ int InlineScriptParser :: parseExpression(_ScriptReader& reader, TapeWriter& wri
    return counter;
 }
 
-int InlineScriptParser :: parseStatement(_ScriptReader& reader, TapeWriter& writer)
+int InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
 {
    if (reader.compare("(")) {
       parseExpression(reader, writer);
+   }
+   else if (bm.state == dfaFullIdentifier) {
+      writer.writeCallCommand(reader.lookup(bm));
    }
 
    return 0;
@@ -470,7 +473,7 @@ void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
       if (bm.state == dfaEOF) {
          break;
       }
-      else parseStatement(reader, writer);
+      else parseStatement(reader, bm, writer);
 
 //      if (reader.token[0] == ';' && reader.info.state != dfaQuote) {
 //         writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);

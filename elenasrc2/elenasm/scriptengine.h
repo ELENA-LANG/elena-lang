@@ -337,10 +337,13 @@ public:
    }
    void write(ident_t token)
    {
-      MemoryWriter writer(&_log);
-      
-      writer.writeLiteral(token, getlength(token));
-      writer.writeChar(' ');
+      size_t length = getlength(token);
+      if (length > 0) {
+         MemoryWriter writer(&_log);
+
+         writer.writeLiteral(token, length);
+         writer.writeChar(' ');
+      }
    }
 
    void* getBody() 

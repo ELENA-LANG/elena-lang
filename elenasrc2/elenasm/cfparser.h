@@ -43,6 +43,8 @@ public:
       RuleType type;
       size_t   terminal;    // in chomski form it is additional nonterminal as well
       size_t   nonterminal;
+      size_t   prefixPtr;
+      size_t   postfixPtr;
 
       bool(*apply)(Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser);
 
@@ -51,6 +53,7 @@ public:
          type = rtNone;
          terminal = nonterminal = 0;
          apply = NULL;
+         postfixPtr = prefixPtr = 0;
       }
    };
 
@@ -101,38 +104,6 @@ public:
    typedef MemoryHashTable<size_t, Rule, syntaxRule, cnHashSize> SyntaxTable;
    typedef MemoryMap<ident_t, size_t> NameMap;
 
-//   typedef Map<ident_t, int> Mapping;
-//
-//   // --- Rule ---
-//   struct Rule
-//   {
-//
-//      size_t prefixPtr;
-//      size_t postfixPtr;
-//
-//      bool(*apply)(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader);
-//
-//      void applyPrefixDSARule(CFParser::TokenInfo& token)
-//      {
-//         token.parser->writeDSARule(token, prefixPtr);
-//      }
-//
-//      void applyPostfixDSARule(CFParser::TokenInfo& token)
-//      {
-//         token.parser->writeDSARule(token, postfixPtr);
-//      }
-//
-//      Rule()
-//      {
-//         terminal = 0;
-//         nonterminal = 0;
-//         prefixPtr = 0;
-//         postfixPtr = 0;
-//      }
-//   };
-//
-//   friend struct TokenInfo;
-
 protected:
    _Parser*    _baseParser;
    SyntaxTable _table;
@@ -157,14 +128,13 @@ protected:
 
    void addRule(int id, Rule& rule);
 
+   void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
    size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t nonterminal = 0);
    void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule);
 
-   void saveTraceItem(TraceItem& item, ScriptLog& log, Rule& rule);
-
    void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);
    int buildDerivationTree(_ScriptReader& reader, size_t startRuleId, MemoryWriter& writer);
-   void generateOutput(int offset, ScriptLog& log);
+   void generateOutput(int offset, _ScriptReader& reader, ScriptLog& log);
 
 public:
    bool compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule);

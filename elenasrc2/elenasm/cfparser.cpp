@@ -26,6 +26,8 @@ using namespace _ELENA_TOOL_;
 #define REFERENCE_MODE        1
 #define EOF_MODE              2
 
+#define HINT_TERMINAL         0x80000000
+
 ////const char* dfaSymbolic[4] =
 ////{
 ////        ".????????dd??d??????????????????bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -533,13 +535,6 @@ void CFParser :: defineApplyRule(Rule& rule, int mode)
 
 }
 
-//void CFParser :: writeDSARule(TokenInfo& token, size_t ptr)
-//{
-//   token.buffer->write(getBodyText(ptr));
-//   // HOTFIX: to prevent too long line
-//   token.buffer->write('\n'); 
-//}
-//
 //bool CFParser :: applyRule(size_t ruleId, TokenInfo& token, _ScriptReader& reader)
 //{
 //   ident_t name = retrieveKey(_names.start(), ruleId, DEFAULT_STR);
@@ -626,15 +621,37 @@ size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, 
    return ruleId;
 }
 
-//void CFParser :: saveScript(TokenInfo& token, _ScriptReader& reader, Rule& rule)
-//{
-//   token.read(reader);
-//   while (!token.compare("=>") || token.state == dfaQuote) {
-//      token.writeLog();
-//
-//      token.read(reader);
-//   }
-//}
+void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
+{
+   bool prefixMode = false;
+   if (rule.terminal == 0 && rule.nonterminal == 0) {
+      prefixMode = true;
+      rule.prefixPtr = _body.Length();
+   }
+   else rule.postfixPtr = _body.Length();
+
+   MemoryWriter writer(&_body);
+   ScriptBookmark bm = reader.read();
+   while (!reader.compare("=>") || bm.state == dfaQuote) {
+      if (prefixMode && reader.compare(REFERENCE_KEYWORD)) {
+         rule.prefixPtr |= HINT_TERMINAL;
+         rule.terminal = -1;
+
+         mode = REFERENCE_MODE;
+         writer.writeChar((char)0);
+         rule.postfixPtr = _body.Length();
+      }
+      else {
+         ident_t token = reader.lookup(bm);
+
+         writer.writeLiteral(token, getlength(token));
+         writer.writeChar(' ');
+      }
+
+      bm = reader.read();
+   }
+   writer.writeChar((char)0);
+}
 
 void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule)
 {
@@ -652,9 +669,9 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
          }
          else rule.terminal = writeBodyText(reader.lookup(bm));
       }
-//      else if (token.compare("<=")) {
-//         saveScript(token, reader, rule);
-//      }
+      else if (reader.compare("<=")) {
+         saveScript(reader, rule, applyMode);
+      }
       else if (bm.state == dfaPrivate) {
          if (rule.terminal) {
             rule.nonterminal = defineGrammarRule(reader, bm);
@@ -836,12 +853,7 @@ int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, M
    throw EParseError(bm.column, bm.row);
 }
 
-void CFParser :: saveTraceItem(TraceItem& item, ScriptLog& log, Rule& rule)
-{
-
-}
-
-void CFParser :: generateOutput(int offset, ScriptLog& log)
+void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptLog& log)
 {
    if (offset == 0)
       return;
@@ -859,12 +871,37 @@ void CFParser :: generateOutput(int offset, ScriptLog& log)
       reader.read(&item, sizeof(TraceItem));
    }
 
+   Stack<size_t> postfixes;
    while (stack.Count() > 0) {
-      item = stack.pop();
+      TraceItem item = stack.pop();
 
       Rule rule = _table.get(item.ruleKey);
-      saveTraceItem(item, log, rule);
+      if (rule.prefixPtr != 0) {
+         if (test(rule.prefixPtr, HINT_TERMINAL)) {
+            log.write(getBodyText(rule.prefixPtr & ~HINT_TERMINAL));
+
+            ScriptBookmark bm;
+            reader.seek(item.terminal);
+            reader.read(&bm, sizeof(ScriptBookmark));
+
+            log.write(scriptReader.lookup(bm));
+         }
+         else log.write(getBodyText(rule.prefixPtr));
+
+         // HOTFIX: to prevent too long line
+         log.write('\n');
+      }
+
+      if (rule.postfixPtr != 0)
+         postfixes.push(rule.postfixPtr);
    }
+
+   while (postfixes.Count() > 0) {
+      size_t ptr = postfixes.pop();
+
+      log.write(getBodyText(ptr));
+   }
+   log.write((char)0);
 }
 
 void CFParser :: parse(_ScriptReader& reader, TapeWriter& tapeWriter)
@@ -877,7 +914,7 @@ void CFParser :: parse(_ScriptReader& reader, TapeWriter& tapeWriter)
       int presaved = writer.Position();
 
       int trace = buildDerivationTree(reader, startId, writer);
-      generateOutput(trace, log);
+      generateOutput(trace, reader, log);
 
       IdentifierTextReader logReader((ident_t)log.getBody());
       ScriptReader scriptReader(&logReader);
