@@ -32,8 +32,6 @@ void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
    TapeWriter writer(&tape);
 
    do {
-      ScriptBookmark bm = reader.read();
-
       if (reader.compare(";")) {
          break;
       }
@@ -41,7 +39,7 @@ void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
          writer.writeCommand(START_VM_MESSAGE_ID);
       }
       else if (reader.compare("#config")) {
-         bm = reader.read();
+         ScriptBookmark bm = reader.read();
          if (bm.state == dfaIdentifier) {
             writer.writeCommand(LOAD_VM_MESSAGE_ID, reader.lookup(bm));
          }
@@ -91,7 +89,9 @@ void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
 //            else throw EParseError(reader.info.column, reader.info.row);
 //         }
 //      }
-//      else return;
+      else return;
+
+      reader.read();
    }
    while(true);
 }
@@ -102,24 +102,23 @@ void Session :: parseMetaScript(MemoryDump& tape, _ScriptReader& reader)
 
    if (reader.compare("[[")) {
       while (!reader.compare("]]")) {
-//         if(StringHelper::compare(token, "#define")) {
-//            _currentParser->parseGrammarRule(reader);
-//         }
-//         else if (StringHelper::compare(token, "#grammar")) {
-//            token = reader.read();
-//
-//            if (StringHelper::compare(token, "cf")) {
-//               _currentParser = new CFParser(_currentParser);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
-//         }
-////         else if(ConstantIdentifier::compare(token, "#mode")) {
-////            _currentParser->parseDirective(reader);
-////         }
-//         else {
-            parseDirectives(tape, reader);
+         ScriptBookmark bm = reader.read();
+
+         if(reader.compare("#define")) {
+            _currentParser->parseGrammarRule(reader);
+         }
+         else if (reader.compare("#grammar")) {
             reader.read();
+
+            if (reader.compare("cf")) {
+               _currentParser = new CFParser(_currentParser);
+            }
+            else throw EParseError(bm.column, bm.row);
+         }
+//         else if(ConstantIdentifier::compare(token, "#mode")) {
+//            _currentParser->parseDirective(reader);
 //         }
+         else parseDirectives(tape, reader);
       }
    }
    else reader.reset();
@@ -153,41 +152,39 @@ int Session :: translate(TextReader* source, bool standalone)
 
 int Session :: translate(ident_t script, bool standalone)
 {
-//   try {
+   try {
       IdentifierTextReader reader(script);
 
       return translate(&reader, standalone);
+   }
+//   catch(EUnrecognizedException) {
+//      _lastError.copy("Unrecognized expression");
+//
+//      return NULL;
 //   }
-////   catch(EUnrecognizedException) {
-////      _lastError.copy("Unrecognized expression");
-////
-////      return NULL;
-////   }
-////   catch(EInvalidExpression e) {
-////      _lastError.copy("Rule ");
-////      _lastError.append(e.nonterminal);
-////      _lastError.append(": invalid expression at ");
-////      _lastError.appendInt(e.row);
-////      _lastError.append(':');
-////      _lastError.appendInt(e.column);
-////
-////      return NULL;
-////   }
-//   catch(EParseError e) {
-//      _lastError.copy("Invalid syntax at ");
+//   catch(EInvalidExpression e) {
+//      _lastError.copy("Rule ");
+//      _lastError.append(e.nonterminal);
+//      _lastError.append(": invalid expression at ");
 //      _lastError.appendInt(e.row);
 //      _lastError.append(':');
 //      _lastError.appendInt(e.column);
 //
 //      return NULL;
 //   }
+   catch(EParseError e) {
+      _lastError.copy("Invalid syntax at ");
+      _lastError.appendInt(e.row);
+      _lastError.append(':');
+      _lastError.appendInt(e.column);
 
-   return 0;
+      return NULL;
+   }
 }
 
 int Session :: translate(path_t path, int encoding, bool autoDetect, bool standalone)
 {
-//   try {
+   try {
       Path scriptPath(_rootPath);
       if (path[0] == '~') {
          scriptPath.combine(path + 2);
@@ -207,28 +204,28 @@ int Session :: translate(path_t path, int encoding, bool autoDetect, bool standa
       }
 
       return translate(&reader, standalone);
+   }
+//   catch(EUnrecognizedException) {
+//      _lastError.copy("Unrecognized expression");
+//
+//      return NULL;
 //   }
-//////   catch(EUnrecognizedException) {
-//////      _lastError.copy("Unrecognized expression");
-//////
-//////      return NULL;
-//////   }
-//////   catch(EInvalidExpression e) {
-//////      _lastError.copy("Rule ");
-//////      _lastError.append(e.nonterminal);
-//////      _lastError.append(": invalid expression at ");
-//////      _lastError.appendInt(e.row);
-//////      _lastError.append(':');
-//////      _lastError.appendInt(e.column);
-//////
-//////      return NULL;
-//////   }
-//   catch(EParseError e) {
-//      _lastError.copy("Invalid syntax at ");
+//   catch(EInvalidExpression e) {
+//      _lastError.copy("Rule ");
+//      _lastError.append(e.nonterminal);
+//      _lastError.append(": invalid expression at ");
 //      _lastError.appendInt(e.row);
 //      _lastError.append(':');
 //      _lastError.appendInt(e.column);
 //
 //      return NULL;
 //   }
+   catch(EParseError e) {
+      _lastError.copy("Invalid syntax at ");
+      _lastError.appendInt(e.row);
+      _lastError.append(':');
+      _lastError.appendInt(e.column);
+
+      return NULL;
+   }
 }

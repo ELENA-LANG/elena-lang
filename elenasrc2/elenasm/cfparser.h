@@ -1,156 +1,30 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA VM Script Engine
-////
-////                                             (C)2011-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//#ifndef cfparserH
-//#define cfparserH 1
-//
-//#include "scriptengine.h"
-//
-//namespace _ELENA_
-//{
-//
-//// --- CFPrarser ---
-//
-//class CFParser : public _Parser
-//{
-//public:
-//   typedef Map<ident_t, int> Mapping;
-//
-//   // --- TokenInfo ---
-//
-//   struct TokenInfo
-//   {
-//      CFParser*        parser;
-//      ScriptLog*       buffer;
-//      Mapping*         mapping;
-//
-//      char    state;
-//      ident_t value;
-//      size_t  row, column;
-//
-//      void read(_ScriptReader& reader)
-//      {
-//         value = reader.read();
-//         state = reader.info.state;
-//         row = reader.info.row;
-//         column = reader.info.column;
-//      }
-//
-////      void copyTo(Terminal* terminal)
-////      {
-////         size_t length = getlength(value);
-////         StringHelper::copy(terminal->value, value, length);
-////         terminal->value[length] = 0;
-////
-////         terminal->col = column;
-////         terminal->row = row;
-////         terminal->state = state;
-////      }
-////
-////      bool empty()
-////      {
-////         return emptystr(value);
-////      }
-//   
-//      bool compare(ident_t param)
-//      {
-//         return StringHelper::compare(value, param);
-//      }
-//   
-//      bool compare(size_t param)
-//      {
-//         ident_t s = parser->getBodyText(param);
-//
-//         return StringHelper::compare(value, s);
-//      }
-//   
-////      const wchar16_t* resolvePtr(size_t param)
-////      {
-////         return parser->getBodyText(param);
-////      }
-//
-//      void writeLog()
-//      {
-//         if (state == _ELENA_TOOL_::dfaQuote) {
-//            buffer->write('\"');
-//            for (size_t i = 0 ; i < getlength(value) ; i++) {
-//               buffer->write(value[i]);
-//               if (value[i]=='"') {
-//                  buffer->write(value[i]);
-//               }
-//            }
-//            buffer->write('\"');
-//         }
-//         else buffer->write(value);
-//      }
-//
-//      void writeLog(ident_t s)
-//      {
-//         buffer->write(s);
-//      }
-//
-//      ident_t getLog()
-//      {
-//         if (buffer->Length() > 0) {            
-//            buffer->write((ident_c)0);
-//
-//            return (ident_t)buffer->getBody();
-//         }
-//         else return NULL;
-//      }
-//
-//      void clearLog()
-//      {
-//         buffer->clear();
-//      }
-//
-//      void trimLog(size_t position)
-//      {
-//         buffer->trim(position);
-//      }
-//
-//      size_t LogPosition() const
-//      {
-//         return buffer->Position();
-//      }
-//
-//      void save(TokenInfo& token)
-//      {
-//         token.parser = parser;
-//         token.buffer = buffer;
-//         token.row = row;
-//         token.column = column;
-//         token.value = value;
-//         token.state = state;
-//      }
-//
-//      TokenInfo(CFParser* parser, ScriptLog* log)
-//      {
-//         this->parser = parser;
-//         this->buffer = log;
-//         row = column = 0;
-//         value = NULL;
-//         state = 0;
-//      }
-//      TokenInfo(TokenInfo& token)
-//      {
-//         parser = token.parser;
-//         this->buffer = token.buffer;
-//         row = token.row;
-//         column = token.column;
-//         value = token.value;
-//         state = token.state;
-//         mapping = token.mapping;
-//      }
-//   };
-//   
-//   enum RuleType
-//   {
+//                                             (C)2011-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef cfparserH
+#define cfparserH 1
+
+#include "scriptengine.h"
+
+namespace _ELENA_
+{
+
+// --- CFPrarser ---
+
+class CFParser : public _Parser
+{
+public:
+   enum RuleType
+   {
+      rtNone = 0,
+      rtNormal,
+      rtChomski,
+      rtNonterminal,
+
 //      rtNormal,
-//      rtChomski,
 //      rtLiteral,
 //      rtNumeric,
 //      rtReference,
@@ -162,13 +36,76 @@
 ////      rtAny,
 //      rtEps,
 //      rtEof
-//   };
+   };
+   
+   struct Rule
+   {
+      RuleType type;
+      size_t   terminal;    // in chomski form it is additional nonterminal as well
+      size_t   nonterminal;
+
+      bool(*apply)(Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser);
+
+      Rule()
+      {
+         type = rtNone;
+         terminal = nonterminal = 0;
+         apply = NULL;
+      }
+   };
+
+   struct DerivationItem
+   {
+      size_t ruleId;
+      int    trace;    // derivation trace
+      int    next;     // tailing nonterminal
+
+      DerivationItem()
+      {
+         ruleId = 0;
+         trace = 0;
+         next = 0;
+      }
+      DerivationItem(int ruleId)
+      {
+         this->ruleId = ruleId;
+         this->trace = 0;
+         this->next = 0;
+      }
+      DerivationItem(int ruleId, int trace, int next)
+      {
+         this->ruleId = ruleId;
+         this->trace = trace;
+         this->next = next;
+      }
+   };
+
+   struct TraceItem
+   {
+      int ruleKey;
+      int terminal;
+      int previous;
+
+      TraceItem()
+      {
+         ruleKey = terminal = previous = 0;
+      }
+      TraceItem(int key)
+      {
+         ruleKey = key;
+         terminal = previous = 0;
+      }
+   };
+
+   typedef Queue<DerivationItem> DerivationQueue;
+   typedef MemoryHashTable<size_t, Rule, syntaxRule, cnHashSize> SyntaxTable;
+   typedef MemoryMap<ident_t, size_t> NameMap;
+
+//   typedef Map<ident_t, int> Mapping;
 //
 //   // --- Rule ---
 //   struct Rule
 //   {
-//      size_t terminal;    // in chomski form it could be additional nonterminal as well
-//      size_t nonterminal;
 //
 //      size_t prefixPtr;
 //      size_t postfixPtr;
@@ -195,56 +132,57 @@
 //   };
 //
 //   friend struct TokenInfo;
-//
-//   typedef MemoryMap<size_t, Rule>    RuleMap;
-//   typedef MemoryMap<ident_t, size_t> NameMap;
-//
-//protected:
-//   _Parser* _baseParser;
-////   bool       _symbolMode;
-//   NameMap    _names;
-//   RuleMap    _rules;
-//   MemoryDump _body;
-//
-//   size_t mapRuleId(ident_t name)
-//   {
-//      return mapKey(_names, name, _names.Count() + 1);
-//   }
-//
-//   void defineApplyRule(Rule& rule, RuleType type);
-//
-//   size_t writeBodyText(ident_t text);
-//   ident_t getBodyText(size_t ptr);
-//
+
+protected:
+   _Parser*    _baseParser;
+   SyntaxTable _table;
+   NameMap     _names;
+   MemoryDump  _body;
+
+   size_t mapRuleId(ident_t name)
+   {
+      return mapKey(_names, name, _names.Count() + 1);
+   }
+
+   void defineApplyRule(Rule& rule, int terminalType);
+
+   size_t writeBodyText(ident_t text);
+   ident_t getBodyText(size_t ptr);
+
 //   size_t defineDSARule(TokenInfo& token, _ScriptReader& reader);
 //
 //   void writeDSARule(TokenInfo& token, size_t ptr);
-//
-//////   void compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler);
-//
-//   size_t defineGrammarRule(TokenInfo& token, _ScriptReader& reader, size_t nonterminal = 0);
-//   void defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule& rule);
-//
-//   void saveScript(TokenInfo& token, _ScriptReader& reader, Rule& rule);
-//
-//public:
-//   bool applyRule(Rule& rule, TokenInfo& token, _ScriptReader& reader);
-//   bool applyRule(size_t ruleId, TokenInfo& token, _ScriptReader& reader);
-//
-//   virtual bool parseGrammarRule(_ScriptReader& reader);
-//   virtual void parse(_ScriptReader& reader, TapeWriter& writer);
-//
-//   CFParser(_Parser* baseParser)
-//      : _rules(Rule())
-//   {
-//      _baseParser = baseParser;
-//
-//      // all body pointers should be greater than zero
-////      _symbolMode = false;
-//      _body.writeDWord(0, 0);
-//   }
-//};
-//
-//} // _ELENA_
-//
-//#endif // cfparserH
+
+//   void compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler);
+
+   void addRule(int id, Rule& rule);
+
+   size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t nonterminal = 0);
+   void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule);
+
+   void saveTraceItem(TraceItem& item, ScriptLog& log, Rule& rule);
+
+   void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);
+   int buildDerivationTree(_ScriptReader& reader, size_t startRuleId, MemoryWriter& writer);
+   void generateOutput(int offset, ScriptLog& log);
+
+public:
+   bool compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule);
+
+   virtual bool parseGrammarRule(_ScriptReader& reader);
+
+   virtual void parse(_ScriptReader& reader, TapeWriter& writer);
+
+   CFParser(_Parser* baseParser)
+      : _table(Rule())
+   {
+      _baseParser = baseParser;
+
+      // all body pointers should be greater than zero
+      _body.writeDWord(0, 0);
+   }
+};
+
+} // _ELENA_
+
+#endif // cfparserH

@@ -50,10 +50,10 @@ class InlineScriptParser : public _Parser
    int parseStatement(_ScriptReader& reader, TapeWriter& writer);
 
 public:
-//   virtual bool parseGrammarRule(_ScriptReader& reader)
-//   {
-//      return false;
-//   }
+   virtual bool parseGrammarRule(_ScriptReader& reader)
+   {
+      return false;
+   }
 
    virtual void parse(_ScriptReader& reader, TapeWriter& writer);
 

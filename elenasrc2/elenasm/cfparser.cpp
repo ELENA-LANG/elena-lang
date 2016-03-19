@@ -1,28 +1,31 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
-////
-////                                              (C)2011-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "cfparser.h"
-//
-//using namespace _ELENA_;
-//using namespace _ELENA_TOOL_;
-//
-//#define REFERENCE_KEYWORD     "$reference"
+//                                              (C)2011-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "cfparser.h"
+
+using namespace _ELENA_;
+using namespace _ELENA_TOOL_;
+
+#define REFERENCE_KEYWORD     "$reference"
 //#define IDENTIFIER_KEYWORD    "$identifier"
 //#define LITERAL_KEYWORD       "$literal"
 //#define NUMERIC_KEYWORD       "$numeric"
 //#define EPS_KEYWORD           "$eps"
-//#define EOF_KEYWORD           "$eof"
+#define EOF_KEYWORD           "$eof"
 //#define SCOPE_KEYWORD         "$scope"
 //#define VAR_KEYWORD           "$var"
 //#define MAPPING_KEYWORD       "$newvar"
 //#define IDLE_MAPPING_KEYWORD  "$new"
 ////#define ANY_KEYWORD           "$any"
-//
+
+#define REFERENCE_MODE        1
+#define EOF_MODE              2
+
 ////const char* dfaSymbolic[4] =
 ////{
 ////        ".????????dd??d??????????????????bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -30,9 +33,14 @@
 ////        "????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????",
 ////        "*********dd**d******************************************************************************************************************"
 ////};
-//
-//// --- CFParser ---
-//
+
+// --- CFParser ---
+
+inline size_t createKey(size_t id, int index)
+{
+   return (id << cnSyntaxPower) + index;
+}
+
 //inline bool apply(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   token.read(reader);
@@ -63,15 +71,27 @@
 //
 //   return true;
 //}
-//
-//bool normalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state == dfaEOF || !token.compare(rule.terminal))
-//      return false;
-//
-//   return apply(rule, token, reader);
-//}
-//
+
+bool normalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   return bm.state != dfaEOF && parser->compareToken(reader, bm, rule.terminal);
+}
+
+bool normalEOFApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   return (bm.state == dfaEOF);
+}
+
+bool normalReferenceApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   return (bm.state == dfaFullIdentifier);
+}
+
+bool nonterminalApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser)
+{
+   return true;
+}
+
 //bool normalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   if (token.state == dfaEOF || !token.compare(rule.terminal))
@@ -340,16 +360,6 @@
 //   return true;
 //}
 //
-//bool normalReferenceApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaFullIdentifier)
-//      return false;
-//
-//   token.writeLog();
-//
-//   return apply(rule, token, reader);
-//}
-//
 //bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   if (token.state != dfaFullIdentifier)
@@ -374,17 +384,6 @@
 //bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   return token.state == dfaEOF;
-//}
-//
-//bool normalEOFApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaEOF)
-//      return false;
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token);
-//
-//   return true;
 //}
 //
 //bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
@@ -453,73 +452,87 @@
 ////   }
 ////   else return false;
 ////}
-//
-//size_t CFParser :: writeBodyText(ident_t text)
-//{
-//   MemoryWriter writer(&_body);
-//
-//   size_t position = writer.Position();
-//   writer.writeLiteral(text);
-//
-//   return position;
-//}
-//
-//ident_t CFParser :: getBodyText(size_t ptr)
-//{
-//   return (ident_t)_body.get(ptr);
-//}
-//
-//void CFParser :: defineApplyRule(Rule& rule, RuleType type)
-//{
+
+size_t CFParser :: writeBodyText(ident_t text)
+{
+   MemoryWriter writer(&_body);
+
+   size_t position = writer.Position();
+   writer.writeLiteral(text);
+
+   return position;
+}
+
+ident_t CFParser :: getBodyText(size_t ptr)
+{
+   return (ident_t)_body.get(ptr);
+}
+
+bool CFParser :: compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule)
+{
+   ident_t terminal = reader.lookup(bm);
+   ident_t ruleTerminal = getBodyText(rule);
+
+   return StringHelper::compare(terminal, ruleTerminal);
+}
+
+void CFParser :: defineApplyRule(Rule& rule, int mode)
+{
 //   bool dsaRule = (rule.postfixPtr != 0) || (rule.prefixPtr != 0);
-//
-//   switch (type) {
-//      case rtNormal:
-//         if (rule.terminal == 0) {
-//            rule.apply = dsaRule ? nonterminalApplyRuleDSA : nonterminalApplyRule;
-//         }
-//         else rule.apply = dsaRule ? normalApplyRuleDSA : normalApplyRule;
-//         break;
-//      case rtChomski:
-//         // in chomski form terminal field contains nonterminal as well
-//         rule.apply = dsaRule ? chomskiApplyRuleDSA : chomskiApplyRule;
-//         break;
-//      case rtLiteral:
-//         rule.apply = dsaRule ? normalLiteralApplyRuleDSA : normalLiteralApplyRule;
-//         break;
-//      case rtNumeric:
-//         rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
-//         break;
-//      case rtReference:
-//         rule.apply = dsaRule ? normalReferenceApplyRuleDSA : normalReferenceApplyRule;
-//         break;
-//      case rtIdentifier:
-//         rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
-//         break;
-//      case rtScope:
-//         rule.apply = dsaRule ? scopeNonterminalApplyRuleDSA : scopeNonterminalApplyRule;
-//         break;
-//      case rtNewIdleVariable:
-//         rule.apply = dsaRule ? newNonterminalApplyRuleDSA : newNonterminalApplyRule;
-//         break;
-//      case rtVariable:
-//         rule.apply = dsaRule ? variableApplyRuleDSA : variableApplyRule;
-//         break;
-//      case rtNewVariable:
-//         rule.apply = dsaRule ? mappingApplyRuleDSA : mappingApplyRule;
-//         break;
-//      //case rtAny:
-//      //   rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
-//      //   break;
-//      case rtEps:
-//         rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
-//         break;
-//      case rtEof:
-//         rule.apply = dsaRule ?  normalEOFApplyRuleDSA :  normalEOFApplyRule;
-//         break;
-//   }
-//}
-//
+
+   if (rule.type == rtNormal) {
+      if (rule.terminal == 0) {
+         rule.type = rtNonterminal;
+
+         rule.apply = nonterminalApplyRule;
+      }
+      else {
+         switch (mode) {
+            case EOF_MODE:
+               rule.apply = normalEOFApplyRule;
+               break;
+            //      case rtLiteral:
+            //         rule.apply = dsaRule ? normalLiteralApplyRuleDSA : normalLiteralApplyRule;
+            //         break;
+            //      case rtNumeric:
+            //         rule.apply = dsaRule ? normalNumericApplyRuleDSA : normalNumericApplyRule;
+            //         break;
+            case REFERENCE_MODE:
+               rule.apply = normalReferenceApplyRule;
+               break;
+            //      case rtIdentifier:
+            //         rule.apply = dsaRule ?  normalIdentifierApplyRuleDSA :  normalIdentifierApplyRule;
+            //         break;
+            //      case rtScope:
+            //         rule.apply = dsaRule ? scopeNonterminalApplyRuleDSA : scopeNonterminalApplyRule;
+            //         break;
+            //      case rtNewIdleVariable:
+            //         rule.apply = dsaRule ? newNonterminalApplyRuleDSA : newNonterminalApplyRule;
+            //         break;
+            //      case rtVariable:
+            //         rule.apply = dsaRule ? variableApplyRuleDSA : variableApplyRule;
+            //         break;
+            //      case rtNewVariable:
+            //         rule.apply = dsaRule ? mappingApplyRuleDSA : mappingApplyRule;
+            //         break;
+            //      //case rtAny:
+            //      //   rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
+            //      //   break;
+            //      case rtEps:
+            //         rule.apply = dsaRule ? epsApplyRuleDSA : epsApplyRule;
+            //         break;
+            default:
+               rule.apply = normalApplyRule;
+               break;
+         }
+      }
+   }
+   else if (rule.type == rtChomski) {
+      rule.apply = nonterminalApplyRule;
+   }      
+
+}
+
 //void CFParser :: writeDSARule(TokenInfo& token, size_t ptr)
 //{
 //   token.buffer->write(getBodyText(ptr));
@@ -578,32 +591,41 @@
 //   }
 //   else return 0;
 //}
-//
-//size_t CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, size_t nonterminal)
-//{
-//   ReferenceNs ns;
-//   int   index = 0;
-//   do {
-//      ns.copy("inline");
-//      ns.appendHex(index++);
-//
-//      if (!_names.exist(ns))
-//         break;
-//
-//   } while (true);
-//
-//   size_t ruleId = mapRuleId(ns);
-//
-//   Rule rule;
-//   rule.nonterminal = nonterminal;
-//
-//   defineGrammarRule(token, reader, rule);
-//
-//   _rules.add(ruleId, rule);
-//
-//   return ruleId;
-//}
-//
+
+void CFParser :: addRule(int ruleId, Rule& rule)
+{
+   size_t key = createKey(ruleId, 1);
+   while (_table.exist(key))
+      key++;
+
+   _table.add(key, rule);
+}
+
+size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t nonterminal)
+{
+   ReferenceNs ns;
+   int   index = 0;
+   do {
+      ns.copy("inline");
+      ns.appendHex(index++);
+
+      if (!_names.exist(ns))
+         break;
+
+   } while (true);
+
+   size_t ruleId = mapRuleId(ns);
+
+   Rule rule;
+   rule.nonterminal = nonterminal;
+
+   defineGrammarRule(reader, bm, rule);
+
+   addRule(ruleId, rule);
+
+   return ruleId;
+}
+
 //void CFParser :: saveScript(TokenInfo& token, _ScriptReader& reader, Rule& rule)
 //{
 //   token.read(reader);
@@ -613,32 +635,33 @@
 //      token.read(reader);
 //   }
 //}
-//
-//void CFParser :: defineGrammarRule(TokenInfo& token, _ScriptReader& reader, Rule& rule)
-//{
-//   // read: terminal [nonterminal] ;
-//   // read: nonterminal [nonterminal2] ;
-//
-//   RuleType type = rtNormal;
-//
-//   while (token.value[0] != ';' || token.state == dfaQuote) {
-//
-//      if (token.state == dfaQuote) {
-//         if (rule.terminal) {
-//            rule.nonterminal = defineGrammarRule(token, reader);
-//            break;
-//         }
-//         else rule.terminal = writeBodyText(token.value);
-//      }
+
+void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule)
+{
+   // read: terminal [nonterminal] ;
+   // read: nonterminal [nonterminal2] ;
+
+   rule.type = rtNormal;
+   int applyMode = 0;
+
+   while (!reader.compare(";") || bm.state == dfaQuote) {
+      if (bm.state == dfaQuote) {
+         if (rule.terminal) {
+            rule.nonterminal = defineGrammarRule(reader, bm);
+            break;
+         }
+         else rule.terminal = writeBodyText(reader.lookup(bm));
+      }
 //      else if (token.compare("<=")) {
 //         saveScript(token, reader, rule);
 //      }
-//      else if (token.state == dfaPrivate) {
-//         if (rule.terminal) {
-//            rule.nonterminal = defineGrammarRule(token, reader);
-//            break;
-//         }
-//         else {
+      else if (bm.state == dfaPrivate) {
+         if (rule.terminal) {
+            rule.nonterminal = defineGrammarRule(reader, bm);
+            break;
+         }
+         else {
+            rule.terminal = -1;
 //            rule.prefixPtr = defineDSARule(token, reader);
 //
 //            if (StringHelper::compare(token.value, LITERAL_KEYWORD)) {
@@ -650,12 +673,12 @@
 //            else if (StringHelper::compare(token.value, EPS_KEYWORD)) {
 //               type = rtEps;
 //            }
-//            else if (StringHelper::compare(token.value, EOF_KEYWORD)) {
-//               type = rtEof;
-//            }
-//            else if (StringHelper::compare(token.value, REFERENCE_KEYWORD)) {
-//               type = rtReference;
-//            }
+            /*else */if (reader.compare(EOF_KEYWORD)) {
+               applyMode = EOF_MODE;
+            }
+            else if (reader.compare(REFERENCE_KEYWORD)) {
+               applyMode = REFERENCE_MODE;
+            }
 //            else if (StringHelper::compare(token.value, SCOPE_KEYWORD)) {
 //               type = rtScope;
 //            }
@@ -674,99 +697,194 @@
 //            else if (StringHelper::compare(token.value, IDENTIFIER_KEYWORD)) {
 //               type = rtIdentifier;
 //            }
-//         }
-//      }
-//      else if (token.state == dfaIdentifier) {
-//         if (rule.nonterminal == 0) {
-//            rule.prefixPtr = defineDSARule(token, reader);
-//
-//            rule.nonterminal = mapRuleId(token.value);
-//         }
-//         else if (rule.terminal == 0) {
-//            type = rtChomski;
-//
-//            rule.terminal = mapRuleId(token.value);
-//         }
-//         else {
-//            if (type == rtChomski) {
-//               rule.terminal = defineGrammarRule(token, reader, rule.terminal);
-//            }
-//            else rule.nonterminal = defineGrammarRule(token, reader, rule.nonterminal);
-//            break;
-//         }
-//      }
-//
-//      token.read(reader);
-//   }
-//
+         }
+      }
+      else if (bm.state == dfaIdentifier) {
+         if (rule.nonterminal == 0) {
+            //rule.prefixPtr = defineDSARule(token, reader);
+
+            rule.nonterminal = mapRuleId(reader.lookup(bm));
+         }
+         else if (rule.terminal == 0) {
+            rule.type = rtChomski;
+
+            rule.terminal = mapRuleId(reader.lookup(bm));
+         }
+         else {
+            if (rule.type == rtChomski) {
+               rule.terminal = defineGrammarRule(reader, bm, rule.terminal);
+            }
+            else rule.nonterminal = defineGrammarRule(reader, bm, rule.nonterminal);
+            break;
+         }
+      }
+
+      bm = reader.read();
+   }
+
 //   rule.postfixPtr = defineDSARule(token, reader);
-//
-//   defineApplyRule(rule, type);
-//}
-//
-//bool CFParser :: parseGrammarRule(_ScriptReader& reader)
-//{
+
+   defineApplyRule(rule, applyMode);
+}
+
+bool CFParser :: parseGrammarRule(_ScriptReader& reader)
+{
 //   ScriptLog log;
 //   TokenInfo token(this, &log);
-//
-//   token.read(reader);
-//
-//   if (token.state != dfaIdentifier)
-//      throw EParseError(reader.info.column, reader.info.row);
-//
-//   size_t ruleId = mapRuleId(token.value);
-//
-//   token.read(reader);
-//   if (!token.compare("::="))
-//      throw EParseError(reader.info.column, reader.info.row);
-//
-//   token.read(reader);
-//
-//   Rule rule;
-//   defineGrammarRule(token, reader, rule);
-//
-//   _rules.add(ruleId, rule);
-//
-//   return true;
-//}
-//
-////void CFParser :: parseDirective(_ScriptReader& reader)
-////{
-////   const wchar16_t* token = reader.read();
-////   while (token[0] != ';') {
-////      if (ConstantIdentifier::compare(token, "symbolic")) {
-////         _symbolMode = true;
-////      }
-////      else throw EParseError(reader.info.column, reader.info.row);
-////
-////      token = reader.read();
-////   }
-////}
-//
-//void CFParser :: parse(_ScriptReader& reader, TapeWriter& writer)
+
+   ScriptBookmark bm = reader.read();
+
+   if (bm.state != dfaIdentifier)
+      throw EParseError(bm.column, bm.row);
+
+   size_t ruleId = mapRuleId(reader.lookup(bm));
+
+   reader.read();
+   if (!reader.compare("::="))
+      throw EParseError(bm.column, bm.row);
+
+   bm = reader.read();
+
+   Rule rule;
+   defineGrammarRule(reader, bm, rule);
+
+   addRule(ruleId, rule);
+
+   return true;
+}
+
+//void CFParser :: parseDirective(_ScriptReader& reader)
 //{
-////   if (_symbolMode)
-////      reader.switchDFA(dfaSymbolic);
+//   const wchar16_t* token = reader.read();
+//   while (token[0] != ';') {
+//      if (ConstantIdentifier::compare(token, "symbolic")) {
+//         _symbolMode = true;
+//      }
+//      else throw EParseError(reader.info.column, reader.info.row);
 //
-//   ScriptLog log;
-//   TokenInfo token(this, &log);
-//
-//   token.read(reader);
-//
-//   size_t readerRollback = reader.Position();
-//   //size_t outputRollback = compiler->Position();
-//   size_t startId = mapRuleId("start");
-//
-//   if (token.state != dfaEOF) {
-//      if (!applyRule(startId, token, reader))
-//         throw EParseError(token.column, token.row);
-//
-//      if (token.state != dfaEOF)
-//         throw EParseError(token.column, token.row);
+//      token = reader.read();
 //   }
-//
-//   IdentifierTextReader logReader((ident_t)log.getBody());
-//   CachedScriptReader scriptReader(&logReader);
-//
-//   _baseParser->parse(scriptReader, writer);
 //}
+
+void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer)
+{
+   size_t key = createKey(item.ruleId, 1);
+   Rule rule = _table.get(key);
+   while (rule.type != rtNone) {
+      if (rule.apply(rule, bm, reader, this)) {
+         int offset = writer.Position();
+         writer.writeDWord(key);
+         writer.writeDWord(terminalOffset);
+         writer.writeDWord(item.trace);
+
+         if (rule.type != rtNormal) {
+            int next = item.next;
+            // if it is a chomksi form
+            if (rule.type == rtChomski) {
+               int previous = next;
+               next = writer.Position();
+               writer.writeDWord(rule.terminal);
+               writer.writeDWord(previous);
+            }
+
+            queue.insert(DerivationItem(rule.nonterminal, offset, next));
+         }
+         else if (rule.nonterminal == 0) {
+            if (item.next == -1) {
+               queue.push(DerivationItem(-1, offset, 0));
+            }
+            else if (item.next > 0) {
+               MemoryReader reader(&_body, item.next);
+               int nonterminal = reader.getDWord();
+               int next = reader.getDWord();
+
+               queue.push(DerivationItem(nonterminal, offset, next));
+            }
+         }
+         else queue.push(DerivationItem(rule.nonterminal, offset, item.next));
+      }
+
+      rule = _table.get(++key);
+   }
+}
+
+int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, MemoryWriter& writer)
+{
+   DerivationQueue predictions;
+   predictions.push(DerivationItem(startRuleId, 0, -1));
+
+   ScriptBookmark bm;
+   while (predictions.Count() > 0) {
+      predictions.push(DerivationItem(0));
+
+      bm = reader.read();
+      int terminalOffset = writer.Position();
+      writer.write(&bm, sizeof(ScriptBookmark));
+
+      DerivationItem current = predictions.pop();
+      if (current.ruleId == -1) {
+         return current.trace;
+      }
+      
+      while (current.ruleId != 0) {
+         predict(predictions, current, reader, bm, terminalOffset, writer);
+
+         current = predictions.pop();
+      }      
+   }
+
+   throw EParseError(bm.column, bm.row);
+}
+
+void CFParser :: saveTraceItem(TraceItem& item, ScriptLog& log, Rule& rule)
+{
+
+}
+
+void CFParser :: generateOutput(int offset, ScriptLog& log)
+{
+   if (offset == 0)
+      return;
+
+   MemoryReader reader(&_body, offset);
+   Stack<TraceItem> stack(TraceItem(0));
+   TraceItem item;
+   reader.read(&item, sizeof(TraceItem));
+   while (true) {
+      stack.push(item);
+      if (item.previous == 0)
+         break;
+
+      reader.seek(item.previous);
+      reader.read(&item, sizeof(TraceItem));
+   }
+
+   while (stack.Count() > 0) {
+      item = stack.pop();
+
+      Rule rule = _table.get(item.ruleKey);
+      saveTraceItem(item, log, rule);
+   }
+}
+
+void CFParser :: parse(_ScriptReader& reader, TapeWriter& tapeWriter)
+{
+   ScriptLog log;
+
+   size_t startId = mapRuleId("start");
+   while (!reader.Eof()) {
+      MemoryWriter writer(&_body);
+      int presaved = writer.Position();
+
+      int trace = buildDerivationTree(reader, startId, writer);
+      generateOutput(trace, log);
+
+      IdentifierTextReader logReader((ident_t)log.getBody());
+      ScriptReader scriptReader(&logReader);
+      
+      _baseParser->parse(scriptReader, tapeWriter);
+
+      _body.trim(presaved);
+      log.clear();
+   }
+}

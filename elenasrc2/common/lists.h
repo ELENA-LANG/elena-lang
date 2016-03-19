@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef listsH
@@ -1123,77 +1123,82 @@ public:
    }
 };
 
-//// --- Queue template ---
-//
-//template <class T> class Queue
-//{
-//   _List<T> _list;
-//   T        _defaultItem;
-//
-//public:
-//   typedef _Iterator<T, _Item<T> >    Iterator;
-//
-//   Iterator start()
-//   {
-//      return _list.start();
-//   }
-//
-//   Iterator end()
-//   {
-//      return _list.end();
-//   }
-//
-//   size_t Count() const { return _list.Count(); }
-//
-//   void push (T item)
-//   {
-//      _list.addToTale(item);
-//   }
-//
-//   T pop()
-//   {
-//      if (!_list.Eof()) {
-//         return _list.cutTop();
-//      }
-//      else return _defaultItem;
-//   }
-//
-//   Iterator get(int index)
-//   {
-//      Iterator it = start();
-//      while (!it.Eof() && index > 0) {
-//         index--;
-//         it++;
-//      }
-//      return it;
-//   }
-//
-//   void cut()
-//   {
-//      _list.clear();
-//   }
-//
-//   void clear()
-//   {
-//      _list.clear();
-//   }
-//
-//   Queue()
-//      : _list(NULL)
-//   {
-//      _defaultItem = 0;
-//   }
-//   Queue(T defaultItem)
-//      : _list(NULL)
-//   {
-//      _defaultItem = defaultItem;
-//   }
-//   Queue(T defaultItem, void(*freeT)(T))
-//      : _list(freeT)
-//   {
-//      defaultItem = defaultItem;
-//   }
-//};
+// --- Queue template ---
+
+template <class T> class Queue
+{
+   _List<T> _list;
+   T        _defaultItem;
+
+public:
+   typedef _Iterator<T, _Item<T> >    Iterator;
+
+   Iterator start()
+   {
+      return _list.start();
+   }
+
+   Iterator end()
+   {
+      return _list.end();
+   }
+
+   size_t Count() const { return _list.Count(); }
+
+   void insert(T item)
+   {
+      _list.addToTop(item);
+   }
+
+   void push (T item)
+   {
+      _list.addToTale(item);
+   }
+
+   T pop()
+   {
+      if (!_list.Eof()) {
+         return _list.cutTop();
+      }
+      else return _defaultItem;
+   }
+
+   Iterator get(int index)
+   {
+      Iterator it = start();
+      while (!it.Eof() && index > 0) {
+         index--;
+         it++;
+      }
+      return it;
+   }
+
+   void cut()
+   {
+      _list.clear();
+   }
+
+   void clear()
+   {
+      _list.clear();
+   }
+
+   Queue()
+      : _list(NULL)
+   {
+      _defaultItem = 0;
+   }
+   Queue(T defaultItem)
+      : _list(NULL)
+   {
+      _defaultItem = defaultItem;
+   }
+   Queue(T defaultItem, void(*freeT)(T))
+      : _list(freeT)
+   {
+      defaultItem = defaultItem;
+   }
+};
 
 // --- BList template ---
 

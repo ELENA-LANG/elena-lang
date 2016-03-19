@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
    if (!_loaded)
       loadScript("scripts\\elena.es");
 
-   executeScript("(system'console ^writeLine \"Hello\")");
+   executeScript("system'console");
 
    runSession();
 }

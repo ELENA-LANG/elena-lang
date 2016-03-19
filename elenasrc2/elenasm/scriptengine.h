@@ -16,18 +16,18 @@ namespace _ELENA_
 typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
 typedef String<ident_c, 0x100> TempString;
 
-//// --- EParseError ---
-//   
-//struct EParseError
-//{
-//   int column, row;
-//   
-//   EParseError(int column, int row)
-//   {
-//      this->column = column;
-//      this->row = row;
-//   }
-//};
+// --- EParseError ---
+   
+struct EParseError
+{
+   int column, row;
+   
+   EParseError(int column, int row)
+   {
+      this->column = column;
+      this->row = row;
+   }
+};
 
 // --- TapeWriter ---
 
@@ -106,15 +106,26 @@ struct ScriptBookmark
 {
    int   offset;
    int   state;
+   short row;
+   short column;
 
    ScriptBookmark()
    {
       state = offset = 0;
+      row = column = 0;
    }
    ScriptBookmark(int offset, int state)
    {
       this->state = state;
       this->offset = offset;
+      this->row = this->column = 0;
+   }
+   ScriptBookmark(int offset, int state, int row, int column)
+   {
+      this->state = state;
+      this->offset = offset;
+      this->row = row;
+      this->column = column;
    }
 };
 
@@ -123,9 +134,11 @@ struct ScriptBookmark
 class _ScriptReader
 {
 public:
+   virtual bool Eof() = 0;
+
    virtual ScriptBookmark read() = 0;
 
-   virtual ident_t lookup(ScriptBookmark bm) = 0;
+   virtual ident_t lookup(ScriptBookmark& bm) = 0;
 
    virtual bool compare(ident_t value) = 0;
 
@@ -140,8 +153,14 @@ protected:
    SourceReader reader;
    MemoryDump   buffer;
    ident_c      token[LINE_LEN];
+   bool         eof;
 
 public:
+   virtual bool Eof()
+   {
+      return eof;
+   }
+
    virtual bool compare(ident_t value)
    {
       return StringHelper::compare(token, value);
@@ -155,6 +174,10 @@ public:
 
       bm.offset = buffer.Length();
       bm.state = info.state;
+      bm.column = info.column;
+      bm.row = info.row;
+      if (info.state == _ELENA_TOOL_::dfaEOF)
+         eof = true;
 
       if (info.state == _ELENA_TOOL_::dfaQuote && token != NULL) {
          QuoteTemplate<TempString> quote(info.line);
@@ -171,7 +194,7 @@ public:
       return bm;
    }
 
-   virtual ident_t lookup(ScriptBookmark bm)
+   virtual ident_t lookup(ScriptBookmark& bm)
    {
       MemoryReader reader(&buffer, bm.offset);
 
@@ -180,6 +203,7 @@ public:
 
    virtual void reset()
    {
+      eof = false;
       reader.reset();
       buffer.clear();
    }
@@ -192,6 +216,7 @@ public:
    ScriptReader(TextReader* script)
       : reader(4, script)
    {
+      eof = false;
    }
 };
 
@@ -296,61 +321,49 @@ public:
 //      _tokenPosition = -1;
 //   }
 //};
-//
-//
-//
-//// --- ScriptLog ---
-//
-//class ScriptLog
-//{
-//   MemoryDump _log;
-//
-//public:
-//   void write(ident_c ch)
-//   {
-//      MemoryWriter writer(&_log);
-//
-//      writer.writeChar(ch);
-//   }
-//   void write(ident_t token)
-//   {
-//      MemoryWriter writer(&_log);
-//      
-//      writer.writeLiteral(token, getlength(token));
-//      writer.writeChar(' ');
-//   }
-//
-//   size_t Position()
-//   {
-//      return _log.Length();
-//   }
-//
-//   void trim(size_t position)
-//   {
-//      _log.trim(position);
-//   }
-//
-//   void* getBody() 
-//   { 
-//      write((ident_c)0);
-//
-//      return _log.get(0); 
-//   } 
-//
-//   size_t Length() const { return _log.Length(); }
-//
-//   void clear()
-//   {
-//      _log.trim(0);
-//   }
-//};
+
+// --- ScriptLog ---
+
+class ScriptLog
+{
+   MemoryDump _log;
+
+public:
+   void write(ident_c ch)
+   {
+      MemoryWriter writer(&_log);
+
+      writer.writeChar(ch);
+   }
+   void write(ident_t token)
+   {
+      MemoryWriter writer(&_log);
+      
+      writer.writeLiteral(token, getlength(token));
+      writer.writeChar(' ');
+   }
+
+   void* getBody() 
+   { 
+      write((ident_c)0);
+
+      return _log.get(0); 
+   } 
+
+   size_t Length() const { return _log.Length(); }
+
+   void clear()
+   {
+      _log.trim(0);
+   }
+};
 
 // --- Parser ---
 
 class _Parser
 {
 public:
-//   virtual bool parseGrammarRule(_ScriptReader& reader) = 0;  
+   virtual bool parseGrammarRule(_ScriptReader& reader) = 0;  
    virtual void parse(_ScriptReader& reader, TapeWriter& writer) = 0;
 
    virtual ~_Parser() {}
