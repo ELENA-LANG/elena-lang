@@ -345,6 +345,14 @@ public:
          writer.writeChar(' ');
       }
    }
+   void writeQuote(ident_t token)
+   {
+      MemoryWriter writer(&_log);
+
+      writer.writeChar('\"');
+      writer.writeLiteral(token, getlength(token));
+      writer.writeChar('\"');
+   }
 
    void* getBody() 
    { 

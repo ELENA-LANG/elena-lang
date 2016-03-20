@@ -23,19 +23,7 @@ public:
       rtNormal,
       rtChomski,
       rtNonterminal,
-
-//      rtNormal,
-//      rtLiteral,
-//      rtNumeric,
-//      rtReference,
-//      rtIdentifier,
-//      rtScope,
-//      rtVariable,
-//      rtNewVariable,
-//      rtNewIdleVariable,
-////      rtAny,
-//      rtEps,
-//      rtEof
+      rtEps,
    };
    
    struct Rule
@@ -47,12 +35,14 @@ public:
       size_t   postfixPtr;
 
       bool(*apply)(Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser);
+      void (*saveTo)(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log);
 
       Rule()
       {
          type = rtNone;
          terminal = nonterminal = 0;
          apply = NULL;
+         saveTo = NULL;
          postfixPtr = prefixPtr = 0;
       }
    };
@@ -137,6 +127,8 @@ protected:
    void generateOutput(int offset, _ScriptReader& reader, ScriptLog& log);
 
 public:
+   void readScriptBookmark(size_t ptr, ScriptBookmark& bm);
+
    bool compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule);
 
    virtual bool parseGrammarRule(_ScriptReader& reader);

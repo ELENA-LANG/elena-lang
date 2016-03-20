@@ -305,9 +305,6 @@ Pipeline:
                        * test ide: goto error if the file is not opened
                        
               idev - unicode
-                       * output window
-                       * project compile
-                       * project run
                        * save last open path (should be saved in the current path??)
                        * fix outdent / uncomment / trim / eraseLine - some general bug in removing
                        * menu option - project - forwards
