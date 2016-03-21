@@ -37,17 +37,12 @@ class InlineScriptParser : public _Parser
 
    int mapVerb(ident_t literal);
 
-//   void readMessage(_ScriptReader& reader, IdentifierString& message, bool subjectOnly = false);
-
    void writeObject(TapeWriter& writer, char state, ident_t value);
    void writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
    
    void parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack);
 
-//   void copyDump(MemoryDump& dump, MemoryDump& line, Stack<int>& arguments);
-//   void writeLine(MemoryDump& line, TapeWriter& writer);
-   int parseExpression(_ScriptReader& reader, TapeWriter& writer);
-   int parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
+   void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
 public:
    virtual bool parseGrammarRule(_ScriptReader& reader)

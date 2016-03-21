@@ -196,6 +196,9 @@ public:
 
    virtual ident_t lookup(ScriptBookmark& bm)
    {
+      if (bm.offset < 0)
+         return NULL;
+
       MemoryReader reader(&buffer, bm.offset);
 
       return reader.getLiteral(DEFAULT_STR);

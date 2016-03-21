@@ -12,6 +12,8 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
+typedef Stack<ScriptBookmark> ScriptStack;
+
 // --- InlineParser ---
 
 InlineScriptParser :: InlineScriptParser()
@@ -80,21 +82,9 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
       case dfaFullIdentifier:
          writer.writeCallCommand(token);
          break;
-         //      case '^':
-//      case '&':
-//         // HOTFIX : set EVAL or GET depending on the parameter counter
-//         if (token[2] == 0x20) {
-//            if (token[0] == '0') {
-//               ((ident_c*)token)[2] = GET_MESSAGE_ID + 0x20;
-//            }
-//            else ((ident_c*)token)[2] = EVAL_MESSAGE_ID + 0x20;
-//         }
-//
-//         writer.writeCommand(state == '^' ? SEND_TAPE_MESSAGE_ID : PUSHM_TAPE_MESSAGE_ID, token);
-//         break;
-//      case '%':
-//         writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, token);
-//         break;
+      case dfaIdentifier:
+         writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, token);
+         break;
 //      case '<':
 //      {
 //         int var_level = StringHelper::strToInt(token);
@@ -116,74 +106,6 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
    }
 }
 
-//inline void save(MemoryDump& cache, char state, ident_t value)
-//{
-//   MemoryWriter argWriter(&cache);
-//
-//   argWriter.writeChar(state);
-//   argWriter.writeLiteral(value);
-//}
-//
-//inline void save(MemoryDump& cache, char state, int length, ident_t value)
-//{
-//   MemoryWriter argWriter(&cache);
-//
-//   argWriter.writeChar(state);
-//   argWriter.writeDWord(length);
-//   argWriter.writeLiteral(value);
-//}
-//
-//void InlineScriptParser::writeLine(MemoryDump& line, TapeWriter& writer)
-//{
-//   MemoryReader reader(&line);
-//   while (!reader.Eof()) {
-//      char state = reader.getByte();
-//
-//      if (state == '*') {
-//         int length = reader.getDWord();
-//         writer.writeCommand(ARG_TAPE_MESSAGE_ID, reader.getLiteral(DEFAULT_STR));
-//         writer.writeCommand(NEW_TAPE_MESSAGE_ID, length);
-//      }
-//      else writeObject(writer, state, reader.getLiteral(DEFAULT_STR));
-//   }
-//}
-//
-//void InlineScriptParser :: copyDump(MemoryDump& dump, MemoryDump& line, Stack<int>& arguments)
-//{
-//   MemoryReader reader(&dump);
-//   while (arguments.Count() > 0) {
-//      int position = arguments.pop();
-//
-//      reader.seek(position);
-//      char state = reader.getByte();
-//
-//      if (state == '*') {
-//         int length = reader.getDWord();
-//
-//         save(line, state, length, reader.getLiteral(DEFAULT_STR));
-//      }
-//      else if (state == '{') {
-//         int level = 1;
-//         while (level > 0) {
-//            state = reader.getByte();
-//            if (state == '{') {
-//               level++;
-//            }
-//            else if (state == '}') {
-//               level--;
-//            }
-//            else if (state == '*') {
-//               int length = reader.getDWord();
-//
-//               save(line, state, length, reader.getLiteral(DEFAULT_STR));
-//            }
-//            else save(line, state, reader.getLiteral(DEFAULT_STR));
-//         }
-//      }
-//      else save(line, state, reader.getLiteral(DEFAULT_STR));
-//   }
-//}
-
 void InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack)
 {
    IdentifierString message;
@@ -194,298 +116,158 @@ void InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer,
       ScriptBookmark bm = stack.pop();
 
       ident_t token = reader.lookup(bm);
-      if (bm.state == -1) {
+      if (bm.state == -2) {
          break;
       }
-      else if (bm.state == -2) {
-         parseStack(reader, writer, stack);
-         paramCounter++;
-      }
-      else if (bm.state == -3) {         
-         command = SEND_TAPE_MESSAGE_ID;
-      }
-      else if (bm.state == dfaIdentifier) {
-         if (!empty) {
-            message.append('&');
-         }
-         else empty = false;
+      switch (bm.state)
+      {
+         case -1:
+         case -4:
+            parseStack(reader, writer, stack);
+            paramCounter++;
+            break;
+         case -3:
+            command = SEND_TAPE_MESSAGE_ID;
+         case dfaIdentifier:
+            if (command == NEW_TAPE_MESSAGE_ID) {
+               writeObject(writer, bm.state, token);
+               paramCounter++;
+            }
+            else {
+               if (!empty) {
+                  message.append('&');
+               }
+               else empty = false;
 
-         message.append(token);
-      }
-      else {
-         writeObject(writer, bm.state, token);
-         paramCounter++;
+               message.append(token);
+            }               
+            break;
+         case -6:
+            if (empty) {
+               message.copy(token);
+               command = NEW_TAPE_MESSAGE_ID;
+               empty = false;
+               paramCounter++;
+            }      
+            break;
+         default:
+            writeObject(writer, bm.state, token);
+            paramCounter++;
+            break;
       }
    }
 
    if (!empty) {
-      writeMessage(writer, message, paramCounter, command);
+      if (command == NEW_TAPE_MESSAGE_ID) {
+         writer.writeCommand(ARG_TAPE_MESSAGE_ID, message);
+         writer.writeCommand(command, paramCounter);
+      }
+      else writeMessage(writer, message, paramCounter, command);
    }
 }
 
-int InlineScriptParser :: parseExpression(_ScriptReader& reader, TapeWriter& writer)
+inline void appendBookmark(ScriptStack& stack, Stack<ScriptStack::Iterator>& brackets, ScriptBookmark bm)
+{
+   if (brackets.Count() != 0) {
+      ScriptStack::Iterator it = brackets.peek();
+
+      stack.insert(it, bm);
+
+      if ((*it).state != -1) {
+         (*brackets.start()) = ++it;
+      }
+   }
+   else stack.push(bm);
+}
+
+inline void appendScope(ScriptStack& stack, Stack<ScriptStack::Iterator>& brackets, ScriptBookmark bm)
+{
+   if (brackets.Count() != 0) {
+      ScriptStack::Iterator it = brackets.peek();
+
+      if ((*it).state == -1) {
+         stack.insert(it, bm);
+         it++;
+
+         brackets.push(it);
+      }
+      else {
+         stack.insert(it, bm);
+
+         brackets.push(it);
+      }
+   }
+   else {
+      stack.push(bm);
+
+      brackets.push(stack.start());
+   }
+}
+
+void InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
 {   
-   int     counter = 0;
+   ScriptStack stack(ScriptBookmark(0, 0));
+   Stack<ScriptStack::Iterator> brackets;
 
-   Stack<ScriptBookmark> stack(ScriptBookmark(0, 0));
-
-   int level = 1;
-   while (level > 0) {
-      ScriptBookmark bm = reader.read();
-
+   do {
       if (reader.compare("(")) {
-         stack.push(ScriptBookmark(-1, -1));
-         level++;
+         appendScope(stack, brackets, ScriptBookmark(-1, -1));
+
+         appendBookmark(stack, brackets, ScriptBookmark(-1, -2));
       }
       else if (reader.compare(")")) {
-         stack.push(ScriptBookmark(-1, -2));
-         level--;
+         brackets.pop();
+      }
+      else if (reader.compare("[")) {
+         appendScope(stack, brackets, ScriptBookmark(-1, -4));
+      }
+      else if (reader.compare("]")) {
+         appendBookmark(stack, brackets, ScriptBookmark(-1, -2));
+         brackets.pop();
       }
       else if (reader.compare("^")) {
-         stack.push(ScriptBookmark(-1, -3));
+         bm = reader.read();
+         bm.state = -3;
+
+         appendBookmark(stack, brackets, bm);
+      }
+      else if (reader.compare("*")) {
+         bm = reader.read();
+         bm.state = -6;
+
+         appendBookmark(stack, brackets, bm);
       }
       else if (bm.state == dfaFullIdentifier) {
-         stack.push(bm);
-      //   counter++;
+         appendBookmark(stack, brackets, bm);
       }
       else if (bm.state == dfaIdentifier) {
-         stack.push(bm);
-         //   counter++;
+         appendBookmark(stack, brackets, bm);
       }
       else if (bm.state == dfaQuote) {
-         stack.push(bm);
-         //counter++;
+         appendBookmark(stack, brackets, bm);
       }
       else if (bm.state == dfaInteger) {
-         stack.push(bm);
-         //counter++;
+         appendBookmark(stack, brackets, bm);
       }
       else if (bm.state == dfaLong) {
-         stack.push(bm);
-         //counter++;
+         appendBookmark(stack, brackets, bm);
       }
       else if (bm.state == dfaReal) {
-         stack.push(bm);
-         //counter++;
+         appendBookmark(stack, brackets, bm);
       }
-      //      char state = reader.info.state;
-//      if (state == dfaEOF) {
-//         break;
-//      }
-//      if (state == dfaQuote) {
-//         if (reverseMode) {
-//            arguments.push(cache.Length());
-//
-//            save(cache, dfaQuote, reader.token);
-//         }
-//         else  save(line, dfaQuote, reader.token);
-//
-//         counter++;
-//         (*scopes.start()).level++;
-//         reader.read();
-//      }
-//      else if (state == dfaFullIdentifier) {
-//         if (reverseMode) {
-//            arguments.push(cache.Length());
-//
-//            save(cache, dfaFullIdentifier, reader.token);
-//         }
-//         else save(line, dfaFullIdentifier, reader.token);
-//
-//         counter++;
-//         (*scopes.start()).level++;
-//         reader.read();
-//      }
-//      else if (state == dfaInteger) {
-//         if (reverseMode) {
-//            arguments.push(cache.Length());
-//
-//            save(cache, dfaInteger, reader.token);
-//         }
-//         else save(line, dfaInteger, reader.token);
-//
-//         counter++;
-//         (*scopes.start()).level++;
-//         reader.read();
-//      }
-//      else if (state == dfaLong) {
-//         if (reverseMode) {
-//            arguments.push(cache.Length());
-//
-//            save(cache, dfaLong, reader.token);
-//         }
-//         else save(line, dfaLong, reader.token);
-//
-//         counter++;
-//         (*scopes.start()).level++;
-//         reader.read();
-//      }
-//      else if (state == dfaReal) {
-//         if (reverseMode) {
-//            arguments.push(cache.Length());
-//
-//            save(cache, dfaReal, reader.token);
-//         }
-//         else save(line, dfaReal, reader.token);
-//
-//         counter++;
-//         (*scopes.start()).level++;
-//         reader.read();
-//      }
-      // if it is a new expression
-//      else if (reader.compare("[")) {
-//         // set reverse mode on, add new scope
-//         reverseMode = true;
-//         scopes.push(Scope(0, arguments.Count() + 1));
-//
-//         reader.read();
-//      }
-//      else if (reader.compare("]")) {
-//          scopes.pop();
-//
-//         copyDump(cache, line, arguments);
-//         cache.trim(0);
-//
-//         reader.read();
-//         reverseMode = false;
-//      }
-//      else if (reader.compare("(")) {
-//         scopes.push(Scope(0, arguments.Count() + 1));
-//
-//         reader.read();
-//      }
-//      else if (reader.compare(")")) {
-//         Scope scope = scopes.pop();
-//
-//         int pos = *arguments.get(arguments.Count() - scopes.peek().arg_level);
-//
-//         MemoryReader cacheReader(&cache, pos);
-//         char op = cacheReader.getByte();
-//         if (op == '^' || op == '&') {
-//            // update message counter
-//            char prm_count = cacheReader.getByte();
-//
-//            cache.writeByte(pos + 1, prm_count + scope.level);
-//
-//            if (op == '^')
-//               counter -= scope.level;
-//         }
-//
-//         reader.read();
-//      }
-//      else if (StringHelper::compare(reader.token, "^")) {
-//         IdentifierString message;
-//         readMessage(reader, message);
-//
-//         arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
-//         save(cache, '^', message);
-//      }
-//      else if (StringHelper::compare(reader.token, "&")) {
-//         IdentifierString message;
-//         readMessage(reader, message);
-//
-//         arguments.insert(arguments.get(arguments.Count() - scopes.peek().arg_level), cache.Length());
-//         save(cache, '&', message);
-//         counter++;
-//      }
-//      else if (StringHelper::compare(reader.token, "%")) {
-//         IdentifierString message;
-//         readMessage(reader, message, true);
-//
-//         if (reverseMode) {
-//            arguments.push(cache.Length());
-//            save(cache, '%', message);
-//         }
-//         else save(line, '%', message);
-//
-//         counter++;
-//      }
-//      else if (StringHelper::compare(reader.token, "*")) {
-//         arguments.push(cache.Length());
-//
-//         reader.read();
-//         save(cache, '*', 0, reader.token);
-//
-//         reader.read();
-//         counter++;
-//      }
-//      else if (StringHelper::compare(reader.token, "<")) {
-//         arguments.push(cache.Length());
-//
-//         reader.read();
-//         save(cache, '<', reader.token);
-//
-//         reader.read();
-//         (*scopes.start()).level++;
-//         counter++;
-//      }
-//      else if (StringHelper::compare(reader.token, ">")) {
-//         arguments.push(cache.Length());
-//
-//         reader.read();
-//         save(cache, '>', reader.token);
-//
-//         reader.read();
-//      }
-//      else if (StringHelper::compare(reader.token, ";") || StringHelper::compare(reader.token, ",")) {
-//         break;
-//      }
-//      else if (StringHelper::compare(reader.token, "{")) {
-//         scopes.push(Scope(0, arguments.Count()));
-//
-//         arguments.push(cache.Length());
-//
-//         reader.read();
-//
-//         cache.writeByte(cache.Length(), '{');
-//         int statement_length = parseStatement(reader, cache);
-//         cache.writeByte(cache.Length(), '}');
-//
-//         Scope scope = scopes.pop();
-//         int pos = *arguments.get(arguments.Count() - scope.arg_level);
-//
-//         MemoryReader cacheReader(&cache, pos);
-//         char op = cacheReader.getByte();
-//         if (op == '*') {
-//            // update length counter
-//            cache.writeDWord(pos + 1, statement_length);
-//         }
-//
-//         (*scopes.start()).level++;
-//         reader.read();
-//      }
-//      else if (StringHelper::compare(reader.token, "}")) {
-//         break;
-//      }
-   }
 
-   stack.pop(); // remove last bookmark
+      bm = reader.read();
+
+   } while (brackets.Count() > 0);
 
    parseStack(reader, writer, stack);
-
-   return counter;
-}
-
-int InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
-{
-   if (reader.compare("(")) {
-      parseExpression(reader, writer);
-   }
-   else if (bm.state == dfaFullIdentifier) {
-      writer.writeCallCommand(reader.lookup(bm));
-   }
-
-   return 0;
 }
 
 void InlineScriptParser :: parse(_ScriptReader& reader, TapeWriter& writer)
 {
-   while (true) {
-      ScriptBookmark bm = reader.read();
-      if (bm.state == dfaEOF) {
-         break;
-      }
-      else parseStatement(reader, bm, writer);
+   ScriptBookmark bm = reader.read();
+   while (!reader.Eof()) {      
+      parseStatement(reader, bm, writer);
 
 //      if (reader.token[0] == ';' && reader.info.state != dfaQuote) {
 //         writer.writeCommand(POP_TAPE_MESSAGE_ID, 1);
