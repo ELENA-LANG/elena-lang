@@ -110,17 +110,11 @@ protected:
    size_t writeBodyText(ident_t text);
    ident_t getBodyText(size_t ptr);
 
-//   size_t defineDSARule(TokenInfo& token, _ScriptReader& reader);
-//
-//   void writeDSARule(TokenInfo& token, size_t ptr);
-
-//   void compile(TokenInfo& token, CachedScriptReader& reader, _ScriptCompiler* compiler);
-
    void addRule(int id, Rule& rule);
 
    void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
-   size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t nonterminal = 0);
-   void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule);
+   size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);
+   void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
 
    void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);
    int buildDerivationTree(_ScriptReader& reader, size_t startRuleId, MemoryWriter& writer);

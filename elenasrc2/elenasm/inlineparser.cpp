@@ -65,15 +65,15 @@ void InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int
 void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token)
 {
    switch (state) {
-//      case dfaInteger:
-//         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
-//         break;
-//      case dfaReal:
-//         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
-//         break;
-//      case dfaLong:
-//         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
-//         break;
+      case dfaInteger:
+         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
+         break;
+      case dfaReal:
+         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
+         break;
+      case dfaLong:
+         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
+         break;
       case dfaQuote:
          writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
          break;
@@ -256,7 +256,19 @@ int InlineScriptParser :: parseExpression(_ScriptReader& reader, TapeWriter& wri
          stack.push(bm);
          //counter++;
       }
-//      char state = reader.info.state;
+      else if (bm.state == dfaInteger) {
+         stack.push(bm);
+         //counter++;
+      }
+      else if (bm.state == dfaLong) {
+         stack.push(bm);
+         //counter++;
+      }
+      else if (bm.state == dfaReal) {
+         stack.push(bm);
+         //counter++;
+      }
+      //      char state = reader.info.state;
 //      if (state == dfaEOF) {
 //         break;
 //      }
