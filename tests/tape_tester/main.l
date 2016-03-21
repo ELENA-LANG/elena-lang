@@ -8,14 +8,15 @@
 [
     scriptEngine load &path:"~\scripts\eson.es".
 
-    #var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
+    //#var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
+    #var s := scriptEngine eval:"{ x : 1 , y : 2 }".
     #var x := s x.
     #var y := s y.
     
-    ((x == 1)and:(y == 2))?
-    [
-        console writeLine:"Script: structure works".
-    ].
+//    ((x == 1)and:(y == 2))?
+//    [
+//        console writeLine:"Script: structure works".
+//    ].
     
     s writeLine:"Script: function works".
 ].
@@ -33,7 +34,7 @@
 [
     #var n := Integer new.
   
-    #var g := Struct(%getNext, Tape(1, 1, tapeControl, %(getAt&args)(1), %(get&index), %(append)(1)), %index, n).
+    #var g := Struct(%getNext, Tape(1, 1, %"tapeOp.var[]", %"get&index", %"append[1]"), %index, n).        
 
     g eval &getNext.
 ].
@@ -65,13 +66,13 @@
 
 #symbol Program =
 [ 
-    SubjectSerializerTest eval.
+    //SubjectSerializerTest eval.
     
-    ClassSerializerTest eval.    
+    //ClassSerializerTest eval.    
 
     InterpreterTest eval
         | if &ScriptError: e [ console writeLine:(e message). ].
 
-    ClassTest eval.
-    ReflectionTester eval.
+    //ClassTest eval.
+    //ReflectionTester eval.
 ].

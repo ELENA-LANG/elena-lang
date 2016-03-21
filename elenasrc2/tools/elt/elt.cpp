@@ -159,8 +159,7 @@ int main(int argc, char* argv[])
    }
 
    if (!_loaded)
-      //loadScript("scripts\\elena.es");
-      loadScript("scripts\\eson.es");
+      loadScript("scripts\\elena.es");
 
    runSession();
 }

@@ -10,11 +10,6 @@
 {
     test
     [
-        #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
-    
-        #var x := a x.
-    
-        a print:"Struct method works".
     ]
 }.
         
@@ -587,11 +582,11 @@
 
 #symbol StructTest =
 [
-    //#var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, tapeControl, %"getAt&args)(1), system'console, %(writeLine)(1) )). 
+    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
 
-    //#var x := a x.
+    #var x := a x.
 
-    //a eval&print:"Struct method works".
+    a print:"Struct method works".
 ].
 
 #symbol GroupMember1 =
