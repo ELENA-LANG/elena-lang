@@ -203,16 +203,19 @@ inline void appendScope(ScriptStack& stack, Stack<ScriptStack::Iterator>& bracke
    if (brackets.Count() != 0) {
       ScriptStack::Iterator it = brackets.peek();
 
-      if ((*it).state == -1) {
+      if ((*it).state != -1) {
+         ScriptStack::Iterator prev = it;
+
+         stack.insertBefore(it, bm);
+
+         (*brackets.start()) = it;
+         brackets.push(prev);
+      }
+      else {
          stack.insert(it, bm);
          it++;
 
          brackets.push(it);
-      }
-      else {
-         brackets.push(it);
-
-         stack.insertBefore(it, bm);
       }
    }
    else {
