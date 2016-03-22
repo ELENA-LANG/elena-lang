@@ -64,6 +64,18 @@ void InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int
    writer.writeCommand(command, reference);
 }
 
+void InlineScriptParser :: writeSubject(TapeWriter& writer, ident_t message)
+{
+   IdentifierString reference;
+   reference.append('0');
+   reference.append('#');
+   reference.append(0x20);
+   reference.append('&');
+   reference.append(message);
+
+   writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, reference);
+}
+
 void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token)
 {
    if (StringHelper::compare(token, ".")) {
@@ -87,7 +99,7 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
          writer.writeCallCommand(token);
          break;
       case dfaIdentifier:
-         writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, token);
+         writeSubject(writer, token);
          break;
          //      case '<':
          //      {

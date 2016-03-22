@@ -18,28 +18,12 @@ class InlineScriptParser : public _Parser
 {
    MessageMap _verbs;
 
-//   struct Scope
-//   {
-//      int level;
-//      int arg_level;
-//
-//      Scope()
-//      {
-//         level = 0;
-//         arg_level = 0;
-//      }
-//      Scope(int level, int arg_level)
-//      {
-//         this->level = level;
-//         this->arg_level = arg_level;
-//      }
-//   };
-
    int mapVerb(ident_t literal);
 
    void writeObject(TapeWriter& writer, char state, ident_t value);
    void writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
-   
+   void writeSubject(TapeWriter& writer, ident_t message);
+
    void parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack);
 
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);

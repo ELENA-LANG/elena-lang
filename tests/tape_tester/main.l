@@ -3,20 +3,14 @@
 #import system'dynamic.
 #import extensions'dynamic.
 
-#symbol dummy =
-{
-    x = 2.
-    
-    y = 3.
-}.
-
 #symbol InterpreterTest =
 [
     scriptEngine load &path:"~\scripts\eson.es".
 
     //#var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
-    //#var s := scriptEngine eval:"{ x : 1 , y : 2 }".
-    #var s := scriptEngine eval:"{ x : 1 }".
+    #var s := scriptEngine eval:"{ x : 1 , y : 2 }".
+    //#var s := scriptEngine eval:"{ x : 1 }".
+    
     #var x := s x.
     #var y := s y.
     
