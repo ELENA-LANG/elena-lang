@@ -258,7 +258,7 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
    }
 }
 
-EXTERN_DLL_EXPORT int Interpret(void* tape)
+EXTERN_DLL_EXPORT int InterpretTape(void* tape)
 {
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
@@ -285,7 +285,7 @@ EXTERN_DLL_EXPORT int Interpret(void* tape)
    }
 }
 
-EXTERN_DLL_EXPORT int Evaluate(void* tape)
+EXTERN_DLL_EXPORT int EvaluateTape(void* tape)
 {
    Instance* instance = getCurrentInstance();
    if (instance == NULL)

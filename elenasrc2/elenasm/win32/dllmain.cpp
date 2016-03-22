@@ -29,30 +29,22 @@ void freeSession()
 
 // === dll entries ===
 
-EXTERN_DLL_EXPORT int InterpretScript(_ELENA_::ident_t script)
+EXTERN_DLL_EXPORT void* InterpretScript(_ELENA_::ident_t script)
 {
-   return session->translate(script, true);
+   return session->translate(script);
 }
 
-EXTERN_DLL_EXPORT int InterpretFile(_ELENA_::ident_t  pathStr, int encoding, bool autoDetect)
+EXTERN_DLL_EXPORT void* InterpretFile(_ELENA_::ident_t  pathStr, int encoding, bool autoDetect)
 {
    _ELENA_::Path path;
    _ELENA_::Path::loadPath(path, pathStr);
 
-   return session->translate(path, encoding, autoDetect, true);
+   return session->translate(path, encoding, autoDetect);
 }
 
-EXTERN_DLL_EXPORT int EvaluateScript(_ELENA_::ident_t script)
+EXTERN_DLL_EXPORT void Release(void* tape)
 {
-   return session->translate(script, false);
-}
-
-EXTERN_DLL_EXPORT int EvaluateFile(_ELENA_::ident_t  pathStr, int encoding, bool autoDetect)
-{
-   _ELENA_::Path path;
-   _ELENA_::Path::loadPath(path, pathStr);
-
-   return session->translate(path, encoding, autoDetect, false);
+   session->free(tape);
 }
 
 EXTERN_DLL_EXPORT int GetStatus(_ELENA_::ident_c* buffer, int maxLength)

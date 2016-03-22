@@ -1,9 +1,9 @@
-[project]
-executable=tape_tester.exe
+﻿[project]
 vmpath=..\..\bin
+executable=tape_tester.exe
 namespace=tape_tester
 template=vm_console
-debuginfo=-2
+debuginfo=-1
 warn:unresolved=0
 
 [files]

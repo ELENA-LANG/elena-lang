@@ -8,12 +8,13 @@
 //---------------------------------------------------------------------------
 #include <stdarg.h>
 #include "elenasm.h"
+#include "elenavm.h"
 
 using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   3
+#define ELT_BUILD_NUMBER   4
  
 // global variables
 int   _encoding = feAnsi;
@@ -45,10 +46,26 @@ void printHelp()
    print("<script>             - execute script\n");
 }
 
+void executeTape(void* tape)
+{
+   int retVal = InterpretTape(tape);
+   Release(tape);
+
+   // copy vm error if retVal is zero
+   if (!retVal) {
+      ident_t error = GetVMLastError();
+      if (!emptystr(error)) {
+         _ELENA_::WideString message(error);
+
+         wprintf(L"\nFailed:%s", (const wchar_t*)message);
+      }
+   }
+}
+
 void executeScript(const char* script)
 {
-   int retVal = InterpretScript(script);
-   if (retVal == 0) {
+   void* tape = InterpretScript(script);
+   if (tape == NULL) {
       char error[0x200];
       int length = GetStatus(error, 0x200);
       error[length] = 0;
@@ -59,14 +76,15 @@ void executeScript(const char* script)
       }
       return;
    }
+   else executeTape(tape);
 }
 
 void loadScript(const char* path)
 {
    path = trim(path);
 
-   int retVal = InterpretFile(path, _encoding, false);
-   if (retVal == 0) {
+   void* tape = InterpretFile(path, _encoding, false);
+   if (tape == NULL) {
       char error[0x200];
       int length = GetStatus(error, 0x200);
       error[length] = 0;
@@ -77,6 +95,7 @@ void loadScript(const char* path)
       }
       return;
    }
+   else executeTape(tape);
 
 }
 
@@ -157,6 +176,8 @@ int main(int argc, char* argv[])
          }
       }
    }
+
+   executeScript("[[ #config vm_console #start; ]]");
 
    if (!_loaded)
       loadScript("scripts\\elena.es");

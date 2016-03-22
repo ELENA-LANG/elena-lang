@@ -9,7 +9,6 @@
 #include "session.h"
 #include "cfparser.h"
 #include "inlineparser.h"
-#include "elenavm.h"
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
@@ -131,31 +130,27 @@ void Session :: parseScript(MemoryDump& tape, _ScriptReader& reader)
    _currentParser->parse(reader, writer);
 }
 
-int Session :: translate(TextReader* source, bool standalone)
+void* Session :: translate(TextReader* source)
 {
    _lastError.clear();
 
    ScriptReader scriptReader(source);
-   MemoryDump   tape;
+   int offset = _tape.Length();
+   if (offset != 0)
+      throw EInvalidOperation("Tape is not released");
 
-   parseMetaScript(tape, scriptReader);
-   parseScript(tape, scriptReader);
+   parseMetaScript(_tape, scriptReader);
+   parseScript(_tape, scriptReader);
 
-   int retVal = standalone ? Interpret(tape.get(0)) : Evaluate(tape.get(0));
-
-   // copy vm error if retVal is zero
-   if (!retVal)
-      _lastError.copy(GetVMLastError());
-
-   return retVal;
+   return _tape.get(offset);
 }
 
-int Session :: translate(ident_t script, bool standalone)
+void* Session :: translate(ident_t script)
 {
    try {
       IdentifierTextReader reader(script);
 
-      return translate(&reader, standalone);
+      return translate(&reader);
    }
 //   catch(EUnrecognizedException) {
 //      _lastError.copy("Unrecognized expression");
@@ -180,9 +175,16 @@ int Session :: translate(ident_t script, bool standalone)
 
       return NULL;
    }
+   catch (EInvalidOperation e) {
+      _lastError.copy("Invalid operation ");
+      _lastError.append(':');
+      _lastError.append(e.Error());
+
+      return NULL;
+   }
 }
 
-int Session :: translate(path_t path, int encoding, bool autoDetect, bool standalone)
+void* Session :: translate(path_t path, int encoding, bool autoDetect)
 {
    try {
       Path scriptPath(_rootPath);
@@ -203,7 +205,7 @@ int Session :: translate(path_t path, int encoding, bool autoDetect, bool standa
          return NULL;
       }
 
-      return translate(&reader, standalone);
+      return translate(&reader);
    }
 //   catch(EUnrecognizedException) {
 //      _lastError.copy("Unrecognized expression");
@@ -225,6 +227,13 @@ int Session :: translate(path_t path, int encoding, bool autoDetect, bool standa
       _lastError.appendInt(e.row);
       _lastError.append(':');
       _lastError.appendInt(e.column);
+
+      return NULL;
+   }
+   catch (EInvalidOperation e) {
+      _lastError.copy("Invalid operation ");
+      _lastError.append(':');
+      _lastError.append(e.Error());
 
       return NULL;
    }

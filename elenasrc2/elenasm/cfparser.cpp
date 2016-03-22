@@ -708,26 +708,39 @@ bool CFParser :: parseGrammarRule(_ScriptReader& reader)
 //   }
 //}
 
+inline int writeDerivationItem(MemoryWriter& writer, int key, int terminal, int trace)
+{
+   int offset = writer.Position();
+   writer.writeDWord(key);
+   writer.writeDWord(terminal);
+   writer.writeDWord(trace);
+
+   return offset;
+}
+
 void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer)
 {
-   ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
+   //ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
 
    size_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);
    while (rule.type != rtNone) {
       if (rule.apply(rule, bm, reader, this)) {
-         int offset = writer.Position();
-         writer.writeDWord(key);
-         writer.writeDWord(terminalOffset);
-         writer.writeDWord(item.trace);
+         int offset = writeDerivationItem(writer, key, terminalOffset, item.trace);
 
          if (rule.type == rtEps) {
+            offset = writeDerivationItem(writer, 0, 0, offset);
+
             if (item.next == -1) {
                queue.insert(DerivationItem(-1, offset, 0));
             }
             else {
                MemoryReader reader(&_body, item.next);
                int nonterminal = reader.getDWord();
+               if (nonterminal == 0) {
+                  offset = writeDerivationItem(writer, 0, 0, offset);
+                  nonterminal = reader.getDWord();
+               }
                int next = reader.getDWord();
 
                queue.insert(DerivationItem(nonterminal, offset, next));
@@ -739,6 +752,7 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
             if (rule.type == rtChomski) {
                int previous = next;
                next = writer.Position();
+               writer.writeDWord(0);
                writer.writeDWord(rule.terminal);
                writer.writeDWord(previous);
             }
@@ -746,12 +760,18 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
             queue.insert(DerivationItem(rule.nonterminal, offset, next));
          }
          else if (rule.nonterminal == 0) {
+            offset = writeDerivationItem(writer, 0, 0, offset);            
+
             if (item.next == -1) {
                queue.push(DerivationItem(-1, offset, 0));
             }
             else if (item.next > 0) {
                MemoryReader reader(&_body, item.next);
                int nonterminal = reader.getDWord();
+               if (nonterminal == 0) {
+                  offset = writeDerivationItem(writer, 0, 0, offset);
+                  nonterminal = reader.getDWord();
+               }
                int next = reader.getDWord();
 
                queue.push(DerivationItem(nonterminal, offset, next));
@@ -814,26 +834,26 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
    Stack<size_t> postfixes;
    while (stack.Count() > 0) {
       TraceItem item = stack.pop();
+      if (item.ruleKey == 0) {
+         size_t ptr = postfixes.pop();
+         if (ptr)
+            log.write(getBodyText(ptr));
+      }
+      else {
+         Rule rule = _table.get(item.ruleKey);
+         if (rule.prefixPtr != 0) {
+            log.write(getBodyText(rule.prefixPtr));
 
-      Rule rule = _table.get(item.ruleKey);
-      if (rule.prefixPtr != 0) {
-         log.write(getBodyText(rule.prefixPtr));
+            if (rule.saveTo != NULL)
+               rule.saveTo(scriptReader, this, item.terminal, log);
 
-         if (rule.saveTo != NULL)
-            rule.saveTo(scriptReader, this, item.terminal, log);
+            // HOTFIX: to prevent too long line
+            log.write('\n');
+         }
 
-         // HOTFIX: to prevent too long line
-         log.write('\n');
+         postfixes.push(rule.postfixPtr);
       }
 
-      if (rule.postfixPtr != 0)
-         postfixes.push(rule.postfixPtr);
-   }
-
-   while (postfixes.Count() > 0) {
-      size_t ptr = postfixes.pop();
-
-      log.write(getBodyText(ptr));
    }
    log.write((char)0);
 }

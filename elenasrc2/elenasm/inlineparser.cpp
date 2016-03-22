@@ -176,11 +176,12 @@ inline void appendBookmark(ScriptStack& stack, Stack<ScriptStack::Iterator>& bra
    if (brackets.Count() != 0) {
       ScriptStack::Iterator it = brackets.peek();
 
-      stack.insert(it, bm);
-
       if ((*it).state != -1) {
-         (*brackets.start()) = ++it;
+         stack.insertBefore(it, bm);
+
+         (*brackets.start()) = it;
       }
+      else stack.insert(it, bm);
    }
    else stack.push(bm);
 }
@@ -197,9 +198,9 @@ inline void appendScope(ScriptStack& stack, Stack<ScriptStack::Iterator>& bracke
          brackets.push(it);
       }
       else {
-         stack.insert(it, bm);
-
          brackets.push(it);
+
+         stack.insertBefore(it, bm);
       }
    }
    else {
@@ -224,10 +225,10 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark&
          brackets.pop();
       }
       else if (reader.compare("[")) {
-         appendScope(stack, brackets, ScriptBookmark(-1, -4));
+         appendScope(stack, brackets, ScriptBookmark(-1, -2));
+         appendBookmark(stack, brackets, ScriptBookmark(-1, -4));
       }
       else if (reader.compare("]")) {
-         appendBookmark(stack, brackets, ScriptBookmark(-1, -2));
          brackets.pop();
       }
       else if (reader.compare("^")) {

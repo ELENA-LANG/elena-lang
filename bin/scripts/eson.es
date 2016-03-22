@@ -22,14 +22,4 @@
    #define parameter  ::= ":" object;
    #define next_param ::= "," parameter next_param;
    #define next_param ::= ")";
-
-   #config vm_console 
-   #start;
 ]]
-
-
-{ 
-   x : 2,
-
-   y : 3
-}

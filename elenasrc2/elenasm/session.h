@@ -20,12 +20,13 @@ class Session
    Path             _rootPath;
 
    String<ident_c, 512> _lastError;
+   MemoryDump           _tape;
 
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);
    void parseMetaScript(MemoryDump& tape, _ScriptReader& reader);
    void parseScript(MemoryDump& tape, _ScriptReader& reader);
 
-   int translate(TextReader* source, bool standalone);
+   void* translate(TextReader* source);
 
 public:
    ident_t getLastError()
@@ -35,8 +36,12 @@ public:
       return !emptystr(error) ? error : NULL;
    }
 
-   int translate(ident_t script, bool standalone);
-   int translate(path_t path, int encoding, bool autoDetect, bool standalone);
+   void* translate(ident_t script);
+   void* translate(path_t path, int encoding, bool autoDetect);
+   void free(void*)
+   {
+      _tape.trim(0);
+   }
 
    Session(path_t rootPath);
    virtual ~Session();

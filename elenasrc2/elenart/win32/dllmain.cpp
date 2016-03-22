@@ -59,7 +59,13 @@ EXTERN_DLL_EXPORT int LoadClassName(void* object, ident_c* buffer, int length)
    return instance->loadClassName((size_t)object, buffer, length);
 }
 
-EXTERN_DLL_EXPORT void* Interpreter(void* tape)
+EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
+{
+   // !! terminator code
+   return NULL;
+}
+
+EXTERN_DLL_EXPORT void* InterpretTape(void* tape)
 {
    // !! terminator code
    return NULL;

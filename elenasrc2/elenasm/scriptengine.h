@@ -29,6 +29,21 @@ struct EParseError
    }
 };
 
+// --- EInvalidOperation ---
+
+class EInvalidOperation
+{
+   ident_t error;
+
+public:
+   ident_t Error() { return error; }
+
+   EInvalidOperation(ident_t error)
+   {
+      this->error = error;
+   }
+};
+
 // --- TapeWriter ---
 
 class TapeWriter

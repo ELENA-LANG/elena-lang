@@ -28,7 +28,7 @@ labHookEnd:
   mov  ebx, data:"'vm_tape"
   push ebx
 
-  call extern 'dlls'elenavm.Interpret
+  call extern 'dlls'elenavm.InterpretTape
 
   lea   esp, [esp + 4]
 

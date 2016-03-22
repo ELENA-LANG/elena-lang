@@ -1103,6 +1103,14 @@ public:
       else _list.insertAfter(it, item);
    }
 
+   void insertBefore(Iterator& it, T item)
+   {
+      if (it.Eof()) {
+         _list.addToTop(item);
+      }
+      else _list.insertBefore(it, item);
+   }
+
    void clear()
    {
       _list.clear();

@@ -5333,3 +5333,16 @@ labErr:
   throw
   
 end
+
+procedure evaluate_tape
+
+  aloadsi 2
+  nload
+  pushd
+  callextr extern : EvaluateTape
+  pop
+  pushd
+  popa
+  quitn 2
+
+end

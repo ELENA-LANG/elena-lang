@@ -30,31 +30,49 @@
         ^ UTF8Encoding toLiteral &int:0 &int:aLength &bytearray:aBuffer.  
     ]
     
-    evaluateScript &literal:aScript
+    #method(stacksafe)$lastVMError
     [
-        #var(type:int)retVal := system'external'elenasm EvaluateScript
+        #var(type:dirty_ptr)err := system'external GetVMLastError.
+            
+        ^ err literal.  
+    ]
+    
+    #method(stacksafe) evaluateTape &dirty_ptr:tape
+        => system'core_routines'evaluate_tape.
+    
+    #method(stacksafe) evaluateScript &literal:aScript
+    [
+        #var(type:dirty_ptr)tape := system'external'elenasm InterpretScript
             &literal:aScript.
             
-        (retVal == 0)
+        (tape == 0)
             ? [ #throw ScriptEngineException new. ].
+            
+        #var retVal := $self evaluateTape &dirty_ptr:tape.
+        
+        system'external'elenasm Release &dirty_ptr:tape.
+        
+        ($nil == retVal)
+            ? [ #throw ScriptEngineException new:($self $lastVMError). ].
+            
+        ^ retVal.            
     ]
 
-    loadScriptFile &literal:aPath &int:anEncoding &int:anAutoDetect
+    #method(stacksafe) loadScriptFile &literal:path &int:anEncoding &int:anAutoDetect
     [
-        #var(type:int)retVal := system'external'elenasm EvaluateFile
-            &literal:aPath
+        #var(type:dirty_ptr)tape := system'external'elenasm InterpretFile
+            &literal:path
             &int:anEncoding
             &int:anAutoDetect.
             
-        (retVal == 0)
+        (tape == 0)
             ? [ #throw ScriptEngineException new. ].
+            
+        system'external'elenasm Release &dirty_ptr:tape.            
     ]
         
     evaluate : aScript
         = $self evaluateScript &literal:(aScript literal).
-        
-    evaluate &path:aPath
-        = $self loadScriptFile &literal:(aPath literal) &int:0 &int:-1.
         
     load &path:aPath
     [

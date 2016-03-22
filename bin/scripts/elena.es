@@ -16,7 +16,4 @@
    #define parameters ::= $eps; 
    #define parameter  ::= ":" object;
    #define next_expr  ::= $eof;
-
-   #config vm_console 
-   #start;
 ]]
