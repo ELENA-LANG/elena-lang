@@ -17,6 +17,8 @@ namespace _ELENA_
 class CFParser : public _Parser
 {
 public:
+   typedef Map<ident_t, int> Mapping;
+
    enum RuleType
    {
       rtNone = 0,
@@ -95,10 +97,11 @@ public:
    typedef MemoryMap<ident_t, size_t> NameMap;
 
 protected:
-   _Parser*    _baseParser;
-   SyntaxTable _table;
-   NameMap     _names;
-   MemoryDump  _body;
+   _Parser*          _baseParser;
+   SyntaxTable       _table;
+   NameMap           _names;
+   MemoryDump        _body;
+   Stack<Mapping*>   _scopes;
 
    size_t mapRuleId(ident_t name)
    {
@@ -128,6 +131,24 @@ public:
    virtual bool parseGrammarRule(_ScriptReader& reader);
 
    virtual void parse(_ScriptReader& reader, TapeWriter& writer);
+
+   Mapping* newScope()
+   {
+      Mapping* mappings = new Mapping();
+      _scopes.push(mappings);
+
+      return mappings;
+   }
+
+   Mapping* getScope()
+   {
+      return _scopes.peek();
+   }
+
+   void freeScope()
+   {
+      freeobj(_scopes.pop());
+   }
 
    CFParser(_Parser* baseParser)
       : _table(Rule())

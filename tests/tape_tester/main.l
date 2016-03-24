@@ -7,8 +7,7 @@
 [
     scriptEngine load &path:"~\scripts\eson.es".
 
-    //#var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
-    #var s := scriptEngine eval:"{ x : 1 , y : 2 }".
+    #var s := scriptEngine eval:"{ x : 1 , y : 2 , writeLine : function(x){ system'console.writeLine(x) } }".
     
     #var x := s x.
     #var y := s y.

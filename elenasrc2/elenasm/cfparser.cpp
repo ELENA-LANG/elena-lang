@@ -17,9 +17,10 @@ using namespace _ELENA_TOOL_;
 #define NUMERIC_KEYWORD       "$numeric"
 #define EPS_KEYWORD           "$eps"
 #define EOF_KEYWORD           "$eof"
-//#define SCOPE_KEYWORD         "$scope"
-//#define VAR_KEYWORD           "$var"
-//#define MAPPING_KEYWORD       "$newvar"
+#define SCOPE_KEYWORD         "$scope"
+#define SCOPEEND_KEYWORD      "$end"
+#define VAR_KEYWORD           "$var"
+#define MAPPING_KEYWORD       "$newvar"
 //#define IDLE_MAPPING_KEYWORD  "$new"
 //#define ANY_KEYWORD           "$any"
 
@@ -80,139 +81,6 @@ bool normalNumericApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptRea
    return (bm.state == dfaInteger || bm.state == dfaLong || bm.state == dfaReal);
 }
 
-//bool scopeNonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   CFParser::Mapping* old = token.mapping;
-//
-//   CFParser::Mapping mapping;
-//
-//   token.mapping = &mapping;
-//
-//   bool ret = applyNonterminal(rule, token, reader);
-//
-//   token.mapping = old;
-//
-//   return ret;
-//}
-//
-//bool scopeNonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   CFParser::Mapping* old = token.mapping;
-//
-//   CFParser::Mapping mapping;
-//
-//   token.mapping = &mapping;
-//
-//   bool ret = applyNonterminalDSA(rule, token, reader);
-//
-//   token.mapping = old;
-//
-//   if (ret) {
-//      if (rule.postfixPtr)
-//         rule.applyPostfixDSARule(token);
-//
-//      return true;
-//   }
-//   else return false;
-//
-//   return ret;
-//}
-//
-//bool newNonterminalApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   token.mapping->add(NULL, token.mapping->Count() + 1);
-//
-//   return applyNonterminal(rule, token, reader);
-//}
-//
-//bool newNonterminalApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   token.mapping->add(NULL, token.mapping->Count() + 1);
-//
-//   bool ret = applyNonterminalDSA(rule, token, reader);
-//
-//   if (ret) {
-//      if (rule.postfixPtr)
-//         rule.applyPostfixDSARule(token);
-//
-//      return true;
-//   }
-//   else return false;
-//
-//   return ret;
-//}
-//
-//bool normalLiteralApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaQuote)
-//      return false;
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token);
-//
-//   token.writeLog();
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token);
-//
-//   return true;
-//}
-//
-//bool normalNumericApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaInteger && token.state != dfaLong && token.state != dfaReal)
-//      return false;
-//
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token);
-//
-//   token.writeLog();
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token);
-//
-//   return true;
-//}
-//
-//bool normalIdentifierApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaIdentifier)
-//      return false;
-//
-//   if (rule.prefixPtr) {
-//      rule.applyPrefixDSARule(token);
-//
-//      token.writeLog();
-//   }   
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr) {
-//      rule.applyPostfixDSARule(token);
-//   }
-//
-//   return true;
-//}
-//
-//bool variableApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.mapping == NULL || token.state != dfaIdentifier || !token.mapping->exist(token.value))
-//      return false;
-//
-//   ident_c s[12];
-//   StringHelper::intToStr(token.mapping->get(token.value), s, 10);
-//   token.writeLog(s);
-//
-//   return apply(rule, token, reader);
-//}
-//
 //bool variableApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   if (token.mapping == NULL || token.state != dfaIdentifier || !token.mapping->exist(token.value))
@@ -235,47 +103,7 @@ bool normalNumericApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptRea
 //
 //   return true;
 //}
-//
-//
-//bool mappingApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.mapping == NULL || token.state != dfaIdentifier)
-//      return false;
-//
-//   token.mapping->add(token.value, token.mapping->Count() + 1);
-//
-//   if (!apply(rule, token, reader)) {
-//      token.mapping->erase(token.value);
-//
-//      return false;
-//   }
-//   else return true;
-//}
-//
-//bool mappingApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.mapping == NULL || token.state != dfaIdentifier)
-//      return false;
-//
-//   if (rule.prefixPtr) {
-//      rule.applyPrefixDSARule(token);
-//   }
-//
-//   token.mapping->add(token.value, token.mapping->Count() + 1);
-//
-//   if (!apply(rule, token, reader)) {
-//      token.mapping->erase(token.value);
-//
-//      return false;
-//   }      
-//
-//   if (rule.postfixPtr) {
-//      rule.applyPostfixDSARule(token);
-//   }
-//
-//   return true;
-//}
-//
+////
 //bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
 //{
 //   if (token.state != dfaFullIdentifier)
@@ -383,6 +211,41 @@ void saveLiteral(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scrip
    parser->readScriptBookmark(ptr, bm);
 
    log.writeQuote(scriptReader.lookup(bm));
+}
+
+void saveNewScope(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+{
+   parser->newScope();
+}
+
+void saveEndScope(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+{
+   parser->freeScope();
+}
+
+void saveMapping(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+{
+   CFParser::Mapping* mapping = parser->getScope();
+
+   ScriptBookmark bm;
+   parser->readScriptBookmark(ptr, bm);
+
+   mapping->add(scriptReader.lookup(bm), mapping->Count() + 1);
+}
+
+void saveVariable(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+{
+   CFParser::Mapping* mapping = parser->getScope();
+
+   ScriptBookmark bm;
+   parser->readScriptBookmark(ptr, bm);
+
+   int index = mapping->get(scriptReader.lookup(bm));
+
+   ident_c s[12];
+   StringHelper::intToStr(index, s, 10);
+
+   log.write(s);
 }
 
 void CFParser :: readScriptBookmark(size_t ptr, ScriptBookmark& bm)
@@ -522,35 +385,53 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    MemoryWriter writer(&_body);
    ScriptBookmark bm = reader.read();
    while (!reader.compare("=>") || bm.state == dfaQuote) {
-      if (prefixMode && reader.compare(REFERENCE_KEYWORD)) {
-         rule.terminal = -1;
-         rule.saveTo = saveReference;
+      if (bm.state != dfaPrivate) {
+         if (rule.saveTo != NULL)
+            throw EParseError(bm.column, bm.row);
 
-         mode = REFERENCE_MODE;
-         writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-      }
-      else if (prefixMode && reader.compare(IDENTIFIER_KEYWORD)) {
-         rule.terminal = -1;
-         rule.saveTo = saveReference;
+         if (reader.compare(REFERENCE_KEYWORD)) {
+            rule.terminal = -1;
+            rule.saveTo = saveReference;
 
-         mode = IDENTIFIER_MODE;
-         writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-      }
-      else if (prefixMode && reader.compare(LITERAL_KEYWORD)) {
-         rule.terminal = -1;
-         rule.saveTo = saveLiteral;
+            mode = REFERENCE_MODE;
+         }
+         else if (reader.compare(IDENTIFIER_KEYWORD)) {
+            rule.terminal = -1;
+            rule.saveTo = saveReference;
 
-         mode = LITERAL_MODE;
-         writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-      }
-      else if (prefixMode && reader.compare(NUMERIC_KEYWORD)) {
-         rule.terminal = -1;
-         rule.saveTo = saveReference;
+            mode = IDENTIFIER_MODE;
+         }
+         else if (reader.compare(LITERAL_KEYWORD)) {
+            rule.terminal = -1;
+            rule.saveTo = saveLiteral;
 
-         mode = NUMERIC_MODE;
+            mode = LITERAL_MODE;
+         }
+         else if (reader.compare(NUMERIC_KEYWORD)) {
+            rule.terminal = -1;
+            rule.saveTo = saveReference;
+
+            mode = NUMERIC_MODE;
+         }
+         else if (reader.compare(SCOPE_KEYWORD)) {
+            rule.saveTo = saveNewScope;
+         }
+         else if (reader.compare(SCOPEEND_KEYWORD)) {
+            rule.saveTo = saveEndScope;
+         }
+         else if (reader.compare(MAPPING_KEYWORD)) {
+            rule.terminal = -1;
+            rule.saveTo = saveMappings;
+
+            mode = IDENTIFIER_MODE;
+         }
+         else if (reader.compare(VAR_KEYWORD)) {
+            rule.terminal = -1;
+            rule.saveTo = saveVariable;
+
+            mode = IDENTIFIER_MODE;
+         }
+
          writer.writeChar((char)0);
          rule.postfixPtr = _body.Length();
       }
@@ -624,17 +505,11 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
             else if (reader.compare(REFERENCE_KEYWORD)) {
                applyMode = REFERENCE_MODE;
             }
-//            else if (StringHelper::compare(token.value, SCOPE_KEYWORD)) {
-//               type = rtScope;
-//            }
 //            else if (StringHelper::compare(token.value, IDLE_MAPPING_KEYWORD)) {
 //               type = rtNewIdleVariable;
 //            }
 //            else if (StringHelper::compare(token.value, VAR_KEYWORD)) {
 //               type = rtVariable;
-//            }
-//            else if (StringHelper::compare(token.value, MAPPING_KEYWORD)) {
-//               type = rtNewVariable;
 //            }
 //            //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
 //      //         type = rtAny;
