@@ -12,10 +12,10 @@
     #var x := s x.
     #var y := s y.
     
-//    ((x == 1)and:(y == 2))?
-//    [
-//        console writeLine:"Script: structure works".
-//    ].
+    ((x == 1)and:(y == 2))?
+    [
+        console writeLine:"Script: structure works".
+    ].
     
     s writeLine:"Script: function works".
 ].

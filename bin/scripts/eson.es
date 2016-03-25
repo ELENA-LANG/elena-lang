@@ -9,6 +9,7 @@
    #define next_field ::= $eps;
    #define field      ::= <= $identifier => initializer;
    #define initializer::= ":" expression;
+   #define initializer::= ":" func;
    #define initializer::= $eps;
    #define expression ::= <= ( => object operation <= ) =>;   
    #define object     ::= <= $reference =>;
@@ -18,8 +19,33 @@
    #define operation  ::= "." message parameters;
    #define operation  ::= $eps;
    #define message    ::= <= ^ $identifier =>;
-   #define parameters ::= "(" parameter next_param;
-   #define parameter  ::= ":" object;
-   #define next_param ::= "," parameter next_param;
+   #define parameters ::= "(" object next_param;
+   #define parameters ::= $eps;
+   #define next_param ::= "," object next_param;
    #define next_param ::= ")";
+
+   #define func       ::= "function" func_expr;
+   #define func_expr  ::= <= $scope => "(" args func_body;
+   #define args       ::= arg next_arg;
+   #define args       ::= ")";
+   #define next_arg   ::= "," args;
+   #define arg        ::= <= $newvar =>;
+   #define func_body  ::= "{" fstatements;
+   #define fstatements::= fexpression next_fstatement;
+   #define fstatements::= <= $end => "}";
+   #define next_fstatement ::= ";" fstatements;
+
+   #define fexpression ::= fobject foperation;   
+   #define fobject     ::= <= $reference =>;
+   #define fobject     ::= <= $literal =>;
+   #define fobject     ::= <= $numeric =>;
+   #define fobject     ::= <= ( %"tapeOp.var[]" $var ) =>;
+   #define fobject     ::= "(" fexpression ")" ;
+   #define foperation  ::= "." fmessage fparameters;
+   #define foperation  ::= $eps;
+   #define fmessage    ::= <= $identifier =>;
+   #define fparameters ::= "(" fobject fnext_param;
+   #define fparameters ::= $eps;
+   #define fnext_param ::= "," fobject fnext_param;
+   #define fnext_param ::= ")";
 ]]
