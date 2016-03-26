@@ -89,27 +89,6 @@ public:
       writer.writeDWord(0);
    }
 
-//   void insert(size_t position, MemoryDump* subTape)
-//   {
-//      _tape->insert(position, subTape->get(0), subTape->Length());
-//   }
-//
-//   ////      void parseVMCommand(TokenInfo& token, ScriptReader& reader);
-//   ////      void parseCommand(TokenInfo& token, ScriptReader& reader);
-//   ////      void parse(ScriptReader& reader);
-//
-//   size_t Position() { return _tape->Length(); }
-//
-//   //   void trim(size_t position)
-//   //   {
-//   //      _tape.trim(position);
-//   //   }
-//   //
-//   //   void* extract()
-//   //   {
-//   //      return _tape.extract();
-//   //   }
-
    TapeWriter(MemoryDump* tape)
    {
       _tape = tape;
@@ -237,108 +216,6 @@ public:
       eof = false;
    }
 };
-
-//class CachedScriptReader : public ScriptReader
-//{
-//protected:
-//   bool       _cacheMode;
-//   MemoryDump _buffer;
-//   size_t     _tokenPosition;
-//   size_t     _position;
-//
-//   void cache()
-//   {
-//      ScriptReader::read();
-//
-//      MemoryWriter writer(&_buffer);
-//
-//      writer.writeDWord(info.column);
-//      writer.writeDWord(info.row);
-//      writer.writeChar(info.state);
-//      writer.writeLiteral(token, getlength(token) + 1);
-//   }
-//
-//public:
-//   virtual size_t Position()
-//   {
-//      _cacheMode = true;
-//
-//      return _tokenPosition;
-//   }
-//
-//   virtual void seek(size_t position)
-//   {
-//      _tokenPosition = position;
-//      if (_tokenPosition != -1) {
-//         // Restore token
-//         MemoryReader reader(&_buffer, position);
-//
-//         ident_t s = reader.getLiteral(DEFAULT_STR);
-//         size_t length = getlength(s);
-//         StringHelper::copy(token, s, length, length);
-//
-//         _position = reader.Position();
-//      }
-//      else _position = 0;
-//   }
-//
-//   //      void reread(TokenInfo& token);
-//
-//   void clearCache()
-//   {
-//      _cacheMode = false;
-//   }
-//
-//   virtual ident_t read()
-//   {
-//      // read from the outer reader if the cache is empty
-//      if (_cacheMode && _position >= _buffer.Length()) {
-//         cache();
-//      }
-//
-//      // read from the cache
-//      if (_position < _buffer.Length()) {
-//         MemoryReader reader(&_buffer, _position);
-//
-//         reader.readDWord(info.column);
-//         reader.readDWord(info.row);
-//         reader.readChar(info.state);
-//
-//         _tokenPosition = reader.Position();
-//
-//         ident_t s = reader.getLiteral(DEFAULT_STR);
-//         size_t length = getlength(s);
-//         StringHelper::copy(token, s, length, length);
-//
-//         _position = reader.Position();
-//
-//         return token;
-//      }
-//      else {
-//         // token itself should be always cached
-//         _buffer.clear();
-//         _tokenPosition = 0;
-//
-//         ident_t s = ScriptReader::read();
-//
-//         MemoryWriter writer(&_buffer);
-//
-//         writer.writeLiteral(s, getlength(s) + 1);
-//         _position = writer.Position();
-//
-//         return s;
-//      }
-//   }
-//
-//   CachedScriptReader(TextReader* script)
-//      : ScriptReader(script)
-//   {
-//      _cacheMode = false;
-//      _position = 0;
-//
-//      _tokenPosition = -1;
-//   }
-//};
 
 // --- ScriptLog ---
 

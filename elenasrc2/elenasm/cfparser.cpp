@@ -21,8 +21,6 @@ using namespace _ELENA_TOOL_;
 #define SCOPEEND_KEYWORD      "$end"
 #define VAR_KEYWORD           "$var"
 #define MAPPING_KEYWORD       "$newvar"
-//#define IDLE_MAPPING_KEYWORD  "$new"
-//#define ANY_KEYWORD           "$any"
 
 #define REFERENCE_MODE        1
 #define IDENTIFIER_MODE       2
@@ -81,122 +79,6 @@ bool normalNumericApplyRule(CFParser::Rule& rule, ScriptBookmark& bm, _ScriptRea
    return (bm.state == dfaInteger || bm.state == dfaLong || bm.state == dfaReal);
 }
 
-//bool variableApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.mapping == NULL || token.state != dfaIdentifier || !token.mapping->exist(token.value))
-//      return false;
-//
-//   if (rule.prefixPtr) {
-//      rule.applyPrefixDSARule(token);
-//
-//      ident_c s[12];
-//      StringHelper::intToStr(token.mapping->get(token.value), s, 10);
-//      token.writeLog(s);
-//   }
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr) {
-//      rule.applyPostfixDSARule(token);
-//   }
-//
-//   return true;
-//}
-////
-//bool normalReferenceApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (token.state != dfaFullIdentifier)
-//      return false;
-//
-//   if (rule.prefixPtr) {
-//      rule.applyPrefixDSARule(token);
-//   }
-//
-//   token.writeLog();
-//
-//   if (!apply(rule, token, reader))
-//      return false;
-//
-//   if (rule.postfixPtr) {
-//      rule.applyPostfixDSARule(token);
-//   }
-//
-//   return true;
-//}
-//
-//bool normalEOFApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   return token.state == dfaEOF;
-//}
-//
-//bool chomskiApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (applyNonterminal(rule, token, reader)) {
-//      // additional nonterminal should be resolved as well
-//      if (applyNonterminal(rule, token, reader, true)) {
-//         return true;
-//      }
-//   }
-//   return false;
-//}
-//
-//bool chomskiApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (applyNonterminalDSA(rule, token, reader)) {
-//      // additional nonterminal should be resolved as well
-//      if (!applyNonterminal(rule, token, reader, true))
-//         return false;
-//
-//      if (rule.postfixPtr)
-//         rule.applyPostfixDSARule(token);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool epsApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   return true;
-//}
-//
-//bool epsApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-//{
-//   if (rule.prefixPtr)
-//      rule.applyPrefixDSARule(token);
-//
-//   if (rule.postfixPtr)
-//      rule.applyPostfixDSARule(token);
-//
-//   return true;
-//}
-//
-////bool anyApplyRule(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-////{
-////   if(token.state == dfaEOF)
-////      return false;
-////
-////   return apply(rule, token, reader);
-////}
-////
-////bool anyApplyRuleDSA(CFParser::Rule& rule, CFParser::TokenInfo& token, _ScriptReader& reader)
-////{
-////   if(token.state == dfaEOF)
-////      return false;
-////
-////   if (rule.prefixPtr)
-////      rule.applyPrefixDSARule(token);
-////
-////   if (apply(rule, token, reader)) {
-////      if (rule.postfixPtr)
-////         rule.applyPostfixDSARule(token);
-////
-////      return true;
-////   }
-////   else return false;
-////}
-
 void saveReference(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
 {
    ScriptBookmark bm;
@@ -223,7 +105,7 @@ void saveEndScope(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scri
    parser->freeScope();
 }
 
-void saveMapping(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+void saveMappings(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
 {
    CFParser::Mapping* mapping = parser->getScope();
 
@@ -304,21 +186,6 @@ void CFParser :: defineApplyRule(Rule& rule, int mode)
             case IDENTIFIER_MODE:
                rule.apply = normalIdentifierApplyRule;
                break;
-            //      case rtScope:
-            //         rule.apply = dsaRule ? scopeNonterminalApplyRuleDSA : scopeNonterminalApplyRule;
-            //         break;
-            //      case rtNewIdleVariable:
-            //         rule.apply = dsaRule ? newNonterminalApplyRuleDSA : newNonterminalApplyRule;
-            //         break;
-            //      case rtVariable:
-            //         rule.apply = dsaRule ? variableApplyRuleDSA : variableApplyRule;
-            //         break;
-            //      case rtNewVariable:
-            //         rule.apply = dsaRule ? mappingApplyRuleDSA : mappingApplyRule;
-            //         break;
-            //      //case rtAny:
-            //      //   rule.apply = dsaRule ?  anyApplyRuleDSA :  anyApplyRule;
-            //      //   break;
             case IDLE_MODE:
                rule.apply = nonterminalApplyRule;
                rule.nonterminal = 0;
@@ -385,7 +252,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    MemoryWriter writer(&_body);
    ScriptBookmark bm = reader.read();
    while (!reader.compare("=>") || bm.state == dfaQuote) {
-      if (bm.state != dfaPrivate) {
+      if (bm.state == dfaPrivate) {
          if (rule.saveTo != NULL)
             throw EParseError(bm.column, bm.row);
 
@@ -505,15 +372,6 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
             else if (reader.compare(REFERENCE_KEYWORD)) {
                applyMode = REFERENCE_MODE;
             }
-//            else if (StringHelper::compare(token.value, IDLE_MAPPING_KEYWORD)) {
-//               type = rtNewIdleVariable;
-//            }
-//            else if (StringHelper::compare(token.value, VAR_KEYWORD)) {
-//               type = rtVariable;
-//            }
-//            //      else if (ConstantIdentifier::compare(token.value, ANY_KEYWORD)) {
-//      //         type = rtAny;
-//      //      }
             else if (reader.compare(IDENTIFIER_KEYWORD)) {
                applyMode = IDENTIFIER_MODE;
             }
@@ -593,66 +451,85 @@ inline int writeDerivationItem(MemoryWriter& writer, int key, int terminal, int 
    return offset;
 }
 
+inline int writeTrailItem(MemoryWriter& writer, int nonterminal, int next)
+{
+   int offset = writer.Position();
+   writer.writeDWord(nonterminal);
+   writer.writeDWord(next);
+
+   return offset;
+}
+
+inline void readTailItemAndPush(MemoryReader& reader, MemoryWriter& writer, CFParser::DerivationQueue& queue, int offset)
+{
+   int nonterminal = reader.getDWord();
+   int next = reader.getDWord();
+
+   while (nonterminal == 0) {
+      offset = writeDerivationItem(writer, 0, 0, offset);
+      if (next != -1) {
+         reader.seek(next);
+         nonterminal = reader.getDWord();
+         next = reader.getDWord();
+      }
+      else break;
+   }
+
+   if (next == -1) {
+      queue.push(CFParser::DerivationItem(-1, offset, 0));
+   }
+   else queue.push(CFParser::DerivationItem(nonterminal, offset, next));
+}
+
+inline void readTailItemAndInsert(MemoryReader& reader, MemoryWriter& writer, CFParser::DerivationQueue& queue, int offset)
+{
+   int nonterminal = reader.getDWord();
+   int next = reader.getDWord();
+
+   while (nonterminal == 0) {
+      offset = writeDerivationItem(writer, 0, 0, offset);
+      if (next != -1) {
+         reader.seek(next);
+         nonterminal = reader.getDWord();
+         next = reader.getDWord();
+      }
+      else break;
+   }
+
+   if (next == -1) {
+      queue.insert(CFParser::DerivationItem(-1, offset, 0));
+   }
+   else queue.insert(CFParser::DerivationItem(nonterminal, offset, next));
+}
+
 void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer)
 {
-   //ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
+   ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
 
    size_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);
    while (rule.type != rtNone) {
       if (rule.apply(rule, bm, reader, this)) {
          int offset = writeDerivationItem(writer, key, terminalOffset, item.trace);
+         int next = writeTrailItem(writer, 0, item.next);
 
          if (rule.type == rtEps) {
-            offset = writeDerivationItem(writer, 0, 0, offset);
-
-            if (item.next == -1) {
-               queue.insert(DerivationItem(-1, offset, 0));
-            }
-            else {
-               MemoryReader reader(&_body, item.next);
-               int nonterminal = reader.getDWord();
-               if (nonterminal == 0) {
-                  offset = writeDerivationItem(writer, 0, 0, offset);
-                  nonterminal = reader.getDWord();
-               }
-               int next = reader.getDWord();
-
-               queue.insert(DerivationItem(nonterminal, offset, next));
-            }
+            MemoryReader reader(&_body, next);
+            readTailItemAndInsert(reader, writer, queue, offset);
          }
          else if (rule.type != rtNormal) {
-            int next = item.next;
             // if it is a chomksi form
             if (rule.type == rtChomski) {
-               int previous = next;
-               next = writer.Position();
-               writer.writeDWord(0);
-               writer.writeDWord(rule.terminal);
-               writer.writeDWord(previous);
+               next = writeTrailItem(writer, rule.terminal, next);
             }
 
             queue.insert(DerivationItem(rule.nonterminal, offset, next));
          }
          else if (rule.nonterminal == 0) {
-            offset = writeDerivationItem(writer, 0, 0, offset);            
-
-            if (item.next == -1) {
-               queue.push(DerivationItem(-1, offset, 0));
-            }
-            else if (item.next > 0) {
-               MemoryReader reader(&_body, item.next);
-               int nonterminal = reader.getDWord();
-               if (nonterminal == 0) {
-                  offset = writeDerivationItem(writer, 0, 0, offset);
-                  nonterminal = reader.getDWord();
-               }
-               int next = reader.getDWord();
-
-               queue.push(DerivationItem(nonterminal, offset, next));
-            }
+            MemoryReader reader(&_body, next);
+            readTailItemAndPush(reader, writer, queue, offset);
          }
-         else queue.push(DerivationItem(rule.nonterminal, offset, item.next));
+         else queue.push(DerivationItem(rule.nonterminal, offset, next));
       }
 
       rule = _table.get(++key);
@@ -715,6 +592,8 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
             log.write(getBodyText(ptr));
       }
       else {
+         ident_t keyName = retrieveKey(_names.start(), item.ruleKey >> 8, DEFAULT_STR);
+
          Rule rule = _table.get(item.ruleKey);
          if (rule.prefixPtr != 0) {
             log.write(getBodyText(rule.prefixPtr));

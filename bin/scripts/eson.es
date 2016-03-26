@@ -24,18 +24,20 @@
    #define next_param ::= "," object next_param;
    #define next_param ::= ")";
 
-   #define func       ::= "function" func_expr;
+   #define func       ::= <= [ *system'dynamic'Tape => "function" func_expr <= ] =>;
    #define func_expr  ::= <= $scope => "(" args func_body;
    #define args       ::= arg next_arg;
    #define args       ::= ")";
-   #define next_arg   ::= "," args;
+   #define next_arg   ::= "," arg next_arg;
+   #define next_arg   ::= ")";
    #define arg        ::= <= $newvar =>;
    #define func_body  ::= "{" fstatements;
    #define fstatements::= fexpression next_fstatement;
    #define fstatements::= <= $end => "}";
    #define next_fstatement ::= ";" fstatements;
+   #define next_fstatement ::= <= $end => "}";
 
-   #define fexpression ::= fobject foperation;   
+   #define fexpression ::= <= ( => fobject foperation <= ) =>;   
    #define fobject     ::= <= $reference =>;
    #define fobject     ::= <= $literal =>;
    #define fobject     ::= <= $numeric =>;
