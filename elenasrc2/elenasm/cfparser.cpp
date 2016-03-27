@@ -21,6 +21,7 @@ using namespace _ELENA_TOOL_;
 #define SCOPEEND_KEYWORD      "$end"
 #define VAR_KEYWORD           "$var"
 #define MAPPING_KEYWORD       "$newvar"
+#define IDLEMAPPING_KEYWORD   "$idlevar"
 
 #define REFERENCE_MODE        1
 #define IDENTIFIER_MODE       2
@@ -113,6 +114,13 @@ void saveMappings(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scri
    parser->readScriptBookmark(ptr, bm);
 
    mapping->add(scriptReader.lookup(bm), mapping->Count() + 1);
+}
+
+void saveIdleMappings(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
+{
+   CFParser::Mapping* mapping = parser->getScope();
+
+   mapping->add(NULL, mapping->Count() + 1);
 }
 
 void saveVariable(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log)
@@ -285,6 +293,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          }
          else if (reader.compare(SCOPEEND_KEYWORD)) {
             rule.saveTo = saveEndScope;
+         }
+         else if (reader.compare(IDLEMAPPING_KEYWORD)) {
+            rule.saveTo = saveIdleMappings;
          }
          else if (reader.compare(MAPPING_KEYWORD)) {
             rule.terminal = -1;

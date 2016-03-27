@@ -25,7 +25,8 @@
    #define next_param ::= ")";
 
    #define func       ::= <= [ *system'dynamic'Tape => "function" func_expr <= ] =>;
-   #define func_expr  ::= <= $scope => "(" args func_body;
+   #define func_expr  ::= <= $scope => "(" func_expr2;
+   #define func_expr2  ::= <= $idlevar => args func_body;
    #define args       ::= arg next_arg;
    #define args       ::= ")";
    #define next_arg   ::= "," arg next_arg;
