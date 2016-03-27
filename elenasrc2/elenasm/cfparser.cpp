@@ -305,7 +305,12 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
       else {
          ident_t token = reader.lookup(bm);
 
-         writer.writeLiteral(token, getlength(token));
+         if (bm.state == dfaQuote) {
+            writer.writeChar('\"');
+            writer.writeLiteral(token, getlength(token));
+            writer.writeChar('\"');
+         }
+         else writer.writeLiteral(token, getlength(token));
          writer.writeChar(' ');
       }
 

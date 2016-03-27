@@ -24,7 +24,7 @@ class InlineScriptParser : public _Parser
    void writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
    void writeSubject(TapeWriter& writer, ident_t message);
 
-   void parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack);
+   int parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack);
 
    void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 

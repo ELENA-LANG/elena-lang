@@ -83,51 +83,36 @@ void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t t
    }
    else {
       switch (state) {
-      case dfaInteger:
-         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaReal:
-         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaLong:
-         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaQuote:
-         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
-         break;
-      case dfaFullIdentifier:
-         writer.writeCallCommand(token);
-         break;
-      case dfaIdentifier:
-         writeSubject(writer, token);
-         break;
-         //      case '<':
-         //      {
-         //         int var_level = StringHelper::strToInt(token);
-         //
-         //         writer.writeCommand(PUSH_VAR_MESSAGE_ID, var_level);
-         //
-         //         break;
-         //      }
-         //      case '>':
-         //      {
-         //         int var_level = StringHelper::strToInt(token);
-         //
-         //         writer.writeCommand(ASSIGN_VAR_MESSAGE_ID, var_level);
-         //
-         //         break;
-         //      }
-         //      //         default:
-         ////            throw EParseError(reader.info.column, reader.info.row);
+         case dfaInteger:
+            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaReal:
+            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaLong:
+            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaQuote:
+            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
+            break;
+         case dfaFullIdentifier:
+            writer.writeCallCommand(token);
+            break;
+         case dfaIdentifier:
+            writeSubject(writer, token);
+            break;
+            //         default:
+            //            throw EParseError(reader.info.column, reader.info.row);
       }
    }
 }
 
-void InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack)
+int InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack)
 {
    IdentifierString message;
    bool empty = true;
-   int paramCounter = -1;  // NOTE: to exclude target object
+   int paramCounter = -1;
+   int counter = 0;
    int command = PUSHM_TAPE_MESSAGE_ID;
    while (stack.Count() > 0) {
       ScriptBookmark bm = stack.pop();
@@ -140,36 +125,46 @@ void InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer,
       {
          case -1:
          case -4:
-            parseStack(reader, writer, stack);
+            counter += parseStack(reader, writer, stack);
             paramCounter++;
             break;
          case -3:
             command = SEND_TAPE_MESSAGE_ID;
          case dfaIdentifier:
-            if (command == NEW_TAPE_MESSAGE_ID) {
-               writeObject(writer, bm.state, token);
-               paramCounter++;
-            }
-            else {
+            if (command != NEW_TAPE_MESSAGE_ID) {
                if (!empty) {
                   message.append('&');
                }
                else empty = false;
 
                message.append(token);
-            }               
+            }
+            else writeObject(writer, bm.state, token);
+
+            counter++;
             break;
          case -6:
             if (empty) {
                message.copy(token);
                command = NEW_TAPE_MESSAGE_ID;
                empty = false;
-               paramCounter++;
             }      
             break;
+         case -7:
+         {
+            ident_t msg = reader.lookup(bm);
+            if (StringHelper::find(msg, '.')) {
+               writer.writeCommand(PUSHE_TAPE_MESSAGE_ID, msg);
+            }
+            else writer.writeCommand(PUSHM_TAPE_MESSAGE_ID, msg);
+            counter++;
+            paramCounter++;
+            break;
+         }
          default:
             writeObject(writer, bm.state, token);
             paramCounter++;
+            counter++;
             break;
       }
    }
@@ -177,10 +172,13 @@ void InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer,
    if (!empty) {
       if (command == NEW_TAPE_MESSAGE_ID) {
          writer.writeCommand(ARG_TAPE_MESSAGE_ID, message);
-         writer.writeCommand(command, paramCounter);
+         writer.writeCommand(command, counter);
+         counter = 1;
       }
       else writeMessage(writer, message, paramCounter, command);
    }
+
+   return counter;
 }
 
 inline void appendBookmark(ScriptStack& stack, Stack<ScriptStack::Iterator>& brackets, ScriptBookmark bm)
@@ -210,6 +208,7 @@ inline void appendScope(ScriptStack& stack, Stack<ScriptStack::Iterator>& bracke
 
          (*brackets.start()) = it;
          brackets.push(prev);
+         //brackets.push(it);
       }
       else {
          stack.insert(it, bm);
@@ -255,6 +254,12 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark&
       else if (reader.compare("*")) {
          bm = reader.read();
          bm.state = -6;
+
+         appendBookmark(stack, brackets, bm);
+      }
+      else if (reader.compare("%")) {
+         bm = reader.read();
+         bm.state = -7;
 
          appendBookmark(stack, brackets, bm);
       }

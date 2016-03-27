@@ -2,8 +2,6 @@
 In development:
 ------                      
                xdev - script engine
-                       * scriptEngine - elenasm - read tape, core - interprete - returns the result
-
                         * #65 : redesign cfparser, to use breadth-first model (current one - deep first)
 
               xdev - generic development

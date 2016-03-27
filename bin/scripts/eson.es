@@ -41,7 +41,7 @@
    #define fobject     ::= <= $reference =>;
    #define fobject     ::= <= $literal =>;
    #define fobject     ::= <= $numeric =>;
-   #define fobject     ::= <= ( %"tapeOp.var[]" $var ) =>;
+   #define fobject     ::= <= ( % "system'dynamic'tapeOp.<#%&var&args$" $var ) =>;
    #define fobject     ::= "(" fexpression ")" ;
    #define foperation  ::= "." fmessage fparameters;
    #define foperation  ::= $eps;

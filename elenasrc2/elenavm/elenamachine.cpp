@@ -533,6 +533,11 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             ecodes.writeByte(bcPushR);
             helper.writeTape(ecodes, loadSymbol(arg, mskMessage), mskRDataRef);
             break;
+         case PUSHE_TAPE_MESSAGE_ID:
+            // pushr r
+            ecodes.writeByte(bcPushR);
+            helper.writeTape(ecodes, loadSymbol(arg, mskExtMessage), mskRDataRef);
+            break;
          case PUSHG_TAPE_MESSAGE_ID:
             // pushr r
             ecodes.writeByte(bcPushR);
