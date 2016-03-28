@@ -198,6 +198,13 @@ static Glib::ustring ui_info =
         "      <menuitem action='ProjectClose'/>"
         "      <menuitem action='FileCloseAllButActive'/>"
         "      <separator/>"
+        "      <menu action='FileRecentFiles'>"
+        "           <menuitem action='FileRecentFilesClear'/>"
+        "      </menu>"
+        "      <menu action='FileRecentProjects'>"
+        "           <menuitem action='FileRecentProjectsClear'/>"
+        "      </menu>"
+        "      <separator/>"
         "      <menuitem action='FileQuit'/>"
         "    </menu>"
         "    <menu action='EditMenu'>"
@@ -222,6 +229,22 @@ static Glib::ustring ui_info =
         "      <menuitem action='EditComment'/>"
         "      <menuitem action='EditUncomment'/>"
         "    </menu>"
+        "    <menu action='ViewMenu'>"
+        "      <menuitem action='ProjectView'/>"
+        "      <separator/>"
+        "      <menuitem action='ProjectOutput'/>"
+        "      <menuitem action='ProjectMessages'/>"
+        "      <menuitem action='ProjectWatch'/>"
+        "      <menuitem action='ProjectCallstack'/>"
+        "      <menuitem action='ProjectConsole'/>"
+        "    </menu>"
+        "    <menu action='SearchMenu'>"
+        "      <menuitem action='Search'/>"
+        "      <menuitem action='SearchNext'/>"
+        "      <separator/>"
+        "      <menuitem action='Replace'/>"
+        "      <menuitem action='ReplaceNext'/>"
+        "    </menu>"
         "    <menu action='ProjectMenu'>"
         "      <menuitem action='ProjectInclude'/>"
         "      <menuitem action='ProjectExclude'/>"
@@ -231,6 +254,35 @@ static Glib::ustring ui_info =
         "      <separator/>"
         "      <menuitem action='ProjectForwards'/>"
         "      <menuitem action='ProjectOptions'/>"
+        "    </menu>"
+        "    <menu action='DebugMenu'>"
+        "      <menuitem action='DebugRun'/>"
+        "      <menuitem action='DebugNext'/>"
+        "      <menuitem action='DebugStepover'/>"
+        "      <menuitem action='DebugStepin'/>"
+        "      <menuitem action='DebugGoto'/>"
+        "      <separator/>"
+        "      <menuitem action='DebugToggle'/>"
+        "      <menuitem action='DebugClearBreakpoints'/>"
+        "      <separator/>"
+        "      <menuitem action='DebugGotoSource'/>"
+        "      <separator/>"
+        "      <menuitem action='DebugStop'/>"
+        "    </menu>"
+        "    <menu action='ToolsMenu'>"
+        "      <menuitem action='ToolsEditor'/>"
+        "      <menuitem action='ToolsDebugger'/>"
+        "    </menu>"
+        "    <menu action='WindowMenu'>"
+        "      <menuitem action='WindowNext'/>"
+        "      <menuitem action='WindowPrevious'/>"
+        "      <separator/>"
+        "      <menuitem action='WindowWindows'/>"
+        "    </menu>"
+        "    <menu action='HelpMenu'>"
+        "      <menuitem action='HelpAPI'/>"
+        "      <separator/>"
+        "      <menuitem action='HelpAbout'/>"
         "    </menu>"
         "  </menubar>"
 //        "  <toolbar  name='ToolBar'>"
@@ -247,6 +299,12 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("FileMenu", "_File") );
    _refActionGroup->add( Gtk::Action::create("EditMenu", "_Edit") );
    _refActionGroup->add( Gtk::Action::create("ProjectMenu", "_Project") );
+   _refActionGroup->add( Gtk::Action::create("ViewMenu", "_View") );
+   _refActionGroup->add( Gtk::Action::create("DebugMenu", "_Debug") );
+   _refActionGroup->add( Gtk::Action::create("ToolsMenu", "_Tools") );
+   _refActionGroup->add( Gtk::Action::create("WindowMenu", "_Window") );
+   _refActionGroup->add( Gtk::Action::create("HelpMenu", "_Help") );
+   _refActionGroup->add( Gtk::Action::create("SearchMenu", "_Search") );
 
    _refActionGroup->add( Gtk::Action::create("FileNew", "New") );
    _refActionGroup->add( Gtk::Action::create("FileNewSource", "Source"), sigc::mem_fun(*this, &MainWindow::on_menu_file_new_source));
@@ -264,6 +322,11 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &MainWindow::on_menu_file_closeproject));
    _refActionGroup->add( Gtk::Action::create("FileQuit", Gtk::Stock::QUIT), sigc::mem_fun(*this, &MainWindow::on_menu_file_quit));
 
+   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
+   _refActionGroup->add( Gtk::Action::create("FileRecentProjects", "Recent projects") );
+   _refActionGroup->add( Gtk::Action::create("FileRecentFilesClear", "Clear history"), sigc::mem_fun(*this, &MainWindow::on_menu_file_clearfilehistory));
+   _refActionGroup->add( Gtk::Action::create("FileRecentProjectsClear", "Clear history"), sigc::mem_fun(*this, &MainWindow::on_menu_file_clearprojecthistory));
+
    _refActionGroup->add( Gtk::Action::create("EditUndo", "Undo"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_undo));
    _refActionGroup->add( Gtk::Action::create("EditRedo", "Redo"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_redo));
    _refActionGroup->add( Gtk::Action::create("EditCut", "Cut"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_cut));
@@ -280,12 +343,44 @@ void MainWindow :: populateMenu()
    _refActionGroup->add( Gtk::Action::create("EditComment", "Block comment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_comment));
    _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), sigc::mem_fun(*this, &MainWindow::on_menu_edit_uncomment));
 
+   _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &MainWindow::on_menu_project_view));
+   _refActionGroup->add( Gtk::Action::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &MainWindow::on_menu_project_output));
+   _refActionGroup->add( Gtk::Action::create("ProjectMessages", "Messages"), sigc::mem_fun(*this, &MainWindow::on_menu_project_messages));
+   _refActionGroup->add( Gtk::Action::create("ProjectWatch", "Debug Watch"), sigc::mem_fun(*this, &MainWindow::on_menu_project_watch));
+   _refActionGroup->add( Gtk::Action::create("ProjectCallstack", "Call stack"), sigc::mem_fun(*this, &MainWindow::on_menu_project_callstack));
+   _refActionGroup->add( Gtk::Action::create("ProjectConsole", "ELENA Interactive"), sigc::mem_fun(*this, &MainWindow::on_menu_project_interactive));
+
+   _refActionGroup->add( Gtk::Action::create("Search", "Find..."), sigc::mem_fun(*this, &MainWindow::on_menu_search_find));
+   _refActionGroup->add( Gtk::Action::create("SearchNext", "Find Next"), sigc::mem_fun(*this, &MainWindow::on_menu_search_findnext));
+   _refActionGroup->add( Gtk::Action::create("Replace", "Replace..."), sigc::mem_fun(*this, &MainWindow::on_menu_search_replace));
+   _refActionGroup->add( Gtk::Action::create("ReplaceNext", "Replace Next"), sigc::mem_fun(*this, &MainWindow::on_menu_search_replacenext));
+
    _refActionGroup->add( Gtk::Action::create("ProjectInclude", "Include"), sigc::mem_fun(*this, &MainWindow::on_menu_project_include));
    _refActionGroup->add( Gtk::Action::create("ProjectExclude", "Exclude"), sigc::mem_fun(*this, &MainWindow::on_menu_project_exclude));
    _refActionGroup->add( Gtk::Action::create("ProjectCompile", "Compile"), sigc::mem_fun(*this, &MainWindow::on_menu_project_compile));
    _refActionGroup->add( Gtk::Action::create("ProjectCleanup", "Clean up"), sigc::mem_fun(*this, &MainWindow::on_menu_project_cleanup));
    _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_forwards));
    _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_project_options));
+
+   _refActionGroup->add( Gtk::Action::create("DebugRun", "Run"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_run));
+   _refActionGroup->add( Gtk::Action::create("DebugNext", "Next Statement"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_next));
+   _refActionGroup->add( Gtk::Action::create("DebugStepover", "Step Over"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_stepover));
+   _refActionGroup->add( Gtk::Action::create("DebugStepin", "Step In"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_stepin));
+   _refActionGroup->add( Gtk::Action::create("DebugGoto", "Go To Cursor"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_goto));
+   _refActionGroup->add( Gtk::Action::create("DebugToggle", "Toggle Breakpoint"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_toggle));
+   _refActionGroup->add( Gtk::Action::create("DebugClearBreakpoints", "Clear All Breakpoints"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_clearbps));
+   _refActionGroup->add( Gtk::Action::create("DebugGotoSource", "Go To Source"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_source));
+   _refActionGroup->add( Gtk::Action::create("DebugStop", "Stop Execution"), sigc::mem_fun(*this, &MainWindow::on_menu_debug_stop));
+
+   _refActionGroup->add( Gtk::Action::create("ToolsEditor", "Editor Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_tools_editor));
+   _refActionGroup->add( Gtk::Action::create("ToolsDebugger", "Debugger Options..."), sigc::mem_fun(*this, &MainWindow::on_menu_tools_debugger));
+
+   _refActionGroup->add( Gtk::Action::create("WindowNext", "Next"), sigc::mem_fun(*this, &MainWindow::on_menu_window_next));
+   _refActionGroup->add( Gtk::Action::create("WindowPrevious", "Previous"), sigc::mem_fun(*this, &MainWindow::on_menu_window_prev));
+   _refActionGroup->add( Gtk::Action::create("WindowWindows", "Window List..."), sigc::mem_fun(*this, &MainWindow::on_menu_windows));
+
+   _refActionGroup->add( Gtk::Action::create("HelpAPI", "ELENA API..."), sigc::mem_fun(*this, &MainWindow::on_menu_help_api));
+   _refActionGroup->add( Gtk::Action::create("HelpAbout", "About..."), sigc::mem_fun(*this, &MainWindow::on_menu_help_about));
 
    loadUI(ui_info, "/MenuBar");
 }

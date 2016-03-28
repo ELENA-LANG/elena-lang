@@ -223,6 +223,119 @@ protected:
    {
       _controller->doSetProjectSettings();
    }
+   void on_menu_file_clearfilehistory()
+   {
+
+   }
+   void on_menu_file_clearprojecthistory()
+   {
+
+   }
+   void on_menu_project_view()
+   {
+
+   }
+   void on_menu_project_output()
+   {
+
+   }
+   void on_menu_project_messages()
+   {
+
+   }
+   void on_menu_project_watch()
+   {
+
+   }
+   void on_menu_project_callstack()
+   {
+
+   }
+   void on_menu_project_interactive()
+   {
+
+   }
+   void on_menu_search_find()
+   {
+
+   }
+   void on_menu_search_findnext()
+   {
+
+   }
+   void on_menu_search_replace()
+   {
+
+   }
+   void on_menu_search_replacenext()
+   {
+
+   }
+   void on_menu_debug_run()
+   {
+
+   }
+   void on_menu_debug_next()
+   {
+
+   }
+   void on_menu_debug_stepover()
+   {
+
+   }
+   void on_menu_debug_stepin()
+   {
+
+   }
+   void on_menu_debug_goto()
+   {
+
+   }
+   void on_menu_debug_toggle()
+   {
+
+   }
+   void on_menu_debug_clearbps()
+   {
+
+   }
+   void on_menu_debug_source()
+   {
+
+   }
+   void on_menu_debug_stop()
+   {
+
+   }
+   void on_menu_tools_editor()
+   {
+
+   }
+   void on_menu_tools_debugger()
+   {
+
+   }
+   void on_menu_window_next()
+   {
+
+   }
+   void on_menu_window_prev()
+   {
+
+   }
+   void on_menu_windows()
+   {
+
+   }
+   void on_menu_help_api()
+   {
+
+   }
+   void on_menu_help_about()
+   {
+
+   }
+
    void on_projectview_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::TreeViewColumn*)
    {

@@ -521,6 +521,16 @@ public:
       //appWindow.clearMessageList();
    }
 
+   virtual void openVMConsole()
+   {
+
+   }
+
+   virtual void closeVMConsole()
+   {
+
+   }
+
    virtual bool compileProject(_ProjectManager* project, int postponedAction)
    {
       return appWindow.compileProject(project, postponedAction);

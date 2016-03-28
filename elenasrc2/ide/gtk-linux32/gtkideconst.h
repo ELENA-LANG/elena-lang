@@ -92,6 +92,7 @@
 #define IDM_VIEW_CALLSTACK                      0x603
 #define IDM_VIEW_MESSAGES                       0x604
 #define IDM_VIEW_PROJECTVIEW                    0x605
+#define IDM_VIEW_VMCONSOLE                      0x606
 
 #define IDM_PROJECT_COMPILE                     0x701
 #define IDM_PROJECT_OPTION                      0x702
