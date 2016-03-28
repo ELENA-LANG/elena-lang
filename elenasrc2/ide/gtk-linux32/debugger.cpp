@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the Debugger class and its helpers implementation
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -10,59 +10,91 @@
 #include "debugger.h"
 #include "../idecommon.h"
 
+#include <time.h>
+#include <errno.h>
+
 using namespace _ELENA_;
 
 // --- main thread that is the debugger residing over a debuggee ---
-//
-//BOOL WINAPI debugEventThread(_Controller* controller)
-//{
-//   controller->debugThread();
-//
-//   ExitThread(TRUE);
-//
-//   return TRUE;
-//}
+
+void* debugEventThread(void* controller)
+{
+   ((_DebugController*)controller)->debugThread();
+
+   return NULL;
+}
 
 // --- DebugEventManager ---
 
 void DebugEventManager :: init()
 {
-//   _events[DEBUG_ACTIVE] = CreateEvent(NULL, TRUE, TRUE, NULL);
-//   _events[DEBUG_CLOSE] = CreateEvent(NULL, TRUE, FALSE, NULL);
-//   _events[DEBUG_SUSPEND] = CreateEvent(NULL, TRUE, FALSE, NULL);
-//   _events[DEBUG_RESUME] = CreateEvent(NULL, TRUE, FALSE, NULL);
+   _flag = 1 << DEBUG_ACTIVE;
+   pthread_mutex_init(&_lock, NULL);
+   pthread_cond_init(&_event, NULL);
 }
 
 void DebugEventManager :: resetEvent(int event)
 {
-//   ResetEvent(_events[event]);
+   pthread_mutex_lock(&_lock);
+   _flag &= ~(_flag = 1 << DEBUG_ACTIVE);
+   pthread_mutex_unlock(&_lock);
 }
 
 void DebugEventManager :: setEvent(int event)
 {
-   //SetEvent(_events[event]);
+   pthread_mutex_lock(&_lock);
+
+   _flag |= (1 << DEBUG_ACTIVE);
+   pthread_cond_signal(&_event);
+
+   pthread_mutex_unlock(&_lock);
 }
 
 int DebugEventManager :: waitForAnyEvent()
 {
-   //return WaitForMultipleObjects (MAX_DEBUG_EVENT, _events, FALSE, INFINITE);
-   return 0; // !! temporal
+   int retVal = 0;
+
+   pthread_mutex_lock(&_lock);
+   while (_flag == 0)
+      pthread_cond_wait(&_event, &_lock);
+
+   for (int i = 1 ; i < MAX_DEBUG_EVENT ; i++) {
+      int mask = 1 << i;
+      if ((_flag & mask)==mask) {
+         retVal = mask;
+         break;
+      }
+   }
+   pthread_mutex_unlock(&_lock);
+
+   return retVal;
 }
 
 bool DebugEventManager :: waitForEvent(int event, int timeout)
 {
-   //return (WaitForSingleObject(_events[event], timeout)==WAIT_OBJECT_0);
-   return 0; // !! temporal
+   timespec to;
+
+   pthread_mutex_lock(&_lock);
+   to.tv_sec = time(NULL) + timeout;
+   to.tv_nsec = 0;
+
+   int err;
+   int mask = 1 << event;
+   while ((_flag & mask) == 0) {
+      err = pthread_cond_timedwait(&_event, &_lock, &to);
+      if (err == ETIMEDOUT)
+         return 0;
+   }
+   pthread_mutex_unlock(&_lock);
+
+   return event;
 }
 
 void DebugEventManager :: close()
 {
-//   for (int i = 0 ; i < MAX_DEBUG_EVENT ; i++) {
-//      if (_events[i]) {
-//         CloseHandle(_events[i]);
-//         _events[i] = NULL;
-//      }
-//   }
+   _flag = 0;
+   pthread_cond_destroy(&_event);
+   pthread_mutex_destroy(&_lock);
 }
 
 // --- ProcessException---
@@ -348,49 +380,53 @@ void BreakpointContext :: clear()
 Debugger :: Debugger()
 //   : threads(NULL, freeobj)
 {
-//   started = false;
-//   threadId = 0;
+   started = false;
+   threadId = 0;
 ////   vmhookAddress = 0;
 //   current = NULL;
 //
-//   dwCurrentProcessId = dwCurrentThreadId = 0;
+   currentProcessId = 0;
 //   exitCheckPoint = false;
 }
 
-//bool Debugger :: startProcess(const TCHAR* exePath, const TCHAR* cmdLine)
-//{
-//   PROCESS_INFORMATION pi = { NULL, NULL, 0, 0 };
-//   STARTUPINFO         si;
-//   Path				   currentPath;
-//
-//   currentPath.copyPath(exePath);
-//
-//   memset(&si, 0, sizeof(si));
-//
-//   si.dwFlags = STARTF_USESHOWWINDOW;
-//   si.wShowWindow = SW_SHOWNORMAL;
-//
-//   if (!CreateProcess(exePath, (TCHAR*)cmdLine, NULL, NULL, FALSE,
-//	   CREATE_NEW_CONSOLE | DEBUG_PROCESS, NULL, currentPath, &si, &pi))
-//   {
-//      return false;
-//   }
-//
-//   if (pi.hProcess)
-//      CloseHandle(pi.hProcess);
-//
-//   if (pi.hThread)
-//      CloseHandle(pi.hThread);
-//
-//   started = true;
-//   exception.code = 0;
-//   needToHandle = false;
+bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
+{
+   currentProcessId = fork();
+   if (currentProcessId >= 0) {  /* fork succeeded */
+      if (currentProcessId == 0) { /* fork() returns 0 for the child process */
+         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 
-//   return true;
-//}
+         const char* exeName = exePath + StringHelper::findLast(exePath, PATH_SEPARATOR) + 1;
 
-//void Debugger :: processEvent(size_t timeout)
-//{
+         execl(exePath, exeName, cmdLine, 0);
+      }
+      else { /* parent process */
+         started = true;
+         //   exception.code = 0;
+         //   needToHandle = false;
+      }
+   }
+   else return false;
+
+   return true;
+}
+
+void Debugger :: processEvent()
+{
+   int status;
+
+   ::wait(&status);
+  // if (WIFEXITED(status)) {
+//            current = threads.get(dwCurrentThreadId);
+//            if (current) {
+//               current->refresh();
+//               exitCheckPoint = proceedCheckPoint();
+//            }
+//            threads.clear();
+//            current = NULL;
+    //  started = false;
+  // }
+
 //   DEBUG_EVENT event;
 //
 //   trapped = false;
@@ -410,14 +446,6 @@ Debugger :: Debugger()
 //            ::CloseHandle(event.u.CreateProcessInfo.hFile);
 //            break;
 //         case EXIT_PROCESS_DEBUG_EVENT:
-//            current = threads.get(dwCurrentThreadId);
-//            if (current) {
-//               current->refresh();
-//               exitCheckPoint = proceedCheckPoint();
-//            }
-//            threads.clear();
-//            current = NULL;
-//            started = false;
 //            break;
 //         case CREATE_THREAD_DEBUG_EVENT:
 //            current = new ThreadContext(current->hProcess, event.u.CreateThread.hThread);
@@ -449,7 +477,7 @@ Debugger :: Debugger()
 //            break;
 //      }
 //   }
-//}
+}
 
 //void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
 //{
@@ -525,14 +553,16 @@ void Debugger :: processVirtualStep(void* state)
 //   current->state = state;
 }
 
-//void Debugger :: continueProcess()
-//{
+void Debugger :: continueProcess()
+{
+   ptrace(PTRACE_CONT, currentProcessId, NULL, NULL);
+
 //   int code = needToHandle ? DBG_EXCEPTION_NOT_HANDLED : DBG_CONTINUE;
 //
 //   ContinueDebugEvent(dwCurrentProcessId, dwCurrentThreadId, code);
 //
 //   needToHandle = false;
-//}
+}
 
 void Debugger :: addStep(size_t address, void* state)
 {
@@ -562,34 +592,34 @@ void Debugger :: setCheckMode()
 
 bool Debugger :: start(const char* exePath, const char* cmdLine)
 {
-//   if (startProcess(exePath, cmdLine)) {
-//      processEvent(INFINITE);
-//
-//      return true;
-//   }
-   /*else*/ return false;
+   if (startProcess(exePath, cmdLine)) {
+      processEvent();
+
+      return true;
+   }
+   else return false;
 }
 
 bool Debugger :: proceed(size_t timeout)
 {
-   //processEvent(timeout);
+   processEvent();
 
    return !trapped;
 }
 
 void Debugger :: run()
 {
-   //continueProcess();
+   continueProcess();
 }
 
 void Debugger :: stop()
 {
-//   if (!started)
-//      return;
-//
+   if (!started)
+      return;
+
 //   ::TerminateProcess(current->hProcess, 1);
-//
-//   continueProcess();
+
+   continueProcess();
 }
 
 void Debugger :: addBreakpoint(size_t address)
@@ -609,23 +639,19 @@ void Debugger :: clearBreakpoints()
 
 bool Debugger :: startThread(_DebugController* controller)
 {
-//   HANDLE hThread = CreateThread(NULL, 4096,
-//                     (LPTHREAD_START_ROUTINE)debugEventThread,
-//                     (LPVOID)controller,
-//                     0, &threadId);
-//
-//   if (!hThread) {
-//      return false;
-//   }
-//   else ::CloseHandle(hThread);
+   int err = pthread_create(&threadId, NULL, &debugEventThread, controller);
+
+   if (err != 0) {
+      return false;
+   }
 
    return true;
 }
 
 void Debugger :: reset()
 {
-//   trapped = false;
-//
+   trapped = false;
+
 //   threads.clear();
 //   current = NULL;
 //

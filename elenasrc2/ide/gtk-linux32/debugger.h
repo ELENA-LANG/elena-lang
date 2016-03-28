@@ -2,12 +2,15 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the Debugger class and its helpers header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef gtkdebuggerH
 #define gtkdebuggerH
 
+#include<pthread.h>
+#include <unistd.h>
+#include <sys/ptrace.h>
 #include "../debugging.h"
 
 // --- EventManager ---
@@ -23,7 +26,9 @@ namespace _ELENA_
 
 class DebugEventManager
 {
-//   //HANDLE _events[MAX_DEBUG_EVENT];
+   int             _flag;
+   pthread_cond_t  _event;
+   pthread_mutex_t _lock;
 
 public:
    void init();
@@ -91,7 +96,7 @@ struct ThreadContext
 protected:
    void*   state;
 //   HANDLE  hProcess;
-//   HANDLE  hThread;
+//   pthread_t  hThread;
 //   CONTEXT context;
 
 public:
@@ -156,9 +161,9 @@ struct BreakpointContext
 class Debugger
 {
 //   typedef Map<int, ThreadContext*> ThreadContextes;
-//
-//   DWORD             threadId;
-//
+
+   pthread_t         threadId;
+
    bool              started;
    bool              trapped;
 //   bool              stepMode;
@@ -169,8 +174,8 @@ class Debugger
 //
 //   ThreadContextes   threads;
 //   ThreadContext*    current;
-//
-//   DWORD             dwCurrentProcessId;
+
+   pid_t             currentProcessId;
 //   DWORD             dwCurrentThreadId;
 //
 //   size_t            minAddress, maxAddress;
@@ -179,12 +184,12 @@ class Debugger
 //   MemoryMap<int, void*> steps;
 //
 //   ProcessException exception;
-//
-//   bool startProcess(const TCHAR* exePath, const TCHAR* cmdLine);
-//   void processEvent(size_t timeout);
+
+   bool startProcess(const char* exePath, const char* cmdLine);
+   void processEvent();
 //   void processException(EXCEPTION_DEBUG_INFO* exception);
-//   void continueProcess();
-//
+   void continueProcess();
+
 //   void processStep();
 
 public:

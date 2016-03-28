@@ -273,7 +273,7 @@ protected:
    }
    void on_menu_debug_run()
    {
-
+      _controller->doDebugRun();
    }
    void on_menu_debug_next()
    {

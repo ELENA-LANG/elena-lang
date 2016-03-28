@@ -6,6 +6,3 @@ debuginfo=-1
 
 [files]
 linux.l
-
-[forwards]
-'program=test'Program
