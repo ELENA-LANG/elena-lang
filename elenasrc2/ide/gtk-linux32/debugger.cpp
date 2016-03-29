@@ -12,6 +12,7 @@
 
 #include <time.h>
 #include <errno.h>
+#include <sys/wait.h>
 
 using namespace _ELENA_;
 
@@ -101,9 +102,9 @@ void DebugEventManager :: close()
 
 const char* ProcessException :: Text()
 {
-//   switch (code) {
-//      case EXCEPTION_ACCESS_VIOLATION:
-//         return ACCESS_VIOLATION_EXCEPTION_TEXT;
+   switch (code) {
+      case SIGSEGV:
+         return ACCESS_VIOLATION_EXCEPTION_TEXT;
 //      case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
 //         return ARRAY_BOUNDS_EXCEEDED_EXCEPTION_TEXT;
 //      case EXCEPTION_DATATYPE_MISALIGNMENT:
@@ -140,22 +141,20 @@ const char* ProcessException :: Text()
 //         return STACK_OVERFLOW_EXCEPTION_TEXT;
 //      case ELENA_ERR_OUTOF_MEMORY:
 //         return GC_OUTOF_MEMORY_EXCEPTION_TEXT;
-//	  default:
-//         return UNKNOWN_EXCEPTION_TEXT;
-//   }
-   return NULL; // !! temporal
+	  default:
+         return UNKNOWN_EXCEPTION_TEXT;
+   }
 }
 
 // --- ThreadContext ---
 
-//ThreadContext :: ThreadContext(HANDLE hProcess, HANDLE hThread)
-//{
-//   this->hProcess = hProcess;
-//   this->hThread = hThread;
-//
-//   this->state = NULL;
-//   this->atCheckPoint = false;
-//}
+ThreadContext :: ThreadContext(pid_t pid)
+{
+   this->threadId = pid;
+
+   this->state = NULL;
+   this->atCheckPoint = false;
+}
 
 void ThreadContext :: refresh()
 {
@@ -170,20 +169,6 @@ void ThreadContext :: refresh()
 void ThreadContext :: setCheckPoint()
 {
    atCheckPoint = true;
-}
-
-void ThreadContext :: setTrapFlag()
-{
-//   context.ContextFlags = CONTEXT_CONTROL;
-//   context.EFlags |= 0x100;
-//   SetThreadContext(hThread, &context);
-}
-
-void ThreadContext :: resetTrapFlag()
-{
-//   context.ContextFlags = CONTEXT_CONTROL;
-//   context.EFlags &= ~0x100;
-//   SetThreadContext(hThread, &context);
 }
 
 void ThreadContext :: setHardwareBreakpoint(size_t breakpoint)
@@ -378,22 +363,22 @@ void BreakpointContext :: clear()
 // --- Debugger ---
 
 Debugger :: Debugger()
-//   : threads(NULL, freeobj)
+   : threads(NULL, freeobj)
 {
    started = false;
    threadId = 0;
-////   vmhookAddress = 0;
-//   current = NULL;
-//
-   currentProcessId = 0;
-//   exitCheckPoint = false;
+//   vmhookAddress = 0;
+   current = NULL;
+
+   currentId = traceeId = 0;
+   exitCheckPoint = false;
 }
 
 bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
 {
-   currentProcessId = fork();
-   if (currentProcessId >= 0) {  /* fork succeeded */
-      if (currentProcessId == 0) { /* fork() returns 0 for the child process */
+   traceeId = fork();
+   if (traceeId >= 0) {  /* fork succeeded */
+      if (traceeId == 0) { /* fork() returns 0 for the child process */
          ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 
          const char* exeName = exePath + StringHelper::findLast(exePath, PATH_SEPARATOR) + 1;
@@ -402,8 +387,15 @@ bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
       }
       else { /* parent process */
          started = true;
-         //   exception.code = 0;
-         //   needToHandle = false;
+         exception.code = 0;
+
+         // enabling multi-threading debugging
+         ptrace(PTRACE_SETOPTIONS, traceeId, NULL, PTRACE_O_TRACECLONE);
+
+         current = new ThreadContext(traceeId);
+         threads.add(traceeId, current);
+
+//            breakpoints.setSoftwareBreakpoints(current);
       }
    }
    else return false;
@@ -413,76 +405,56 @@ bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
 
 void Debugger :: processEvent()
 {
+   trapped = false;
+
    int status;
+   currentId = waitpid(-1, &status, __WALL);
+   if (currentId == -1)
+      return;
 
-   ::wait(&status);
-  // if (WIFEXITED(status)) {
-//            current = threads.get(dwCurrentThreadId);
-//            if (current) {
-//               current->refresh();
-//               exitCheckPoint = proceedCheckPoint();
-//            }
-//            threads.clear();
-//            current = NULL;
-    //  started = false;
-  // }
+   // new thread
+   if(WIFSTOPPED(status) && WSTOPSIG(status) == SIGTRAP) {
+      if(((status >> 16) & 0xffff) == PTRACE_EVENT_CLONE) {
+         pid_t newThreadId;
+         if(ptrace(PTRACE_GETEVENTMSG, currentId, 0, &newThreadId) != -1) {
+            current = new ThreadContext(newThreadId);
+            current->refresh();
 
-//   DEBUG_EVENT event;
-//
-//   trapped = false;
-//   if (WaitForDebugEvent(&event, timeout)) {
-//      dwCurrentThreadId = event.dwThreadId;
-//      dwCurrentProcessId = event.dwProcessId;
-//
-//      switch (event.dwDebugEventCode) {
-//         case CREATE_PROCESS_DEBUG_EVENT:
-//            current = new ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
-//            current->refresh();
-//
-//            threads.add(dwCurrentThreadId, current);
-//
-//            breakpoints.setSoftwareBreakpoints(current);
-//
-//            ::CloseHandle(event.u.CreateProcessInfo.hFile);
-//            break;
-//         case EXIT_PROCESS_DEBUG_EVENT:
-//            break;
-//         case CREATE_THREAD_DEBUG_EVENT:
-//            current = new ThreadContext(current->hProcess, event.u.CreateThread.hThread);
-//            current->refresh();
-//
-//            threads.add(dwCurrentThreadId, current);
-//            break;
-//         case EXIT_THREAD_DEBUG_EVENT:
-//            threads.erase(event.dwThreadId);
-//            current = NULL;
-//            break;
-//         case LOAD_DLL_DEBUG_EVENT:
-//            ::CloseHandle(event.u.LoadDll.hFile);
-//            break;
-//         case UNLOAD_DLL_DEBUG_EVENT:
-//            break;
-//         case OUTPUT_DEBUG_STRING_EVENT:
-//            break;
-//         case RIP_EVENT:
-//            started = false;
-//            break;
-//         case EXCEPTION_DEBUG_EVENT:
-//            current = threads.get(dwCurrentThreadId);
-//            if (current)
-//               current->refresh();
-//
-//            processException(&event.u.Exception);
-//            current->refresh();
-//            break;
-//      }
-//   }
+            threads.add(newThreadId, current);
+         }
+      }
+   }
+
+   // thread closed / killed
+   if (WIFEXITED(status) || WIFSIGNALED(status)) {
+      current = threads.get(dwCurrentThreadId);
+
+      threads.erase(currentId);
+
+      // process closed
+      if (threads.Count() == 0) {
+         if (current) {
+            current->refresh();
+            exitCheckPoint = proceedCheckPoint();
+         }
+
+         started = false;
+      }
+
+      current = NULL;
+   }
+   else if (WIFSTOPPED(status)) {
+      current = threads.get(currentId);
+
+      int stopCode = WSTOPSIG(status);
+      processSignal(stopCode);
+   }
 }
 
-//void Debugger :: processException(EXCEPTION_DEBUG_INFO* exception)
-//{
-//   switch (exception->ExceptionRecord.ExceptionCode) {
-//      case EXCEPTION_SINGLE_STEP:
+void Debugger :: processSignal(int signal)
+{
+   if(signal == SIGTRAP && current) {
+      if (stepMode) {
 //         if (breakpoints.processStep(current, stepMode))
 //            break;
 //
@@ -491,9 +463,8 @@ void Debugger :: processEvent()
 //         }
 //         if (!trapped)
 //            current->setTrapFlag();
-//
-//         break;
-//      case EXCEPTION_BREAKPOINT:
+      }
+      else {
 ////         // init vm hook address if enabled
 ////         if (vmhookAddress == -1) {
 ////            vmhookAddress = current->context.Eip;
@@ -508,19 +479,24 @@ void Debugger :: processEvent()
 //         //else if (vmhookAddress == current->context.Eip) {
 //         //   trapped = true;
 //         //}
-//         break;
-//      default:
-//         if (exception->dwFirstChance != 0) {
-//            needToHandle = true;
-//         }
-//         else {
-//            this->exception.code = exception->ExceptionRecord.ExceptionCode;
-//            this->exception.address = (int)exception->ExceptionRecord.ExceptionAddress;
-//            TerminateProcess(current->hProcess, 1);
-//         }
-//         break;
-//   }
-//}
+
+      }
+//            current->refresh();
+   }
+   else if (signal == SIGSEGV) {
+      struct __ptrace_peeksiginfo_args mask;
+      siginfo_t info;
+
+      mask.nr = 1;
+      mask.flags = 0;
+      mask.off = 0;
+
+      ptrace(PTRACE_PEEKSIGINFO, currentId, &mask, &info);
+
+      this->exception.code = signal;
+      this->exception.address = (int)info.si_addr;
+   }
+}
 
 //void Debugger :: processStep()
 //{
@@ -555,13 +531,7 @@ void Debugger :: processVirtualStep(void* state)
 
 void Debugger :: continueProcess()
 {
-   ptrace(PTRACE_CONT, currentProcessId, NULL, NULL);
-
-//   int code = needToHandle ? DBG_EXCEPTION_NOT_HANDLED : DBG_CONTINUE;
-//
-//   ContinueDebugEvent(dwCurrentProcessId, dwCurrentThreadId, code);
-//
-//   needToHandle = false;
+   ptrace(stepMode ? PTRACE_SINGLESTEP : PTRACE_CONT, currentId, NULL, NULL);
 }
 
 void Debugger :: addStep(size_t address, void* state)
@@ -577,7 +547,7 @@ void Debugger :: addStep(size_t address, void* state)
 void Debugger :: setStepMode()
 {
 //   current->setTrapFlag();
-//   stepMode = true;
+   stepMode = true;
 }
 
 void Debugger :: setBreakpoint(size_t address, bool withStackLevelControl)
@@ -617,7 +587,7 @@ void Debugger :: stop()
    if (!started)
       return;
 
-//   ::TerminateProcess(current->hProcess, 1);
+   kill(traceeId, SIGKILL);
 
    continueProcess();
 }
@@ -652,18 +622,17 @@ void Debugger :: reset()
 {
    trapped = false;
 
-//   threads.clear();
-//   current = NULL;
-//
+   threads.clear();
+   current = NULL;
+
 //   minAddress = 0xFFFFFFFF;
 //   maxAddress = 0;
 ////   vmhookAddress = 0;
 //
 //   steps.clear();
 //   breakpoints.clear();
-//
-//   stepMode = false;
-//   needToHandle = false;
+
+   stepMode = false;
 //   exitCheckPoint = false;
 }
 

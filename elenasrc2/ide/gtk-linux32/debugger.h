@@ -8,9 +8,12 @@
 #ifndef gtkdebuggerH
 #define gtkdebuggerH
 
-#include<pthread.h>
+#include <pthread.h>
 #include <unistd.h>
 #include <sys/ptrace.h>
+#include <sys/user.h>
+#include <sys/reg.h>
+
 #include "../debugging.h"
 
 // --- EventManager ---
@@ -40,8 +43,7 @@ public:
 
    DebugEventManager()
    {
-//      for (int i = 0 ; i < MAX_DEBUG_EVENT ; i++)
-//         _events[i] = NULL;
+      _flag = 0;
    }
    ~DebugEventManager()
    {
@@ -95,9 +97,9 @@ struct ThreadContext
 
 protected:
    void*   state;
-//   HANDLE  hProcess;
-//   pthread_t  hThread;
-//   CONTEXT context;
+   pid_t   threadId;
+
+   user_regs_struct context;
 
 public:
    ThreadBreakpoint breakpoint;
@@ -106,7 +108,7 @@ public:
    bool checkFailed;
 
    void* State() const { return state; }
-   size_t EIP() const { return /*context.Eip*/0; } // !! temporal
+   size_t EIP() const { return context.eip; }
    size_t Frame() { return /*context.Ebp - offset * */4; } // !! temporal
    size_t Local(int offset) { return /*context.Ebp - offset * */4; } // !! temporal
    size_t Current(int offset) { return /*context.Esp + offset * */4; }// !! temporal
@@ -125,8 +127,6 @@ public:
    void refresh();
 
    void setCheckPoint();
-   void setTrapFlag();
-   void resetTrapFlag();
    void setHardwareBreakpoint(size_t breakpoint);
    unsigned char setSoftwareBreakpoint(size_t breakpoint);
    void setEIP(size_t address);
@@ -134,7 +134,7 @@ public:
    void clearHardwareBreakpoint();
    void clearSoftwareBreakpoint(size_t breakpoint, char substitute);
 
-//   ThreadContext(HANDLE hProcess, HANDLE hThread);
+   ThreadContext(pid_t pid);
 };
 
 // --- BreakpointContext ---
@@ -160,34 +160,33 @@ struct BreakpointContext
 
 class Debugger
 {
-//   typedef Map<int, ThreadContext*> ThreadContextes;
+   typedef Map<pid_t, ThreadContext*> ThreadContextes;
 
    pthread_t         threadId;
 
    bool              started;
    bool              trapped;
-//   bool              stepMode;
-//   bool              needToHandle;
-//   bool              exitCheckPoint;
-//
-//   BreakpointContext breakpoints;
-//
-//   ThreadContextes   threads;
-//   ThreadContext*    current;
+   bool              stepMode;
+   bool              exitCheckPoint;
 
-   pid_t             currentProcessId;
-//   DWORD             dwCurrentThreadId;
-//
+//   BreakpointContext breakpoints;
+
+   ThreadContextes   threads;
+   ThreadContext*    current;
+
+   pid_t             traceeId;
+   pid_t             currentId;
+
 //   size_t            minAddress, maxAddress;
 ////   size_t            vmhookAddress; // =0 - hook is turned off, =-1 : waiting for initializing, >0 hook address
 //
 //   MemoryMap<int, void*> steps;
-//
-//   ProcessException exception;
+
+   ProcessException exception;
 
    bool startProcess(const char* exePath, const char* cmdLine);
    void processEvent();
-//   void processException(EXCEPTION_DEBUG_INFO* exception);
+   void processSignal(int signal);
    void continueProcess();
 
 //   void processStep();
@@ -199,7 +198,7 @@ public:
    bool isInitBreakpoint() const { return /*vmhookAddress == current->context.Eip;*/ false; }
 
    ThreadContext* Context() { return /*current*/NULL; }
-   ProcessException* Exception() { return /*exception.code == 0 ? */NULL/* : &exception*/; } // !! temporal
+   ProcessException* Exception() { return exception.code == 0 ? NULL : &exception; }
 
    void resetException() { /*exception.code = 0;*/ }
 
