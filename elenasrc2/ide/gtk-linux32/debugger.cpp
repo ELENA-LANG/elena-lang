@@ -13,6 +13,7 @@
 #include <time.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <stddef.h>
 
 using namespace _ELENA_;
 
@@ -148,18 +149,19 @@ const char* ProcessException :: Text()
 
 // --- ThreadContext ---
 
-ThreadContext :: ThreadContext(pid_t pid)
+ThreadContext :: ThreadContext(Debugger* debugger, pid_t pid)
 {
    this->threadId = pid;
 
    this->state = NULL;
    this->atCheckPoint = false;
+
+   this->debugger = debugger;
 }
 
 void ThreadContext :: refresh()
 {
-//   context.ContextFlags = CONTEXT_FULL;
-//   GetThreadContext(hThread, &context);
+   ptrace(PTRACE_GETREGS, threadId, NULL, &context);
 //   if (context.SegFs==0) {                                 // !! hotfix
 //      context.SegFs=0x38;
 //      SetThreadContext(hThread, &context);
@@ -171,91 +173,148 @@ void ThreadContext :: setCheckPoint()
    atCheckPoint = true;
 }
 
+
+void ThreadContext :: set_breakpoint_addr(void *addr, int n)
+{
+   int ret;
+
+   ret = ptrace(PTRACE_POKEUSER, threadId,
+                  offsetof(struct user, u_debugreg[n]), addr);
+ }
+
 void ThreadContext :: setHardwareBreakpoint(size_t breakpoint)
 {
-//   context.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+   set_breakpoint_addr((void*)breakpoint, 0);
+   set_breakpoint_addr((void*)1, 7);
 //   context.Dr0 = breakpoint;
 //   context.Dr7 = 0x000001;
-//   SetThreadContext(hThread, &context);
-//   this->breakpoint.hardware = true;
+   this->breakpoint.hardware = true;
 }
 
 void ThreadContext :: clearHardwareBreakpoint()
 {
-//   context.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+   set_breakpoint_addr(NULL, 0);
+   set_breakpoint_addr(NULL, 7);
 //   context.Dr0 = 0x0;
 //   context.Dr7 = 0x0;
-//   SetThreadContext(hThread, &context);
-//   breakpoint.hardware = false;
+   breakpoint.hardware = false;
 }
 
 void ThreadContext :: clearSoftwareBreakpoint(size_t breakpoint, char substitute)
 {
-//   writeDump(breakpoint, &substitute, 1);
+   writeDump(breakpoint, &substitute, 1);
 }
 
 unsigned char ThreadContext :: setSoftwareBreakpoint(size_t breakpoint)
 {
    unsigned char code = 0;
-//   unsigned char terminator = 0xCC;
-//
-//   readDump(breakpoint, (char*)&code, 1);
-//   writeDump(breakpoint, (char*)&terminator, 1);
+   unsigned char terminator = 0xCC;
+
+   readDump(breakpoint, (char*)&code, 1);
+   writeDump(breakpoint, (char*)&terminator, 1);
 
    return code;
 }
 
 void ThreadContext :: readDump(size_t address, char* dump, size_t length)
 {
-//   unsigned long   size = 0;
-//
-//   ReadProcessMemory(hProcess, (void*)(address), dump, length, &size);
+   int index = 0;
+   long val;
+   while (length > 0) {
+      val = ptrace(PTRACE_PEEKDATA,
+                          threadId, address + index * 4,
+                          NULL);
+
+      if (length > 3) {
+         memcpy(dump + index * 4, &val, 4);
+         length -= 4;
+      }
+      else {
+         memcpy(dump + index * 4, &val, length);
+         length = 0;
+      }
+
+      index++;
+   }
 }
 
 void ThreadContext :: writeDump(size_t address, char* dump, size_t length)
 {
-//   unsigned long   size = 0;
-//
-//   WriteProcessMemory(hProcess, (void*)(address), dump, length, &size);
+   int index = 0;
+   long val;
+   while (length > 0) {
+      if (length > 3) {
+         memcpy(&val, dump + index * 4, 4);
+         length -= 4;
+      }
+      else {
+         val = ptrace(PTRACE_PEEKDATA,
+                          threadId, address + index * 4,
+                          NULL);
+
+         memcpy(&val, dump + index * 4, length);
+         length = 0;
+      }
+
+      ptrace(PTRACE_POKEDATA,
+                          threadId, address + index * 4,
+                          (void*)val);
+
+      index++;
+   }
 }
 
 size_t ThreadContext :: ClassVMT(size_t objectPtr)
 {
-   int             dump = -1;
-//   unsigned long   size = 0;
-//
-//   ReadProcessMemory(hProcess, (void*)(objectPtr - 4), &dump, 4, &size);
+   long val = ptrace(PTRACE_PEEKDATA,
+                    threadId, (void*)(objectPtr - 4),
+                    NULL);
 
-   return dump;
+   return val;
 }
 
 size_t ThreadContext :: VMTFlags(size_t vmtPtr)
 {
-   int             dump = -1;
-//   unsigned long   size = 0;
-//
-//   ReadProcessMemory(hProcess, (void*)(vmtPtr - 8), &dump, 4, &size);
+   long val = ptrace(PTRACE_PEEKDATA,
+                    threadId, (void*)(vmtPtr - 8),
+                    NULL);
 
-   return dump;
+   return val;
 }
 
 size_t ThreadContext :: ObjectPtr(size_t address)
 {
-   int             dump = -1;
-//   unsigned long   size = 0;
-//
-//   ReadProcessMemory(hProcess, (void*)(address), &dump, 4, &size);
+   long val = ptrace(PTRACE_PEEKDATA,
+                    threadId, (void*)(address),
+                    NULL);
 
-   return dump;
+   return val;
 }
 
 void ThreadContext :: setEIP(size_t address)
 {
+   ptrace(PTRACE_POKEUSER, threadId,
+                  offsetof(struct user, regs.eip), address);
+}
+
+void ThreadContext :: setTrapFlag()
+{
+   debugger->setStepMode();
+
 //   context.ContextFlags = CONTEXT_CONTROL;
-//   GetThreadContext(hThread, &context);
-//   context.Eip = address;
+//   context.EFlags |= 0x100;
 //   SetThreadContext(hThread, &context);
 }
+
+void ThreadContext :: resetTrapFlag()
+{
+   debugger->resetStepMode();
+
+//   context.ContextFlags = CONTEXT_CONTROL;
+//   context.EFlags &= ~0x100;
+//   SetThreadContext(hThread, &context);
+}
+
 
 // --- BreakpointContext ---
 
@@ -265,99 +324,99 @@ BreakpointContext :: BreakpointContext()
 
 void BreakpointContext :: addBreakpoint(size_t address, ThreadContext* context, bool started)
 {
-//   if (started) {
-//      breakpoints.add(address, context->setSoftwareBreakpoint(address));
-//   }
-//   else breakpoints.add(address, 0);
+   if (started) {
+      breakpoints.add(address, context->setSoftwareBreakpoint(address));
+   }
+   else breakpoints.add(address, 0);
 }
 
 void BreakpointContext :: removeBreakpoint(size_t address, ThreadContext* context, bool started)
 {
-//   if (started) {
-//      context->clearSoftwareBreakpoint(address, breakpoints.get(address));
-//      if (context->breakpoint.software && context->breakpoint.next==address) {
-//
-//         context->breakpoint.clearSoftware();
-//         context->resetTrapFlag();
-//      }
-//   }
-//   breakpoints.erase(address);
+   if (started) {
+      context->clearSoftwareBreakpoint(address, breakpoints.get(address));
+      if (context->breakpoint.software && context->breakpoint.next==address) {
+
+         context->breakpoint.clearSoftware();
+         context->resetTrapFlag();
+      }
+   }
+   breakpoints.erase(address);
 }
 
 void BreakpointContext :: setSoftwareBreakpoints(ThreadContext* context)
 {
-//   Map<size_t, char>::Iterator breakpoint = breakpoints.start();
-//   while (!breakpoint.Eof()) {
-//      *breakpoint = context->setSoftwareBreakpoint(breakpoint.key());
-//
-//      breakpoint++;
-//   }
+   Map<size_t, char>::Iterator breakpoint = breakpoints.start();
+   while (!breakpoint.Eof()) {
+      *breakpoint = context->setSoftwareBreakpoint(breakpoint.key());
+
+      breakpoint++;
+   }
 }
 
 void BreakpointContext :: setHardwareBreakpoint(size_t address, ThreadContext* context, bool withStackControl)
 {
-//   if (address==context->context.Eip) {
-//      context->setTrapFlag();
-//      context->breakpoint.next = address;
-//   }
-//   else context->setHardwareBreakpoint(address);
-//
-//   if (withStackControl) {
-//      context->breakpoint.stackLevel = context->context.Ebp;
-//   }
-//   else context->breakpoint.stackLevel = 0;
+   if (address==context->context.eip) {
+      context->setTrapFlag();
+      context->breakpoint.next = address;
+   }
+   else context->setHardwareBreakpoint(address);
+
+   if (withStackControl) {
+      context->breakpoint.stackLevel = context->context.ebp;
+   }
+   else context->breakpoint.stackLevel = 0;
 }
 
 bool BreakpointContext :: processStep(ThreadContext* context, bool stepMode)
 {
-//   ThreadBreakpoint breakpoint = context->breakpoint;
-//
-//   if (breakpoint.next != 0) {
-//      if (breakpoint.software) {
-//         context->setSoftwareBreakpoint(breakpoint.next);
-//         context->breakpoint.software = false;
-//      }
-//      else context->setHardwareBreakpoint(breakpoint.next);
-//      context->breakpoint.next = 0;
-//      if (stepMode)
-//         context->setTrapFlag();
-//
-//      return true;
-//   }
-//
-//   if (breakpoint.hardware) {
-//      context->clearHardwareBreakpoint();
-//
-//      // check stack level to skip recursive entries
-//      if (context->context.Ebp < breakpoint.stackLevel) {
-//         context->breakpoint.next = context->context.Eip;
-//         context->setTrapFlag();
-//         return true;
-//      }
-//   }
+   ThreadBreakpoint breakpoint = context->breakpoint;
+
+   if (breakpoint.next != 0) {
+      if (breakpoint.software) {
+         context->setSoftwareBreakpoint(breakpoint.next);
+         context->breakpoint.software = false;
+      }
+      else context->setHardwareBreakpoint(breakpoint.next);
+      context->breakpoint.next = 0;
+      if (stepMode)
+         context->setTrapFlag();
+
+      return true;
+   }
+
+   if (breakpoint.hardware) {
+      context->clearHardwareBreakpoint();
+
+      // check stack level to skip recursive entries
+      if (context->context.ebp < breakpoint.stackLevel) {
+         context->breakpoint.next = context->context.eip;
+         context->setTrapFlag();
+         return true;
+      }
+   }
 
    return false;
 }
 
 bool BreakpointContext :: processBreakpoint(ThreadContext* context)
 {
-//   if (breakpoints.exist(context->context.Eip - 1)) {
-//      context->breakpoint.next = context->context.Eip - 1;
-//
-//      context->setEIP(context->breakpoint.next);
-//      char substitute = breakpoints.get(context->breakpoint.next);
-//      context->writeDump(context->breakpoint.next, &substitute, 1);
-//
-//      context->breakpoint.software = true;
-//
-//      return true;
-//   }
-   /*else*/ return false;
+   if (breakpoints.exist(context->context.eip - 1)) {
+      context->breakpoint.next = context->context.eip - 1;
+
+      context->setEIP(context->breakpoint.next);
+      char substitute = breakpoints.get(context->breakpoint.next);
+      context->writeDump(context->breakpoint.next, &substitute, 1);
+
+      context->breakpoint.software = true;
+
+      return true;
+   }
+   else return false;
 }
 
 void BreakpointContext :: clear()
 {
-//   breakpoints.clear();
+   breakpoints.clear();
 }
 
 // --- Debugger ---
@@ -392,10 +451,10 @@ bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
          // enabling multi-threading debugging
          ptrace(PTRACE_SETOPTIONS, traceeId, NULL, PTRACE_O_TRACECLONE);
 
-         current = new ThreadContext(traceeId);
+         current = new ThreadContext(this, traceeId);
          threads.add(traceeId, current);
 
-//            breakpoints.setSoftwareBreakpoints(current);
+         breakpoints.setSoftwareBreakpoints(current);
       }
    }
    else return false;
@@ -417,7 +476,7 @@ void Debugger :: processEvent()
       if(((status >> 16) & 0xffff) == PTRACE_EVENT_CLONE) {
          pid_t newThreadId;
          if(ptrace(PTRACE_GETEVENTMSG, currentId, 0, &newThreadId) != -1) {
-            current = new ThreadContext(newThreadId);
+            current = new ThreadContext(this, newThreadId);
             current->refresh();
 
             threads.add(newThreadId, current);
@@ -427,7 +486,7 @@ void Debugger :: processEvent()
 
    // thread closed / killed
    if (WIFEXITED(status) || WIFSIGNALED(status)) {
-      current = threads.get(dwCurrentThreadId);
+      current = threads.get(currentId);
 
       threads.erase(currentId);
 
@@ -455,33 +514,32 @@ void Debugger :: processSignal(int signal)
 {
    if(signal == SIGTRAP && current) {
       if (stepMode) {
-//         if (breakpoints.processStep(current, stepMode))
-//            break;
-//
-//         if (current->context.Eip >= minAddress && current->context.Eip <= maxAddress) {
-//            processStep();
-//         }
-//         if (!trapped)
-//            current->setTrapFlag();
+         if (breakpoints.processStep(current, stepMode))
+            return;
+
+         if (current->context.eip >= minAddress && current->context.eip <= maxAddress) {
+            processStep();
+         }
+         if (!trapped)
+            current->setTrapFlag();
       }
       else {
-////         // init vm hook address if enabled
-////         if (vmhookAddress == -1) {
-////            vmhookAddress = current->context.Eip;
-////         }
-//
-//         if (breakpoints.processBreakpoint(current)) {
-//            current->state = steps.get(current->context.Eip);
-//            trapped = true;
-//            stepMode = false;
-//            current->setTrapFlag();
+//         // init vm hook address if enabled
+//         if (vmhookAddress == -1) {
+//            vmhookAddress = current->context.Eip;
 //         }
-//         //else if (vmhookAddress == current->context.Eip) {
-//         //   trapped = true;
-//         //}
 
+         if (breakpoints.processBreakpoint(current)) {
+            current->state = steps.get(current->context.eip);
+            trapped = true;
+            stepMode = false;
+            current->setTrapFlag();
+         }
+         //else if (vmhookAddress == current->context.Eip) {
+         //   trapped = true;
+         //}
       }
-//            current->refresh();
+      current->refresh();
    }
    else if (signal == SIGSEGV) {
       struct __ptrace_peeksiginfo_args mask;
@@ -498,35 +556,33 @@ void Debugger :: processSignal(int signal)
    }
 }
 
-//void Debugger :: processStep()
-//{
-//   current->state = steps.get(current->context.Eip);
-//   if (current->state != NULL) {
-//      trapped = true;
-//      stepMode = false;
-//      proceedCheckPoint();
-//   }
-//}
+void Debugger :: processStep()
+{
+   current->state = steps.get(current->context.eip);
+   if (current->state != NULL) {
+      trapped = true;
+      stepMode = false;
+      proceedCheckPoint();
+   }
+}
 
 bool Debugger :: proceedCheckPoint()
 {
-//   if (started) {
-//      if (current->atCheckPoint) {
-//         current->checkFailed = (current->context.Eax == 0);
-//         current->atCheckPoint = false;
-//      }
-//      else current->checkFailed = false;
-//
-//      return current->checkFailed;
-//   }
-//   else return exitCheckPoint;
+   if (started) {
+      if (current->atCheckPoint) {
+         current->checkFailed = (current->context.eax == 0);
+         current->atCheckPoint = false;
+      }
+      else current->checkFailed = false;
 
-   return false; // !! temporal
+      return current->checkFailed;
+   }
+   else return exitCheckPoint;
 }
 
 void Debugger :: processVirtualStep(void* state)
 {
-//   current->state = state;
+   current->state = state;
 }
 
 void Debugger :: continueProcess()
@@ -536,12 +592,12 @@ void Debugger :: continueProcess()
 
 void Debugger :: addStep(size_t address, void* state)
 {
-//   steps.add(address, state);
-//   if (address < minAddress)
-//      minAddress = address;
-//
-//   if (address > maxAddress)
-//      maxAddress = address;
+   steps.add(address, state);
+   if (address < minAddress)
+      minAddress = address;
+
+   if (address > maxAddress)
+      maxAddress = address;
 }
 
 void Debugger :: setStepMode()
@@ -550,14 +606,20 @@ void Debugger :: setStepMode()
    stepMode = true;
 }
 
+void Debugger :: resetStepMode()
+{
+//   current->setTrapFlag();
+   stepMode = false;
+}
+
 void Debugger :: setBreakpoint(size_t address, bool withStackLevelControl)
 {
-  // breakpoints.setHardwareBreakpoint(address, current, withStackLevelControl);
+   breakpoints.setHardwareBreakpoint(address, current, withStackLevelControl);
 }
 
 void Debugger :: setCheckMode()
 {
-   //current->setCheckPoint();
+   current->setCheckPoint();
 }
 
 bool Debugger :: start(const char* exePath, const char* cmdLine)
@@ -594,17 +656,17 @@ void Debugger :: stop()
 
 void Debugger :: addBreakpoint(size_t address)
 {
-//   breakpoints.addBreakpoint(address, current, started);
+   breakpoints.addBreakpoint(address, current, started);
 }
 
 void Debugger :: removeBreakpoint(size_t address)
 {
-//   breakpoints.removeBreakpoint(address, current, started);
+   breakpoints.removeBreakpoint(address, current, started);
 }
 
 void Debugger :: clearBreakpoints()
 {
-//   breakpoints.clear();
+   breakpoints.clear();
 }
 
 bool Debugger :: startThread(_DebugController* controller)
@@ -625,15 +687,15 @@ void Debugger :: reset()
    threads.clear();
    current = NULL;
 
-//   minAddress = 0xFFFFFFFF;
-//   maxAddress = 0;
-////   vmhookAddress = 0;
-//
-//   steps.clear();
-//   breakpoints.clear();
+   minAddress = 0xFFFFFFFF;
+   maxAddress = 0;
+//   vmhookAddress = 0;
+
+   steps.clear();
+   breakpoints.clear();
 
    stepMode = false;
-//   exitCheckPoint = false;
+   exitCheckPoint = false;
 }
 
 //BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)

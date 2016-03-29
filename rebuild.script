@@ -1,8 +1,8 @@
 #!/bin/bash
-#mkdir /usr/share/elena/
-#mkdir /etc/elena/
-#mkdir /etc/elena/templates
-#mkdir /usr/lib/elena
+mkdir /usr/share/elena/
+mkdir /etc/elena/
+mkdir /etc/elena/templates
+mkdir /usr/lib/elena
 
 cp bin/elc.config /etc/elena/
 cp -a bin/templates/*.config /etc/elena/templates/

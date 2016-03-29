@@ -90,16 +90,21 @@ struct ProcessException
 
 // --- ThreadContext ---
 
+class Debugger;
+
 struct ThreadContext
 {
    friend class Debugger;
    friend struct BreakpointContext;
 
 protected:
-   void*   state;
-   pid_t   threadId;
+   Debugger* debugger;
+   void*     state;
+   pid_t     threadId;
 
-   user_regs_struct context;
+   struct user_regs_struct context;
+
+   void set_breakpoint_addr(void *addr, int n);
 
 public:
    ThreadBreakpoint breakpoint;
@@ -108,10 +113,10 @@ public:
    bool checkFailed;
 
    void* State() const { return state; }
-   size_t EIP() const { return context.eip; }
-   size_t Frame() { return /*context.Ebp - offset * */4; } // !! temporal
-   size_t Local(int offset) { return /*context.Ebp - offset * */4; } // !! temporal
-   size_t Current(int offset) { return /*context.Esp + offset * */4; }// !! temporal
+   size_t IP() { return context.eip; }
+   size_t Frame() { return context.ebp; }
+   size_t Local(int offset) { return context.ebp - offset * 4; }
+   size_t Current(int offset) { return context.esp + offset * 4; }
    size_t ClassVMT(size_t address);
    size_t VMTFlags(size_t address);
    size_t ObjectPtr(size_t address);
@@ -121,8 +126,26 @@ public:
    void readDump(size_t address, char* dump, size_t length);
    void writeDump(size_t address, char* dump, size_t length);
 
-   size_t readDWord(size_t address) { return 0; } // !! temporal
-   size_t readWord(size_t address) { return 0; } // !! temporal
+   size_t readDWord(size_t address)
+   {
+      size_t word = 0;
+      readDump(address, (char*)&word, 4);
+
+      return word;
+   }
+
+   size_t readWord(size_t address)
+   {
+      size_t word = 0;
+      readDump(address, (char*)&word, 2);
+
+      return word;
+   }
+
+   void writeDWord(size_t address, size_t word)
+   {
+      writeDump(address, (char*)&word, 4);
+   }
 
    void refresh();
 
@@ -134,7 +157,10 @@ public:
    void clearHardwareBreakpoint();
    void clearSoftwareBreakpoint(size_t breakpoint, char substitute);
 
-   ThreadContext(pid_t pid);
+   void setTrapFlag();
+   void resetTrapFlag();
+
+   ThreadContext(Debugger* debugger, pid_t pid);
 };
 
 // --- BreakpointContext ---
@@ -169,7 +195,7 @@ class Debugger
    bool              stepMode;
    bool              exitCheckPoint;
 
-//   BreakpointContext breakpoints;
+   BreakpointContext breakpoints;
 
    ThreadContextes   threads;
    ThreadContext*    current;
@@ -177,10 +203,10 @@ class Debugger
    pid_t             traceeId;
    pid_t             currentId;
 
-//   size_t            minAddress, maxAddress;
-////   size_t            vmhookAddress; // =0 - hook is turned off, =-1 : waiting for initializing, >0 hook address
-//
-//   MemoryMap<int, void*> steps;
+   size_t            minAddress, maxAddress;
+//   size_t            vmhookAddress; // =0 - hook is turned off, =-1 : waiting for initializing, >0 hook address
+
+   MemoryMap<int, void*> steps;
 
    ProcessException exception;
 
@@ -189,7 +215,7 @@ class Debugger
    void processSignal(int signal);
    void continueProcess();
 
-//   void processStep();
+   void processStep();
 
 public:
    bool isStarted() const { return started; }
@@ -197,10 +223,10 @@ public:
    // !! temporal
    bool isInitBreakpoint() const { return /*vmhookAddress == current->context.Eip;*/ false; }
 
-   ThreadContext* Context() { return /*current*/NULL; }
+   ThreadContext* Context() { return current; }
    ProcessException* Exception() { return exception.code == 0 ? NULL : &exception; }
 
-   void resetException() { /*exception.code = 0;*/ }
+   void resetException() { exception.code = 0; }
 
    void addStep(size_t address, void* state);
 
@@ -209,6 +235,7 @@ public:
    void clearBreakpoints();
 
    void setStepMode();
+   void resetStepMode();
    void setBreakpoint(size_t address, bool withStackLevelControl);
    void setCheckMode();
 

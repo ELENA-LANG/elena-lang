@@ -781,7 +781,7 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
    DebugReader reader(&_debugger);
 
    RTManager manager;
-   manager.readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->EIP(), writer);
+   manager.readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->IP(), writer);
 
    ident_t path = NULL;
    ident_t moduleName = NULL;
