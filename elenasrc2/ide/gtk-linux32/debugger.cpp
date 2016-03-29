@@ -178,8 +178,18 @@ void ThreadContext :: set_breakpoint_addr(void *addr, int n)
 {
    int ret;
 
-   ret = ptrace(PTRACE_POKEUSER, threadId,
-                  offsetof(struct user, u_debugreg[n]), addr);
+   // !! temporal
+   if (n == 0) {
+      ret = ptrace(PTRACE_POKEUSER, threadId,
+                     offsetof(struct user, u_debugreg[0]), addr);
+   }
+   else if (n == 7) {
+      ret = ptrace(PTRACE_POKEUSER, threadId,
+                     offsetof(struct user, u_debugreg[7]), addr);
+   }
+
+   //ret = ptrace(PTRACE_POKEUSER, threadId,
+   //               offsetof(struct user, u_debugreg[n]), addr);
  }
 
 void ThreadContext :: setHardwareBreakpoint(size_t breakpoint)
