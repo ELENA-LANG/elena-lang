@@ -512,13 +512,33 @@ void MainWindow :: on_notification_from_output()
    else _outputProcess.writeOut(_output);
 }
 
+void MainWindow :: on_notification_from_debugger()
+{
+   Glib::Threads::Mutex::Lock lock(_debugMutex);
+
+   DebugMessage rec = _debugMessages.pop();
+   switch (rec.message) {
+      case dbgStart:
+         _controller->onDebuggerStart();
+         break;
+   }
+}
+
 void MainWindow :: notifyOutput()
 {
    _outputDispatcher.emit();
 }
 
+void MainWindow :: notityDebugStep(DebugMessage message)
+{
+   Glib::Threads::Mutex::Lock lock(_debugMutex);
+
+   _debugMessages.push(message);
+   _debugDispatcher.emit();
+}
+
 MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* model)
-   : SDIWindow(caption), _mainFrame(model), _outputThread(NULL)
+   : SDIWindow(caption), _mainFrame(model), _outputThread(NULL), _debugMessages(DebugMessage())
 {
    _controller = controller;
    _model = model;
@@ -545,4 +565,5 @@ MainWindow :: MainWindow(const char* caption, _Controller* controller, Model* mo
    //_output.set_editable(false);
 
    _outputDispatcher.connect(sigc::mem_fun(*this, &MainWindow::on_notification_from_output));
+   _debugDispatcher.connect(sigc::mem_fun(*this, &MainWindow::on_notification_from_debugger));
 }

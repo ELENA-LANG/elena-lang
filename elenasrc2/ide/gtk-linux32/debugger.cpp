@@ -84,8 +84,10 @@ bool DebugEventManager :: waitForEvent(int event, int timeout)
    int mask = 1 << event;
    while ((_flag & mask) == 0) {
       err = pthread_cond_timedwait(&_event, &_lock, &to);
-      if (err == ETIMEDOUT)
-         return 0;
+      if (err == ETIMEDOUT) {
+         event = 0;
+         break;
+      }
    }
    pthread_mutex_unlock(&_lock);
 

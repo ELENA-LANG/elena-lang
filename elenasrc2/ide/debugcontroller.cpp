@@ -53,9 +53,9 @@ void DebugController :: debugThread()
             _events.setEvent(DEBUG_ACTIVE);
             break;
          case DEBUG_SUSPEND:
-            _events.resetEvent(DEBUG_ACTIVE);
-            _events.resetEvent(DEBUG_SUSPEND);
             _running = false;
+            _events.resetEvent(DEBUG_SUSPEND);
+            _events.resetEvent(DEBUG_ACTIVE);
             break;
          case DEBUG_CLOSE:
             _debugger.stop();

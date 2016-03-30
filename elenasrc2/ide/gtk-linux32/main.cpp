@@ -583,7 +583,7 @@ public:
 
    virtual void onStart()
    {
-      //appWindow._notify(IDE_DEBUGGER_START);
+      appWindow.notityDebugStep(DebugMessage(dbgStart));
    }
 
    virtual void reloadProjectView(_ProjectManager* project)

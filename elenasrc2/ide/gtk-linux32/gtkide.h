@@ -15,6 +15,26 @@ namespace _GUI_
 {
 // --- GTKIDEView ---
 
+enum DebugMessageType
+{
+   dbgNone = 0,
+   dbgStart
+};
+
+struct DebugMessage
+{
+   DebugMessageType message;
+
+   DebugMessage()
+   {
+      this->message = dbgNone;
+   }
+   DebugMessage(DebugMessageType message)
+   {
+      this->message = message;
+   }
+};
+
 class MainWindow : public SDIWindow
 {
    class OutputProcess
@@ -80,6 +100,10 @@ class MainWindow : public SDIWindow
 
    Glib::Threads::Thread* _outputThread;
    Glib::Dispatcher       _outputDispatcher;
+   Glib::Dispatcher       _debugDispatcher;
+
+   mutable Glib::Threads::Mutex _debugMutex;
+   _ELENA_::Queue<DebugMessage> _debugMessages;
 
 protected:
    Clipboard      _clipboard;
@@ -349,6 +373,7 @@ protected:
    }
 
    void on_notification_from_output();
+   void on_notification_from_debugger();
 
    void populateMenu();
    void populateToolbar();
@@ -365,6 +390,7 @@ public:
    void selectDocument(int docIndex);
 
    void notifyOutput();
+   void notityDebugStep(DebugMessage message);
 
    void reloadProjectView(_ProjectManager* project);
 
@@ -372,73 +398,6 @@ public:
 
    MainWindow(const char* caption, _Controller* controller, Model* model);
 };
-
-////// --- Win32ContextBrowser ---
-////
-////class Win32ContextBrowser : public ContextBrowser
-////{
-////   ContextMenu _menu;
-////
-////public:
-////   TreeViewItem hitTest(short x, short y);
-////
-////   void showContextMenu(HWND owner, short x, short y);
-////
-////   Win32ContextBrowser(Control* owner);
-////};
-////
-////// --- AppDebugController ---
-////
-////class Win32AppDebugController : public AppDebugController
-////{
-////   Window* _receptor;
-////
-////   void _notify(int code);
-////   void _notify(int code, const TCHAR* message, int param = 0);
-////   void _notify(int code, const TCHAR* message, int param1, int param2);
-////   void _notify(int code, const TCHAR* source, HighlightInfo info);
-////
-////public:
-////   void assign(Window* receptor)
-////   {
-////      _receptor = receptor;
-////   }
-////
-////   virtual void onStart()
-////   {
-////      _notify(IDE_DEBUGGER_START);
-////   }
-////
-////   virtual void onStop(bool failed)
-////   {
-////      _notify(failed ? IDE_DEBUGGER_BREAK : IDE_DEBUGGER_STOP);
-////   }
-////
-////   virtual void onStep(const TCHAR* source, int row, int disp, int length)
-////   {
-////      _notify(IDE_DEBUGGER_STEP, source, HighlightInfo(row, disp, length));
-//   }
-//
-//   void onCheckPoint(const TCHAR* message)
-//   {
-//      _notify(IDE_DEBUGGER_CHECKPOINT, message);
-//   }
-//
-//   void onNotification(const TCHAR* message, size_t address, int code)
-//   {
-//      _notify(IDM_DEBUGGER_EXCEPTION, message, address, code);
-//   }
-//
-//   virtual void onLoadModule(const TCHAR* name)
-//   {
-//      _notify(IDE_DEBUGGER_LOADMODULE, name);
-//   }
-//
-//   Win32AppDebugController()
-//   {
-//      _receptor = NULL;
-//   }
-//};
 
 } // _GUI_
 
