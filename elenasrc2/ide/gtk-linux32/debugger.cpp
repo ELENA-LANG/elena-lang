@@ -35,18 +35,18 @@ void DebugEventManager :: init()
    pthread_cond_init(&_event, NULL);
 }
 
-void DebugEventManager :: resetEvent(int event)
+void DebugEventManager :: resetEvent(int eventId)
 {
    pthread_mutex_lock(&_lock);
-   _flag &= ~(_flag = 1 << DEBUG_ACTIVE);
+   _flag &= ~(_flag = 1 << eventId);
    pthread_mutex_unlock(&_lock);
 }
 
-void DebugEventManager :: setEvent(int event)
+void DebugEventManager :: setEvent(int eventId)
 {
    pthread_mutex_lock(&_lock);
 
-   _flag |= (1 << DEBUG_ACTIVE);
+   _flag |= (1 << eventId);
    pthread_cond_signal(&_event);
 
    pthread_mutex_unlock(&_lock);
@@ -60,10 +60,10 @@ int DebugEventManager :: waitForAnyEvent()
    while (_flag == 0)
       pthread_cond_wait(&_event, &_lock);
 
-   for (int i = 1 ; i < MAX_DEBUG_EVENT ; i++) {
+   for (int i = 0 ; i < MAX_DEBUG_EVENT ; i++) {
       int mask = 1 << i;
       if ((_flag & mask)==mask) {
-         retVal = mask;
+         retVal = i;
          break;
       }
    }
