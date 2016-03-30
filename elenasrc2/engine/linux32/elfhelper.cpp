@@ -5,7 +5,7 @@
 //
 //		This file contains ELENA PEHelper implementation.
 //		Supported platforms: Linux I386
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,6 +17,21 @@
 #define ELF_HEADER_SIZE    0x34
 
 using namespace _ELENA_;
+
+size_t ELFHelper :: findEntryPoint(path_t path)
+{
+   FileReader reader(path, feRaw, false);
+   if (reader.Eof())
+      return (size_t)-1;
+
+   // !! hard-coded offset
+   reader.seek(0x18);
+
+   size_t entry = 0;
+   reader.readDWord(entry);
+
+   return entry;
+}
 
 bool ELFHelper :: seekDebugSegment(StreamReader& reader, size_t& address)
 {

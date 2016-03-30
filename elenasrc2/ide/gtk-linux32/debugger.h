@@ -59,6 +59,7 @@ struct ThreadBreakpoint
    bool   hardware;
    size_t next;
    size_t stackLevel;
+   size_t pendingAddress;
 
    void clearSoftware()
    {
@@ -70,6 +71,7 @@ struct ThreadBreakpoint
    {
       hardware = software = false;
       stackLevel = next = 0;
+      pendingAddress = 0;
    }
 };
 
@@ -178,6 +180,7 @@ struct BreakpointContext
    bool processBreakpoint(ThreadContext* context);
 
    void clear();
+   void applyPendingBreakpoints(ThreadContext* context);
 
    BreakpointContext();
 };

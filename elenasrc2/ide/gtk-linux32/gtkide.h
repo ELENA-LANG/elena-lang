@@ -301,15 +301,15 @@ protected:
    }
    void on_menu_debug_next()
    {
-
+      _controller->doStepOver();
    }
    void on_menu_debug_stepover()
    {
-
+      _controller->doStepOver();
    }
    void on_menu_debug_stepin()
    {
-
+      _controller->doStepInto();
    }
    void on_menu_debug_goto()
    {

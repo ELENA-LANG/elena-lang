@@ -13,4 +13,6 @@
    console writeLine:d2.
    console writeLine:msec.
    console writeLine:s.
+
+   console readChar.
 ].

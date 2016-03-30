@@ -9,6 +9,7 @@
 //---------------------------------------------------------------------------
 #include "debugger.h"
 #include "../idecommon.h"
+#include "linux32/elfhelper.h"
 
 #include <time.h>
 #include <errno.h>
@@ -16,6 +17,8 @@
 #include <stddef.h>
 
 using namespace _ELENA_;
+
+#define DR_OFFSET(dr) ((((struct user *)0)->u_debugreg) + (dr))
 
 // --- main thread that is the debugger residing over a debuggee ---
 
@@ -175,23 +178,11 @@ void ThreadContext :: setCheckPoint()
    atCheckPoint = true;
 }
 
-
 void ThreadContext :: set_breakpoint_addr(void *addr, int n)
 {
-   int ret;
-
-   // !! temporal
-   if (n == 0) {
-      ret = ptrace(PTRACE_POKEUSER, threadId,
-                     offsetof(struct user, u_debugreg[0]), addr);
-   }
-   else if (n == 7) {
-      ret = ptrace(PTRACE_POKEUSER, threadId,
-                     offsetof(struct user, u_debugreg[7]), addr);
-   }
-
-   //ret = ptrace(PTRACE_POKEUSER, threadId,
-   //               offsetof(struct user, u_debugreg[n]), addr);
+   int ret ;
+   ret = ptrace(PTRACE_POKEUSER, threadId,
+                  DR_OFFSET(n), addr);
  }
 
 void ThreadContext :: setHardwareBreakpoint(size_t breakpoint)
@@ -371,12 +362,21 @@ void BreakpointContext :: setHardwareBreakpoint(size_t address, ThreadContext* c
       context->setTrapFlag();
       context->breakpoint.next = address;
    }
-   else context->setHardwareBreakpoint(address);
+   else context->breakpoint.pendingAddress = address;
 
    if (withStackControl) {
       context->breakpoint.stackLevel = context->context.ebp;
    }
    else context->breakpoint.stackLevel = 0;
+}
+
+void BreakpointContext :: applyPendingBreakpoints(ThreadContext* context)
+{
+   if (context->breakpoint.pendingAddress) {
+      context->setHardwareBreakpoint(context->breakpoint.pendingAddress);
+
+      context->breakpoint.pendingAddress = 0;
+   }
 }
 
 bool BreakpointContext :: processStep(ThreadContext* context, bool stepMode)
@@ -452,6 +452,8 @@ bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
       if (traceeId == 0) { /* fork() returns 0 for the child process */
          ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 
+         //execlp("gnome-terminal", "gnome-terminal", "-x", exePath, cmdLine, NULL );
+
          const char* exeName = exePath + StringHelper::findLast(exePath, PATH_SEPARATOR) + 1;
 
          execl(exePath, exeName, cmdLine, 0);
@@ -461,7 +463,7 @@ bool Debugger :: startProcess(const char* exePath, const char* cmdLine)
          exception.code = 0;
 
          // enabling multi-threading debugging
-         ptrace(PTRACE_SETOPTIONS, traceeId, NULL, PTRACE_O_TRACECLONE);
+         ptrace(PTRACE_SETOPTIONS, traceeId, NULL, PTRACE_O_TRACECLONE/* | PTRACE_O_TRACEFORK*/);
 
          current = new ThreadContext(this, traceeId);
          threads.add(traceeId, current);
@@ -516,6 +518,8 @@ void Debugger :: processEvent()
    }
    else if (WIFSTOPPED(status)) {
       current = threads.get(currentId);
+      if (current)
+         current->refresh();
 
       int stopCode = WSTOPSIG(status);
       processSignal(stopCode);
@@ -525,33 +529,22 @@ void Debugger :: processEvent()
 void Debugger :: processSignal(int signal)
 {
    if(signal == SIGTRAP && current) {
-      if (stepMode) {
-         if (breakpoints.processStep(current, stepMode))
-            return;
-
+      if (breakpoints.processBreakpoint(current)) {
+         current->state = steps.get(current->context.eip);
+         trapped = true;
+         stepMode = false;
+         current->setTrapFlag();
+      }
+      else if (breakpoints.processStep(current, stepMode)) {
+         return;
+      }
+      else {
          if (current->context.eip >= minAddress && current->context.eip <= maxAddress) {
             processStep();
          }
          if (!trapped)
             current->setTrapFlag();
       }
-      else {
-//         // init vm hook address if enabled
-//         if (vmhookAddress == -1) {
-//            vmhookAddress = current->context.Eip;
-//         }
-
-         if (breakpoints.processBreakpoint(current)) {
-            current->state = steps.get(current->context.eip);
-            trapped = true;
-            stepMode = false;
-            current->setTrapFlag();
-         }
-         //else if (vmhookAddress == current->context.Eip) {
-         //   trapped = true;
-         //}
-      }
-      current->refresh();
    }
    else if (signal == SIGSEGV) {
       struct __ptrace_peeksiginfo_args mask;
@@ -599,6 +592,9 @@ void Debugger :: processVirtualStep(void* state)
 
 void Debugger :: continueProcess()
 {
+   if (current)
+      breakpoints.applyPendingBreakpoints(current);
+
    ptrace(stepMode ? PTRACE_SINGLESTEP : PTRACE_CONT, currentId, NULL, NULL);
 }
 
@@ -729,7 +725,7 @@ void Debugger :: activate()
 
 size_t Debugger :: findEntryPoint(const char* programPath)
 {
-   return 0; // !! temporal
+   return _ELENA_::ELFHelper::findEntryPoint(programPath);
 }
 
 bool Debugger :: findSignature(char* signature)
