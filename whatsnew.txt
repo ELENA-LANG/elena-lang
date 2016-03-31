@@ -9,7 +9,7 @@
 
 [ELENA]
 [+] #201 : shorthand property settings
-[+] #54 : templates 
+[+] #54 : field / method templates.
 [+] new statement #extern - exclude the code from GC
 [+] #231 - new syntax : Signature / Message constants
 

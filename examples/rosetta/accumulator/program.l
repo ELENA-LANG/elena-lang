@@ -22,13 +22,13 @@ ELENA is OO language, so a function is in fact an object
         = Variable new:self mix &into:Function.
 }
 
-#symbol Program =
+#symbol program =
 [
     #var x := 1 Accumulator.
     
-    x:5.
+    x eval:5.
     
     #var y := 3 Accumulator.
     
-    console write:(x:2.3r).
+    console write:(x eval:2.3r).
 ].

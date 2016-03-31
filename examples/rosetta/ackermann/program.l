@@ -18,8 +18,8 @@
     m =>
        0 ? [ n + 1 ]
        > 0 ? [
-              n => 0 ? [ ackermann:(m - 1):1 ] 
-                       > 0 ? [ ackermann:(m - 1):(ackermann:m:(n-1)) ]   
+              n => 0 ? [ ackermann eval:(m - 1):1 ] 
+                       > 0 ? [ ackermann eval:(m - 1):(ackermann eval:m:(n-1)) ]   
            ]
 ].
 
@@ -29,7 +29,7 @@
     [
         0 to:5 &doEach: (:j)
         [
-            console writeLine:"A(":i:",":j:")=":(ackermann:i:j).
+            console writeLine:"A(":i:",":j:")=":(ackermann eval:i:j).
         ].
     ].
 

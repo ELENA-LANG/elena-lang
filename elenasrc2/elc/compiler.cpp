@@ -2399,7 +2399,7 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
                paramCount = OPEN_ARG_COUNT;
             }
             else if (message[getlength(message) - 1] == ']') {
-               signature.copy(message + i + 1, getlength(message) - param - 2);
+               signature.copy(message + i + 1, getlength(message) - i - 2);
                paramCount = StringHelper::strToInt(signature);
                if (paramCount > 12)
                   scope.raiseError(errInvalidSubject, terminal);
@@ -2419,6 +2419,13 @@ ObjectInfo Compiler :: compileMessageReference(DNode node, CodeScope& scope)
          signature.copy(message + subject, param - subject);
       }
       else signature.copy(message + subject);
+
+      if (subject == 0 && paramCount != -1) {
+         verb_id = _verbs.get(signature);
+         if (verb_id != 0) {
+            signature.clear();
+         }
+      }
 
       if (paramCount == OPEN_ARG_COUNT) {
          // HOT FIX : support open argument list

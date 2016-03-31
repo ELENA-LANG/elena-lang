@@ -7,7 +7,3 @@ warn:unresolved=0
 
 [files]
 program.l
-
-[forwards]
-'program=accumulator'Program
-

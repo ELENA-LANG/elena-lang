@@ -1,21 +1,34 @@
 ------                                 
 In development:
 ------                      
-               xdev - script engine
-                        * #65 : redesign cfparser, to use breadth-first model (current one - deep first)
-
               xdev - generic development
-                       * simplify vm script syntax
-                       * test elena script
-                       * test live eson scipr
+                       * test all samples
+                       * test string_comparision
+                       * test combinations
+                       * test comp_list
+                       * test twenty_four
+                       * test c_a_g
+                       * test graph
+                       * test notepad
 
-                       * test StructTest
-                       * DTOToStructTest
+                       * live programming : provide path to the current library
+                       * test live programming
+                       * test calculator sample
+                       * test chat sample : fix the current bug, simple implementation - direct output
+
+                       * review array implementation (template usage)
+                       * review primitive imlementation (template usage)
+                       * probably all hints should be templates??
+                       * #54 : implementing generics / templates : class
+                       * review #10 issue
+                       * #method => system'core_routines'dispatch : compiler should automatically append argument list
+                       * verify if methods can be added for sealed, limited, method duplications                       
+
+                       * test live eson script
 
                        * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                          as light as possible
-                       * #54 : implementing generics / templates : class
-                       * verify if methods can be added for sealed, limited, method duplications                       
+
                        * #190 : Closure : auto boxing / unboxing local variables  
                        * #215 : Operations with structure fields
                          possible, no exception boxing

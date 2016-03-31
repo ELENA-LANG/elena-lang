@@ -18,7 +18,7 @@
     proceed : aChoice
     [
         ^ (aChoice toInt) =>
-            1 ? [ now literal ]
+            1 ? [ now literal. ]
             2 ? [ utcNow literal ]
             3 ? [ now year literal ]
             4 ? [ now toShortTimeLiteral ]
