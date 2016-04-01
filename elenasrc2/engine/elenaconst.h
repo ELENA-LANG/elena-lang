@@ -288,36 +288,36 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-   const int elEmbeddable          = 0x00000010;
+  // const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
-   const int elWrapper             = 0x00001040;
-   const int elStructureWrapper    = 0x00000048;
+  // const int elWrapper             = 0x00001040;
+  // const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
-   const int elGroup               = 0x00000200;
+  // const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000400;
    const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
-   const int elSignature           = 0x00002000;
+  // const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
-   const int elExtension           = 0x00004980;
+  // const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
-   const int elExtMessage          = 0x00208000;
-   const int elSymbol              = 0x00100000;
+  // const int elExtMessage          = 0x00208000;
+  // const int elSymbol              = 0x00100000;
    const int elDebugMask           = 0x000F0000;
 
-   const int elDebugDWORD          = 0x00010000;
-   const int elDebugReal64         = 0x00020000;
-   const int elDebugLiteral        = 0x00030000;
-   const int elDebugIntegers       = 0x00040000;
-   const int elDebugArray          = 0x00050000;
-   const int elDebugQWORD          = 0x00060000;
-   const int elDebugBytes          = 0x00070000;
-   const int elDebugShorts         = 0x00080000;
-   const int elDebugPTR            = 0x00090000;
-   const int elDebugWideLiteral    = 0x000A0000;
-   const int elDebugReference      = 0x000B0000;   // symbol reference
-   const int elDebugSubject        = 0x000C0000;
+  // const int elDebugDWORD          = 0x00010000;
+  // const int elDebugReal64         = 0x00020000;
+  // const int elDebugLiteral        = 0x00030000;
+  // const int elDebugIntegers       = 0x00040000;
+  // const int elDebugArray          = 0x00050000;
+  // const int elDebugQWORD          = 0x00060000;
+  // const int elDebugBytes          = 0x00070000;
+  // const int elDebugShorts         = 0x00080000;
+  // const int elDebugPTR            = 0x00090000;
+  // const int elDebugWideLiteral    = 0x000A0000;
+  // const int elDebugReference      = 0x000B0000;   // symbol reference
+  // const int elDebugSubject        = 0x000C0000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -446,39 +446,39 @@ namespace _ELENA_
    #define GENERIC_PREFIX           "#generic"
    #define EMBEDDED_PREFIX          "#embedded"
 
-  // --- ELENA hints ---
-   #define HINT_CONSTANT           "const"
-   #define HINT_TYPE               "type"              // type hint
-   #define HINT_SIZE               "size"
-   #define HINT_STRUCT             "struct"
-   #define HINT_INTEGER_NUMBER     "integer"
-   #define HINT_FLOAT_NUMBER       "floating"
-   #define HINT_VARIABLE           "variable"
-   #define HINT_BINARY             "stringof"
-   #define HINT_XDYNAMIC           "dynamic"      // obsolete, arrayof should be used
-   #define HINT_DYNAMIC            "arrayof"
-   #define HINT_POINTER            "pointer"
-   #define HINT_STRING             "string"
-   #define HINT_WIDESTRING         "widestring"
-// #define HINT_SAFEPOINT          "safepoint"
-// #define HINT_LOCK               "sync"
-   #define HINT_SEALED             "sealed"
-   #define HINT_LIMITED            "limited"
-   #define HINT_MESSAGE            "message"
-   #define HINT_SIGNATURE          "signature"
-   #define HINT_EXT_MESSAGE        "extension_message"
-   #define HINT_SYMBOL             "symbol"
-   #define HINT_EXTENSION          "extension"
-   #define HINT_GROUP              "group"
-   #define HINT_WRAPPER            "class"
-   #define HINT_GENERIC            "generic"
-   #define HINT_EMBEDDABLE         "embeddable"
-   #define HINT_NONSTRUCTURE       "nonstructural"
-   #define HINT_STACKSAFE          "stacksafe"
-   #define HINT_SUPPRESS_WARNINGS  "suppress"
-   #define HINT_TARGET             "target"
-   #define HINT_TARGET_FIELD       "field"
-   #define HINT_TARGET_METHOD      "method"
+//  // --- ELENA hints ---
+//   #define HINT_CONSTANT           "const"
+//   #define HINT_TYPE               "type"              // type hint
+//   #define HINT_SIZE               "size"
+//   #define HINT_STRUCT             "struct"
+//   #define HINT_INTEGER_NUMBER     "integer"
+//   #define HINT_FLOAT_NUMBER       "floating"
+//   #define HINT_VARIABLE           "variable"
+//   #define HINT_BINARY             "stringof"
+//   #define HINT_XDYNAMIC           "dynamic"      // obsolete, arrayof should be used
+//   #define HINT_DYNAMIC            "arrayof"
+//   #define HINT_POINTER            "pointer"
+//   #define HINT_STRING             "string"
+//   #define HINT_WIDESTRING         "widestring"
+//// #define HINT_SAFEPOINT          "safepoint"
+//// #define HINT_LOCK               "sync"
+//   #define HINT_SEALED             "sealed"
+//   #define HINT_LIMITED            "limited"
+//   #define HINT_MESSAGE            "message"
+//   #define HINT_SIGNATURE          "signature"
+//   #define HINT_EXT_MESSAGE        "extension_message"
+//   #define HINT_SYMBOL             "symbol"
+//   #define HINT_EXTENSION          "extension"
+//   #define HINT_GROUP              "group"
+//   #define HINT_WRAPPER            "class"
+//   #define HINT_GENERIC            "generic"
+//   #define HINT_EMBEDDABLE         "embeddable"
+//   #define HINT_NONSTRUCTURE       "nonstructural"
+//   #define HINT_STACKSAFE          "stacksafe"
+//   #define HINT_SUPPRESS_WARNINGS  "suppress"
+//   #define HINT_TARGET             "target"
+//   #define HINT_TARGET_FIELD       "field"
+//   #define HINT_TARGET_METHOD      "method"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
@@ -506,26 +506,26 @@ namespace _ELENA_
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
-   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
-   #define FUNCX_FORWARD            "'$function"                     // the base action / function class
-   #define NFUNCX_FORWARD           "'$nfunction"                    // the base action / function class
+//   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
+//   #define FUNCX_FORWARD            "'$function"                     // the base action / function class
+//   #define NFUNCX_FORWARD           "'$nfunction"                    // the base action / function class
    #define INT_FORWARD              "'$int"
    #define LONG_FORWARD             "'$long"
    #define REAL_FORWARD             "'$real"
    #define STR_FORWARD              "'$literal"
    #define WIDESTR_FORWARD          "'$wideliteral"
    #define CHAR_FORWARD             "'$char"
-   #define TRUE_FORWARD             "'$true"
-   #define FALSE_FORWARD            "'$false"
+//   #define TRUE_FORWARD             "'$true"
+//   #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
    #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
-   #define ARRAY_FORWARD            "'$array"
-   #define PARAMS_FORWARD           "'$params"
-   #define SUBJ_FORWARD             "'$sign"
-
-   #define BOOLTYPE_FORWARD         "'$bool"
+//   #define ARRAY_FORWARD            "'$array"
+//   #define PARAMS_FORWARD           "'$params"
+//   #define SUBJ_FORWARD             "'$sign"
+//
+//   #define BOOLTYPE_FORWARD         "'$bool"
 
    #define STARTUP_CLASS            "'startUp"
 

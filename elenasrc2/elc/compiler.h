@@ -260,21 +260,21 @@ private:
 
       // cached references
       ref_t superReference;
-      ref_t intReference;
-      ref_t longReference;
-      ref_t realReference;
-      ref_t literalReference;
-      ref_t wideReference;
-      ref_t charReference;
-      ref_t trueReference;
-      ref_t falseReference;
-      ref_t paramsReference;
-      ref_t signatureReference;
-      ref_t messageReference;
-      ref_t verbReference;
-      ref_t arrayReference;
+      //ref_t intReference;
+      //ref_t longReference;
+      //ref_t realReference;
+      //ref_t literalReference;
+      //ref_t wideReference;
+      //ref_t charReference;
+      //ref_t trueReference;
+      //ref_t falseReference;
+      //ref_t paramsReference;
+      //ref_t signatureReference;
+      //ref_t messageReference;
+      //ref_t verbReference;
+      //ref_t arrayReference;
 
-      ref_t boolType;
+      //ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -372,9 +372,9 @@ private:
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 
-      ref_t getBaseFunctionClass(int paramCount);
-      ref_t getBaseIndexFunctionClass(int paramCount);
-      ref_t getBaseLazyExpressionClass();
+      //ref_t getBaseFunctionClass(int paramCount);
+      //ref_t getBaseIndexFunctionClass(int paramCount);
+      //ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);
 
@@ -777,7 +777,7 @@ private:
 
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
+   //ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
    ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);

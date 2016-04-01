@@ -2,7 +2,6 @@
 In development:
 ------                      
               xdev - generic development
-                       * test all samples
                        * test string_comparision
                        * test combinations
                        * test comp_list

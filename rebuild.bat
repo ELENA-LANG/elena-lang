@@ -11,7 +11,7 @@ bin\asm2binx src30\asm\x32\coreapi.asm bin\x32
 bin\asm2binx src30\asm\x32\core_vm.asm bin\x32
 bin\asm2binx src30\asm\x32\core_win.asm bin\x32
 bin\elc -csrc30\system\system.prj
-bin\elc -csrc30\extensions\extensions.prj
-bin\elc -csrc30\net\net.prj
-bin\elc -csrc30\forms\forms.prj
-bin\elc -csrc30\sqlite\sqlite.prj
+rem bin\elc -csrc30\extensions\extensions.prj
+rem bin\elc -csrc30\net\net.prj
+rem bin\elc -csrc30\forms\forms.prj
+rem bin\elc -csrc30\sqlite\sqlite.prj
