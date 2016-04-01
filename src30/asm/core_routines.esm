@@ -22,8 +22,8 @@ procedure __object.dispatch[0]
   open 1
   bcopyf -1
   pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
+//  pushr class : system'MethodNotFoundException
+//  pushr const : %new&mssg$[1]
   throw
 
 end

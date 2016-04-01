@@ -1,5 +1,5 @@
-// ==== ver 3.4.1 ===
-//
+// ==== ver 3.5.1 ===
+
 // --- CommandLine ---
 //
 //#symbol $CommandLineFactory =
@@ -14,11 +14,11 @@
 //
 //#symbol commandLine = 
 //    $CommandLineFactory new.
-//
+
 // --- startUp ---
-//
-//#class StartUp
-//{
+
+#class StartUp
+{
 //    #field theFinializeEvent.
 //
 //    #method set &onAppEnd:aHandle
@@ -27,25 +27,25 @@
 //            ? [ theFinializeEvent := aHandle. ]
 //            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
 //    ]
-//    
-//    #method start
-//    [
-//        'program eval
-//            | on:
-//            {
-//                Abort = e [].
-//                
-//                ! = e [ console writeLine:(e literal). ].
-//            }.
-//
+    
+    #method start
+    [
+        'program eval
+            /*| on:
+            {
+                Abort = e [].
+                
+                ! = e [ console writeLine:(e literal). ].
+            }*/.
+
 //        $self $onStop:$nil.
-//    ]
-//    
+    ]
+    
 //    #method $onStop : arg
 //    [
 //        ($nil == theFinializeEvent)
 //            ! [ theFinializeEvent eval:arg ].
 //    ]
-//}
-//
-//#static startUp = StartUp new.
+}
+
+#static startUp = StartUp new.
