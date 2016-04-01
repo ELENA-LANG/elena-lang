@@ -34,6 +34,7 @@ class ECodesAssembler : public Assembler
    void fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info);
 
    void readMessage(TokenInfo& token, int& verbId, IdentifierString& subject, int& paramCount);
+   void compileMessage(TokenInfo& token, IdentifierString& message);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);
    ref_t compileRMessageArg(TokenInfo& token, _Module* binary);

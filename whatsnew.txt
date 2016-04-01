@@ -8,10 +8,11 @@
 ******************************************************************************
 
 [ELENA]
-[+] #201 : shorthand property settings
-[+] #54 : templates.
 [+] new statement #extern - exclude the code from GC
+[+] #201 : shorthand property settings
+[+] #54 : templates
 [+] #231 - new syntax : Signature / Message constants
+[*] #136 : refactoring access to primitive managed code (core_routines)
 
 [ELC]
 [!] binary incompatible due to implementing issues #217 and #54

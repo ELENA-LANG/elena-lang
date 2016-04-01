@@ -1,13 +1,13 @@
-//// ==== ver 3.4.1 ===
-//
-//// --- super object ---
-//
-///// A common ancestor
-//#class Object
-//{
-//    /// Creates the object
-//    #constructor new []
-//
+// ==== ver 3.5.1 ===
+
+// --- super object ---
+
+/// A common ancestor
+#class Object
+{
+    /// Creates the object
+    #constructor new []
+
 //    /// Returns true if the specified object is equal to the current object; otherwise, false.
 //    ///
 //    /// By default compares the object references.
@@ -18,11 +18,11 @@
 //    
 //    /// Dispatches the verb to the target object with generic subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &object:$self.
-//                        
-//    /// Implements a message dispatching in VMT
-//    #method => system'core_routines'dispatch.
-//}
-//
+                        
+    /// Implements a message dispatching in VMT
+    #method => system'core_routines'__object.
+}
+
 //// --- nil constant ---
 //
 ///// A nil value

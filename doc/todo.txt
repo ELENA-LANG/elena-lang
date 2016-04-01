@@ -2,6 +2,14 @@
 In development:
 ------                      
               xdev - generic development
+                       * #method => system'core_routines'dispatch : compiler should automatically append argument list, issue #136
+
+                       * review array implementation (template usage)
+                       * review primitive imlementation (template usage)
+                       * probably all hints should be templates??
+                       * #54 : implementing generics / templates : class
+                       * review #10 issue
+
                        * test string_comparision
                        * test combinations
                        * test comp_list
@@ -9,25 +17,14 @@ In development:
                        * test c_a_g
                        * test graph
                        * test notepad
-
                        * live programming : provide path to the current library
                        * test live programming
                        * test calculator sample
                        * test chat sample : fix the current bug, simple implementation - direct output
-
-                       * review array implementation (template usage)
-                       * review primitive imlementation (template usage)
-                       * probably all hints should be templates??
-                       * #54 : implementing generics / templates : class
-                       * review #10 issue
-                       * #method => system'core_routines'dispatch : compiler should automatically append argument list
                        * verify if methods can be added for sealed, limited, method duplications                       
-
-                       * test live eson script
-
+                       * test live eson script                                                                                                         
                        * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
                          as light as possible
-
                        * #190 : Closure : auto boxing / unboxing local variables  
                        * #215 : Operations with structure fields
                          possible, no exception boxing

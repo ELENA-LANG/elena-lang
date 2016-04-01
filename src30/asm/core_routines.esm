@@ -1,6 +1,7 @@
 //        ELENA Language 2.0
 //      inline system library
 
+/*
 define elMessage            000008000h
 define elExtMessage         000200000h
 define elRole               000004000h
@@ -12,7 +13,23 @@ define EVAL_MESSAGE_ID      085000000h
 define GET_MESSAGE_ID       086000000h
 
 define INV_PARAM_MASK       0FFFFFFF0h
+*/
 
+procedure __object.dispatch[0]
+
+  bsredirect  
+  pushe
+  open 1
+  bcopyf -1
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
+end
+
+
+/*
 procedure object_equal
 
   aloadsi 1
@@ -25,19 +42,6 @@ labTrue:
   acopyr const : system'true
   quitn 2
   
-end
-
-procedure dispatch
-
-  bsredirect  
-  pushe
-  open 1
-  bcopyf -1
-  pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
-  throw
-
 end
 
 procedure byte_min
@@ -5344,5 +5348,10 @@ procedure evaluate_tape
   pushd
   popa
   quitn 2
+
+end
+*/
+
+procedure dummy
 
 end

@@ -743,7 +743,7 @@ private:
    ref_t mapNestedExpression(CodeScope& scope);
    ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
-   void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference);
+   void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference, ref_t message);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 

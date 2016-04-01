@@ -59,7 +59,10 @@ void ECodesAssembler :: readMessage(TokenInfo& token, int& verbId, IdentifierStr
 {
    verbId = mapVerb(token.value);
    if (verbId == 0) {
-      verbId = EVAL_MESSAGE_ID;
+      if (token.check("dispatch")) {
+         verbId = DISPATCH_MESSAGE_ID;
+      }
+      else verbId = EVAL_MESSAGE_ID;
    }
 
    token.read();
@@ -82,14 +85,13 @@ void ECodesAssembler :: readMessage(TokenInfo& token, int& verbId, IdentifierStr
    token.read("]", "Invalid operand");
 }
 
-ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& message)
 {
-   IdentifierString message;
    IdentifierString subject;
 
    int paramCount = 0;
    int verbId = 0;
-   
+
    readMessage(token, verbId, subject, paramCount);
 
    // reserve place for param counter
@@ -110,6 +112,12 @@ ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
    message.append(subject);
 
    message[0] = message[0] + paramCount;
+}
+
+ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+{
+   IdentifierString message;
+   compileMessage(token, message);
 
    return binary->mapReference(message) | mskMessage;
 }
@@ -514,8 +522,25 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
    LabelInfo info;
 
    token.read();
-   ReferenceNs refName(binary->Name(), token.value);
 
+   IdentifierString method;
+   method.copy(token.value);
+
+   token.read();
+
+   if (token.check(".")) {
+      token.read();
+
+      IdentifierString message;
+      compileMessage(token, message);
+
+      method.append('.');
+      method.append(message);
+
+      token.read();
+   }
+
+   ReferenceNs refName(binary->Name(), method);
    ref_t reference = binary->mapReference(refName) | mskCodeRef;
 
 	if (binary->mapSection(reference, true)!=NULL) {
@@ -525,8 +550,6 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
    _Memory* code = binary->mapSection(reference, false);
 	MemoryWriter writer(code);
    writer.writeDWord(0);
-
-   token.read();
 
 	while (!token.check("end")) {
       compileCommand(token, writer, info, binary);

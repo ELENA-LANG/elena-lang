@@ -105,4 +105,4 @@
 //    ]
 //}
 //
-#static startUp = $GUIStartUp new.
+//#static startUp = $GUIStartUp new.

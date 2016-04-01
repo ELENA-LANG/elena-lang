@@ -1480,10 +1480,26 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
    writeMessage(*scope.moduleScope, writer, scope.message);
 }
 
-void Compiler :: importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t referenceProperName)
+void Compiler :: importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t referenceProperName, ref_t message)
 {
+   IdentifierString virtualReference(referenceProperName);
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t sign_ref, verb_id;
+   decodeMessage(message, sign_ref, verb_id, paramCount);
+
+   virtualReference.append('0' + paramCount);
+   virtualReference.append('#');
+   virtualReference.append(0x20 + verb_id);
+
+   if (sign_ref != 0) {
+      virtualReference.append('&');
+      virtualReference.append(scope.module->resolveSubject(sign_ref));
+   }
+
    ref_t reference = 0;
-   _Module* api = scope.project->resolveModule(referenceProperName, reference);
+   _Module* api = scope.project->resolveModule(virtualReference, reference);
 
    _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
    if (section == NULL) {
@@ -4126,7 +4142,7 @@ void Compiler :: compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope
    writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (isImportRedirect(node)) {
-      importCode(node, *scope.moduleScope, writer, node.Terminal());
+      importCode(node, *scope.moduleScope, writer, node.Terminal(), scope.message);
    }
    else {
       writer.newNode(lxDispatching);
@@ -4303,7 +4319,7 @@ void Compiler :: compileConstructorDispatchExpression(DNode node, SyntaxWriter& 
       ObjectInfo info = scope.mapObject(node.Terminal());
       // if it is an internal routine
       if (info.kind == okInternal) {
-         importCode(node, *scope.moduleScope, writer, node.Terminal());
+         importCode(node, *scope.moduleScope, writer, node.Terminal(), scope.getMessageID());
       }
       else scope.raiseError(errInvalidOperation, node.Terminal());
    }
@@ -4360,7 +4376,7 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
    // check if it is a dispatch
    else if (dispatchBody != nsNone) {
       if (isImportRedirect(dispatchBody.firstChild())) {
-         importCode(node, *scope.moduleScope, writer, dispatchBody.firstChild().Terminal());
+         importCode(node, *scope.moduleScope, writer, dispatchBody.firstChild().Terminal(), scope.message);
       }
       else compileDispatchExpression(dispatchBody.firstChild(), codeScope, tape);
    }
@@ -4675,6 +4691,9 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
 
    // if no construtors are defined inherits the parent one
    if (!findSymbol(node.firstChild(), nsConstructor)) {
+      if (classScope.info.header.parentRef == 0)
+         classScope.raiseError(errInvalidParent, node.FirstTerminal());
+
       IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
       classClassParentName.append(CLASSCLASS_POSTFIX);
 
