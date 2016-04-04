@@ -62,23 +62,23 @@ enum LexicalType
    lxIf              = 0x2031E,  // optional arg - reference
    lxElse            = 0x2031F,  // optional arg - reference
    lxOption          = 0x00320,
-   lxBody            = 0x00321,
+   //lxBody            = 0x00321,
    lxLocalUnboxing   = 0x00322, // arg - size
    lxNewFrame        = 0x00323, // if argument -1 - than with presaved message
    lxCreatingClass   = 0x00324, // arg - count
    lxCreatingStruct  = 0x00325, // arg - size
    lxExternFrame     = 0x00326,
-   lxTemplateCalling = 0x10327,
+   //lxTemplateCalling = 0x10327,
 
-   lxBoolOp          = 0x00328, // arg - operation id
-   lxNilOp           = 0x00329, // arg - operation id
-   lxIntOp           = 0x0132A, // arg - operation id
-   lxLongOp          = 0x0132B, // arg - operation id
-   lxRealOp          = 0x0132C, // arg - operation id
-   lxIntArrOp        = 0x0132D, // arg - operation id
-   lxArrOp           = 0x0132E, // arg - operation id
+   //lxBoolOp          = 0x00328, // arg - operation id
+   //lxNilOp           = 0x00329, // arg - operation id
+   //lxIntOp           = 0x0132A, // arg - operation id
+   //lxLongOp          = 0x0132B, // arg - operation id
+   //lxRealOp          = 0x0132C, // arg - operation id
+   //lxIntArrOp        = 0x0132D, // arg - operation id
+   //lxArrOp           = 0x0132E, // arg - operation id
 
-   lxTemplAssigning  = 0x0032F, // arg - size
+   //lxTemplAssigning  = 0x0032F, // arg - size
 
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count
@@ -121,20 +121,20 @@ enum LexicalType
    lxSelfVariable    = 0x00411, // debug info only
    lxReleasing       = 0x00412,
    lxImporting       = 0x00413,
-   lxTemplateField   = 0x00414, // template target pseudo variable
+   //lxTemplateField   = 0x00414, // template target pseudo variable
 
    lxTarget          = 0x20801, // arg - reference
    lxCallTarget      = 0x20802, // arg - reference
    lxType            = 0x40803, // arg - subject
-   lxSubject         = 0x40804, // arg - subject
-   lxStacksafe       = 0x00805,
+   //lxSubject         = 0x40804, // arg - subject
+   //lxStacksafe       = 0x00805,
    lxTempLocal       = 0x00806,
    lxOverridden      = 0x00807,
-   lxIfValue         = 0x20808, // arg - reference
-   lxElseValue       = 0x20809, // arg - reference
+   //lxIfValue         = 0x20808, // arg - reference
+   //lxElseValue       = 0x20809, // arg - reference
    lxMessage         = 0x1080A, // arg - message
-   lxEmbeddable      = 0x0080B,
-   lxSize            = 0x0080C,
+   //lxEmbeddable      = 0x0080B,
+   //lxSize            = 0x0080C,
    lxReserved        = 0x0080D,
    lxParamCount      = 0x0080E,
 
@@ -144,22 +144,22 @@ enum LexicalType
    lxLength          = 0x02004,
    lxTerminal        = 0x02005,
    lxLevel           = 0x02006,
-   lxClassName       = 0x22007, // arg - reference
+   lxClassName       = 0x02007, // arg - reference
    lxValue           = 0x02008,
    lxFrameAttr       = 0x02009,
    lxSourcePath      = 0x0200A,
 
    lxClassFlag       = 0x04001,      // class fields
    lxClassStructure  = 0x04002,      
-   lxClassArray      = 0x04003,
-   lxClassField      = 0x04005,
+   //lxClassArray      = 0x04003,
+   //lxClassField      = 0x04005,
    lxClassMethod     = 0x14006,
    lxClassMethodAttr = 0x04007,
-   lxClassMethodOpt  = 0x04008,
+   //lxClassMethodOpt  = 0x04008,
    lxWarningMask     = 0x04009,
 
-   lxFieldTemplate   = 0x2400A,
-   lxMethodTemplate  = 0x2400B,
+   //lxFieldTemplate   = 0x2400A,
+   //lxMethodTemplate  = 0x2400B,
 };
 
 // --- SyntaxTree ---

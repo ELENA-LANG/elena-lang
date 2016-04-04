@@ -1,5 +1,5 @@
-//// ==== ver 3.4.1 ===
-//
+// ==== ver 3.5.1 ===
+
 //// === basic logical types ===
 //#subject(class:system'BaseBoolValue) bool.
 // 
@@ -11,7 +11,7 @@
 //
 //#subject(class:system'ByteNumber)   byte.
 //#subject(class:system'ShortNumber)  short.
-//#subject(class:system'IntNumber)    int.
+//#subject(system'IntNumber)    int.
 //#subject(class:system'LongNumber)   long.
 //#subject(class:system'RealNumber)   real.
 //#subject(class:system'CharValue)    char.

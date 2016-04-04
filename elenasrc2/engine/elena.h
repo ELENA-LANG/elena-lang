@@ -379,31 +379,31 @@ struct ClassHeader
 
 enum MethodAttribute
 {
-   maTypeMask       = 0x100,
+   maSubjectMask    = 0x100,
 
    maNone           = 0x000,
    maHint           = 0x001,
-   maType           = 0x102,
-   maEmbeddableGet  = 0x103,
-   maEmbeddedInit   = 0x104,
-   maEmbeddableIdle = 0x005,
+//   maType           = 0x102,
+//   maEmbeddableGet  = 0x103,
+//   maEmbeddedInit   = 0x104,
+//   maEmbeddableIdle = 0x005,
 };
 
 struct ClassInfo
 {
    typedef Pair<ref_t, int>                   Attribute;
    typedef MemoryMap<ref_t, bool, false>      MethodMap;
-   typedef MemoryMap<ident_t, int, true>      FieldMap;
-   typedef MemoryMap<int, ref_t>              FieldTypeMap;
+   //typedef MemoryMap<ident_t, int, true>      FieldMap;
+   //typedef MemoryMap<int, ref_t>              FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false> MethodInfoMap;
 
    ClassHeader   header;
    size_t        size;           // Object size
    ref_t         classClassRef;  // reference to class class VMT
    MethodMap     methods;
-   FieldMap      fields;
+   //FieldMap      fields;
 
-   FieldTypeMap  fieldTypes;
+   //FieldTypeMap  fieldTypes;
    MethodInfoMap methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
@@ -413,8 +413,8 @@ struct ClassInfo
       writer->writeDWord(classClassRef);
       if (!headerAndSizeOnly) {
          methods.write(writer);
-         fields.write(writer);
-         fieldTypes.write(writer);
+         //fields.write(writer);
+         //fieldTypes.write(writer);
          methodHints.write(writer);
       }
    }
@@ -426,14 +426,14 @@ struct ClassInfo
       classClassRef = reader->getDWord();
       if (!headerOnly) {
          methods.read(reader);
-         fields.read(reader);
-         fieldTypes.read(reader);
+         //fields.read(reader);
+         //fieldTypes.read(reader);
          methodHints.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0)
+      : /*fields(-1), */methods(0), methodHints(0)
    {
       header.flags = 0;
       classClassRef = 0;

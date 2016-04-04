@@ -41,3 +41,10 @@
 //    /// Any typecasting message will be handled and nil value returned
 //    #method(generic)get = $nil.
 //}.
+
+// === basic templates ===
+
+//#template varof
+//{
+//    #field($target) theValue.
+//}

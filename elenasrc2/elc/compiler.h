@@ -22,40 +22,34 @@ class Compiler
 public:
    struct Parameter
    {
-      int        offset;
-      bool       stackAllocated;
-      union {
-         ref_t   sign_ref;   // if not stack allocated - contains type reference
-         ref_t   class_ref;  // if stack allocated - contains class reference
-      };
+      int    offset;
+      ref_t  subj_ref;
+      //size_t struct_ref;
 
       Parameter()
       {
          offset = -1;
-         sign_ref = 0;
-         stackAllocated = false;
+         subj_ref = 0;
+         //struct_ref = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
-         this->sign_ref = 0;
-         stackAllocated = false;
+         this->subj_ref = 0;
+         //this->struct_ref = 0;
       }
-      Parameter(int offset, ref_t sign_ref)
+      Parameter(int offset, ref_t subj_ref)
       {
          this->offset = offset;
-         this->sign_ref = sign_ref;
-         stackAllocated = false;
+         this->subj_ref = subj_ref;
+         //this->struct_ref = 0;
       }
-      Parameter(int offset, ref_t ref, bool stackAllocated)
-      {
-         this->offset = offset;
-         this->stackAllocated = stackAllocated;
-         if (stackAllocated) {
-            this->class_ref = ref;
-         }
-         else this->sign_ref = ref;
-      }
+      //Parameter(int offset, ref_t subj_ref, size_t struct_ref)
+      //{
+      //   this->offset = offset;
+      //   this->subj_ref = subj_ref;
+      //   this->struct_ref = struct_ref;
+      //}
    };
 
    // InheritResult
@@ -78,9 +72,9 @@ public:
       tpClosed     = 0x02,
       tpNormal     = 0x03,
       tpDispatcher = 0x04,
-      tpStackSafe  = 0x10,
-      tpEmbeddable = 0x20,
-      tpGeneric    = 0x40,
+      //tpStackSafe  = 0x10,
+//      tpEmbeddable = 0x20,
+//      tpGeneric    = 0x40,
    };
 
    struct Unresolved
@@ -113,33 +107,33 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-      okLiteralConstant,              // param - reference 
-      okWideLiteralConstant,          // param - reference 
-      okCharConstant,                 // param - reference
+   //   okLiteralConstant,              // param - reference 
+   //   okWideLiteralConstant,          // param - reference 
+   //   okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference 
-      okLongConstant,                 // param - reference 
-      okRealConstant,                 // param - reference 
-      okMessageConstant,              // param - reference 
-      okExtMessageConstant,           // param - reference 
-      okSignatureConstant,            // param - reference 
-      okVerbConstant,                 // param - reference 
+   //   okLongConstant,                 // param - reference 
+   //   okRealConstant,                 // param - reference 
+   //   okMessageConstant,              // param - reference 
+   //   okExtMessageConstant,           // param - reference 
+   //   okSignatureConstant,            // param - reference 
+   //   okVerbConstant,                 // param - reference 
       okField,                        // param - field offset
-      okFieldAddress,                 // param - field offset
-      okOuter,                        // param - field offset
-      okOuterField,                   // param - field offset, extraparam - outer field offset
+   //   okFieldAddress,                 // param - field offset
+   //   okOuter,                        // param - field offset
+   //   okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
-      okSubject,                      // param - parameter offset
+   //   okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset
       okNil,
       okSuper,
-      okLocalAddress,                 // param - local offset, extraparam - class reference
-      okParams,                       // param - local offset
-      okBlockLocal,                   // param - local offset
+      okLocalAddress,                 // param - local offset, class reference
+   //   okParams,                       // param - local offset
+   //   okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
    
-      okTemplateField,
-      okTemplateTarget,
+   //   okTemplateField,
+   //   okTemplateTarget,
 
       okExternal,
       okInternal,
@@ -196,38 +190,39 @@ public:
       }
    };
 
-   struct TemplateInfo
-   {
-      ref_t subject;
-      int   offset;
-      ref_t templateRef;
-      ref_t type;          // field template : the field type; method template : the target method signature
-      int   size;
-      ref_t targetRef;
-
-      TemplateInfo()
-      {
-         targetRef = templateRef = subject = type = 0;
-         size = offset = 0;
-      }
-
-      TemplateInfo(ref_t subject, int offset, ref_t type, int size, ref_t targetRef, ref_t templateRef)
-      {
-         this->subject = subject;
-         this->offset = offset;
-         this->templateRef = templateRef;
-         this->type = type;
-         this->size = size;
-         this->targetRef = targetRef;
-      }
-   };
+//   struct TemplateInfo
+//   {
+//      ref_t subject;
+//      int   offset;
+//      ref_t templateRef;
+//      ref_t type;          // field template : the field type; method template : the target method signature
+//      int   size;
+//      ref_t targetRef;
+//
+//      TemplateInfo()
+//      {
+//         targetRef = templateRef = subject = type = 0;
+//         size = offset = 0;
+//      }
+//
+//      TemplateInfo(ref_t subject, int offset, ref_t type, int size, ref_t targetRef, ref_t templateRef)
+//      {
+//         this->subject = subject;
+//         this->offset = offset;
+//         this->templateRef = templateRef;
+//         this->type = type;
+//         this->size = size;
+//         this->targetRef = targetRef;
+//      }
+//   };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef Map<int, ref_t>                RoleMap;
    typedef List<Unresolved>               Unresolveds;
-   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-   typedef Map<ref_t, TemplateInfo>       TemplateMap;
+//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+//   typedef Map<ref_t, TemplateInfo>       TemplateMap;
 
 private:
    // - ModuleScope -
@@ -247,34 +242,37 @@ private:
       // symbol hints
       Map<ref_t, ref_t> constantHints;
 
-      // extensions
-      SubjectMap        extensionHints; 
-      ExtensionMap      extensions;
+//      // extensions
+//      SubjectMap        extensionHints; 
+//      ExtensionMap      extensions;
 
       // type hints
-      ForwardMap        types;
-      SubjectMap        typeHints;
+      ForwardMap        subjects;
+      SubjectMap        subjectHints;
 
-      // importing templates
-      TemplateMap       importedTemplates;
+      // role hints
+      RoleMap           roleHints;
+
+//      // importing templates
+//      TemplateMap       importedTemplates;
 
       // cached references
       ref_t superReference;
-      //ref_t intReference;
-      //ref_t longReference;
-      //ref_t realReference;
-      //ref_t literalReference;
-      //ref_t wideReference;
-      //ref_t charReference;
-      //ref_t trueReference;
-      //ref_t falseReference;
-      //ref_t paramsReference;
-      //ref_t signatureReference;
-      //ref_t messageReference;
-      //ref_t verbReference;
-      //ref_t arrayReference;
-
-      //ref_t boolType;
+      ref_t intReference;
+//      //ref_t longReference;
+//      //ref_t realReference;
+//      //ref_t literalReference;
+//      //ref_t wideReference;
+//      //ref_t charReference;
+//      //ref_t trueReference;
+//      //ref_t falseReference;
+//      //ref_t paramsReference;
+//      //ref_t signatureReference;
+//      //ref_t messageReference;
+//      //ref_t verbReference;
+//      //ref_t arrayReference;
+//
+//      //ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -290,10 +288,10 @@ private:
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-      void defineConstantSymbol(ref_t reference, ref_t classReference)
-      {
-         constantHints.add(reference, classReference);
-      }
+//      void defineConstantSymbol(ref_t reference, ref_t classReference)
+//      {
+//         constantHints.add(reference, classReference);
+//      }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
@@ -305,16 +303,12 @@ private:
 
       ref_t resolveIdentifier(ident_t name);
 
-      ref_t mapNewType(ident_t terminal);
+      ref_t mapNewSubject(ident_t terminal);
 
-      ref_t mapType(TerminalInfo terminal);
-
-      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output, bool strongOnly = false);
-      ref_t mapSubject(ident_t name)
-      {
-         IdentifierString wsName(name);
-         return module->mapSubject(wsName, false);
-      }
+      // NOTE : the function returns 0 for implicit subjects
+      // in any case output is set (for explicit one - the namespace is copied as well)
+      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
+      ref_t mapSubject(TerminalInfo terminal);
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
@@ -327,61 +321,72 @@ private:
       }
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
-      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
-      {
-         return loadTemplateInfo(module->resolveReference(reference), argModule);
-      }
-      _Memory* loadTemplateInfo(ident_t symbol, _Module* &argModule);
+//      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
+//      {
+//         return loadTemplateInfo(module->resolveReference(reference), argModule);
+//      }
+//      _Memory* loadTemplateInfo(ident_t symbol, _Module* &argModule);
+//
+//      bool recognizePrimitive(ident_t name, ident_t value, size_t& roleMask, int& size);
 
-      int defineStructSize(ref_t classReference, bool& variable);
-      int defineStructSize(ref_t classReference)
-      {
-         bool dummy = false;
+      //int defineStructSize(ref_t classReference/*, bool& variable*/);
+//      //int defineStructSize(ref_t classReference)
+//      //{
+//      //   bool dummy = false;
+//
+//      //   return defineStructSize(classReference, dummy);
+//      //}
+//
+//      //int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
+//      //int defineTypeSize(ref_t type_ref)
+//      //{
+//      //   ref_t dummy1;
+//      //   bool dummy2;
+//
+//      //   return defineTypeSize(type_ref, dummy1, dummy2);
+//      //}
+//      //int defineTypeSize(ref_t type_ref, ref_t& class_ref)
+//      //{
+//      //   bool dummy2;
+//
+//      //   return defineTypeSize(type_ref, class_ref, dummy2);
+//      //}
+//
+//      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
+//      int checkMethod(ref_t reference, ref_t message)
+//      {
+//         bool dummy;
+//         ref_t dummyRef;
+//         return checkMethod(reference, message, dummy, dummyRef);
+//      }
 
-         return defineStructSize(classReference, dummy);
-      }
+      void loadSubjects(_Module* module);
+//      void loadExtensions(TerminalInfo terminal, _Module* module);
+      void loadRoles(_Module* module);
 
-      int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
-      int defineTypeSize(ref_t type_ref)
-      {
-         ref_t dummy1;
-         bool dummy2;
-
-         return defineTypeSize(type_ref, dummy1, dummy2);
-      }
-      int defineTypeSize(ref_t type_ref, ref_t& class_ref)
-      {
-         bool dummy2;
-
-         return defineTypeSize(type_ref, class_ref, dummy2);
-      }
-
-      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
-      int checkMethod(ref_t reference, ref_t message)
-      {
-         bool dummy;
-         ref_t dummyRef;
-         return checkMethod(reference, message, dummy, dummyRef);
-      }
-
-      void loadTypes(_Module* module);
-      void loadExtensions(TerminalInfo terminal, _Module* module);
-
-      void saveType(ref_t type_ref, ref_t classReference, bool internalType);
-      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      void saveSubject(ref_t type_ref, ref_t classReference, bool internalType);
+//      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      void saveRole(int role, ref_t reference);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 
-      //ref_t getBaseFunctionClass(int paramCount);
-      //ref_t getBaseIndexFunctionClass(int paramCount);
-      //ref_t getBaseLazyExpressionClass();
+//      //ref_t getBaseFunctionClass(int paramCount);
+//      //ref_t getBaseIndexFunctionClass(int paramCount);
+//      //ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);
 
       bool checkIfCompatible(ref_t typeRef, ref_t classRef);
-      ref_t defineType(ref_t classRef);
+//      ref_t defineType(ref_t classRef);
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
+
+      void loadModuleInfo(_Module* extModule)
+      {
+         loadSubjects(extModule);
+         //loadExtensions(TerminalInfo(), extModule);
+         loadRoles(extModule);
+      }
 
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -513,8 +518,8 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-      bool  constant;
-      ref_t typeRef;
+//      bool  constant;
+//      ref_t typeRef;
 
       void compileHints(DNode hints);
 
@@ -540,10 +545,10 @@ private:
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-      bool         withOpenArg;
-      bool         stackSafe;
-      bool         embeddable;
-      bool         generic;
+//      bool         withOpenArg;
+//      bool         stackSafe;
+//      bool         embeddable;
+//      bool         generic;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -553,10 +558,10 @@ private:
          else return parent->getScope(level);
       }
 
-      ref_t getReturningType() const
-      {
-         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
-      }
+//      ref_t getReturningType() const
+//      {
+//         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
+//      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -575,7 +580,7 @@ private:
    struct CodeScope : public Scope
    {
       SyntaxWriter* writer;
-      int           rootBookmark;   // !! should be removed??
+//      int           rootBookmark;   // !! should be removed??
 
       // scope local variables
       LocalMap     locals;
@@ -596,11 +601,10 @@ private:
       {
          locals.add(local, Parameter(level, type));
       }
-
-      void mapLocal(ident_t local, int level, ref_t ref, bool stackAllocated)
-      {
-         locals.add(local, Parameter(level, ref, stackAllocated));
-      }
+      //void mapLocal(ident_t local, int level, ref_t type, size_t struct_ref)
+      //{
+      //   locals.add(local, Parameter(level, type, struct_ref));
+      //}
 
       void freeSpace()
       {
@@ -638,7 +642,7 @@ private:
          return scope ? scope->info.header.flags : 0;
       }
 
-      void compileLocalHints(DNode hints, ref_t& type, int& size, ref_t& classReference);
+      void compileLocalHints(DNode hints, ref_t& type/*, ref_t& classRef, int& size*/);
 
       CodeScope(SymbolScope* parent, SyntaxWriter* writer);
       CodeScope(MethodScope* parent, SyntaxWriter* writer);
@@ -666,9 +670,9 @@ private:
       };
 
       Map<ident_t, Outer>     outers;
-      ClassInfo::FieldTypeMap outerFieldTypes;
+      //ClassInfo::FieldTypeMap outerFieldTypes;
 
-      Outer mapSelf();
+      //Outer mapSelf();
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -678,7 +682,7 @@ private:
          else return Scope::getScope(level);
       }
 
-      virtual ObjectInfo mapObject(TerminalInfo identifier);
+      //virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
@@ -741,7 +745,7 @@ private:
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
    ref_t mapNestedExpression(CodeScope& scope);
-   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference, ref_t message);
 
@@ -752,78 +756,78 @@ private:
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
-   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope, bool& isExtension, ref_t& extensionType);
-   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
-   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope/*, bool& isExtension, ref_t& extensionType*/);
+//   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
+//   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
-   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol, bool isExtension, ref_t extensionType);
+   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
-   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
-   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
-   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
-   void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
-   void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
-   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
+//   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
+//   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+//   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+//   void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+//   void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+//   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
 
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
-   {
-      bool dummy = false;
-      return mapMessage(node, scope, count, dummy);
-   }
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
+   //ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
+   //{
+   //   bool dummy = false;
+   //   return mapMessage(node, scope, count, dummy);
+   //}
 
-   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
+//   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-   //ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
-   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-
-   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
+//   //ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
+//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+//
+//   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
-   int mapOperandType(CodeScope& scope, ObjectInfo operand);
-   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
+//   int mapOperandType(CodeScope& scope, ObjectInfo operand);
+//   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
+//
+//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
+//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+//   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
-   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-
-   ref_t compileMessageParameters(DNode node, CodeScope& scope/*, bool stacksafe*/);
+   ref_t compileMessageParameters(DNode node, CodeScope& scope);
 
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
-   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
+//   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 
    ObjectInfo compileAssigning(DNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);   
-   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+//   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
-   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+//
+//   void compileLoop(DNode node, CodeScope& scope);
+//   void compileThrow(DNode node, CodeScope& scope, int mode);
+//   void compileTry(DNode node, CodeScope& scope);
+//   void compileLock(DNode node, CodeScope& scope);
+//
+//   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
-   void compileLoop(DNode node, CodeScope& scope);
-   void compileThrow(DNode node, CodeScope& scope, int mode);
-   void compileTry(DNode node, CodeScope& scope);
-   void compileLock(DNode node, CodeScope& scope);
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+   //int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
+   bool allocateStructure(CodeScope& scope, int size, int flags, ObjectInfo& exprOperand);
 
-   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
-
-   int allocateStructure(ModuleScope& scope, bool bytearray, int& allocatedSize, int& reserved);
-   int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
-   bool allocateStructure(CodeScope& scope, int mode, ObjectInfo& exprOperand);
-
-   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
-
-   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
+//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
+//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
+//
+//   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+//   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
    void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
    void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 
@@ -833,34 +837,34 @@ private:
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
-   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
-   void compileSingletonClass(DNode member, ClassScope& scope);
+//   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
+//   void compileSingletonClass(DNode member, ClassScope& scope);
 
    void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
 
    void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
-   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
+//   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope& scope, bool withGenericMethods = false);
    void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
    void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
-   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
+//   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
    void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
-   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
+//   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
-   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
+//   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
 
    void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
-   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
+//   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
    void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
    void generateClassDeclaration(ClassScope& scope, bool closed);
    void generateInlineClassDeclaration(ClassScope& scope, bool closed);
-   
+
    void generateClassImplementation(ClassScope& scope);
 
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
@@ -870,8 +874,8 @@ private:
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
    void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
-   void compileIncludeModule(DNode node, ModuleScope& scope/*, DNode hints*/);
-   void compileType(DNode& member, ModuleScope& scope, DNode hints);
+   void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
+   void compileSubject(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(DNode member, ModuleScope& scope);
    void compileImplementations(DNode member, ModuleScope& scope);
@@ -884,28 +888,28 @@ private:
    bool validate(Project& project, _Module* module, int reference);
    void validateUnresolved(Unresolveds& unresolveds, Project& project);
 
-   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
+//   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
-   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
-   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+//   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+////   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
+////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+////   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
+////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+//
+//   void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+//
+//   void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+//   void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
+   void optimizeClassTree(ClassScope& scope);
+   void optimizeSymbolTree(SourceScope& scope);
 
-   void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-
-   void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-   void analizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-   void analizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
-   void analizeClassTree(ClassScope& scope);
-   void analizeSymbolTree(SourceScope& scope);
-
-   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
-   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
-   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+//   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
+//   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
+//   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
 public:
    void loadRules(StreamReader* optimization);

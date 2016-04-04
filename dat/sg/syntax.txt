@@ -273,6 +273,8 @@ ALT_OPERATIONS ->
 	| eps
 	
 HINT -> identifier HINT_BODY
+	| private HINT_BODY
+	| reference
 	
 INCLUDE ->
 	identifier INCLUDE_BODY DECLARATION_END

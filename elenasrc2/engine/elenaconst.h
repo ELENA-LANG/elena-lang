@@ -167,7 +167,7 @@ namespace _ELENA_
       mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000,   // meta data
       mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
-      mskSyntaxTreeRef       = 0x46000000,   // template
+      mskSyntaxTreeRef       = 0x46000000,   // template, declared in subject namespace
 
       mskConstantRef         = 0x01000000,   // reference to constant
       mskLiteralRef          = 0x02000000,   // reference to constant literal
@@ -306,7 +306,7 @@ namespace _ELENA_
   // const int elSymbol              = 0x00100000;
    const int elDebugMask           = 0x000F0000;
 
-  // const int elDebugDWORD          = 0x00010000;
+   const int elDebugDWORD          = 0x00010000;
   // const int elDebugReal64         = 0x00020000;
   // const int elDebugLiteral        = 0x00030000;
   // const int elDebugIntegers       = 0x00040000;
@@ -318,6 +318,10 @@ namespace _ELENA_
   // const int elDebugWideLiteral    = 0x000A0000;
   // const int elDebugReference      = 0x000B0000;   // symbol reference
   // const int elDebugSubject        = 0x000C0000;
+
+  // --- ELENA class roles ---
+   const int crRoleMask            = 0xFFFFFFF0;
+   const int crInteger             = 0x00000010;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -439,6 +443,7 @@ namespace _ELENA_
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
    #define EXTENSION_SECTION        "#extensions"
+   #define ROLE_SECTION             "#roles"
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
@@ -446,12 +451,12 @@ namespace _ELENA_
    #define GENERIC_PREFIX           "#generic"
    #define EMBEDDED_PREFIX          "#embedded"
 
-//  // --- ELENA hints ---
+  // --- ELENA modifiers ---
 //   #define HINT_CONSTANT           "const"
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
 //   #define HINT_STRUCT             "struct"
-//   #define HINT_INTEGER_NUMBER     "integer"
+   #define HINT_INTEGER_NUMBER     "$integer"      // class representing an integer number
 //   #define HINT_FLOAT_NUMBER       "floating"
 //   #define HINT_VARIABLE           "variable"
 //   #define HINT_BINARY             "stringof"
@@ -474,8 +479,8 @@ namespace _ELENA_
 //   #define HINT_GENERIC            "generic"
 //   #define HINT_EMBEDDABLE         "embeddable"
 //   #define HINT_NONSTRUCTURE       "nonstructural"
-//   #define HINT_STACKSAFE          "stacksafe"
-//   #define HINT_SUPPRESS_WARNINGS  "suppress"
+   #define HINT_STACKSAFE          "$stacksafe"
+   #define HINT_SUPPRESS_WARNINGS  "$suppress"
 //   #define HINT_TARGET             "target"
 //   #define HINT_TARGET_FIELD       "field"
 //   #define HINT_TARGET_METHOD      "method"

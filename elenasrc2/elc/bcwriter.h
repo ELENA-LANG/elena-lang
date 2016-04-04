@@ -165,7 +165,7 @@ class ByteCodeWriter
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
@@ -178,7 +178,6 @@ class ByteCodeWriter
    void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callRoleMessage(CommandTape& tape, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
@@ -198,8 +197,8 @@ class ByteCodeWriter
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
    void freeVirtualStack(CommandTape& tape, int count);
 
@@ -234,12 +233,12 @@ class ByteCodeWriter
    void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
-   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-   void doIntOperation(CommandTape& tape, int operator_id);
-   void doLongOperation(CommandTape& tape, int operator_id);
-   void doRealOperation(CommandTape& tape, int operator_id);
-   void doArrayOperation(CommandTape& tape, int operator_id);
-   void doIntArrayOperation(CommandTape& tape, int operator_id);
+//   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+//   void doIntOperation(CommandTape& tape, int operator_id);
+//   void doLongOperation(CommandTape& tape, int operator_id);
+//   void doRealOperation(CommandTape& tape, int operator_id);
+//   void doArrayOperation(CommandTape& tape, int operator_id);
+//   void doIntArrayOperation(CommandTape& tape, int operator_id);
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
@@ -255,10 +254,10 @@ class ByteCodeWriter
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
-   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
-   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+//   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);

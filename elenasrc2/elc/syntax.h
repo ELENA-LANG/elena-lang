@@ -89,7 +89,7 @@ enum Symbol
    nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
    nsDefaultGeneric             = 0x01046,
-   nsType                       = 0x01047,
+   nsSubject                    = 0x01047,
    nsInlineClosure              = 0x01048,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
