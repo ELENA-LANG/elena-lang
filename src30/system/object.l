@@ -1,9 +1,14 @@
 // ==== ver 3.5.1 ===
 
+//#template dispatchable
+//{
+//    #method cast : verb &to:target = target::verb eval /*&$target*/:$self.
+//}
+
 // --- super object ---
 
 /// A common ancestor
-#class Object
+#class/*(dispatchable:object)*/ Object
 {
     /// Creates the object
     #constructor new []

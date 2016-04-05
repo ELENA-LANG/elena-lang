@@ -137,7 +137,7 @@ public:
    //   okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
    
-   //   okTemplateField,
+      okTemplateTarget,
    //   okTemplateTarget,
 
       okExternal,

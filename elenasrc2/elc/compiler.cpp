@@ -1290,13 +1290,10 @@ Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
 
 ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
 {
-//   if (StringHelper::compare(identifier, TARGET_VAR)) {
-//      if (templateType == lxFieldTemplate) {
-//         return ObjectInfo(okTemplateField);
-//      }
-//      else return ObjectInfo(okTemplateTarget, 1);
-//   }
-   /*else */return ClassScope::mapObject(identifier);
+   if (StringHelper::compare(identifier, TARGET_VAR)) {
+      return ObjectInfo(okTemplateTarget);
+   }
+   else return ClassScope::mapObject(identifier);
 }
 
 // --- Compiler ---
@@ -2050,6 +2047,9 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
 
                TerminalInfo target = hints.firstChild().Terminal();
                templateInfo.targetType = scope.moduleScope->mapSubject(target);
+               templateInfo.targetSubject = templateInfo.targetType;
+               if (templateInfo.targetSubject == 0)
+                  templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
                
                classRef = generateTemplate(*scope.moduleScope, templateInfo);
                if (classRef == 0)
@@ -2317,7 +2317,6 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLocal:
       case okParam:
       case okThisParam:
-      //case okTemplateTarget:
          scope.writer->newNode(object.extraparam == -1 ? lxBoxableLocal : lxLocal, object.param);
          break;
       case okSuper:
@@ -2368,16 +2367,16 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okConstantRole:
          scope.writer->newNode(lxConstantSymbol, object.param);
          break;
-      //case okTemplateField:
-      //   scope.writer->newNode(lxTemplateField, object.param);
-      //   break;
+      case okTemplateTarget:
+         scope.writer->newNode(lxTemplateTarget, object.param);
+         break;
       case okExternal:
       case okInternal:
          // HOTFIX : external / internal node will be declared later
          return;
    }
 
-   appendObjectInfo(scope, object);
+   //appendObjectInfo(scope, object);
 
    scope.writer->closeNode();
 }
@@ -3075,7 +3074,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 
    recordDebugStep(scope, node.Terminal(), dsStep);
 
-   appendObjectInfo(scope, retVal);
+   //appendObjectInfo(scope, retVal);
 
    // define the message target if required
    if (target.kind == okConstantRole) {
@@ -3285,24 +3284,24 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
       }
-//      else if (member == nsAltMessageOperation) {
-//         scope.writer->newBookmark();
-//
-//         scope.writer->appendNode(lxCurrent);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->removeBookmark();
-//      }
-//      else if (member == nsCatchMessageOperation) {
-//         scope.writer->newBookmark();
-//
-//         scope.writer->appendNode(lxResult);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->removeBookmark();
-//      }
+      else if (member == nsAltMessageOperation) {
+         scope.writer->newBookmark();
+
+         scope.writer->appendNode(lxCurrent);
+
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->removeBookmark();
+      }
+      else if (member == nsCatchMessageOperation) {
+         scope.writer->newBookmark();
+
+         scope.writer->appendNode(lxResult);
+
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->removeBookmark();
+      }
 //      else if (member == nsSwitching) {
 //         compileSwitch(member, scope, currentObject);
 //
@@ -3610,25 +3609,19 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode)
 {
-   bool tryMode = false;
-   bool altMode = false;
-   bool retExpr = test(mode, HINT_RETEXPR);
-   mode &= ~HINT_RETEXPR;
+   //bool retExpr = test(mode, HINT_RETEXPR);
+   //mode &= ~HINT_RETEXPR;
 
-   if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
-      scope.writer->newNode(lxTrying);
-      tryMode = true;
-   }
-   else if (findSymbol(node.firstChild(), nsAltMessageOperation)) {
-      // for alt mode the target object should be presaved
-      scope.writer->newNode(lxExpression);
-      scope.writer->newNode(lxVariable);
-      compileExpression(node.firstChild(), scope, 0, 0);
-      scope.writer->closeNode();
+   //else if (findSymbol(node.firstChild(), nsAltMessageOperation)) {
+   //   // for alt mode the target object should be presaved
+   //   scope.writer->newNode(lxExpression);
+   //   scope.writer->newNode(lxVariable);
+   //   compileExpression(node.firstChild(), scope, 0, 0);
+   //   scope.writer->closeNode();
 
-      scope.writer->newNode(lxAlt);
-      altMode = true;
-   }
+   //   scope.writer->newNode(lxAlt);
+   //   altMode = true;
+   //}
 
    scope.writer->newBookmark();
 
@@ -3638,13 +3631,23 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
       if (member.nextNode() != nsNone) {
          if (member == nsObject) {
-            if (!altMode) {
-               objectInfo = compileObject(member, scope, mode);
-            }
-            else scope.writer->appendNode(lxResult);
+            objectInfo = compileObject(member, scope, mode);
          }
          if (findSymbol(member, nsAssigning)) {
             objectInfo = compileAssigning(member, scope, objectInfo, mode);
+         }
+         else if (findSymbol(member, nsAltMessageOperation)) {
+            scope.writer->insert(lxVariable);
+            scope.writer->closeNode();
+
+            scope.writer->newNode(lxAlt);
+            scope.writer->newBookmark();
+            scope.writer->appendNode(lxResult);
+            objectInfo = compileOperations(member, scope, objectInfo, mode);
+            scope.writer->removeBookmark();
+            scope.writer->closeNode();
+
+            scope.writer->appendNode(lxReleasing, 1);
          }
          else objectInfo = compileOperations(member, scope, objectInfo, mode);
       }
@@ -3652,24 +3655,33 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    }
    else objectInfo = compileObject(node, scope, mode);
 
-   if (targetType != 0) {
-      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+   //if (targetType != 0) {
+   //   scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
-      appendTerminalInfo(scope.writer, node.FirstTerminal());
+   //   appendTerminalInfo(scope.writer, node.FirstTerminal());
 
+   //   scope.writer->closeNode();
+   //}
+
+   // if it is try-catch statement
+   if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
+      scope.writer->insert(lxTrying);
+      scope.writer->closeNode();
+   }
+   // otherwise put the expression into appropriate node
+   else {
+      scope.writer->insert(lxExpression);
+      appendObjectInfo(scope, objectInfo);
       scope.writer->closeNode();
    }
 
    scope.writer->removeBookmark();
 
-   if (tryMode || altMode) {
-      scope.writer->closeNode(); // close try / alt
-
-      if (altMode) {
-         scope.writer->appendNode(lxReleasing, 1);
-         scope.writer->closeNode(); // close expression
-      }
-   }
+   //if (altMode) {
+   //   scope.writer->closeNode(); // close try / alt
+   //   scope.writer->appendNode(lxReleasing, 1);
+   //   scope.writer->closeNode(); // close expression
+   //}
 
    return objectInfo;
 }
@@ -3859,9 +3871,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsExpression:
          case nsRootExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            scope.writer->newNode(lxExpression);
+            //scope.writer->newNode(lxExpression);
             compileExpression(statement, scope, 0, HINT_ROOT);
-            scope.writer->closeNode();
+            //scope.writer->closeNode();
             break;
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
@@ -5441,22 +5453,22 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       if (current == lxClassFlag) {
          writer.appendNode(lxClassFlag, current.argument);
       }
-      //if (current == lxClassMethod) {
-      //   ref_t subject = getSignature(current.argument);
-      //   if (subject) {
-      //      IdentifierString subjName(templateModule->resolveSubject(subject));
-      //      subjName.insert("&", 0);
-      //      subjName.insert(scope.moduleScope->module->resolveSubject(info.subject), 0);
-      //   }
-      //   else subject = info.subject;
+      else if (current == lxClassMethod) {
+         ref_t subject = getSignature(current.argument);
+         if (subject) {
+            IdentifierString subjName(templateModule->resolveSubject(subject));
+            subjName.insert("&", 0);
+            subjName.insert(scope.moduleScope->module->resolveSubject(info.targetSubject), 0);
+         }
+         else subject = info.targetSubject;
 
-      //   ref_t messageRef = overwriteSubject(current.argument, subject);
+         ref_t messageRef = overwriteSubject(current.argument, subject);
 
-      //   writer.newNode(lxClassMethod, messageRef);
+         writer.newNode(lxClassMethod, messageRef);
 
-      //   // NOTE : source path reference should be imported
-      //   // but the message name should be overwritten
-      //   writeMessage(*scope.moduleScope, writer, messageRef);
+         // NOTE : source path reference should be imported
+         // but the message name should be overwritten
+         writeMessage(*scope.moduleScope, writer, messageRef);
 
       //   // HOT FIX : if the field is typified provide a method hint
       //   if (current.argument == encodeVerb(GET_MESSAGE_ID)) {
@@ -5465,8 +5477,8 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
 
       //   importTree(scope, current, writer, templateModule, info);
 
-      //   writer.closeNode();
-      //}
+         writer.closeNode();
+      }
 
       current = current.nextNode();
    }
@@ -6216,38 +6228,38 @@ void Compiler :: optimizeBoxableObject(ModuleScope& scope, SNode node, int warni
 void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
 {
    switch (current.type) {
-      case lxLocalAddress:
-//      case lxFieldAddress:
-//      case lxSubject:
-//      case lxBoxableLocal:
-//      case lxBlockLocalAddr:
-         optimizeBoxableObject(scope, current, warningMask, mode);
-         break;
-      case lxAssigning:
-         optimizeAssigning(scope, current, warningMask);
-         break;
-      case lxTypecasting:
-         optimizeTypecast(scope, current, warningMask, mode);
-         break;
-////      case lxDirectCalling:
-////      case lxSDirctCalling:
-////         optimizeDirectCall(scope, current, warningMask);
-////         break;
-////      case lxIntOp:
-////      case lxLongOp:
-////      case lxRealOp:
-////      case lxIntArrOp:
-////      case lxArrOp:
-////         optimizeOp(scope, current, warningMask, mode);
-////         break;
-////      case lxStdExternalCall:
-////      case lxExternalCall:
-////      case lxCoreAPICall:
-////         optimizeExtCall(scope, current, warningMask, mode);
-////         break;
-////      case lxInternalCall:
-////         optimizeInternalCall(scope, current, warningMask, mode);
-////         break;
+//      case lxLocalAddress:
+////      case lxFieldAddress:
+////      case lxSubject:
+////      case lxBoxableLocal:
+////      case lxBlockLocalAddr:
+//         optimizeBoxableObject(scope, current, warningMask, mode);
+//         break;
+//      case lxAssigning:
+//         optimizeAssigning(scope, current, warningMask);
+//         break;
+//      case lxTypecasting:
+//         optimizeTypecast(scope, current, warningMask, mode);
+//         break;
+//////      case lxDirectCalling:
+//////      case lxSDirctCalling:
+//////         optimizeDirectCall(scope, current, warningMask);
+//////         break;
+//////      case lxIntOp:
+//////      case lxLongOp:
+//////      case lxRealOp:
+//////      case lxIntArrOp:
+//////      case lxArrOp:
+//////         optimizeOp(scope, current, warningMask, mode);
+//////         break;
+//////      case lxStdExternalCall:
+//////      case lxExternalCall:
+//////      case lxCoreAPICall:
+//////         optimizeExtCall(scope, current, warningMask, mode);
+//////         break;
+//////      case lxInternalCall:
+//////         optimizeInternalCall(scope, current, warningMask, mode);
+//////         break;
       case lxExpression:
          // HOT FIX : to pass the optimization mode into sub expression
          optimizeSyntaxExpression(scope, current, warningMask, mode);
@@ -6256,11 +6268,12 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
 ////         analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
 ////         break;
 //      case lxOverridden:
-//         analizeSyntaxExpression(scope, current, warningMask, mode);
-//         break;
-      case lxBoxing:
-         optimizeBoxing(scope, current, warningMask);
+      case lxVariable:
+         optimizeSyntaxExpression(scope, current, warningMask, mode);
          break;
+      //case lxBoxing:
+      //   optimizeBoxing(scope, current, warningMask);
+      //   break;
       default:
          if (test(current.type, lxExpressionMask)) {
             optimizeSyntaxExpression(scope, current, warningMask);
