@@ -1170,40 +1170,40 @@ void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug
    debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-////inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
-////{
-////   it++;
-////   
-////   return it.Eof() ? -1 : *it;
-////}
+inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
+{
+   it++;
+   
+   return it.Eof() ? -1 : *it;
+}
 
 void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
 {
    bool structure = test(info.header.flags, elStructureRole);
    int remainingSize = info.size;
 
-   //ClassInfo::FieldMap::Iterator it = info.fields.start();
-   //while (!it.Eof()) {
-   //   if (!emptystr(it.key())) {
-   //      DebugLineInfo symbolInfo(dsField, 0, 0, 0);
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      if (!emptystr(it.key())) {
+         DebugLineInfo symbolInfo(dsField, 0, 0, 0);
 
-   //      symbolInfo.addresses.field.nameRef = debugStrings->Position();
-   //      if (structure) {            
-   //         int nextOffset = getNextOffset(it);
-   //         if (nextOffset == -1) {
-   //            symbolInfo.addresses.field.size = remainingSize;
-   //         }
-   //         else symbolInfo.addresses.field.size = nextOffset - *it;
+         symbolInfo.addresses.field.nameRef = debugStrings->Position();
+         if (structure) {            
+            int nextOffset = getNextOffset(it);
+            if (nextOffset == -1) {
+               symbolInfo.addresses.field.size = remainingSize;
+            }
+            else symbolInfo.addresses.field.size = nextOffset - *it;
 
-   //         remainingSize -= symbolInfo.addresses.field.size;
-   //      }
+            remainingSize -= symbolInfo.addresses.field.size;
+         }
 
-   //      debugStrings->writeLiteral(it.key());
+         debugStrings->writeLiteral(it.key());
 
-   //      writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-   //   }
-   //   it++;
-   //}
+         writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+      }
+      it++;
+   }
 }
 
 void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings,

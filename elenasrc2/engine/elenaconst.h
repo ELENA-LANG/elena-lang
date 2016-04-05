@@ -288,9 +288,9 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-  // const int elEmbeddable          = 0x00000010;
+   const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
-  // const int elWrapper             = 0x00001040;
+   const int elWrapper             = 0x00001040;
   // const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
@@ -319,9 +319,9 @@ namespace _ELENA_
   // const int elDebugReference      = 0x000B0000;   // symbol reference
   // const int elDebugSubject        = 0x000C0000;
 
-  // --- ELENA class roles ---
-   const int crRoleMask            = 0xFFFFFFF0;
-   const int crInteger             = 0x00000010;
+  //// --- ELENA class roles ---
+  // const int crRoleMask            = 0xFFFFFFF0;
+  // const int crInteger             = 0x00000010;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -458,7 +458,7 @@ namespace _ELENA_
 //   #define HINT_STRUCT             "struct"
    #define HINT_INTEGER_NUMBER     "$integer"      // class representing an integer number
 //   #define HINT_FLOAT_NUMBER       "floating"
-//   #define HINT_VARIABLE           "variable"
+   #define HINT_VARIABLE           "$variable"
 //   #define HINT_BINARY             "stringof"
 //   #define HINT_XDYNAMIC           "dynamic"      // obsolete, arrayof should be used
 //   #define HINT_DYNAMIC            "arrayof"

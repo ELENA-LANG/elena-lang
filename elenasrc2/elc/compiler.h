@@ -24,32 +24,37 @@ public:
    {
       int    offset;
       ref_t  subj_ref;
-      //size_t struct_ref;
+      size_t class_ref;
+      int    size;
 
       Parameter()
       {
          offset = -1;
          subj_ref = 0;
-         //struct_ref = 0;
+         class_ref = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->subj_ref = 0;
-         //this->struct_ref = 0;
+         this->class_ref = 0;
+         this->size = 0;
       }
       Parameter(int offset, ref_t subj_ref)
       {
          this->offset = offset;
          this->subj_ref = subj_ref;
-         //this->struct_ref = 0;
+         this->class_ref = 0;
+         this->size = 0;
       }
-      //Parameter(int offset, ref_t subj_ref, size_t struct_ref)
-      //{
-      //   this->offset = offset;
-      //   this->subj_ref = subj_ref;
-      //   this->struct_ref = struct_ref;
-      //}
+      Parameter(int offset, ref_t subj_ref, size_t class_ref, int size)
+      {
+         this->offset = offset;
+         this->subj_ref = subj_ref;
+         this->class_ref = class_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -190,31 +195,25 @@ public:
       }
    };
 
-//   struct TemplateInfo
-//   {
-//      ref_t subject;
-//      int   offset;
-//      ref_t templateRef;
-//      ref_t type;          // field template : the field type; method template : the target method signature
-//      int   size;
-//      ref_t targetRef;
-//
-//      TemplateInfo()
-//      {
-//         targetRef = templateRef = subject = type = 0;
-//         size = offset = 0;
-//      }
-//
-//      TemplateInfo(ref_t subject, int offset, ref_t type, int size, ref_t targetRef, ref_t templateRef)
-//      {
-//         this->subject = subject;
-//         this->offset = offset;
-//         this->templateRef = templateRef;
-//         this->type = type;
-//         this->size = size;
-//         this->targetRef = targetRef;
-//      }
-//   };
+   struct TemplateInfo
+   {
+      ref_t templateRef;
+      ref_t targetType;
+      ref_t targetSubject;
+
+      TemplateInfo()
+      {
+         targetType = targetSubject = 0;
+         templateRef = 0;
+      }
+
+      TemplateInfo(ref_t templateRef, ref_t targetType, ref_t targetSubject)
+      {
+         this->templateRef = templateRef;
+         this->targetType = targetType;
+         this->targetSubject = targetSubject;
+      }
+   };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
@@ -222,7 +221,7 @@ public:
    typedef Map<int, ref_t>                RoleMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-//   typedef Map<ref_t, TemplateInfo>       TemplateMap;
+   typedef MemoryMap<ref_t, TemplateInfo> TemplateMap;
 
 private:
    // - ModuleScope -
@@ -253,8 +252,8 @@ private:
       // role hints
       RoleMap           roleHints;
 
-//      // importing templates
-//      TemplateMap       importedTemplates;
+      // class templates to be imported ; the list is filled during the declaration
+      TemplateMap       templates;
 
       // cached references
       ref_t superReference;
@@ -308,7 +307,7 @@ private:
       // NOTE : the function returns 0 for implicit subjects
       // in any case output is set (for explicit one - the namespace is copied as well)
       ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
-      ref_t mapSubject(TerminalInfo terminal);
+      ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true);
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
@@ -321,22 +320,22 @@ private:
       }
       ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
-//      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
-//      {
-//         return loadTemplateInfo(module->resolveReference(reference), argModule);
-//      }
-//      _Memory* loadTemplateInfo(ident_t symbol, _Module* &argModule);
-//
+      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
+      {
+         return loadTemplateInfo(module->resolveSubject(reference), argModule);
+      }
+      _Memory* loadTemplateInfo(ident_t symbol, _Module* &argModule);
+
 //      bool recognizePrimitive(ident_t name, ident_t value, size_t& roleMask, int& size);
 
-      //int defineStructSize(ref_t classReference/*, bool& variable*/);
-//      //int defineStructSize(ref_t classReference)
-//      //{
-//      //   bool dummy = false;
-//
-//      //   return defineStructSize(classReference, dummy);
-//      //}
-//
+      int defineStructSize(ref_t classReference/*, bool& variable*/);
+      //int defineStructSize(ref_t classReference)
+      //{
+      //   bool dummy = false;
+
+      //   return defineStructSize(classReference, dummy);
+      //}
+
 //      //int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
 //      //int defineTypeSize(ref_t type_ref)
 //      //{
@@ -387,6 +386,8 @@ private:
          //loadExtensions(TerminalInfo(), extModule);
          loadRoles(extModule);
       }
+
+      ref_t mapNestedExpression();
 
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -473,7 +474,7 @@ private:
    // - ClassScope -
    struct ClassScope : public SourceScope
    {
-      ClassInfo info;
+      ClassInfo   info;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -601,10 +602,10 @@ private:
       {
          locals.add(local, Parameter(level, type));
       }
-      //void mapLocal(ident_t local, int level, ref_t type, size_t struct_ref)
-      //{
-      //   locals.add(local, Parameter(level, type, struct_ref));
-      //}
+      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref, int size)
+      {
+         locals.add(local, Parameter(level, type, class_ref, size));
+      }
 
       void freeSpace()
       {
@@ -641,8 +642,6 @@ private:
 
          return scope ? scope->info.header.flags : 0;
       }
-
-      void compileLocalHints(DNode hints, ref_t& type/*, ref_t& classRef, int& size*/);
 
       CodeScope(SymbolScope* parent, SyntaxWriter* writer);
       CodeScope(MethodScope* parent, SyntaxWriter* writer);
@@ -756,15 +755,19 @@ private:
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
+
+   bool compileClassHint(DNode hint, SyntaxWriter& writer);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope/*, bool& isExtension, ref_t& extensionType*/);
-//   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
+
+   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
+   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef/*, int& size*/);
 //   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
 //   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
-//   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
-//   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
 //   void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
@@ -792,9 +795,9 @@ private:
 
 //   int mapOperandType(CodeScope& scope, ObjectInfo operand);
 //   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
-//
-//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+
+   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
+   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
    ref_t compileMessageParameters(DNode node, CodeScope& scope);
@@ -858,6 +861,8 @@ private:
 
    void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
 
+   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo);
+
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
 //   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
    void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
@@ -890,18 +895,18 @@ private:
 
 //   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
-//   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 ////   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
 ////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 ////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 ////   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 ////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
 ////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//
-//   void analizBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//
-//   void analizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-//   void analizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+
+   void optimizeBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+
+   void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void optimizeClassTree(ClassScope& scope);
