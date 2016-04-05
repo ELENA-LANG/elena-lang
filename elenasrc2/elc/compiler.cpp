@@ -3572,20 +3572,20 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
       int paramCount;
       ref_t verb;
       decodeMessage(scope.getMessageID(), subj, verb, paramCount);
-      //if (verb == GET_MESSAGE_ID && paramCount == 0) {
-      //   // if the class is compatible with the type
-      //   // use alternative typecasting routine
-      //   if (scope.moduleScope->checkIfCompatible(subj, scope.getClassRefId())) {
-      //      scope.writer->newBookmark();
-      //      typecasting = true;
+      if (verb == GET_MESSAGE_ID && paramCount == 0) {
+         // if the class is compatible with the type
+         // use alternative typecasting routine
+         if (scope.moduleScope->checkIfCompatible(subj, scope.getClassRefId())) {
+            scope.writer->newBookmark();
+            typecasting = true;
 
-      //      subj = 0;
-      //   }
+            subj = 0;
+         }
+      }
+      //else if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maType))) {
+      //   subj = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maType));
       //}
-//      else if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maType))) {
-//         subj = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maType));
-//      }
-      /*else */subj = 0;
+      else subj = 0;
 
       // typecasting should be applied only for the strong type
       if (!scope.moduleScope->subjectHints.exist(subj)) {
@@ -3690,6 +3690,8 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 
       scope.writer->newNode(lxBoxing, info.size);
       scope.writer->appendNode(lxTarget, target.extraparam);
+
+      withBoxing = true;
    }
       
    // if primitive data operation can be used
@@ -3878,18 +3880,18 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileLock(statement, scope);
 //            break;
-         //case nsRetStatement:
-         //{
-         //   needVirtualEnd = false;
-         //   recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
+         case nsRetStatement:
+         {
+            needVirtualEnd = false;
+            recordDebugStep(scope, statement.firstChild().FirstTerminal(), dsStep);
 
-         //   scope.writer->newNode(lxReturning);
-         //   retVal = compileRetExpression(statement.firstChild(), scope, HINT_ROOT);
-         //   scope.writer->closeNode();
-         //   scope.freeSpace();
+            scope.writer->newNode(lxReturning);
+            retVal = compileRetExpression(statement.firstChild(), scope, HINT_ROOT);
+            scope.writer->closeNode();
+            scope.freeSpace();
 
-         //   break;
-         //}
+            break;
+         }
          case nsVariable:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             compileVariable(statement, scope, hints);
@@ -4977,6 +4979,8 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
 
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
+
+   compileParentDeclaration(DNode(), scope);
 
    writer.appendNode(lxClassFlag, elSealed);
 

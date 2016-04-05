@@ -666,10 +666,10 @@
 //    /// Creates the object with specified value
 //    #constructor new : anObject
 //        <= new &int:(anObject int).
-//
-//    /// Returns itself
-//    #method int = $self.
-//
+
+    /// Returns itself
+    #method int = $self.
+
 //    /// Returns the value as a short integer    
 //    #method(stacksafe) short = shortConvertor convert &int:$self.
 //
