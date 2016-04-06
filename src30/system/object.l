@@ -1,14 +1,15 @@
 // ==== ver 3.5.1 ===
 
-//#template dispatchable
-//{
-//    #method cast : verb &to:target = target::verb eval /*&$target*/:$self.
-//}
+#template dispatchable
+{
+    /// Dispatches the verb to the target with a specified subject
+    #method cast : verb &to:target = target::verb eval &$target:$self.
+}
 
 // --- super object ---
 
 /// A common ancestor
-#class/*(dispatchable:object)*/ Object
+#class(dispatchable:object) Object
 {
     /// Creates the object
     #constructor new []
@@ -18,7 +19,6 @@
 //    /// By default compares the object references.
 //    #method(type:bool) equal : anObject => system'core_routines'object_equal.
 //    
-//    /// Dispatches the verb to the target object with generic subject
 //    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
 //    
 //    /// Dispatches the verb to the target object with generic subject

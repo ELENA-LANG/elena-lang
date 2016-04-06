@@ -21,8 +21,7 @@ using namespace _ELENA_;
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
 //#define HINT_EXTERNALOP       0x10000000
-#define HINT_RETEXPR          0x08000000
-//#define HINT_EXTENSION_MODE   0x04000000
+#define HINT_EXTENSION_MODE   0x04000000
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
 //#define HINT_CLOSURE          0x00008000
@@ -1632,7 +1631,7 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer)
+bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly)
 {
    TerminalInfo terminal = hint.Terminal();
 
@@ -1659,13 +1658,29 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer)
 
             writer.closeNode();
 
-            //scope.moduleScope->saveRole(crInteger | size, scope.reference);
-
             return true;            
          }
       }
       else if (StringHelper::compare(terminal, HINT_VARIABLE)) {
          writer.appendNode(lxClassFlag, elWrapper);
+
+         return true;
+      }
+   }
+   else if (!directiveOnly) {
+      ref_t hintRef = scope.moduleScope->mapSubject(terminal, false);
+      if (hintRef != 0) {
+         TemplateInfo templateInfo;
+         templateInfo.templateRef = hintRef;
+
+         TerminalInfo target = hint.firstChild().Terminal();
+         if (!emptystr(target)) {
+            templateInfo.targetSubject = scope.moduleScope->mapSubject(target);
+            if (templateInfo.targetSubject == 0)
+               templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
+         }
+
+         scope.moduleScope->templates.add(scope.reference, templateInfo);
 
          return true;
       }
@@ -1678,7 +1693,7 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
 {
    // define class flags
    while (hints == nsHint) {
-      if (!compileClassHint(hints, writer))
+      if (!compileClassHint(hints, writer, scope, false))
          scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
       //if (StringHelper::compare(terminal, HINT_GROUP)) {
@@ -1855,7 +1870,7 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
 {
    // define class flags
    while (hints == nsHint) {
-      if (!compileClassHint(hints, writer))
+      if (!compileClassHint(hints, writer, scope, true))
          scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
 //      //if (StringHelper::compare(terminal, HINT_TARGET)) {
@@ -2317,7 +2332,12 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okLocal:
       case okParam:
       case okThisParam:
-         scope.writer->newNode(object.extraparam == -1 ? lxBoxableLocal : lxLocal, object.param);
+         if (object.extraparam == -1) {
+            scope.writer->newNode(lxCondBoxing);
+            scope.writer->appendNode(lxLocal, object.param);
+            appendObjectInfo(scope, object);
+         }
+         else scope.writer->newNode(lxLocal, object.param);
          break;
       case okSuper:
          scope.writer->newNode(lxLocal, 1);
@@ -2332,7 +2352,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       //   scope.writer->appendNode(lxResultField, object.extraparam);
       //   break;
       case okLocalAddress:
-         scope.writer->newNode(lxLocalAddress, object.param);
+         scope.writer->newNode(lxBoxing);
+         scope.writer->appendNode(lxLocalAddress, object.param);
+         appendObjectInfo(scope, object);
          break;
       //case okFieldAddress:
       //   scope.writer->newNode(lxFieldAddress, object.param);
@@ -2375,8 +2397,6 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          // HOTFIX : external / internal node will be declared later
          return;
    }
-
-   //appendObjectInfo(scope, object);
 
    scope.writer->closeNode();
 }
@@ -2651,7 +2671,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount/*,
 
       verb_id = _verbs.get(verb.value);
       if (verb_id == 0) {
-         ref_t id = scope.moduleScope->mapSubject(verb, signature);
+         ref_t id = scope.mapSubject(verb, signature);
 
          // if followed by argument list - it is EVAL verb
          if (arg != nsNone) {
@@ -2685,7 +2705,7 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount/*,
       }
       else first = false;
 
-      ref_t subjRef = scope.moduleScope->mapSubject(subject, signature);
+      ref_t subjRef = scope.mapSubject(subject, signature);
 
       arg = arg.nextNode();
 
@@ -3119,7 +3139,7 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope)
    while (arg == nsSubjectArg) {
       TerminalInfo subject = arg.Terminal();
 
-      ref_t subjRef = scope.moduleScope->mapSubject(subject);
+      ref_t subjRef = scope.mapSubject(subject);
 
       arg = arg.nextNode();
 
@@ -3276,9 +3296,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
          while (member.nextNode() == nsMessageParameter)
             member = member.nextNode();
       }
-//      else if (member == nsExtension) {
-//         currentObject = compileExtension(member, scope, currentObject, mode);
-//      }
+      else if (member == nsExtension) {
+         currentObject = compileExtension(member, scope, currentObject, mode);
+      }
       else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
          || member == nsL7Operation || member == nsL0Operation)
       {
@@ -3314,59 +3334,59 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
    return currentObject;
 }
 
-//ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   ObjectInfo   role;
-//
-//   DNode roleNode = node.firstChild();
-//   // check if the extension can be used as a static role (it is constant)
-//   if (roleNode.firstChild() == nsNone) {
-//      int flags = 0;
-//
-//      role = scope.mapObject(roleNode.Terminal());
-//      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-//         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
-//
-//         // if the symbol is used inside itself
-//         if (classRef == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
-//
-//            flags = roleClass.header.flags;
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
-//   }
-//
-//   // if it is a generic role
-//   if (role.kind != okConstantRole) {
-//      scope.writer->newNode(lxOverridden);
-//      role = compileExpression(roleNode, scope, 0, 0);
-//      scope.writer->closeNode();
-//   }
-//
-//   // override standard message compiling routine
-//   node = node.nextNode();
-//
-//   return compileExtensionMessage(node, scope, object, role);
-//}
-//
-//ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role)
-//{
-//   ref_t messageRef = compileMessageParameters(node, scope);
-//
-//   ObjectInfo retVal = compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+   ObjectInfo   role;
+
+   DNode roleNode = node.firstChild();
+   //// check if the extension can be used as a static role (it is constant)
+   //if (roleNode.firstChild() == nsNone) {
+   //   int flags = 0;
+
+   //   role = scope.mapObject(roleNode.Terminal());
+   //   if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+   //      ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
+   //      // if the symbol is used inside itself
+   //      if (classRef == scope.getClassRefId()) {
+   //         flags = scope.getClassFlags();
+   //      }
+   //      // otherwise
+   //      else {
+   //         ClassInfo roleClass;
+   //         moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
+
+   //         flags = roleClass.header.flags;
+   //      }
+   //   }
+   //   // if the symbol VMT can be used as an external role
+   //   if (test(flags, elStateless)) {
+   //      role = ObjectInfo(okConstantRole, role.param);
+   //   }
+   //}
+
+   // if it is a generic role
+   if (role.kind != okConstantRole) {
+      scope.writer->newNode(lxOverridden);
+      role = compileExpression(roleNode, scope, 0, 0);
+      scope.writer->closeNode();
+   }
+
+   // override standard message compiling routine
+   node = node.nextNode();
+
+   return compileExtensionMessage(node, scope, object, role);
+}
+
+ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role)
+{
+   ref_t messageRef = compileMessageParameters(node, scope);
+
+   ObjectInfo retVal = compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
+
+   return retVal;
+}
 
 bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared)
 {
@@ -3592,7 +3612,7 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
       }
    }
 
-   ObjectInfo info = compileExpression(node, scope, subj, mode | HINT_RETEXPR);
+   ObjectInfo info = compileExpression(node, scope, subj, mode);
 
    if (typecasting) {
       // if the type class returns itself, no need to typecast the result
@@ -3609,20 +3629,6 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
 ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode)
 {
-   //bool retExpr = test(mode, HINT_RETEXPR);
-   //mode &= ~HINT_RETEXPR;
-
-   //else if (findSymbol(node.firstChild(), nsAltMessageOperation)) {
-   //   // for alt mode the target object should be presaved
-   //   scope.writer->newNode(lxExpression);
-   //   scope.writer->newNode(lxVariable);
-   //   compileExpression(node.firstChild(), scope, 0, 0);
-   //   scope.writer->closeNode();
-
-   //   scope.writer->newNode(lxAlt);
-   //   altMode = true;
-   //}
-
    scope.writer->newBookmark();
 
    ObjectInfo objectInfo;
@@ -3655,14 +3661,6 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
    }
    else objectInfo = compileObject(node, scope, mode);
 
-   //if (targetType != 0) {
-   //   scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-
-   //   appendTerminalInfo(scope.writer, node.FirstTerminal());
-
-   //   scope.writer->closeNode();
-   //}
-
    // if it is try-catch statement
    if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
       scope.writer->insert(lxTrying);
@@ -3675,13 +3673,15 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
       scope.writer->closeNode();
    }
 
-   scope.writer->removeBookmark();
+   if (targetType != 0) {
+      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
-   //if (altMode) {
-   //   scope.writer->closeNode(); // close try / alt
-   //   scope.writer->appendNode(lxReleasing, 1);
-   //   scope.writer->closeNode(); // close expression
-   //}
+      appendTerminalInfo(scope.writer, node.FirstTerminal());
+
+      scope.writer->closeNode();
+   }
+
+   scope.writer->removeBookmark();
 
    return objectInfo;
 }
@@ -5359,8 +5359,27 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
-//void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
-//{
+inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, Compiler::TemplateInfo& info)
+{
+   ident_t signature = sour->resolveSubject(sign_ref);
+
+   // if the target subject should be overridden
+   int index = StringHelper::find(signature, TARGET_POSTFIX);
+   if (index >= 0) {
+      IdentifierString newSignature;
+      newSignature.copy(signature, index);
+      if (info.targetSubject != 0) {
+         newSignature.append(dest->resolveSubject(info.targetSubject));
+      }
+      newSignature.append(signature + index + getlength(TARGET_POSTFIX));
+
+      return dest->mapSubject(newSignature, false);
+   }
+   else return importSubject(sour, sign_ref, dest);
+}
+
+void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
+{
 //   if (current.type == lxTemplateField) {
 //      writer.newNode(info.size != 0? lxFieldAddress : lxField, info.offset);
 //
@@ -5410,41 +5429,42 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
 //      writer.closeNode();
 //      return;
 //   }
-//   else if (current == lxTerminal) {
-//      writer.newNode(lxTerminal, current.identifier());
-//   }
-//   else if (current == lxSourcePath) {
-//      writer.newNode(lxSourcePath, current.identifier());
-//   }
-//   else if (current == lxMessageVariable) {
-//      // message variable should be already set
-//      return;
-//   }
-//   else if (test(current.type, lxMessageMask)) {
-//      writer.newNode(current.type, importMessage(templateModule, current.argument, scope.moduleScope->module));
-//   }
-//   else if (test(current.type, lxReferenceMask)) {
-//      writer.newNode(current.type, importReference(templateModule, current.argument, scope.moduleScope->module));
-//   }
-//   else if (test(current.type, lxSubjectMask)) {
-//      writer.newNode(current.type, importSubject(templateModule, current.argument, scope.moduleScope->module));
-//   }
-//   else writer.newNode(current.type, current.argument);
-//
-//   importTree(scope, current, writer, templateModule, info);
-//
-//   writer.closeNode();
-//}
-//
-//void Compiler :: importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      importNode(scope, current, writer, templateModule, info);
-//
-//      current = current.nextNode();
-//   }
-//}
+   /*else */if (current == lxTerminal) {
+      writer.newNode(lxTerminal, current.identifier());
+   }
+   else if (current == lxSourcePath) {
+      writer.newNode(lxSourcePath, current.identifier());
+   }
+   else if (current == lxMessageVariable) {
+      // message variable should be already set
+      return;
+   }
+   else if (test(current.type, lxMessageMask)) {
+      writer.newNode(current.type, overwriteSubject(current.argument, 
+         importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info)));
+   }
+   else if (test(current.type, lxReferenceMask)) {
+      writer.newNode(current.type, importReference(templateModule, current.argument, scope.moduleScope->module));
+   }
+   else if (test(current.type, lxSubjectMask)) {
+      writer.newNode(current.type, importTemplateSubject(templateModule, scope.moduleScope->module, current.argument, info));
+   }
+   else writer.newNode(current.type, current.argument);
+
+   importTree(scope, current, writer, templateModule, info);
+
+   writer.closeNode();
+}
+
+void Compiler :: importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      importNode(scope, current, writer, templateModule, info);
+
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule)
 {
@@ -5454,15 +5474,15 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
          writer.appendNode(lxClassFlag, current.argument);
       }
       else if (current == lxClassMethod) {
-         ref_t subject = getSignature(current.argument);
-         if (subject) {
-            IdentifierString subjName(templateModule->resolveSubject(subject));
-            subjName.insert("&", 0);
-            subjName.insert(scope.moduleScope->module->resolveSubject(info.targetSubject), 0);
-         }
-         else subject = info.targetSubject;
+         //ref_t subject = getSignature(current.argument);
+         //if (subject) {
+         //   IdentifierString subjName(templateModule->resolveSubject(subject));
+         //   subjName.insert("&", 0);
+         //   subjName.insert(scope.moduleScope->module->resolveSubject(info.targetSubject), 0);
+         //}
+         //else subject = info.targetSubject;
 
-         ref_t messageRef = overwriteSubject(current.argument, subject);
+         ref_t messageRef = /*overwriteSubject(*/current.argument/*, subject)*/;
 
          writer.newNode(lxClassMethod, messageRef);
 
@@ -5475,7 +5495,7 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       //      scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
       //   }
 
-      //   importTree(scope, current, writer, templateModule, info);
+         importTree(scope, current, writer, templateModule, info);
 
          writer.closeNode();
       }
@@ -6016,6 +6036,8 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
 {
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
+   node.setArgument(scope.defineStructSize(target.argument));
+
    if (test(warningLevel, WARNING_LEVEL_3)) {
       SNode row = SyntaxTree::findChild(node, lxRow);
       SNode col = SyntaxTree::findChild(node, lxCol);
@@ -6028,106 +6050,109 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
 
 void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
-   bool typecasted = true;
-
    ref_t targetType = getSignature(node.argument);
 
-   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+   bool typecasted = true;
+   if (scope.subjectHints.get(targetType) != 0) {
 
-   int typecastMode = 0;
-   if (!checkIfCompatible(scope, targetType, object)) {
-      ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
-      ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
-      if (sourceClassRef == 0 && sourceType != 0) {
-         sourceClassRef = scope.subjectHints.get(sourceType);
-      }
-
-      // NOTE : compiler magic!
-      // if the target is wrapper (container) around the source
-      ref_t targetClassRef = scope.subjectHints.get(targetType);
-      if (targetClassRef != 0) {
-         ClassInfo targetInfo;
-         scope.loadClassInfo(targetInfo, targetClassRef, false);
-      
-         //if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
-         //   // if target is source wrapper (i.e. target is a source container)
-         //   if (sourceClassRef != 0 && scope.typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
-         //      // if boxing is not required (stack safe) and can be passed directly
-         //      if (test(mode, HINT_NOBOXING)) {
-         //         node = lxExpression;
-         //      }
-         //      else {
-         //         // if unboxing is not required
-         //         if (test(targetInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
-         //            node = lxBoxing;
-         //         }
-         //         else node = lxUnboxing;
-      
-         //         node.setArgument(targetInfo.size);
-      
-         //         node.appendNode(lxTarget, targetClassRef);
-         //      }
-      
-         //      typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-         //      typecasted = false;
-         //   }
-         //}
-         //else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
-         //   ClassInfo sourceInfo;
-         //   scope.loadClassInfo(sourceInfo, sourceClassRef, false);
-         //   // if source is target wrapper (i.e. source is a target container)
-         //   if (test(sourceInfo.header.flags, elStructureWrapper | elEmbeddable) && scope.typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
-         //      // if boxing is not required (stack safe) and can be passed directly
-         //      if (test(mode, HINT_NOBOXING)) {
-         //         node = lxExpression;
-         //      }
-         //      else {
-         //         // if unboxing is not required
-         //         if (test(sourceInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
-         //            node = lxBoxing;
-         //         }
-         //         else node = lxUnboxing;
-      
-         //         node.setArgument(sourceInfo.size);
-      
-         //         node.appendNode(lxTarget, sourceClassRef);
-         //      }
-      
-         //      typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-         //      typecasted = false;
-         //   }
-         //}
-         //else if (test(targetInfo.header.flags, elWrapper)) {
-         //   // if the target is generic wrapper (container)
-         //   if (!test(mode, HINT_EXTERNALOP)) {
-         //      node.setArgument(0);
-         //      node = lxUnboxing;
-         //      node.appendNode(lxTarget, targetClassRef);
-         //   }
-         //   else {
-         //      // HOTFIX : allow to pass the reference to the object directly 
-         //      // for an external operation
-         //      node = lxExpression;
-         //      typecastMode = mode;
-         //   }
-
-         //   typecasted = false;
-         //}
-      }
    }
-   else {
-      typecastMode = mode;
+   else typecasted = false;
+//
+//   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+//
+//   int typecastMode = 0;
+//   if (!checkIfCompatible(scope, targetType, object)) {
+//      ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
+//      ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
+//      if (sourceClassRef == 0 && sourceType != 0) {
+//         sourceClassRef = scope.subjectHints.get(sourceType);
+//      }
+//
+//      // NOTE : compiler magic!
+//      // if the target is wrapper (container) around the source
+//      ref_t targetClassRef = scope.subjectHints.get(targetType);
+//      if (targetClassRef != 0) {
+//         ClassInfo targetInfo;
+//         scope.loadClassInfo(targetInfo, targetClassRef, false);
+//      
+//         //if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
+//         //   // if target is source wrapper (i.e. target is a source container)
+//         //   if (sourceClassRef != 0 && scope.typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
+//         //      // if boxing is not required (stack safe) and can be passed directly
+//         //      if (test(mode, HINT_NOBOXING)) {
+//         //         node = lxExpression;
+//         //      }
+//         //      else {
+//         //         // if unboxing is not required
+//         //         if (test(targetInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
+//         //            node = lxBoxing;
+//         //         }
+//         //         else node = lxUnboxing;
+//      
+//         //         node.setArgument(targetInfo.size);
+//      
+//         //         node.appendNode(lxTarget, targetClassRef);
+//         //      }
+//      
+//         //      typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+//         //      typecasted = false;
+//         //   }
+//         //}
+//         //else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
+//         //   ClassInfo sourceInfo;
+//         //   scope.loadClassInfo(sourceInfo, sourceClassRef, false);
+//         //   // if source is target wrapper (i.e. source is a target container)
+//         //   if (test(sourceInfo.header.flags, elStructureWrapper | elEmbeddable) && scope.typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
+//         //      // if boxing is not required (stack safe) and can be passed directly
+//         //      if (test(mode, HINT_NOBOXING)) {
+//         //         node = lxExpression;
+//         //      }
+//         //      else {
+//         //         // if unboxing is not required
+//         //         if (test(sourceInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
+//         //            node = lxBoxing;
+//         //         }
+//         //         else node = lxUnboxing;
+//      
+//         //         node.setArgument(sourceInfo.size);
+//      
+//         //         node.appendNode(lxTarget, sourceClassRef);
+//         //      }
+//      
+//         //      typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+//         //      typecasted = false;
+//         //   }
+//         //}
+//         //else if (test(targetInfo.header.flags, elWrapper)) {
+//         //   // if the target is generic wrapper (container)
+//         //   if (!test(mode, HINT_EXTERNALOP)) {
+//         //      node.setArgument(0);
+//         //      node = lxUnboxing;
+//         //      node.appendNode(lxTarget, targetClassRef);
+//         //   }
+//         //   else {
+//         //      // HOTFIX : allow to pass the reference to the object directly 
+//         //      // for an external operation
+//         //      node = lxExpression;
+//         //      typecastMode = mode;
+//         //   }
+//
+//         //   typecasted = false;
+//         //}
+//      }
+//   }
+////   if (node == lxBoxing || node == lxUnboxing) {
+////      analizeBoxing(scope, node, warningMask);
+////   }
+
+
+   if (!typecasted) {
+//      typecastMode = mode;
 
       node = lxExpression;
-
-      typecasted = false;
    }
 
-//   if (node == lxBoxing || node == lxUnboxing) {
-//      analizeBoxing(scope, node, warningMask);
-//   }
-
-   optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
+   optimizeSyntaxExpression(scope, node, warningMask/*, typecastMode*/);
 
    if (test(warningMask, WARNING_LEVEL_2) && typecasted) {
       SNode row = SyntaxTree::findChild(node, lxRow);
@@ -6159,71 +6184,71 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
 ////   return offset;
 ////}
 
-void Compiler :: optimizeBoxableObject(ModuleScope& scope, SNode node, int warningLevel, int mode)
-{
-   if (!test(mode, HINT_NOBOXING) || (node == lxFieldAddress && node.argument > 0)) {
-      SNode target = SyntaxTree::findChild(node, lxTarget);
-      ClassInfo info;
-      scope.loadClassInfo(info, target.argument, true);
-
-      int size = 0;
-      bool variable = false;
-      //   int size = (target.argument == scope.paramsReference) ? -1 : scope.defineStructSize(target.argument, variable);
-      if (isEmbeddable(info)) {
-         size = info.size;
-
-         variable = !test(info.header.flags, elReadOnlyRole);
-      }
-      if (size == 0)
-         return;
-
-   //   // allocating temporal stack allocated variable for structure field if required
-   //   if (node == lxFieldAddress && node.argument > 0) {
-   //      int offset = allocateStructure(scope, node, size);
-
-   //      // injecting assinging, boxing / unboxing operation
-   //      LexicalType nodeType = lxAssigning;
-   //      SNode assignNode = node;
-   //      if (test(mode, HINT_NOBOXING)) {
-   //         if (variable && !test(mode, HINT_NOUNBOXING)) {
-   //            node.appendNode(lxAssigning, size);
-   //            assignNode = SyntaxTree::findChild(node, lxAssigning);
-
-   //            nodeType = lxLocalUnboxing;
-   //         }
-   //      }
-   //      else {
-   //         node.appendNode(lxAssigning, size);
-   //         assignNode = SyntaxTree::findChild(node, lxAssigning);
-
-   //         nodeType = variable && !test(mode, HINT_NOUNBOXING) ? lxUnboxing : lxBoxing;
-   //      }
-   //      assignNode.appendNode(lxLocalAddress, offset);
-   //      assignNode.appendNode(lxFieldAddress, node.argument);
-
-   //      node = nodeType;
-   //      node.setArgument(size);
-   //   }
-   //   else {
-         // inject boxing node
-         node.appendNode(node.type, node.argument);
-
-         if (node == lxBlockLocalAddr && size == -1) {
-            node = lxArgBoxing;
-         }
-         else if (variable && !test(mode, HINT_NOUNBOXING)) {
-            node = lxUnboxing;
-         }
-         else node = (node == lxBoxableLocal) ? lxCondBoxing : lxBoxing;
-
-         node.setArgument(size);
-   //   }
-   }
-
-   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
-      optimizeBoxing(scope, node, warningLevel);
-   }
-}
+//void Compiler :: optimizeBoxableObject(ModuleScope& scope, SNode node, int warningLevel, int mode)
+//{
+//   if (!test(mode, HINT_NOBOXING) || (node == lxFieldAddress && node.argument > 0)) {
+//      SNode target = SyntaxTree::findChild(node, lxTarget);
+//      ClassInfo info;
+//      scope.loadClassInfo(info, target.argument, true);
+//
+//      int size = 0;
+//      bool variable = false;
+//      //   int size = (target.argument == scope.paramsReference) ? -1 : scope.defineStructSize(target.argument, variable);
+//      if (isEmbeddable(info)) {
+//         size = info.size;
+//
+//         variable = !test(info.header.flags, elReadOnlyRole);
+//      }
+//      if (size == 0)
+//         return;
+//
+//   //   // allocating temporal stack allocated variable for structure field if required
+//   //   if (node == lxFieldAddress && node.argument > 0) {
+//   //      int offset = allocateStructure(scope, node, size);
+//
+//   //      // injecting assinging, boxing / unboxing operation
+//   //      LexicalType nodeType = lxAssigning;
+//   //      SNode assignNode = node;
+//   //      if (test(mode, HINT_NOBOXING)) {
+//   //         if (variable && !test(mode, HINT_NOUNBOXING)) {
+//   //            node.appendNode(lxAssigning, size);
+//   //            assignNode = SyntaxTree::findChild(node, lxAssigning);
+//
+//   //            nodeType = lxLocalUnboxing;
+//   //         }
+//   //      }
+//   //      else {
+//   //         node.appendNode(lxAssigning, size);
+//   //         assignNode = SyntaxTree::findChild(node, lxAssigning);
+//
+//   //         nodeType = variable && !test(mode, HINT_NOUNBOXING) ? lxUnboxing : lxBoxing;
+//   //      }
+//   //      assignNode.appendNode(lxLocalAddress, offset);
+//   //      assignNode.appendNode(lxFieldAddress, node.argument);
+//
+//   //      node = nodeType;
+//   //      node.setArgument(size);
+//   //   }
+//   //   else {
+//         // inject boxing node
+//         node.appendNode(node.type, node.argument);
+//
+//         if (node == lxBlockLocalAddr && size == -1) {
+//            node = lxArgBoxing;
+//         }
+//         else if (variable && !test(mode, HINT_NOUNBOXING)) {
+//            node = lxUnboxing;
+//         }
+//         else node = (node == lxBoxableLocal) ? lxCondBoxing : lxBoxing;
+//
+//         node.setArgument(size);
+//   //   }
+//   }
+//
+//   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
+//      optimizeBoxing(scope, node, warningLevel);
+//   }
+//}
 
 void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
 {
@@ -6238,28 +6263,28 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
 //      case lxAssigning:
 //         optimizeAssigning(scope, current, warningMask);
 //         break;
-//      case lxTypecasting:
-//         optimizeTypecast(scope, current, warningMask, mode);
-//         break;
-//////      case lxDirectCalling:
-//////      case lxSDirctCalling:
-//////         optimizeDirectCall(scope, current, warningMask);
-//////         break;
-//////      case lxIntOp:
-//////      case lxLongOp:
-//////      case lxRealOp:
-//////      case lxIntArrOp:
-//////      case lxArrOp:
-//////         optimizeOp(scope, current, warningMask, mode);
-//////         break;
-//////      case lxStdExternalCall:
-//////      case lxExternalCall:
-//////      case lxCoreAPICall:
-//////         optimizeExtCall(scope, current, warningMask, mode);
-//////         break;
-//////      case lxInternalCall:
-//////         optimizeInternalCall(scope, current, warningMask, mode);
-//////         break;
+      case lxTypecasting:
+         optimizeTypecast(scope, current, warningMask, mode);
+         break;
+////      case lxDirectCalling:
+////      case lxSDirctCalling:
+////         optimizeDirectCall(scope, current, warningMask);
+////         break;
+////      case lxIntOp:
+////      case lxLongOp:
+////      case lxRealOp:
+////      case lxIntArrOp:
+////      case lxArrOp:
+////         optimizeOp(scope, current, warningMask, mode);
+////         break;
+////      case lxStdExternalCall:
+////      case lxExternalCall:
+////      case lxCoreAPICall:
+////         optimizeExtCall(scope, current, warningMask, mode);
+////         break;
+////      case lxInternalCall:
+////         optimizeInternalCall(scope, current, warningMask, mode);
+////         break;
       case lxExpression:
          // HOT FIX : to pass the optimization mode into sub expression
          optimizeSyntaxExpression(scope, current, warningMask, mode);
@@ -6267,13 +6292,14 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
 ////      case lxReturning:
 ////         analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
 ////         break;
-//      case lxOverridden:
+      case lxOverridden:
       case lxVariable:
          optimizeSyntaxExpression(scope, current, warningMask, mode);
          break;
-      //case lxBoxing:
-      //   optimizeBoxing(scope, current, warningMask);
-      //   break;
+      case lxBoxing:
+      case lxCondBoxing:
+         optimizeBoxing(scope, current, warningMask);
+         break;
       default:
          if (test(current.type, lxExpressionMask)) {
             optimizeSyntaxExpression(scope, current, warningMask);

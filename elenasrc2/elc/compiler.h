@@ -448,6 +448,22 @@ private:
          else return NULL;
       }
 
+      virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
+      {
+         if (parent) {
+            return parent->mapSubject(terminal, output);
+         }
+         else return moduleScope->mapSubject(terminal, output);
+      }
+
+      virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
+      {
+         if (parent) {
+            return parent->mapSubject(terminal, implicitOnly);
+         }
+         else return moduleScope->mapSubject(terminal, implicitOnly);
+      }
+
       Scope(ModuleScope* moduleScope)
       {
          this->parent = NULL;
@@ -695,6 +711,24 @@ private:
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
+      virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
+      {
+         if (StringHelper::compare(terminal, TARGET_VAR)) {
+            output.copy(TARGET_POSTFIX);
+
+            return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
+         }
+         else return moduleScope->mapSubject(terminal, output);
+      }
+
+      virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
+      {
+         if (StringHelper::compare(terminal, TARGET_VAR)) {
+            return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
+         }
+         else return Scope::mapSubject(terminal, implicitOnly);
+      }
+
       void save()
       {
          _Memory* section = moduleScope->module->mapSection(reference | mskSyntaxTreeRef, false);
@@ -756,7 +790,7 @@ private:
    void compileParentDeclaration(DNode node, ClassScope& scope);
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
 
-   bool compileClassHint(DNode hint, SyntaxWriter& writer);
+   bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope/*, bool& isExtension, ref_t& extensionType*/);
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
@@ -768,8 +802,8 @@ private:
 //   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
-//   void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
-//   void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+   void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+   void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
@@ -804,11 +838,11 @@ private:
 
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
+   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 
    ObjectInfo compileAssigning(DNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);   
-//   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(DNode node, CodeScope& scope, ref_t targetType, int mode);
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
@@ -903,7 +937,7 @@ private:
 ////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
 ////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
-   void optimizeBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   //void optimizeBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);

@@ -450,6 +450,7 @@ namespace _ELENA_
    #define CLASSCLASS_POSTFIX       "#class"
    #define GENERIC_PREFIX           "#generic"
    #define EMBEDDED_PREFIX          "#embedded"
+   #define TARGET_POSTFIX           "#target"
 
   // --- ELENA modifiers ---
 //   #define HINT_CONSTANT           "const"

@@ -2,6 +2,8 @@
 In development:
 ------                      
               xdev - generic development
+
+
                        * test stack unsafe operation
                        * test stack safe operation
                        * test int => vint
@@ -43,6 +45,8 @@ In development:
                        * #62 : Tape implementation
                        
               xdev - general implementation     
+                       * replace all operation with StringHelper with some built-in operators
+
                        * rename console to STA, consolex to MTO, consolevm to STA VM Client, gui to STAGUI, guix to MTAGUI
                        * chatserver : #var(type:int)len := theBuffer length. - embeddable get should be used
                        * fix #12 : Extension with stack allocated object
