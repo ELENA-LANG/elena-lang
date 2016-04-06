@@ -77,7 +77,7 @@ public:
       tpClosed     = 0x02,
       tpNormal     = 0x03,
       tpDispatcher = 0x04,
-      //tpStackSafe  = 0x10,
+      tpStackSafe  = 0x10,
 //      tpEmbeddable = 0x20,
 //      tpGeneric    = 0x40,
    };
@@ -350,14 +350,14 @@ private:
 //
 //      //   return defineTypeSize(type_ref, class_ref, dummy2);
 //      //}
-//
-//      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
-//      int checkMethod(ref_t reference, ref_t message)
-//      {
-//         bool dummy;
-//         ref_t dummyRef;
-//         return checkMethod(reference, message, dummy, dummyRef);
-//      }
+
+      int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
+      int checkMethod(ref_t reference, ref_t message)
+      {
+         bool dummy;
+         ref_t dummyRef;
+         return checkMethod(reference, message, dummy, dummyRef);
+      }
 
       void loadSubjects(_Module* module);
 //      void loadExtensions(TerminalInfo terminal, _Module* module);
@@ -563,7 +563,7 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool         withOpenArg;
-//      bool         stackSafe;
+      bool         stackSafe;
 //      bool         embeddable;
 //      bool         generic;
 
@@ -939,7 +939,7 @@ private:
 ////   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
 ////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 ////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-////   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 ////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
 ////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 

@@ -740,33 +740,33 @@ int Compiler::ModuleScope :: getClassFlags(ref_t reference)
    return classInfo.header.flags;
 }
 
-//int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
-//{
-//   ClassInfo info;
-//   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
-//
-//   if (found) {
-//      bool methodFound = info.methods.exist(message);
-//
-//      if (methodFound) {
-//         int hint = info.methodHints.get(Attribute(message, maHint));
-//         outputType = info.methodHints.get(Attribute(message, maType));
-//
-//         if ((hint & tpMask) == tpSealed) {
-//            return hint;
-//         }
-//         else if (test(info.header.flags, elSealed)) {
-//            return tpSealed | hint;
-//         }
-//         else if (test(info.header.flags, elClosed)) {
-//            return tpClosed | hint;
-//         }
-//         else return tpNormal | hint;
-//      }
-//   }
-//
-//   return tpUnknown;
-//}
+int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
+{
+   ClassInfo info;
+   found = loadClassInfo(info, module->resolveReference(reference)) != 0;
+
+   if (found) {
+      bool methodFound = info.methods.exist(message);
+
+      if (methodFound) {
+         int hint = info.methodHints.get(Attribute(message, maHint));
+         //outputType = info.methodHints.get(Attribute(message, maType));
+
+         if ((hint & tpMask) == tpSealed) {
+            return hint;
+         }
+         else if (test(info.header.flags, elSealed)) {
+            return tpSealed | hint;
+         }
+         else if (test(info.header.flags, elClosed)) {
+            return tpClosed | hint;
+         }
+         else return tpNormal | hint;
+      }
+   }
+
+   return tpUnknown;
+}
 
 void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t reference)
 {
@@ -1091,7 +1091,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
 //   this->withOpenArg = false;
-//   this->stackSafe = false;
+   this->stackSafe = false;
 //   this->embeddable = false;
 //   this->generic = false;
 
@@ -1102,7 +1102,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 {
    if (StringHelper::compare(identifier, THIS_VAR)) {
-      return ObjectInfo(okThisParam, 1/*, stackSafe ? -1 : 0*/);
+      return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
    }
    else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
       return ObjectInfo(okParam, (size_t)-1);
@@ -1115,7 +1115,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
          //if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
          //   return ObjectInfo(okParams, -1 - local, 0, param.sign_ref);
          //}
-         /*else */return ObjectInfo(okParam, -1 - local, /*stackSafe ? -1 : */0, param.subj_ref);
+         /*else */return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.subj_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -1685,6 +1685,16 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
          return true;
       }
+      else if (StringHelper::compare(terminal, HINT_SEALED)) {
+         writer.appendNode(lxClassFlag, elSealed);
+
+         return true;
+      }
+      else if (StringHelper::compare(terminal, HINT_LIMITED)) {
+         writer.appendNode(lxClassFlag, elClosed);
+
+         return true;
+      }
    }
    else if (!directiveOnly) {
       ref_t hintRef = scope.moduleScope->mapSubject(terminal, false);
@@ -1718,14 +1728,8 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //if (StringHelper::compare(terminal, HINT_GROUP)) {
       //   writer.appendNode(lxClassFlag, elGroup);
       //}
-      //else if (StringHelper::compare(terminal, HINT_SEALED)) {
-      //   writer.appendNode(lxClassFlag, elSealed);
-      //}
       //else if (StringHelper::compare(terminal, HINT_CONSTANT)) {
       //   writer.appendNode(lxClassFlag, elReadOnlyRole);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_LIMITED)) {
-      //   writer.appendNode(lxClassFlag, elClosed);
       //}
       //else if (StringHelper::compare(terminal, HINT_MESSAGE)) {
       //   writer.newNode(lxClassStructure, 4);
@@ -1955,28 +1959,34 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
-      //if (terminal.symbol == tsPrivate) {
-      //   if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
-      //      DNode value = hints.select(nsHintValue);
-      //      TerminalInfo level = value.Terminal();
-      //      if (StringHelper::compare(level, "w2")) {
-      //         writer.appendNode(lxWarningMask, WARNING_MASK_1);
-      //      }
-      //      else if (StringHelper::compare(level, "w3")) {
-      //         writer.appendNode(lxWarningMask, WARNING_MASK_2);
-      //      }
-      //      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      //   }
-      //   else if (warningsOnly) {
-      //      // ignore other hints for implementation stage
-      //   }
-      //   else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
-      //      writer.appendNode(lxClassMethodAttr, tpStackSafe);
-      //   }
-      //}
-      //else if (warningsOnly) {
-      //   // ignore other hints for implementation stage
-      //}
+
+      if (terminal.symbol == tsPrivate) {
+         if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
+            DNode value = hints.select(nsHintValue);
+            TerminalInfo level = value.Terminal();
+            if (StringHelper::compare(level, "w2")) {
+               writer.appendNode(lxWarningMask, WARNING_MASK_1);
+            }
+            else if (StringHelper::compare(level, "w3")) {
+               writer.appendNode(lxWarningMask, WARNING_MASK_2);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+         }
+         else if (warningsOnly) {
+            // ignore other hints for implementation stage
+         }
+         else if (StringHelper::compare(terminal, HINT_SEALED)) {
+            writer.appendNode(lxClassMethodAttr, tpSealed);
+         }
+         else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
+            writer.appendNode(lxClassMethodAttr, tpStackSafe);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      }
+      else if (warningsOnly) {
+         // ignore other hints for implementation stage
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       ////else if (StringHelper::compare(terminal, HINT_GENERIC)) {
       ////   scope.generic = true;         
@@ -1997,9 +2007,6 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       ////   scope.embeddable = true;
 
       ////   writer.appendNode(lxClassMethodAttr, tpEmbeddable);
-      ////   writer.appendNode(lxClassMethodAttr, tpSealed);
-      ////}
-      ////else if (StringHelper::compare(terminal, HINT_SEALED)) {
       ////   writer.appendNode(lxClassMethodAttr, tpSealed);
       ////}
       //else {
@@ -2037,7 +2044,6 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       ////      }
       ////      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
       ////   }
-         /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
       //}
 
       hints = hints.nextNode();
@@ -3045,29 +3051,29 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    int paramCount = getParamCount(messageRef);
 
    // try to recognize the operation
-   //ref_t classReference = resolveObjectReference(scope, target);
-   //bool classFound = false;
+   ref_t classReference = resolveObjectReference(scope, target);
+   bool classFound = false;
    //bool dispatchCall = false;
    //bool templateCall = false;
-   //int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
-   //int callType = methodHint & tpMask;
+   int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
+   int callType = methodHint & tpMask;
 
-   //if (target.kind == okConstantClass) {
-   //   retVal.param = target.param;
+   if (target.kind == okConstantClass) {
+      retVal.param = target.param;
 
-   //   // constructors are always sealed
-   //   callType = tpSealed;
-   //}
+      // constructors are always sealed
+      callType = tpSealed;
+   }
    //else if (classReference == scope.moduleScope->signatureReference) {
    //   dispatchCall = test(mode, HINT_EXTENSION_MODE);
    //}
    //else if (classReference == scope.moduleScope->messageReference) {
    //   dispatchCall = test(mode, HINT_EXTENSION_MODE);
    //}
-   //else if (target.kind == okSuper) {
-   //   // parent methods are always sealed
-   //   callType = tpSealed;
-   //}
+   else if (target.kind == okSuper) {
+      // parent methods are always sealed
+      callType = tpSealed;
+   }
    //else if (target.kind == okTemplateTarget) {
    //   templateCall = true;
    //}
@@ -3079,33 +3085,33 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    //   scope.writer->appendNode(lxCallTarget, classReference);
    //   //scope.writer->appendNode(lxStacksafe);
    //}
-   //else if (callType == tpClosed) {
-   //   scope.writer->insert(lxSDirctCalling, messageRef);
+   /*else */if (callType == tpClosed) {
+      scope.writer->insert(lxSDirctCalling, messageRef);
 
-   //   scope.writer->appendNode(lxCallTarget, classReference);
-   //   //if (test(methodHint, tpStackSafe))
-   //   //   scope.writer->appendNode(lxStacksafe);
-   //}
-   //else if (callType == tpSealed) {
-   //   scope.writer->insert(lxDirectCalling, messageRef);
+      scope.writer->appendNode(lxCallTarget, classReference);
+      if (test(methodHint, tpStackSafe))
+         scope.writer->appendNode(lxStacksafe);
+   }
+   else if (callType == tpSealed) {
+      scope.writer->insert(lxDirectCalling, messageRef);
 
-   //   scope.writer->appendNode(lxCallTarget, classReference);
-   //   //if (test(methodHint, tpStackSafe))
-   //   //   scope.writer->appendNode(lxStacksafe);
-   //   //if (test(methodHint, tpEmbeddable))
-   //   //   scope.writer->appendNode(lxEmbeddable);
-   //}
+      scope.writer->appendNode(lxCallTarget, classReference);
+      if (test(methodHint, tpStackSafe))
+         scope.writer->appendNode(lxStacksafe);
+      //if (test(methodHint, tpEmbeddable))
+      //   scope.writer->appendNode(lxEmbeddable);
+   }
    //else if (templateCall) {
    //   scope.writer->insert(lxTemplateCalling, messageRef);
    //}
-   //else {
+   else {
       scope.writer->insert(lxCalling, messageRef);
 
-      //// if the class found and the message is not supported - warn the programmer and raise an exception
-      //if (classFound && callType == tpUnknown) {
-      //   scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.FirstTerminal());
-      //}
-   //}
+      // if the class found and the message is not supported - warn the programmer and raise an exception
+      if (classFound && callType == tpUnknown) {
+         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.FirstTerminal());
+      }
+   }
 
    // the result of get&type message should be typed
    if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->subjectHints.exist(signRef)) {
@@ -3442,7 +3448,7 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
    }
 
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
-   //methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
+   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
 
    return /*lazyExpression*/false;
 }
@@ -4774,7 +4780,7 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
                   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-               //methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
+               methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
 
                compileDispatcher(member.firstChild().firstChild(), writer, methodScope, test(scope.info.header.flags, elWithGenerics));
             }
@@ -4782,8 +4788,8 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
             else {
                declareArgumentList(member, methodScope, hints);
 
-               //int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-               //methodScope.stackSafe = test(hint, tpStackSafe);
+               int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+               methodScope.stackSafe = test(hint, tpStackSafe);
                //methodScope.generic = test(hint, tpGeneric);
 
                compileMethod(member, writer, methodScope);
@@ -4910,8 +4916,8 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
 
          declareArgumentList(member, methodScope, hints);
-         //int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
-         //methodScope.stackSafe = test(hint, tpStackSafe);
+         int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
+         methodScope.stackSafe = test(hint, tpStackSafe);
 
          //// if the constructor is stack safe, embeddable and the class is an embeddable structure
          //// the special method should be compiled
@@ -5925,13 +5931,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 //
 //   analizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
 //}
-//
-//void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningMask)
-//{
-//   int mode = 0;
-//
-//   bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
-//
+
+void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningMask)
+{
+   int mode = 0;
+
+   bool stackSafe = SyntaxTree::existChild(node, lxStacksafe);
+
 //   if (node == lxDirectCalling && SyntaxTree::existChild(node, lxEmbeddable)) {
 //      // check if it is a virtual call
 //      if (getVerb(node.argument) == GET_MESSAGE_ID && getParamCount(node.argument) == 0) {
@@ -5948,13 +5954,13 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 //         }
 //      }
 //   }
-//
-//   if (stackSafe)
-//      mode |= HINT_NOBOXING;
-//
-//   analizeSyntaxExpression(scope, node, warningMask, mode);
-//}
-//
+
+   if (stackSafe)
+      mode |= HINT_NOBOXING;
+
+   optimizeSyntaxExpression(scope, node, warningMask, mode);
+}
+
 //void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
 //{
 //   boxPrimitive(scope, node, mode);
@@ -6320,10 +6326,10 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
       case lxTypecasting:
          optimizeTypecast(scope, current, warningMask, mode);
          break;
-////      case lxDirectCalling:
-////      case lxSDirctCalling:
-////         optimizeDirectCall(scope, current, warningMask);
-////         break;
+      case lxDirectCalling:
+      case lxSDirctCalling:
+         optimizeDirectCall(scope, current, warningMask);
+         break;
 ////      case lxIntOp:
 ////      case lxLongOp:
 ////      case lxRealOp:

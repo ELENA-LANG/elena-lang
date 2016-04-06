@@ -128,7 +128,7 @@ enum LexicalType
    lxCallTarget      = 0x20802, // arg - reference
    lxType            = 0x40803, // arg - subject
    //lxSubject         = 0x40804, // arg - subject
-   //lxStacksafe       = 0x00805,
+   lxStacksafe       = 0x00805,
    lxTempLocal       = 0x00806,
    lxOverridden      = 0x00807,
    //lxIfValue         = 0x20808, // arg - reference
@@ -294,7 +294,7 @@ public:
          if (type != lxNone) {
             return (ident_t)tree->_strings.get(argument);
          }
-         else NULL;
+         else return NULL;
       }
 
       bool operator == (LexicalType type)
