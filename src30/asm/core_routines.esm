@@ -28,6 +28,29 @@ procedure __object.dispatch[0]
 
 end
 
+procedure __verb.dispatch[0]
+
+  bloadsi 1
+  ifb labDefault
+  
+  setverb 0
+  nload
+  or
+  ecopyd
+  aloadsi 1
+  ajumpvi 0
+  
+labDefault:
+  bsredirect  
+  pushe
+  open 1
+  bcopyf -1
+  pushb
+  //pushr class : system'MethodNotFoundException
+  //pushr const : %new&mssg$[1]
+  throw
+  
+end
 
 /*
 procedure object_equal
@@ -3634,30 +3657,6 @@ labEnd:
   pushr const : %new&mssg$[1]
   throw
 
-labDefault:
-  bsredirect  
-  pushe
-  open 1
-  bcopyf -1
-  pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
-  throw
-  
-end
-
-procedure handle_verb
-
-  bloadsi 1
-  ifb labDefault
-  
-  setverb 0
-  nload
-  or
-  ecopyd
-  aloadsi 1
-  ajumpvi 0
-  
 labDefault:
   bsredirect  
   pushe

@@ -298,7 +298,7 @@ namespace _ELENA_
    const int elWithGenerics        = 0x00000400;
    const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
-  // const int elSignature           = 0x00002000;
+   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
   // const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
@@ -317,7 +317,7 @@ namespace _ELENA_
   // const int elDebugPTR            = 0x00090000;
   // const int elDebugWideLiteral    = 0x000A0000;
   // const int elDebugReference      = 0x000B0000;   // symbol reference
-  // const int elDebugSubject        = 0x000C0000;
+   const int elDebugSubject        = 0x000C0000;
 
   //// --- ELENA class roles ---
   // const int crRoleMask            = 0xFFFFFFF0;
@@ -471,7 +471,7 @@ namespace _ELENA_
 //   #define HINT_SEALED             "sealed"
 //   #define HINT_LIMITED            "limited"
 //   #define HINT_MESSAGE            "message"
-//   #define HINT_SIGNATURE          "signature"
+   #define HINT_SIGNATURE          "$signature"
 //   #define HINT_EXT_MESSAGE        "extension_message"
 //   #define HINT_SYMBOL             "symbol"
 //   #define HINT_EXTENSION          "extension"

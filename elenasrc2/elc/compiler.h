@@ -118,10 +118,10 @@ public:
       okIntConstant,                  // param - reference 
    //   okLongConstant,                 // param - reference 
    //   okRealConstant,                 // param - reference 
-   //   okMessageConstant,              // param - reference 
-   //   okExtMessageConstant,           // param - reference 
-   //   okSignatureConstant,            // param - reference 
-   //   okVerbConstant,                 // param - reference 
+      okMessageConstant,              // param - reference 
+      okExtMessageConstant,           // param - reference 
+      okSignatureConstant,            // param - reference 
+      okVerbConstant,                 // param - reference 
       okField,                        // param - field offset
    //   okFieldAddress,                 // param - field offset
    //   okOuter,                        // param - field offset
@@ -800,6 +800,7 @@ private:
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
 //   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
+   void declareImportedTemplate(ClassScope& scope, TemplateInfo templateInfo);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
@@ -820,8 +821,8 @@ private:
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   //ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-//
-//   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
+
+   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(DNode node, CodeScope& scope);

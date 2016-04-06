@@ -4,6 +4,9 @@
 {
     /// Dispatches the verb to the target with a specified subject
     #method cast : verb &to:target = target::verb eval &$target:$self.
+
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &$target:$self.
 }
 
 // --- super object ---
@@ -18,11 +21,6 @@
 //    ///
 //    /// By default compares the object references.
 //    #method(type:bool) equal : anObject => system'core_routines'object_equal.
-//    
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &object:$self.
-//    
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &object:$self.
                         
     /// Implements a message dispatching in VMT
     #method => system'core_routines'__object.

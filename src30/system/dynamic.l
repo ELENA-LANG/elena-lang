@@ -12,22 +12,22 @@
 //    /// Redirects incoming messages to the symbol
 //    #method => system'core_routines'symbol_redirect.
 //}
-//
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//#class(sealed,signature) Verb
-//{
+
+// --- Verb ---
+
+/// A dynamic verb extender
+#class(/*sealed,*/$signature) Verb
+{
 //    /// Loads a dynamic verb
 //    #constructor(stacksafe) new &verb:aVerb
 //        => system'core_routines'int_copy.
 //
 //    #method verb = $self.
-//
-//    /// Dispatches incoming messages and redirects to the target
-//    #method => system'core_routines'handle_verb.
-//}
-//
+
+    /// Dispatches incoming messages and redirects to the target
+    #method => system'core_routines'__verb.
+}
+
 //// --- Message ---
 //
 ///// A message constant
