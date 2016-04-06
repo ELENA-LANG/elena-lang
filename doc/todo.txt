@@ -2,7 +2,11 @@
 In development:
 ------                      
               xdev - generic development
-
+                       * assign stack allocated ones
+                       * primitive operations
+                       * primitive assigning operations
+                       
+                       * stacksafe template method : box this variable if required
 
                        * test stack unsafe operation
                        * test stack safe operation

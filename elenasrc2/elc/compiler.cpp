@@ -251,7 +251,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    // cache the frequently used references
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
-   //longReference = mapReference(project->resolveForward(LONG_FORWARD));
+   longReference = mapReference(project->resolveForward(LONG_FORWARD));
    //realReference = mapReference(project->resolveForward(REAL_FORWARD));
    //literalReference = mapReference(project->resolveForward(STR_FORWARD));
    //wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
@@ -1387,18 +1387,26 @@ bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree
    ref_t nodeType = SyntaxTree::findChild(node, lxType).argument;   
    ref_t nodeRef = SyntaxTree::findChild(node, lxTarget).argument;
 
+   // HOTFIX : try to find the node target / type in sub nondes
+   if (node == lxExpression && nodeType == 0 && nodeRef == 0) {
+      SNode subNode = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+      nodeType = SyntaxTree::findChild(subNode, lxType).argument;
+      nodeRef = SyntaxTree::findChild(subNode, lxTarget).argument;
+   }
+
    if (nodeType == typeRef) {
       return true;
    }
    // NOTE : $nil is compatible to any type
-   else if (node == lxNil) {
+   else if (SyntaxTree::findMatchedChild(node, lxObjectMask) == lxNil) {
       return true;
    }
-   else if (node == lxConstantInt) {
-      int flags = scope.getClassFlags(scope.intReference);
+   //else if (node == lxConstantInt) {
+   //   int flags = scope.getClassFlags(scope.intReference);
 
-      return (flags & elDebugMask) == elDebugDWORD;
-   }
+   //   return (flags & elDebugMask) == elDebugDWORD;
+   //}
    else return scope.checkIfCompatible(typeRef, nodeRef);
 }
 
@@ -1421,8 +1429,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return object.extraparam;
       case okIntConstant:
          return scope.moduleScope->intReference;
-      //case okLongConstant:
-      //   return scope.moduleScope->longReference;
+      case okLongConstant:
+         return scope.moduleScope->longReference;
       //case okRealConstant:
       //   return scope.moduleScope->realReference;
       //case okLiteralConstant:
@@ -1475,13 +1483,13 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
       }
-      //else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->longReference)) {
-      //   writer.newNode(lxLongVariable);
-      //   writer.appendNode(lxTerminal, it.key());
-      //   writer.appendNode(lxLevel, -1 - (*it).offset);
-      //   writer.appendNode(lxFrameAttr);
-      //   writer.closeNode();
-      //}
+      else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->longReference)) {
+         writer.newNode(lxLongVariable);
+         writer.appendNode(lxTerminal, it.key());
+         writer.appendNode(lxLevel, -1 - (*it).offset);
+         writer.appendNode(lxFrameAttr);
+         writer.closeNode();
+      }
       //else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
       //   writer.newNode(lxReal64Variable);
       //   writer.appendNode(lxTerminal, it.key());
@@ -1648,9 +1656,9 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
             if (/*size == 1 || size == 2 || */size == 4) {
                writer.appendNode(lxClassFlag, elDebugDWORD);
             }
-            //      else if (size == 8) {
-            //         writer.appendNode(lxClassFlag, elDebugQWORD);
-            //      }
+            else if (size == 8) {
+               writer.appendNode(lxClassFlag, elDebugQWORD);
+            }
             else return false;
 
             writer.appendNode(lxClassFlag, elReadOnlyRole);
@@ -2219,12 +2227,12 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
                scope.writer->appendNode(lxLevel, variable.param);
                scope.writer->closeNode();
                break;
-//            case elDebugQWORD:
-//               scope.writer->newNode(lxLongVariable);
-//               scope.writer->appendNode(lxTerminal, terminal.value);
-//               scope.writer->appendNode(lxLevel, variable.param);
-//               scope.writer->closeNode();
-//               break;
+            case elDebugQWORD:
+               scope.writer->newNode(lxLongVariable);
+               scope.writer->appendNode(lxTerminal, terminal.value);
+               scope.writer->appendNode(lxLevel, variable.param);
+               scope.writer->closeNode();
+               break;
 //         //   case elDebugReal64:
 //         //      scope.writer->newNode(lxReal64Variable);
 //         //      scope.writer->appendNode(lxTerminal, terminal.value);
@@ -2325,21 +2333,30 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okIntConstant:
          scope.writer->newNode(lxConstantInt, object.param);
          break;
-      //case okLongConstant:
-      //   scope.writer->newNode(lxConstantLong, object.param);
-      //   break;
+      case okLongConstant:
+         scope.writer->newNode(lxConstantLong, object.param);
+         break;
       //case okRealConstant:
       //   scope.writer->newNode(lxConstantReal, object.param);
       //   break;
       case okLocal:
       case okParam:
-      case okThisParam:
          if (object.extraparam == -1) {
             scope.writer->newNode(lxCondBoxing);
             scope.writer->appendNode(lxLocal, object.param);
             appendObjectInfo(scope, object);
+            appendTerminalInfo(scope.writer, terminal);
          }
          else scope.writer->newNode(lxLocal, object.param);
+         break;
+      case okThisParam:
+         if (object.extraparam == -1) {
+            scope.writer->newNode(lxCondBoxing);
+            scope.writer->appendNode(lxThisLocal, object.param);
+            appendObjectInfo(scope, object);
+            appendTerminalInfo(scope.writer, terminal);
+         }
+         else scope.writer->newNode(lxThisLocal, object.param);
          break;
       case okSuper:
          scope.writer->newNode(lxLocal, 1);
@@ -2357,6 +2374,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxBoxing);
          scope.writer->appendNode(lxLocalAddress, object.param);
          appendObjectInfo(scope, object);
+         appendTerminalInfo(scope.writer, terminal);
          break;
       //case okFieldAddress:
       //   scope.writer->newNode(lxFieldAddress, object.param);
@@ -2430,16 +2448,16 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope)
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
    }
-//   else if (terminal == tsLong) {
-//      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
-//      s.append(terminal.value, getlength(terminal.value) - 1);
-//
-//      long long integer = StringHelper::strToLongLong(s + 1, 10);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+   else if (terminal == tsLong) {
+      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
+      s.append(terminal.value, getlength(terminal.value) - 1);
+
+      long long integer = StringHelper::strToLongLong(s + 1, 10);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
+   }
    else if (terminal == tsHexInteger) {
       String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
 
@@ -3679,6 +3697,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
       scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
 
       appendTerminalInfo(scope.writer, node.FirstTerminal());
+      scope.writer->appendNode(lxType, targetType);
 
       scope.writer->closeNode();
    }
@@ -3690,7 +3709,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
 {
-   // if target type is not defined ,try to find it out
+   // if target type is not defined, try to find it out
    bool withBoxing = false;
    if (target.extraparam > 0 && target.type == 0) {
       ClassInfo info;
@@ -3704,33 +3723,33 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 
       scope.writer->newNode(lxBoxing, info.size);
       scope.writer->appendNode(lxTarget, target.extraparam);
+      appendTerminalInfo(scope.writer, node.FirstTerminal());
 
       withBoxing = true;
    }
       
-   // if primitive data operation can be used
-   if (target.kind == okLocalAddress/* || target.kind == okFieldAddress*/) {
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, target.type, 0);
-   }
-   else {
-      ref_t targetType = 0;
-      if (target.kind == okLocal || target.kind == okField/* || target.kind == okOuterField*/) {
-         if (target.type != 0) {
-            targetType = target.type;
-         }
-      }
-      else if (target.kind == okUnknown) {
+   ref_t targetType = target.type;
+   switch (target.kind)
+   {
+      case okLocal:
+      case okField:
+      //case okOuterField:
+      case okLocalAddress:
+      //case okFieldAddress:
+         break;
+      case okUnknown:
          scope.raiseError(errUnknownObject, node.Terminal());
-      }
-      else scope.raiseError(errInvalidOperation, node.Terminal());
-
-      ObjectInfo info = compileExpression(assigning.firstChild(), scope, targetType, 0);
+      default:
+         scope.raiseError(errInvalidOperation, node.Terminal());
+         break;
    }
+
+   ObjectInfo info = compileExpression(assigning.firstChild(), scope, targetType, 0);
 
    if (withBoxing)
       scope.writer->closeNode();
 
-   return ObjectInfo(okObject);
+   return info;
 }
 
 //ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
@@ -5450,6 +5469,10 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
       // message variable should be already set
       return;
    }
+   else if (current == lxThisLocal) {
+      writer.newNode(current.type, current.argument);
+      writer.appendNode(lxTarget, scope.reference);
+   }
    else if (test(current.type, lxMessageMask)) {
       writer.newNode(current.type, overwriteSubject(current.argument, 
          importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info)));
@@ -6004,14 +6027,21 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    if (node.argument != 0)
       mode |= HINT_NOBOXING;
 
-   SNode target;
+   bool targetNode = true;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
-         if (target != lxNone) {
-            optimizeSyntaxNode(scope, current, warningLevel, mode);
+         if (targetNode) {
+            targetNode = false;
+
+            // HOTFIX : remove boxing node for assignee
+            if (current == lxBoxing) {
+               SNode subNode = SyntaxTree::findMatchedChild(current, lxObjectMask);
+               current = subNode.type;
+               current.setArgument(subNode.argument);
+            }
          }
-         else target = current;
+         else optimizeSyntaxNode(scope, current, warningLevel, mode);
       }
       current = current.nextNode();
    }
@@ -6043,13 +6073,23 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    //}
 }
 
-void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel)
+void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
    node.setArgument(scope.defineStructSize(target.argument));
 
-   if (test(warningLevel, WARNING_LEVEL_3)) {
+   bool boxing = true;
+
+   if (!test(mode, HINT_NOBOXING)/* || (node == lxFieldAddress && node.argument > 0)*/) {
+   }
+   else boxing = false;
+
+   // ignore boxing operation if allowed
+   if (!boxing)
+      node = lxExpression;
+
+   if (boxing && test(warningLevel, WARNING_LEVEL_3)) {
       SNode row = SyntaxTree::findChild(node, lxRow);
       SNode col = SyntaxTree::findChild(node, lxCol);
       SNode terminal = SyntaxTree::findChild(node, lxTerminal);
@@ -6063,15 +6103,18 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
 {
    ref_t targetType = getSignature(node.argument);
 
+   int typecastMode = 0;
    bool typecasted = true;
    if (scope.subjectHints.get(targetType) != 0) {
-
+      SNode object = SyntaxTree::findChild(node, lxExpression);
+      if (!checkIfCompatible(scope, targetType, object)) {
+      }
+      else typecasted = false;
    }
    else typecasted = false;
 //
 //   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
 //
-//   int typecastMode = 0;
 //   if (!checkIfCompatible(scope, targetType, object)) {
 //      ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
 //      ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
@@ -6158,12 +6201,12 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
 
 
    if (!typecasted) {
-//      typecastMode = mode;
+      typecastMode = mode;
 
       node = lxExpression;
    }
 
-   optimizeSyntaxExpression(scope, node, warningMask/*, typecastMode*/);
+   optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
 
    if (test(warningMask, WARNING_LEVEL_2) && typecasted) {
       SNode row = SyntaxTree::findChild(node, lxRow);
@@ -6271,9 +6314,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
 ////      case lxBlockLocalAddr:
 //         optimizeBoxableObject(scope, current, warningMask, mode);
 //         break;
-//      case lxAssigning:
-//         optimizeAssigning(scope, current, warningMask);
-//         break;
+      case lxAssigning:
+         optimizeAssigning(scope, current, warningMask);
+         break;
       case lxTypecasting:
          optimizeTypecast(scope, current, warningMask, mode);
          break;
@@ -6309,7 +6352,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          break;
       case lxBoxing:
       case lxCondBoxing:
-         optimizeBoxing(scope, current, warningMask);
+         optimizeBoxing(scope, current, warningMask, mode);
          break;
       default:
          if (test(current.type, lxExpressionMask)) {

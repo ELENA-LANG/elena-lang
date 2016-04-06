@@ -89,7 +89,7 @@ enum LexicalType
    lxLocalAddress    = 0x04107, // arg - offset
    lxBlockLocalAddr  = 0x04108, // arg - offset
    lxLocal           = 0x04109, // arg - offset
-   lxBoxableLocal    = 0x0410A, // arg - offset
+   //lxBoxableLocal    = 0x0410A, // arg - offset7
    lxBlockLocal      = 0x0410B, // arg - offset
    lxConstantString  = 0x2410C, // arg - reference
    lxConstantWideStr = 0x2410D, // arg - reference
@@ -107,6 +107,7 @@ enum LexicalType
    lxResult          = 0x04119, // arg -offset
    lxResultField     = 0x0411A, // arg -offset
    lxCurrentMessage  = 0x0411B,
+   lxThisLocal       = 0x0411C,
 
    lxVariable        = 0x00407, // debug info only if lxFrameAttr is included
    lxIntVariable     = 0x00408,

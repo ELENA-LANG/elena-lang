@@ -637,7 +637,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(/*sealed,*/$integer:4) IntNumber //:: IntBaseNumber
+#class(/*sealed,*/$integer:4,dispatchable:int) IntNumber //:: IntBaseNumber
 {
 //    /// Creates the object with the minimal value
 //    #constructor min
@@ -885,12 +885,6 @@
 //
 //    /// Clones the value
 //    #method clone = IntNumber new &int:$self.
-//    
-//    /// Dispatches the verb to the target object with int subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &int:$self.
-//    
-//    /// Dispatches the verb to the target object with int subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &int:$self.
 //
 //    // Reads the object hash code into the output parameter
 //    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
@@ -904,11 +898,11 @@
 //    ]
 }
 
-//// --- LongNumber ---
-//
-///// A signed 64 bit integer value
-//#class(sealed,integer:8) LongNumber :: IntBaseNumber
-//{
+// --- LongNumber ---
+
+/// A signed 64 bit integer value
+#class(/*sealed,*/$integer:8,dispatchable:long) LongNumber //:: IntBaseNumber
+{
 //    /// Returns the minimal value
 //    #constructor min
 //        => system'core_routines'long_min.
@@ -949,10 +943,10 @@
 //    
 //    /// Returns the byte value
 //    #method byte = byteConvertor convert &long:$self.
-//
-//    /// Returns itself
-//    #method long = $self.
-//
+
+    /// Returns itself
+    #method long = $self.
+
 //    /// Returns a real value
 //    #method real = RealNumber new &long:$self.
 //
@@ -1166,8 +1160,8 @@
 //        
 //        ^ aCode.
 //    ]
-//}
-//
+}
+
 //// --- realNumber ---
 //
 ///// A 64bit float numeric value

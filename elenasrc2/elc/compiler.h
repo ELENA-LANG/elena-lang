@@ -116,7 +116,7 @@ public:
    //   okWideLiteralConstant,          // param - reference 
    //   okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference 
-   //   okLongConstant,                 // param - reference 
+      okLongConstant,                 // param - reference 
    //   okRealConstant,                 // param - reference 
       okMessageConstant,              // param - reference 
       okExtMessageConstant,           // param - reference 
@@ -258,20 +258,20 @@ private:
       // cached references
       ref_t superReference;
       ref_t intReference;
-//      //ref_t longReference;
-//      //ref_t realReference;
-//      //ref_t literalReference;
-//      //ref_t wideReference;
-//      //ref_t charReference;
-//      //ref_t trueReference;
-//      //ref_t falseReference;
-//      //ref_t paramsReference;
-//      //ref_t signatureReference;
-//      //ref_t messageReference;
-//      //ref_t verbReference;
-//      //ref_t arrayReference;
-//
-//      //ref_t boolType;
+      ref_t longReference;
+      //ref_t realReference;
+      //ref_t literalReference;
+      //ref_t wideReference;
+      //ref_t charReference;
+      //ref_t trueReference;
+      //ref_t falseReference;
+      //ref_t paramsReference;
+      //ref_t signatureReference;
+      //ref_t messageReference;
+      //ref_t verbReference;
+      //ref_t arrayReference;
+
+      //ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -729,6 +729,11 @@ private:
          else return Scope::mapSubject(terminal, implicitOnly);
       }
 
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         return Scope::getScope(level);
+      }
+
       void save()
       {
          _Memory* section = moduleScope->module->mapSection(reference | mskSyntaxTreeRef, false);
@@ -940,7 +945,7 @@ private:
 
    //void optimizeBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
-   void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
