@@ -637,7 +637,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(/*sealed,*/$integer:4,dispatchable:int) IntNumber //:: IntBaseNumber
+#class(sealed,integerof:4,dispatchable:int) IntNumber //:: IntBaseNumber
 {
 //    /// Creates the object with the minimal value
 //    #constructor min
@@ -901,7 +901,7 @@
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-#class(/*sealed,*/$integer:8,dispatchable:long) LongNumber //:: IntBaseNumber
+#class(sealed,integerof:8,dispatchable:long) LongNumber //:: IntBaseNumber
 {
 //    /// Returns the minimal value
 //    #constructor min

@@ -3,10 +3,10 @@
 #template dispatchable
 {
     /// Dispatches the verb to the target with a specified subject
-    #method cast : verb &to:target = target::verb eval &$target:$self.
+    #method cast : verb &to:target = target::verb eval &template_subj:$self.
 
     /// Dispatches the verb to the target object with generic subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &$target:$self.
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
 }
 
 // --- super object ---

@@ -264,6 +264,14 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    //falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
    //arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 
+   // cache the frequently used subjects / hints
+   sealedHint = module->mapSubject(HINT_SEALED, false);
+   integerHint = module->mapSubject(HINT_INTEGER_NUMBER, false);
+   varHint = module->mapSubject(HINT_VARIABLE, false);
+   limitedHint = module->mapSubject(HINT_LIMITED, false);
+   signHint = module->mapSubject(HINT_SIGNATURE, false);
+   stackHint = module->mapSubject(HINT_STACKSAFE, false);
+   warnHint = module->mapSubject(HINT_SUPPRESS_WARNINGS, false);
    //boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
 
    defaultNs.add(module->Name());
@@ -1641,60 +1649,61 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
 
 bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
+
    TerminalInfo terminal = hint.Terminal();
 
    // if it is a class modifier
-   if (terminal.symbol == tsPrivate) {
-      if (StringHelper::compare(terminal, HINT_INTEGER_NUMBER)) {
-         TerminalInfo sizeValue = hint.select(nsHintValue).Terminal();
-         if (sizeValue.symbol == tsInteger) {
-            int size = StringHelper::strToInt(sizeValue.value);
-            writer.newNode(lxClassStructure, size);
-            appendTerminalInfo(&writer, terminal);
+   ref_t hintRef = moduleScope->mapSubject(terminal, false);
+   if (hintRef == moduleScope->sealedHint) {
+      writer.appendNode(lxClassFlag, elSealed);
 
-            // !! HOTFIX : allow only 1,2,4 or 8
-            if (/*size == 1 || size == 2 || */size == 4) {
-               writer.appendNode(lxClassFlag, elDebugDWORD);
-            }
-            else if (size == 8) {
-               writer.appendNode(lxClassFlag, elDebugQWORD);
-            }
-            else return false;
-
-            writer.appendNode(lxClassFlag, elReadOnlyRole);
-            writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole);
-
-            writer.closeNode();
-
-            return true;            
-         }
-      }
-      else if (StringHelper::compare(terminal, HINT_VARIABLE)) {
-         writer.appendNode(lxClassFlag, elWrapper);
-
-         return true;
-      }
-      else if (StringHelper::compare(terminal, HINT_SIGNATURE)) {
-         writer.newNode(lxClassStructure, 4);
-
+      return true;
+   }
+   else if (hintRef == moduleScope->integerHint) {
+      TerminalInfo sizeValue = hint.select(nsHintValue).Terminal();
+      if (sizeValue.symbol == tsInteger) {
+         int size = StringHelper::strToInt(sizeValue.value);
+         writer.newNode(lxClassStructure, size);
          appendTerminalInfo(&writer, terminal);
-         writer.appendNode(lxClassFlag, elDebugSubject);
-         writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
+
+         // !! HOTFIX : allow only 1,2,4 or 8
+         if (/*size == 1 || size == 2 || */size == 4) {
+            writer.appendNode(lxClassFlag, elDebugDWORD);
+         }
+         else if (size == 8) {
+            writer.appendNode(lxClassFlag, elDebugQWORD);
+         }
+         else return false;
+
+         writer.appendNode(lxClassFlag, elReadOnlyRole);
+         writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole);
 
          writer.closeNode();
 
          return true;
       }
-      else if (StringHelper::compare(terminal, HINT_SEALED)) {
-         writer.appendNode(lxClassFlag, elSealed);
+   }
+   else if (hintRef == moduleScope->varHint) {
+      writer.appendNode(lxClassFlag, elWrapper);
 
-         return true;
-      }
-      else if (StringHelper::compare(terminal, HINT_LIMITED)) {
-         writer.appendNode(lxClassFlag, elClosed);
+      return true;
+   }
+   else if (hintRef == moduleScope->limitedHint) {
+      writer.appendNode(lxClassFlag, elClosed);
 
-         return true;
-      }
+      return true;
+   }
+   else if (hintRef == moduleScope->signHint) {
+      writer.newNode(lxClassStructure, 4);
+
+      appendTerminalInfo(&writer, terminal);
+      writer.appendNode(lxClassFlag, elDebugSubject);
+      writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
+
+      writer.closeNode();
+
+      return true;
    }
    else if (!directiveOnly) {
       ref_t hintRef = scope.moduleScope->mapSubject(terminal, false);
@@ -1957,34 +1966,31 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
 
 void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      if (terminal.symbol == tsPrivate) {
-         if (StringHelper::compare(terminal, HINT_SUPPRESS_WARNINGS)) {
-            DNode value = hints.select(nsHintValue);
-            TerminalInfo level = value.Terminal();
-            if (StringHelper::compare(level, "w2")) {
-               writer.appendNode(lxWarningMask, WARNING_MASK_1);
-            }
-            else if (StringHelper::compare(level, "w3")) {
-               writer.appendNode(lxWarningMask, WARNING_MASK_2);
-            }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+      ref_t hintRef = moduleScope->mapSubject(terminal, false);
+
+      if (hintRef == moduleScope->warnHint) {
+         DNode value = hints.select(nsHintValue);
+         TerminalInfo level = value.Terminal();
+         if (StringHelper::compare(level, "w2")) {
+            writer.appendNode(lxWarningMask, WARNING_MASK_1);
          }
-         else if (warningsOnly) {
-            // ignore other hints for implementation stage
+         else if (StringHelper::compare(level, "w3")) {
+            writer.appendNode(lxWarningMask, WARNING_MASK_2);
          }
-         else if (StringHelper::compare(terminal, HINT_SEALED)) {
-            writer.appendNode(lxClassMethodAttr, tpSealed);
-         }
-         else if (StringHelper::compare(terminal, HINT_STACKSAFE)) {
-            writer.appendNode(lxClassMethodAttr, tpStackSafe);
-         }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
       else if (warningsOnly) {
          // ignore other hints for implementation stage
+      }
+      else if (hintRef == moduleScope->sealedHint) {
+         writer.appendNode(lxClassMethodAttr, tpSealed);
+      }
+      else if (hintRef == moduleScope->stackHint) {
+         writer.appendNode(lxClassMethodAttr, tpStackSafe);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
@@ -2079,6 +2085,7 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
                TerminalInfo target = hints.firstChild().Terminal();
                templateInfo.targetType = scope.moduleScope->mapSubject(target);
                templateInfo.targetSubject = templateInfo.targetType;
+               templateInfo.targetOffset = 0;
                if (templateInfo.targetSubject == 0)
                   templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
                
@@ -4217,7 +4224,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
 		   scope.raiseError(errInvalidOperation, verb);
 	   }
 	   else if (verb_id == 0) {
-         sign_id = scope.moduleScope->mapSubject(verb, signature);
+         sign_id = scope.mapSubject(verb, signature);
 	   }
    }
 
@@ -4259,7 +4266,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
       }
       else first = false;
 
-      ref_t subj_ref = scope.moduleScope->mapSubject(subject, signature);
+      ref_t subj_ref = scope.mapSubject(subject, signature);
 
       arg = arg.nextNode();
 
@@ -5023,9 +5030,9 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
 
    writer.appendNode(lxClassFlag, elSealed);
 
-   scope.info.fields.add(TARGET_VAR, 0);
+   scope.info.fields.add(TARGET_VAR, templateInfo.targetOffset);
    if (templateInfo.targetType != 0)
-      scope.info.fieldTypes.add(0, templateInfo.targetType);
+      scope.info.fieldTypes.add(templateInfo.targetOffset, templateInfo.targetType);
 
    importTemplate(scope, writer, templateInfo);
 
@@ -5416,16 +5423,18 @@ inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, C
 
 void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
 {
-//   if (current.type == lxTemplateField) {
+   if (current.type == lxTemplateTarget) {
+      if (info.targetOffset >= 0) {
+         writer.newNode(/*info.size != 0 ? lxFieldAddress : */lxField, info.targetOffset);
+      }
 //      writer.newNode(info.size != 0? lxFieldAddress : lxField, info.offset);
 //
 //      if (info.targetRef != 0)
 //         writer.appendNode(lxTarget, info.targetRef);
-//      
-//      if (info.type != 0)
-//         writer.appendNode(lxType, info.targetRef);
-//
-//   }
+      
+      if (info.targetType != 0)
+         writer.appendNode(lxType, info.targetType);
+   }
 //   else if (current.type == lxTemplateCalling) {
 //      ref_t message = overwriteSubject(current.argument, info.type);
 //      if (test(scope.info.header.flags, elSealed)) {
@@ -5465,7 +5474,7 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
 //      writer.closeNode();
 //      return;
 //   }
-   /*else */if (current == lxTerminal) {
+   else if (current == lxTerminal) {
       writer.newNode(lxTerminal, current.identifier());
    }
    else if (current == lxSourcePath) {
@@ -5514,15 +5523,7 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
          writer.appendNode(lxClassFlag, current.argument);
       }
       else if (current == lxClassMethod) {
-         //ref_t subject = getSignature(current.argument);
-         //if (subject) {
-         //   IdentifierString subjName(templateModule->resolveSubject(subject));
-         //   subjName.insert("&", 0);
-         //   subjName.insert(scope.moduleScope->module->resolveSubject(info.targetSubject), 0);
-         //}
-         //else subject = info.targetSubject;
-
-         ref_t messageRef = /*overwriteSubject(*/current.argument/*, subject)*/;
+         ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info));
 
          writer.newNode(lxClassMethod, messageRef);
 
@@ -6094,6 +6095,8 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
    // ignore boxing operation if allowed
    if (!boxing)
       node = lxExpression;
+
+   optimizeSyntaxExpression(scope, node, warningLevel);
 
    if (boxing && test(warningLevel, WARNING_LEVEL_3)) {
       SNode row = SyntaxTree::findChild(node, lxRow);

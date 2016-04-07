@@ -201,10 +201,13 @@ public:
       ref_t targetType;
       ref_t targetSubject;
 
+      int   targetOffset;
+
       TemplateInfo()
       {
          targetType = targetSubject = 0;
          templateRef = 0;
+         targetOffset = -1;
       }
 
       TemplateInfo(ref_t templateRef, ref_t targetType, ref_t targetSubject)
@@ -212,6 +215,15 @@ public:
          this->templateRef = templateRef;
          this->targetType = targetType;
          this->targetSubject = targetSubject;
+         this->targetOffset = -1;
+      }
+
+      TemplateInfo(ref_t templateRef, ref_t targetType, ref_t targetSubject, int targetOffset)
+      {
+         this->templateRef = templateRef;
+         this->targetType = targetType;
+         this->targetSubject = targetSubject;
+         this->targetOffset = targetOffset;
       }
    };
 
@@ -270,6 +282,15 @@ private:
       //ref_t messageReference;
       //ref_t verbReference;
       //ref_t arrayReference;
+
+      // cached subjects / hints
+      ref_t sealedHint;
+      ref_t limitedHint;
+      ref_t integerHint;
+      ref_t varHint;
+      ref_t signHint;
+      ref_t stackHint;
+      ref_t warnHint;
 
       //ref_t boolType;
 
@@ -713,7 +734,7 @@ private:
 
       virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
       {
-         if (StringHelper::compare(terminal, TARGET_VAR)) {
+         if (StringHelper::compare(terminal, TARGETSUBJ_VAR)) {
             output.copy(TARGET_POSTFIX);
 
             return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
@@ -723,7 +744,7 @@ private:
 
       virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
       {
-         if (StringHelper::compare(terminal, TARGET_VAR)) {
+         if (StringHelper::compare(terminal, TARGETSUBJ_VAR)) {
             return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
          }
          else return Scope::mapSubject(terminal, implicitOnly);

@@ -438,7 +438,9 @@ namespace _ELENA_
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
+
    #define TARGET_VAR              "$target"          // template target pseudo-variable
+   #define TARGETSUBJ_VAR          "template_subj"    // template psedo-subject
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
@@ -457,9 +459,9 @@ namespace _ELENA_
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
 //   #define HINT_STRUCT             "struct"
-   #define HINT_INTEGER_NUMBER     "$integer"      // class representing an integer number
+   #define HINT_INTEGER_NUMBER     "integerof$"      // class representing an integer number
 //   #define HINT_FLOAT_NUMBER       "floating"
-   #define HINT_VARIABLE           "$variable"
+   #define HINT_VARIABLE           "variableof$"
 //   #define HINT_BINARY             "stringof"
 //   #define HINT_XDYNAMIC           "dynamic"      // obsolete, arrayof should be used
 //   #define HINT_DYNAMIC            "arrayof"
@@ -468,10 +470,10 @@ namespace _ELENA_
 //   #define HINT_WIDESTRING         "widestring"
 //// #define HINT_SAFEPOINT          "safepoint"
 //// #define HINT_LOCK               "sync"
-   #define HINT_SEALED             "$sealed"
-   #define HINT_LIMITED            "$limited"
+   #define HINT_SEALED             "sealed$"
+   #define HINT_LIMITED            "limited$"
 //   #define HINT_MESSAGE            "message"
-   #define HINT_SIGNATURE          "$signature"
+   #define HINT_SIGNATURE          "signature$"
 //   #define HINT_EXT_MESSAGE        "extension_message"
 //   #define HINT_SYMBOL             "symbol"
 //   #define HINT_EXTENSION          "extension"
@@ -480,8 +482,8 @@ namespace _ELENA_
 //   #define HINT_GENERIC            "generic"
 //   #define HINT_EMBEDDABLE         "embeddable"
 //   #define HINT_NONSTRUCTURE       "nonstructural"
-   #define HINT_STACKSAFE          "$stacksafe"
-   #define HINT_SUPPRESS_WARNINGS  "$suppress"
+   #define HINT_STACKSAFE          "stacksafe$"
+   #define HINT_SUPPRESS_WARNINGS  "suppress$"
 //   #define HINT_TARGET             "target"
 //   #define HINT_TARGET_FIELD       "field"
 //   #define HINT_TARGET_METHOD      "method"

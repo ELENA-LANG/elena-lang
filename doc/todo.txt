@@ -2,7 +2,6 @@
 In development:
 ------                      
               xdev - generic development
-                       * assign stack allocated ones
                        * primitive operations
                        * primitive assigning operations
                        
@@ -12,7 +11,6 @@ In development:
                        * test stack safe operation
                        * test int => vint
                        * test vint => int
-                       * replace all $hint with hint using class templates
 
                        * test assigning generic object to stack allocated variable
                             #var(integer:4)n := object. // !! should be typecasting

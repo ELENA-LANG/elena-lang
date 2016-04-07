@@ -16,7 +16,7 @@
 // --- Verb ---
 
 /// A dynamic verb extender
-#class(/*sealed,*/$signature) Verb
+#class(sealed,signature) Verb
 {
 //    /// Loads a dynamic verb
 //    #constructor(stacksafe) new &verb:aVerb
