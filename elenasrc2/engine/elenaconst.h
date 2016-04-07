@@ -478,7 +478,7 @@ namespace _ELENA_
 //   #define HINT_SYMBOL             "symbol"
 //   #define HINT_EXTENSION          "extension"
 //   #define HINT_GROUP              "group"
-//   #define HINT_WRAPPER            "class"
+   #define HINT_WRAPPER            "class"         // obsolete
 //   #define HINT_GENERIC            "generic"
 //   #define HINT_EMBEDDABLE         "embeddable"
 //   #define HINT_NONSTRUCTURE       "nonstructural"

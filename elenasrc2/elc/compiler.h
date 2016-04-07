@@ -230,6 +230,7 @@ public:
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef Map<ref_t, ref_t>              ClassMap;
    typedef Map<int, ref_t>                RoleMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -301,6 +302,9 @@ private:
 
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
+
+      // list of typified classes which may need get&type message
+      ClassMap typifiedClasses;
 
       ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -909,6 +913,7 @@ private:
    void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope& scope, bool withGenericMethods = false);
+   
    void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
    void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
@@ -916,13 +921,16 @@ private:
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
    void compileSymbolCode(ClassScope& scope);
+   void compileVirtualMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
    void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
 
    void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
 
-   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo);
+   void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
+
+   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t typeRef);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);

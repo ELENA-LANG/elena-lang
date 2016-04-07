@@ -11,8 +11,8 @@
 //
 //#subject(class:system'ByteNumber)   byte.
 //#subject(class:system'ShortNumber)  short.
-#subject(system'IntNumber)    int.
-#subject(system'LongNumber)   long.
+#subject int   = system'IntNumber.
+#subject long  = system'LongNumber.
 //#subject(class:system'RealNumber)   real.
 //#subject(class:system'CharValue)    char.
 //#subject(class:system'Message)      mssg.

@@ -4,8 +4,16 @@ In development:
               xdev - generic development
                        * primitive operations
                        * primitive assigning operations
+
+                       * support old style variable / field declaration (with type keyword)
+                       * support old style subject declaration (with class keyword)
+
+                       * check subject duplicates
                        
                        * stacksafe template method : box this variable if required
+
+                       * subject and its wrapper should be declared in the same namespace, probably
+                         warn if it is not the case
 
                        * test stack unsafe operation
                        * test stack safe operation

@@ -9,6 +9,9 @@
 
 [ELENA]
 [+] new statement #extern - exclude the code from GC
+[+] new simplified syntax to declare typified variable / field
+[+] new simplified syntax to declare subject
+[+] typecasting message is auto generated
 [+] #201 : shorthand property settings
 [+] #54 : templates
 [+] #231 - new syntax : Signature / Message constants

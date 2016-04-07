@@ -306,8 +306,8 @@ STATIC ->
 	| private SYMBOL_BODY
 
 TYPE ->
-	identifier TERMINATOR
-	| private TERMINATOR
+	identifier TYPE_BODY DECLARATION_END
+	| private TYPE_BODY DECLARATION_END
 
 FIELD ->
 	identifier TERMINATOR
@@ -366,6 +366,10 @@ SYMBOL_EXPRESSION ->
 	EXPRESSION
 
 INCLUDE_BODY ->
+	= FORWARD
+	| eps
+
+TYPE_BODY ->
 	= FORWARD
 	| eps
 
@@ -613,6 +617,7 @@ NEXT_OPTION ->
 	
 FORWARD ->
 	reference
+	| identifier	
 
 HINT_VALUE ->
 	integer

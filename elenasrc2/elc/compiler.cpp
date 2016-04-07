@@ -867,6 +867,8 @@ void Compiler::ModuleScope :: loadRoles(_Module* extModule)
 void Compiler::ModuleScope :: loadSubjects(_Module* extModule)
 {
    if (extModule) {
+      bool owner = module == extModule;
+
       ReferenceNs sectionName(extModule->Name(), TYPE_SECTION);
 
       _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
@@ -878,6 +880,10 @@ void Compiler::ModuleScope :: loadSubjects(_Module* extModule)
             ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
 
             subjectHints.add(subj_ref, class_ref);
+
+            if (owner && class_ref != 0) {
+               typifiedClasses.add(class_ref, subj_ref);
+            }
          }
       }
    }
@@ -923,6 +929,9 @@ void Compiler::ModuleScope :: saveSubject(ref_t type_ref, ref_t classReference, 
 
       metaWriter.writeDWord(type_ref);
       metaWriter.writeDWord(classReference);
+
+      if (classReference != 0)
+         typifiedClasses.add(classReference, type_ref);
    }
 
    subjectHints.add(type_ref, classReference, true);
@@ -2112,7 +2121,7 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
                if (templateInfo.targetSubject == 0)
                   templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
                
-               classRef = generateTemplate(*scope.moduleScope, templateInfo);
+               classRef = generateTemplate(*scope.moduleScope, templateInfo, 0);
                if (classRef == 0)
                   scope.raiseError(errInvalidHint, terminal);
             }
@@ -5045,9 +5054,13 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
    }
 }
 
-ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo)
+ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t typeRef)
 {
    ClassScope scope(&moduleScope, moduleScope.mapNestedExpression());
+
+   // link the generated class to the specified type
+   if (typeRef != 0)
+      moduleScope.saveSubject(typeRef, scope.reference, false);
 
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
@@ -5073,7 +5086,10 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
    // HOTFIX : generate syntax once again to properly import the template code
    writer.clear();
    writer.newNode(lxRoot, scope.reference);
+
    importTemplate(scope, writer, templateInfo, false);
+   compileVirtualMethods(writer, scope);
+
    writer.closeNode();
 
    generateClassImplementation(scope);
@@ -5115,9 +5131,9 @@ void Compiler :: declareImportedTemplate(ClassScope& scope, TemplateInfo templat
    while (current != lxNone) {
       if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, scope.moduleScope->module, getSignature(current.argument), templateInfo));
-   //         
-   //         generateMethodHints(scope, current, message);
-   //
+           
+         generateMethodHints(scope, current, messageRef);
+   
          scope.include(messageRef);
       }
    
@@ -5558,6 +5574,9 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info));
 
+         if (declaringMode)
+            generateMethodHints(scope, current, messageRef);
+
          writer.newNode(lxClassMethod, messageRef);
 
          // NOTE : source path reference should be imported
@@ -5588,6 +5607,50 @@ void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, Templat
    importTemplateTree(scope, writer, root, templateInfo, extModule, declarationMode);
 }
 
+void Compiler :: compileVirtualMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument)
+{
+   int paramCount = getParamCount(scope.message);
+
+   writer.newNode(lxClassMethod, scope.message);
+
+   // new stack frame
+   // stack already contains current $self reference
+   writer.newNode(lxNewFrame);
+   writer.newNode(lxReturning);
+
+   writer.appendNode(target, argument);
+
+   writer.closeNode();
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
+   writer.appendNode(lxReserved, scope.reserved);
+
+   writer.closeNode();
+}
+
+void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // auto generate get&type message if required
+   ClassMap::Iterator c_it = moduleScope->typifiedClasses.getIt(scope.reference);
+   while (!c_it.Eof()) {
+      if (c_it.key() == scope.reference) {
+         MethodScope methodScope(&scope);
+         methodScope.message = encodeMessage(*c_it, GET_MESSAGE_ID, 0);
+
+         // skip if there is an explicit method
+         if (!scope.info.methods.exist(methodScope.message)) {
+            scope.include(methodScope.message);
+
+            compileVirtualMethod(writer, methodScope, lxThisLocal, 1);
+         }
+      }
+      c_it++;
+   }
+}
+
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -5596,15 +5659,16 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    writer.newNode(lxRoot, scope.reference);
 
    // import templates
-   TemplateMap::Iterator it = moduleScope->templates.getIt(scope.reference);
-   while (!it.Eof() && it.key() == scope.reference) {
-      importTemplate(scope, writer, *it, false);
+   TemplateMap::Iterator t_it = moduleScope->templates.getIt(scope.reference);
+   while (!t_it.Eof() && t_it.key() == scope.reference) {
+      importTemplate(scope, writer, *t_it, false);
 
-      it++;
+      t_it++;
    }
 
    DNode member = node.firstChild();
    compileVMT(member, writer, scope);
+   compileVirtualMethods(writer, scope);
 
    writer.closeNode();
 
@@ -6566,18 +6630,47 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      TerminalInfo value = hints.select(nsHintValue).Terminal();
-      if (value == nsNone) {
-         if (classRef != 0)
-            scope.raiseError(errInvalidHint, terminal);
-
-         classRef = scope.mapTerminal(terminal);
+      // obsolete, body should be used
+      if (StringHelper::compare(terminal, HINT_WRAPPER)) {
+         TerminalInfo value = hints.select(nsHintValue).Terminal();
+         ref_t classRef = scope.mapTerminal(value);
          if (classRef == 0)
             scope.raiseError(errUnknownSubject, value);
+
+         scope.validateReference(value, classRef);
       }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
+      else {
+         ref_t hintRef = scope.mapSubject(terminal, false);
+         if (hintRef != 0) {
+            TemplateInfo templateInfo;
+            templateInfo.templateRef = hintRef;
+
+            TerminalInfo target = hints.firstChild().Terminal();
+            templateInfo.targetType = scope.mapSubject(target);
+            templateInfo.targetSubject = templateInfo.targetType;
+            if (templateInfo.targetSubject == 0)
+               templateInfo.targetSubject = scope.module->mapSubject(target, false);
+
+            classRef = generateTemplate(scope, templateInfo, subjRef);
+            if (classRef == 0)
+               scope.raiseError(errInvalidHint, terminal);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      }      
 
       hints = hints.nextNode();
+   }
+
+   DNode body = goToSymbol(member.firstChild(), nsForward);
+   if (body != nsNone) {
+      TerminalInfo terminal = body.Terminal();
+
+      if (classRef != 0)
+         scope.raiseError(errInvalidSyntax, terminal);
+
+      classRef = scope.mapTerminal(terminal);
+      if (classRef == 0)
+         scope.raiseError(errUnknownSubject, terminal);
    }
 
    scope.saveSubject(subjRef, classRef, internalSubject);
