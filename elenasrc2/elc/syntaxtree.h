@@ -135,7 +135,7 @@ enum LexicalType
    //lxElseValue       = 0x20809, // arg - reference
    lxMessage         = 0x1080A, // arg - message
    //lxEmbeddable      = 0x0080B,
-   //lxSize            = 0x0080C,
+   lxSize            = 0x0080C,
    lxReserved        = 0x0080D,
    lxParamCount      = 0x0080E,
 
@@ -153,7 +153,7 @@ enum LexicalType
    lxClassFlag       = 0x04001,      // class fields
    lxClassStructure  = 0x04002,      
    //lxClassArray      = 0x04003,
-   //lxClassField      = 0x04005,
+   lxClassField      = 0x04005,
    lxClassMethod     = 0x14006,
    lxClassMethodAttr = 0x04007,
    //lxClassMethodOpt  = 0x04008,
@@ -202,6 +202,14 @@ public:
       void clear()
       {
          _writer.seek(0);
+         _bookmarks.clear();
+      }
+
+      void clear(int bookmark)
+      {
+         size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+
+         _writer.seek(position);
          _bookmarks.clear();
       }
 

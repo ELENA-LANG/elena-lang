@@ -214,9 +214,14 @@ inline bool isImportRedirect(DNode node)
 //   else return false;
 //}
 
+inline bool isEmbeddable(int flags)
+{
+   return test(flags, elStructureRole | elEmbeddable);
+}
+
 inline bool isEmbeddable(ClassInfo& localInfo)
 {
-   if (test(localInfo.header.flags, elStructureRole | elEmbeddable)) {
+   if (isEmbeddable(localInfo.header.flags)) {
       return true;
    }
 
@@ -229,6 +234,25 @@ void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
    writer->appendNode(lxRow, terminal.Row());
    writer->appendNode(lxLength, terminal.length);
    writer->appendNode(lxTerminal, terminal.value);
+}
+
+inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, Compiler::TemplateInfo& info)
+{
+   ident_t signature = sour->resolveSubject(sign_ref);
+
+   // if the target subject should be overridden
+   int index = StringHelper::find(signature, TARGET_POSTFIX);
+   if (index >= 0) {
+      IdentifierString newSignature;
+      newSignature.copy(signature, index);
+      if (info.targetSubject != 0) {
+         newSignature.append(dest->resolveSubject(info.targetSubject));
+      }
+      newSignature.append(signature + index + getlength(TARGET_POSTFIX));
+
+      return dest->mapSubject(newSignature, false);
+   }
+   else return importSubject(sour, sign_ref, dest);
 }
 
 // --- Compiler::ModuleScope ---
@@ -724,17 +748,17 @@ int Compiler::ModuleScope :: defineStructSize(ref_t classReference/*, bool& vari
    return 0;
 }
 
-//int Compiler::ModuleScope :: defineTypeSize(ref_t type_ref, ref_t& classReference, bool& variable)
-//{
-//   if (type_ref == 0)
-//      return 0;
-//
-//   classReference = typeHints.get(type_ref);
-//   if (classReference != 0) {
-//      return defineStructSize(classReference, variable);
-//   }
-//   else return 0;
-//}
+int Compiler::ModuleScope :: defineSubjectSize(ref_t type_ref/*, ref_t& classReference, bool& variable*/)
+{
+   if (type_ref == 0)
+      return 0;
+
+   ref_t classReference = subjectHints.get(type_ref);
+   if (classReference != 0) {
+      return defineStructSize(classReference/*, variable*/);
+   }
+   else return 0;
+}
 
 int Compiler::ModuleScope :: getClassFlags(ref_t reference)
 {
@@ -1051,17 +1075,17 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
       return ObjectInfo(okParam, (size_t)-1);
    }
    else {
-//   //   int reference = info.fields.get(identifier);
-//   //   if (reference != -1) {
-//   //      if (test(info.header.flags, elStructureRole)) {
-//   //         int offset = reference;
-//
-//   //         return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
-//   //      }
-//   //      // otherwise it is a normal field
-//   //      else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
-//   //   }
-      /*else */return Scope::mapObject(identifier);
+      int reference = info.fields.get(identifier);
+      if (reference != -1) {
+         if (test(info.header.flags, elStructureRole)) {
+            int offset = reference;
+
+            return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
+         }
+         // otherwise it is a normal field
+         else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
+      }
+      else return Scope::mapObject(identifier);
    }
 }
 
@@ -1081,9 +1105,9 @@ void Compiler::ClassScope :: compileClassHint(SNode hint)
          if (hint.type == lxClassStructure) {
             info.size = hint.argument;
 
-      //      SNode typeNode = SyntaxTree::findChild(hint, lxType);
-      //      if (typeNode.argument != 0)
-      //         info.fieldTypes.add(-1, typeNode.argument);
+            SNode typeNode = SyntaxTree::findChild(hint, lxType);
+            if (typeNode.argument != 0)
+               info.fieldTypes.add(-1, typeNode.argument);
          }
          break;
       }
@@ -2085,7 +2109,6 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
                TerminalInfo target = hints.firstChild().Terminal();
                templateInfo.targetType = scope.moduleScope->mapSubject(target);
                templateInfo.targetSubject = templateInfo.targetType;
-               templateInfo.targetOffset = 0;
                if (templateInfo.targetSubject == 0)
                   templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
                
@@ -2389,9 +2412,12 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          appendObjectInfo(scope, object);
          appendTerminalInfo(scope.writer, terminal);
          break;
-      //case okFieldAddress:
-      //   scope.writer->newNode(lxFieldAddress, object.param);
-      //   break;
+      case okFieldAddress:
+         scope.writer->newNode(lxBoxing);
+         scope.writer->appendNode(lxFieldAddress, object.param);
+         appendObjectInfo(scope, object);
+         appendTerminalInfo(scope.writer, terminal);
+         break;
       case okNil:
          scope.writer->newNode(lxNil, object.param);
          break;
@@ -3270,10 +3296,10 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
 
          size = scope.moduleScope->defineStructSize(classReference);
       }
-      //else if (object.kind == okFieldAddress) {
-      //   size = scope.moduleScope->defineTypeSize(object.type, classReference);
-      //}
-      else if (object.kind == okLocal/* || object.kind == okField || object.kind == okOuterField*/) {
+      else if (object.kind == okFieldAddress) {
+         size = scope.moduleScope->defineSubjectSize(object.type);
+      }
+      else if (object.kind == okLocal || object.kind == okField/* || object.kind == okOuterField*/) {
 
       }
 //      else if (object.kind == okTemplateField) {
@@ -3748,7 +3774,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       case okField:
       //case okOuterField:
       case okLocalAddress:
-      //case okFieldAddress:
+      case okFieldAddress:
          break;
       case okUnknown:
          scope.raiseError(errUnknownObject, node.Terminal());
@@ -5030,15 +5056,26 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
 
    writer.appendNode(lxClassFlag, elSealed);
 
-   scope.info.fields.add(TARGET_VAR, templateInfo.targetOffset);
-   if (templateInfo.targetType != 0)
-      scope.info.fieldTypes.add(templateInfo.targetOffset, templateInfo.targetType);
+   templateInfo.targetOffset = scope.info.fields.Count();
 
-   importTemplate(scope, writer, templateInfo);
+   writer.newNode(lxClassField);
+   writer.appendNode(lxTerminal, TARGET_VAR);
+   if (templateInfo.targetType != 0)
+      writer.appendNode(lxType, templateInfo.targetType);
+   writer.closeNode();
+
+   importTemplate(scope, writer, templateInfo, true);
 
    writer.closeNode();
 
    generateClassDeclaration(scope, false);
+
+   // HOTFIX : generate syntax once again to properly import the template code
+   writer.clear();
+   writer.newNode(lxRoot, scope.reference);
+   importTemplate(scope, writer, templateInfo, false);
+   writer.closeNode();
+
    generateClassImplementation(scope);
 
    return scope.reference;
@@ -5077,109 +5114,107 @@ void Compiler :: declareImportedTemplate(ClassScope& scope, TemplateInfo templat
    current = current.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         ref_t message = /*overwriteSubject(*/current.argument/*, subject)*/;
+         ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, scope.moduleScope->module, getSignature(current.argument), templateInfo));
    //         
    //         generateMethodHints(scope, current, message);
    //
-         scope.include(message);
+         scope.include(messageRef);
       }
    
       current = current.nextNode();
    }
 }
 
-//void Compiler :: generateClassFields(ClassScope& scope, SNode root)
-//{
-//   //bool singleField = SyntaxTree::countChild(root, lxClassField);
-//
-//   //SNode current = root.firstChild();
-//   //while (current != lxNone) {
-//   //   if (current == lxClassField) {
-//   //      int offset = 0;
-//   //      ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
-//
-//   //      // a role cannot have fields
-//   //      if (test(scope.info.header.flags, elStateless))
-//   //         scope.raiseError(errIllegalField, current);
-//
-//   //      // a class with a dynamic length structure must have no fields
-//   //      if (test(scope.info.header.flags, elDynamicRole))
-//   //         scope.raiseError(errIllegalField, current);
-//
-//   //      if (scope.info.fields.exist(terminal))
-//   //         scope.raiseError(errDuplicatedField, current);
-//
-//   //      ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
-//   //      int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
-//
-//   //      int size = (typeHint != 0) ? scope.moduleScope->defineTypeSize(typeHint) : 0;
-//   //      if (sizeHint != 0) {
-//   //         if (size < 0) {
-//   //            size = sizeHint * (-size);
-//   //         }
-//   //         else scope.raiseError(errIllegalField, current);
-//   //      }
-//
-//   //      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-//   //      if (test(scope.info.header.flags, elStructureRole) && singleField
-//   //         && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
-//   //      {
-//   //         scope.info.header.flags |= elStructureWrapper;
-//   //         scope.info.size = size;
-//
-//   //         if (size < 0) {
-//   //            scope.info.header.flags |= elDynamicRole;
-//   //         }
-//
-//   //         scope.info.fields.add(terminal, 0);
-//   //         scope.info.fieldTypes.add(0, typeHint);
-//   //      }
-//   //      // if it is a structure field
-//   //      else if (test(scope.info.header.flags, elStructureRole)) {
-//   //         if (size <= 0)
-//   //            scope.raiseError(errIllegalField, current);
-//
-//   //         if (scope.info.size != 0 && scope.info.fields.Count() == 0)
-//   //            scope.raiseError(errIllegalField, current);
-//
-//   //         offset = scope.info.size;
-//   //         scope.info.size += size;
-//
-//   //         scope.info.fields.add(terminal, offset);
-//   //         scope.info.fieldTypes.add(offset, typeHint);
-//   //      }
-//   //      // if it is a normal field
-//   //      else {
-//   //         scope.info.header.flags |= elNonStructureRole;
-//
-//   //         offset = scope.info.fields.Count();
-//   //         scope.info.fields.add(terminal, offset);
-//
-//   //         if (typeHint != 0)
-//   //            scope.info.fieldTypes.add(offset, typeHint);
-//
-//   //         // byref variable may have only one field
-//   //         if (test(scope.info.header.flags, elWrapper)) {
-//   //            if (scope.info.fields.Count() > 1)
-//   //               scope.raiseError(errIllegalField, current);
-//   //         }
-//
-//   //         
-//   //      }
-//
-//   //      // check for field templates
-//   //      SNode templ = SyntaxTree::findChild(current, lxFieldTemplate);
-//   //      if (templ != lxNone) {
-//   //         if (!test(scope.info.header.flags, elStructureRole))
-//   //            size = 0; // for normal field size should be ignored in the template
-//
-//   //         declareImportedTemplate(scope, templ, offset, typeHint, size);
-//   //      }
-//   //   }
-//
-//   //   current = current.nextNode();
-//   //}
-//}
+void Compiler :: generateClassFields(ClassScope& scope, SNode root)
+{
+   bool singleField = SyntaxTree::countChild(root, lxClassField) == 1;
+
+   SNode current = root.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         int offset = 0;
+         ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
+
+         // a role cannot have fields
+         if (test(scope.info.header.flags, elStateless))
+            scope.raiseError(errIllegalField, current);
+
+         // a class with a dynamic length structure must have no fields
+         if (test(scope.info.header.flags, elDynamicRole))
+            scope.raiseError(errIllegalField, current);
+
+         if (scope.info.fields.exist(terminal))
+            scope.raiseError(errDuplicatedField, current);
+
+         ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
+         int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
+
+         int size = (typeHint != 0) ? scope.moduleScope->defineSubjectSize(typeHint) : 0;
+         if (sizeHint != 0) {
+            if (size < 0) {
+               size = sizeHint * (-size);
+            }
+            else scope.raiseError(errIllegalField, current);
+         }
+
+         // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+         if (!test(scope.info.header.flags, elNonStructureRole) && singleField
+            && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
+         {
+            scope.info.header.flags |= elStructureRole;
+            scope.info.size = size;
+
+            if (size < 0) {
+               scope.info.header.flags |= elDynamicRole;
+            }
+
+            scope.info.fields.add(terminal, 0);
+            scope.info.fieldTypes.add(0, typeHint);
+         }
+         // if it is a structure field
+         else if (test(scope.info.header.flags, elStructureRole)) {
+            if (size <= 0)
+               scope.raiseError(errIllegalField, current);
+
+            if (scope.info.size != 0 && scope.info.fields.Count() == 0)
+               scope.raiseError(errIllegalField, current);
+
+            offset = scope.info.size;
+            scope.info.size += size;
+
+            scope.info.fields.add(terminal, offset);
+            scope.info.fieldTypes.add(offset, typeHint);
+         }
+         // if it is a normal field
+         else {
+            scope.info.header.flags |= elNonStructureRole;
+
+            offset = scope.info.fields.Count();
+            scope.info.fields.add(terminal, offset);
+
+            if (typeHint != 0)
+               scope.info.fieldTypes.add(offset, typeHint);
+
+            // byref variable may have only one field
+            if (test(scope.info.header.flags, elWrapper)) {
+               if (scope.info.fields.Count() > 1)
+                  scope.raiseError(errIllegalField, current);
+            }            
+         }
+
+         //// check for field templates
+         //SNode templ = SyntaxTree::findChild(current, lxFieldTemplate);
+         //if (templ != lxNone) {
+         //   if (!test(scope.info.header.flags, elStructureRole))
+         //      size = 0; // for normal field size should be ignored in the template
+
+         //   declareImportedTemplate(scope, templ, offset, typeHint, size);
+         //}
+      }
+
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t message)
 {
@@ -5254,18 +5289,28 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    // generate flags
    generateClassFlags(scope, root);
 
-   //// generate fields
-   //generateClassFields(scope, root);
+   // generate fields
+   generateClassFields(scope, root);
 
-   //// mark the class as a wrapper if it is appropriate
-   //if (test(scope.info.header.flags, elStructureRole | elSealed | elEmbeddable) && (scope.info.fieldTypes.Count() == 1) && scope.info.size > 0) {
-   //   int type = scope.info.header.flags & elDebugMask;
-   //   int fieldType = scope.moduleScope->getClassFlags(scope.moduleScope->typeHints.get(*scope.info.fieldTypes.start())) & elDebugMask;
-   //   if (type == 0 && fieldType != 0) {
-   //      scope.info.header.flags |= elStructureWrapper;
-   //      scope.info.header.flags |= fieldType;
-   //   }
-   //}
+   // verify fif the class may be a wrapper
+   if (test(scope.info.header.flags, elWrapper)) {
+      if (scope.info.fields.Count() != 1 || !test(scope.info.header.flags, elSealed)) {
+         // wrapper should have only single field and be sealed
+         scope.info.header.flags &= ~elWrapper;
+      }
+      else {
+         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(*scope.info.fieldTypes.start());
+
+         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
+         if (isEmbeddable(fieldFlags) && test(scope.info.header.flags, elStructureRole)) {
+            // wrapper around embeddable object is imbeddable itself
+            scope.info.header.flags |= elEmbeddable;
+
+            if ((scope.info.header.flags & elDebugMask) == 0)
+               scope.info.header.flags |= fieldFlags & elDebugMask;
+         }
+      }
+   }
 
    // generate methods
    generateMethodDeclarations(scope, root, closed);
@@ -5402,30 +5447,18 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
-inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, Compiler::TemplateInfo& info)
-{
-   ident_t signature = sour->resolveSubject(sign_ref);
-
-   // if the target subject should be overridden
-   int index = StringHelper::find(signature, TARGET_POSTFIX);
-   if (index >= 0) {
-      IdentifierString newSignature;
-      newSignature.copy(signature, index);
-      if (info.targetSubject != 0) {
-         newSignature.append(dest->resolveSubject(info.targetSubject));
-      }
-      newSignature.append(signature + index + getlength(TARGET_POSTFIX));
-
-      return dest->mapSubject(newSignature, false);
-   }
-   else return importSubject(sour, sign_ref, dest);
-}
-
 void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
 {
    if (current.type == lxTemplateTarget) {
       if (info.targetOffset >= 0) {
-         writer.newNode(/*info.size != 0 ? lxFieldAddress : */lxField, info.targetOffset);
+         // if it is a structure field
+         if (test(scope.info.header.flags, elStructureRole)) {
+            writer.newNode(lxBoxing);
+            writer.appendNode(lxFieldAddress, info.targetOffset);
+
+            writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
+         }
+         else writer.newNode(lxField, info.targetOffset);
       }
 //      writer.newNode(info.size != 0? lxFieldAddress : lxField, info.offset);
 //
@@ -5515,11 +5548,11 @@ void Compiler :: importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWrit
    }
 }
 
-void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule)
+void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule, bool declaringMode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxClassFlag) {
+      if (current == lxClassFlag && declaringMode) {
          writer.appendNode(lxClassFlag, current.argument);
       }
       else if (current == lxClassMethod) {
@@ -5536,7 +5569,8 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       //      scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
       //   }
 
-         importTree(scope, current, writer, templateModule, info);
+         if (!declaringMode)
+            importTree(scope, current, writer, templateModule, info);
 
          writer.closeNode();
       }
@@ -5545,18 +5579,13 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
    }
 }
 
-void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo)
+void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode)
 {
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule));
 
    SNode root = tree.readRoot();
-   //if (root == lxFieldTemplate) {
-      importTemplateTree(scope, writer, root, templateInfo, extModule);
-   //}
-   //else if (root == lxMethodTemplate) {
-   //   importTemplateTree(scope, writer, root, templateInfo, extModule);
-   //}
+   importTemplateTree(scope, writer, root, templateInfo, extModule, declarationMode);
 }
 
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
@@ -5569,7 +5598,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    // import templates
    TemplateMap::Iterator it = moduleScope->templates.getIt(scope.reference);
    while (!it.Eof() && it.key() == scope.reference) {
-      importTemplate(scope, writer, *it);
+      importTemplate(scope, writer, *it, false);
 
       it++;
    }

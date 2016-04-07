@@ -123,7 +123,7 @@ public:
       okSignatureConstant,            // param - reference 
       okVerbConstant,                 // param - reference 
       okField,                        // param - field offset
-   //   okFieldAddress,                 // param - field offset
+      okFieldAddress,                 // param - field offset
    //   okOuter,                        // param - field offset
    //   okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
@@ -357,14 +357,14 @@ private:
       //   return defineStructSize(classReference, dummy);
       //}
 
-//      //int defineTypeSize(ref_t type_ref, ref_t& class_ref, bool& variable);
-//      //int defineTypeSize(ref_t type_ref)
-//      //{
-//      //   ref_t dummy1;
-//      //   bool dummy2;
-//
-//      //   return defineTypeSize(type_ref, dummy1, dummy2);
-//      //}
+      int defineSubjectSize(ref_t type_ref/*, ref_t& class_ref, bool& variable*/);
+      //int defineTypeSize(ref_t type_ref)
+      //{
+      //   ref_t dummy1;
+      //   bool dummy2;
+
+      //   return defineTypeSize(type_ref, dummy1, dummy2);
+      //}
 //      //int defineTypeSize(ref_t type_ref, ref_t& class_ref)
 //      //{
 //      //   bool dummy2;
@@ -827,8 +827,8 @@ private:
 
 //   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
    void declareImportedTemplate(ClassScope& scope, TemplateInfo templateInfo);
-   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
-   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode);
+   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule, bool declaringMode);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
    void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
@@ -925,7 +925,7 @@ private:
    ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
-//   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
+   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
    void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
    void generateClassDeclaration(ClassScope& scope, bool closed);
