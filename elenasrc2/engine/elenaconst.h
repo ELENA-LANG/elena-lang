@@ -291,7 +291,7 @@ namespace _ELENA_
    const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
    const int elWrapper             = 0x00000040;
-  // const int elStructureWrapper    = 0x00000048;
+   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
   // const int elGroup               = 0x00000200;
@@ -461,10 +461,10 @@ namespace _ELENA_
 //   #define HINT_STRUCT             "struct"
    #define HINT_INTEGER_NUMBER     "integerof$"      // class representing an integer number
 //   #define HINT_FLOAT_NUMBER       "floating"
-   #define HINT_VARIABLE           "variableof$"
+   #define HINT_VARIABLE           "variable$"
 //   #define HINT_BINARY             "stringof"
-//   #define HINT_XDYNAMIC           "dynamic"      // obsolete, arrayof should be used
-//   #define HINT_DYNAMIC            "arrayof"
+//   #define HINT_DYNAMIC           "dynamic"      
+//   #define HINT_ARRAYOF           "arrayof"
 //   #define HINT_POINTER            "pointer"
 //   #define HINT_STRING             "string"
 //   #define HINT_WIDESTRING         "widestring"

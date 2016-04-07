@@ -20,7 +20,7 @@ using namespace _ELENA_;
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
-//#define HINT_EXTERNALOP       0x10000000
+#define HINT_EXTERNALOP       0x10000000
 #define HINT_EXTENSION_MODE   0x04000000
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
@@ -6210,102 +6210,105 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
    if (scope.subjectHints.get(targetType) != 0) {
       SNode object = SyntaxTree::findChild(node, lxExpression);
       if (!checkIfCompatible(scope, targetType, object)) {
+         ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
+         ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
+
+         // HOTFIX : try to find the node target / type in sub nondes
+         if (node == lxExpression && sourceType == 0 && sourceClassRef == 0) {
+            SNode subNode = SyntaxTree::findMatchedChild(object, lxObjectMask);
+
+            sourceType = SyntaxTree::findChild(subNode, lxType).argument;
+            sourceClassRef = SyntaxTree::findChild(subNode, lxTarget).argument;
+         }
+         if (sourceClassRef == 0 && sourceType != 0) {
+            sourceClassRef = scope.subjectHints.get(sourceType);
+         }
+         
+         // NOTE : compiler magic!
+         // if the target is wrapper (container) around the source
+         ref_t targetClassRef = scope.subjectHints.get(targetType);
+         if (targetClassRef != 0) {
+            ClassInfo targetInfo;
+            scope.loadClassInfo(targetInfo, targetClassRef, false);
+         
+            if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
+               // if target is source wrapper (i.e. target is a source container)
+               if (sourceClassRef != 0 && scope.subjectHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
+                  // if boxing is not required (stack safe) and can be passed directly
+                  if (test(mode, HINT_NOBOXING)) {
+                     node = lxExpression;
+                  }
+                  else {
+                     // if unboxing is not required
+                     if (test(targetInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
+                        node = lxBoxing;
+                     }
+                     else node = lxUnboxing;
+               
+                     node.setArgument(targetInfo.size);
+               
+                     node.appendNode(lxTarget, targetClassRef);
+                  }
+               
+                  typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+                  typecasted = false;
+               }
+            }
+            else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
+               ClassInfo sourceInfo;
+               scope.loadClassInfo(sourceInfo, sourceClassRef, false);
+               // if source is target wrapper (i.e. source is a target container)
+               if (test(sourceInfo.header.flags, elStructureWrapper | elEmbeddable) && scope.subjectHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
+                  // if boxing is not required (stack safe) and can be passed directly
+                  if (test(mode, HINT_NOBOXING)) {
+                     node = lxExpression;
+                  }
+                  else {
+                     // if unboxing is not required
+                     if (test(sourceInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
+                        node = lxBoxing;
+                     }
+                     else node = lxUnboxing;
+               
+                     node.setArgument(sourceInfo.size);
+               
+                     node.appendNode(lxTarget, sourceClassRef);
+                  }
+               
+                  typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+                  typecasted = false;
+               }
+            }
+            else if (test(targetInfo.header.flags, elWrapper)) {
+               // if the target is generic wrapper (container)
+               if (!test(mode, HINT_EXTERNALOP)) {
+                  node.setArgument(0);
+                  node = lxUnboxing;
+                  node.appendNode(lxTarget, targetClassRef);
+               }
+               else {
+                  // HOTFIX : allow to pass the reference to the object directly 
+                  // for an external operation
+                  node = lxExpression;
+                  typecastMode = mode;
+               }
+         
+               typecasted = false;
+            }
+         }
       }
       else typecasted = false;
    }
    else typecasted = false;
-//
-//   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//
-//   if (!checkIfCompatible(scope, targetType, object)) {
-//      ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
-//      ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
-//      if (sourceClassRef == 0 && sourceType != 0) {
-//         sourceClassRef = scope.subjectHints.get(sourceType);
-//      }
-//
-//      // NOTE : compiler magic!
-//      // if the target is wrapper (container) around the source
-//      ref_t targetClassRef = scope.subjectHints.get(targetType);
-//      if (targetClassRef != 0) {
-//         ClassInfo targetInfo;
-//         scope.loadClassInfo(targetInfo, targetClassRef, false);
-//      
-//         //if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
-//         //   // if target is source wrapper (i.e. target is a source container)
-//         //   if (sourceClassRef != 0 && scope.typeHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
-//         //      // if boxing is not required (stack safe) and can be passed directly
-//         //      if (test(mode, HINT_NOBOXING)) {
-//         //         node = lxExpression;
-//         //      }
-//         //      else {
-//         //         // if unboxing is not required
-//         //         if (test(targetInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
-//         //            node = lxBoxing;
-//         //         }
-//         //         else node = lxUnboxing;
-//      
-//         //         node.setArgument(targetInfo.size);
-//      
-//         //         node.appendNode(lxTarget, targetClassRef);
-//         //      }
-//      
-//         //      typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-//         //      typecasted = false;
-//         //   }
-//         //}
-//         //else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
-//         //   ClassInfo sourceInfo;
-//         //   scope.loadClassInfo(sourceInfo, sourceClassRef, false);
-//         //   // if source is target wrapper (i.e. source is a target container)
-//         //   if (test(sourceInfo.header.flags, elStructureWrapper | elEmbeddable) && scope.typeHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
-//         //      // if boxing is not required (stack safe) and can be passed directly
-//         //      if (test(mode, HINT_NOBOXING)) {
-//         //         node = lxExpression;
-//         //      }
-//         //      else {
-//         //         // if unboxing is not required
-//         //         if (test(sourceInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
-//         //            node = lxBoxing;
-//         //         }
-//         //         else node = lxUnboxing;
-//      
-//         //         node.setArgument(sourceInfo.size);
-//      
-//         //         node.appendNode(lxTarget, sourceClassRef);
-//         //      }
-//      
-//         //      typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-//         //      typecasted = false;
-//         //   }
-//         //}
-//         //else if (test(targetInfo.header.flags, elWrapper)) {
-//         //   // if the target is generic wrapper (container)
-//         //   if (!test(mode, HINT_EXTERNALOP)) {
-//         //      node.setArgument(0);
-//         //      node = lxUnboxing;
-//         //      node.appendNode(lxTarget, targetClassRef);
-//         //   }
-//         //   else {
-//         //      // HOTFIX : allow to pass the reference to the object directly 
-//         //      // for an external operation
-//         //      node = lxExpression;
-//         //      typecastMode = mode;
-//         //   }
-//
-//         //   typecasted = false;
-//         //}
-//      }
-//   }
-////   if (node == lxBoxing || node == lxUnboxing) {
-////      analizeBoxing(scope, node, warningMask);
-////   }
-
 
    if (!typecasted) {
       typecastMode = mode;
 
       node = lxExpression;
+   }
+
+   if (node == lxBoxing || node == lxUnboxing) {
+      optimizeBoxing(scope, node, warningMask, 0);
    }
 
    optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
