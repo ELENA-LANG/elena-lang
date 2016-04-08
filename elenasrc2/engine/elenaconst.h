@@ -307,16 +307,16 @@ namespace _ELENA_
    const int elDebugMask           = 0x000F0000;
 
    const int elDebugDWORD          = 0x00010000;
-  // const int elDebugReal64         = 0x00020000;
-  // const int elDebugLiteral        = 0x00030000;
-  // const int elDebugIntegers       = 0x00040000;
-  // const int elDebugArray          = 0x00050000;
+   const int elDebugReal64         = 0x00020000;
+   const int elDebugLiteral        = 0x00030000;
+   const int elDebugIntegers       = 0x00040000;
+   const int elDebugArray          = 0x00050000;
    const int elDebugQWORD          = 0x00060000;
-  // const int elDebugBytes          = 0x00070000;
-  // const int elDebugShorts         = 0x00080000;
-  // const int elDebugPTR            = 0x00090000;
-  // const int elDebugWideLiteral    = 0x000A0000;
-  // const int elDebugReference      = 0x000B0000;   // symbol reference
+   const int elDebugBytes          = 0x00070000;
+   const int elDebugShorts         = 0x00080000;
+   const int elDebugPTR            = 0x00090000;
+   const int elDebugWideLiteral    = 0x000A0000;
+   const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
 
   //// --- ELENA class roles ---
@@ -459,31 +459,31 @@ namespace _ELENA_
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
 //   #define HINT_STRUCT             "struct"
-   #define HINT_INTEGER_NUMBER     "integerof$"      // class representing an integer number
+   #define HINT_INTEGER_NUMBER      "integerof$"      // class representing an integer number
 //   #define HINT_FLOAT_NUMBER       "floating"
-   #define HINT_VARIABLE           "variable$"
+   #define HINT_VARIABLE            "variable$"
 //   #define HINT_BINARY             "stringof"
-//   #define HINT_DYNAMIC           "dynamic"      
+   #define HINT_DYNAMIC             "dynamic$"
 //   #define HINT_ARRAYOF           "arrayof"
 //   #define HINT_POINTER            "pointer"
 //   #define HINT_STRING             "string"
 //   #define HINT_WIDESTRING         "widestring"
 //// #define HINT_SAFEPOINT          "safepoint"
 //// #define HINT_LOCK               "sync"
-   #define HINT_SEALED             "sealed$"
-   #define HINT_LIMITED            "limited$"
+   #define HINT_SEALED              "sealed$"
+   #define HINT_LIMITED             "limited$"
 //   #define HINT_MESSAGE            "message"
-   #define HINT_SIGNATURE          "signature$"
+   #define HINT_SIGNATURE           "signature$"
 //   #define HINT_EXT_MESSAGE        "extension_message"
 //   #define HINT_SYMBOL             "symbol"
 //   #define HINT_EXTENSION          "extension"
 //   #define HINT_GROUP              "group"
-   #define HINT_WRAPPER            "class"         // obsolete
+   #define HINT_WRAPPER             "class"         // obsolete
 //   #define HINT_GENERIC            "generic"
 //   #define HINT_EMBEDDABLE         "embeddable"
 //   #define HINT_NONSTRUCTURE       "nonstructural"
-   #define HINT_STACKSAFE          "stacksafe$"
-   #define HINT_SUPPRESS_WARNINGS  "suppress$"
+   #define HINT_STACKSAFE           "stacksafe$"
+   #define HINT_SUPPRESS_WARNINGS   "suppress$"
 //   #define HINT_TARGET             "target"
 //   #define HINT_TARGET_FIELD       "field"
 //   #define HINT_TARGET_METHOD      "method"

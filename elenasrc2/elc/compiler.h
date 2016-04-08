@@ -292,6 +292,7 @@ private:
       ref_t signHint;
       ref_t stackHint;
       ref_t warnHint;
+      ref_t dynamicHint;
 
       //ref_t boolType;
 
@@ -446,7 +447,7 @@ private:
          SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
          SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
 
-         moduleScope->raiseError(message, row.argument, col.argument, (ident_t)terminal.argument);
+         moduleScope->raiseError(message, row.argument, col.argument, terminal.identifier());
       }
       void raiseWarning(int level, const char* message, SyntaxTree::Node node)
       {
@@ -454,7 +455,7 @@ private:
          SyntaxTree::Node col = SyntaxTree::findChild(node, lxCol);
          SyntaxTree::Node terminal = SyntaxTree::findChild(node, lxTerminal);
 
-         moduleScope->raiseWarning(level, message, row.argument, col.argument, (ident_t)terminal.argument);
+         moduleScope->raiseWarning(level, message, row.argument, col.argument, terminal.identifier());
       }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier)
@@ -824,7 +825,7 @@ private:
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope/*, bool& isExtension, ref_t& extensionType*/);
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
-   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef/*, int& size*/);
+   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
 //   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
@@ -858,7 +859,7 @@ private:
    ObjectInfo compileTerminal(DNode node, CodeScope& scope);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
-//   int mapOperandType(CodeScope& scope, ObjectInfo operand);
+   int mapOperandType(CodeScope& scope, ObjectInfo operand);
 //   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
@@ -888,8 +889,8 @@ private:
 //   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-   //int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
-   bool allocateStructure(CodeScope& scope, int size, int flags, ObjectInfo& exprOperand);
+   int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
+   bool allocateStructure(CodeScope& scope, int size, int flags, bool bytearray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
@@ -965,12 +966,13 @@ private:
 //   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-////   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
+   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
 ////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 ////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 ////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-////   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeArrOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    //void optimizeBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 

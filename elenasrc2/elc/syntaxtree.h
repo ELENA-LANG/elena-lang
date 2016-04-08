@@ -75,8 +75,8 @@ enum LexicalType
    //lxIntOp           = 0x0132A, // arg - operation id
    //lxLongOp          = 0x0132B, // arg - operation id
    //lxRealOp          = 0x0132C, // arg - operation id
-   //lxIntArrOp        = 0x0132D, // arg - operation id
-   //lxArrOp           = 0x0132E, // arg - operation id
+   lxIntArrOp        = 0x0132D, // arg - operation id
+   lxArrOp           = 0x0132E, // arg - operation id
 
    //lxTemplAssigning  = 0x0032F, // arg - size
 
@@ -160,8 +160,7 @@ enum LexicalType
    lxWarningMask     = 0x04009,
 
    lxTemplate        = 0x2400A,
-   //lxFieldTemplate   = 0x2400A,
-   //lxMethodTemplate  = 0x2400B,
+   lxTemplateField   = 0x2400B
 };
 
 // --- SyntaxTree ---
@@ -437,6 +436,21 @@ public:
 
       while (current != lxNone) {
          if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
+   static int countChild(Node node, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
             counter++;
 
          current = current.nextNode();

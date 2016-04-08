@@ -2,6 +2,9 @@
 In development:
 ------                      
               xdev - generic development
+                       * creating an array
+                       * returning an array length
+
                        * primitive operations
                        * primitive assigning operations
 

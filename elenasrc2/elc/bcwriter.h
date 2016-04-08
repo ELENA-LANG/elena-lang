@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -165,7 +165,7 @@ class ByteCodeWriter
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
@@ -237,8 +237,8 @@ class ByteCodeWriter
 //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
-//   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
@@ -256,8 +256,8 @@ class ByteCodeWriter
 
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
