@@ -354,28 +354,8 @@ private:
 
 //      bool recognizePrimitive(ident_t name, ident_t value, size_t& roleMask, int& size);
 
-      int defineStructSize(ref_t classReference/*, bool& variable*/);
-      //int defineStructSize(ref_t classReference)
-      //{
-      //   bool dummy = false;
-
-      //   return defineStructSize(classReference, dummy);
-      //}
-
-      int defineSubjectSize(ref_t type_ref/*, ref_t& class_ref, bool& variable*/);
-      //int defineTypeSize(ref_t type_ref)
-      //{
-      //   ref_t dummy1;
-      //   bool dummy2;
-
-      //   return defineTypeSize(type_ref, dummy1, dummy2);
-      //}
-//      //int defineTypeSize(ref_t type_ref, ref_t& class_ref)
-//      //{
-//      //   bool dummy2;
-//
-//      //   return defineTypeSize(type_ref, class_ref, dummy2);
-//      //}
+      int defineStructSize(ref_t classReference, bool embeddableOnly = true);
+      int defineSubjectSize(ref_t type_ref, bool embeddableOnly = true);
 
       int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
       int checkMethod(ref_t reference, ref_t message)

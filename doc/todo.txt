@@ -2,6 +2,8 @@
 In development:
 ------                      
               xdev - generic development
+                       * system test
+
                        * creating an array
                        * returning an array length
 
@@ -12,6 +14,8 @@ In development:
                        * support old style subject declaration (with class keyword)
 
                        * check subject duplicates
+
+                       * system test : new test with template arrays
                        
                        * stacksafe template method : box this variable if required
 

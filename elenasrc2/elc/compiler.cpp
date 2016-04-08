@@ -272,6 +272,16 @@ inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, C
    else return importSubject(sour, sign_ref, dest);
 }
 
+inline SNode getFirstObject(SNode node)
+{
+   SNode child = SyntaxTree::findMatchedChild(node, lxObjectMask);
+   if (child == lxExpression) {
+      child = SyntaxTree::findMatchedChild(child, lxObjectMask);
+   }
+
+   return child;
+}
+
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
@@ -750,14 +760,17 @@ _Memory* Compiler::ModuleScope :: loadTemplateInfo(ident_t symbol, _Module* &arg
 //   return false;
 //}
 
-int Compiler::ModuleScope :: defineStructSize(ref_t classReference/*, bool& variable*/)
+int Compiler::ModuleScope :: defineStructSize(ref_t classReference, bool embeddableOnly)
 {
    ClassInfo classInfo;
    if(loadClassInfo(classInfo, module->resolveReference(classReference), true) == 0)
       return 0;
 
    //if (test(classInfo.header.flags, elStructureRole) && test(classInfo.header.flags, elEmbeddable)) {
-   if (isEmbeddable(classInfo)) {
+   if (!embeddableOnly && test(classInfo.header.flags, elStructureRole)) {
+      return classInfo.size;
+   }
+   else if (isEmbeddable(classInfo)) {
       //   variable = !test(classInfo.header.flags, elReadOnlyRole);
 
       return classInfo.size;
@@ -766,14 +779,14 @@ int Compiler::ModuleScope :: defineStructSize(ref_t classReference/*, bool& vari
    return 0;
 }
 
-int Compiler::ModuleScope :: defineSubjectSize(ref_t type_ref/*, ref_t& classReference, bool& variable*/)
+int Compiler::ModuleScope :: defineSubjectSize(ref_t type_ref, bool embeddableOnly /*, ref_t& classReference, bool& variable*/)
 {
    if (type_ref == 0)
       return 0;
 
    ref_t classReference = subjectHints.get(type_ref);
    if (classReference != 0) {
-      return defineStructSize(classReference/*, variable*/);
+      return defineStructSize(classReference, embeddableOnly/*, variable*/);
    }
    else return 0;
 }
@@ -1456,6 +1469,9 @@ bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree
 
    if (nodeType == typeRef) {
       return true;
+   }
+   else if (nodeRef == -1) {
+      return false;
    }
    // NOTE : $nil is compatible to any type
    else if (SyntaxTree::findMatchedChild(node, lxObjectMask) == lxNil) {
@@ -3044,7 +3060,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
             if (object.kind == okLocalAddress && object.extraparam == -1) {
                itemType = object.type;
 
-               size = moduleScope->defineStructSize(moduleScope->subjectHints.get(itemType));
+               size = moduleScope->defineSubjectSize(itemType);
             }
             else {
                ClassInfo info;
@@ -3804,28 +3820,7 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
 }
 
 ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
-{
-   // if target type is not defined, try to find it out
-   bool withBoxing = false;
-   if (target.extraparam > 0 && target.type == 0) {
-      ClassInfo info;
-      scope.moduleScope->loadClassInfo(info, target.extraparam, false);
-
-      // only wrapper class can be used in this case
-      if (test(info.header.flags, elWrapper)) {
-         target.type = info.fieldTypes.get(0);
-      }
-      else if (test(info.header.flags, elDynamicRole)) {
-      }
-      else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
-
-      scope.writer->newNode(lxBoxing, info.size);
-      scope.writer->appendNode(lxTarget, target.extraparam);
-      appendTerminalInfo(scope.writer, node.FirstTerminal());
-
-      withBoxing = true;
-   }
-      
+{      
    ref_t targetType = target.type;
    switch (target.kind)
    {
@@ -3842,12 +3837,41 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
          break;
    }
 
-   ObjectInfo info = compileExpression(assigning.firstChild(), scope, targetType, 0);
+   scope.writer->newBookmark();
 
-   if (withBoxing)
-      scope.writer->closeNode();
+   ObjectInfo objectInfo = compileExpression(assigning.firstChild(), scope, targetType, 0);
 
-   return info;
+   // if target type is not defined, try to find it out
+   if (target.extraparam > 0 && target.type == 0) {
+      ClassInfo info;
+      scope.moduleScope->loadClassInfo(info, target.extraparam, false);
+
+      // only wrapper class can be used in this case
+      if (test(info.header.flags, elWrapper)) {
+         target.type = info.fieldTypes.get(0);
+
+         scope.writer->insert(lxTypecasting, target.type);
+         scope.writer->insert(lxBoxing, info.size);
+         scope.writer->appendNode(lxTarget, target.extraparam);
+         appendTerminalInfo(scope.writer, node.FirstTerminal());
+         scope.writer->closeNode();
+         scope.writer->closeNode();
+      }
+      // HOTFIX : to allow boxing primitive array
+      else if (test(info.header.flags, elDynamicRole | elStructureRole) && objectInfo.kind == okLocalAddress && objectInfo.extraparam == -1 &&
+         (objectInfo.type == info.fieldTypes.get(-1)))
+      {
+         scope.writer->insert(lxBoxing, info.size);
+         scope.writer->appendNode(lxTarget, target.extraparam);
+         appendTerminalInfo(scope.writer, node.FirstTerminal());
+         scope.writer->closeNode();
+      }
+      else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
+   }
+
+   scope.writer->removeBookmark();
+
+   return objectInfo;
 }
 
 //ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
@@ -5553,16 +5577,7 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
       if (info.targetOffset >= 0) {
          // if it is an array
          if (test(scope.info.header.flags, elDynamicRole)) {
-            SNode parent = current.parentNode();
-            if (parent == lxCalling && IsReferOperator(getVerb(parent.argument))) {
-               if (getSignature(parent.argument) == 0) {
-                  parent = lxArrOp;
-                  parent.setArgument(getVerb(parent.argument));
-
-                  writer.appendNode(lxSize, -scope.info.size);
-               }               
-               writer.newNode(lxThisLocal, 1);
-            }
+            writer.newNode(lxThisLocal, 1);
          }
          // if it is a structure field
          else if (test(scope.info.header.flags, elStructureRole)) {
@@ -5635,8 +5650,32 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
       writer.appendNode(lxTarget, scope.reference);
    }
    else if (test(current.type, lxMessageMask)) {
-      writer.newNode(current.type, overwriteSubject(current.argument, 
-         importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info)));
+      ref_t signature = importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info);
+
+      // HOTFIX : replace generic call with an array operation
+      if (IsReferOperator(getVerb(current.argument)) && signature == 0 && test(scope.info.header.flags, elDynamicRole) 
+         && getFirstObject(current) == lxTemplateTarget)
+      {
+         if (test(scope.info.header.flags, elStructureRole)) {
+            writer.newNode(lxBoxing);
+            writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
+            writer.newNode(lxArrOp, current.argument);
+            writer.appendNode(lxSize, -scope.info.size);
+
+            importTree(scope, current, writer, templateModule, info);
+
+            writer.closeNode();
+            writer.closeNode();
+
+            return;
+         }
+         else {
+            writer.newNode(lxArrOp, current.argument);
+
+            writer.appendNode(lxSize, -scope.info.size);
+         }
+      }
+      else writer.newNode(current.type, overwriteSubject(current.argument, signature));
    }
    else if (test(current.type, lxReferenceMask)) {
       writer.newNode(current.type, importReference(templateModule, current.argument, scope.moduleScope->module));
@@ -6298,13 +6337,20 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
 
 void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {
-   SNode target = SyntaxTree::findChild(node, lxTarget);
-
-   node.setArgument(scope.defineStructSize(target.argument));
-
    bool boxing = true;
 
-   if (!test(mode, HINT_NOBOXING)/* || (node == lxFieldAddress && node.argument > 0)*/) {
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   // HOT FIX : do not box primitive array
+   if (target.argument == -1) {
+      boxing = false;
+   }
+   else if (node.argument == 0)
+      node.setArgument(scope.defineStructSize(target.argument, false));
+
+   if (!boxing) {
+   }
+   else if (!test(mode, HINT_NOBOXING)/* || (node == lxFieldAddress && node.argument > 0)*/) {
    }
    else boxing = false;
 
@@ -6354,7 +6400,29 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
             ClassInfo targetInfo;
             scope.loadClassInfo(targetInfo, targetClassRef, false);
          
-            if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
+            // HOT FIX : trying to typecast primitive array
+            if (sourceClassRef == -1) {
+               if (test(targetInfo.header.flags, elStructureRole | elDynamicRole) && targetInfo.fieldTypes.get(-1) == sourceType) {
+                  // if boxing is not required (stack safe) and can be passed directly
+                  if (test(mode, HINT_NOBOXING)) {
+                     node = lxExpression;
+                  }
+                  else {
+                     // if unboxing is not required
+                     if (test(mode, HINT_NOUNBOXING)) {
+                        node = lxBoxing;
+                     }
+                     else node = lxUnboxing;
+
+                     node.setArgument(targetInfo.size);
+
+                     node.appendNode(lxTarget, targetClassRef);
+                  }
+
+                  typecasted = false;
+               }
+            }
+            else if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
                // if target is source wrapper (i.e. target is a source container)
                if (sourceClassRef != 0 && scope.subjectHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
                   // if boxing is not required (stack safe) and can be passed directly
@@ -6424,7 +6492,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
    }
    else typecasted = false;
 
-   if (!typecasted) {
+   if (!typecasted && node == lxTypecasting) {
       typecastMode = mode;
 
       node = lxExpression;
@@ -6572,9 +6640,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          // HOT FIX : to pass the optimization mode into sub expression
          optimizeSyntaxExpression(scope, current, warningMask, mode);
          break;
-////      case lxReturning:
-////         analizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
-////         break;
+      case lxReturning:
+         optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
+         break;
       case lxOverridden:
       case lxVariable:
          optimizeSyntaxExpression(scope, current, warningMask, mode);

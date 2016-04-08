@@ -122,7 +122,7 @@ enum LexicalType
    lxSelfVariable    = 0x00411, // debug info only
    lxReleasing       = 0x00412,
    lxImporting       = 0x00413,
-   lxTemplateTarget  = 0x00414, // template target pseudo variable
+   lxTemplateTarget  = 0x00514, // template target pseudo variable
 
    lxTarget          = 0x20801, // arg - reference
    lxCallTarget      = 0x20802, // arg - reference
