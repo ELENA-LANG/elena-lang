@@ -1,24 +1,23 @@
-//#import system.
+#import system.
 //#import system'routines.
 //#import system'collections.
 //#import system'dynamic.
 //#import system'calendar.
 //#import extensions.
 //#import extensions'dynamic.
-//
-//#symbol XTester =
-//{
-//    test
-//    [
-//        #var msg := %"get[0]".
-//    ]
-//}.
-//        
-//#symbol XTest =
-//[
-//    XTester test.
-//].
-//
+
+#symbol XTester =
+{
+    test
+    [
+    ]
+}.
+        
+#symbol XTest =
+[
+    XTester test.
+].
+
 //// --- OpenArgTest ---
 //
 //#symbol OpenArgTester =

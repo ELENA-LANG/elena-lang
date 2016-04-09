@@ -1,18 +1,26 @@
 // ==== ver 3.5.1 ===
 
-#template dispatchable
-{
-    /// Dispatches the verb to the target with a specified subject
-    #method cast : verb &to:target = target::verb eval &template_subj:$self.
+// === basic templates ===
 
-    /// Dispatches the verb to the target object with generic subject
-    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
+//#template dispatchable
+//{
+//    /// Dispatches the verb to the target with a specified subject
+//    #method cast : verb &to:target = target::verb eval &template_subj:$self.
+//
+//    /// Dispatches the verb to the target object with generic subject
+//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
+//}
+
+#template numeric
+{
+   #method(stacksafe) add &template_subj:val
+      = $target + val.
 }
 
 // --- super object ---
 
 /// A common ancestor
-#class(dispatchable:object) Object
+#class/*(dispatchable:object)*/ Object
 {
     /// Creates the object
     #constructor new []
@@ -45,9 +53,3 @@
 //    #method(generic)get = $nil.
 //}.
 
-// === basic templates ===
-
-//#template varof
-//{
-//    #field($target) theValue.
-//}

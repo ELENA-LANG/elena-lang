@@ -70,15 +70,16 @@ enum LexicalType
    lxExternFrame     = 0x00326,
    //lxTemplateCalling = 0x10327,
 
-   //lxBoolOp          = 0x00328, // arg - operation id
-   //lxNilOp           = 0x00329, // arg - operation id
-   //lxIntOp           = 0x0132A, // arg - operation id
-   //lxLongOp          = 0x0132B, // arg - operation id
-   //lxRealOp          = 0x0132C, // arg - operation id
-   lxIntArrOp        = 0x0132D, // arg - operation id
-   lxArrOp           = 0x0132E, // arg - operation id
+   lxOp              = 0x00328, // generic operation, arg - operation id 
+   //lxBoolOp          = 0x00329, // arg - operation id
+   //lxNilOp           = 0x0032A, // arg - operation id
+   lxIntOp           = 0x0132B, // arg - operation id
+   lxLongOp          = 0x0132C, // arg - operation id
+   lxRealOp          = 0x0132D, // arg - operation id
+   lxIntArrOp        = 0x0132E, // arg - operation id
+   lxArrOp           = 0x0132F, // arg - operation id
 
-   //lxTemplAssigning  = 0x0032F, // arg - size
+   //lxTemplAssigning  = 0x00330, // arg - size
 
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count
@@ -131,8 +132,8 @@ enum LexicalType
    lxStacksafe       = 0x00805,
    lxTempLocal       = 0x00806,
    lxOverridden      = 0x00807,
-   //lxIfValue         = 0x20808, // arg - reference
-   //lxElseValue       = 0x20809, // arg - reference
+   lxIfValue         = 0x20808, // arg - reference
+   lxElseValue       = 0x20809, // arg - reference
    lxMessage         = 0x1080A, // arg - message
    //lxEmbeddable      = 0x0080B,
    lxSize            = 0x0080C,

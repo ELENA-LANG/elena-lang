@@ -4,10 +4,10 @@
 
 #symbol program =
 [   
-//    XTest eval.
-//
-//    console writeLine:"Starting...".
-//
+    XTest eval.
+
+    console writeLine:"Starting...".
+
 //    ControlTest eval.
 //    ObjectTest eval.
 //    BooleanTest eval.

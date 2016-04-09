@@ -197,8 +197,8 @@ class ByteCodeWriter
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
    void freeVirtualStack(CommandTape& tape, int count);
 
@@ -234,9 +234,9 @@ class ByteCodeWriter
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
 //   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
-//   void doLongOperation(CommandTape& tape, int operator_id);
-//   void doRealOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doLongOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id);
    void doArrayOperation(CommandTape& tape, int operator_id);
    void doIntArrayOperation(CommandTape& tape, int operator_id);
 
@@ -312,6 +312,8 @@ public:
 };
 
 bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
 
 } // _ELENA_
 

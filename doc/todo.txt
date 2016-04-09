@@ -4,6 +4,9 @@ In development:
               xdev - generic development
                        * system test
 
+                       * optimize n := n + m.
+                       * optimize n := n + 1.
+
                        * creating an array
                        * returning an array length
 

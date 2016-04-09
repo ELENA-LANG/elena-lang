@@ -112,8 +112,8 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-   //   okLiteralConstant,              // param - reference 
-   //   okWideLiteralConstant,          // param - reference 
+      okLiteralConstant,              // param - reference 
+      okWideLiteralConstant,          // param - reference 
    //   okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference 
       okLongConstant,                 // param - reference 
@@ -273,8 +273,8 @@ private:
       ref_t intReference;
       ref_t longReference;
       //ref_t realReference;
-      //ref_t literalReference;
-      //ref_t wideReference;
+      ref_t literalReference;
+      ref_t wideReference;
       //ref_t charReference;
       //ref_t trueReference;
       //ref_t falseReference;
@@ -839,8 +839,9 @@ private:
    ObjectInfo compileTerminal(DNode node, CodeScope& scope);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
-   int mapOperandType(CodeScope& scope, ObjectInfo operand);
+   //int mapOperandType(CodeScope& scope, ObjectInfo operand);
 //   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
+   int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
@@ -886,8 +887,8 @@ private:
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
-//   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
-//   void compileSingletonClass(DNode member, ClassScope& scope);
+   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
+   void compileSingletonClass(DNode member, ClassScope& scope);
 
    void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
 
@@ -905,7 +906,7 @@ private:
    void compileVirtualMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
    void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
-//   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
+   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
 
    void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
 
@@ -946,7 +947,7 @@ private:
 //   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, int mode);
+   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, ref_t targetType, int warningLevel, int mode);
 ////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 ////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);

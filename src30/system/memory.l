@@ -1,5 +1,5 @@
-//// ==== ver 3.4.2 ===
-//
+// ==== ver 3.5.1 ===
+
 //// === basic memory classes ===
 //
 //// --- BaseByteArray ---

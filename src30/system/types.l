@@ -8,11 +8,11 @@
 //#subject(class:system'KeyValue)     keyvalue.
 //
 //#subject(class:system'Variable)     ref.
-//
-//#subject(class:system'ByteNumber)   byte.
-//#subject(class:system'ShortNumber)  short.
+
+//#subject byte  = system'ByteNumber.
+//#subject short = system'ShortNumber.
 #subject int   = system'IntNumber.
-#subject long  = system'LongNumber.
+//#subject long  = system'LongNumber.
 //#subject(class:system'RealNumber)   real.
 //#subject(class:system'CharValue)    char.
 //#subject(class:system'Message)      mssg.
