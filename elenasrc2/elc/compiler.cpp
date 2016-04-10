@@ -6205,6 +6205,7 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t 
 
          node = SyntaxTree::findChild(node, lxAssigning);
       }
+      else node.appendNode(lxType, targetType);
 
       node = SyntaxTree::findChild(node, opType);
    }
@@ -6533,11 +6534,22 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
 void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
    ref_t targetType = getSignature(node.argument);
+   bool optimized = false;
 
    int typecastMode = 0;
    bool typecasted = true;
    if (scope.subjectHints.get(targetType) != 0) {
       SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+      // HOTFIX : primitibe operation should be done before
+      if (object == lxOp) {
+         optimizeOp(scope, object, warningMask, mode);
+
+         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+         optimized = true;
+      }
+
       if (!checkIfCompatible(scope, targetType, object)) {
          ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
          ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
@@ -6655,7 +6667,8 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
       optimizeBoxing(scope, node, warningMask, 0);
    }
 
-   optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
+   if (!optimized)
+      optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
 
    if (test(warningMask, WARNING_LEVEL_2) && typecasted) {
       SNode row = SyntaxTree::findChild(node, lxRow);

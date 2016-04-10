@@ -136,8 +136,8 @@
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-//#class(sealed,integerof:1,dispatchable:byte) ByteNumber //:: IntBaseNumber
-//{
+#class(sealed,integerof:1,numeric:byte,dispatchable:byte) ByteNumber //:: IntBaseNumber
+{
 //    /// Returns the minimal value (0)
 //    #constructor min
 //        => system'core_routines'byte_min.
@@ -376,7 +376,7 @@
 //        
 //        ^ aCode.
 //    ]
-//}
+}
 
 // --- ShortNumber ---
 

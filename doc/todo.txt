@@ -21,6 +21,8 @@ In development:
 
                        * check subject duplicates
 
+                       * array of structures
+
                        * system test : new test with template arrays
                        
                        * stacksafe template method : box this variable if required

@@ -9,7 +9,7 @@
 //
 //#subject(class:system'Variable)     ref.
 
-//#subject byte  = system'ByteNumber.
+#subject byte     = system'ByteNumber.
 //#subject short = system'ShortNumber.
 #subject int      = system'IntNumber.
 //#subject long  = system'LongNumber.
