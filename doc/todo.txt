@@ -4,6 +4,9 @@ In development:
               xdev - generic development
                        * system test
 
+                       * template : add typecast around parameter passed with template_subj ; make sure
+                         cast methods work correct after this
+
                        * optimize n := n + m.
                        * optimize n := n + 1.
 

@@ -370,6 +370,7 @@ private:
       void loadRoles(_Module* module);
 
       void saveSubject(ref_t type_ref, ref_t classReference, bool internalType);
+      void saveTemplate(ref_t template_ref);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
       void saveRole(int role, ref_t reference);
 
@@ -810,8 +811,7 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
-//   void declareImportedTemplate(ClassScope& scope, SyntaxTree::Node templ, int fieldOffset, ref_t type, int size);
-   void declareImportedTemplate(ClassScope& scope, TemplateInfo templateInfo);
+   void declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule, bool declaringMode);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);

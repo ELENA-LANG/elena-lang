@@ -1,5 +1,11 @@
 // ==== ver 3.5.1 ===
 
+#template(dynamic) arrayof
+{
+    #method getAt &int:n  // !! validate range
+        = $target @ n.
+}
+
 //// === basic memory classes ===
 //
 //// --- BaseByteArray ---
@@ -294,12 +300,12 @@
 //    #constructor(stacksafe) new &int : aLength
 //        => system'core_routines'ns_create.
 //}
-//
-//// --- IntArray ---
-//
-///// An array of integers
-//#class(sealed) IntArray :: BaseIntArray
-//{
+
+// --- IntArray ---
+
+/// An array of integers
+#class(sealed,arrayof:int,dispatchable:intarray) IntArray //:: BaseIntArray
+{
 //    /// Creates the array with the specified length
 //    #constructor(stacksafe) new &int : aLength
 //        => system'core_routines'ns_create.
@@ -393,8 +399,8 @@
 //    
 //    /// Dispatches the verb to the target object with intarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intarray:$self.    
-//}
-//
+}
+
 //// --- BitArray ---
 //
 //#class(sealed) BitArray

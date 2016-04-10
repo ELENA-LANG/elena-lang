@@ -11,7 +11,7 @@
 
 //#subject byte  = system'ByteNumber.
 //#subject short = system'ShortNumber.
-#subject int   = system'IntNumber.
+#subject int      = system'IntNumber.
 //#subject long  = system'LongNumber.
 //#subject(class:system'RealNumber)   real.
 //#subject(class:system'CharValue)    char.
@@ -32,7 +32,7 @@
 //// === basic dynamic types ===
 //#subject(class:system'ByteArray)    bytearray.
 //#subject(class:system'ShortArray)   shortarray.
-//#subject(class:system'IntArray)     intarray.
+#subject intarray = system'IntArray.
 //#subject(class:system'IntMatrix)    intmatrix.
 //#subject(class:system'RealArray)    realarray.
 //#subject(class:system'RealMatrix)   realmatrix.

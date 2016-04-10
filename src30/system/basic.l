@@ -637,7 +637,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(sealed,integerof:4,numeric:int/*,dispatchable:int*/) IntNumber //:: IntBaseNumber
+#class(sealed,integerof:4,numeric:int,dispatchable:int) IntNumber //:: IntBaseNumber
 {
 //    /// Creates the object with the minimal value
 //    #constructor min

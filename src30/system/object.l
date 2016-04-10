@@ -2,14 +2,14 @@
 
 // === basic templates ===
 
-//#template dispatchable
-//{
-//    /// Dispatches the verb to the target with a specified subject
-//    #method cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//}
+#template dispatchable
+{
+    /// Dispatches the verb to the target with a specified subject
+    #method cast : verb &to:target = target::verb eval &template_subj:$self.
+
+    /// Dispatches the verb to the target object with generic subject
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
+}
 
 #template numeric
 {
@@ -20,7 +20,7 @@
 // --- super object ---
 
 /// A common ancestor
-#class/*(dispatchable:object)*/ Object
+#class(dispatchable:object) Object
 {
     /// Creates the object
     #constructor new []
