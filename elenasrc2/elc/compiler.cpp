@@ -246,19 +246,19 @@ inline bool isEmbeddable(ClassInfo& localInfo)
    return false;
 }
 
-inline bool isArrayPrimitive(int flags)
-{
-   switch (flags & elDebugMask)
-   {
-      case elDebugIntegers:
-      case elDebugArray:
-      case elDebugBytes:
-      case elDebugShorts:
-         return true;
-      default:
-         return false;
-   }
-}
+//inline bool isArrayPrimitive(int flags)
+//{
+//   switch (flags & elDebugMask)
+//   {
+//      case elDebugIntegers:
+//      case elDebugArray:
+//      case elDebugBytes:
+//      case elDebugShorts:
+//         return true;
+//      default:
+//         return false;
+//   }
+//}
 
 void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
 {
@@ -2359,19 +2359,19 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
                      scope.writer->appendNode(lxLevel, variable.param);
                      scope.writer->closeNode();
                   }
-   //               else if (localInfo.size == 2) {
-   //                  scope.writer->newNode(lxShortsVariable, size);
-   //                  scope.writer->appendNode(lxTerminal, terminal.value);
-   //                  scope.writer->appendNode(lxLevel, variable.param);
-   //                  scope.writer->closeNode();
-   //               }
-   //               else if (localInfo.size == 1) {
-   //                  scope.writer->newNode(lxBytesVariable, size);
-   //                  scope.writer->appendNode(lxTerminal, terminal.value);
-   //                  scope.writer->appendNode(lxLevel, variable.param);
-   //                  scope.writer->closeNode();
-   //               }
-   //               break;
+                  else if (localInfo.size == 2) {
+                     scope.writer->newNode(lxShortsVariable, size);
+                     scope.writer->appendNode(lxTerminal, terminal.value);
+                     scope.writer->appendNode(lxLevel, variable.param);
+                     scope.writer->closeNode();
+                  }
+                  else if (localInfo.size == 1) {
+                     scope.writer->newNode(lxBytesVariable, size);
+                     scope.writer->appendNode(lxTerminal, terminal.value);
+                     scope.writer->appendNode(lxLevel, variable.param);
+                     scope.writer->closeNode();
+                  }
+                  break;
    //            case elDebugQWORD:
    //               break;
    //            default:
@@ -5649,6 +5649,8 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
                writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
                break;
             case elDebugIntegers:
+            case elDebugBytes:
+            case elDebugShorts:
                writer.appendNode(lxTarget, -3); // NOTE : -3 means primitive array
                break;
             default:
@@ -6301,6 +6303,12 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                   case 4:
                      node = lxIntArrOp;
                      break;
+                  case 1:
+                     node = lxByteArrOp;
+                     break;
+                  case 2:
+                     node = lxShortArrOp;
+                     break;
                   default:
                      break;
                }
@@ -6345,6 +6353,12 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                {
                   case 4:
                      node = lxIntArrOp;
+                     break;
+                  case 1:
+                     node = lxByteArrOp;
+                     break;
+                  case 2:
+                     node = lxShortArrOp;
                      break;
                   default:
                      break;

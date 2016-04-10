@@ -17,12 +17,12 @@
 //    #constructor(stacksafe) new &int:aLength
 //        => system'core_routines'bs_create.
 //}
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//#class(sealed) ByteArray :: BaseByteArray
-//{
+
+// --- ByteArray ---
+
+/// A byte array
+#class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray //:: BaseByteArray
+{
 //    /// Creates the byte array with the specified length
 //    #constructor(stacksafe) new &int:aLength
 //        => system'core_routines'bs_create.
@@ -189,13 +189,13 @@
 //    
 //    /// Dispatches the verb to the target object with bytearray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &bytearray:$self.
-//}
-//
-//// --- ShortArray ---
-//
-///// A short integer array
-//#class(sealed,stringof:short) ShortArray
-//{
+}
+
+// --- ShortArray ---
+
+/// A short integer array
+#class(sealed,arrayof:short,dispatchable:shortarray) ShortArray
+{
 //    /// Creates the short array with the specified length
 //    #constructor(stacksafe) new &int:aLength
 //        => system'core_routines'sa_create.
@@ -289,8 +289,8 @@
 //    
 //    /// Dispatches the verb to the target object with shortarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &shortarray:$self.
-//}
-//
+}
+
 //// --- BaseIntArray ---
 //
 ///// A base integer array

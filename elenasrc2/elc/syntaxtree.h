@@ -77,9 +77,11 @@ enum LexicalType
    lxLongOp          = 0x0132C, // arg - operation id
    lxRealOp          = 0x0132D, // arg - operation id
    lxIntArrOp        = 0x0132E, // arg - operation id
-   lxArrOp           = 0x0132F, // arg - operation id
+   lxByteArrOp       = 0x0132F, // arg - operation id
+   lxShortArrOp      = 0x01330, // arg - operation id
+   lxArrOp           = 0x01331, // arg - operation id
 
-   //lxTemplAssigning  = 0x00330, // arg - size
+   //lxTemplAssigning  = 0x00332, // arg - size
 
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count

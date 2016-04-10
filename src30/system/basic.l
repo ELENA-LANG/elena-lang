@@ -381,8 +381,8 @@
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-//#class(sealed,integerof:2,dispatchable:short) ShortNumber //:: IntBaseNumber
-//{
+#class(sealed,integerof:2,numeric:short,dispatchable:short) ShortNumber //:: IntBaseNumber
+{
 //    /// Returns the minimal value (-32768)
 //    #constructor min
 //        => system'core_routines'short_min.
@@ -632,7 +632,7 @@
 //        
 //        ^ aCode.
 //    ]
-//}
+}
 
 // --- IntNumber ---
 

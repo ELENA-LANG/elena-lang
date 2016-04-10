@@ -9,9 +9,9 @@
 //
 //#subject(class:system'Variable)     ref.
 
-#subject byte     = system'ByteNumber.
-//#subject short = system'ShortNumber.
-#subject int      = system'IntNumber.
+#subject byte       = system'ByteNumber.
+#subject short      = system'ShortNumber.
+#subject int        = system'IntNumber.
 //#subject long  = system'LongNumber.
 //#subject(class:system'RealNumber)   real.
 //#subject(class:system'CharValue)    char.
@@ -20,7 +20,7 @@
 //#subject(class:system'Verb)         verb.
 //#subject(class:system'Signature)    subject.
 //#subject(class:system'Symbol)       symbol_ref.
-//
+
 //#subject(class:system'Integer)      vint.
 //#subject(class:system'Long)         vlong.
 //#subject(class:system'Real)         vreal.
@@ -28,11 +28,11 @@
 //#subject(class:system'Short)        vshort.
 //#subject(class:system'Char)         vchar.
 //#subject(class:system'MessageVar)   vmssg.
-//
-//// === basic dynamic types ===
-//#subject(class:system'ByteArray)    bytearray.
-//#subject(class:system'ShortArray)   shortarray.
-#subject intarray = system'IntArray.
+
+// === basic dynamic types ===
+#subject bytearray  = system'ByteArray.
+#subject shortarray = system'ShortArray.
+#subject intarray   = system'IntArray.
 //#subject(class:system'IntMatrix)    intmatrix.
 //#subject(class:system'RealArray)    realarray.
 //#subject(class:system'RealMatrix)   realmatrix.

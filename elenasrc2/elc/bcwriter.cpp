@@ -2316,6 +2316,54 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
    }
 }
 
+void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // breadb
+         // dcopye
+         // nsave
+         tape.write(bcBReadB);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // ecopyd
+         // nload
+         // bwriteb
+         tape.write(bcECopyD);
+         tape.write(bcNLoad);
+         tape.write(bcBWriteB);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // wread
+         // dcopye
+         // nsave
+         tape.write(bcWRead);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // ecopyd
+         // nload
+         // wwrite
+         tape.write(bcECopyD);
+         tape.write(bcNLoad);
+         tape.write(bcWWrite);
+         break;
+      default:
+         break;
+   }
+}
+
 void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 {
    tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
@@ -2703,6 +2751,18 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    {
       case lxIntArrOp:
          doIntArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_MESSAGE_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      case lxByteArrOp:
+         doByteArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_MESSAGE_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      case lxShortArrOp:
+         doShortArrayOperation(tape, node.argument);
 
          if (node.argument == REFER_MESSAGE_ID)
             assignBaseTo(tape, lxResult);
@@ -3684,6 +3744,8 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
          generateOperation(tape, node);
          break;
       case lxIntArrOp:
+      case lxByteArrOp:
+      case lxShortArrOp:
       case lxArrOp:
          generateArrOperation(tape, node);
          break;
