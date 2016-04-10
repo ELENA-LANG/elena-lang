@@ -2,6 +2,9 @@
 In development:
 ------                      
               xdev - generic development
+                       * fields
+                       * primitive fields
+
                        * system test
 
                        * template : add typecast around parameter passed with template_subj ; make sure

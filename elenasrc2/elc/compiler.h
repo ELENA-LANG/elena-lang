@@ -316,10 +316,10 @@ private:
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
@@ -505,7 +505,7 @@ private:
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       void compileClassHint(SyntaxTree::Node hint);
-//      void compileFieldHints(DNode hints, int& size, ref_t& type);
+      //void compileFieldHints(DNode hints, int& size, ref_t& type);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -545,7 +545,7 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
 //      ref_t typeRef;
 
       void compileHints(DNode hints);
@@ -810,7 +810,7 @@ private:
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
-//   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 

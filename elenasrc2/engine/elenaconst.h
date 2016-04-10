@@ -456,7 +456,7 @@ namespace _ELENA_
    #define TARGET_POSTFIX           "#target"
 
   // --- ELENA modifiers ---
-   #define HINT_CONSTANT           "const$"
+   #define HINT_CONSTANT            "const$"
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
 //   #define HINT_STRUCT             "struct"

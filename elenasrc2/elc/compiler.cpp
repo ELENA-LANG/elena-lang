@@ -1095,7 +1095,7 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
 //   typeRef = 0;
-//   constant = false;
+   constant = false;
 
    syntaxTree.writeString(parent->sourcePath);
 }
@@ -1105,9 +1105,10 @@ void Compiler::SymbolScope :: compileHints(DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      //if (StringHelper::compare(terminal, HINT_CONSTANT)) {
-      //   constant = true;
-      //}
+      ref_t hintRef = moduleScope->mapSubject(terminal, false);
+      if (hintRef == moduleScope->constHint) {
+         constant = true;
+      }
       //else if (StringHelper::compare(terminal, HINT_TYPE)) {
       //   DNode value = hints.select(nsHintValue);
       //   TerminalInfo typeTerminal = value.Terminal();
@@ -1116,7 +1117,7 @@ void Compiler::SymbolScope :: compileHints(DNode hints)
       //   if (typeRef == 0)
       //      raiseError(wrnInvalidHint, terminal);
       //}
-      /*else */raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
+      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -1143,25 +1144,25 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 
 ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 {
-   //if (StringHelper::compare(identifier, SUPER_VAR)) {
-   //   return ObjectInfo(okSuper, info.header.parentRef);
-   //}
-   //else if (StringHelper::compare(identifier, SELF_VAR)) {
-   //   return ObjectInfo(okParam, (size_t)-1);
-   //}
-   //else {
-   //   int reference = info.fields.get(identifier);
-   //   if (reference != -1) {
-   //      if (test(info.header.flags, elStructureRole)) {
-   //         int offset = reference;
+   if (StringHelper::compare(identifier, SUPER_VAR)) {
+      return ObjectInfo(okSuper, info.header.parentRef);
+   }
+   else if (StringHelper::compare(identifier, SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
+   }
+   else {
+      int reference = info.fields.get(identifier);
+      if (reference != -1) {
+         //if (test(info.header.flags, elStructureRole)) {
+         //   int offset = reference;
 
-   //         return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
-   //      }
-   //      // otherwise it is a normal field
-   //      else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
-   //   }
-     /*else */return Scope::mapObject(identifier);
-   //}
+         //   return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
+         //}
+         // otherwise it is a normal field
+         /*else */return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
+      }
+     else return Scope::mapObject(identifier);
+   }
 }
 
 void Compiler::ClassScope :: compileClassHint(SNode hint)
@@ -1576,55 +1577,55 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 
 void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf)
 {
-   //ModuleScope* moduleScope = scope.moduleScope;
+   ModuleScope* moduleScope = scope.moduleScope;
 
-   //// declare method parameter debug info
-   //LocalMap::Iterator it = scope.parameters.start();
-   //while (!it.Eof()) {
-   //   //if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->paramsReference)) {
-   //   //   writer.newNode(lxParamsVariable);
-   //   //   writer.appendNode(lxTerminal, it.key());
-   //   //   writer.appendNode(lxLevel, -1 - (*it).offset);
-   //   //   writer.closeNode();
-   //   //}
-   //   /*else */if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->intReference)) {
-   //      writer.newNode(lxIntVariable);
-   //      writer.appendNode(lxTerminal, it.key());
-   //      writer.appendNode(lxLevel, -1 - (*it).offset);
-   //      writer.appendNode(lxFrameAttr);
-   //      writer.closeNode();
-   //   }
-   //   else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->longReference)) {
-   //      writer.newNode(lxLongVariable);
-   //      writer.appendNode(lxTerminal, it.key());
-   //      writer.appendNode(lxLevel, -1 - (*it).offset);
-   //      writer.appendNode(lxFrameAttr);
-   //      writer.closeNode();
-   //   }
-   //   //else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
-   //   //   writer.newNode(lxReal64Variable);
-   //   //   writer.appendNode(lxTerminal, it.key());
-   //   //   writer.appendNode(lxLevel, -1 - (*it).offset);
-   //   //   writer.appendNode(lxFrameAttr);
-   //   //   writer.closeNode();
-   //   //}
-   //   else {
-   //      writer.newNode(lxVariable, -1);
-   //      writer.appendNode(lxTerminal, it.key());
-   //      writer.appendNode(lxLevel, -1 - (*it).offset);
-   //      writer.appendNode(lxFrameAttr);
-   //      writer.closeNode();
-   //   }
+   // declare method parameter debug info
+   LocalMap::Iterator it = scope.parameters.start();
+   while (!it.Eof()) {
+      //if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->paramsReference)) {
+      //   writer.newNode(lxParamsVariable);
+      //   writer.appendNode(lxTerminal, it.key());
+      //   writer.appendNode(lxLevel, -1 - (*it).offset);
+      //   writer.closeNode();
+      //}
+      /*else */if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->intReference)) {
+         writer.newNode(lxIntVariable);
+         writer.appendNode(lxTerminal, it.key());
+         writer.appendNode(lxLevel, -1 - (*it).offset);
+         writer.appendNode(lxFrameAttr);
+         writer.closeNode();
+      }
+      else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->longReference)) {
+         writer.newNode(lxLongVariable);
+         writer.appendNode(lxTerminal, it.key());
+         writer.appendNode(lxLevel, -1 - (*it).offset);
+         writer.appendNode(lxFrameAttr);
+         writer.closeNode();
+      }
+      //else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
+      //   writer.newNode(lxReal64Variable);
+      //   writer.appendNode(lxTerminal, it.key());
+      //   writer.appendNode(lxLevel, -1 - (*it).offset);
+      //   writer.appendNode(lxFrameAttr);
+      //   writer.closeNode();
+      //}
+      else {
+         writer.newNode(lxVariable, -1);
+         writer.appendNode(lxTerminal, it.key());
+         writer.appendNode(lxLevel, -1 - (*it).offset);
+         writer.appendNode(lxFrameAttr);
+         writer.closeNode();
+      }
 
-   //   it++;
-   //}
-   //if (withThis)
-   //   writer.appendNode(lxSelfVariable, 1);
+      it++;
+   }
+   if (withThis)
+      writer.appendNode(lxSelfVariable, 1);
 
-   //if (withSelf)
-   //   writer.appendNode(lxSelfVariable, -1);
+   if (withSelf)
+      writer.appendNode(lxSelfVariable, -1);
 
-   //writeMessage(*scope.moduleScope, writer, scope.message);
+   writeMessage(*scope.moduleScope, writer, scope.message);
 }
 
 void Compiler :: importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t referenceProperName, ref_t message)
@@ -2018,57 +2019,111 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
    }
 }
 
-//void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
-//{
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      //if (StringHelper::compare(terminal, HINT_TYPE)) {
-//      //   DNode value = hints.select(nsHintValue);
-//      //   if (value!=nsNone) {
-//      //      TerminalInfo typeTerminal = value.Terminal();
-//
-//      //      ref_t type = scope.moduleScope->mapType(typeTerminal);
-//      //      if (type == 0)
-//      //         scope.raiseError(errInvalidHint, terminal);
-//
-//      //      writer.appendNode(lxType, type);
-//      //   }
-//      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-//      //}
-//      //else if (StringHelper::compare(terminal, HINT_SIZE)) {
-//      //   TerminalInfo sizeValue = hints.firstChild().Terminal();
-//      //   if (sizeValue.symbol == tsInteger) {
-//      //      writer.appendNode(lxSize, StringHelper::strToInt(sizeValue.value));
-//      //   }
-//      //   else if (sizeValue.symbol == tsHexInteger) {
-//      //      writer.appendNode(lxSize, StringHelper::strToLong(sizeValue.value, 16));
-//      //   }
-//      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-//      //}
-//      //else {
-//      //   ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
-//      //   _Module* dummy;
-//      //   _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, dummy);
-//      //   if (section != NULL) {
-//      //      SyntaxTree tree(section);
-//      //      SNode node = tree.readRoot();
-//      //      if (node == lxFieldTemplate) {
-//      //         writer.newNode(lxFieldTemplate, templateRef);
-//
-//      //         TerminalInfo typeTerminal = hints.firstChild().Terminal();
-//      //         writer.appendNode(lxSubject, scope.moduleScope->mapSubject(typeTerminal));
-//
-//      //         writer.closeNode();
-//      //      }
-//      //      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-//      //   }
-//         /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-//      //}
-//
-//      hints = hints.nextNode();
-//   }
-//}
+void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
+{
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      ref_t hintRef = scope.moduleScope->mapSubject(terminal, false);
+      if (hintRef != 0) {
+         if (scope.moduleScope->subjectHints.exist(hintRef)) {
+      //      if (type == 0 && classRef == 0) {
+      //         type = hintRef;
+
+            TerminalInfo target = hints.firstChild().Terminal();
+            if (target != nsNone) {
+      //            if (target.symbol == tsInteger) {
+      //               size = StringHelper::strToInt(target);
+
+      //               classRef = -3; // NOTE : -3 means an array of type
+      //            }
+               /*else */scope.raiseError(errInvalidHint, terminal);
+            }
+            else {
+               writer.appendNode(lxType, hintRef);
+
+      //            classRef = scope.moduleScope->subjectHints.get(type);
+
+      //            int flags = scope.moduleScope->getClassFlags(classRef);
+      //            //HOTFIX : recognize int wrapper as primitive value
+      //            switch (flags & elDebugMask) {
+      //            case elDebugDWORD:
+      //               classRef = -1; // NOTE : -1 means primitive int32
+      //               break;
+      //            case elDebugQWORD:
+      //               classRef = -2; // NOTE : -2 means primitive int64
+      //               break;
+      //            case elDebugReal64:
+      //               classRef = -4; // NOTE : -4 means primitive real64
+      //               break;
+      //            }
+      //         }
+            }
+      //      else scope.raiseError(errInvalidHint, terminal);
+         }
+         else {
+      //      if (type != 0)
+      //         scope.raiseError(errInvalidHint, terminal);
+
+      //      TemplateInfo templateInfo;
+      //      templateInfo.templateRef = hintRef;
+
+      //      TerminalInfo target = hints.firstChild().Terminal();
+      //      templateInfo.targetType = scope.moduleScope->mapSubject(target);
+      //      templateInfo.targetSubject = templateInfo.targetType;
+      //      if (templateInfo.targetSubject == 0)
+      //         templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
+
+      //      classRef = generateTemplate(*scope.moduleScope, templateInfo, 0);
+      //      if (classRef == 0)
+               scope.raiseError(errInvalidHint, terminal);
+         }
+      }
+      //if (StringHelper::compare(terminal, HINT_TYPE)) {
+      //   DNode value = hints.select(nsHintValue);
+      //   if (value!=nsNone) {
+      //      TerminalInfo typeTerminal = value.Terminal();
+
+      //      ref_t type = scope.moduleScope->mapType(typeTerminal);
+      //      if (type == 0)
+      //         scope.raiseError(errInvalidHint, terminal);
+
+      //      
+      //   }
+      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+      //}
+      //else if (StringHelper::compare(terminal, HINT_SIZE)) {
+      //   TerminalInfo sizeValue = hints.firstChild().Terminal();
+      //   if (sizeValue.symbol == tsInteger) {
+      //      writer.appendNode(lxSize, StringHelper::strToInt(sizeValue.value));
+      //   }
+      //   else if (sizeValue.symbol == tsHexInteger) {
+      //      writer.appendNode(lxSize, StringHelper::strToLong(sizeValue.value, 16));
+      //   }
+      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      //}
+      //else {
+      //   ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
+      //   _Module* dummy;
+      //   _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, dummy);
+      //   if (section != NULL) {
+      //      SyntaxTree tree(section);
+      //      SNode node = tree.readRoot();
+      //      if (node == lxFieldTemplate) {
+      //         writer.newNode(lxFieldTemplate, templateRef);
+
+      //         TerminalInfo typeTerminal = hints.firstChild().Terminal();
+      //         writer.appendNode(lxSubject, scope.moduleScope->mapSubject(typeTerminal));
+
+      //         writer.closeNode();
+      //      }
+      //      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      //   }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      //}
+
+      hints = hints.nextNode();
+   }
+}
 
 void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly)
 {
@@ -2530,13 +2585,13 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          }
          else scope.writer->newNode(lxThisLocal, object.param);
          break;
-   //   case okSuper:
-   //      scope.writer->newNode(lxLocal, 1);
-   //      break;
-   //   case okField:
-   //   //case okOuter:
-   //      scope.writer->newNode(lxField, object.param);
-   //      break;
+      case okSuper:
+         scope.writer->newNode(lxLocal, 1);
+         break;
+      case okField:
+      //case okOuter:
+         scope.writer->newNode(lxField, object.param);
+         break;
    //   //case okOuterField:
    //   //   scope.writer->newNode(lxExpression);
    //   //   scope.writer->appendNode(lxField, object.param);
@@ -5008,21 +5063,21 @@ void Compiler :: compileFieldDeclarations(DNode& member, SyntaxWriter& writer, C
    while (member != nsNone) {
       DNode hints = skipHints(member);
 
-//      if (member==nsField) {
-//         writer.newNode(lxClassField);
-//
-//         appendTerminalInfo(&writer, member.Terminal());
-//         compileFieldHints(hints, writer, scope);
-//
-//         writer.closeNode();
-//      }
-//      else {
+      if (member==nsField) {
+         writer.newNode(lxClassField);
+
+         appendTerminalInfo(&writer, member.Terminal());
+         compileFieldHints(hints, writer, scope);
+
+         writer.closeNode();
+      }
+      else {
          // due to current syntax we need to reset hints back, otherwise they will be skipped
          if (hints != nsNone)
             member = hints;
 
          break;
-//      }
+      }
       member = member.nextNode();
    }
 }
@@ -6033,16 +6088,16 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 //         singleton = true;
 //      }
    }
-//
-//   if (!singleton && (scope.typeRef != 0 || scope.constant)) {
-//      SymbolExpressionInfo info;
-//      info.expressionTypeRef = scope.typeRef;
-//      info.constant = scope.constant;
-//
-//      // save class meta data
-//      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//      info.save(&metaWriter);
-//   }
+
+   if (!singleton && (/*scope.typeRef != 0 || */scope.constant)) {
+      SymbolExpressionInfo info;
+      info.expressionTypeRef = /*scope.typeRef*/0;
+      info.constant = scope.constant;
+
+      // save class meta data
+      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+      info.save(&metaWriter);
+   }
 }
 
 void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
@@ -6119,76 +6174,76 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
    }
    else writeTerminal(node.FirstTerminal(), codeScope, retVal);
 
-   //// create constant if required
-   //if (scope.constant) {
-   //   // static symbol cannot be constant
-   //   if (isStatic)
-   //      scope.raiseError(errInvalidOperation, expression.FirstTerminal());
+   // create constant if required
+   if (scope.constant) {
+      // static symbol cannot be constant
+      if (isStatic)
+         scope.raiseError(errInvalidOperation, expression.FirstTerminal());
 
-   //   // expression cannot be constant
-   //   if (retVal.kind == okObject)
-   //      scope.raiseError(errInvalidOperation, expression.FirstTerminal());
+      // expression cannot be constant
+      if (retVal.kind == okObject)
+         scope.raiseError(errInvalidOperation, expression.FirstTerminal());
 
-      //if (retVal.kind == okIntConstant) {
-      //   _Module* module = scope.moduleScope->module;
-      //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+      if (retVal.kind == okIntConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      //   size_t value = StringHelper::strToULong(module->resolveConstant(retVal.param), 16);
+         size_t value = StringHelper::strToULong(module->resolveConstant(retVal.param), 16);
 
-      //   dataWriter.writeDWord(value);
+         dataWriter.writeDWord(value);
 
-      //   dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, (ref_t) - 4);
+         dataWriter.Memory()->addReference(scope.moduleScope->intReference | mskVMTRef, (ref_t) - 4);
 
-      //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->intReference);
-      //}
-      //else if (retVal.kind == okLongConstant) {
-      //   _Module* module = scope.moduleScope->module;
-      //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->intReference);
+      }
+      else if (retVal.kind == okLongConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      //   long value = StringHelper::strToLongLong(module->resolveConstant(retVal.param) + 1, 10);
+         long value = StringHelper::strToLongLong(module->resolveConstant(retVal.param) + 1, 10);
 
-      //   dataWriter.write(&value, 8);
+         dataWriter.write(&value, 8);
 
-      //   dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
+         dataWriter.Memory()->addReference(scope.moduleScope->longReference | mskVMTRef, (ref_t)-4);
 
-      //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
-      //}
-      //else if (retVal.kind == okRealConstant) {
-      //   _Module* module = scope.moduleScope->module;
-      //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
+      }
+      else if (retVal.kind == okRealConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      //   double value = StringHelper::strToDouble(module->resolveConstant(retVal.param));
+         double value = StringHelper::strToDouble(module->resolveConstant(retVal.param));
 
-      //   dataWriter.write(&value, 8);
+         dataWriter.write(&value, 8);
 
-      //   dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
+         dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
 
-      //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
-      //}
-      //else if (retVal.kind == okLiteralConstant) {
-      //   _Module* module = scope.moduleScope->module;
-      //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
+      }
+      else if (retVal.kind == okLiteralConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      //   ident_t value = module->resolveConstant(retVal.param);
+         ident_t value = module->resolveConstant(retVal.param);
 
-      //   dataWriter.writeLiteral(value, getlength(value) + 1);
+         dataWriter.writeLiteral(value, getlength(value) + 1);
 
-      //   dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
+         dataWriter.Memory()->addReference(scope.moduleScope->literalReference | mskVMTRef, (size_t)-4);
 
-      //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
-      //}
-      //else if (retVal.kind == okWideLiteralConstant) {
-      //   _Module* module = scope.moduleScope->module;
-      //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->literalReference);
+      }
+      else if (retVal.kind == okWideLiteralConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      //   WideString wideValue(module->resolveConstant(retVal.param));
+         WideString wideValue(module->resolveConstant(retVal.param));
 
-      //   dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
 
-      //   dataWriter.Memory()->addReference(scope.moduleScope->wideReference | mskVMTRef, (size_t)-4);
+         dataWriter.Memory()->addReference(scope.moduleScope->wideReference | mskVMTRef, (size_t)-4);
 
-      //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
-      //}
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
+      }
       //else if (retVal.kind == okCharConstant) {
       //   _Module* module = scope.moduleScope->module;
       //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
@@ -6201,8 +6256,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
       //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
       //}
-      //else scope.raiseError(errInvalidOperation, expression.FirstTerminal());
-   //}
+      else scope.raiseError(errInvalidOperation, expression.FirstTerminal());
+   }
 
    // NOTE : close root node
    writer.closeNode();
