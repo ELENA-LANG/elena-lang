@@ -318,6 +318,7 @@ namespace _ELENA_
    const int elDebugWideLiteral    = 0x000A0000;
    const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
+   const int elDebugReals          = 0x000D0000;
 
   //// --- ELENA class roles ---
   // const int crRoleMask            = 0xFFFFFFF0;
@@ -455,19 +456,18 @@ namespace _ELENA_
    #define TARGET_POSTFIX           "#target"
 
   // --- ELENA modifiers ---
-//   #define HINT_CONSTANT           "const"
+   #define HINT_CONSTANT           "const$"
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
 //   #define HINT_STRUCT             "struct"
    #define HINT_INTEGER_NUMBER      "integerof$"      // class representing an integer number
-//   #define HINT_FLOAT_NUMBER       "floating"
+   #define HINT_FLOAT_NUMBER        "floatof$"
    #define HINT_VARIABLE            "variable$"
 //   #define HINT_BINARY             "stringof"
    #define HINT_DYNAMIC             "dynamic$"
 //   #define HINT_ARRAYOF           "arrayof"
 //   #define HINT_POINTER            "pointer"
-//   #define HINT_STRING             "string"
-//   #define HINT_WIDESTRING         "widestring"
+   #define HINT_STRING              "string$"
 //// #define HINT_SAFEPOINT          "safepoint"
 //// #define HINT_LOCK               "sync"
    #define HINT_SEALED              "sealed$"

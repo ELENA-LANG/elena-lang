@@ -1,9 +1,17 @@
 // ==== ver 3.5.1 ===
 
+// --- arrayof ---
+
 #template(dynamic) arrayof
 {
     #method getAt &int:n  // !! validate range
         = $target @ n.
+}
+
+// --- stringof --- 
+
+#template(const,string) stringof
+{
 }
 
 //// === basic memory classes ===
@@ -966,12 +974,12 @@
 //
 ///// An empty literal value
 //#symbol(const,type:literal) emptyLiteralValue = "".
-//
-//// --- LiteralValue ---
-//
-///// A UTF-8 literal value
-//#class(sealed,string,const) LiteralValue :: BaseValue
-//{
+
+// --- LiteralValue ---
+
+/// A UTF-8 literal value
+#class(sealed,stringof:byte,dispatchable:literal) LiteralValue //:: BaseValue
+{
 //    #field(type:bytearray)theValue.
 //
 //    /// Creates the empty literal
@@ -1193,8 +1201,8 @@
 //        
 //        ^ aCode.
 //    ]
-//}
-//
+}
+
 //// --- String ---
 //
 ///// A literal variable. 
@@ -1356,12 +1364,12 @@
 //
 ///// An empty wide literal value
 //#symbol(type:wide) emptyWideLiteralValue = ""w.
-//
-//// --- WideLiteralValue ---
-//
-///// A UTF-18 literal value
-//#class(sealed,widestring,const) WideLiteralValue :: BaseValue
-//{
+
+// --- WideLiteralValue ---
+
+/// A UTF-18 literal value
+#class(sealed,stringof:short,dispatchable:wide) WideLiteralValue //:: BaseValue
+{
 //    #field(type:shortarray)theValue.
 //
 //    /// Creates the empty literal
@@ -1583,8 +1591,8 @@
 //        
 //        ^ aCode.
 //    ]
-//}
-//
+}
+
 //// --- WideString ---
 //
 ///// A wide literal variable. 

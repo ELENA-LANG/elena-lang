@@ -321,7 +321,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
-   //realReference = mapReference(project->resolveForward(REAL_FORWARD));
+   realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(STR_FORWARD));
    wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
    //charReference = mapReference(project->resolveForward(CHAR_FORWARD));
@@ -336,12 +336,15 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    // cache the frequently used subjects / hints
    sealedHint = module->mapSubject(HINT_SEALED, false);
    integerHint = module->mapSubject(HINT_INTEGER_NUMBER, false);
+   realHint = module->mapSubject(HINT_FLOAT_NUMBER, false);
+   literalHint = module->mapSubject(HINT_STRING, false);
    varHint = module->mapSubject(HINT_VARIABLE, false);
    limitedHint = module->mapSubject(HINT_LIMITED, false);
    signHint = module->mapSubject(HINT_SIGNATURE, false);
    stackHint = module->mapSubject(HINT_STACKSAFE, false);
    warnHint = module->mapSubject(HINT_SUPPRESS_WARNINGS, false);
    dynamicHint = module->mapSubject(HINT_DYNAMIC, false);
+   constHint = module->mapSubject(HINT_CONSTANT, false);
    //boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
 
    defaultNs.add(module->Name());
@@ -1505,6 +1508,16 @@ bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree
 
       return (flags & elDebugMask) == elDebugDWORD;
    }
+   else if (node == lxConstantReal) {
+      int flags = scope.getClassFlags(nodeRef);
+
+      return (flags & elDebugMask) == elDebugReal64;
+   }
+   else if (node == lxConstantLong) {
+      int flags = scope.getClassFlags(nodeRef);
+
+      return (flags & elDebugMask) == elDebugQWORD;
+   }
    else return scope.checkIfCompatible(typeRef, nodeRef);
 }
 
@@ -1529,8 +1542,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return scope.moduleScope->intReference;
       case okLongConstant:
          return scope.moduleScope->longReference;
-      //case okRealConstant:
-      //   return scope.moduleScope->realReference;
+      case okRealConstant:
+         return scope.moduleScope->realReference;
       case okLiteralConstant:
          return scope.moduleScope->literalReference;
       case okWideLiteralConstant:
@@ -1774,6 +1787,26 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
          return true;
       }
    }
+   else if (hintRef == moduleScope->realHint) {
+      TerminalInfo sizeValue = hint.select(nsHintValue).Terminal();
+      if (sizeValue.symbol == tsInteger) {
+         int size = StringHelper::strToInt(sizeValue.value);
+
+         writer.newNode(lxClassStructure, size);
+         appendTerminalInfo(&writer, terminal);
+         writer.closeNode();
+
+         // !! HOTFIX : allow only 8
+         if (size == 8) {
+            writer.appendNode(lxClassFlag, elDebugReal64);
+         }
+         else return false;
+
+         writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elReadOnlyRole);
+
+         return true;
+      }
+   }
    //else if (hintRef == moduleScope->varHint) {
    //   writer.appendNode(lxClassFlag, elWrapper);
 
@@ -1789,6 +1822,21 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
+   else if (hintRef == moduleScope->literalHint) {
+      writer.appendNode(lxClassFlag, elDebugLiteral); // NOTE : template importer should tweak it depending on character size
+      writer.appendNode(lxClassFlag, elStructureRole | elDynamicRole);
+
+      return true;
+   }
+   else if (hintRef == moduleScope->constHint) {
+      writer.appendNode(lxClassFlag, elReadOnlyRole);
+
+      return true;
+   }
+   //else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
+   //   writer.appendNode(lxClassFlag, elDebugWideLiteral);
+   //   writer.appendNode(lxClassFlag, elStructureRole);
+   //}
    //else if (hintRef == moduleScope->signHint) {
    //   writer.newNode(lxClassStructure, 4);
 
@@ -1837,9 +1885,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //if (StringHelper::compare(terminal, HINT_GROUP)) {
       //   writer.appendNode(lxClassFlag, elGroup);
       //}
-      //else if (StringHelper::compare(terminal, HINT_CONSTANT)) {
-      //   writer.appendNode(lxClassFlag, elReadOnlyRole);
-      //}
       //else if (StringHelper::compare(terminal, HINT_MESSAGE)) {
       //   writer.newNode(lxClassStructure, 4);
       //   appendTerminalInfo(&writer, terminal);
@@ -1865,25 +1910,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //   writer.appendNode(lxClassFlag, elStructureRole | elSymbol | elReadOnlyRole);
 
       //   writer.closeNode();
-      //}
-      //else if (StringHelper::compare(terminal, HINT_FLOAT_NUMBER)) {
-      //   TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
-      //   if (sizeValue.symbol == tsInteger) {
-      //      int size = StringHelper::strToInt(sizeValue.value);
-
-      //      writer.newNode(lxClassStructure, size);
-      //      appendTerminalInfo(&writer, terminal);
-      //      writer.closeNode();
-
-      //      // !! HOTFIX : allow only 8
-      //      if (size == 8) {
-      //         writer.appendNode(lxClassFlag, elDebugReal64);
-      //      }
-      //      else scope.raiseError(wrnInvalidHint, terminal);
-
-      //      writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elReadOnlyRole);
-      //   }
-      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
       //}
       //else if (StringHelper::compare(terminal, HINT_POINTER)) {
       //   writer.newNode(lxClassStructure, 4);
@@ -1913,14 +1939,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       //   writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elDynamicRole);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_STRING)) {
-      //   writer.appendNode(lxClassFlag, elDebugLiteral);
-      //   writer.appendNode(lxClassFlag, elStructureRole);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_WIDESTRING)) {
-      //   writer.appendNode(lxClassFlag, elDebugWideLiteral);
-      //   writer.appendNode(lxClassFlag, elStructureRole);
       //}
       //else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
       //   writer.appendNode(lxClassFlag, elNonStructureRole);
@@ -2170,7 +2188,13 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
                   //HOTFIX : recognize int wrapper as primitive value
                   switch (flags & elDebugMask) {
                      case elDebugDWORD:
-                        classRef = -1; // NOTE : -1 means primitive integer
+                        classRef = -1; // NOTE : -1 means primitive int32
+                        break;
+                     case elDebugQWORD:
+                        classRef = -2; // NOTE : -2 means primitive int64
+                        break;
+                     case elDebugReal64:
+                        classRef = -4; // NOTE : -4 means primitive real64
                         break;
                   }
                }
@@ -2324,6 +2348,8 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             switch (classRef)
             {
                case -1:
+               case -2:
+               case -4:
                   size = localInfo.size;
                   break;
                case -3:
@@ -2399,18 +2425,18 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
                   scope.writer->appendNode(lxLevel, variable.param);
                   scope.writer->closeNode();
                   break;
-   //            case elDebugQWORD:
-   //               scope.writer->newNode(lxLongVariable);
-   //               scope.writer->appendNode(lxTerminal, terminal.value);
-   //               scope.writer->appendNode(lxLevel, variable.param);
-   //               scope.writer->closeNode();
-   //               break;
-   //               //         //   case elDebugReal64:
-   //               //         //      scope.writer->newNode(lxReal64Variable);
-   //               //         //      scope.writer->appendNode(lxTerminal, terminal.value);
-   //               //         //      scope.writer->appendNode(lxLevel, variable.param);
-   //               //         //      scope.writer->closeNode();
-   //               //         //      break;
+               case elDebugQWORD:
+                  scope.writer->newNode(lxLongVariable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
+                  scope.writer->closeNode();
+                  break;
+               case elDebugReal64:
+                  scope.writer->newNode(lxReal64Variable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
+                  scope.writer->closeNode();
+                  break;
    //            default:
    //               scope.writer->newNode(lxBinaryVariable);
    //               scope.writer->appendNode(lxTerminal, terminal.value);
@@ -2471,24 +2497,24 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okConstantSymbol:
          scope.writer->newNode(lxConstantSymbol, object.param);
          break;
-   //   case okLiteralConstant:
-   //      scope.writer->newNode(lxConstantString, object.param);
-   //      break;
-   //   case okWideLiteralConstant:
-   //      scope.writer->newNode(lxConstantWideStr, object.param);
-   //      break;
+      case okLiteralConstant:
+         scope.writer->newNode(lxConstantString, object.param);
+         break;
+      case okWideLiteralConstant:
+         scope.writer->newNode(lxConstantWideStr, object.param);
+         break;
    //   //case okCharConstant:
    //   //   scope.writer->newNode(lxConstantChar, object.param);
    //   //   break;
       case okIntConstant:
          scope.writer->newNode(lxConstantInt, object.param);
          break;
-   //   case okLongConstant:
-   //      scope.writer->newNode(lxConstantLong, object.param);
-   //      break;
-   //   //case okRealConstant:
-   //   //   scope.writer->newNode(lxConstantReal, object.param);
-   //   //   break;
+      case okLongConstant:
+         scope.writer->newNode(lxConstantLong, object.param);
+         break;
+      case okRealConstant:
+         scope.writer->newNode(lxConstantReal, object.param);
+         break;
       case okLocal:
       case okParam:
          if (object.extraparam == -1) {
@@ -2583,7 +2609,7 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope)
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
 //   }
-   /*else */if (terminal == tsInteger) {
+   else if (terminal == tsInteger) {
       String<ident_c, 20> s(terminal.value, getlength(terminal.value));
 
       long integer = s.toInt();
@@ -2619,19 +2645,19 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope)
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
    }
-//   else if (terminal == tsReal) {
-//      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
-//      double number = StringHelper::strToDouble(s);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // HOT FIX : to support 0r constant
-//      if (s.Length() == 1) {
-//         s.append(".0");
-//      }
-//
-//      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+   else if (terminal == tsReal) {
+      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
+      double number = StringHelper::strToDouble(s);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // HOT FIX : to support 0r constant
+      if (s.Length() == 1) {
+         s.append(".0");
+      }
+
+      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
+   }
    else if (!emptystr(terminal))
       object = scope.mapObject(terminal);
 
@@ -3404,7 +3430,7 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
          classReference = object.extraparam;
 
          if (isPrimitiveRef(classReference)) {
-            if (classReference == -1) {
+            if (classReference == -1 || classReference == -2) {
                size = scope.moduleScope->defineSubjectSize(object.type);
             }
          }
@@ -5288,8 +5314,17 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
          // a class with a dynamic length structure must have no fields
          if (test(scope.info.header.flags, elDynamicRole)) {
             if (current == lxTemplateField && scope.info.size == 0 && scope.info.fields.Count() == 0) {
-               // compiler magic : turn a field declaration into an array one
+               // compiler magic : turn a field declaration into an array or string one 
                if (size != 0) {
+                  if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
+                     scope.info.header.flags &= ~elDebugMask;
+                     if (size == 2) {                        
+                        scope.info.header.flags |= elDebugWideLiteral;
+                     }
+                     else if (size == 1) {
+                        scope.info.header.flags |= elDebugLiteral;
+                     }
+                  }
                   scope.info.header.flags |= elStructureRole;
                   scope.info.size = -size;
                }
@@ -5647,6 +5682,12 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          switch (scope.info.header.flags & elDebugMask) {
             case elDebugDWORD:
                writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
+               break;
+            case elDebugQWORD:
+               writer.appendNode(lxTarget, -2); // NOTE : -2 means primitive long integer
+               break;
+            case elDebugReal64:
+               writer.appendNode(lxTarget, -4); // NOTE : -4 means primitive real number
                break;
             case elDebugIntegers:
             case elDebugBytes:
@@ -6341,6 +6382,14 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          if (IsNumericOperator(node.argument)) {
             if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
                node = lxIntOp;
+               boxing = true;
+            }
+            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
+               node = lxLongOp;
+               boxing = true;
+            }
+            else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
+               node = lxRealOp;
                boxing = true;
             }
          }

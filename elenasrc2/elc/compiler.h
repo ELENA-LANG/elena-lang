@@ -117,7 +117,7 @@ public:
    //   okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference 
       okLongConstant,                 // param - reference 
-   //   okRealConstant,                 // param - reference 
+      okRealConstant,                 // param - reference 
       okMessageConstant,              // param - reference 
       okExtMessageConstant,           // param - reference 
       okSignatureConstant,            // param - reference 
@@ -272,7 +272,7 @@ private:
       ref_t superReference;
       ref_t intReference;
       ref_t longReference;
-      //ref_t realReference;
+      ref_t realReference;
       ref_t literalReference;
       ref_t wideReference;
       //ref_t charReference;
@@ -288,11 +288,14 @@ private:
       ref_t sealedHint;
       ref_t limitedHint;
       ref_t integerHint;
+      ref_t realHint;
+      ref_t literalHint;
       ref_t varHint;
       ref_t signHint;
       ref_t stackHint;
       ref_t warnHint;
       ref_t dynamicHint;
+      ref_t constHint;
 
       //ref_t boolType;
 

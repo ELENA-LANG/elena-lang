@@ -21,7 +21,10 @@ In development:
 
                        * check subject duplicates
 
+                       * array of long
+                       * array of real
                        * array of structures
+                       * support #var(real)r := 2. // assigning int to real by constant
 
                        * system test : new test with template arrays
                        

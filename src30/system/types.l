@@ -12,8 +12,8 @@
 #subject byte       = system'ByteNumber.
 #subject short      = system'ShortNumber.
 #subject int        = system'IntNumber.
-//#subject long  = system'LongNumber.
-//#subject(class:system'RealNumber)   real.
+#subject long       = system'LongNumber.
+#subject real       = system'RealNumber.
 //#subject(class:system'CharValue)    char.
 //#subject(class:system'Message)      mssg.
 //#subject(class:system'ExtensionMessage) ext_mssg.
@@ -42,10 +42,10 @@
 //#subject(class:system'MessageArray) mssgarray.
 //#subject(class:system'BitArray)     bitarray.
 //#subject(class:system'BitArray32)   bitset.
-//
-//#subject(class:system'LiteralValue) literal.
-//#subject(class:system'WideLiteralValue) wide.
-//
+
+#subject literal    = system'LiteralValue.
+#subject wide       = system'WideLiteralValue.
+
 //// === function types ===
 //#subject(class:system'BaseFunction)  func.
 //#subject(class:system'BaseFunction1) func1.
