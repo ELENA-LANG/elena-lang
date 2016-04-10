@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   2
+#define REVISION_VERSION   1
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -886,7 +886,7 @@ void runSession(_Module* module)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2012-2015 by Alexei Rakov\n\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
+   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2016 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");

@@ -1,6 +1,6 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
+// ==== ver 3.5.1 ===
+
+#import system.
 //#import system'text.
 //
 //#subject(class:CONSOLE_SCREEN_BUFFER_INFO)console_screen_buffer_info.
@@ -49,28 +49,28 @@
 //        aCoord write &short:x &short:y.
 //    ]
 //}
-//
-//// --- $ConsoleHandleFactory --
-//
-//#symbol $ConsoleHandleFactory =
-//{
+
+// --- $ConsoleHandleFactory --
+
+#symbol $ConsoleHandleFactory =
+{
 //    #method(type:handle) new &attributes:anAttributes
 //    [ 
 //        #var(type:handle) aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
 //        
 //        ^ Handle new &handle:aHandle.
 //    ]
-//    
-//    #method newWriter
-//    [
+    
+    #method newWriter
+    [
 //        #var(type:handle)handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
 //        #var(type:int)dwMode := system'external'KERNEL32 GetFileType &int:handle.
 //        (dwMode == FILE_TYPE_CHAR)
 //            ? [ ^ $ConsoleWriter new &handle:handle. ]
 //            ! [ ^ $FileWriter new &handle:handle. ].
-//    ]
-//}.
-//
+    ]
+}.
+
 //// --- ConsoleWriter ---
 //
 //#class(sealed,struct:embeddable) $ConsoleWriter
@@ -358,9 +358,9 @@
 //            &int:theHandle.
 //    ]
 //}
-//
-//// --- Console Standard Symbols
-//
-//#symbol stdConsoleWriter = $ConsoleHandleFactory newWriter.
-//
+
+// --- Console Standard Symbols
+
+#symbol stdConsoleWriter = $ConsoleHandleFactory newWriter.
+
 //#symbol stdConsoleReader = $ConsoleReader new &handle:($ConsoleHandleFactory new &attributes:0FFFFFFF6h).

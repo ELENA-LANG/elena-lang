@@ -10,9 +10,9 @@
     #field(literal)theNewLineConstant.
 
     /// Creates a console
-    #constructor new //&reader:aReader &writer:aWriter
+    #constructor new /*&reader:aReader*/ &writer:aWriter
     [
-//        theWriter := aWriter.
+        theWriter := aWriter.
 //        theReader := aReader.
         theNewLineConstant := 'newLine literal.
     ]
@@ -79,4 +79,4 @@
 }
 
 /// A standard console
-#static console = $Console new/* &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter*/.
+#static console = $Console new/* &reader:system'io'stdConsoleReader */&writer:system'io'stdConsoleWriter.

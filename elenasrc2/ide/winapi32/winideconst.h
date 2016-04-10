@@ -13,7 +13,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDE_REVISION_NUMBER 10
+#define IDE_REVISION_NUMBER                     1
 
 // --- Command line arguments ---
 
@@ -245,14 +245,10 @@
  
 #define VER_FILE_VERSION_STR        STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    "." STRINGIZE(IDE_REVISION_NUMBER) \
-                                    ".0" 
+                                    "." STRINGIZE(IDE_REVISION_NUMBER)
 
 #define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    ".0"                                   \
-                                    ".0"                                   
-                   
-#define APP_VERSION                 "Version 1.9.26"
+                                    "." STRINGIZE(ENGINE_RELEASE_VERSION)
 
 #endif // winideconstH

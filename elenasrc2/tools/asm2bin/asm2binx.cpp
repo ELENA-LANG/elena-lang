@@ -18,7 +18,7 @@
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA Assembler Compiler %d.%d.%d (C)2007-2016 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
+   printf("ELENA Assembler Compiler %d.%d.%d (C)2011-2016 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
 
    if (argc<2) {
       printf("asm2bin <file.asm> <output path>");

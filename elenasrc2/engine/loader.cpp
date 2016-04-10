@@ -125,10 +125,17 @@ Image :: Image(bool standAlone)
    MemoryWriter writer(&_data);
 
    if (standAlone) {
-      writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
+      writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));      
    }
    else writer.write(ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE));
 
+   char number[4];
+   StringHelper::intToStr(ENGINE_MINOR_VERSION, number, 10);
+   writer.write(number, strlen(number));
+   writer.writeChar('.');
+   StringHelper::intToStr(ENGINE_RELEASE_VERSION, number, 10);
+   writer.write(number, strlen(number));               
+                                                  
    writer.align(4, 0);
 
    // write debug length and entry point placeholders

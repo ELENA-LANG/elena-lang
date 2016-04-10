@@ -175,7 +175,7 @@ LoadResult Module :: load(StreamReader& reader)
    char signature[12];
    reader.read(signature, strlen(MODULE_SIGNATURE));
    if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
-      return (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
+      return (strncmp(signature, ELENA_SIGNITURE, 7) == 0) ? lrWrongVersion : lrWrongStructure;
    }
 
    // load name...
