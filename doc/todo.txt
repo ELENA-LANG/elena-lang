@@ -44,12 +44,17 @@ In development:
                        * test assigning generic object to stack allocated variable
                             #var(integer:4)n := object. // !! should be typecasting
 
+                       * no need in temporal variable in this code
+                         #var(handle)handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
+
                        * review array implementation (template usage)
                        * review primitive imlementation (template usage)
                        * probably all hints should be templates??
                        * #54 : implementing generics / templates : class
                        * stack allocated variable and $nil
                        * review #10 issue
+
+                       * elc refactoring : replace "SyntaxTree::findChild(child,..."  with "child.findChild(..."
 
                        * test string_comparision
                        * test combinations

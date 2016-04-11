@@ -366,7 +366,7 @@ int main(int argc, char* argv[])
    _ELC_::Project project;
 
    try {
-      print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ENGINE_RELEASE_VERSION, ELC_REVISION_NUMBER);
+      print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
 
       if (argc < 2) {
          // show help if no parameters proveded

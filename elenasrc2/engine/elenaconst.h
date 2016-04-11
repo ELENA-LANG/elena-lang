@@ -460,13 +460,11 @@ namespace _ELENA_
    #define HINT_CONSTANT            "const$"
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
-//   #define HINT_STRUCT             "struct"
+   #define HINT_STRUCT              "struct$"
    #define HINT_INTEGER_NUMBER      "integerof$"      // class representing an integer number
    #define HINT_FLOAT_NUMBER        "floatof$"
    #define HINT_VARIABLE            "variable$"
-//   #define HINT_BINARY             "stringof"
    #define HINT_DYNAMIC             "dynamic$"
-//   #define HINT_ARRAYOF           "arrayof"
 //   #define HINT_POINTER            "pointer"
    #define HINT_STRING              "string$"
 //// #define HINT_SAFEPOINT          "safepoint"
@@ -479,15 +477,16 @@ namespace _ELENA_
 //   #define HINT_SYMBOL             "symbol"
 //   #define HINT_EXTENSION          "extension"
 //   #define HINT_GROUP              "group"
-   #define HINT_WRAPPER             "class"         // obsolete
 //   #define HINT_GENERIC            "generic"
-//   #define HINT_EMBEDDABLE         "embeddable"
+   #define HINT_EMBEDDABLE          "embeddable$"
 //   #define HINT_NONSTRUCTURE       "nonstructural"
    #define HINT_STACKSAFE           "stacksafe$"
    #define HINT_SUPPRESS_WARNINGS   "suppress$"
 //   #define HINT_TARGET             "target"
 //   #define HINT_TARGET_FIELD       "field"
 //   #define HINT_TARGET_METHOD      "method"
+
+   #define HINT_WRAPPER             "class"         // obsolete
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

@@ -1,14 +1,14 @@
-//// ==== ver 3.4.1 ===
-//
-//// --- Handler ---
-//
-//#class(sealed,struct:embeddable) Handle
-//{
-//    #field(type:int)theHandle.
-//    
-//    #constructor(stacksafe) new &handle:aHandle
-//        => system'core_routines'int_copy.
-//
+// --- Handler ---
+
+#class(sealed,struct:embeddable,variable,dispatchable:handle) Handle
+{
+    #field(int)theHandle.
+    
+    #constructor(stacksafe) new &handle:h
+    [
+        theHandle := h.
+    ]
+
 //    #constructor(stacksafe) new &int:aHandle
 //        => system'core_routines'int_copy.
 //
@@ -17,16 +17,8 @@
 //
 //    #method(type:bool,stacksafe) equal &handle:anOperand 
 //        => system'core_routines'int_equal.
-//
-//    #method handle = $self.
-//
-//    /// Dispatches the verb to the target object with handle subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &handle:$self.
-//    
-//    /// Dispatches the verb to the target object with bytearray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &handle:$self.
-//}
-//
+}
+
 //// --- RTPointer ---
 //
 //#static rt_sync = Object new.

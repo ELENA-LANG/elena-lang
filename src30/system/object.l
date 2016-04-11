@@ -1,5 +1,3 @@
-// ==== ver 3.5.1 ===
-
 // === basic templates ===
 
 #template dispatchable

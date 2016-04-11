@@ -296,6 +296,8 @@ private:
       ref_t warnHint;
       ref_t dynamicHint;
       ref_t constHint;
+      ref_t structHint;
+      ref_t embedHint;
 
       //ref_t boolType;
 
@@ -715,8 +717,11 @@ private:
    // --- TemplateScope ---
    struct TemplateScope : public ClassScope
    {
+      ref_t       templateRef;
       LexicalType templateType;
 
+      // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
+      // proper reference is 0 in this case
       TemplateScope(ModuleScope* parent, ref_t reference);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -739,14 +744,9 @@ private:
          else return Scope::mapSubject(terminal, implicitOnly);
       }
 
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         return Scope::getScope(level);
-      }
-
       void save()
       {
-         _Memory* section = moduleScope->module->mapSection(reference | mskSyntaxTreeRef, false);
+         _Memory* section = moduleScope->module->mapSection(templateRef | mskSyntaxTreeRef, false);
          section->trim(0);
 
          syntaxTree.save(section);
@@ -814,7 +814,7 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
-   void declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+   bool declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule, bool declaringMode);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
@@ -869,16 +869,16 @@ private:
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
-//
-//   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+
+   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
    bool allocateStructure(CodeScope& scope, int size, int flags, bool bytearray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
-//
+   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
+   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
+
 //   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
    void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
@@ -951,8 +951,8 @@ private:
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, ref_t targetType, int warningLevel, int mode);
-////   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-////   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 ////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
