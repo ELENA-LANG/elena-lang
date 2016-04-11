@@ -52,6 +52,20 @@ labDefault:
   
 end
 
+procedure __wideconvertor.convert&literal$[1]
+
+  aloadsi 2
+  blen
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya  
+  aloadsi 2
+  callextr api : strtowstr
+  acopyb
+  quitn 2  
+
+end
+
 /*
 procedure object_equal
 
@@ -1948,20 +1962,6 @@ procedure str_copywstr
   acopyb
   quitn 2
   
-end
-
-procedure wstr_copystr
-
-  aloadsi 2
-  blen
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya  
-  aloadsi 2
-  callextr api : strtowstr
-  acopyb
-  quitn 2  
-
 end
 
 procedure bs_create

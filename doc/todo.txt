@@ -2,8 +2,8 @@
 In development:
 ------                      
               xdev - generic development
-                       * fields
-                       * primitive fields
+                       * templates : make sure it is not possible to assign array (see arrayof, stringof) 
+                         (probably assigning is not correct for numeric template as well)
 
                        * system test
 

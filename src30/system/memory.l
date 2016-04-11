@@ -1,5 +1,3 @@
-// ==== ver 3.5.1 ===
-
 // --- arrayof ---
 
 #template(dynamic) arrayof
@@ -980,8 +978,6 @@
 /// A UTF-8 literal value
 #class(sealed,stringof:byte,dispatchable:literal) LiteralValue //:: BaseValue
 {
-//    #field(type:bytearray)theValue.
-//
 //    /// Creates the empty literal
 //    #constructor min
 //        => system'core_routines's_empty.
@@ -1008,13 +1004,10 @@
 //
 //    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
 //        => system'core_routines's_copybuf.
-//
-//    /// Returns itself
-//    #method literal = $self.
-//    
-//    /// Converts to UTF-16 literal
-//    #method wide = wideConvertor convert &literal:$self.
-//
+    
+    /// Converts to UTF-16 literal
+    #method wide = wideConvertor convert &literal:$self.
+
 //    /// Compares the values
 //    #method(type:bool) equal &literal : aLiteral
 //        => system'core_routines's_equal.

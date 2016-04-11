@@ -1216,7 +1216,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    //else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
    //   return ObjectInfo(okParam, (size_t)-1);
    //}
-   //else {
+   else {
       Parameter param = parameters.get(identifier);
 
       int local = param.offset;
@@ -1231,7 +1231,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 
          return retVal;
       }
-   //}
+   }
 }
 
 // --- Compiler::ActionScope ---
@@ -2152,7 +2152,7 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       else if (warningsOnly) {
          // ignore other hints for implementation stage
       }
-      if (moduleScope->subjectHints.exist(hintRef)) {
+      else if (moduleScope->subjectHints.exist(hintRef)) {
          writer.appendNode(lxType, hintRef);
       }
       else if (hintRef == moduleScope->sealedHint) {
@@ -3495,13 +3495,11 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
       else if (object.kind == okLocal || object.kind == okField/* || object.kind == okOuterField*/) {
 
       }
-//      else if (object.kind == okTemplateField) {
-//         // if it is a template field
-//         // treates it like a normal field
-//         currentObject.kind = okField;
-//
-//         assignType = lxTemplAssigning;
-//      }
+      else if (object.kind == okTemplateTarget) {
+         // if it is a template field
+         // treates it like a normal field
+         currentObject.kind = okField;
+      }
       else scope.raiseError(errInvalidOperation, node.Terminal());
 
       currentObject = compileAssigningExpression(node, member, scope, currentObject);
@@ -5769,7 +5767,6 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
 //         writer.appendNode(lxStacksafe);
 //   }
 //   else if (current.type == lxTemplAssigning) {
-//      // HOT FIX : add a typecasting for field assigning if it is required
 //      writer.newNode(lxAssigning, info.size);
 //
 //      if (info.targetRef != 0)
@@ -6572,6 +6569,13 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
             // HOTFIX : remove boxing node for assignee
             if (current == lxBoxing) {
                SNode subNode = SyntaxTree::findMatchedChild(current, lxObjectMask);
+
+               if (node.argument == 0 && subNode == lxFieldAddress) {
+                  // HOT FIX : for template target define the assignment size
+                  defineTargetSize(scope, current);
+                  node.setArgument(current.argument);
+               }
+               
                current = subNode.type;
                current.setArgument(subNode.argument);
             }
@@ -6608,13 +6612,11 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    //}
 }
 
-void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
+void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
 {
-   bool boxing = true;
-
    SNode target = SyntaxTree::findChild(node, lxTarget);
 
-   // HOT FIX : box primitive structures
+   // HOT FIX : box / assign primitive structures
    if (isPrimitiveRef(target.argument)) {
       ref_t type = SyntaxTree::findChild(node, lxType).argument;
       int size = scope.defineSubjectSize(type, false);
@@ -6627,11 +6629,22 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
       target.setArgument(scope.subjectHints.get(type));
    }
    else if (node.argument == 0)
-      node.setArgument(scope.defineStructSize(target.argument, false));
+      node.setArgument(scope.defineStructSize(target.argument));
+}
 
-   if (!test(mode, HINT_NOBOXING)/* || (node == lxFieldAddress && node.argument > 0)*/) {
+void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
+{
+   bool boxing = true;
+
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+
+   defineTargetSize(scope, node);
+
+   // if the object is not embeddable or no boxing hint provided
+   // then boxing should be skipped
+   if (test(mode, HINT_NOBOXING) || node.argument == 0) {
+      boxing = false;
    }
-   else boxing = false;
 
    // ignore boxing operation if allowed
    if (!boxing)
@@ -6647,6 +6660,18 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
          scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, terminal.identifier());
       }
    }
+}
+
+bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
+{
+   if (sourceClassRef == -1 && (targetInfo.header.flags & elDebugMask) == elDebugDWORD)
+   {
+      return true;
+   }
+   else if (sourceClassRef != 0 && scope.subjectHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
+      return true;
+   }
+   else return false;
 }
 
 void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
@@ -6714,7 +6739,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
             }
             else if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
                // if target is source wrapper (i.e. target is a source container)
-               if (sourceClassRef != 0 && scope.subjectHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
+               if (checkIfImplicitBoxable(scope, sourceClassRef, targetInfo)) {
                   // if boxing is not required (stack safe) and can be passed directly
                   if (test(mode, HINT_NOBOXING)) {
                      node = lxExpression;
@@ -6736,6 +6761,9 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
                }
             }
             else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
+               if (isPrimitiveRef(sourceClassRef) && sourceType != 0)
+                  sourceClassRef = scope.subjectHints.get(sourceType);
+
                ClassInfo sourceInfo;
                scope.loadClassInfo(sourceInfo, sourceClassRef, false);
                // if source is target wrapper (i.e. source is a target container)
@@ -6922,9 +6950,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          // HOT FIX : to pass the optimization mode into sub expression
          optimizeSyntaxExpression(scope, current, warningMask, mode);
          break;
-//      case lxReturning:
-//         optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
-//         break;
+      case lxReturning:
+         optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
+         break;
 //      case lxOverridden:
 //      case lxVariable:
 //         optimizeSyntaxExpression(scope, current, warningMask, mode);

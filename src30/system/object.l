@@ -11,8 +11,18 @@
 
 #template numeric
 {
-   #method(stacksafe) add &template_subj:val
+   #method(stacksafe,suppress:w3) add &template_subj:val
       = $target + val.
+}
+
+#template(variable) varof
+{
+    #method set &template_subj:val
+    [
+        $target := val.
+    ]
+    
+    #method template_subj = $target.
 }
 
 // --- super object ---

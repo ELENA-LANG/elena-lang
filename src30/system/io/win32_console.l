@@ -85,8 +85,8 @@
         $self write &wide:(aLiteral wide).
     ]
 
-//    #method write &wide : aLiteral
-//    [
+    #method write &wide : aLiteral
+    [
 //        #var(int)aLength.
 //        aLiteral readLength &vint:aLength.
 //
@@ -96,9 +96,9 @@
 //            &int  :  aLength
 //            &int  :  0                       // !! temporally we do not use it
 //            &int  :  0.             
-//
-//        // !!check the result of the operation
-//    ]
+
+        // !!check the result of the operation
+    ]
     
 //    #method clear
 //    [

@@ -1,5 +1,5 @@
-//// === basic data classes ===
-//
+// === basic data classes ===
+
 //// --- BaseValue ---
 //
 //// A base value
@@ -1353,6 +1353,10 @@
 //        ^ aCode.
 //    ]
 }
+
+// === Numeric Variables ===
+
+#subject(varof:int)vint.
 
 ////// --- Byte ---
 ////
@@ -3436,81 +3440,81 @@
 ////    #method(type:literal,stacksafe) convert &literal:aLiteral
 ////        = aLiteral.
 ////}.
-////
-////// --- wideConvertor ---
-////
-/////// A wide literal convertor
-////#symbol wideConvertor =
-////{
-////    /// Converts the parameter to the literal value
-////    #method(type:wide,stacksafe) convert &char:aValue
-////        => system'core_routines'ws_copychar.
-////    
-////    /// Converts the parameter to the literal value
-////    #method(type:wide,stacksafe) convert &int:aNumber
-////        => system'core_routines'ws_copyint.
-////
-////    /// Converts the parameter to the literal value
-////    #method(type:wide,stacksafe) convert &short:aNumber
-////        => system'core_routines'ws_copyint.
-////
-////    /// Converts the parameter to the literal value
-////    #method(type:wide,stacksafe) convert &byte:aNumber
-////        => system'core_routines'ws_copyint.
-////
-////    /// Converts the parameter to the literal value
-////    #method(type:wide,stacksafe) convert &long:aNumber
-////        => system'core_routines'ws_copylong.
-////
-////    /// Converts the parameter to the literal value with the provided radix
-////    #method(type:wide,stacksafe) convert &int:aNumber &int:aRadix
-////        => system'core_routines'ws_copyint_radix.
-////
-////    /// Converts the parameter to the literal value with the provided radix
-////    #method(type:wide,stacksafe) convert &short:aNumber &int:aRadix
-////        => system'core_routines'ws_copyint_radix.
-////
-////    /// Converts the parameter to the literal value with the provided radix
-////    #method(type:wide,stacksafe) convert &byte:aNumber &int:aRadix
-////        => system'core_routines'ws_copyint_radix.
-////
-////    /// Converts the parameter to the literal value with the provided radix
-////    #method(type:wide,stacksafe) convert &long:aNumber &int:aRadix
-////        => system'core_routines'ws_copylong_radix.
-////
-////    /// obsolete
-////    #method(type:wide,stacksafe) convert &int:aNumber &index:aRadix
-////        <= convert &int:aNumber &int:(aRadix int).
-////
-////    /// obsolete
-////    #method(type:wide,stacksafe) convert &short:aNumber &index:aRadix
-////        <= convert &short:aNumber &int:(aRadix int).
-////
-////    /// obsolete
-////    #method(type:wide,stacksafe) convert &byte:aNumber &index:aRadix
-////        <= convert &byte:aNumber &int:(aRadix int).
-////
-////    /// obsolete
-////    #method(type:wide,stacksafe) convert &long:aNumber &index:aRadix
-////        <= convert &long:aNumber &int:(aRadix int).
-////
-////    /// Converts the parameter to the literal value
-////    #method(type:wide,stacksafe) convert &real:aNumber
-////        => system'core_routines'ws_copyreal.
-////
-////    /// Converts UTF-8 literal to UTF-16e
-////    #method(type:wide,stacksafe) convert &literal:aLiteral
-////        => system'core_routines'wstr_copystr.
-////        
-////    /// Returns the literal presentation of the parameter
-////    #method(type:wide,stacksafe) convert : anObject
-////        = anObject wide.
-////        
-////    /// Returns a parameter
-////    #method(type:wide,stacksafe) convert &wide:aLiteral
-////        = aLiteral.
-////}.
-////
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+#symbol wideConvertor =
+{
+//    /// Converts the parameter to the literal value
+//    #method(type:wide,stacksafe) convert &char:aValue
+//        => system'core_routines'ws_copychar.
+//    
+//    /// Converts the parameter to the literal value
+//    #method(type:wide,stacksafe) convert &int:aNumber
+//        => system'core_routines'ws_copyint.
+//
+//    /// Converts the parameter to the literal value
+//    #method(type:wide,stacksafe) convert &short:aNumber
+//        => system'core_routines'ws_copyint.
+//
+//    /// Converts the parameter to the literal value
+//    #method(type:wide,stacksafe) convert &byte:aNumber
+//        => system'core_routines'ws_copyint.
+//
+//    /// Converts the parameter to the literal value
+//    #method(type:wide,stacksafe) convert &long:aNumber
+//        => system'core_routines'ws_copylong.
+//
+//    /// Converts the parameter to the literal value with the provided radix
+//    #method(type:wide,stacksafe) convert &int:aNumber &int:aRadix
+//        => system'core_routines'ws_copyint_radix.
+//
+//    /// Converts the parameter to the literal value with the provided radix
+//    #method(type:wide,stacksafe) convert &short:aNumber &int:aRadix
+//        => system'core_routines'ws_copyint_radix.
+//
+//    /// Converts the parameter to the literal value with the provided radix
+//    #method(type:wide,stacksafe) convert &byte:aNumber &int:aRadix
+//        => system'core_routines'ws_copyint_radix.
+//
+//    /// Converts the parameter to the literal value with the provided radix
+//    #method(type:wide,stacksafe) convert &long:aNumber &int:aRadix
+//        => system'core_routines'ws_copylong_radix.
+//
+//    /// obsolete
+//    #method(type:wide,stacksafe) convert &int:aNumber &index:aRadix
+//        <= convert &int:aNumber &int:(aRadix int).
+//
+//    /// obsolete
+//    #method(type:wide,stacksafe) convert &short:aNumber &index:aRadix
+//        <= convert &short:aNumber &int:(aRadix int).
+//
+//    /// obsolete
+//    #method(type:wide,stacksafe) convert &byte:aNumber &index:aRadix
+//        <= convert &byte:aNumber &int:(aRadix int).
+//
+//    /// obsolete
+//    #method(type:wide,stacksafe) convert &long:aNumber &index:aRadix
+//        <= convert &long:aNumber &int:(aRadix int).
+//
+//    /// Converts the parameter to the literal value
+//    #method(type:wide,stacksafe) convert &real:aNumber
+//        => system'core_routines'ws_copyreal.
+
+    /// Converts UTF-8 literal to UTF-16e
+    #method(wide,stacksafe) convert &literal:aLiteral
+        => system'core_routines'__wideconvertor.
+        
+//    /// Returns the literal presentation of the parameter
+//    #method(type:wide,stacksafe) convert : anObject
+//        = anObject wide.
+        
+    /// Returns a parameter
+    #method(wide,stacksafe) convert &wide:aLiteral
+        = aLiteral.
+}.
+
 ////// --- realOpController ---
 ////
 ////#symbol realOpController =

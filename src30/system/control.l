@@ -1,5 +1,3 @@
-//// ==== ver 3.4.1 ===
-//
 //// --- true ---
 //
 //#class(limited) BaseBoolValue

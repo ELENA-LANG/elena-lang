@@ -790,6 +790,7 @@ private:
    void writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t messageRef);
 
    bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
+   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
    ref_t mapNestedExpression(CodeScope& scope);
@@ -959,6 +960,8 @@ private:
    void optimizeArrOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    //void optimizeBoxableObject(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+
+   void defineTargetSize(ModuleScope& scope, SNode& node);
 
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
