@@ -2,7 +2,7 @@
 In development:
 ------                      
               xdev - generic development
-                       * user friendly names for templates, probably something like varof$<int$> for vint
+                       * every time when varof:int for example is used, new class is declared, it should be reused
 
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)

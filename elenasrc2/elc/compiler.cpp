@@ -1229,7 +1229,13 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    //      //if (withOpenArg && moduleScope->typeHints.exist(param.sign_ref, moduleScope->paramsReference)) {
    //      //   return ObjectInfo(okParams, -1 - local, 0, param.sign_ref);
    //      //}
-         /*else */return ObjectInfo(okParam, -1 - local, stackSafe ? -1 : 0, param.subj_ref);
+         /*else */if (stackSafe && param.subj_ref != 0) {
+            // HOTFIX : only embeddable parameter should be boxed in stacksafe method
+            if (isEmbeddable(moduleScope->getClassFlags(moduleScope->subjectHints.get(param.subj_ref)))) {
+               return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
+            }
+         }
+         return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -5256,9 +5262,15 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
    }
 }
 
-ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t typeRef)
+ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t typeRef, ident_t className)
 {
-   ClassScope scope(&moduleScope, moduleScope.mapNestedExpression());
+   ref_t reference = 0;
+   if (!emptystr(className)) {
+      reference = moduleScope.module->mapReference(className);
+   }
+   else reference = moduleScope.mapNestedExpression();
+
+   ClassScope scope(&moduleScope, reference);
 
    // link the generated class to the specified type
    if (typeRef != 0)
@@ -7287,7 +7299,11 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
             if (templateInfo.targetSubject == 0)
                templateInfo.targetSubject = scope.module->mapSubject(target, false);
 
-            classRef = generateTemplate(scope, templateInfo, subjRef);
+            ReferenceNs name(scope.module->Name(), scope.module->resolveSubject(hintRef));
+            name.append('@');
+            name.append(scope.module->resolveSubject(templateInfo.targetSubject));
+
+            classRef = generateTemplate(scope, templateInfo, subjRef, name);
             if (classRef == 0)
                scope.raiseError(errInvalidHint, terminal);
          }

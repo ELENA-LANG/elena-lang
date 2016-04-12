@@ -922,7 +922,7 @@ private:
 
    void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
 
-   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t typeRef);
+   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t typeRef, ident_t className = NULL);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
