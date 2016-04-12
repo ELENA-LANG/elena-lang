@@ -825,32 +825,37 @@ int Compiler::ModuleScope :: getClassFlags(ref_t reference)
    return classInfo.header.flags;
 }
 
+int Compiler::ModuleScope :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
+      outputType = info.methodHints.get(Attribute(message, maType));
+
+      if ((hint & tpMask) == tpSealed) {
+         return hint;
+      }
+      else if (test(info.header.flags, elSealed)) {
+         return tpSealed | hint;
+      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
+      else return tpNormal | hint;
+   }
+   else return tpUnknown;
+}
+
 int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
 {
    ClassInfo info;
    found = loadClassInfo(info, module->resolveReference(reference)) != 0;
 
    if (found) {
-      bool methodFound = info.methods.exist(message);
-
-      if (methodFound) {
-         int hint = info.methodHints.get(Attribute(message, maHint));
-         outputType = info.methodHints.get(Attribute(message, maType));
-
-         if ((hint & tpMask) == tpSealed) {
-            return hint;
-         }
-         else if (test(info.header.flags, elSealed)) {
-            return tpSealed | hint;
-         }
-         else if (test(info.header.flags, elClosed)) {
-            return tpClosed | hint;
-         }
-         else return tpNormal | hint;
-      }
+      return checkMethod(info, message, outputType);
    }
-
-   return tpUnknown;
+   else return tpUnknown;
 }
 
 void Compiler::ModuleScope :: validateReference(TerminalInfo terminal, ref_t reference)
@@ -3330,7 +3335,9 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 
       // if the class found and the message is not supported - warn the programmer and raise an exception
       if (classFound && callType == tpUnknown) {
-         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.FirstTerminal());
+         scope.writer->appendNode(lxCallTarget, classReference);
+
+         //scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.FirstTerminal());
       }
    }
 
@@ -6415,6 +6422,64 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningM
    optimizeSyntaxExpression(scope, node, warningMask, mode);
 }
 
+void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
+{
+   int mode = 0;
+
+   bool stackSafe = false;
+   bool methodNotFound = false;
+   SNode target = SyntaxTree::findChild(node, lxCallTarget);
+   if (target.argument != 0) {
+      ClassInfo info;
+      if (scope.loadClassInfo(info, target.argument)) {
+         ref_t dummy;
+         int hint = scope.checkMethod(info, node.argument, dummy);
+         
+         if (hint == tpUnknown) {
+            // Compiler magic : allow to call wrapper content directly
+            if (test(info.header.flags, elWrapper)) {
+               target.setArgument(scope.subjectHints.get(info.fieldTypes.get(0)));
+
+               hint = scope.checkMethod(target.argument, node.argument);
+
+               // for dynamic object, target object should be overridden
+               if (!test(info.header.flags, elStructureRole)) {
+                  node.appendNode(lxOverridden);
+                  SNode n = SyntaxTree::findChild(node, lxOverridden);
+                  n.appendNode(lxField);
+               }
+            }            
+         }
+
+         methodNotFound = hint == tpUnknown;
+         switch (hint & tpMask) {
+            case tpSealed:
+               stackSafe = test(hint, tpStackSafe);
+               node = lxDirectCalling;
+               break;
+            case tpClosed:
+               stackSafe = test(hint, tpStackSafe);
+               node = lxSDirctCalling;
+               break;
+         }
+      }
+   }
+
+   if (stackSafe)
+      mode |= HINT_NOBOXING;
+
+   optimizeSyntaxExpression(scope, node, warningMask, mode);
+
+   if (methodNotFound && test(warningMask, WARNING_LEVEL_1)) {
+      SNode row = SyntaxTree::findChild(node, lxRow);
+      SNode col = SyntaxTree::findChild(node, lxCol);
+      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
+      if (col != lxNone && row != lxNone) {
+         scope.raiseWarning(WARNING_LEVEL_3, wrnUnknownMessage, row.argument, col.argument, terminal.identifier());
+      }
+   }
+}
+
 int Compiler :: mapOpArg(ModuleScope& scope, SNode arg)
 {
    int flags = 0;
@@ -6693,9 +6758,9 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
 
    defineTargetSize(scope, node);
 
-   // if the object is not embeddable or no boxing hint provided
+   // if no boxing hint provided
    // then boxing should be skipped
-   if (test(mode, HINT_NOBOXING) || node.argument == 0) {
+   if (test(mode, HINT_NOBOXING)) {
       boxing = false;
    }
 
@@ -6845,7 +6910,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
                // if the target is generic wrapper (container)
                if (!test(mode, HINT_EXTERNALOP)) {
                   node.setArgument(0);
-                  node = lxUnboxing;
+                  node = test(mode, HINT_NOUNBOXING) ? lxBoxing : lxUnboxing;
                   node.appendNode(lxTarget, targetClassRef);
                }
                else {
@@ -6975,13 +7040,6 @@ int Compiler :: allocateStructure(ModuleScope& scope, SNode node, int& size)
 void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
 {
    switch (current.type) {
-//      case lxLocalAddress:
-////      case lxFieldAddress:
-////      case lxSubject:
-////      case lxBoxableLocal:
-////      case lxBlockLocalAddr:
-//         optimizeBoxableObject(scope, current, warningMask, mode);
-//         break;
       case lxAssigning:
          optimizeAssigning(scope, current, warningMask);
          break;
@@ -7000,16 +7058,14 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          optimizeInternalCall(scope, current, warningMask, mode);
          break;
       case lxExpression:
+      case lxOverridden:
+      case lxVariable:
          // HOT FIX : to pass the optimization mode into sub expression
          optimizeSyntaxExpression(scope, current, warningMask, mode);
          break;
       case lxReturning:
          optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING);
          break;
-//      case lxOverridden:
-//      case lxVariable:
-//         optimizeSyntaxExpression(scope, current, warningMask, mode);
-//         break;
       case lxBoxing:
       case lxCondBoxing:
          optimizeBoxing(scope, current, warningMask, mode);
@@ -7020,6 +7076,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
       case lxDirectCalling:
       case lxSDirctCalling:
          optimizeDirectCall(scope, current, warningMask);
+         break;
+      case lxCalling:
+         optimizeCall(scope, current, warningMask);
          break;
       default:
          if (test(current.type, lxExpressionMask)) {

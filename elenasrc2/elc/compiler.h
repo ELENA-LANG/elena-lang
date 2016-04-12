@@ -362,6 +362,7 @@ private:
       int defineStructSize(ref_t classReference, bool embeddableOnly = true);
       int defineSubjectSize(ref_t type_ref, bool embeddableOnly = true);
 
+      int checkMethod(ClassInfo& info, ref_t message, ref_t& outputType);
       int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
       int checkMethod(ref_t reference, ref_t message)
       {
@@ -959,6 +960,7 @@ private:
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 ////   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeArrOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
