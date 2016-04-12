@@ -910,7 +910,8 @@ private:
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
    void compileSymbolCode(ClassScope& scope);
-   void compileVirtualMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
+   void compileVirtualTypecastMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
+   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
    void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
    void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);

@@ -5913,7 +5913,7 @@ void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, Templat
    importTemplateTree(scope, writer, root, templateInfo, extModule, declarationMode);
 }
 
-void Compiler :: compileVirtualMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument)
+void Compiler :: compileVirtualTypecastMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument)
 {
    int paramCount = getParamCount(scope.message);
 
@@ -5935,6 +5935,36 @@ void Compiler :: compileVirtualMethod(SyntaxWriter& writer, MethodScope& scope, 
    writer.closeNode();
 }
 
+void Compiler :: compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument)
+{
+   int paramCount = getParamCount(scope.message);
+
+   writer.newNode(lxClassMethod, scope.message);
+   writer.newNode(lxDispatching);
+   writer.newNode(lxResending, scope.message);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   if (test(classScope->info.header.flags, elStructureWrapper)) {
+      // new stack frame
+      // stack already contains current $self reference
+      writer.newNode(lxNewFrame);
+      writer.newNode(lxBoxing);
+      writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(classScope->info.fieldTypes.get(0)));
+      writer.appendNode(lxFieldAddress);
+      writer.closeNode();
+      writer.closeNode();
+   }
+   else {
+      writer.newNode(lxExpression);
+      writer.appendNode(lxResultField);
+      writer.closeNode();
+   }  
+
+   writer.closeNode();
+   writer.closeNode();
+   writer.closeNode();
+}
+
 void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -5950,10 +5980,20 @@ void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
          if (!scope.info.methods.exist(methodScope.message)) {
             scope.include(methodScope.message);
 
-            compileVirtualMethod(writer, methodScope, lxThisLocal, 1);
+            compileVirtualTypecastMethod(writer, methodScope, lxThisLocal, 1);
          }
       }
       c_it++;
+   }
+
+   // auto generate dispatch handler for wrapper class
+   if (test(scope.info.header.flags, elWrapper) && !scope.info.methods.exist(DISPATCH_MESSAGE_ID, true)) {
+      //scope.info.header.flags |= elWithGenerics;
+
+      MethodScope methodScope(&scope);
+      methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);;
+
+      compileVirtualDispatchMethod(writer, methodScope, lxResultField, 0);
    }
 }
 
