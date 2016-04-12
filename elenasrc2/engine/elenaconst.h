@@ -442,7 +442,6 @@ namespace _ELENA_
    #define NIL_VAR                 "$nil"             // the nil symbol
 
    #define TARGET_VAR              "$target"          // template target pseudo-variable
-   #define TARGETSUBJ_VAR          "template_subj"    // template psedo-subject
 
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"

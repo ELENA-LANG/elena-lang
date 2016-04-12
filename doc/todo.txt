@@ -2,6 +2,9 @@
 In development:
 ------                      
               xdev - generic development
+                       * template - explicitly declare the subject, e.g.
+                          #template dispatchable : template_subj
+
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)
 

@@ -4543,7 +4543,8 @@ void Compiler :: compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope
 
    CommandTape* tape = scope.tape;
 
-   writer.insert(lxClassMethod, scope.message);
+   // HOTFIX : insert the node to make sure method hints are inside the method node
+   writer.insert(lxClassMethod, scope.message); 
    writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (isImportRedirect(node)) {
@@ -4768,6 +4769,7 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
 
    CommandTape* tape = scope.tape;
 
+   // HOTFIX : insert the node to make sure method hints are inside the method node
    writer.insert(lxClassMethod, scope.message);
    writer.appendNode(lxSourcePath);  // the source path is first string
 
@@ -5605,6 +5607,17 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    compileTemplateHints(hints, writer, scope);
 
    DNode member = node.firstChild();
+
+   // load template parameters
+   while (member == nsMethodParameter) {
+      if (!scope.parameters.exist(member.Terminal())) {
+         scope.parameters.add(member.Terminal(), scope.parameters.Count() + 1);
+      }
+      else scope.raiseError(errDuplicatedDefinition, member.Terminal());
+
+      member = member.nextNode();
+   }
+
    compileVMT(member, writer, scope, false);
 
    writer.closeNode();
@@ -6980,7 +6993,10 @@ void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SNode node, int wa
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      optimizeSyntaxNode(scope, current, warningMask, mode);
+      if (current == lxWarningMask) {
+         warningMask = current.argument;
+      }
+      else optimizeSyntaxNode(scope, current, warningMask, mode);
 
       current = current.nextNode();
    }
@@ -6991,10 +7007,7 @@ void Compiler :: optimizeClassTree(ClassScope& scope)
    int warningMask = scope.moduleScope->warningMask;
    SNode current = scope.syntaxTree.readRoot().firstChild();
    while (current != lxNone) {
-      if (current == lxWarningMask) {
-         warningMask = current.argument;
-      }
-      else if (current == lxClassMethod) {
+      if (current == lxClassMethod) {
          optimizeSyntaxExpression(*scope.moduleScope, current, warningMask);
 
          //if (test(_optFlag, 1)) {

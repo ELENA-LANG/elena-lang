@@ -1,6 +1,6 @@
 // --- arrayof ---
 
-#template(dynamic) arrayof
+#template(dynamic) arrayof : template_subj
 {
     #method getAt &int:n  // !! validate range
         = $target @ n.
@@ -8,7 +8,7 @@
 
 // --- stringof --- 
 
-#template(const,string) stringof
+#template(const,string) stringof : template_subj
 {
 }
 

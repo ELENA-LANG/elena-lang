@@ -719,6 +719,7 @@ private:
    {
       ref_t       templateRef;
       LexicalType templateType;
+      ForwardMap  parameters;
 
       // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
       // proper reference is 0 in this case
@@ -728,7 +729,8 @@ private:
 
       virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
       {
-         if (StringHelper::compare(terminal, TARGETSUBJ_VAR)) {
+         ref_t parameter = parameters.get(terminal);
+         if (parameter != 0) {
             output.copy(TARGET_POSTFIX);
 
             return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
@@ -738,7 +740,8 @@ private:
 
       virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
       {
-         if (StringHelper::compare(terminal, TARGETSUBJ_VAR)) {
+         ref_t parameter = parameters.get(terminal);
+         if (parameter != 0) {
             return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
          }
          else return Scope::mapSubject(terminal, implicitOnly);

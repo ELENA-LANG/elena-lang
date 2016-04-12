@@ -1,6 +1,6 @@
 // === basic templates ===
 
-#template dispatchable
+#template dispatchable : template_subj
 {
     /// Dispatches the verb to the target with a specified subject
     #method cast : verb &to:target = target::verb eval &template_subj:$self.
@@ -9,20 +9,20 @@
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
 }
 
-#template numeric
+#template numeric : template_subj
 {
    #method(stacksafe,suppress:w3) add &template_subj:val
       = $target + val.
 }
 
-#template(variable) varof
+#template(variable) varof : template_subj
 {
     #method set &template_subj:val
     [
         $target := val.
     ]
     
-    #method template_subj = $target.
+    #method(suppress:w3) template_subj = $target.
 }
 
 // --- super object ---
