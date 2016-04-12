@@ -1716,6 +1716,12 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offs
       tape.write(bcBCopyF, offset);
       tape.write(bcNCopy);
    }
+   else if (target == lxLocal) {
+      // bloadfi param
+      // ncopy
+      tape.write(bcBLoadFI, offset, bpFrame);
+      tape.write(bcNCopy);
+   }
 }
 
 void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int offset)
@@ -1736,6 +1742,12 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int of
       // bcopyf param
       // ncopy
       tape.write(bcBCopyF, offset);
+      tape.write(bcNCopy);
+   }
+   else if (target == lxLocal) {
+      // bloadfi param
+      // ncopy
+      tape.write(bcBLoadFI, offset, bpFrame);
       tape.write(bcNCopy);
    }
 }
@@ -1759,6 +1771,12 @@ void ByteCodeWriter :: assignByte(CommandTape& tape, LexicalType target, int off
       // bcopyf param
       // ncopy
       tape.write(bcBCopyF, offset);
+      tape.write(bcNCopy);
+   }
+   else if (target == lxLocal) {
+      // bloadfi param
+      // ncopy
+      tape.write(bcBLoadFI, offset, bpFrame);
       tape.write(bcNCopy);
    }
 }
@@ -1799,6 +1817,12 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
       tape.write(bcBCopyF, offset);
       tape.write(bcLCopy);
    }
+   else if (target == lxLocal) {
+      // bloadfi param
+      // lcopy
+      tape.write(bcBLoadFI, offset, bpFrame);
+      tape.write(bcLCopy);
+   }
 }
 
 void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int offset, int size)
@@ -1814,7 +1838,12 @@ void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int o
 
       copyStructure(tape, 0, size);
    }
+   else if (target == lxLocalAddress) {
+      // bloadfi param
+      tape.write(bcBLoadFI, offset, bpFrame);
 
+      copyStructure(tape, 0, size);
+   }
 }
 
 void ByteCodeWriter :: copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size)
@@ -3222,6 +3251,9 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
          else popObject(tape, lxResult);
 
          if (current.argument != 0) {
+            if (target == lxExpression)
+               target = SyntaxTree::findMatchedChild(target, lxObjectMask);
+
             tape.write(bcPushB);
             if (target == lxAssigning) {
                // unboxing field address

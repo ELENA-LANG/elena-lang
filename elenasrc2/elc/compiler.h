@@ -128,6 +128,7 @@ public:
    //   okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
+      okParamField,
    //   okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset
       okNil,

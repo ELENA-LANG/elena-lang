@@ -3455,31 +3455,31 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
    if (member == nsL0Operation) {
       return compileOperations(node, scope, object, mode);
    }
-//   else if (member == nsMessageOperation) {
-//      // if it is shorthand property settings
-//      DNode arg = member.firstChild();
-//      if (arg != nsNone || member.nextNode() != nsAssigning)
-//         scope.raiseError(errInvalidSyntax, member.FirstTerminal());
-//
-//      ref_t subject = scope.moduleScope->mapSubject(member.Terminal());
-//      ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
-//
-//      ref_t extensionRef = mapExtension(scope, messageRef, object);
-//
-//      if (extensionRef != 0) {
-//         //HOTFIX: A proper method should have a precedence over an extension one
-//         if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
-//            object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
-//         }
-//      }
-//
-//      if (scope.moduleScope->typeHints.exist(subject)) {
-//         compileExpression(member.nextNode().firstChild(), scope, subject, 0);
-//      }
-//      else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
-//
-//      return compileMessage(member, scope, object, messageRef, 0);
-//   }
+   //else if (member == nsMessageOperation) {
+   //   // if it is shorthand property settings
+   //   DNode arg = member.firstChild();
+   //   if (arg != nsNone || member.nextNode() != nsAssigning)
+   //      scope.raiseError(errInvalidSyntax, member.FirstTerminal());
+
+   //   ref_t subject = scope.moduleScope->mapSubject(member.Terminal());
+   //   ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+
+   //   ref_t extensionRef = mapExtension(scope, messageRef, object);
+
+   //   if (extensionRef != 0) {
+   //      //HOTFIX: A proper method should have a precedence over an extension one
+   //      if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
+   //         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+   //      }
+   //   }
+
+   //   if (scope.moduleScope->typeHints.exist(subject)) {
+   //      compileExpression(member.nextNode().firstChild(), scope, subject, 0);
+   //   }
+   //   else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
+
+   //   return compileMessage(member, scope, object, messageRef, 0);
+   //}
    else {
       ObjectInfo currentObject = object;
 
@@ -3501,6 +3501,17 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
       }
       else if (object.kind == okLocal || object.kind == okField/* || object.kind == okOuterField*/) {
 
+      }
+      else if (object.kind == okParam) {
+         // Compiler magic : allowing to assign byref / variable parameter
+         classReference = scope.moduleScope->subjectHints.get(object.type);
+         ClassInfo info;
+         scope.moduleScope->loadClassInfo(info, classReference);
+         if (test(info.header.flags, elWrapper)) {
+            size = info.size;
+            currentObject.kind = okParamField;
+         }
+         else scope.raiseError(errInvalidOperation, node.Terminal());
       }
       else if (object.kind == okTemplateTarget) {
          // if it is a template field
@@ -3948,6 +3959,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       //case okOuterField:
       case okLocalAddress:
       case okFieldAddress:
+      case okParamField:
          break;
       case okUnknown:
          scope.raiseError(errUnknownObject, node.Terminal());
@@ -6685,7 +6697,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
             targetNode = false;
 
             // HOTFIX : remove boxing node for assignee
-            if (current == lxBoxing) {
+            if (current == lxBoxing || current == lxCondBoxing) {
                SNode subNode = SyntaxTree::findMatchedChild(current, lxObjectMask);
 
                if (node.argument == 0 && subNode == lxFieldAddress) {
@@ -6934,7 +6946,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
       node = lxExpression;
    }
 
-   if (node == lxBoxing || node == lxUnboxing) {
+   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
       optimizeBoxing(scope, node, warningMask, 0);
    }
 
