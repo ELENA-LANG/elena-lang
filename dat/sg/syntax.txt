@@ -350,7 +350,7 @@ EXTERN_BLOCK ->
 	[ FIRST_EXT_STATEMENT
 	
 HINT_BODY ->
-	: HINT_VALUE
+	: HINT_VALUE HINT_BODY
 	| eps
 	
 CLASS_BODY ->
@@ -372,7 +372,7 @@ INCLUDE_BODY ->
 	| eps
 
 TYPE_BODY ->
-	= FORWARD HINT_BODY
+	= FORWARD
 	| eps
 
 METHOD_BODY ->
@@ -618,8 +618,8 @@ NEXT_OPTION ->
 	| eps
 	
 FORWARD ->
-	reference
-	| identifier	
+	reference HINT_BODY
+	| identifier HINT_BODY
 
 HINT_VALUE ->
 	integer

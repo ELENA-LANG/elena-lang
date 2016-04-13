@@ -2,10 +2,10 @@
 In development:
 ------                      
               xdev - generic development
+                       * system test
+
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)
-
-                       * system test
 
                        * template : add typecast around parameter passed with template_subj ; make sure
                          cast methods work correct after this
@@ -31,7 +31,7 @@ In development:
 
                        * varof:int, int:3 should be used directly in the code
 
-                       * system test : new test with template arrays
+                       * system test : new test with generic array / list / map
                        
                        * stacksafe template method : box this variable if required
 

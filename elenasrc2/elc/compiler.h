@@ -200,31 +200,33 @@ public:
    {
       ref_t templateRef;
       ref_t targetType;
-      ref_t targetSubject;
-
       int   targetOffset;
+
+      int   paramCount;
+      ref_t parameters[12];
 
       TemplateInfo()
       {
-         targetType = targetSubject = 0;
+         targetType = 0;
          templateRef = 0;
          targetOffset = -1;
+         paramCount = 0;
       }
 
-      TemplateInfo(ref_t templateRef, ref_t targetType, ref_t targetSubject)
+      TemplateInfo(ref_t templateRef, ref_t targetType)
       {
          this->templateRef = templateRef;
          this->targetType = targetType;
-         this->targetSubject = targetSubject;
          this->targetOffset = -1;
+         this->paramCount = 0;
       }
 
-      TemplateInfo(ref_t templateRef, ref_t targetType, ref_t targetSubject, int targetOffset)
+      TemplateInfo(ref_t templateRef, ref_t targetType, int targetOffset)
       {
          this->templateRef = templateRef;
          this->targetType = targetType;
-         this->targetSubject = targetSubject;
          this->targetOffset = targetOffset;
+         this->paramCount = 0;
       }
    };
 
@@ -260,7 +262,7 @@ private:
 //      ExtensionMap      extensions;
 
       // type hints
-      ForwardMap        subjects;
+      MessageMap        subjects;
       SubjectMap        subjectHints;
 
       // role hints
@@ -298,6 +300,7 @@ private:
       ref_t dynamicHint;
       ref_t constHint;
       ref_t structHint;
+      ref_t structOfHint;
       ref_t embedHint;
 
       //ref_t boolType;
@@ -340,6 +343,7 @@ private:
       // in any case output is set (for explicit one - the namespace is copied as well)
       ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
       ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true);
+      ref_t resolveSubjectRef(ident_t name, bool implicitOnly = true);
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
@@ -734,8 +738,9 @@ private:
          ref_t parameter = parameters.get(terminal);
          if (parameter != 0) {
             output.copy(TARGET_POSTFIX);
-
-            return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
+            output.appendInt((int)parameter);
+            
+            return moduleScope->module->mapSubject(output, false);
          }
          else return moduleScope->mapSubject(terminal, output);
       }
@@ -744,7 +749,11 @@ private:
       {
          ref_t parameter = parameters.get(terminal);
          if (parameter != 0) {
-            return moduleScope->module->mapSubject(TARGET_POSTFIX, false);
+            IdentifierString output;
+            output.copy(TARGET_POSTFIX);
+            output.appendInt((int)parameter);
+
+            return moduleScope->module->mapSubject(output, false);
          }
          else return Scope::mapSubject(terminal, implicitOnly);
       }
@@ -793,6 +802,7 @@ private:
 
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t messageRef);
+   ref_t mapHint(DNode hint, ModuleScope& scope);
 
    bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
    bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -806,6 +816,8 @@ private:
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
+
+   void compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo, ref_t ownerRef);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);

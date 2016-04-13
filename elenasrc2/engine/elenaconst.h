@@ -453,15 +453,16 @@ namespace _ELENA_
    #define CLASSCLASS_POSTFIX       "#class"
    #define GENERIC_PREFIX           "#generic"
    #define EMBEDDED_PREFIX          "#embedded"
-   #define TARGET_POSTFIX           "#target"
+   #define TARGET_POSTFIX           "##"
 
   // --- ELENA modifiers ---
    #define HINT_CONSTANT            "const$"
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
+   #define HINT_STRUCTOF            "struct#1$"
    #define HINT_STRUCT              "struct$"
-   #define HINT_INTEGER_NUMBER      "integerof$"      // class representing an integer number
-   #define HINT_FLOAT_NUMBER        "floatof$"
+   #define HINT_INTEGER_NUMBER      "integerof#1$"      // class representing an integer number
+   #define HINT_FLOAT_NUMBER        "floatof#1$"
    #define HINT_VARIABLE            "variable$"
    #define HINT_DYNAMIC             "dynamic$"
 //   #define HINT_POINTER            "pointer"
