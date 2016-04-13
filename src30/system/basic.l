@@ -1,5 +1,9 @@
 // === basic data classes ===
 
+// === Numeric Variables ===
+
+#subject vint = varof:int.
+
 //// --- BaseValue ---
 //
 //// A base value
@@ -1353,10 +1357,6 @@
 //        ^ aCode.
 //    ]
 }
-
-// === Numeric Variables ===
-
-#subject(varof:int)vint.
 
 ////// --- Byte ---
 ////

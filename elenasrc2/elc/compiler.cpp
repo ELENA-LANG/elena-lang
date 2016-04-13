@@ -2278,7 +2278,11 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
             if (templateInfo.targetSubject == 0)
                templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
                
-            classRef = generateTemplate(*scope.moduleScope, templateInfo, 0);
+            ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
+            name.append('@');
+            name.append(scope.moduleScope->module->resolveSubject(templateInfo.targetSubject));
+
+            classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
             if (classRef == 0)
                scope.raiseError(errInvalidHint, terminal);
          }
@@ -5262,19 +5266,18 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
    }
 }
 
-ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t typeRef, ident_t className)
+ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
 {
-   ref_t reference = 0;
-   if (!emptystr(className)) {
-      reference = moduleScope.module->mapReference(className);
+   if (!reference) {
+      reference = moduleScope.mapNestedExpression();
    }
-   else reference = moduleScope.mapNestedExpression();
+
+   ClassInfo info;
+   if (moduleScope.loadClassInfo(info, reference, true)) {
+      return reference;
+   }
 
    ClassScope scope(&moduleScope, reference);
-
-   // link the generated class to the specified type
-   if (typeRef != 0)
-      moduleScope.saveSubject(typeRef, scope.reference, false);
 
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
@@ -7267,7 +7270,7 @@ void Compiler :: compileIncludeModule(DNode node, ModuleScope& scope, DNode hint
    }
 }
 
-void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
+void Compiler :: declareSubject(DNode& member, ModuleScope& scope, DNode hints)
 {
    bool internalSubject = member.Terminal().symbol == tsPrivate;
 
@@ -7278,37 +7281,7 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      // obsolete, body should be used
-      if (StringHelper::compare(terminal, HINT_WRAPPER)) {
-         TerminalInfo value = hints.select(nsHintValue).Terminal();
-         ref_t classRef = scope.mapTerminal(value);
-         if (classRef == 0)
-            scope.raiseError(errUnknownSubject, value);
-
-         scope.validateReference(value, classRef);
-      }
-      else {
-         ref_t hintRef = scope.mapSubject(terminal, false);
-         if (hintRef != 0) {
-            TemplateInfo templateInfo;
-            templateInfo.templateRef = hintRef;
-
-            TerminalInfo target = hints.firstChild().Terminal();
-            templateInfo.targetType = scope.mapSubject(target);
-            templateInfo.targetSubject = templateInfo.targetType;
-            if (templateInfo.targetSubject == 0)
-               templateInfo.targetSubject = scope.module->mapSubject(target, false);
-
-            ReferenceNs name(scope.module->Name(), scope.module->resolveSubject(hintRef));
-            name.append('@');
-            name.append(scope.module->resolveSubject(templateInfo.targetSubject));
-
-            classRef = generateTemplate(scope, templateInfo, subjRef, name);
-            if (classRef == 0)
-               scope.raiseError(errInvalidHint, terminal);
-         }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-      }      
+      scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -7316,16 +7289,57 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
    DNode body = goToSymbol(member.firstChild(), nsForward);
    if (body != nsNone) {
       TerminalInfo terminal = body.Terminal();
+      
+      DNode option = body.nextNode();
+      if (option != nsNone) {
+         ref_t hintRef = scope.mapSubject(terminal, false);
+         ref_t optionRef = scope.mapSubject(option.Terminal());
+         if (hintRef != 0 && optionRef != 0) {
+            classRef = scope.resolveIdentifier(terminal);
+            if (!classRef) {
+               ReferenceNs name(scope.module->Name(), scope.module->resolveSubject(hintRef));
+               name.append('@');
+               name.append(scope.module->resolveSubject(optionRef));
 
-      if (classRef != 0)
-         scope.raiseError(errInvalidSyntax, terminal);
-
-      classRef = scope.mapTerminal(terminal);
-      if (classRef == 0)
-         scope.raiseError(errUnknownSubject, terminal);
+               classRef = scope.module->mapReference(name);
+            }
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      }
+      else {
+         classRef = scope.mapTerminal(terminal);
+         if (classRef == 0)
+            scope.raiseError(errUnknownSubject, terminal);
+      }
    }
 
    scope.saveSubject(subjRef, classRef, internalSubject);
+}
+
+void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
+{
+   DNode body = goToSymbol(member.firstChild(), nsForward);
+   DNode option = body.nextNode();
+
+   if (option != nsNone) {
+      TerminalInfo terminal = body.Terminal();
+
+      ref_t hintRef = scope.mapSubject(terminal, false);
+      ref_t subjRef = scope.mapSubject(member.Terminal());
+      ref_t classRef = scope.subjectHints.get(subjRef);
+
+      TemplateInfo templateInfo;
+      templateInfo.templateRef = hintRef;
+
+      templateInfo.targetType = scope.mapSubject(option.Terminal());
+      templateInfo.targetSubject = templateInfo.targetType;
+      if (templateInfo.targetSubject == 0)
+         templateInfo.targetSubject = scope.module->mapSubject(option.Terminal(), false);
+
+      classRef = generateTemplate(scope, templateInfo, classRef);
+      if (classRef == 0)
+         scope.raiseError(errInvalidHint, terminal);
+   }
 }
 
 void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
@@ -7337,7 +7351,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 
       switch (member) {
          case nsSubject:
-            compileSubject(member, scope, hints);
+            declareSubject(member, scope, hints);
             break;
          case nsClass:
          {
@@ -7405,6 +7419,9 @@ void Compiler :: compileImplementations(DNode member, ModuleScope& scope)
       TerminalInfo name = member.Terminal();
 
       switch (member) {
+         case nsSubject:
+            compileSubject(member, scope, hints);
+            break;
          case nsClass:
          {
             ref_t reference = scope.mapTerminal(name);

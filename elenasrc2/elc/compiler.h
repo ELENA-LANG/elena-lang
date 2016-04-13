@@ -922,7 +922,7 @@ private:
 
    void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
 
-   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t typeRef, ident_t className = NULL);
+   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
@@ -941,6 +941,7 @@ private:
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
    void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
    void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
+   void declareSubject(DNode& member, ModuleScope& scope, DNode hints);
    void compileSubject(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(DNode member, ModuleScope& scope);

@@ -2,8 +2,6 @@
 In development:
 ------                      
               xdev - generic development
-                       * every time when varof:int for example is used, new class is declared, it should be reused
-
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)
 
@@ -30,6 +28,8 @@ In development:
                        * array of real
                        * array of structures
                        * support #var(real)r := 2. // assigning int to real by constant
+
+                       * varof:int, int:3 should be used directly in the code
 
                        * system test : new test with template arrays
                        
