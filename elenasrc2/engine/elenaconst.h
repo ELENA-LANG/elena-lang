@@ -479,7 +479,7 @@ namespace _ELENA_
    #define HINT_EMBEDDABLE          "embeddable$"
 //   #define HINT_NONSTRUCTURE       "nonstructural"
    #define HINT_STACKSAFE           "stacksafe$"
-   #define HINT_SUPPRESS_WARNINGS   "suppress$"
+   #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
 //   #define HINT_TARGET             "target"
 //   #define HINT_TARGET_FIELD       "field"
 //   #define HINT_TARGET_METHOD      "method"

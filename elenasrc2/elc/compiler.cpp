@@ -2198,7 +2198,8 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      ref_t hintRef = moduleScope->mapSubject(terminal, false);
+      //ref_t hintRef = moduleScope->mapSubject(terminal, false);
+      ref_t hintRef = mapHint(hints, *moduleScope);
 
       if (hintRef == moduleScope->warnHint) {
          DNode value = hints.select(nsHintValue);
@@ -2223,54 +2224,18 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       else if (hintRef == moduleScope->stackHint) {
          writer.appendNode(lxClassMethodAttr, tpStackSafe);
       }
-      //else {
-      ////   ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
-      ////   _Module* extModule;
-      ////   _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, extModule);
-      ////   if (section != NULL) {
-      ////      SyntaxTree tree(section);
-      ////      SNode node = tree.readRoot();
-      ////      if (node == lxMethodTemplate) {
-      ////         // validate if the template can be applied
-      ////         ref_t targetMessage = importMessage(extModule, SyntaxTree::findChild(node, lxMessage).argument, scope.moduleScope->module);
+      else if (hintRef != 0) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-      ////         bool invalid = true;
-      ////         if (getParamCount(scope.message) == getParamCount(targetMessage) && getVerb(scope.message) == getVerb(targetMessage)) {
-      ////            ident_t sourSign = scope.moduleScope->module->resolveSubject(getSignature(scope.message));
-      ////            ident_t targetSign = scope.moduleScope->module->resolveSubject(getSignature(targetMessage));
+         TemplateInfo templateInfo;
+         templateInfo.templateRef = hintRef;
 
-      ////            int sourLen = getlength(sourSign);
-      ////            int targetLen = getlength(targetSign);
+         compileTemplateParameters(hints, *scope.moduleScope, templateInfo);
 
-      ////            if (sourLen >= targetLen && StringHelper::compare(targetSign, sourSign + sourLen - targetLen))
-      ////               invalid = false;
-      ////         }
+         templateInfo.messageSubject = getSignature(scope.message);
 
-      ////         if (!invalid) {
-      ////            writer.newNode(lxMethodTemplate, templateRef);
-
-      ////            TerminalInfo typeTerminal = hints.firstChild().Terminal();
-      ////            writer.appendNode(lxSubject, scope.moduleScope->mapSubject(typeTerminal));
-
-      ////            writer.closeNode();
-      ////         }
-      ////         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      ////      }
-      ////      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-      ////   }
-      //}
-
-      ////else if (StringHelper::compare(terminal, HINT_GENERIC)) {
-      ////   scope.generic = true;         
-
-      ////   writer.appendNode(lxClassMethodAttr, tpGeneric);
-      ////}
-      ////else if (StringHelper::compare(terminal, HINT_EMBEDDABLE)) {
-      ////   scope.embeddable = true;
-
-      ////   writer.appendNode(lxClassMethodAttr, tpEmbeddable);
-      ////   writer.appendNode(lxClassMethodAttr, tpSealed);
-      ////}
+         scope.moduleScope->templates.add(classScope->reference, templateInfo);
+      }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
@@ -5420,6 +5385,10 @@ bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer
          }
          writer.closeNode();
       }
+      else if (current == lxTemplateSubject) {
+         templateInfo.parameters[templateInfo.paramCount] = templateInfo.messageSubject;
+         templateInfo.paramCount++;
+      }
       else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, scope.moduleScope->module, getSignature(current.argument), templateInfo));
            
@@ -5722,6 +5691,30 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
       member = member.nextNode();
    }
 
+   // load dynamic subjects
+   while (member == nsSubject) {
+      ref_t param = 0;
+      TerminalInfo terminal = member.Terminal();
+
+      scope.parameters.add(terminal, scope.parameters.Count() + 1);
+
+      writer.newNode(lxTemplateSubject, scope.parameters.Count());
+      DNode body = member.firstChild();
+      if (body != nsNone) {
+         writer.newNode(lxSubject, scope.moduleScope->mapSubject(body.Terminal(), false));
+         DNode option = body.firstChild();
+         while (option != nsNone) {
+            writer.newNode(lxTemplateSubject, scope.parameters.get(option.Terminal()));
+
+            option = option.nextNode();
+         }
+         writer.closeNode();
+      }
+      writer.closeNode();
+
+      member = member.nextNode();
+   }
+
    // load template fields
    DNode fieldHints = skipHints(member);
    while (member == nsField) {
@@ -5797,6 +5790,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    //ref_t extensionType = 0;
    compileClassHints(hints, writer, scope/*, isExtension, extensionType*/);
    compileFieldDeclarations(member, writer, scope);
+   declareVMT(member, writer, scope, nsMethod/*, isExtension, extensionType*/);
 
    // declare imported methods / flags
    TemplateMap::Iterator it = scope.moduleScope->templates.getIt(scope.reference);
@@ -5806,8 +5800,6 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
       it++;
    }
-
-   declareVMT(member, writer, scope, nsMethod/*, isExtension, extensionType*/);
 
    writer.closeNode();
 
@@ -5978,7 +5970,10 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
       /*else */writer.newNode(current.type, overwriteSubject(current.argument, signature));
    }
    else if (test(current.type, lxReferenceMask)) {
-      writer.newNode(current.type, importReference(templateModule, current.argument, scope.moduleScope->module));
+      if (current.argument == -1) {
+         writer.newNode(current.type, current.argument);
+      }
+      else writer.newNode(current.type, importReference(templateModule, current.argument, scope.moduleScope->module));
    }
    else if (test(current.type, lxSubjectMask)) {
       writer.newNode(current.type, importTemplateSubject(templateModule, scope.moduleScope->module, current.argument, info));
@@ -7385,21 +7380,16 @@ void Compiler :: declareSubject(DNode& member, ModuleScope& scope, DNode hints)
          if (!hintRef)
             scope.raiseError(errInvalidHint, terminal);
 
-         IdentifierString name(scope.module->resolveSubject(hintRef));
+         ReferenceNs fulName(scope.module->Name(), scope.module->resolveSubject(hintRef));
          while (option != nsNone) {
             ref_t optionRef = scope.mapSubject(option.Terminal());
-            name.append('@');
-            name.append(scope.module->resolveSubject(optionRef));
+            fulName.append('@');
+            fulName.append(scope.module->resolveSubject(optionRef));
 
             option = option.nextNode();
          }
 
-         classRef = scope.resolveIdentifier(name);
-         if (!classRef) {
-            ReferenceNs fulName(scope.module->Name(), name);
-
-            classRef = scope.module->mapReference(fulName);
-         }         
+         classRef = scope.module->mapReference(fulName);
       }
       else {
          classRef = scope.mapTerminal(terminal);

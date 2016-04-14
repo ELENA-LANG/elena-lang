@@ -139,6 +139,7 @@ enum LexicalType
    lxSize            = 0x0080C,
    lxReserved        = 0x0080D,
    lxParamCount      = 0x0080E,
+   lxSubject         = 0x4080F,
 
    lxBreakpoint      = 0x02001,
    lxCol             = 0x02002,
@@ -161,8 +162,10 @@ enum LexicalType
    lxWarningMask     = 0x04009,
 
    lxTemplate          = 0x2400A,
-   lxTemplateField     = 0x2400B,
-   lxTemplateFieldType = 0x2400C
+   lxTemplateField     = 0x0400B,
+   lxTemplateFieldType = 0x0400C,
+   lxTemplateSubject   = 0x0400D,
+   lx
 };
 
 // --- SyntaxTree ---

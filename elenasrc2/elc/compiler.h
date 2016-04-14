@@ -204,6 +204,7 @@ public:
 
       int   paramCount;
       ref_t parameters[12];
+      ref_t messageSubject;
 
       TemplateInfo()
       {
@@ -211,6 +212,7 @@ public:
          templateRef = 0;
          targetOffset = -1;
          paramCount = 0;
+         messageSubject = 0;
       }
 
       TemplateInfo(ref_t templateRef, ref_t targetType)
@@ -219,6 +221,7 @@ public:
          this->targetType = targetType;
          this->targetOffset = -1;
          this->paramCount = 0;
+         messageSubject = 0;
       }
 
       TemplateInfo(ref_t templateRef, ref_t targetType, int targetOffset)
@@ -227,6 +230,7 @@ public:
          this->targetType = targetType;
          this->targetOffset = targetOffset;
          this->paramCount = 0;
+         messageSubject = 0;
       }
    };
 
