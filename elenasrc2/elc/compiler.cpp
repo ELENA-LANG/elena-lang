@@ -2227,14 +2227,21 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       else if (hintRef != 0) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-         TemplateInfo templateInfo;
-         templateInfo.templateRef = hintRef;
+         // Method templates can be applied only for methods with custom verbs
+         if (getVerb(scope.message) == EVAL_MESSAGE_ID && getSignature(scope.message) != 0) {
+            TemplateInfo templateInfo;
+            templateInfo.templateRef = hintRef;
 
-         compileTemplateParameters(hints, *scope.moduleScope, templateInfo);
+            compileTemplateParameters(hints, *scope.moduleScope, templateInfo);
 
-         templateInfo.messageSubject = getSignature(scope.message);
+            ident_t signature = moduleScope->module->resolveSubject(getSignature(scope.message));
+            IdentifierString customVerb(signature, StringHelper::find(signature, '&', getlength(signature)));
+            templateInfo.messageSubject = moduleScope->module->mapSubject(customVerb, false);
 
-         scope.moduleScope->templates.add(classScope->reference, templateInfo);
+            scope.moduleScope->templates.add(classScope->reference, templateInfo);
+
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
