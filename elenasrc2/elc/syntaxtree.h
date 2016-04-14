@@ -160,8 +160,9 @@ enum LexicalType
    //lxClassMethodOpt  = 0x04008,
    lxWarningMask     = 0x04009,
 
-   lxTemplate        = 0x2400A,
-   lxTemplateField   = 0x2400B
+   lxTemplate          = 0x2400A,
+   lxTemplateField     = 0x2400B,
+   lxTemplateFieldType = 0x2400C
 };
 
 // --- SyntaxTree ---

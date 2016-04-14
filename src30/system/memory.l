@@ -2,6 +2,8 @@
 
 #template(dynamic) arrayof : template_subj
 {
+    #field(template_subj)$target.
+    
     #method getAt &int:n  // !! validate range
         = $target @ n.
 }
@@ -10,6 +12,7 @@
 
 #template(const,string) stringof : template_subj
 {
+    #field(template_subj)$target.
 }
 
 //// === basic memory classes ===

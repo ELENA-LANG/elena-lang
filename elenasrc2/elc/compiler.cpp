@@ -1436,8 +1436,10 @@ Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
 
 ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
 {
-   if (StringHelper::compare(identifier, TARGET_VAR)) {
-      return ObjectInfo(okTemplateTarget);
+   int index = info.fields.get(identifier);
+
+   if (index >= 0) {
+      return ObjectInfo(okTemplateTarget, index);
    }
    else return ClassScope::mapObject(identifier);
 }
@@ -1790,7 +1792,7 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-void Compiler :: compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo, ref_t ownerRef)
+void Compiler :: compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo)
 {
    DNode paramNode = hint.firstChild();
    while (paramNode != nsNone) {
@@ -1798,12 +1800,8 @@ void Compiler :: compileTemplateParameters(DNode hint, ModuleScope& scope, Templ
          TerminalInfo param = paramNode.Terminal();
          if (param == tsIdentifier) {
             ref_t subject = scope.mapSubject(param, false);
-            if (subject != 0) {
-               // HOTFIX : if it is a typified class template - set targetType
-               if (ownerRef != 0 && scope.subjectHints.exist(subject, ownerRef))
-                  templateInfo.targetType = subject;
-            }
-            else subject = scope.module->mapSubject(param, false);
+            if (subject == 0)
+               subject = scope.module->mapSubject(param, false);
 
             templateInfo.parameters[templateInfo.paramCount] = subject;
             templateInfo.paramCount++;
@@ -1946,7 +1944,7 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
       TemplateInfo templateInfo;
       templateInfo.templateRef = hintRef;
 
-      compileTemplateParameters(hint, *scope.moduleScope, templateInfo, scope.reference);
+      compileTemplateParameters(hint, *scope.moduleScope, templateInfo);
 
       scope.moduleScope->templates.add(scope.reference, templateInfo);
 
@@ -2326,7 +2324,7 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
             TemplateInfo templateInfo;
             templateInfo.templateRef = hintRef;
 
-            compileTemplateParameters(hints, *scope.moduleScope, templateInfo, 0);
+            compileTemplateParameters(hints, *scope.moduleScope, templateInfo);
                
             ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
             for (int i = 0; i < templateInfo.paramCount; i++) {
@@ -5300,25 +5298,25 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          //   writer.closeNode();
          //   writer.closeNode();
 
-         //   writer.newNode(lxClassMethod, specialMethodScope.message);
-         //   writer.closeNode();
-         //}
-         /*else */writer.closeNode();
+//   writer.newNode(lxClassMethod, specialMethodScope.message);
+//   writer.closeNode();
+//}
+/*else */writer.closeNode();
 
-         //if (methodScope.generic)
-         //   writer.appendNode(lxClassFlag, elWithGenerics);
+//if (methodScope.generic)
+//   writer.appendNode(lxClassFlag, elWithGenerics);
 
-         //// save extensions if any
-         //if (isExtension) {
-         //   scope.moduleScope->saveExtension(methodScope.message, extensionType, scope.reference);
-         //}
+//// save extensions if any
+//if (isExtension) {
+//   scope.moduleScope->saveExtension(methodScope.message, extensionType, scope.reference);
+//}
 
       }
       member = member.nextNode();
    }
 }
 
-ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
+ref_t Compiler::generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
 {
    if (!reference) {
       reference = moduleScope.mapNestedExpression();
@@ -5340,12 +5338,6 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
 
    templateInfo.targetOffset = scope.info.fields.Count();
 
-   writer.newNode(lxTemplateField);
-   writer.appendNode(lxTerminal, TARGET_VAR);
-   if (templateInfo.targetType != 0)
-      writer.appendNode(lxType, templateInfo.targetType);
-   writer.closeNode();
-
    importTemplate(scope, writer, templateInfo, true);
 
    writer.closeNode();
@@ -5366,20 +5358,20 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
    return scope.reference;
 }
 
-void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
+void Compiler::generateClassFlags(ClassScope& scope, SNode root)
 {
    SNode current = root.firstChild();
    while (current != lxNone) {
       scope.compileClassHint(current);
       if (current == lxClassStructure/* || current == lxClassArray*/) {
          generateClassFlags(scope, current);
-      }         
+      }
 
       current = current.nextNode();
    }
 }
 
-bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo)
+bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo)
 {
    _Module* extModule = NULL;
    _Memory* section = scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule);
@@ -5392,15 +5384,41 @@ bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer
    while (current != lxNone) {
       if (current == lxClassFlag) {
          writer.appendNode(lxClassFlag, current.argument);
-         // HOTFIX : import dynamic array template
-         if (test(current.argument, elDynamicRole)) {
-            writer.newNode(lxTemplateField);
-            writer.appendNode(lxTerminal, TARGET_VAR);
+         //// HOTFIX : import dynamic array template
+         //if (test(current.argument, elDynamicRole)) {
+         //   //writer.newNode(lxTemplateField);
+         //   //writer.appendNode(lxTerminal, TARGET_VAR);
 
-            if (templateInfo.targetType != 0)
-               writer.appendNode(lxType, templateInfo.targetType);
-            writer.closeNode();
+         //   //if (templateInfo.targetType != 0)
+         //   //   writer.appendNode(lxType, templateInfo.targetType);
+         //   //writer.closeNode();
+         //}
+      }
+      else if (current == lxTemplateField) {
+         SNode templateType = SyntaxTree::findChild(current, lxTemplateFieldType);
+         if (templateType.argument != 0) {
+            templateInfo.targetType = templateInfo.parameters[templateType.argument - 1];
+
+            // HOTFIX : if the target field is the object itself
+            // ignore target field
+            if (scope.moduleScope->subjectHints.exist(templateInfo.targetType, scope.reference)) {
+               current = current.nextNode();
+
+               continue;
+            }
          }
+
+         writer.newNode(lxTemplateField, current.argument);
+         SNode attr = current.firstChild();
+         while (attr != lxNone) {
+            if (attr == lxTemplateFieldType) {               
+               writer.appendNode(lxType, templateInfo.targetType);
+            }
+            else importNode(scope, attr, writer, extModule, templateInfo);
+
+            attr = attr.nextNode();
+         }
+         writer.closeNode();
       }
       else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, scope.moduleScope->module, getSignature(current.argument), templateInfo));
@@ -5700,6 +5718,37 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
          scope.parameters.add(member.Terminal(), scope.parameters.Count() + 1);
       }
       else scope.raiseError(errDuplicatedDefinition, member.Terminal());
+
+      member = member.nextNode();
+   }
+
+   // load template fields
+   DNode fieldHints = skipHints(member);
+   while (member == nsField) {
+      ref_t param = 0;
+      TerminalInfo terminal = member.Terminal();
+      //HOTFIX : only one template field is allowed
+      if (scope.info.fields.Count() > 0)
+         scope.raiseError(errIllegalField, terminal);
+
+      scope.info.fields.add(terminal, 0);
+
+      if (fieldHints != nsNone) {
+         while (fieldHints == nsHint) {
+            param = scope.parameters.get(fieldHints.Terminal());
+            if (param == 0 || hints.firstChild() != nsNone) {
+               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, fieldHints.Terminal());
+            }
+
+            fieldHints = fieldHints.nextNode();
+         }
+      }
+
+      writer.newNode(lxTemplateField);
+      writer.appendNode(lxTerminal, terminal);
+      if (param >= 0)
+         writer.appendNode(lxTemplateFieldType, param);
+      writer.closeNode();
 
       member = member.nextNode();
    }
@@ -7379,7 +7428,7 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
       templateInfo.templateRef = mapHint(body, scope);
       templateInfo.targetType = scope.mapSubject(member.Terminal());
 
-      compileTemplateParameters(body, scope, templateInfo, 0);
+      compileTemplateParameters(body, scope, templateInfo);
 
       ref_t classRef = scope.subjectHints.get(templateInfo.targetType);
 

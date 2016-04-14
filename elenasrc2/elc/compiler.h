@@ -817,7 +817,7 @@ private:
 
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 
-   void compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo, ref_t ownerRef);
+   void compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
@@ -832,7 +832,7 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
-   bool declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+   bool declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule, bool declaringMode);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);

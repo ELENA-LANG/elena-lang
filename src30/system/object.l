@@ -11,12 +11,16 @@
 
 #template numeric : template_subj
 {
-   #method(stacksafe,suppress:w3) add &template_subj:val
+    #field(template_subj)$target.
+    
+    #method(stacksafe,suppress:w3) add &template_subj:val
       = $target + val.
 }
 
 #template(variable) varof : template_subj
 {
+    #field(template_subj)$target.
+    
     #method set &template_subj:val
     [
         $target := val.

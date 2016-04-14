@@ -441,8 +441,6 @@ namespace _ELENA_
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
 
-   #define TARGET_VAR              "$target"          // template target pseudo-variable
-
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
    #define EXTENSION_SECTION        "#extensions"
