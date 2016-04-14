@@ -135,7 +135,7 @@ enum LexicalType
    lxIfValue         = 0x20808, // arg - reference
    lxElseValue       = 0x20809, // arg - reference
    lxMessage         = 0x1080A, // arg - message
-   //lxEmbeddable      = 0x0080B,
+   lxEmbeddable      = 0x0080B,
    lxSize            = 0x0080C,
    lxReserved        = 0x0080D,
    lxParamCount      = 0x0080E,

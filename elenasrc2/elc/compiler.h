@@ -78,7 +78,7 @@ public:
       tpNormal     = 0x03,
       tpDispatcher = 0x04,
       tpStackSafe  = 0x10,
-//      tpEmbeddable = 0x20,
+      tpEmbeddable = 0x20,
 //      tpGeneric    = 0x40,
    };
 
@@ -979,7 +979,7 @@ private:
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-//   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
+   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeArrOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
@@ -992,9 +992,9 @@ private:
    void optimizeClassTree(ClassScope& scope);
    void optimizeSymbolTree(SourceScope& scope);
 
-//   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
-//   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
-//   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
+   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
+   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
 public:
    void loadRules(StreamReader* optimization);
