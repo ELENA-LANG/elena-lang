@@ -2239,7 +2239,6 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
             templateInfo.messageSubject = moduleScope->module->mapSubject(customVerb, false);
 
             scope.moduleScope->templates.add(classScope->reference, templateInfo);
-
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
@@ -5724,33 +5723,39 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
    // load template fields
    DNode fieldHints = skipHints(member);
-   while (member == nsField) {
-      ref_t param = 0;
-      TerminalInfo terminal = member.Terminal();
-      //HOTFIX : only one template field is allowed
-      if (scope.info.fields.Count() > 0)
-         scope.raiseError(errIllegalField, terminal);
+   if (member != nsField) {
+      // due to current syntax we need to reset hints back, otherwise they will be skipped
+      member = fieldHints;
+   }
+   else {
+      while (member == nsField) {
+         ref_t param = 0;
+         TerminalInfo terminal = member.Terminal();
+         //HOTFIX : only one template field is allowed
+         if (scope.info.fields.Count() > 0)
+            scope.raiseError(errIllegalField, terminal);
 
-      scope.info.fields.add(terminal, 0);
+         scope.info.fields.add(terminal, 0);
 
-      if (fieldHints != nsNone) {
-         while (fieldHints == nsHint) {
-            param = scope.parameters.get(fieldHints.Terminal());
-            if (param == 0 || hints.firstChild() != nsNone) {
-               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, fieldHints.Terminal());
+         if (fieldHints != nsNone) {
+            while (fieldHints == nsHint) {
+               param = scope.parameters.get(fieldHints.Terminal());
+               if (param == 0 || hints.firstChild() != nsNone) {
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, fieldHints.Terminal());
+               }
+
+               fieldHints = fieldHints.nextNode();
             }
-
-            fieldHints = fieldHints.nextNode();
          }
+
+         writer.newNode(lxTemplateField);
+         writer.appendNode(lxTerminal, terminal);
+         if (param >= 0)
+            writer.appendNode(lxTemplateFieldType, param);
+         writer.closeNode();
+
+         member = member.nextNode();
       }
-
-      writer.newNode(lxTemplateField);
-      writer.appendNode(lxTerminal, terminal);
-      if (param >= 0)
-         writer.appendNode(lxTemplateFieldType, param);
-      writer.closeNode();
-
-      member = member.nextNode();
    }
 
    compileVMT(member, writer, scope, false);
@@ -5951,30 +5956,15 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
    else if (test(current.type, lxMessageMask)) {
       ref_t signature = importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info);
 
-//      // HOTFIX : replace generic call with an array operation
-//      if (IsReferOperator(getVerb(current.argument)) && signature == 0 && test(scope.info.header.flags, elDynamicRole) 
-//         && getFirstObject(current) == lxTemplateTarget)
-//      {
-//         if (test(scope.info.header.flags, elStructureRole)) {
-//            writer.newNode(lxBoxing);
-//            writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
-//            writer.newNode(lxArrOp, current.argument);
-//            writer.appendNode(lxSize, -scope.info.size);
-//
-//            importTree(scope, current, writer, templateModule, info);
-//
-//            writer.closeNode();
-//            writer.closeNode();
-//
-//            return;
-//         }
-//         else {
-//            writer.newNode(lxArrOp, current.argument);
-//
-//            writer.appendNode(lxSize, -scope.info.size);
-//         }
-//      }
-      /*else */writer.newNode(current.type, overwriteSubject(current.argument, signature));
+      writer.newNode(current.type, overwriteSubject(current.argument, signature));
+
+      // HOTFIX : insert calling target if required
+      if (current.type == lxCalling) {
+         SNode callee = SyntaxTree::findMatchedChild(current, lxObjectMask);
+         if (callee == lxThisLocal) {
+            writer.appendNode(lxCallTarget, scope.reference);
+         }
+      }
    }
    else if (test(current.type, lxReferenceMask)) {
       if (current.argument == -1) {
@@ -7088,72 +7078,6 @@ int Compiler :: allocateStructure(ModuleScope& scope, SNode node, int& size)
 
    return offset;
 }
-
-//void Compiler :: optimizeBoxableObject(ModuleScope& scope, SNode node, int warningLevel, int mode)
-//{
-//   if (!test(mode, HINT_NOBOXING) || (node == lxFieldAddress && node.argument > 0)) {
-//      SNode target = SyntaxTree::findChild(node, lxTarget);
-//      ClassInfo info;
-//      scope.loadClassInfo(info, target.argument, true);
-//
-//      int size = 0;
-//      bool variable = false;
-//      //   int size = (target.argument == scope.paramsReference) ? -1 : scope.defineStructSize(target.argument, variable);
-//      if (isEmbeddable(info)) {
-//         size = info.size;
-//
-//         variable = !test(info.header.flags, elReadOnlyRole);
-//      }
-//      if (size == 0)
-//         return;
-//
-//   //   // allocating temporal stack allocated variable for structure field if required
-//   //   if (node == lxFieldAddress && node.argument > 0) {
-//   //      int offset = allocateStructure(scope, node, size);
-//
-//   //      // injecting assinging, boxing / unboxing operation
-//   //      LexicalType nodeType = lxAssigning;
-//   //      SNode assignNode = node;
-//   //      if (test(mode, HINT_NOBOXING)) {
-//   //         if (variable && !test(mode, HINT_NOUNBOXING)) {
-//   //            node.appendNode(lxAssigning, size);
-//   //            assignNode = SyntaxTree::findChild(node, lxAssigning);
-//
-//   //            nodeType = lxLocalUnboxing;
-//   //         }
-//   //      }
-//   //      else {
-//   //         node.appendNode(lxAssigning, size);
-//   //         assignNode = SyntaxTree::findChild(node, lxAssigning);
-//
-//   //         nodeType = variable && !test(mode, HINT_NOUNBOXING) ? lxUnboxing : lxBoxing;
-//   //      }
-//   //      assignNode.appendNode(lxLocalAddress, offset);
-//   //      assignNode.appendNode(lxFieldAddress, node.argument);
-//
-//   //      node = nodeType;
-//   //      node.setArgument(size);
-//   //   }
-//   //   else {
-//         // inject boxing node
-//         node.appendNode(node.type, node.argument);
-//
-//         if (node == lxBlockLocalAddr && size == -1) {
-//            node = lxArgBoxing;
-//         }
-//         else if (variable && !test(mode, HINT_NOUNBOXING)) {
-//            node = lxUnboxing;
-//         }
-//         else node = (node == lxBoxableLocal) ? lxCondBoxing : lxBoxing;
-//
-//         node.setArgument(size);
-//   //   }
-//   }
-//
-//   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
-//      optimizeBoxing(scope, node, warningLevel);
-//   }
-//}
 
 void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
 {
