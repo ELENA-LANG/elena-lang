@@ -5338,7 +5338,7 @@ ref_t Compiler::generateTemplate(ModuleScope& moduleScope, TemplateInfo& templat
 
    templateInfo.targetOffset = scope.info.fields.Count();
 
-   importTemplate(scope, writer, templateInfo, true);
+   declareImportedTemplate(scope, writer, templateInfo);
 
    writer.closeNode();
 
@@ -5348,7 +5348,7 @@ ref_t Compiler::generateTemplate(ModuleScope& moduleScope, TemplateInfo& templat
    writer.clear();
    writer.newNode(lxRoot, scope.reference);
 
-   importTemplate(scope, writer, templateInfo, false);
+   importTemplate(scope, writer, templateInfo);
    compileVirtualMethods(writer, scope);
 
    writer.closeNode();
@@ -6000,18 +6000,12 @@ void Compiler :: importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWrit
    }
 }
 
-void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule, bool declaringMode)
+void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNode node, TemplateInfo& info, _Module* templateModule)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxClassFlag && declaringMode) {
-         writer.appendNode(lxClassFlag, current.argument);
-      }
-      else if (current == lxClassMethod) {
+      if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info));
-
-         if (declaringMode)
-            generateMethodHints(scope, current, messageRef);
 
          writer.newNode(lxClassMethod, messageRef);
 
@@ -6024,8 +6018,7 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       //      scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
       //   }
 
-         if (!declaringMode)
-            importTree(scope, current, writer, templateModule, info);
+         importTree(scope, current, writer, templateModule, info);
 
          writer.closeNode();
       }
@@ -6034,13 +6027,13 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
    }
 }
 
-void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode)
+void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo)
 {
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule));
 
    SNode root = tree.readRoot();
-   importTemplateTree(scope, writer, root, templateInfo, extModule, declarationMode);
+   importTemplateTree(scope, writer, root, templateInfo, extModule);
 }
 
 void Compiler :: compileVirtualTypecastMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument)
@@ -6137,7 +6130,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    // import templates
    TemplateMap::Iterator t_it = moduleScope->templates.getIt(scope.reference);
    while (!t_it.Eof() && t_it.key() == scope.reference) {
-      importTemplate(scope, writer, *t_it, false);
+      importTemplate(scope, writer, *t_it);
 
       t_it++;
    }

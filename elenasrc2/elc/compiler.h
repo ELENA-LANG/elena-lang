@@ -833,8 +833,8 @@ private:
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
    bool declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
-   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo, bool declarationMode);
-   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule, bool declaringMode);
+   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
    void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
