@@ -4,11 +4,20 @@ In development:
               xdev - generic development
                        * system test
 
+                       * review IntNumber implementation
+                       * review LiteralValue implementation
+
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)
 
                        * template : add typecast around parameter passed with template_subj ; make sure
                          cast methods work correct after this
+                                         	
+                       * review the code:
+                            #var(literal) s := "Hello".    
+                            #var(int)l := s length.
+
+                          acopyf fp:-2 is implemented twice in row
 
                        * optimize n := n + m.
                        * optimize n := n + 1.

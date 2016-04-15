@@ -295,7 +295,7 @@ inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, C
       while (index >= 0) {
          newSignature.append(signature, index);
          int param_index = signature[index + strlen(TARGET_POSTFIX)] - '0';
-         newSignature.append(dest->resolveSubject(info.parameters[param_index - 1]));
+         newSignature.append(dest->resolveSubject(info.parameters.get(param_index)));
 
          signature += index + getlength(TARGET_POSTFIX);
          index = StringHelper::find(signature, TARGET_POSTFIX);
@@ -320,7 +320,7 @@ inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, C
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
-   : constantHints((ref_t)-1)/*, extensions(NULL, freeobj)*/, templates(TemplateInfo())
+   : constantHints((ref_t)-1)/*, extensions(NULL, freeobj)*/
 {
    this->project = project;
    this->sourcePath = sourcePath;
@@ -370,6 +370,10 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    defaultNs.add(module->Name());
 
    loadModuleInfo(module);
+
+   // create a root node for template tree
+   SyntaxTree::Writer writer(templates);
+   writer.appendNode(lxRoot);
 }
 
 ////ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)
@@ -1419,7 +1423,8 @@ Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
 {
    // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
    // proper reference is 0 in this case
-   templateRef = reference;
+   this->templateRef = reference;
+   this->reference = moduleScope->mapNestedExpression(); // HOTFIX : dummy name, used only for template in template routines
 
    templateType = lxNone;
 
@@ -1792,7 +1797,61 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-void Compiler :: compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo)
+void Compiler :: declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t ownerRef, ref_t hintRef, ref_t messageSubject)
+{
+   SyntaxTree::Writer writer(scope.templates, true);
+
+   writer.newNode(lxClass, ownerRef);
+   writer.newNode(lxTemplate, hintRef);
+
+   DNode paramNode = hint.firstChild();
+   while (paramNode != nsNone) {
+      if (paramNode == nsHintValue) {
+         TerminalInfo param = paramNode.Terminal();
+         if (param == tsIdentifier) {
+            ref_t subject = scope.mapSubject(param, false);
+            if (subject == 0)
+               subject = scope.module->mapSubject(param, false);
+
+            writer.appendNode(lxTemplateSubject, subject);
+         }
+         else scope.raiseError(errInvalidHintValue, param);
+      }
+      paramNode = paramNode.nextNode();
+   }
+
+   if (messageSubject != 0)
+      writer.appendNode(lxTemplateSubject, messageSubject);   
+
+   writer.closeNode();
+   writer.closeNode();
+
+   writer.closeNode(); //HOTFIX : close the root node
+}
+
+void Compiler :: importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, TemplateInfo& info)
+{
+   SyntaxTree::Writer writer(scope.templates, true);
+
+   writer.newNode(lxClass, ownerRef);
+   writer.newNode(lxTemplate, node.argument);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplateSubject) {
+         writer.appendNode(current.type, current.argument);
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+   writer.closeNode();
+
+   writer.closeNode(); //HOTFIX : close the root node
+}
+
+void Compiler :: declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters)
 {
    DNode paramNode = hint.firstChild();
    while (paramNode != nsNone) {
@@ -1803,12 +1862,42 @@ void Compiler :: compileTemplateParameters(DNode hint, ModuleScope& scope, Templ
             if (subject == 0)
                subject = scope.module->mapSubject(param, false);
 
-            templateInfo.parameters[templateInfo.paramCount] = subject;
-            templateInfo.paramCount++;
+            parameters.add(parameters.Count() + 1, subject);
          }
          else scope.raiseError(errInvalidHintValue, param);
       }
       paramNode = paramNode.nextNode();
+   }
+}
+
+void Compiler :: readTemplateInfo(SNode node, TemplateInfo& info)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplate) {
+         info.templateRef = current.argument;
+
+         readTemplateInfo(current, info);
+      }
+      else if (current == lxTemplateSubject) {
+         int index = 1 + info.parameters.Count();
+
+         info.parameters.add(index, current.argument);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: copyTemplateInfo(SyntaxTree::Node node, SyntaxTree::Writer& writer)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      writer.newNode(current.type, current.argument);
+      copyTemplateInfo(current, writer);
+      writer.closeNode();
+
+      current = current.nextNode();
    }
 }
 
@@ -1941,12 +2030,7 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
       else return true;
    }
    else if (hintRef != 0) {
-      TemplateInfo templateInfo;
-      templateInfo.templateRef = hintRef;
-
-      compileTemplateParameters(hint, *scope.moduleScope, templateInfo);
-
-      scope.moduleScope->templates.add(scope.reference, templateInfo);
+      declareTemplateInfo(hint, *scope.moduleScope, scope.reference, hintRef);
 
       return true;
    }
@@ -2232,16 +2316,11 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
 
          // Method templates can be applied only for methods with custom verbs
          if (getVerb(scope.message) == EVAL_MESSAGE_ID && getSignature(scope.message) != 0) {
-            TemplateInfo templateInfo;
-            templateInfo.templateRef = hintRef;
-
-            compileTemplateParameters(hints, *scope.moduleScope, templateInfo);
-
             ident_t signature = moduleScope->module->resolveSubject(getSignature(scope.message));
             IdentifierString customVerb(signature, StringHelper::find(signature, '&', getlength(signature)));
-            templateInfo.messageSubject = moduleScope->module->mapSubject(customVerb, false);
+            ref_t messageSubject = moduleScope->module->mapSubject(customVerb, false);
 
-            scope.moduleScope->templates.add(classScope->reference, templateInfo);
+            declareTemplateInfo(hints, *scope.moduleScope, classScope->reference, hintRef, messageSubject);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
@@ -2298,12 +2377,15 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
             TemplateInfo templateInfo;
             templateInfo.templateRef = hintRef;
 
-            compileTemplateParameters(hints, *scope.moduleScope, templateInfo);
+            declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
                
             ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
-            for (int i = 0; i < templateInfo.paramCount; i++) {
+            RoleMap::Iterator it = templateInfo.parameters.start();
+            while (!it.Eof()) {
                name.append('@');
-               name.append(scope.moduleScope->module->resolveSubject(templateInfo.parameters[i]));
+               name.append(scope.moduleScope->module->resolveSubject(*it));
+
+               it++;
             }
 
             classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
@@ -5050,7 +5132,6 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          case nsMethod:
          {
             MethodScope methodScope(&scope);
-            compileMethodHints(hints, writer, methodScope, warningsOnly);
 
             // if it is a dispatch handler
             if (member.firstChild() == nsDispatchHandler) {
@@ -5059,6 +5140,8 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
                methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
                methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
+
+               compileMethodHints(hints, writer, methodScope, warningsOnly);
 
                compileDispatcher(member.firstChild().firstChild(), writer, methodScope, test(scope.info.header.flags, elWithGenerics));
             }
@@ -5069,6 +5152,8 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
                int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
                methodScope.stackSafe = test(hint, tpStackSafe);
                //methodScope.generic = test(hint, tpGeneric);
+
+               compileMethodHints(hints, writer, methodScope, warningsOnly);
 
                compileMethod(member, writer, methodScope);
             }
@@ -5290,7 +5375,7 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
    }
 }
 
-ref_t Compiler::generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
+ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
 {
    if (!reference) {
       reference = moduleScope.mapNestedExpression();
@@ -5312,7 +5397,8 @@ ref_t Compiler::generateTemplate(ModuleScope& moduleScope, TemplateInfo& templat
 
    templateInfo.targetOffset = scope.info.fields.Count();
 
-   declareImportedTemplate(scope, writer, templateInfo);
+   declareTemplate(scope, writer, templateInfo);   
+   declareImportedTemplates(scope, writer);           // HOTFIX : import templates declared in templates
 
    writer.closeNode();
 
@@ -5321,8 +5407,10 @@ ref_t Compiler::generateTemplate(ModuleScope& moduleScope, TemplateInfo& templat
    // HOTFIX : generate syntax once again to properly import the template code
    writer.clear();
    writer.newNode(lxRoot, scope.reference);
+   templateInfo.parameters.clear();
 
    importTemplate(scope, writer, templateInfo);
+   importTemplates(scope, writer);                 // HOTFIX : import templates declared in templates
    compileVirtualMethods(writer, scope);
 
    writer.closeNode();
@@ -5345,7 +5433,7 @@ void Compiler::generateClassFlags(ClassScope& scope, SNode root)
    }
 }
 
-bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo)
+bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo)
 {
    _Module* extModule = NULL;
    _Memory* section = scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule);
@@ -5371,7 +5459,7 @@ bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer
       else if (current == lxTemplateField) {
          SNode templateType = SyntaxTree::findChild(current, lxTemplateFieldType);
          if (templateType.argument != 0) {
-            templateInfo.targetType = templateInfo.parameters[templateType.argument - 1];
+            templateInfo.targetType = templateInfo.parameters.get(templateType.argument);
 
             // HOTFIX : if the target field is the object itself
             // ignore target field
@@ -5395,8 +5483,7 @@ bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer
          writer.closeNode();
       }
       else if (current == lxTemplateSubject) {
-         templateInfo.parameters[templateInfo.paramCount] = templateInfo.messageSubject;
-         templateInfo.paramCount++;
+         templateInfo.parameters.add(templateInfo.parameters.Count() + 1, templateInfo.messageSubject);
       }
       else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, scope.moduleScope->module, getSignature(current.argument), templateInfo));
@@ -5404,6 +5491,9 @@ bool Compiler :: declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer
          generateMethodHints(scope, current, messageRef);
    
          scope.include(messageRef);
+      }
+      else if (current == lxTemplate) {
+         importTemplateInfo(current, *scope.moduleScope, scope.reference, templateInfo);
       }
    
       current = current.nextNode();
@@ -5727,8 +5817,10 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    // load template fields
    DNode fieldHints = skipHints(member);
    if (member != nsField) {
-      // due to current syntax we need to reset hints back, otherwise they will be skipped
-      member = fieldHints;
+      if (fieldHints != nsNone) {
+         // due to current syntax we need to reset hints back, otherwise they will be skipped
+         member = fieldHints;
+      }
    }
    else {
       while (member == nsField) {
@@ -5763,6 +5855,16 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
    compileVMT(member, writer, scope, false);
 
+   // declare template in template
+   SNode templateNode = scope.moduleScope->templates.readRoot().firstChild();
+   while (templateNode != lxNone) {
+      if (templateNode.type == lxClass && templateNode.argument == scope.reference) {
+         copyTemplateInfo(templateNode, writer);
+      }
+
+      templateNode = templateNode.nextNode();
+   }
+
    writer.closeNode();
 
 //   // validate template
@@ -5784,6 +5886,24 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    scope.save();
 
    scope.moduleScope->saveTemplate(scope.templateRef);
+}
+
+bool Compiler :: declareImportedTemplates(ClassScope& scope, SyntaxWriter& writer)
+{
+   SNode templateNode = scope.moduleScope->templates.readRoot().firstChild();
+   while (templateNode != lxNone) {
+      if (templateNode.type == lxClass && templateNode.argument == scope.reference) {
+         TemplateInfo info;
+
+         readTemplateInfo(templateNode, info);
+         if (!declareTemplate(scope, writer, info))
+            return false;
+      }
+
+      templateNode = templateNode.nextNode();
+   }
+
+   return true;
 }
 
 void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
@@ -5808,13 +5928,8 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    declareVMT(member, writer, scope, nsMethod/*, isExtension, extensionType*/);
 
    // declare imported methods / flags
-   TemplateMap::Iterator it = scope.moduleScope->templates.getIt(scope.reference);
-   while (!it.Eof() && it.key() == scope.reference) {
-      if (!declareImportedTemplate(scope, writer, *it))
-         scope.raiseError(errInvalidHint, node.FirstTerminal());
-
-      it++;
-   }
+   if (!declareImportedTemplates(scope, writer))
+      scope.raiseError(errInvalidHint, node.FirstTerminal());
 
    writer.closeNode();
 
@@ -5999,7 +6114,19 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxClassMethod) {
+      if (current == lxTemplateSubject) {
+         info.parameters.add(info.parameters.Count() + 1, info.messageSubject);
+      }
+      else if (current == lxTemplateField) {
+         SNode templateType = SyntaxTree::findChild(current, lxTemplateFieldType);
+         if (templateType.argument != 0) {
+            info.targetType = info.parameters.get(templateType.argument);
+         }
+      }
+      else if (current == lxTemplate) {
+         // templates should be already imported
+      }
+      else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info));
 
          writer.newNode(lxClassMethod, messageRef);
@@ -6022,7 +6149,7 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
    }
 }
 
-void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo)
+void Compiler :: importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo)
 {
    _Module* extModule = NULL;
    SyntaxTree tree(scope.moduleScope->loadTemplateInfo(templateInfo.templateRef, extModule));
@@ -6115,6 +6242,21 @@ void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
    }
 }
 
+void Compiler :: importTemplates(ClassScope& scope, SyntaxWriter& writer)
+{
+   SNode templateNode = scope.moduleScope->templates.readRoot().firstChild();
+   while (templateNode != lxNone) {
+      if (templateNode.type == lxClass && templateNode.argument == scope.reference) {
+         TemplateInfo info;
+
+         readTemplateInfo(templateNode, info);
+         importTemplate(scope, writer, info);
+      }
+
+      templateNode = templateNode.nextNode();
+   }
+}
+
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -6123,12 +6265,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    writer.newNode(lxRoot, scope.reference);
 
    // import templates
-   TemplateMap::Iterator t_it = moduleScope->templates.getIt(scope.reference);
-   while (!t_it.Eof() && t_it.key() == scope.reference) {
-      importTemplate(scope, writer, *t_it);
-
-      t_it++;
-   }
+   importTemplates(scope, writer);
 
    DNode member = node.firstChild();
    compileVMT(member, writer, scope);
@@ -7354,7 +7491,7 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
       templateInfo.templateRef = mapHint(body, scope);
       templateInfo.targetType = scope.mapSubject(member.Terminal());
 
-      compileTemplateParameters(body, scope, templateInfo);
+      declareTemplateParameters(body, scope, templateInfo.parameters);
 
       ref_t classRef = scope.subjectHints.get(templateInfo.targetType);
 

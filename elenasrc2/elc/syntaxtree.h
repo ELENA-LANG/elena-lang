@@ -161,11 +161,12 @@ enum LexicalType
    //lxClassMethodOpt  = 0x04008,
    lxWarningMask     = 0x04009,
 
-   lxTemplate          = 0x2400A,
-   lxTemplateField     = 0x0400B,
-   lxTemplateFieldType = 0x0400C,
-   lxTemplateSubject   = 0x0400D,
-   lx
+   lxTemplate         = 0x4400A,
+   lxTemplateField    = 0x0400B,
+   lxTemplateFieldType= 0x0400C,
+   lxTemplateSubject  = 0x0400D,
+
+   lxClass            = 0x0400E,
 };
 
 // --- SyntaxTree ---
@@ -277,6 +278,17 @@ public:
       Writer(SyntaxTree& tree)
          : _writer(&tree._body), _stringWriter(&tree._strings)
       {
+      }
+
+      /// parameter : appendMode - when true, the ending node is removed
+      Writer(SyntaxTree& tree, bool appendMode)
+         : _writer(&tree._body), _stringWriter(&tree._strings)
+      {
+         if (appendMode && tree._body.Length() >= 8) {
+            tree._body.trim(tree._body.Length() - 8);
+            _writer.seekEOF();
+         }
+            
       }
    };
 

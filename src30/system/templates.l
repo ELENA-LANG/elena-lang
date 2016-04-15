@@ -1,5 +1,3 @@
-//// ==== ver 3.4.2 ===
-//
 //#template(target:field) prop
 //{
 //    #method set : value
@@ -9,14 +7,16 @@
 //    
 //    #method get = $target.
 //}
-//
-//#template(target:method) vrnprop
-//{
-//   #method(stacksafe,type:int,embeddable,suppress:w3) get
-//   [
-//        #var(type:int)aLength.
-//        $target eval &vint:aLength.
-//        
-//        ^ aLength.
-//   ]
-//}
+
+#template outnprop : template_subj
+{
+   #subject target.
+    
+   #method(stacksafe,int,embeddable,suppress:w3) template_subj
+   [
+        #var(int)aLength.
+        $self target &vint:aLength.
+        
+        ^ aLength.
+   ]
+}

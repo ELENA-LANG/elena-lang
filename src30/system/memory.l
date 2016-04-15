@@ -13,6 +13,11 @@
 #template(const,string) stringof : template_subj
 {
     #field(template_subj)$target.
+    
+    #method(outnprop:length,stacksafe)readLength &vint:retVal
+    [
+        retVal := 1.
+    ]    
 }
 
 //// === basic memory classes ===

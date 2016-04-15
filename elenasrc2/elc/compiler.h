@@ -196,22 +196,28 @@ public:
       }
    };
 
+   typedef Map<ident_t, ref_t, false>     ForwardMap;
+   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef Map<ref_t, ref_t>              ClassMap;
+   typedef Map<int, ref_t>                RoleMap;
+   typedef List<Unresolved>               Unresolveds;
+//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+
    struct TemplateInfo
    {
-      ref_t templateRef;
-      ref_t targetType;
-      int   targetOffset;
+      ref_t   templateRef;
+      ref_t   targetType;
+      int     targetOffset;
+      ref_t   messageSubject;
 
-      int   paramCount;
-      ref_t parameters[12];
-      ref_t messageSubject;
+      RoleMap parameters;
 
       TemplateInfo()
       {
          targetType = 0;
          templateRef = 0;
          targetOffset = -1;
-         paramCount = 0;
          messageSubject = 0;
       }
 
@@ -220,8 +226,7 @@ public:
          this->templateRef = templateRef;
          this->targetType = targetType;
          this->targetOffset = -1;
-         this->paramCount = 0;
-         messageSubject = 0;
+         this->messageSubject = 0;
       }
 
       TemplateInfo(ref_t templateRef, ref_t targetType, int targetOffset)
@@ -229,19 +234,9 @@ public:
          this->templateRef = templateRef;
          this->targetType = targetType;
          this->targetOffset = targetOffset;
-         this->paramCount = 0;
-         messageSubject = 0;
+         this->messageSubject = 0;
       }
    };
-
-   typedef Map<ident_t, ref_t, false>     ForwardMap;
-   typedef Map<ident_t, Parameter, false> LocalMap;
-   typedef Map<ref_t, ref_t>              SubjectMap;
-   typedef Map<ref_t, ref_t>              ClassMap;
-   typedef Map<int, ref_t>                RoleMap;
-   typedef List<Unresolved>               Unresolveds;
-//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-   typedef MemoryMap<ref_t, TemplateInfo> TemplateMap;
 
 private:
    // - ModuleScope -
@@ -272,8 +267,8 @@ private:
       // role hints
       RoleMap           roleHints;
 
-      // class templates to be imported ; the list is filled during the declaration
-      TemplateMap       templates;
+      // templates
+      SyntaxTree        templates;
 
       // cached references
       ref_t superReference;
@@ -821,7 +816,11 @@ private:
 
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 
-   void compileTemplateParameters(DNode hint, ModuleScope& scope, TemplateInfo& templateInfo);
+   void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
+   void declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t ownerRef, ref_t hintRef, ref_t messageSubject = 0);
+   void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, TemplateInfo& info);
+   void readTemplateInfo(SyntaxTree::Node node, TemplateInfo& info);
+   void copyTemplateInfo(SyntaxTree::Node node, SyntaxTree::Writer& writer);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
@@ -836,8 +835,10 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
 
-   bool declareImportedTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
-   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo templateInfo);
+   bool declareImportedTemplates(ClassScope& scope, SyntaxWriter& writer);
+   bool declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
+   void importTemplates(ClassScope& scope, SyntaxWriter& writer);
+   void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
    void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
