@@ -2340,6 +2340,13 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoad);
          tape.write(bcNWrite);
          break;
+      // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // nlen
+         // nsave
+         tape.write(bcNLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -2364,6 +2371,13 @@ void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoad);
          tape.write(bcBWriteB);
          break;
+         // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // blen
+         // nsave
+         tape.write(bcBLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -2387,6 +2401,13 @@ void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcECopyD);
          tape.write(bcNLoad);
          tape.write(bcWWrite);
+         break;
+         // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // wlen
+         // nsave
+         tape.write(bcWLen);
+         tape.write(bcNSave);
          break;
       default:
          break;
@@ -2718,6 +2739,7 @@ void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rar
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 {
+   bool lenMode = node.argument == READ_MESSAGE_ID;
    bool setMode = node.argument == SET_REFER_MESSAGE_ID;
    bool assignMode = node != lxArrOp;
 
@@ -2752,6 +2774,12 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       if (!rargSimple || !rarg2Simple) {
          tape.write(bcPopB);
       }
+   }
+   else if (lenMode) {
+      generateObjectExpression(tape, rarg);
+      loadBase(tape, lxResult);
+
+      generateObjectExpression(tape, larg);
    }
    else {
       if (assignMode && (!largSimple || !rargSimple)) {

@@ -341,8 +341,8 @@ private:
       // NOTE : the function returns 0 for implicit subjects
       // in any case output is set (for explicit one - the namespace is copied as well)
       ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
-      ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true);
-      ref_t resolveSubjectRef(ident_t name, bool implicitOnly = true);
+      ref_t mapSubject(TerminalInfo terminal, bool explicitOnly = true);
+      ref_t resolveSubjectRef(ident_t name, bool explicitOnly = true);
 
       ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
 
@@ -837,7 +837,7 @@ private:
 
    bool declareImportedTemplates(ClassScope& scope, SyntaxWriter& writer);
    bool declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
-   void importTemplates(ClassScope& scope, SyntaxWriter& writer);
+   void importTemplates(ClassScope& scope, SyntaxWriter& writerf);
    void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
    void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
    void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);

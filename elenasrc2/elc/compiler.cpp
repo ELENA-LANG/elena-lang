@@ -452,7 +452,7 @@ ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)
    return module->mapSubject(fullName, false);
 }
 
-ref_t Compiler::ModuleScope :: resolveSubjectRef(ident_t identifier, bool implicitOnly)
+ref_t Compiler::ModuleScope :: resolveSubjectRef(ident_t identifier, bool explicitOnly)
 {
    ref_t subj_ref = subjects.get(identifier);
    if (subj_ref != 0)
@@ -475,7 +475,7 @@ ref_t Compiler::ModuleScope :: resolveSubjectRef(ident_t identifier, bool implic
       else fullName.append(*it);
 
       subj_ref = module->mapSubject(fullName, true);
-      if (subj_ref && (!implicitOnly || subjectHints.exist(subj_ref))) {
+      if (subj_ref && (!explicitOnly || subjectHints.exist(subj_ref))) {
          subjects.add(identifier, subj_ref);
 
          return subj_ref;
@@ -486,7 +486,7 @@ ref_t Compiler::ModuleScope :: resolveSubjectRef(ident_t identifier, bool implic
    return 0;
 }
 
-ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, bool implicitOnly)
+ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, bool explicitOnly)
 {
    ident_t identifier = NULL;
    if (terminal.symbol == tsIdentifier || terminal.symbol == tsPrivate) {
@@ -494,7 +494,7 @@ ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, bool implicitOn
    }
    else raiseError(errInvalidSubject, terminal);
 
-   return resolveSubjectRef(terminal, implicitOnly);
+   return resolveSubjectRef(terminal, explicitOnly);
 }
 
 ref_t Compiler::ModuleScope :: mapSubject(TerminalInfo terminal, IdentifierString& output)
@@ -1906,16 +1906,20 @@ ref_t Compiler :: mapHint(DNode hint, ModuleScope& scope)
    ref_t hintRef = 0;
 
    TerminalInfo terminal = hint.Terminal();
-   int count = countSymbol(hint, nsHintValue);
-   if (count != 0) {
-      IdentifierString hintName(terminal);
 
-      hintName.append('#');
-      hintName.appendInt(count);
+   hintRef = scope.mapSubject(terminal);
+   if (hintRef == 0) {
+      int count = countSymbol(hint, nsHintValue);
+      if (count != 0) {
+         IdentifierString hintName(terminal);
 
-      hintRef = scope.resolveSubjectRef(hintName, false);
+         hintName.append('#');
+         hintName.appendInt(count);
+
+         hintRef = scope.resolveSubjectRef(hintName, false);
+      }
+      else hintRef = scope.mapSubject(terminal, false);
    }
-   else hintRef = scope.mapSubject(terminal, false);
 
    return hintRef;
 }
@@ -6742,6 +6746,21 @@ int Compiler :: mapOpArg(ModuleScope& scope, SNode arg)
    return flags & elDebugMask;
 }
 
+inline LexicalType mapArrPrimitiveOp(int size)
+{
+   switch (size)
+   {
+      case 4:
+         return lxIntArrOp;
+      case 1:
+         return lxByteArrOp;
+      case 2:
+         return lxShortArrOp;
+      default:
+         return lxNone;
+   }
+}
+
 void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {   
    if (node.argument == SET_REFER_MESSAGE_ID) {
@@ -6757,20 +6776,7 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             if (checkIfCompatible(scope, destType, rarg)) {
                int size = scope.defineSubjectSize(destType);
                node.appendNode(lxSize, size);
-               switch (size)
-               {
-                  case 4:
-                     node = lxIntArrOp;
-                     break;
-                  case 1:
-                     node = lxByteArrOp;
-                     break;
-                  case 2:
-                     node = lxShortArrOp;
-                     break;
-                  default:
-                     break;
-               }
+               node = mapArrPrimitiveOp(size);
             }
          }
       }
@@ -6816,21 +6822,16 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                lref = scope.subjectHints.get(destType);
                int size = scope.defineStructSize(lref);
                node.appendNode(lxSize, size);
-               switch (size)
-               {
-                  case 4:
-                     node = lxIntArrOp;
-                     break;
-                  case 1:
-                     node = lxByteArrOp;
-                     break;
-                  case 2:
-                     node = lxShortArrOp;
-                     break;
-                  default:
-                     break;
-               }
+               node = mapArrPrimitiveOp(size);
                boxing = true;
+            }
+         }
+         else if (node.argument == READ_MESSAGE_ID) {
+            if (lref == -3 && rflags == elDebugDWORD) {
+               lref = scope.subjectHints.get(destType);
+               int size = scope.defineStructSize(lref);
+               node.appendNode(lxSize, size);
+               node = mapArrPrimitiveOp(size);
             }
          }
       }
