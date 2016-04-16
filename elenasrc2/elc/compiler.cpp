@@ -3882,7 +3882,7 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
       //}
       //else {
       //   // dynamic normal symbol
-         ownerScope.writer->newNode(lxNested, /*scope.info.fields.Count()*/(size_t)0);
+         ownerScope.writer->newNode(lxNested, scope.info.fields.Count());
          ownerScope.writer->appendNode(lxTarget, scope.reference);
       //}
 
@@ -4345,8 +4345,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       flags = classInfo.header.flags;
 
       LexicalType argType = lxNone;
-      // if it is an integer number pass it directly
       switch (flags & elDebugMask) {
+         // if it is an integer number pass it directly
          case elDebugDWORD:
       //   case elDebugPTR:
       //   case elDebugSubject:
@@ -4355,6 +4355,10 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       //   case elDebugReference:
       //      argType = lxExtInteranlRef;
       //      break;
+         case elDebugWideLiteral:
+         case elDebugLiteral:
+            argType = lxExtArgument;
+            break;
          default:
             scope.raiseError(errInvalidOperation, terminal);
             break;
@@ -5093,7 +5097,7 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, SyntaxWriter& wri
       }
    }
    else if (!test(classScope->info.header.flags, elDynamicRole)) {
-      writer.newNode(lxCreatingClass, /*classScope->info.fields.Count()*/(ref_t)0);
+      writer.newNode(lxCreatingClass, classScope->info.fields.Count());
       writer.appendNode(lxTarget, classScope->reference);
       writer.closeNode();
    }
@@ -6008,6 +6012,8 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
             case elDebugIntegers:
             case elDebugBytes:
             case elDebugShorts:
+            case elDebugLiteral:
+            case elDebugWideLiteral:
                writer.appendNode(lxTarget, -3); // NOTE : -3 means primitive array
                break;
             default:
@@ -6620,13 +6626,12 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask
    while (parentNode == lxExpression)
       parentNode = parentNode.parentNode();
 
-   if (parentNode == lxAssigning && parentNode.argument == 4) {
+   if (parentNode == lxAssigning) {
+      if (parentNode.argument != 4) {
+         ref_t type = SyntaxTree::findChild(parentNode, lxType).argument;
 
-   }
-   else {
-      ref_t type = SyntaxTree::findChild(parentNode, lxType).argument;
-
-      boxPrimitive(scope, node, -1, type, warningMask, mode);
+         boxPrimitive(scope, node, -1, type, warningMask, mode);
+      }
    }
 
    SNode arg = node.firstChild();

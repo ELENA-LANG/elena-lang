@@ -85,17 +85,16 @@
         $self write &wide:(aLiteral wide).
     ]
 
-    #method write &wide : aLiteral
+    #method write &wide : s
     [
-//        #var(int)aLength.
-//        aLiteral readLength &vint:aLength.
-//
-//        system'external'KERNEL32 WriteConsoleW
-//            &int  :  theHandle
-//            &wide :  aLiteral
-//            &int  :  aLength
-//            &int  :  0                       // !! temporally we do not use it
-//            &int  :  0.             
+        #var(int)len := s length.
+
+        system'external'KERNEL32 WriteConsoleW
+            &int  :  theHandle
+            &wide :  s
+            &int  :  len
+            &int  :  0                       // !! temporally we do not use it
+            &int  :  0.             
 
         // !!check the result of the operation
     ]

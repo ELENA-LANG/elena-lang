@@ -16,7 +16,10 @@
     
     #method(outnprop:length,stacksafe)readLength &vint:retVal
     [
-        retVal := 1.
+        #var(int)len.
+        $target >> len.
+        
+        retVal := len - 1.
     ]    
 }
 

@@ -124,4 +124,3 @@ The project source code is compiled with CodeBlocks and Mingw32
 The project files could be found in <app root>\elenasrc2 folder.
 
 Visual studio express projects are available as well.
-
