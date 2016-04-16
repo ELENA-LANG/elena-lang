@@ -22,9 +22,9 @@ using namespace _ELENA_;
 #define HINT_NOUNBOXING       0x20000000
 #define HINT_EXTERNALOP       0x10000000
 #define HINT_EXTENSION_MODE   0x04000000
-//#define HINT_ACTION           0x00020000
+#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
-//#define HINT_CLOSURE          0x00008000
+#define HINT_CLOSURE          0x00008000
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -346,8 +346,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    //messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    //verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    //paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
-   //trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
-   //falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
+   trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
+   falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
    //arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 
    // cache the frequently used subjects / hints
@@ -365,7 +365,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    structHint = module->mapSubject(HINT_STRUCT, false);
    structOfHint = module->mapSubject(HINT_STRUCTOF, false);
    embedHint = module->mapSubject(HINT_EMBEDDABLE, false);
-   //boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
+   boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
 
    defaultNs.add(module->Name());
 
@@ -2862,12 +2862,12 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
 //      case nsMethodParameter:
          result = compileClosure(member, scope, 0);
          break;
-//      case nsInlineClosure:
-//         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
-//         break;
-//      case nsInlineExpression:
-//         result = compileClosure(objectNode, scope, HINT_ACTION);
-//         break;
+      case nsInlineClosure:
+         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
+         break;
+      case nsInlineExpression:
+         result = compileClosure(objectNode, scope, HINT_ACTION);
+         break;
       case nsExpression:
 //         if (isCollection(member)) {
 //            TerminalInfo parentInfo = objectNode.Terminal();
@@ -3163,39 +3163,39 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount/*,
 //
 //   return extRef;
 //}
-//
-//ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
-//{
-//   //scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-//   //appendTerminalInfo(scope.writer, node.FirstTerminal());
-//   //scope.writer->closeNode();
-//
-//   //DNode elsePart = node.select(nsElseOperation);
-//   //if (elsePart != nsNone) {
-//   //   scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
-//
-//   //   compileBranching(node, scope/*, object, operator_id, 0*/);
-//
-//   //   scope.writer->closeNode();
-//   //   scope.writer->newNode(lxElse);
-//
-//   //   compileBranching(elsePart, scope); // for optimization, the condition is checked only once
-//
-//   //   scope.writer->closeNode();
-//   //}
-//   //else {
-//   //   scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
-//
-//   //   compileBranching(node, scope);
-//
-//   //   scope.writer->closeNode();
-//   //}
-//
-//   //scope.writer->insert(lxBranching);
-//   //scope.writer->closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
+
+ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
+{
+   scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+   appendTerminalInfo(scope.writer, node.FirstTerminal());
+   scope.writer->closeNode();
+
+   DNode elsePart = node.select(nsElseOperation);
+   if (elsePart != nsNone) {
+      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
+
+      compileBranching(node, scope/*, object, operator_id, 0*/);
+
+      scope.writer->closeNode();
+      scope.writer->newNode(lxElse);
+
+      compileBranching(elsePart, scope); // for optimization, the condition is checked only once
+
+      scope.writer->closeNode();
+   }
+   else {
+      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
+
+      compileBranching(node, scope);
+
+      scope.writer->closeNode();
+   }
+
+   scope.writer->insert(lxBranching);
+   scope.writer->closeNode();
+
+   return ObjectInfo(okObject);
+}
 
 //int Compiler :: mapOperandType(CodeScope& scope, ObjectInfo operand)
 //{
@@ -3381,10 +3381,10 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    TerminalInfo operator_name = node.Terminal();
    int operator_id = _operators.get(operator_name);
 
-//   // if it is branching operators
-//   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-//      return compileBranchingOperator(node, scope, object, mode, operator_id);
-//   }
+   // if it is branching operators
+   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
+      return compileBranchingOperator(node, scope, object, mode, operator_id);
+   }
 
    return compileOperator(node, scope, object, mode, operator_id);
 }
@@ -3916,10 +3916,10 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mod
    if (node == nsSubCode || node == nsInlineClosure) {
       compileAction(node, scope, DNode(), mode);
    }
-//   // if it is a closure / labda function with a parameter
-//   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
-//      compileAction(node.firstChild(), scope, node, mode);
-//   }
+   // if it is a closure / labda function with a parameter
+   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
+      compileAction(node.firstChild(), scope, node, mode);
+   }
 //   // if it is an action code block
 //   else if (node == nsMethodParameter || node == nsSubjectArg) {
 //      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
@@ -4125,26 +4125,26 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
-//{
-//   CodeScope subScope(&scope);
-//
-//   DNode thenCode = thenNode.firstChild();
-//
-//   DNode expr = thenCode.firstChild();
-//   if (expr == nsCodeEnd || expr.nextNode() != nsNone) {
-//      compileCode(thenCode, subScope);
-//
-//      if (subScope.level > scope.level) {
-//         scope.writer->appendNode(lxReleasing, subScope.level - scope.level);
-//      }
-//   }
-//   // if it is inline action
-//   else compileRetExpression(expr, scope, 0);
-//
-//   return ObjectInfo(okObject);
-//}
-//
+ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
+{
+   CodeScope subScope(&scope);
+
+   DNode thenCode = thenNode.firstChild();
+
+   DNode expr = thenCode.firstChild();
+   if (expr == nsCodeEnd || expr.nextNode() != nsNone) {
+      compileCode(thenCode, subScope);
+
+      if (subScope.level > scope.level) {
+         scope.writer->appendNode(lxReleasing, subScope.level - scope.level);
+      }
+   }
+   // if it is inline action
+   else compileRetExpression(expr, scope, 0);
+
+   return ObjectInfo(okObject);
+}
+
 //void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
 //{
 //   scope.writer->newNode(lxThrowing);
@@ -4323,7 +4323,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
    }
 
   //scope.rootBookmark = -1;
-   scope.writer->removeBookmark();
+  // scope.writer->removeBookmark();
 
    return retVal;
 }
@@ -6379,12 +6379,12 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareSingletonAction(classScope, objNode, DNode());
          singleton = true;
       }
-//      else if (objNode == nsInlineExpression) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//
-//         declareSingletonAction(classScope, objNode, expression.firstChild());
-//         singleton = true;
-//      }
+      else if (objNode == nsInlineExpression) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+
+         declareSingletonAction(classScope, objNode, expression.firstChild());
+         singleton = true;
+      }
 //      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
 //         ClassScope classScope(scope.moduleScope, scope.reference);
 //
@@ -6440,16 +6440,16 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }
-//      else if (classNode == nsInlineExpression) {
-//         ModuleScope* moduleScope = scope.moduleScope;
-//
-//         ClassScope classScope(moduleScope, scope.reference);
-//         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
-//
-//         compileAction(classNode, classScope, expression.firstChild(), 0, true);
-//
-//         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
-//      }
+      else if (classNode == nsInlineExpression) {
+         ModuleScope* moduleScope = scope.moduleScope;
+
+         ClassScope classScope(moduleScope, scope.reference);
+         moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
+
+         compileAction(classNode, classScope, expression.firstChild(), 0, true);
+
+         retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
+      }
 //      else if (classNode == nsSubjectArg || classNode == nsMethodParameter) {
 //         ModuleScope* moduleScope = scope.moduleScope;
 //

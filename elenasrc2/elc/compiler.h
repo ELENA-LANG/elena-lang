@@ -278,8 +278,8 @@ private:
       ref_t literalReference;
       ref_t wideReference;
       //ref_t charReference;
-      //ref_t trueReference;
-      //ref_t falseReference;
+      ref_t trueReference;
+      ref_t falseReference;
       //ref_t paramsReference;
       //ref_t signatureReference;
       //ref_t messageReference;
@@ -302,7 +302,7 @@ private:
       ref_t structOfHint;
       ref_t embedHint;
 
-      //ref_t boolType;
+      ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -871,7 +871,7 @@ private:
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-//   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
+   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
    ref_t compileMessageParameters(DNode node, CodeScope& scope);
 
@@ -886,8 +886,8 @@ private:
    ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
-//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
+   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
 //   void compileLoop(DNode node, CodeScope& scope);
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);

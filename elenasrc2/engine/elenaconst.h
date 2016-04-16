@@ -521,8 +521,8 @@ namespace _ELENA_
    #define STR_FORWARD              "'$literal"
    #define WIDESTR_FORWARD          "'$wideliteral"
    #define CHAR_FORWARD             "'$char"
-//   #define TRUE_FORWARD             "'$true"
-//   #define FALSE_FORWARD            "'$false"
+   #define TRUE_FORWARD             "'$true"
+   #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
    #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
@@ -530,8 +530,8 @@ namespace _ELENA_
 //   #define ARRAY_FORWARD            "'$array"
 //   #define PARAMS_FORWARD           "'$params"
 //   #define SUBJ_FORWARD             "'$sign"
-//
-//   #define BOOLTYPE_FORWARD         "'$bool"
+
+   #define BOOLTYPE_FORWARD         "'$bool"
 
    #define STARTUP_CLASS            "'startUp"
 

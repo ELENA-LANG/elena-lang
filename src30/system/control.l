@@ -1,13 +1,13 @@
-//// --- true ---
-//
-//#class(limited) BaseBoolValue
-//{
-//    #method then : aTrueAction = $nil.
-//
-//    #method then : aTrueAction &else:aFalseAction = $nil.
-//
-//    #method else : aTrueAction = $nil.
-//    
+// --- true ---
+
+#class(limited,dispatchable:bool) BaseBoolValue
+{
+    #method then : aTrueAction = $nil.
+
+    #method then : aTrueAction &else:aFalseAction = $nil.
+
+    #method else : aTrueAction = $nil.
+    
 //    #method iif:aTrueValue:aFalseValue = $nil.
 //
 //    #method(type:bool) or : anExpr = $nil.
@@ -33,20 +33,20 @@
 //    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
 //    
 //    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
-//}
-//
-///// A true value symbol
-//#symbol true = BaseBoolValue
-//{
-//    /// Executes the action
-//    #method then : aTrueAction = aTrueAction eval.
-//
-//    /// Executes then-action
-//    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    #method else : aTrueAction = $nil.
-//
+}
+
+/// A true value symbol
+#symbol true = BaseBoolValue
+{
+    /// Executes the action
+    #method then : aTrueAction = aTrueAction eval.
+
+    /// Executes then-action
+    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
+
+    /// Always returns nil.
+    #method else : aTrueAction = $nil.
+
 //    #method iif:aTrueValue:aFalseValue = aTrueValue.
 //    
 //    /// Executes logical OR operation
@@ -85,22 +85,22 @@
 //
 //    /// Returns itself.
 //    #method clone = $self.
-//}.
-//
-//// --- false ---
-//
-///// A false value symbol
-//#symbol false = BaseBoolValue
-//{
-//    /// Always returns nil
-//    #method then : anAction = $nil.
-//    
-//    /// Executes else-action
-//    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    #method else : aFalseAction = aFalseAction eval.
-//
+}.
+
+// --- false ---
+
+/// A false value symbol
+#symbol false = BaseBoolValue
+{
+    /// Always returns nil
+    #method then : anAction = $nil.
+    
+    /// Executes else-action
+    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
+
+    /// Executes the action
+    #method else : aFalseAction = aFalseAction eval.
+
 //    #method iif:aTrueValue:aFalseValue = aFalseValue.
 //
 //    /// Executes logical OR operation
@@ -149,8 +149,8 @@
 //
 //    /// Returns itself
 //    #method clone = $self.
-//}.
-//
+}.
+
 //// === Basic prototypes ===
 //
 //// --- Enumerator ---
