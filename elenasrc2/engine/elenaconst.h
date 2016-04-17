@@ -297,7 +297,7 @@ namespace _ELENA_
    const int elNonStructureRole    = 0x00001000;
    const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
-  // const int elExtension           = 0x00004980;
+   const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
   // const int elExtMessage          = 0x00208000;
   // const int elSymbol              = 0x00100000;
@@ -469,7 +469,8 @@ namespace _ELENA_
    #define HINT_SIGNATURE           "signature$"
 //   #define HINT_EXT_MESSAGE        "extension_message"
 //   #define HINT_SYMBOL             "symbol"
-//   #define HINT_EXTENSION          "extension"
+   #define HINT_EXTENSION           "extension$"
+   #define HINT_EXTENSIONOF         "extension#1$"
 //   #define HINT_GROUP              "group"
 //   #define HINT_GENERIC            "generic"
    #define HINT_EMBEDDABLE          "embeddable$"

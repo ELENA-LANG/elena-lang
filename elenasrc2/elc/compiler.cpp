@@ -320,7 +320,7 @@ inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, C
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
-   : constantHints((ref_t)-1)/*, extensions(NULL, freeobj)*/
+   : constantHints((ref_t)-1), extensions(NULL, freeobj)
 {
    this->project = project;
    this->sourcePath = sourcePath;
@@ -366,6 +366,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    structOfHint = module->mapSubject(HINT_STRUCTOF, false);
    embedHint = module->mapSubject(HINT_EMBEDDABLE, false);
    boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
+   extensionHint = module->mapSubject(HINT_EXTENSION, false);
+   extensionOfHint = module->mapSubject(HINT_EXTENSIONOF, false);
 
    defaultNs.add(module->Name());
 
@@ -978,36 +980,36 @@ void Compiler::ModuleScope :: loadSubjects(_Module* extModule)
    }
 }
 
-//void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* extModule)
-//{
-//   if (extModule) {
-//      ReferenceNs sectionName(extModule->Name(), EXTENSION_SECTION);
-//
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t type_ref = importSubject(extModule, metaReader.getDWord(), module);
-//            ref_t message = importMessage(extModule, metaReader.getDWord(), module);
-//            ref_t role_ref = importReference(extModule, metaReader.getDWord(), module);
-//
-//            if(!extensionHints.exist(message, type_ref)) {
-//               extensionHints.add(message, type_ref);
-//
-//               SubjectMap* typeExtensions = extensions.get(type_ref);
-//               if (!typeExtensions) {
-//                  typeExtensions = new SubjectMap();
-//
-//                  extensions.add(type_ref, typeExtensions);
-//               }
-//
-//               typeExtensions->add(message, role_ref);
-//            }
-//            else raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, terminal);
-//         }
-//      }
-//   }
-//}
+void Compiler::ModuleScope :: loadExtensions(TerminalInfo terminal, _Module* extModule)
+{
+   if (extModule) {
+      ReferenceNs sectionName(extModule->Name(), EXTENSION_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t type_ref = importSubject(extModule, metaReader.getDWord(), module);
+            ref_t message = importMessage(extModule, metaReader.getDWord(), module);
+            ref_t role_ref = importReference(extModule, metaReader.getDWord(), module);
+
+            if(!extensionHints.exist(message, type_ref)) {
+               extensionHints.add(message, type_ref);
+
+               SubjectMap* typeExtensions = extensions.get(type_ref);
+               if (!typeExtensions) {
+                  typeExtensions = new SubjectMap();
+
+                  extensions.add(type_ref, typeExtensions);
+               }
+
+               typeExtensions->add(message, role_ref);
+            }
+            else raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, terminal);
+         }
+      }
+   }
+}
 
 void Compiler::ModuleScope :: saveSubject(ref_t type_ref, ref_t classReference, bool internalType)
 {
@@ -1036,32 +1038,35 @@ void Compiler::ModuleScope :: saveTemplate(ref_t template_ref)
    metaWriter.writeDWord(-1); // -1 indicates that it is a template declaration
 }
 
-//bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
-//{
-//   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
-//
-//   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//   metaWriter.writeDWord(type);
-//   metaWriter.writeDWord(message);
-//   metaWriter.writeDWord(role);
-//
-//   if (!extensionHints.exist(message, type)) {
-//      extensionHints.add(message, type);
-//
-//      SubjectMap* typeExtensions = extensions.get(type);
-//      if (!typeExtensions) {
-//         typeExtensions = new SubjectMap();
-//
-//         extensions.add(type, typeExtensions);
-//      }
-//
-//      typeExtensions->add(message, role);
-//
-//      return true;
-//   }
-//   else return false;
-//}
+bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t role)
+{
+   if (type == -1)
+      type = 0;
+
+   ReferenceNs sectionName(module->Name(), EXTENSION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   metaWriter.writeDWord(type);
+   metaWriter.writeDWord(message);
+   metaWriter.writeDWord(role);
+
+   if (!extensionHints.exist(message, type)) {
+      extensionHints.add(message, type);
+
+      SubjectMap* typeExtensions = extensions.get(type);
+      if (!typeExtensions) {
+         typeExtensions = new SubjectMap();
+
+         extensions.add(type, typeExtensions);
+      }
+
+      typeExtensions->add(message, role);
+
+      return true;
+   }
+   else return false;
+}
 
 void Compiler::ModuleScope :: saveRole(int role, ref_t reference)
 {
@@ -1171,6 +1176,8 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.count = 0;
    info.size = 0;
    info.classClassRef = 0;
+
+   extensionMode = 0;
 
    syntaxTree.writeString(parent->sourcePath);
 }
@@ -2018,6 +2025,24 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
    //   return true;
    //}
+   else if (hintRef == moduleScope->extensionHint) {
+      scope.extensionMode = -1;
+      writer.appendNode(lxClassFlag, elExtension);
+      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+
+      return true;
+   }
+   else if (hintRef == moduleScope->extensionOfHint) {
+      DNode value = hint.select(nsHintValue);
+      scope.extensionMode = scope.moduleScope->mapSubject(value.Terminal());
+      if (scope.extensionMode)
+         scope.raiseError(errUnknownSubject, value.Terminal());
+
+      writer.appendNode(lxClassFlag, elExtension);
+      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+
+      return true;
+   }
    else if (hintRef == moduleScope->structHint || hintRef == moduleScope->structOfHint) {
       writer.appendNode(lxClassFlag, elStructureRole);
 
@@ -2134,17 +2159,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //      writer.appendNode(lxType, type);
       //   }
       //   writer.closeNode();
-      //}
-      //else if (StringHelper::compare(terminal, HINT_EXTENSION)) {
-      //   DNode value = hints.select(nsHintValue);
-      //   if (value != nsNone) {
-      //      extensionType = scope.moduleScope->mapType(value.Terminal());
-      //      if (extensionType == 0)
-      //         scope.raiseError(errUnknownSubject, value.Terminal());
-      //   }
-      //   isExtension = true;
-      //   writer.appendNode(lxClassFlag, elExtension);
-      //   writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
       //}
 
       hints = hints.nextNode();
@@ -2755,9 +2769,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
    //   case okObject:
    //      scope.writer->newNode(lxResult);
    //      break;
-   //   case okConstantRole:
-   //      scope.writer->newNode(lxConstantSymbol, object.param);
-   //      break;
+      case okConstantRole:
+         scope.writer->newNode(lxConstantSymbol, object.param);
+         break;
       case okTemplateTarget:
          scope.writer->newNode(lxTemplateTarget, object.param);
          break;
@@ -3117,53 +3131,53 @@ ref_t Compiler :: mapMessage(DNode node, CodeScope& scope, size_t& paramCount/*,
    return encodeMessage(sign_id, verb_id, paramCount);
 }
 
-//ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
-//{
-//   // check typed extension if the type available
-//   ref_t type = 0;
-//   ref_t extRef = 0;
-//
-//   if (object.type != 0 && scope.moduleScope->extensionHints.exist(messageRef, object.type)) {
-//      type = object.type;
-//   }
-//   else {
-//      if (scope.moduleScope->extensionHints.exist(messageRef)) {
-//         ref_t classRef = resolveObjectReference(scope, object);
-//         // if class reference available - select the possible type
-//         if (classRef != 0) {
-//            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
-//            while (!it.Eof()) {
-//               if (it.key() == messageRef) {
-//                  if (scope.moduleScope->typeHints.exist(*it, classRef)) {
-//                     type = *it;
-//
-//                     break;
-//                  }
-//               }
-//
-//               it++;
-//            }
-//         }
-//      }
-//   }
-//
-//   if (type != 0) {
-//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
-//
-//      if (typeExtensions)
-//         extRef = typeExtensions->get(messageRef);
-//   }
-//
-//   // check generic extension
-//   if (extRef == 0) {
-//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
-//
-//      if (typeExtensions)
-//         extRef = typeExtensions->get(messageRef);
-//   }
-//
-//   return extRef;
-//}
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo object)
+{
+   // check typed extension if the type available
+   ref_t type = 0;
+   ref_t extRef = 0;
+
+   if (object.type != 0 && scope.moduleScope->extensionHints.exist(messageRef, object.type)) {
+      type = object.type;
+   }
+   else {
+      if (scope.moduleScope->extensionHints.exist(messageRef)) {
+         ref_t classRef = resolveObjectReference(scope, object);
+         // if class reference available - select the possible type
+         if (classRef != 0) {
+            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
+            while (!it.Eof()) {
+               if (it.key() == messageRef) {
+                  if (scope.moduleScope->subjectHints.exist(*it, classRef)) {
+                     type = *it;
+
+                     break;
+                  }
+               }
+
+               it++;
+            }
+         }
+      }
+   }
+
+   if (type != 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(type);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   // check generic extension
+   if (extRef == 0) {
+      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
+
+      if (typeExtensions)
+         extRef = typeExtensions->get(messageRef);
+   }
+
+   return extRef;
+}
 
 ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
 {
@@ -3556,14 +3570,14 @@ ref_t Compiler :: compileMessageParameters(DNode node, CodeScope& scope)
 ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo object)
 {
    ref_t messageRef = compileMessageParameters(node, scope);
-   //ref_t extensionRef = mapExtension(scope, messageRef, object);
+   ref_t extensionRef = mapExtension(scope, messageRef, object);
 
-   //if (extensionRef != 0) {
-   //   //HOTFIX: A proper method should have a precedence over an extension one
-   //   if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
-   //      object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
-   //   }
-   //}
+   if (extensionRef != 0) {
+      //HOTFIX: A proper method should have a precedence over an extension one
+      if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
+         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+      }
+   }
 
    return compileMessage(node, scope, object, messageRef, 0);
 }
@@ -3685,9 +3699,9 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 //         while (member.nextNode() == nsMessageParameter)
 //            member = member.nextNode();
 //      }
-//      else if (member == nsExtension) {
-//         currentObject = compileExtension(member, scope, currentObject, mode);
-//      }
+      else if (member == nsExtension) {
+         currentObject = compileExtension(member, scope, currentObject, mode);
+      }
       else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
          || member == nsL7Operation || member == nsL0Operation)
       {
@@ -3729,31 +3743,31 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
    ObjectInfo   role;
 
    DNode roleNode = node.firstChild();
-   //// check if the extension can be used as a static role (it is constant)
-   //if (roleNode.firstChild() == nsNone) {
-   //   int flags = 0;
+   // check if the extension can be used as a static role (it is constant)
+   if (roleNode.firstChild() == nsNone) {
+      int flags = 0;
 
-   //   role = scope.mapObject(roleNode.Terminal());
-   //   if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-   //      ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+      role = scope.mapObject(roleNode.Terminal());
+      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
 
-   //      // if the symbol is used inside itself
-   //      if (classRef == scope.getClassRefId()) {
-   //         flags = scope.getClassFlags();
-   //      }
-   //      // otherwise
-   //      else {
-   //         ClassInfo roleClass;
-   //         moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
+         // if the symbol is used inside itself
+         if (classRef == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
 
-   //         flags = roleClass.header.flags;
-   //      }
-   //   }
-   //   // if the symbol VMT can be used as an external role
-   //   if (test(flags, elStateless)) {
-   //      role = ObjectInfo(okConstantRole, role.param);
-   //   }
-   //}
+            flags = roleClass.header.flags;
+         }
+      }
+      // if the symbol VMT can be used as an external role
+      if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
+   }
 
    // if it is a generic role
    if (role.kind != okConstantRole) {
@@ -5259,7 +5273,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    writer.appendNode(lxClassFlag, elStateless);
 
    DNode member = node.firstChild();
-   declareVMT(member, writer, classClassScope, nsConstructor/*, false, 0*/);
+   declareVMT(member, writer, classClassScope, nsConstructor);
    
    // add virtual constructor
    writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
@@ -5323,7 +5337,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    generateClassImplementation(classClassScope);
 }
 
-void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/)
+void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
@@ -5366,19 +5380,18 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          //   writer.closeNode();
          //   writer.closeNode();
 
-//   writer.newNode(lxClassMethod, specialMethodScope.message);
-//   writer.closeNode();
-//}
-/*else */writer.closeNode();
+         //   writer.newNode(lxClassMethod, specialMethodScope.message);
+         //   writer.closeNode();
+         //}
+         /*else */writer.closeNode();
 
-//if (methodScope.generic)
-//   writer.appendNode(lxClassFlag, elWithGenerics);
+         //if (methodScope.generic)
+         //   writer.appendNode(lxClassFlag, elWithGenerics);
 
-//// save extensions if any
-//if (isExtension) {
-//   scope.moduleScope->saveExtension(methodScope.message, extensionType, scope.reference);
-//}
-
+         // save extensions if any
+         if (scope.extensionMode != 0) {
+            scope.moduleScope->saveExtension(methodScope.message, scope.extensionMode, scope.reference);
+         }
       }
       member = member.nextNode();
    }
@@ -5934,11 +5947,9 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    int flagCopy = scope.info.header.flags;
 
-   //bool isExtension = false;
-   //ref_t extensionType = 0;
-   compileClassHints(hints, writer, scope/*, isExtension, extensionType*/);
+   compileClassHints(hints, writer, scope);
    compileFieldDeclarations(member, writer, scope);
-   declareVMT(member, writer, scope, nsMethod/*, isExtension, extensionType*/);
+   declareVMT(member, writer, scope, nsMethod);
 
    // declare imported methods / flags
    if (!declareImportedTemplates(scope, writer))
@@ -6328,7 +6339,7 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
       writer.appendNode(lxClassFlag, elSealed);
    }
 
-   declareVMT(node.firstChild(), writer, scope, nsMethod/*, false, 0*/);
+   declareVMT(node.firstChild(), writer, scope, nsMethod);
 
    writer.closeNode();
 

@@ -1,22 +1,20 @@
-//// ==== ver 3.4.1 ===
-//
-//// === actions ===
-//
+// === actions ===
+
 //#symbol ifOrdered
 //    = (:aFormer:aLater) [ aFormer < aLater ].
 //
 //#symbol ifDecrescent
 //    = (:aFormer:aLater) [ aFormer > aLater ].
-//
-//// --- common methods ---
-//
-///// A generic extender
-//#class(extension)objectOp
-//{
-//    /// Returns true if the specified object instances are equal; otherwise, false.
-//    #method equal &reference:anObject
-//        => system'core_routines'object_equal.
-//        
+
+// --- common methods ---
+
+/// A generic extender
+#class(extension)objectOp
+{
+    /// Returns true if the specified object instances are equal; otherwise, false.
+    #method(bool) equal &reference:anObject
+        => system'core_routines'__object.
+        
 //    /// Returns the parameter        
 //    #method back : anObject = anObject.
 //
@@ -54,8 +52,8 @@
 //
 //    #method eval &with:action
 //        = action eval:self.
-//}
-//
+}
+
 //// --- Operations ---
 //
 //// --- byteOp ---

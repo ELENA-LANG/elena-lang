@@ -43,6 +43,20 @@ labTrue:
   
 end
 
+procedure __object.equal&reference[1]
+
+  aloadsi 1
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
+  
+labTrue:
+  acopyr const : system'true
+  quitn 2
+  
+end
+
 procedure __verb.dispatch[0]
 
   bloadsi 1

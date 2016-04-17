@@ -202,7 +202,7 @@ public:
    typedef Map<ref_t, ref_t>              ClassMap;
    typedef Map<int, ref_t>                RoleMap;
    typedef List<Unresolved>               Unresolveds;
-//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
    struct TemplateInfo
    {
@@ -256,9 +256,9 @@ private:
       // symbol hints
       Map<ref_t, ref_t> constantHints;
 
-//      // extensions
-//      SubjectMap        extensionHints; 
-//      ExtensionMap      extensions;
+      // extensions
+      SubjectMap        extensionHints; 
+      ExtensionMap      extensions;
 
       // type hints
       MessageMap        subjects;
@@ -301,6 +301,8 @@ private:
       ref_t structHint;
       ref_t structOfHint;
       ref_t embedHint;
+      ref_t extensionHint;
+      ref_t extensionOfHint;
 
       ref_t boolType;
 
@@ -376,12 +378,12 @@ private:
       }
 
       void loadSubjects(_Module* module);
-//      void loadExtensions(TerminalInfo terminal, _Module* module);
+      void loadExtensions(TerminalInfo terminal, _Module* module);
       void loadRoles(_Module* module);
 
       void saveSubject(ref_t type_ref, ref_t classReference, bool internalType);
       void saveTemplate(ref_t template_ref);
-//      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      bool saveExtension(ref_t message, ref_t type, ref_t role);
       void saveRole(int role, ref_t reference);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
@@ -400,7 +402,7 @@ private:
       void loadModuleInfo(_Module* extModule)
       {
          loadSubjects(extModule);
-         //loadExtensions(TerminalInfo(), extModule);
+         loadExtensions(TerminalInfo(), extModule);
          loadRoles(extModule);
       }
 
@@ -508,6 +510,7 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
+      ref_t       extensionMode;
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -808,7 +811,7 @@ private:
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
    ref_t mapNestedExpression(CodeScope& scope);
-//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference, ref_t message);
 
@@ -827,13 +830,13 @@ private:
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
 
    bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly);
-   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope/*, bool& isExtension, ref_t& extensionType*/);
+   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
-   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol/*, bool isExtension, ref_t extensionType*/);
+   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol);
 
    bool declareImportedTemplates(ClassScope& scope, SyntaxWriter& writer);
    bool declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
