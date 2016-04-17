@@ -2,6 +2,8 @@
 In development:
 ------                      
               xdev - generic development
+                       * equal message should be always the second one, so we could call it directly
+
                        * system test
 
                        * review IntNumber implementation

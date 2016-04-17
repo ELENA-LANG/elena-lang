@@ -388,7 +388,7 @@ private:
 
 //      //ref_t getBaseFunctionClass(int paramCount);
 //      //ref_t getBaseIndexFunctionClass(int paramCount);
-//      //ref_t getBaseLazyExpressionClass();
+      ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);
 
@@ -919,7 +919,7 @@ private:
    void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
 
    void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
-//   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
+   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope& scope, bool withGenericMethods = false);
    
    void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
@@ -938,6 +938,7 @@ private:
    void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
 
    void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
+   void declareVirtualMethods(ClassScope& scope);
 
    ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
 

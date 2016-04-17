@@ -461,7 +461,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          endNativeDebugInfo(sizePtr);
 
       if (count != header.count)
-         count = 0;
+         throw InternalError("VMT structure is corrupt");
 
       // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, classClassRef, references);

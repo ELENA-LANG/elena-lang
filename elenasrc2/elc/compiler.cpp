@@ -376,34 +376,34 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    writer.appendNode(lxRoot);
 }
 
-////ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)
-////{
-////   if (paramCount == 0) {
-////      return mapReference(project->resolveForward(FUNCX_FORWARD));
-////   }
-////   else {
-////      IdentifierString className(project->resolveForward(FUNCX_FORWARD));
-////      className.appendInt(paramCount);
-////
-////      return mapReference(className);
-////   }
-////}
-////
-////ref_t Compiler::ModuleScope :: getBaseIndexFunctionClass(int paramCount)
-////{
-////   if (paramCount > 0) {
-////      IdentifierString className(project->resolveForward(NFUNCX_FORWARD));
-////      className.appendInt(paramCount);
-////
-////      return mapReference(className);
-////   }
-////   else return 0;
-////}
-////
-////ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
-////{
-////   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
-////}
+//ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)
+//{
+//   if (paramCount == 0) {
+//      return mapReference(project->resolveForward(FUNCX_FORWARD));
+//   }
+//   else {
+//      IdentifierString className(project->resolveForward(FUNCX_FORWARD));
+//      className.appendInt(paramCount);
+//
+//      return mapReference(className);
+//   }
+//}
+//
+//ref_t Compiler::ModuleScope :: getBaseIndexFunctionClass(int paramCount)
+//{
+//   if (paramCount > 0) {
+//      IdentifierString className(project->resolveForward(NFUNCX_FORWARD));
+//      className.appendInt(paramCount);
+//
+//      return mapReference(className);
+//   }
+//   else return 0;
+//}
+
+ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
+{
+   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
+}
 
 ObjectInfo Compiler::ModuleScope :: mapObject(TerminalInfo identifier)
 {
@@ -2728,9 +2728,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxBoxing);
          scope.writer->appendNode(lxFieldAddress, object.param);
          break;
-   //   case okNil:
-   //      scope.writer->newNode(lxNil, object.param);
-   //      break;
+      case okNil:
+         scope.writer->newNode(lxNil, object.param);
+         break;
    //   case okVerbConstant:
    //      scope.writer->newNode(lxVerbConstant, object.param);
    //      break;
@@ -3778,7 +3778,7 @@ ObjectInfo Compiler :: compileExtensionMessage(DNode node, CodeScope& scope, Obj
 
 bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared)
 {
-   //bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
+   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
 
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
@@ -3791,9 +3791,9 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
 
    if (!alreadyDeclared) {
       ref_t parentRef = scope.info.header.parentRef;
-      //if (lazyExpression) {
-      //   parentRef = scope.moduleScope->getBaseLazyExpressionClass();
-      //}
+      if (lazyExpression) {
+         parentRef = scope.moduleScope->getBaseLazyExpressionClass();
+      }
       //else if (getSignature(methodScope.message) == 0) {
       //   parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
       //}
@@ -3812,7 +3812,7 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
    methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
 
-   return /*lazyExpression*/false;
+   return lazyExpression;
 }
 
 void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
@@ -3821,16 +3821,16 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int
    writer.newNode(lxRoot, scope.reference);
 
    ActionScope methodScope(&scope);
-   /*bool lazyExpression = */declareActionScope(node, scope, argNode, writer, methodScope, mode, alreadyDeclared);
+   bool lazyExpression = declareActionScope(node, scope, argNode, writer, methodScope, mode, alreadyDeclared);
 
    writer.newNode(lxClassMethod, methodScope.message);
    writer.appendNode(lxSourcePath); // the source path is first string
 
    // if it is single expression
-   //if (!lazyExpression) {
+   if (!lazyExpression) {
       compileActionMethod(node, writer, methodScope);
-   //}
-   //else compileLazyExpressionMethod(node.firstChild(), writer, methodScope);
+   }
+   else compileLazyExpressionMethod(node.firstChild(), writer, methodScope);
 
    writer.closeNode();  // closing method
 
@@ -4744,23 +4744,23 @@ void Compiler :: compileActionMethod(DNode node, SyntaxWriter& writer, MethodSco
    writer.appendNode(lxReserved, scope.reserved);
 }
 
-//void Compiler :: compileLazyExpressionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
-//{
-//   CodeScope codeScope(&scope, &writer);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   writer.newNode(lxNewFrame);
-//   codeScope.level++;
-//
-//   declareParameterDebugInfo(scope, writer, false, false);
-//
-//   compileRetExpression(node, codeScope, 0);
-//
-//   writer.closeNode();
-//   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
-//   writer.appendNode(lxReserved, scope.reserved);
-//}
+void Compiler :: compileLazyExpressionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
+{
+   CodeScope codeScope(&scope, &writer);
+
+   // new stack frame
+   // stack already contains previous $self value
+   writer.newNode(lxNewFrame);
+   codeScope.level++;
+
+   declareParameterDebugInfo(scope, writer, false, false);
+
+   compileRetExpression(node, codeScope, 0);
+
+   writer.closeNode();
+   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   writer.appendNode(lxReserved, scope.reserved);
+}
 
 void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape)
 {
@@ -5743,20 +5743,24 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
 
    // generate methods
    generateMethodDeclarations(scope, root, closed);
+
+   // declare virtual methods
+   if (!closed)
+      declareVirtualMethods(scope);
 }
 
 void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
 {
    generateClassDeclaration(scope, closed);
 
-   //// stateless inline class
-   //if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
+   // stateless inline class
+   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
       scope.info.header.flags |= elStateless;
 
-   //   // stateless inline class is its own class class
+      // stateless inline class is its own class class
       scope.info.classClassRef = scope.reference;
-   //}
-   //else scope.info.header.flags &= ~elStateless;
+   }
+   else scope.info.header.flags &= ~elStateless;
 }
 
 //bool Compiler :: validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod)
@@ -6220,6 +6224,26 @@ void Compiler :: compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope&
    writer.closeNode();
 }
 
+void Compiler :: declareVirtualMethods(ClassScope& scope)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   // auto generate get&type message if required
+   ClassMap::Iterator c_it = moduleScope->typifiedClasses.getIt(scope.reference);
+   while (!c_it.Eof()) {
+      if (c_it.key() == scope.reference) {
+         MethodScope methodScope(&scope);
+         methodScope.message = encodeMessage(*c_it, GET_MESSAGE_ID, 0);
+
+         // skip if there is an explicit method
+         if (!scope.info.methods.exist(methodScope.message, true)) {
+            scope.info.methods.add(methodScope.message, false);
+         }
+      }
+      c_it++;
+   }
+}
+
 void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -6232,9 +6256,7 @@ void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
          methodScope.message = encodeMessage(*c_it, GET_MESSAGE_ID, 0);
 
          // skip if there is an explicit method
-         if (!scope.info.methods.exist(methodScope.message)) {
-            scope.include(methodScope.message);
-
+         if (scope.info.methods.exist(methodScope.message, false)) {
             compileVirtualTypecastMethod(writer, methodScope, lxThisLocal, 1);
          }
       }

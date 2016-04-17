@@ -9,8 +9,9 @@ define elSubject            000002000h
 define elStructure          000000008h
 
 define NEW_MESSAGE_ID       084000000h
+*/
 define EVAL_MESSAGE_ID      085000000h
-define GET_MESSAGE_ID       086000000h
+/*define GET_MESSAGE_ID       086000000h
 
 define INV_PARAM_MASK       0FFFFFFF0h
 */
@@ -26,6 +27,20 @@ procedure __object.dispatch[0]
 //  pushr const : %new&mssg$[1]
   throw
 
+end
+
+procedure __object.equal[1]
+
+  aloadsi 1
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
+  
+labTrue:
+  acopyr const : system'true
+  quitn 2
+  
 end
 
 procedure __verb.dispatch[0]
@@ -66,21 +81,22 @@ procedure __wideconvertor.convert&literal$[1]
 
 end
 
-/*
-procedure object_equal
+procedure __lazyexpression.dispatch[0]
 
-  aloadsi 1
-  bloadsi 2
-  ifb     labTrue
-  acopyr  const : system'false
-  quitn   2
-  
-labTrue:
-  acopyr const : system'true
-  quitn 2
-  
+  pushe
+  pusha
+  copym EVAL_MESSAGE_ID
+
+  xindexrm system'BaseLazyExpression %eval[0]
+  acallvd
+
+  pope
+  asavesi 1
+  ajumpvi 0
+
 end
 
+/*
 procedure byte_min
 
   bcopya
@@ -4056,18 +4072,6 @@ labEmpty:
   nsave
   acopyb
   quitn 4
-
-end
-
-procedure expression_dispatch
-
-  pushe
-  pusha
-  copym EVAL_MESSAGE_ID
-  acallvi 1
-  pope
-  asavesi 1
-  ajumpvi 0
 
 end
 

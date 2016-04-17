@@ -27,40 +27,36 @@ namespace _ELENA_
    #define OPEN_ARG_COUNT          0x0C
 
    #define DISPATCH_MESSAGE_ID     0x0001             // NOTE : verb id should not be bigger than 0xE0 due to message constant implementation
-   #define NEWOBJECT_MESSAGE_ID    0x0003
+   #define NEWOBJECT_MESSAGE_ID    0x0002             // NOTE : verb id should not be equal to 7, due to message reference constant implementation
 
-   #define NEW_MESSAGE_ID          0x0004
+   #define NEW_MESSAGE_ID          0x0003
+   #define EQUAL_MESSAGE_ID        0x0004
    #define EVAL_MESSAGE_ID         0x0005
    #define GET_MESSAGE_ID          0x0006
-   #define SET_MESSAGE_ID          0x001D
-
-   #define ADD_MESSAGE_ID          0x0013
-   #define SUB_MESSAGE_ID          0x0014
-   #define MUL_MESSAGE_ID          0x0015
-   #define DIV_MESSAGE_ID          0x0016
+   #define LESS_MESSAGE_ID         0x0008
+   #define IF_MESSAGE_ID           0x0009
    #define AND_MESSAGE_ID          0x000A
    #define OR_MESSAGE_ID           0x000B
    #define XOR_MESSAGE_ID          0x000C
-
-   #define EQUAL_MESSAGE_ID        0x0007
-   #define LESS_MESSAGE_ID         0x0008
+   #define IFNOT_MESSAGE_ID        0x000D
+   #define RUN_MESSAGE_ID          0x000E
    #define NOTEQUAL_MESSAGE_ID     0x000F
    #define NOTLESS_MESSAGE_ID      0x0010
    #define NOTGREATER_MESSAGE_ID   0x0011
    #define GREATER_MESSAGE_ID      0x0012
-
-   #define READ_MESSAGE_ID         0x001E
-   #define WRITE_MESSAGE_ID        0x001F
-
-   #define IF_MESSAGE_ID           0x0009
-   #define IFNOT_MESSAGE_ID        0x000D
-   #define RUN_MESSAGE_ID          0x000E
+   #define ADD_MESSAGE_ID          0x0013
+   #define SUB_MESSAGE_ID          0x0014
+   #define MUL_MESSAGE_ID          0x0015
+   #define DIV_MESSAGE_ID          0x0016
    #define REFER_MESSAGE_ID        0x0017
    #define APPEND_MESSAGE_ID       0x0018
    #define REDUCE_MESSAGE_ID       0x0019
    #define INCREASE_MESSAGE_ID     0x001A
    #define SEPARATE_MESSAGE_ID     0x001B
    #define SET_REFER_MESSAGE_ID    0x001C
+   #define SET_MESSAGE_ID          0x001D
+   #define READ_MESSAGE_ID         0x001E
+   #define WRITE_MESSAGE_ID        0x001F
    #define RAISE_MESSAGE_ID        0x0020
    #define SELECT_MESSAGE_ID       0x0021
    #define FIND_MESSAGE_ID         0x0022
@@ -512,9 +508,8 @@ namespace _ELENA_
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
-//   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
+   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
 //   #define FUNCX_FORWARD            "'$function"                     // the base action / function class
-//   #define NFUNCX_FORWARD           "'$nfunction"                    // the base action / function class
    #define INT_FORWARD              "'$int"
    #define LONG_FORWARD             "'$long"
    #define REAL_FORWARD             "'$real"

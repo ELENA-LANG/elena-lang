@@ -1,6 +1,6 @@
-//// === basic logical types ===
-//#subject(class:system'BaseBoolValue) bool.
-// 
+// === basic logical types ===
+#subject bool       = system'BaseBoolValue.
+
 //// === basic primitive types ===
 //
 //#subject(class:system'KeyValue)     keyvalue.

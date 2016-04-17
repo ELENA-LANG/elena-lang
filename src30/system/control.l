@@ -9,15 +9,15 @@
     #method else : aTrueAction = $nil.
     
 //    #method iif:aTrueValue:aFalseValue = $nil.
-//
-//    #method(type:bool) or : anExpr = $nil.
-//
-//    #method(type:bool) and : anExpr = $nil.
-//
-//    #method(type:bool) xor : aBool = $nil.
-//
-//    #method equal : anExpr = $nil.
-//
+
+    #method(bool) or : anExpr = $nil.
+
+    #method(bool) and : anExpr = $nil.
+
+    #method(bool) xor : aBool = $nil.
+
+    #method equal : anExpr = $nil.
+
 //    #method(type:bool) equal &bool:aBool = $nil.
 //
 //    #method(type:bool) not = $nil.
@@ -48,26 +48,26 @@
     #method else : aTrueAction = $nil.
 
 //    #method iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    #method(type:bool) or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    #method(type:bool) and : anExpr = anExpr bool.
-//
-//    /// Executes logical XOR operation
-//    #method(type:bool,suppress:w2) xor : aBool
-//    [
-//        aBool ? [ ^ false. ].
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method equal : anExpr = anExpr bool.
-//
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    #method(bool) or : anExpr = $self.
+
+    /// Executes logical AND operation
+    #method(bool) and : anExpr = anExpr bool.
+
+    /// Executes logical XOR operation
+    #method(bool,suppress:w2) xor : aBool
+    [
+        aBool ? [ ^ false. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal : anExpr = anExpr bool.
+
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method(type:bool) equal &bool:aBool = aBool.
 //
@@ -102,31 +102,31 @@
     #method else : aFalseAction = aFalseAction eval.
 
 //    #method iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    #method(type:bool) or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    #method(type:bool) and : anExpr = $self.
-//
-//    /// Executes logical XOR operation
-//    #method(type:bool,suppress:w2) xor : anExpr 
-//    [
-//        anExpr ? [ ^ true. ].
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method(suppress:w2) equal : anExpr
-//    [
-//        anExpr ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
-//
+
+    /// Executes logical OR operation
+    #method(bool) or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    #method(bool) and : anExpr = $self.
+
+    /// Executes logical XOR operation
+    #method(bool,suppress:w2) xor : anExpr 
+    [
+        anExpr ? [ ^ true. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method(suppress:w2) equal : anExpr
+    [
+        anExpr ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
 //    /// Determines whether the specified object is equal to the current object boolean value
 //    #method(type:bool) equal &bool:anExpr
 //    [
@@ -744,16 +744,16 @@
 //        ^ $nil.        
 //    ]
 //}
-//
-//// --- base lazy expression ---
-//
-//#class(limited)BaseLazyExpression
-//{
-//    #method eval []
-//    
-//    #method => system'core_routines'expression_dispatch.
-//}
-//
+
+// --- base lazy expression ---
+
+#class(limited)BaseLazyExpression
+{
+    #method eval []
+    
+    #method => system'core_routines'__lazyexpression.
+}
+
 //// --- IndexFunction ---
 //
 ///// A base index function
