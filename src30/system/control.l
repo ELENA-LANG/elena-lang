@@ -19,9 +19,9 @@
     #method equal : anExpr = $nil.
 
 //    #method(type:bool) equal &bool:aBool = $nil.
-//
-//    #method(type:bool) not = $nil.
-//
+
+    #method(bool) not = $nil.
+
 //    #method literal = $nil.
 //
 //    #method wide = $nil.
@@ -70,10 +70,10 @@
 
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method(type:bool) equal &bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    #method(type:bool) not = false.
-//
+
+    /// Always returns false.
+    #method(bool) not = false.
+
 //    /// Returns literal representation.
 //    #method literal = "true".
 //
@@ -134,10 +134,10 @@
 //        
 //        ^ true.
 //    ]
-//
-//    /// Always returns true
-//    #method not = true.
-//
+
+    /// Always returns true
+    #method not = true.
+
 //    /// Returns literal representation
 //    #method literal = "false".
 //    

@@ -124,8 +124,8 @@ public:
       okVerbConstant,                 // param - reference 
       okField,                        // param - field offset
       okFieldAddress,                 // param - field offset
-   //   okOuter,                        // param - field offset
-   //   okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuter,                        // param - field offset
+      okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
       okParamField,
@@ -702,9 +702,9 @@ private:
       };
 
       Map<ident_t, Outer>     outers;
-      //ClassInfo::FieldTypeMap outerFieldTypes;
+      ClassInfo::FieldTypeMap outerFieldTypes;
 
-      //Outer mapSelf();
+      Outer mapSelf();
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -714,7 +714,7 @@ private:
          else return Scope::getScope(level);
       }
 
-      //virtual ObjectInfo mapObject(TerminalInfo identifier);
+      virtual ObjectInfo mapObject(TerminalInfo identifier);
 
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
