@@ -906,7 +906,7 @@ private:
    ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
    ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 
-//   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
    void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
    void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);

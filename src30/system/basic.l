@@ -140,22 +140,22 @@
 /// An unsigned 8 bit integer
 #class(sealed,integerof:1,numeric:byte,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
-//    /// Returns the minimal value (0)
-//    #constructor min
-//        => system'core_routines'byte_min.
-//    
-//    /// Returns the maxial value (255)
-//    #constructor max
-//        => system'core_routines'byte_max.
-//    
-//    /// Creates the object with a specified value
-//    #constructor(stacksafe) new &byte:anOperand
-//        => system'core_routines'int_copy.
-//
-//    /// Creates the object with a specified value
-//    #constructor new : aValue
-//        <= new &byte:(aValue byte).
-//
+    /// Returns the minimal value (0)
+    #constructor min
+        = 0.
+
+    /// Returns the maxial value (255)
+    #constructor max
+        = 255.
+    
+    /// Creates the object with a specified value
+    #constructor(stacksafe,suppress:w3) new &byte:value
+        = value.
+
+    /// Creates the object with a specified value
+    #constructor new : aValue
+        <= new &byte:(aValue byte).
+
 //    /// Creates the object with a default value (0)
 //    #constructor new
 //        => system'core_routines'int_init.

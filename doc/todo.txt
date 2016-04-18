@@ -2,6 +2,8 @@
 In development:
 ------                      
               xdev - generic development
+                       * constructor should inherites only object class (default one) if the object is not dynamic, otherwise - object itself
+
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
                          always return bool operand
 
@@ -54,6 +56,8 @@ In development:
                        * test stack safe operation
                        * test int => vint
                        * test vint => int
+
+                       * test constructor returning not compatible object
 
                        * test assigning generic object to stack allocated variable
                             #var(integer:4)n := object. // !! should be typecasting

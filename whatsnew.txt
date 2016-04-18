@@ -15,6 +15,7 @@
 [+] #201 : shorthand property settings
 [+] #54 : templates
 [+] #231 - new syntax : Signature / Message constants
+[+] #128 : constructors may now return constant value
 [*] #136 : refactoring access to primitive managed code (core_routines)
 
 [ELC]
