@@ -15,6 +15,21 @@
     
     #method(stacksafe,suppress:w3) add &template_subj:val
       = $target + val.
+    
+    #method(stacksafe,suppress:w3) subtract &template_subj:val
+      = $target - val.
+    
+    #method(stacksafe,suppress:w3) multiply &template_subj:val
+      = $target * val.
+    
+    #method(stacksafe,suppress:w3) divide &template_subj:val
+      = $target / val.
+      
+    #method(bool,stacksafe) equal &template_subj:val
+      = $target == val.
+        
+    #method(bool,stacksafe) less &template_subj:val
+      = $target < val.      
 }
 
 #template(variable) varof : template_subj

@@ -2,7 +2,8 @@
 In development:
 ------                      
               xdev - generic development
-                       * equal message should be always the second one, so we could call it directly
+                       * equal message should be always the second one, so we could call it directly, equal / not equal message should 
+                         always return bool operand
 
                        * system test
 

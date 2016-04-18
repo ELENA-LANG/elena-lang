@@ -986,8 +986,8 @@ private:
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-   void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-   void optimizeArrOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   bool optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeBoolOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void defineTargetSize(ModuleScope& scope, SNode& node);
 

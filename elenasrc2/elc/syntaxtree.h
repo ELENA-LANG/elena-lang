@@ -71,8 +71,8 @@ enum LexicalType
    //lxTemplateCalling = 0x10327,
 
    lxOp              = 0x00328, // generic operation, arg - operation id 
-   //lxBoolOp          = 0x00329, // arg - operation id
-   //lxNilOp           = 0x0032A, // arg - operation id
+   lxBoolOp          = 0x00329, // arg - operation id
+   lxNilOp           = 0x0032A, // arg - operation id
    lxIntOp           = 0x0132B, // arg - operation id
    lxLongOp          = 0x0132C, // arg - operation id
    lxRealOp          = 0x0132D, // arg - operation id

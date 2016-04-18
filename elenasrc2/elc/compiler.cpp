@@ -195,20 +195,20 @@ inline bool IsNumericOperator(int operator_id)
    }
 }
 
-//inline bool IsCompOperator(int operator_id)
-//{
-//   switch(operator_id) {
-//      case EQUAL_MESSAGE_ID:
-//      case NOTEQUAL_MESSAGE_ID:
-//      case LESS_MESSAGE_ID:
-//      case NOTLESS_MESSAGE_ID:
-//      case GREATER_MESSAGE_ID:
-//      case NOTGREATER_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+inline bool IsCompOperator(int operator_id)
+{
+   switch(operator_id) {
+      case EQUAL_MESSAGE_ID:
+      case NOTEQUAL_MESSAGE_ID:
+      case LESS_MESSAGE_ID:
+      case NOTLESS_MESSAGE_ID:
+      case GREATER_MESSAGE_ID:
+      case NOTGREATER_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline bool IsReferOperator(int operator_id)
 {
@@ -220,25 +220,25 @@ inline bool IsDoubleOperator(int operator_id)
    return operator_id == SET_REFER_MESSAGE_ID;
 }
 
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   if (operator_id == NOTEQUAL_MESSAGE_ID) {
-//      operator_id = EQUAL_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTLESS_MESSAGE_ID) {
-//      operator_id = LESS_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTGREATER_MESSAGE_ID) {
-//      operator_id = GREATER_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else return false;
-//}
+inline bool IsInvertedOperator(int& operator_id)
+{
+   if (operator_id == NOTEQUAL_MESSAGE_ID) {
+      operator_id = EQUAL_MESSAGE_ID;
+
+      return true;
+   }
+   else if (operator_id == NOTLESS_MESSAGE_ID) {
+      operator_id = LESS_MESSAGE_ID;
+
+      return true;
+   }
+   else if (operator_id == NOTGREATER_MESSAGE_ID) {
+      operator_id = GREATER_MESSAGE_ID;
+
+      return true;
+   }
+   else return false;
+}
 
 inline bool isPrimitiveRef(ref_t reference)
 {
@@ -3266,20 +3266,32 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       operator_id = SET_REFER_MESSAGE_ID;
 
    bool dblOperator = IsDoubleOperator(operator_id);
-   //bool notOperator = IsInvertedOperator(operator_id);
+   bool notOperator = IsInvertedOperator(operator_id);
 
    ObjectInfo operand = compileExpression(node, scope, 0, 0);
    if (dblOperator)
       compileExpression(node.nextNode().firstChild(), scope, 0, 0);
 
+   if (IsCompOperator(operator_id)) {
+      if (notOperator) {
+         scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);
+         scope.writer->appendNode(lxElseValue, scope.moduleScope->trueReference);
+      }
+      else {
+         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
+         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
+      }
+   }
+
+   if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
+      scope.writer->insert(lxNilOp, operator_id);
+   }
+   else  scope.writer->insert(lxOp, operator_id);
+
    //// try to implement the primitive operation directly
    //LexicalType primitiveOp = lxNone;
    //size_t size = 0;
 
-   ////// if it is comparing with nil
-   ////if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
-   ////   primitiveOp = lxNilOp;
-   ////}
    //// HOTFIX : primitive operations can be implemented only in the method
    //// because the symbol implementations do not open a new stack frame
    ///*else */if (scope.getScope(Scope::slMethod) != NULL) {
@@ -3345,7 +3357,6 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    //}
 
    //if (primitiveOp != lxNone) {
-      scope.writer->insert(lxOp, operator_id);
 
    //   if (size != 0)
    //      scope.writer->appendNode(lxSize, size);
@@ -3378,20 +3389,25 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    //   retVal = compileMessage(node, scope, object, message_id, mode/* | HINT_INLINE*/);
 
    //   //if (notOperator) {
-   //   //   scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-   //   //   scope.writer->closeNode();
-
-   //   //   scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
-   //   //   scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
-   //   //   scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
-   //   //   scope.writer->closeNode();
-
-   //   //   retVal.type = scope.moduleScope->boolType;
    //   //}
    //}
 
-   //if (dblOperator)
-   //   node = node.nextNode();
+   if (IsCompOperator(operator_id)) {
+      if (notOperator) {
+         scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+         scope.writer->closeNode();
+
+         scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
+         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
+         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
+         scope.writer->closeNode();
+
+         retVal.type = scope.moduleScope->boolType;
+      }
+   }
+
+   if (dblOperator)
+      node = node.nextNode();
 
    return retVal;
 }
@@ -6806,7 +6822,19 @@ inline LexicalType mapArrPrimitiveOp(int size)
    }
 }
 
-void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
+void Compiler :: optimizeBoolOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
+{
+   SNode typecastNode = SyntaxTree::findChild(node, lxTypecasting);
+   SNode opNode = SyntaxTree::findChild(typecastNode, lxOp);
+
+   if (optimizeOp(scope, opNode, warningLevel, mode)) {
+      typecastNode = lxExpression;
+      node = lxExpression;
+   }
+   else optimizeSyntaxExpression(scope, node, warningLevel);
+}
+
+bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {   
    if (node.argument == SET_REFER_MESSAGE_ID) {
       SNode larg, narg, rarg;
@@ -6862,6 +6890,17 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                boxing = true;
             }
          }
+         else if (IsCompOperator(node.argument)) {
+            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
+               node = lxIntOp;
+            }
+            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
+               node = lxLongOp;
+            }
+            else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
+               node = lxRealOp;
+            }
+         }
          else if (IsReferOperator(node.argument)) {
             if (lref == -3 && rflags == elDebugDWORD) {
                lref = scope.subjectHints.get(destType);
@@ -6886,6 +6925,8 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          node = lxCalling;
 
          optimizeSyntaxExpression(scope, node, warningLevel);
+
+         return false;
       }
       else {
          optimizeSyntaxNode(scope, larg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
@@ -6893,34 +6934,10 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
          if (boxing)
             boxPrimitive(scope, node, lref, destType, warningLevel, mode);
+
+         return true;
       }
    }
-}
-
-void Compiler :: optimizeArrOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
-{
-//   SNode sizeNode = SyntaxTree::findChild(node, lxSize);
-//   if (sizeNode.argument == 4) {
-//      node = lxIntArrOp;
-//   }
-//
-//   boxPrimitive(scope, node, mode);
-//
-//   bool first = true;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (!first) {
-//            optimizeSyntaxNode(scope, current, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//         }
-//         else {
-//            optimizeSyntaxNode(scope, current, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
 }
 
 void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, SNode& callNode)
@@ -7274,9 +7291,6 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
       case lxTypecasting:
          optimizeTypecast(scope, current, warningMask, mode);
          break;
-      case lxArrOp:
-         optimizeArrOp(scope, current, warningMask, mode);
-         break;
       case lxStdExternalCall:
       case lxExternalCall:
       case lxCoreAPICall:
@@ -7300,6 +7314,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          break;
       case lxOp:
          optimizeOp(scope, current, warningMask, mode);
+         break;
+      case lxBoolOp:
+         optimizeBoolOp(scope, current, warningMask, mode);
          break;
       case lxDirectCalling:
       case lxSDirctCalling:

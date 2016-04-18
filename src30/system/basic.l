@@ -4,65 +4,65 @@
 
 #subject vint = varof:int.
 
-//// --- BaseValue ---
-//
-//// A base value
-//#class BaseValue
-//{
-//    /// Compares the values
-//    #method equal : anObject = anObject cast:%equal &to:$self bool.
-//
-//    /// Compares the values
-//    #method(type:bool) less : anObject = anObject cast:%less &to:$self bool.
-//
-//    /// Compares the values
-//    #method(type:bool) greater : anObject = anObject less:$self bool.
-//}
-//
-//// --- BaseNumber ---
-//
-///// A base numeric value
-//#class BaseNumber :: BaseValue
-//{
-//    /// Adds the value
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Subtracts the value
-//    #method subtract : anObject = anObject cast:%subtract &to:$self.
-//
-//    /// Multiply by the value
-//    #method multiply : anObject = anObject cast:%multiply &to:$self.
-//
-//    /// Divides into the value
-//    #method divide : anObject = anObject cast:%divide &to:$self.
-//}
-//
-//// --- IntBaseNumber ---
-//
-///// A base integer value
-//#class IntBaseNumber :: BaseNumber
-//{
-//    /// Execute bitwise AND operation
-//    #method and : anObject = anObject cast:%and &to:$self.
-//    
-//    /// Execute bitwise OR operation
-//    #method or : anObject = anObject cast:%or &to:$self.
-//    
-//    /// Execute bitwise XOR operation
-//    #method xor : anObject = anObject cast:%xor &to:$self.
-//    
-//    /// Returns true if all the mask bits are set
-//    #method allMask : anOperand
-//        = $self and:anOperand == anOperand.
-//        
-//    /// Returns true if any of the mask bits are set    
-//    #method anyMask : anOperand
-//        = 0 != $self and:anOperand.
-//        
-//    /// Returns the negated value        
-//    #method negative = 0 subtract:$self.
-//}
-//
+// --- BaseValue ---
+
+// A base value
+#class BaseValue
+{
+    /// Compares the values
+    #method equal : anObject = anObject cast:%equal &to:$self bool.
+
+    /// Compares the values
+    #method(bool) less : anObject = anObject cast:%less &to:$self bool.
+
+    /// Compares the values
+    #method(bool) greater : anObject = anObject less:$self bool.
+}
+
+// --- BaseNumber ---
+
+/// A base numeric value
+#class BaseNumber :: BaseValue
+{
+    /// Adds the value
+    #method add : anObject = anObject cast:%add &to:$self.
+
+    /// Subtracts the value
+    #method subtract : anObject = anObject cast:%subtract &to:$self.
+
+    /// Multiply by the value
+    #method multiply : anObject = anObject cast:%multiply &to:$self.
+
+    /// Divides into the value
+    #method divide : anObject = anObject cast:%divide &to:$self.
+}
+
+// --- IntBaseNumber ---
+
+/// A base integer value
+#class IntBaseNumber :: BaseNumber
+{
+    /// Execute bitwise AND operation
+    #method and : anObject = anObject cast:%and &to:$self.
+    
+    /// Execute bitwise OR operation
+    #method or : anObject = anObject cast:%or &to:$self.
+    
+    /// Execute bitwise XOR operation
+    #method xor : anObject = anObject cast:%xor &to:$self.
+    
+    /// Returns true if all the mask bits are set
+    #method allMask : anOperand
+        = $self and:anOperand == anOperand.
+        
+    /// Returns true if any of the mask bits are set    
+    #method anyMask : anOperand
+        = 0 != $self and:anOperand.
+        
+    /// Returns the negated value        
+    #method negative = 0 subtract:$self.
+}
+
 //// --- IntBaseVariable ---
 //
 ///// A base integer variable
@@ -138,7 +138,7 @@
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-#class(sealed,integerof:1,numeric:byte,dispatchable:byte) ByteNumber //:: IntBaseNumber
+#class(sealed,integerof:1,numeric:byte,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
 //    /// Returns the minimal value (0)
 //    #constructor min
@@ -175,12 +175,6 @@
 //    /// Returns the value as a real number
 //    #method real = RealNumber new &byte:$self.
 //
-//    #method(type:bool,stacksafe) equal &byte:anOperand
-//        => system'core_routines'int_equal.
-//        
-//    #method(type:bool,stacksafe) less &byte:anOperand
-//        => system'core_routines'int_less.
-//
 //    #method(type:bool,stacksafe) equal &short:anOperand
 //        => system'core_routines'int_equal.
 //        
@@ -210,22 +204,6 @@
 //    /// Compares the value
 //    #method(type:bool,stacksafe) less &real:anOperand
 //        = RealNumber new &byte:$self less &real:anOperand.
-//
-//    /// Returns the sum
-//    #method(type:byte,stacksafe) add &byte:anOperand
-//        => system'core_routines'byte_add.
-//
-//    /// Returns the difference
-//    #method(type:byte,stacksafe) subtract &byte:anOperand
-//        => system'core_routines'byte_sub.
-//
-//    /// Returns the product
-//    #method(type:byte,stacksafe) multiply &byte:anOperand
-//        => system'core_routines'byte_mul.
-//
-//    /// Returns the result of integer division
-//    #method(type:byte,stacksafe) divide &byte:anOperand
-//        => system'core_routines'byte_div.
 //
 //    /// Returns the sum
 //    #method(stacksafe) add &short:anOperand
@@ -383,7 +361,7 @@
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-#class(sealed,integerof:2,numeric:short,dispatchable:short) ShortNumber //:: IntBaseNumber
+#class(sealed,integerof:2,numeric:short,dispatchable:short) ShortNumber :: IntBaseNumber
 {
 //    /// Returns the minimal value (-32768)
 //    #constructor min
@@ -436,14 +414,6 @@
 //        => system'core_routines'int_less.
 //    
 //    /// Compares the value
-//    #method(type:bool,stacksafe) equal &short:anOperand 
-//        => system'core_routines'int_equal.
-//        
-//    /// Compares the value
-//    #method(type:bool,stacksafe) less &short:anOperand
-//        => system'core_routines'int_less.
-//    
-//    /// Compares the value
 //    #method(type:bool,stacksafe) equal &byte:anOperand 
 //        => system'core_routines'int_equal.
 //        
@@ -466,22 +436,6 @@
 //    /// Compares the value
 //    #method(type:bool,stacksafe) less &real:anOperand
 //        = RealNumber new &short:$self less &real:anOperand.
-//
-//    /// Returns the sum
-//    #method(type:short,stacksafe) add &short:anOperand
-//        => system'core_routines'short_add.
-//    
-//    /// Returns the difference
-//    #method(type:short,stacksafe) subtract &short:anOperand
-//        => system'core_routines'short_sub.
-//
-//    /// Returns the product
-//    #method(type:short,stacksafe) multiply &short:anOperand
-//        => system'core_routines'short_mul.
-//
-//    /// Returns the result of integer division
-//    #method(type:short,stacksafe) divide &short:anOperand
-//        => system'core_routines'short_div.
 //
 //    /// Returns the sum
 //    #method(stacksafe) add &byte:anOperand
@@ -639,7 +593,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(sealed,integerof:4,numeric:int,dispatchable:int) IntNumber //:: IntBaseNumber
+#class(sealed,integerof:4,numeric:int,dispatchable:int) IntNumber :: IntBaseNumber
 {
 //    /// Creates the object with the minimal value
 //    #constructor min
@@ -688,11 +642,6 @@
 //    [
 //        shortConvertor convert &int:$self &vshort:aValue.
 //    ]
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) equal &int:anOperand 
-//        => system'core_routines'int_equal.
-//        
 //    /// Compares the integer value
 //    #method(type:bool,stacksafe) equal &short:anOperand 
 //        => system'core_routines'int_equal.
@@ -708,10 +657,6 @@
 //    /// Compares the integer value
 //    #method(stacksafe) equal &real:anOperand 
 //        = RealNumber new &int:$self equal &real:anOperand.
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) less &int:anOperand
-//        => system'core_routines'int_less.
 //
 //    /// Compares the integer value
 //    #method(type:bool,stacksafe) less &short:anOperand
@@ -903,7 +848,7 @@
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-#class(sealed,integerof:8,numeric:long,dispatchable:long) LongNumber //:: IntBaseNumber
+#class(sealed,integerof:8,numeric:long,dispatchable:long) LongNumber :: IntBaseNumber
 {
 //    /// Returns the minimal value
 //    #constructor min
@@ -951,11 +896,7 @@
 
 //    /// Returns a real value
 //    #method real = RealNumber new &long:$self.
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) equal &long:anOperand
-//        => system'core_routines'long_equal.
-//
+
 //    /// Compares the integer value
 //    #method(type:bool,stacksafe) equal &int:anOperand 
 //        = $self equal &long:(LongNumber new &int:anOperand).
@@ -971,10 +912,6 @@
 //    /// Compares the integer value
 //    #method(stacksafe) equal &real:anOperand 
 //        = RealNumber new &long:$self equal &real:anOperand.
-//
-//    /// Compares the integer value
-//    #method(type:bool,stacksafe) less &long:anOperand
-//        => system'core_routines'long_less.
 //
 //    /// Compares the integer value
 //    #method(type:bool,stacksafe) less &int:anOperand 
@@ -993,10 +930,6 @@
 //        = RealNumber new &long:$self less &real:anOperand.
 //
 //    /// Returns the sum of integers
-//    #method(type:long,stacksafe) add &long:anOperand
-//        => system'core_routines'long_add.
-//
-//    /// Returns the sum of integers
 //    #method(stacksafe) add &int:anOperand
 //        = $self add &long:(LongNumber new &int:anOperand).
 //
@@ -1011,10 +944,6 @@
 //    /// Returns the sum of integers
 //    #method(stacksafe) add &real:anOperand
 //        = RealNumber new &long:$self add &real:anOperand.
-//
-//    /// Returns the difference of integers
-//    #method(type:long,stacksafe) subtract &long:anOperand
-//        => system'core_routines'long_sub.
 //
 //    /// Returns the difference of integers
 //    #method(stacksafe) subtract &int:anOperand
@@ -1033,10 +962,6 @@
 //        = RealNumber new &long:$self subtract &real:anOperand.
 //
 //    /// Returns the product of integers
-//    #method(type:long,stacksafe) multiply &long:anOperand
-//        => system'core_routines'long_mul.
-//
-//    /// Returns the product of integers
 //    #method(stacksafe) multiply &real:anOperand
 //        = RealNumber new &long:$self multiply &real:anOperand.
 //
@@ -1051,10 +976,6 @@
 //    /// Returns the product of integers
 //    #method(stacksafe) multiply &short:anOperand
 //        = $self multiply &long:(LongNumber new &short:anOperand).
-//
-//    /// Returns the result of integer division
-//    #method(type:long,stacksafe) divide &long:anOperand
-//        => system'core_routines'long_div.
 //
 //    /// Returns the result of integer division
 //    #method(stacksafe) divide &int:anOperand

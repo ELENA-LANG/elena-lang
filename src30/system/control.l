@@ -8,7 +8,7 @@
 
     #method else : aTrueAction = $nil.
     
-//    #method iif:aTrueValue:aFalseValue = $nil.
+    #method iif:aTrueValue:aFalseValue = $nil.
 
     #method(bool) or : anExpr = $nil.
 
@@ -18,21 +18,15 @@
 
     #method equal : anExpr = $nil.
 
-//    #method(type:bool) equal &bool:aBool = $nil.
+    #method(bool) equal &bool:aBool = $nil.
 
     #method(bool) not = $nil.
 
-//    #method literal = $nil.
-//
-//    #method wide = $nil.
-//
-//    #method bool = $self.
-//
-//    #method clone = $nil.
-//    
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bool:$self.
-//    
-//    #method cast : aVerb &with:aParam &to:aTarget = aTarget::aVerb eval:aParam &bool:$self.
+    #method literal = $nil.
+
+    #method wide = $nil.
+
+    #method clone = $nil.
 }
 
 /// A true value symbol
@@ -47,7 +41,7 @@
     /// Always returns nil.
     #method else : aTrueAction = $nil.
 
-//    #method iif:aTrueValue:aFalseValue = aTrueValue.
+    #method iif:aTrueValue:aFalseValue = aTrueValue.
     
     /// Executes logical OR operation
     ///
@@ -68,23 +62,20 @@
     /// Determines whether the specified object is equal to the current object boolean value.
     #method equal : anExpr = anExpr bool.
 
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method(type:bool) equal &bool:aBool = aBool.
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method(bool) equal &bool:aBool = aBool.
 
     /// Always returns false.
     #method(bool) not = false.
 
-//    /// Returns literal representation.
-//    #method literal = "true".
-//
-//    /// Returns literal representation.
-//    #method wide = "true" wide. // !! temporal
-//
-//    /// Returns itself.
-//    #method bool = $self.
-//
-//    /// Returns itself.
-//    #method clone = $self.
+    /// Returns literal representation.
+    #method literal = "true".
+
+    /// Returns literal representation.
+    #method wide = "true" wide. // !! temporal
+
+    /// Returns itself.
+    #method clone = $self.
 }.
 
 // --- false ---
@@ -101,7 +92,7 @@
     /// Executes the action
     #method else : aFalseAction = aFalseAction eval.
 
-//    #method iif:aTrueValue:aFalseValue = aFalseValue.
+    #method iif:aTrueValue:aFalseValue = aFalseValue.
 
     /// Executes logical OR operation
     #method(bool) or : anExpr = anExpr bool.
@@ -127,28 +118,25 @@
         ^ true.
     ]
 
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method(type:bool) equal &bool:anExpr
-//    [
-//        anExpr ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method(bool) equal &bool:anExpr
+    [
+        anExpr ? [ ^ $self. ].
+        
+        ^ true.
+    ]
 
     /// Always returns true
     #method not = true.
 
-//    /// Returns literal representation
-//    #method literal = "false".
-//    
-//    /// Returns literal representation
-//    #method wide = "false" wide. // !! temporal
-//
-//    /// Returns itself
-//    #method bool = $self.
-//
-//    /// Returns itself
-//    #method clone = $self.
+    /// Returns literal representation
+    #method literal = "false".
+    
+    /// Returns literal representation
+    #method wide = "false" wide. // !! temporal
+
+    /// Returns itself
+    #method clone = $self.
 }.
 
 //// === Basic prototypes ===

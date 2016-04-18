@@ -2166,24 +2166,24 @@ void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
    tape.write(bcNSave);
 }
 
-//void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
-//{
-//   // pushr trueRef
-//   // ifr labEnd falseRef
-//   // acopyr falseRef
-//   // asavesi 0
-//   // labEnd:
-//   // popa
-//
-//   tape.newLabel();
-//
-//   tape.write(bcPushR, trueRef | mskConstantRef);
-//   tape.write(bcIfR, baCurrentLabel, falseRef | mskConstantRef);
-//   tape.write(bcACopyR, falseRef | mskConstantRef);
-//   tape.write(bcASaveSI);
-//   tape.setLabel();
-//   tape.write(bcPopA);
-//}
+void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
+{
+   // pushr trueRef
+   // ifr labEnd falseRef
+   // acopyr falseRef
+   // asavesi 0
+   // labEnd:
+   // popa
+
+   tape.newLabel();
+
+   tape.write(bcPushR, trueRef | mskConstantRef);
+   tape.write(bcIfR, baCurrentLabel, falseRef | mskConstantRef);
+   tape.write(bcACopyR, falseRef | mskConstantRef);
+   tape.write(bcASaveSI);
+   tape.setLabel();
+   tape.write(bcPopA);
+}
 
 void ByteCodeWriter :: saveSubject(CommandTape& tape)
 {
@@ -2968,29 +2968,29 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    releaseObject(tape, level);
 }
 
-//void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   generateExpression(tape, node);
-//
-//   SNode ifParam = SyntaxTree::findChild(node, lxIfValue);
-//   SNode elseParam = SyntaxTree::findChild(node, lxElseValue);
-//
-//   if (node.argument == NOT_MESSAGE_ID) {
-//      invertBool(tape, ifParam.argument, elseParam.argument);
-//   }      
-//}
-//
-//void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   generateExpression(tape, node);
-//
-//   SNode ifParam = SyntaxTree::findChild(node, lxIfValue);
-//   SNode elseParam = SyntaxTree::findChild(node, lxElseValue);
-//
-//   if (node.argument == EQUAL_MESSAGE_ID) {
-//      selectByAcc(tape, elseParam.argument, ifParam.argument);
-//   }
-//}
+void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   generateExpression(tape, node);
+
+   SNode ifParam = SyntaxTree::findChild(node, lxIfValue);
+   SNode elseParam = SyntaxTree::findChild(node, lxElseValue);
+
+   if (node.argument == NOT_MESSAGE_ID) {
+      invertBool(tape, ifParam.argument, elseParam.argument);
+   }      
+}
+
+void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   generateExpression(tape, node);
+
+   SNode ifParam = SyntaxTree::findChild(node, lxIfValue);
+   SNode elseParam = SyntaxTree::findChild(node, lxElseValue);
+
+   if (node.argument == EQUAL_MESSAGE_ID) {
+      selectByAcc(tape, elseParam.argument, ifParam.argument);
+   }
+}
 
 void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
 {
@@ -3792,12 +3792,12 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxNested:
          generateNestedExpression(tape, node);
          break;
-      //case lxBoolOp:
-      //   generateBoolOperation(tape, node);
-      //   break;
-      //case lxNilOp:
-      //   generateNilOperation(tape, node);
-      //   break;
+      case lxBoolOp:
+         generateBoolOperation(tape, node);
+         break;
+      case lxNilOp:
+         generateNilOperation(tape, node);
+         break;
       case lxIntOp:
       case lxLongOp:
       case lxRealOp:

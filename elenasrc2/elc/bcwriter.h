@@ -233,7 +233,7 @@ class ByteCodeWriter
    void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
-//   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);
@@ -256,8 +256,8 @@ class ByteCodeWriter
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
