@@ -294,6 +294,7 @@ private:
       ref_t literalHint;
       ref_t varHint;
       ref_t signHint;
+      ref_t mssgHint;
       ref_t stackHint;
       ref_t warnHint;
       ref_t dynamicHint;

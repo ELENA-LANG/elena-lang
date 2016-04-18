@@ -465,7 +465,7 @@ namespace _ELENA_
 //// #define HINT_LOCK               "sync"
    #define HINT_SEALED              "sealed$"
    #define HINT_LIMITED             "limited$"
-//   #define HINT_MESSAGE            "message"
+   #define HINT_MESSAGE             "message$"
    #define HINT_SIGNATURE           "signature$"
 //   #define HINT_EXT_MESSAGE        "extension_message"
 //   #define HINT_SYMBOL             "symbol"

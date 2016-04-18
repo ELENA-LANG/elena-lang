@@ -13,17 +13,14 @@
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
 //#subject(class:system'CharValue)    char.
-//#subject(class:system'Message)      mssg.
+#subject mssg       = system'Message.
 //#subject(class:system'ExtensionMessage) ext_mssg.
-//#subject(class:system'Verb)         verb.
-//#subject(class:system'Signature)    subject.
+#subject verb       = system'Verb.
+#subject subject    = system'Signature.
 //#subject(class:system'Symbol)       symbol_ref.
 
-//#subject(class:system'Integer)      vint.
 //#subject(class:system'Long)         vlong.
 //#subject(class:system'Real)         vreal.
-//#subject(class:system'Byte)         vbyte.
-//#subject(class:system'Short)        vshort.
 //#subject(class:system'Char)         vchar.
 //#subject(class:system'MessageVar)   vmssg.
 

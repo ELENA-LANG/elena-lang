@@ -370,6 +370,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    varHint = module->mapSubject(HINT_VARIABLE, false);
    limitedHint = module->mapSubject(HINT_LIMITED, false);
    signHint = module->mapSubject(HINT_SIGNATURE, false);
+   mssgHint = module->mapSubject(HINT_MESSAGE, false);
    stackHint = module->mapSubject(HINT_STACKSAFE, false);
    warnHint = module->mapSubject(HINT_SUPPRESS_WARNINGS, false);
    dynamicHint = module->mapSubject(HINT_DYNAMIC, false);
@@ -2038,6 +2039,17 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
+   else if (hintRef == moduleScope->mssgHint) {
+      writer.newNode(lxClassStructure, 4);
+
+      appendTerminalInfo(&writer, terminal);
+      writer.appendNode(lxClassFlag, elDebugDWORD);
+      writer.appendNode(lxClassFlag, elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
+
+      writer.closeNode();
+
+      return true;
+   }
    else if (hintRef == moduleScope->extensionHint) {
       scope.extensionMode = -1;
       writer.appendNode(lxClassFlag, elExtension);
@@ -2089,15 +2101,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
 
       //if (StringHelper::compare(terminal, HINT_GROUP)) {
       //   writer.appendNode(lxClassFlag, elGroup);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_MESSAGE)) {
-      //   writer.newNode(lxClassStructure, 4);
-      //   appendTerminalInfo(&writer, terminal);
-
-      //   writer.appendNode(lxClassFlag, elDebugDWORD);
-      //   writer.appendNode(lxClassFlag, elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
-
-      //   writer.closeNode();
       //}
       //else if (StringHelper::compare(terminal, HINT_EXT_MESSAGE)) {
       //   writer.newNode(lxClassStructure, 8);
@@ -3517,6 +3520,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    recordDebugStep(scope, node.Terminal(), dsStep);
 
    appendObjectInfo(scope, retVal);
+   appendTerminalInfo(scope.writer, node.FirstTerminal());
 
    // define the message target if required
    if (target.kind == okConstantRole) {
@@ -6824,7 +6828,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
       SNode col = SyntaxTree::findChild(node, lxCol);
       SNode terminal = SyntaxTree::findChild(node, lxTerminal);
       if (col != lxNone && row != lxNone) {
-         scope.raiseWarning(WARNING_LEVEL_3, wrnUnknownMessage, row.argument, col.argument, terminal.identifier());
+         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, row.argument, col.argument, terminal.identifier());
       }
    }
 }
@@ -7132,8 +7136,13 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
 
 bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
 {
-   if (sourceClassRef == -1 && (targetInfo.header.flags & elDebugMask) == elDebugDWORD)
-   {
+   if (sourceClassRef == -1 && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+      return true;
+   }
+   else if (sourceClassRef == -2 && (targetInfo.header.flags & elDebugMask) == elDebugQWORD) {
+      return true;
+   }
+   else if (sourceClassRef == -4 && (targetInfo.header.flags & elDebugMask) == elDebugReal64) {
       return true;
    }
    else if (sourceClassRef != 0 && scope.subjectHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {

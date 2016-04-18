@@ -2,14 +2,13 @@
 In development:
 ------                      
               xdev - generic development
-                       * constructor should inherites only object class (default one) if the object is not dynamic, otherwise - object itself
+                       * int numbers : bitwise operations
 
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
                          always return bool operand
 
                        * system test
 
-                       * review IntNumber implementation
                        * review LiteralValue implementation
 
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 

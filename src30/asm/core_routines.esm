@@ -23,8 +23,8 @@ procedure __object.dispatch[0]
   open 1
   bcopyf -1
   pushb
-//  pushr class : system'MethodNotFoundException
-//  pushr const : %new&mssg$[1]
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
   throw
 
 end
@@ -107,6 +107,561 @@ procedure __lazyexpression.dispatch[0]
   pope
   asavesi 1
   ajumpvi 0
+
+end
+
+procedure __literalconvertor.convert&int$[1]
+
+  dcopy 10
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  acopyb
+  quitn 2
+
+end
+
+procedure __literalconvertor.convert&short$[1]
+
+  dcopy 10
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  acopyb
+  quitn 2
+
+end
+
+procedure __literalconvertor.convert&byte$[1]
+
+  dcopy 10
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  acopyb
+  quitn 2
+
+end
+
+procedure __literalconvertor.convert&long$[1]
+
+  dcopy 64
+  acopyr class : system'LiteralValue  
+  bcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+
+  callextr api : longtostr
+
+  acopyb
+  quitn 2
+
+end
+
+procedure __literalconvertor.convert&int$&int$[2]
+
+  dcopy 32
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+
+  callextr api : inttostr
+
+  acopyb
+  quitn 3
+
+end
+
+procedure __literalconvertor.convert&short$&int$[2]
+
+  dcopy 32
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+
+  callextr api : inttostr
+
+  acopyb
+  quitn 3
+
+end
+
+procedure __literalconvertor.convert&byte$&int$[2]
+
+  dcopy 32
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+
+  callextr api : inttostr
+
+  acopyb
+  quitn 3
+
+end
+
+procedure __literalconvertor.convert&long$&int$[2]
+
+  dcopy 64
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  aloadsi 2
+  callextr api : longtostr
+  acopyb
+  quitn 3
+
+end
+
+procedure __literalconvertor.convert&real$[1]
+
+  dcopy 30
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  aloadsi 2
+  dcopy 24
+  callextr api : realtostr
+  acopyb
+  quitn 2
+
+end
+
+procedure __wideconvertor.convert&int$[1]
+
+  dcopy 10
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+
+  callextr api : inttowstr
+
+  acopyb
+  quitn 2
+  
+end
+
+procedure __wideconvertor.convert&short$[1]
+
+  dcopy 10
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+
+  callextr api : inttowstr
+
+  acopyb
+  quitn 2
+  
+end
+
+procedure __wideconvertor.convert&byte$[1]
+
+  dcopy 10
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+
+  callextr api : inttowstr
+
+  acopyb
+  quitn 2
+  
+end
+
+procedure __wideconvertor.convert&long$[1]
+
+  dcopy 64
+  acopyr class : system'WideLiteralValue  
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 10
+
+  callextr api : longtowstr
+
+  acopyb
+  quitn 2
+
+end
+
+procedure __wideconvertor.convert&int$&int$[2]
+
+  dcopy 32
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+  callextr api : inttowstr
+  acopyb
+  quitn 3
+
+end
+
+procedure __wideconvertor.convert&short$&int$[2]
+
+  dcopy 32
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+  callextr api : inttowstr
+  acopyb
+  quitn 3
+
+end
+
+procedure __wideconvertor.convert&byte$&int$[2]
+
+  dcopy 32
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 3
+  nload
+  aloadsi 2
+  callextr api : inttowstr
+  acopyb
+  quitn 3
+
+end
+
+procedure __wideconvertor.convert&long$&int$[2]
+
+  dcopy 64
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  aloadsi 2
+  callextr api : longtowstr
+  acopyb
+  quitn 3
+
+end
+
+procedure __wideconvertor.convert&real$[1]
+
+  dcopy 30
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  aloadsi 2
+  dcopy 24
+  callextr api : realtowstr
+  acopyb
+  quitn 2
+
+end
+
+procedure __shortconvertor.convert&byte$&vshort$[2]
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __byteconvertor.convert&short$&vbyte$[2]
+
+  aloadsi 2
+  nload
+
+  lessn labErr 0  
+  lessn labCopy 0FFh
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __intconvertor.convert&short$&vint$[2]
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor.convert&byte$&vint$[2]
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __byteconvertor.convert&int$&vbyte$[2]
+
+  aloadsi 2
+  nload
+  
+  lessn labErr 0  
+  lessn labCopy 100h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __shortconvertor.convert&int$&vshort$[2]
+
+  bloadsi 3
+  aloadsi 2
+
+  nload
+  lessn labNegative 0
+
+  lessn labCopy 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  nsave
+  quitn 2  
+  
+labNegative:
+  not
+
+  lessn labCopyNeg 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+  
+labCopyNeg:
+  not
+  nsave
+  quitn 2  
+
+end
+
+procedure __longconvertor.convert&int$&vlong$[2]
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor.convert&short$&vlong$[2]
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+procedure __longconvertor.convert&byte$&vlong$[2]
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  nsave
+  dcopy 0
+  nsavei 1
+  acopyb
+  quitn 3
+
+end
+
+
+procedure __message.dispatch[0]
+
+  bloadsi 1
+  ifb labDefault
+
+  nload
+  eswap
+  setverb EVAL_MESSAGE_ID
+  setsubj 0
+  else labEnd
+  nload
+  ecopyd
+  aloadsi 1
+  ajumpvi 0
+
+labEnd:
+  pushd
+  open 1
+  bcopyf -1
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
+labDefault:
+  bsredirect  
+  pushe
+  open 1
+  bcopyf -1
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+  
+end
+
+procedure __byteconvertor.convert&long$&vbyte$[2]
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  elsen labErr 0  
+
+  nload
+
+  lessn labErr 0  
+  lessn labCopy 0FFh
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __shortconvertor.convert&long$&vshort$[2]
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  nload
+  lessn labCopy 8000h  
+  jump  labErr
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+  nload
+  not
+  lessn labCopyNegative 8000h  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopyNegative:
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __intconvertor.convert&long$&vint$[2]
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
 
 end
 
@@ -768,19 +1323,6 @@ procedure long_copyint
 
 end
 
-procedure long_convertint
-  
-  bloadsi 3
-  aloadsi 2
-  nload
-  nsave
-  dcopy 0
-  nsavei 1
-  acopyb
-  quitn 3
-
-end
-
 procedure long_copystruct
 
   bcopya
@@ -1032,71 +1574,6 @@ labCopy:
 
 end
 
-procedure byte_copyint
-
-  aloadsi 2
-  nload
-  
-  lessn labErr 0  
-  lessn labCopy 100h
-
-labErr:  
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-
-labCopy:
-  bloadsi 3
-  nsave
-  quitn 3  
-
-end
-
-procedure byte_copyword
-
-  aloadsi 2
-  nload
-
-  lessn labErr 0  
-  lessn labCopy 0FFh
-
-labErr:  
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-
-labCopy:
-  bloadsi 3
-  nsave
-  quitn 3  
-
-end
-
-procedure byte_copylong
-
-  aloadsi 2
-  dcopy 4
-  bread
-  dcopye
-  elsen labErr 0  
-
-  nload
-
-  lessn labErr 0  
-  lessn labCopy 0FFh
-
-labErr:  
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-
-labCopy:
-  bloadsi 3
-  nsave
-  quitn 3  
-
-end
-
 procedure byte_copyreal
 
   pushn 0
@@ -1203,87 +1680,6 @@ labErr:
   throw    
 
 labCopy:
-  bloadsi 3
-  nsave
-  quitn 3  
-
-end
-
-procedure word_copybyte
-
-  aloadsi 2
-  nload
-  bloadsi 3
-  nsave
-  quitn 3  
-
-end
-
-procedure word_copyint
-
-  bloadsi 3
-  aloadsi 2
-
-  nload
-  lessn labNegative 0
-
-  lessn labCopy 8000h
-
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-
-labCopy:
-  nsave
-  quitn 2  
-  
-labNegative:
-  not
-
-  lessn labCopyNeg 8000h
-
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-  
-labCopyNeg:
-  not
-  nsave
-  quitn 2  
-
-end
-
-procedure word_copylong
-
-  aloadsi 2
-  dcopy 4
-  bread
-  dcopye
-  lessn labNegative 0  
-  elsen labErr 0  
-
-  nload
-  lessn labCopy 8000h  
-  jump  labErr
-
-labCopy:
-  bloadsi 3
-  nsave
-  quitn 3  
-
-labNegative:
-  elsen labErr 0FFFFFFFFh
-  nload
-  not
-  lessn labCopyNegative 8000h  
-
-labErr:
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
-
-labCopyNegative:
-  nload
   bloadsi 3
   nsave
   quitn 3  
@@ -1524,45 +1920,6 @@ labErr:
   pushr class : system'FormatException
   pushr const : %new[0]
   throw
-
-end
-
-procedure int_saveint
-
-  aloadsi 2
-  nload
-  bloadsi 3
-  nsave
-  quitn 3
-
-end
-
-procedure int_savelong
-
-  aloadsi 2
-  dcopy 4
-  bread
-  dcopye
-  lessn labNegative 0  
-  elsen labErr 0  
-
-  nload
-  bloadsi 3
-  nsave
-  quitn 3  
-
-labNegative:
-  elsen labErr 0FFFFFFFFh
-
-  nload
-  bloadsi 3
-  nsave
-  quitn 3  
-
-labErr:
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw    
 
 end
 
@@ -1820,162 +2177,6 @@ labErr:
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
-
-end
-
-procedure s_copyint
-
-  dcopy 10
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-  aloadsi 2
-  dcopy 10
-  
-  callextr api : inttostr
-
-  acopyb
-  quitn 2
-
-end
-
-procedure ws_copyint
-
-  dcopy 10
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-  aloadsi 2
-  dcopy 10
-
-  callextr api : inttowstr
-
-  acopyb
-  quitn 2
-  
-end
-
-procedure s_copylong
-
-  dcopy 64
-  acopyr class : system'LiteralValue  
-  bcreate
-  bcopya
-  aloadsi 2
-  dcopy 10
-
-  callextr api : longtostr
-
-  acopyb
-  quitn 2
-
-end
-
-procedure ws_copylong
-
-  dcopy 64
-  acopyr class : system'WideLiteralValue  
-  wcreate
-  bcopya
-  aloadsi 2
-  dcopy 10
-
-  callextr api : longtowstr
-
-  acopyb
-  quitn 2
-
-end
-
-procedure s_copyint_radix
-
-  dcopy 32
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-  aloadsi 3
-  nload
-  aloadsi 2
-
-  callextr api : inttostr
-
-  acopyb
-  quitn 3
-
-end
-
-procedure ws_copyint_radix
-
-  dcopy 32
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-  aloadsi 3
-  nload
-  aloadsi 2
-  callextr api : inttowstr
-  acopyb
-  quitn 3
-
-end
-
-procedure s_copylong_radix
-
-  dcopy 64
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-
-  aloadsi 3
-  nload
-  aloadsi 2
-  callextr api : longtostr
-  acopyb
-  quitn 3
-
-end
-
-procedure ws_copylong_radix
-
-  dcopy 64
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-
-  aloadsi 3
-  nload
-  aloadsi 2
-  callextr api : longtowstr
-  acopyb
-  quitn 3
-
-end
-
-procedure s_copyreal
-
-  dcopy 30
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-  aloadsi 2
-  dcopy 24
-  callextr api : realtostr
-  acopyb
-  quitn 2
-
-end
-
-procedure ws_copyreal
-
-  dcopy 30
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-  aloadsi 2
-  dcopy 24
-  callextr api : realtowstr
-  acopyb
-  quitn 2
 
 end
 
@@ -3626,42 +3827,6 @@ procedure symbol_redirect
   pope
   ajumpvi 0
 
-end
-
-procedure handle_message
-
-  bloadsi 1
-  ifb labDefault
-
-  nload
-  eswap
-  setverb EVAL_MESSAGE_ID
-  setsubj 0
-  else labEnd
-  nload
-  ecopyd
-  aloadsi 1
-  ajumpvi 0
-
-labEnd:
-  pushd
-  open 1
-  bcopyf -1
-  pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
-  throw
-
-labDefault:
-  bsredirect  
-  pushe
-  open 1
-  bcopyf -1
-  pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
-  throw
-  
 end
 
 procedure handle_ext_message

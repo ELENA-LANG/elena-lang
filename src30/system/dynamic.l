@@ -26,33 +26,34 @@
     #method => system'core_routines'__verb.
 }
 
-////// --- Message ---
-////
-/////// A message constant
-////#class(sealed,message) Message
-////{
-////    /// Loads a message
-////    #constructor(stacksafe) new &mssg:aMessage
-////        => system'core_routines'int_copy.
-////
-////    #method mssg
-////        = $self.
-////                        
-////    #method(stacksafe) subject
-////        => system'core_routines'mssg_getsubj.
-////        
-////    #method(stacksafe)literal
-////    [
-////        #var(type:bytearray,size:256)aBuffer.        
-////        #var(type:int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
-////        
-////        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-////    ]
-////
-////    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-////    #method => system'core_routines'handle_message.
-////}
-////
+// --- Message ---
+
+/// A message constant
+#class(sealed,message) Message
+{
+//    /// Loads a message
+//    #constructor(stacksafe) new &mssg:aMessage
+//        => system'core_routines'int_copy.
+//
+//    #method mssg
+//        = $self.
+//                        
+//    #method(stacksafe) subject
+//        => system'core_routines'mssg_getsubj.
+//        
+//    #method(stacksafe)literal
+//    [
+//        #var(type:bytearray,size:256)aBuffer.        
+//        #var(type:int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
+//        
+//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+//    ]
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+//    #method => system'core_routines'handle_message.
+    #method => system'core_routines'__message.
+}
+
 ////// --- ExtensionMessage ---
 ////
 /////// An extended message constant
