@@ -1,33 +1,31 @@
-////// ==== ver 3.4.1 ===
-////
-////// --- Symbol ---
-////
-/////// A dynamic symbol
-////#class(sealed,symbol) Symbol
-////{
-////    /// Loads a symbol
-////    #constructor new &literal:aName
-////        => system'core_routines'symbol_new.
-////        
-////    /// Redirects incoming messages to the symbol
-////    #method => system'core_routines'symbol_redirect.
-////}
+//// --- Symbol ---
 //
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//#class(sealed,signature) Verb
+///// A dynamic symbol
+//#class(sealed,symbol) Symbol
 //{
-////    /// Loads a dynamic verb
-////    #constructor(stacksafe) new &verb:aVerb
-////        => system'core_routines'int_copy.
-////
-////    #method verb = $self.
-//
-//    /// Dispatches incoming messages and redirects to the target
-//    #method => system'core_routines'__verb.
+//    /// Loads a symbol
+//    #constructor new &literal:aName
+//        => system'core_routines'symbol_new.
+//        
+//    /// Redirects incoming messages to the symbol
+//    #method => system'core_routines'symbol_redirect.
 //}
+
+// --- Verb ---
+
+/// A dynamic verb extender
+#class(sealed,signature) Verb
+{
+//    /// Loads a dynamic verb
+//    #constructor(stacksafe) new &verb:aVerb
+//        => system'core_routines'int_copy.
 //
+//    #method verb = $self.
+
+    /// Dispatches incoming messages and redirects to the target
+    #method => system'core_routines'__verb.
+}
+
 ////// --- Message ---
 ////
 /////// A message constant

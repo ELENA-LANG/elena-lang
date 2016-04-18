@@ -3837,19 +3837,19 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 
 void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
 {
-   SNode child = node.firstChild();
-   while (child != lxNone) {
-      if (test(child.type, lxObjectMask)) {
-         generateObjectExpression(tape, child);
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         generateObjectExpression(tape, current);
       }
-      else if (child == lxVariable) {
-         generateObjectExpression(tape, child);
+      else if (current == lxVariable) {
+         generateObjectExpression(tape, current);
       }
-      else if (child == lxReleasing) {
-         releaseObject(tape, child.argument);
+      else if (current == lxReleasing) {
+         releaseObject(tape, current.argument);
       }
 
-      child = child.nextNode();
+      current = current.nextNode();
    }      
 }
 

@@ -472,7 +472,7 @@ namespace _ELENA_
    #define HINT_EXTENSION           "extension$"
    #define HINT_EXTENSIONOF         "extension#1$"
 //   #define HINT_GROUP              "group"
-//   #define HINT_GENERIC            "generic"
+   #define HINT_GENERIC             "generic$"
    #define HINT_EMBEDDABLE          "embeddable$"
 //   #define HINT_NONSTRUCTURE       "nonstructural"
    #define HINT_STACKSAFE           "stacksafe$"

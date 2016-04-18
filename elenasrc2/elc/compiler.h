@@ -79,7 +79,7 @@ public:
       tpDispatcher = 0x04,
       tpStackSafe  = 0x10,
       tpEmbeddable = 0x20,
-//      tpGeneric    = 0x40,
+      tpGeneric    = 0x40,
    };
 
    struct Unresolved
@@ -129,7 +129,7 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
       okParam,                        // param - parameter offset
       okParamField,
-   //   okSubject,                      // param - parameter offset
+      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset
       okNil,
       okSuper,
@@ -281,9 +281,9 @@ private:
       ref_t trueReference;
       ref_t falseReference;
       //ref_t paramsReference;
-      //ref_t signatureReference;
-      //ref_t messageReference;
-      //ref_t verbReference;
+      ref_t signatureReference;
+      ref_t messageReference;
+      ref_t verbReference;
       //ref_t arrayReference;
 
       // cached subjects / hints
@@ -303,6 +303,7 @@ private:
       ref_t embedHint;
       ref_t extensionHint;
       ref_t extensionOfHint;
+      ref_t genericHint;
 
       ref_t boolType;
 
@@ -585,7 +586,7 @@ private:
 //      bool         withOpenArg;
       bool         stackSafe;
 //      bool         embeddable;
-//      bool         generic;
+      bool         generic;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -595,10 +596,10 @@ private:
          else return parent->getScope(level);
       }
 
-//      ref_t getReturningType() const
-//      {
-//         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
-//      }
+      ref_t getReturningType() const
+      {
+         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
+      }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 

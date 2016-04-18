@@ -25,34 +25,34 @@
         theWriter write &literal:theNewLineConstant.
     ]
 
-//    /// Writes the specified literal value to the standard output stream.
-//    #method write : anObject
-//    [
-//        anObject cast:%write &to:$self.
-//    ]
-//
-//    /// Writes the object literal presentation to the standard output stream.
-//    #method(generic) write : anObject
-//    [
-//        theWriter write &literal:(anObject literal).
-//        
-//        theWriter refresh.
-//    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    #method write &literal:aLiteral
-//    [
-//        theWriter write &literal:aLiteral.
-//        
-//        theWriter refresh.
-//    ]
-//
-//    /// the current line terminator to the standard output stream.
-//    #method writeLine
-//    [
-//        self write:theNewLineConstant.
-//    ]
-//
+    /// Writes the specified literal value to the standard output stream.
+    #method write : anObject
+    [
+        anObject cast:%write &to:$self.
+    ]
+
+    /// Writes the object literal presentation to the standard output stream.
+    #method(generic) write : anObject
+    [
+        theWriter write &literal:(anObject literal).
+        
+        theWriter refresh.
+    ]
+
+    /// Writes the specified literal value to the standard output stream.
+    #method write &literal:aLiteral
+    [
+        theWriter write &literal:aLiteral.
+        
+        theWriter refresh.
+    ]
+
+    /// the current line terminator to the standard output stream.
+    #method writeLine
+    [
+        self write:theNewLineConstant.
+    ]
+
 //    /// Clears the console
 //    #method clear 
 //        => theWriter.

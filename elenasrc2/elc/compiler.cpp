@@ -342,9 +342,9 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    literalReference = mapReference(project->resolveForward(STR_FORWARD));
    wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
    //charReference = mapReference(project->resolveForward(CHAR_FORWARD));
-   //signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
-   //messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
-   //verbReference = mapReference(project->resolveForward(VERB_FORWARD));
+   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
+   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
+   verbReference = mapReference(project->resolveForward(VERB_FORWARD));
    //paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
@@ -368,6 +368,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
    extensionHint = module->mapSubject(HINT_EXTENSION, false);
    extensionOfHint = module->mapSubject(HINT_EXTENSIONOF, false);
+   genericHint = module->mapSubject(HINT_GENERIC, false);
 
    defaultNs.add(module->Name());
 
@@ -1241,7 +1242,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->withOpenArg = false;
    this->stackSafe = false;
 //   this->embeddable = false;
-//   this->generic = false;
+   this->generic = false;
 
    //NOTE : tape has to be overridden in the constructor
    this->tape = &parent->tape;
@@ -1329,10 +1330,10 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      //if (StringHelper::compare(identifier, SUBJECT_VAR)) {
-      //   return ObjectInfo(okSubject, local.offset);
-      //}
-      /*else */if (local.size != 0) {
+      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset);
+      }
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
@@ -1606,17 +1607,17 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
       //   return scope.moduleScope->charReference;
       case okThisParam:
          return scope.getClassRefId(false);
-      //case okSubject:
-      //case okSignatureConstant:
-      //   return scope.moduleScope->signatureReference;
+      case okSubject:
+      case okSignatureConstant:
+         return scope.moduleScope->signatureReference;
       case okSuper:
          return object.param;
       //case okParams:
       //   return scope.moduleScope->paramsReference;
       case okExternal:
          return -1; // NOTE : -1 means primitve int32
-      //case okMessageConstant:
-      //   return scope.moduleScope->messageReference;
+      case okMessageConstant:
+         return scope.moduleScope->messageReference;
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -2014,17 +2015,17 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
-   //else if (hintRef == moduleScope->signHint) {
-   //   writer.newNode(lxClassStructure, 4);
+   else if (hintRef == moduleScope->signHint) {
+      writer.newNode(lxClassStructure, 4);
 
-   //   appendTerminalInfo(&writer, terminal);
-   //   writer.appendNode(lxClassFlag, elDebugSubject);
-   //   writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
+      appendTerminalInfo(&writer, terminal);
+      writer.appendNode(lxClassFlag, elDebugSubject);
+      writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
 
-   //   writer.closeNode();
+      writer.closeNode();
 
-   //   return true;
-   //}
+      return true;
+   }
    else if (hintRef == moduleScope->extensionHint) {
       scope.extensionMode = -1;
       writer.appendNode(lxClassFlag, elExtension);
@@ -2300,7 +2301,6 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
 
-      //ref_t hintRef = moduleScope->mapSubject(terminal, false);
       ref_t hintRef = mapHint(hints, *moduleScope);
 
       if (hintRef == moduleScope->warnHint) {
@@ -2319,6 +2319,11 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       }
       else if (moduleScope->subjectHints.exist(hintRef)) {
          writer.appendNode(lxType, hintRef);
+      }
+      else if (hintRef == moduleScope->genericHint) {
+         writer.appendNode(lxClassMethodAttr, tpGeneric);
+
+         scope.generic = true;
       }
       else if (hintRef == moduleScope->sealedHint) {
          writer.appendNode(lxClassMethodAttr, tpSealed);
@@ -2745,30 +2750,30 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okNil:
          scope.writer->newNode(lxNil, object.param);
          break;
-   //   case okVerbConstant:
-   //      scope.writer->newNode(lxVerbConstant, object.param);
-   //      break;
-   //   case okMessageConstant:
-   //      scope.writer->newNode(lxMessageConstant, object.param);
-   //      break;
-   //   case okExtMessageConstant:
-   //      scope.writer->newNode(lxExtMessageConstant, object.param);
-   //      break;
-   //   case okSignatureConstant:
-   //      scope.writer->newNode(lxSignatureConstant, object.param);
-   //      break;
-   //   //case okSubject:
-   //   //   scope.writer->newNode(lxLocalAddress, object.param);
-   //   //   break;
-   //   //case okBlockLocal:
-   //   //   scope.writer->newNode(lxBlockLocal, object.param);
-   //   //   break;
-   //   //case okParams:
-   //   //   scope.writer->newNode(lxBlockLocalAddr, object.param);
-   //   //   break;
-   //   case okObject:
-   //      scope.writer->newNode(lxResult);
-   //      break;
+      case okVerbConstant:
+         scope.writer->newNode(lxVerbConstant, object.param);
+         break;
+      case okMessageConstant:
+         scope.writer->newNode(lxMessageConstant, object.param);
+         break;
+      case okExtMessageConstant:
+         scope.writer->newNode(lxExtMessageConstant, object.param);
+         break;
+      case okSignatureConstant:
+         scope.writer->newNode(lxSignatureConstant, object.param);
+         break;
+      case okSubject:
+         scope.writer->newNode(lxLocalAddress, object.param);
+         break;
+      //case okBlockLocal:
+      //   scope.writer->newNode(lxBlockLocal, object.param);
+      //   break;
+      //case okParams:
+      //   scope.writer->newNode(lxBlockLocalAddr, object.param);
+      //   break;
+      case okObject:
+         scope.writer->newNode(lxResult);
+         break;
       case okConstantRole:
          scope.writer->newNode(lxConstantSymbol, object.param);
          break;
@@ -3414,7 +3419,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
    bool classFound = false;
-   //bool dispatchCall = false;
+   bool dispatchCall = false;
    //bool templateCall = false;
    int methodHint = classReference != 0 ? scope.moduleScope->checkMethod(classReference, messageRef, classFound, retVal.type) : 0;
    int callType = methodHint & tpMask;
@@ -3425,12 +3430,12 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
       // constructors are always sealed
       callType = tpSealed;
    }
-   //else if (classReference == scope.moduleScope->signatureReference) {
-   //   dispatchCall = test(mode, HINT_EXTENSION_MODE);
-   //}
-   //else if (classReference == scope.moduleScope->messageReference) {
-   //   dispatchCall = test(mode, HINT_EXTENSION_MODE);
-   //}
+   else if (classReference == scope.moduleScope->signatureReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
+   else if (classReference == scope.moduleScope->messageReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
    else if (target.kind == okSuper) {
       // parent methods are always sealed
       callType = tpSealed;
@@ -3439,14 +3444,14 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
    //   templateCall = true;
    //}
 
-   //if (dispatchCall) {
-   //   scope.writer->insert(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
+   if (dispatchCall) {
+      scope.writer->insert(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
 
-   //   scope.writer->appendNode(lxMessage, messageRef);
-   //   scope.writer->appendNode(lxCallTarget, classReference);
-   //   //scope.writer->appendNode(lxStacksafe);
-   //}
-   /*else */if (callType == tpClosed) {
+      scope.writer->appendNode(lxMessage, messageRef);
+      scope.writer->appendNode(lxCallTarget, classReference);
+      //scope.writer->appendNode(lxStacksafe);
+   }
+   else if (callType == tpClosed) {
       scope.writer->insert(lxSDirctCalling, messageRef);
 
       scope.writer->appendNode(lxCallTarget, classReference);
@@ -4675,17 +4680,18 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
       }
    }
 
-   //while (hints == nsHint) {
-   //   TerminalInfo terminal = hints.Terminal();
-   //   if (StringHelper::compare(terminal, HINT_GENERIC)) {
-   //      if (!emptystr(signature))
-   //         scope.raiseError(errInvalidHint, terminal);
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      ref_t hintRef = mapHint(hints, *scope.moduleScope);
+      if (hintRef == scope.moduleScope->genericHint) {
+         if (!emptystr(signature))
+            scope.raiseError(errInvalidHint, terminal);
 
-   //      signature.copy(GENERIC_PREFIX);
-   //   }
+         signature.copy(GENERIC_PREFIX);
+      }
 
-   //   hints = hints.nextNode();
-   //}
+      hints = hints.nextNode();
+   }
 
    // if signature is presented
    if (!emptystr(signature)) {
@@ -4949,14 +4955,14 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
       // new stack frame
       // stack already contains current $self reference
       // the original message should be restored if it is a generic method
-      writer.newNode(lxNewFrame, /*scope.generic ? -1 : */0u);
+      writer.newNode(lxNewFrame, scope.generic ? -1 : 0u);
 
       codeScope.level++;
-      //// declare the current subject for a generic method
-      //if (scope.generic) {
-      //   codeScope.level++;
-      //   codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
-      //}
+      // declare the current subject for a generic method
+      if (scope.generic) {
+         codeScope.level++;
+         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, 0);
+      }
 
       declareParameterDebugInfo(scope, writer, true, test(codeScope.getClassFlags(), elRole));
 
@@ -4972,15 +4978,15 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
          // if the method returns itself
          if(retVal.kind == okUnknown) {
             ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-            //ref_t typeHint = scope.getReturningType();
+            ref_t typeHint = scope.getReturningType();
 
-            //if (typeHint != 0) {
-            //   writer.newNode(lxTypecasting, encodeMessage(typeHint, GET_MESSAGE_ID, 0));
-            //   writer.appendNode(lxLocal, 1);
-            //   appendTerminalInfo(&writer, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
-            //   writer.closeNode();
-            //}
-            /*else */writer.appendNode(lxLocal, 1);
+            if (typeHint != 0) {
+               writer.newNode(lxTypecasting, encodeMessage(typeHint, GET_MESSAGE_ID, 0));
+               writer.appendNode(lxLocal, 1);
+               appendTerminalInfo(&writer, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
+               writer.closeNode();
+            }
+            else writer.appendNode(lxLocal, 1);
          }
       }
 
@@ -5174,7 +5180,7 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
                int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
                methodScope.stackSafe = test(hint, tpStackSafe);
-               //methodScope.generic = test(hint, tpGeneric);
+               methodScope.generic = test(hint, tpGeneric);
 
                compileMethodHints(hints, writer, methodScope, warningsOnly);
 
@@ -5192,7 +5198,7 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
             // mark as having generic methods
             scope.info.header.flags |= elWithGenerics;
-            //methodScope.generic = true;
+            methodScope.generic = true;
 
             compileMethod(member, writer, methodScope);
             break;
@@ -5385,8 +5391,8 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          //}
          /*else */writer.closeNode();
 
-         //if (methodScope.generic)
-         //   writer.appendNode(lxClassFlag, elWithGenerics);
+         if (methodScope.generic)
+            writer.appendNode(lxClassFlag, elWithGenerics);
 
          // save extensions if any
          if (scope.extensionMode != 0) {
@@ -6277,7 +6283,7 @@ void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
 
    // auto generate dispatch handler for wrapper class
    if (test(scope.info.header.flags, elWrapper) && !scope.info.methods.exist(DISPATCH_MESSAGE_ID, true)) {
-      //scope.info.header.flags |= elWithGenerics;
+      scope.info.header.flags |= elWithGenerics;
 
       MethodScope methodScope(&scope);
       methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);;
