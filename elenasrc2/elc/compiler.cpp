@@ -6170,6 +6170,10 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          if (callee == lxThisLocal) {
             writer.appendNode(lxCallTarget, scope.reference);
          }
+         // HOTFIX : if it is typecast message, provide the type
+         if (getVerb(current.argument) == GET_MESSAGE_ID && getParamCount(current.argument) == 0 && scope.moduleScope->subjectHints.exist(signature)) {
+            current.appendNode(lxType, signature);
+         }
       }
    }
    else if (test(current.type, lxReferenceMask)) {
@@ -6964,6 +6968,8 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
                node = lxRealOp;
             }
+
+            node.appendNode(lxType, scope.boolType);
          }
          else if (IsVarOperator(node.argument)) {
             if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {

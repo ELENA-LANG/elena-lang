@@ -36,17 +36,33 @@
 {
     #field(template_subj)$value.
     
-    #method set &template_subj:val
+    #method set : val
     [
-        $value := val.
+        $value := val template_subj.
     ]
     
-    #method append &template_subj:val
+    #method append : val
     [
-        $value += val.
+        $value := $value + val template_subj.
     ]
     
-    #method(suppress:w3) template_subj = $value.
+    #method reduce : val
+    [
+        $value := $value - val template_subj.
+    ]
+
+    #method multiplyBy : val
+    [
+        $value := $value * val template_subj.
+    ]
+    
+    /// Divides into the value
+    #method divideInto : val
+    [
+        $value := $value / val template_subj.
+    ]
+
+    #method(suppress:w3) get = $value.
 }
 
 // --- super object ---
