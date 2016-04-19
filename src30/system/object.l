@@ -34,14 +34,19 @@
 
 #template(variable) varof : template_subj
 {
-    #field(template_subj)$target.
+    #field(template_subj)$value.
     
     #method set &template_subj:val
     [
-        $target := val.
+        $value := val.
     ]
     
-    #method(suppress:w3) template_subj = $target.
+    #method append &template_subj:val
+    [
+        $value += val.
+    ]
+    
+    #method(suppress:w3) template_subj = $value.
 }
 
 // --- super object ---

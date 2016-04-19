@@ -26,6 +26,7 @@ using namespace _ELENA_;
 #define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
+#define HINT_ASSIGNING        0x00004000
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -183,27 +184,26 @@ inline bool isImportRedirect(DNode node)
 inline bool IsVarOperator(int operator_id)
 {
    switch (operator_id) {
-   case WRITE_MESSAGE_ID:
-   case APPEND_MESSAGE_ID:
-   case REDUCE_MESSAGE_ID:
-   case INCREASE_MESSAGE_ID:
-   case SEPARATE_MESSAGE_ID:
-      return true;
-   default:
-      return false;
+      case APPEND_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
+      case SEPARATE_MESSAGE_ID:
+         return true;
+      default:
+         return false;
    }
 }
 
 inline bool IsNumericOperator(int operator_id)
 {
    switch (operator_id) {
-   case ADD_MESSAGE_ID:
-   case SUB_MESSAGE_ID:
-   case MUL_MESSAGE_ID:
-   case DIV_MESSAGE_ID:
-      return true;
-   default:
-      return false;
+      case ADD_MESSAGE_ID:
+      case SUB_MESSAGE_ID:
+      case MUL_MESSAGE_ID:
+      case DIV_MESSAGE_ID:
+         return true;
+      default:
+         return false;
    }
 }
 
@@ -255,6 +255,12 @@ inline bool IsInvertedOperator(int& operator_id)
 inline bool isPrimitiveRef(ref_t reference)
 {
    return (int)reference < 0;
+}
+
+// returns true if the stack allocated object described by the flag may be passed directly - be stacksafe
+inline bool isStacksafe(int flags)
+{
+   return test(flags, elStructureRole | elEmbeddable) | test(flags, elStructureRole | elEmbeddableWrapper);
 }
 
 inline bool isEmbeddable(int flags)
@@ -1278,7 +1284,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
    //      //   return ObjectInfo(okParams, -1 - local, 0, param.sign_ref);
    //      //}
          /*else */if (stackSafe && param.subj_ref != 0) {
-            // HOTFIX : only embeddable parameter should be boxed in stacksafe method
+            // HOTFIX : only embeddable parameter / embeddable wrapper should be boxed in stacksafe method
             if (isEmbeddable(moduleScope->getClassFlags(moduleScope->subjectHints.get(param.subj_ref)))) {
                return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
             }
@@ -1572,19 +1578,19 @@ bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree
       return true;
    }
    else if (node == lxConstantInt) {
-      int flags = scope.getClassFlags(nodeRef);
+      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
 
-      return (flags & elDebugMask) == elDebugDWORD;
+      return isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD;
    }
    else if (node == lxConstantReal) {
-      int flags = scope.getClassFlags(nodeRef);
+      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
 
-      return (flags & elDebugMask) == elDebugReal64;
+      return isEmbeddable(flags) && (flags & elDebugMask) == elDebugReal64;
    }
    else if (node == lxConstantLong) {
-      int flags = scope.getClassFlags(nodeRef);
+      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
 
-      return (flags & elDebugMask) == elDebugQWORD;
+      return isEmbeddable(flags) && (flags & elDebugMask) == elDebugQWORD;
    }
    else return scope.checkIfCompatible(typeRef, nodeRef);
 }
@@ -2392,17 +2398,19 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
                   classRef = scope.moduleScope->subjectHints.get(type);
 
                   int flags = scope.moduleScope->getClassFlags(classRef);
-                  //HOTFIX : recognize int wrapper as primitive value
-                  switch (flags & elDebugMask) {
-                     case elDebugDWORD:
-                        classRef = -1; // NOTE : -1 means primitive int32
-                        break;
-                     case elDebugQWORD:
-                        classRef = -2; // NOTE : -2 means primitive int64
-                        break;
-                     case elDebugReal64:
-                        classRef = -4; // NOTE : -4 means primitive real64
-                        break;
+                  if (isEmbeddable(flags)) {
+                     //HOTFIX : recognize embeddable object as primitive value
+                     switch (flags & elDebugMask) {
+                        case elDebugDWORD:
+                           classRef = -1; // NOTE : -1 means primitive int32
+                           break;
+                        case elDebugQWORD:
+                           classRef = -2; // NOTE : -2 means primitive int64
+                           break;
+                        case elDebugReal64:
+                           classRef = -4; // NOTE : -4 means primitive real64
+                           break;
+                     }
                   }
                }
             }
@@ -2432,30 +2440,6 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
          }
       }
       else scope.raiseError(errUnknownSubject, terminal);
-
-   //   //      //if (StringHelper::compare(terminal, HINT_TYPE)) {
-   //   //      //   TerminalInfo typeValue = hints.firstChild().Terminal();
-   //   //
-   //   //
-   //   //      //   size = moduleScope->defineTypeSize(type, classReference);
-   //   //      //}
-   //   //      //else if (StringHelper::compare(terminal, HINT_SIZE)) {
-   //   //      //   int itemSize = moduleScope->defineTypeSize(type);
-   //   //
-   //   //      //   TerminalInfo sizeValue = hints.firstChild().Terminal();
-   //   //      //   if (itemSize < 0 && sizeValue.symbol == tsInteger) {
-   //   //      //      itemSize = -itemSize;
-   //   //
-   //   //      //      size = StringHelper::strToInt(sizeValue.value) * itemSize;
-   //   //      //   }
-   //   //      //   else if (itemSize < 0 && sizeValue.symbol == tsHexInteger) {
-   //   //      //      itemSize = -itemSize;
-   //   //
-   //   //      //      size = StringHelper::strToLong(sizeValue.value, 16) * itemSize;
-   //   //      //   }
-   //   //      //   else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-   //   //      //}
-   //   //else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       hints = hints.nextNode();
    }
@@ -2557,8 +2541,7 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       if (isPrimitiveRef(classRef)) {
          scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
          if (isEmbeddable(localInfo)) {
-            switch (classRef)
-            {
+            switch (classRef) {
                case -1:
                case -2:
                case -4:
@@ -5461,6 +5444,8 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
 ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
 {
+   int initialParamCount = templateInfo.parameters.Count();
+
    if (!reference) {
       reference = moduleScope.mapNestedExpression();
    }
@@ -5491,7 +5476,11 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
    // HOTFIX : generate syntax once again to properly import the template code
    writer.clear();
    writer.newNode(lxRoot, scope.reference);
-   templateInfo.parameters.clear();
+
+   // HOT FIX : declare external parameters once again, 
+   // intitial parameters must be preserved
+   while (templateInfo.parameters.Count() > initialParamCount)
+      templateInfo.parameters.erase(templateInfo.parameters.end());
 
    importTemplate(scope, writer, templateInfo);
    importTemplates(scope, writer);                 // HOTFIX : import templates declared in templates
@@ -5784,8 +5773,8 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
 
          int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
          if (isEmbeddable(fieldFlags) && test(scope.info.header.flags, elStructureRole)) {
-            // wrapper around embeddable object is imbeddable itself
-            scope.info.header.flags |= elEmbeddable;
+            // wrapper around embeddable object should be marked as embeddable wrapper
+            scope.info.header.flags |= elEmbeddableWrapper;
 
             if ((scope.info.header.flags & elDebugMask) == 0)
                scope.info.header.flags |= fieldFlags & elDebugMask;
@@ -6069,7 +6058,23 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
             writer.newNode(lxBoxing);
             writer.appendNode(lxFieldAddress, info.targetOffset);
 
-            writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
+            if (test(scope.info.header.flags, elWrapper)) {
+               // HOTFIX : recognize primitive types
+               switch (scope.info.header.flags & elDebugMask) {
+                  case elDebugDWORD:
+                     writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
+                     break;
+                  case elDebugQWORD:
+                     writer.appendNode(lxTarget, -2); // NOTE : -2 means primitive long integer
+                     break;
+                  case elDebugReal64:
+                     writer.appendNode(lxTarget, -4); // NOTE : -4 means primitive real number
+                     break;
+                  default:
+                     writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
+               }
+            }
+            else writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
          }
          else writer.newNode(lxField, info.targetOffset);
       }
@@ -6099,11 +6104,6 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          }         
       }
 
-//      writer.newNode(info.size != 0? lxFieldAddress : lxField, info.offset);
-//
-//      if (info.targetRef != 0)
-//         writer.appendNode(lxTarget, info.targetRef);
-      
       if (info.targetType != 0)
          writer.appendNode(lxType, info.targetType);
    }
@@ -6799,7 +6799,15 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
                if (!test(info.header.flags, elStructureRole)) {
                   node.appendNode(lxOverridden);
                   SNode n = SyntaxTree::findChild(node, lxOverridden);
-                  n.appendNode(lxField);
+                  n.appendNode(lxCurrentField);
+               }
+               else {
+                  node.appendNode(lxOverridden);
+                  SNode n = SyntaxTree::findChild(node, lxOverridden);
+                  n.appendNode(lxBoxing);
+                  n = SyntaxTree::findChild(n, lxBoxing);
+                  n.appendNode(lxCurrent);
+                  n.appendNode(lxTarget, target.argument);
                }
             }            
          }
@@ -6833,16 +6841,32 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
    }
 }
 
-int Compiler :: mapOpArg(ModuleScope& scope, SNode arg)
+int Compiler :: mapOpArg(ModuleScope& scope, SNode arg, ref_t& ref)
 {
    int flags = 0;
 
-   ref_t ref = SyntaxTree::findChild(arg, lxTarget).argument;
+   ref = SyntaxTree::findChild(arg, lxTarget).argument;
    ref_t type = SyntaxTree::findChild(arg, lxType).argument;
    if (isPrimitiveRef(ref) || ref == 0) {
       flags = scope.getClassFlags(scope.subjectHints.get(type));
    }
-   else flags = scope.getClassFlags(ref);
+   else {
+      flags = scope.getClassFlags(ref);
+      if (test(flags, elEmbeddableWrapper | elStructureRole)) {
+         //HOTFIX : recognize embeddable object as primitive value
+         switch (flags & elDebugMask) {
+            case elDebugDWORD:
+               ref = -1; // NOTE : -1 means primitive int32
+               break;
+            case elDebugQWORD:
+               ref = -2; // NOTE : -2 means primitive int64
+               break;
+            case elDebugReal64:
+               ref = -4; // NOTE : -4 means primitive real64
+               break;
+         }
+      }
+   }
 
    return flags & elDebugMask;
 }
@@ -6911,10 +6935,10 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
       ref_t destType = SyntaxTree::findChild(larg, lxType).argument;
 
-      int lflags = mapOpArg(scope, larg);
+      ref_t lref = 0;
+      int lflags = mapOpArg(scope, larg, lref);
       int rflags = mapOpArg(scope, rarg);
 
-      ref_t lref = SyntaxTree::findChild(larg, lxTarget).argument;
       if (isPrimitiveRef(lref)) {
          if (IsNumericOperator(node.argument)) {
             if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
@@ -6931,6 +6955,17 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             }
          }
          else if (IsCompOperator(node.argument)) {
+            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
+               node = lxIntOp;
+            }
+            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
+               node = lxLongOp;
+            }
+            else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
+               node = lxRealOp;
+            }
+         }
+         else if (IsVarOperator(node.argument)) {
             if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
                node = lxIntOp;
             }
@@ -7024,7 +7059,7 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, S
 
 void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLevel)
 {
-   int mode = HINT_NOUNBOXING;
+   int mode = HINT_NOUNBOXING | HINT_ASSIGNING;
    if (node.argument != 0)
       mode |= HINT_NOBOXING;
 
@@ -7214,7 +7249,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
                   typecasted = false;
                }
             }
-            else if (test(targetInfo.header.flags, elStructureWrapper | elEmbeddable)) {
+            else if (test(targetInfo.header.flags, elStructureRole | elEmbeddableWrapper)) {
                // if target is source wrapper (i.e. target is a source container)
                if (checkIfImplicitBoxable(scope, sourceClassRef, targetInfo)) {
                   // if boxing is not required (stack safe) and can be passed directly
@@ -7244,7 +7279,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
                ClassInfo sourceInfo;
                scope.loadClassInfo(sourceInfo, sourceClassRef, false);
                // if source is target wrapper (i.e. source is a target container)
-               if (test(sourceInfo.header.flags, elStructureWrapper | elEmbeddable) && scope.subjectHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
+               if (test(sourceInfo.header.flags, elStructureRole | elEmbeddableWrapper) && scope.subjectHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
                   // if boxing is not required (stack safe) and can be passed directly
                   if (test(mode, HINT_NOBOXING)) {
                      node = lxExpression;

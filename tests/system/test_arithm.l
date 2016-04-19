@@ -309,14 +309,14 @@
     console write:"(2 >= 2) is " writeLine:(2 >= 2).
     console write:"(2 >= 3) is " writeLine:(2 >= 3).
 
-//    #var n := Integer new write:1.
-//    n += 2.
-//    n -= 2.
-//    n *= 2.
-//    n /= 2.
-//    
-//    (n == 1) ?
-//        [ console writeLine:"Integer operators are working". ].
+    #var(vint) n := 1.
+    n += 2.
+    n -= 2.
+    n *= 2.
+    n /= 2.
+    
+    (n == 1) ?
+        [ console writeLine:"Integer operators are working". ].
 ].
 
 //// --- LongArithmeticTest ---

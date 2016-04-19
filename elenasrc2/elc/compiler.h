@@ -872,7 +872,12 @@ private:
 
    //int mapOperandType(CodeScope& scope, ObjectInfo operand);
 //   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
-   int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
+   int mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target);
+   int mapOpArg(Compiler::ModuleScope& scope, SNode arg)
+   {
+      ref_t dummy;
+      return mapOpArg(scope, arg, dummy);
+   }
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
