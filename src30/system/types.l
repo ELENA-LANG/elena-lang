@@ -12,7 +12,7 @@
 #subject int        = system'IntNumber.
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
-//#subject(class:system'CharValue)    char.
+#subject char       = system'CharValue.
 #subject mssg       = system'Message.
 //#subject(class:system'ExtensionMessage) ext_mssg.
 #subject verb       = system'Verb.

@@ -6756,6 +6756,9 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t 
    else if (targetRef == -1) {
       size = 4;
    }
+   else if (targetRef == -2 || targetRef == -4) {
+      size = 8;
+   }
 
    if (size != 0) {
       int offset = allocateStructure(scope, node, size);
@@ -7229,14 +7232,33 @@ void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
    // HOT FIX : box / assign primitive structures
    if (isPrimitiveRef(target.argument)) {
       ref_t type = SyntaxTree::findChild(node, lxType).argument;
-      int size = scope.defineSubjectSize(type, false);
-
-      if (target.argument == -3) {
-         node.setArgument(-size);
+      if (type == 0) {
+         // HOTFIX : if the type is not provided
+         switch (target.argument) {
+            case -1:
+               node.setArgument(4);
+               target.setArgument(scope.intReference);
+               break;
+            case -2:
+               node.setArgument(8);
+               target.setArgument(scope.longReference);
+               break;
+            case -4:
+               node.setArgument(8);
+               target.setArgument(scope.realReference);
+               break;
+         }
       }
-      else node.setArgument(size);
+      else {
+         int size = scope.defineSubjectSize(type, false);
 
-      target.setArgument(scope.subjectHints.get(type));
+         if (target.argument == -3) {
+            node.setArgument(-size);
+         }
+         else node.setArgument(size);
+
+         target.setArgument(scope.subjectHints.get(type));
+      }
    }
    else if (node.argument == 0)
       node.setArgument(scope.defineStructSize(target.argument));

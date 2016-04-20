@@ -411,12 +411,11 @@
     #var b3 := "ba" > "ab".
     #var b4 := "ab" < "abc".
 
-//    #var l := "abc" + "de".
-//    #var ll := l length.
-//    #var c := l@2.
-//
+    #var l := "abc" + "de".
+    #var ll := l length.
+    #var c := l@2.
+
 //    #var a := l toArray.
-////    #var a2 := l~indexable arreay.
 //
 //    "abc" run &each: (:ch)[ console write:ch ].
 //

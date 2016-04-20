@@ -7,6 +7,7 @@
 #subject vint   = varof:int.
 #subject vlong  = varof:long.
 #subject vreal  = varof:real.
+#subject vchar  = varof:char.
 
 // --- BaseValue ---
 
@@ -1204,294 +1205,169 @@
 //        ^ aCode.
 //    ]
 }
-////
-////// --- CharValue ---
-////
-/////// An UTF-32 character symbol
-////#class(sealed,integer:4) CharValue :: BaseValue
-////{
-////    /// Creates the object with a default value (0)
-////    #constructor new
-////        => system'core_routines'int_init.        
-////
-////    /// Creates the object with specified value
-////    #constructor(stacksafe) new &char:anOperand
-////        => system'core_routines'int_copy.
-////
-////    /// Creates the object with specified value
-////    #constructor new : anOperand
-////        <= new &char:(anOperand cast:%convert &to:charConvertor char).
-////
-////    /// Creates the object with specified numeric value
-////    #constructor(stacksafe) new &int:anOperand
-////        <= new &char:(charConvertor convert &int:anOperand).
-////
-////    /// Returns the minimal possible character value (0)
-////    #constructor min
-////        <= %new &char:#0.
-////
-////    /// Returns the maximal possible character value (010FFFFh)
-////    #constructor max
-////        <= %new &char:#010FFFFh.
-////
-////    /// Returns itself
-////    #method char = $self.
-////
-////    #method(stacksafe) readInt &vint:aRetVal
-////    [
-////        intConvertor convert &char:$self &vint:aRetVal.
-////    ]
-////
-////    /// Returns the numeric value
-////    #method(stacksafe,embeddable,suppress:w2) int
-////    [
-////        #var(type:int)aRetVal.
-////        $self readInt &vint:aRetVal.
-////        
-////        ^ aRetVal.
-////    ]
-////    
-////    #method add : anObject
-////        = anObject cast:%eval &to:
-////            {
-////                eval:aChar &int:n
-////                    = aChar add &int:n.
-////                    
-////                eval:aChar &short:n
-////                    = aChar add &int:(n int).
-////                    
-////                eval:aChar &byte:n
-////                    = aChar add &int:(n int).
-////                    
-////                eval:aChar &literal:aLiteral
-////                    = aChar literal add &literal:aLiteral.
-////            }
-////            &with:$self.
-////        
-////    #method subtract : anObject
-////        = anObject cast:%eval &to:
-////            {
-////                eval:aChar &int:n
-////                    = aChar subtract &int:n.
-////                    
-////                eval:aChar &short:n
-////                    = aChar subtract &int:(n int).
-////                    
-////                eval:aChar &byte:n
-////                    = aChar subtract &int:(n int).
-////            }
-////            &with:$self.
-////        
-////    #method add &int:aNumber
-////    [
-////        #var(type:int)n := $self int.
-////        
-////        ^ CharValue new &int:(n + aNumber).
-////    ]
-////        
-////    #method subtract &int:aNumber
-////    [
-////        #var(type:int)n := $self int.
-////        
-////        ^ CharValue new &int:(n - aNumber).
-////    ]
-////    
-////    /// Compares values
-////    #method(stacksafe) equal &char:anOperand 
-////        => system'core_routines'int_equal.
-////
-////    /// Compares values
-////    #method(stacksafe) less &char:anOperand 
-////        => system'core_routines'int_less.
-////
-////    /// Compares values
-////    #method(stacksafe) equal &int:anOperand 
-////        => system'core_routines'int_equal.
-////
-////    /// Compares values
-////    #method(stacksafe) less &int:anOperand 
-////        => system'core_routines'int_less.
-////
-////    /// Clones the value
-////    #method clone = CharValue new &char:$self.
-////
-////    /// Dispatches the verb to the target object with char subject
-////    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &char:$self.
-////    
-////    /// Dispatches the verb to the target object with char subject
-////    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:$self.
-////
-////    /// Returns the literal value
-////    #method(stacksafe) literal = literalConvertor convert &char:$self.
-////
-////    /// Returns the wide literal value
-////    #method(stacksafe) wide = wideConvertor convert &char:$self.
-////    
-////    /// Reads the number of bytes to represent the symbol
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'char_getlen.
-////        
-////    /// Reads the number of bytes to represent the symbol
-////    #method(stacksafe) readWideLength &vint:aRetVal
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        aLength := aLength + 1.
-////        aLength := aLength / 2.
-////
-////        aRetVal << aLength.
-////    ]
-////        
-////    /// Retuns the number of bytes to represent the symbol        
-////    #method(stacksafe,type:int,embeddable,suppress:w3) length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]
-////    
-////    /// Retuns the number of short integers to represent the symbol
-////    #method(stacksafe,type:int,embeddable,suppress:w3) wideLength
-////    [
-////        #var(type:int)aLength.
-////        $self readWideLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]
-////
-////    // Reads the object hash code into the output parameter
-////    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
-////    
-////    #method(embeddable,type:int,suppress:w3) hash_code
-////    [
-////        #var(type:int)aCode.
-////        $self readHashCode &vint:aCode.
-////        
-////        ^ aCode.
-////    ]
-////}
-////
-////// --- Char ---
-////
-/////// An UTF-32 character variable
-///////
-/////// Extends CharValue class
-////#class(sealed,struct:embeddable) Char :: BaseVariable
-////{
-////    #field(type:char)theValue.
-////    
-////    /// Creates a variable with a default value (0)
-////    #constructor new
-////    [
-////        theValue := #0.
-////    ]
-////    
-////    /// Creates a variable with a specified value
-////    #constructor new : aValue  
-////    [
-////        aValue cast:%write &to:$self.
-////    ]
-////    
-////    /// Creates a variable with a specified value
-////    #constructor(stacksafe) new &char:aValue
-////    [
-////        theValue := aValue.
-////    ]
-////    
-////    /// Creates a variable with a specified value
-////    #constructor new &int:aValue
-////    [
-////        theValue := charConvertor convert &int:aValue.
-////    ]
-////    
-////    /// Returns itself
-////    #method vchar = $self.
-////    
-////    /// Returns the character value
-////    #method char = CharValue new &char:theValue.
-////    
-////    /// Copies the character value
-////    #method(stacksafe) write &char:anOperand
-////    [
-////        theValue := anOperand.
-////    ]
-////    
-////    /// Copies the character value
-////    #method(stacksafe) write &int:value
-////    [
-////        theValue := charConvertor convert &int:value.
-////    ]
-////    
-////    /// Reads the character value
-////    #method(stacksafe) read &vchar:aRetVal
-////    [
-////        aRetVal << theValue.
-////    ]
-////    
-////    /// Compares values
-////    #method(type:bool,stacksafe) equal &char:anOperand 
-////        = theValue == anOperand.
-////
-////    /// Compares values
-////    #method(type:bool,stacksafe) less &char:anOperand
-////        = theValue < anOperand.
-////
-////    // Returns the value        
-////    #method value = CharValue new &char:theValue.
-////
-////    /// Returns the literal value
-////    #method literal = literalConvertor convert &char:theValue.
-////
-////    /// Returns the literal value
-////    #method wide = wideConvertor convert &char:theValue.
-////
-////    /// Clones the variable
-////    #method clone = Char new &char:theValue.
-////    
-////    /// Reads the number of bytes to represent the symbol
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'char_getlen.
-////        
-////    /// Retuns the number of bytes to represent the symbol        
-////    #method length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ IntNumber new &int:aLength.
-////    ]
-////    
-////    /// Dispatches the verb to the target object with char subject
-////    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &char:(CharValue new &char:theValue).
-////    
-////    /// Dispatches the verb to the target object with char subject
-////    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &char:(CharValue new &char:theValue).
-////
-////    /// Extends the character value
-////    #method(suppress:w3) => theValue.    
-////}
-////
-////// === Basic Factory symbols ==
-////
-////#class BaseExtender
-////{
-////    #field theObject.
-////    
-////    /// Returns true if the specified object is equal to the current object; otherwise, false.
-////    #method(type:bool) equal : anObject
-////        => theObject.
-////      
-////    /// Dispatches the verb to the target object
-////    #method cast : aVerb &to:aTarget => theObject.
-////    
-////    /// Dispatches the verb to the target object
-////    #method cast : aVerb &to:aTarget &with:aParam => theObject.
-////    
-////    #method => theObject.
-////}
-////
+
+// --- CharValue ---
+
+/// An UTF-32 character symbol
+#class(sealed,integerof:4,dispatchable:char) CharValue :: BaseValue
+{
+    /// Creates the object with a default value (0)
+    #constructor new
+        = 0.
+
+//    /// Creates the object with specified value
+//    #constructor(stacksafe) new &char:anOperand
+//        => system'core_routines'int_copy.
+//
+//    /// Creates the object with specified value
+//    #constructor new : anOperand
+//        <= new &char:(anOperand cast:%convert &to:charConvertor char).
+//
+//    /// Creates the object with specified numeric value
+//    #constructor(stacksafe) new &int:anOperand
+//        <= new &char:(charConvertor convert &int:anOperand).
+//
+//    /// Returns the minimal possible character value (0)
+//    #constructor min
+//        <= %new &char:#0.
+//
+//    /// Returns the maximal possible character value (010FFFFh)
+//    #constructor max
+//        <= %new &char:#010FFFFh.
+//
+//    /// Returns itself
+//    #method char = $self.
+//
+//    #method(stacksafe) readInt &vint:aRetVal
+//    [
+//        intConvertor convert &char:$self &vint:aRetVal.
+//    ]
+//
+//    /// Returns the numeric value
+//    #method(stacksafe,embeddable,suppress:w2) int
+//    [
+//        #var(type:int)aRetVal.
+//        $self readInt &vint:aRetVal.
+//        
+//        ^ aRetVal.
+//    ]
+//    
+//    #method add : anObject
+//        = anObject cast:%eval &to:
+//            {
+//                eval:aChar &int:n
+//                    = aChar add &int:n.
+//                    
+//                eval:aChar &short:n
+//                    = aChar add &int:(n int).
+//                    
+//                eval:aChar &byte:n
+//                    = aChar add &int:(n int).
+//                    
+//                eval:aChar &literal:aLiteral
+//                    = aChar literal add &literal:aLiteral.
+//            }
+//            &with:$self.
+//        
+//    #method subtract : anObject
+//        = anObject cast:%eval &to:
+//            {
+//                eval:aChar &int:n
+//                    = aChar subtract &int:n.
+//                    
+//                eval:aChar &short:n
+//                    = aChar subtract &int:(n int).
+//                    
+//                eval:aChar &byte:n
+//                    = aChar subtract &int:(n int).
+//            }
+//            &with:$self.
+//        
+//    #method add &int:aNumber
+//    [
+//        #var(type:int)n := $self int.
+//        
+//        ^ CharValue new &int:(n + aNumber).
+//    ]
+//        
+//    #method subtract &int:aNumber
+//    [
+//        #var(type:int)n := $self int.
+//        
+//        ^ CharValue new &int:(n - aNumber).
+//    ]
+//    
+//    /// Compares values
+//    #method(stacksafe) equal &char:anOperand 
+//        => system'core_routines'int_equal.
+//
+//    /// Compares values
+//    #method(stacksafe) less &char:anOperand 
+//        => system'core_routines'int_less.
+//
+//    /// Compares values
+//    #method(stacksafe) equal &int:anOperand 
+//        => system'core_routines'int_equal.
+//
+//    /// Compares values
+//    #method(stacksafe) less &int:anOperand 
+//        => system'core_routines'int_less.
+//
+//    /// Clones the value
+//    #method clone = CharValue new &char:$self.
+//
+//    /// Returns the literal value
+//    #method(stacksafe) literal = literalConvertor convert &char:$self.
+//
+//    /// Returns the wide literal value
+//    #method(stacksafe) wide = wideConvertor convert &char:$self.
+//    
+//    /// Reads the number of bytes to represent the symbol
+//    #method(stacksafe) readLength &vint:aLength
+//        => system'core_routines'char_getlen.
+//        
+//    /// Reads the number of bytes to represent the symbol
+//    #method(stacksafe) readWideLength &vint:aRetVal
+//    [
+//        #var(type:int)aLength.
+//        $self readLength &vint:aLength.
+//        
+//        aLength := aLength + 1.
+//        aLength := aLength / 2.
+//
+//        aRetVal << aLength.
+//    ]
+//        
+//    /// Retuns the number of bytes to represent the symbol        
+//    #method(stacksafe,type:int,embeddable,suppress:w3) length
+//    [
+//        #var(type:int)aLength.
+//        $self readLength &vint:aLength.
+//        
+//        ^ aLength.
+//    ]
+//    
+//    /// Retuns the number of short integers to represent the symbol
+//    #method(stacksafe,type:int,embeddable,suppress:w3) wideLength
+//    [
+//        #var(type:int)aLength.
+//        $self readWideLength &vint:aLength.
+//        
+//        ^ aLength.
+//    ]
+//
+//    // Reads the object hash code into the output parameter
+//    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
+//    
+//    #method(embeddable,type:int,suppress:w3) hash_code
+//    [
+//        #var(type:int)aCode.
+//        $self readHashCode &vint:aCode.
+//        
+//        ^ aCode.
+//    ]
+}
+
 /////// A generic variable. 
 ///////
 /////// Extends an assigned value

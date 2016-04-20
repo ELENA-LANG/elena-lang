@@ -13,7 +13,11 @@
 #template(const,string) stringof : template_subj
 {
     #field(template_subj)$target.
-    
+
+    /// Concatinates the values
+    #method add : value 
+        = value cast:%add &to:$self.
+                        
     #method(outnprop:length,stacksafe)readLength &vint:retVal
     [
         #var(int)len.
@@ -21,6 +25,19 @@
         
         retVal := len - 1.
     ]    
+        
+    /// Returns the character at specified index
+    #method(char,stacksafe,suppress:w3) getAt &int:anIndex
+    [
+        #var(char)ch.
+        $self read &int:anIndex &vchar:ch.
+        
+        ^ ch.
+    ]
+
+    /// Returns the character at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
 }
 
 //// === basic memory classes ===
@@ -989,13 +1006,13 @@
 /// A UTF-8 literal value
 #class(sealed,stringof:byte,dispatchable:literal) LiteralValue :: BaseValue
 {
-//    /// Creates the empty literal
-//    #constructor min
-//        => system'core_routines's_empty.
+    /// Creates the empty literal
+    #constructor min
+        = emptyLiteralValue.
         
-//    /// Creates the literal string with specified length        
-//    #constructor(stacksafe) new &int:size
-//        = byte:(size + 1).
+    /// Creates the literal string with specified length        
+    #constructor(stacksafe) new &int:size
+        = byte:(size + 1).
 
 //    /// Creates the literal string with specified length and copies the parameter value
 //    #constructor(stacksafe) new &int:aSize &literal:aLiteral
@@ -1034,39 +1051,22 @@
 //    /// Compares the values
 //    #method(type:bool) less &char : aChar
 //        <= %less &literal:(aChar literal).
-//
-//    /// Concatinates the values
-//    #method(type:literal) add &literal : aLiteral
-//        => system'core_routines's_add.
-//
+
+    /// Concatinates the values
+    #method(literal) add &literal : aLiteral
+        => system'core_routines'__literal.
+
 //    /// Concatinates the values
 //    #method(type:literal,stacksafe) add &char:aChar
 //        = $self add &literal:(aChar literal).
-//
-//    /// Concatinates the values
-//    #method add : anObject
-//        = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines's_getat.
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'core_routines'__literal.
+
 //    // Reads the byte at the specified index and saves into an output parameter
 //    #method(stacksafe) read &int:anIndex &vbyte:anInt
 //        => system'core_routines'bs_readbyte.
-//        
-//    /// Returns the character at the specified index
-//    #method(type:char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(type:char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
 //
 //    /// Saves the index of the first occurence of the specified substring into an output parameter.
 //    ///
@@ -1211,14 +1211,14 @@
 /// A UTF-18 literal value
 #class(sealed,stringof:short,dispatchable:wide) WideLiteralValue :: BaseValue
 {
-//    /// Creates the empty literal
-//    #constructor min
-//        => system'core_routines'ws_empty.
-//        
-//    /// Creates the literal string with specified length
-//    #constructor(stacksafe) new &int:aSize 
-//        => system'core_routines'ws_create.
-//
+    /// Creates the empty literal
+    #constructor min
+        = emptyWideLiteralValue.
+        
+    /// Creates the literal string with specified length
+    #constructor(stacksafe) new &int:size
+        = short:(size + 1).
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    #constructor(stacksafe) new &int:aSize &wide:aLiteral
 //        => system'core_routines'ws_copy.
@@ -1238,9 +1238,6 @@
 //    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
 //        => system'core_routines'ws_copybuf.
 //
-//    /// Returns itself
-//    #method wide = $self.
-//
 //    /// Converts to UTF-8 literal
 //    #method literal = literalConvertor convert &wide:$self.
 
@@ -1259,11 +1256,11 @@
 //    /// Compares the values
 //    #method(type:bool) less &char : aChar
 //        <= %less &wide:(aChar wide).
-//
-//    /// Concatinates the values
-//    #method(type:wide,stacksafe) add &wide : aLiteral
-//        => system'core_routines'ws_add.
-//
+
+    /// Concatinates the values
+    #method(wide,stacksafe) add &wide : aLiteral
+        => system'core_routines'__wide.
+
 //    /// Concatinates the values
 //    #method(type:wide,stacksafe) add &char:aChar
 //        = $self add &wide:(aChar wide).
@@ -1271,31 +1268,14 @@
 //    /// Concatinates the values
 //    #method(type:wide) add &literal:aLiteral
 //        = $self add &wide:(aLiteral wide).
-//
-//    /// Concatinates the values
-//    #method add : anObject
-//        = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'ws_getat.
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'core_routines'__wide.
+
 //    // Reads the short integer at the specified index and saves into an output parameter
 //    #method(stacksafe) read &int:anIndex &vshort:aValue
 //        => system'core_routines'sa_readword.
-//        
-//    /// Returns the character at specified index
-//    #method(type:char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(type:char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
 //
 //    /// Saves the index of the first occurence of the specified substring into an output parameter.
 //    ///
