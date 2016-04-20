@@ -665,17 +665,43 @@ labErr:
 
 end
 
-/*
-procedure byte_min
+procedure __literal.equal&literal$[1]
 
-  bcopya
-  dcopy 0
-  nsave
-  acopyb
-  quitn 1
-
+  bloadsi 2
+  callextr api : sequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
 end
 
+procedure __literal.less&literal$[1]
+
+  bloadsi 2
+  callextr api : sless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __wide.equal&wide$[1]
+
+  bloadsi 2
+  callextr api : wequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __wide.less&wide$[1]
+
+  bloadsi 2
+  callextr api : wless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+/*
 procedure byte_max
 
   bcopya
@@ -3218,42 +3244,6 @@ labEnd:
 
   acopyb
   quitn 3
-  
-end
-
-procedure s_equal
-
-  bloadsi 2
-  callextr api : sequal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure ws_equal
-
-  bloadsi 2
-  callextr api : wequal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure s_less
-
-  bloadsi 2
-  callextr api : sless
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure ws_less
-
-  bloadsi 2
-  callextr api : wless
-  selectr const : system'false const : system'true
-  quitn 2
   
 end
 

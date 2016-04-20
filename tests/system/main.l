@@ -12,9 +12,9 @@
     ObjectTest eval.
     BooleanTest eval.
     IntegerTest eval.
-//    LongTest eval.
-//    RealTest eval.
-//    LiteralTest eval.
+    LongTest eval.
+    RealTest eval.
+    LiteralTest eval.
 //    MultiDispatchTest eval.
 //    MultySelectTest  eval.
 //    EnumTest eval.    

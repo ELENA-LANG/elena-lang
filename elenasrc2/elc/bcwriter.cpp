@@ -2243,15 +2243,19 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
          tape.write(bcLCopy);
          break;
       case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
          tape.write(bcLAdd);
          break;
       case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
          tape.write(bcLSub);
          break;
       case MUL_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
          tape.write(bcLMul);
          break;
       case DIV_MESSAGE_ID:
+      case SEPARATE_MESSAGE_ID:
          tape.write(bcLDiv);
          break;
       case AND_MESSAGE_ID:
@@ -2281,15 +2285,19 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
          tape.write(bcLCopy);
          break;
       case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
          tape.write(bcRAdd);
          break;
       case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
          tape.write(bcRSub);
          break;
       case MUL_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
          tape.write(bcRMul);
          break;
       case DIV_MESSAGE_ID:
+      case SEPARATE_MESSAGE_ID:
          tape.write(bcRDiv);
          break;
       case EQUAL_MESSAGE_ID:
@@ -2741,6 +2749,15 @@ void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rar
 
       current = current.nextNode();
    }
+}
+
+void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   generateExpression(tape, node);
+   loadIndex(tape, lxResult);
+   loadObject(tape, lxThisLocal, 1);
+   // HOTFIX: -1 indicates the stack is not consumed by the constructor
+   callMethod(tape, 1, -1);
 }
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
@@ -3814,6 +3831,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxShortArrOp:
       case lxArrOp:
          generateArrOperation(tape, node);
+         break;
+      case lxNewOp:
+         generateNewOperation(tape, node);
          break;
       case lxResending:
          generateResendingExpression(tape, node);

@@ -260,6 +260,7 @@ class ByteCodeWriter
    void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);

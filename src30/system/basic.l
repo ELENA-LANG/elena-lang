@@ -6,6 +6,7 @@
 #subject vshort = varof:short.
 #subject vint   = varof:int.
 #subject vlong  = varof:long.
+#subject vreal  = varof:real.
 
 // --- BaseValue ---
 

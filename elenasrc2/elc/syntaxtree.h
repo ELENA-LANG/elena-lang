@@ -23,6 +23,7 @@ enum LexicalType
    lxMessageMask     = 0x10000,
    lxReferenceMask   = 0x20000,
    lxSubjectMask     = 0x40000,
+   lxConstantMask    = 0x80000,
 
    lxEnding          = -1,
 
@@ -68,18 +69,18 @@ enum LexicalType
    lxCreatingClass   = 0x00324, // arg - count
    lxCreatingStruct  = 0x00325, // arg - size
    lxExternFrame     = 0x00326,
-   //lxTemplateCalling = 0x10327,
+   lxNewOp           = 0x00327,
 
-   lxOp              = 0x00328, // generic operation, arg - operation id 
-   lxBoolOp          = 0x00329, // arg - operation id
-   lxNilOp           = 0x0032A, // arg - operation id
-   lxIntOp           = 0x0132B, // arg - operation id
-   lxLongOp          = 0x0132C, // arg - operation id
-   lxRealOp          = 0x0132D, // arg - operation id
-   lxIntArrOp        = 0x0132E, // arg - operation id
-   lxByteArrOp       = 0x0132F, // arg - operation id
-   lxShortArrOp      = 0x01330, // arg - operation id
-   lxArrOp           = 0x01331, // arg - operation id
+   lxOp              = 0x00329, // generic operation, arg - operation id 
+   lxBoolOp          = 0x0032A, // arg - operation id
+   lxNilOp           = 0x0032B, // arg - operation id
+   lxIntOp           = 0x0132C, // arg - operation id
+   lxLongOp          = 0x0132D, // arg - operation id
+   lxRealOp          = 0x0132E, // arg - operation id
+   lxIntArrOp        = 0x0132F, // arg - operation id
+   lxByteArrOp       = 0x01330, // arg - operation id
+   lxShortArrOp      = 0x01331, // arg - operation id
+   lxArrOp           = 0x01332, // arg - operation id
 
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count
@@ -92,12 +93,12 @@ enum LexicalType
    lxLocal           = 0x04109, // arg - offset
    //lxBoxableLocal    = 0x0410A, // arg - offset7
    lxBlockLocal      = 0x0410B, // arg - offset
-   lxConstantString  = 0x2410C, // arg - reference
-   lxConstantWideStr = 0x2410D, // arg - reference
-   lxConstantChar    = 0x2410E, // arg - reference
-   lxConstantInt     = 0x2410F, // arg - reference
-   lxConstantLong    = 0x24110, // arg - reference
-   lxConstantReal    = 0x24111, // arg - reference
+   lxConstantString  = 0x8410C, // arg - reference
+   lxConstantWideStr = 0x8410D, // arg - reference
+   lxConstantChar    = 0x8410E, // arg - reference
+   lxConstantInt     = 0x8410F, // arg - reference
+   lxConstantLong    = 0x84110, // arg - reference
+   lxConstantReal    = 0x84111, // arg - reference
    lxConstantClass   = 0x24112, // arg - reference
    lxMessageConstant = 0x24113, // arg - rererence
    lxExtMessageConstant = 0x24114, // arg -reference

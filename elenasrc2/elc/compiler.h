@@ -558,7 +558,7 @@ private:
    struct SymbolScope : public SourceScope
    {
       bool  constant;
-//      ref_t typeRef;
+      ref_t typeRef;
 
       void compileHints(DNode hints);
 
@@ -672,6 +672,13 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope ? scope->reference : 0;
+      }
+
+      ref_t getFieldType(int offset, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.fieldTypes.get(offset) : 0;
       }
 
       ref_t getClassFlags(bool ownerClass = true)
@@ -823,7 +830,7 @@ private:
 
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
    void declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t ownerRef, ref_t hintRef, ref_t messageSubject = 0);
-   void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, TemplateInfo& info);
+   void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void readTemplateInfo(SyntaxTree::Node node, TemplateInfo& info);
    void copyTemplateInfo(SyntaxTree::Node node, SyntaxTree::Writer& writer);
 
@@ -889,6 +896,7 @@ private:
    ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 
+   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(DNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);   
    ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
@@ -934,7 +942,7 @@ private:
    
    void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
    void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
-//   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
+   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
    void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
@@ -993,6 +1001,7 @@ private:
    void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    bool optimizeOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeBoolOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void defineTargetSize(ModuleScope& scope, SNode& node);

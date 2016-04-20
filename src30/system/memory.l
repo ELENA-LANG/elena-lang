@@ -978,25 +978,25 @@
 //    /// Dispatches the verb to the target object with chararray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &chararray:$self.    
 //}
-//        
-//// --- emptyliteralvalue ---
-//
-///// An empty literal value
-//#symbol(const,type:literal) emptyLiteralValue = "".
+        
+// --- emptyliteralvalue ---
+
+/// An empty literal value
+#symbol(const,literal) emptyLiteralValue = "".
 
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-#class(sealed,stringof:byte,dispatchable:literal) LiteralValue //:: BaseValue
+#class(sealed,stringof:byte,dispatchable:literal) LiteralValue :: BaseValue
 {
 //    /// Creates the empty literal
 //    #constructor min
 //        => system'core_routines's_empty.
-//        
+        
 //    /// Creates the literal string with specified length        
-//    #constructor(stacksafe) new &int:aSize 
-//        => system'core_routines's_create.
-//
+//    #constructor(stacksafe) new &int:size
+//        = byte:(size + 1).
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    #constructor(stacksafe) new &int:aSize &literal:aLiteral
 //        => system'core_routines's_copy.
@@ -1019,14 +1019,14 @@
     /// Converts to UTF-16 literal
     #method wide = wideConvertor convert &literal:$self.
 
-//    /// Compares the values
-//    #method(type:bool) equal &literal : aLiteral
-//        => system'core_routines's_equal.
-//
-//    /// Compares the values
-//    #method(type:bool) less &literal : aLiteral
-//        => system'core_routines's_less.
-//
+    /// Compares the values
+    #method(bool) equal &literal : aLiteral
+        => system'core_routines'__literal.
+
+    /// Compares the values
+    #method(bool) less &literal : aLiteral
+        => system'core_routines'__literal.
+
 //    /// Compares the values
 //    #method(type:bool) equal &char : aChar
 //        <= %equal &literal:(aChar literal).
@@ -1186,12 +1186,6 @@
 //    /// Returns the string iterator
 //    #method iterator = LiteralIterator new &literal:$self.
 //    
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:$self.
-//    
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:$self.
-//    
 //    /// Clones the value
 //    #method clone = LiteralValue new &literal:$self.
 //
@@ -1207,175 +1201,16 @@
 //    ]
 }
 
-//// --- String ---
-//
-///// A literal variable. 
-/////
-///// Extends system'LiteralValue value
-//#class String :: BaseValue
-//{
-//    #field(type:literal)theValue.
-//
-//    /// Creates an empty literal variable 
-//    #constructor new
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//
-//    /// Creates a literal variable with specified value
-//    #constructor new : aValue
-//    [
-//        $self write:aValue.
-//    ]
-//    
-//    /// Creates a literal variable with specified value
-//    #constructor new &literal:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//    
-//    /// Creates a literal variable with specified value
-//    #constructor new &char:aValue
-//    [
-//        theValue := aValue literal.
-//    ]
-//    
-//    /// Creates a literal variable with specified value
-//    #constructor new &wide:aValue
-//    [
-//        theValue := aValue literal.
-//    ]
-//    
-//    /// Writes the value
-//    #method write : anOperand
-//    [
-//        anOperand cast:%write &to:$self.
-//    ]
-//    
-//    /// Writes the value
-//    #method write &literal:aLiteral
-//    [
-//        theValue := aLiteral.
-//    ]
-//    
-//    /// Writes the value
-//    #method write &wide:aLiteral
-//    [
-//        theValue := aLiteral literal.
-//    ]
-//    
-//    /// Writes the value
-//    #method write &char:aChar
-//    [
-//        theValue := aChar literal.
-//    ]
-//
-//    /// Appends the value    
-//    #method append : anOperand
-//    [
-//        anOperand cast:%append &to:$self.
-//    ]
-//    
-//    /// Appends the value    
-//    #method append &literal:anOperand
-//    [
-//        theValue := theValue add &literal:anOperand.
-//    ]
-//    
-//    /// Appends the value    
-//    #method append &wide:anOperand
-//    [
-//        theValue := theValue add &literal:(anOperand literal).
-//    ]
-//    
-//    /// Appends the value    
-//    #method append &char:anOperand
-//    [
-//        theValue := theValue add &literal:(anOperand literal).
-//    ]
-//
-//    /// Inserts a sub string
-//    #method insert &int:anIndex &literal:aLiteral
-//    [
-//        (anIndex == 0)
-//            ? [ theValue := aLiteral add &literal:theValue. ]
-//            ! [ theValue := theValue insert &int:anIndex &literal:aLiteral. ].
-//    ]
-//    
-//    /// Inserts a character
-//    #method insert &int:anIndex &char:aChar
-//    [
-//        (anIndex == 0)
-//            ? [ theValue := aChar literal add &literal:theValue. ]
-//            ! [ theValue := theValue insert &int:anIndex &literal:(aChar literal). ].
-//    ]
-//    
-//    /// Inserts a wide literal
-//    #method insert &int:anIndex &wide:aLiteral
-//    [
-//        theValue := theValue insert &int:anIndex &literal:(aLiteral literal).
-//    ]
-//
-//    /// Inserts an object at the specified position
-//    #method insert : anObject &at:anIndex
-//    [
-//        anObject cast:%eval &to:
-//        {
-//            eval:target &char:aChar [ target insert &int:(anIndex int) &char:aChar. ]
-//            
-//            eval:target &literal:aLiteral [ target insert &int:(anIndex int) &literal:aLiteral. ]
-//            
-//            eval:target &wide:aLiteral [ target insert &int:(anIndex int) &wide:aLiteral. ]
-//        } &with:$self.
-//    ]            
-//                                    
-//    /// Deletes a sub string
-//    #method delete &int:anIndex &int:aLength
-//    [
-//        theValue := theValue delete &int:anIndex &int:aLength.
-//    ]
-//
-//    /// Deletes a sub string
-//    #method delete : aLength &at:anIndex
-//        <= delete &int:(anIndex int) &int:(aLength int).
-//
-//    /// Clears the variable value
-//    #method clear
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//
-//    /// Clones the object    
-//    #method clone = String new &literal:theValue.
-//                
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &literal:theValue.
-//    
-//    /// Dispatches the verb to the target object with literal subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &literal:theValue.
-//
-//    /// Returns a literal value        
-//    #method literal = theValue.
-//    
-//    /// Returns a literal value        
-//    #method value = theValue.
-//    
-//    /// Redirects other messages to the literal value
-//    #method => theValue.
-//}
-//
-//// --- emptyWideLiteralValue ---
-//
-///// An empty wide literal value
-//#symbol(type:wide) emptyWideLiteralValue = ""w.
+// --- emptyWideLiteralValue ---
+
+/// An empty wide literal value
+#symbol(const,wide) emptyWideLiteralValue = ""w.
 
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-#class(sealed,stringof:short,dispatchable:wide) WideLiteralValue //:: BaseValue
+#class(sealed,stringof:short,dispatchable:wide) WideLiteralValue :: BaseValue
 {
-//    #field(type:shortarray)theValue.
-//
 //    /// Creates the empty literal
 //    #constructor min
 //        => system'core_routines'ws_empty.
@@ -1408,15 +1243,15 @@
 //
 //    /// Converts to UTF-8 literal
 //    #method literal = literalConvertor convert &wide:$self.
-//
-//    /// Compares the values
-//    #method(type:bool) equal &wide : aLiteral
-//        => system'core_routines'ws_equal.
-//
-//    /// Compares the values
-//    #method(type:bool) less &wide : aLiteral
-//        => system'core_routines'ws_less.
-//
+
+    /// Compares the values
+    #method(bool) equal &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Compares the values
+    #method(bool) less &wide : aLiteral
+        => system'core_routines'__wide.
+
 //    /// Compares the values
 //    #method(type:bool) equal &char : aChar
 //        <= %equal &wide:(aChar wide).
