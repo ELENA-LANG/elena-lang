@@ -411,12 +411,22 @@ void ByteCodeWriter :: closeFrame(CommandTape& tape)
 
 void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
 {
-   if (itemSize != 1) {
-      // muln itemSize
-      tape.write(bcMulN, itemSize);
+   if (itemSize == 4) {
+      // ncreate
+      tape.write(bcNCreate);
    }
-   // bcreate
-   tape.write(bcBCreate);
+   else if (itemSize == 2) {
+      // wcreate
+      tape.write(bcWCreate);
+   }
+   else {
+      if (itemSize != 1) {
+         // muln itemSize
+         tape.write(bcMulN, itemSize);
+      }
+      // bcreate
+      tape.write(bcBCreate);
+   }
 }
 
 void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
@@ -2755,9 +2765,23 @@ void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node 
 {
    generateExpression(tape, node);
    loadIndex(tape, lxResult);
-   loadObject(tape, lxThisLocal, 1);
-   // HOTFIX: -1 indicates the stack is not consumed by the constructor
-   callMethod(tape, 1, -1);
+
+   if (node.argument != 0) {
+      int size = SyntaxTree::findChild(node, lxSize).argument;
+
+      loadObject(tape, lxConstantClass, node.argument);
+      if (size < 0) {
+         newDynamicStructure(tape, -size);
+      }
+      else if (size == 0) {
+         newDynamicObject(tape);
+      }
+   }
+   else {      
+      loadObject(tape, lxThisLocal, 1);
+      // HOTFIX: -1 indicates the stack is not consumed by the constructor
+      callMethod(tape, 1, -1);
+   }
 }
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)

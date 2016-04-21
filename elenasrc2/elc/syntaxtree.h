@@ -69,7 +69,7 @@ enum LexicalType
    lxCreatingClass   = 0x00324, // arg - count
    lxCreatingStruct  = 0x00325, // arg - size
    lxExternFrame     = 0x00326,
-   lxNewOp           = 0x00327,
+   lxNewOp           = 0x20327,
 
    lxOp              = 0x00329, // generic operation, arg - operation id 
    lxBoolOp          = 0x0032A, // arg - operation id

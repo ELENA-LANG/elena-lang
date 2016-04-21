@@ -2,7 +2,7 @@
 In development:
 ------                              
               xdev - generic development
-                       * creating an array
+                       * #var(vbyte)b := 4. - should work
 
                        * int numbers : bitwise operations
 

@@ -27,6 +27,7 @@ using namespace _ELENA_;
 //#define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
 #define HINT_ASSIGNING        0x00004000
+#define HINT_CONSTRUCTOR_EPXR 0x00002000
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -4074,11 +4075,17 @@ ObjectInfo Compiler :: compileNewOperator(DNode node, CodeScope& scope, int mode
    if (isEmbeddable(flags)) {
       retVal.param = -3;
    }
-   else retVal.param = -5;
+   else {
+      retVal.param = -5;
+      // HOTFIX : allow lexical subjects as well
+      if (subject == 0)
+         subject = scope.moduleScope->module->mapSubject(node.Terminal(), false);
+   }
    retVal.type = subject;
 
-   scope.writer->appendNode(lxTarget, retVal.param);
+   appendObjectInfo(scope, retVal);
    appendTerminalInfo(scope.writer, node.FirstTerminal());
+
    scope.writer->closeNode();
 
    scope.writer->removeBookmark();
@@ -5145,7 +5152,7 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
 
          writer.newNode(lxReturning);
          writer.newBookmark();
-         ObjectInfo retVal = compileRetExpression(bodyNode.firstChild(), codeScope, 0);
+         ObjectInfo retVal = compileRetExpression(bodyNode.firstChild(), codeScope, HINT_CONSTRUCTOR_EPXR);
          if (resolveObjectReference(codeScope, retVal) != codeScope.getClassRefId()) {
             if (test(classFlags, elWrapper)) {
                writer.insert(lxTypecasting, codeScope.getFieldType(0));
@@ -6786,13 +6793,18 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t 
          node = lxBoxing;
          node.setArgument(size);
 
+         node.appendNode(lxTarget, targetRef);
+         node.appendNode(lxType, targetType);
+
          optimizeBoxing(scope, node, warningLevel, 0);
 
          node = SyntaxTree::findChild(node, lxAssigning);
       }
+      else {
+         node.appendNode(lxTarget, targetRef);
+         node.appendNode(lxType, targetType);
+      }
 
-      node.appendNode(lxTarget, targetRef);
-      node.appendNode(lxType, targetType);
 
       node = SyntaxTree::findChild(node, opType);
    }
@@ -7387,7 +7399,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
 
       if (!checkIfCompatible(scope, targetType, object)) {
          ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
-         ref_t sourceClassRef = resolvePrimitiveReference(scope, SyntaxTree::findChild(object, lxTarget));
+         ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
 
          if (sourceClassRef == 0 && sourceType != 0) {
             sourceClassRef = scope.subjectHints.get(sourceType);
@@ -7400,12 +7412,16 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
             ClassInfo targetInfo;
             scope.loadClassInfo(targetInfo, targetClassRef, false);
          
-            // HOT FIX : trying to typecast primitive array
+            // HOT FIX : trying to typecast primitive structure array
             if (sourceClassRef == -3) {
                if (test(targetInfo.header.flags, elStructureRole | elDynamicRole) && targetInfo.fieldTypes.get(-1) == sourceType) {
                   // if boxing is not required (stack safe) and can be passed directly
                   if (test(mode, HINT_NOBOXING)) {
                      node = lxExpression;
+                  }
+                  else if (object == lxNewOp) {
+                     object.setArgument(targetClassRef);
+                     object.appendNode(lxSize, targetInfo.size);
                   }
                   else {
                      // if unboxing is not required
@@ -7417,6 +7433,17 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
                      node.setArgument(targetInfo.size);
 
                      node.appendNode(lxTarget, targetClassRef);
+                  }
+
+                  typecasted = false;
+               }
+            }
+            // HOT FIX : trying to typecast primitive object array
+            else if (sourceClassRef == -5) {
+               if (test(targetInfo.header.flags, elDynamicRole) && targetInfo.fieldTypes.get(-1) == sourceType) {
+                  if (object == lxNewOp) {
+                     object.setArgument(targetClassRef);
+                     object.appendNode(lxSize, targetInfo.size);
                   }
 
                   typecasted = false;
