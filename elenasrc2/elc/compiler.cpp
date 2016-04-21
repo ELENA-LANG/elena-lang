@@ -27,7 +27,6 @@ using namespace _ELENA_;
 //#define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
 #define HINT_ASSIGNING        0x00004000
-#define HINT_CONSTRUCTOR_EPXR 0x00002000
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef Compiler::ObjectKind ObjectKind;
@@ -1572,7 +1571,7 @@ void Compiler :: optimizeTape(CommandTape& tape)
 bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node)
 {
    ref_t nodeType = SyntaxTree::findChild(node, lxType).argument;   
-   ref_t nodeRef = SyntaxTree::findChild(node, lxTarget).argument;
+   ref_t nodeRef = resolvePrimitiveReference(scope, SyntaxTree::findChild(node, lxTarget));
 
    if (nodeType == typeRef) {
       return true;
@@ -4060,36 +4059,29 @@ ObjectInfo Compiler :: compileRetExpression(DNode node, CodeScope& scope, int mo
 
 ObjectInfo Compiler :: compileNewOperator(DNode node, CodeScope& scope, int mode)
 {
-   ObjectInfo retVal;
+   ObjectInfo retVal(okObject);
+   scope.writer->newBookmark();
 
-   if (test(mode, HINT_CONSTRUCTOR_EPXR)) {
-      scope.writer->newBookmark();
+   // Compiler magic : if the argument is the number and the object is a strong subject
+   ref_t subject = scope.mapSubject(node.Terminal());
 
-      // Compiler magic : if the argument is the number and the object is a strong subject
-      ref_t subject = scope.moduleScope->mapSubject(node.Terminal());
+   //compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+   compileObject(node.nextNode(), scope, 0);
 
-      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
+   int flags = subject != 0 ? scope.moduleScope->getClassFlags(scope.moduleScope->subjectHints.get(subject)) : 0;
 
-      if (subject != 0) {
-         ClassScope* owner = (ClassScope*)scope.getScope(Scope::slClass);
-         // If it is a dynamic class constructor
-         if (owner && test(owner->info.header.flags, elDynamicRole) && owner->info.fieldTypes.get(-1) == subject) {
-            if (test(owner->info.header.flags, elStructureRole)) {
-               scope.writer->insert(lxNewOp);
-               scope.writer->appendNode(lxTarget, -3);
-               appendTerminalInfo(scope.writer, node.FirstTerminal());
-               scope.writer->closeNode();
-            }
-
-            return ObjectInfo(okObject, -3);
-         }
-      }
-
-      scope.writer->removeBookmark();
+   scope.writer->insert(lxNewOp);
+   if (isEmbeddable(flags)) {
+      retVal.param = -3;
    }
+   else retVal.param = -5;
+   retVal.type = subject;
 
-   // otherwise the operation is illegal
-   scope.raiseError(errInvalidOperation, node.Terminal());
+   scope.writer->appendNode(lxTarget, retVal.param);
+   appendTerminalInfo(scope.writer, node.FirstTerminal());
+   scope.writer->closeNode();
+
+   scope.writer->removeBookmark();
 
    return retVal;
 }
@@ -4173,33 +4165,51 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
 
    scope.writer->newBookmark();
 
-   ObjectInfo objectInfo = compileExpression(assigning.firstChild(), scope, targetType, 0);
+   ObjectInfo objectInfo = compileExpression(assigning.firstChild(), scope, 0, 0);
 
-   // if target type is not defined, try to find it out
-   if (target.extraparam > 0 && target.type == 0) {
+   if (targetType != 0) {
+      ref_t ref = resolveObjectReference(scope, objectInfo);
+
+      if (isPrimitiveRef(ref)) {
+         scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+         appendTerminalInfo(scope.writer, node.FirstTerminal());
+         scope.writer->closeNode();
+         //scope.writer->insert(lxBoxing);
+         //scope.writer->appendNode(lxTarget, target.extraparam);
+         //appendTerminalInfo(scope.writer, node.FirstTerminal());
+         //scope.writer->closeNode();
+      }
+      else if (objectInfo.type != targetType) {
+         scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+         appendTerminalInfo(scope.writer, node.FirstTerminal());
+         scope.writer->closeNode();
+      }      
+   }
+   else if (target.extraparam > 0) {
       ClassInfo info;
       scope.moduleScope->loadClassInfo(info, target.extraparam, false);
 
-      // only wrapper class can be used in this case
+      // wrapper class can be used in this case
       if (test(info.header.flags, elWrapper)) {
          target.type = info.fieldTypes.get(0);
 
-         scope.writer->insert(lxTypecasting, target.type);
+         scope.writer->insert(lxTypecasting, encodeMessage(target.type, GET_MESSAGE_ID, 0));
+         scope.writer->closeNode();
+         
          scope.writer->insert(lxBoxing, info.size);
          scope.writer->appendNode(lxTarget, target.extraparam);
-         appendTerminalInfo(scope.writer, node.FirstTerminal());
-         scope.writer->closeNode();
-         scope.writer->closeNode();
-      }
-      // HOTFIX : to allow boxing primitive array
-      else if (test(info.header.flags, elDynamicRole | elStructureRole) && objectInfo.kind == okLocalAddress && objectInfo.extraparam == -3 &&
-         (objectInfo.type == info.fieldTypes.get(-1)))
-      {
-         scope.writer->insert(lxBoxing, info.size);
-         scope.writer->appendNode(lxTarget, target.extraparam);
-         appendTerminalInfo(scope.writer, node.FirstTerminal());
+         appendTerminalInfo(scope.writer, node.FirstTerminal());         
          scope.writer->closeNode();
       }
+      //// HOTFIX : to allow boxing primitive array
+      //else if (test(info.header.flags, elDynamicRole | elStructureRole) && objectInfo.kind == okLocalAddress && objectInfo.extraparam == -3 &&
+      //   (objectInfo.type == info.fieldTypes.get(-1)))
+      //{
+      //   scope.writer->insert(lxBoxing, info.size);
+      //   scope.writer->appendNode(lxTarget, target.extraparam);
+      //   appendTerminalInfo(scope.writer, node.FirstTerminal());
+      //   scope.writer->closeNode();
+      //}
       else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
    }
 
@@ -5135,7 +5145,7 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
 
          writer.newNode(lxReturning);
          writer.newBookmark();
-         ObjectInfo retVal = compileRetExpression(bodyNode.firstChild(), codeScope, HINT_CONSTRUCTOR_EPXR);
+         ObjectInfo retVal = compileRetExpression(bodyNode.firstChild(), codeScope, 0);
          if (resolveObjectReference(codeScope, retVal) != codeScope.getClassRefId()) {
             if (test(classFlags, elWrapper)) {
                writer.insert(lxTypecasting, codeScope.getFieldType(0));
@@ -5867,7 +5877,7 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
             }
          }
       }
-      //else scope.info.header.flags |= elDebugArray;
+      else scope.info.header.flags |= elDebugArray;
    }
 
    // generate methods
@@ -6114,8 +6124,7 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          if (test(scope.info.header.flags, elDynamicRole)) {
             writer.newNode(lxThisLocal, 1);
 
-            if (test(scope.info.header.flags, elStructureRole))
-               writer.appendNode(lxTarget, -3);
+            writer.appendNode(lxTarget, test(scope.info.header.flags, elStructureRole) ? -3 : -5);
          }
          // if it is a structure field
          else if (test(scope.info.header.flags, elStructureRole)) {
@@ -6777,14 +6786,13 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t 
          node = lxBoxing;
          node.setArgument(size);
 
-         node.appendNode(lxTarget, targetRef);
-         node.appendNode(lxType, targetType);
-
          optimizeBoxing(scope, node, warningLevel, 0);
 
          node = SyntaxTree::findChild(node, lxAssigning);
       }
-      else node.appendNode(lxType, targetType);
+
+      node.appendNode(lxTarget, targetRef);
+      node.appendNode(lxType, targetType);
 
       node = SyntaxTree::findChild(node, opType);
    }
@@ -6995,11 +7003,17 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       if (node == lxOp) {
          node.setArgument(encodeMessage(0, node.argument, 2));
          node = lxCalling;
+
+         optimizeSyntaxExpression(scope, node, warningLevel);
+
+         return false;
       }
       else {
          optimizeSyntaxNode(scope, larg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
          optimizeSyntaxNode(scope, narg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
          optimizeSyntaxNode(scope, rarg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
+
+         return true;
       }
    }
    else {
@@ -7013,7 +7027,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       int lflags = mapOpArg(scope, larg, lref);
       int rflags = mapOpArg(scope, rarg);
 
-      // HOTFIX : allowing arithmetic / comparison operations with 
+      // HOTFIX : allowing arithmetic / comparison operations with numerics
       if (IsNumericOperator(node.argument) || IsCompOperator(node.argument)) {
          if (scope.intReference == lref) {
             lref = -1;
@@ -7065,21 +7079,27 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                node = lxRealOp;
             }
          }
-         else if (IsReferOperator(node.argument)) {
-            if (lref == -3 && rflags == elDebugDWORD) {
+         else if (IsReferOperator(node.argument) && rflags == elDebugDWORD) {
+            if (lref == -3) {
                lref = scope.subjectHints.get(destType);
                int size = scope.defineStructSize(lref);
                node.appendNode(lxSize, size);
                node = mapArrPrimitiveOp(size);
                boxing = true;
             }
+            else if (lref == -5) {
+               node = lxArrOp;
+            }
          }
-         else if (node.argument == READ_MESSAGE_ID) {
-            if (lref == -3 && rflags == elDebugDWORD) {
+         else if (node.argument == READ_MESSAGE_ID && rflags == elDebugDWORD) {
+            if (lref == -3) {
                lref = scope.subjectHints.get(destType);
                int size = scope.defineStructSize(lref);
                node.appendNode(lxSize, size);
                node = mapArrPrimitiveOp(size);
+            }
+            else if (lref == -5) {
+               node = lxArrOp;
             }
          }
       }
@@ -7225,6 +7245,20 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    //}
 }
 
+ref_t Compiler :: resolvePrimitiveReference(ModuleScope& scope, ref_t reference)
+{
+   switch (reference) {
+      case -1:
+         return scope.intReference;
+      case -2:
+         return scope.longReference;
+      case -4:
+         return scope.realReference;
+      default:
+         return reference;
+   }
+}
+
 void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
 {
    SNode target = SyntaxTree::findChild(node, lxTarget);
@@ -7234,20 +7268,9 @@ void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
       ref_t type = SyntaxTree::findChild(node, lxType).argument;
       if (type == 0) {
          // HOTFIX : if the type is not provided
-         switch (target.argument) {
-            case -1:
-               node.setArgument(4);
-               target.setArgument(scope.intReference);
-               break;
-            case -2:
-               node.setArgument(8);
-               target.setArgument(scope.longReference);
-               break;
-            case -4:
-               node.setArgument(8);
-               target.setArgument(scope.realReference);
-               break;
-         }
+         target.setArgument(resolvePrimitiveReference(scope, target));
+
+         node.setArgument(scope.defineStructSize(target.argument));
       }
       else {
          int size = scope.defineSubjectSize(type, false);
@@ -7320,6 +7343,22 @@ bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef
    else return false;
 }
 
+void Compiler :: raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered)
+{
+   if (test(warningMask, WARNING_LEVEL_2) && triggered) {
+      while (node != lxRoot) {
+         SNode row = SyntaxTree::findChild(node, lxRow);
+         SNode col = SyntaxTree::findChild(node, lxCol);
+         SNode terminal = SyntaxTree::findChild(node, lxTerminal);
+         if (col != lxNone && row != lxNone) {
+            scope.raiseWarning(warningLevel, message, row.argument, col.argument, terminal.identifier());
+            break;
+         }
+         else node = node.parentNode();
+      }
+   }
+}
+
 void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
    ref_t targetType = getSignature(node.argument);
@@ -7348,7 +7387,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
 
       if (!checkIfCompatible(scope, targetType, object)) {
          ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
-         ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
+         ref_t sourceClassRef = resolvePrimitiveReference(scope, SyntaxTree::findChild(object, lxTarget));
 
          if (sourceClassRef == 0 && sourceType != 0) {
             sourceClassRef = scope.subjectHints.get(sourceType);
@@ -7407,9 +7446,6 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
                }
             }
             else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
-               if (isPrimitiveRef(sourceClassRef) && sourceType != 0)
-                  sourceClassRef = scope.subjectHints.get(sourceType);
-
                ClassInfo sourceInfo;
                scope.loadClassInfo(sourceInfo, sourceClassRef, false);
                // if source is target wrapper (i.e. source is a target container)
@@ -7469,13 +7505,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
    if (!optimized)
       optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
 
-   if (test(warningMask, WARNING_LEVEL_2) && typecasted) {
-      SNode row = SyntaxTree::findChild(node, lxRow);
-      SNode col = SyntaxTree::findChild(node, lxCol);
-      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
-      if (col != lxNone && row != lxNone)
-         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, row.argument, col.argument, terminal.identifier());
-   }
+   raiseWarning(scope, node, wrnTypeMismatch, WARNING_LEVEL_2, warningMask, typecasted);
 }
 
 int Compiler :: allocateStructure(ModuleScope& scope, SNode node, int& size)

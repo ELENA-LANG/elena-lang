@@ -811,6 +811,8 @@ private:
       scope.writer->closeNode();
    }
 
+   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
+
    void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t messageRef);
    ref_t mapHint(DNode hint, ModuleScope& scope);
@@ -1005,6 +1007,11 @@ private:
    void optimizeBoolOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void defineTargetSize(ModuleScope& scope, SNode& node);
+   ref_t resolvePrimitiveReference(ModuleScope& scope, ref_t reference);
+   ref_t resolvePrimitiveReference(ModuleScope& scope, SNode node)
+   {
+      return resolvePrimitiveReference(scope, node.argument);
+   }
 
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);

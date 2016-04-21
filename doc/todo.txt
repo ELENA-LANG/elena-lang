@@ -1,6 +1,6 @@
 ------                                 
 In development:
-------                      
+------                              
               xdev - generic development
                        * creating an array
 
@@ -12,6 +12,8 @@ In development:
                        * system test
 
                        * review LiteralValue implementation
+
+                       * arrayof:bool - make sure set operation typecast the result
 
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)
