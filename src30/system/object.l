@@ -29,7 +29,22 @@
       = $target == val.
         
     #method(bool,stacksafe) less &template_subj:val
-      = $target < val.      
+      = $target < val.
+}
+
+#template(numeric:template_subj) intnumeric : template_subj
+{
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe)and &template_subj:val
+        = $target && val.
+        
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe)or &template_subj:val
+        = $target || val.
+        
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe)xor &template_subj:val
+        = $target ^^ val.
 }
 
 #template(variable) varof : template_subj
@@ -89,11 +104,6 @@
 {
     /// Returns true if the specified object is nil.
     #method(bool) equal : anObject = ($nil == anObject).
-//    
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &void:$nil.
-//    
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &void:$nil.
     
     /// Returns nil
     ///

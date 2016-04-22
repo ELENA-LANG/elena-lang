@@ -68,82 +68,10 @@
     #method negative = 0 subtract:$self.
 }
 
-//// --- IntBaseVariable ---
-//
-///// A base integer variable
-//#class IntBaseVariable :: IntBaseNumber
-//{
-//    /// Assigns the numeric value
-//    #method write : anOperand
-//    [
-//        anOperand cast:%write &to:$self.
-//    ]
-//    
-//    /// Appends the numeric value
-//    #method append : anOperand
-//    [
-//        anOperand cast:%append &to:$self.
-//    ]
-//    
-//    /// Subtracts the numeric value and reassigns the value
-//    #method reduce : anOperand
-//    [
-//        anOperand cast:%reduce &to:$self.
-//    ]
-//    
-//    /// Multiplies by the numeric value and reassigns the value
-//    #method multiplyBy : anOperand
-//    [
-//        anOperand cast:%multiplyBy &to:$self.
-//    ]
-//    
-//    /// Divides into the numeric value and reassigns the value
-//    #method divideInto : anOperand
-//    [
-//        anOperand cast:%divideInto &to:$self.
-//    ]
-//}
-//
-//// --- BaseNumber ---
-//
-///// A base numeric variable
-//#class BaseVariable :: BaseNumber
-//{
-//    /// Assigns the value
-//    #method write : anOperand
-//    [
-//        anOperand cast:%write &to:$self.
-//    ]
-//    
-//    /// Appends the value
-//    #method append : anOperand
-//    [
-//        anOperand cast:%append &to:$self.
-//    ]
-//    
-//    /// Subtracts the value and reassigns the value
-//    #method reduce : anOperand
-//    [
-//        anOperand cast:%reduce &to:$self.
-//    ]
-//    
-//    /// Multiplies by the value and reassigns the value
-//    #method multiplyBy : anOperand
-//    [
-//        anOperand cast:%multiplyBy &to:$self.
-//    ]
-//    
-//    /// Divides into the value and reassigns the value
-//    #method divideInto : anOperand
-//    [
-//        anOperand cast:%divideInto &to:$self.
-//    ]
-//}
-
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-#class(sealed,integerof:1,numeric:byte,dispatchable:byte) ByteNumber :: IntBaseNumber
+#class(sealed,integerof:1,intnumeric:byte,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
     /// Returns the minimal value (0)
     #constructor min
@@ -271,54 +199,42 @@
     #method(stacksafe) divide &real:anOperand
         = RealNumber new &byte:$self divide &real:anOperand.
 
-//    /// Returns the result of bitwise AND operation
-//    #method(type:byte,stacksafe) and &byte:anOperand
-//        => system'core_routines'byte_and.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:byte,stacksafe) or &byte:anOperand
-//        => system'core_routines'byte_or.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:byte,stacksafe) xor &byte:anOperand
-//        => system'core_routines'byte_xor.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &short:anOperand
-//        = ShortNumber new &byte:$self and &short:anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &short:anOperand
-//        = ShortNumber new &byte:$self or &short:anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &short:anOperand
-//        = ShortNumber new &byte:$self xor &short:anOperand.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(type:int,stacksafe) and &int:anOperand
-//        => system'core_routines'int_and.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:int,stacksafe) or &int:anOperand
-//        => system'core_routines'int_or.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:int,stacksafe) xor &int:anOperand
-//        => system'core_routines'int_xor.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(type:long,stacksafe) and &long:anOperand
-//        = LongNumber new &byte:$self and &long:anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:long,stacksafe) or &long:anOperand
-//        = LongNumber new &byte:$self or &long:anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:long,stacksafe) xor &long:anOperand
-//        = LongNumber new &byte:$self xor &long:anOperand.
-//
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &short:anOperand
+        = ShortNumber new &byte:$self and &short:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &short:anOperand
+        = ShortNumber new &byte:$self or &short:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &short:anOperand
+        = ShortNumber new &byte:$self xor &short:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &int:anOperand
+        = IntNumber new &byte:$self and &int:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &int:anOperand
+        = IntNumber new &byte:$self or &int:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &int:anOperand
+        = IntNumber new &byte:$self xor &int:anOperand.
+
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &long:anOperand
+        = LongNumber new &byte:$self and &long:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &long:anOperand
+        = LongNumber new &byte:$self or &long:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &long:anOperand
+        = LongNumber new &byte:$self xor &long:anOperand.
+
 //    #method shift : anOrder
 //        <= shift &int:(anOrder int).
 //    
@@ -357,7 +273,7 @@
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-#class(sealed,integerof:2,numeric:short,dispatchable:short) ShortNumber :: IntBaseNumber
+#class(sealed,integerof:2,intnumeric:short,dispatchable:short) ShortNumber :: IntBaseNumber
 {
     /// Returns the minimal value (-32768)
     #constructor min
@@ -494,54 +410,42 @@
     #method(stacksafe) divide &real:anOperand
         = RealNumber new &short:$self divide &real:anOperand.
 
-//    /// Returns the result of bitwise AND operation
-//    #method(type:short,stacksafe) and &short:anOperand
-//        => system'core_routines'short_and.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:short,stacksafe) or &short:anOperand
-//        => system'core_routines'short_or.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:short,stacksafe) xor &short:anOperand
-//        => system'core_routines'short_xor.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &byte:anOperand
-//        => system'core_routines'short_and.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &byte:anOperand
-//        => system'core_routines'short_or.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &byte:anOperand
-//        => system'core_routines'short_xor.
-//        
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &int:anOperand
-//        = IntNumber new &short:$self and &int:anOperand.        
-//        
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &int:anOperand
-//        = IntNumber new &short:$self or &int:anOperand.        
-//        
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &int:anOperand
-//        = IntNumber new &short:$self xor &int:anOperand.        
-//        
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &long:anOperand
-//        = LongNumber new &short:$self and &long:anOperand.        
-//        
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &long:anOperand
-//        = LongNumber new &short:$self or &long:anOperand.        
-//        
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &long:anOperand
-//        = LongNumber new &short:$self xor &long:anOperand.        
-//
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &byte:anOperand
+        = $self and &short:(ShortNumber new &byte:anOperand). 
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &byte:anOperand
+        = $self or &short:(ShortNumber new &byte:anOperand). 
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &byte:anOperand
+        = $self xor &short:(ShortNumber new &byte:anOperand). 
+        
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &int:anOperand
+        = IntNumber new &short:$self and &int:anOperand.        
+        
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &int:anOperand
+        = IntNumber new &short:$self or &int:anOperand.        
+        
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &int:anOperand
+        = IntNumber new &short:$self xor &int:anOperand.        
+        
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &long:anOperand
+        = LongNumber new &short:$self and &long:anOperand.        
+        
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &long:anOperand
+        = LongNumber new &short:$self or &long:anOperand.        
+        
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &long:anOperand
+        = LongNumber new &short:$self xor &long:anOperand.        
+
 //    /// Bitwise shift operation
 //    #method(type:short,stacksafe) shift &int:anOrder
 //        => system'core_routines'short_shift.
@@ -580,7 +484,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(sealed,integerof:4,numeric:int,dispatchable:int) IntNumber :: IntBaseNumber
+#class(sealed,integerof:4,intnumeric:int,dispatchable:int) IntNumber :: IntBaseNumber
 {
     /// Creates the object with the minimal value
     #constructor min
@@ -723,54 +627,42 @@
     #method(stacksafe) divide &real:anOperand
         = RealNumber new &int:$self divide &real:anOperand.
 
-//    /// Returns the result of bitwise AND operation
-//    #method(type:int,stacksafe) and &int:anOperand
-//        => system'core_routines'int_and.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(type:int,stacksafe) and &short:anOperand
-//        => system'core_routines'int_and.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(type:int,stacksafe) and &byte:anOperand
-//        => system'core_routines'int_and.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &long:anOperand
-//        = LongNumber new &int:$self and &long:anOperand.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:int,stacksafe) or &int:anOperand
-//        => system'core_routines'int_or.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:int,stacksafe) or &short:anOperand
-//        => system'core_routines'int_or.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:int,stacksafe) or &byte:anOperand
-//        => system'core_routines'int_or.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &long:anOperand
-//        = LongNumber new &int:$self or &long:anOperand.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:int,stacksafe) xor &int:anOperand
-//        => system'core_routines'int_xor.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:int,stacksafe) xor &short:anOperand
-//        => system'core_routines'int_xor.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:int,stacksafe) xor &byte:anOperand
-//        => system'core_routines'int_xor.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &long:anOperand
-//        = LongNumber new &int:$self xor &long:anOperand.
-//
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &short:anOperand
+        = $self and &int:(IntNumber new &short:anOperand).
+
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &byte:anOperand
+        = $self and &int:(IntNumber new &byte:anOperand).
+
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &long:anOperand
+        = LongNumber new &int:$self and &long:anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &short:anOperand
+        = $self or &int:(IntNumber new &short:anOperand).
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &byte:anOperand
+        = $self or &int:(IntNumber new &byte:anOperand).
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &long:anOperand
+        = LongNumber new &int:$self or &long:anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &short:anOperand
+        = $self xor &int:(IntNumber new &short:anOperand).
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &byte:anOperand
+        = $self xor &int:(IntNumber new &byte:anOperand).
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &long:anOperand
+        = LongNumber new &int:$self xor &long:anOperand.
+
 //    #method shift:anOrder
 //        <= shift &int:(anOrder int).
 //    
@@ -817,7 +709,7 @@
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-#class(sealed,integerof:8,numeric:long,dispatchable:long) LongNumber :: IntBaseNumber
+#class(sealed,integerof:8,intnumeric:long,dispatchable:long) LongNumber :: IntBaseNumber
 {
     /// Returns the minimal value
     #constructor min
@@ -959,54 +851,42 @@
     #method(stacksafe) divide &real:anOperand
         = RealNumber new &long:$self divide &real:anOperand.
         
-//    /// Returns the result of bitwise AND operation
-//    #method(type:long,stacksafe) and &long:anOperand
-//        => system'core_routines'long_and.
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &int:anOperand
-//        = $self and &long:(LongNumber new &int:anOperand).
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &short:anOperand
-//        = $self and &long:(LongNumber new &short:anOperand).
-//
-//    /// Returns the result of bitwise AND operation
-//    #method(stacksafe) and &byte:anOperand
-//        = $self and &long:(LongNumber new &byte:anOperand).
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(type:long,stacksafe) or &long:anOperand
-//        => system'core_routines'long_or.
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &int:anOperand
-//        = $self or &long:(LongNumber new &int:anOperand).
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &short:anOperand
-//        = $self or &long:(LongNumber new &short:anOperand).
-//
-//    /// Returns the result of bitwise OR operation
-//    #method(stacksafe) or &byte:anOperand
-//        = $self or &long:(LongNumber new &byte:anOperand).        
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(type:long,stacksafe) xor &long:anOperand
-//        => system'core_routines'long_xor.
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &int:anOperand
-//        = $self xor &long:(LongNumber new &int:anOperand).
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &short:anOperand
-//        = $self xor &long:(LongNumber new &short:anOperand).
-//
-//    /// Returns the result of bitwise XOR operation
-//    #method(stacksafe) xor &byte:anOperand
-//        = $self xor &long:(LongNumber new &byte:anOperand).
-//
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &int:anOperand
+        = $self and &long:(LongNumber new &int:anOperand).
+
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &short:anOperand
+        = $self and &long:(LongNumber new &short:anOperand).
+
+    /// Returns the result of bitwise AND operation
+    #method(stacksafe) and &byte:anOperand
+        = $self and &long:(LongNumber new &byte:anOperand).
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &int:anOperand
+        = $self or &long:(LongNumber new &int:anOperand).
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &short:anOperand
+        = $self or &long:(LongNumber new &short:anOperand).
+
+    /// Returns the result of bitwise OR operation
+    #method(stacksafe) or &byte:anOperand
+        = $self or &long:(LongNumber new &byte:anOperand).        
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &int:anOperand
+        = $self xor &long:(LongNumber new &int:anOperand).
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &short:anOperand
+        = $self xor &long:(LongNumber new &short:anOperand).
+
+    /// Returns the result of bitwise XOR operation
+    #method(stacksafe) xor &byte:anOperand
+        = $self xor &long:(LongNumber new &byte:anOperand).
+
 //    #method shift:anOrder
 //        <= shift &int:(anOrder int).
 //    

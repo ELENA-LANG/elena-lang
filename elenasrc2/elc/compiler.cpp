@@ -218,6 +218,18 @@ inline bool IsNumericOperator(int operator_id)
    }
 }
 
+inline bool IsBitwiseOperator(int operator_id)
+{
+   switch (operator_id) {
+      case AND_MESSAGE_ID:
+      case OR_MESSAGE_ID:
+      case XOR_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 inline bool IsCompOperator(int operator_id)
 {
    switch(operator_id) {
@@ -1478,9 +1490,35 @@ ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
    int index = info.fields.get(identifier);
 
    if (index >= 0) {
-      return ObjectInfo(okTemplateTarget, index);
+      return ObjectInfo(okTemplateTarget, index, 0, info.fieldTypes.get(index));
    }
    else return ClassScope::mapObject(identifier);
+}
+
+bool Compiler::TemplateScope :: validateTemplate(ref_t reference)
+{
+   _Module* extModule = NULL;
+   _Memory* section = moduleScope->loadTemplateInfo(reference, extModule);
+   if (!section)
+      return false;
+
+   // HOTFIX : inherite template fields
+   SyntaxTree tree(section);
+   SNode current = tree.readRoot();
+   current = current.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplateField) {
+         SNode typeNode = SyntaxTree::findChild(current, lxTemplateFieldType);
+
+         info.fields.add(SyntaxTree::findChild(current, lxTerminal).identifier(), current.argument);
+         if (typeNode.argument != 0)
+            info.fieldTypes.add(current.argument, typeNode.argument);
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
 }
 
 // --- Compiler ---
@@ -1831,11 +1869,16 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-void Compiler :: declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t ownerRef, ref_t hintRef, ref_t messageSubject)
+bool Compiler :: declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject)
 {
-   SyntaxTree::Writer writer(scope.templates, true);
+   ModuleScope* moduleScope = scope.moduleScope;
 
-   writer.newNode(lxClass, ownerRef);
+   if (!scope.validateTemplate(hintRef))
+      return false;
+
+   SyntaxTree::Writer writer(moduleScope->templates, true);
+
+   writer.newNode(lxClass, scope.reference);
    writer.newNode(lxTemplate, hintRef);
 
    DNode paramNode = hint.firstChild();
@@ -1845,7 +1888,7 @@ void Compiler :: declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t owner
          if (param == tsIdentifier) {
             ref_t subject = scope.mapSubject(param, false);
             if (subject == 0)
-               subject = scope.module->mapSubject(param, false);
+               subject = moduleScope->module->mapSubject(param, false);
 
             writer.appendNode(lxTemplateSubject, subject);
          }
@@ -1861,6 +1904,8 @@ void Compiler :: declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t owner
    writer.closeNode();
 
    writer.closeNode(); //HOTFIX : close the root node
+
+   return true;
 }
 
 void Compiler :: importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info)
@@ -1873,7 +1918,7 @@ void Compiler :: importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, r
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxTemplateSubject) {
-         writer.appendNode(current.type, importSubject(templateModule, current.argument, scope.module));
+         writer.appendNode(current.type, importTemplateSubject(templateModule, scope.module, current.argument, info));
       }
 
       current = current.nextNode();
@@ -2097,9 +2142,7 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
       else return true;
    }
    else if (hintRef != 0) {
-      declareTemplateInfo(hint, *scope.moduleScope, scope.reference, hintRef);
-
-      return true;
+      return declareTemplateInfo(hint, scope, hintRef);
    }
 
    return false;
@@ -2202,7 +2245,7 @@ void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassS
       TerminalInfo terminal = hints.Terminal();
 
       if (hintRef != 0) {
-         declareTemplateInfo(hints, *scope.moduleScope, scope.reference, hintRef);
+         declareTemplateInfo(hints, scope, hintRef);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
@@ -2387,7 +2430,7 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
             IdentifierString customVerb(signature, StringHelper::find(signature, '&', getlength(signature)));
             ref_t messageSubject = moduleScope->module->mapSubject(customVerb, false);
 
-            declareTemplateInfo(hints, *scope.moduleScope, classScope->reference, hintRef, messageSubject);
+            declareTemplateInfo(hints, *classScope, hintRef, messageSubject);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
       }
@@ -2800,6 +2843,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okTemplateTarget:
          scope.writer->newNode(lxTemplateTarget, object.param);
+         // HOTFIX : tempalte type is not an actual type, so it should be saved in special way and cleared after
+         scope.writer->appendNode(lxTemplateFieldType, object.type);
+         object.type = 0;
          break;
       case okExternal:
       case okInternal:
@@ -3306,112 +3352,15 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
    if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
       scope.writer->insert(lxNilOp, operator_id);
+      // HOT FIX : the result of comparision with $nil is always bool
+      scope.writer->appendNode(lxType, scope.moduleScope->boolType);
    }
    else  scope.writer->insert(lxOp, operator_id);
 
-   //// try to implement the primitive operation directly
-   //LexicalType primitiveOp = lxNone;
-   //size_t size = 0;
 
-   //// HOTFIX : primitive operations can be implemented only in the method
-   //// because the symbol implementations do not open a new stack frame
-   ///*else */if (scope.getScope(Scope::slMethod) != NULL) {
-   //   int lflag, rflag;
+   appendObjectInfo(scope, retVal);
 
-   ////   if (IsVarOperator(operator_id)) {
-   ////      lflag = mapVarOperandType(scope, object);
-   ////   }
-   //   /*else */lflag = mapOperandType(scope, object);
-
-   //   rflag = mapOperandType(scope, operand);
-
-   ////   if (lflag == rflag) {
-   ////      if (lflag == elDebugDWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
-   ////         if (IsExprOperator(operator_id))
-   ////            retVal.param = resolveObjectReference(scope, object);
-
-   ////         primitiveOp = lxIntOp;
-   ////         size = 4;
-   ////      }
-   ////      else if (lflag == elDebugQWORD && (IsExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
-   ////         if (IsExprOperator(operator_id))
-   ////            retVal.param = moduleScope->longReference;
-
-   ////         primitiveOp = lxLongOp;
-   ////         size = 8;
-   ////      }
-   ////      else if (lflag == elDebugReal64 && (IsRealExprOperator(operator_id) || IsCompOperator(operator_id) || IsVarOperator(operator_id))) {
-   ////         if (IsExprOperator(operator_id))
-   ////            retVal.param = moduleScope->realReference;
-
-   ////         primitiveOp = lxRealOp;
-   ////         size = 8;
-   ////      }
-   ////      else if (lflag == elDebugSubject && IsCompOperator(operator_id)) {
-   ////         primitiveOp = lxIntOp;
-   ////         size = 4;
-   ////      }
-   ////   }
-   //   /*else */if (IsReferOperator(operator_id)) {
-   //      if (isArrayPrimitive(lflag) && rflag == elDebugDWORD) {
-   //         ref_t itemType = 0;
-   //         if (object.kind == okLocalAddress && object.extraparam == -1) {
-   //            itemType = object.type;
-
-   //            size = moduleScope->defineSubjectSize(itemType);
-   //         }
-   //         else {
-   //            ClassInfo info;
-   //            moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(resolveObjectReference(scope, object)), false);
-
-   //            itemType = info.fieldTypes.get(-1);
-   //            size = -info.size;
-   //         }
-   //            
-   //         else {
-   //            primitiveOp = lxArrOp;
-
-   //            retVal.type = itemType;
-   //         }
-   //      }
-   //   }
-   //}
-
-   //if (primitiveOp != lxNone) {
-
-   //   if (size != 0)
-   //      scope.writer->appendNode(lxSize, size);
-
-   ////   if (IsCompOperator(operator_id)) {
-   ////      if (notOperator) {
-   ////         scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);
-   ////         scope.writer->appendNode(lxElseValue, scope.moduleScope->trueReference);
-   ////      }
-   ////      else {
-   ////         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
-   ////         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
-   ////      }
-   ////   }
-
-   ////   if (IsCompOperator(operator_id))
-   ////      retVal.type = moduleScope->boolType;
-
-      appendObjectInfo(scope, retVal);
-
-      scope.writer->closeNode();
-   //}
-   //else {
-   //   if (operator_id == SET_REFER_MESSAGE_ID)
-   //      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
-
-   //   int message_id = encodeMessage(0, operator_id, dblOperator ? 2 : 1);
-
-   //   // otherwise operation is replaced with a normal message call
-   //   retVal = compileMessage(node, scope, object, message_id, mode/* | HINT_INLINE*/);
-
-   //   //if (notOperator) {
-   //   //}
-   //}
+   scope.writer->closeNode();
 
    if (IsCompOperator(operator_id)) {
       if (notOperator) {
@@ -5951,8 +5900,6 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
-   compileTemplateHints(hints, writer, scope);
-
    DNode member = node.firstChild();
 
    // load template parameters
@@ -5964,6 +5911,8 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
       member = member.nextNode();
    }
+
+   compileTemplateHints(hints, writer, scope);
 
    // load dynamic subjects
    while (member == nsSubject) {
@@ -6041,21 +5990,6 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
    }
 
    writer.closeNode();
-
-//   // validate template
-//   if (scope.templateType == lxMethodTemplate) {
-//      ref_t targetMessage = 0;
-//      if (validateMethodTemplate(scope.syntaxTree.readRoot(), targetMessage)) {
-//         scope.syntaxTree.readRoot().insertNode(lxMessage, targetMessage);
-//      }
-//      else scope.raiseError(errInvalidSyntax, node.FirstTerminal());
-//   }
-
-//   // update template tree
-//   if (scope.templateType != lxNone) {
-//      scope.syntaxTree.readRoot() = scope.templateType;
-//   }
-//   else scope.raiseError(errInvalidSyntax, node.FirstTerminal());
 
    // save declaration
    scope.save();
@@ -6201,8 +6135,14 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          }         
       }
 
-      if (info.targetType != 0)
+      if (info.targetType != 0) {
          writer.appendNode(lxType, info.targetType);
+      }         
+      else {
+         SNode explicitTypeNode = SyntaxTree::findChild(current, lxTemplateFieldType);
+         writer.appendNode(lxType, info.parameters.get(explicitTypeNode.argument));
+      }
+      
    }
 //   else if (current.type == lxTemplateCalling) {
 //      ref_t message = overwriteSubject(current.argument, info.type);
@@ -7068,7 +7008,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       int rflags = mapOpArg(scope, rarg);
 
       // HOTFIX : allowing arithmetic / comparison operations with numerics
-      if (IsNumericOperator(node.argument) || IsCompOperator(node.argument)) {
+      if (IsNumericOperator(node.argument) || IsCompOperator(node.argument) || IsBitwiseOperator(node.argument)) {
          if (scope.intReference == lref) {
             lref = -1;
          }
@@ -7092,6 +7032,16 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             }
             else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
                node = lxRealOp;
+               boxing = true;
+            }
+         }
+         else if (IsBitwiseOperator(node.argument)) {
+            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
+               node = lxIntOp;
+               boxing = true;
+            }
+            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
+               node = lxLongOp;
                boxing = true;
             }
          }

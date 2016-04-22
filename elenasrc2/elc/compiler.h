@@ -527,6 +527,12 @@ private:
          else return Scope::getScope(level);
       }
 
+      virtual bool validateTemplate(ref_t hintRef)
+      {
+         _Module* extModule = NULL;
+         return moduleScope->loadTemplateInfo(hintRef, extModule) != 0;
+      }
+
       void save()
       {
          // save class meta data
@@ -744,6 +750,8 @@ private:
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
+      virtual bool validateTemplate(ref_t reference);
+
       virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
       {
          ref_t parameter = parameters.get(terminal);
@@ -831,7 +839,7 @@ private:
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
-   void declareTemplateInfo(DNode hint, ModuleScope& scope, ref_t ownerRef, ref_t hintRef, ref_t messageSubject = 0);
+   bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
    void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void readTemplateInfo(SyntaxTree::Node node, TemplateInfo& info);
    void copyTemplateInfo(SyntaxTree::Node node, SyntaxTree::Writer& writer);
