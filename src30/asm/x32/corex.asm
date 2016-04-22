@@ -2025,10 +2025,10 @@ end
 // ; nshift
 inline % 4Dh
 
-  mov edx, [eax]
-  and ebx, ebx
-  jns short lab1
+  mov edx, [edi]
   mov ecx, ebx
+  and ecx, ecx
+  jns short lab1
   neg ecx
   shl edx, cl
   jmp short lab2
@@ -2506,9 +2506,9 @@ end
 // ; lshift
 inline % 7Bh
 
-  mov  edx, [eax]
-  mov  ecx, esi
-  mov  ebx, [eax+4]
+  mov  ecx, ebx
+  mov  edx, [edi]
+  mov  ebx, [edi+4]
 
   and  ecx, ecx
   jns  short LR

@@ -407,7 +407,7 @@ ELENA byte codes (or ecodes)
 
  not                        - !index => index
  
- nshift                     - int[base] << int[acc] <<< index
+ nshift                     - int[base] <<= index
  
  nsub                       - int[base] -= int[acc]
  

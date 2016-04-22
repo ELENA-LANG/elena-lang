@@ -35,16 +35,23 @@
 #template(numeric:template_subj) intnumeric : template_subj
 {
     /// Returns the result of bitwise AND operation
-    #method(stacksafe)and &template_subj:val
+    #method(stacksafe,suppress:w3)and &template_subj:val
         = $target && val.
         
     /// Returns the result of bitwise OR operation
-    #method(stacksafe)or &template_subj:val
+    #method(stacksafe,suppress:w3)or &template_subj:val
         = $target || val.
         
     /// Returns the result of bitwise XOR operation
-    #method(stacksafe)xor &template_subj:val
+    #method(stacksafe,suppress:w3)xor &template_subj:val
         = $target ^^ val.
+        
+    #method(stacksafe,suppress:w2) shift &template_subj:val
+    [
+        (val < 0)
+            ? [ ^ $target << val. ]
+            ! [ ^ $target >> (0 - val). ].
+    ]
 }
 
 #template(variable) varof : template_subj

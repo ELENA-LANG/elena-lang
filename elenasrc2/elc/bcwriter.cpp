@@ -2208,7 +2208,18 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
       case WRITE_MESSAGE_ID:
-         tape.write(bcNCopy);
+         // nload
+         // not
+         // nshift
+         tape.write(bcNLoad);
+         tape.write(bcNot);
+         tape.write(bcNShift);
+         break;
+      case READ_MESSAGE_ID:
+         // nload
+         // nshift
+         tape.write(bcNLoad);
+         tape.write(bcNShift);
          break;
       case ADD_MESSAGE_ID:
       case APPEND_MESSAGE_ID:
@@ -2250,7 +2261,18 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
       case WRITE_MESSAGE_ID:
-         tape.write(bcLCopy);
+         // nload
+         // not
+         // lshift
+         tape.write(bcNLoad);
+         tape.write(bcNot);
+         tape.write(bcLShift);
+         break;
+      case READ_MESSAGE_ID:
+         // nload
+         // lshift
+         tape.write(bcNLoad);
+         tape.write(bcLShift);
          break;
       case ADD_MESSAGE_ID:
       case APPEND_MESSAGE_ID:
@@ -2893,6 +2915,8 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
       case XOR_MESSAGE_ID:
+      case READ_MESSAGE_ID:
+      case WRITE_MESSAGE_ID:
          assignMode = true;
          break;
       case LESS_MESSAGE_ID:

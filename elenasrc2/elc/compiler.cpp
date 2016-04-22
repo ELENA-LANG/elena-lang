@@ -230,6 +230,18 @@ inline bool IsBitwiseOperator(int operator_id)
    }
 }
 
+
+inline bool IsShiftOperator(int operator_id)
+{
+   switch (operator_id) {
+      case READ_MESSAGE_ID:
+      case WRITE_MESSAGE_ID:
+      case XOR_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
 inline bool IsCompOperator(int operator_id)
 {
    switch(operator_id) {
@@ -7008,7 +7020,9 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       int rflags = mapOpArg(scope, rarg);
 
       // HOTFIX : allowing arithmetic / comparison operations with numerics
-      if (IsNumericOperator(node.argument) || IsCompOperator(node.argument) || IsBitwiseOperator(node.argument)) {
+      if (IsNumericOperator(node.argument) || IsCompOperator(node.argument) || IsBitwiseOperator(node.argument) 
+         || IsShiftOperator(node.argument)) 
+      {
          if (scope.intReference == lref) {
             lref = -1;
          }
@@ -7032,6 +7046,35 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             }
             else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
                node = lxRealOp;
+               boxing = true;
+            }
+         }
+         else if (node.argument == READ_MESSAGE_ID) {
+            if (lref == -3 && rflags == elDebugDWORD) {
+               lref = scope.subjectHints.get(destType);
+               int size = scope.defineStructSize(lref);
+               node.appendNode(lxSize, size);
+               node = mapArrPrimitiveOp(size);
+            }
+            else if (lref == -5 && rflags == elDebugDWORD) {
+               node = lxArrOp;
+            }
+            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
+               node = lxIntOp;
+               boxing = true;
+            }
+            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugDWORD) {
+               node = lxLongOp;
+               boxing = true;
+            }
+         }
+         else if (node.argument == WRITE_MESSAGE_ID) {
+            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
+               node = lxIntOp;
+               boxing = true;
+            }
+            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugDWORD) {
+               node = lxLongOp;
                boxing = true;
             }
          }
@@ -7076,17 +7119,6 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                node.appendNode(lxSize, size);
                node = mapArrPrimitiveOp(size);
                boxing = true;
-            }
-            else if (lref == -5) {
-               node = lxArrOp;
-            }
-         }
-         else if (node.argument == READ_MESSAGE_ID && rflags == elDebugDWORD) {
-            if (lref == -3) {
-               lref = scope.subjectHints.get(destType);
-               int size = scope.defineStructSize(lref);
-               node.appendNode(lxSize, size);
-               node = mapArrPrimitiveOp(size);
             }
             else if (lref == -5) {
                node = lxArrOp;
