@@ -560,7 +560,7 @@ private:
       bool  constant;
       ref_t typeRef;
 
-      void compileHints(DNode hints);
+      void compileHints(DNode hints, bool silentMode);
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -842,6 +842,7 @@ private:
 
    bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
@@ -933,10 +934,10 @@ private:
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
-   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope);
+   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope, DNode hints);
    void compileSingletonClass(DNode member, ClassScope& scope);
 
-   void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression);
+   void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression, DNode hints);
 
    void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
    void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);

@@ -1169,7 +1169,7 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    syntaxTree.writeString(parent->sourcePath);
 }
 
-void Compiler::SymbolScope :: compileHints(DNode hints)
+void Compiler::SymbolScope :: compileHints(DNode hints, bool silentMode)
 {
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
@@ -1181,7 +1181,8 @@ void Compiler::SymbolScope :: compileHints(DNode hints)
       else if (moduleScope->subjectHints.get(hintRef) != 0) {
          typeRef = hintRef;
       }
-      else raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
+      else if (!silentMode)
+         raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -2104,7 +2105,7 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
    return false;
 }
 
-void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope/*, bool& isExtension, ref_t& extensionType*/)
+void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
 {
    // define class flags
    while (hints == nsHint) {
@@ -2188,6 +2189,22 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //   }
       //   writer.closeNode();
       //}
+
+      hints = hints.nextNode();
+   }
+}
+
+void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
+{
+   while (hints == nsHint) {
+      ref_t hintRef = mapHint(hints, *scope.moduleScope);
+
+      TerminalInfo terminal = hints.Terminal();
+
+      if (hintRef != 0) {
+         declareTemplateInfo(hints, *scope.moduleScope, scope.reference, hintRef);
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -6472,7 +6489,7 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    compileSymbolCode(scope);
 }
 
-void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope)
+void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope, DNode hints)
 {
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
@@ -6488,7 +6505,13 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
       writer.appendNode(lxClassFlag, elSealed);
    }
 
+   compileSingletonHints(hints, writer, scope);
+
    declareVMT(node.firstChild(), writer, scope, nsMethod);
+
+   // declare imported methods / flags
+   if (!declareImportedTemplates(scope, writer))
+      scope.raiseError(errInvalidHint, node.FirstTerminal());
 
    writer.closeNode();
 
@@ -6497,8 +6520,11 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
    scope.save();
 }
 
-void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, DNode expression)
+void Compiler :: declareSingletonAction(ClassScope& classScope, DNode objNode, DNode expression, DNode hints)
 {
+   if (hints != nsNone)
+      classScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+
    SyntaxWriter writer(classScope.syntaxTree);
    writer.newNode(lxRoot, classScope.reference);
 
@@ -6524,6 +6550,9 @@ void Compiler :: compileSingletonClass(DNode node, ClassScope& scope)
 
    DNode member = node.firstChild();
 
+   // import templates
+   importTemplates(scope, writer);
+
    compileVMT(member, writer, scope);
 
    writer.closeNode();
@@ -6534,9 +6563,7 @@ void Compiler :: compileSingletonClass(DNode node, ClassScope& scope)
 void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints)
 {
    bool singleton = false;
-
-   scope.compileHints(hints);
-
+   
    DNode expression = node.firstChild();
    // if it is a singleton
    if (isSingleStatement(expression)) {
@@ -6547,25 +6574,25 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          ClassScope classScope(scope.moduleScope, scope.reference);
 
          if (classNode.Terminal() != nsNone) {
-            declareSingletonClass(classNode.firstChild(), classNode, classScope);
+            declareSingletonClass(classNode.firstChild(), classNode, classScope, hints);
             singleton = true;
          }
          // if it is normal nested class
          else {
-            declareSingletonClass(classNode.firstChild(), DNode(), classScope);
+            declareSingletonClass(classNode.firstChild(), DNode(), classScope, hints);
             singleton = true;
          }
       }
       else if (objNode == nsSubCode) {
          ClassScope classScope(scope.moduleScope, scope.reference);
 
-         declareSingletonAction(classScope, objNode, DNode());
+         declareSingletonAction(classScope, objNode, DNode(), hints);
          singleton = true;
       }
       else if (objNode == nsInlineExpression) {
          ClassScope classScope(scope.moduleScope, scope.reference);
 
-         declareSingletonAction(classScope, objNode, expression.firstChild());
+         declareSingletonAction(classScope, objNode, expression.firstChild(), hints);
          singleton = true;
       }
 //      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
@@ -6575,6 +6602,7 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 //         singleton = true;
 //      }
    }
+   else scope.compileHints(hints, false);
 
    if (!singleton && (scope.typeRef != 0 || scope.constant)) {
       SymbolExpressionInfo info;
@@ -6589,8 +6617,6 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
 
 void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
 {
-   scope.compileHints(hints);
-
    ObjectInfo retVal;
    DNode expression = node.firstChild();
    // if it is a singleton
@@ -6653,6 +6679,8 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
    CodeScope codeScope(&scope, &writer);
    if (retVal.kind == okUnknown) {
+      scope.compileHints(hints, true);
+      
       // compile symbol body, if it is not a singleton
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);
       writer.newNode(lxExpression);

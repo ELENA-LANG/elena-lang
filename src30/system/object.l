@@ -82,22 +82,22 @@
     #method => system'core_routines'__object.
 }
 
-//// --- nil constant ---
-//
-///// A nil value
-//#symbol nil =
-//{
-//    /// Returns true if the specified object is nil.
-//    #method(type:bool) equal : anObject = ($nil == anObject).
+// --- nil constant ---
+
+/// A nil value
+#symbol(dispatchable:void) nil =
+{
+    /// Returns true if the specified object is nil.
+    #method(bool) equal : anObject = ($nil == anObject).
 //    
 //    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &void:$nil.
 //    
 //    /// Dispatches the verb to the target object with generic subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &void:$nil.
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    #method(generic)get = $nil.
-//}.
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    #method(generic)get = $nil.
+}.
 
