@@ -809,6 +809,14 @@ labErr:
 
 end
 
+procedure __int.eval&readHashCode&vint$[1]
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
 /*
 procedure byte_max
 
@@ -5381,14 +5389,6 @@ labErr:
   pushr const : %new[0]
   throw
 
-  quitn 2
-
-end
-
-procedure int_hashcode
-
-  bloadsi 2
-  ncopy
   quitn 2
 
 end

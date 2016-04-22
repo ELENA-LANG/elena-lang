@@ -63,9 +63,28 @@
     /// Returns true if any of the mask bits are set    
     #method anyMask : anOperand
         = 0 != $self and:anOperand.
-        
+
+    #method shift &int:v [ ]
+                        
     /// Returns the negated value        
     #method negative = 0 subtract:$self.
+    
+    /// Bitwise shift operation
+    #method shift &index:anOrder
+        <= shift &int:(anOrder int).
+
+    #method shift : anOrder
+        <= shift &int:(anOrder int).
+    
+    #method(stacksafe) readHashCode &vint:aCode []
+    
+    #method(embeddable,int,suppress:w3) hash_code
+    [
+        #var(int)aCode.
+        $self readHashCode &vint:aCode.
+        
+        ^ aCode.
+    ]        
 }
 
 // --- ByteNumber ---
@@ -235,39 +254,18 @@
     #method(stacksafe) xor &long:anOperand
         = LongNumber new &byte:$self xor &long:anOperand.
 
-//    #method shift : anOrder
-//        <= shift &int:(anOrder int).
-//    
-//    /// Bitwise shift operation
-//    #method(type:byte) shift &index:anOrder
-//        <= shift &int:(anOrder int).
-//    
-//    #method(type:byte,stacksafe) shift &int:anOrder
-//        => system'core_routines'byte_shift.
-
     /// Returns the literal presentation
     #method literal = literalConvertor convert &byte:$self.
 
     /// Returns the literal presentation
     #method wide = wideConvertor convert &byte:$self.
 
-//    /// Bitwise inversion
-//    #method(type:byte,stacksafe) not
-//        => system'core_routines'byte_not.
-
     /// Clones the value
     #method clone = ByteNumber new &byte:$self.
 
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
-//    
-//    #method(embeddable,type:int,suppress:w3) hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode 
+        => system'core_routines'__int.
 }
 
 // --- ShortNumber ---
@@ -310,9 +308,6 @@
     
     /// Returns the value as a real number
     #method real = RealNumber new &short:$self.
-    
-//    #method(stacksafe)read &vint:n
-//        => system'core_routines'int_save.
     
     /// Compares the value
     #method(bool,stacksafe) equal &int:anOperand 
@@ -446,39 +441,19 @@
     #method(stacksafe) xor &long:anOperand
         = LongNumber new &short:$self xor &long:anOperand.        
 
-//    /// Bitwise shift operation
-//    #method(type:short,stacksafe) shift &int:anOrder
-//        => system'core_routines'short_shift.
-//
-//    #method shift:anOrder
-//        <= shift &int:(anOrder int).
-//
-//    #method(type:short) shift &index:anOrder
-//        <= shift &int:(anOrder int).
-
     /// Returns the literal presentation
     #method literal = literalConvertor convert &short:$self.
 
     /// Returns the literal presentation
     #method wide = wideConvertor convert &short:$self.
 
-//    /// Bitwise inversion
-//    #method(type:byte,stacksafe) not
-//        => system'core_routines'short_not.
-
     /// Clones the value
     #method clone = ShortNumber new &short:$self.    
-                
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
-//    
-//    #method(embeddable,type:int,suppress:w3) hash_code
-//    [
-//        #var(type:int)aCode.
-//        $self readHashCode &vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe) readHashCode &vint:aCode 
+        => system'core_routines'__int.
+
 }
 
 // --- IntNumber ---

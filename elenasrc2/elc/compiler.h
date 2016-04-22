@@ -211,6 +211,8 @@ public:
       int     targetOffset;
       ref_t   messageSubject;
 
+      int     sourceCol, sourceRow;
+
       RoleMap parameters;
 
       TemplateInfo()
@@ -219,6 +221,8 @@ public:
          templateRef = 0;
          targetOffset = -1;
          messageSubject = 0;
+
+         sourceCol = sourceRow = 0;
       }
 
       TemplateInfo(ref_t templateRef, ref_t targetType)
@@ -227,6 +231,8 @@ public:
          this->targetType = targetType;
          this->targetOffset = -1;
          this->messageSubject = 0;
+
+         this->sourceCol = this->sourceRow = 0;
       }
 
       TemplateInfo(ref_t templateRef, ref_t targetType, int targetOffset)
@@ -235,6 +241,8 @@ public:
          this->targetType = targetType;
          this->targetOffset = targetOffset;
          this->messageSubject = 0;
+
+         this->sourceCol = this->sourceRow = 0;
       }
    };
 

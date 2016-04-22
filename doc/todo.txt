@@ -53,8 +53,10 @@ In development:
                        * test stack safe operation
                        * test int => vint
                        * test vint => int
+                       * test not, shift, negative operations
                        * optimize dynamic array / literal creation
                        * optimize intnumeric.shift implementation
+                       * optimize intnumeric.not implementation
 
                        * test constructor returning not compatible object
 

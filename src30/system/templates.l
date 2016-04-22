@@ -8,6 +8,8 @@
 //    #method get = $target.
 //}
 
+// --- outnprop ---
+
 #template outnprop : template_subj
 {
    #subject target.

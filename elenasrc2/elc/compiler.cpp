@@ -1892,6 +1892,7 @@ bool Compiler :: declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRe
 
    writer.newNode(lxClass, scope.reference);
    writer.newNode(lxTemplate, hintRef);
+   appendTerminalInfo(&writer, hint.Terminal());
 
    DNode paramNode = hint.firstChild();
    while (paramNode != nsNone) {
@@ -1926,6 +1927,8 @@ void Compiler :: importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, r
 
    writer.newNode(lxClass, ownerRef);
    writer.newNode(lxTemplate, importSubject(templateModule, node.argument, scope.module));
+   writer.appendNode(lxCol, info.sourceCol);
+   writer.appendNode(lxRow, info.sourceRow);
 
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -1974,6 +1977,12 @@ void Compiler :: readTemplateInfo(SNode node, TemplateInfo& info)
          int index = 1 + info.parameters.Count();
 
          info.parameters.add(index, current.argument);
+      }
+      else if (current == lxCol) {
+         info.sourceCol = current.argument;
+      }
+      else if (current == lxRow) {
+         info.sourceRow = current.argument;
       }
 
       current = current.nextNode();
@@ -6207,6 +6216,12 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
    else if (current == lxThisLocal) {
       writer.newNode(current.type, current.argument);
       writer.appendNode(lxTarget, scope.reference);
+   }
+   else if (current == lxCol && current.parentNode() != lxBreakpoint) {
+      writer.newNode(lxCol, info.sourceCol);
+   }
+   else if (current == lxRow && current.parentNode() != lxBreakpoint) {
+      writer.newNode(lxRow, info.sourceRow);
    }
    else if (test(current.type, lxMessageMask)) {
       ref_t signature = importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info);

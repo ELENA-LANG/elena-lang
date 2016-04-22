@@ -46,12 +46,15 @@
     #method(stacksafe,suppress:w3)xor &template_subj:val
         = $target ^^ val.
         
-    #method(stacksafe,suppress:w2) shift &template_subj:val
+    #method(stacksafe) shift &int:val
     [
         (val < 0)
             ? [ ^ $target << val. ]
             ! [ ^ $target >> (0 - val). ].
     ]
+    
+    #method(stacksafe) not
+        = 0 - $target + 1.        
 }
 
 #template(variable) varof : template_subj
@@ -85,6 +88,11 @@
     ]
 
     #method(suppress:w3) get = $value.
+    
+    #method(suppress:w3) cast : verb &to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    #method(suppress:w3) cast : aVerb &to:aTarget &with:aParam => $value.
 }
 
 // --- super object ---
