@@ -158,7 +158,7 @@ namespace _ELENA_
       mskSymbolRelRef        = 0x32000000,   // symbol code
       mskVMTRef              = 0x41000000,   // class VMT
       mskClassRef            = 0x11000000,   // class code
-//      mskClassRelRef         = 0x31000000,   // class relative code
+      mskClassRelRef         = 0x31000000,   // class relative code
       mskStatSymbolRef       = 0x82000000,   // reference to static symbol
 
       mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT

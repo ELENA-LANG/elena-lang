@@ -394,7 +394,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(STR_FORWARD));
    wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
-   //charReference = mapReference(project->resolveForward(CHAR_FORWARD));
+   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
@@ -1679,8 +1679,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return scope.moduleScope->literalReference;
       case okWideLiteralConstant:
          return scope.moduleScope->wideReference;
-      //case okCharConstant:
-      //   return scope.moduleScope->charReference;
+      case okCharConstant:
+         return scope.moduleScope->charReference;
       case okThisParam:
          return scope.getClassRefId(false);
       case okSubject:
@@ -2509,6 +2509,8 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
 
             TemplateInfo templateInfo;
             templateInfo.templateRef = hintRef;
+            templateInfo.sourceCol = terminal.Col();
+            templateInfo.sourceRow = terminal.Row();
 
             declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
                
@@ -2785,9 +2787,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okWideLiteralConstant:
          scope.writer->newNode(lxConstantWideStr, object.param);
          break;
-   //   //case okCharConstant:
-   //   //   scope.writer->newNode(lxConstantChar, object.param);
-   //   //   break;
+      case okCharConstant:
+         scope.writer->newNode(lxConstantChar, object.param);
+         break;
       case okIntConstant:
          scope.writer->newNode(lxConstantInt, object.param);
          break;
@@ -2892,9 +2894,9 @@ ObjectInfo Compiler :: compileTerminal(DNode node, CodeScope& scope)
    else if (terminal == tsWide) {
       object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
    }
-//   else if (terminal==tsCharacter) {
-//      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
-//   }
+   else if (terminal==tsCharacter) {
+      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
+   }
    else if (terminal == tsInteger) {
       String<ident_c, 20> s(terminal.value, getlength(terminal.value));
 
@@ -3345,8 +3347,6 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
 
 ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
 {
-   //ModuleScope* moduleScope = scope.moduleScope;
-
    ObjectInfo retVal(okObject);
 
    // HOTFIX : recognize SET_REFER_MESSAGE_ID
@@ -3378,8 +3378,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    }
    else  scope.writer->insert(lxOp, operator_id);
 
-
    appendObjectInfo(scope, retVal);
+   appendTerminalInfo(scope.writer, node.FirstTerminal());
 
    scope.writer->closeNode();
 
@@ -4353,6 +4353,7 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsRootExpression:
             recordDebugStep(scope, statement.FirstTerminal(), dsStep);
             scope.writer->newNode(lxExpression);
+            appendTerminalInfo(scope.writer, node.FirstTerminal());
             compileExpression(statement, scope, 0, HINT_ROOT);
             scope.writer->closeNode();
             break;
@@ -6726,18 +6727,18 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
       }
-      //else if (retVal.kind == okCharConstant) {
-      //   _Module* module = scope.moduleScope->module;
-      //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+      else if (retVal.kind == okCharConstant) {
+         _Module* module = scope.moduleScope->module;
+         MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      //   ident_t value = module->resolveConstant(retVal.param);
+         ident_t value = module->resolveConstant(retVal.param);
 
-      //   dataWriter.writeLiteral(value, getlength(value));
+         dataWriter.writeLiteral(value, getlength(value));
 
-      //   dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
+         dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
 
-      //   scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
-      //}
+         scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
+      }
       else scope.raiseError(errInvalidOperation, expression.FirstTerminal());
    }
 
@@ -7244,6 +7245,8 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
                   // HOT FIX : for template target define the assignment size
                   defineTargetSize(scope, current);
                   node.setArgument(current.argument);
+                  if (node.argument != 0)
+                     mode |= HINT_NOBOXING;
                }
                
                current = subNode.type;
@@ -7353,14 +7356,7 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
 
    optimizeSyntaxExpression(scope, node, warningLevel, HINT_NOBOXING);
 
-   if (boxing && test(warningLevel, WARNING_LEVEL_3)) {
-      SNode row = SyntaxTree::findChild(node, lxRow);
-      SNode col = SyntaxTree::findChild(node, lxCol);
-      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
-      if (col != lxNone && row != lxNone) {
-         scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, row.argument, col.argument, terminal.identifier());
-      }
-   }
+   raiseWarning(scope, node, wrnBoxingCheck, WARNING_LEVEL_3, warningLevel, boxing);
 }
 
 bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
@@ -7382,8 +7378,8 @@ bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef
 
 void Compiler :: raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered)
 {
-   if (test(warningMask, WARNING_LEVEL_2) && triggered) {
-      while (node != lxRoot) {
+   if (test(warningLevel, warningMask) && triggered) {
+      while (node != lxNewFrame) {
          SNode row = SyntaxTree::findChild(node, lxRow);
          SNode col = SyntaxTree::findChild(node, lxCol);
          SNode terminal = SyntaxTree::findChild(node, lxTerminal);
@@ -7855,6 +7851,8 @@ void Compiler :: compileSubject(DNode& member, ModuleScope& scope, DNode hints)
       TemplateInfo templateInfo;
       templateInfo.templateRef = mapHint(body, scope);
       templateInfo.targetType = scope.mapSubject(member.Terminal());
+      templateInfo.sourceCol = body.FirstTerminal().Col();
+      templateInfo.sourceRow = body.FirstTerminal().Row();
 
       declareTemplateParameters(body, scope, templateInfo.parameters);
 

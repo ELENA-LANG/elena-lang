@@ -114,7 +114,7 @@ public:
       okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference 
       okWideLiteralConstant,          // param - reference 
-   //   okCharConstant,                 // param - reference
+      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference 
       okLongConstant,                 // param - reference 
       okRealConstant,                 // param - reference 
@@ -285,7 +285,7 @@ private:
       ref_t realReference;
       ref_t literalReference;
       ref_t wideReference;
-      //ref_t charReference;
+      ref_t charReference;
       ref_t trueReference;
       ref_t falseReference;
       //ref_t paramsReference;

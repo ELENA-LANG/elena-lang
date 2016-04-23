@@ -57,6 +57,7 @@ In development:
                        * optimize dynamic array / literal creation
                        * optimize intnumeric.shift implementation
                        * optimize intnumeric.not implementation
+                       * optimize charvalue#class.new&char$[1]
 
                        * test constructor returning not compatible object
 
