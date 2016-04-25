@@ -75,31 +75,30 @@
         <= new &int:0 &int:(anArray length int) &bytearray:anArray.
 
     /// Reads the array length to the output parameter
-    #method(stacksafe,outnprop:length) readLength &vint:aLength
+    #method(stacksafe) readLength &vint:aLength
         => system'core_routines'__bytearray.
 
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
-//    [
-//        #var(type:int)aTotalLength.
-//        $self readLength &vint:aTotalLength.
-//        
-//        #var(type:int)i := anIndex.
-//        #var(type:int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &byte:aValue.
-//            
-//            i := i + 1.
-//        ].
-//    ]
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &int:i &byte:aValue.
+            
+            i := i + 1.
+        ].
+    ]
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
@@ -109,103 +108,88 @@
     #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
         => system'core_routines'__bytearray.
 
-////    /// Writes the byte value at specified position
-////    #method(stacksafe) write &int:anIndex &byte:anInt
-////        => system'core_routines'bs_writebyte.
-////
-////    /// Reads a byte value at the specified position and saves it into an output variable
-////    #method(stacksafe) read &int:anIndex &vbyte:anInt
-////        => system'core_routines'bs_readbyte.
-////
-////    /// Writes a short integer value at the specified position
-////    #method(stacksafe) write &int:anIndex &short:anInt
-////        => system'core_routines'bs_writeword.
-////
-////    /// Reads a short integer value at the specified position and saves it into an output variable
-////    #method(stacksafe) read &int:anIndex &vshort:aChar
-////        => system'core_routines'bs_readword.
-////
-////    /// Writes a character value at the specified position
-////    #method(stacksafe) write &int:anIndex &char:anInt
-////        => system'core_routines'bs_writedword.
-////
-////    /// Reads a character value at the specified position and saves it into an output variable
-////    #method(stacksafe) read &int:anIndex &vchar:aChar
-////        => system'core_routines'bs_readdword.
-////
-////    /// Writes an integer value at the specified position
-////    #method(stacksafe) write &int:anIndex &int:anInt
-////        => system'core_routines'bs_writedword.
-////
-////    /// Reads an integer value at the specified position and saves it into an output variable
-////    #method(stacksafe) read &int:anIndex &vint:anInt
-////        => system'core_routines'bs_readdword.
-////
-////    /// Writes a long integer value at the specified position
-////    #method(stacksafe) write &int:anIndex &long:aLong
-////        => system'core_routines'bs_writeqword.
-////
-////    /// Reads a long integer value at the specified position and saves it into an output variable
-////    #method(stacksafe) read &int:anIndex &vlong:aLong
-////        => system'core_routines'bs_readqword.
-////
-////    /// Writes a real value at the specified position
-////    #method(stacksafe) write &int:anIndex &real:aLong
-////        => system'core_routines'bs_writeqword.
-////
-////    /// Reads a real value at the specified position and saves it into an output variable
-////    #method(stacksafe) read &int:anIndex &vreal:aLong
-////        => system'core_routines'bs_readqword.
-////
-////    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
-////        => system'core_routines'bs_move.
-////        
-////    /// Returns a byte at the specified position
-////    #method getAt : anIndex
-////    [
-////        #var(type:byte)aRetVal.
-////        $self read &int:(anIndex int) &vbyte:aRetVal.
-////        
-////        ^ ByteNumber new &byte:aRetVal.
-////    ]        
-////
-////    /// Sets a byte at the specified position
-////    #method setAt : anIndex : aValue
-////    [
-////        $self write &int:(anIndex int) &byte:(aValue byte).
-////    ]
-////    
-////    /// Concatinates the arrays    
-////    #method(stacksafe,type:bytearray) add &int:aLength2 &bytearray:anArray
-////    [
-////        #var(type:int)aLength1 := $self length.
-////        
-////        #var(type:bytearray)aRetVal := ByteArray new &int:(aLength1 + aLength2).
-////
-////        #var(type:byte)tmp.
-////        #var(type:int)anIndex := 0.
-////        #loop (anIndex < aLength1) ?
-////        [
-////            $self read &int:anIndex &vbyte:tmp.
-////            aRetVal write &int:anIndex &byte:tmp.
-////            
-////            anIndex := anIndex + 1.
-////        ].
-////
-////        anIndex := 0.
-////        #loop (anIndex < aLength2) ?
-////        [
-////            anArray read &int:anIndex &vbyte:tmp.
-////            aRetVal write &int:(aLength1 + anIndex) &byte:tmp.
-////            
-////            anIndex := anIndex + 1.
-////        ].
-////            
-////        ^ aRetVal.
-////    ]    
-////                        
-////    /// Creates the object copy
-////    #method clone = ByteArray new &bytearray:$self.
+    /// Writes the byte value at specified position
+    #method(stacksafe) write &int:anIndex &byte:anInt
+        => system'core_routines'__bytearray.
+
+    /// Reads a byte value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
+        => system'core_routines'__bytearray.
+
+//    /// Writes a short integer value at the specified position
+//    #method(stacksafe) write &int:anIndex &short:anInt
+//        => system'core_routines'bs_writeword.
+//
+//    /// Reads a short integer value at the specified position and saves it into an output variable
+//    #method(stacksafe) read &int:anIndex &vshort:aChar
+//        => system'core_routines'bs_readword.
+//
+//    /// Writes a character value at the specified position
+//    #method(stacksafe) write &int:anIndex &char:anInt
+//        => system'core_routines'bs_writedword.
+//
+//    /// Reads a character value at the specified position and saves it into an output variable
+//    #method(stacksafe) read &int:anIndex &vchar:aChar
+//        => system'core_routines'bs_readdword.
+//
+//    /// Writes an integer value at the specified position
+//    #method(stacksafe) write &int:anIndex &int:anInt
+//        => system'core_routines'bs_writedword.
+//
+//    /// Reads an integer value at the specified position and saves it into an output variable
+//    #method(stacksafe) read &int:anIndex &vint:anInt
+//        => system'core_routines'bs_readdword.
+//
+//    /// Writes a long integer value at the specified position
+//    #method(stacksafe) write &int:anIndex &long:aLong
+//        => system'core_routines'bs_writeqword.
+//
+//    /// Reads a long integer value at the specified position and saves it into an output variable
+//    #method(stacksafe) read &int:anIndex &vlong:aLong
+//        => system'core_routines'bs_readqword.
+//
+//    /// Writes a real value at the specified position
+//    #method(stacksafe) write &int:anIndex &real:aLong
+//        => system'core_routines'bs_writeqword.
+//
+//    /// Reads a real value at the specified position and saves it into an output variable
+//    #method(stacksafe) read &int:anIndex &vreal:aLong
+//        => system'core_routines'bs_readqword.
+//
+//    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
+//        => system'core_routines'bs_move.
+//    
+//    /// Concatinates the arrays    
+//    #method(stacksafe,type:bytearray) add &int:aLength2 &bytearray:anArray
+//    [
+//        #var(type:int)aLength1 := $self length.
+//        
+//        #var(type:bytearray)aRetVal := ByteArray new &int:(aLength1 + aLength2).
+//
+//        #var(type:byte)tmp.
+//        #var(type:int)anIndex := 0.
+//        #loop (anIndex < aLength1) ?
+//        [
+//            $self read &int:anIndex &vbyte:tmp.
+//            aRetVal write &int:anIndex &byte:tmp.
+//            
+//            anIndex := anIndex + 1.
+//        ].
+//
+//        anIndex := 0.
+//        #loop (anIndex < aLength2) ?
+//        [
+//            anArray read &int:anIndex &vbyte:tmp.
+//            aRetVal write &int:(aLength1 + anIndex) &byte:tmp.
+//            
+//            anIndex := anIndex + 1.
+//        ].
+//            
+//        ^ aRetVal.
+//    ]    
+//                        
+//    /// Creates the object copy
+//    #method clone = ByteArray new &bytearray:$self.
 }
 
 //// --- ShortArray ---

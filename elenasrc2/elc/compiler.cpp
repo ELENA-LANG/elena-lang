@@ -4189,38 +4189,38 @@ void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
    scope.writer->closeNode();
 }
 
-//void Compiler :: compileLoop(DNode node, CodeScope& scope)
-//{
-//   //DNode expr = node.firstChild().firstChild();
-//
-//   //// if it is while-do loop
-//   //if (expr.nextNode() == nsL7Operation) {
-//   //   scope.writer->newNode(lxLooping);
-//
-//   //   DNode loopNode = expr.nextNode();
-//
-//   //   ObjectInfo cond = compileExpression(expr, scope, scope.moduleScope->boolType, 0);
-//
-//   //   int operator_id = _operators.get(loopNode.Terminal());
-//
-//   //   // HOTFIX : lxElse is used to be similar with branching code
-//   //   // because of optimization rules
-//   //   scope.writer->newNode(lxElse, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->falseReference : scope.moduleScope->trueReference);
-//   //   compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
-//   //   scope.writer->closeNode();
-//
-//   //   scope.writer->closeNode();
-//   //}
-//   //// if it is repeat loop
-//   //else {
-//   //   scope.writer->newNode(lxLooping, scope.moduleScope->trueReference);
-//
-//   //   ObjectInfo retVal = compileExpression(node.firstChild(), scope, scope.moduleScope->boolType, 0);
-//
-//   //   scope.writer->closeNode();
-//   //}
-//}
-//
+void Compiler :: compileLoop(DNode node, CodeScope& scope)
+{
+   DNode expr = node.firstChild().firstChild();
+
+   // if it is while-do loop
+   if (expr.nextNode() == nsL7Operation) {
+      scope.writer->newNode(lxLooping);
+
+      DNode loopNode = expr.nextNode();
+
+      ObjectInfo cond = compileExpression(expr, scope, scope.moduleScope->boolType, 0);
+
+      int operator_id = _operators.get(loopNode.Terminal());
+
+      // HOTFIX : lxElse is used to be similar with branching code
+      // because of optimization rules
+      scope.writer->newNode(lxElse, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->falseReference : scope.moduleScope->trueReference);
+      compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
+      scope.writer->closeNode();
+
+      scope.writer->closeNode();
+   }
+   // if it is repeat loop
+   else {
+      scope.writer->newNode(lxLooping, scope.moduleScope->trueReference);
+
+      ObjectInfo retVal = compileExpression(node.firstChild(), scope, scope.moduleScope->boolType, 0);
+
+      scope.writer->closeNode();
+   }
+}
+
 //void Compiler :: compileTry(DNode node, CodeScope& scope)
 //{
 ////   scope.writer->newNode(lxTrying);
@@ -4308,12 +4308,12 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
          case nsThrow:
             compileThrow(statement, scope, 0);
             break;
-//         case nsLoop:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            //scope.writer->newNode(lxExpression);
-//            compileLoop(statement, scope);
-//            //scope.writer->closeNode();
-//            break;
+         case nsLoop:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            //scope.writer->newNode(lxExpression);
+            compileLoop(statement, scope);
+            //scope.writer->closeNode();
+            break;
 //         case nsTry:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileTry(statement, scope);
@@ -6209,6 +6209,8 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
             importTree(scope, current, writer, templateModule, info);
 
             writer.closeNode();
+
+            scope.include(messageRef);
          }
       }
 

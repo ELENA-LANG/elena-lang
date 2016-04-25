@@ -923,7 +923,7 @@ private:
 
    ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
-//   void compileLoop(DNode node, CodeScope& scope);
+   void compileLoop(DNode node, CodeScope& scope);
    void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);

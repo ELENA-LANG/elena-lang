@@ -132,11 +132,11 @@
 //    #constructor new:aMessage
 //        <= %new &literal:(aMessage literal) &subject: %IndexOutOfRangeError.
 //}
-//
+
 // --- InvalidArgumentException ---
-//
-//#class InvalidArgumentException :: Exception
-//{
+
+#class InvalidArgumentException //:: Exception
+{
 //    /// Creates the exception
 //    #constructor new
 //        <= %new &literal:"Invalid argument" &subject: %InvalidArgumentError.
@@ -150,8 +150,8 @@
 //    /// Obsolete
 //    #constructor new &message:aMessage
 //        <= %new &literal:(aMessage literal) &subject:%InvalidArgumentError.        
-//}
-//
+}
+
 // --- InvalidOperationException ---
 //
 //#class InvalidOperationException :: Exception
