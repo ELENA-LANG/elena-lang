@@ -8,23 +8,23 @@
         $value := val template_subj.
     ]
     
-    #method append : val
+    #method(suppress:w3) append : val
     [
         $value := $value + val template_subj.
     ]
     
-    #method reduce : val
+    #method(suppress:w3) reduce : val
     [
         $value := $value - val template_subj.
     ]
 
-    #method multiplyBy : val
+    #method(suppress:w3) multiplyBy : val
     [
         $value := $value * val template_subj.
     ]
     
     /// Divides into the value
-    #method divideInto : val
+    #method(suppress:w3) divideInto : val
     [
         $value := $value / val template_subj.
     ]
@@ -36,7 +36,7 @@
     /// Dispatches the verb to the target object with generic subject
     #method(suppress:w3) cast : aVerb &to:aTarget &with:aParam => $value.
     
-    #method equal : anObject
+    #method(suppress:w3) equal : anObject
         => $value.
 }
 
@@ -48,70 +48,6 @@
 #subject vlong  = varof:long.
 #subject vreal  = varof:real.
 #subject vchar  = varof:char.
-
-// === basic data templates ===
-
-#template valof : template_subj
-{
-    #field(template_subj)$target.
-    
-    #method(bool,stacksafe) equal &template_subj:val
-      = $target == val.
-        
-    #method(bool,stacksafe) less &template_subj:val
-      = $target < val.
-}
-
-#template numeric : template_subj
-{
-    #field(template_subj)$target.
-    
-    #method(stacksafe,suppress:w3) add &template_subj:val
-      = $target + val.
-    
-    #method(stacksafe,suppress:w3) subtract &template_subj:val
-      = $target - val.
-    
-    #method(stacksafe,suppress:w3) multiply &template_subj:val
-      = $target * val.
-    
-    #method(stacksafe,suppress:w3) divide &template_subj:val
-      = $target / val.
-      
-    #method(bool,stacksafe) equal &template_subj:val
-      = $target == val.
-        
-    #method(bool,stacksafe) less &template_subj:val
-      = $target < val.
-                        
-    /// Returns the negated value        
-    #method negative = 0 - $target.
-}
-
-#template(numeric:template_subj) intnumeric : template_subj
-{
-    /// Returns the result of bitwise AND operation
-    #method(stacksafe,suppress:w3)and &template_subj:val
-        = $target && val.
-        
-    /// Returns the result of bitwise OR operation
-    #method(stacksafe,suppress:w3)or &template_subj:val
-        = $target || val.
-        
-    /// Returns the result of bitwise XOR operation
-    #method(stacksafe,suppress:w3)xor &template_subj:val
-        = $target ^^ val.
-        
-    #method(stacksafe) shift &int:val
-    [
-        (val < 0)
-            ? [ ^ $target << val. ]
-            ! [ ^ $target >> (0 - val). ].
-    ]
-    
-    #method(stacksafe) not
-        = 0 - $target + 1.        
-}
 
 // === basic data classes ===
 
@@ -183,8 +119,10 @@
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-#class(sealed,integerof:1,intnumeric:byte,dispatchable:byte) ByteNumber :: IntBaseNumber
+#class(struct:embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
+    #field(integerof:1)theValue.
+    
     /// Returns the minimal value (0)
     #constructor min
         = 0.
@@ -217,8 +155,14 @@
     /// Returns the value as a real number
     #method real = RealNumber new &byte:$self.
 
+    #method(bool,stacksafe) equal &byte:anOperand
+        = theValue == anOperand.
+
     #method(bool,stacksafe) equal &short:anOperand
         = ShortNumber new &byte:$self equal &short:anOperand.
+
+    #method(bool,stacksafe) less &byte:anOperand
+        = theValue < anOperand.
 
     #method(bool,stacksafe) less &short:anOperand
         = ShortNumber new &byte:$self less &short:anOperand.
@@ -248,105 +192,143 @@
         = RealNumber new &byte:$self less &real:anOperand.
 
     /// Returns the sum
-    #method(stacksafe) add &short:anOperand
+    #method(byte,stacksafe,suppress:w3) add &byte:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(byte,stacksafe,suppress:w3) subtract &byte:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(byte,stacksafe,suppress:w3) multiply &byte:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(byte,stacksafe,suppress:w3) divide &byte:anOperand
+        = theValue / anOperand.
+
+    /// Returns the sum
+    #method(short,stacksafe) add &short:anOperand
         = ShortNumber new &byte:$self add &short:anOperand.
 
     /// Returns the difference
-    #method(stacksafe) subtract &short:anOperand
+    #method(short,stacksafe) subtract &short:anOperand
         = ShortNumber new &byte:$self subtract &short:anOperand.
 
     /// Returns the product
-    #method(stacksafe) multiply &short:anOperand
+    #method(short,stacksafe) multiply &short:anOperand
         = ShortNumber new &byte:$self multiply &short:anOperand.
 
     /// Returns the result of integer division
-    #method(stacksafe) divide &short:anOperand
+    #method(short,stacksafe) divide &short:anOperand
         = ShortNumber new &byte:$self divide &short:anOperand.
 
     /// Returns the sum
-    #method(stacksafe) add &int:anOperand
+    #method(int,stacksafe) add &int:anOperand
         = IntNumber new &byte:$self add &int:anOperand.
 
     /// Returns the difference
-    #method(stacksafe) subtract &int:anOperand
+    #method(int,stacksafe) subtract &int:anOperand
         = IntNumber new &byte:$self subtract &int:anOperand.
 
     /// Returns the product
-    #method(stacksafe) multiply &int:anOperand
+    #method(int,stacksafe) multiply &int:anOperand
         = IntNumber new &byte:$self multiply &int:anOperand.
 
     /// Returns the result of integer division
-    #method(stacksafe) divide &int:anOperand
+    #method(int,stacksafe) divide &int:anOperand
         = IntNumber new &byte:$self divide &int:anOperand.
 
     /// Returns the sum
-    #method(stacksafe) add &long:anOperand
+    #method(long,stacksafe) add &long:anOperand
         = LongNumber new &byte:$self add &long:anOperand.
 
     /// Returns the difference
-    #method(stacksafe) subtract &long:anOperand
+    #method(long,stacksafe) subtract &long:anOperand
         = LongNumber new &byte:$self subtract &long:anOperand.
 
     /// Returns the product
-    #method(stacksafe) multiply &long:anOperand
+    #method(long,stacksafe) multiply &long:anOperand
         = LongNumber new &byte:$self multiply &long:anOperand.
 
     /// Returns the result of integer division
-    #method(stacksafe) divide &long:anOperand
+    #method(long,stacksafe) divide &long:anOperand
         = LongNumber new &byte:$self divide &long:anOperand.
 
     /// Returns the sum
-    #method(stacksafe) add &real:anOperand
+    #method(real,stacksafe) add &real:anOperand
         = RealNumber new &byte:$self add &real:anOperand.
 
     /// Returns the difference
-    #method(stacksafe) subtract &real:anOperand
+    #method(real,stacksafe) subtract &real:anOperand
         = RealNumber new &byte:$self subtract &real:anOperand.
 
     /// Returns the product
-    #method(stacksafe) multiply &real:anOperand
+    #method(real,stacksafe) multiply &real:anOperand
         = RealNumber new &byte:$self multiply &real:anOperand.
 
     /// Returns the result of integer division
-    #method(stacksafe) divide &real:anOperand
+    #method(real,stacksafe) divide &real:anOperand
         = RealNumber new &byte:$self divide &real:anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(stacksafe) and &short:anOperand
+    #method(byte,stacksafe,suppress:w3) and &byte:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(byte,stacksafe,suppress:w3) or &byte:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(byte,stacksafe,suppress:w3) xor &byte:anOperand
+        = theValue ^^ anOperand.
+
+    /// Returns the result of bitwise AND operation
+    #method(short,stacksafe) and &short:anOperand
         = ShortNumber new &byte:$self and &short:anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(stacksafe) or &short:anOperand
+    #method(short,stacksafe) or &short:anOperand
         = ShortNumber new &byte:$self or &short:anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(stacksafe) xor &short:anOperand
+    #method(short,stacksafe) xor &short:anOperand
         = ShortNumber new &byte:$self xor &short:anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(stacksafe) and &int:anOperand
+    #method(int,stacksafe) and &int:anOperand
         = IntNumber new &byte:$self and &int:anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(stacksafe) or &int:anOperand
+    #method(int,stacksafe) or &int:anOperand
         = IntNumber new &byte:$self or &int:anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(stacksafe) xor &int:anOperand
+    #method(int,stacksafe) xor &int:anOperand
         = IntNumber new &byte:$self xor &int:anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(stacksafe) and &long:anOperand
+    #method(long,stacksafe) and &long:anOperand
         = LongNumber new &byte:$self and &long:anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(stacksafe) or &long:anOperand
+    #method(long,stacksafe) or &long:anOperand
         = LongNumber new &byte:$self or &long:anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(stacksafe) xor &long:anOperand
+    #method(long,stacksafe) xor &long:anOperand
         = LongNumber new &byte:$self xor &long:anOperand.
 
+    #method(byte,stacksafe,suppress:w3) shift &int:val
+    [
+        (val < 0)
+            ? [ ^ theValue << val. ].
+            
+        #var(int)neg_val := 0 - val.
+            
+        ^ theValue >> neg_val.
+    ]
+    
     /// Returns the literal presentation
     #method literal = literalConvertor convert &byte:$self.
 
@@ -372,8 +354,10 @@
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-#class(sealed,integerof:2,intnumeric:short,dispatchable:short) ShortNumber :: IntBaseNumber
+#class(struct:embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
 {
+    #field(integerof:2)theValue.    
+    
     /// Returns the minimal value (-32768)
     #constructor min
         = -32768.
@@ -409,7 +393,15 @@
     
     /// Returns the value as a real number
     #method real = RealNumber new &short:$self.
-    
+
+    /// Compares the value
+    #method(bool,stacksafe) equal &short:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &short:anOperand
+        = theValue < anOperand.
+        
     /// Compares the value
     #method(bool,stacksafe) equal &int:anOperand 
         = IntNumber new &short:$self equal &int:anOperand.
@@ -441,6 +433,22 @@
     /// Compares the value
     #method(bool,stacksafe) less &real:anOperand
         = RealNumber new &short:$self less &real:anOperand.
+
+    /// Returns the sum
+    #method(short,stacksafe,suppress:w3) add &short:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(short,stacksafe,suppress:w3) subtract &short:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(short,stacksafe,suppress:w3) multiply &short:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(short,stacksafe,suppress:w3) divide &short:anOperand
+        = theValue / anOperand.
 
     /// Returns the sum
     #method(stacksafe) add &byte:anOperand
@@ -507,6 +515,18 @@
         = RealNumber new &short:$self divide &real:anOperand.
 
     /// Returns the result of bitwise AND operation
+    #method(short,stacksafe,suppress:w3) and &short:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(short,stacksafe,suppress:w3) or &short:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(short,stacksafe,suppress:w3) xor &short:anOperand
+        = theValue ^^ anOperand.
+        
+    /// Returns the result of bitwise AND operation
     #method(stacksafe) and &byte:anOperand
         = $self and &short:(ShortNumber new &byte:anOperand). 
 
@@ -542,6 +562,16 @@
     #method(stacksafe) xor &long:anOperand
         = LongNumber new &short:$self xor &long:anOperand.        
 
+    #method(short,stacksafe,suppress:w3) shift &int:val
+    [
+        (val < 0)
+            ? [ ^ theValue << val. ].
+            
+        #var(int)neg_val := 0 - val.
+            
+        ^ theValue >> neg_val.
+    ]
+
     /// Returns the literal presentation
     #method literal = literalConvertor convert &short:$self.
 
@@ -567,8 +597,10 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(sealed,integerof:4,intnumeric:int,dispatchable:int) IntNumber :: IntBaseNumber
+#class(struct:embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
 {
+    #field(integerof:4)theValue.    
+    
     /// Creates the object with the minimal value
     #constructor min
         = -2147483648.
@@ -608,6 +640,42 @@
 
     /// Returns the real number
     #method real = RealNumber new &int:$self.
+    
+    /// Compares the value
+    #method(bool,stacksafe) equal &int:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &int:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    #method(int,stacksafe,suppress:w3) add &int:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(int,stacksafe,suppress:w3) subtract &int:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(int,stacksafe,suppress:w3) multiply &int:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(int,stacksafe,suppress:w3) divide &int:anOperand
+        = theValue / anOperand.
+
+    /// Returns the result of bitwise AND operation
+    #method(int,stacksafe,suppress:w3) and &int:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(int,stacksafe,suppress:w3) or &int:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(int,stacksafe,suppress:w3) xor &int:anOperand
+        = theValue ^^ anOperand.    
 
     /// Compares the integer value
     #method(bool,stacksafe) equal &short:value 
@@ -761,13 +829,25 @@
         
         ^ aCode.
     ]        
+
+    #method(int,stacksafe,suppress:w3) shift &int:val
+    [
+        (val < 0)
+            ? [ ^ theValue << val. ].
+            
+        #var(int)neg_val := 0 - val.
+            
+        ^ theValue >> neg_val.
+    ]
 }
 
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-#class(sealed,integerof:8,intnumeric:long,dispatchable:long) LongNumber :: IntBaseNumber
+#class(struct:embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
 {
+    #field(integerof:8)theValue.
+    
     /// Returns the minimal value
     #constructor min
         = -9223372036854775808l.
@@ -811,6 +891,42 @@
 
     /// Returns a real value
     #method real = RealNumber new &long:$self.
+    
+    /// Compares the value
+    #method(bool,stacksafe) equal &long:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &long:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    #method(long,stacksafe,suppress:w3) add &long:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(long,stacksafe,suppress:w3) subtract &long:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(long,stacksafe,suppress:w3) multiply &long:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(long,stacksafe,suppress:w3) divide &long:anOperand
+        = theValue / anOperand.
+
+    /// Returns the result of bitwise AND operation
+    #method(long,stacksafe,suppress:w3) and &long:anOperand
+        = theValue && anOperand.
+
+    /// Returns the result of bitwise OR operation
+    #method(long,stacksafe,suppress:w3) or &long:anOperand
+        = theValue || anOperand.
+
+    /// Returns the result of bitwise XOR operation
+    #method(long,stacksafe,suppress:w3) xor &long:anOperand
+        = theValue ^^ anOperand.    
 
     /// Compares the integer value
     #method(bool,stacksafe) equal &int:anOperand 
@@ -964,13 +1080,25 @@
         
         ^ aCode.
     ]
+
+    #method(long,stacksafe,suppress:w3) shift &int:val
+    [
+        (val < 0)
+            ? [ ^ theValue << val. ].
+            
+        #var(int)neg_val := 0 - val.
+            
+        ^ theValue >> neg_val.
+    ]
 }
 
 // --- realNumber ---
 
 /// A 64bit float numeric value
-#class(sealed,floatof:8,numeric:real,dispatchable:real) RealNumber :: BaseNumber
+#class(struct:embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
 {
+    #field(floatof:8)theValue.
+    
     /// Returns the minimal value
     #constructor min
         = -1.7976931348623157e+308r.
@@ -1006,6 +1134,30 @@
     /// Creates the object with specified value
     #constructor new : anObject
         <= new &real:(anObject real).
+        
+    /// Compares the value
+    #method(bool,stacksafe) equal &real:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &real:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    #method(real,stacksafe,suppress:w3) add &real:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(real,stacksafe,suppress:w3) subtract &real:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(real,stacksafe,suppress:w3) multiply &real:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(real,stacksafe,suppress:w3) divide &real:anOperand
+        = theValue / anOperand.
         
     /// Compares the numeric values
     #method(bool,stacksafe) equal &int:anOperand
@@ -1128,8 +1280,10 @@
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-#class(sealed,integerof:4,dispatchable:char,valof:char) CharValue :: BaseValue
+#class(struct:embeddable,sealed,dispatchable:char) CharValue :: BaseValue
 {
+    #field(int)theValue.
+    
     /// Creates the object with a default value (0)
     #constructor new
         <= new &char:#0.
@@ -1176,7 +1330,7 @@
         aLength := aLength + 1.
         aLength := aLength / 2.
 
-        aRetVal << aLength.
+        aRetVal := aLength.
     ]
         
     /// Retuns the number of bytes to represent the symbol        
@@ -1479,7 +1633,7 @@
         $self $convert &int:0 &literal:aValue &vchar:aRetVal.
         
         #var(int)l1.
-        #var(int)l2 := aValue length.
+        #var(int)l2 := aValue length int.
         aRetVal readLength &vint:l1.
         
         (l1 != l2)
@@ -1495,7 +1649,7 @@
         $self $convert &int:0 &wide:aValue &vchar:aRetVal.
 
         #var(int)l1.
-        #var(int)l2 := aValue length.
+        #var(int)l2 := aValue length int.
         aRetVal readWideLength &vint:l1.
                 
         (l1 != l2)

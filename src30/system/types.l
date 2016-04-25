@@ -1,11 +1,11 @@
 // === basic logical types ===
 #subject bool       = system'BaseBoolValue.
 
-//// === basic primitive types ===
-//
+// === basic primitive types ===
+
 //#subject(class:system'KeyValue)     keyvalue.
 //
-//#subject(class:system'Variable)     ref.
+#subject ref        = system'Variable.
 
 #subject byte       = system'ByteNumber.
 #subject short      = system'ShortNumber.
@@ -13,16 +13,11 @@
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
-#subject mssg       = system'Message.
+//#subject mssg       = system'Message.
 //#subject(class:system'ExtensionMessage) ext_mssg.
-#subject verb       = system'Verb.
-#subject subject    = system'Signature.
+//#subject verb       = system'Verb.
+//#subject subject    = system'Signature.
 //#subject(class:system'Symbol)       symbol_ref.
-
-//#subject(class:system'Long)         vlong.
-//#subject(class:system'Real)         vreal.
-//#subject(class:system'Char)         vchar.
-//#subject(class:system'MessageVar)   vmssg.
 
 // === basic dynamic types ===
 #subject bytearray  = system'ByteArray.
@@ -41,7 +36,7 @@
 #subject literal    = system'LiteralValue.
 #subject wide       = system'WideLiteralValue.
 
-//// === function types ===
+// === function types ===
 //#subject(class:system'BaseFunction)  func.
 //#subject(class:system'BaseFunction1) func1.
 //#subject(class:system'BaseFunction2) func2.
@@ -66,7 +61,7 @@
 #subject handle     = system'Handle.
 //#subject(class:system'RTPointer)rt_ptr.
 //#subject(class:system'UnsafePointer)dirty_ptr.
-//
-//// --- Enumerators / Indexers ---
+
+// --- Enumerators / Indexers ---
 //#subject(class:system'Enumerator)enumerator.
 //#subject(class:system'Iterator)iterator.

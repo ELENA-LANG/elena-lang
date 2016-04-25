@@ -97,15 +97,15 @@
 //    /// Returns the message
 //    #method message = theMessage.
 //}
-//
+
 // --- FormatException ---
-//
-//#class FormatException :: Exception
-//{
+
+#class FormatException //:: Exception
+{
 //    /// Creates the exception
 //    #constructor new
 //        <= %new &literal:"A number is not in the correct format" &subject: %FormatError.
-//}
+}
 
 // --- OutOfRangeException ---
 

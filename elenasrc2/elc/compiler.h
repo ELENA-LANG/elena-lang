@@ -899,11 +899,7 @@ private:
    //int mapOperandType(CodeScope& scope, ObjectInfo operand);
 //   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
    int mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target);
-   int mapOpArg(Compiler::ModuleScope& scope, SNode arg)
-   {
-      ref_t dummy;
-      return mapOpArg(scope, arg, dummy);
-   }
+   int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
 
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
    ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
@@ -926,7 +922,7 @@ private:
    ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
 //   void compileLoop(DNode node, CodeScope& scope);
-//   void compileThrow(DNode node, CodeScope& scope, int mode);
+   void compileThrow(DNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
 
@@ -1013,7 +1009,7 @@ private:
 //   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, ref_t targetType, int warningLevel, int mode);
+   void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode);
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
@@ -1024,11 +1020,6 @@ private:
    void optimizeBoolOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
    void defineTargetSize(ModuleScope& scope, SNode& node);
-   ref_t resolvePrimitiveReference(ModuleScope& scope, ref_t reference);
-   ref_t resolvePrimitiveReference(ModuleScope& scope, SNode node)
-   {
-      return resolvePrimitiveReference(scope, node.argument);
-   }
 
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);

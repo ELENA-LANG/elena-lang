@@ -1246,7 +1246,6 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
       if (reference != -1) {
          if (test(info.header.flags, elStructureRole)) {
             int offset = reference;
-
             return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
          }
          // otherwise it is a normal field
@@ -1263,21 +1262,18 @@ void Compiler::ClassScope :: compileClassHint(SNode hint)
       case lxClassFlag:
          info.header.flags |= hint.argument;
          break;
-      case lxClassStructure:
-      //case lxClassArray:
-      {
-         if (testany(info.header.flags, elStructureRole | elNonStructureRole | elWrapper))
-            raiseError(wrnInvalidHint, hint);
+      //case lxClassStructure:
+      ////case lxClassArray:
+      //{
+      //   if (hint.type == lxClassStructure) {
+      //      info.size = hint.argument;
 
-         if (hint.type == lxClassStructure) {
-            info.size = hint.argument;
-
-            SNode typeNode = SyntaxTree::findChild(hint, lxType);
-            if (typeNode.argument != 0)
-               info.fieldTypes.add(-1, typeNode.argument);
-         }
-         break;
-      }
+      //      SNode typeNode = SyntaxTree::findChild(hint, lxType);
+      //      if (typeNode.argument != 0)
+      //         info.fieldTypes.add(-1, typeNode.argument);
+      //   }
+      //   break;
+      //}
    }
 }
 
@@ -1567,9 +1563,26 @@ void Compiler :: appendObjectInfo(CodeScope& scope, ObjectInfo object)
    if (object.type != 0) {
       scope.writer->appendNode(lxType, object.type);
    }
+
    ref_t objectRef = resolveObjectReference(scope, object);
    if (objectRef != 0) {
       scope.writer->appendNode(lxTarget, objectRef);
+   }
+   else if (object.type == 0) {
+      if (object.kind == okFieldAddress && object.param == 0) {
+         int flags = scope.getClassFlags();
+         switch (flags & elDebugMask) {
+            case elDebugDWORD:
+               scope.writer->appendNode(lxTarget, -1);
+               break;
+            case elDebugQWORD:
+               scope.writer->appendNode(lxTarget, -2);
+               break;
+            case elDebugReal64:
+               scope.writer->appendNode(lxTarget, -4);
+               break;
+         }
+      }
    }
 }
 
@@ -1623,13 +1636,22 @@ void Compiler :: optimizeTape(CommandTape& tape)
 bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node)
 {
    ref_t nodeType = SyntaxTree::findChild(node, lxType).argument;   
-   ref_t nodeRef = resolvePrimitiveReference(scope, SyntaxTree::findChild(node, lxTarget));
+   ref_t nodeRef = SyntaxTree::findChild(node, lxTarget).argument;
 
    if (nodeType == typeRef) {
       return true;
    }
    else if (isPrimitiveRef(nodeRef)) {
-      return false;
+      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
+      if (!isEmbeddable(flags))
+         return false;
+
+      switch (nodeRef) {
+         case -1:
+            return (flags & elDebugMask) == elDebugDWORD;
+         default:
+            return false;
+      }
    }
    else if (node == lxNil) {
       return true;
@@ -2037,50 +2059,6 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
-   else if (hintRef == moduleScope->integerHint) {
-      TerminalInfo sizeValue = hint.select(nsHintValue).Terminal();
-      if (sizeValue.symbol == tsInteger) {
-         int size = StringHelper::strToInt(sizeValue.value);
-         writer.newNode(lxClassStructure, size);
-         appendTerminalInfo(&writer, terminal);
-
-         // !! HOTFIX : allow only 1,2,4 or 8
-         if (size == 1 || size == 2 || size == 4) {
-            writer.appendNode(lxClassFlag, elDebugDWORD);
-         }
-         else if (size == 8) {
-            writer.appendNode(lxClassFlag, elDebugQWORD);
-         }
-         else return false;
-
-         writer.appendNode(lxClassFlag, elReadOnlyRole);
-         writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole);
-
-         writer.closeNode();
-
-         return true;
-      }
-   }
-   else if (hintRef == moduleScope->realHint) {
-      TerminalInfo sizeValue = hint.select(nsHintValue).Terminal();
-      if (sizeValue.symbol == tsInteger) {
-         int size = StringHelper::strToInt(sizeValue.value);
-
-         writer.newNode(lxClassStructure, size);
-         appendTerminalInfo(&writer, terminal);
-         writer.closeNode();
-
-         // !! HOTFIX : allow only 8
-         if (size == 8) {
-            writer.appendNode(lxClassFlag, elDebugReal64);
-         }
-         else return false;
-
-         writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elReadOnlyRole);
-
-         return true;
-      }
-   }
    else if (hintRef == moduleScope->varHint) {
       writer.appendNode(lxClassFlag, elWrapper);
 
@@ -2107,46 +2085,46 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
-   else if (hintRef == moduleScope->signHint) {
-      writer.newNode(lxClassStructure, 4);
+   //else if (hintRef == moduleScope->signHint) {
+   //   writer.newNode(lxClassStructure, 4);
 
-      appendTerminalInfo(&writer, terminal);
-      writer.appendNode(lxClassFlag, elDebugSubject);
-      writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
+   //   appendTerminalInfo(&writer, terminal);
+   //   writer.appendNode(lxClassFlag, elDebugSubject);
+   //   writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
 
-      writer.closeNode();
+   //   writer.closeNode();
 
-      return true;
-   }
-   else if (hintRef == moduleScope->mssgHint) {
-      writer.newNode(lxClassStructure, 4);
+   //   return true;
+   //}
+   //else if (hintRef == moduleScope->mssgHint) {
+   //   writer.newNode(lxClassStructure, 4);
 
-      appendTerminalInfo(&writer, terminal);
-      writer.appendNode(lxClassFlag, elDebugDWORD);
-      writer.appendNode(lxClassFlag, elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
+   //   appendTerminalInfo(&writer, terminal);
+   //   writer.appendNode(lxClassFlag, elDebugDWORD);
+   //   writer.appendNode(lxClassFlag, elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
 
-      writer.closeNode();
+   //   writer.closeNode();
 
-      return true;
-   }
-   else if (hintRef == moduleScope->extensionHint) {
-      scope.extensionMode = -1;
-      writer.appendNode(lxClassFlag, elExtension);
-      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+   //   return true;
+   //}
+   //else if (hintRef == moduleScope->extensionHint) {
+   //   scope.extensionMode = -1;
+   //   writer.appendNode(lxClassFlag, elExtension);
+   //   writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
 
-      return true;
-   }
-   else if (hintRef == moduleScope->extensionOfHint) {
-      DNode value = hint.select(nsHintValue);
-      scope.extensionMode = scope.moduleScope->mapSubject(value.Terminal());
-      if (scope.extensionMode)
-         scope.raiseError(errUnknownSubject, value.Terminal());
+   //   return true;
+   //}
+   //else if (hintRef == moduleScope->extensionOfHint) {
+   //   DNode value = hint.select(nsHintValue);
+   //   scope.extensionMode = scope.moduleScope->mapSubject(value.Terminal());
+   //   if (scope.extensionMode)
+   //      scope.raiseError(errUnknownSubject, value.Terminal());
 
-      writer.appendNode(lxClassFlag, elExtension);
-      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+   //   writer.appendNode(lxClassFlag, elExtension);
+   //   writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
 
-      return true;
-   }
+   //   return true;
+   //}
    else if (hintRef == moduleScope->structHint || hintRef == moduleScope->structOfHint) {
       writer.appendNode(lxClassFlag, elStructureRole);
 
@@ -2260,18 +2238,18 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
 
 void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
 {
-   while (hints == nsHint) {
-      ref_t hintRef = mapHint(hints, *scope.moduleScope);
+   //while (hints == nsHint) {
+   //   ref_t hintRef = mapHint(hints, *scope.moduleScope);
 
-      TerminalInfo terminal = hints.Terminal();
+   //   TerminalInfo terminal = hints.Terminal();
 
-      if (hintRef != 0) {
-         declareTemplateInfo(hints, scope, hintRef);
-      }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+   //   if (hintRef != 0) {
+   //      declareTemplateInfo(hints, scope, hintRef);
+   //   }
+   //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
-      hints = hints.nextNode();
-   }
+   //   hints = hints.nextNode();
+   //}
 }
 
 void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope)
@@ -2299,105 +2277,68 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
 
 void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
 {
+   ModuleScope* moduleScope = scope.moduleScope;
+
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
-      ref_t hintRef = scope.moduleScope->mapSubject(terminal, false);
+      ref_t hintRef = mapHint(hints, *scope.moduleScope);
       if (hintRef != 0) {
-         if (scope.moduleScope->subjectHints.exist(hintRef)) {
-      //      if (type == 0 && classRef == 0) {
-      //         type = hintRef;
+         if (hintRef == moduleScope->integerHint) {
+            TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
+            if (sizeValue.symbol == tsInteger) {
+               int size = StringHelper::strToInt(sizeValue.value);
 
-            TerminalInfo target = hints.firstChild().Terminal();
-            if (target != nsNone) {
-      //            if (target.symbol == tsInteger) {
-      //               size = StringHelper::strToInt(target);
+               // !! HOTFIX : allow only 1,2,4 or 8
+               if (size == 1 || size == 2 || size == 4) {
+                  writer.appendNode(lxTarget, -1);
+               }
+               else if (size == 8) {
+                  writer.appendNode(lxTarget, -2);
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
-      //               classRef = -3; // NOTE : -3 means an array of type
-      //            }
-               /*else */scope.raiseError(errInvalidHint, terminal);
+               writer.appendNode(lxSize, size);
             }
-            else {
-               writer.appendNode(lxType, hintRef);
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+         }
+         else if (hintRef == moduleScope->realHint) {
+            TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
+            if (sizeValue.symbol == tsInteger) {
+               int size = StringHelper::strToInt(sizeValue.value);
 
-      //            classRef = scope.moduleScope->subjectHints.get(type);
+               // !! HOTFIX : allow only 8
+               if (size == 8) {
+                  writer.appendNode(lxTarget, -4);
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
-      //            int flags = scope.moduleScope->getClassFlags(classRef);
-      //            //HOTFIX : recognize int wrapper as primitive value
-      //            switch (flags & elDebugMask) {
-      //            case elDebugDWORD:
-      //               classRef = -1; // NOTE : -1 means primitive int32
-      //               break;
-      //            case elDebugQWORD:
-      //               classRef = -2; // NOTE : -2 means primitive int64
-      //               break;
-      //            case elDebugReal64:
-      //               classRef = -4; // NOTE : -4 means primitive real64
-      //               break;
-      //            }
-      //         }
+               writer.appendNode(lxSize, size);
             }
-      //      else scope.raiseError(errInvalidHint, terminal);
          }
-         else {
-      //      if (type != 0)
-      //         scope.raiseError(errInvalidHint, terminal);
-
-      //      TemplateInfo templateInfo;
-      //      templateInfo.templateRef = hintRef;
-
-      //      TerminalInfo target = hints.firstChild().Terminal();
-      //      templateInfo.targetType = scope.moduleScope->mapSubject(target);
-      //      templateInfo.targetSubject = templateInfo.targetType;
-      //      if (templateInfo.targetSubject == 0)
-      //         templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
-
-      //      classRef = generateTemplate(*scope.moduleScope, templateInfo, 0);
-      //      if (classRef == 0)
-               scope.raiseError(errInvalidHint, terminal);
+         else if(scope.moduleScope->subjectHints.exist(hintRef)) {
+            writer.appendNode(lxType, hintRef);
          }
+   //      else {
+   //   //      if (type != 0)
+   //   //         scope.raiseError(errInvalidHint, terminal);
+
+   //   //      TemplateInfo templateInfo;
+   //   //      templateInfo.templateRef = hintRef;
+
+   //   //      TerminalInfo target = hints.firstChild().Terminal();
+   //   //      templateInfo.targetType = scope.moduleScope->mapSubject(target);
+   //   //      templateInfo.targetSubject = templateInfo.targetType;
+   //   //      if (templateInfo.targetSubject == 0)
+   //   //         templateInfo.targetSubject = scope.moduleScope->module->mapSubject(target, false);
+
+   //   //      classRef = generateTemplate(*scope.moduleScope, templateInfo, 0);
+   //   //      if (classRef == 0)
+   //            scope.raiseError(errInvalidHint, terminal);
+   //      }
+   //   }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
       }
-      //if (StringHelper::compare(terminal, HINT_TYPE)) {
-      //   DNode value = hints.select(nsHintValue);
-      //   if (value!=nsNone) {
-      //      TerminalInfo typeTerminal = value.Terminal();
-
-      //      ref_t type = scope.moduleScope->mapType(typeTerminal);
-      //      if (type == 0)
-      //         scope.raiseError(errInvalidHint, terminal);
-
-      //      
-      //   }
-      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_SIZE)) {
-      //   TerminalInfo sizeValue = hints.firstChild().Terminal();
-      //   if (sizeValue.symbol == tsInteger) {
-      //      writer.appendNode(lxSize, StringHelper::strToInt(sizeValue.value));
-      //   }
-      //   else if (sizeValue.symbol == tsHexInteger) {
-      //      writer.appendNode(lxSize, StringHelper::strToLong(sizeValue.value, 16));
-      //   }
-      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-      //}
-      //else {
-      //   ref_t templateRef = scope.moduleScope->resolveIdentifier(terminal);
-      //   _Module* dummy;
-      //   _Memory* section = scope.moduleScope->loadTemplateInfo(templateRef, dummy);
-      //   if (section != NULL) {
-      //      SyntaxTree tree(section);
-      //      SNode node = tree.readRoot();
-      //      if (node == lxFieldTemplate) {
-      //         writer.newNode(lxFieldTemplate, templateRef);
-
-      //         TerminalInfo typeTerminal = hints.firstChild().Terminal();
-      //         writer.appendNode(lxSubject, scope.moduleScope->mapSubject(typeTerminal));
-
-      //         writer.closeNode();
-      //      }
-      //      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-      //   }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-      //}
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -2468,7 +2409,22 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
       ref_t hintRef = mapHint(hints, *scope.moduleScope);
 
       if (hintRef != 0) {
-         if (scope.moduleScope->subjectHints.exist(hintRef)) {
+         if (hintRef == scope.moduleScope->integerHint) {
+            TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
+            if (sizeValue.symbol == tsInteger) {
+               size = StringHelper::strToInt(sizeValue.value);
+               // !! HOTFIX : allow only 1,2,4 or 8
+               if (size == 1 || size == 2 || size == 4) {
+                  classRef = -1;
+               }
+               else if (size == 8) {
+                  classRef = -2;
+               }
+               else scope.raiseError(errInvalidHint, terminal);
+            }
+            else scope.raiseError(errInvalidHint, terminal);
+         }
+         else if (scope.moduleScope->subjectHints.exist(hintRef)) {
             if (type == 0 && classRef == 0) {
                type = hintRef;
 
@@ -2481,54 +2437,37 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
                   }
                   else scope.raiseError(errInvalidHint, terminal);
                }
-               else {
-                  classRef = scope.moduleScope->subjectHints.get(type);
-
-                  int flags = scope.moduleScope->getClassFlags(classRef);
-                  if (isEmbeddable(flags)) {
-                     //HOTFIX : recognize embeddable object as primitive value
-                     switch (flags & elDebugMask) {
-                        case elDebugDWORD:
-                           classRef = -1; // NOTE : -1 means primitive int32
-                           break;
-                        case elDebugQWORD:
-                           classRef = -2; // NOTE : -2 means primitive int64
-                           break;
-                        case elDebugReal64:
-                           classRef = -4; // NOTE : -4 means primitive real64
-                           break;
-                     }
-                  }
-               }
+               else classRef = scope.moduleScope->subjectHints.get(type);
             }
             else scope.raiseError(errInvalidHint, terminal);
          }
-         else {
-            if (type != 0)
-               scope.raiseError(errInvalidHint, terminal);
+   //      else {
+   //         if (type != 0)
+   //            scope.raiseError(errInvalidHint, terminal);
 
-            TemplateInfo templateInfo;
-            templateInfo.templateRef = hintRef;
-            templateInfo.sourceCol = terminal.Col();
-            templateInfo.sourceRow = terminal.Row();
+   //         TemplateInfo templateInfo;
+   //         templateInfo.templateRef = hintRef;
+   //         templateInfo.sourceCol = terminal.Col();
+   //         templateInfo.sourceRow = terminal.Row();
 
-            declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
-               
-            ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
-            RoleMap::Iterator it = templateInfo.parameters.start();
-            while (!it.Eof()) {
-               name.append('@');
-               name.append(scope.moduleScope->module->resolveSubject(*it));
+   //         declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
+   //            
+   //         ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
+   //         RoleMap::Iterator it = templateInfo.parameters.start();
+   //         while (!it.Eof()) {
+   //            name.append('@');
+   //            name.append(scope.moduleScope->module->resolveSubject(*it));
 
-               it++;
-            }
+   //            it++;
+   //         }
 
-            classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
-            if (classRef == 0)
-               scope.raiseError(errInvalidHint, terminal);
-         }
+   //         classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
+   //         if (classRef == 0)
+   //            scope.raiseError(errInvalidHint, terminal);
+   //      }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
       }
-      else scope.raiseError(errUnknownSubject, terminal);
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -2628,21 +2567,20 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       ClassInfo localInfo;
       bool bytearray = false;
       if (isPrimitiveRef(classRef)) {
-         scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
-         if (isEmbeddable(localInfo)) {
-            switch (classRef) {
-               case -1:
-               case -2:
-               case -4:
-                  size = localInfo.size;
-                  break;
-               case -3:
-                  size = size * localInfo.size;
-                  bytearray = true;
-                  break;
-            }
+         if (classRef == -1) {
+            localInfo.header.flags = elDebugDWORD;
          }
-         else scope.raiseError(errInvalidOperation, node.Terminal());
+         else if (classRef == -2) {
+            localInfo.header.flags = elDebugQWORD;
+         }
+         else if (classRef == -4) {
+            localInfo.header.flags = elDebugReal64;
+         }
+         else if (classRef == -3) {
+            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
+            size = size * localInfo.size;
+            bytearray = true;
+         }
       }
       else if (classRef != 0) {
          scope.moduleScope->loadClassInfo(localInfo, classRef, true);
@@ -2721,19 +2659,19 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
                   scope.writer->appendNode(lxLevel, variable.param);
                   scope.writer->closeNode();
                   break;
-   //            default:
-   //               scope.writer->newNode(lxBinaryVariable);
-   //               scope.writer->appendNode(lxTerminal, terminal.value);
-   //               scope.writer->appendNode(lxLevel, variable.param);
+               default:
+                  scope.writer->newNode(lxBinaryVariable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
 
-   //               //if (type != 0) {
-   //               //   ref_t classRef = scope.moduleScope->typeHints.get(type);
-   //               //
-   //               //   scope.writer->appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
-   //               //}
+                  if (type != 0) {
+                     ref_t classRef = scope.moduleScope->subjectHints.get(type);
+                  
+                     scope.writer->appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+                  }
 
-   //               scope.writer->closeNode();
-   //               break;
+                  scope.writer->closeNode();
+                  break;
             }
          }
       }
@@ -2813,6 +2751,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
             scope.writer->appendNode(lxThisLocal, object.param);
          }
          else scope.writer->newNode(lxThisLocal, object.param);
+         scope.writer->appendNode(lxTarget, scope.getClassRefId());
          break;
       case okSuper:
          scope.writer->newNode(lxLocal, 1);
@@ -4162,22 +4101,31 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
    ObjectInfo objectInfo = compileExpression(assigning.firstChild(), scope, 0, 0);
 
    if (targetType != 0) {
-      ref_t ref = resolveObjectReference(scope, objectInfo);
+   //   ref_t ref = resolveObjectReference(scope, objectInfo);
 
-      if (isPrimitiveRef(ref)) {
-         scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-         appendTerminalInfo(scope.writer, node.FirstTerminal());
-         scope.writer->closeNode();
-         //scope.writer->insert(lxBoxing);
-         //scope.writer->appendNode(lxTarget, target.extraparam);
-         //appendTerminalInfo(scope.writer, node.FirstTerminal());
-         //scope.writer->closeNode();
-      }
-      else if (objectInfo.type != targetType) {
+   //   if (isPrimitiveRef(ref)) {
+   //      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
+   //      appendTerminalInfo(scope.writer, node.FirstTerminal());
+   //      scope.writer->closeNode();
+   //      //scope.writer->insert(lxBoxing);
+   //      //scope.writer->appendNode(lxTarget, target.extraparam);
+   //      //appendTerminalInfo(scope.writer, node.FirstTerminal());
+   //      //scope.writer->closeNode();
+   //   }
+      /*else */if (objectInfo.type != targetType) {
          scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
          appendTerminalInfo(scope.writer, node.FirstTerminal());
          scope.writer->closeNode();
       }      
+   }
+   else if (isPrimitiveRef(target.extraparam)) {
+      ClassInfo info;
+      scope.moduleScope->loadClassInfo(info, resolveObjectReference(scope, objectInfo), true);
+
+      if (target.extraparam == -1 && ((info.header.flags & elDebugMask)  == elDebugDWORD)) {
+         // allow assigning an int wrapper to the primitive int
+      }
+      else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
    }
    else if (target.extraparam > 0) {
       ClassInfo info;
@@ -4232,15 +4180,15 @@ ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, Obje
    return ObjectInfo(okObject);
 }
 
-//void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
-//{
-//   scope.writer->newNode(lxThrowing);
-//
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, mode);
-//
-//   scope.writer->closeNode();
-//}
-//
+void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
+{
+   scope.writer->newNode(lxThrowing);
+
+   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, mode);
+
+   scope.writer->closeNode();
+}
+
 //void Compiler :: compileLoop(DNode node, CodeScope& scope)
 //{
 //   //DNode expr = node.firstChild().firstChild();
@@ -4357,9 +4305,9 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
             compileExpression(statement, scope, 0, HINT_ROOT);
             scope.writer->closeNode();
             break;
-//         case nsThrow:
-//            compileThrow(statement, scope, 0);
-//            break;
+         case nsThrow:
+            compileThrow(statement, scope, 0);
+            break;
 //         case nsLoop:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            //scope.writer->newNode(lxExpression);
@@ -4418,69 +4366,69 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 
 void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
 {
-   ModuleScope* moduleScope = scope.moduleScope;
+   //ModuleScope* moduleScope = scope.moduleScope;
 
-   while (arg == nsSubjectArg) {
-      TerminalInfo terminal = arg.Terminal();
+   //while (arg == nsSubjectArg) {
+   //   TerminalInfo terminal = arg.Terminal();
 
-      ref_t subject = moduleScope->mapSubject(terminal);
-      ref_t classReference = moduleScope->subjectHints.get(subject);
-      int flags = 0;
-      ClassInfo classInfo;
-      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
-         scope.raiseError(errInvalidOperation, terminal);
+   //   ref_t subject = moduleScope->mapSubject(terminal);
+   //   ref_t classReference = moduleScope->subjectHints.get(subject);
+   //   int flags = 0;
+   //   ClassInfo classInfo;
+   //   if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+   //      scope.raiseError(errInvalidOperation, terminal);
 
-      flags = classInfo.header.flags;
+   //   flags = classInfo.header.flags;
 
-      LexicalType argType = lxNone;
-      switch (flags & elDebugMask) {
-         // if it is an integer number pass it directly
-         case elDebugDWORD:
-      //   case elDebugPTR:
-      //   case elDebugSubject:
-            argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
-            break;
-      //   case elDebugReference:
-      //      argType = lxExtInteranlRef;
-      //      break;
-         case elDebugWideLiteral:
-         case elDebugLiteral:
-            argType = lxExtArgument;
-            break;
-         default:
-            scope.raiseError(errInvalidOperation, terminal);
-            break;
-      }
+   //   LexicalType argType = lxNone;
+   //   switch (flags & elDebugMask) {
+   //      // if it is an integer number pass it directly
+   //      case elDebugDWORD:
+   //   //   case elDebugPTR:
+   //   //   case elDebugSubject:
+   //         argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
+   //         break;
+   //   //   case elDebugReference:
+   //   //      argType = lxExtInteranlRef;
+   //   //      break;
+   //      case elDebugWideLiteral:
+   //      case elDebugLiteral:
+   //         argType = lxExtArgument;
+   //         break;
+   //      default:
+   //         scope.raiseError(errInvalidOperation, terminal);
+   //         break;
+   //   }
 
-      arg = arg.nextNode();
-      if (arg == nsMessageParameter) {
-      //   if (argType == lxExtInteranlRef) {
-      //      if (isSingleObject(arg.firstChild())) {
-      //         ObjectInfo target = compileTerminal(arg.firstChild(), scope);
-      //         if (target.kind == okInternal) {
-      //            scope.writer->appendNode(lxExtInteranlRef, target.param);
-      //         }
-      //         else scope.raiseError(errInvalidOperation, terminal);
-      //      }
-      //      else scope.raiseError(errInvalidOperation, terminal);
-      //   }
-      //   else {
-            scope.writer->newNode(argType);
+   //   arg = arg.nextNode();
+   //   if (arg == nsMessageParameter) {
+   //   //   if (argType == lxExtInteranlRef) {
+   //   //      if (isSingleObject(arg.firstChild())) {
+   //   //         ObjectInfo target = compileTerminal(arg.firstChild(), scope);
+   //   //         if (target.kind == okInternal) {
+   //   //            scope.writer->appendNode(lxExtInteranlRef, target.param);
+   //   //         }
+   //   //         else scope.raiseError(errInvalidOperation, terminal);
+   //   //      }
+   //   //      else scope.raiseError(errInvalidOperation, terminal);
+   //   //   }
+   //   //   else {
+   //         scope.writer->newNode(argType);
 
-            ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
-            if (info.kind == okIntConstant) {
-               int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
+   //         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
+   //         if (info.kind == okIntConstant) {
+   //            int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
 
-               scope.writer->appendNode(lxValue, value);
-            }
+   //            scope.writer->appendNode(lxValue, value);
+   //         }
 
-            scope.writer->closeNode();
-      //   }
+   //         scope.writer->closeNode();
+   //   //   }
 
-         arg = arg.nextNode();
-      }
-      else scope.raiseError(errInvalidOperation, terminal);
-   }
+   //      arg = arg.nextNode();
+   //   }
+   //   else scope.raiseError(errInvalidOperation, terminal);
+   //}
 }
 
 ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
@@ -5562,14 +5510,14 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
    return scope.reference;
 }
 
-void Compiler::generateClassFlags(ClassScope& scope, SNode root)
+void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
    SNode current = root.firstChild();
    while (current != lxNone) {
       scope.compileClassHint(current);
-      if (current == lxClassStructure/* || current == lxClassArray*/) {
-         generateClassFlags(scope, current);
-      }
+      //if (current == lxClassStructure/* || current == lxClassArray*/) {
+      //   generateClassFlags(scope, current);
+      //}
 
       current = current.nextNode();
    }
@@ -5660,18 +5608,54 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
 
          ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
          int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
+         ref_t target = SyntaxTree::findChild(current, lxTarget).argument;
 
          int size = (typeHint != 0) ? scope.moduleScope->defineSubjectSize(typeHint) : 0;
          if (sizeHint != 0) {
             if (size < 0) {
                size = sizeHint * (-size);
             }
+            else if (size == 0) {
+               size = sizeHint;
+            }
             else scope.raiseError(errIllegalField, current);
          }
 
+         if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
+            // wrapper may have only one field
+            scope.raiseError(errIllegalField, current);
+         }
+         else if (isPrimitiveRef(target)) {
+            if (testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
+               scope.raiseError(errIllegalField, current);
+
+            if (test(scope.info.header.flags, elStructureRole)) {
+               scope.info.fields.add(terminal, scope.info.size);
+               scope.info.size += size;
+            }
+            else scope.raiseError(errIllegalField, current);
+
+            // if it is a primitive field
+            if (singleField && scope.info.fields.Count() == 1) {
+               switch (target) {
+                  case -1:
+                     scope.info.header.flags |= (elDebugDWORD | elStructureRole | elReadOnlyRole);
+                     break;
+                  case -2:
+                     scope.info.header.flags |= (elDebugQWORD | elStructureRole | elReadOnlyRole) ;
+                     break;
+                  case -4:
+                     scope.info.header.flags |= (elDebugReal64 | elStructureRole | elReadOnlyRole);
+                     break;
+                  default:
+                     scope.raiseError(errIllegalField, current);
+                     break;
+               }
+            }
+         }
          // a class with a dynamic length structure must have no fields
-         if (test(scope.info.header.flags, elDynamicRole)) {
-            if (current == lxTemplateField && scope.info.size == 0 && scope.info.fields.Count() == 0) {
+         else if (test(scope.info.header.flags, elDynamicRole)) {
+            if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
                // compiler magic : turn a field declaration into an array or string one 
                if (size != 0) {
                   if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
@@ -5733,22 +5717,13 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
                if (typeHint != 0)
                   scope.info.fieldTypes.add(offset, typeHint);
 
-               // byref variable may have only one field
-               if (test(scope.info.header.flags, elWrapper)) {
-                  if (scope.info.fields.Count() > 1)
-                     scope.raiseError(errIllegalField, current);
-               }
+               //// byref variable may have only one field
+               //if (test(scope.info.header.flags, elWrapper)) {
+               //   if (scope.info.fields.Count() > 1)
+               //      scope.raiseError(errIllegalField, current);
+               //}
             }
          }
-
-         //// check for field templates
-         //SNode templ = SyntaxTree::findChild(current, lxFieldTemplate);
-         //if (templ != lxNone) {
-         //   if (!test(scope.info.header.flags, elStructureRole))
-         //      size = 0; // for normal field size should be ignored in the template
-
-         //   declareImportedTemplate(scope, templ, offset, typeHint, size);
-         //}
       }
 
       current = current.nextNode();
@@ -6110,61 +6085,44 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          else if (test(scope.info.header.flags, elStructureRole)) {
             writer.newNode(lxBoxing);
             writer.appendNode(lxFieldAddress, info.targetOffset);
-
-            if (test(scope.info.header.flags, elWrapper)) {
-               // HOTFIX : recognize primitive types
-               switch (scope.info.header.flags & elDebugMask) {
-                  case elDebugDWORD:
-                     writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
-                     break;
-                  case elDebugQWORD:
-                     writer.appendNode(lxTarget, -2); // NOTE : -2 means primitive long integer
-                     break;
-                  case elDebugReal64:
-                     writer.appendNode(lxTarget, -4); // NOTE : -4 means primitive real number
-                     break;
-                  default:
-                     writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
-               }
-            }
-            else writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
+            //writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
          }
          else writer.newNode(lxField, info.targetOffset);
       }
-      else {
-         writer.newNode(lxThisLocal, 1);
+   //   else {
+   //      writer.newNode(lxThisLocal, 1);
 
-         // HOTFIX : recognize primitive types
-         switch (scope.info.header.flags & elDebugMask) {
-            case elDebugDWORD:
-               writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
-               break;
-            case elDebugQWORD:
-               writer.appendNode(lxTarget, -2); // NOTE : -2 means primitive long integer
-               break;
-            case elDebugReal64:
-               writer.appendNode(lxTarget, -4); // NOTE : -4 means primitive real number
-               break;
-            case elDebugIntegers:
-            case elDebugBytes:
-            case elDebugShorts:
-            case elDebugLiteral:
-            case elDebugWideLiteral:
-               writer.appendNode(lxTarget, -3); // NOTE : -3 means primitive array
-               break;
-            default:
-               writer.appendNode(lxTarget, scope.reference);
-         }         
-      }
+   //      // HOTFIX : recognize primitive types
+   //      switch (scope.info.header.flags & elDebugMask) {
+   //         case elDebugDWORD:
+   //            writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
+   //            break;
+   //         case elDebugQWORD:
+   //            writer.appendNode(lxTarget, -2); // NOTE : -2 means primitive long integer
+   //            break;
+   //         case elDebugReal64:
+   //            writer.appendNode(lxTarget, -4); // NOTE : -4 means primitive real number
+   //            break;
+   //         case elDebugIntegers:
+   //         case elDebugBytes:
+   //         case elDebugShorts:
+   //         case elDebugLiteral:
+   //         case elDebugWideLiteral:
+   //            writer.appendNode(lxTarget, -3); // NOTE : -3 means primitive array
+   //            break;
+   //         default:
+   //            writer.appendNode(lxTarget, scope.reference);
+   //      }         
+   //   }
 
       if (info.targetType != 0) {
          writer.appendNode(lxType, info.targetType);
       }         
       else {
-         SNode explicitTypeNode = SyntaxTree::findChild(current, lxTemplateFieldType);
-         writer.appendNode(lxType, info.parameters.get(explicitTypeNode.argument));
+         ref_t fieldType = SyntaxTree::findChild(current, lxTemplateFieldType).argument;
+         if (fieldType != 0)
+            writer.appendNode(lxType, info.parameters.get(fieldType));
       }
-      
    }
 //   else if (current.type == lxTemplateCalling) {
 //      ref_t message = overwriteSubject(current.argument, info.type);
@@ -6757,20 +6715,17 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, ref_t targetType, int warningLevel, int mode)
+void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
 {
    LexicalType opType = node.type;
 
    int size = 0;
-   if (targetType != 0) {
-      size = scope.defineSubjectSize(targetType, false);
+   if (isPrimitiveRef(targetRef)) {
+      if (targetRef == -1) {
+         size = 4;
+      }
    }
-   else if (targetRef == -1) {
-      size = 4;
-   }
-   else if (targetRef == -2 || targetRef == -4) {
-      size = 8;
-   }
+   else size = scope.defineStructSize(targetRef);
 
    if (size != 0) {
       int offset = allocateStructure(scope, node, size);
@@ -6790,17 +6745,12 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t 
          node.setArgument(size);
 
          node.appendNode(lxTarget, targetRef);
-         node.appendNode(lxType, targetType);
 
          optimizeBoxing(scope, node, warningLevel, 0);
 
          node = SyntaxTree::findChild(node, lxAssigning);
       }
-      else {
-         node.appendNode(lxTarget, targetRef);
-         node.appendNode(lxType, targetType);
-      }
-
+      else node.appendNode(lxTarget, targetRef);
 
       node = SyntaxTree::findChild(node, opType);
    }
@@ -6816,7 +6766,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask
       if (parentNode.argument != 4) {
          ref_t type = SyntaxTree::findChild(parentNode, lxType).argument;
 
-         boxPrimitive(scope, node, -1, type, warningMask, mode);
+         boxPrimitive(scope, node, -1, warningMask, mode);
       }
    }
 
@@ -6831,7 +6781,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask
 
 void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
-   boxPrimitive(scope, node, -1, 0, warningMask, mode);
+   boxPrimitive(scope, node, -1, warningMask, mode);
 
    optimizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
 }
@@ -6931,34 +6881,53 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
    }
 }
 
-int Compiler :: mapOpArg(ModuleScope& scope, SNode arg, ref_t& ref)
+int Compiler :: mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target)
 {
-   int flags = 0;
+   target = SyntaxTree::findChild(arg, lxTarget).argument;
+   int flags = mapOpArg(scope, arg);
 
-   ref = SyntaxTree::findChild(arg, lxTarget).argument;
-   ref_t type = SyntaxTree::findChild(arg, lxType).argument;
-   if (isPrimitiveRef(ref) || ref == 0) {
-      flags = scope.getClassFlags(scope.subjectHints.get(type));
-   }
-   else {
-      flags = scope.getClassFlags(ref);
-      if (test(flags, elEmbeddableWrapper | elStructureRole)) {
-         //HOTFIX : recognize embeddable object as primitive value
-         switch (flags & elDebugMask) {
-            case elDebugDWORD:
-               ref = -1; // NOTE : -1 means primitive int32
-               break;
-            case elDebugQWORD:
-               ref = -2; // NOTE : -2 means primitive int64
-               break;
-            case elDebugReal64:
-               ref = -4; // NOTE : -4 means primitive real64
-               break;
-         }
+   // HOTFIX : if the target is not defined - consider it as primitive one
+   if (target == 0) {
+      switch (flags) {
+         case elDebugDWORD:
+            target = -1;
+            break;
+         case elDebugQWORD:
+            target = -2;
+            break;
+         case elDebugReal64:
+            target = -4;
+            break;
+         default:
+            break;
       }
    }
 
-   return flags & elDebugMask;
+   return flags;
+}
+
+int Compiler :: mapOpArg(ModuleScope& scope, SNode arg)
+{
+   int flags = 0;
+
+   ref_t ref = SyntaxTree::findChild(arg, lxTarget).argument;
+   if (isPrimitiveRef(ref) || ref == 0) {
+      switch (ref) {
+         case -1:
+            return elDebugDWORD;
+         case -2:
+            return elDebugQWORD;
+         case -4:
+            return elDebugReal64;
+         default:
+            return 0;
+      }
+   }
+   else {
+      flags = scope.getClassFlags(ref);
+
+      return flags & elDebugMask;
+   }   
 }
 
 inline LexicalType mapArrPrimitiveOp(int size)
@@ -6984,19 +6953,31 @@ void Compiler :: optimizeBoolOp(ModuleScope& scope, SNode node, int warningLevel
    if (optimizeOp(scope, opNode, warningLevel, mode)) {
       typecastNode = lxExpression;
       node = lxExpression;
+      // HOTFIX : mark it as a boolean operation
+      node.appendNode(lxType, scope.boolType);
    }
    else optimizeSyntaxExpression(scope, node, warningLevel);
 }
 
 bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {   
+   ref_t destType = 0;
+   SNode parent = node.parentNode();
+   while (parent != lxNewFrame) {
+      if (parent == lxTypecasting) {
+         destType = getSignature(parent.argument);
+         break;
+      }
+      else parent = parent.parentNode();;
+   }
+
    if (node.argument == SET_REFER_MESSAGE_ID) {
       SNode larg, narg, rarg;
       assignOpArguments(node, larg, narg, rarg);
 
+      ref_t lref = SyntaxTree::findChild(larg, lxTarget).argument;
       int nflags = mapOpArg(scope, narg);
 
-      ref_t lref = SyntaxTree::findChild(larg, lxTarget).argument;
       if (isPrimitiveRef(lref)) {
          if (lref == -3 && nflags == elDebugDWORD) {
             ref_t destType = SyntaxTree::findChild(larg, lxType).argument;
@@ -7029,116 +7010,107 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       SNode larg, rarg;
       assignOpArguments(node, larg, rarg);
 
-      ref_t destType = SyntaxTree::findChild(larg, lxType).argument;
-
-      ref_t lref = 0;
-      int lflags = mapOpArg(scope, larg, lref);
+      ref_t target = 0;
+      int lflags = mapOpArg(scope, larg, target);
       int rflags = mapOpArg(scope, rarg);
 
-      // HOTFIX : allowing arithmetic / comparison operations with numerics
-      if (IsNumericOperator(node.argument) || IsCompOperator(node.argument) || IsBitwiseOperator(node.argument) 
-         || IsShiftOperator(node.argument)) 
-      {
-         if (scope.intReference == lref) {
-            lref = -1;
+      if (IsNumericOperator(node.argument)) {
+         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
+
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+            node = lxIntOp;
+            boxing = true;
          }
-         else if (scope.longReference == lref) {
-            lref = -2;
+         else if (lflags == elDebugQWORD && rflags == elDebugQWORD && oflags == elDebugQWORD) {
+            node = lxLongOp;
+            boxing = true;
          }
-         else if (scope.realReference == lref) {
-            lref = -4;
+         else if (lflags == elDebugReal64 && rflags == elDebugReal64 && oflags == elDebugReal64) {
+            node = lxRealOp;
+            boxing = true;
          }
       }
+      else if (node.argument == READ_MESSAGE_ID) {
+         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
 
-      if (isPrimitiveRef(lref)) {
-         if (IsNumericOperator(node.argument)) {
-            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
-               node = lxIntOp;
-               boxing = true;
-            }
-            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
-               node = lxLongOp;
-               boxing = true;
-            }
-            else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
-               node = lxRealOp;
-               boxing = true;
-            }
+         if (target == -3 && rflags == elDebugDWORD) {
+            target = scope.subjectHints.get(destType);
+            int size = scope.defineStructSize(target);
+            node.appendNode(lxSize, size);
+            node = mapArrPrimitiveOp(size);
          }
-         else if (node.argument == READ_MESSAGE_ID) {
-            if (lref == -3 && rflags == elDebugDWORD) {
-               lref = scope.subjectHints.get(destType);
-               int size = scope.defineStructSize(lref);
-               node.appendNode(lxSize, size);
-               node = mapArrPrimitiveOp(size);
-            }
-            else if (lref == -5 && rflags == elDebugDWORD) {
-               node = lxArrOp;
-            }
-            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
-               node = lxIntOp;
-               boxing = true;
-            }
-            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugDWORD) {
-               node = lxLongOp;
-               boxing = true;
-            }
+         else if (target == -5 && rflags == elDebugDWORD) {
+            node = lxArrOp;
          }
-         else if (node.argument == WRITE_MESSAGE_ID) {
-            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
-               node = lxIntOp;
-               boxing = true;
-            }
-            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugDWORD) {
-               node = lxLongOp;
-               boxing = true;
-            }
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+            node = lxIntOp;
+            boxing = true;
          }
-         else if (IsBitwiseOperator(node.argument)) {
-            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
-               node = lxIntOp;
-               boxing = true;
-            }
-            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
-               node = lxLongOp;
-               boxing = true;
-            }
+         else if (lflags == elDebugQWORD && rflags == elDebugDWORD && oflags == elDebugQWORD) {
+            node = lxLongOp;
+            boxing = true;
          }
-         else if (IsCompOperator(node.argument)) {
-            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
-               node = lxIntOp;
-            }
-            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
-               node = lxLongOp;
-            }
-            else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
-               node = lxRealOp;
-            }
+      }
+      else if (node.argument == WRITE_MESSAGE_ID) {
+         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
 
-            node.appendNode(lxType, scope.boolType);
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+            node = lxIntOp;
+            boxing = true;
          }
-         else if (IsVarOperator(node.argument)) {
-            if (lref == -1 && lflags == elDebugDWORD && rflags == elDebugDWORD) {
-               node = lxIntOp;
-            }
-            else if (lref == -2 && lflags == elDebugQWORD && rflags == elDebugQWORD) {
-               node = lxLongOp;
-            }
-            else if (lref == -4 && lflags == elDebugReal64 && rflags == elDebugReal64) {
-               node = lxRealOp;
-            }
+         else if (lflags == elDebugQWORD && rflags == elDebugDWORD && oflags == elDebugQWORD) {
+            node = lxLongOp;
+            boxing = true;
          }
-         else if (IsReferOperator(node.argument) && rflags == elDebugDWORD) {
-            if (lref == -3) {
-               lref = scope.subjectHints.get(destType);
-               int size = scope.defineStructSize(lref);
-               node.appendNode(lxSize, size);
-               node = mapArrPrimitiveOp(size);
-               boxing = true;
-            }
-            else if (lref == -5) {
-               node = lxArrOp;
-            }
+      }
+      else if (IsBitwiseOperator(node.argument)) {
+         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
+
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+            node = lxIntOp;
+            boxing = true;
+         }
+         else if (lflags == elDebugQWORD && rflags == elDebugQWORD && oflags == elDebugQWORD) {
+            node = lxLongOp;
+            boxing = true;
+         }
+      }
+      else if (IsCompOperator(node.argument)) {
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            node = lxIntOp;
+         }
+         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
+            node = lxLongOp;
+         }
+         else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
+            node = lxRealOp;
+         }
+
+         node.appendNode(lxType, scope.boolType);
+      }
+      else if (IsVarOperator(node.argument)) {
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            node = lxIntOp;
+         }
+         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
+            node = lxLongOp;
+         }
+         else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
+            node = lxRealOp;
+         }
+      }
+      else if (IsReferOperator(node.argument) && rflags == elDebugDWORD) {         
+         destType = SyntaxTree::findChild(larg, lxType).argument;
+
+         if (target == -3 && destType != 0) {
+            target = scope.subjectHints.get(destType);
+            int size = scope.defineStructSize(target);
+            node.appendNode(lxSize, size);
+            node = mapArrPrimitiveOp(size);
+            boxing = true;
+         }
+         else if (target == -5) {
+            node = lxArrOp;
          }
       }
 
@@ -7154,8 +7126,13 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          optimizeSyntaxNode(scope, larg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
          optimizeSyntaxNode(scope, rarg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
 
-         if (boxing)
-            boxPrimitive(scope, node, lref, destType, warningLevel, mode);
+         if (boxing) {
+            if (isPrimitiveRef(target)) {
+               target = scope.subjectHints.get(destType);
+            }
+
+            boxPrimitive(scope, node, target, warningLevel, mode);
+         }            
 
          return true;
       }
@@ -7285,32 +7262,22 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    //}
 }
 
-ref_t Compiler :: resolvePrimitiveReference(ModuleScope& scope, ref_t reference)
-{
-   switch (reference) {
-      case -1:
-         return scope.intReference;
-      case -2:
-         return scope.longReference;
-      case -4:
-         return scope.realReference;
-      default:
-         return reference;
-   }
-}
-
 void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
 {
    SNode target = SyntaxTree::findChild(node, lxTarget);
+   ref_t type = SyntaxTree::findChild(node, lxType).argument;
+
+   // HOTFIX : try to resolve target if it is not defined 
+   if (target == lxNone && type != 0) {
+      node.appendNode(lxTarget, scope.subjectHints.get(type));
+
+      target = SyntaxTree::findChild(node, lxTarget);
+   }
 
    // HOT FIX : box / assign primitive structures
-   if (isPrimitiveRef(target.argument)) {
-      ref_t type = SyntaxTree::findChild(node, lxType).argument;
+   if (isPrimitiveRef(target.argument)) {      
       if (type == 0) {
-         // HOTFIX : if the type is not provided
-         target.setArgument(resolvePrimitiveReference(scope, target));
-
-         node.setArgument(scope.defineStructSize(target.argument));
+         raiseWarning(scope, node, errInvalidOperation, 0, 0);
       }
       else {
          int size = scope.defineSubjectSize(type, false);
@@ -7323,23 +7290,20 @@ void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
          target.setArgument(scope.subjectHints.get(type));
       }
    }
-   else if (node.argument == 0)
+   else if (node.argument == 0) {
       node.setArgument(scope.defineStructSize(target.argument));
+   }
 }
 
 void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {
    bool boxing = true;
 
-   SNode target = SyntaxTree::findChild(node, lxTarget);
-
    SNode exprNode = SyntaxTree::findMatchedChild(node, lxObjectMask);
    if (exprNode == lxNewOp) {
       boxing = false;
    }
    else {
-      defineTargetSize(scope, node);
-
       // if no boxing hint provided
       // then boxing should be skipped
       if (test(mode, HINT_NOBOXING)) {
@@ -7350,9 +7314,11 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
       }
    }
 
+   if (boxing) {
+      defineTargetSize(scope, node);
+   }
    // ignore boxing operation if allowed
-   if (!boxing)
-      node = lxExpression;
+   else node = lxExpression;
 
    optimizeSyntaxExpression(scope, node, warningLevel, HINT_NOBOXING);
 
@@ -7378,7 +7344,7 @@ bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef
 
 void Compiler :: raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered)
 {
-   if (test(warningLevel, warningMask) && triggered) {
+   if (test(warningMask, warningLevel) && triggered) {
       while (node != lxNewFrame) {
          SNode row = SyntaxTree::findChild(node, lxRow);
          SNode col = SyntaxTree::findChild(node, lxCol);
@@ -7405,6 +7371,13 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
       // HOTFIX : primitive / external operation should be done before
       if (object == lxOp) {
          optimizeOp(scope, object, warningMask, mode);
+
+         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+         optimized = true;
+      }
+      else if (object == lxBoolOp) {
+         optimizeBoolOp(scope, object, warningMask, mode);
 
          object = SyntaxTree::findMatchedChild(node, lxObjectMask);
 

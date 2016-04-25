@@ -155,7 +155,6 @@ enum LexicalType
    lxSourcePath      = 0x0200A,
 
    lxClassFlag       = 0x04001,      // class fields
-   lxClassStructure  = 0x04002,      
    //lxClassArray      = 0x04003,
    lxClassField      = 0x04005,
    lxClassMethod     = 0x14006,

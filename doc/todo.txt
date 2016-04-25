@@ -2,6 +2,7 @@
 In development:
 ------                              
               xdev - generic development
+
                        * #var(vbyte)b := 4. - should work
 
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
@@ -58,6 +59,8 @@ In development:
                        * optimize intnumeric.shift implementation
                        * optimize intnumeric.not implementation
                        * optimize charvalue#class.new&char$[1]
+                       * optimize shift implementation
+                       * optimize varof.append / varof.reduce / ...
 
                        * test constructor returning not compatible object
 

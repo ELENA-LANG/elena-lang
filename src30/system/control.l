@@ -72,7 +72,7 @@
     #method literal = "true".
 
     /// Returns literal representation.
-    #method wide = "true" wide. // !! temporal
+    #method wide = "true"w.
 
     /// Returns itself.
     #method clone = $self.
@@ -133,7 +133,7 @@
     #method literal = "false".
     
     /// Returns literal representation
-    #method wide = "false" wide. // !! temporal
+    #method wide = "false"w.
 
     /// Returns itself
     #method clone = $self.
