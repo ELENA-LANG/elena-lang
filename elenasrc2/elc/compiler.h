@@ -764,10 +764,12 @@ private:
       {
          ref_t parameter = parameters.get(terminal);
          if (parameter != 0) {
-            output.copy(TARGET_POSTFIX);
-            output.appendInt((int)parameter);
-            
-            return moduleScope->module->mapSubject(output, false);
+            int offset = output.Length();
+
+            output.append(TARGET_POSTFIX);
+            output.appendInt((int)parameter);            
+
+            return moduleScope->module->mapSubject(output + offset, false);
          }
          else return moduleScope->mapSubject(terminal, output);
       }

@@ -4,57 +4,57 @@
 {
     #field(template_subj)$target.
     
-//    #method(outnprop:length,stacksafe)readLength &vint:retVal
-//    [
-//        #var(int)len.
-//        $target >> len.
-//        
-//        retVal := len - 1.
-//    ]
+    #method(outnprop:length,stacksafe)readLength &vint:retVal
+    [
+        #var(int)len.
+        $target >> len.
+        
+        retVal := len - 1.
+    ]
 
-    #method getAt &int:n  // !! validate range
-        = $target @ n.
+    #method(suppress:w3) getAt &int:n
+    [
+        (n < 0)
+            ? [ #throw InvalidArgumentException new. ].
+        
+        #var(int)len.
+        $target >> len.
+
+        (n < len)
+            ? [ ^ $target @ n. ]
+            ! [ #throw InvalidArgumentException new. ].
+            
+    ]
+
+    #method(suppress:w3) setAt &int:n &template_subj:item
+    [
+        (n < 0)
+            ? [ #throw InvalidArgumentException new. ].
+        
+        #var(int)len.
+        $target >> len.
+
+        (n < len)
+            ? [ $target @ n := item. ]
+            ! [ #throw InvalidArgumentException new. ].            
+    ]
+                
+    /// Returns the item at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+        
+    /// Returns the item at the specified index
+    #method(suppress:w2) setAt : index : value
+        <= %setAt &int:(index int) &template_subj:value.
 }
 
-//// --- stringof --- 
-//
-//#template(const,string) stringof : template_subj
-//{
-//    #field(template_subj)$target.
-//
-//    /// Concatinates the values
-//    #method add : value 
-//        = value cast:%add &to:$self.
-//                        
-//    #method(outnprop:length,stacksafe)readLength &vint:retVal
-//    [
-//        #var(int)len.
-//        $target >> len.
-//        
-//        retVal := len - 1.
-//    ]    
-//        
-//    /// Returns the character at specified index
-//    #method(char,stacksafe,suppress:w3) getAt &int:anIndex
-//    [
-//        #var(char)ch.
-//        $self read &int:anIndex &vchar:ch.
-//        
-//        ^ ch.
-//    ]
-//
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//}
-//
-//// === basic memory classes ===
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//#class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
-//{
+// === basic memory classes ===
+
+// --- ByteArray ---
+
+/// A byte array
+#class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
+{
 //    /// Creates the byte array with the specified length
 //    #constructor(stacksafe) new &int:len
 //        = byte:len.
@@ -221,8 +221,8 @@
 ////    
 ////    /// Dispatches the verb to the target object with bytearray subject
 ////    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array

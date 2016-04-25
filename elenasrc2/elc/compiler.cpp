@@ -5481,8 +5481,6 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
 
    writer.appendNode(lxClassFlag, elSealed);
 
-   templateInfo.targetOffset = scope.info.fields.Count();
-
    declareTemplate(scope, writer, templateInfo);   
    declareImportedTemplates(scope, writer);           // HOTFIX : import templates declared in templates
 
@@ -5547,24 +5545,12 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
          //}
       }
       else if (current == lxTemplateField) {
-         SNode templateType = SyntaxTree::findChild(current, lxTemplateFieldType);
-         if (templateType.argument != 0) {
-            templateInfo.targetType = templateInfo.parameters.get(templateType.argument);
-
-            // HOTFIX : if the target field is the object itself
-            // ignore target field
-            if (scope.moduleScope->subjectHints.exist(templateInfo.targetType, scope.reference)) {
-               current = current.nextNode();
-
-               continue;
-            }
-         }
-
          writer.newNode(lxTemplateField, current.argument);
+
          SNode attr = current.firstChild();
          while (attr != lxNone) {
             if (attr == lxTemplateFieldType) {               
-               writer.appendNode(lxType, templateInfo.targetType);
+               writer.appendNode(lxType, templateInfo.parameters.get(attr.argument));
             }
             else importNode(scope, attr, writer, extModule, templateInfo);
 
@@ -6074,94 +6060,36 @@ void Compiler :: generateClassImplementation(ClassScope& scope)
 void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
 {
    if (current.type == lxTemplateTarget) {
+      int offset = 0;
+      ref_t type = 0;
       if (info.targetOffset >= 0) {
-         // if it is an array
-         if (test(scope.info.header.flags, elDynamicRole)) {
-            writer.newNode(lxThisLocal, 1);
-
-            writer.appendNode(lxTarget, test(scope.info.header.flags, elStructureRole) ? -3 : -5);
-         }
-         // if it is a structure field
-         else if (test(scope.info.header.flags, elStructureRole)) {
-            writer.newNode(lxBoxing);
-            writer.appendNode(lxFieldAddress, info.targetOffset);
-            //writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
-         }
-         else writer.newNode(lxField, info.targetOffset);
+         type = info.targetType;
+         offset = info.targetOffset;
       }
-   //   else {
-   //      writer.newNode(lxThisLocal, 1);
-
-   //      // HOTFIX : recognize primitive types
-   //      switch (scope.info.header.flags & elDebugMask) {
-   //         case elDebugDWORD:
-   //            writer.appendNode(lxTarget, -1); // NOTE : -1 means primitive integer
-   //            break;
-   //         case elDebugQWORD:
-   //            writer.appendNode(lxTarget, -2); // NOTE : -2 means primitive long integer
-   //            break;
-   //         case elDebugReal64:
-   //            writer.appendNode(lxTarget, -4); // NOTE : -4 means primitive real number
-   //            break;
-   //         case elDebugIntegers:
-   //         case elDebugBytes:
-   //         case elDebugShorts:
-   //         case elDebugLiteral:
-   //         case elDebugWideLiteral:
-   //            writer.appendNode(lxTarget, -3); // NOTE : -3 means primitive array
-   //            break;
-   //         default:
-   //            writer.appendNode(lxTarget, scope.reference);
-   //      }         
-   //   }
-
-      if (info.targetType != 0) {
-         writer.appendNode(lxType, info.targetType);
-      }         
       else {
-         ref_t fieldType = SyntaxTree::findChild(current, lxTemplateFieldType).argument;
-         if (fieldType != 0)
-            writer.appendNode(lxType, info.parameters.get(fieldType));
+         ident_t field = SyntaxTree::findChild(current, lxTerminal).identifier();
+
+         offset = scope.info.fields.get(field);
+         type = scope.info.fieldTypes.get(offset);         
       }
+
+      // if it is an array
+      if (test(scope.info.header.flags, elDynamicRole)) {
+         writer.newNode(lxThisLocal, 1);
+
+         writer.appendNode(lxTarget, test(scope.info.header.flags, elStructureRole) ? -3 : -5);
+      }
+      // if it is a structure field
+      else if (test(scope.info.header.flags, elStructureRole)) {
+         writer.newNode(lxBoxing);
+         writer.appendNode(lxFieldAddress, offset);
+         //writer.appendNode(lxTarget, scope.moduleScope->subjectHints.get(info.targetType));
+      }
+      else writer.newNode(lxField, offset);
+
+      if (type != 0)
+         writer.appendNode(lxType, type);
    }
-//   else if (current.type == lxTemplateCalling) {
-//      ref_t message = overwriteSubject(current.argument, info.type);
-//      if (test(scope.info.header.flags, elSealed)) {
-//         writer.newNode(lxDirectCalling, message);
-//      }
-//      else if (test(scope.info.header.flags, elClosed)) {
-//         writer.newNode(lxSDirctCalling, message);
-//      }
-//      else writer.newNode(lxCalling, message);
-//
-//      writer.appendNode(lxCallTarget, scope.reference);
-//
-//      int methodHint = scope.info.methodHints.get(Attribute(message, maHint));
-//
-//      if (test(methodHint, tpStackSafe))
-//         writer.appendNode(lxStacksafe);
-//   }
-//   else if (current.type == lxTemplAssigning) {
-//      writer.newNode(lxAssigning, info.size);
-//
-//      if (info.targetRef != 0)
-//         writer.appendNode(lxTarget, info.targetRef);
-//
-//      SNode subNode = current.firstChild();
-//      while (subNode != lxNone) {
-//         if (info.type != 0 && subNode != lxTemplateField && test(subNode.type, lxObjectMask)) {
-//            writer.newNode(lxTypecasting, encodeMessage(info.type, GET_MESSAGE_ID, 0));
-//            importNode(scope, subNode, writer, templateModule, info);
-//            writer.closeNode();
-//         }
-//         else importNode(scope, subNode, writer, templateModule, info);
-//
-//         subNode = subNode.nextNode();
-//      }
-//
-//      writer.closeNode();
-//      return;
-//   }
    else if (current == lxTerminal) {
       writer.newNode(lxTerminal, current.identifier());
    }
@@ -6980,7 +6908,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
       if (isPrimitiveRef(lref)) {
          if (lref == -3 && nflags == elDebugDWORD) {
-            ref_t destType = SyntaxTree::findChild(larg, lxType).argument;
+            destType = SyntaxTree::findChild(larg, lxType).argument;
             if (checkIfCompatible(scope, destType, rarg)) {
                int size = scope.defineSubjectSize(destType);
                node.appendNode(lxSize, size);
@@ -7034,7 +6962,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
 
          if (target == -3 && rflags == elDebugDWORD) {
-            target = scope.subjectHints.get(destType);
+            target = scope.subjectHints.get(SyntaxTree::findChild(larg, lxType).argument);
             int size = scope.defineStructSize(target);
             node.appendNode(lxSize, size);
             node = mapArrPrimitiveOp(size);
