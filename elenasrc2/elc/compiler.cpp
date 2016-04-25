@@ -5563,10 +5563,20 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
       }
       else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, scope.moduleScope->module, getSignature(current.argument), templateInfo));
-           
-         generateMethodHints(scope, current, messageRef);
-   
-         scope.include(messageRef);
+         
+         writer.newNode(lxTemplateMethod, messageRef);
+         SNode attr = current.firstChild();
+         while (attr != lxNone) {
+            if (attr == lxClassMethodAttr) {
+               writer.appendNode(lxClassMethodAttr, attr.argument);
+            }
+            else if (attr == lxType) {
+               writer.appendNode(lxType, attr.argument);
+            }
+
+            attr = attr.nextNode();
+         }
+         writer.closeNode();
       }
       else if (current == lxTemplate) {
          importTemplateInfo(current, *scope.moduleScope, scope.reference, extModule, templateInfo);
@@ -5759,7 +5769,15 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
 {
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if (current == lxClassMethod) {
+      if (current == lxTemplateMethod) {
+         if (!scope.info.methods.exist(current.argument, true)) {
+            generateMethodHints(scope, current, current.argument);
+
+            if (!scope.info.methods.exist(current.argument))
+               scope.info.methods.add(current.argument, false);
+         }
+      }
+      else if (current == lxClassMethod) {
          generateMethodHints(scope, current, current.argument);
 
          int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint));
@@ -6175,20 +6193,23 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info));
 
-         writer.newNode(lxClassMethod, messageRef);
+         // method should not be imported if it was already declared in the class scope
+         if (!scope.info.methods.exist(messageRef, true)) {
+            writer.newNode(lxClassMethod, messageRef);
 
-         // NOTE : source path reference should be imported
-         // but the message name should be overwritten
-         writeMessage(*scope.moduleScope, writer, messageRef);
+            // NOTE : source path reference should be imported
+            // but the message name should be overwritten
+            writeMessage(*scope.moduleScope, writer, messageRef);
 
-      //   // HOT FIX : if the field is typified provide a method hint
-      //   if (current.argument == encodeVerb(GET_MESSAGE_ID)) {
-      //      scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
-      //   }
+            //   // HOT FIX : if the field is typified provide a method hint
+            //   if (current.argument == encodeVerb(GET_MESSAGE_ID)) {
+            //      scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
+            //   }
 
-         importTree(scope, current, writer, templateModule, info);
+            importTree(scope, current, writer, templateModule, info);
 
-         writer.closeNode();
+            writer.closeNode();
+         }
       }
 
       current = current.nextNode();

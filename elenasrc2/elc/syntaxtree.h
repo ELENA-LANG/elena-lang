@@ -166,8 +166,9 @@ enum LexicalType
    lxTemplateField    = 0x0400B,
    lxTemplateFieldType= 0x0400C,
    lxTemplateSubject  = 0x0400D,
+   lxTemplateMethod   = 0x0400E,
 
-   lxClass            = 0x0400E,
+   lxClass            = 0x0400F,
 };
 
 // --- SyntaxTree ---

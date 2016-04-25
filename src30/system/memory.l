@@ -55,69 +55,60 @@
 /// A byte array
 #class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
 {
-//    /// Creates the byte array with the specified length
-//    #constructor(stacksafe) new &int:len
-//        = byte:len.
-//
-//    /// Creates the byte array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the copy of a byte subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
-//        <= (new &int:aLength)
+    /// Creates the byte array with the specified length
+    #constructor(stacksafe) new &int:len
+        = byte:len.
+
+    /// Creates the byte array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the copy of a byte subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &bytearray:$self.
+    ]
+    
+    /// Creates the byte array copy
+    #constructor(stacksafe) new &bytearray:anArray
+        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
+
+    /// Reads the array length to the output parameter
+    #method(stacksafe,outnprop:length) readLength &vint:aLength
+        => system'core_routines'__bytearray.
+
+//    /// Fills the sub array with a specified value
+//    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
 //    [
-//        anArray read &int:anIndex &int:aLength &bytearray:$self.
+//        #var(type:int)aTotalLength.
+//        $self readLength &vint:aTotalLength.
+//        
+//        #var(type:int)i := anIndex.
+//        #var(type:int)m := anIndex + aLength.
+//        
+//        (i > aTotalLength)
+//            ? [ #throw system'InvalidArgumentException new. ].
+//        
+//        (m > aTotalLength)
+//            ? [ #throw system'InvalidArgumentException new. ].
+//            
+//        #loop (i < m)?
+//        [
+//            $self write &int:i &byte:aValue.
+//            
+//            i := i + 1.
+//        ].
 //    ]
-//    
-//    /// Creates the byte array copy
-//    #constructor(stacksafe) new &bytearray:anArray
-//        <= new &int:0 &int:(anArray length int) &bytearray:anArray.
-//
-////    /// Reads the array length to the output parameter
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'bs_getlen.
-////        
-////    /// Returns the byte array length        
-////    #method(stacksafe,type:int,embeddable,suppress:w3) length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]
-////
-////    /// Fills the sub array with a specified value
-////    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
-////    [
-////        #var(type:int)aTotalLength.
-////        $self readLength &vint:aTotalLength.
-////        
-////        #var(type:int)i := anIndex.
-////        #var(type:int)m := anIndex + aLength.
-////        
-////        (i > aTotalLength)
-////            ? [ #throw system'InvalidArgumentException new. ].
-////        
-////        (m > aTotalLength)
-////            ? [ #throw system'InvalidArgumentException new. ].
-////            
-////        #loop (i < m)?
-////        [
-////            $self write &int:i &byte:aValue.
-////            
-////            i := i + 1.
-////        ].
-////    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
-//        => system'core_routines'__bytearray.
-//
-//    /// Copies the byte array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
-//        => system'core_routines'__bytearray.
-//
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
+        => system'core_routines'__bytearray.
+
+    /// Copies the byte array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
+        => system'core_routines'__bytearray.
+
 ////    /// Writes the byte value at specified position
 ////    #method(stacksafe) write &int:anIndex &byte:anInt
 ////        => system'core_routines'bs_writebyte.
@@ -215,12 +206,6 @@
 ////                        
 ////    /// Creates the object copy
 ////    #method clone = ByteArray new &bytearray:$self.
-////    
-////    /// Dispatches the verb to the target object with bytearray subject
-////    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &bytearray:$self.
-////    
-////    /// Dispatches the verb to the target object with bytearray subject
-////    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &bytearray:$self.
 }
 
 //// --- ShortArray ---

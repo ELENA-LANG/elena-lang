@@ -1764,6 +1764,15 @@ labErr:
 
 end
 
+procedure __bytearray.eval&readLength&vint$[1]
+
+  blen
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
 /*
 procedure byte_max
 
@@ -2635,15 +2644,6 @@ procedure bs_copy
   copy
   acopyb
   quitn 3
-
-end
-
-procedure bs_getlen
-
-  blen
-  bloadsi 2
-  nsave
-  quitn 2
 
 end
 
