@@ -958,6 +958,21 @@
     #method(literal) add &literal : aLiteral
         => system'core_routines'__literal.
 
+    #method add : anObject = anObject cast:%add &to:$self.
+
+    /// Returns the character at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+
+    /// Returns the character at the specified index
+    #method(char,stacksafe) getAt &int:anIndex
+    [
+        #var(char)aChar.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+    
     /// Concatinates the values
     #method(literal) add &char:aChar
         = $self add &literal:(aChar literal).
@@ -1147,6 +1162,21 @@
     /// Compares the values
     #method(bool) less &char : aChar
         <= %less &wide:(aChar wide).
+
+    #method add : anObject = anObject cast:%add &to:$self.
+
+    /// Returns the character at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+
+    /// Returns the character at the specified index
+    #method(char,stacksafe) getAt &int:anIndex
+    [
+        #var(char)aChar.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
 
     /// Concatinates the values
     #method(wide,stacksafe) add &wide : aLiteral

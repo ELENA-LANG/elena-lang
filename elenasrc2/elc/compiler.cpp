@@ -2110,24 +2110,25 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
    //   return true;
    //}
-   //else if (hintRef == moduleScope->extensionHint) {
-   //   scope.extensionMode = -1;
-   //   writer.appendNode(lxClassFlag, elExtension);
-   //   writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+   else if (hintRef == moduleScope->extensionHint) {
+      scope.extensionMode = -1;
 
-   //   return true;
-   //}
-   //else if (hintRef == moduleScope->extensionOfHint) {
-   //   DNode value = hint.select(nsHintValue);
-   //   scope.extensionMode = scope.moduleScope->mapSubject(value.Terminal());
-   //   if (scope.extensionMode)
-   //      scope.raiseError(errUnknownSubject, value.Terminal());
+      writer.appendNode(lxClassFlag, elExtension);
+      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
 
-   //   writer.appendNode(lxClassFlag, elExtension);
-   //   writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+      return true;
+   }
+   else if (hintRef == moduleScope->extensionOfHint) {
+      DNode value = hint.select(nsHintValue);
+      scope.extensionMode = scope.moduleScope->mapSubject(value.Terminal());
+      if (!scope.extensionMode)
+         scope.raiseError(errUnknownSubject, value.Terminal());
 
-   //   return true;
-   //}
+      writer.appendNode(lxClassFlag, elExtension);
+      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
+
+      return true;
+   }
    else if (hintRef == moduleScope->structHint || hintRef == moduleScope->structOfHint) {
       writer.appendNode(lxClassFlag, elStructureRole);
 
@@ -4373,69 +4374,69 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 
 void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
 {
-   //ModuleScope* moduleScope = scope.moduleScope;
+   ModuleScope* moduleScope = scope.moduleScope;
 
-   //while (arg == nsSubjectArg) {
-   //   TerminalInfo terminal = arg.Terminal();
+   while (arg == nsSubjectArg) {
+      TerminalInfo terminal = arg.Terminal();
 
-   //   ref_t subject = moduleScope->mapSubject(terminal);
-   //   ref_t classReference = moduleScope->subjectHints.get(subject);
-   //   int flags = 0;
-   //   ClassInfo classInfo;
-   //   if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
-   //      scope.raiseError(errInvalidOperation, terminal);
+      ref_t subject = moduleScope->mapSubject(terminal);
+      ref_t classReference = moduleScope->subjectHints.get(subject);
+      int flags = 0;
+      ClassInfo classInfo;
+      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+         scope.raiseError(errInvalidOperation, terminal);
 
-   //   flags = classInfo.header.flags;
+      flags = classInfo.header.flags;
 
-   //   LexicalType argType = lxNone;
-   //   switch (flags & elDebugMask) {
-   //      // if it is an integer number pass it directly
-   //      case elDebugDWORD:
-   //   //   case elDebugPTR:
-   //   //   case elDebugSubject:
-   //         argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
-   //         break;
-   //   //   case elDebugReference:
-   //   //      argType = lxExtInteranlRef;
-   //   //      break;
-   //      case elDebugWideLiteral:
-   //      case elDebugLiteral:
-   //         argType = lxExtArgument;
-   //         break;
-   //      default:
-   //         scope.raiseError(errInvalidOperation, terminal);
-   //         break;
-   //   }
+      LexicalType argType = lxNone;
+      switch (flags & elDebugMask) {
+         // if it is an integer number pass it directly
+         case elDebugDWORD:
+      //   case elDebugPTR:
+      //   case elDebugSubject:
+            argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
+            break;
+      //   case elDebugReference:
+      //      argType = lxExtInteranlRef;
+      //      break;
+         case elDebugWideLiteral:
+         case elDebugLiteral:
+            argType = lxExtArgument;
+            break;
+         default:
+            scope.raiseError(errInvalidOperation, terminal);
+            break;
+      }
 
-   //   arg = arg.nextNode();
-   //   if (arg == nsMessageParameter) {
-   //   //   if (argType == lxExtInteranlRef) {
-   //   //      if (isSingleObject(arg.firstChild())) {
-   //   //         ObjectInfo target = compileTerminal(arg.firstChild(), scope);
-   //   //         if (target.kind == okInternal) {
-   //   //            scope.writer->appendNode(lxExtInteranlRef, target.param);
-   //   //         }
-   //   //         else scope.raiseError(errInvalidOperation, terminal);
-   //   //      }
-   //   //      else scope.raiseError(errInvalidOperation, terminal);
-   //   //   }
-   //   //   else {
-   //         scope.writer->newNode(argType);
+      arg = arg.nextNode();
+      if (arg == nsMessageParameter) {
+      //   if (argType == lxExtInteranlRef) {
+      //      if (isSingleObject(arg.firstChild())) {
+      //         ObjectInfo target = compileTerminal(arg.firstChild(), scope);
+      //         if (target.kind == okInternal) {
+      //            scope.writer->appendNode(lxExtInteranlRef, target.param);
+      //         }
+      //         else scope.raiseError(errInvalidOperation, terminal);
+      //      }
+      //      else scope.raiseError(errInvalidOperation, terminal);
+      //   }
+      //   else {
+            scope.writer->newNode(argType);
 
-   //         ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
-   //         if (info.kind == okIntConstant) {
-   //            int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
+            ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
+            if (info.kind == okIntConstant) {
+               int value = StringHelper::strToULong(moduleScope->module->resolveConstant(info.param), 16);
 
-   //            scope.writer->appendNode(lxValue, value);
-   //         }
+               scope.writer->appendNode(lxValue, value);
+            }
 
-   //         scope.writer->closeNode();
-   //   //   }
+            scope.writer->closeNode();
+      //   }
 
-   //      arg = arg.nextNode();
-   //   }
-   //   else scope.raiseError(errInvalidOperation, terminal);
-   //}
+         arg = arg.nextNode();
+      }
+      else scope.raiseError(errInvalidOperation, terminal);
+   }
 }
 
 ObjectInfo Compiler :: compileExternalCall(DNode node, CodeScope& scope, ident_t dllAlias, int mode)
@@ -6751,7 +6752,13 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask
 
 void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
-   //boxPrimitive(scope, node, -1, warningMask, mode);
+   //SNode parentNode = node.parentNode();
+   //while (parentNode == lxExpression)
+   //   parentNode = parentNode.parentNode();
+
+   //if (parentNode == lxAssigning) {
+   //   boxPrimitive(scope, node, -1, warningMask, mode);
+   //}
 
    optimizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
 }

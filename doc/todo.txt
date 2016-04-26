@@ -2,15 +2,12 @@
 In development:
 ------                              
               xdev - generic development
+                       * system test
 
-                       * #var(vbyte)b := 4. - should work
+                       * 2 + 3 * 4 - should be implemented as primitive operations
 
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
                          always return bool operand
-
-                       * system test
-
-                       * review LiteralValue implementation
 
                        * arrayof:bool - make sure set operation typecast the result
 
@@ -39,9 +36,7 @@ In development:
                        * array of structures
                        * support #var(real)r := 2. // assigning int to real by constant
 
-                       * varof:int, int:3 should be used directly in the code
-
-                       * singleton template : make sure it is not possible to declare fields for them
+                       * singleton template : make sure it is not possible to declare fields for them??
 
                        * system test : new test with generic array / list / map
                        

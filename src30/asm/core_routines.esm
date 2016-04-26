@@ -43,7 +43,7 @@ labTrue:
   
 end
 
-procedure __object.equal&reference[1]
+procedure __object.equal&reference[2]
 
   aloadsi 1
   bloadsi 2
