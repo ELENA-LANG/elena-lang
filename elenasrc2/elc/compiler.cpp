@@ -1789,6 +1789,9 @@ void Compiler :: importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer
    ref_t sign_ref, verb_id;
    decodeMessage(message, sign_ref, verb_id, paramCount);
 
+   // HOTFIX : include self as a parameter
+   paramCount++;
+
    virtualReference.append('0' + paramCount);
    virtualReference.append('#');
    virtualReference.append(0x20 + verb_id);

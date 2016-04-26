@@ -4,7 +4,7 @@
 // === basic primitive types ===
 
 //#subject(class:system'KeyValue)     keyvalue.
-//
+
 #subject ref        = system'Variable.
 
 #subject byte       = system'ByteNumber.
@@ -13,10 +13,10 @@
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
-//#subject mssg       = system'Message.
+#subject mssg       = system'Message.
 //#subject(class:system'ExtensionMessage) ext_mssg.
-//#subject verb       = system'Verb.
-//#subject subject    = system'Signature.
+#subject verb       = system'Verb.
+#subject subject    = system'Signature.
 //#subject(class:system'Symbol)       symbol_ref.
 
 // === basic dynamic types ===
@@ -27,7 +27,7 @@
 //#subject(class:system'RealArray)    realarray.
 //#subject(class:system'RealMatrix)   realmatrix.
 //#subject(class:system'CharArray)    chararray.
-//#subject(class:system'Array)        array.
+#subject array      = system'Array.
 //#subject(class:system'OpenArgs)     args.
 //#subject(class:system'MessageArray) mssgarray.
 //#subject(class:system'BitArray)     bitarray.

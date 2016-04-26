@@ -16,7 +16,7 @@ define EVAL_MESSAGE_ID      085000000h
 define INV_PARAM_MASK       0FFFFFFF0h
 */
 
-procedure __object.dispatch[0]
+procedure __object.dispatch[1]
 
   bsredirect  
   pushe
@@ -29,7 +29,7 @@ procedure __object.dispatch[0]
 
 end
 
-procedure __object.equal[1]
+procedure __object.equal[2]
 
   aloadsi 1
   bloadsi 2
@@ -57,7 +57,7 @@ labTrue:
   
 end
 
-procedure __verb.dispatch[0]
+procedure __verb.dispatch[1]
 
   bloadsi 1
   ifb labDefault
@@ -81,7 +81,7 @@ labDefault:
   
 end
 
-procedure __wideconvertor.convert&literal$[1]
+procedure __wideconvertor.convert&literal$[2]
 
   aloadsi 2
   blen
@@ -95,7 +95,7 @@ procedure __wideconvertor.convert&literal$[1]
 
 end
 
-procedure __lazyexpression.dispatch[0]
+procedure __lazyexpression.dispatch[1]
 
   pushe
   pusha
@@ -110,7 +110,7 @@ procedure __lazyexpression.dispatch[0]
 
 end
 
-procedure __literalconvertor.convert&int$[1]
+procedure __literalconvertor.convert&int$[2]
 
   dcopy 10
   acopyr class : system'LiteralValue
@@ -126,7 +126,7 @@ procedure __literalconvertor.convert&int$[1]
 
 end
 
-procedure __literalconvertor.convert&short$[1]
+procedure __literalconvertor.convert&short$[2]
 
   dcopy 10
   acopyr class : system'LiteralValue
@@ -142,7 +142,7 @@ procedure __literalconvertor.convert&short$[1]
 
 end
 
-procedure __literalconvertor.convert&byte$[1]
+procedure __literalconvertor.convert&byte$[2]
 
   dcopy 10
   acopyr class : system'LiteralValue
@@ -158,7 +158,7 @@ procedure __literalconvertor.convert&byte$[1]
 
 end
 
-procedure __literalconvertor.convert&long$[1]
+procedure __literalconvertor.convert&long$[2]
 
   dcopy 64
   acopyr class : system'LiteralValue  
@@ -174,7 +174,7 @@ procedure __literalconvertor.convert&long$[1]
 
 end
 
-procedure __literalconvertor.convert&int$&int$[2]
+procedure __literalconvertor.convert&int$&int$[3]
 
   dcopy 32
   acopyr class : system'LiteralValue
@@ -191,7 +191,7 @@ procedure __literalconvertor.convert&int$&int$[2]
 
 end
 
-procedure __literalconvertor.convert&short$&int$[2]
+procedure __literalconvertor.convert&short$&int$[3]
 
   dcopy 32
   acopyr class : system'LiteralValue
@@ -208,7 +208,7 @@ procedure __literalconvertor.convert&short$&int$[2]
 
 end
 
-procedure __literalconvertor.convert&byte$&int$[2]
+procedure __literalconvertor.convert&byte$&int$[3]
 
   dcopy 32
   acopyr class : system'LiteralValue
@@ -225,7 +225,7 @@ procedure __literalconvertor.convert&byte$&int$[2]
 
 end
 
-procedure __literalconvertor.convert&long$&int$[2]
+procedure __literalconvertor.convert&long$&int$[3]
 
   dcopy 64
   acopyr class : system'LiteralValue
@@ -241,7 +241,7 @@ procedure __literalconvertor.convert&long$&int$[2]
 
 end
 
-procedure __literalconvertor.convert&real$[1]
+procedure __literalconvertor.convert&real$[2]
 
   dcopy 30
   acopyr class : system'LiteralValue
@@ -255,7 +255,7 @@ procedure __literalconvertor.convert&real$[1]
 
 end
 
-procedure __wideconvertor.convert&int$[1]
+procedure __wideconvertor.convert&int$[2]
 
   dcopy 10
   acopyr class : system'WideLiteralValue
@@ -271,7 +271,7 @@ procedure __wideconvertor.convert&int$[1]
   
 end
 
-procedure __wideconvertor.convert&short$[1]
+procedure __wideconvertor.convert&short$[2]
 
   dcopy 10
   acopyr class : system'WideLiteralValue
@@ -287,7 +287,7 @@ procedure __wideconvertor.convert&short$[1]
   
 end
 
-procedure __wideconvertor.convert&byte$[1]
+procedure __wideconvertor.convert&byte$[2]
 
   dcopy 10
   acopyr class : system'WideLiteralValue
@@ -303,7 +303,7 @@ procedure __wideconvertor.convert&byte$[1]
   
 end
 
-procedure __wideconvertor.convert&long$[1]
+procedure __wideconvertor.convert&long$[2]
 
   dcopy 64
   acopyr class : system'WideLiteralValue  
@@ -319,7 +319,7 @@ procedure __wideconvertor.convert&long$[1]
 
 end
 
-procedure __wideconvertor.convert&int$&int$[2]
+procedure __wideconvertor.convert&int$&int$[3]
 
   dcopy 32
   acopyr class : system'WideLiteralValue
@@ -334,7 +334,7 @@ procedure __wideconvertor.convert&int$&int$[2]
 
 end
 
-procedure __wideconvertor.convert&short$&int$[2]
+procedure __wideconvertor.convert&short$&int$[3]
 
   dcopy 32
   acopyr class : system'WideLiteralValue
@@ -349,7 +349,7 @@ procedure __wideconvertor.convert&short$&int$[2]
 
 end
 
-procedure __wideconvertor.convert&byte$&int$[2]
+procedure __wideconvertor.convert&byte$&int$[3]
 
   dcopy 32
   acopyr class : system'WideLiteralValue
@@ -364,7 +364,7 @@ procedure __wideconvertor.convert&byte$&int$[2]
 
 end
 
-procedure __wideconvertor.convert&long$&int$[2]
+procedure __wideconvertor.convert&long$&int$[3]
 
   dcopy 64
   acopyr class : system'WideLiteralValue
@@ -380,7 +380,7 @@ procedure __wideconvertor.convert&long$&int$[2]
 
 end
 
-procedure __wideconvertor.convert&real$[1]
+procedure __wideconvertor.convert&real$[2]
 
   dcopy 30
   acopyr class : system'WideLiteralValue
@@ -394,7 +394,7 @@ procedure __wideconvertor.convert&real$[1]
 
 end
 
-procedure __shortconvertor.convert&byte$&vshort$[2]
+procedure __shortconvertor.convert&byte$&vshort$[3]
 
   aloadsi 2
   nload
@@ -404,7 +404,7 @@ procedure __shortconvertor.convert&byte$&vshort$[2]
 
 end
 
-procedure __byteconvertor.convert&short$&vbyte$[2]
+procedure __byteconvertor.convert&short$&vbyte$[3]
 
   aloadsi 2
   nload
@@ -424,7 +424,7 @@ labCopy:
 
 end
 
-procedure __intconvertor.convert&short$&vint$[2]
+procedure __intconvertor.convert&short$&vint$[3]
 
   aloadsi 2
   nload
@@ -434,7 +434,7 @@ procedure __intconvertor.convert&short$&vint$[2]
 
 end
 
-procedure __intconvertor.convert&byte$&vint$[2]
+procedure __intconvertor.convert&byte$&vint$[3]
 
   aloadsi 2
   nload
@@ -444,7 +444,7 @@ procedure __intconvertor.convert&byte$&vint$[2]
 
 end
 
-procedure __byteconvertor.convert&int$&vbyte$[2]
+procedure __byteconvertor.convert&int$&vbyte$[3]
 
   aloadsi 2
   nload
@@ -464,7 +464,7 @@ labCopy:
 
 end
 
-procedure __shortconvertor.convert&int$&vshort$[2]
+procedure __shortconvertor.convert&int$&vshort$[3]
 
   bloadsi 3
   aloadsi 2
@@ -480,7 +480,7 @@ procedure __shortconvertor.convert&int$&vshort$[2]
 
 labCopy:
   nsave
-  quitn 2  
+  quitn 3
   
 labNegative:
   not
@@ -494,11 +494,11 @@ labNegative:
 labCopyNeg:
   not
   nsave
-  quitn 2  
+  quitn 3  
 
 end
 
-procedure __longconvertor.convert&int$&vlong$[2]
+procedure __longconvertor.convert&int$&vlong$[3]
   
   bloadsi 3
   aloadsi 2
@@ -511,7 +511,7 @@ procedure __longconvertor.convert&int$&vlong$[2]
 
 end
 
-procedure __longconvertor.convert&short$&vlong$[2]
+procedure __longconvertor.convert&short$&vlong$[3]
   
   bloadsi 3
   aloadsi 2
@@ -524,7 +524,7 @@ procedure __longconvertor.convert&short$&vlong$[2]
 
 end
 
-procedure __longconvertor.convert&byte$&vlong$[2]
+procedure __longconvertor.convert&byte$&vlong$[3]
   
   bloadsi 3
   aloadsi 2
@@ -538,7 +538,7 @@ procedure __longconvertor.convert&byte$&vlong$[2]
 end
 
 
-procedure __message.dispatch[0]
+procedure __message.dispatch[1]
 
   bloadsi 1
   ifb labDefault
@@ -574,7 +574,7 @@ labDefault:
   
 end
 
-procedure __byteconvertor.convert&long$&vbyte$[2]
+procedure __byteconvertor.convert&long$&vbyte$[3]
 
   aloadsi 2
   dcopy 4
@@ -599,7 +599,7 @@ labCopy:
 
 end
 
-procedure __shortconvertor.convert&long$&vshort$[2]
+procedure __shortconvertor.convert&long$&vshort$[3]
 
   aloadsi 2
   dcopy 4
@@ -636,7 +636,7 @@ labCopyNegative:
 
 end
 
-procedure __intconvertor.convert&long$&vint$[2]
+procedure __intconvertor.convert&long$&vint$[3]
 
   aloadsi 2
   dcopy 4
@@ -665,7 +665,7 @@ labErr:
 
 end
 
-procedure __literal.equal&literal$[1]
+procedure __literal.equal&literal$[2]
 
   bloadsi 2
   callextr api : sequal
@@ -674,7 +674,7 @@ procedure __literal.equal&literal$[1]
   
 end
 
-procedure __literal.less&literal$[1]
+procedure __literal.less&literal$[2]
 
   bloadsi 2
   callextr api : sless
@@ -683,7 +683,7 @@ procedure __literal.less&literal$[1]
   
 end
 
-procedure __wide.equal&wide$[1]
+procedure __wide.equal&wide$[2]
 
   bloadsi 2
   callextr api : wequal
@@ -692,7 +692,7 @@ procedure __wide.equal&wide$[1]
   
 end
 
-procedure __wide.less&wide$[1]
+procedure __wide.less&wide$[2]
 
   bloadsi 2
   callextr api : wless
@@ -701,7 +701,7 @@ procedure __wide.less&wide$[1]
   
 end
 
-procedure __literal.add&literal$[1]
+procedure __literal.add&literal$[2]
 
   blen
   dec
@@ -729,7 +729,7 @@ procedure __literal.add&literal$[1]
 
 end                                                
 
-procedure __wide.add&wide$[1]
+procedure __wide.add&wide$[2]
 
   wlen
   dec
@@ -757,7 +757,7 @@ procedure __wide.add&wide$[1]
 
 end                                                
 
-procedure __literal.read&int$&vchar$[2]
+procedure __literal.read&int$&vchar$[3]
 
   blen
   bcopya
@@ -783,7 +783,7 @@ labErr:
 
 end
 
-procedure __wide.read&int$&vchar$[2]
+procedure __wide.read&int$&vchar$[3]
 
   wlen
   bcopya
@@ -809,7 +809,7 @@ labErr:
 
 end
 
-procedure __int.eval&readHashCode&vint$[1]
+procedure __int.eval&readHashCode&vint$[2]
 
   bloadsi 2
   ncopy
@@ -817,7 +817,7 @@ procedure __int.eval&readHashCode&vint$[1]
 
 end
 
-procedure __char.eval&readLength&vint$[1]
+procedure __char.eval&readLength&vint$[2]
 
   bloadsi 2
   nload
@@ -839,7 +839,7 @@ labEnd:
 
 end
 
-procedure __byteconvertor.convert&char$&vbyte$[2]
+procedure __byteconvertor.convert&char$&vbyte$[3]
 
   aloadsi 2
   nload
@@ -859,7 +859,7 @@ labCopy:
 
 end
 
-procedure __byteconvertor.convert&real$&vbyte$[2]
+procedure __byteconvertor.convert&real$&vbyte$[3]
 
   pushn 0
   pushn 0
@@ -889,7 +889,7 @@ labCopy:
 
 end
 
-procedure __byteconvertor.convert&literal$&vbyte$[2]
+procedure __byteconvertor.convert&literal$&vbyte$[3]
   
   bloadsi  3
   ecopy    10
@@ -920,7 +920,7 @@ labErr:
 
 end
 
-procedure __byteconvertor.convert&wide$&vbyte$[2]
+procedure __byteconvertor.convert&wide$&vbyte$[3]
   
   bloadsi  3
   ecopy    10
@@ -951,7 +951,7 @@ labErr:
 
 end
 
-procedure __shortconvertor.convert&char$&vshort$[2]
+procedure __shortconvertor.convert&char$&vshort$[3]
 
   aloadsi 2
   nload
@@ -971,7 +971,7 @@ labCopy:
 
 end
 
-procedure __shortconvertor.convert&real$&vshort$[2]
+procedure __shortconvertor.convert&real$&vshort$[3]
 
   pushn 0
   pushn 0
@@ -1001,7 +1001,7 @@ labCopy:
 
 end
 
-procedure __shortconvertor.convert&literal$&vshort$[2]
+procedure __shortconvertor.convert&literal$&vshort$[3]
   
   bloadsi  3
   ecopy    10
@@ -1032,7 +1032,7 @@ labErr:
 
 end
 
-procedure __shortconvertor.convert&wide$&vshort$[2]
+procedure __shortconvertor.convert&wide$&vshort$[3]
   
   bloadsi  3
   ecopy    10
@@ -1063,7 +1063,7 @@ labErr:
 
 end
 
-procedure __charconvertor.convert&byte$&vchar$[2]
+procedure __charconvertor.convert&byte$&vchar$[3]
   
   bloadsi 3
   aloadsi 2
@@ -1086,7 +1086,7 @@ labCopy:
 
 end
 
-procedure __charconvertor.convert&short$&vchar$[2]
+procedure __charconvertor.convert&short$&vchar$[3]
   
   bloadsi 3
   aloadsi 2
@@ -1109,7 +1109,7 @@ labCopy:
 
 end
 
-procedure __charconvertor.convert&int$&vchar$[2]
+procedure __charconvertor.convert&int$&vchar$[3]
   
   bloadsi 3
   aloadsi 2
@@ -1132,7 +1132,7 @@ labCopy:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&literal$&vchar$[3]
+procedure __charconvertor.eval&system$convert&int$&literal$&vchar$[4]
   
   aloadsi 2
   nload
@@ -1155,7 +1155,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&bytearray$&vchar$[3]
+procedure __charconvertor.eval&system$convert&int$&bytearray$&vchar$[4]
   
   aloadsi 2
   nload
@@ -1178,7 +1178,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&wide$&vchar$[3]
+procedure __charconvertor.eval&system$convert&int$&wide$&vchar$[4]
   
   aloadsi 2
   nload
@@ -1201,7 +1201,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$convert&int$&shortarray$&vchar$[3]
+procedure __charconvertor.eval&system$convert&int$&shortarray$&vchar$[4]
   
   aloadsi 2
   nload
@@ -1224,7 +1224,7 @@ labErr:
 
 end
 
-procedure __charconvertor.eval&system$save&char$&int$&shortarray$&vint$[4]
+procedure __charconvertor.eval&system$save&char$&int$&shortarray$&vint$[5]
 
   aloadsi 2
   nload
@@ -1241,7 +1241,7 @@ procedure __charconvertor.eval&system$save&char$&int$&shortarray$&vint$[4]
 
 end
 
-procedure __charconvertor.eval&system$save&char$&int$&bytearray$&vint$[4]
+procedure __charconvertor.eval&system$save&char$&int$&bytearray$&vint$[5]
 
   aloadsi 2
   nload
@@ -1258,7 +1258,7 @@ procedure __charconvertor.eval&system$save&char$&int$&bytearray$&vint$[4]
 
 end
 
-procedure __intconvertor.convert&literal$&vint$[2]
+procedure __intconvertor.convert&literal$&vint$[3]
   
   bloadsi  3
   ecopy    10
@@ -1276,7 +1276,7 @@ labErr:
 
 end
 
-procedure __intconvertor.convert&literal$&int$&vint$[3]
+procedure __intconvertor.convert&literal$&int$&vint$[4]
   
   bloadsi  4
   aloadsi  3
@@ -1296,7 +1296,7 @@ labErr:
 
 end
 
-procedure __intconvertor.convert&wide$&vint$[2]
+procedure __intconvertor.convert&wide$&vint$[3]
   
   bloadsi  3
   ecopy    10
@@ -1314,7 +1314,7 @@ labErr:
 
 end
 
-procedure __intconvertor.convert&wide$&int$&vint$[3]
+procedure __intconvertor.convert&wide$&int$&vint$[4]
   
   bloadsi  4
   aloadsi  3
@@ -1334,7 +1334,7 @@ labErr:
 
 end
 
-procedure __intconvertor.convert&char$&vint$[2]
+procedure __intconvertor.convert&char$&vint$[3]
 
   aloadsi 2
   nload
@@ -1344,7 +1344,7 @@ procedure __intconvertor.convert&char$&vint$[2]
 
 end
 
-procedure __intconvertor.convert&real$&vint$[2]
+procedure __intconvertor.convert&real$&vint$[3]
 
   aloadsi 2
   bloadsi 3  
@@ -1356,7 +1356,7 @@ procedure __intconvertor.convert&real$&vint$[2]
 
 end
 
-procedure __longconvertor.convert&literal$&vlong$[2]
+procedure __longconvertor.convert&literal$&vlong$[3]
   
   bloadsi  3
   ecopy    10
@@ -1376,7 +1376,7 @@ labErr:
 
 end
 
-procedure __longconvertor.convert&literal$&int$&vlong$[3]
+procedure __longconvertor.convert&literal$&int$&vlong$[4]
   
   bloadsi  4
   aloadsi  3
@@ -1398,7 +1398,7 @@ labErr:
 
 end
 
-procedure __longconvertor.convert&wide$&vlong$[2]
+procedure __longconvertor.convert&wide$&vlong$[3]
   
   bloadsi  3
   ecopy    10
@@ -1418,7 +1418,7 @@ labErr:
 
 end
 
-procedure __longconvertor.convert&wide$&int$&vlong$[3]
+procedure __longconvertor.convert&wide$&int$&vlong$[4]
   
   bloadsi  4
   aloadsi  3
@@ -1440,7 +1440,7 @@ labErr:
 
 end
 
-procedure __longconvertor.convert&real$&vlong$[2]
+procedure __longconvertor.convert&real$&vlong$[3]
 
   aloadsi 2
   bloadsi 3
@@ -1453,7 +1453,7 @@ procedure __longconvertor.convert&real$&vlong$[2]
 
 end
 
-procedure __realconvertor.convert&int$&vreal$[2]
+procedure __realconvertor.convert&int$&vreal$[3]
   
   bloadsi 3
   aloadsi 2
@@ -1465,7 +1465,7 @@ procedure __realconvertor.convert&int$&vreal$[2]
 
 end
 
-procedure __realconvertor.convert&byte$&vreal$[2]
+procedure __realconvertor.convert&byte$&vreal$[3]
   
   bloadsi 3
   aloadsi 2
@@ -1477,7 +1477,7 @@ procedure __realconvertor.convert&byte$&vreal$[2]
 
 end
 
-procedure __realconvertor.convert&short$&vreal$[2]
+procedure __realconvertor.convert&short$&vreal$[3]
   
   bloadsi 3
   aloadsi 2
@@ -1489,25 +1489,25 @@ procedure __realconvertor.convert&short$&vreal$[2]
 
 end
 
-procedure __realconvertor.convert&long$&vreal$[2]
+procedure __realconvertor.convert&long$&vreal$[3]
   
   bcopya
   aloadsi 2
   callextr api : longtoreal
   acopyb
-  quitn 2
+  quitn 3
 
 end
 
 
-procedure __realconvertor.convert&literal$&vreal$[2]
+procedure __realconvertor.convert&literal$&vreal$[3]
   
   bloadsi  3
   dcopy    10
   aloadsi  2
   callextr api : strtoreal
   ifr      labErr 0
-  quitn    2
+  quitn    3
 
 labErr:
   open 1
@@ -1517,14 +1517,14 @@ labErr:
 
 end
 
-procedure __realconvertor.convert&wide$&vreal$[2]
+procedure __realconvertor.convert&wide$&vreal$[3]
   
   bloadsi  3
   dcopy    10
   aloadsi  2
   callextr api : wstrtoreal
   ifr      labErr 0
-  quitn    2
+  quitn    3
 
 labErr:
   open 1
@@ -1534,7 +1534,7 @@ labErr:
 
 end
 
-procedure __literalconvertor.convert&char$[1]
+procedure __literalconvertor.convert&char$[2]
 
   aloadsi 2
   nload
@@ -1562,7 +1562,7 @@ labEmpty:
 
 end
 
-procedure __literalconvertor.convert&wide$[1]
+procedure __literalconvertor.convert&wide$[2]
 
   aloadsi 2
   wlen
@@ -1577,7 +1577,7 @@ procedure __literalconvertor.convert&wide$[1]
   
 end
 
-procedure __wideconvertor.convert&char$[1]
+procedure __wideconvertor.convert&char$[2]
 
   aloadsi 2
   nload
@@ -1606,7 +1606,7 @@ labEmpty:
 
 end
 
-procedure __real.eval&exp&real$&vreal$[2]
+procedure __real.eval&exp&real$&vreal$[3]
 
   aloadsi 2
   bloadsi 3
@@ -1616,7 +1616,7 @@ procedure __real.eval&exp&real$&vreal$[2]
 
 end
 
-procedure __real.eval&ln&real$&vreal$[2]
+procedure __real.eval&ln&real$&vreal$[3]
 
   aloadsi 2  
   bloadsi 3
@@ -1626,7 +1626,7 @@ procedure __real.eval&ln&real$&vreal$[2]
 
 end
 
-procedure __real.eval&round&real$&vreal$[2]
+procedure __real.eval&round&real$&vreal$[3]
 
   aloadsi 2  
   bloadsi 3
@@ -1636,7 +1636,7 @@ procedure __real.eval&round&real$&vreal$[2]
 
 end
 
-procedure __real.eval&truncate&real$&vreal$[2]
+procedure __real.eval&truncate&real$&vreal$[3]
 
   aloadsi 2  
   bloadsi 3
@@ -1646,7 +1646,7 @@ procedure __real.eval&truncate&real$&vreal$[2]
 
 end
 
-procedure __real.eval&sin&real$&vreal$[2]
+procedure __real.eval&sin&real$&vreal$[3]
 
   aloadsi 2
   bloadsi 3
@@ -1656,7 +1656,7 @@ procedure __real.eval&sin&real$&vreal$[2]
 
 end
 
-procedure __real.eval&cos&real$&vreal$[2]
+procedure __real.eval&cos&real$&vreal$[3]
 
   aloadsi 2
   bloadsi 3
@@ -1666,7 +1666,7 @@ procedure __real.eval&cos&real$&vreal$[2]
 
 end
 
-procedure __real.eval&arctan&real$&vreal$[2]
+procedure __real.eval&arctan&real$&vreal$[3]
 
   aloadsi 2
   bloadsi 3
@@ -1676,16 +1676,16 @@ procedure __real.eval&arctan&real$&vreal$[2]
   
 end
 
-procedure __real.eval&pi&vreal$[1]
+procedure __real.eval&pi&vreal$[2]
 
   bloadsi 2
   callextr api : rpi
   
-  quitn 1
+  quitn 2
   
 end
 
-procedure __real.eval&sqrt&real$&vreal$[2]
+procedure __real.eval&sqrt&real$&vreal$[3]
 
   aloadsi 2  
   bloadsi 3
@@ -1695,7 +1695,7 @@ procedure __real.eval&sqrt&real$&vreal$[2]
 
 end
 
-procedure __real.eval&abs&real$&vreal$[2]
+procedure __real.eval&abs&real$&vreal$[3]
 
   aloadsi 2
   bloadsi 3
@@ -1705,7 +1705,7 @@ procedure __real.eval&abs&real$&vreal$[2]
 
 end
 
-procedure __bytearray.write&int$&int$&bytearray$[3]
+procedure __bytearray.write&int$&int$&bytearray$[4]
 
   bcopya
   aloadsi 2
@@ -1735,7 +1735,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&int$&bytearray$[3]
+procedure __bytearray.read&int$&int$&bytearray$[4]
 
   bcopya
   blen
@@ -1764,7 +1764,7 @@ labErr:
 
 end
 
-procedure __bytearray.eval&readLength&vint$[1]
+procedure __bytearray.eval&readLength&vint$[2]
 
   blen
   bloadsi 2
@@ -1774,7 +1774,7 @@ procedure __bytearray.eval&readLength&vint$[1]
 end
 
 
-procedure __bytearray.write&int$&byte$[2]
+procedure __bytearray.write&int$&byte$[3]
 
   blen
   ecopyd
@@ -1798,7 +1798,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&vbyte$[2]
+procedure __bytearray.read&int$&vbyte$[3]
 
   bcopya
   blen
@@ -1824,7 +1824,7 @@ labErr:
 
 end
 
-procedure __bytearray.write&int$&short$[2]
+procedure __bytearray.write&int$&short$[3]
 
   blen
   ecopyd
@@ -1849,7 +1849,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&vshort$[2]
+procedure __bytearray.read&int$&vshort$[3]
 
   bcopya
   blen
@@ -1875,7 +1875,7 @@ labErr:
 
 end
 
-procedure __bytearray.write&int$&char$[2]
+procedure __bytearray.write&int$&char$[3]
 
   blen
   ecopyd
@@ -1900,7 +1900,7 @@ labErr:
 
 end
 
-procedure __bytearray.write&int$&int$[2]
+procedure __bytearray.write&int$&int$[3]
 
   blen
   ecopyd
@@ -1925,7 +1925,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&vint$[2]
+procedure __bytearray.read&int$&vint$[3]
 
   bcopya
   blen
@@ -1951,7 +1951,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&vchar$[2]
+procedure __bytearray.read&int$&vchar$[3]
 
   bcopya
   blen
@@ -1977,7 +1977,7 @@ labErr:
 
 end
 
-procedure __bytearray.write&int$&long$[2]
+procedure __bytearray.write&int$&long$[3]
 
   blen
   bcopya
@@ -2001,7 +2001,7 @@ labErr:
 
 end
 
-procedure __bytearray.write&int$&real$[2]
+procedure __bytearray.write&int$&real$[3]
 
   blen
   bcopya
@@ -2025,7 +2025,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&vreal$[2]
+procedure __bytearray.read&int$&vreal$[3]
 
   bcopya
   blen
@@ -2049,7 +2049,7 @@ labErr:
 
 end
 
-procedure __bytearray.read&int$&vlong$[2]
+procedure __bytearray.read&int$&vlong$[3]
 
   bcopya
   blen
@@ -2073,7 +2073,7 @@ labErr:
 
 end
 
-procedure __bytearray.eval&move&int$&int$&int$[3]
+procedure __bytearray.eval&move&int$&int$&int$[4]
 
   pusha 
 
@@ -2095,7 +2095,7 @@ procedure __bytearray.eval&move&int$&int$&int$[3]
   
 end
 
-procedure __shortarray.eval&readLength&vint$[1]
+procedure __shortarray.eval&readLength&vint$[2]
 
   wlen
   bloadsi 2
@@ -2105,7 +2105,7 @@ procedure __shortarray.eval&readLength&vint$[1]
 end
 
 
-procedure __shortarray.read&int$&int$&shortarray$[3]
+procedure __shortarray.read&int$&int$&shortarray$[4]
 
   bcopya
   wlen
@@ -2143,7 +2143,7 @@ labErr:
 
 end
 
-procedure __shortarray.write&int$&int$&shortarray$[3]
+procedure __shortarray.write&int$&int$&shortarray$[4]
 
   bcopya
   wlen
@@ -2181,7 +2181,7 @@ labErr:
 
 end
 
-procedure __shortarray.write&int$&short$[2]
+procedure __shortarray.write&int$&short$[3]
 
   wlen
   bcopya
@@ -2207,7 +2207,7 @@ labErr:
 
 end
 
-procedure __shortarray.read&int$&vshort$[2]
+procedure __shortarray.read&int$&vshort$[3]
 
   wlen
   bcopya
@@ -2234,7 +2234,7 @@ labErr:
   
 end
 
-procedure __intarray.eval&readLength&vint$[1]
+procedure __intarray.eval&readLength&vint$[2]
 
   aloadsi 1
   nlen
@@ -2244,7 +2244,7 @@ procedure __intarray.eval&readLength&vint$[1]
 
 end
 
-procedure __intarray.read&int$&int$&intarray$[3]
+procedure __intarray.read&int$&int$&intarray$[4]
 
   bcopya
   nlen
@@ -2270,7 +2270,7 @@ labErr:
 
 end
 
-procedure __intarray.write&int$&int$&intarray$[3]
+procedure __intarray.write&int$&int$&intarray$[4]
 
   bcopya
   aloadsi 2
@@ -2300,7 +2300,7 @@ labErr:
 
 end
 
-procedure __intarray.write&int$&int$[2]
+procedure __intarray.write&int$&int$[3]
 
   nlen
   bcopya
@@ -2323,7 +2323,7 @@ labErr:
 
 end
 
-procedure __intarray.read&int$&vint$[2]
+procedure __intarray.read&int$&vint$[3]
 
   bcopya
   nlen
@@ -2349,7 +2349,7 @@ labErr:
 
 end
 
-procedure __literal.eval&copy&literal$&literal$[2]
+procedure __literal.eval&copy&literal$&literal$[3]
 
   aloadsi 2
   bcopya
@@ -2360,7 +2360,7 @@ procedure __literal.eval&copy&literal$&literal$[2]
 
 end
 
-procedure __literal.eval&readLength&vint$[1]
+procedure __literal.eval&readLength&vint$[2]
 
   aloadsi 1
   blen
@@ -2371,7 +2371,7 @@ procedure __literal.eval&readLength&vint$[1]
 
 end
 
-procedure __literal.indexOf&int$&literal$&vint$[3]
+procedure __literal.indexOf&int$&literal$&vint$[4]
 
   bcopya
   aloadsi 2                 // ; load index
@@ -2385,7 +2385,7 @@ procedure __literal.indexOf&int$&literal$&vint$[3]
 
 end
 
-procedure __literal.indexOf&int$&char$&vint$[3]
+procedure __literal.indexOf&int$&char$&vint$[4]
 
   pusha
   aloadsi 4
@@ -2409,7 +2409,7 @@ procedure __literal.indexOf&int$&char$&vint$[3]
 
 end
 
-procedure __literal.insert&int$&literal$[2]
+procedure __literal.insert&int$&literal$[3]
 
   // ; calculate length
   blen
@@ -2453,7 +2453,7 @@ procedure __literal.insert&int$&literal$[2]
   
 end
 
-procedure __literal.delete&int$&int$[2]
+procedure __literal.delete&int$&int$[3]
 
   bcopya
 
@@ -2492,7 +2492,7 @@ procedure __literal.delete&int$&int$[2]
   
 end
 
-procedure __literal.eval&Substring&int$&int$[2]
+procedure __literal.eval&Substring&int$&int$[3]
 
   // ; calculate length
   aloadsi 3
@@ -2524,10 +2524,227 @@ procedure __literal.eval&Substring&int$&int$[2]
 
 end
 
-procedure __literal.eval&readHashCode&vint$[1]
+procedure __literal.eval&readHashCode&vint$[2]
 
   bloadsi 2
   ncopy
+  quitn 2
+
+end
+
+procedure __wide.eval&readHashCode&vint$[2]
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure __wide.eval&copy&wide$&wide$[2]
+
+  bcopya
+  aloadsi 2
+  nload
+  inc
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 2
+
+end
+
+procedure __wide.read&int$&vshort$[3]
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  eaddn -1
+  notless labErr
+  lessn   labErr 0
+
+  acopyb
+  shiftn -1
+  breadw
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __wide.indexOf&int$&wide$&vint$[4]
+
+  bcopya
+  aloadsi 2                 // ; load index
+  nload
+  aloadsi 3                 // ; load searching str
+  callextr api : wseek
+  acopyb
+  bloadsi 4                 // ; load target
+  nsave                    // ; save index
+  quitn 4
+
+end
+
+procedure __wide.indexOf&int$&char$&vint$[4]
+
+  pusha
+  aloadsi 4
+  pushn 0
+  pushn 0
+  bcopys 0
+  pushn 0
+  pushn 0FFFFFFFEh
+  callextr api : chartowstr
+
+  aloadsi 7                 // ; load index
+  nload
+  acopys 2
+  bloadsi 4
+  callextr api : wseek
+  bloadsi 9                // ; load target
+  nsave                    // ; save index
+  popi 4
+  popa
+  quitn 4
+  
+end
+
+procedure __wide.insert&int$&wide$[3]
+
+  // ; calculate length
+  wlen
+  dec
+  ecopyd
+  
+  aloadsi 3
+  wlen
+  add
+
+  acopyr class : system'WideLiteralValue
+  wcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : winsert
+
+  // ; insert
+  aloadsi 3
+  ecopyd
+  wlen
+  dec
+  eswap
+  callextr api : winsert
+  
+  // ; copy right side 
+  ecopyd
+  aloadsi 2
+  nload  
+  eswap
+  aloadsi 1
+  callextr api : wadd
+
+  acopyb
+  quitn 3
+  
+end
+
+procedure __wide.delete&int$&int$[3]
+
+  bcopya
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  ecopyd
+
+  acopyb
+  wlen
+  sub
+
+  acopyr class : system'WideLiteralValue
+  wcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : winsert                  
+
+  // ; copy right side 
+  ecopyd          
+  aloadsi 3
+  nload
+  add
+  eswap
+  aloadsi 1
+  callextr api : wadd
+
+  acopyb
+  quitn 3
+  
+end
+
+procedure __wide.eval&Substring&int$&int$[3]
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  inc
+
+  // ; create a new string  
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  
+  aloadsi 2
+  nload
+
+  aloadsi 1
+  callextr api : wsubcopy
+
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  shiftn -1
+  bwritew
+
+  quitn 3
+
+end
+
+procedure __wide.eval&readLength&vint$[2]
+
+  aloadsi 1
+  wlen
+  dec
+  bloadsi 2
+  nsave
   quitn 2
 
 end
@@ -3613,23 +3830,6 @@ procedure s_copy
 
 end
 
-procedure ws_copy
-
-  bcopya
-  aloadsi 2
-  nload
-  inc
-  acopyb
-  acallvi 1
-
-  bcopya
-  aloadsi 3
-  copy
-  acopyb
-  quitn 3
-
-end
-
 procedure s_copyarr
 
   bcopya
@@ -3881,171 +4081,6 @@ labEnd:
   acopyb
   quitn 3
   
-end
-
-procedure ws_indexof
-
-  bcopya
-  aloadsi 2                 // ; load index
-  nload
-  aloadsi 3                 // ; load searching str
-  callextr api : wseek
-  acopyb
-  bloadsi 4                 // ; load target
-  nsave                    // ; save index
-  quitn 4
-
-end
-
-procedure ws_indexof_char
-
-  pusha
-  aloadsi 4
-  pushn 0
-  pushn 0
-  bcopys 0
-  pushn 0
-  pushn 0FFFFFFFEh
-  callextr api : chartowstr
-
-  aloadsi 7                 // ; load index
-  nload
-  acopys 2
-  bloadsi 4
-  callextr api : wseek
-  bloadsi 9                // ; load target
-  nsave                    // ; save index
-  popi 4
-  popa
-  quitn 4
-  
-end
-
-procedure ws_insert
-
-  // ; calculate length
-  wlen
-  dec
-  ecopyd
-  
-  aloadsi 3
-  wlen
-  add
-
-  acopyr class : system'WideLiteralValue
-  wcreate
-
-  // ; copy left side               
-  bcopya
-  aloadsi 2
-  nload
-  ecopyd
-  aloadsi 1
-  dcopy 0
-  callextr api : winsert
-
-  // ; insert
-  aloadsi 3
-  ecopyd
-  wlen
-  dec
-  eswap
-  callextr api : winsert
-  
-  // ; copy right side 
-  ecopyd
-  aloadsi 2
-  nload  
-  eswap
-  aloadsi 1
-  callextr api : wadd
-
-  acopyb
-  quitn 3
-  
-end
-
-procedure ws_delete
-
-  bcopya
-
-  // ; calculate length
-  aloadsi 3
-  nload
-  ecopyd
-
-  acopyb
-  wlen
-  sub
-
-  acopyr class : system'WideLiteralValue
-  wcreate
-
-  // ; copy left side               
-  bcopya
-  aloadsi 2
-  nload
-  ecopyd
-  aloadsi 1
-  dcopy 0
-  callextr api : winsert                  
-
-  // ; copy right side 
-  ecopyd          
-  aloadsi 3
-  nload
-  add
-  eswap
-  aloadsi 1
-  callextr api : wadd
-
-  acopyb
-  quitn 3
-  
-end
-
-procedure ws_subs
-
-  // ; calculate length
-  aloadsi 3
-  nload
-  inc
-
-  // ; create a new string  
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-
-  aloadsi 3
-  nload
-  ecopyd
-  
-  aloadsi 2
-  nload
-
-  aloadsi 1
-  callextr api : wsubcopy
-
-  acopyb
-  wlen
-  ecopy 0
-  dec
-  shiftn -1
-  bwritew
-
-  quitn 3
-
-end
-
-procedure ws_getlen
-
-  aloadsi 1
-  wlen
-  dec
-  bloadsi 2
-  nsave
-  quitn 2
-
 end
 
 procedure arr_create

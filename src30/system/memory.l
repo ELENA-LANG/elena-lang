@@ -1099,1048 +1099,1019 @@
 {
     #field(short)$target.
 
-//    /// Creates the empty literal
-//    #constructor min
-//        = emptyWideLiteralValue.
-//        
-//    /// Creates the literal string with specified length
-//    #constructor(stacksafe) new &int:size
-//        = short:(size + 1).
+    /// Creates the empty literal
+    #constructor min
+        = emptyWideLiteralValue.
+        
+    /// Creates the literal string with specified length
+    #constructor(stacksafe) new &int:size
+        = short:(size + 1).
+
+    /// Creates the literal string with specified length and copies the parameter value
+    #constructor(stacksafe) new &int:aSize &wide:aLiteral
+        <= (new &int:aSize)
+    [
+        system'core_routines'__wide copy &wide:$self &wide:aLiteral.
+    ]
+
+//    /// Creates the literal string with specified length fills with spciefied character value
+//    #constructor(stacksafe) new &int:aSize &char:aChar
+//        => system'core_routines'ws_fill.
+
+    /// Creates the literal string copy
+    #constructor new &wide:aLiteral
+        <= %new &int:(aLiteral length) &wide:aLiteral.
+        
+//    /// Creates the copy of a subarray
+//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+//        => system'core_routines'ws_copysubarr.
 //
-////    /// Creates the literal string with specified length and copies the parameter value
-////    #constructor(stacksafe) new &int:aSize &wide:aLiteral
-////        => system'core_routines'ws_copy.
-////    
-////    /// Creates the literal string with specified length fills with spciefied character value
-////    #constructor(stacksafe) new &int:aSize &char:aChar
-////        => system'core_routines'ws_fill.
-////
-////    /// Creates the literal string copy
-////    #constructor new &wide:aLiteral
-////        <= %new &int:(aLiteral length int) &wide:aLiteral.
-////        
-////    /// Creates the copy of a subarray
-////    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-////        => system'core_routines'ws_copysubarr.
-////
-////    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
-////        => system'core_routines'ws_copybuf.
-////
-////    /// Converts to UTF-8 literal
-////    #method literal = literalConvertor convert &wide:$self.
-//
-//    /// Compares the values
-//    #method(bool) equal &wide : aLiteral
+//    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
+//        => system'core_routines'ws_copybuf.
+
+    /// Converts to UTF-8 literal
+    #method literal = literalConvertor convert &wide:$self.
+
+    /// Compares the values
+    #method(bool) equal &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Compares the values
+    #method(bool) less &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Compares the values
+    #method(bool) equal &char : aChar
+        <= %equal &wide:(aChar wide).
+
+    /// Compares the values
+    #method(bool) less &char : aChar
+        <= %less &wide:(aChar wide).
+
+    /// Concatinates the values
+    #method(wide,stacksafe) add &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Concatinates the values
+    #method(wide,stacksafe) add &char:aChar
+        = $self add &wide:(aChar wide).
+
+    /// Concatinates the values
+    #method(wide) add &literal:aLiteral
+        = $self add &wide:(aLiteral wide).
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'core_routines'__wide.
+
+//    // Reads the short integer at the specified index and saves into an output parameter
+//    #method(stacksafe) read &int:anIndex &vshort:aValue
 //        => system'core_routines'__wide.
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
+        => system'core_routines'__wide.
+
+    /// Saves the index of the first occurence of the specified character into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'core_routines'__wide.
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar
+    [
+        #var(int)aRetVal.
+        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
+    [
+        #var(int)aRetVal.
+        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified object.
+    ///
+    /// If the substring is not found. returns -1
+    #method indexOf : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
+                
+                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
+                
+                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Inserts the substring into and returns the new one
+    #method(wide,stacksafe) insert &int:anIndex &wide:aLiteral
+        => system'core_routines'__wide.
+
+    /// Inserts the substring into and returns the new one
+    #method(wide,stacksafe) insert &int:anIndex &literal:aLiteral
+        = $self insert &int:anIndex &wide:(aLiteral wide).
+
+    /// Inserts a character into and returns the new one
+    #method(wide,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &wide:(aChar wide).
+
+    /// Inserts an object into and returns the new one
+    #method insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &wide:aLiteral.
+    
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
+    
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Deletes the substring from the object and returns the new one
+    #method delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+            
+    /// Deletes the substring from the object and returns the new one            
+    #method(wide,stacksafe) delete &int:anIndex &int:aLength
+        => system'core_routines'__wide.
+
+    /// Returns the substring
+    #method(wide,stacksafe) Substring &int:anIndex &int:aLength
+        => system'core_routines'__wide.
+
+    #method(wide) Substring : aLength &at:anIndex
+        <= Substring &int:(anIndex int) &int:(aLength int).
+
+    /// Reads the literal length into an output parameter
+    #method(outnprop:length,stacksafe) readLength &vint:aLength
+        => system'core_routines'__wide.
+
+//    /// Saves the literal into a UTF-32 character array
+//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
+//        => system'core_routines'ws_save.
 //
-//    /// Compares the values
-//    #method(bool) less &wide : aLiteral
-//        => system'core_routines'__wide.
+//    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
+//        => system'core_routines'ws_saveraw.
 //
-////    /// Compares the values
-////    #method(type:bool) equal &char : aChar
-////        <= %equal &wide:(aChar wide).
-////
-////    /// Compares the values
-////    #method(type:bool) less &char : aChar
-////        <= %less &wide:(aChar wide).
-//
-//    /// Concatinates the values
-//    #method(wide,stacksafe) add &wide : aLiteral
-//        => system'core_routines'__wide.
-//
-////    /// Concatinates the values
-////    #method(type:wide,stacksafe) add &char:aChar
-////        = $self add &wide:(aChar wide).
-////
-////    /// Concatinates the values
-////    #method(type:wide) add &literal:aLiteral
-////        = $self add &wide:(aLiteral wide).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'__wide.
-//
-////    // Reads the short integer at the specified index and saves into an output parameter
-////    #method(stacksafe) read &int:anIndex &vshort:aValue
-////        => system'core_routines'sa_readword.
-////
-////    /// Saves the index of the first occurence of the specified substring into an output parameter.
-////    ///
-////    /// If the substring is not found. returns -1
-////    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
-////        => system'core_routines'ws_indexof.
-////
-////    /// Saves the index of the first occurence of the specified character into an output parameter.
-////    ///
-////    /// If the substring is not found. returns -1
-////    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-////        => system'core_routines'ws_indexof_char.
-////
-////    /// Returns the index of the first occurence of the specified character.
-////    ///
-////    /// If the substring is not found. returns -1
-////    #method(stacksafe) indexOf &int:anIndex &char:aChar
-////    [
-////        #var(type:int)aRetVal.
-////        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
-////        
-////        ^ IntNumber new &int:aRetVal.
-////    ]
-////
-////    /// Returns the index of the first occurence of the specified substring.
-////    ///
-////    /// If the substring is not found. returns -1
-////    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
-////    [
-////        #var(type:int)aRetVal.
-////        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
-////        
-////        ^ IntNumber new &int:aRetVal.
-////    ]
-////
-////    /// Returns the index of the first occurence of the specified object.
-////    ///
-////    /// If the substring is not found. returns -1
-////    #method indexOf : anObject &at:anIndex
-////        = anObject cast:%eval &to:
-////            {
-////                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
-////                
-////                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
-////                
-////                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
-////            } &with:$self.
-////
-////    /// Inserts the substring into and returns the new one
-////    #method(type:wide,stacksafe) insert &int:anIndex &wide:aLiteral
-////        => system'core_routines'ws_insert.
-////
-////    /// Inserts the substring into and returns the new one
-////    #method(type:wide,stacksafe) insert &int:anIndex &literal:aLiteral
-////        = $self insert &int:anIndex &wide:(aLiteral wide).
-////
-////    /// Inserts a character into and returns the new one
-////    #method(type:wide,stacksafe) insert &int:anIndex &char:aChar
-////        = $self insert &int:anIndex &wide:(aChar wide).
-////
-////    /// Inserts an object into and returns the new one
-////    #method insert : anObject &at:anIndex
-////        = anObject cast:%eval &to:
-////            {
-////               eval:target &wide:aLiteral
-////                  = target insert &int:(anIndex int) &wide:aLiteral.
-////    
-////               eval:target &literal:aLiteral
-////                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
-////    
-////               eval:target &char:aChar
-////                  = target insert &int:(anIndex int) &char:aChar.
-////            } &with:$self.
-////
-////    /// Deletes the substring from the object and returns the new one
-////    #method delete:aLength &at:anIndex
-////        = $self delete &int:(anIndex int) &int:(aLength int).
-////            
-////    /// Deletes the substring from the object and returns the new one            
-////    #method(type:wide,stacksafe) delete &int:anIndex &int:aLength
-////        => system'core_routines'ws_delete.
-////
-////    /// Returns the substring
-////    #method(type:wide,stacksafe) Substring &int:anIndex &int:aLength
-////        => system'core_routines'ws_subs.
-////
-////    #method(type:wide) Substring : aLength &at:anIndex
-////        <= Substring &int:(anIndex int) &int:(aLength int).
-////
-////    /// Reads the literal length into an output parameter
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'ws_getlen.
-////
-////    /// Returns the string length
-////    #method(stacksafe,type:int,embeddable,suppress:w3) length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]
-////
-////    /// Saves the literal into a UTF-32 character array
-////    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
-////        => system'core_routines'ws_save.
-////
-////    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
-////        => system'core_routines'ws_saveraw.
-////
-////    /// Returns the object enumerator
-////    #method enumerator = WideLiteralEnumerator new &wide:$self.
-////    
-////    /// Returns the object iterator
-////    #method iterator = WideLiteralIterator new &wide:$self.
-////    
-////    /// Dispatches the verb to the target object with wide subject
-////    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &wide:$self.
-////    
-////    /// Dispatches the verb to the target object with wide subject
-////    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &wide:$self.
-////    
-////    /// Clones the value
-////    #method clone = WideLiteralValue new &wide:$self.
-////
-////    // Reads the object hash code into the output parameter
-////    #method(stacksafe) readHashCode &vint:aCode => system'core_routines'int_hashcode.
-////    
-////    #method(type:int,embeddable,suppress:w3) hash_code
-////    [
-////        #var(type:int)aCode.
-////        $self readHashCode &vint:aCode.
-////        
-////        ^ aCode.
-////    ]
+//    /// Returns the object enumerator
+//    #method enumerator = WideLiteralEnumerator new &wide:$self.
+//    
+//    /// Returns the object iterator
+//    #method iterator = WideLiteralIterator new &wide:$self.
+    
+    /// Clones the value
+    #method clone = WideLiteralValue new &wide:$self.
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
+        => system'core_routines'__wide.
 }
-////
-////// --- Variant ---
-////
-/////// A basic type variant class
-////#class Variant :: String
-////{
-////    /// Tries to convert the literal value to a byte number
-////    #method byte
-////        = byteConvertor convert &literal:theValue.
-////
-////    /// Tries to convert the literal value to a short integer number
-////    #method short
-////        = shortConvertor convert &literal:theValue.
-////
-////    /// Tries to convert the literal value to a character
-////    #method char
-////    [
-////        #var(type:char)retVal.
-////        charConvertor $convert &int:0 &literal:theValue &vchar:retVal.
-////        
-////        ^ CharValue new &char:retVal.
-////    ]
-////
-////    /// Tries to convert the literal value to the integer number
-////    #method int
-////        = intConvertor convert &literal:theValue.
-////
-////    /// Tries to convert the literal value to the long integer number
-////    #method long
-////        = longConvertor convert &literal:theValue.
-////
-////    /// Tries to convert the literal value to the real number
-////    #method real
-////        = realConvertor convert &literal:theValue.
-////
-////    /// Converts the parameter into a literal string
-////    #method write &int:aValue
-////    [
-////        theValue := aValue literal.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    #method write &short:aValue
-////    [
-////        theValue := aValue literal.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    #method write &byte:aValue
-////    [
-////        theValue := aValue literal.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    #method write &long:aValue
-////    [
-////        theValue := aValue literal.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    #method write &real:aValue
-////    [
-////        theValue := aValue literal.
-////    ]    
-////
-////    #method cast : aVerb &to:aTarget
-////    [
-////        #var aValue := aTarget cast:%eval &to:
-////        {
-////            eval : aVariant &int:aValue
-////                = aVariant int.
-////                
-////            eval : aVariant &byte:aValue
-////                = aVariant byte.
-////                
-////            eval : aVariant &short:aValue
-////                = aVariant short.
-////                
-////            eval : aVariant &long:aValue
-////                = aVariant long.
-////                
-////            eval : aVariant &real:aValue
-////                = aVariant real.
-////                
-////            eval : aVariant &literal:aValue
-////                = aVariant literal.
-////                
-////            eval : aVariant &wide:aValue
-////                = aVariant wide.
-////        }
-////        &with:$self.
-////        
-////        ^ aValue cast:aVerb &to:aTarget.
-////    ]
-////
-////    #method equal : anObject
-////        = anObject equal:$self bool.
-////
-////    /// Returns a literal value
-////    #method literal = theValue.
-////    
-////    /// Returns a wide literal value
-////    #method wide = theValue wide.
-////}
-////
-////// --- BaseArray ---
-////
-/////// A base array
-////#class(dynamic) BaseArray
-////{
-////    /// Creates the array with the specified length
-////    #constructor(stacksafe) new &int:aLength
-////        => system'core_routines'arr_create.
-////}
-////
-////// --- Array ---
-////
-/////// An array
-////#class(sealed) Array :: BaseArray
-////{
-////    /// Creates an empty array
-////    #constructor min
-////        => system'core_routines'arr_empty.
-////    
-////    /// Creates the array with the specified length
-////    #constructor new : aLength
-////        <= new &int:(aLength int).
-////    
-////    /// Creates the array with the specified length
-////    ///
-////    /// Obsolete
-////    #constructor new &length:aLength
-////        <= new &int:(aLength int).
-////    
-////    /// Creates the array with the specified length
-////    #constructor(stacksafe) new &int:aLength
-////        => system'core_routines'arr_create.
-////    
-////    /// Creates a copy of the provided array
-////    #constructor new &array:anArray
-////        <= %new &int:0 &int:(anArray length int) &array:anArray.
-////    
-////    /// Creates a copy of the provided sub array
-////    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
-////        => system'core_routines'arr_copysubarr.
-////        
-////    #constructor new &object:singleItem
-////        <= (new &int:1)
-////    [
-////        $self setAt &int:0 &object:singleItem.
-////    ]
-////        
-////    /// Returns the specified array member
-////    #method getAt : anIndex
-////        = $self getAt &int:(anIndex int).
-////
-////    /// Returns the specified array member
-////    #method(stacksafe) getAt &int:anIndex
-////        => system'core_routines'arr_getat.
-////
-////    /// Sets the specified array member
-////    #method setAt:anIndex:anObject
-////    [
-////        $self setAt &int:(anIndex int) &object:anObject.
-////    ]
-////    
-////    /// Sets the specified array member
-////    #method(stacksafe) setAt &int:anIndex &object:anObject
-////        => system'core_routines'arr_setat.
-////
-////    /// Concatinates the arrays    
-////    #method add : anObject
-////        = $self add &array:(anObject array).
-////
-////    /// Concatinates the arrays    
-////    #method add &array:anArray
-////    [
-////        #var(type:int)aLength1.
-////        #var(type:int)aLength2.
-////        
-////        $self readLength &vint:aLength1.        
-////        anArray readLength &vint:aLength2.
-////        
-////        #var(type:array)aRetVal := Array new &int:(aLength1 + aLength2).
-////
-////        #var(type:int)anIndex := 0.
-////        #loop (anIndex < aLength1) ?
-////        [
-////            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
-////            
-////            anIndex := anIndex + 1.
-////        ].
-////
-////        anIndex := 0.
-////        #loop (anIndex < aLength2) ?
-////        [
-////            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
-////            
-////            anIndex := anIndex + 1.
-////        ].
-////            
-////        ^ aRetVal.
-////    ]
-////
-////    /// Returns itself
-////    #method array = $self.
-////
-////    /// Reads the array length into an output parameter
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'arr_getlen.
-////
-////    /// Returns the array length
-////    #method(stacksafe,type:int,embeddable,suppress:w3) length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]
-////
-////    /// Returns the array enumerator
-////    #method enumerator = ArrayEnumerator new &array:$self.
-////
-////    /// Returns the array iterator
-////    #method iterator = ArrayIterator new &array:$self.
-////
-////    /// Dispatches the verb to the target object with array subject
-////    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
-////    
-////    /// Dispatches the verb to the target object with array subject
-////    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array:$self.
-////
-////    /// Clones the array
-////    #method(type:array) clone 
-////        = Array new &array:$self.
-////}
-////
-////// --- OpenArgs ---
-////
-////#class(sealed,dynamic)OpenArgs
-////{
-////    /// Returns the specified array member
-////    #method getAt : anIndex
-////        = $self getAt &int:(anIndex int).
-////
-////    /// Returns the specified array member
-////    #method(stacksafe) getAt &int:anIndex
-////        => system'core_routines'arr_getat.
-////
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'args_getlen.
-////        
-////    #method(stacksafe,type:int,embeddable,suppress:w3) length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]
-////}
-////
-////// === Enumerators / Indexers
-////
-////// --- LiteralEnumerator ---
-////
-/////// A literal enumerator
-////#class LiteralEnumerator :: Enumerator
-////{
-////    #field(type:literal) theLiteral.
-////    #field(type:vint)    theIndex.
-////    #field(type:vint)    theDiff.
-////    #field(type:char)    theChar.
-////    
-////    /// Creates an enumerator
-////    #constructor new : anObject
-////        <= new &literal:(anObject literal).
-////    
-////    /// Creates an enumerator
-////    #constructor new &literal:aLiteral
-////    [
-////        theLiteral := aLiteral.
-////        theIndex := Integer new &int:(-1).
-////        theDiff := Integer new &int:1.
-////        theChar := #0.
-////    ]
-////
-////    /// Resets the enumerator
-////    #method reset
-////    [
-////        theIndex write &int:-1.
-////        theDiff write &int:1.
-////    ]
-////
-////    /// Goes to the next enumeration member and returns true if it is not the last member
-////    #method next
-////    [
-////        #var(type:int)aLength.       
-////        theLiteral readLength &vint:aLength.
-////        
-////        theIndex += theDiff.
-////        
-////        (theIndex < aLength)
-////            ? [
-////                theChar := theLiteral getAt &int:theIndex.                
-////                
-////                theChar readLength &vint:theDiff.
-////                
-////                ^ true.
-////            ].
-////
-////        theDiff write &int:0.
-////        theChar := #0.
-////
-////        ^ false.
-////    ]
-////    
-////    /// Returns the current character
-////    #method get = theChar.
-////}
-////
-////// --- LiteralIterator ---
-////
-/////// A literal value iterator
-////#class LiteralIterator :: Iterator
-////{
-////    #field(type:literal) theLiteral.
-////    #field(type:vint)    theIndex.
-////    
-////    /// Creates an iterator
-////    #constructor new : anObject
-////        <= new &literal:(anObject literal).
-////    
-////    /// Creates an iterator
-////    #constructor new &literal:aLiteral
-////    [
-////        theLiteral := aLiteral.
-////        theIndex := Integer new.
-////    ]
-////    
-////    /// Returns false if the index out of range
-////    #method available
-////    [
-////        #var(type:int)aLength.
-////        theLiteral readLength &vint:aLength.
-////        
-////        ^ theIndex < aLength.
-////    ]
-////
-////    /// Returns the current character
-////    #method get
-////    [
-////        #var(type:char)aChar.
-////        theLiteral read &int:theIndex &vchar:aChar.
-////        
-////        ^ CharValue new &char:aChar.
-////    ]
-////    
-////    /// Sets the index by specified value
-////    #method set : anObject 
-////    [
-////        #throw system'NotSupportedException new.
-////    ]
-////    
-////    /// Reads the current index and saves it into an output parameter
-////    #method readIndex &vint:anIndex
-////    [
-////        anIndex << theIndex.
-////    ]
-////    
-////    /// Sets the index by specified value
-////    #method writeIndex &int:anIndex 
-////    [
-////        theIndex write &int:anIndex.
-////    ]
-////    
-////    /// Reads the length to the output parameter    
-////    #method readLength &vint:anOutput
-////        => theLiteral.
-////}
-////
-////// --- WideLiteralEnumerator ---
-////
-/////// A literal enumerator
-////#class WideLiteralEnumerator :: Enumerator
-////{
-////    #field(type:wide) theLiteral.
-////    #field(type:vint) theIndex.
-////    #field(type:vint) theDiff.
-////    #field(type:char) theChar.
-////    
-////    /// Creates an enumerator
-////    #constructor new : anObject
-////        <= new &wide:(anObject wide).
-////    
-////    /// Creates an enumerator
-////    #constructor new &wide:aLiteral
-////    [
-////        theLiteral := aLiteral.
-////        theIndex := Integer new &int:(-1).
-////        theDiff := Integer new &int:1.
-////        theChar := #0.
-////    ]
-////
-////    /// Resets the enumerator
-////    #method reset
-////    [
-////        theIndex write &int:-1.
-////        theDiff write &int:1.
-////    ]
-////
-////    /// Goes to the next enumeration member and returns true if it is not the last member
-////    #method next
-////    [
-////        #var(type:int)aLength.
-////        
-////        theLiteral readLength &vint:aLength.
-////
-////        theIndex += theDiff.
-////        
-////        (theIndex < aLength)
-////            ? [
-////                theChar := theLiteral getAt &int:theIndex.
-////                
-////                theChar readLength &vint:theDiff.
-////                theDiff += 1.
-////                theDiff /= 2.
-////                
-////                ^ true.
-////            ].
-////
-////        theDiff write &int:0.
-////        theChar := #0.
-////
-////        ^ false.
-////    ]
-////    
-////    /// Returns the current character
-////    #method get = theChar.
-////}
-////
-////// --- WideLiteralIterator ---
-////
-/////// A wide literal enumerator
-////#class WideLiteralIterator :: Iterator
-////{
-////    #field(type:wide) theLiteral.
-////    #field(type:vint) theIndex.
-////    
-////    /// Creates an iterator
-////    #constructor new : anObject
-////        <= new &wide:(anObject wide).
-////    
-////    /// Creates an iterator
-////    #constructor new &wide:aLiteral
-////    [
-////        theLiteral := aLiteral.
-////        theIndex := Integer new.
-////    ]
-////
-////    /// Returns false if the index out of range    
-////    #method available
-////    [
-////        #var(type:int)aLength.
-////        theLiteral readLength &vint:aLength.
-////        
-////        ^ theIndex < aLength.
-////    ]
-////
-////    /// Returns the current character
-////    #method get
-////        = theLiteral getAt &int:theIndex.
-////    
-////    #method set : anObject 
-////    [
-////        #throw system'NotSupportedException new.
-////    ]
-////    
-////    /// Reads the current index and saves it into an output parameter
-////    #method readIndex &vint:anIndex
-////    [
-////        anIndex << theIndex.
-////    ]
-////    
-////    /// Sets the index by specified value
-////    #method writeIndex &int:anIndex 
-////    [
-////        theIndex write &int:anIndex.
-////    ]
-////    
-////    /// Reads the length to the output parameter    
-////    #method readLength &vint:anOutput
-////        => theLiteral.
-////}
-////
-////// --- ArrayIterator ---
-////
-/////// An array iterator
-////#class ArrayIterator :: Iterator
-////{
-////    #field(type:array) theArray.
-////    #field(type:vint)  theIndex.
-////
-////    /// Returns the parameter iterator
-////    #constructor new : anArray
-////        <= new &array:(anArray array).
-////    
-////    /// Returns the parameter iterator
-////    #constructor new &array:anArray
-////    [
-////        theArray := anArray.
-////        theIndex := Integer new.
-////    ]
-////    
-////    /// Returns false if the index out of range
-////    #method available
-////    [
-////        #var(type:int)aLength.
-////        theArray readLength &vint:aLength.
-////        
-////        ^ theIndex < aLength.
-////    ]
-////
-////    /// Returns the current member
-////    #method get
-////        = theArray getAt &int:theIndex.
-////    
-////    /// Sets the current member
-////    #method set : anObject
-////    [
-////        theArray setAt &int:theIndex &object:anObject.
-////    ]
-////    
-////    /// Reads the current index and saves it into an output parameter
-////    #method readIndex  &vint:anIndex
-////    [
-////        anIndex << theIndex.
-////    ]
-////    
-////    /// Sets the index by specified value
-////    #method writeIndex &int:anIndex 
-////    [
-////        theIndex write &int:anIndex.
-////    ]
-////    
-////    /// Reads the length to the output parameter    
-////    #method readLength &vint:anOutput
-////        => theArray.
-////}
-////
-////// --- ArrayEnumerator ---
-////
-/////// An array enumerator
-////#class ArrayEnumerator :: Enumerator
-////{
-////    #field(type:array) theArray.
-////    #field(type:vint)  theIndex.
-////    
-////    /// Creates an array enumerator
-////    #constructor new : anArray
-////        <= new &array:(anArray array).
-////    
-////    /// Creates an array enumerator
-////    #constructor new &array:anArray
-////    [
-////        theArray := anArray.
-////        theIndex := Integer new &int:(-1).
-////    ]
-////
-////    /// Resets the enumerator
-////    #method reset
-////    [
-////        theIndex write &int:-1.
-////    ]
-////
-////    /// Goes to the next enumeration member and returns true if it is not the last member
-////    #method next
-////    [
-////        #var(type:int)aLength.
-////        theArray readLength &vint:aLength.
-////        
-////        theIndex append &int:1.
-////
-////        ^ theIndex < aLength.
-////    ]
-////    
-////    /// Returns the current object
-////    #method get
-////        = theArray getAt &int:theIndex.
-////}
-////
-////// --- Func1Group ---
-////
-////#subject(class:system'Func1Array)func1array.
-////
-////#class(arrayof:func1,sealed) Func1Array
-////{
-////    #constructor(stacksafe) new &int:aLength
-////        => system'core_routines'arr_create.
-////        
-////    #method(stacksafe) readLength &vint:aLength
-////        => system'core_routines'arr_getlen.
-////
-////    #method getAt : anIndex
-////        = $self getAt &int:(anIndex int).
-////
-////    #method(stacksafe) getAt &int:anIndex
-////        => system'core_routines'arr_getat.
-////
-////    #method setAt:anIndex:anObject
-////    [
-////        $self setAt &int:(anIndex int) &object:anObject.
-////    ]
-////    
-////    #method(stacksafe) setAt &int:anIndex &object:anObject
-////        => system'core_routines'arr_setat.
-////
-////    #method(stacksafe,type:int,embeddable,suppress:w3) length
-////    [
-////        #var(type:int)aLength.
-////        $self readLength &vint:aLength.
-////        
-////        ^ aLength.
-////    ]        
-////}
-////
-////#class Function1Group :: BaseFunction1
-////{
-////    #field(type:func1array) theHandlers.
-////    
-////    #constructor new &args:Handlers
-////    [
-////        #var(type:int)i.
-////        #var(type:int)len.
-////        Handlers readLength &vint:len.
-////        
-////        theHandlers := Func1Array new &int:len.
-////        
-////        #loop (i < len)?
-////        [
-////            theHandlers@i := (Handlers@i) func1.
-////            
-////            i := i + 1.
-////        ].
-////    ]
-////    
-////    #method eval : anObject
-////    [
-////        #var(type:int)i.
-////        #var(type:int)len.
-////        theHandlers readLength &vint:len.
-////        
-////        #loop (i < len)?
-////        [
-////            theHandlers@i eval:anObject.
-////            
-////            i := i + 1.
-////        ].
-////    ]
-////}
-////
-////// --- BitArrayIterator ---
-////
-/////// An array iterator
-////#class BitArrayIterator :: Iterator
-////{
-////    #field(type:bitarray) theArray.
-////    #field(type:vint)  theIndex.
-////
-////    /// Returns the parameter iterator
-////    #constructor new : anArray
-////        <= new &bitarray:(anArray bitarray).
-////    
-////    /// Returns the parameter iterator
-////    #constructor new &bitarray:anArray
-////    [
-////        theArray := anArray.
-////        theIndex := Integer new.
-////    ]
-////    
-////    /// Returns false if the index out of range
-////    #method available
-////    [
-////        #var(type:int)aLength.
-////        theArray readLength &vint:aLength.
-////        
-////        ^ theIndex < aLength.
-////    ]
-////
-////    /// Returns the current member
-////    #method(type:bool) get
-////        = theArray getAt &int:theIndex.
-////    
-////    /// Sets the current member
-////    #method set : anObject
-////    [
-////        theArray setAt &int:theIndex &bool:(anObject bool).
-////    ]
-////    
-////    /// Reads the current index and saves it into an output parameter
-////    #method readIndex  &vint:anIndex
-////    [
-////        anIndex << theIndex.
-////    ]
-////    
-////    /// Sets the index by specified value
-////    #method writeIndex &int:anIndex 
-////    [
-////        theIndex write &int:anIndex.
-////    ]
-////    
-////    /// Reads the length to the output parameter    
-////    #method readLength &vint:anOutput
-////        => theArray.
-////}
-////
-////// --- BitArrayEnumerator ---
-////
-/////// An array enumerator
-////#class BitArrayEnumerator :: Enumerator
-////{
-////    #field(type:bitarray) theArray.
-////    #field(type:vint)  theIndex.
-////    
-////    /// Creates an array enumerator
-////    #constructor new : anArray
-////        <= new &bitarray:(anArray bitarray).
-////    
-////    /// Creates an array enumerator
-////    #constructor new &bitarray:anArray
-////    [
-////        theArray := anArray.
-////        theIndex := Integer new &int:(-1).
-////    ]
-////
-////    /// Resets the enumerator
-////    #method reset
-////    [
-////        theIndex write &int:-1.
-////    ]
-////
-////    /// Goes to the next enumeration member and returns true if it is not the last member
-////    #method next
-////    [
-////        #var(type:int)aLength.
-////        theArray readLength &vint:aLength.
-////        
-////        theIndex append &int:1.
-////
-////        ^ theIndex < aLength.
-////    ]
-////    
-////    /// Returns the current object
-////    #method(type:bool) get
-////        = theArray getAt &int:theIndex.
-////}
-////
-////// --- BitArray32Iterator ---
-////
-/////// An array iterator
-////#class BitArray32Iterator :: Iterator
-////{
-////    #field(type:bitset) theArray.
-////    #field(type:vint)  theIndex.
-////
-////    /// Returns the parameter iterator
-////    #constructor new : anArray
-////        <= new &bitset:(anArray bitset).
-////    
-////    /// Returns the parameter iterator
-////    #constructor new &bitset:anArray
-////    [
-////        theArray := anArray.
-////        theIndex := Integer new.
-////    ]
-////    
-////    /// Returns false if the index out of range
-////    #method available
-////    [
-////        ^ theIndex < 32.
-////    ]
-////
-////    /// Returns the current member
-////    #method(type:bool) get
-////        = theArray getAt &int:theIndex.
-////    
-////    /// Sets the current member
-////    #method set : anObject
-////    [
-////        theArray setAt &int:theIndex &bool:(anObject bool).
-////    ]
-////    
-////    /// Reads the current index and saves it into an output parameter
-////    #method readIndex  &vint:anIndex
-////    [
-////        anIndex << theIndex.
-////    ]
-////    
-////    /// Sets the index by specified value
-////    #method writeIndex &int:anIndex 
-////    [
-////        theIndex write &int:anIndex.
-////    ]
-////    
-////    /// Reads the length to the output parameter    
-////    #method readLength &vint:anOutput
-////        => theArray.
-////}
-////
-////// --- BitArray32Enumerator ---
-////
-/////// An array enumerator
-////#class BitArray32Enumerator :: Enumerator
-////{
-////    #field(type:bitset) theArray.
-////    #field(type:vint)  theIndex.
-////    
-////    /// Creates an array enumerator
-////    #constructor new : anArray
-////        <= new &bitset:(anArray bitset).
-////    
-////    /// Creates an array enumerator
-////    #constructor new &bitset:anArray
-////    [
-////        theArray := anArray.
-////        theIndex := Integer new &int:(-1).
-////    ]
-////
-////    /// Resets the enumerator
-////    #method reset
-////    [
-////        theIndex write &int:-1.
-////    ]
-////
-////    /// Goes to the next enumeration member and returns true if it is not the last member
-////    #method next
-////    [
-////        theIndex append &int:1.
-////
-////        ^ theIndex < 32.
-////    ]
-////    
-////    /// Returns the current object
-////    #method get
-////        = theArray getAt &int:theIndex.
-////}
+//
+//// --- Variant ---
+//
+///// A basic type variant class
+//#class Variant :: String
+//{
+//    /// Tries to convert the literal value to a byte number
+//    #method byte
+//        = byteConvertor convert &literal:theValue.
+//
+//    /// Tries to convert the literal value to a short integer number
+//    #method short
+//        = shortConvertor convert &literal:theValue.
+//
+//    /// Tries to convert the literal value to a character
+//    #method char
+//    [
+//        #var(type:char)retVal.
+//        charConvertor $convert &int:0 &literal:theValue &vchar:retVal.
+//        
+//        ^ CharValue new &char:retVal.
+//    ]
+//
+//    /// Tries to convert the literal value to the integer number
+//    #method int
+//        = intConvertor convert &literal:theValue.
+//
+//    /// Tries to convert the literal value to the long integer number
+//    #method long
+//        = longConvertor convert &literal:theValue.
+//
+//    /// Tries to convert the literal value to the real number
+//    #method real
+//        = realConvertor convert &literal:theValue.
+//
+//    /// Converts the parameter into a literal string
+//    #method write &int:aValue
+//    [
+//        theValue := aValue literal.
+//    ]    
+//
+//    /// Converts the parameter into a literal string
+//    #method write &short:aValue
+//    [
+//        theValue := aValue literal.
+//    ]    
+//
+//    /// Converts the parameter into a literal string
+//    #method write &byte:aValue
+//    [
+//        theValue := aValue literal.
+//    ]    
+//
+//    /// Converts the parameter into a literal string
+//    #method write &long:aValue
+//    [
+//        theValue := aValue literal.
+//    ]    
+//
+//    /// Converts the parameter into a literal string
+//    #method write &real:aValue
+//    [
+//        theValue := aValue literal.
+//    ]    
+//
+//    #method cast : aVerb &to:aTarget
+//    [
+//        #var aValue := aTarget cast:%eval &to:
+//        {
+//            eval : aVariant &int:aValue
+//                = aVariant int.
+//                
+//            eval : aVariant &byte:aValue
+//                = aVariant byte.
+//                
+//            eval : aVariant &short:aValue
+//                = aVariant short.
+//                
+//            eval : aVariant &long:aValue
+//                = aVariant long.
+//                
+//            eval : aVariant &real:aValue
+//                = aVariant real.
+//                
+//            eval : aVariant &literal:aValue
+//                = aVariant literal.
+//                
+//            eval : aVariant &wide:aValue
+//                = aVariant wide.
+//        }
+//        &with:$self.
+//        
+//        ^ aValue cast:aVerb &to:aTarget.
+//    ]
+//
+//    #method equal : anObject
+//        = anObject equal:$self bool.
+//
+//    /// Returns a literal value
+//    #method literal = theValue.
+//    
+//    /// Returns a wide literal value
+//    #method wide = theValue wide.
+//}
+
+// --- Array ---
+
+/// An array
+#class(sealed,arrayof:object,dispatchable:array) Array
+{
+//    /// Creates an empty array
+//    #constructor min
+//        => system'core_routines'arr_empty.
+//    
+//    /// Creates the array with the specified length
+//    #constructor new : aLength
+//        <= new &int:(aLength int).
+//    
+//    /// Creates the array with the specified length
+//    ///
+//    /// Obsolete
+//    #constructor new &length:aLength
+//        <= new &int:(aLength int).
+//    
+//    /// Creates the array with the specified length
+//    #constructor(stacksafe) new &int:aLength
+//        => system'core_routines'arr_create.
+//    
+//    /// Creates a copy of the provided array
+//    #constructor new &array:anArray
+//        <= %new &int:0 &int:(anArray length int) &array:anArray.
+//    
+//    /// Creates a copy of the provided sub array
+//    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
+//        => system'core_routines'arr_copysubarr.
+//        
+//    #constructor new &object:singleItem
+//        <= (new &int:1)
+//    [
+//        $self setAt &int:0 &object:singleItem.
+//    ]
+//        
+//    /// Returns the specified array member
+//    #method getAt : anIndex
+//        = $self getAt &int:(anIndex int).
+//
+//    /// Returns the specified array member
+//    #method(stacksafe) getAt &int:anIndex
+//        => system'core_routines'arr_getat.
+//
+//    /// Sets the specified array member
+//    #method setAt:anIndex:anObject
+//    [
+//        $self setAt &int:(anIndex int) &object:anObject.
+//    ]
+//    
+//    /// Sets the specified array member
+//    #method(stacksafe) setAt &int:anIndex &object:anObject
+//        => system'core_routines'arr_setat.
+//
+//    /// Concatinates the arrays    
+//    #method add : anObject
+//        = $self add &array:(anObject array).
+//
+//    /// Concatinates the arrays    
+//    #method add &array:anArray
+//    [
+//        #var(type:int)aLength1.
+//        #var(type:int)aLength2.
+//        
+//        $self readLength &vint:aLength1.        
+//        anArray readLength &vint:aLength2.
+//        
+//        #var(type:array)aRetVal := Array new &int:(aLength1 + aLength2).
+//
+//        #var(type:int)anIndex := 0.
+//        #loop (anIndex < aLength1) ?
+//        [
+//            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
+//            
+//            anIndex := anIndex + 1.
+//        ].
+//
+//        anIndex := 0.
+//        #loop (anIndex < aLength2) ?
+//        [
+//            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
+//            
+//            anIndex := anIndex + 1.
+//        ].
+//            
+//        ^ aRetVal.
+//    ]
+//
+//    /// Returns itself
+//    #method array = $self.
+//
+//    /// Reads the array length into an output parameter
+//    #method(stacksafe) readLength &vint:aLength
+//        => system'core_routines'arr_getlen.
+//
+//    /// Returns the array length
+//    #method(stacksafe,type:int,embeddable,suppress:w3) length
+//    [
+//        #var(type:int)aLength.
+//        $self readLength &vint:aLength.
+//        
+//        ^ aLength.
+//    ]
+//
+//    /// Returns the array enumerator
+//    #method enumerator = ArrayEnumerator new &array:$self.
+//
+//    /// Returns the array iterator
+//    #method iterator = ArrayIterator new &array:$self.
+//
+//    /// Dispatches the verb to the target object with array subject
+//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
+//    
+//    /// Dispatches the verb to the target object with array subject
+//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array:$self.
+//
+//    /// Clones the array
+//    #method(type:array) clone 
+//        = Array new &array:$self.
+}
+
+//// --- OpenArgs ---
+//
+//#class(sealed,dynamic)OpenArgs
+//{
+//    /// Returns the specified array member
+//    #method getAt : anIndex
+//        = $self getAt &int:(anIndex int).
+//
+//    /// Returns the specified array member
+//    #method(stacksafe) getAt &int:anIndex
+//        => system'core_routines'arr_getat.
+//
+//    #method(stacksafe) readLength &vint:aLength
+//        => system'core_routines'args_getlen.
+//        
+//    #method(stacksafe,type:int,embeddable,suppress:w3) length
+//    [
+//        #var(type:int)aLength.
+//        $self readLength &vint:aLength.
+//        
+//        ^ aLength.
+//    ]
+//}
+//
+//// === Enumerators / Indexers
+//
+//// --- LiteralEnumerator ---
+//
+///// A literal enumerator
+//#class LiteralEnumerator :: Enumerator
+//{
+//    #field(type:literal) theLiteral.
+//    #field(type:vint)    theIndex.
+//    #field(type:vint)    theDiff.
+//    #field(type:char)    theChar.
+//    
+//    /// Creates an enumerator
+//    #constructor new : anObject
+//        <= new &literal:(anObject literal).
+//    
+//    /// Creates an enumerator
+//    #constructor new &literal:aLiteral
+//    [
+//        theLiteral := aLiteral.
+//        theIndex := Integer new &int:(-1).
+//        theDiff := Integer new &int:1.
+//        theChar := #0.
+//    ]
+//
+//    /// Resets the enumerator
+//    #method reset
+//    [
+//        theIndex write &int:-1.
+//        theDiff write &int:1.
+//    ]
+//
+//    /// Goes to the next enumeration member and returns true if it is not the last member
+//    #method next
+//    [
+//        #var(type:int)aLength.       
+//        theLiteral readLength &vint:aLength.
+//        
+//        theIndex += theDiff.
+//        
+//        (theIndex < aLength)
+//            ? [
+//                theChar := theLiteral getAt &int:theIndex.                
+//                
+//                theChar readLength &vint:theDiff.
+//                
+//                ^ true.
+//            ].
+//
+//        theDiff write &int:0.
+//        theChar := #0.
+//
+//        ^ false.
+//    ]
+//    
+//    /// Returns the current character
+//    #method get = theChar.
+//}
+//
+//// --- LiteralIterator ---
+//
+///// A literal value iterator
+//#class LiteralIterator :: Iterator
+//{
+//    #field(type:literal) theLiteral.
+//    #field(type:vint)    theIndex.
+//    
+//    /// Creates an iterator
+//    #constructor new : anObject
+//        <= new &literal:(anObject literal).
+//    
+//    /// Creates an iterator
+//    #constructor new &literal:aLiteral
+//    [
+//        theLiteral := aLiteral.
+//        theIndex := Integer new.
+//    ]
+//    
+//    /// Returns false if the index out of range
+//    #method available
+//    [
+//        #var(type:int)aLength.
+//        theLiteral readLength &vint:aLength.
+//        
+//        ^ theIndex < aLength.
+//    ]
+//
+//    /// Returns the current character
+//    #method get
+//    [
+//        #var(type:char)aChar.
+//        theLiteral read &int:theIndex &vchar:aChar.
+//        
+//        ^ CharValue new &char:aChar.
+//    ]
+//    
+//    /// Sets the index by specified value
+//    #method set : anObject 
+//    [
+//        #throw system'NotSupportedException new.
+//    ]
+//    
+//    /// Reads the current index and saves it into an output parameter
+//    #method readIndex &vint:anIndex
+//    [
+//        anIndex << theIndex.
+//    ]
+//    
+//    /// Sets the index by specified value
+//    #method writeIndex &int:anIndex 
+//    [
+//        theIndex write &int:anIndex.
+//    ]
+//    
+//    /// Reads the length to the output parameter    
+//    #method readLength &vint:anOutput
+//        => theLiteral.
+//}
+//
+//// --- WideLiteralEnumerator ---
+//
+///// A literal enumerator
+//#class WideLiteralEnumerator :: Enumerator
+//{
+//    #field(type:wide) theLiteral.
+//    #field(type:vint) theIndex.
+//    #field(type:vint) theDiff.
+//    #field(type:char) theChar.
+//    
+//    /// Creates an enumerator
+//    #constructor new : anObject
+//        <= new &wide:(anObject wide).
+//    
+//    /// Creates an enumerator
+//    #constructor new &wide:aLiteral
+//    [
+//        theLiteral := aLiteral.
+//        theIndex := Integer new &int:(-1).
+//        theDiff := Integer new &int:1.
+//        theChar := #0.
+//    ]
+//
+//    /// Resets the enumerator
+//    #method reset
+//    [
+//        theIndex write &int:-1.
+//        theDiff write &int:1.
+//    ]
+//
+//    /// Goes to the next enumeration member and returns true if it is not the last member
+//    #method next
+//    [
+//        #var(type:int)aLength.
+//        
+//        theLiteral readLength &vint:aLength.
+//
+//        theIndex += theDiff.
+//        
+//        (theIndex < aLength)
+//            ? [
+//                theChar := theLiteral getAt &int:theIndex.
+//                
+//                theChar readLength &vint:theDiff.
+//                theDiff += 1.
+//                theDiff /= 2.
+//                
+//                ^ true.
+//            ].
+//
+//        theDiff write &int:0.
+//        theChar := #0.
+//
+//        ^ false.
+//    ]
+//    
+//    /// Returns the current character
+//    #method get = theChar.
+//}
+//
+//// --- WideLiteralIterator ---
+//
+///// A wide literal enumerator
+//#class WideLiteralIterator :: Iterator
+//{
+//    #field(type:wide) theLiteral.
+//    #field(type:vint) theIndex.
+//    
+//    /// Creates an iterator
+//    #constructor new : anObject
+//        <= new &wide:(anObject wide).
+//    
+//    /// Creates an iterator
+//    #constructor new &wide:aLiteral
+//    [
+//        theLiteral := aLiteral.
+//        theIndex := Integer new.
+//    ]
+//
+//    /// Returns false if the index out of range    
+//    #method available
+//    [
+//        #var(type:int)aLength.
+//        theLiteral readLength &vint:aLength.
+//        
+//        ^ theIndex < aLength.
+//    ]
+//
+//    /// Returns the current character
+//    #method get
+//        = theLiteral getAt &int:theIndex.
+//    
+//    #method set : anObject 
+//    [
+//        #throw system'NotSupportedException new.
+//    ]
+//    
+//    /// Reads the current index and saves it into an output parameter
+//    #method readIndex &vint:anIndex
+//    [
+//        anIndex << theIndex.
+//    ]
+//    
+//    /// Sets the index by specified value
+//    #method writeIndex &int:anIndex 
+//    [
+//        theIndex write &int:anIndex.
+//    ]
+//    
+//    /// Reads the length to the output parameter    
+//    #method readLength &vint:anOutput
+//        => theLiteral.
+//}
+//
+//// --- ArrayIterator ---
+//
+///// An array iterator
+//#class ArrayIterator :: Iterator
+//{
+//    #field(type:array) theArray.
+//    #field(type:vint)  theIndex.
+//
+//    /// Returns the parameter iterator
+//    #constructor new : anArray
+//        <= new &array:(anArray array).
+//    
+//    /// Returns the parameter iterator
+//    #constructor new &array:anArray
+//    [
+//        theArray := anArray.
+//        theIndex := Integer new.
+//    ]
+//    
+//    /// Returns false if the index out of range
+//    #method available
+//    [
+//        #var(type:int)aLength.
+//        theArray readLength &vint:aLength.
+//        
+//        ^ theIndex < aLength.
+//    ]
+//
+//    /// Returns the current member
+//    #method get
+//        = theArray getAt &int:theIndex.
+//    
+//    /// Sets the current member
+//    #method set : anObject
+//    [
+//        theArray setAt &int:theIndex &object:anObject.
+//    ]
+//    
+//    /// Reads the current index and saves it into an output parameter
+//    #method readIndex  &vint:anIndex
+//    [
+//        anIndex << theIndex.
+//    ]
+//    
+//    /// Sets the index by specified value
+//    #method writeIndex &int:anIndex 
+//    [
+//        theIndex write &int:anIndex.
+//    ]
+//    
+//    /// Reads the length to the output parameter    
+//    #method readLength &vint:anOutput
+//        => theArray.
+//}
+//
+//// --- ArrayEnumerator ---
+//
+///// An array enumerator
+//#class ArrayEnumerator :: Enumerator
+//{
+//    #field(type:array) theArray.
+//    #field(type:vint)  theIndex.
+//    
+//    /// Creates an array enumerator
+//    #constructor new : anArray
+//        <= new &array:(anArray array).
+//    
+//    /// Creates an array enumerator
+//    #constructor new &array:anArray
+//    [
+//        theArray := anArray.
+//        theIndex := Integer new &int:(-1).
+//    ]
+//
+//    /// Resets the enumerator
+//    #method reset
+//    [
+//        theIndex write &int:-1.
+//    ]
+//
+//    /// Goes to the next enumeration member and returns true if it is not the last member
+//    #method next
+//    [
+//        #var(type:int)aLength.
+//        theArray readLength &vint:aLength.
+//        
+//        theIndex append &int:1.
+//
+//        ^ theIndex < aLength.
+//    ]
+//    
+//    /// Returns the current object
+//    #method get
+//        = theArray getAt &int:theIndex.
+//}
+//
+//// --- Func1Group ---
+//
+//#subject(class:system'Func1Array)func1array.
+//
+//#class(arrayof:func1,sealed) Func1Array
+//{
+//    #constructor(stacksafe) new &int:aLength
+//        => system'core_routines'arr_create.
+//        
+//    #method(stacksafe) readLength &vint:aLength
+//        => system'core_routines'arr_getlen.
+//
+//    #method getAt : anIndex
+//        = $self getAt &int:(anIndex int).
+//
+//    #method(stacksafe) getAt &int:anIndex
+//        => system'core_routines'arr_getat.
+//
+//    #method setAt:anIndex:anObject
+//    [
+//        $self setAt &int:(anIndex int) &object:anObject.
+//    ]
+//    
+//    #method(stacksafe) setAt &int:anIndex &object:anObject
+//        => system'core_routines'arr_setat.
+//
+//    #method(stacksafe,type:int,embeddable,suppress:w3) length
+//    [
+//        #var(type:int)aLength.
+//        $self readLength &vint:aLength.
+//        
+//        ^ aLength.
+//    ]        
+//}
+//
+//#class Function1Group :: BaseFunction1
+//{
+//    #field(type:func1array) theHandlers.
+//    
+//    #constructor new &args:Handlers
+//    [
+//        #var(type:int)i.
+//        #var(type:int)len.
+//        Handlers readLength &vint:len.
+//        
+//        theHandlers := Func1Array new &int:len.
+//        
+//        #loop (i < len)?
+//        [
+//            theHandlers@i := (Handlers@i) func1.
+//            
+//            i := i + 1.
+//        ].
+//    ]
+//    
+//    #method eval : anObject
+//    [
+//        #var(type:int)i.
+//        #var(type:int)len.
+//        theHandlers readLength &vint:len.
+//        
+//        #loop (i < len)?
+//        [
+//            theHandlers@i eval:anObject.
+//            
+//            i := i + 1.
+//        ].
+//    ]
+//}
+//
+//// --- BitArrayIterator ---
+//
+///// An array iterator
+//#class BitArrayIterator :: Iterator
+//{
+//    #field(type:bitarray) theArray.
+//    #field(type:vint)  theIndex.
+//
+//    /// Returns the parameter iterator
+//    #constructor new : anArray
+//        <= new &bitarray:(anArray bitarray).
+//    
+//    /// Returns the parameter iterator
+//    #constructor new &bitarray:anArray
+//    [
+//        theArray := anArray.
+//        theIndex := Integer new.
+//    ]
+//    
+//    /// Returns false if the index out of range
+//    #method available
+//    [
+//        #var(type:int)aLength.
+//        theArray readLength &vint:aLength.
+//        
+//        ^ theIndex < aLength.
+//    ]
+//
+//    /// Returns the current member
+//    #method(type:bool) get
+//        = theArray getAt &int:theIndex.
+//    
+//    /// Sets the current member
+//    #method set : anObject
+//    [
+//        theArray setAt &int:theIndex &bool:(anObject bool).
+//    ]
+//    
+//    /// Reads the current index and saves it into an output parameter
+//    #method readIndex  &vint:anIndex
+//    [
+//        anIndex << theIndex.
+//    ]
+//    
+//    /// Sets the index by specified value
+//    #method writeIndex &int:anIndex 
+//    [
+//        theIndex write &int:anIndex.
+//    ]
+//    
+//    /// Reads the length to the output parameter    
+//    #method readLength &vint:anOutput
+//        => theArray.
+//}
+//
+//// --- BitArrayEnumerator ---
+//
+///// An array enumerator
+//#class BitArrayEnumerator :: Enumerator
+//{
+//    #field(type:bitarray) theArray.
+//    #field(type:vint)  theIndex.
+//    
+//    /// Creates an array enumerator
+//    #constructor new : anArray
+//        <= new &bitarray:(anArray bitarray).
+//    
+//    /// Creates an array enumerator
+//    #constructor new &bitarray:anArray
+//    [
+//        theArray := anArray.
+//        theIndex := Integer new &int:(-1).
+//    ]
+//
+//    /// Resets the enumerator
+//    #method reset
+//    [
+//        theIndex write &int:-1.
+//    ]
+//
+//    /// Goes to the next enumeration member and returns true if it is not the last member
+//    #method next
+//    [
+//        #var(type:int)aLength.
+//        theArray readLength &vint:aLength.
+//        
+//        theIndex append &int:1.
+//
+//        ^ theIndex < aLength.
+//    ]
+//    
+//    /// Returns the current object
+//    #method(type:bool) get
+//        = theArray getAt &int:theIndex.
+//}
+//
+//// --- BitArray32Iterator ---
+//
+///// An array iterator
+//#class BitArray32Iterator :: Iterator
+//{
+//    #field(type:bitset) theArray.
+//    #field(type:vint)  theIndex.
+//
+//    /// Returns the parameter iterator
+//    #constructor new : anArray
+//        <= new &bitset:(anArray bitset).
+//    
+//    /// Returns the parameter iterator
+//    #constructor new &bitset:anArray
+//    [
+//        theArray := anArray.
+//        theIndex := Integer new.
+//    ]
+//    
+//    /// Returns false if the index out of range
+//    #method available
+//    [
+//        ^ theIndex < 32.
+//    ]
+//
+//    /// Returns the current member
+//    #method(type:bool) get
+//        = theArray getAt &int:theIndex.
+//    
+//    /// Sets the current member
+//    #method set : anObject
+//    [
+//        theArray setAt &int:theIndex &bool:(anObject bool).
+//    ]
+//    
+//    /// Reads the current index and saves it into an output parameter
+//    #method readIndex  &vint:anIndex
+//    [
+//        anIndex << theIndex.
+//    ]
+//    
+//    /// Sets the index by specified value
+//    #method writeIndex &int:anIndex 
+//    [
+//        theIndex write &int:anIndex.
+//    ]
+//    
+//    /// Reads the length to the output parameter    
+//    #method readLength &vint:anOutput
+//        => theArray.
+//}
+//
+//// --- BitArray32Enumerator ---
+//
+///// An array enumerator
+//#class BitArray32Enumerator :: Enumerator
+//{
+//    #field(type:bitset) theArray.
+//    #field(type:vint)  theIndex.
+//    
+//    /// Creates an array enumerator
+//    #constructor new : anArray
+//        <= new &bitset:(anArray bitset).
+//    
+//    /// Creates an array enumerator
+//    #constructor new &bitset:anArray
+//    [
+//        theArray := anArray.
+//        theIndex := Integer new &int:(-1).
+//    ]
+//
+//    /// Resets the enumerator
+//    #method reset
+//    [
+//        theIndex write &int:-1.
+//    ]
+//
+//    /// Goes to the next enumeration member and returns true if it is not the last member
+//    #method next
+//    [
+//        theIndex append &int:1.
+//
+//        ^ theIndex < 32.
+//    ]
+//    
+//    /// Returns the current object
+//    #method get
+//        = theArray getAt &int:theIndex.
+//}
