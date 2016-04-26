@@ -2703,9 +2703,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
-//      case lxInternalCall:
-//         tape.write(bcCallR, argument | mskInternalRef);
-//         break;
+      case lxInternalCall:
+         tape.write(bcCallR, argument | mskInternalRef);
+         break;
       default:
          break;
    }

@@ -3997,7 +3997,10 @@ ObjectInfo Compiler :: compileNewOperator(DNode node, CodeScope& scope, int mode
 
    int flags = subject != 0 ? scope.moduleScope->getClassFlags(scope.moduleScope->subjectHints.get(subject)) : 0;
 
+   // HOTFIX : provide the expression result
+   scope.writer->insert(lxTypecasting, encodeMessage(retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->intReference, 0), GET_MESSAGE_ID, 0));
    scope.writer->insert(lxNewOp);
+
    if (isEmbeddable(flags)) {
       retVal.param = -3;
    }
@@ -4012,6 +4015,7 @@ ObjectInfo Compiler :: compileNewOperator(DNode node, CodeScope& scope, int mode
    appendObjectInfo(scope, retVal);
    appendTerminalInfo(scope.writer, node.FirstTerminal());
 
+   scope.writer->closeNode();
    scope.writer->closeNode();
 
    scope.writer->removeBookmark();
@@ -4489,12 +4493,24 @@ ObjectInfo Compiler :: compileInternalCall(DNode node, CodeScope& scope, ObjectI
 {
    ModuleScope* moduleScope = scope.moduleScope;
 
-   // only eval message is allowed
-   TerminalInfo     verb = node.Terminal();
-   if (_verbs.get(verb) != EVAL_MESSAGE_ID)
-      scope.raiseError(errInvalidOperation, verb);
+   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
+   virtualReference.append('.');
 
-   scope.writer->newNode(lxInternalCall, routine.param);
+   int paramCount;
+   ref_t sign_ref, verb_id, dummy;
+   ref_t message = mapMessage(node, scope, dummy);
+   decodeMessage(message, sign_ref, verb_id, paramCount);
+
+   virtualReference.append('0' + paramCount);
+   virtualReference.append('#');
+   virtualReference.append(0x20 + verb_id);
+
+   if (sign_ref != 0) {
+      virtualReference.append('&');
+      virtualReference.append(moduleScope->module->resolveSubject(sign_ref));
+   }
+
+   scope.writer->newNode(lxInternalCall, moduleScope->module->mapReference(virtualReference));
 
    DNode arg = node.firstChild();
 
@@ -6732,7 +6748,7 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask
 
 void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, int warningMask, int mode)
 {
-   boxPrimitive(scope, node, -1, warningMask, mode);
+   //boxPrimitive(scope, node, -1, warningMask, mode);
 
    optimizeSyntaxExpression(scope, node, warningMask, HINT_NOBOXING);
 }
@@ -7095,6 +7111,8 @@ void Compiler :: optimizeNewOp(ModuleScope& scope, SNode node, int warningLevel,
    optimizeSyntaxExpression(scope, node, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
 
    SNode expr = SyntaxTree::findMatchedChild(node, lxObjectMask);
+   if (expr == lxExpression)
+      expr = SyntaxTree::findMatchedChild(expr, lxObjectMask);
 
    ref_t type = SyntaxTree::findChild(expr, lxType).argument;
    ref_t classRef = SyntaxTree::findChild(expr, lxTarget).argument;
