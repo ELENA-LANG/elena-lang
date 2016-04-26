@@ -9,10 +9,10 @@
         #var(int)len.
         $target >> len.
         
-        retVal := len - 1.
+        retVal := len.
     ]
 
-    #method(suppress:w3) getAt &int:n
+    #method(suppress:w3,stacksafe) getAt &int:n
     [
         (n < 0)
             ? [ #throw InvalidArgumentException new. ].
@@ -26,7 +26,7 @@
             
     ]
 
-    #method(suppress:w3) setAt &int:n &template_subj:item
+    #method(suppress:w3,stacksafe) setAt &int:n &template_subj:item
     [
         (n < 0)
             ? [ #throw InvalidArgumentException new. ].
@@ -1393,118 +1393,82 @@
 //    /// Creates an empty array
 //    #constructor min
 //        => system'core_routines'arr_empty.
-//    
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    ///
-//    /// Obsolete
-//    #constructor new &length:aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        => system'core_routines'arr_create.
-//    
-//    /// Creates a copy of the provided array
-//    #constructor new &array:anArray
-//        <= %new &int:0 &int:(anArray length int) &array:anArray.
-//    
-//    /// Creates a copy of the provided sub array
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
-//        => system'core_routines'arr_copysubarr.
+    
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    ///
+    /// Obsolete
+    #constructor new &length:aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        = object:aLength.
+
+    /// Creates a copy of the provided array
+    #constructor new &array:anArray
+        <= %new &int:0 &int:(anArray length int) &array:anArray.
+    
+    /// Creates a copy of the provided sub array
+    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
+        <= (new &int:aLength)
+    [
+        system'core_routines'__array copy &array:$self &int:anIndex &int:aLength &array:anArray.
+    ]
 //        
 //    #constructor new &object:singleItem
 //        <= (new &int:1)
 //    [
 //        $self setAt &int:0 &object:singleItem.
 //    ]
-//        
-//    /// Returns the specified array member
-//    #method getAt : anIndex
-//        = $self getAt &int:(anIndex int).
-//
-//    /// Returns the specified array member
-//    #method(stacksafe) getAt &int:anIndex
-//        => system'core_routines'arr_getat.
-//
-//    /// Sets the specified array member
-//    #method setAt:anIndex:anObject
-//    [
-//        $self setAt &int:(anIndex int) &object:anObject.
-//    ]
-//    
-//    /// Sets the specified array member
-//    #method(stacksafe) setAt &int:anIndex &object:anObject
-//        => system'core_routines'arr_setat.
-//
-//    /// Concatinates the arrays    
-//    #method add : anObject
-//        = $self add &array:(anObject array).
-//
-//    /// Concatinates the arrays    
-//    #method add &array:anArray
-//    [
-//        #var(type:int)aLength1.
-//        #var(type:int)aLength2.
-//        
-//        $self readLength &vint:aLength1.        
-//        anArray readLength &vint:aLength2.
-//        
-//        #var(type:array)aRetVal := Array new &int:(aLength1 + aLength2).
-//
-//        #var(type:int)anIndex := 0.
-//        #loop (anIndex < aLength1) ?
-//        [
-//            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//
-//        anIndex := 0.
-//        #loop (anIndex < aLength2) ?
-//        [
-//            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
-//
-//    /// Returns itself
-//    #method array = $self.
-//
-//    /// Reads the array length into an output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'arr_getlen.
-//
-//    /// Returns the array length
-//    #method(stacksafe,type:int,embeddable,suppress:w3) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//
+
+    /// Concatinates the arrays    
+    #method add : anObject
+        = $self add &array:(anObject array).
+
+    /// Concatinates the arrays    
+    #method add &array:anArray
+    [
+        #var(int)aLength1 := $self length.
+        #var(int)aLength2 := anArray length.
+        
+        #var(array)aRetVal := Array new &int:(aLength1 + aLength2).
+
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength1) ?
+        [
+            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
+            
+            anIndex += 1.
+        ].
+
+        anIndex := 0.
+        #loop (anIndex < aLength2) ?
+        [
+            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
+            
+            anIndex += 1.
+        ].
+            
+        ^ aRetVal.
+    ]
+
+    /// Reads the array length into an output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__array.
+
 //    /// Returns the array enumerator
 //    #method enumerator = ArrayEnumerator new &array:$self.
 //
 //    /// Returns the array iterator
 //    #method iterator = ArrayIterator new &array:$self.
-//
-//    /// Dispatches the verb to the target object with array subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &array:$self.
-//    
-//    /// Dispatches the verb to the target object with array subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &array:$self.
-//
-//    /// Clones the array
-//    #method(type:array) clone 
-//        = Array new &array:$self.
+
+    /// Clones the array
+    #method(array) clone 
+        = Array new &array:$self.
 }
 
 //// --- OpenArgs ---

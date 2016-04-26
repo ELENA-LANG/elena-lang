@@ -5117,7 +5117,7 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
                writer.appendNode(lxTarget, codeScope.getClassRefId());
                writer.closeNode();
             }
-            else if (test(classFlags, elDynamicRole) && retVal.param == -3) {
+            else if (test(classFlags, elDynamicRole) && (retVal.param == -3 ||retVal.param == -5)) {
                writer.insert(lxBoxing);
                writer.appendNode(lxTarget, codeScope.getClassRefId());
                writer.closeNode();
@@ -6957,6 +6957,12 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                node = mapArrPrimitiveOp(size);
             }
          }
+         else if (lref == -5 && nflags == elDebugDWORD) {
+            destType = SyntaxTree::findChild(larg, lxType).argument;
+            if (checkIfCompatible(scope, destType, rarg)) {
+               node = lxArrOp;
+            }
+         }
       }
 
       if (node == lxOp) {
@@ -7012,7 +7018,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          else if (target == -5 && rflags == elDebugDWORD) {
             node = lxArrOp;
          }
-         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+         else if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
             node = lxIntOp;
             boxing = true;
          }

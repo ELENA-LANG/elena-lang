@@ -2207,6 +2207,7 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
 void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
+      // Note read / write operator is used for bitwise operations
       case WRITE_MESSAGE_ID:
          // nload
          // not
@@ -2215,6 +2216,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
          tape.write(bcNot);
          tape.write(bcNShift);
          break;
+      // Note read / write operator is used for bitwise operations
       case READ_MESSAGE_ID:
          // nload
          // nshift
@@ -2260,6 +2262,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
+      // Note read / write operator is used for bitwise operations
       case WRITE_MESSAGE_ID:
          // nload
          // not
@@ -2268,6 +2271,7 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
          tape.write(bcNot);
          tape.write(bcLShift);
          break;
+      // Note read / write operator is used for bitwise operations
       case READ_MESSAGE_ID:
          // nload
          // lshift
@@ -2356,6 +2360,13 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
          // set
          tape.write(bcSet);
          break;
+      // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // len
+         // nsave
+         tape.write(bcLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -2411,7 +2422,7 @@ void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoad);
          tape.write(bcBWriteB);
          break;
-         // NOTE : read operator is used to define the array length
+      // NOTE : read operator is used to define the array length
       case READ_MESSAGE_ID:
          // blen
          // nsave
@@ -2442,7 +2453,7 @@ void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoad);
          tape.write(bcWWrite);
          break;
-         // NOTE : read operator is used to define the array length
+      // NOTE : read operator is used to define the array length
       case READ_MESSAGE_ID:
          // wlen
          // nsave
