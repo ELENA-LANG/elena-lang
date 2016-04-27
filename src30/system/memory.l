@@ -3,7 +3,30 @@
 #template(dynamic) arrayof : template_subj
 {
     #field(template_subj)$target.
-    
+
+    #method enumerator 
+    [
+        #var(vint)index := -1.
+        #var(int)length := 0.
+        $target >> length.
+        
+        ^ Enumerator
+          {
+              enumerable = $owner.
+              
+              get = $owner@index.
+              
+              reset [ index := -1. ]
+              
+              next
+              [
+                  index += 1.
+                  
+                  ^ index < length.
+              ]
+          }.
+    ]
+        
     #method(outnprop:length,stacksafe)readLength &vint:retVal
     [
         #var(int)len.

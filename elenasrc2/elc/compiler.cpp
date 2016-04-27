@@ -3593,14 +3593,14 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
       else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
 
       }
-      else if (object.kind == okParam) {
+      else if (object.kind == okParam || object.kind == okOuter) {
          // Compiler magic : allowing to assign byref / variable parameter
          classReference = scope.moduleScope->subjectHints.get(object.type);
          ClassInfo info;
          scope.moduleScope->loadClassInfo(info, classReference);
          if (test(info.header.flags, elWrapper)) {
             size = info.size;
-            currentObject.kind = okParamField;
+            currentObject.kind = (object.kind == okParam) ? okParamField : okOuterField;
          }
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }
@@ -3837,7 +3837,9 @@ void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& sc
 ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
 {
    if (test(scope.info.header.flags, elStateless)) {
-      ownerScope.writer->appendNode(lxConstantSymbol, scope.reference);
+      ownerScope.writer->newNode(lxConstantSymbol, scope.reference);
+      ownerScope.writer->appendNode(lxTarget, scope.reference);
+      ownerScope.writer->closeNode();
 
       // if it is a stateless class
       return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
@@ -7580,6 +7582,10 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          break;
       case lxNewOp:
          optimizeNewOp(scope, current, warningMask, 0);
+         break;
+      case lxNested:
+      case lxMember:
+         optimizeSyntaxExpression(scope, current, warningMask);
          break;
       default:
          if (test(current.type, lxExpressionMask)) {

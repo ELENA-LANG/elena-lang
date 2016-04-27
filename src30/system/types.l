@@ -63,5 +63,5 @@
 //#subject(class:system'UnsafePointer)dirty_ptr.
 
 // --- Enumerators / Indexers ---
-//#subject(class:system'Enumerator)enumerator.
+#subject enumerator = system'Enumerator.
 //#subject(class:system'Iterator)iterator.

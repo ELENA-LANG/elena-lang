@@ -1732,6 +1732,16 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offs
       tape.write(bcBLoadFI, offset, bpFrame);
       tape.write(bcNCopy);
    }
+   else if (target == lxField) {
+      // bcopya
+      // aloadfi param
+      // aloadai param
+      // ncopyb
+      tape.write(bcBCopyA);
+      tape.write(bcALoadFI, 1, bpFrame);
+      tape.write(bcALoadAI, offset);
+      tape.write(bcNCopyB);
+   }
 }
 
 void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int offset)
@@ -1759,6 +1769,16 @@ void ByteCodeWriter :: assignShort(CommandTape& tape, LexicalType target, int of
       // ncopy
       tape.write(bcBLoadFI, offset, bpFrame);
       tape.write(bcNCopy);
+   }
+   else if (target == lxField) {
+      // bcopya
+      // aloadfi param
+      // aloadai param
+      // ncopyb
+      tape.write(bcBCopyA);
+      tape.write(bcALoadFI, 1, bpFrame);
+      tape.write(bcALoadAI, offset);
+      tape.write(bcNCopyB);
    }
 }
 
@@ -1788,6 +1808,16 @@ void ByteCodeWriter :: assignByte(CommandTape& tape, LexicalType target, int off
       // ncopy
       tape.write(bcBLoadFI, offset, bpFrame);
       tape.write(bcNCopy);
+   }
+   else if (target == lxField) {
+      // bcopya
+      // aloadfi param
+      // aloadai param
+      // ncopyb
+      tape.write(bcBCopyA);
+      tape.write(bcALoadFI, 1, bpFrame);
+      tape.write(bcALoadAI, offset);
+      tape.write(bcNCopyB);
    }
 }
 
@@ -1832,6 +1862,16 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
       // lcopy
       tape.write(bcBLoadFI, offset, bpFrame);
       tape.write(bcLCopy);
+   }
+   else if (target == lxField) {
+      // bcopya
+      // aloadfi param
+      // aloadai param
+      // lcopyb
+      tape.write(bcBCopyA);
+      tape.write(bcALoadFI, 1, bpFrame);
+      tape.write(bcALoadAI, offset);
+      tape.write(bcLCopyB);
    }
 }
 

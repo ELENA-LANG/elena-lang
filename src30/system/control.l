@@ -139,32 +139,26 @@
     #method clone = $self.
 }.
 
-//// === Basic prototypes ===
-//
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//#class(limited) Enumerator
-//{
-//    /// Returns itself
-//    #method enumerator = $self.
-//    
-//    /// Returns the current object
-//    #method get = $nil.
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method(type:bool) next = $nil.
-//    
-//    /// Resets the enumerator
-//    #method reset []
-//    
-//    /// Dispatches the verb to the target object with enumerator subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &enumerator:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerator subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerator:$self.
-//}
-//
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+/// An enumerator prototype
+#class(limited,dispatchable:enumerator) Enumerator
+{
+    /// Returns the current object
+    #method get = $nil.
+    
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method(bool) next = $nil.
+    
+    /// Resets the enumerator
+    #method reset []
+    
+    /// returns the enumerator owner
+    #method enumerable = $nil.
+}
+
 //// --- Iterator ---
 //
 ///// An iterator prototype
