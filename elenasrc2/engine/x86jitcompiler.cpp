@@ -68,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 131;
+const int gcCommandNumber = 132;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -82,7 +82,7 @@ const int gcCommands[gcCommandNumber] =
    bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
    bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
-   bcNSub, bcNMul, bcNDiv,
+   bcNSub, bcNMul, bcNDiv, bcNLoadE,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
    bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
@@ -120,7 +120,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteOp,
 
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,

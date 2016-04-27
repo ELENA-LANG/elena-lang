@@ -1490,6 +1490,14 @@
     #method(stacksafe) readLength &vint:aLength
         => system'core_routines'__array.
 
+    /// Sets the specified array member
+    #method(stacksafe) setAt &int:anIndex &object:anObject
+        => system'core_routines'__array.
+
+    /// Returns the specified array member
+    #method(stacksafe) getAt &int:anIndex
+        => system'core_routines'__array.
+        
 //    /// Returns the array enumerator
 //    #method enumerator = ArrayEnumerator new &array:$self.
 //

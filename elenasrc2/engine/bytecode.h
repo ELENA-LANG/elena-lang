@@ -91,7 +91,7 @@ enum ByteCode
    bcNCopyB          = 0x50,
    bcLCopyB          = 0x51,
    bcCopyB           = 0x52,
-
+   bcNLoadE          = 0x53,
    bcWRead           = 0x59,
    bcWWrite          = 0x5A,
    bcNRead           = 0x5B,

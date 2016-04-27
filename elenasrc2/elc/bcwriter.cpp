@@ -2384,11 +2384,9 @@ void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNSave);
          break;
       case SET_REFER_MESSAGE_ID:
-         // ecopyd
-         // nload
+         // nloade
          // nwrite
-         tape.write(bcECopyD);
-         tape.write(bcNLoad);
+         tape.write(bcNLoadE);
          tape.write(bcNWrite);
          break;
       // NOTE : read operator is used to define the array length
@@ -2415,11 +2413,9 @@ void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNSave);
          break;
       case SET_REFER_MESSAGE_ID:
-         // ecopyd
-         // nload
+         // nloade
          // bwriteb
-         tape.write(bcECopyD);
-         tape.write(bcNLoad);
+         tape.write(bcNLoadE);
          tape.write(bcBWriteB);
          break;
       // NOTE : read operator is used to define the array length
@@ -2446,11 +2442,9 @@ void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNSave);
          break;
       case SET_REFER_MESSAGE_ID:
-         // ecopyd
-         // nload
+         // nloade
          // wwrite
-         tape.write(bcECopyD);
-         tape.write(bcNLoad);
+         tape.write(bcNLoadE);
          tape.write(bcWWrite);
          break;
       // NOTE : read operator is used to define the array length
@@ -2834,22 +2828,22 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       generateObjectExpression(tape, larg);
       loadBase(tape, lxResult);
 
-      if (assignMode && (!largSimple || !rarg2Simple)) {
+      if (!rargSimple || !rarg2Simple) {
          tape.write(bcPushB);
       }
 
-      if (!rargSimple) {
-         generateObjectExpression(tape, rarg);
+      if (!rarg2Simple) {
+         generateObjectExpression(tape, rarg2);
          pushObject(tape, lxResult);
       }
 
-      generateObjectExpression(tape, rarg2);
+      generateObjectExpression(tape, rarg);
       loadIndex(tape, lxResult);
 
-      if (!rargSimple) {
+      if (!rarg2Simple) {
          popObject(tape, lxResult);
       }
-      else generateObjectExpression(tape, rarg);
+      else generateObjectExpression(tape, rarg2);
 
       if (!rargSimple || !rarg2Simple) {
          tape.write(bcPopB);

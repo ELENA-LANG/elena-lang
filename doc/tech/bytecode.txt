@@ -1,4 +1,4 @@
-ELENA byte codes (or ecodes)
+D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
 ============================
 
  ELENA virtual machine registers:
@@ -112,6 +112,8 @@ ELENA byte codes (or ecodes)
  ncopyb                     - int[base] >> int[acc]
  
  nload                      - int[acc] >> index
+  
+ nloade                     - int[acc] >> ext
   
  nloadi                     - int[acc+i*4] >> index
  
@@ -281,7 +283,7 @@ ELENA byte codes (or ecodes)
  
  flag                       - acc::VMT::flag >> index 
 
- len                        - [base].Count >> ext ;
+ len                        - [acc].Count >> index;
  
  mindex                     - search for ext in acc:VMT; out: index or -1
  

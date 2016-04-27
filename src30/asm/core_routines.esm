@@ -2751,9 +2751,7 @@ end
 
 procedure __array.eval&readLength&vint$[2]
 
-  bcopya
   len
-  dcopye
   bloadsi 2
   nsave
   quitn 2
@@ -2775,6 +2773,49 @@ procedure __array.eval&copy&array$&int$&int$&array$[4]
   acopyb
   quitn 4
   
+end
+
+procedure __array.getAt&int$[2]
+
+  bcopya
+  len
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  get
+  quitn 2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __array.setAt&int$&object[3]
+
+  bcopya
+  len
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  set
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
 end
 
 
@@ -4121,47 +4162,6 @@ procedure arr_empty
   dcopy 0
   acallvi 1
   quitn 1
-
-end
-
-procedure arr_getat
-
-  bcopya
-  len
-  aloadsi 2
-  nload  
-  notless labErr
-  lessn   labErr 0
-
-  get
-  quitn 2
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-
-end
-
-procedure arr_setat
-
-  bcopya
-  len
-  aloadsi 2
-  nload  
-  notless labErr
-  lessn   labErr 0
-
-  aloadsi 3
-  set
-  quitn 3
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
 
 end
 

@@ -1623,8 +1623,8 @@ end
 
 inline % 11h
 
-  mov  ecx, [edi-8]
-  shr  ecx, 2
+  mov  ebx, [eax-8]
+  shr  ebx, 2
 
 end
 
@@ -2096,6 +2096,13 @@ labCopy:
   lea  ebx, [ebx+4]
   add  ecx, 4
   js   short labCopy
+
+end
+
+// ; nloade
+inline % 53h
+
+  mov ecx, [eax]
 
 end
 
