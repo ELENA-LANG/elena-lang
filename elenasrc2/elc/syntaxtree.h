@@ -167,8 +167,11 @@ enum LexicalType
    lxTemplateFieldType= 0x0400C,
    lxTemplateSubject  = 0x0400D,
    lxTemplateMethod   = 0x0400E,
+   lxNestedTemplate   = 0x0000F, // arg - count
+   lxNestedTemplateOwner  = 0x00010, // indicates the nested template owner
+   lxNestedTemplateParent = 0x20811,
 
-   lxClass            = 0x0400F,
+   lxClass            = 0x04012,
 };
 
 // --- SyntaxTree ---

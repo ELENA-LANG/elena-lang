@@ -207,9 +207,11 @@ public:
    struct TemplateInfo
    {
       ref_t   templateRef;
+      ref_t   templateParent;
       ref_t   targetType;
       int     targetOffset;
       ref_t   messageSubject;
+      ref_t   ownerRef;
 
       int     sourceCol, sourceRow;
 
@@ -219,8 +221,10 @@ public:
       {
          targetType = 0;
          templateRef = 0;
+         templateParent = 0;
          targetOffset = -1;
          messageSubject = 0;
+         ownerRef = 0;
 
          sourceCol = sourceRow = 0;
       }
@@ -228,9 +232,11 @@ public:
       TemplateInfo(ref_t templateRef, ref_t targetType)
       {
          this->templateRef = templateRef;
+         this->templateParent = 0;
          this->targetType = targetType;
          this->targetOffset = -1;
          this->messageSubject = 0;
+         this->ownerRef = 0;
 
          this->sourceCol = this->sourceRow = 0;
       }
@@ -238,9 +244,11 @@ public:
       TemplateInfo(ref_t templateRef, ref_t targetType, int targetOffset)
       {
          this->templateRef = templateRef;
+         this->templateParent = 0;
          this->targetType = targetType;
          this->targetOffset = targetOffset;
          this->messageSubject = 0;
+         this->ownerRef = 0;
 
          this->sourceCol = this->sourceRow = 0;
       }
@@ -417,6 +425,7 @@ private:
       }
 
       ref_t mapNestedExpression();
+      ref_t mapNestedTemplate();
 
       ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
@@ -727,6 +736,8 @@ private:
          }
       };
 
+      bool                    templateMode;
+      ref_t                   templateRef;
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 

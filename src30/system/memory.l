@@ -4,7 +4,7 @@
 {
     #field(template_subj)$target.
 
-    #method enumerator 
+    #method(suppress:w3) enumerator 
     [
         #var(vint)index := -1.
         #var(int)length := 0.
@@ -12,9 +12,9 @@
         
         ^ Enumerator
           {
-              enumerable = $owner.
+              get = $owner getAt &int:index.
               
-              get = $owner@index.
+              enumerable = $owner.
               
               reset [ index := -1. ]
               

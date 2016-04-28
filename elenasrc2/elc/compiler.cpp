@@ -121,6 +121,19 @@ inline void findUninqueName(_Module* module, ReferenceNs& name)
    } while (ref != 0);
 }
 
+inline void findUninqueSubject(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapSubject(name, true);
+   } while (ref != 0);
+}
+
 // skip the hints and return the first hint node or none
 inline DNode skipHints(DNode& node)
 {
@@ -290,6 +303,11 @@ inline bool IsInvertedOperator(int& operator_id)
 inline bool isPrimitiveRef(ref_t reference)
 {
    return (int)reference < 0;
+}
+
+inline bool isTemplateRef(ref_t reference)
+{
+   return reference == -6;
 }
 
 // returns true if the stack allocated object described by the flag may be passed directly - be stacksafe
@@ -606,6 +624,16 @@ ref_t Compiler::ModuleScope :: mapNestedExpression()
    findUninqueName(module, name);
 
    return module->mapReference(name);
+}
+
+ref_t Compiler::ModuleScope :: mapNestedTemplate()
+{
+   // otherwise auto generate the name
+   ReferenceNs name(module->Name(), INLINE_POSTFIX);
+
+   findUninqueSubject(module, name);
+
+   return module->mapSubject(name, false);
 }
 
 bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
@@ -1394,6 +1422,8 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
 {
    this->parent = owner;
    info.header.flags |= elNestedClass;
+   templateMode = false;
+   templateRef = 0;
 }
 
 Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
@@ -1407,6 +1437,10 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
       owner.outerObject.kind = okThisParam;
       owner.outerObject.param = 1;
       owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
+      // Compiler magic : if the owner is a template - switch to template closure mode
+      if (isTemplateRef(owner.outerObject.extraparam)) {
+         templateMode = true;
+      }
 
       outers.add(thisVar, owner);
       mapKey(info.fields, thisVar, owner.reference);
@@ -1487,7 +1521,7 @@ Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
    // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
    // proper reference is 0 in this case
    this->templateRef = reference;
-   this->reference = moduleScope->mapNestedExpression(); // HOTFIX : dummy name, used only for template in template routines
+   this->reference = -6; // indicating template
 
    templateType = lxNone;
 
@@ -1574,7 +1608,10 @@ void Compiler :: appendObjectInfo(CodeScope& scope, ObjectInfo object)
    }
 
    ref_t objectRef = resolveObjectReference(scope, object);
-   if (objectRef != 0) {
+   if (isTemplateRef(objectRef)) {
+      scope.writer->appendNode(lxNestedTemplateOwner);
+   }
+   else if (objectRef != 0) {
       scope.writer->appendNode(lxTarget, objectRef);
    }
    else if (object.type == 0) {
@@ -2763,8 +2800,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
             scope.writer->newNode(lxCondBoxing);
             scope.writer->appendNode(lxThisLocal, object.param);
          }
-         else scope.writer->newNode(lxThisLocal, object.param);
-         scope.writer->appendNode(lxTarget, scope.getClassRefId());
+         else scope.writer->newNode(lxThisLocal, object.param);         
          break;
       case okSuper:
          scope.writer->newNode(lxLocal, 1);
@@ -3837,10 +3873,31 @@ void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& sc
 
    compileVMT(member, writer, scope);
 
-   writer.closeNode();
+   if (scope.templateMode) {
+      // import fields
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      while (!outer_it.Eof()) {
+         writer.newNode(lxTemplateField, (*outer_it).reference);
+         writer.appendNode(lxTerminal, outer_it.key());
+         writer.closeNode();
 
-   generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
-   generateClassImplementation(scope);
+         outer_it++;
+      }
+
+      writer.closeNode();
+
+      scope.templateRef = scope.moduleScope->mapNestedTemplate();
+
+      _Memory* section = scope.moduleScope->module->mapSection(scope.templateRef | mskSyntaxTreeRef, false);
+
+      scope.syntaxTree.save(section);
+   }
+   else {
+      writer.closeNode();
+
+      generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+      generateClassImplementation(scope);
+   }
 }
 
 ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
@@ -3861,6 +3918,11 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
 
          if (scope.outers.Count() > 0)
             scope.raiseError(errInvalidInlineClass, node.Terminal());
+      }
+      else if (scope.templateMode) {
+         ownerScope.writer->newNode(lxNestedTemplate, scope.info.fields.Count());
+         ownerScope.writer->appendNode(lxTemplate, scope.templateRef);
+         ownerScope.writer->appendNode(lxNestedTemplateParent, scope.info.header.parentRef);
       }
       else {
          // dynamic normal symbol
@@ -5508,7 +5570,10 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
    SyntaxWriter writer(scope.syntaxTree);
    writer.newNode(lxRoot, scope.reference);
 
-   compileParentDeclaration(DNode(), scope);
+   if (templateInfo.templateParent != 0) {
+      compileParentDeclaration(DNode(), scope, templateInfo.templateParent);
+   }
+   else compileParentDeclaration(DNode(), scope);
 
    writer.appendNode(lxClassFlag, elSealed);
 
@@ -6139,6 +6204,25 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
       if (type != 0)
          writer.appendNode(lxType, type);
    }
+   else if (current == lxNestedTemplate) {
+      writer.newNode(lxNested, current.argument);
+
+      TemplateInfo nestedInfo;
+      nestedInfo.templateRef = SyntaxTree::findChild(current, lxTemplate).argument;
+      nestedInfo.templateParent = importReference(templateModule,
+         SyntaxTree::findChild(current, lxNestedTemplateParent).argument, scope.moduleScope->module);
+
+      nestedInfo.ownerRef = scope.reference;
+      ref_t classRef = generateTemplate(*scope.moduleScope, nestedInfo, 0);
+      writer.appendNode(lxTarget, classRef);
+   }
+   else if (current == lxNestedTemplateOwner) {
+      writer.newNode(lxTarget, info.ownerRef);
+   }
+   else if (current == lxTemplate || current == lxNestedTemplateParent) {
+      // ignore template node, it should be already handled
+      return;
+   }
    else if (current == lxTerminal) {
       writer.newNode(lxTerminal, current.identifier());
    }
@@ -6170,6 +6254,12 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          if (callee == lxThisLocal) {
             writer.appendNode(lxCallTarget, scope.reference);
          }
+         else if (callee == lxField) {
+            SNode attr = SyntaxTree::findChild(callee, lxNestedTemplateOwner);
+            if (attr != lxNone) 
+               writer.appendNode(lxCallTarget, info.ownerRef);
+         }
+
          // HOTFIX : if it is typecast message, provide the type
          if (getVerb(current.argument) == GET_MESSAGE_ID && getParamCount(current.argument) == 0 && scope.moduleScope->subjectHints.exist(signature)) {
             current.appendNode(lxType, signature);
