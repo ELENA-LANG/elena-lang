@@ -1406,6 +1406,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
       owner.reference = info.fields.Count();
       owner.outerObject.kind = okThisParam;
       owner.outerObject.param = 1;
+      owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
 
       outers.add(thisVar, owner);
       mapKey(info.fields, thisVar, owner.reference);
@@ -1419,7 +1420,7 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
       Outer owner = mapSelf();
 
       // map as an outer field (reference to outer object and outer object field index)
-      return ObjectInfo(okOuter, owner.reference);
+      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam);
    }
    else {
       Outer outer = outers.get(identifier);
@@ -1455,8 +1456,16 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
             outers.add(identifier, outer);
             mapKey(info.fields, identifier.value, outer.reference);
 
-            return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+            switch (outer.outerObject.kind) {
+               case okOuterField:
+               case okParam:
+               case okThisParam:
+                  return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+               default:
+                  return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+            }
          }
+         // map if the object is outer one
          else if (outer.outerObject.kind == okUnknown) {
             // check if there is inherited fields
             outer.reference = info.fields.get(identifier);
@@ -1720,7 +1729,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          if (object.kind == okObject && object.param != 0) {
             return object.param;
          }
-         else if (object.kind == okLocal && object.extraparam > 0) {
+         else if ((object.kind == okLocal || object.kind == okOuter) && object.extraparam > 0) {
             return object.extraparam;
          }
          else return object.type != 0 ? scope.moduleScope->subjectHints.get(object.type) : 0;
