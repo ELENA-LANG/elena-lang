@@ -8,6 +8,11 @@
         $value := val template_subj.
     ]
     
+    #method(stacksafe) set &template_subj:val
+    [
+        $value := val.
+    ]
+    
     #method(suppress:w3) append : val
     [
         $value := $value + val template_subj.

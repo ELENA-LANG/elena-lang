@@ -37,6 +37,7 @@
 [*] system : Char#class.new[1] supports now an integer parameter
 [*] system'text : TextBuffer => TextBuilder
 [*] system'io : Console output operation can be redirected now
+[+] system'collections : #234 issue - listof:subject
 
 [IDE]
 [-] issue #4 : IDE and Chinese characters

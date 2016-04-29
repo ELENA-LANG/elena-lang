@@ -2,14 +2,16 @@
 In development:
 ------                              
               xdev - generic development
+                       * test length operation
+
+                       * arrayof:bool - a@n -> should be bool
+
                        * system test
 
                        * 2 + 3 * 4 - should be implemented as primitive operations
 
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
                          always return bool operand
-
-                       * arrayof:bool - make sure set operation typecast the result
 
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
                          (probably assigning is not correct for numeric template as well)

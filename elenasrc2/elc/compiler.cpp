@@ -2396,58 +2396,62 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
 
 void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly)
 {
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
    ModuleScope* moduleScope = scope.moduleScope;
+
    while (hints == nsHint) {
       TerminalInfo terminal = hints.Terminal();
+      //HOTFIX : if it is a virtual subject
+      if (!warningsOnly && hints.firstChild() != nsHintValue && scope.isVirtualSubject(terminal)) {
+         writer.appendNode(lxType, scope.mapSubject(terminal));
+      }
+      else {
+         ref_t hintRef = mapHint(hints, *moduleScope);
 
-      ref_t hintRef = mapHint(hints, *moduleScope);
-
-      if (hintRef == moduleScope->warnHint) {
-         DNode value = hints.select(nsHintValue);
-         TerminalInfo level = value.Terminal();
-         if (StringHelper::compare(level, "w2")) {
-            writer.appendNode(lxWarningMask, WARNING_MASK_1);
+         if (hintRef == moduleScope->warnHint) {
+            DNode value = hints.select(nsHintValue);
+            TerminalInfo level = value.Terminal();
+            if (StringHelper::compare(level, "w2")) {
+               writer.appendNode(lxWarningMask, WARNING_MASK_1);
+            }
+            else if (StringHelper::compare(level, "w3")) {
+               writer.appendNode(lxWarningMask, WARNING_MASK_2);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
          }
-         else if (StringHelper::compare(level, "w3")) {
-            writer.appendNode(lxWarningMask, WARNING_MASK_2);
+         else if (warningsOnly) {
+            // ignore other hints for implementation stage
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      }
-      else if (warningsOnly) {
-         // ignore other hints for implementation stage
-      }
-      else if (moduleScope->subjectHints.exist(hintRef)) {
-         writer.appendNode(lxType, hintRef);
-      }
-      else if (hintRef == moduleScope->genericHint) {
-         writer.appendNode(lxClassMethodAttr, tpGeneric);
-
-         scope.generic = true;
-      }
-      else if (hintRef == moduleScope->sealedHint) {
-         writer.appendNode(lxClassMethodAttr, tpSealed);
-      }
-      else if (hintRef == moduleScope->stackHint) {
-         writer.appendNode(lxClassMethodAttr, tpStackSafe);
-      }
-      else if (hintRef == moduleScope->embedHint) {
-         writer.appendNode(lxClassMethodAttr, tpEmbeddable);
-      }
-      else if (hintRef != 0) {
-         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-
-         // Method templates can be applied only for methods with custom verbs
-         if (getVerb(scope.message) == EVAL_MESSAGE_ID && getSignature(scope.message) != 0) {
-            ident_t signature = moduleScope->module->resolveSubject(getSignature(scope.message));
-            IdentifierString customVerb(signature, StringHelper::find(signature, '&', getlength(signature)));
-            ref_t messageSubject = moduleScope->module->mapSubject(customVerb, false);
-
-            declareTemplateInfo(hints, *classScope, hintRef, messageSubject);
+         else if (moduleScope->subjectHints.exist(hintRef)) {
+            writer.appendNode(lxType, hintRef);
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-      }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+         else if (hintRef == moduleScope->genericHint) {
+            writer.appendNode(lxClassMethodAttr, tpGeneric);
 
+            scope.generic = true;
+         }
+         else if (hintRef == moduleScope->sealedHint) {
+            writer.appendNode(lxClassMethodAttr, tpSealed);
+         }
+         else if (hintRef == moduleScope->stackHint) {
+            writer.appendNode(lxClassMethodAttr, tpStackSafe);
+         }
+         else if (hintRef == moduleScope->embedHint) {
+            writer.appendNode(lxClassMethodAttr, tpEmbeddable);
+         }
+         else if (hintRef != 0) {
+            // Method templates can be applied only for methods with custom verbs
+            if (getVerb(scope.message) == EVAL_MESSAGE_ID && getSignature(scope.message) != 0) {
+               ident_t signature = moduleScope->module->resolveSubject(getSignature(scope.message));
+               IdentifierString customVerb(signature, StringHelper::find(signature, '&', getlength(signature)));
+               ref_t messageSubject = moduleScope->module->mapSubject(customVerb, false);
+
+               declareTemplateInfo(hints, *classScope, hintRef, messageSubject);
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
+      }
       hints = hints.nextNode();
    }
 }
@@ -5630,15 +5634,6 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
    while (current != lxNone) {
       if (current == lxClassFlag) {
          writer.appendNode(lxClassFlag, current.argument);
-         //// HOTFIX : import dynamic array template
-         //if (test(current.argument, elDynamicRole)) {
-         //   //writer.newNode(lxTemplateField);
-         //   //writer.appendNode(lxTerminal, TARGET_VAR);
-
-         //   //if (templateInfo.targetType != 0)
-         //   //   writer.appendNode(lxType, templateInfo.targetType);
-         //   //writer.closeNode();
-         //}
       }
       else if (current == lxTemplateField) {
          writer.newNode(lxTemplateField, current.argument);
@@ -5667,7 +5662,7 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
                writer.appendNode(lxClassMethodAttr, attr.argument);
             }
             else if (attr == lxType) {
-               writer.appendNode(lxType, attr.argument);
+               writer.appendNode(lxType, importTemplateSubject(extModule, scope.moduleScope->module, attr.argument, templateInfo));
             }
 
             attr = attr.nextNode();
@@ -6034,7 +6029,6 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
       member = member.nextNode();
    }
-
    // load template fields
    DNode fieldHints = skipHints(member);
    if (member != nsField) {
@@ -6321,11 +6315,6 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
             // NOTE : source path reference should be imported
             // but the message name should be overwritten
             writeMessage(*scope.moduleScope, writer, messageRef);
-
-            //   // HOT FIX : if the field is typified provide a method hint
-            //   if (current.argument == encodeVerb(GET_MESSAGE_ID)) {
-            //      scope.info.methodHints.add(Attribute(messageRef, maType), info.subject);
-            //   }
 
             importTree(scope, current, writer, templateModule, info);
 
@@ -7202,7 +7191,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          node.setArgument(encodeMessage(0, node.argument, 1));
          node = lxCalling;
 
-         optimizeSyntaxExpression(scope, node, warningLevel);
+         optimizeCall(scope, node, warningLevel);
 
          return false;
       }

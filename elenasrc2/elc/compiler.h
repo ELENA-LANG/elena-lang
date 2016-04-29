@@ -494,6 +494,14 @@ private:
          else return moduleScope->mapSubject(terminal, output);
       }
 
+      virtual bool isVirtualSubject(TerminalInfo terminal)
+      {
+         if (parent) {
+            return parent->isVirtualSubject(terminal);
+         }
+         else return false;
+      }
+
       virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
       {
          if (parent) {
@@ -783,6 +791,11 @@ private:
             return moduleScope->module->mapSubject(output + offset, false);
          }
          else return moduleScope->mapSubject(terminal, output);
+      }
+
+      virtual bool isVirtualSubject(TerminalInfo terminal)
+      {
+         return parameters.exist(terminal);
       }
 
       virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
