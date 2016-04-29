@@ -5569,6 +5569,7 @@ ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templ
    writer.closeNode();
 
    generateClassDeclaration(scope, false);
+   scope.save();
 
    // HOTFIX : generate syntax once again to properly import the template code
    writer.clear();
