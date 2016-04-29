@@ -880,7 +880,8 @@ private:
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
-   void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope);
+   void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope); 
+   void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
 
    bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);

@@ -170,8 +170,9 @@ enum LexicalType
    lxNestedTemplate   = 0x0000F, // arg - count
    lxNestedTemplateOwner  = 0x00010, // indicates the nested template owner
    lxNestedTemplateParent = 0x20811,
+   lxTemplateParam    = 0x00012,
 
-   lxClass            = 0x04012,
+   lxClass            = 0x04013,
 };
 
 // --- SyntaxTree ---
