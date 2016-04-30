@@ -1035,6 +1035,8 @@ private:
 
 //   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 
+   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
+
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode);
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
