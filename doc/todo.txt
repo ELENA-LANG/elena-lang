@@ -60,6 +60,7 @@ In development:
                        * optimize charvalue#class.new&char$[1]
                        * optimize shift implementation
                        * optimize varof.append / varof.reduce / ...
+                       * optimize listof.$exapnd
 
                        * test constructor returning not compatible object
 

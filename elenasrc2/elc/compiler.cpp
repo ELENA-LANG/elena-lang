@@ -1408,6 +1408,9 @@ ObjectInfo Compiler::CodeScope :: mapObject(TerminalInfo identifier)
       if (StringHelper::compare(identifier, SUBJECT_VAR)) {
          return ObjectInfo(okSubject, local.offset);
       }
+      else if (isTemplateRef(local.class_ref)) {
+         return ObjectInfo(okTemplateLocal, local.offset, local.class_ref, local.subj_ref);
+      }
       else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
       }
@@ -7020,7 +7023,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
    // HOT FIX : if call target not defined
    if (target == lxNone) {
       SNode callee = SyntaxTree::findMatchedChild(node, lxObjectMask);
-      if (callee == lxField) {
+      if (callee == lxField || callee == lxLocal) {
          SNode attr = SyntaxTree::findChild(callee, lxType);
          if (attr == lxType) {
             ref_t classRef = scope.subjectHints.get(attr.argument);
@@ -7130,6 +7133,12 @@ int Compiler :: mapOpArg(ModuleScope& scope, SNode arg)
    int flags = 0;
 
    ref_t ref = SyntaxTree::findChild(arg, lxTarget).argument;
+   if (ref == 0) {
+      ref_t type = SyntaxTree::findChild(arg, lxType).argument;
+      if (type != 0)
+         ref = scope.subjectHints.get(type);
+   }
+
    if (isPrimitiveRef(ref) || ref == 0) {
       switch (ref) {
          case -1:
