@@ -139,6 +139,7 @@ public:
       okConstantRole,                 // param - role reference
    
       okTemplateTarget,
+      okTemplateLocal,
    //   okTemplateTarget,
 
       okExternal,
@@ -439,7 +440,8 @@ private:
          slSymbol,
          slMethod,
          slCode,
-         slOwnerClass
+         slOwnerClass,
+         slTemplate
       };
 
       ModuleScope* moduleScope;
@@ -811,6 +813,14 @@ private:
          else return Scope::mapSubject(terminal, implicitOnly);
       }
 
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slTemplate) {
+            return this;
+         }
+         else return ClassScope::getScope(level);
+      }
+
       void save()
       {
          _Memory* section = moduleScope->module->mapSection(templateRef | mskSyntaxTreeRef, false);
@@ -869,6 +879,8 @@ private:
    void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference, ref_t message);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+
+   ref_t declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef);
 
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 

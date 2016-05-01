@@ -1104,10 +1104,10 @@ void Compiler::ModuleScope :: saveSubject(ref_t type_ref, ref_t classReference, 
 
       metaWriter.writeDWord(type_ref);
       metaWriter.writeDWord(classReference);
-
-      if (classReference != 0)
-         typifiedClasses.add(classReference, type_ref);
    }
+
+   if (classReference != 0)
+      typifiedClasses.add(classReference, type_ref);
 
    subjectHints.add(type_ref, classReference, true);
 }
@@ -1604,13 +1604,31 @@ void Compiler :: writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t me
 
 void Compiler :: appendObjectInfo(CodeScope& scope, ObjectInfo object)
 {
-   if (object.type != 0) {
+   if (object.type != 0 && object.kind != okTemplateLocal) {
       scope.writer->appendNode(lxType, object.type);
    }
 
    ref_t objectRef = resolveObjectReference(scope, object);
    if (isTemplateRef(objectRef)) {
-      scope.writer->appendNode(lxNestedTemplateOwner);
+      if (object.kind == okTemplateLocal) {
+         TemplateScope* templateScope = (TemplateScope*)scope.getScope(Scope::slTemplate);
+
+         ident_t templateFullName = scope.moduleScope->module->resolveSubject(object.type);
+         int index = StringHelper::find(templateFullName, '@');
+
+         IdentifierString name(templateFullName, index);
+         //HOTFIX : virtual variable
+         scope.writer->newNode(lxTemplateType, scope.moduleScope->module->mapSubject(name, true));
+         while (index < getlength(templateFullName)) {
+            int pos = index + 1;
+            index = StringHelper::find(templateFullName + pos, '@', getlength(templateFullName));
+            IdentifierString param(templateFullName + pos, index - pos);
+
+            scope.writer->appendNode(lxTemplateParam, templateScope->parameters.get(param));
+         }
+         scope.writer->closeNode();
+      }
+      else scope.writer->appendNode(lxNestedTemplateOwner);
    }
    else if (objectRef != 0) {
       scope.writer->appendNode(lxTarget, objectRef);
@@ -1757,6 +1775,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return scope.moduleScope->signatureReference;
       case okSuper:
          return object.param;
+      case okTemplateLocal:
+         return object.extraparam;
       //case okParams:
       //   return scope.moduleScope->paramsReference;
       case okExternal:
@@ -2478,31 +2498,37 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
             }
             else scope.raiseError(errInvalidHint, terminal);
          }
-   //      else {
-   //         if (type != 0)
-   //            scope.raiseError(errInvalidHint, terminal);
+         else {
+            if (type != 0)
+               scope.raiseError(errInvalidHint, terminal);
 
-   //         TemplateInfo templateInfo;
-   //         templateInfo.templateRef = hintRef;
-   //         templateInfo.sourceCol = terminal.Col();
-   //         templateInfo.sourceRow = terminal.Row();
+            TemplateInfo templateInfo;
+            templateInfo.templateRef = hintRef;
+            templateInfo.sourceCol = terminal.Col();
+            templateInfo.sourceRow = terminal.Row();
 
-   //         declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
-   //            
-   //         ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
-   //         RoleMap::Iterator it = templateInfo.parameters.start();
-   //         while (!it.Eof()) {
-   //            name.append('@');
-   //            name.append(scope.moduleScope->module->resolveSubject(*it));
+            declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
 
-   //            it++;
-   //         }
+            ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
+            RoleMap::Iterator it = templateInfo.parameters.start();
+            while (!it.Eof()) {
+               name.append('@');
+               name.append(scope.moduleScope->module->resolveSubject(*it));
 
-   //         classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
-   //         if (classRef == 0)
-   //            scope.raiseError(errInvalidHint, terminal);
-   //      }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+               it++;
+            }
+
+            //HOTFIX: validate if the subjects are virtual
+            if (scope.isVirtualSubject(hints.firstChild().Terminal())) {
+               classRef = -6;
+               type = scope.moduleScope->module->mapSubject(name, false);
+            }
+            else {
+               classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
+               if (classRef == 0)
+                  scope.raiseError(errInvalidHint, terminal);
+            }
+         }
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
@@ -2601,9 +2627,14 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
       int size = 0;
       compileLocalHints(hints, scope, type, classRef, size);
 
+      ObjectInfo variable(okLocal, 0, classRef, type);
+
       ClassInfo localInfo;
       bool bytearray = false;
-      if (isPrimitiveRef(classRef)) {
+      if (isTemplateRef(classRef)) {
+         variable.kind = okTemplateLocal;
+      }
+      else if (isPrimitiveRef(classRef)) {
          if (classRef == -1) {
             localInfo.header.flags = elDebugDWORD;
          }
@@ -2626,7 +2657,6 @@ void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
             size = localInfo.size;
       }      
 
-      ObjectInfo variable(okLocal, 0, classRef, type);
       if (size > 0) {
          if (!allocateStructure(scope, size, localInfo.header.flags, bytearray, variable))
             scope.raiseError(errInvalidOperation, node.Terminal());
@@ -2773,6 +2803,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okRealConstant:
          scope.writer->newNode(lxConstantReal, object.param);
+         break;
+      case okTemplateLocal:
+         scope.writer->newNode(lxLocal, object.param);
          break;
       case okLocal:
       case okParam:
@@ -4162,6 +4195,9 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       case okLocalAddress:
       case okFieldAddress:
       case okParamField:
+         break;
+      case okTemplateLocal:
+         mode |= HINT_VIRTUAL_FIELD; // HOTFIX : typecast it like a virtual field
          break;
       case okUnknown:
          scope.raiseError(errUnknownObject, node.Terminal());
@@ -5617,6 +5653,36 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    }
 }
 
+ref_t Compiler :: declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef)
+{
+   TemplateInfo fieldTemplate;
+   fieldTemplate.templateRef = inlineTemplateRef;
+
+   ReferenceNs fulName(scope.module->Name(), scope.module->resolveSubject(fieldTemplate.templateRef));
+   SNode param = node.firstChild();
+   while (param != lxNone) {
+      if (param == lxTemplateParam) {
+         ref_t optionRef = templateInfo.parameters.get(param.argument);
+
+         fieldTemplate.parameters.add(fieldTemplate.parameters.Count() + 1, optionRef);
+
+         fulName.append('@');
+         fulName.append(scope.module->resolveSubject(optionRef));
+      }
+      param = param.nextNode();
+   }
+   ref_t classRef = scope.module->mapReference(fulName);
+   ref_t fieldType = scope.typifiedClasses.get(classRef);
+   if (!fieldType) {
+      fieldType = scope.mapNestedTemplate();
+      scope.saveSubject(fieldType, classRef, true);
+   }         
+
+   generateTemplate(scope, fieldTemplate, classRef);
+
+   return fieldType;
+}
+
 bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -5642,29 +5708,8 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
                writer.appendNode(lxType, templateInfo.parameters.get(attr.argument));
             }
             else if (attr == lxTemplate) {
-               TemplateInfo fieldTemplate;
-               fieldTemplate.templateRef = importSubject(extModule, attr.argument, moduleScope->module);
-
-               ReferenceNs fulName(moduleScope->module->Name(), moduleScope->module->resolveSubject(fieldTemplate.templateRef));
-               SNode param = attr.firstChild();
-               while (param != lxNone) {
-                  if (param == lxTemplateParam) {
-                     ref_t optionRef = templateInfo.parameters.get(param.argument);
-
-                     fieldTemplate.parameters.add(fieldTemplate.parameters.Count() + 1, optionRef);
-
-                     fulName.append('@');
-                     fulName.append(moduleScope->module->resolveSubject(optionRef));
-                  }
-                  param = param.nextNode();
-               }
-               ref_t classRef = moduleScope->module->mapReference(fulName);
-               ref_t fieldType = moduleScope->mapNestedTemplate();
-               moduleScope->saveSubject(fieldType, classRef, true);
-
-               generateTemplate(*scope.moduleScope, fieldTemplate, classRef);
-
-               writer.appendNode(lxType, fieldType);
+               writer.appendNode(lxType, declareInlineTemplate(*scope.moduleScope, attr, templateInfo, 
+                  importSubject(extModule, attr.argument, moduleScope->module)));
             }
             else importNode(scope, attr, writer, extModule, templateInfo);
 
@@ -6012,22 +6057,14 @@ void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
 
 void Compiler :: compileTemplateFieldDeclaration(DNode& member, SyntaxWriter& writer, TemplateScope& scope)
 {
-   DNode fieldHints = skipHints(member);
-   if (member != nsField) {
-      if (fieldHints != nsNone) {
-         // due to current syntax we need to reset hints back, otherwise they will be skipped
-         member = fieldHints;
-      }
-   }
-   else {
-      while (member == nsField) {
+   while (member != nsNone) {
+      DNode fieldHints = skipHints(member);
+
+      if (member == nsField) {
          ref_t param = 0;
          TerminalInfo terminal = member.Terminal();
-         //HOTFIX : only one template field is allowed
-         if (scope.info.fields.Count() > 0)
-            scope.raiseError(errIllegalField, terminal);
 
-         scope.info.fields.add(terminal, 0);
+         scope.info.fields.add(terminal, scope.info.fields.Count());
 
          writer.newNode(lxTemplateField);
          writer.appendNode(lxTerminal, terminal);
@@ -6044,18 +6081,23 @@ void Compiler :: compileTemplateFieldDeclaration(DNode& member, SyntaxWriter& wr
                else {
                   ref_t hintRef = mapHint(fieldHints, *scope.moduleScope);
                   if (hintRef != 0) {
-                     writer.newNode(lxTemplate, hintRef);
-                     DNode option = fieldHints.firstChild();
-                     while (option == nsHintValue) {
-                        int param = scope.parameters.get(option.Terminal());
-                        if (param != 0) {
-                           writer.appendNode(lxTemplateParam, param);
-                        }
-                        else scope.raiseError(wrnInvalidHint, fieldHints.Terminal());
-
-                        option = option.nextNode();
+                     if (scope.moduleScope->subjectHints.exist(hintRef)) {
+                        writer.appendNode(lxType, hintRef);
                      }
-                     writer.closeNode();
+                     else {
+                        writer.newNode(lxTemplate, hintRef);
+                        DNode option = fieldHints.firstChild();
+                        while (option == nsHintValue) {
+                           int param = scope.parameters.get(option.Terminal());
+                           if (param != 0) {
+                              writer.appendNode(lxTemplateParam, param);
+                           }
+                           else scope.raiseError(wrnInvalidHint, fieldHints.Terminal());
+
+                           option = option.nextNode();
+                        }
+                        writer.closeNode();
+                     }                     
                   }
                   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, fieldHints.Terminal());
                }
@@ -6063,11 +6105,16 @@ void Compiler :: compileTemplateFieldDeclaration(DNode& member, SyntaxWriter& wr
                fieldHints = fieldHints.nextNode();
             }
          }
-
          writer.closeNode();
-
-         member = member.nextNode();
       }
+      else {
+         // due to current syntax we need to reset hints back, otherwise they will be skipped
+         if (fieldHints != nsNone)
+            member = fieldHints;
+
+         break;
+      }
+      member = member.nextNode();
    }
 }
 
@@ -6290,6 +6337,10 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
    else if (current == lxNestedTemplateOwner) {
       writer.newNode(lxTarget, info.ownerRef);
    }
+   else if (current == lxTemplateType) {
+      writer.newNode(lxType, declareInlineTemplate(*scope.moduleScope, current, info, 
+         importSubject(templateModule, current.argument, scope.moduleScope->module)));
+   }
    else if (current == lxTemplate || current == lxNestedTemplateParent) {
       // ignore template node, it should be already handled
       return;
@@ -6325,7 +6376,7 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          if (callee == lxThisLocal) {
             writer.appendNode(lxCallTarget, scope.reference);
          }
-         else if (callee == lxField) {
+         else if (callee == lxField/* || callee == lxTemplateTarget*/) {
             SNode attr = SyntaxTree::findChild(callee, lxNestedTemplateOwner, lxType);
             if (attr == lxNestedTemplateOwner) {
                writer.appendNode(lxCallTarget, info.ownerRef);
@@ -6966,6 +7017,22 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
    bool stackSafe = false;
    bool methodNotFound = false;
    SNode target = SyntaxTree::findChild(node, lxCallTarget);
+   // HOT FIX : if call target not defined
+   if (target == lxNone) {
+      SNode callee = SyntaxTree::findMatchedChild(node, lxObjectMask);
+      if (callee == lxField) {
+         SNode attr = SyntaxTree::findChild(callee, lxType);
+         if (attr == lxType) {
+            ref_t classRef = scope.subjectHints.get(attr.argument);
+            if (classRef) {
+               node.appendNode(lxCallTarget, classRef);
+
+               target = SyntaxTree::findChild(node, lxCallTarget);
+            }               
+         }
+      }
+   }
+
    if (target.argument != 0) {
       ClassInfo info;
       if (scope.loadClassInfo(info, target.argument)) {
@@ -7151,7 +7218,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          node.setArgument(encodeMessage(0, node.argument, 2));
          node = lxCalling;
 
-         optimizeSyntaxExpression(scope, node, warningLevel);
+         optimizeCall(scope, node, warningLevel);
 
          return false;
       }
@@ -7313,7 +7380,7 @@ void Compiler :: optimizeNewOp(ModuleScope& scope, SNode node, int warningLevel,
    if (classRef == 0 && type != 0)
       classRef = scope.subjectHints.get(type);
 
-   if (classRef != -1 && classRef != scope.intReference) {
+   if (classRef != -1 && (scope.getClassFlags(classRef) & elDebugMask) != elDebugDWORD) {
       SNode row = SyntaxTree::findChild(node, lxRow);
       SNode col = SyntaxTree::findChild(node, lxCol);
       SNode terminal = SyntaxTree::findChild(node, lxTerminal);

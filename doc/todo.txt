@@ -2,6 +2,8 @@
 In development:
 ------                              
               xdev - generic development
+                       * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
+
                        * test length operation
 
                        * arrayof:bool - a@n -> should be bool
