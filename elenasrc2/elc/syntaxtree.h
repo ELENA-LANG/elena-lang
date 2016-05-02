@@ -173,7 +173,7 @@ enum LexicalType
    lxTemplateParam    = 0x00012,
    lxClass            = 0x04013,
    lxTemplateType     = 0x44014,
-
+   lxActionAttr       = 0x44015,
 };
 
 // --- SyntaxTree ---

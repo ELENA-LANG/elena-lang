@@ -441,7 +441,7 @@ namespace _ELENA_
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
    #define EXTENSION_SECTION        "#extensions"
-   #define ROLE_SECTION             "#roles"
+   #define ACTION_SECTION           "#actions"
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
@@ -475,9 +475,10 @@ namespace _ELENA_
 //   #define HINT_GROUP              "group"
    #define HINT_GENERIC             "generic$"
    #define HINT_EMBEDDABLE          "embeddable$"
-//   #define HINT_NONSTRUCTURE       "nonstructural"
+   #define HINT_NONSTRUCTURE        "nonstructural$"
    #define HINT_STACKSAFE           "stacksafe$"
    #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
+   #define HINT_ACTION_CLASS        "action$"
 //   #define HINT_TARGET             "target"
 //   #define HINT_TARGET_FIELD       "field"
 //   #define HINT_TARGET_METHOD      "method"
@@ -511,7 +512,6 @@ namespace _ELENA_
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
    #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
-//   #define FUNCX_FORWARD            "'$function"                     // the base action / function class
    #define INT_FORWARD              "'$int"
    #define LONG_FORWARD             "'$long"
    #define REAL_FORWARD             "'$real"

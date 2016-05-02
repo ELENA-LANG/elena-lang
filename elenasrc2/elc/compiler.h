@@ -281,8 +281,8 @@ private:
       MessageMap        subjects;
       SubjectMap        subjectHints;
 
-      // role hints
-      RoleMap           roleHints;
+      // action hints
+      SubjectMap        actionHints;
 
       // templates
       SyntaxTree        templates;
@@ -322,6 +322,8 @@ private:
       ref_t extensionHint;
       ref_t extensionOfHint;
       ref_t genericHint;
+      ref_t actionHint;
+      ref_t nonstructHint;
 
       ref_t boolType;
 
@@ -398,17 +400,15 @@ private:
 
       void loadSubjects(_Module* module);
       void loadExtensions(TerminalInfo terminal, _Module* module);
-      void loadRoles(_Module* module);
+      void loadActions(_Module* module);
 
       void saveSubject(ref_t type_ref, ref_t classReference, bool internalType);
       void saveTemplate(ref_t template_ref);
       bool saveExtension(ref_t message, ref_t type, ref_t role);
-      void saveRole(int role, ref_t reference);
+      void saveAction(ref_t message, ref_t reference);
 
       void validateReference(TerminalInfo terminal, ref_t reference);
 
-//      //ref_t getBaseFunctionClass(int paramCount);
-//      //ref_t getBaseIndexFunctionClass(int paramCount);
       ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);
@@ -422,7 +422,7 @@ private:
       {
          loadSubjects(extModule);
          loadExtensions(TerminalInfo(), extModule);
-         loadRoles(extModule);
+         loadActions(extModule);
       }
 
       ref_t mapNestedExpression();

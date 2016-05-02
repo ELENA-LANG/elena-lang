@@ -1,11 +1,11 @@
 #import system.
-//#import system'collections.
-//#import system'routines.
+#import system'collections.
+#import system'routines.
 //#import system'calendar.
 //#import system'text.
-//
-//// --- convertors ---
-//
+
+// --- convertors ---
+
 //#symbol literalExConvertor =
 //{
 //    convert &enumerable:aList
@@ -46,11 +46,11 @@
 {
     convert &enumerable:aList
     [
-//        #var(type:array_list)aRetVal := ArrayList new.
-//        
-//        aList run &each:anItem [ aRetVal append:anItem ].
-//
-//        ^ aRetVal array.
+        #var(array_list)aRetVal := ArrayList new.
+        
+        aList run &each:anItem [ aRetVal append:anItem ].
+
+        ^ aRetVal array.
     ]
 }.
 

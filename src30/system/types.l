@@ -37,8 +37,8 @@
 #subject wide       = system'WideLiteralValue.
 
 // === function types ===
-//#subject(class:system'BaseFunction)  func.
-//#subject(class:system'BaseFunction1) func1.
+#subject func       = system'BaseFunction.
+#subject func1      = system'BaseFunction1.
 //#subject(class:system'BaseFunction2) func2.
 //#subject(class:system'BaseFunction3) func3.
 //#subject(class:system'BaseFunction4) func4.

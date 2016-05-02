@@ -1,6 +1,4 @@
-//// ==== ver 3.4.2 ===
-//
-//#import system.
+#import system.
 //#import system'collections.
 //
 //// --- literalSplitOp ---
@@ -121,14 +119,14 @@
 //        ^ aList array.
 //    ]
 //}
-//
-//// --- enumerableOp ---
-//
-//#class(extension)enumerableOp
-//{
-//    #method run &each:aFunction
-//      = aFunction run &enumerator:(self enumerator).
-//      
+
+// --- enumerableOp ---
+
+#class(extension)enumerableOp
+{
+    #method run &each:aFunction
+      = aFunction run &enumerator:(self enumerator).
+      
 //    #method run &eachPair:aFunction
 //      = aFunction run:self &enumerator:(self enumerator).
 //      
@@ -200,8 +198,8 @@
 //        
 //        ^ counter.
 //    ]
-//}
-//
+}
+
 //// --- indexableOp ---
 //
 //#class(extension)indexableOp

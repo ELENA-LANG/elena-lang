@@ -1,9 +1,9 @@
 #import system.
-//#import system'routines.
+#import system'routines.
 //#import system'collections.
 //#import system'dynamic.
 //#import system'calendar.
-//#import extensions.
+#import extensions.
 //#import extensions'dynamic.
 
 #symbol XTester =
@@ -417,24 +417,24 @@
 
     #var a := l toArray.
 
-//    "abc" run &each: (:ch)[ console write:ch ].
-//
-//    console writeLine.
-//
-//    #var n := "abcd" indexOf:"bc" &at:0.
-//    #var n2 := "abcd" indexOf:"bac" &at:0.
-//
-//    #var s := "acd" insert:"b" &at:1.
-//    #var ls := s length.
-//
-//    #var s2 := "abbcd" delete:1 &at:1.
-//    #var ls2 := s2 length.
-//    
-//    #var s3 := "abcd" Substring:2 &at:1.
-//    #var ls3 := s3 length.
-//   
-//    "abc" getAt:2.
-//    
+    "abc" run &each: (:ch)[ console write:ch ].
+
+    console writeLine.
+
+    #var n := "abcd" indexOf:"bc" &at:0.
+    #var n2 := "abcd" indexOf:"bac" &at:0.
+
+    #var s := "acd" insert:"b" &at:1.
+    #var ls := s length.
+
+    #var s2 := "abbcd" delete:1 &at:1.
+    #var ls2 := s2 length.
+    
+    #var s3 := "abcd" Substring:2 &at:1.
+    #var ls3 := s3 length.
+   
+    "abc" getAt:2.
+    
 //    "abc" getAt:(-1) |
 //        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
 //

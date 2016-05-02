@@ -95,6 +95,16 @@ procedure __wideconvertor.convert&literal$[2]
 
 end
 
+
+procedure __symbol.dispatch[1]
+
+  pushe
+  acalli 0
+  pope
+  ajumpvi 0
+
+end
+
 procedure __lazyexpression.dispatch[1]
 
   pushe
@@ -2360,6 +2370,24 @@ procedure __literal.eval&copy&literal$&literal$[2]
 
 end
 
+procedure __literal.eval&copy&literal$&int$&int$&bytearray$[4]
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : subcopy
+  
+  acopyb
+  quitn 4
+
+end
+
+
 procedure __literal.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -2760,7 +2788,7 @@ end
 
 procedure __array.eval&copy&array$&int$&int$&array$[4]
 
-  aloadsi 2
+  aloadsi 1
   bcopya
   aloadsi 3
   nload
@@ -4205,15 +4233,6 @@ labError:
 
 end
 
-procedure symbol_redirect
-
-  pushe
-  acalli 0
-  pope
-  ajumpvi 0
-
-end
-
 procedure handle_ext_message
 
   bloadsi 1
@@ -4884,29 +4903,6 @@ procedure ws_charcount
   callextr api : wstrcharlen
   aloadsi 3
   nsave
-
-end
-
-procedure s_copybuf
-
-  aloadsi 3
-  nload  
-  inc
-  acopyr class : system'LiteralValue
-  bcreate
-
-  bcopya
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  
-  callextr api : subcopy
-  
-  acopyb
-  quitn 4
 
 end
 

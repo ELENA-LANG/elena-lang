@@ -244,89 +244,71 @@
 //    /// Dispatches the verb to the target object with iterator subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &iterator:$self.
 //}
-//
-//// --- base functions ---
-//
-///// A base action
-//#class(limited)BaseFunction
-//{
-//    /// Executes the action
-//    #method eval []
-//    
-//    /// Executes the action while the condition is true
-//    #method(sealed,suppress:w2) run &if:aBool
-//    [
-//        #loop aBool ?
-//        [
-//            $self eval.
-//        ].
-//    ]
-//
-//    /// Executes the action while the condition is false
-//    ///
-//    /// Executes at least once
-//    #method(sealed) run &until:aBool
-//    [
-//        #var(type:bool)flag := false.
-//        
-//        #loop flag !
-//        [
-//            $self eval.
-//            
-//            flag := aBool bool.
-//        ].
-//    ]
-//    
-//    /// Returns itself
-//    #method func = $self.
-//    
-//    /// Dispatches the verb to the target with func subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func:$self.
-//    
-//    /// Dispatches the verb to the target with func subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func:$self.
-//}
-//
-///// A base function
-//#class(limited)BaseFunction1
-//{
-//    /// Returns itself
-//    #method func1 = $self.
-//    
-//    /// Dispatches the verb to the target with func1 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func1:$self.
-//    
-//    /// Dispatches the verb to the target with func1 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func1:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam []
-//
-//    /// Executes the function for every enumeration item
-//    #method run &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for every enumeration item until it returns true
-//    #method(sealed,suppress:w2) retrieve &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
+
+// --- base functions ---
+
+/// A base action
+#class(limited,dispatchable:func)BaseFunction
+{
+    /// Executes the action
+    #method(action) eval []
+    
+    /// Executes the action while the condition is true
+    #method(sealed,suppress:w2) run &if:aBool
+    [
+        #loop aBool ?
+        [
+            $self eval.
+        ].
+    ]
+
+    /// Executes the action while the condition is false
+    ///
+    /// Executes at least once
+    #method(sealed) run &until:aBool
+    [
+        #var(bool)flag := false.
+        
+        #loop flag !
+        [
+            $self eval.
+            
+            flag := aBool bool.
+        ].
+    ]
+}
+
+/// A base function
+#class(limited,dispatchable:func1)BaseFunction1
+{
+    /// Executes the function
+    #method(action) eval : aParam []
+
+    /// Executes the function for every enumeration item
+    #method run &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for every enumeration item until it returns true
+    #method(sealed,suppress:w2) retrieve &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
 ///// A base two variable function
 //#class(limited)BaseFunction2
 //{

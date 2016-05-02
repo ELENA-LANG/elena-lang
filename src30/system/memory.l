@@ -949,14 +949,17 @@
 
     /// Creates the literal string copy              
     #constructor new &literal:aLiteral
-        <= %new &int:(aLiteral length) &literal:aLiteral.
+        <= new &int:(aLiteral length) &literal:aLiteral.
         
 //    /// Creates the copy of a subarray        
 //    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
 //        => system'core_routines's_copysubarr.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
-//        => system'core_routines's_copybuf.
+
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
+        <= (new &int:aSize)
+    [
+        system'core_routines'__literal copy &literal:$self &int:anIndex &int:aSize &bytearray:anArray.
+    ]
     
     /// Converts to UTF-16 literal
     #method wide = wideConvertor convert &literal:$self.

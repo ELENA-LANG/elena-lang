@@ -442,6 +442,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    extensionHint = module->mapSubject(HINT_EXTENSION, false);
    extensionOfHint = module->mapSubject(HINT_EXTENSIONOF, false);
    genericHint = module->mapSubject(HINT_GENERIC, false);
+   actionHint = module->mapSubject(HINT_ACTION_CLASS, false);
+   nonstructHint = module->mapSubject(HINT_NONSTRUCTURE, false);
 
    defaultNs.add(module->Name());
 
@@ -451,30 +453,6 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    SyntaxTree::Writer writer(templates);
    writer.appendNode(lxRoot);
 }
-
-//ref_t Compiler::ModuleScope :: getBaseFunctionClass(int paramCount)
-//{
-//   if (paramCount == 0) {
-//      return mapReference(project->resolveForward(FUNCX_FORWARD));
-//   }
-//   else {
-//      IdentifierString className(project->resolveForward(FUNCX_FORWARD));
-//      className.appendInt(paramCount);
-//
-//      return mapReference(className);
-//   }
-//}
-//
-//ref_t Compiler::ModuleScope :: getBaseIndexFunctionClass(int paramCount)
-//{
-//   if (paramCount > 0) {
-//      IdentifierString className(project->resolveForward(NFUNCX_FORWARD));
-//      className.appendInt(paramCount);
-//
-//      return mapReference(className);
-//   }
-//   else return 0;
-//}
 
 ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
 {
@@ -1016,20 +994,19 @@ void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, 
    project->raiseError(message, sourcePath, row, col, terminal);
 }
 
-void Compiler::ModuleScope :: loadRoles(_Module* extModule)
+void Compiler::ModuleScope :: loadActions(_Module* extModule)
 {
    if (extModule) {
-      ReferenceNs sectionName(extModule->Name(), ROLE_SECTION);
+      ReferenceNs sectionName(extModule->Name(), ACTION_SECTION);
    
       _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
       if (section) {
          MemoryReader metaReader(section);
          while (!metaReader.Eof()) {
-            int role = metaReader.getDWord();
-
+            ref_t mssg_ref = importMessage(extModule, metaReader.getDWord(), module);
             ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
    
-            roleHints.add(role, class_ref);
+            actionHints.add(mssg_ref, class_ref);
          }
       }
    }
@@ -1152,16 +1129,16 @@ bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t rol
    else return false;
 }
 
-void Compiler::ModuleScope :: saveRole(int role, ref_t reference)
+void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
 {
-   ReferenceNs sectionName(module->Name(), ROLE_SECTION);
+   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
    
    MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
    
-   metaWriter.writeDWord(role);
+   metaWriter.writeDWord(mssg_ref);
    metaWriter.writeDWord(reference);
 
-   roleHints.add(role, reference);
+   actionHints.add(mssg_ref, reference);
 }
 
 //ref_t Compiler::ModuleScope :: defineType(ref_t classRef)
@@ -1824,13 +1801,13 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
       }
-      //else if (scope.moduleScope->typeHints.exist((*it).sign_ref, moduleScope->realReference)) {
-      //   writer.newNode(lxReal64Variable);
-      //   writer.appendNode(lxTerminal, it.key());
-      //   writer.appendNode(lxLevel, -1 - (*it).offset);
-      //   writer.appendNode(lxFrameAttr);
-      //   writer.closeNode();
-      //}
+      else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->realReference)) {
+         writer.newNode(lxReal64Variable);
+         writer.appendNode(lxTerminal, it.key());
+         writer.appendNode(lxLevel, -1 - (*it).offset);
+         writer.appendNode(lxFrameAttr);
+         writer.closeNode();
+      }
       else {
          writer.newNode(lxVariable, -1);
          writer.appendNode(lxTerminal, it.key());
@@ -2214,6 +2191,11 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
       }
       else return true;
    }
+   else if (hintRef == moduleScope->nonstructHint) {
+      writer.appendNode(lxClassFlag, elNonStructureRole);
+
+      return true;
+   }
    else if (hintRef != 0) {
       return declareTemplateInfo(hint, scope, hintRef);
    }
@@ -2276,9 +2258,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       //   writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elDynamicRole);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_NONSTRUCTURE)) {
-      //   writer.appendNode(lxClassFlag, elNonStructureRole);
       //}
       //else if (StringHelper::compare(terminal, HINT_XDYNAMIC)) {
       //   writer.newNode(lxClassArray);
@@ -2444,6 +2423,9 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
          }
          else if (hintRef == moduleScope->embedHint) {
             writer.appendNode(lxClassMethodAttr, tpEmbeddable);
+         }
+         else if (hintRef == moduleScope->actionHint) {
+            writer.appendNode(lxActionAttr);
          }
          else if (hintRef != 0) {
             // Method templates can be applied only for methods with custom verbs
@@ -2973,14 +2955,14 @@ ObjectInfo Compiler :: compileObject(DNode objectNode, CodeScope& scope, int mod
    switch (member)
    {
       case nsNestedClass:
-//      case nsRetStatement:
+      case nsRetStatement:
          if (objectNode.Terminal() != nsNone) {
             result = compileClosure(objectNode, scope, 0);
             break;
          }
       case nsSubCode:
-//      case nsSubjectArg:
-//      case nsMethodParameter:
+      case nsSubjectArg:
+      case nsMethodParameter:
          result = compileClosure(member, scope, 0);
          break;
       case nsInlineClosure:
@@ -3737,29 +3719,29 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
       {
          currentObject = compileOperator(member, scope, currentObject, mode);
       }
-//      else if (member == nsAltMessageOperation) {
-//         scope.writer->newBookmark();
-//
-//         scope.writer->appendNode(lxCurrent);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->removeBookmark();
-//      }
-//      else if (member == nsCatchMessageOperation) {
-//         scope.writer->newBookmark();
-//
-//         scope.writer->appendNode(lxResult);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->removeBookmark();
-//      }
-//      else if (member == nsSwitching) {
-//         compileSwitch(member, scope, currentObject);
-//
-//         currentObject = ObjectInfo(okObject);
-//      }
+      else if (member == nsAltMessageOperation) {
+         scope.writer->newBookmark();
+
+         scope.writer->appendNode(lxCurrent);
+
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->removeBookmark();
+      }
+      else if (member == nsCatchMessageOperation) {
+         scope.writer->newBookmark();
+
+         scope.writer->appendNode(lxResult);
+
+         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
+
+         scope.writer->removeBookmark();
+      }
+      //else if (member == nsSwitching) {
+      //   compileSwitch(member, scope, currentObject);
+
+      //   currentObject = ObjectInfo(okObject);
+      //}
 
       member = member.nextNode();
    }
@@ -3839,17 +3821,11 @@ bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNod
       if (lazyExpression) {
          parentRef = scope.moduleScope->getBaseLazyExpressionClass();
       }
-      //else if (getSignature(methodScope.message) == 0) {
-      //   parentRef = scope.moduleScope->getBaseFunctionClass(getParamCount(methodScope.message));
-      //}
-      //else {
-      //   // check if it is nfunc
-      //   ref_t nfuncRef = scope.moduleScope->getBaseIndexFunctionClass(getParamCount(methodScope.message));
-
-      //   if (nfuncRef != 0 && scope.moduleScope->checkMethod(nfuncRef, methodScope.message) != tpUnknown) {
-      //      parentRef = nfuncRef;
-      //   }
-      //}
+      else {
+         ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
+         if (actionRef)
+            parentRef = actionRef;
+      }
 
       compileParentDeclaration(DNode(), scope, parentRef);
    }
@@ -3977,7 +3953,7 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
 
       ownerScope.writer->closeNode();
 
-      return ObjectInfo(okObject, scope.reference/*, 0, scope.moduleScope->defineType(scope.reference)*/);
+      return ObjectInfo(okObject, scope.reference);
    }
 }
 
@@ -3993,10 +3969,10 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mod
    else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
       compileAction(node.firstChild(), scope, node, mode);
    }
-//   // if it is an action code block
-//   else if (node == nsMethodParameter || node == nsSubjectArg) {
-//      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
-//   }
+   // if it is an action code block
+   else if (node == nsMethodParameter || node == nsSubjectArg) {
+      compileAction(goToSymbol(node, nsInlineExpression), scope, node, 0);
+   }
    // if it is inherited nested class
    else if (node.Terminal() != nsNone) {
 	   // inherit parent
@@ -4149,30 +4125,30 @@ ObjectInfo Compiler :: compileExpression(DNode node, CodeScope& scope, ref_t tar
          if (findSymbol(member, nsAssigning)) {
             objectInfo = compileAssigning(member, scope, objectInfo, mode);
          }
-   //      else if (findSymbol(member, nsAltMessageOperation)) {
-   //         scope.writer->insert(lxVariable);
-   //         scope.writer->closeNode();
+         else if (findSymbol(member, nsAltMessageOperation)) {
+            scope.writer->insert(lxVariable);
+            scope.writer->closeNode();
 
-   //         scope.writer->newNode(lxAlt);
-   //         scope.writer->newBookmark();
-   //         scope.writer->appendNode(lxResult);
-   //         objectInfo = compileOperations(member, scope, objectInfo, mode);
-   //         scope.writer->removeBookmark();
-   //         scope.writer->closeNode();
+            scope.writer->newNode(lxAlt);
+            scope.writer->newBookmark();
+            scope.writer->appendNode(lxResult);
+            objectInfo = compileOperations(member, scope, objectInfo, mode);
+            scope.writer->removeBookmark();
+            scope.writer->closeNode();
 
-   //         scope.writer->appendNode(lxReleasing, 1);
-   //      }
+            scope.writer->appendNode(lxReleasing, 1);
+         }
          else objectInfo = compileOperations(member, scope, objectInfo, mode);
       }
       else objectInfo = compileObject(member, scope, mode);
    }
    else objectInfo = compileObject(node, scope, mode);
 
-   //// if it is try-catch statement
-   //if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
-   //   scope.writer->insert(lxTrying);
-   //   scope.writer->closeNode();
-   //}
+   // if it is try-catch statement
+   if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
+      scope.writer->insert(lxTrying);
+      scope.writer->closeNode();
+   }
 
    if (targetType != 0) {
       scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
@@ -4513,6 +4489,11 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       //      break;
          case elDebugWideLiteral:
          case elDebugLiteral:
+            argType = lxExtArgument;
+            break;
+         case elDebugIntegers:
+         case elDebugShorts:
+         case elDebugBytes:
             argType = lxExtArgument;
             break;
          default:
@@ -5905,6 +5886,9 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
       else if (current == lxType) {
          outputType = current.argument;
       }
+      else if (current == lxActionAttr) {
+         scope.moduleScope->saveAction(message, scope.reference);
+      }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
 //         if (mssgAttr != lxNone) {
@@ -6380,8 +6364,8 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
          if (callee == lxThisLocal) {
             writer.appendNode(lxCallTarget, scope.reference);
          }
-         else if (callee == lxField/* || callee == lxTemplateTarget*/) {
-            SNode attr = SyntaxTree::findChild(callee, lxNestedTemplateOwner, lxType);
+         else if (callee == lxField || callee == lxTemplateTarget) {
+            SNode attr = SyntaxTree::findChild(callee, lxNestedTemplateOwner, lxType, lxTemplateFieldType);
             if (attr == lxNestedTemplateOwner) {
                writer.appendNode(lxCallTarget, info.ownerRef);
             }
@@ -6714,12 +6698,13 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareSingletonAction(classScope, objNode, expression.firstChild(), hints);
          singleton = true;
       }
-//      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-//
-//         declareSingletonAction(classScope, objNode, objNode);
-//         singleton = true;
-//      }
+      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+
+         declareSingletonAction(classScope, objNode, objNode, hints);
+         singleton = true;
+      }
+      else scope.compileHints(hints, false);
    }
    else scope.compileHints(hints, false);
 
@@ -7040,8 +7025,8 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
    if (target.argument != 0) {
       ClassInfo info;
       if (scope.loadClassInfo(info, target.argument)) {
-         ref_t dummy;
-         int hint = scope.checkMethod(info, node.argument, dummy);
+         ref_t resultType;
+         int hint = scope.checkMethod(info, node.argument, resultType);
          
          if (hint == tpUnknown) {
             // Compiler magic : allow to call wrapper content directly
@@ -7072,10 +7057,14 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
             case tpSealed:
                stackSafe = test(hint, tpStackSafe);
                node = lxDirectCalling;
+               if (resultType != 0)
+                  node.appendNode(lxType, resultType);
                break;
             case tpClosed:
                stackSafe = test(hint, tpStackSafe);
                node = lxSDirctCalling;
+               if (resultType != 0)
+                  node.appendNode(lxType, resultType);
                break;
          }
       }
@@ -7622,6 +7611,7 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             // if boxing is not required (stack safe) and can be passed directly
             if (test(mode, HINT_NOBOXING)) {
                node = lxExpression;
+               typecastMode |= HINT_NOBOXING;
             }
             else if (object == lxNewOp) {
                object.setArgument(targetClassRef);
@@ -7749,6 +7739,13 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
       // HOTFIX : primitive / external operation should be done before
       if (object == lxOp) {
          optimizeOp(scope, object, warningMask, mode);
+
+         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+         optimized = true;
+      }
+      if (object == lxCalling) {
+         optimizeCall(scope, object, warningMask);
 
          object = SyntaxTree::findMatchedChild(node, lxObjectMask);
 
