@@ -324,6 +324,8 @@ private:
       ref_t genericHint;
       ref_t actionHint;
       ref_t nonstructHint;
+      ref_t symbolHint;
+      ref_t extMssgHint;
 
       ref_t boolType;
 

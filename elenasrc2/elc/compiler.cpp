@@ -430,6 +430,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    varHint = module->mapSubject(HINT_VARIABLE, false);
    limitedHint = module->mapSubject(HINT_LIMITED, false);
    signHint = module->mapSubject(HINT_SIGNATURE, false);
+   extMssgHint = module->mapSubject(HINT_EXT_MESSAGE, false);
    mssgHint = module->mapSubject(HINT_MESSAGE, false);
    stackHint = module->mapSubject(HINT_STACKSAFE, false);
    warnHint = module->mapSubject(HINT_SUPPRESS_WARNINGS, false);
@@ -444,6 +445,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    genericHint = module->mapSubject(HINT_GENERIC, false);
    actionHint = module->mapSubject(HINT_ACTION_CLASS, false);
    nonstructHint = module->mapSubject(HINT_NONSTRUCTURE, false);
+   symbolHint = module->mapSubject(HINT_SYMBOL, false);
 
    defaultNs.add(module->Name());
 
@@ -1626,6 +1628,9 @@ void Compiler :: appendObjectInfo(CodeScope& scope, ObjectInfo object)
             case elDebugReal64:
                scope.writer->appendNode(lxTarget, -4);
                break;
+            case elDebugSubject:
+               scope.writer->appendNode(lxTarget, -8);
+               break;
          }
       }
    }
@@ -2135,28 +2140,6 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
-   //else if (hintRef == moduleScope->signHint) {
-   //   writer.newNode(lxClassStructure, 4);
-
-   //   appendTerminalInfo(&writer, terminal);
-   //   writer.appendNode(lxClassFlag, elDebugSubject);
-   //   writer.appendNode(lxClassFlag, elStructureRole | elSignature | elEmbeddable | elReadOnlyRole);
-
-   //   writer.closeNode();
-
-   //   return true;
-   //}
-   //else if (hintRef == moduleScope->mssgHint) {
-   //   writer.newNode(lxClassStructure, 4);
-
-   //   appendTerminalInfo(&writer, terminal);
-   //   writer.appendNode(lxClassFlag, elDebugDWORD);
-   //   writer.appendNode(lxClassFlag, elStructureRole | elMessage | elEmbeddable | elReadOnlyRole);
-
-   //   writer.closeNode();
-
-   //   return true;
-   //}
    else if (hintRef == moduleScope->extensionHint) {
       scope.extensionMode = -1;
 
@@ -2212,23 +2195,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
 
       //if (StringHelper::compare(terminal, HINT_GROUP)) {
       //   writer.appendNode(lxClassFlag, elGroup);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_EXT_MESSAGE)) {
-      //   writer.newNode(lxClassStructure, 8);
-
-      //   appendTerminalInfo(&writer, terminal);
-      //   writer.appendNode(lxClassFlag, elStructureRole | elExtMessage | elReadOnlyRole);
-
-      //   writer.closeNode();
-      //}
-      //else if (StringHelper::compare(terminal, HINT_SYMBOL)) {
-      //   writer.newNode(lxClassStructure, 4);
-
-      //   appendTerminalInfo(&writer, terminal);
-      //   writer.appendNode(lxClassFlag, elDebugReference);
-      //   writer.appendNode(lxClassFlag, elStructureRole | elSymbol | elReadOnlyRole);
-
-      //   writer.closeNode();
       //}
       //else if (StringHelper::compare(terminal, HINT_POINTER)) {
       //   writer.newNode(lxClassStructure, 4);
@@ -2367,6 +2333,22 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
 
                writer.appendNode(lxSize, size);
             }
+         }
+         else if (hintRef == moduleScope->symbolHint) {
+            writer.appendNode(lxTarget, -7);
+            writer.appendNode(lxSize, 4);
+         }
+         else if (hintRef == moduleScope->signHint) {
+            writer.appendNode(lxTarget, -8);
+            writer.appendNode(lxSize, 4);
+         }
+         else if (hintRef == moduleScope->mssgHint) {
+            writer.appendNode(lxTarget, -9);
+            writer.appendNode(lxSize, 4);
+         }
+         else if (hintRef == moduleScope->extMssgHint) {
+            writer.appendNode(lxTarget, -10);
+            writer.appendNode(lxSize, 8);
          }
          else if(scope.moduleScope->subjectHints.exist(hintRef)) {
             writer.appendNode(lxType, hintRef);
@@ -4481,7 +4463,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          // if it is an integer number pass it directly
          case elDebugDWORD:
       //   case elDebugPTR:
-      //   case elDebugSubject:
+         case elDebugSubject:
+         case elDebugMessage:
             argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
             break;
       //   case elDebugReference:
@@ -5173,11 +5156,11 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
    // if it is a dynamic object implicit constructor call is not possible
    else scope.raiseError(errIllegalConstructor, node.Terminal());
 
-   ////if (dispatchBody != nsNone) {
-   ////   compileConstructorDispatchExpression(dispatchBody.firstChild(), writer, codeScope);
-   ////   writer.closeNode();
-   ////   return;
-   ////}
+   //if (dispatchBody != nsNone) {
+   //   compileConstructorDispatchExpression(dispatchBody.firstChild(), writer, codeScope);
+   //   writer.closeNode();
+   //   return;
+   //}
    if (bodyNode != nsNone) {
       if (!withFrame) {
          withFrame = true;
@@ -5779,13 +5762,25 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
             if (singleField && scope.info.fields.Count() == 1) {
                switch (target) {
                   case -1:
-                     scope.info.header.flags |= (elDebugDWORD | elStructureRole | elReadOnlyRole);
+                     scope.info.header.flags |= (elDebugDWORD | elReadOnlyRole);
                      break;
                   case -2:
-                     scope.info.header.flags |= (elDebugQWORD | elStructureRole | elReadOnlyRole) ;
+                     scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole) ;
                      break;
                   case -4:
-                     scope.info.header.flags |= (elDebugReal64 | elStructureRole | elReadOnlyRole);
+                     scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
+                     break;
+                  case -7:
+                     scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
+                     break;
+                  case -8:
+                     scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
+                     break;
+                  case -9:
+                     scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
+                     break;
+                  case -10:
+                     scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
                      break;
                   default:
                      scope.raiseError(errIllegalField, current);
@@ -7137,6 +7132,8 @@ int Compiler :: mapOpArg(ModuleScope& scope, SNode arg)
             return elDebugQWORD;
          case -4:
             return elDebugReal64;
+         case -8:
+            return elDebugSubject;
          default:
             return 0;
       }
@@ -7301,6 +7298,9 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       }
       else if (IsCompOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            node = lxIntOp;
+         }
+         else if (lflags == elDebugSubject && rflags == elDebugSubject) {
             node = lxIntOp;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {

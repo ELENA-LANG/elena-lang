@@ -1,11 +1,15 @@
 // --- Symbol ---
 
 /// A dynamic symbol
-#class(sealed,symbol) Symbol
+#class(sealed,struct:embeddable) Symbol
 {
-//    /// Loads a symbol
-//    #constructor new &literal:aName
-//        => system'core_routines'symbol_new.
+    #field(symbol)theValue.
+    
+    /// Loads a symbol
+    #constructor new &literal:name
+    [
+        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
+    ]
         
     /// Redirects incoming messages to the symbol
     #method => system'core_routines'__symbol.
@@ -14,13 +18,13 @@
 // --- Verb ---
 
 /// A dynamic verb extender
-#class/*(sealed,signature)*/ Verb
+#class(sealed,struct:embeddable) Verb
 {
-//    /// Loads a dynamic verb
-//    #constructor(stacksafe) new &verb:aVerb
-//        => system'core_routines'int_copy.
-//
-//    #method verb = $self.
+    #field(signature)theValue.
+    
+    /// Loads a dynamic verb
+    #constructor(stacksafe,suppress:w3) new &verb:aVerb
+        = aVerb.
 
     /// Dispatches incoming messages and redirects to the target
     #method => system'core_routines'__verb.
@@ -29,93 +33,94 @@
 // --- Message ---
 
 /// A message constant
-#class/*(sealed,message)*/ Message
+#class(sealed,struct:embeddable) Message
 {
-//    /// Loads a message
-//    #constructor(stacksafe) new &mssg:aMessage
-//        => system'core_routines'int_copy.
-//
-//    #method mssg
-//        = $self.
-//                        
-//    #method(stacksafe) subject
-//        => system'core_routines'mssg_getsubj.
-//        
-//    #method(stacksafe)literal
-//    [
-//        #var(type:bytearray,size:256)aBuffer.        
-//        #var(type:int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
-//        
-//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-//    ]
+    #field(message)theValue.
+    
+    /// Loads a message
+    #constructor(stacksafe,suppress:w3) new &mssg:message
+        = message.
+
+    #method(stacksafe) subject
+        => system'core_routines'__message.
+
+    #method(stacksafe)literal
+    [
+        #var(byte:256)aBuffer.        
+        #var(int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    #method => system'core_routines'handle_message.
     #method => system'core_routines'__message.
 }
 
-//// --- ExtensionMessage ---
-//
-///// An extended message constant
-//#class(sealed,extension_message) ExtensionMessage
-//{
-//    /// Loads a message
-//    #constructor(stacksafe) new &ext_mssg:aMessage
-//        => system'core_routines'int_copy.
-//
-//    #method ext_mssg
-//        = $self.
-//                        
-//    #method(stacksafe) subject
-//        => system'core_routines'mssg_getsubj.
-//
-//    #method(stacksafe) equal &ext_mssg : aSubject
-//        => system'core_routines'long_equal.
-//        
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    #method => system'core_routines'handle_ext_message.
-//}
-//
-//
-//// --- Signature ---
-//
-///// A dynamic signature extender
-//#class(sealed,signature) Signature
-//{
-//    /// Creates a dynamic signature
-//    #constructor(stacksafe) new &mssg:aMessage
-//        => system'core_routines'subj_copymssg.
-//        
-//    /// Creates a dynamic signature
-//    #constructor(stacksafe) new &subject:aSubject
-//        => system'core_routines'int_copy.
-//
-//    /// Creates a dynamic signature
-//    #constructor new &literal:aSubjectName
-//        => system'core_routines'subj_load.
-//
-//    /// Creates a dynamic signature
-//    #constructor new &wide:aSubjectName
-//        <= new &literal:(aSubjectName literal).
-//
-//    #method subject = $self.
-//
-//    /// Compares the values
-//    #method(stacksafe) equal &subject : aSubject
-//        => system'core_routines'subject_equal.
-//        
-//    #method(stacksafe)literal
-//    [
-//        #var(type:bytearray,size:256)aBuffer.        
-//        #var(type:int)aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
-//        
-//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-//    ]
-//        
-//    /// Qualifies incoming messages and redirects to the target
-//    #method => system'core_routines'qualify_message.
-//}
-//
+// --- ExtensionMessage ---
+
+/// An extended message constant
+#class(sealed,struct:embeddable) ExtensionMessage
+{
+    #field(extension_message)theValue.
+    
+    /// Loads a message
+    #constructor(stacksafe,suppress:w3) new &ext_mssg:message
+        = message.
+
+    #method(stacksafe) subject
+        => system'core_routines'__message.
+
+    #method(stacksafe) equal &ext_mssg : aSubject    
+        => system'core_routines'__extmessage.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    #method => system'core_routines'__extmessage.
+}
+
+
+// --- Signature ---
+
+/// A dynamic signature extender
+#class(sealed,struct:embeddable) Signature
+{
+    #field(signature)theValue.
+    
+    /// Creates a dynamic signature
+    #constructor(stacksafe) new &mssg:message
+    [
+        system'core_routines'__signature load &subject:$self &mssg:message.
+    ]
+        
+    /// Creates a dynamic signature
+    #constructor(stacksafe,suppress:w3) new &subject:subject
+        = subject.
+
+    /// Creates a dynamic signature
+    #constructor new &literal:aSubjectName
+    [
+        system'core_routines'__signature load &subject:$self &literal:aSubjectName.
+    ]
+
+    /// Creates a dynamic signature
+    #constructor new &wide:aSubjectName
+        <= new &literal:(aSubjectName literal).
+
+    /// Compares the values
+    #method(stacksafe) equal &subject : subject
+        = theValue == subject.
+
+    #method(stacksafe)literal
+    [
+        #var(byte:256)aBuffer.        
+        #var(int)aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]
+        
+    /// Qualifies incoming messages and redirects to the target
+    #method => system'core_routines'__signature.
+}
+
 //// --- MessageVar ---
 //
 //#class(sealed,struct:embeddable) MessageVar

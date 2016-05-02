@@ -14,10 +14,10 @@
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
 #subject mssg       = system'Message.
-//#subject(class:system'ExtensionMessage) ext_mssg.
+#subject ext_mssg   = system'ExtensionMessage.
 #subject verb       = system'Verb.
 #subject subject    = system'Signature.
-//#subject(class:system'Symbol)       symbol_ref.
+#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
 #subject bytearray  = system'ByteArray.
