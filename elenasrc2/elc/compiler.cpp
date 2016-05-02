@@ -2504,85 +2504,85 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
 }
 
 
-//void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
-//{
-//   //if (switchValue.kind == okObject) {
-//   //   scope.writer->insert(lxVariable);
-//   //   scope.writer->insert(lxSwitching);
-//   //   scope.writer->closeNode();
-//
-//   //   switchValue.kind = okBlockLocal;
-//   //   switchValue.param = 1;
-//   //}
-//   //else scope.writer->insert(lxSwitching);
-//
-//   //DNode option = node.firstChild();
-//   //while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
-//   //   scope.writer->newNode(lxOption);
-//   //   recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
-//
-//   //   //      _writer.declareSwitchOption(*scope.tape);
-//
-//   //   int operator_id = EQUAL_MESSAGE_ID;
-//   //   if (option == nsBiggerSwitchOption) {
-//   //      operator_id = GREATER_MESSAGE_ID;
-//   //   }
-//   //   else if (option == nsLessSwitchOption) {
-//   //      operator_id = LESS_MESSAGE_ID;
-//   //   }
-//
-//   //   scope.writer->newBookmark();
-//
-//   //   writeTerminal(TerminalInfo(), scope, switchValue);
-//
-//   //   DNode operand = option.firstChild();
-//   //   ObjectInfo result = compileOperator(operand, scope, switchValue, 0, operator_id);
-//   //   scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-//   //   appendTerminalInfo(scope.writer, node.FirstTerminal());
-//   //   scope.writer->closeNode();
-//
-//   //   scope.writer->removeBookmark();
-//
-//   //   scope.writer->newNode(lxElse, scope.moduleScope->falseReference);
-//
-//   //   CodeScope subScope(&scope);
-//   //   DNode thenCode = option.firstChild().nextNode();
-//
-//   //   //_writer.declareBlock(*scope.tape);
-//
-//   //   DNode statement = thenCode.firstChild();
-//   //   if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
-//   //      compileCode(thenCode, subScope);
-//   //   }
-//   //   // if it is inline action
-//   //   else compileRetExpression(statement, scope, 0);
-//
-//   //   scope.writer->closeNode();
-//
-//   //   scope.writer->closeNode();
-//
-//   //   option = option.nextNode();
-//   //}
-//   //if (option == nsLastSwitchOption) {
-//   //   scope.writer->newNode(lxElse);
-//
-//   //   CodeScope subScope(&scope);
-//   //   DNode thenCode = option.firstChild();
-//
-//   //   //_writer.declareBlock(*scope.tape);
-//
-//   //   DNode statement = thenCode.firstChild();
-//   //   if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
-//   //      compileCode(thenCode, subScope);
-//   //   }
-//   //   // if it is inline action
-//   //   else compileRetExpression(statement, scope, 0);
-//
-//   //   scope.writer->closeNode();
-//   //}
-//
-//   //scope.writer->closeNode();
-//}
+void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
+{
+   if (switchValue.kind == okObject) {
+      scope.writer->insert(lxVariable);
+      scope.writer->insert(lxSwitching);
+      scope.writer->closeNode();
+
+      switchValue.kind = okBlockLocal;
+      switchValue.param = 1;
+   }
+   else scope.writer->insert(lxSwitching);
+
+   DNode option = node.firstChild();
+   while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
+      scope.writer->newNode(lxOption);
+      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
+
+      //      _writer.declareSwitchOption(*scope.tape);
+
+      int operator_id = EQUAL_MESSAGE_ID;
+      if (option == nsBiggerSwitchOption) {
+         operator_id = GREATER_MESSAGE_ID;
+      }
+      else if (option == nsLessSwitchOption) {
+         operator_id = LESS_MESSAGE_ID;
+      }
+
+      scope.writer->newBookmark();
+
+      writeTerminal(TerminalInfo(), scope, switchValue);
+
+      DNode operand = option.firstChild();
+      ObjectInfo result = compileOperator(operand, scope, switchValue, 0, operator_id);
+      scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
+      appendTerminalInfo(scope.writer, node.FirstTerminal());
+      scope.writer->closeNode();
+
+      scope.writer->removeBookmark();
+
+      scope.writer->newNode(lxElse, scope.moduleScope->falseReference);
+
+      CodeScope subScope(&scope);
+      DNode thenCode = option.firstChild().nextNode();
+
+      //_writer.declareBlock(*scope.tape);
+
+      DNode statement = thenCode.firstChild();
+      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
+         compileCode(thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(statement, scope, 0);
+
+      scope.writer->closeNode();
+
+      scope.writer->closeNode();
+
+      option = option.nextNode();
+   }
+   if (option == nsLastSwitchOption) {
+      scope.writer->newNode(lxElse);
+
+      CodeScope subScope(&scope);
+      DNode thenCode = option.firstChild();
+
+      //_writer.declareBlock(*scope.tape);
+
+      DNode statement = thenCode.firstChild();
+      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
+         compileCode(thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(statement, scope, 0);
+
+      scope.writer->closeNode();
+   }
+
+   scope.writer->closeNode();
+}
 
 void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 {
@@ -2827,9 +2827,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okSubject:
          scope.writer->newNode(lxLocalAddress, object.param);
          break;
-      //case okBlockLocal:
-      //   scope.writer->newNode(lxBlockLocal, object.param);
-      //   break;
+      case okBlockLocal:
+         scope.writer->newNode(lxBlockLocal, object.param);
+         break;
       //case okParams:
       //   scope.writer->newNode(lxBlockLocalAddr, object.param);
       //   break;
@@ -3719,11 +3719,11 @@ ObjectInfo Compiler :: compileOperations(DNode node, CodeScope& scope, ObjectInf
 
          scope.writer->removeBookmark();
       }
-      //else if (member == nsSwitching) {
-      //   compileSwitch(member, scope, currentObject);
+      else if (member == nsSwitching) {
+         compileSwitch(member, scope, currentObject);
 
-      //   currentObject = ObjectInfo(okObject);
-      //}
+         currentObject = ObjectInfo(okObject);
+      }
 
       member = member.nextNode();
    }

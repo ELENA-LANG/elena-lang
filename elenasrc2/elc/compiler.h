@@ -135,7 +135,7 @@ public:
       okSuper,
       okLocalAddress,                 // param - local offset, class reference
    //   okParams,                       // param - local offset
-   //   okBlockLocal,                   // param - local offset
+      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
    
       okTemplateTarget,
@@ -923,7 +923,7 @@ private:
    //   return mapMessage(node, scope, count, dummy);
    //}
 
-//   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
+   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);

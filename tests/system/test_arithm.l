@@ -67,36 +67,36 @@
 //
 ////    OpenArgTester test &args:1:"a":3.
 //].
-//
-//// --- MultiDispatchTest ---
-//
-//#symbol DispatchTester =
-//{
-//    eval &x:anX &y:anY
-//    [
-//        ^ anX + anY.
-//    ]
-//}.
-//
-//#symbol MultiDispatchTest =
-//[
-//    #var msg := %"x&y".
-//    
-//    DispatchTester::msg eval:1:2.
-//].
-//
-//// --- MultySelectTest ---
-//
-//#symbol MultySelectTest =
-//[
-//    #var n := 3.
-//    
-//    n =>
-//        1 ? [ console writeLine:"=> operator fails". ]
-//        2 ? [ console writeLine:"=> operator fails". ]
-//        3 ? [ console writeLine:"=> operator works!". ].
-//].
-//
+
+// --- MultiDispatchTest ---
+
+#symbol DispatchTester =
+{
+    eval &x:anX &y:anY
+    [
+        ^ anX + anY.
+    ]
+}.
+
+#symbol MultiDispatchTest =
+[
+    #var msg := %"x&y".
+    
+    DispatchTester::msg eval:1:2.
+].
+
+// --- MultySelectTest ---
+
+#symbol MultySelectTest =
+[
+    #var n := 3.
+    
+    n =>
+        1 ? [ console writeLine:"=> operator fails". ]
+        2 ? [ console writeLine:"=> operator fails". ]
+        3 ? [ console writeLine:"=> operator works!". ].
+].
+
 //// --- LocalTest ---
 //
 //#symbol LocalTester =
