@@ -61,6 +61,8 @@ In development:
                        * optimize shift implementation
                        * optimize varof.append / varof.reduce / ...
                        * optimize listof.$exapnd
+                       * optimize ($nil != a) ? [ ... ]
+                       * optimite #var(int)last_index := theLength - 1. // where theLength is vint
 
                        * test constructor returning not compatible object
 

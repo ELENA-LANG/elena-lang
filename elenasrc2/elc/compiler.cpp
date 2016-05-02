@@ -3402,6 +3402,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
          scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
          scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
          scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
+         scope.writer->appendNode(lxType, scope.moduleScope->boolType);
          scope.writer->closeNode();
 
          retVal.type = scope.moduleScope->boolType;
@@ -7178,7 +7179,7 @@ void Compiler :: optimizeBoolOp(ModuleScope& scope, SNode node, int warningLevel
    SNode typecastNode = SyntaxTree::findChild(node, lxTypecasting);
    SNode opNode = SyntaxTree::findChild(typecastNode, lxOp);
 
-   if (optimizeOp(scope, opNode, warningLevel, mode)) {
+   if (opNode == lxOp && optimizeOp(scope, opNode, warningLevel, mode)) {
       typecastNode = lxExpression;
       node = lxExpression;
       // HOTFIX : mark it as a boolean operation

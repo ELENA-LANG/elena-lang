@@ -12,6 +12,31 @@
     [
         $value := val.
     ]
+
+    #method(suppress:w3) get = $value.
+    
+    #method(suppress:w3) cast : verb &to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    #method(suppress:w3) cast : aVerb &to:aTarget &with:aParam => $value.
+    
+    #method(suppress:w3) equal : anObject
+        => $value.
+}
+
+#template(variable) nvarof : template_subj
+{
+    #field(template_subj)$value.
+    
+    #method set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    #method(stacksafe) set &template_subj:val
+    [
+        $value := val.
+    ]
     
     #method(suppress:w3) append : val
     [
@@ -47,11 +72,11 @@
 
 // === Numeric Variables ===
 
-#subject vbyte  = varof:byte.
-#subject vshort = varof:short.
-#subject vint   = varof:int.
-#subject vlong  = varof:long.
-#subject vreal  = varof:real.
+#subject vbyte  = nvarof:byte.
+#subject vshort = nvarof:short.
+#subject vint   = nvarof:int.
+#subject vlong  = nvarof:long.
+#subject vreal  = nvarof:real.
 #subject vchar  = varof:char.
 
 // === basic data classes ===
