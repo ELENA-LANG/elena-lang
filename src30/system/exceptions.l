@@ -136,94 +136,128 @@
 
 // --- OutOfRangeException ---
 
-#class OutOfRangeException //:: Exception
+#class(exceptionof:OutOfRangeError) OutOfRangeException
 {
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"An index is out of range" &subject: %OutOfRangeError.
-//        
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= %new &literal:(aMessage literal) &subject: %OutOfRangeError.
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"An index is out of range".
+
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
 }
 
 // --- IndexOutOfRangeException ---
-//
-//#class IndexOutOfRangeException :: Exception
-//{
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"An index is out of range" &subject: %IndexOutOfRangeError.
-//        
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= %new &literal:(aMessage literal) &subject: %IndexOutOfRangeError.
-//}
+
+#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"An index is out of range".
+
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
+}
 
 // --- InvalidArgumentException ---
 
-#class InvalidArgumentException //:: Exception
+#class(exceptionof:InvalidArgumentError) InvalidArgumentException
 {
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"Invalid argument" &subject: %InvalidArgumentError.
-//        
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= %new &literal:(aMessage literal) &subject:%InvalidArgumentError.
-//                
-//    /// Creates the exception
-//    ///
-//    /// Obsolete
-//    #constructor new &message:aMessage
-//        <= %new &literal:(aMessage literal) &subject:%InvalidArgumentError.        
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Invalid argument".
+        
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
 }
 
 // --- InvalidOperationException ---
-//
-//#class InvalidOperationException :: Exception
-//{
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"Invalid operation" &subject: %InvalidOperationError.
-//        
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= %new &literal:(aMessage literal) &subject: %InvalidOperationError.
-//}
+
+#class(exceptionof:InvalidOperationError) InvalidOperationException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Invalid operation".
+
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
+}
 
 // --- MethodNotFound ---
 
-#class MethodNotFoundException //:: Exception
+#class(exceptionof:MethodNotFoundError) MethodNotFoundException
 {
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"Method not found" &subject: %MethodNotFoundError.
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Method not found".
 
     #constructor(stacksafe) new &mssg:missingMessage
-//        <= %new &literal:("Method " + missingMessage literal + " not found") &subject: %MethodNotFoundError.
-    [
-    ]
+        <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
 // --- MethodNotSupported ---
-//
-//#class NotSupportedException :: Exception
-//{
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"Operation is not supported" &subject: %NotSupportedError.
-//        
-//    /// Creates the exception
-//    #constructor new :aMessage
-//        <= %new &literal:(aMessage literal) &subject: %NotSupportedError.
-//}
-//
+
+#class(exceptionof:NotSupportedError) NotSupportedException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Operation is not supported".
+        
+    /// Creates the exception
+    #constructor new :aMessage
+        <= new &literal:(aMessage literal).
+}
+
 // --- AbortException ---
-//
-//#class AbortException :: Exception
-//{
-//    /// Creates the exception
-//    #constructor new
-//        <= %new &literal:"The process terminated" &subject: %Abort.
-//}
+
+#class(exceptionof:Abort) AbortException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"The process terminated".
+}

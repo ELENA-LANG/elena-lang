@@ -435,11 +435,11 @@
    
     "abc" getAt:2.
     
-//    "abc" getAt:(-1) |
-//        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
-//
-//    "abc" getAt:4 |
-//        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
+    "abc" getAt:(-1) |
+        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
+
+    "abc" getAt:4 |
+        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 //// --- ArrayTest ---
