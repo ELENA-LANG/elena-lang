@@ -921,9 +921,9 @@
     #constructor new &literal:aLiteral
         <= new &int:(aLiteral length) &literal:aLiteral.
         
-//    /// Creates the copy of a subarray        
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'core_routines's_copysubarr.
+    /// Creates the copy of a subarray        
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+        => system'core_routines'__literal.
 
     #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
         <= (new &int:aSize)
@@ -1077,12 +1077,12 @@
     #method(outnprop:length,stacksafe) readLength &vint:aLength
         => system'core_routines'__literal.
 
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
-//        => system'core_routines's_save.
-//
-//    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
-//        => system'core_routines's_saveraw.
+    /// Saves the literal into a UTF-32 character array
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
+        => system'core_routines'__literal.
+
+    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
+        => system'core_routines'__literal.
 
     /// Returns the string enumerator
     #method enumerator = LiteralEnumerator new &literal:$self.
@@ -1133,10 +1133,10 @@
     #constructor new &wide:aLiteral
         <= %new &int:(aLiteral length) &wide:aLiteral.
         
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'core_routines'ws_copysubarr.
-//
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+        => system'core_routines'__wide.
+
 //    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
 //        => system'core_routines'ws_copybuf.
 
@@ -1286,12 +1286,12 @@
     #method(outnprop:length,stacksafe) readLength &vint:aLength
         => system'core_routines'__wide.
 
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
-//        => system'core_routines'ws_save.
-//
-//    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
-//        => system'core_routines'ws_saveraw.
+    /// Saves the literal into a UTF-32 character array
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
+        => system'core_routines'__wide.
+
+    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
+        => system'core_routines'__wide.
 
     /// Returns the object enumerator
     #method enumerator = WideLiteralEnumerator new &wide:$self.

@@ -60,7 +60,7 @@
 // === system handles ===
 #subject handle     = system'Handle.
 //#subject(class:system'RTPointer)rt_ptr.
-//#subject(class:system'UnsafePointer)dirty_ptr.
+#subject dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
 #subject enumerator = system'Enumerator.

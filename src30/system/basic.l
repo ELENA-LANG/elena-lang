@@ -1146,20 +1146,20 @@
         = value.
   
     /// Creates the object with specified value
-    #constructor(stacksafe) new &int:anOperand 
-        => system'core_routines'real_copyint.
+    #constructor(stacksafe) new &int:value 
+        = realConvertor convert &int:value.
 
     /// Creates the object with specified value
-    #constructor(stacksafe) new &short:anOperand 
-        => system'core_routines'real_copyint.
+    #constructor(stacksafe) new &short:value 
+        = realConvertor convert &short:value.
 
     /// Creates the object with specified value
-    #constructor(stacksafe) new &byte:anOperand 
-        => system'core_routines'real_copyint.
+    #constructor(stacksafe) new &byte:value 
+        = realConvertor convert &byte:value.
 
     /// Creates the object with specified value
-    #constructor(stacksafe) new &long:anOperand 
-        => system'core_routines'real_copylong.
+    #constructor(stacksafe) new &long:value
+        = realConvertor convert &long:value.
         
     /// Creates the object with specified value
     #constructor new : anObject
@@ -1338,6 +1338,9 @@
     #constructor max
         = #010FFFFh.
 
+    #method(stacksafe,bool) equal &int:val
+        = theValue == val.
+
     /// Clones the value
     #method clone = CharValue new &char:$self.
 
@@ -1381,6 +1384,14 @@
         ^ aLength.
     ]
 
+    /// Compares values
+    #method(bool,stacksafe) equal &char:anOperand 
+        => system'core_routines'__char.
+
+    /// Compares values
+    #method(bool,stacksafe) less &char:anOperand 
+        => system'core_routines'__char.
+        
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode 
         => system'core_routines'__int.

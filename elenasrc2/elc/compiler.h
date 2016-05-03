@@ -414,6 +414,10 @@ private:
       ref_t getBaseLazyExpressionClass();
 
       int getClassFlags(ref_t reference);
+      int getTypeFlags(ref_t subject)
+      {
+         return getClassFlags(subjectHints.get(subject));
+      }
 
       bool checkIfCompatible(ref_t typeRef, ref_t classRef);
 //      ref_t defineType(ref_t classRef);
@@ -635,6 +639,13 @@ private:
       ref_t getReturningType() const
       {
          return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
+      }
+
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
       }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -977,7 +988,7 @@ private:
    ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 
    void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
+   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
    void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
    void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 

@@ -1305,7 +1305,10 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
 {
    if (StringHelper::compare(identifier, THIS_VAR)) {
-      return ObjectInfo(okThisParam, 1, stackSafe ? -1 : 0);
+      if (stackSafe && test(getClassFlags(), elStructureRole)) {
+         return ObjectInfo(okThisParam, 1, -1);
+      }
+      else return ObjectInfo(okThisParam, 1);
    }
    else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
       return ObjectInfo(okParam, (size_t)-1);
@@ -4453,10 +4456,24 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       ref_t classReference = moduleScope->subjectHints.get(subject);
       int flags = 0;
       ClassInfo classInfo;
-      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
+      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), false) == 0)
          scope.raiseError(errInvalidOperation, terminal);
 
       flags = classInfo.header.flags;
+
+      //HOTFIX : allow to pass structures / byref parameters
+      if (test(flags, elStructureRole | elEmbeddable)) {
+         if (test(flags, elWrapper)) {
+            flags = elDebugBinary;
+         }
+         else if ((flags & elDebugMask) == 0) {
+            if (classInfo.fields.Count() == 1) {
+               flags = moduleScope->getTypeFlags(classInfo.fieldTypes.get(0));
+            }
+            else flags = elDebugBinary;
+         }
+
+      }
 
       LexicalType argType = lxNone;
       switch (flags & elDebugMask) {
@@ -4477,6 +4494,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          case elDebugIntegers:
          case elDebugShorts:
          case elDebugBytes:
+         case elDebugBinary:
             argType = lxExtArgument;
             break;
          default:
@@ -4995,18 +5013,18 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
    else scope.raiseError(errUnknownMessage, node.Terminal());
 }
 
-//void Compiler :: compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope)
-//{
-//   if (node.firstChild() == nsNone) {
-//      ObjectInfo info = scope.mapObject(node.Terminal());
-//      // if it is an internal routine
-//      if (info.kind == okInternal) {
-//         importCode(node, *scope.moduleScope, writer, node.Terminal(), scope.getMessageID());
-//      }
-//      else scope.raiseError(errInvalidOperation, node.Terminal());
-//   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//}
+void Compiler :: compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope)
+{
+   if (node.firstChild() == nsNone) {
+      ObjectInfo info = scope.mapObject(node.Terminal());
+      // if it is an internal routine
+      if (info.kind == okInternal) {
+         importCode(node, *scope.moduleScope, writer, node.Terminal(), scope.getMessageID());
+      }
+      else scope.raiseError(errInvalidOperation, node.Terminal());
+   }
+   else scope.raiseError(errInvalidOperation, node.Terminal());
+}
 
 void Compiler :: compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape)
 {
@@ -5144,7 +5162,13 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
 
    DNode bodyNode = goToSymbol(node.firstChild(), nsRetStatement, nsSubCode);
    DNode resendBody = node.select(nsResendExpression);
-   if (resendBody != nsNone) {
+   DNode dispatchBody = node.select(nsDispatchExpression);
+   if (dispatchBody != nsNone) {
+      compileConstructorDispatchExpression(dispatchBody.firstChild(), writer, codeScope);
+      writer.closeNode();
+      return;
+   }
+   else if (resendBody != nsNone) {
       compileConstructorResendExpression(resendBody.firstChild(), codeScope, classClassScope, withFrame);
    }
    else if (bodyNode == nsRetStatement) {
@@ -5156,11 +5180,6 @@ void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScop
    // if it is a dynamic object implicit constructor call is not possible
    else scope.raiseError(errIllegalConstructor, node.Terminal());
 
-   //if (dispatchBody != nsNone) {
-   //   compileConstructorDispatchExpression(dispatchBody.firstChild(), writer, codeScope);
-   //   writer.closeNode();
-   //   return;
-   //}
    if (bodyNode != nsNone) {
       if (!withFrame) {
          withFrame = true;

@@ -318,6 +318,7 @@ namespace _ELENA_
    const int elDebugSubject        = 0x000C0000;
    const int elDebugReals          = 0x000D0000;
    const int elDebugMessage        = 0x000E0000;
+   const int elDebugBinary         = 0x000F0000;
 
   //// --- ELENA class roles ---
   // const int crRoleMask            = 0xFFFFFFF0;

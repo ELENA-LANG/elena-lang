@@ -3121,6 +3121,546 @@ procedure __chararray.eval&move&int$&int$&int$[4]
   
 end
 
+procedure __literal.new&int$&int$&chararray$[4]
+
+  aloadsi 3
+  nload
+  ifn labEmpty 0
+    
+  aloadsi 4
+  ecopyd
+  callextr api : slen_ch
+            
+  acopyr class : system'LiteralValue
+  inc
+  bcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+
+  callextr api : s_copychars
+  
+  acopyb
+  blen
+  ecopy 0
+  dec
+  bwriteb
+  quitn 4
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 4
+
+end
+
+procedure __wide.new&int$&int$&chararray$[4]
+  
+  aloadsi 3
+  nload
+  ifn labEmpty 0
+    
+  aloadsi 4
+  ecopyd
+  callextr api : wslen_ch
+
+  acopyr class : system'WideLiteralValue
+  inc
+  wcreate
+  bcopya
+  
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+
+  callextr api : ws_copychars
+  
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  shiftn -1
+  bwritew
+  quitn 4
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 4  
+
+end
+
+procedure __literal.save&int$&chararray$&vint$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+  callextr api : strtochararray
+  bloadsi 5
+  dcopye
+  nsave
+  popa
+
+  quitn 4
+
+end
+
+procedure __wide.save&int$&chararray$&vint$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+  callextr api : wstrtochararray
+  bloadsi 5
+  dcopye
+  nsave
+  popa
+  
+  quitn 4
+
+end
+
+procedure __utf8encoder.convert&int$&vint$&bytearray$&chararray$&vint$[6]
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder.convert&int$&vint$&chararray$&bytearray$&vint$[6]
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+  
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder.eval&charCount&literal$&vint$[3]
+
+  bcopya
+  aloadsi 2
+  blen
+  callextr api : strcharlen
+  aloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __utf8encoder.convert&int$&vint$&literal$&chararray$&vint$[6]
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __literal.eval&system$save&int$&bytearray$&int$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  breadb
+  inc
+  dswapsi 0
+  bwriteb
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
+end
+
+procedure __wide.eval&system$save&int$&shortarray$&int$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  wread
+  inc
+  dswapsi 0
+  wwrite
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
+end
+
+procedure __utf16encoder.convert&int$&vint$&bytearray$&chararray$&vint$[6]
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder.convert&int$&vint$&chararray$&bytearray$&vint$[6]
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf16encoder.eval&charCount&wide$&vint$[3]
+
+  bcopya
+  aloadsi 2
+  wlen
+  callextr api : wstrcharlen
+  aloadsi 3
+  nsave
+
+end
+
+procedure __utf16encoder.convert&int$&int$&shortarray$&chararray$&vint$[6]
+
+  aloadsi 3
+  nload
+  shiftn -1
+  ecopyd
+  aloadsi 2
+  nload
+  shiftn -1
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder.convert&int$&int$&chararray$&shortarray$&vint$[6]
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __dptr.set[2]
+
+  bcopya
+  dloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr.set&dirty_ptr$[2]
+
+  bcopya
+  aloadsi 2
+  ncopy
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr.write&int$[2]
+
+  nload
+  pushd
+  popb
+  aloadsi 2
+  nload
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr.read&vint$[2]
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr.read&bytearray$&int$[3]
+
+  bloadsi 2
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 1
+
+  callextr api : subcopy  
+  
+  quitn 3
+
+end
+
+procedure __char.equal&char$[2]
+
+  bloadsi 2
+  nequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __char.less&char$[2]
+
+  bloadsi 2
+  nless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
 /*
 procedure byte_max
 
@@ -3132,16 +3672,6 @@ procedure byte_max
 
 end
 
-procedure int_copy
-
-  bcopya
-  aloadsi 2
-  ncopy
-  acopyb
-  quitn 2
-
-end
-
 procedure int_init
 
   bcopya
@@ -3150,24 +3680,6 @@ procedure int_init
   acopyb
   quitn 1
 
-end
-
-procedure int_equal
-
-  bloadsi 2
-  nequal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure int_less
-
-  bloadsi 2
-  nless
-  selectr const : system'false const : system'true
-  quitn 2
-  
 end
 
 procedure byte_add
@@ -4093,28 +4605,6 @@ procedure ns_copy
 
 end
 
-procedure ns_copysubarr
-
-  bcopya
-  aloadsi 3
-  nload
-  acopyb
-  acallvi 1
-
-  bcopya
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  callextr api : nsubcopy
-  
-  acopyb
-  quitn 4
-  
-end
-
 procedure s_empty
 
   dcopy 1
@@ -4548,56 +5038,6 @@ procedure ptr_get
 
 end
 
-procedure dptr_copy
-
-  bcopya
-  dloadsi 2
-  nsave
-  acopyb
-  quitn 2
-
-end
-
-procedure dptr_readint
-
-  nload
-  pushd
-  popa
-  nload
-  bloadsi 2
-  nsave
-  aloadsi 1
-  quitn 2
-
-end
-
-procedure dptr_writeint
-
-  nload
-  pushd
-  popb
-  aloadsi 2
-  nload
-  nsave
-  aloadsi 1
-  quitn 2
-
-end
-
-procedure dptr_readbytearray
-
-  bloadsi 2
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 1
-
-  callextr api : subcopy  
-  
-  quitn 3
-
-end
-
 procedure arr_realloc
 
   aloadsi 1
@@ -4655,93 +5095,6 @@ labNext2:
 
 end
 
-procedure ws_copysubarr
-
-  aloadsi 3
-  nload
-  ifn labEmpty 0
-    
-  aloadsi 4
-  ecopyd
-  callextr api : wslen_ch
-
-  acopyr class : system'WideLiteralValue
-  inc
-  wcreate
-  bcopya
-  
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-
-  callextr api : ws_copychars
-  
-  acopyb
-  wlen
-  ecopy 0
-  dec
-  shiftn -1
-  bwritew
-  quitn 4
-  
-labEmpty:
-  dcopy 1
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-  dcopy 0
-  nsave
-  acopyb
-  quitn 4
-  
-end
-
-procedure s_copysubarr
-
-  aloadsi 3
-  nload
-  ifn labEmpty 0
-    
-  aloadsi 4
-  ecopyd
-  callextr api : slen_ch
-            
-  acopyr class : system'LiteralValue
-  inc
-  bcreate
-  bcopya
-
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-
-  callextr api : s_copychars
-  
-  acopyb
-  blen
-  ecopy 0
-  dec
-  bwriteb
-  quitn 4
-  
-labEmpty:
-  dcopy 1
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-  dcopy 0
-  nsave
-  acopyb
-  quitn 4
-
-end
-
 procedure dlong_empty
 
   bcopya
@@ -4755,315 +5108,6 @@ procedure dlong_empty
   dcopy 3
   nwrite
   quitn 1
-
-end
-
-procedure s_save
-
-  pusha
-  bloadsi 4
-  aloadsi 5
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  aloadsi 0
-  callextr api : strtochararray
-  bloadsi 5
-  dcopye
-  nsave
-  popa
-
-  quitn 4
-
-end
-
-procedure ws_save
-
-  pusha
-  bloadsi 4
-  aloadsi 5
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  aloadsi 0
-  callextr api : wstrtochararray
-  bloadsi 5
-  dcopye
-  nsave
-  popa
-  
-  quitn 4
-
-end
-
-procedure s_saveraw
-
-  pusha
-  bloadsi 4
-  aloadsi 5
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  aloadsi 0
-
-  pushe                                               
-  pushd
-  dcopy 0
-
-labNext:
-  esavesi 1
-  breadb
-  inc
-  dswapsi 0
-  bwriteb
-  inc
-  eloadsi 1
-  dswapsi 0
-  less labNext
-
-  popi 2
-  popa
-
-  quitn 4
-
-end
-
-procedure ws_saveraw
-
-  pusha
-  bloadsi 4
-  aloadsi 5
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  aloadsi 0
-
-  pushe                                               
-  pushd
-  dcopy 0
-
-labNext:
-  esavesi 1
-  wread
-  inc
-  dswapsi 0
-  wwrite
-  inc
-  eloadsi 1
-  dswapsi 0
-  less labNext
-
-  popi 2
-  popa
-
-  quitn 4
-
-end
-
-procedure s_encode
-
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  bloadsi 5
-  
-  callextr api : s_encode
-  ifr labErr 0
-
-  pushd
-  dcopye  
-  bloadsi 7
-  nsave
-
-  aloadsi 3
-  nload
-  ecopyd
-  popd
-  sub    
-
-  bloadsi 3
-  nsave
-  aloadsi 1
-  
-  quitn 6
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-  
-end
-
-procedure ws_encode
-
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  bloadsi 5
-  
-  callextr api : ws_encode
-  ifr labErr 0
-
-  pushd
-  dcopye  
-  bloadsi 7
-  nsave
-
-  aloadsi 3
-  nload
-  ecopyd
-  popd
-  sub    
-
-  bloadsi 3
-  nsave
-  aloadsi 1
-  
-  quitn 6
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-
-end
-
-procedure sa_encode
-
-  aloadsi 3
-  nload
-  shiftn -1
-  ecopyd
-  aloadsi 2
-  nload
-  shiftn -1
-  aloadsi 4
-  bloadsi 5
-  
-  callextr api : ws_encode
-  ifr labErr 0
-
-  dcopye  
-  bloadsi 6
-  nsave
-  
-  quitn 6
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-
-end
-
-procedure s_decode
-
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  bloadsi 5
-  
-  callextr api : s_decode
-  ifr labErr 0
-
-  pushd
-  dcopye  
-  bloadsi 7
-  nsave
-
-  aloadsi 3
-  nload
-  ecopyd
-  popd
-  sub    
-  
-  bloadsi 3
-  nsave
-  aloadsi 1
-  
-  quitn 6
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-  
-end
-
-procedure ws_decode
-
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  bloadsi 5
-  
-  callextr api : ws_decode
-  ifr labErr 0
-
-  pushd
-  dcopye  
-  bloadsi 7
-  nsave
-
-  aloadsi 3
-  nload
-  ecopyd
-  popd
-  sub    
-
-  bloadsi 3
-  nsave
-  aloadsi 1
-  
-  quitn 6
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-  
-end
-
-procedure s_charcount
-
-  bcopya
-  aloadsi 2
-  blen
-  callextr api : strcharlen
-  aloadsi 3
-  nsave
-
-end
-
-procedure ws_charcount
-
-  bcopya
-  aloadsi 2
-  wlen
-  callextr api : wstrcharlen
-  aloadsi 3
-  nsave
 
 end
 
@@ -5813,33 +5857,6 @@ labEnd:
 
   equit
         
-end
-
-procedure sa_decode
-
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  bloadsi 5
-  
-  callextr api : ws_decode
-  ifr labErr 0
-
-  dcopye  
-  bloadsi 6
-  nsave
-  
-  quitn 6
-
-labErr:
-  open 1
-  pushr class : system'OutOfRangeException
-  pushr const : %new[0]
-  throw
-  
 end
 
 procedure evaluate_tape

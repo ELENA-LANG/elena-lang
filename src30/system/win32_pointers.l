@@ -48,82 +48,76 @@
 //    #method(stacksafe) free
 //        => system'core_routines'api_free_index.
 //}
-//
-//// --- UnsafePointer ---
-//
-//#class(sealed,struct:embeddable) UnsafePointer
-//{
-//    #field(type:int)thePointer.
-//
-//    #constructor new : anObject
-//    [
-//        $self assign:anObject.
-//    ]
-//    
-//    #method dirty_ptr = $self.
-//    
-//    #method(stacksafe) assign : anObject
-//        => system'core_routines'dptr_copy.
-//                
-//    #method(stacksafe) assign &int:anObject
-//        => system'core_routines'int_copy.
-//                
-//    #method(stacksafe) offset &int:aValue
-//    [
-//        thePointer := thePointer + aValue.
-//    ]                            
-//
-//    #method(stacksafe) write &dirty_ptr:anObject
-//        => system'core_routines'int_copy.
-//                
-//    #method(stacksafe) write &int:anObject
-//        => system'core_routines'dptr_writeint.
-//                
-//    #method(stacksafe) read &vint:aPointer
-//        => system'core_routines'dptr_readint.
-//
-//    #method(stacksafe) read &bytearray:arr &int:len
-//        => system'core_routines'dptr_readbytearray.
-//
-//    // unsafe code
-//    #method(stacksafe) int
-//    [
-//        #var(type:int)aValue.
-//        $self read &vint:aValue.
-//        
-//        ^ IntNumber new &int:aValue.
-//    ]
-//
-//    // unsafe code
-//    #method(stacksafe) literal
-//    [
-//        #var(type:int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
-//        #var(type:literal)aLiteral := LiteralValue new &int:aLen.
-//        system'external'KERNEL32 lstrcpyA &literal:aLiteral &int:thePointer.
-//        
-//        ^ aLiteral.
-//    ]        
-//
-//    // unsafe code
-//    #method(stacksafe) wide
-//    [
-//        #var(type:int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
-//        #var(type:wide)aLiteral := WideLiteralValue new &int:aLen.
-//        system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
-//        
-//        ^ aLiteral.
-//    ]
-//    
-//    #method(stacksafe,type:bool)is &empty
-//        = 0 == thePointer.
-//    
-//    /// Dispatches the verb to the target object with handle subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &dirty_ptr:$self.
-//    
-//    /// Dispatches the verb to the target object with bytearray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &dirty_ptr:$self.    
-//}
-//
+
+// --- UnsafePointer ---
+
+#class(sealed,struct:embeddable,dispatchable:dirty_ptr) UnsafePointer
+{
+    #field(int)thePointer.
+
+    #constructor new : anObject
+    [
+        $self set:anObject.
+    ]
+    
+    #method(stacksafe) set : anObject
+        => system'core_routines'__dptr.
+                
+    #method(stacksafe) set &int:aValue
+    [
+        thePointer := aValue.
+    ]
+                
+    #method(stacksafe) offset &int:aValue
+    [
+        thePointer := thePointer + aValue.
+    ]                            
+
+    #method(stacksafe) set &dirty_ptr:anObject
+        => system'core_routines'__dptr.
+                
+    #method(stacksafe) write &int:anObject
+        => system'core_routines'__dptr.
+                
+    #method(stacksafe) read &vint:aPointer
+        => system'core_routines'__dptr.
+
+    #method(stacksafe) read &bytearray:arr &int:len
+        => system'core_routines'__dptr.
+
+    // unsafe code
+    #method(stacksafe) int
+    [
+        #var(int)aValue.
+        $self read &vint:aValue.
+        
+        ^ IntNumber new &int:aValue.
+    ]
+
+    // unsafe code
+    #method(stacksafe) literal
+    [
+        #var(int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
+        #var(literal)aLiteral := LiteralValue new &int:aLen.
+        system'external'KERNEL32 lstrcpyA &literal:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]        
+
+    // unsafe code
+    #method(stacksafe) wide
+    [
+        #var(int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
+        #var(wide)aLiteral := WideLiteralValue new &int:aLen.
+        system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]
+    
+    #method(stacksafe,bool)is &empty
+        = 0 == thePointer.
+}
+
 //// --- COORD ---
 //
 //#subject(class:system'COORD)win_coord.
