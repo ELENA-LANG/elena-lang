@@ -199,19 +199,19 @@
     console writeLine:".".
 ].
 
-//#symbol actionTester =
-//{
-//    testGeneric : anAction
-//    [
-//        anAction eval:"Action Test":" passed".
-//    ]
-//    
-//    testAction : anAction
-//    [
-//        anAction eval &line1:"Action Test" &line2:" passed".
-//    ]
-//}.
-//
+#symbol actionTester =
+{
+    testGeneric : anAction
+    [
+        anAction eval:"Action Test":" passed".
+    ]
+    
+    testAction : anAction
+    [
+        anAction eval &line1:"Action Test" &line2:" passed".
+    ]
+}.
+
 //#class MyException :: Exception
 //{
 //    #constructor new : aMessage
@@ -361,46 +361,46 @@
         [ console writeLine:"Real operators are working". ].
 ].
 
-//// --- Action Test ---
-//
-//#symbol ActionTest =
-//[
-//    console write:"Generic ".
-//    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
-//    
-//    console write:"Normal ".
-//    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
-//].
-//
-//// --- Role Tests ---
-//
-//#symbol Role =
-//{
-//    literal = "Role overriding works!".
-//}.
-//
-//#symbol RoleTest =
-//[
-//    console writeLine:("Role overriding doesn't work!!"::Role literal).
-//].
-//
-//// --- ConvertorTest ---
-//
-//#symbol ConvertorTest =
-//[
-//    #var n := "23" toInt.
-//    #var sn := n literal.
-//    (sn == "23")
-//        ! [ console writeLine:"Int conversion does not work" ].
-//    
-//    #var l := "1234567890123456" toLong.
-//    #var nn := "-123" toInt.
-//    #var ll := "-1234567890123456" toLong.
-//
-//    #var r := "23" toReal.
-//    #var r2 := "123.456789" toReal.
-//    #var r3 := "-123.456789" toReal.
-//].
+// --- Action Test ---
+
+#symbol ActionTest =
+[
+    console write:"Generic ".
+    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
+    
+    console write:"Normal ".
+    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
+].
+
+// --- Role Tests ---
+
+#symbol Role =
+{
+    literal = "Role overriding works!".
+}.
+
+#symbol RoleTest =
+[
+    console writeLine:("Role overriding doesn't work!!"::Role literal).
+].
+
+// --- ConvertorTest ---
+
+#symbol ConvertorTest =
+[
+    #var n := "23" toInt.
+    #var sn := n literal.
+    (sn == "23")
+        ! [ console writeLine:"Int conversion does not work" ].
+    
+    #var l := "1234567890123456" toLong.
+    #var nn := "-123" toInt.
+    #var ll := "-1234567890123456" toLong.
+
+    #var r := "23" toReal.
+    #var r2 := "123.456789" toReal.
+    #var r3 := "-123.456789" toReal.
+].
 
 // --- LiteralTest ---
 
@@ -478,38 +478,38 @@
 //    
 //    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
 //].
-//
-//// --- LoopTest ---
-//
-//#symbol LoopTest =
-//[
-//    #var i := 5.
-//        
-//    console writeLine:"Loop running...".
-//    #loop (i > 0) ?
-//    [
-//        console writeLine:i.
-//        
-//        i := i - 1.
-//    ].
-//  
-//    #var j := Integer new.
-//    control while: [j < 5] &do:
-//    [
-//        console writeLine:j.
-//        
-//        j += 1.
-//    ].
-//    
-//    control do:
-//    [
-//        console writeLine:j.
-//        
-//        j -= 1.
-//    ]
-//    &until:[j == 0].
-//].
-//
+
+// --- LoopTest ---
+
+#symbol LoopTest =
+[
+    #var i := 5.
+        
+    console writeLine:"Loop running...".
+    #loop (i > 0) ?
+    [
+        console writeLine:i.
+        
+        i := i - 1.
+    ].
+  
+    #var(vint)j := 0.
+    control while: [j < 5] &do:
+    [
+        console writeLine:j.
+        
+        j += 1.
+    ].
+    
+    control do:
+    [
+        console writeLine:j.
+        
+        j -= 1.
+    ]
+    &until:[j == 0].
+].
+
 //// --- ExceptionTest ---
 //
 //#symbol ExceptionTest =
@@ -533,17 +533,17 @@
 //    | if &MyError2: e [ console writeLine:(e literal). ].
 //    
 //].
-//
-//// --- TextBufferTest ---
-//
-//#symbol TextBufferTest =
-//[
-//    #var aBuffer := system'text'TextBuffer new.
-//    aBuffer write:"abc".
-//
-//    #var anOutput := aBuffer literal.
-//].
-//
+
+// --- TextBufferTest ---
+
+#symbol TextBufferTest =
+[
+    #var aBuffer := system'text'TextBuffer new.
+    aBuffer write:"abc".
+
+    #var anOutput := aBuffer literal.
+].
+
 //// --- DateTest ---
 //
 //#symbol DateTest =

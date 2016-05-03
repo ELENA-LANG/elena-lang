@@ -1,6 +1,4 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
+#import system.
 //#import system'routines.
 //
 //#class(extension:int)intLoopOp
@@ -73,27 +71,27 @@
 //            ? [ console writeLine:"Assertion fails!" ].
 //    ]
 //}
-//
-//// --- control ---
-//
-//#symbol control =
-//{
-//    try : anAction &catching:aHandler
-//    [
-//        ^ anAction eval | if:aHandler.
-//    ]    
-//    
-//    do:anAction = anAction eval.
-//    
-//    do:anAction &until:anExpr
-//        = anAction run &until:anExpr.
-//
-//    while:anExpr
-//        = $self while:anExpr &do:[].
-//
-//    while:anExpr &do:anAction
-//        = anAction run &if:anExpr.
-//
+
+// --- control ---
+
+#symbol control =
+{
+    try : anAction &catching:aHandler
+    [
+        ^ anAction eval | if:aHandler.
+    ]    
+    
+    do:anAction = anAction eval.
+    
+    do:anAction &until:anExpr
+        = anAction run &until:anExpr.
+
+    while:anExpr
+        = $self while:anExpr &do:[].
+
+    while:anExpr &do:anAction
+        = anAction run &if:anExpr.
+
 //    run &int:aStart &int:anEnd &every:aFunction
 //        = (aStart < anEnd)
 //            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
@@ -103,4 +101,4 @@
 //        = (aStart < anEnd)
 //            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
 //            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
-//}.
+}.

@@ -18,11 +18,11 @@
     MultiDispatchTest eval.
     MultySelectTest  eval.
     EnumTest eval.    
-//    TextBufferTest eval.
-//    LoopTest eval.
-//    ActionTest eval.
-//    RoleTest eval.
-//    ConvertorTest eval.
+    TextBufferTest eval.
+    LoopTest eval.
+    ActionTest eval.
+    RoleTest eval.
+    ConvertorTest eval.
 //    ArrayTest eval.     
 //    MethodNotFoundTest eval.
 //    ExceptionTest eval.

@@ -309,405 +309,316 @@
     ]
 }
 
-///// A base two variable function
-//#class(limited)BaseFunction2
-//{
-//    /// Returns itself
-//    #method func2 = $self.
-//    
-//    /// Dispatches the verb to the target with func2 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func2:$self.
-//    
-//    /// Dispatches the verb to the target with func2 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func2:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true
-//    #method(sealed,suppress:w2) retrieve : aParam &enumerator:anEnumerator
-//    [
-//        #var anItem := nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base three variable function
-//#class(limited)BaseFunction3
-//{
-//    /// Returns itself
-//    #method func3 = $self.
-//    
-//    /// Dispatches the verb to the target object with func3 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func3:$self.
-//    
-//    /// Dispatches the verb to the target object with func3 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func3:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 &enumerator:anEnumerator
-//    [
-//        #var anItem := nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base four variable function
-//#class(limited)BaseFunction4
-//{
-//    /// Returns itself
-//    #method func4 = $self.
-//    
-//    /// Dispatches the verb to the target object with func4 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func4:$self.
-//    
-//    /// Dispatches the verb to the target object with func4 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func4:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.
-//    ]
-//}
-//
-///// A base five variable function
-//#class(limited)BaseFunction5
-//{
-//    /// Returns itself
-//    #method func5 = $self.
-//    
-//    /// Dispatches the verb to the target object with func5 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func5:$self.
-//    
-//    /// Dispatches the verb to the target object with func5 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func5:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.
-//    ]
-//}
-//
-///// A base six variable function
-//#class(limited)BaseFunction6
-//{
-//    /// Returns itself
-//    #method func6 = $self.
-//    
-//    /// Dispatches the verb to the target object with func6 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func6:$self.
-//    
-//    /// Dispatches the verb to the target object with func6 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func6:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base seven variable function
-//#class(limited)BaseFunction7
-//{
-//    /// Returns itself
-//    #method func7 = $self.
-//    
-//    /// Dispatches the verb to the target object with func7 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func7:$self.
-//    
-//    /// Dispatches the verb to the target object with func7 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func7:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base eight variable function
-//#class(limited)BaseFunction8
-//{
-//    /// Returns itself
-//    #method func8 = $self.
-//    
-//    /// Dispatches the verb to the target object with func8 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func8:$self.
-//    
-//    /// Dispatches the verb to the target object with func8 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func8:$self.
-//
-//    /// Executes the function    
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base nine variable function
-//#class(limited)BaseFunction9
-//{
-//    /// Returns itself
-//    #method func9 = $self.
-//    
-//    /// Dispatches the verb to the target object with func9 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func9:$self.
-//    
-//    /// Dispatches the verb to the target object with func9 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func9:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base ten variable function
-//#class(limited)BaseFunction10
-//{
-//    /// Returns itself
-//    #method func10 = $self.
-//    
-//    /// Dispatches the verb to the target object with func10 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func10:$self.
-//    
-//    /// Dispatches the verb to the target object with func10 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func10:$self.
-//
-//    /// Executes the function    
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
-//
-///// A base eleven variable functions
-//#class(limited)BaseFunction11
-//{
-//    /// Returns itself
-//    #method func11 = $self.
-//    
-//    /// Dispatches the verb to the target object with func11 subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &func11:$self.
-//    
-//    /// Dispatches the verb to the target object with func11 subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &func11:$self.
-//    
-//    /// Executes the function
-//    #method eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:(anEnumerator get).
-//        ].        
-//    ]
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
-//    [
-//        #var anItem := $nil.
-//        #loop (anEnumerator next) ?
-//        [
-//            anItem := anEnumerator get.
-//            
-//            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
-//                [ ^ anItem. ].
-//        ].        
-//        
-//        ^ $nil.        
-//    ]
-//}
+/// A base two variable function
+#class(limited,dispatchable:func2)BaseFunction2
+{
+    /// Dispatches the verb to the target with func2 subject
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true
+    #method(sealed,suppress:w2) retrieve : aParam &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base three variable function
+#class(limited,dispatchable:func3)BaseFunction3
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 &enumerator:anEnumerator
+    [
+        #var anItem := nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base four variable function
+#class(limited,dispatchable:func4)BaseFunction4
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.
+    ]
+}
+
+/// A base five variable function
+#class(limited,dispatchable:func5)BaseFunction5
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.
+    ]
+}
+
+/// A base six variable function
+#class(limited,dispatchable:func6)BaseFunction6
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base seven variable function
+#class(limited,dispatchable:func7)BaseFunction7
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base eight variable function
+#class(limited,dispatchable:func8)BaseFunction8
+{
+    /// Executes the function    
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base nine variable function
+#class(limited,dispatchable:func9)BaseFunction9
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base ten variable function
+#class(limited,dispatchable:func10)BaseFunction10
+{
+    /// Executes the function    
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
+
+/// A base eleven variable functions
+#class(limited,dispatchable:func11)BaseFunction11
+{
+    /// Executes the function
+    #method(action) eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []
+    
+    /// Executes the function for parameters and every enumeration item
+    #method(sealed) run : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:(anEnumerator get).
+        ].        
+    ]
+    
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    #method(sealed,suppress:w2) retrieve : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 &enumerator:anEnumerator
+    [
+        #var anItem := $nil.
+        #loop (anEnumerator next) ?
+        [
+            anItem := anEnumerator get.
+            
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
+                [ ^ anItem. ].
+        ].        
+        
+        ^ $nil.        
+    ]
+}
 
 // --- base lazy expression ---
 
