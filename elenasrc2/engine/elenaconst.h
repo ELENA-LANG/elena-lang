@@ -526,8 +526,8 @@ namespace _ELENA_
    #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
-//   #define ARRAY_FORWARD            "'$array"
-//   #define PARAMS_FORWARD           "'$params"
+   #define ARRAY_FORWARD            "'$array"
+   #define PARAMS_FORWARD           "'$params"
 //   #define SUBJ_FORWARD             "'$sign"
 
    #define BOOLTYPE_FORWARD         "'$bool"

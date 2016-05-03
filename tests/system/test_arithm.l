@@ -18,55 +18,55 @@
     XTester test.
 ].
 
-//// --- OpenArgTest ---
-//
-//#symbol OpenArgTester =
-//{
-////    #method testUnboxing : anArg1 : anArg2 : anArg3
-////    [
-////        #var b := anArg1.
-////    ]
-//
-//    test : anIndex &args:aParams
-//        = aParams @ (anIndex int).
-//
-//    testParamsCopy &args: aParams
-//    [        
-//        #var n := aParams @ 0.
-//
-//        $self testBoxing:aParams.
-//                        
-//        #var n2 := $self test:0 &args:aParams.
-//                        
-//        ^ n.
-//    ]
-//            
-////    test &params : aParams
-////    [
-////        #var n := $self testParamsCopy &:aParams.
-////        
-////        #var aLength := aParams length.
-////        
-////        #var aSecond := aParams@1.
-////        
-////        $self testBoxing:aParams.
-//////        $self testUnboxing::aParams.
-////    ]
-//    
-//    testBoxing : anArray
+// --- OpenArgTest ---
+
+#symbol OpenArgTester =
+{
+//    #method testUnboxing : anArg1 : anArg2 : anArg3
 //    [
-//        #var b := anArray.
-//    ]    
-//}.
-//
-//#symbol OpenArgTest =
-//[
-//    OpenArgTester testParamsCopy &args:1:"a":3.
-//
-//    #var aRetVal := OpenArgTester test:1 &args:1:"a":3.
-//
-////    OpenArgTester test &args:1:"a":3.
-//].
+//        #var b := anArg1.
+//    ]
+
+    test : anIndex &args:aParams
+        = aParams @ (anIndex int).
+
+    testParamsCopy &args: aParams
+    [        
+        #var n := aParams @ 0.
+
+        $self testBoxing:aParams.
+                        
+        #var n2 := $self test:0 &args:aParams.
+                        
+        ^ n.
+    ]
+            
+    test &args : aParams
+    [
+        #var n := $self testParamsCopy &args:aParams.
+        
+        #var aLength := aParams length.
+        
+        #var aSecond := aParams@1.
+        
+        $self testBoxing:aParams.
+//        $self testUnboxing::aParams.
+    ]
+    
+    testBoxing : anArray
+    [
+        #var b := anArray.
+    ]    
+}.
+
+#symbol OpenArgTest =
+[
+    OpenArgTester testParamsCopy &args:1:"a":3.
+
+    #var aRetVal := OpenArgTester test:1 &args:1:"a":3.
+
+    OpenArgTester test &args:1:"a":3.
+].
 
 // --- MultiDispatchTest ---
 
@@ -442,42 +442,42 @@
         if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
-//// --- ArrayTest ---
-//
-//#symbol ArrayTest =
-//[
-//    #var a1 := Array(1,2,3).
-//    #var n := a1 @ 1.
-//
-//    #var(type:array) a4 := Array new:3.
-//    a4 setAt:0:2.
-//    a4 setAt:1:1.
-//    a4 setAt:2:3.
-//    
-//    #var a2 := Array new:5 set &every: (&index:x) [ Integer new:x ].    
-//    #var n2 := a2 @ 1.
-//    a2 setAt:1:-1.
-//    #var n3 := a2 @ 1.
-//    
-//    a2 setAt:0:2.
-//        
-//    a4 sort: (:aFormer:aNext)[ aFormer < aNext ].
-//
-//    a4 getAt:(-1) |
-//        if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
-//
-//    a4 getAt:3 |
-//        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
-//].
-//
-//// --- MethodNotFoundTest ---
-//
-//#symbol MethodNotFoundTest =
-//[
-//    #var n := 2.
-//    
-//    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
-//].
+// --- ArrayTest ---
+
+#symbol ArrayTest =
+[
+    #var a1 := Array(1,2,3).
+    #var n := a1 @ 1.
+
+    #var(array) a4 := Array new:3.
+    a4 setAt:0:2.
+    a4 setAt:1:1.
+    a4 setAt:2:3.
+    
+    #var a2 := Array new:5 set &every: (&index:x) [ IntNumber new:x ].    
+    #var n2 := a2 @ 1.
+    a2 setAt:1:-1.
+    #var n3 := a2 @ 1.
+    
+    a2 setAt:0:2.
+        
+    a4 sort: (:aFormer:aNext)[ aFormer < aNext ].
+
+    a4 getAt:(-1) |
+        if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
+
+    a4 getAt:3 |
+        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
+].
+
+// --- MethodNotFoundTest ---
+
+#symbol MethodNotFoundTest =
+[
+    #var n := 2.
+    
+    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
+].
 
 // --- LoopTest ---
 

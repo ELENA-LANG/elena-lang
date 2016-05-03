@@ -10,8 +10,8 @@ warn:unresolved=0
 types.l
 object.l
 basic.l
-control.l
 templates.l
+control.l
 memory.l
 dynamic.l
 win32_strings.l

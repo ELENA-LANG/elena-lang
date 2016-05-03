@@ -200,192 +200,191 @@
 //    ]
 }
 
-//// --- indexableOp ---
-//
-//#class(extension)indexableOp
-//{
-//    #method exchange : anIndex1 : anIndex2
-//        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
-//        
-//    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(type:iterator)anIndexer := self iterator.
-//        
-//        anIndexer writeIndex &int:anIndex1.
-//        
-//        #var anObject1 := anIndexer get.
-//        
-//        anIndexer writeIndex &int:anIndex2.
-//        #var anObject2 := anIndexer get.
-//        
-//        anIndexer set:anObject1.
-//        
-//        anIndexer writeIndex &int:anIndex1.
-//        anIndexer set:anObject2.
-//    ]
-//    
-//    #method run &every:nfunc
-//    [
-//        #var(type:iterator)it := self iterator.
-//        
-//        #loop (it available)?
-//        [
-//            nfunc eval &index:(it index).
-//            
-//            it append &index:1.
-//        ].
-//    ]
-//    
-//    #method(suppress:w2) indexOf : anObject
-//    [
-//        #var(type:iterator)anIndexer := self iterator.
-//        
-//        #loop (anIndexer available)?
-//        [
-//            (anObject == anIndexer get)
-//                ? [ ^ anIndexer index. ].
-//            
-//            anIndexer append &index:1.
-//        ].
-//        
-//        ^ -1.
-//    ]
-//    
-//    #method deepClone
-//    [
-//        #var aCopy := self clone.
-//        
-//        #var(type:iterator)aIndexer := aCopy iterator.
-//        
-//        #loop (aIndexer available)?
-//        [
-//            aIndexer set:(aIndexer get clone).
-//            
-//            aIndexer append &index:1.
-//        ].
-//        
-//        ^ aCopy.
-//    ]
-//    
-//    #method set &every:anIndexFunc
-//        = self::indexableOp set &nfunc:(anIndexFunc nfunc).
-//        
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(type:iterator)aIndexer := self iterator.
-//
-//        #loop (aIndexer available) ?
-//        [
-//            #var(type:int)anIndex.
-//            aIndexer readIndex &vint:anIndex.
-//            
-//            aIndexer set:(anIndexFunc eval &int:anIndex).
-//            
-//            aIndexer append &index:1.
-//        ].
-//        
-//        ^ self.
-//    ]    
-//
-//    #method sort : aCompareFunc
-//        = self::indexableOp sort &func2:(aCompareFunc func2).
-//    
-//    #method(suppress:w2) sort &func2:aCompareFunc
-//    [
-//        #var(type:iterator) aFormer := self iterator.
-//        #var(type:iterator) aLater := self iterator.
-//
-//        #loop (aFormer available) ?
-//        [
-//            #var(type:vint)i.
-//            aFormer readIndex &vint:i.
-//            
-//            aLater writeIndex &int:(i + 1).
-//            
-//            #loop (aLater available) ?
-//            [
-//                (aCompareFunc eval:(aFormer get):(aLater get))
-//                    ! [
-//                        #var aTmp := aFormer get.
-//                        aFormer set:(aLater get).
-//                        aLater set:aTmp.
-//                    ].
-//                    
-//                aLater append &index:1.
-//            ].
-//            aFormer append &index:1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method ascendant
-//        = (self clone)::indexableOp sort:ifOrdered.
-//
-//    #method Subarray : aLength &at:anIndex
-//        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
-//                
-//    /// obsolete
-//    #method Subarray &index:anIndex &length:aLength
-//        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
-//                
-//    #method Subarray &int:anIndex &int:aLength
-//    [
-//        #var(type:iterator) it := self iterator.
-//        
-//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-//    ]
-//    
-//    #method(suppress:w2) equal &indexable:anArray
-//    [
-//        (self length != anArray length)
-//            ? [ ^ false. ].
-//            
-//        #var(type:iterator) a := self iterator.
-//        #var(type:iterator) b := anArray iterator.
-//        
-//        #loop (a available)?
-//        [
-//            (a get == b get)
-//                ! [ ^ false. ].
-//                
-//            a append &index:1.
-//            b append &index:1.
-//        ].
-//          
-//        ^ true.                              
-//    ]
-//            
-//    #method reverse
-//        = self::indexableOp reverse:(self length) &at:0.
-//            
-//    #method reverse:counter &at:index
-//    [
-//        #var(type:iterator) it := self iterator.
-//        
-//        #var(type:int)i := index int.
-//        #var(type:int)j := counter int.
-//        j := j + i.
-//        j := j - 1.
-//        
-//        #loop (i < j)?
-//        [
-//            it writeIndex &int:i.
-//            #var temp1 := it get.
-//            it writeIndex &int:j.
-//            #var temp2 := it get.
-//            it set:temp1.
-//            it writeIndex &int:i.
-//            it set:temp2.
-//            
-//            i := i + 1.
-//            j := j - 1.
-//        ].
-//        
-//        ^ self.
-//    ]    
-//}
-//
+// --- indexableOp ---
+
+#class(extension)indexableOp
+{
+    #method exchange : anIndex1 : anIndex2
+        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
+        
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(iterator)anIndexer := self iterator.
+        
+        anIndexer writeIndex &int:anIndex1.
+        
+        #var anObject1 := anIndexer get.
+        
+        anIndexer writeIndex &int:anIndex2.
+        #var anObject2 := anIndexer get.
+        
+        anIndexer set:anObject1.
+        
+        anIndexer writeIndex &int:anIndex1.
+        anIndexer set:anObject2.
+    ]
+    
+    #method run &every:nfunc
+    [
+        #var(iterator)it := self iterator.
+        
+        #loop (it available)?
+        [
+            nfunc eval &index:(it index).
+            
+            it append &index:1.
+        ].
+    ]
+    
+    #method(suppress:w2) indexOf : anObject
+    [
+        #var(iterator)anIndexer := self iterator.
+        
+        #loop (anIndexer available)?
+        [
+            (anObject == anIndexer get)
+                ? [ ^ anIndexer index. ].
+            
+            anIndexer append &index:1.
+        ].
+        
+        ^ -1.
+    ]
+    
+    #method deepClone
+    [
+        #var aCopy := self clone.
+        
+        #var(iterator)aIndexer := aCopy iterator.
+        
+        #loop (aIndexer available)?
+        [
+            aIndexer set:(aIndexer get clone).
+            
+            aIndexer append &index:1.
+        ].
+        
+        ^ aCopy.
+    ]
+    
+    #method set &every:anIndexFunc
+        = self::indexableOp set &nfunc:(anIndexFunc nfunc).
+        
+    #method set &nfunc:anIndexFunc
+    [
+        #var(iterator)aIndexer := self iterator.
+
+        #loop (aIndexer available) ?
+        [
+            #var(int)anIndex.
+            aIndexer readIndex &vint:anIndex.
+            
+            aIndexer set:(anIndexFunc eval &int:anIndex).
+            
+            aIndexer append &index:1.
+        ].
+        
+        ^ self.
+    ]    
+
+    #method sort : aCompareFunc
+        = self::indexableOp sort &func2:(aCompareFunc func2).
+    
+    #method(suppress:w2) sort &func2:aCompareFunc
+    [
+        #var(iterator) aFormer := self iterator.
+        #var(iterator) aLater := self iterator.
+
+        #loop (aFormer available) ?
+        [
+            #var(int)i := aFormer index.
+            
+            aLater writeIndex &int:(i + 1).
+            
+            #loop (aLater available) ?
+            [
+                (aCompareFunc eval:(aFormer get):(aLater get))
+                    ! [
+                        #var aTmp := aFormer get.
+                        aFormer set:(aLater get).
+                        aLater set:aTmp.
+                    ].
+                    
+                aLater append &index:1.
+            ].
+            aFormer append &index:1.
+        ].
+        
+        ^ self.
+    ]
+    
+    #method ascendant
+        = (self clone)::indexableOp sort:ifOrdered.
+
+    #method Subarray : aLength &at:anIndex
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    #method Subarray &int:anIndex &int:aLength
+    [
+        #var(iterator) it := self iterator.
+        
+        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
+    ]
+    
+    #method(suppress:w2) equal &indexable:anArray
+    [
+        (self length != anArray length)
+            ? [ ^ false. ].
+            
+        #var(iterator) a := self iterator.
+        #var(iterator) b := anArray iterator.
+        
+        #loop (a available)?
+        [
+            (a get == b get)
+                ! [ ^ false. ].
+                
+            a append &index:1.
+            b append &index:1.
+        ].
+          
+        ^ true.                              
+    ]
+            
+    #method reverse
+        = self::indexableOp reverse:(self length) &at:0.
+            
+    #method reverse:counter &at:index
+    [
+        #var(iterator) it := self iterator.
+        
+        #var(int)i := index int.
+        #var(int)j := counter int.
+        j := j + i.
+        j := j - 1.
+        
+        #loop (i < j)?
+        [
+            it writeIndex &int:i.
+            #var temp1 := it get.
+            it writeIndex &int:j.
+            #var temp2 := it get.
+            it set:temp1.
+            it writeIndex &int:i.
+            it set:temp2.
+            
+            i += 1.
+            j -= 1.
+        ].
+        
+        ^ self.
+    ]    
+}
+
 //// --- stringListOp ---
 //
 //#symbol stringListOpDispatcher =

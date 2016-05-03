@@ -28,7 +28,7 @@
 //#subject(class:system'RealMatrix)   realmatrix.
 #subject chararray  = system'CharArray.
 #subject array      = system'Array.
-//#subject(class:system'OpenArgs)     args.
+#subject args       = system'OpenArgs.
 //#subject(class:system'MessageArray) mssgarray.
 //#subject(class:system'BitArray)     bitarray.
 //#subject(class:system'BitArray32)   bitset.
@@ -50,9 +50,9 @@
 #subject func10     = system'BaseFunction10.
 #subject func11     = system'BaseFunction11.
 
-//#subject(class:system'IndexFunction1)nfunc.
-//#subject(class:system'IndexFunction2)nnfunc.
-//#subject(class:system'IndexFunction3)n3func.
+#subject nfunc      = system'IndexFunction1.
+#subject nnfunc     = system'IndexFunction2.
+#subject n3func     = system'IndexFunction3.
 
 // === system handles ===
 #subject handle     = system'Handle.
@@ -61,4 +61,4 @@
 
 // --- Enumerators / Indexers ---
 #subject enumerator = system'Enumerator.
-//#subject(class:system'Iterator)iterator.
+#subject iterator   = system'Iterator.

@@ -23,10 +23,10 @@
     ActionTest eval.
     RoleTest eval.
     ConvertorTest eval.
-//    ArrayTest eval.     
-//    MethodNotFoundTest eval.
+    ArrayTest eval.
+    OpenArgTest eval.
+    MethodNotFoundTest eval.
 //    ExceptionTest eval.
-//    OpenArgTest eval.
 //    DateTest eval.
 //    ListTest eval.
 //    DictionaryTest eval.

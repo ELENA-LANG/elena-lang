@@ -596,7 +596,7 @@ void _ELENA_::compilePush(int opcode, x86JITScope& scope)
 {
    // push constant | reference
    scope.code->writeByte(0x68);
-   if (opcode == bcPushR) {
+   if (opcode == bcPushR && scope.argument != 0) {
       scope.writeReference(*scope.code, scope.argument, 0);
    }
    else scope.code->writeDWord(scope.argument);

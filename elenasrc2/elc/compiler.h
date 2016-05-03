@@ -134,7 +134,7 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, class reference
-   //   okParams,                       // param - local offset
+      okParams,                       // param - local offset
       okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
    
@@ -297,11 +297,11 @@ private:
       ref_t charReference;
       ref_t trueReference;
       ref_t falseReference;
-      //ref_t paramsReference;
+      ref_t paramsReference;
       ref_t signatureReference;
       ref_t messageReference;
       ref_t verbReference;
-      //ref_t arrayReference;
+      ref_t arrayReference;
 
       // cached subjects / hints
       ref_t sealedHint;
@@ -623,7 +623,7 @@ private:
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      bool         withOpenArg;
+      bool         withOpenArg;
       bool         stackSafe;
 //      bool         embeddable;
       bool         generic;
@@ -927,20 +927,20 @@ private:
    void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
 
-   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
-   //ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
-   //{
-   //   bool dummy = false;
-   //   return mapMessage(node, scope, count, dummy);
-   //}
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
+   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
+   {
+      bool dummy = false;
+      return mapMessage(node, scope, count, dummy);
+   }
 
    void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(DNode node, CodeScope& scope, DNode hints);
 
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-//   //ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
    ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
    void writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object);
