@@ -26,7 +26,7 @@
 //#subject(class:system'IntMatrix)    intmatrix.
 //#subject(class:system'RealArray)    realarray.
 //#subject(class:system'RealMatrix)   realmatrix.
-//#subject(class:system'CharArray)    chararray.
+#subject chararray  = system'CharArray.
 #subject array      = system'Array.
 //#subject(class:system'OpenArgs)     args.
 //#subject(class:system'MessageArray) mssgarray.

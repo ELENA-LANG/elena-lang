@@ -2994,6 +2994,133 @@ procedure __extmessage.equal&ext_mssg$[2]
 end
 
 
+procedure __chararray.read&int$&int$&chararray$[4]
+
+  bcopya
+  nlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  aloadsi 3
+  nload
+  acopyb
+
+  bloadsi 4
+  callextr api : nsubcopy
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.write&int$&int$&chararray$[4]
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  nlen
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : ninsert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.write&int$&char$[3]
+
+  nlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  ecopyd
+  aloadsi 3
+  nload
+  eswap  
+  nwrite
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.read&int$&vchar$[3]
+
+  bcopya
+  nlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  nread
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.eval&move&int$&int$&int$[4]
+
+  pusha 
+
+  // ; insert
+  aloadsi 4
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi  0
+  aloadsi 5
+  pushai 0
+
+  callextr api : nmove
+
+  pop  
+  popa
+  quitn 4
+  
+end
+
 /*
 procedure byte_max
 
@@ -4735,28 +4862,6 @@ labNext:
 
   quitn 4
 
-end
-
-procedure ns_move
-
-  pusha 
-
-  // ; insert
-  aloadsi 4
-  nload
-  ecopyd
-  aloadsi 3
-  nload
-  bloadsi  0
-  aloadsi 5
-  pushai 0
-
-  callextr api : nmove
-
-  pop  
-  popa
-  quitn 4
-  
 end
 
 procedure s_encode

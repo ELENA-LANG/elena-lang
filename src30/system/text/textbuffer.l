@@ -1,52 +1,40 @@
-//// ==== ver 3.4.1 ===
+#import system. 
+
+#symbol(const,int)$TextPageSize = 128.
+
+#subject textbuffer = system'text'TextBuilder.
+
+// --- TextBuffer ---
+
+#class(sealed) TextBuilder
+{
+    #field(chararray) theBuffer.
+    #field(vint)      theLength.
+
+    #constructor new
+    [
+        theBuffer := CharArray new &int:$TextPageSize.
+        theLength := 0.
+    ]
+
+    #method clear
+    [
+        theLength set &int:0.
+    ]
+
+    #method(stacksafe,outnprop:length) readLength &vint:aRetVal
+    [
+        aRetVal set &int:theLength.
+    ]
 //
-//#import system. 
-//
-//#symbol(const,type:int)$TextPageSize = 128.
-//
-//#subject(class:system'text'TextBuilder) textbuffer.
-//
-//// --- TextBuffer ---
-//
-//#class(sealed) TextBuilder
-//{
-//    #field(type:chararray) theBuffer.
-//    #field(type:vint)      theLength.
-//
-//    #constructor new
-//    [
-//        theBuffer := CharArray new &int:$TextPageSize.
-//        theLength := Integer new &int:0.
-//    ]
-//
-//    #method textbuffer = $self.
-//
-//    #method clear
-//    [
-//        theLength << 0.
-//    ]
-//
-//    #method(stacksafe) readLength &vint:aRetVal
-//    [
-//        aRetVal << theLength.
-//    ]
-//
-//    #method(type:int,embeddable,suppress:w2) length
-//    [
-//        #var(type:int)retVal.
-//        $self readLength &vint:retVal.
-//        
-//        ^ retVal.
-//    ]
-//
-//    #method(stacksafe) setLength &int:aLength
-//    [
-//        theLength << aLength.
-//    ]
-//
-//    #method set &length:aLength
-//        <= setLength &int:(aLength int).
-//
+    #method(stacksafe) setLength &int:aLength
+    [
+        theLength set &int:aLength.
+    ]
+
+    #method set &length:aLength
+        <= setLength &int:(aLength int).
+
 //    #method chararray = theBuffer.
 //
 //    #method literal
@@ -54,22 +42,22 @@
 //
 //    #method wide
 //        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
-//
-//    #method write : aLine
-//    [
-//        aLine cast:%write &to:$self.
-//    ]
-//
-//    #method writeLine : aLine
-//    [
-//        $self write:aLine write:'newLine.
-//    ]
-//
-//    #method append : aLine
-//    [
-//        $self write:aLine.
-//    ]
-//                                    
+
+    #method write : aLine
+    [
+        aLine cast:%write &to:$self.
+    ]
+
+    #method writeLine : aLine
+    [
+        $self write:aLine write:'newLine.
+    ]
+
+    #method append : aLine
+    [
+        $self write:aLine.
+    ]
+                                    
 //    #method(stacksafe) reserve &int:aLength
 //    [
 //        #var(type:int)aNewLength := aLength.
@@ -355,6 +343,6 @@
 //        
 //        theLength -= aLength.
 //    ]
-//}
-//
-//#symbol TextBuffer = TextBuilder.
+}
+
+#symbol TextBuffer = TextBuilder.

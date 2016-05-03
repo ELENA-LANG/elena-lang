@@ -812,109 +812,79 @@
 //    /// Dispatches the verb to the target object with intarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realmatrix:$self.
 //}
-//
-//// --- CharArray ---
-//
-///// An array of unicode characters (UTF-32)
-//#class(sealed) CharArray :: BaseIntArray
-//{
-//    /// Creates the new array with a specified length
-//    #constructor(stacksafe) new &int : aLength
-//        => system'core_routines'ns_create.
-//
-//    /// Creates the new array with a specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
-//        => system'core_routines'ns_copysubarr.
-//        
-//    /// Creates the short array copy
-//    #constructor new &chararray:anArray
-//        <= new &int:0 &int:(anArray length int) &chararray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'ns_getlen.
-//
-//    /// Returns the array length        
-//    #method(stacksafe,type:int,embeddable,suppress:w3) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
-//    [
-//        #var(type:int)aTotalLength := $self length.
-//        
-//        #var(type:int)i := anIndex.
-//        #var(type:int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &char:aValue.
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//        
-//    /// Returns itself
-//    #method chararray = $self.
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
-//        => system'core_routines'ns_read.
-//
-//    /// Copies the array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
-//        => system'core_routines'ns_write.
-//
-//    /// Writes a character value at the specified position
-//    #method(stacksafe) write &int:anIndex &char:aValue
-//        => system'core_routines'ns_writedword.
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vchar:anInt
-//        => system'core_routines'ns_readdword.
-//
-//    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
-//        => system'core_routines'ns_move.
-//
-//    /// Returns a character at the specified position
-//    #method getAt : anIndex
-//    [
-//        #var(type:char)aRetVal.
-//        $self read &int:(anIndex int) &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]        
-//
-//    /// Sets a character at the specified position
-//    #method setAt : anIndex : aValue
-//    [
-//        $self write &int:(anIndex int) &char:(aValue char).
-//    ]
-//
-//    /// Creates the object copy
-//    #method clone = CharArray new &chararray:$self.
-//    
-//    /// Dispatches the verb to the target object with chararray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &chararray:$self.
-//    
-//    /// Dispatches the verb to the target object with chararray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &chararray:$self.    
-//}
+
+// --- CharArray ---
+
+/// An array of unicode characters (UTF-32)
+#class(sealed,arrayof:char,dispatchable:chararray) CharArray
+{
+    /// Creates the new array with a specified length
+    #constructor(stacksafe) new &int : len
+        = char:len.
+
+    /// Creates the new array with a specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &chararray:$self.
+    ]
+     
+    /// Creates the short array copy
+    #constructor new &chararray:anArray
+        <= new &int:0 &int:(anArray length) &chararray:anArray.
+    
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__array.
+
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &int:i &char:aValue.
+            
+            i := i + 1.
+        ].
+    ]
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
+        => system'core_routines'__chararray.
+
+    /// Copies the array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
+        => system'core_routines'__chararray.
+
+    /// Writes a character value at the specified position
+    #method(stacksafe) write &int:anIndex &char:aValue
+        => system'core_routines'__chararray.
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vchar:anInt
+        => system'core_routines'__chararray.
+
+    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
+        => system'core_routines'__chararray.
+
+    /// Creates the object copy
+    #method clone = CharArray new &chararray:$self.
+}
         
 // --- emptyliteralvalue ---
 

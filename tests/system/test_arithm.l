@@ -188,17 +188,17 @@
 //    #var s := aList safeSeek:"abc".
 //    #var n2 := aList safeSeek:-1.
 //].
-//
-//#symbol EnumTest =
-//[
-//    "abc" run &each: (:x)
-//    [
-//        console write:x.
-//    ].
-//        
-//    console writeLine:".".
-//].
-//
+
+#symbol EnumTest =
+[
+    "abc" run &each: (:x)
+    [
+        console write:x.
+    ].
+        
+    console writeLine:".".
+].
+
 //#symbol actionTester =
 //{
 //    testGeneric : anAction
