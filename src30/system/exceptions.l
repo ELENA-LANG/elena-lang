@@ -72,7 +72,13 @@
     [
         handler eval:$self.
     ]
-    
+
+    /// default handler
+    #method(generic) if : aHandler
+    [
+        #throw $self.
+    ]
+        
     /// Executes the exception handler for the current exception if available.
     ///
     /// Otherwise goes to the next exception handler

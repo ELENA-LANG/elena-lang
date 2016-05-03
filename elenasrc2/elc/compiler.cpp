@@ -5734,6 +5734,8 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
          templateInfo.parameters.add(templateInfo.parameters.Count() + 1, templateInfo.messageSubject);
       }
       else if (current == lxClassMethod) {
+         bool withGenericAttr = false;
+
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, moduleScope->module, getSignature(current.argument), templateInfo));
          
          writer.newNode(lxTemplateMethod, messageRef);
@@ -5741,6 +5743,8 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
          while (attr != lxNone) {
             if (attr == lxClassMethodAttr) {
                writer.appendNode(lxClassMethodAttr, attr.argument);
+               if (attr.argument == tpGeneric)
+                  withGenericAttr = true;
             }
             else if (attr == lxType) {
                writer.appendNode(lxType, importTemplateSubject(extModule, moduleScope->module, attr.argument, templateInfo));
@@ -5749,6 +5753,10 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
             attr = attr.nextNode();
          }
          writer.closeNode();
+
+         //HOTFIX : recognize generic handler
+         if (withGenericAttr)
+            writer.appendNode(lxClassFlag, elWithGenerics);
       }
       else if (current == lxTemplate) {
          importTemplateInfo(current, *moduleScope, scope.reference, extModule, templateInfo);
