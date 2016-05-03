@@ -26,7 +26,7 @@
     ArrayTest eval.
     OpenArgTest eval.
     MethodNotFoundTest eval.
-//    ExceptionTest eval.
+    ExceptionTest eval.
 //    DateTest eval.
 //    ListTest eval.
 //    DictionaryTest eval.

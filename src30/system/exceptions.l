@@ -72,6 +72,14 @@
     [
         handler eval:$self.
     ]
+    
+    /// Executes the exception handler for the current exception if available.
+    ///
+    /// Otherwise goes to the next exception handler
+    #method on : aCatchBlock
+    [
+        aCatchBlock subject eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
+    ]    
 }
 
 // --- Exception ---

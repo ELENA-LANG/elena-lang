@@ -447,7 +447,7 @@ private:
          slMethod,
          slCode,
          slOwnerClass,
-         slTemplate
+         slTemplate,
       };
 
       ModuleScope* moduleScope;

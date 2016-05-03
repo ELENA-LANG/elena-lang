@@ -2315,6 +2315,7 @@ end
 
 procedure __intarray.read&int$&int$&intarray$[4]
 
+  aloadsi 1
   bcopya
   nlen
   ecopyd  
@@ -2322,11 +2323,19 @@ procedure __intarray.read&int$&int$&intarray$[4]
   nload
   notless labErr
   lessn   labErr 0
+  ecopyd
+  aloadsi 3
+  nload
+  lessn   labErr 0
+  add
+  nlen
+  less labErr
  
   aloadsi 3
   nload
-  acopyb
+  eswap
 
+  acopyb
   bloadsi 4
   callextr api : nsubcopy
   quitn 4

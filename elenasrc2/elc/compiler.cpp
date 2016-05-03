@@ -3841,12 +3841,37 @@ void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int
 
    writer.closeNode();  // closing method
 
-   writer.closeNode();
+   //HOTFIX : recognize if it is nested template action
+   //!!should be refactored
+   if (scope.getScope(Scope::slOwnerClass) != &scope && ((InlineClassScope*)&scope)->templateMode) {
+      InlineClassScope* inlineScope = (InlineClassScope*)&scope;
 
-   if (!alreadyDeclared)
-      generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+      // import fields
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = inlineScope->outers.start();
+      while (!outer_it.Eof()) {
+         writer.newNode(lxTemplateField, (*outer_it).reference);
+         writer.appendNode(lxTerminal, outer_it.key());
+         writer.closeNode();
 
-   generateClassImplementation(scope);
+         outer_it++;
+      }
+
+      writer.closeNode();
+
+      inlineScope->templateRef = scope.moduleScope->mapNestedTemplate();
+
+      _Memory* section = scope.moduleScope->module->mapSection(inlineScope->templateRef | mskSyntaxTreeRef, false);
+
+      scope.syntaxTree.save(section);
+   }
+   else {
+      writer.closeNode();
+
+      if (!alreadyDeclared)
+         generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
+
+      generateClassImplementation(scope);
+   }
 }
 
 void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope)
