@@ -29,10 +29,10 @@
     ExceptionTest eval.
     DateTest eval.
     ListTest eval.
-//    DictionaryTest eval.
-//    BoxingTest eval.
+    DictionaryTest eval.
+    BoxingTest eval.
 //    OuterFieldTest eval.
-//    LocalTest eval.
+    LocalTest eval.
 //    StructTest eval.
 //    GroupTest eval.
 //    GenericMethodTest eval.

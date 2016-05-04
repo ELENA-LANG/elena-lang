@@ -97,86 +97,86 @@
         3 ? [ console writeLine:"=> operator works!". ].
 ].
 
-//// --- LocalTest ---
-//
-//#symbol LocalTester =
-//{
-//    do &int:n
-//    [
-//        #var o := n.
-//    ]
-//    
-//    do:n
-//    [
-//        #var o := n.
-//    ]
-//}.
-//
-//#symbol LocalTest =
-//[
-//    #var(type:int)n := 3.    
-//    n := n + 1.
-//    
-//    LocalTester do &int:n.
-//    
-//    LocalTester do:(n int).
-//    
-//    #var(type:long)l := 12345678901234566l.
-//    l := l + 1l.
-//    
-//    #var o := n.
-//    #var o2 := l.
-//].
-//
+// --- LocalTest ---
+
+#symbol LocalTester =
+{
+    do &int:n
+    [
+        #var o := n.
+    ]
+    
+    do:n
+    [
+        #var o := n.
+    ]
+}.
+
+#symbol LocalTest =
+[
+    #var(int)n := 3.    
+    n := n + 1.
+    
+    LocalTester do &int:n.
+    
+    LocalTester do:(n int).
+    
+    #var(long)l := 12345678901234566l.
+    l := l + 1l.
+    
+    #var o := n.
+    #var o2 := l.
+].
+
 //// --- OuterFieldTest ---
 //
 //#symbol OuterFieldTest =
 //[
-//    #var i := Integer new.
-//    { eval : n [ i << n. ] } eval:3.
+//    #var(int) i := 0.
+//    { eval : n [ i := n. ] } eval:3.
 //].
-//
-//#symbol BoxingTester =
-//{
-//    add : aValue
-//    [
-//        ^ aValue.
-//    ]
-//    
-//    #method(stacksafe) add &int:aValue
-//    [
-//        ^ aValue.
-//    ]
-//}.
-//
-//#symbol BoxingTest =
-//[
-//    #var n := 2 + 3 * 4.    // here should be all primitive operations and the result should be boxed
-//    #var n2 := 2 + 3 * n.   // here should be no primitive operations at all.
-//    
-//    BoxingTester add:n.
-//    BoxingTester add:2.
-//    BoxingTester add &int:(n + 3 * 4).
-//    BoxingTester add :(2 + 3).
-//    BoxingTester add :(2 + n).
-//    
-//    #var n3 := BoxingTester add &int:(2 + 3 * 4).
-//    BoxingTester add :(2 + 3 * 4).
-//    
-//].
-//
-//#symbol DictionaryTest =
-//[
-//    #var aList := Dictionary new.
-//    
-//    aList @ 1 := "1a".
-//    aList @ 2 := "2".
-//    
-//    aList @ 1 := "1".
-//    
-//    #var anN1 := aList @ 1.
-//    #var anN2 := aList @ 2.
-//].
+
+#symbol BoxingTester =
+{
+    add : aValue
+    [
+        ^ aValue.
+    ]
+    
+    #method(stacksafe) add &int:aValue
+    [
+        ^ aValue.
+    ]
+}.
+
+#symbol BoxingTest =
+[
+    #var n := 2 + 3 * 4.    // here should be all primitive operations and the result should be boxed
+    #var n2 := 2 + 3 * n.   // here should be no primitive operations at all.
+    
+    BoxingTester add:n.
+    BoxingTester add:2.
+    BoxingTester add &int:(n + 3 * 4).
+    BoxingTester add :(2 + 3).
+    BoxingTester add :(2 + n).
+    
+    #var n3 := BoxingTester add &int:(2 + 3 * 4).
+    BoxingTester add :(2 + 3 * 4).
+    
+].
+
+#symbol DictionaryTest =
+[
+    #var aList := Dictionary new.
+    
+    aList @ 1 := "1a".
+    aList @ 2 := "2".
+    
+    aList @ 1 := "1".
+    
+    #var anN1 := aList @ 1.
+    #var anN2 := aList @ 2.
+].
 
 #symbol ListTest =
 [

@@ -3,7 +3,7 @@
 
 // === basic primitive types ===
 
-//#subject(class:system'KeyValue)     keyvalue.
+#subject keyvalue   = system'KeyValue.
 
 #subject ref        = system'Variable.
 

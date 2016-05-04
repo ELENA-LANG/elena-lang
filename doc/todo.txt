@@ -4,6 +4,7 @@ In development:
               xdev - generic development
                        * system test
 
+                       * OuterFieldTest should work
                        * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                        * primitive operation with subject
 

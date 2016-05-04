@@ -1422,6 +1422,44 @@
     ]
 }
 
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+#class(sealed) KeyValue
+{
+    #field theKey.
+    #field theObject.
+    
+    /// Creates a new objext
+    #constructor new &key:aKey &object:anObject
+    [
+        theKey := aKey.
+        theObject := anObject.
+    ]
+    
+    /// Returns the key
+    #method key = theKey.
+    
+    /// Returns the key
+    #method object = theObject.
+
+    #method set &object:anObject
+    [
+        theObject := anObject.
+    ]
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theObject.
+            
+    /// Redirects the incoming messages to the object
+    #method => theObject.
+}
+
 // === Basic Convertors ===
 
 // --- convertor helpers ---
