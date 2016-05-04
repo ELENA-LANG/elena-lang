@@ -65,7 +65,6 @@ In development:
                        * optimize ($nil != a) ? [ ... ]
                        * optimite #var(int)last_index := theLength - 1. // where theLength is vint
                        * optimize pop close => nop close
-                       * char comparision : use primitive operations (see TextBuilder)
                        * arrayof should support iterator
 
                        * test constructor returning not compatible object

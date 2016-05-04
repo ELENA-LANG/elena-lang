@@ -194,7 +194,7 @@
         [
             theBuffer read &int:anIndex &vchar:aCurrent.
             
-            (aCurrent equal &char:aValue)
+            (aCurrent == aValue)
                 ? [ aRetVal := anIndex. ^$self. ].
                 
             anIndex += 1.
@@ -224,7 +224,7 @@
         [
             theBuffer read &int:anIndex &vchar:aCurrent.
             
-            (aCurrent equal &char:aFirstChar) ?
+            (aCurrent == aFirstChar) ?
             [ 
                 #var(int)j := aFirstCharLen.
                 #var(int)chLen.
@@ -233,7 +233,7 @@
                     theBuffer read &int:(anIndex + j) &vchar:aCurrent.
                     aLiteral read &int:j &vchar:aNextChar.
                     
-                    (aNextChar equal &char:aCurrent)
+                    (aNextChar == aCurrent)
                         ? [ aNextChar readLength &vint:chLen. ]
                         ! [ j := aLiteralLength. chLen := 1. ].
                     
@@ -268,7 +268,7 @@
         [
             theBuffer read &int:anIndex &vchar:aCurrent.
             
-            (aCurrent equal &char:aFirstChar) ?
+            (aCurrent == aFirstChar) ?
             [ 
                 #var(int)j := aFirstCharLen.
                 #var(int)chLen.
@@ -277,7 +277,7 @@
                     theBuffer read &int:(anIndex + j) &vchar:aCurrent.
                     aLiteral read &int:j &vchar:aNextChar.
                     
-                    (aNextChar equal &char:aCurrent)
+                    (aNextChar == aCurrent)
                         ? [ aNextChar readWideLength &vint:chLen. ]
                         ! [ j := aLiteralLength. chLen := 1. ].
                     

@@ -948,8 +948,6 @@ private:
    ObjectInfo compileTerminal(DNode node, CodeScope& scope);
    ObjectInfo compileObject(DNode objectNode, CodeScope& scope, int mode);
 
-   //int mapOperandType(CodeScope& scope, ObjectInfo operand);
-//   int mapVarOperandType(CodeScope& scope, ObjectInfo operand);
    int mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target);
    int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
 

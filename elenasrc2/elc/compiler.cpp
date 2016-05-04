@@ -2199,15 +2199,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //if (StringHelper::compare(terminal, HINT_GROUP)) {
       //   writer.appendNode(lxClassFlag, elGroup);
       //}
-      //else if (StringHelper::compare(terminal, HINT_POINTER)) {
-      //   writer.newNode(lxClassStructure, 4);
-
-      //   appendTerminalInfo(&writer, terminal);
-      //   writer.appendNode(lxClassFlag, elDebugPTR);
-      //   writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole);
-
-      //   writer.closeNode();
-      //}
       //else if (StringHelper::compare(terminal, HINT_BINARY)) {
       //   TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
       //   if (sizeValue.symbol == tsIdentifier) {
@@ -2227,31 +2218,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
 
       //   writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elDynamicRole);
-      //}
-      //else if (StringHelper::compare(terminal, HINT_XDYNAMIC)) {
-      //   writer.newNode(lxClassArray);
-
-      //   appendTerminalInfo(&writer, terminal);
-      //   writer.appendNode(lxClassFlag, elDynamicRole);
-      //   writer.appendNode(lxClassFlag, elDebugArray);
-
-      //   writer.closeNode();
-      //}
-      //else if (StringHelper::compare(terminal, HINT_DYNAMIC)) {
-      //   writer.newNode(lxClassStructure);
-      //   appendTerminalInfo(&writer, terminal);
-
-      //   writer.appendNode(lxClassFlag, elDynamicRole);
-      //   writer.appendNode(lxClassFlag, elDebugArray);
-      //   DNode value = hints.select(nsHintValue);
-      //   if (value != nsNone) {
-      //      size_t type = scope.moduleScope->mapType(value.Terminal());
-      //      if (type == 0)
-      //         scope.raiseError(errUnknownSubject, value.Terminal());
-
-      //      writer.appendNode(lxType, type);
-      //   }
-      //   writer.closeNode();
       //}
 
       hints = hints.nextNode();
@@ -3285,44 +3251,6 @@ ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, O
 
    return ObjectInfo(okObject);
 }
-
-//int Compiler :: mapOperandType(CodeScope& scope, ObjectInfo operand)
-//{
-//   if (operand.kind == okIntConstant) {
-//      return elDebugDWORD;
-//   }
-//   else if (operand.kind == okLongConstant) {
-//      return elDebugQWORD;
-//   }
-//   //else if (operand.kind == okRealConstant) {
-//   //   return elDebugReal64;
-//   //}
-//   //else if (operand.kind == okSubject) {
-//   //   return elDebugSubject;
-//   //}
-//   else if (operand.kind == okLocalAddress && operand.extraparam == -1) {
-//      ClassInfo info;
-//      scope.moduleScope->loadClassInfo(info, scope.moduleScope->subjectHints.get(operand.type), true);
-//      switch (info.header.flags & elDebugMask) {
-//         case elDebugDWORD:
-//            return elDebugIntegers;
-//         default:
-//            return 0;
-//      }
-//   }
-//   else return scope.moduleScope->getClassFlags(resolveObjectReference(scope, operand)) & elDebugMask;
-//}
-
-//int Compiler :: mapVarOperandType(CodeScope& scope, ObjectInfo operand)
-//{
-//   int flags = scope.moduleScope->getClassFlags(resolveObjectReference(scope, operand));
-//
-//   // read only classes cannot be used for variable operations
-//   if (test(flags, elReadOnlyRole))
-//      flags = 0;
-//
-//   return flags & elDebugMask;
-//}
 
 ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
 {
@@ -4482,30 +4410,22 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       ref_t classReference = moduleScope->subjectHints.get(subject);
       int flags = 0;
       ClassInfo classInfo;
-      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), false) == 0)
+      if (moduleScope->loadClassInfo(classInfo, moduleScope->module->resolveReference(classReference), true) == 0)
          scope.raiseError(errInvalidOperation, terminal);
 
       flags = classInfo.header.flags;
 
-      //HOTFIX : allow to pass structures / byref parameters
-      if (test(flags, elStructureRole | elEmbeddable)) {
-         if (test(flags, elWrapper)) {
-            flags = elDebugBinary;
-         }
-         else if ((flags & elDebugMask) == 0) {
-            if (classInfo.fields.Count() == 1) {
-               flags = moduleScope->getTypeFlags(classInfo.fieldTypes.get(0));
-            }
-            else flags = elDebugBinary;
-         }
-
+      //HOTFIX : allow to pass structure
+      if (test(flags, elStructureRole | elEmbeddable) && (flags & elDebugMask) == 0) {
+         flags = elStructureRole;
       }
+      else flags &= elDebugMask;
 
       LexicalType argType = lxNone;
-      switch (flags & elDebugMask) {
+      switch (flags) {
          // if it is an integer number pass it directly
          case elDebugDWORD:
-      //   case elDebugPTR:
+         case elDebugPTR:
          case elDebugSubject:
          case elDebugMessage:
             argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
@@ -4515,12 +4435,11 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
       //      break;
          case elDebugWideLiteral:
          case elDebugLiteral:
-            argType = lxExtArgument;
-            break;
          case elDebugIntegers:
          case elDebugShorts:
          case elDebugBytes:
-         case elDebugBinary:
+         case elStructureRole:
+         case elDebugDPTR:
             argType = lxExtArgument;
             break;
          default:
@@ -6049,6 +5968,23 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
       else scope.info.header.flags |= elDebugArray;
    }
 
+   //HOTFIX : recognize pointer structure
+   if (test(scope.info.header.flags, elStructureRole | elEmbeddable)
+      && ((scope.info.header.flags & elDebugMask) == 0) && scope.info.fields.Count() == 1) 
+   {
+      switch (scope.moduleScope->getTypeFlags(scope.info.fieldTypes.get(0)) & elDebugMask)
+      {
+         case elDebugDWORD:
+            scope.info.header.flags |= elDebugPTR;
+            break;
+         case elDebugQWORD:
+            scope.info.header.flags |= elDebugDPTR;
+            break;
+         default:
+            break;
+      }
+   }
+
    // generate methods
    generateMethodDeclarations(scope, root, closed);
 
@@ -7350,13 +7286,16 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          }
       }
       else if (IsCompOperator(node.argument)) {
-         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+         if (lflags == elDebugDWORD && (rflags == elDebugDWORD || rflags == elDebugPTR)) {
+            node = lxIntOp;
+         }
+         else if (lflags == elDebugPTR && rflags == elDebugPTR) {
             node = lxIntOp;
          }
          else if (lflags == elDebugSubject && rflags == elDebugSubject) {
             node = lxIntOp;
          }
-         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
+         else if (lflags == elDebugQWORD && (rflags == elDebugQWORD || rflags == elDebugDPTR)) {
             node = lxLongOp;
          }
          else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
@@ -7742,6 +7681,18 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
 
             typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
             typecasted = false;
+         }
+         else if (targetInfo.size >= sourceInfo.size && (targetInfo.header.flags & elDebugMask) == (sourceInfo.header.flags & elDebugMask)) {
+            if ((targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
+               //HOTFIX : allow passing short / byte to int
+               typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+               typecasted = false;
+               boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);
+
+               //HOTFIX :  set the correct size
+               SNode parent = object.parentNode();
+               parent.setArgument(sourceInfo.size);
+            }
          }
       }
       else if (test(targetInfo.header.flags, elWrapper)) {

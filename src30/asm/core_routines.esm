@@ -3687,6 +3687,23 @@ labSearch:
 
 end
 
+procedure __timest.eval&empty&__time_st$calendar[1]
+
+  bloadsi 1
+  ecopy 0
+  dcopy 0
+  nwrite
+  dcopy 1
+  nwrite
+  dcopy 2
+  nwrite
+  dcopy 3
+  nwrite
+  quitn 1
+
+end
+
+
 /*
 procedure byte_max
 
@@ -5101,22 +5118,6 @@ labNext2:
   less labNext2
   popa
   quitn 2
-
-end
-
-procedure dlong_empty
-
-  bcopya
-  ecopy 0
-  dcopy 0
-  nwrite
-  dcopy 1
-  nwrite
-  dcopy 2
-  nwrite
-  dcopy 3
-  nwrite
-  quitn 1
 
 end
 

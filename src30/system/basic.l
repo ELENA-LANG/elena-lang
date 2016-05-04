@@ -1310,7 +1310,7 @@
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-#class(struct:embeddable,sealed,dispatchable:char) CharValue :: BaseValue
+#class(struct:embeddable,sealed,dispatchable:char,const) CharValue :: BaseValue
 {
     #field(int)theValue.
     
@@ -1386,11 +1386,11 @@
 
     /// Compares values
     #method(bool,stacksafe) equal &char:anOperand 
-        => system'core_routines'__char.
+        = theValue == anOperand.
 
     /// Compares values
     #method(bool,stacksafe) less &char:anOperand 
-        => system'core_routines'__char.
+        = theValue < anOperand.
         
     // Reads the object hash code into the output parameter
     #method(stacksafe) readHashCode &vint:aCode 

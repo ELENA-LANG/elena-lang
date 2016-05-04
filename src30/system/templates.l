@@ -16,9 +16,38 @@
     
    #method(stacksafe,int,embeddable,suppress:w3) template_subj
    [
-        #var(int)aLength.
-        $self target &vint:aLength.
+        #var(int)val.
+        $self target &vint:val.
         
-        ^ aLength.
+        ^ val.
+   ]
+}
+
+// --- innprop ---
+
+#template innprop : template_subj
+{
+   #subject target.
+    
+   #method(stacksafe) set &template_subj:val
+   [
+        $self target &int:val.
+        
+        ^ val.
+   ]
+}
+ 
+// --- outlprop ---
+
+#template outlprop : template_subj
+{
+   #subject target.
+    
+   #method(stacksafe,long,embeddable,suppress:w3) template_subj
+   [
+        #var(long)val.
+        $self target &vlong:val.
+        
+        ^ val.
    ]
 }

@@ -302,8 +302,8 @@ namespace _ELENA_
    const int elExtMessage          = 0x00208000;
    const int elSymbol              = 0x00100000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-   const int elDebugMask           = 0x000F0000;
 
+   const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
    const int elDebugReal64         = 0x00020000;
    const int elDebugLiteral        = 0x00030000;
@@ -318,7 +318,7 @@ namespace _ELENA_
    const int elDebugSubject        = 0x000C0000;
    const int elDebugReals          = 0x000D0000;
    const int elDebugMessage        = 0x000E0000;
-   const int elDebugBinary         = 0x000F0000;
+   const int elDebugDPTR           = 0x000F0000;
 
   //// --- ELENA class roles ---
   // const int crRoleMask            = 0xFFFFFFF0;
@@ -462,10 +462,9 @@ namespace _ELENA_
    #define HINT_FLOAT_NUMBER        "floatof#1$"
    #define HINT_VARIABLE            "variable$"
    #define HINT_DYNAMIC             "dynamic$"
-//   #define HINT_POINTER            "pointer"
    #define HINT_STRING              "string$"
-//// #define HINT_SAFEPOINT          "safepoint"
-//// #define HINT_LOCK               "sync"
+// #define HINT_SAFEPOINT          "safepoint"
+// #define HINT_LOCK               "sync"
    #define HINT_SEALED              "sealed$"
    #define HINT_LIMITED             "limited$"
    #define HINT_MESSAGE             "message$"

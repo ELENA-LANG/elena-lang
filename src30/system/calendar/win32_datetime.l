@@ -1,103 +1,103 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
-//
-//#subject(class:system'calendar'SystemTime)    __time.
-//#subject(class:system'calendar'TimeStruct)    __time_st.
-//
-//#symbol(const,type:int) DATE_SHORTDATE  = 00000001h.
-//#symbol(const,type:int) DATE_LONGDATE   = 00000002h.
-//
-//// --- SystemTime ---
-//
-//#symbol $factory =
-//{
-//    #method(type:__time) utcNow
-//    [
-//        #var(type:__time)aTime.
-//        
-//        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
-//        
-//        ^ SystemTime new &__time:aTime.
-//    ]
-//    
-//    #method(type:__time) now
-//    [
-//        #var(type:__time)aTime.
-//        #var(type:__time)aLocalTime.
-//        
-//        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
-//
-//        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__time:aLocalTime.
-//
-//        ^ SystemTime new &__time:aLocalTime.
-//    ]
-//}.
-//
-//#class(sealed,struct:embeddable) SystemTime :: BaseValue
-//{
-//    #field(type:long)theValue.
-//    
-//    #constructor(stacksafe) new &__time:aValue
-//        => system'core_routines'long_copy.
-//
-//    #constructor(stacksafe) $new &long:aValue
-//        => system'core_routines'long_copy.
-//
-//    #constructor now
-//        <= new &__time:($factory now).
-//
-//    #constructor utcNow
-//        <= new &__time:($factory utcNow).
-//                        
-//    #method(type:bool) equal &__time:anOperand
-//        => system'core_routines'long_equal.
-//        
-//    #method(type:bool) less &__time:anOperand
-//        => system'core_routines'long_less.
-//    
-//    #method(stacksafe) write &__time:aValue
-//    [
-//        theValue := aValue.
-//    ]
-//    
-//    #method(stacksafe) read &vlong:aRetVal
-//        => system'core_routines'long_save.
-//        
-//    #method(type:__time,stacksafe) subtract &__time:anOperand
-//        => system'core_routines'long_sub.
-//        
-//    #method(type:__time,stacksafe) add &__time:anOperand
-//        => system'core_routines'long_add.
-//    
-//    #method __time = $self.
-//}
-//
-//// --- TimeStruct ---
-//
-//#class(struct:embeddable,sealed) TimeStruct
-//{
-//    #field(type:short)theYear.
-//    #field(type:short)theMonth.
-//    #field(type:short)theDayOfWeek.
-//    #field(type:short)theDay.
-//    #field(type:short)theHour.
-//    #field(type:short)theMinute.
-//    #field(type:short)theSecond.
-//    #field(type:short)theMillisecond.
-//    
-//    #constructor new
-//        => system'core_routines'dlong_empty.
-//
-//    #constructor(stacksafe) new &__time:aTime
-//    [
-//        $self write &__time:aTime.
-//    ]
-//        
-//    #method __time_st = $self.
-//    
-//    #method(stacksafe) year = IntNumber new &short:theYear.
-//
+#import system.
+
+#subject __time    = system'calendar'SystemTime.
+#subject __time_st = system'calendar'TimeStruct.
+
+#symbol(const,int) DATE_SHORTDATE  = 00000001h.
+#symbol(const,int) DATE_LONGDATE   = 00000002h.
+
+// --- SystemTime ---
+
+#symbol $factory =
+{
+    #method(__time) utcNow
+    [
+        #var(__time)aTime.        
+        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+        
+        ^ SystemTime new &__time:aTime.
+    ]
+    
+    #method(__time) now
+    [
+        #var(__time)aTime.
+        #var(__time)aLocalTime.
+        
+        system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
+
+        system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__time:aLocalTime.
+
+        ^ SystemTime new &__time:aLocalTime.
+    ]
+}.
+
+#class(sealed,struct:embeddable,const) SystemTime :: BaseValue
+{
+    #field(long)theValue.
+    
+    #constructor(stacksafe,suppress:w3) new &__time:value
+        = value.
+
+    #constructor(stacksafe) $new &long:aValue
+    [
+        theValue := aValue.
+    ]
+
+    #constructor now
+        = $factory now.
+
+    #constructor utcNow
+        = $factory utcNow.
+
+    #method(bool) equal &__time:anOperand
+        = theValue == anOperand.
+
+    #method(bool) less &__time:anOperand
+        = theValue < anOperand.
+
+    #method(stacksafe,outlprop:long) readValue &vlong:retVal
+    [
+        retVal := theValue.
+    ]
+
+    #method(__time,stacksafe) subtract &__time:anOperand
+    [
+        #var(long)val := anOperand long.
+        
+        ^ SystemTime $new &long:(theValue - val).
+    ]
+
+    #method(__time,stacksafe) add &__time:anOperand
+    [
+        #var(long)val := anOperand long.
+        
+        ^ SystemTime $new &long:(theValue + val).
+    ]
+}
+
+// --- TimeStruct ---
+
+#class(struct:embeddable,sealed) TimeStruct
+{
+    #field(short)theYear.
+    #field(short)theMonth.
+    #field(short)theDayOfWeek.
+    #field(short)theDay.
+    #field(short)theHour.
+    #field(short)theMinute.
+    #field(short)theSecond.
+    #field(short)theMillisecond.
+    
+    #constructor new
+    [
+        system'core_routines'__timest empty &__time_st:$self.
+    ]
+
+    #constructor(stacksafe) new &__time:aTime
+    [
+        $self write &__time:aTime.
+    ]
+
 //    #method(stacksafe) month = IntNumber new &short:theMonth.
 //
 //    #method(stacksafe) dayOfWeek = IntNumber new &short:theDayOfWeek.
@@ -132,12 +132,14 @@
 //
 //    #method(stacksafe) set &millisecond:aValue 
 //        <= writeMillisecond &int:(aValue int).
-//
-//    #method(stacksafe) readYear &vint:aRetVal
-//    [
-//        aRetVal write &short:theYear.
-//    ]
-//
+
+    #method(stacksafe,outnprop:year) readYear &vint:aRetVal
+    [
+        #var(int)val := theYear.
+        
+        aRetVal := val.
+    ]
+
 //    #method(stacksafe) readMonth &vint:aRetVal
 //    [
 //        aRetVal write &short:theMonth.
@@ -238,12 +240,12 @@
 //    [
 //        $self write &__time:aTime.
 //    ] 
-//
-//    #method(stacksafe) write &__time:aFileTime
-//    [
-//        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
-//    ]
-//      
+
+    #method(stacksafe) write &__time:aFileTime
+    [
+        system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
+    ]
+      
 //    #method(stacksafe) toWide &date_attributes:Flags
 //    [
 //        #var(type:shortarray,size:127)aBuffer.
@@ -287,4 +289,4 @@
 //
 //    #method(stacksafe) toShortTime
 //        <= %toWide &time_attributes:0.
-//}
+}
