@@ -4424,14 +4424,19 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       flags = classInfo.header.flags;
 
-      //HOTFIX : allow to pass structure
-      if (test(flags, elStructureRole | elEmbeddable) && (flags & elDebugMask) == 0) {
-         flags = elStructureRole;
+      if (test(flags, elStructureRole)) {
+         if (testany(flags, elDynamicRole | elEmbeddable | elWrapper)) {
+            //HOTFIX : allow to pass structure
+            if ((flags & elDebugMask) == 0) {
+               flags = elDebugBytes;
+            }
+         }
+         else flags = 0;
       }
-      else flags &= elDebugMask;
+      else flags = 0;
 
       LexicalType argType = lxNone;
-      switch (flags) {
+      switch (flags & elDebugMask) {
          // if it is an integer number pass it directly
          case elDebugDWORD:
          case elDebugPTR:
@@ -4447,7 +4452,6 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          case elDebugIntegers:
          case elDebugShorts:
          case elDebugBytes:
-         case elStructureRole:
          case elDebugDPTR:
             argType = lxExtArgument;
             break;

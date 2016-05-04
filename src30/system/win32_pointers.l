@@ -1,6 +1,6 @@
 // --- Handler ---
 
-#class(const,sealed,struct:embeddable,variable,dispatchable:handle) Handle
+#class(const,sealed,struct:embeddable,variable,dispatchable:handle,const) Handle
 {
     #field(int)theHandle.
     

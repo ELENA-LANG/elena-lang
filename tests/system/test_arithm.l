@@ -2,7 +2,7 @@
 #import system'routines.
 //#import system'collections.
 //#import system'dynamic.
-//#import system'calendar.
+#import system'calendar.
 #import extensions.
 //#import extensions'dynamic.
 
@@ -547,41 +547,41 @@
     #var anOutput := aBuffer literal.
 ].
 
-//// --- DateTest ---
+// --- DateTest ---
+
+#symbol DateTest =
+[
+    #var aDate := now.
+    
+    #var aYear := aDate year.
+    #var aMonth := aDate month.
+    #var aDay := aDate day.
+    #var anHour := aDate hour.
+    #var aMinute := aDate minute.
+    #var aSecond := aDate second.
+    
+    #var aRetVal := aDate literal.
+].
+
+//// --- GetPropertyTest ---
 //
-//#symbol DateTest =
+//#symbol GetPropertyAgent =
+//{
+//    eval : aGetProperty
+//    [
+//        #var n := aGetProperty property.
+//        
+//        2 == aGetProperty property
+//            ? [ console writeLine:"GetProperty works!". ]
+//            ! [ console writeLine:"!! GetProperty does not work !!". ]
+//    ]
+//}.
+//
+//#symbol GetPropertyTest =
 //[
-//    #var aDate := now.
-//    
-//    #var aYear := aDate year.
-//    #var aMonth := aDate month.
-//    #var aDay := aDate day.
-//    #var anHour := aDate hour.
-//    #var aMinute := aDate minute.
-//    #var aSecond := aDate second.
-//    
-//    #var aRetVal := aDate literal.
+//    GetPropertyAgent eval:%property[2].
 //].
-//
-////// --- GetPropertyTest ---
-////
-////#symbol GetPropertyAgent =
-////{
-////    eval : aGetProperty
-////    [
-////        #var n := aGetProperty property.
-////        
-////        2 == aGetProperty property
-////            ? [ console writeLine:"GetProperty works!". ]
-////            ! [ console writeLine:"!! GetProperty does not work !!". ]
-////    ]
-////}.
-////
-////#symbol GetPropertyTest =
-////[
-////    GetPropertyAgent eval:%property[2].
-////].
-//
+
 //#symbol StructTest =
 //[
 //    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 

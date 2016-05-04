@@ -410,8 +410,8 @@
         = Date new &__time:theValue.
 }
 
-//// --- now ---
-//
-//#symbol(type:datetime) now = Date now.
-//
-//#symbol(type:datetime) utcNow = Date utcNow.
+// --- now ---
+
+#symbol(datetime) now = Date now.
+
+#symbol(datetime) utcNow = Date utcNow.
