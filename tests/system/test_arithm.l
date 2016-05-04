@@ -1,6 +1,6 @@
 #import system.
 #import system'routines.
-//#import system'collections.
+#import system'collections.
 //#import system'dynamic.
 #import system'calendar.
 #import extensions.
@@ -177,17 +177,17 @@
 //    #var anN1 := aList @ 1.
 //    #var anN2 := aList @ 2.
 //].
-//
-//#symbol ListTest =
-//[
-//    #var aList := List new append:1 append:2 append:4 append:"abc".
-//
-//    #var anArray := aList toArray.
-//
-//    #var n1 := aList safeSeek:2.
-//    #var s := aList safeSeek:"abc".
-//    #var n2 := aList safeSeek:-1.
-//].
+
+#symbol ListTest =
+[
+    #var aList := List new append:1 append:2 append:4 append:"abc".
+
+    #var anArray := aList toArray.
+
+    #var n1 := aList safeSeek:2.
+    #var s := aList safeSeek:"abc".
+    #var n2 := aList safeSeek:-1.
+].
 
 #symbol EnumTest =
 [

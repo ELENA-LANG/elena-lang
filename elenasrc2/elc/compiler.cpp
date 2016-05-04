@@ -3295,7 +3295,7 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
 
    scope.writer->closeNode();
 
-   if (IsCompOperator(operator_id)) {
+   if (IsCompOperator(operator_id) && object.kind != okNil) {
       if (notOperator) {
          scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
          scope.writer->closeNode();

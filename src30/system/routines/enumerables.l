@@ -133,15 +133,15 @@
     #method run:aParam &eachPair:aFunction
       = aFunction run:aParam &enumerator:(self enumerator).
 
-//    #method seek &each:aFunction
-//      = aFunction retrieve &enumerator:(self enumerator).
-//
-//    #method seek:param &eachPair:function
-//      = function retrieve:param &enumerator:(self enumerator).
-//
-//    #method safeSeek : aValue
-//        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
-//
+    #method seek &each:aFunction
+      = aFunction retrieve &enumerator:(self enumerator).
+
+    #method seek:param &eachPair:function
+      = function retrieve:param &enumerator:(self enumerator).
+
+    #method safeSeek : aValue
+        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
+
 //    #method ifExists : aValue
 //        = $nil != self::enumerableOp safeSeek:aValue.
 //        

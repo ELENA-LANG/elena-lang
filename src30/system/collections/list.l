@@ -1,8 +1,7 @@
 #import system.
 
-//#subject(class:system'collections'ListItem)   list_item.
-//
-//#subject(class:system'collections'List)list.
+#subject list_item  = system'collections'ListItem.
+#subject list       = system'collections'List.
 #subject array_list = system'collections'ArrayList.
 //#subject(class:system'collections'Dictionary) dictionary.
 
@@ -137,334 +136,314 @@
 }
 
 
-//// --- ListItem ---
-//
-///// A list item
-//#class(sealed) ListItem
-//{
-//    #field                 theContent.
-//    #field(type:list_item) theNext.
-//    
-//    /// Creates a new item
-//    #constructor new : aValue
-//    [
-//        theContent := aValue.
-//    ]
-//
-//    /// Returns the item object
-//    #method get = theContent.
-//            
-//    /// Sets the item object
-//    #method set : anObject
-//    [
-//        theContent := anObject.
-//    ]    
-//
-//    /// Returns the next item
-//    #method(type:list_item) nextItem = theNext.
-//
-//    #method list_item = $self.
-//
-//    /// Sets the next item
-//    #method setNextItem &list_item:aNext
-//    [
-//        theNext := aNext.
-//    ]
-//}
-//
-//// --- ListEnumerator ---
-//
-///// A list enumerator
-//#class ListEnumerator :: Enumerator
-//{
-//    #field(type:list)     theList.
-//    #field(type:list_item)theCurrent.
-//    
-//    /// Creates a list enumerator
-//    #constructor new &list:aList
-//    [
-//        theList := aList.
-//    ]
-//
-//    /// Creates a list enumerator
-//    #constructor new : anObject
-//        <= new &list:(anObject list).
-//
-//    /// Returns the current object
-//    #method get = theCurrent get.
-//    
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theCurrent := $nil.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        ($nil == theCurrent)
-//            ? [ theCurrent := theList topItem. ]
-//            ! [ theCurrent := theCurrent nextItem. ].
-//            
-//        ^ $nil != theCurrent.
-//    ]
-//}
-//
-//// --- ListIndexer ---
-//
-///// A list iterator
-//#class ListIterator :: Iterator
-//{
-//    #field(type:list)      theList.
-//    #field(type:list_item) theCurrent.
-//    #field(type:vint)      theIndex.
-//    
-//    /// Creates a list iterator
-//    #constructor new &list:aList
-//    [
-//        theList := aList.
-//        theCurrent := aList topItem.
-//        theIndex := Integer new.
-//    ]
-//
-//    /// Creates a list iterator
-//    #constructor new : anObject
-//        <= new &list:(anObject list).
-//    
-//    /// Returns false if the index out of range
-//    #method available = $nil != theCurrent.
-//
-//    /// Returns the current member
-//    #method get = theCurrent get.
-//    
-//    /// Sets the current member
-//    #method set : anObject 
-//    [
-//        theCurrent set:anObject.
-//    ]
-//    
-//    /// Reads the current index into an output parameter
-//    #method readIndex &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex
-//    [
-//        #var(type:int)i := theIndex.
-//        
-//        (anIndex < i) ?
-//        [
-//            theCurrent := theList topItem.
-//            i := 0.
-//        ].
-//        
-//        #loop (i < anIndex) ?
-//        [
-//            ($nil == theCurrent)
-//                ? [ #throw OutOfRangeException new. ].
-//            
-//            theCurrent := theCurrent nextItem.            
-//            i := i + 1.
-//        ].
-//        
-//        theIndex write &int:i.
-//    ]
-//}
-//
-//// --- List ---
-//
-///// A list object
-//#class(sealed) List
-//{
-//    #field theState.
-//    #field(type:vint)      theCount.
-//    #field(type:list_item) theTop.
-//    #field(type:list_item) theLast.
-//
-//    /// Creates a list
-//    #constructor new
-//    [
-//        theState := %empty.
-//        theCount := Integer new.
-//    ]
-//
-//    /// Returns the top item
-//    #method(type:list_item) topItem = theTop.
-//
-//    /// Returns the top object
-//    #method first = theTop get.
-//
-//    /// Returns the last object
-//    #method last = theLast get.    
-//
-//    #method append&empty : anObject
-//    [
-//        theCount write &int:1.
-//        theTop := ListItem new:anObject.
-//        theLast := theTop.
-//        theState := %active.
-//    ]
-//
-//    #method insert&empty : anObject
-//        <= %append &empty:anObject.
-//
-//    #method append&active : anObject
-//    [
-//        theCount += 1.
-//        
-//        #var(type:list_item) aNewItem := ListItem new:anObject.
-//        
-//        theLast setNextItem &list_item:aNewItem.        
-//        theLast := aNewItem.
-//    ]
-//
-//    #method insert&active : anObject
-//    [
-//        theCount += 1.        
-//        
-//        #var(type:list_item) aNewItem := ListItem new:anObject.
-//        aNewItem setNextItem &list_item:theTop.        
-//        theTop := aNewItem.
-//    ]
-//    
-//    /// Returns the object at the specified position
-//    #method getAt : anIndex
-//        = $self getAt &int:(anIndex int).
-//
-//    /// Returns the list item at the specified position
-//    #method(type:list_item,stacksafe) getItemAt &int:anIndex
-//    [
-//        #var(type:int)aCurrentIndex := anIndex.
-//        #var(type:list_item) anItem := theTop.
-//        
-//        #loop (aCurrentIndex > 0) ?
-//        [
-//            anItem := anItem nextItem.
-//            ($nil == anItem)
-//                ? [ #throw OutOfRangeException new. ].
-//            
-//            aCurrentIndex := aCurrentIndex - 1.
-//        ].
-//        
-//        ^ anItem.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    #method(stacksafe) getAt &int:anIndex
-//        = $self getItemAt &int:anIndex get.
-//
-//    /// Appends a new object to the end of the list
-//    #method append : anObject => theState.
-//
-//    /// Inserts a new object to the beginning of the list
-//    #method insert : anObject => theState.
-//
-//    #method insert : anObject &at:anIndex
-//        <= insert &int:(anIndex int) &object:anObject.
-//
-//    /// Inserts a new object to the specified position
-//    #method insert &int:anIndex &object:anObject
-//    [
-//        (anIndex == 0)
-//            ? [ $self insert:anObject. ]
-//            ! [
-//                #var(type:list_item) aNew := ListItem new:anObject.        
-//                #var(type:list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
-//                #var(type:list_item) aNext := aPrevious nextItem.
-//                
-//                aPrevious setNextItem &list_item:aNew.
-//                aNew setNextItem &list_item:aNext.
-//            ].
-//    ]
-//
-//    /// Removes an object at the specified position
-//    #method(suppress:w2) remove &int:anIndex
-//    [
-//        ($nil == theTop)
-//            ? [ #throw OutOfRangeException new. ].
-//        
-//        (0 == anIndex)
-//            ? [
-//                theTop := theTop nextItem.
-//                ($nil == theTop)
-//                    ? [ theLast := $nil. theState := %empty. ].
-//            ]
-//            ! [
-//                #var(type:list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
-//                #var(type:list_item) aNext := aPrevious nextItem.
-//                
-//                aPrevious setNextItem &list_item:(aNext nextItem).
-//                
-//                (aNext equal &reference:theLast)
-//                    ? [ theLast := aPrevious ].
-//            ].
-//            
-//        theCount -= 1.
-//    ]
-//        
-//    #method remove &at:anIndex
-//        <= remove &int:(anIndex int).
-//
-//    /// obsolete        
-//    #method remove &index:anIndex
-//        <= remove &int:(anIndex int).
-//        
-//    /// Reads the number of list item to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//    [
-//        aLength << theCount.
-//    ]
-//    
-//    /// Returns the number of list items
-//    #method(type:int,embeddable,suppress:w3) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]    
-//    
-//    /// Clears the list
-//    #method clear 
-//    [
-//        theCount write &int:0.
-//        
-//        theState := %empty.
-//        theTop := $nil.
-//        theLast := $nil.
-//    ]
-//
-//    /// Returns the list enumerator
-//    #method enumerator = ListEnumerator new &list:$self.
-//
-//    /// Returns the list iterator
-//    #method iterator = ListIterator new &list:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast:aVerb &to:aTarget = aTarget::aVerb eval &enumerable:$self.
-//    
-//    /// Dispatches the verb to the target object with enumerable subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &enumerable:$self.
-//
-//    /// Returns itself
-//    #method list = $self.
-//    
-//    /// Clones the list
-//    #method clone 
-//    [
-//        #var aList := List new.
-//        
-//        #var(type:list_item) anItem := theTop.        
-//        #loop ($nil != anItem) ?
-//        [
-//            aList append:(anItem get).
-//            
-//            anItem := anItem nextItem.
-//        ].
-//    ]
-//}
+// --- ListItem ---
+
+/// A list item
+#class(sealed) ListItem
+{
+    #field            theContent.
+    #field(list_item) theNext.
+    
+    /// Creates a new item
+    #constructor new : aValue
+    [
+        theContent := aValue.
+    ]
+
+    /// Returns the item object
+    #method get = theContent.
+            
+    /// Sets the item object
+    #method set : anObject
+    [
+        theContent := anObject.
+    ]    
+
+    /// Returns the next item
+    #method(list_item) nextItem = theNext.
+
+    /// Sets the next item
+    #method setNextItem &list_item:aNext
+    [
+        theNext := aNext.
+    ]
+}
+
+// --- ListEnumerator ---
+
+/// A list enumerator
+#class ListEnumerator :: Enumerator
+{
+    #field(list)     theList.
+    #field(list_item)theCurrent.
+    
+    /// Creates a list enumerator
+    #constructor new &list:aList
+    [
+        theList := aList.
+    ]
+
+    /// Creates a list enumerator
+    #constructor new : anObject
+        <= new &list:(anObject list).
+
+    /// Returns the current object
+    #method get = theCurrent get.
+    
+    /// Resets the enumerator
+    #method reset
+    [
+        theCurrent := $nil.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        ($nil == theCurrent)
+            ? [ theCurrent := theList topItem. ]
+            ! [ theCurrent := theCurrent nextItem. ].
+            
+        ^ $nil != theCurrent.
+    ]
+}
+
+// --- ListIndexer ---
+
+/// A list iterator
+#class ListIterator :: Iterator
+{
+    #field(list)      theList.
+    #field(list_item) theCurrent.
+    #field(vint)      theIndex.
+    
+    /// Creates a list iterator
+    #constructor(suppress:w3) new &list:aList
+    [
+        theList := aList.
+        theCurrent := aList topItem.
+        theIndex := 0.
+    ]
+
+    /// Creates a list iterator
+    #constructor new : anObject
+        <= new &list:(anObject list).
+    
+    /// Returns false if the index out of range
+    #method available = $nil != theCurrent.
+
+    /// Returns the current member
+    #method get = theCurrent get.
+    
+    /// Sets the current member
+    #method set : anObject 
+    [
+        theCurrent set:anObject.
+    ]
+    
+    /// Reads the current index into an output parameter
+    #method readIndex &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex
+    [
+        #var(int)i := theIndex.
+        
+        (anIndex < i) ?
+        [
+            theCurrent := theList topItem.
+            i := 0.
+        ].
+        
+        #loop (i < anIndex) ?
+        [
+            ($nil == theCurrent)
+                ? [ #throw OutOfRangeException new. ].
+            
+            theCurrent := theCurrent nextItem.            
+            i := i + 1.
+        ].
+        
+        theIndex set &int:i.
+    ]
+}
+
+// --- List ---
+
+/// A list object
+#class(sealed,dispatchable:enumerable) List
+{
+    #field theState.
+    #field(vint)      theCount.
+    #field(list_item) theTop.
+    #field(list_item) theLast.
+
+    /// Creates a list
+    #constructor(suppress:w3) new
+    [
+        theState := %empty.
+        theCount := 0.
+    ]
+
+    /// Returns the top item
+    #method(list_item) topItem = theTop.
+
+    /// Returns the top object
+    #method first = theTop get.
+
+    /// Returns the last object
+    #method last = theLast get.    
+
+    #method append&empty : anObject
+    [
+        theCount set &int:1.
+        theTop := ListItem new:anObject.
+        theLast := theTop.
+        theState := %active.
+    ]
+
+    #method insert&empty : anObject
+        <= %append &empty:anObject.
+
+    #method append&active : anObject
+    [
+        theCount += 1.
+        
+        #var(list_item) aNewItem := ListItem new:anObject.
+        
+        theLast setNextItem &list_item:aNewItem.        
+        theLast := aNewItem.
+    ]
+
+    #method insert&active : anObject
+    [
+        theCount += 1.        
+        
+        #var(list_item) aNewItem := ListItem new:anObject.
+        aNewItem setNextItem &list_item:theTop.        
+        theTop := aNewItem.
+    ]
+    
+    /// Returns the object at the specified position
+    #method getAt : anIndex
+        = $self getAt &int:(anIndex int).
+
+    /// Returns the list item at the specified position
+    #method(list_item,stacksafe) getItemAt &int:anIndex
+    [
+        #var(int)aCurrentIndex := anIndex.
+        #var(list_item) anItem := theTop.
+        
+        #loop (aCurrentIndex > 0) ?
+        [
+            anItem := anItem nextItem.
+            ($nil == anItem)
+                ? [ #throw OutOfRangeException new. ].
+            
+            aCurrentIndex := aCurrentIndex - 1.
+        ].
+        
+        ^ anItem.
+    ]
+
+    /// Returns the object at the specified position
+    #method(stacksafe) getAt &int:anIndex
+        = $self getItemAt &int:anIndex get.
+
+    /// Appends a new object to the end of the list
+    #method append : anObject => theState.
+
+    /// Inserts a new object to the beginning of the list
+    #method insert : anObject => theState.
+
+    #method insert : anObject &at:anIndex
+        <= insert &int:(anIndex int) &object:anObject.
+
+    /// Inserts a new object to the specified position
+    #method insert &int:anIndex &object:anObject
+    [
+        (anIndex == 0)
+            ? [ $self insert:anObject. ]
+            ! [
+                #var(list_item) aNew := ListItem new:anObject.        
+                #var(list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
+                #var(list_item) aNext := aPrevious nextItem.
+                
+                aPrevious setNextItem &list_item:aNew.
+                aNew setNextItem &list_item:aNext.
+            ].
+    ]
+
+    /// Removes an object at the specified position
+    #method(suppress:w2) remove &int:anIndex
+    [
+        ($nil == theTop)
+            ? [ #throw OutOfRangeException new. ].
+        
+        (0 == anIndex)
+            ? [
+                theTop := theTop nextItem.
+                ($nil == theTop)
+                    ? [ theLast := $nil. theState := %empty. ].
+            ]
+            ! [
+                #var(list_item) aPrevious := $self getItemAt &int:(anIndex - 1).
+                #var(list_item) aNext := aPrevious nextItem.
+                
+                aPrevious setNextItem &list_item:(aNext nextItem).
+                
+                (aNext equal &reference:theLast)
+                    ? [ theLast := aPrevious ].
+            ].
+            
+        theCount -= 1.
+    ]
+        
+    #method remove &at:anIndex
+        <= remove &int:(anIndex int).
+
+    /// obsolete        
+    #method remove &index:anIndex
+        <= remove &int:(anIndex int).
+        
+    /// Reads the number of list item to the output parameter
+    #method(stacksafe,outnprop:length) readLength &vint:aLength
+    [
+        aLength := theCount.
+    ]
+    
+    /// Clears the list
+    #method clear 
+    [
+        theCount set &int:0.
+        
+        theState := %empty.
+        theTop := $nil.
+        theLast := $nil.
+    ]
+
+    /// Returns the list enumerator
+    #method enumerator = ListEnumerator new &list:$self.
+
+    /// Returns the list iterator
+    #method iterator = ListIterator new &list:$self.
+    
+    /// Clones the list
+    #method clone 
+    [
+        #var aList := List new.
+        
+        #var(list_item) anItem := theTop.        
+        #loop ($nil != anItem) ?
+        [
+            aList append:(anItem get).
+            
+            anItem := anItem nextItem.
+        ].
+    ]
+}
 
 // --- ArrayList ---
 

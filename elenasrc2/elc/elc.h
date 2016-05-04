@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x003C
+#define ELC_REVISION_NUMBER             0x003D
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -94,7 +94,7 @@
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."
 #define ELC_LINKING                 "Linking..."
-#define ELC_SUCCESSFUL_COMPILATION  "Successfully compiled\n"
+#define ELC_SUCCESSFUL_COMPILATION  "\nSuccessfully compiled\n"
 #define ELC_WARNING_COMPILATION     "Compiled with warnings\n"
 #define ELC_UNSUCCESSFUL            "Compiled with errors\n"
 #define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
