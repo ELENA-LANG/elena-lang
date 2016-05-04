@@ -29,7 +29,7 @@
 {
    #subject target.
     
-   #method(stacksafe) set &template_subj:val
+   #method(stacksafe,suppress:w2) set &template_subj:val
    [
         $self target &int:val.
         

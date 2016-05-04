@@ -202,11 +202,11 @@
 //        ^ byteConvertor convert &short:aWord.
 //    ]
 //}
-//
-//// --- intOp ---
-//
-//#class(extension:int) intOp
-//{
+
+// --- intOp ---
+
+#class(extension:int) intOp
+{
 //    #method(type:int) absolute
 //    [
 //        #var(type:int)n := self int.
@@ -216,18 +216,18 @@
 //        
 //        ^ IntNumber new &int:n.
 //    ]
-//    
-//    #method(type:int) mod : anOperand
-//    [
-//        #var(type:int)x := self int.
-//        #var(type:int)y := anOperand int.
-//        
-//        #var(type:int)z := x / y.
-//        z := z * y.
-//        
-//        ^ IntNumber new &int:(x - z).
-//    ]
-//    
+    
+    #method(int) mod : anOperand
+    [
+        #var(int)x := self int.
+        #var(int)y := anOperand int.
+        
+        #var(int)z := x / y.
+        z := z * y.
+        
+        ^ IntNumber new &int:(x - z).
+    ]
+    
 //    #method(type:int)power &int:y
 //    [
 //        #var(type:int)x := self int.
@@ -309,8 +309,8 @@
 //        
 //        ^ shortConvertor convert &int:aWord.
 //    ]
-//}
-//
+}
+
 //// --- longOp ---
 //
 //#class(extension:long) longOp

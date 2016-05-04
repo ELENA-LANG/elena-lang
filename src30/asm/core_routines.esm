@@ -3703,6 +3703,23 @@ procedure __timest.eval&empty&__time_st$calendar[1]
 
 end
 
+procedure __wide.eval&copy&wide$&int$&int$&shortarray$[4]
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : wsubcopy
+  
+  acopyb
+  quitn 4
+
+end
+
 
 /*
 procedure byte_max
@@ -5118,29 +5135,6 @@ labNext2:
   less labNext2
   popa
   quitn 2
-
-end
-
-procedure ws_copybuf
-
-  aloadsi 3
-  nload  
-  inc
-  acopyr class : system'WideLiteralValue
-  wcreate
-
-  bcopya
-  aloadsi 3
-  nload
-  ecopyd
-  aloadsi 2
-  nload
-  aloadsi 4
-  
-  callextr api : wsubcopy
-  
-  acopyb
-  quitn 4
 
 end
 

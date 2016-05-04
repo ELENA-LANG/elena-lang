@@ -1137,8 +1137,11 @@
     #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
         => system'core_routines'__wide.
 
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
-//        => system'core_routines'ws_copybuf.
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
+        <= (new &int:aSize)
+    [
+        system'core_routines'__wide copy &wide:$self &int:anIndex &int:aSize &shortarray:anArray.
+    ]
 
     /// Converts to UTF-8 literal
     #method literal = literalConvertor convert &wide:$self.

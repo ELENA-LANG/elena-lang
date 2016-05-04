@@ -331,6 +331,11 @@ inline bool isEmbeddable(ClassInfo& localInfo)
    return false;
 }
 
+inline bool isDWORD(int flags)
+{
+   return (isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD);
+}
+
 //inline bool isArrayPrimitive(int flags)
 //{
 //   switch (flags & elDebugMask)
@@ -3513,31 +3518,35 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
    if (member == nsL0Operation) {
       return compileOperations(node, scope, object, mode);
    }
-   //else if (member == nsMessageOperation) {
-   //   // if it is shorthand property settings
-   //   DNode arg = member.firstChild();
-   //   if (arg != nsNone || member.nextNode() != nsAssigning)
-   //      scope.raiseError(errInvalidSyntax, member.FirstTerminal());
+   else if (member == nsMessageOperation) {
+      // if it is shorthand property settings
+      DNode arg = member.firstChild();
+      if (arg != nsNone || member.nextNode() != nsAssigning)
+         scope.raiseError(errInvalidSyntax, member.FirstTerminal());
 
-   //   ref_t subject = scope.moduleScope->mapSubject(member.Terminal());
-   //   ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+      ref_t subject = scope.moduleScope->mapSubject(member.Terminal());
+      //HOTFIX : support lexical subjects
+      if (subject == 0)
+         subject = scope.moduleScope->module->mapSubject(member.Terminal(), false);
 
-   //   ref_t extensionRef = mapExtension(scope, messageRef, object);
+      ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
 
-   //   if (extensionRef != 0) {
-   //      //HOTFIX: A proper method should have a precedence over an extension one
-   //      if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
-   //         object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
-   //      }
-   //   }
+      ref_t extensionRef = mapExtension(scope, messageRef, object);
 
-   //   if (scope.moduleScope->typeHints.exist(subject)) {
-   //      compileExpression(member.nextNode().firstChild(), scope, subject, 0);
-   //   }
-   //   else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
+      if (extensionRef != 0) {
+         //HOTFIX: A proper method should have a precedence over an extension one
+         if (scope.moduleScope->checkMethod(resolveObjectReference(scope, object), messageRef) == tpUnknown) {
+            object = ObjectInfo(okConstantRole, extensionRef, 0, object.type);
+         }
+      }
 
-   //   return compileMessage(member, scope, object, messageRef, 0);
-   //}
+      if (scope.moduleScope->subjectHints.exist(subject)) {
+         compileExpression(member.nextNode().firstChild(), scope, subject, 0);
+      }
+      else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
+
+      return compileMessage(member, scope, object, messageRef, 0);
+   }
    else {
       ObjectInfo currentObject = object;
 
@@ -6362,7 +6371,7 @@ void Compiler :: importNode(ClassScope& scope, SyntaxTree::Node current, SyntaxW
 
          // HOTFIX : if it is typecast message, provide the type
          if (getVerb(current.argument) == GET_MESSAGE_ID && getParamCount(current.argument) == 0 && scope.moduleScope->subjectHints.exist(signature)) {
-            current.appendNode(lxType, signature);
+            writer.appendNode(lxType, signature);
          }
       }
    }
@@ -7682,17 +7691,15 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
             typecasted = false;
          }
-         else if (targetInfo.size >= sourceInfo.size && (targetInfo.header.flags & elDebugMask) == (sourceInfo.header.flags & elDebugMask)) {
-            if ((targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
-               //HOTFIX : allow passing short / byte to int
-               typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-               typecasted = false;
-               boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);
+         else if (isDWORD(targetInfo.header.flags) && isDWORD(sourceInfo.header.flags)) {
+            //HOTFIX : allow passing short / byte to int
+            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+            typecasted = false;
+            boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);
 
-               //HOTFIX :  set the correct size
-               SNode parent = object.parentNode();
-               parent.setArgument(sourceInfo.size);
-            }
+            //HOTFIX :  set the correct size
+            SNode parent = object.parentNode();
+            parent.setArgument(sourceInfo.size);
          }
       }
       else if (test(targetInfo.header.flags, elWrapper)) {
