@@ -285,6 +285,8 @@ D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
 
  len                        - [acc].Count >> index;
  
+ count                      - [base].Count >> ext;
+ 
  mindex                     - search for ext in acc:VMT; out: index or -1
  
  ncreate                    - create the object with size=index*4 and vmt=acc, out : acc   (*index and ext affected)

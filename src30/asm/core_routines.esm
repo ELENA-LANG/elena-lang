@@ -1,17 +1,17 @@
 //        ELENA Language 2.0
 //      inline system library
 
-/*
 define elMessage            000008000h
 define elExtMessage         000200000h
 define elRole               000004000h
 define elSubject            000002000h
+/*
 define elStructure          000000008h
 
 define NEW_MESSAGE_ID       084000000h
 */
 define EVAL_MESSAGE_ID      085000000h
-//define GET_MESSAGE_ID       086000000h
+define GET_MESSAGE_ID       086000000h
 
 define INV_PARAM_MASK       0FFFFFFF0h
 
@@ -3720,6 +3720,145 @@ procedure __wide.eval&copy&wide$&int$&int$&shortarray$[4]
 
 end
 
+procedure __struct.dispatch[1]
+
+  bsredirect
+
+  pushe
+  dcopysubj
+  pushd
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elSubject
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  popi 2
+  pope
+  setsubj 0
+  dcopye
+  ifn labQuit GET_MESSAGE_ID
+  ajumpvi 0
+
+labQuit:
+  quitn 1
+  
+labEnd:
+  popi 3
+  open 1
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __tape.dispatch[1]
+
+  dcopyverb
+  eswap
+  
+  elsem labDefault EVAL_MESSAGE_ID
+
+  ecopyd
+  dcopycount
+  inc
+  ecopyd  
+
+  open 5
+  reserve 2
+  pusha
+  
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+  
+  pushn 0
+  
+  bcopyf -6
+  
+// ; copy message + self
+labNextParam:
+  get
+  pusha
+  next labNextParam
+
+  bloadfi 1
+
+labNext:
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  flag
+  ecopyd
+  andn elMessage
+  elsen labMessage 0
+  pusha
+  jump labNext
+
+labMessage:
+  dcopye
+  andn elExtMessage
+  elsen labExtMessage 0
+
+  nload
+  ecopyd
+  aloadsi 0  
+  acallvi 0
+  pusha
+  bloadfi 1
+  jump labNext
+
+labExtMessage:
+  nload
+  ecopyd
+  acalli 1
+  pusha
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  popa
+
+  dloadfi -3
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+labDefault:
+  ecopyd
+  bsredirect  
+  pushe
+  open 1
+  bcopyf -1
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
+end
 
 /*
 procedure byte_max
@@ -5365,146 +5504,6 @@ procedure class_indexOfMsg
 labFalse:
   acopyr const : system'false
   quitn 2
-
-end
-
-procedure handle_tape
-
-  dcopyverb
-  eswap
-  
-  elsem labDefault EVAL_MESSAGE_ID
-
-  ecopyd
-  dcopycount
-  inc
-  ecopyd  
-
-  open 5
-  reserve 2
-  pusha
-  
-  dsavefi -3
-  dcopy 0  
-  dsavefi -2
-  
-  pushn 0
-  
-  bcopyf -6
-  
-// ; copy message + self
-labNextParam:
-  get
-  pusha
-  next labNextParam
-
-  bloadfi 1
-
-labNext:
-  len
-  dloadfi -2
-  if labEnd
-  get
-  inc
-  dsavefi -2
-
-  flag
-  ecopyd
-  andn elMessage
-  elsen labMessage 0
-  pusha
-  jump labNext
-
-labMessage:
-  dcopye
-  andn elExtMessage
-  elsen labExtMessage 0
-
-  nload
-  ecopyd
-  aloadsi 0  
-  acallvi 0
-  pusha
-  bloadfi 1
-  jump labNext
-
-labExtMessage:
-  nload
-  ecopyd
-  acalli 1
-  pusha
-  bloadfi 1
-  jump labNext
-
-labEnd:
-  popa
-
-  dloadfi -3
-  ecopyd
-  restore 4
-  close
-
-  equit
-
-labDefault:
-  ecopyd
-  bsredirect  
-  pushe
-  open 1
-  bcopyf -1
-  pushb
-  pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
-  throw
-
-end
-
-procedure handle_selector
-
-  bsredirect
-
-  pushe
-  dcopysubj
-  pushd
-  bcopya
-  pushn 0
-
-labNext:
-  len
-  dloadsi 0
-  if labEnd
-  get
-  inc
-  dsavesi 0
-
-  flag
-  andn elSubject
-  ifn  labNext 0
-
-  nload
-  ecopyd
-  dloadsi 1
-  else labNext
-
-labCall:
-  dloadsi 0
-  get
-  popi 2
-  pope
-  setsubj 0
-  dcopye
-  ifn labQuit GET_MESSAGE_ID
-  ajumpvi 0
-
-labQuit:
-  quitn 1
-  
-labEnd:
-  popi 3
-  open 1
-  pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
-  throw
 
 end
 

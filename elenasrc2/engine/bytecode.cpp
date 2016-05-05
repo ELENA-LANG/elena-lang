@@ -18,7 +18,7 @@ const char* _fnOpcodes[256] =
    "dcopycount", "or", "pusha", "popa", "acopyb", "pope", "bsredirect", "dcopysubj",
 
    "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
-   "get", "set", "inc", "equit", "unknown", "unhook", "add", "create",
+   "get", "set", "inc", "equit", "count", "unhook", "add", "create",
 
    "ecopyd", "dcopye", "pushd", "popd", "unknown", "include", "exclude", "trylock",
    "freelock", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",

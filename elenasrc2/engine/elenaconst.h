@@ -291,7 +291,7 @@ namespace _ELENA_
    const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
-  // const int elGroup               = 0x00000200;
+   const int elGroup               = 0x00000200;
    const int elWithGenerics        = 0x00000400;
    const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
@@ -473,7 +473,7 @@ namespace _ELENA_
    #define HINT_SYMBOL              "symbol$"
    #define HINT_EXTENSION           "extension$"
    #define HINT_EXTENSIONOF         "extension#1$"
-//   #define HINT_GROUP              "group"
+   #define HINT_GROUP               "group$"
    #define HINT_GENERIC             "generic$"
    #define HINT_EMBEDDABLE          "embeddable$"
    #define HINT_NONSTRUCTURE        "nonstructural$"

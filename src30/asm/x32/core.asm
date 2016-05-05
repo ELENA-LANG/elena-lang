@@ -1245,6 +1245,14 @@ inline % 1Bh
  
 end
 
+// ; count
+inline % 1Ch
+
+  mov  ecx, [edi-8]
+  shr  ecx, 2
+
+end
+
 // ; unhook
 inline % 1Dh
 

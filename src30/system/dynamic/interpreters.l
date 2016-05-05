@@ -1,10 +1,8 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
+#import system.
 //#import system'routines.
-//
-//#subject(class:Struct) struct.
-//
+
+#subject struct = system'dynamic'Struct.
+
 //// --- CastOver ---
 //
 //#class(group) CastOver :: BaseArray
@@ -25,43 +23,39 @@
 //    
 //    #method => system'core_routines'handle_castover.
 //}
-//
-//// --- Tape ---
-//
-//#class(group) Tape :: BaseArray
-//{
-//    #method => system'core_routines'handle_tape.
-//}
-//
-//// --- tapeControl ---
-//
-//#class(extension)tapeOp
-//{
-//    #method var &args:params
-//    [
-//        #var(type:int)len := params length.
-//        #var(type:int)n := len.
-//        n := n - self int.
-//       
-//        ^ params@n.
-//    ]
-//}
-//
-//// --- Struct ---
-//
-//#class(group) Struct :: BaseArray
-//{
-//    #method struct = $self.
-//    
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &struct:$self.
-//    
-//    /// Dispatches the verb to the target object with generic subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:$self.
-//    
-//    #method => system'core_routines'handle_selector.
-//}
-//
+
+// --- Tape ---
+
+#class(dynamic,group) Tape
+{
+    #field $item.
+    
+    #method => system'core_routines'__tape.
+}
+
+// --- tapeControl ---
+
+#class(extension)tapeOp
+{
+    #method var &args:params
+    [
+        #var(int)len := params length.
+        #var(int)n := len.
+        n -= self int.
+       
+        ^ params@n.
+    ]
+}
+
+// --- Struct ---
+
+#class(dynamic,group,dispatchable:struct) Struct
+{
+    #field $item.
+    
+    #method => system'core_routines'__struct.
+}
+
 //// --- Dynamic ---
 //
 //#class Dynamic

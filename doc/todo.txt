@@ -3,7 +3,22 @@ In development:
 ------                              
               xdev - generic development
                        * system test
+                       * implement prop template
+                       * test all rosetta samples
+                       * test all samples
+                       * test string_comparision
+                       * test combinations
+                       * test comp_list
+                       * test twenty_four
+                       * test c_a_g
+                       * test graph
+                       * test notepad
+                       * live programming : provide path to the current library
+                       * test live programming
+                       * test calculator sample
+                       * test chat sample : fix the current bug, simple implementation - direct output
 
+              xdev - generic development
                        * OuterFieldTest should work
                        * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                        * primitive operation with subject
@@ -83,19 +98,6 @@ In development:
                        * stack allocated variable and $nil
                        * review #10 issue
 
-                       * test all rosetta samples
-                       * test all samples
-                       * test string_comparision
-                       * test combinations
-                       * test comp_list
-                       * test twenty_four
-                       * test c_a_g
-                       * test graph
-                       * test notepad
-                       * live programming : provide path to the current library
-                       * test live programming
-                       * test calculator sample
-                       * test chat sample : fix the current bug, simple implementation - direct output
                        * verify if methods can be added for sealed, limited, method duplications                       
                        * test live eson script                                                                                                         
                        * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 

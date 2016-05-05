@@ -44,6 +44,7 @@ enum ByteCode
    bcSet             = 0x19,
    bcInc             = 0x1A,
    bcEQuit           = 0x1B,
+   bcCount           = 0x1C,
    bcUnhook          = 0x1D,
    bcAdd             = 0x1E,
    bcCreate          = 0x1F,

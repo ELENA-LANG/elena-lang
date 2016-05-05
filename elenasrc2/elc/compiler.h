@@ -326,6 +326,7 @@ private:
       ref_t nonstructHint;
       ref_t symbolHint;
       ref_t extMssgHint;
+      ref_t groupHint;
 
       ref_t boolType;
 

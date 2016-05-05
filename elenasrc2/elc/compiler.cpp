@@ -451,6 +451,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    actionHint = module->mapSubject(HINT_ACTION_CLASS, false);
    nonstructHint = module->mapSubject(HINT_NONSTRUCTURE, false);
    symbolHint = module->mapSubject(HINT_SYMBOL, false);
+   groupHint = module->mapSubject(HINT_GROUP, false);
 
    defaultNs.add(module->Name());
 
@@ -2137,6 +2138,11 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
+   if (hintRef == moduleScope->groupHint) {
+      writer.appendNode(lxClassFlag, elGroup);
+
+      return true;
+   }
    else if (hintRef == moduleScope->literalHint) {
       writer.appendNode(lxClassFlag, elDebugLiteral); // NOTE : template importer should tweak it depending on character size
       writer.appendNode(lxClassFlag, elStructureRole | elDynamicRole);
@@ -2201,9 +2207,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       if (!compileClassHint(hints, writer, scope, false))
          scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
-      //if (StringHelper::compare(terminal, HINT_GROUP)) {
-      //   writer.appendNode(lxClassFlag, elGroup);
-      //}
       //else if (StringHelper::compare(terminal, HINT_BINARY)) {
       //   TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
       //   if (sizeValue.symbol == tsIdentifier) {
