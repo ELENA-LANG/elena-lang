@@ -1,60 +1,58 @@
-//// ==== ver 3.4.2 ===
-//
-//#import system.
+#import system.
 //#import system'collections.
-//
+
 //#symbol idleFunc1 = x [].
-//
-//// === pattern enumerators ==
-//
-//// --- Toping ---
-//
-//#class TopFilter :: Enumerator
-//{
-//    #field(type:vint)theOffset.    
-//    #field(type:vint)theCounter.    
-//    #field(type:enumerator)theEnumerator.
-//    
-//    #constructor new : aCounter &enumerator:anEnumerator
-//    [
-//        theCounter := Integer new &int:(aCounter int).
-//        theOffset := Integer new &int:0.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #constructor new : counter &skipping:offset &enumerator:enumerator
-//    [
-//        theCounter := Integer new &int:(counter int).
-//        theOffset := Integer new &int:(offset int).
-//        
-//        theEnumerator := enumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method next
-//    [
-//        (theCounter != 0)?
-//        [
-//            #loop (theEnumerator next)?
-//            [
-//                (theOffset == 0)
-//                    ? [  
-//                        theCounter -= 1. ^ true.
-//                    ]
-//                    ! [ theOffset -= 1. ]
-//            ].
-//        ].
-//        
-//        ^ false.
-//    ]
-//    
-//    #method reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
+
+// === pattern enumerators ==
+
+// --- Toping ---
+
+#class TopFilter :: Enumerator
+{
+    #field(vint)theOffset.    
+    #field(vint)theCounter.    
+    #field(enumerator)theEnumerator.
+    
+    #constructor(suppress:w3) new : aCounter &enumerator:anEnumerator
+    [
+        theCounter := aCounter int.
+        theOffset := 0.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #constructor(suppress:w3) new : counter &skipping:offset &enumerator:enumerator
+    [
+        theCounter := counter int.
+        theOffset := offset int.
+        
+        theEnumerator := enumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method next
+    [
+        (theCounter != 0)?
+        [
+            #loop (theEnumerator next)?
+            [
+                (theOffset == 0)
+                    ? [  
+                        theCounter -= 1. ^ true.
+                    ]
+                    ! [ theOffset -= 1. ]
+            ].
+        ].
+        
+        ^ false.
+    ]
+    
+    #method reset 
+    [
+        theEnumerator reset.
+    ]    
+}
+
 //// --- Filtering ---
 //
 //#class Filter :: Enumerator
@@ -662,11 +660,11 @@
 //
 //    #method eval : aParam [ theResult << theOperation eval:theResult:aParam. ]
 //}
-//
-//// --- patternOp ---
-//
-//#class(extension)patternOp
-//{
+
+// --- patternOp ---
+
+#class(extension)patternOp
+{
 //    #method summarize : aVariable
 //    [
 //        Summing new:aVariable run &enumerator:(self enumerator).
@@ -686,10 +684,10 @@
 //    
 //    #method accumulate &with:operation 
 //        = self::patternOp accumulate:(Variable new) &with:operation.
-//
-//    #method top:aCounter
-//        = TopFilter new:aCounter &enumerator:(self enumerator).
-//
+
+    #method top:aCounter
+        = TopFilter new:aCounter &enumerator:(self enumerator).
+
 //    #method last:counter
 //        = TopFilter new:counter &skipping:(self length - counter) &enumerator:(self enumerator).
 //
@@ -740,4 +738,4 @@
 //        
 //    #method repeat &till:max &each:aRepeater
 //        = Repeater new &from:self &till:max &each:aRepeater.
-//}
+}

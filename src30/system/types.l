@@ -29,7 +29,7 @@
 #subject chararray  = system'CharArray.
 #subject array      = system'Array.
 #subject args       = system'OpenArgs.
-//#subject(class:system'MessageArray) mssgarray.
+#subject mssgarray  = system'MessageArray.
 //#subject(class:system'BitArray)     bitarray.
 //#subject(class:system'BitArray32)   bitset.
 

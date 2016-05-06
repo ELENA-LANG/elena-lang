@@ -336,20 +336,6 @@ inline bool isDWORD(int flags)
    return (isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD);
 }
 
-//inline bool isArrayPrimitive(int flags)
-//{
-//   switch (flags & elDebugMask)
-//   {
-//      case elDebugIntegers:
-//      case elDebugArray:
-//      case elDebugBytes:
-//      case elDebugShorts:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-
 void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
 {
    writer->appendNode(lxCol, terminal.Col());
@@ -4436,6 +4422,10 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          }
          else flags = 0;
       }
+      else if (test(flags, elWrapper)) {
+         //HOTFIX : allow to pass a normal object
+         flags = elDebugBytes;
+      }
       else flags = 0;
 
       LexicalType argType = lxNone;
@@ -5965,8 +5955,8 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
       if (test(scope.info.header.flags, elStructureRole)) {
          ref_t fieldClassRef = scope.moduleScope->subjectHints.get(scope.info.fieldTypes.get(-1));
 
-         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
-         if ((fieldFlags & elDebugMask) == elDebugDWORD) {
+         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef) & elDebugMask;
+         if (fieldFlags == elDebugDWORD) {
             switch (scope.info.size)
             {
                case -4:
@@ -5979,6 +5969,9 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
                   scope.info.header.flags |= elDebugBytes;
                   break;
             }
+         }
+         else if ((scope.info.size == -4) && (fieldFlags == elDebugMessage || fieldFlags == elDebugSubject)) {
+            scope.info.header.flags |= elDebugIntegers;
          }
       }
       else scope.info.header.flags |= elDebugArray;

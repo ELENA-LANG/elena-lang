@@ -34,10 +34,10 @@
 //    OuterFieldTest eval.
     LocalTest eval.
     StructTest eval.
-//    GroupTest eval.
-//    GenericMethodTest eval.
-//    ConstructorTest eval.
-//    DTOToStructTest eval.
+    GroupTest eval.
+    GenericMethodTest eval.
+    ConstructorTest eval.
+    DTOToStructTest eval.
 //    UnboxTest eval.
 //    ByRefTest eval.
 //    SuperTest eval.

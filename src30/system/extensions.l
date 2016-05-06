@@ -689,14 +689,14 @@
 //        ^ self.
 //    ]
 //}
-//
-//// --- arrayOp ---
-//
-//#class(extension:array)arrayOp
-//{
-//    #method(stacksafe) reallocate &int:aNewLength
-//        => system'core_routines'arr_realloc.
-//
+
+// --- arrayOp ---
+
+#class(extension:array)arrayOp
+{
+    #method(stacksafe) reallocate &int:aNewLength
+        => system'core_routines'__array.
+
 //    #method exchange : anIndex1 : anIndex2
 //        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
 //        
@@ -863,8 +863,8 @@
 //        
 //        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
 //    ]
-//}
-//
+}
+
 //// --- literalOp ---
 //
 //#class(extension:literal)literalOp

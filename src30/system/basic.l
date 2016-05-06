@@ -1408,7 +1408,7 @@
 /// A generic variable. 
 ///
 /// Extends an assigned value
-#class(varof:object) Variable
+#class(sealed,varof:object) Variable
 {
     /// Creates the empty variable
     #constructor new

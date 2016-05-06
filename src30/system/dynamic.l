@@ -106,7 +106,7 @@
         <= new &literal:(aSubjectName literal).
 
     /// Compares the values
-    #method(stacksafe) equal &subject : subject
+    #method(stacksafe,bool) equal &subject : subject
         = theValue == subject.
 
     #method(stacksafe)literal
@@ -121,72 +121,27 @@
     #method => system'core_routines'__signature.
 }
 
-//// --- MessageVar ---
-//
-//#class(sealed,struct:embeddable) MessageVar
-//{
-//    /// Creates a dynamic signature
-//    #field(type:mssg)theMessage.
-//    
-//    #constructor new &mssg:aMessage
-//    [
-//        theMessage := aMessage.
-//    ]
-//    
-//    #method mssg = Message new &mssg:theMessage.
-//    
-//    #method(suppress:w3) => theMessage.
-//}
-//
-//// --- MessageArray ---
-//
-//#class(sealed,stringof:mssg)MessageArray
-//{
-//    #constructor(stacksafe) new &int : aLength
-//        => system'core_routines'ns_create.
-//        
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//        
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'ns_getlen.
-//        
-//    #method(stacksafe,type:int,embeddable,suppress:w3) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//    
-//    #method mssgarray = $self.
-//
+// --- MessageArray ---
+
+#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray
+{
+    #constructor(stacksafe) new &int : aLength
+        = mssg:aLength.
+        
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
 //    #method(stacksafe) write &int:anIndex &mssg:aValue
 //        => system'core_routines'ns_writedword.
 //
 //    #method(stacksafe) read &int:anIndex &vmssg:anInt
 //        => system'core_routines'ns_readdword.
 //    
-//    #method(stacksafe) getAt &int:anIndex
-//    [
-//        #var(type:mssg)aMessage.
-//        $self read &int:anIndex &vmssg:aMessage.
-//        
-//        ^ Message new &mssg:aMessage.
-//    ]
-//    
-//    #method getAt : anIndex
-//        <= getAt &int:(anIndex int).
-//    
 //    #method enumerator = MessageArrayEnumerator new &mssgarray:$self.
 //
 //    #method iterator = MessageArrayIterator new &mssgarray:$self.
-//    
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &mssgarray:$self.
-//    
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &mssgarray:$self.
-//}
-//
+}
+
 //// --- MessageArrayIterator ---
 //
 //#class MessageArrayIterator :: Iterator
