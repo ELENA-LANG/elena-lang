@@ -27,8 +27,6 @@ In development:
 
                        * arrayof:bool - a@n -> should be bool
 
-                       * 2 + 3 * 4 - should be implemented as primitive operations
-
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
                          always return bool operand
 

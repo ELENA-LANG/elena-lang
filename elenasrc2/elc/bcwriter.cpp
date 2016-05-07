@@ -3520,7 +3520,9 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
       child = child.nextNode();
    }
 
-   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp))) {
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp) ||
+      IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)))
+   {
       loadBase(tape, target.type, target.argument);
 
       generateObjectExpression(tape, source);

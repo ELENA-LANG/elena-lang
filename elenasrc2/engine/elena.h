@@ -647,6 +647,17 @@ inline bool IsExprOperator(int operator_id)
    }
 }
 
+inline bool IsShiftOperator(int operator_id)
+{
+   switch (operator_id) {
+      case READ_MESSAGE_ID:
+      case WRITE_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 inline bool IsRealExprOperator(int operator_id)
 {
    switch (operator_id) {

@@ -2175,7 +2175,6 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
    }
 }
 
-
 void Compiler :: compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode)
 {
    while (hints == nsHint) {
@@ -7204,29 +7203,37 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       SNode larg, rarg;
       assignOpArguments(node, larg, rarg);
 
+      if (larg == lxOp) {
+         if (optimizeOp(scope, larg, warningLevel, mode)) {
+            larg = SyntaxTree::findMatchedChild(node, lxObjectMask);
+            rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
+         }
+      }
+      if (rarg == lxOp) {
+         if (optimizeOp(scope, rarg, warningLevel, mode)) {
+            rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
+         }
+      }
+
       ref_t target = 0;
       int lflags = mapOpArg(scope, larg, target);
       int rflags = mapOpArg(scope, rarg);
 
       if (IsNumericOperator(node.argument)) {
-         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
-
-         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
             node = lxIntOp;
             boxing = true;
          }
-         else if (lflags == elDebugQWORD && rflags == elDebugQWORD && oflags == elDebugQWORD) {
+         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
             node = lxLongOp;
             boxing = true;
          }
-         else if (lflags == elDebugReal64 && rflags == elDebugReal64 && oflags == elDebugReal64) {
+         else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
             node = lxRealOp;
             boxing = true;
          }
       }
       else if (node.argument == READ_MESSAGE_ID) {
-         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
-
          if (target == -3 && rflags == elDebugDWORD) {
             target = scope.subjectHints.get(SyntaxTree::findChild(larg, lxType).argument);
             int size = scope.defineStructSize(target);
@@ -7236,35 +7243,31 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          else if (target == -5 && rflags == elDebugDWORD) {
             node = lxArrOp;
          }
-         else if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+         else if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
             node = lxIntOp;
             boxing = true;
          }
-         else if (lflags == elDebugQWORD && rflags == elDebugDWORD && oflags == elDebugQWORD) {
+         else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
             node = lxLongOp;
             boxing = true;
          }
       }
       else if (node.argument == WRITE_MESSAGE_ID) {
-         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
-
-         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
             node = lxIntOp;
             boxing = true;
          }
-         else if (lflags == elDebugQWORD && rflags == elDebugDWORD && oflags == elDebugQWORD) {
+         else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
             node = lxLongOp;
             boxing = true;
          }
       }
       else if (IsBitwiseOperator(node.argument)) {
-         int oflags = scope.getClassFlags(scope.subjectHints.get(destType)) & elDebugMask;
-
-         if (lflags == elDebugDWORD && rflags == elDebugDWORD && oflags == elDebugDWORD) {
+         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
             node = lxIntOp;
             boxing = true;
          }
-         else if (lflags == elDebugQWORD && rflags == elDebugQWORD && oflags == elDebugQWORD) {
+         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
             node = lxLongOp;
             boxing = true;
          }

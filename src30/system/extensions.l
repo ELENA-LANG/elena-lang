@@ -121,101 +121,101 @@
         = self byte <= 0.
 }
 
-//// --- intOp ---
-//
-//#class(extension:short) shortOp
-//{
-//    #method(type:short) absolute
-//    [
-//        #var(type:short)n := self short.
-//        (n < 0)
-//            ? [ n := n * -1. ].
-//                
-//        ^ ShortNumber new &short:n.
-//    ]
-//    
-//    #method(type:short,suppress:w2) mod : anOperand
-//    [
-//        #var retVal := self short / anOperand * anOperand.
-//        
-//        ^ retVal cast:%convertor &to:shortConvertor.
-//    ]
-//    
-//    #method(type:short)power &short:y
-//    [
-//        #var(type:short)x := self short.
-//        
-//        #var(type:short)i := 0.
-//        #loop (i < y)?
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ ShortNumber new &short:x.
-//    ]
-//    
-//    #method(type:short) sqr
-//    [
-//        #var(type:short)n := self short.        
-//        #var(type:short)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//
-//    #method power : aPower
-//        = self::shortOp power &short:(aPower short).
-//                
-//    #method(type:bool) is &odd
-//        = self::shortOp mod:2 != 0.
-//        
-//    #method(type:bool) is &even
-//        = self::shortOp mod:2 == 0.
-//        
-//    #method(type:bool) is &zero
-//        = self short equal &int:0.
-//        
-//    #method(type:bool) is &positive
-//        = self short > 0.
-//        
-//    #method(type:bool) is &negative
-//        = self short < 0.
-//        
-//    #method(type:bool) is &nonnegative
-//        = self short <= 0.
-//    
-//    #method(type:byte) high
-//    [
-//        #var(type:short)aWord := self short.
-//        aWord := aWord && 0FF00h.
-//        aWord := aWord shift &int:8.
-//        
-//        ^ byteConvertor convert &short:aWord.
-//    ]
-//        
-//    #method(type:byte) low
-//    [
-//        #var(type:short)aWord := self short.
-//        aWord := aWord && 0FFh.
-//        
-//        ^ byteConvertor convert &short:aWord.
-//    ]
-//}
+// --- shortOp ---
+
+#class(extension:short) shortOp
+{
+    #method(short) absolute
+    [
+        #var(short)n := self short.
+        (n < 0)
+            ? [ n := n * -1. ].
+                
+        ^ ShortNumber new &short:n.
+    ]
+    
+    #method(short,suppress:w2) mod : anOperand
+    [
+        #var retVal := self short / anOperand * anOperand.
+        
+        ^ retVal cast:%convertor &to:shortConvertor.
+    ]
+    
+    #method(short)power &short:y
+    [
+        #var(short)x := self short.
+        
+        #var(short)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ShortNumber new &short:x.
+    ]
+    
+    #method(short) sqr
+    [
+        #var(short)n := self short.        
+        #var(short)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::shortOp power &short:(aPower short).
+                
+    #method(bool) is &odd
+        = self::shortOp mod:2 != 0.
+        
+    #method(bool) is &even
+        = self::shortOp mod:2 == 0.
+        
+    #method(bool) is &zero
+        = self short equal &int:0.
+        
+    #method(bool) is &positive
+        = self short > 0.
+        
+    #method(bool) is &negative
+        = self short < 0.
+        
+    #method(bool) is &nonnegative
+        = self short <= 0.
+    
+    #method(byte) high
+    [
+        #var(short)aWord := self short.
+        aWord := aWord && 0FF00h.
+        aWord := aWord shift &int:8.
+        
+        ^ byteConvertor convert &short:aWord.
+    ]
+        
+    #method(byte) low
+    [
+        #var(short)aWord := self short.
+        aWord := aWord && 0FFh.
+        
+        ^ byteConvertor convert &short:aWord.
+    ]
+}
 
 // --- intOp ---
 
 #class(extension:int) intOp
 {
-//    #method(type:int) absolute
-//    [
-//        #var(type:int)n := self int.
-//        
-//        (n < 0)
-//            ? [ n := n * -1. ].
-//        
-//        ^ IntNumber new &int:n.
-//    ]
+    #method(int) absolute
+    [
+        #var(int)n := self int.
+        
+        (n < 0)
+            ? [ n := n * -1. ].
+        
+        ^ IntNumber new &int:n.
+    ]
     
     #method(int) mod : anOperand
     [
@@ -228,87 +228,87 @@
         ^ IntNumber new &int:(x - z).
     ]
     
-//    #method(type:int)power &int:y
-//    [
-//        #var(type:int)x := self int.
-//        #var(type:int)r := 1.
-//        
-//        #var(type:int)i := 0.
-//        #loop (i < y)?
-//        [
-//            r := r * x.
-//            
-//            i := i + 1.
-//        ].
-//        
-//        ^ IntNumber new &int:r.
-//    ]
-//    
-//    #method(type:int) sqr
-//    [
-//        #var(type:int)n := self int.        
-//        #var(type:int)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    #method(type:int) sqrt
-//    [
-//        #var(type:int)num := self int.
-//        
-//        (num == 0)
-//            ? [ ^ 0. ].
-//            
-//        #var(type:int)n := num / 2 + 1.
-//        #var(type:int)n1 := (n + (num / n)) / 2.
-//        #loop (n1 < n)?
-//        [
-//            n := n1.
-//            n1 := (n + (num / n)) / 2.
-//        ].
-//        
-//        ^ IntNumber new &int:n.
-//    ]
-//
-//    #method power : aPower
-//        = self::intOp power &int:(aPower int).
-//                
-//    #method(type:bool) is &odd
-//        = self int and &int:1 != 0.
-//        
-//    #method(type:bool) is &even
-//        = self int and &int:1 == 0.
-//        
-//    #method(type:bool) is &zero
-//        = self int equal &int:0.
-//        
-//    #method(type:bool) is &positive
-//        = self int > 0.
-//        
-//    #method(type:bool) is &negative
-//        = self int < 0.
-//        
-//    #method(type:bool) is &nonnegative
-//        = self int <= 0.
-//
-//    #method high
-//    [
-//        #var(type:int)aWord := self int.
-//        aWord := aWord && 0FFFF0000h.
-//        aWord := aWord shift &int:16.
-//        
-//        ^ shortConvertor convert &int:aWord.
-//    ]
-//
-//    #method low
-//    [
-//        #var(type:int)aWord := self int.
-//        aWord := aWord && 0FFFFh.
-//        
-//        ^ shortConvertor convert &int:aWord.
-//    ]
+    #method(int)power &int:y
+    [
+        #var(int)x := self int.
+        #var(int)r := 1.
+        
+        #var(int)i := 0.
+        #loop (i < y)?
+        [
+            r := r * x.
+            
+            i += 1.
+        ].
+        
+        ^ IntNumber new &int:r.
+    ]
+    
+    #method(int) sqr
+    [
+        #var(int)n := self int.        
+        #var(int)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method(int) sqrt
+    [
+        #var(int)num := self int.
+        
+        (num == 0)
+            ? [ ^ 0. ].
+            
+        #var(int)n := num / 2 + 1.
+        #var(int)n1 := (n + (num / n)) / 2.
+        #loop (n1 < n)?
+        [
+            n := n1.
+            n1 := (n + (num / n)) / 2.
+        ].
+        
+        ^ IntNumber new &int:n.
+    ]
+
+    #method power : aPower
+        = self::intOp power &int:(aPower int).
+                
+    #method(bool) is &odd
+        = self int and &int:1 != 0.
+        
+    #method(bool) is &even
+        = self int and &int:1 == 0.
+        
+    #method(bool) is &zero
+        = self int equal &int:0.
+        
+    #method(bool) is &positive
+        = self int > 0.
+        
+    #method(bool) is &negative
+        = self int < 0.
+        
+    #method(bool) is &nonnegative
+        = self int <= 0.
+
+    #method high
+    [
+        #var(int)aWord := self int.
+        aWord := aWord && 0FFFF0000h.
+        aWord := aWord >> 16.
+        
+        ^ shortConvertor convert &int:aWord.
+    ]
+
+    #method low
+    [
+        #var(int)aWord := self int.
+        aWord := aWord && 0FFFFh.
+        
+        ^ shortConvertor convert &int:aWord.
+    ]
 }
 
 //// --- longOp ---

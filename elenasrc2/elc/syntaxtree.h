@@ -505,6 +505,24 @@ public:
       return current;
    }
 
+   static Node findSecondMatchedChild(Node node, int mask)
+   {
+      Node current = node.firstChild();
+
+      bool first = true;
+      while (current != lxNone) {
+         if (test(current.type, mask)) {
+            if (first) {
+               first = false;
+            }
+            else return current;
+         }
+         current = current.nextNode();
+      }
+
+      return current;
+   }
+
    static Node findChild(Node node, LexicalType type1, LexicalType type2)
    {
       Node current = node.firstChild();
