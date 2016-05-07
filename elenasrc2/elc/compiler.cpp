@@ -1193,25 +1193,6 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
    syntaxTree.writeString(parent->sourcePath);
 }
 
-void Compiler::SymbolScope :: compileHints(DNode hints, bool silentMode)
-{
-   while (hints == nsHint) {
-      TerminalInfo terminal = hints.Terminal();
-
-      ref_t hintRef = moduleScope->mapSubject(terminal, false);
-      if (hintRef == moduleScope->constHint) {
-         constant = true;
-      }
-      else if (moduleScope->subjectHints.get(hintRef) != 0) {
-         typeRef = hintRef;
-      }
-      else if (!silentMode)
-         raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
-
-      hints = hints.nextNode();
-   }
-}
-
 ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
 {
    return Scope::mapObject(identifier);
@@ -2082,15 +2063,12 @@ ref_t Compiler :: mapHint(DNode hint, ModuleScope& scope)
    hintRef = scope.mapSubject(terminal);
    if (hintRef == 0) {
       int count = countSymbol(hint, nsHintValue);
-      if (count != 0) {
-         IdentifierString hintName(terminal);
+      IdentifierString hintName(terminal);
 
-         hintName.append('#');
-         hintName.appendInt(count);
+      hintName.append('#');
+      hintName.appendInt(count);
 
-         hintRef = scope.resolveSubjectRef(hintName, false);
-      }
-      else hintRef = scope.mapSubject(terminal, false);
+      hintRef = scope.resolveSubjectRef(hintName, false);
    }
 
    return hintRef;
@@ -2164,7 +2142,7 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       if (hintRef == moduleScope->structOfHint) {
          DNode option = hint.select(nsHintValue);
-         ref_t optionRef = moduleScope->mapSubject(option.Terminal(), false);
+         ref_t optionRef = mapHint(option, *moduleScope);
          if (optionRef == moduleScope->embedHint) {
             writer.appendNode(lxClassFlag, elEmbeddable);
 
@@ -2193,26 +2171,23 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
       if (!compileClassHint(hints, writer, scope, false))
          scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
-      //else if (StringHelper::compare(terminal, HINT_BINARY)) {
-      //   TerminalInfo sizeValue = hints.select(nsHintValue).Terminal();
-      //   if (sizeValue.symbol == tsIdentifier) {
-      //      DNode value = hints.select(nsHintValue);
-      //      size_t type = scope.moduleScope->mapType(value.Terminal());
-      //      if (type == 0)
-      //         scope.raiseError(errUnknownSubject, value.Terminal());
+      hints = hints.nextNode();
+   }
+}
 
-      //      int size = -scope.moduleScope->defineTypeSize(type);
-      //      writer.newNode(lxClassStructure, size);
-      //      appendTerminalInfo(&writer, terminal);
 
-      //      writer.appendNode(lxType, type);
-
-      //      writer.closeNode();
-      //   }
-      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-
-      //   writer.appendNode(lxClassFlag, elEmbeddable | elStructureRole | elDynamicRole);
-      //}
+void Compiler :: compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode)
+{
+   while (hints == nsHint) {
+      ref_t hintRef = mapHint(hints, *scope.moduleScope);
+      if (hintRef == scope.moduleScope->constHint) {
+         scope.constant = true;
+      }
+      else if (scope.moduleScope->subjectHints.get(hintRef) != 0) {
+         scope.typeRef = hintRef;
+      }
+      else if (!silentMode)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
       hints = hints.nextNode();
    }
@@ -6697,9 +6672,9 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareSingletonAction(classScope, objNode, objNode, hints);
          singleton = true;
       }
-      else scope.compileHints(hints, false);
+      else compileSymbolHints(hints, scope, false);
    }
-   else scope.compileHints(hints, false);
+   else compileSymbolHints(hints, scope, false);
 
    if (!singleton && (scope.typeRef != 0 || scope.constant)) {
       SymbolExpressionInfo info;
@@ -6776,7 +6751,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
    CodeScope codeScope(&scope, &writer);
    if (retVal.kind == okUnknown) {
-      scope.compileHints(hints, true);
+      compileSymbolHints(hints, scope, true);
       
       // compile symbol body, if it is not a singleton
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);

@@ -28,23 +28,23 @@
     #method(bool) is &nil
         = nil == self.
         
-//    /// Returns true if the object is literal or character
-//    #method is &literal
-//        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! : anObject = false. }.
-//        
-//    /// Returns true if the object is integer numereric
-//    #method is &integer
-//        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
-//        
-//    /// Returns true if the object is numereric
-//    #method is &numeric
-//        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
-//        
-//    #method(type:bool,suppress:w2) is &empty
-//        = self length == 0.
-//        
-//    #method(type:bool) is &nonempty
-//        = self length != 0.
+    /// Returns true if the object is literal or character
+    #method is &literal
+        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! : anObject = false. }.
+        
+    /// Returns true if the object is integer numereric
+    #method is &integer
+        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
+        
+    /// Returns true if the object is numereric
+    #method is &numeric
+        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
+        
+    #method(bool,suppress:w2) is &empty
+        = self length == 0.
+        
+    #method(bool) is &nonempty
+        = self length != 0.
         
     /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
     #method safeEqual : anObject
@@ -54,73 +54,73 @@
         = action eval:self.
 }
 
-//// --- Operations ---
-//
-//// --- byteOp ---
-//
-//#class(extension:byte) byteOp
-//{
-//    #method(type:byte) absolute
-//    [
-//        #var(type:byte)n := self byte.
-//        (n < 0)
-//            ? [ n := n * -1. ].
-//                
-//        ^ ByteNumber new &byte:n.
-//    ]
-//    
-//    #method(type:byte,suppress:w2) mod : anOperand
-//    [
-//        #var retVal := self byte / anOperand * anOperand.
-//        
-//        ^ retVal cast:%convertor &to:byteConvertor.
-//    ]    
-//    
-//    #method(type:byte)power &byte:y
-//    [
-//        #var(type:byte)x := self byte.
-//        
-//        #var(type:byte)i := 0.
-//        #loop (i < y)?
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ ByteNumber new &byte:x.
-//    ]
-//    
-//    #method(type:byte) sqr
-//    [
-//        #var(type:byte)n := self byte.        
-//        #var(type:byte)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//
-//    #method power : aPower
-//        = self::byteOp power &byte:(aPower byte).
-//                
-//    #method(type:bool) is &odd
-//        = self::byteOp mod:2 != 0.
-//        
-//    #method(type:bool) is &even
-//        = self::byteOp mod:2 == 0.
-//        
-//    #method(type:bool) is &zero
-//        = self byte equal &int:0.
-//        
-//    #method(type:bool) is &positive
-//        = self byte > 0.
-//        
-//    #method(type:bool) is &negative
-//        = self byte < 0.
-//        
-//    #method(type:bool) is &nonnegative
-//        = self byte <= 0.
-//}
-//
+// --- Operations ---
+
+// --- byteOp ---
+
+#class(extension:byte) byteOp
+{
+    #method(byte) absolute
+    [
+        #var(byte)n := self byte.
+        (n < 0)
+            ? [ n := n * -1. ].
+                
+        ^ ByteNumber new &byte:n.
+    ]
+    
+    #method(byte,suppress:w2) mod : anOperand
+    [
+        #var retVal := self byte / anOperand * anOperand.
+        
+        ^ retVal cast:%convertor &to:byteConvertor.
+    ]    
+    
+    #method(byte)power &byte:y
+    [
+        #var(byte)x := self byte.
+        
+        #var(byte)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ByteNumber new &byte:x.
+    ]
+    
+    #method(byte) sqr
+    [
+        #var(byte)n := self byte.        
+        #var(byte)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::byteOp power &byte:(aPower byte).
+                
+    #method(bool) is &odd
+        = self::byteOp mod:2 != 0.
+        
+    #method(bool) is &even
+        = self::byteOp mod:2 == 0.
+        
+    #method(bool) is &zero
+        = self byte equal &int:0.
+        
+    #method(bool) is &positive
+        = self byte > 0.
+        
+    #method(bool) is &negative
+        = self byte < 0.
+        
+    #method(bool) is &nonnegative
+        = self byte <= 0.
+}
+
 //// --- intOp ---
 //
 //#class(extension:short) shortOp

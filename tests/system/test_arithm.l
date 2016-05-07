@@ -683,87 +683,87 @@
     #var z := aCopy Z.
 ].
 
-//#class BoxerHelper
-//{
-//    #constructor new []
-//    
-//    #method init &vint:aRetVal
-//    [
-//        aRetVal << 2.
-//    ]
-//    
-//    #method exchange &ref:anObject1 &ref:anObject2
-//    [
-//        #var tmp := anObject1 value.
-//        anObject1 << (anObject2 value).
-//        anObject2 << tmp.
-//    ]    
-//}
+#class BoxerHelper
+{
+    #constructor new []
+    
+    #method init &vint:aRetVal
+    [
+        aRetVal := 2.
+    ]
+    
+    #method exchange &ref:anObject1 &ref:anObject2
+    [
+        #var tmp := anObject1 get.
+        anObject1 set &object:(anObject2 get).
+        anObject2 set &object:tmp.
+    ]    
+}
+
+#symbol UnboxTest =
+[        
+    #var(int)n := 1.
+    
+    #var o := BoxerHelper new.
+    
+    o init &vint:n.
+            
+    (2 == n)
+        ? [ console writeLine:"Unboxing parameter works". ].
 //
-//#symbol UnboxTest =
-//[        
-//    #var(type:int)n := 1.
-//    
-//    #var o := BoxerHelper new.
-//    
-//    o init &vint:n.
-//            
-//    (2 == n)
-//        ? [ console writeLine:"Unboxing parameter works". ].
-//
-//    #var(type:bytearray,size:4)a.
+//    #var(byte:4)a.
 //
 //    a@0 := 070h.
 //    a@1 := 080h.
 //    a@2 := 0C0h.
 //    a@3 := 0FFh.
 //
-//    #var(type:int)r.
+//    #var(int)r.
 //    a read &int:0 &vint:r.
 //    
 //    (0FFC08070h == r)
 //        ? [ console writeLine:"Unboxing object works". ].
-//].
-//
-//#symbol ByRefTest =
-//[
-//    #var a := 2.
-//    #var b := "hello".
-//    
-//    BoxerHelper new exchange &ref:a &ref:b.
-//    
-//    ((a == "hello")and:(b == 2))
-//        ? [ console writeLine:"ByRef routine works". ].
-//].
-//
-//#class Parent
-//{
-//    #method print
-//    [
-//        console writeLine:"Super works".
-//    ]
-//}
-//
-//#class Child :: Parent
-//{
-//    #method print
-//    [
-//        console writeLine:"Super does not work".
-//    ]
-//    
-//    #method test
-//    [
-//        $super print.
-//    ]
-//}
-//
-//#symbol SuperTest =
-//[
-//    #var o := Child new.
-//    
-//    o test.
-//].
-//
+].
+
+#symbol ByRefTest =
+[
+    #var a := 2.
+    #var b := "hello".
+    
+    BoxerHelper new exchange &ref:a &ref:b.
+    
+    ((a == "hello")and:(b == 2))
+        ? [ console writeLine:"ByRef routine works". ].
+].
+
+#class Parent
+{
+    #method print
+    [
+        console writeLine:"Super works".
+    ]
+}
+
+#class Child :: Parent
+{
+    #method print
+    [
+        console writeLine:"Super does not work".
+    ]
+    
+    #method test
+    [
+        $super print.
+    ]
+}
+
+#symbol SuperTest =
+[
+    #var o := Child new.
+    
+    o test.
+].
+
 //#subject(class:TestVar)test_var.
 //#class(sealed,struct:embeddable) TestVar
 //{
@@ -781,12 +781,12 @@
 //[
 //    #var(type:test_var)var := TestVar new &int:2.
 //].
-//
-//#symbol jsonTest =
-//[
-//    #var dto := DTO{ X = 2. Y = "Value". }.
-//    
-//    #var(type:literal)json := dto toJson literal.
-//    
-//    #var ori := json fromJson.
-//].
+
+#symbol jsonTest =
+[
+    #var dto := DTO{ X = 2. Y = "Value". }.
+    
+    #var(literal)json := dto toJson literal.
+    
+    #var ori := json fromJson.
+].

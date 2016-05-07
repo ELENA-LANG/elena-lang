@@ -1460,6 +1460,12 @@
     #method => theObject.
 }
 
+// --- DTO ---
+
+#class(dispatchable:dto) DTO
+{
+}
+
 // === Basic Convertors ===
 
 // --- convertor helpers ---

@@ -598,9 +598,7 @@ private:
    struct SymbolScope : public SourceScope
    {
       bool  constant;
-      ref_t typeRef;
-
-      void compileHints(DNode hints, bool silentMode);
+      ref_t typeRef;      
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
@@ -909,6 +907,7 @@ private:
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope); 
    void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
 
+   void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
    bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
