@@ -1,6 +1,6 @@
 #import system.
-//#import system'routines.
-//
+#import system'routines.
+
 //#class(extension:int)intLoopOp
 //{
 //    #method to &int:anEnd &doEvery:aFunction
@@ -15,28 +15,28 @@
 //            ! [ ^ aFunction rewind &int:aStart &int:anEnd &int:1. ].
 //    ]
 //}
-//
-//#class(extension)forLoopOp
-//{
-//    #method to:aMaxValue &doEach:aFunction
-//        = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
-//        
-//    #method to:aMaxValue &by:aStep &doEach:aFunction
-//        = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
-//        
-//    #method till:aMaxValue &doEach:aFunction
-//        = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue).
-//        
-//    #method till:aMaxValue &by:aStep &doEach:aFunction
-//        = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue &by:aStep).
-//        
-//    #method to:aMaxValue &seekEach:aFunction
-//        = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
-//        
-//    #method to:aMaxValue &by:aStep &seekEach:aFunction
-//        = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
-//}
-//
+
+#class(extension)forLoopOp
+{
+    #method to:aMaxValue &doEach:aFunction
+        = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
+        
+    #method to:aMaxValue &by:aStep &doEach:aFunction
+        = aFunction run &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
+        
+    #method till:aMaxValue &doEach:aFunction
+        = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue).
+        
+    #method till:aMaxValue &by:aStep &doEach:aFunction
+        = aFunction run &enumerator:(IntervalEnumerator new &from:self &till:aMaxValue &by:aStep).
+        
+    #method to:aMaxValue &seekEach:aFunction
+        = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue).
+        
+    #method to:aMaxValue &by:aStep &seekEach:aFunction
+        = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
+}
+
 //#class(extension)loopOp
 //{
 //    #method doWhile:anAction

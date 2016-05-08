@@ -2,6 +2,9 @@
 In development:
 ------                              
               xdev - generic development
+                       * Typed Extensions : self should be typedcasted #40 
+                       * extension should not be used stand-alone
+
                        * system test
                        * test all rosetta samples
                        * test all samples

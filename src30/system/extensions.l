@@ -1421,7 +1421,7 @@
 
 #class(extension:char)charOp
 {
-    #method(bool,suppress:w2)is &whitespace
+    #method(bool)is &whitespace
     [
         #var(int)aCode := intConvertor convert &char:self.
         #var(bool)ret := false.

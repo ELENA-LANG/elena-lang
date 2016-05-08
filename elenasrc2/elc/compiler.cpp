@@ -1220,7 +1220,10 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
       return ObjectInfo(okSuper, info.header.parentRef);
    }
    else if (StringHelper::compare(identifier, SELF_VAR)) {
-      return ObjectInfo(okParam, (size_t)-1);
+      if (extensionMode != 0 && extensionMode != -1) {
+         return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
+      }
+      else return ObjectInfo(okParam, (size_t)-1);
    }
    else {
       int reference = info.fields.get(identifier);
@@ -1292,6 +1295,12 @@ ObjectInfo Compiler::MethodScope :: mapObject(TerminalInfo identifier)
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
+         if (stackSafe && retVal.kind == okParam && retVal.param == -1 && retVal.type != 0) {
+            if (isEmbeddable(moduleScope->getClassFlags(moduleScope->subjectHints.get(retVal.type)))) {
+               return ObjectInfo(okParam, retVal.param, -1, retVal.type);
+            }
+            else return retVal;
+         }
 
          return retVal;
       }
@@ -3688,6 +3697,11 @@ ObjectInfo Compiler :: compileExtension(DNode& node, CodeScope& scope, ObjectInf
             moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
 
             flags = roleClass.header.flags;
+            //HOTFIX : typecast the extension target if required
+            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+               scope.writer->insert(lxTypecasting, encodeMessage(roleClass.fieldTypes.get(-1), GET_MESSAGE_ID, 0));
+               scope.writer->closeNode();
+            }
          }
       }
       // if the symbol VMT can be used as an external role
@@ -5521,6 +5535,9 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
          // save extensions if any
          if (scope.extensionMode != 0) {
+            if (scope.extensionMode != -1)
+               scope.info.fieldTypes.add(-1, scope.extensionMode);
+
             scope.moduleScope->saveExtension(methodScope.message, scope.extensionMode, scope.reference);
          }
       }
@@ -6557,6 +6574,12 @@ void Compiler :: importTemplates(ClassScope& scope, SyntaxWriter& writer)
 
 void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
 {
+   if (test(scope.info.header.flags, elExtension)) {
+      scope.extensionMode = scope.info.fieldTypes.get(-1);
+      if (scope.extensionMode == 0)
+         scope.extensionMode = -1;
+   }
+
    ModuleScope* moduleScope = scope.moduleScope;
 
    SyntaxWriter writer(scope.syntaxTree);
@@ -6574,7 +6597,9 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope)
    generateClassImplementation(scope);
 
    // compile explicit symbol
-   compileSymbolCode(scope);
+   // extension cannot be used stand-alone, so the symbol should not be generated
+   if (scope.extensionMode == 0)
+      compileSymbolCode(scope);
 }
 
 void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope, DNode hints)

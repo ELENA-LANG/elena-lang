@@ -128,8 +128,8 @@
     #constructor new &literal:aLiteral &token_dfa:dfa
     [
         theLiteral := aLiteral.
-        theIndex := Integer new.
-        theBuffer := TextBuffer new.
+        theIndex := 0.
+        theBuffer := TextBuilder new.
         theDFA := dfa.
     ]    
     
@@ -138,7 +138,7 @@
     
     #method reset 
     [
-        theIndex write &int:0.
+        theIndex set &int:0.
     ]
     
     #method next
@@ -158,7 +158,7 @@
             
             (theDFA proceed &char:aChar)
                 ? [
-                    theIndex write &int:aCurrent.
+                    theIndex set &int:aCurrent.
                     
                     ^ true.
                 ]
@@ -171,7 +171,7 @@
             aCurrent := aCurrent + aCharLen.
         ].
 
-        theIndex write &int:aCurrent.
+        theIndex set &int:aCurrent.
 
         ^ theBuffer is &nonempty.
     ]

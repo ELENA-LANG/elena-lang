@@ -17,6 +17,7 @@
 [+] #231 - new syntax : Signature / Message constants
 [+] #128 : constructors may now return constant value
 [*] #136 : refactoring access to primitive managed code (core_routines)
+[*] #40 : self is typified for type extensions
 
 [ELC]
 [!] binary incompatible due to implementing issues #217 and #54

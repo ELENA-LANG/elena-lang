@@ -53,492 +53,492 @@
     ]    
 }
 
-//// --- Filtering ---
-//
-//#class Filter :: Enumerator
-//{
-//    #field(type:func1)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    
-//    #constructor new &each:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter func1.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method(suppress:w2) next
-//    [
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:(theEnumerator get))
-//                ? [ ^ true. ].
-//        ].
-//        
-//        ^ false.
-//    ]
-//    
-//    #method reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
-//// --- PatternFilter2 ---
-//
-//#class PatternFilter2 :: Enumerator
-//{
-//    #field(type:func2)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    #field thePrevious.
-//    
-//    #constructor new &func2:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method(suppress:w2) next
-//    [
-//        ($nil == thePrevious) ?
-//        [
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:thePrevious:(theEnumerator get))
-//                ? [ ^ true. ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        ^ false.
-//    ]
-//}
-//
-//// --- PatternFilter3 ---
-//
-//#class PatternFilter3 :: Enumerator
-//{
-//    #field(type:func3)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    #field thePrevious.
-//    #field theBeforePrev.
-//    
-//    #constructor new &func3:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method(suppress:w2) next
-//    [
-//        ($nil == thePrevious) ?
-//        [
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:theBeforePrev:thePrevious:(theEnumerator get))
-//                ? [ ^ true. ].
-//            
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        ^ false.
-//    ]
-//}
-//
-//// --- PatternFilter4 ---
-//
-//#class PatternFilter4 :: Enumerator
-//{
-//    #field(type:func4)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    #field thePrevious.
-//    #field theBeforePrev.
-//    #field theBefore2Prev.
-//    
-//    #constructor new &func4:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method(suppress:w2) next
-//    [
-//        ($nil == thePrevious) ?
-//        [
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
-//                ? [ ^ true. ].
-//            
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        ^ false.
-//    ]
-//}
-//
-//// --- PatternFilter5 ---
-//
-//#class PatternFilter5 :: Enumerator
-//{
-//    #field(type:func5)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    #field thePrevious.
-//    #field theBeforePrev.
-//    #field theBefore2Prev.
-//    #field theBefore3Prev.
-//    
-//    #constructor new &func5:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method(suppress:w2) next
-//    [
-//        ($nil == thePrevious) ?
-//        [
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBefore3Prev := theEnumerator get.
-//            
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:theBefore3Prev:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
-//                ? [ ^ true. ].
-//            
-//            theBefore3Prev := theBefore2Prev.
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        ^ false.
-//    ]
-//}
-//
-//// --- PatternFilter6 ---
-//
-//#class PatternFilter6 :: Enumerator
-//{
-//    #field(type:func6)theFilter.
-//    #field(type:enumerator)theEnumerator.
-//    #field thePrevious.
-//    #field theBeforePrev.
-//    #field theBefore2Prev.
-//    #field theBefore3Prev.
-//    #field theBefore4Prev.
-//    
-//    #constructor new &func6:aFilter &enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theEnumerator get.
-//    
-//    #method(suppress:w2) next
-//    [
-//        ($nil == thePrevious) ?
-//        [
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBefore4Prev := theEnumerator get.
-//            
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBefore3Prev := theEnumerator get.
-//            
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            (theEnumerator next)
-//                ! [ ^ false. ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//                
-//        #loop (theEnumerator next)?
-//        [
-//            (theFilter eval:theBefore4Prev:theBefore3Prev:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
-//                ? [ ^ true. ].
-//            
-//            theBefore4Prev := theBefore3Prev.
-//            theBefore3Prev := theBefore2Prev.
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        ^ false.
-//    ]
-//}
-//
-//// --- Selecting ---
-//
-//#class Selector :: Enumerator
-//{
-//    #field(type:func1)theSelector.
-//    #field(type:enumerator)theEnumerator.
-//    
-//    #constructor new &each:aSelector &enumerator:anEnumerator
-//    [
-//        theSelector := aSelector func1.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    #method get = theSelector eval:(theEnumerator get).
-//    
-//    #method next = theEnumerator next.
-//    
-//    #method reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
-//// --- Repeater ---
-//
-//#class Repeater :: Enumerator
-//{
-//    #field(type:int)   theMin.
-//    #field(type:int)   theMax.
-//    #field(type:int)   theCurrent.
-//    #field(type:func1) theFunc.
-//    
-//    #constructor new &till:maxValue &each:func
-//    [
-//        theMax := maxValue int.
-//        theMin := 0.
-//        theCurrent := -1.
-//        theFunc := func func1.
-//    ]
-//    
-//    #constructor new &from:minValue &till:maxValue &each:func
-//    [
-//        theMin := minValue int.
-//        theMax := maxValue int.
-//        theCurrent := theMin - 1.
-//        theFunc := func func1.
-//    ]
-//    
-//    #method get = theFunc eval:theCurrent.
-//    
-//    #method reset
-//    [
-//        theCurrent := theMin - 1.
-//    ]
-//    
-//    #method next
-//    [
-//        theCurrent := theCurrent + 1.
-//        
-//        ^ (theCurrent < theMax).
-//    ]
-//}
-//
-//// --- ZipEnumerator ---
-//
-//#class ZipEnumerator :: Enumerator
-//{
-//    #field(type:enumerator) theEnumerator1.
-//    #field(type:enumerator) theEnumerator2.
-//    
-//    #field(type:func2) theZipper.
-//    
-//    #constructor new:combinator &enumerator:enum1 &enumerator:enum2
-//    [
-//        theZipper := combinator func2.
-//        
-//        theEnumerator1 := enum1.
-//        theEnumerator2 := enum2.
-//    ]
-//    
-//    #method get = theZipper eval:(theEnumerator1 get):(theEnumerator2 get).
-//    
-//    #method next = theEnumerator1 next && theEnumerator2 next.
-//    
-//    #method reset
-//    [
-//        theEnumerator1 reset.
-//        theEnumerator2 reset.
-//    ]
-//}
-//
-//// --- RangeEnumerator ---
-//
-//#class RangeEnumerator :: Enumerator
-//{
-//    #field theVariable.
-//    #field theStart.
-//    #field theEnd.
-//    #field theStep.
-//    
-//    #field(type:bool)theForward.
-//    
-//    #constructor new &for:aVariable &from:aStart &to:anEnd &by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd) bool.
-//        
-//        $self reset.
-//    ]
-//
-//    #constructor new &from:aStart &to:anEnd &by:aStep
-//        <= new &for:(Variable new) &from:aStart &to:anEnd &by:aStep.
-//
-//    #constructor new &from:aStart &to:anEnd
-//        <= new &for:(Variable new) &from:aStart &to:anEnd &by:1.
-//        
-//    #method reset 
-//    [
-//        theVariable << theStart.
-//
-//        theForward 
-//            ? [ theVariable -= theStep. ]
-//            ! [ theVariable += theStep. ].
-//    ]    
-//    
-//    #method get = theVariable value.
-//    
-//    #method next
-//    [
-//        theForward 
-//            ? [ theVariable += theStep. ^ (theVariable <= theEnd) bool. ].
-//        
-//        theVariable -= theStep. 
-//        
-//        ^ (theVariable >= theEnd) bool.
-//    ]
-//}
-//
-//// --- RangeEnumerator ---
-//
-//#class IntervalEnumerator :: Enumerator
-//{
-//    #field theVariable.
-//    #field theStart.
-//    #field theEnd.
-//    #field theStep.
-//    
-//    #field(type:bool)theForward.
-//    
-//    #constructor new &for:aVariable &from:aStart &till:anEnd &by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd) bool.
-//        
-//        $self reset.
-//    ]
-//
-//    #constructor new &from:aStart &till:anEnd &by:aStep
-//        <= new &for:(Variable new) &from:aStart &till:anEnd &by:aStep.
-//
-//    #constructor new &from:aStart &till:anEnd
-//        <= new &for:(Variable new) &from:aStart &till:anEnd &by:1.
-//        
-//    #method reset 
-//    [
-//        theVariable << theStart.
-//
-//        theForward 
-//            ? [ theVariable -= theStep. ]
-//            ! [ theVariable += theStep. ].
-//    ]    
-//    
-//    #method get = theVariable value.
-//    
-//    #method next
-//    [
-//        theForward 
-//            ? [ theVariable += theStep. ^ (theVariable < theEnd) bool. ].
-//        
-//        theVariable -= theStep. 
-//        
-//        ^ (theVariable > theEnd) bool.
-//    ]
-//}
-//
+// --- Filtering ---
+
+#class Filter :: Enumerator
+{
+    #field(func1)theFilter.
+    #field(enumerator)theEnumerator.
+    
+    #constructor new &each:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter func1.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:(theEnumerator get))
+                ? [ ^ true. ].
+        ].
+        
+        ^ false.
+    ]
+    
+    #method reset 
+    [
+        theEnumerator reset.
+    ]    
+}
+
+// --- PatternFilter2 ---
+
+#class PatternFilter2 :: Enumerator
+{
+    #field(func2)theFilter.
+    #field(enumerator)theEnumerator.
+    #field thePrevious.
+    
+    #constructor new &func2:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+        
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:thePrevious:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter3 ---
+
+#class PatternFilter3 :: Enumerator
+{
+    #field(func3)theFilter.
+    #field(enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    
+    #constructor new &func3:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:theBeforePrev:thePrevious:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter4 ---
+
+#class PatternFilter4 :: Enumerator
+{
+    #field(func4)theFilter.
+    #field(enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    #field theBefore2Prev.
+    
+    #constructor new &func4:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter5 ---
+
+#class PatternFilter5 :: Enumerator
+{
+    #field(func5)theFilter.
+    #field(enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    #field theBefore2Prev.
+    #field theBefore3Prev.
+    
+    #constructor new &func5:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore3Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:theBefore3Prev:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            theBefore3Prev := theBefore2Prev.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- PatternFilter6 ---
+
+#class PatternFilter6 :: Enumerator
+{
+    #field(func6)theFilter.
+    #field(enumerator)theEnumerator.
+    #field thePrevious.
+    #field theBeforePrev.
+    #field theBefore2Prev.
+    #field theBefore3Prev.
+    #field theBefore4Prev.
+    
+    #constructor new &func6:aFilter &enumerator:anEnumerator
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theEnumerator get.
+    
+    #method(suppress:w2) next
+    [
+        ($nil == thePrevious) ?
+        [
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore4Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore3Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            (theEnumerator next)
+                ! [ ^ false. ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
+                
+        #loop (theEnumerator next)?
+        [
+            (theFilter eval:theBefore4Prev:theBefore3Prev:theBefore2Prev:theBeforePrev:thePrevious:(theEnumerator get))
+                ? [ ^ true. ].
+            
+            theBefore4Prev := theBefore3Prev.
+            theBefore3Prev := theBefore2Prev.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get.
+        ].
+        
+        ^ false.
+    ]
+}
+
+// --- Selecting ---
+
+#class Selector :: Enumerator
+{
+    #field(func1)theSelector.
+    #field(enumerator)theEnumerator.
+    
+    #constructor new &each:aSelector &enumerator:anEnumerator
+    [
+        theSelector := aSelector func1.
+        theEnumerator := anEnumerator.
+    ]
+    
+    #method get = theSelector eval:(theEnumerator get).
+    
+    #method next = theEnumerator next.
+    
+    #method reset 
+    [
+        theEnumerator reset.
+    ]    
+}
+
+// --- Repeater ---
+
+#class Repeater :: Enumerator
+{
+    #field(int)   theMin.
+    #field(int)   theMax.
+    #field(int)   theCurrent.
+    #field(func1) theFunc.
+    
+    #constructor new &till:maxValue &each:func
+    [
+        theMax := maxValue int.
+        theMin := 0.
+        theCurrent := -1.
+        theFunc := func func1.
+    ]
+    
+    #constructor(suppress:w3) new &from:minValue &till:maxValue &each:func
+    [
+        theMin := minValue int.
+        theMax := maxValue int.
+        theCurrent := theMin - 1.
+        theFunc := func func1.
+    ]
+    
+    #method get = theFunc eval:theCurrent.
+    
+    #method(suppress:w3) reset
+    [
+        theCurrent := theMin - 1.
+    ]
+    
+    #method(suppress:w3) next
+    [
+        theCurrent := theCurrent + 1.
+        
+        ^ (theCurrent < theMax).
+    ]
+}
+
+// --- ZipEnumerator ---
+
+#class ZipEnumerator :: Enumerator
+{
+    #field(enumerator) theEnumerator1.
+    #field(enumerator) theEnumerator2.
+    
+    #field(func2) theZipper.
+    
+    #constructor new:combinator &enumerator:enum1 &enumerator:enum2
+    [
+        theZipper := combinator func2.
+        
+        theEnumerator1 := enum1.
+        theEnumerator2 := enum2.
+    ]
+    
+    #method get = theZipper eval:(theEnumerator1 get):(theEnumerator2 get).
+    
+    #method next = theEnumerator1 next && theEnumerator2 next.
+    
+    #method reset
+    [
+        theEnumerator1 reset.
+        theEnumerator2 reset.
+    ]
+}
+
+// --- RangeEnumerator ---
+
+#class RangeEnumerator :: Enumerator
+{
+    #field theVariable.
+    #field theStart.
+    #field theEnd.
+    #field theStep.
+    
+    #field(bool)theForward.
+    
+    #constructor new &for:aVariable &from:aStart &to:anEnd &by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd) bool.
+        
+        $self reset.
+    ]
+
+    #constructor new &from:aStart &to:anEnd &by:aStep
+        <= new &for:(Variable new) &from:aStart &to:anEnd &by:aStep.
+
+    #constructor new &from:aStart &to:anEnd
+        <= new &for:(Variable new) &from:aStart &to:anEnd &by:1.
+        
+    #method reset 
+    [
+        theVariable << theStart.
+
+        theForward 
+            ? [ theVariable -= theStep. ]
+            ! [ theVariable += theStep. ].
+    ]    
+    
+    #method get = theVariable value.
+    
+    #method next
+    [
+        theForward 
+            ? [ theVariable += theStep. ^ (theVariable <= theEnd) bool. ].
+        
+        theVariable -= theStep. 
+        
+        ^ (theVariable >= theEnd) bool.
+    ]
+}
+
+// --- IntervalEnumerator ---
+
+#class IntervalEnumerator :: Enumerator
+{
+    #field theVariable.
+    #field theStart.
+    #field theEnd.
+    #field theStep.
+    
+    #field(bool)theForward.
+    
+    #constructor new &for:aVariable &from:aStart &till:anEnd &by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd) bool.
+        
+        $self reset.
+    ]
+
+    #constructor new &from:aStart &till:anEnd &by:aStep
+        <= new &for:(Variable new) &from:aStart &till:anEnd &by:aStep.
+
+    #constructor new &from:aStart &till:anEnd
+        <= new &for:(Variable new) &from:aStart &till:anEnd &by:1.
+        
+    #method reset 
+    [
+        theVariable << theStart.
+
+        theForward 
+            ? [ theVariable -= theStep. ]
+            ! [ theVariable += theStep. ].
+    ]    
+    
+    #method get = theVariable value.
+    
+    #method next
+    [
+        theForward 
+            ? [ theVariable += theStep. ^ (theVariable < theEnd) bool. ].
+        
+        theVariable -= theStep. 
+        
+        ^ (theVariable > theEnd) bool.
+    ]
+}
+
 //// --- GroupingEnumerator ---
 //
 //#class GroupingEnumerator :: Enumerator

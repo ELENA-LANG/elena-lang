@@ -3,8 +3,8 @@
 #import system'text.
 #import system'dynamic.
 //#import system'routines.
-//#import extensions.
-//#import extensions'text.
+#import extensions.
+#import extensions'text.
 
 // --- IOException ---
 
@@ -96,13 +96,13 @@
         output write:"{".
                 
         #var(mssg:10) properties.
-        #var(type:int)len := 10.
-        #var(type:int)offs := 0.
+        #var(int)len := 10.
+        #var(int)offs := 0.
 
         object readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:properties &vint:len.
         #loop (len > 0) ?
         [
-            #var(type:int)i:=0.
+            #var(int)i:=0.
             #loop (i < len)?
             [
                 #var(mssg) message := properties@i.
