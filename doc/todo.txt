@@ -3,7 +3,6 @@ In development:
 ------                              
               xdev - generic development
                        * system test
-                       * implement prop template
                        * test all rosetta samples
                        * test all samples
                        * test string_comparision
@@ -17,6 +16,8 @@ In development:
                        * test live programming
                        * test calculator sample
                        * test chat sample : fix the current bug, simple implementation - direct output
+
+                       * check template type before applying (i.e. method template should be declared only for the method declaration)
 
               xdev - generic development
                        * OuterFieldTest should work

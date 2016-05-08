@@ -1243,18 +1243,6 @@ void Compiler::ClassScope :: compileClassHint(SNode hint)
       case lxClassFlag:
          info.header.flags |= hint.argument;
          break;
-      //case lxClassStructure:
-      ////case lxClassArray:
-      //{
-      //   if (hint.type == lxClassStructure) {
-      //      info.size = hint.argument;
-
-      //      SNode typeNode = SyntaxTree::findChild(hint, lxType);
-      //      if (typeNode.argument != 0)
-      //         info.fieldTypes.add(-1, typeNode.argument);
-      //   }
-      //   break;
-      //}
    }
 }
 
@@ -1482,7 +1470,7 @@ Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
    this->templateRef = reference;
    this->reference = -6; // indicating template
 
-   templateType = lxNone;
+   type = ttNone;
 
    // HOT FIX : overwrite source path to provide explicit namespace
    _Memory* strings = syntaxTree.Strings();
@@ -1974,6 +1962,36 @@ bool Compiler :: declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRe
    return true;
 }
 
+void Compiler :: declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   //if (!scope.validateTemplate(hintRef))
+   //   return false;
+
+   SyntaxTree::Writer writer(moduleScope->templates, true);
+
+   writer.newNode(lxClass, scope.reference);
+   writer.newNode(lxTemplate, hintRef);
+   //appendTerminalInfo(&writer, hint.Terminal());
+
+   SNode attr = node.firstChild();
+   while (attr != lxNone) {
+      if (attr == lxTemplateSubject) {
+         writer.appendNode(lxTemplateSubject, attr.argument);
+      }
+      attr = attr.nextNode();
+   }
+
+   writer.appendNode(lxTemplateField, fieldOffset);
+
+   writer.closeNode();
+   writer.closeNode();
+
+   writer.closeNode(); //HOTFIX : close the root node
+
+}
+
 void Compiler :: importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info)
 {
    SyntaxTree::Writer writer(scope.templates, true);
@@ -2030,6 +2048,9 @@ void Compiler :: readTemplateInfo(SNode node, TemplateInfo& info)
          int index = 1 + info.parameters.Count();
 
          info.parameters.add(index, current.argument);
+      }
+      else if (current == lxTemplateField) {
+         info.targetOffset = current.argument;
       }
       else if (current == lxCol) {
          info.sourceCol = current.argument;
@@ -2215,18 +2236,6 @@ void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, Templat
       if (!compileClassHint(hints, writer, scope, true))
          scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
-//      //if (StringHelper::compare(terminal, HINT_TARGET)) {
-//      //   TerminalInfo target = hints.select(nsHintValue).Terminal();
-//      //   if (StringHelper::compare(target.value, HINT_TARGET_FIELD)) {
-//      //      scope.templateType = lxFieldTemplate;
-//      //   }
-//      //   else if (StringHelper::compare(target.value, HINT_TARGET_METHOD)) {
-//      //      scope.templateType = lxMethodTemplate;
-//      //   }
-//      //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-//      //}
-//      /*else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, terminal);
-
       hints = hints.nextNode();
    }
 }
@@ -2289,6 +2298,26 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
          }
          else if(scope.moduleScope->subjectHints.exist(hintRef)) {
             writer.appendNode(lxType, hintRef);
+         }
+         else if (hintRef != 0) {
+            writer.newNode(lxTemplate, hintRef);
+            appendTerminalInfo(&writer, terminal);
+            DNode paramNode = hints.firstChild();
+            while (paramNode != nsNone) {
+               if (paramNode == nsHintValue) {
+                  TerminalInfo param = paramNode.Terminal();
+                  if (param == tsIdentifier) {
+                     ref_t subject = scope.mapSubject(param, false);
+                     if (subject == 0)
+                        subject = moduleScope->module->mapSubject(param, false);
+
+                     writer.appendNode(lxTemplateSubject, subject);
+                  }
+                  else scope.raiseError(errInvalidHintValue, param);
+               }
+               paramNode = paramNode.nextNode();
+            }
+            writer.closeNode();
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
       }
@@ -5557,9 +5586,6 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    SNode current = root.firstChild();
    while (current != lxNone) {
       scope.compileClassHint(current);
-      //if (current == lxClassStructure/* || current == lxClassArray*/) {
-      //   generateClassFlags(scope, current);
-      //}
 
       current = current.nextNode();
    }
@@ -5810,6 +5836,12 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
                //      scope.raiseError(errIllegalField, current);
                //}
             }
+         }
+
+         // handle field template
+         SNode templateNode = SyntaxTree::findChild(current, lxTemplate);
+         if (templateNode.argument != 0) {
+            declareFieldTemplateInfo(templateNode, scope, templateNode.argument, offset);
          }
       }
 
@@ -6092,29 +6124,15 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
    compileTemplateHints(hints, writer, scope);
 
-   // load dynamic subjects
-   while (member == nsSubject) {
-      ref_t param = 0;
-      TerminalInfo terminal = member.Terminal();
+   if (scope.type == TemplateScope::ttMethod) {
+      scope.parameters.add(TARGET_PSEUDO_VAR, scope.parameters.Count() + 1);
 
-      scope.parameters.add(terminal, scope.parameters.Count() + 1);
-
-      writer.newNode(lxTemplateSubject, scope.parameters.Count());
-      DNode body = member.firstChild();
-      if (body != nsNone) {
-         writer.newNode(lxSubject, scope.moduleScope->mapSubject(body.Terminal(), false));
-         DNode option = body.firstChild();
-         while (option != nsNone) {
-            writer.newNode(lxTemplateSubject, scope.parameters.get(option.Terminal()));
-
-            option = option.nextNode();
-         }
-         writer.closeNode();
-      }
-      writer.closeNode();
-
-      member = member.nextNode();
+      writer.appendNode(lxTemplateSubject, scope.parameters.Count());
    }
+   else if (scope.type == TemplateScope::ttField) {
+      scope.info.fields.add(TARGET_PSEUDO_VAR, 0);
+   }
+
    // load template fields
    compileTemplateFieldDeclaration(member, writer, scope);
 
@@ -8125,6 +8143,8 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             break;
          }
          case nsTemplate:
+         case nsFieldTemplate:
+         case nsMethodTemplate:
          {
             ref_t templateRef = 0;
             int count = countSymbol(member, nsMethodParameter);
@@ -8132,6 +8152,7 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
                IdentifierString templateName(name);
                templateName.append('#');
                templateName.appendInt(count);
+
                templateRef = scope.mapNewSubject(templateName);
             }
             else templateRef = scope.mapNewSubject(name);
@@ -8142,8 +8163,16 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
 
             scope.module->mapSection(templateRef | mskSyntaxTreeRef, false);
 
-            // compile class
             TemplateScope classScope(&scope, templateRef);
+            classScope.type = TemplateScope::ttClass;
+            if (member == nsFieldTemplate) {
+               classScope.type = TemplateScope::ttField;
+            }
+            else if (member == nsMethodTemplate) {
+               classScope.type = TemplateScope::ttMethod;
+            }
+
+            // compile class
             compileTemplateDeclaration(member, classScope, hints);
 
             break;

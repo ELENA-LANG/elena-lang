@@ -3015,7 +3015,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    if (assignMode) {
       SNode parent = node.parentNode();
       while (parent == lxExpression)
-         parent = node.parentNode();
+         parent = parent.parentNode();
 
       if (parent == lxAssigning) {
          SNode target = findSubNodeMask(parent, lxObjectMask);

@@ -781,8 +781,16 @@ private:
    // --- TemplateScope ---
    struct TemplateScope : public ClassScope
    {
+      enum Type
+      {
+         ttNone = 0,
+         ttClass,
+         ttField,
+         ttMethod
+      };
+
       ref_t       templateRef;
-      LexicalType templateType;
+      Type        type;
       ForwardMap  parameters;
 
       // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
@@ -898,6 +906,7 @@ private:
 
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
    bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
+   void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
    void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void readTemplateInfo(SyntaxTree::Node node, TemplateInfo& info);
    void copyTemplateInfo(SyntaxTree::Node node, SyntaxTree::Writer& writer);

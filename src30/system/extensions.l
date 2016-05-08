@@ -311,384 +311,384 @@
     ]
 }
 
-//// --- longOp ---
-//
-//#class(extension:long) longOp
-//{
-//    #method(type:long) absolute
-//    [
-//        #var(type:long)n := self long.
-//
-//        (n < 0l)
-//            ? [ n := n * -1l. ].
-//                
-//        ^ LongNumber new &long:n.
-//    ]
-//    
-//    #method(type:long) mod : anOperand
-//    [
-//        #var(type:long)x := self long.
-//        #var(type:long)y := anOperand long.
-//        
-//        #var(type:long)z := x / y.
-//        z := z * y.
-//        
-//        ^ LongNumber new &long:(x - z).
-//    ]
-//    
-//    #method(type:long)power &long:y
-//    [
-//        #var(type:long)x := self long.
-//        
-//        #var(type:long)i := 0l.
-//        #loop (i < y)?
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ LongNumber new &long:x.
-//    ]
-//    
-//    #method(type:long) sqr
-//    [
-//        #var(type:long)n := self long.        
-//        #var(type:long)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//
-//    #method power : aPower
-//        = self::longOp power &long:(aPower long).
-//                
-//    #method(type:bool) is &odd
-//        = self::longOp mod:2l != 0.
-//        
-//    #method(type:bool) is &even
-//        = self::longOp mod:2l == 0.
-//        
-//    #method(type:bool) is &zero
-//        = self long equal &long:0l.
-//        
-//    #method(type:bool) is &positive
-//        = self long > 0l.
-//        
-//    #method(type:bool) is &negative
-//        = self long < 0l.
-//        
-//    #method(type:bool) is &nonnegative
-//        = self long <= 0l.
-//
-//    #method(type:int) high
-//    [
-//        #var(type:long)aWord := self long.
-//        aWord := aWord && -4294967296l.
-//        aWord := aWord shift &int:32.
-//        
-//        ^ intConvertor convert &long:aWord.
-//    ]
-//
-//    #method(type:int) low
-//    [
-//        #var(type:long)aWord := self long.
-//        aWord := aWord && 4294967295l.
-//        
-//        ^ intConvertor convert &long:aWord.
-//    ]
-//}
-//
-//// --- realOp ---
-//
-//#class(extension:real) realOp
-//{        
-//    #method(type:real) absolute
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:vreal)aRetVal.
-//        
-//        realOpController abs &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//        
-//    #method(type:real) exp
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController exp &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//    
-//    #method(type:real) ln
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController ln &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//    
-//    #method(type:real) sqrt
-//    [
-//        #var(type:real)n := self real.      
-//        #var(type:real)aRetVal.
-//        
-//        realOpController sqrt &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method (type:real)power &real:y
-//    [
-//        #var(type:real)x := self real.
-//        
-//        (x == 0.0r)
-//            ? [ ^ 0.0r. ].
-//                        
-//        (y == 0.0r)
-//            ? [ ^ 1.0r. ].
-//            
-//        realOpController ln &real:x &vreal:x.
-//        
-//        x := x multiply &real:y.
-//        
-//        realOpController exp &real:x &vreal:x.
-//            
-//        ^ RealNumber new &real:x.            
-//            
-//    ]
-//
-//    #method(type:real)power &int:y
-//    [
-//        #var(type:real)x := self real.
-//
-//        (x == 0.0r)
-//            ? [ ^ 0.0r. ].
-//                        
-//        (y == 0)
-//            ? [ ^ 1.0r. ].
-//                        
-//        (x < 0.0r)
-//            ? [
-//                x := x * -1.0r.
-//                
-//                realOpController ln &real:x &vreal:x.
-//                
-//                x := x multiply &int:y.
-//                
-//                realOpController exp &real:x &vreal:x.
-//                
-//                (y::intOp is &odd)
-//                    ? [ x := x * -1.0r. ].
-//            ]
-//            ! [
-//                realOpController ln &real:x &vreal:x.
-//                
-//                x := x multiply &int:y.
-//                
-//                realOpController exp &real:x &vreal:x.
-//            ].
-//        
-//        ^ RealNumber new &real:x.
-//    ]
-//
-//    #method power : aPower
-//        = self::realOp power &int:(aPower int).
-//
-//    #method(type:real) sqr
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(type:real) rounded
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController round &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(type:real) integer
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController truncate &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(type:real) frac
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController abs &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:(n - aRetVal).
-//    ]
-//
-//    #method(type:real)sin
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController sin &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(type:real)cos
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController cos &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(type:real)tan
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aSinVal.
-//        #var(type:real)aCosVal.
-//        
-//        realOpController sin &real:n &vreal:aSinVal.
-//        realOpController cos &real:n &vreal:aCosVal.
-//        
-//        ^ RealNumber new &real:(aSinVal / aCosVal).
-//    ]
-//
-//    #method(type:real)arctan
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)aRetVal.
-//        
-//        realOpController arctan &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//            
-//    #method(type:real)arcsin
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)arg.
-//        #var(type:real)retVal.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt &real:retVal &vreal:arg.
-//        
-//        arg := n / arg.        
-//        realOpController arctan &real:arg &vreal:retVal.
-//        
-//        ^ RealNumber new &real:retVal.
-//    ]
-//            
-//    #method(type:real)arccos
-//    [
-//        #var(type:real)n := self real.        
-//        #var(type:real)arg.
-//        #var(type:real)retVal.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt &real:retVal &vreal:arg.
-//        
-//        arg := arg / n.        
-//        realOpController arctan &real:arg &vreal:retVal.
-//        
-//        ^ RealNumber new &real:retVal.
-//    ]
-//            
-//    #method(type:real) radian
-//    [
-//        #var(type:real)aValue := self real.
-//        
-//        aValue := aValue * pi_value.
-//        
-//        ^ RealNumber new &real:(aValue / 180.0r).
-//    ]
-//            
-//    #method(type:real) degree
-//    [
-//        #var(type:real)aValue := self real.
-//        
-//        aValue := aValue * 180.0r.
-//        
-//        ^ RealNumber new &real:(aValue / pi_value).
-//    ]
-//            
-//    #method(type:real) reciprocal
-//    [
-//        #var(type:real)aValue := self real.
-//        
-//        ^ RealNumber new &real:(1.0r / aValue).
-//    ]    
-//            
-//    #method(type:bool) is &zero
-//        = self real == 0.
-//        
-//    #method(type:bool) is &positive
-//        = self real > 0.
-//        
-//    #method(type:bool) is &negative
-//        = self real < 0.
-//        
-//    #method(type:bool) is &nonnegative
-//        = self real <= 0.
-//}
-//
-//// --- arrayOp ---
-//
-//#class(extension:intarray)intArrayOp
-//{
-//    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(type:intarray)a := self intarray.
-//
-//        #var(type:int)n1.
-//        #var(type:int)n2.
-//
-//        a read &int:anIndex1 &vint:n1.
-//        a read &int:anIndex2 &vint:n2.
-//        
-//        a write &int:anIndex1 &int:n2.
-//        a write &int:anIndex2 &int:n1.
-//    ]
-//
-//    #method set &every:anIndexFunc
-//        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
-//        
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(type:intarray)anArray := self intarray.
-//        
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLength := anArray length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [            
-//            anArray write &int:anIndex &int:(anIndexFunc eval &int:anIndex int).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//}
+// --- longOp ---
+
+#class(extension:long) longOp
+{
+    #method(long) absolute
+    [
+        #var(long)n := self long.
+
+        (n < 0l)
+            ? [ n := n * -1l. ].
+                
+        ^ LongNumber new &long:n.
+    ]
+    
+    #method(long) mod : anOperand
+    [
+        #var(long)x := self long.
+        #var(long)y := anOperand long.
+        
+        #var(long)z := x / y.
+        z := z * y.
+        
+        ^ LongNumber new &long:(x - z).
+    ]
+    
+    #method(long)power &long:y
+    [
+        #var(long)x := self long.
+        
+        #var(long)i := 0l.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ LongNumber new &long:x.
+    ]
+    
+    #method(long) sqr
+    [
+        #var(long)n := self long.        
+        #var(long)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::longOp power &long:(aPower long).
+                
+    #method(bool) is &odd
+        = self::longOp mod:2l != 0.
+        
+    #method(bool) is &even
+        = self::longOp mod:2l == 0.
+        
+    #method(bool) is &zero
+        = self long equal &long:0l.
+        
+    #method(bool) is &positive
+        = self long > 0l.
+        
+    #method(bool) is &negative
+        = self long < 0l.
+        
+    #method(bool) is &nonnegative
+        = self long <= 0l.
+
+    #method(int) high
+    [
+        #var(long)aWord := self long.
+        aWord := aWord && -4294967296l.
+        aWord := aWord >> 32.
+        
+        ^ intConvertor convert &long:aWord.
+    ]
+
+    #method(int) low
+    [
+        #var(long)aWord := self long.
+        aWord := aWord && 4294967295l.
+        
+        ^ intConvertor convert &long:aWord.
+    ]
+}
+
+// --- realOp ---
+
+#class(extension:real) realOp
+{        
+    #method(real) absolute
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController abs &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+        
+    #method(real) exp
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController exp &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+    
+    #method(real) ln
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController ln &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+    
+    #method(real) sqrt
+    [
+        #var(real)n := self real.      
+        #var(real)aRetVal.
+        
+        realOpController sqrt &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method (real)power &real:y
+    [
+        #var(real)x := self real.
+        
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0.0r)
+            ? [ ^ 1.0r. ].
+            
+        realOpController ln &real:x &vreal:x.
+        
+        x := x multiply &real:y.
+        
+        realOpController exp &real:x &vreal:x.
+            
+        ^ RealNumber new &real:x.            
+            
+    ]
+
+    #method(real)power &int:y
+    [
+        #var(real)x := self real.
+
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0)
+            ? [ ^ 1.0r. ].
+                        
+        (x < 0.0r)
+            ? [
+                x := x * -1.0r.
+                
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+                
+                (y::intOp is &odd)
+                    ? [ x := x * -1.0r. ].
+            ]
+            ! [
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+            ].
+        
+        ^ RealNumber new &real:x.
+    ]
+
+    #method power : aPower
+        = self::realOp power &int:(aPower int).
+
+    #method(real) sqr
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real) rounded
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController round &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real) integer
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController truncate &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real) frac
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController abs &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:(n - aRetVal).
+    ]
+
+    #method(real)sin
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController sin &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real)cos
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController cos &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real)tan
+    [
+        #var(real)n := self real.        
+        #var(real)aSinVal.
+        #var(real)aCosVal.
+        
+        realOpController sin &real:n &vreal:aSinVal.
+        realOpController cos &real:n &vreal:aCosVal.
+        
+        ^ RealNumber new &real:(aSinVal / aCosVal).
+    ]
+
+    #method(real)arctan
+    [
+        #var(real)n := self real.        
+        #var(real)aRetVal.
+        
+        realOpController arctan &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+            
+    #method(real)arcsin
+    [
+        #var(real)n := self real.        
+        #var(real)arg.
+        #var(real)retVal.
+        
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt &real:retVal &vreal:arg.
+        
+        arg := n / arg.        
+        realOpController arctan &real:arg &vreal:retVal.
+        
+        ^ RealNumber new &real:retVal.
+    ]
+            
+    #method(real)arccos
+    [
+        #var(real)n := self real.        
+        #var(real)arg.
+        #var(real)retVal.
+        
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt &real:retVal &vreal:arg.
+        
+        arg := arg / n.        
+        realOpController arctan &real:arg &vreal:retVal.
+        
+        ^ RealNumber new &real:retVal.
+    ]
+            
+    #method(real) radian
+    [
+        #var(real)aValue := self real.
+        
+        aValue := aValue * pi_value.
+        
+        ^ RealNumber new &real:(aValue / 180.0r).
+    ]
+            
+    #method(real) degree
+    [
+        #var(real)aValue := self real.
+        
+        aValue := aValue * 180.0r.
+        
+        ^ RealNumber new &real:(aValue / pi_value).
+    ]
+            
+    #method(real) reciprocal
+    [
+        #var(real)aValue := self real.
+        
+        ^ RealNumber new &real:(1.0r / aValue).
+    ]    
+            
+    #method(bool) is &zero
+        = self real == 0.
+        
+    #method(bool) is &positive
+        = self real > 0.
+        
+    #method(bool) is &negative
+        = self real < 0.
+        
+    #method(bool) is &nonnegative
+        = self real <= 0.
+}
+
+// --- arrayOp ---
+
+#class(extension:intarray)intArrayOp
+{
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(intarray)a := self intarray.
+
+        #var(int)n1.
+        #var(int)n2.
+
+        a read &int:anIndex1 &vint:n1.
+        a read &int:anIndex2 &vint:n2.
+        
+        a write &int:anIndex1 &int:n2.
+        a write &int:anIndex2 &int:n1.
+    ]
+
+    #method set &every:anIndexFunc
+        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
+        
+    #method set &nfunc:anIndexFunc
+    [
+        #var(intarray)anArray := self intarray.
+        
+        #var(int)anIndex := 0.
+        #var(int)aLength := anArray length.
+        
+        #loop (anIndex < aLength) ?
+        [            
+            anArray write &int:anIndex &int:(anIndexFunc eval &int:anIndex int).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self.
+    ]
+}
 
 // --- arrayOp ---
 
@@ -697,264 +697,261 @@
     #method(stacksafe) reallocate &int:aNewLength
         => system'core_routines'__array.
 
-//    #method exchange : anIndex1 : anIndex2
-//        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
-//        
-//    #method exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(type:array) anArray := self array.
-//
-//        #var aTemp := anArray getAt &int:anIndex1.
-//        
-//        anArray setAt &int:anIndex1 &object:(anArray getAt &int:anIndex2).
-//        anArray setAt &int:anIndex2 &object:aTemp.
-//    ]
-//    
-//    #method(stacksafe,suppress:w2) indexOf &int:anIndex &object:anObject &vint:aRetVal
-//    [
-//        aRetVal << -1.
-//        
-//        #var(type:array)anArray := self array.
-//        #var(type:int)aLength := anArray length.
-//        
-//        #var(type:int)i := anIndex.
-//        #loop (i < aLength)?
-//        [
-//            #var anArrayItem := anArray getAt &int:i.
-//            
-//            (anObject == anArrayItem)
-//                ? [ aRetVal << i. ].
-//            
-//            i := i + 1.
-//        ].
-//    ]        
-//        
-//    #method(stacksafe) indexOf &int:anIndex &object:anObject
-//    [
-//        #var(type:int)aRetVal.
-//        
-//        self::arrayOp indexOf &int:anIndex &object:anObject &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//    
-//    #method indexOf : anObject
-//        = self::arrayOp indexOf &int:0 &object:anObject.
-//        
-//    #method(suppress:w2) safeSeek : aValue
-//    [
-//        #var(type:array)anArray := self array.
-//        #var(type:int)aLength := anArray length.
-//        
-//        #var(type:int)i := 0.
-//        #loop (i < aLength)?
-//        [
-//            #var anArrayItem := anArray getAt &int:i.
-//            
-//            (aValue safeEqual:anArrayItem)
-//                ? [ ^ anArrayItem. ].
-//            
-//            i := i + 1.
-//        ].
-//        
-//        ^ $nil.
-//    ]
-//        
-//    #method deepClone
-//    [
-//        #var(type:array)anArray := self array.
-//        #var(type:int)aLength.
-//        anArray readLength &vint:aLength.
-//        
-//        #var(type:array)aCopy := Array new &int:aLength.
-//                
-//        #var(type:int)anIndex := 0.
-//        #loop (anIndex < aLength) ?
-//        [
-//            aCopy setAt &int:anIndex &object:(anArray getAt &int:anIndex clone).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method set &every:anIndexFunc
-//        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
-//    
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(type:array)anArray := self array.
-//        
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLength.
-//        anArray readLength &vint:aLength.
-//        
-//        #loop (anIndex < aLength) ?
-//        [            
-//            anArray setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method sort : aCompareFunc
-//        = self::arrayOp sort &func2:(aCompareFunc func2).
-//    
-//    #method(suppress:w2) sort &func2:aCompareFunc
-//    [
-//        #var(type:array)anArray := self array.
-//        
-//        #var(type:int)i := 0.
-//        #var(type:int)j := 0.
-//        #var(type:int)aLength := anArray length.
-//        #var aCurrent := $nil.
-//        #var aNext := $nil.
-//        
-//        #loop (i < aLength) ?
-//        [
-//            aCurrent := anArray getAt &int:i.
-//            
-//            j := i + 1.
-//            #loop (j < aLength) ?
-//            [
-//                aNext := anArray getAt &int:j.
-//                (aCompareFunc eval:aCurrent:aNext)
-//                    ! [                        
-//                        anArray setAt &int:i &object:aNext.
-//                        anArray setAt &int:j &object:aCurrent.
-//                        
-//                        aCurrent := aNext.
-//                    ].
-//                    
-//                j := j + 1.
-//            ].
-//            
-//            i := i + 1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
-//    #method ascendant
-//        = (self clone)::arrayOp sort:ifOrdered.
-//    
-//    #method(type:bool) is &empty
-//    [
-//        #var(type:array)anArray := self array.
-//        #var(type:int)aLength.
-//        anArray readLength &vint:aLength.
-//        
-//        ^ aLength == 0.
-//    ]
-//    
-//    #method Subarray : aLength &at:anIndex
-//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-//    
-//    /// obsolete
-//    #method Subarray &index:anIndex &length:aLength
-//        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
-//    
-//    #method Subarray &int:anIndex &int:aLength
-//    [
-//        #var(type:iterator) it := self iterator.
-//        
-//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-//    ]
+    #method exchange : anIndex1 : anIndex2
+        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
+        
+    #method exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(array) anArray := self array.
+
+        #var aTemp := anArray getAt &int:anIndex1.
+        
+        anArray setAt &int:anIndex1 &object:(anArray getAt &int:anIndex2).
+        anArray setAt &int:anIndex2 &object:aTemp.
+    ]
+    
+    #method(stacksafe,suppress:w2) indexOf &int:anIndex &object:anObject &vint:aRetVal
+    [
+        aRetVal << -1.
+        
+        #var(array)anArray := self array.
+        #var(int)aLength := anArray length.
+        
+        #var(int)i := anIndex.
+        #loop (i < aLength)?
+        [
+            #var anArrayItem := anArray getAt &int:i.
+            
+            (anObject == anArrayItem)
+                ? [ aRetVal << i. ].
+            
+            i := i + 1.
+        ].
+    ]        
+        
+    #method(stacksafe) indexOf &int:anIndex &object:anObject
+    [
+        #var(int)aRetVal.
+        
+        self::arrayOp indexOf &int:anIndex &object:anObject &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf : anObject
+        = self::arrayOp indexOf &int:0 &object:anObject.
+        
+    #method(suppress:w2) safeSeek : aValue
+    [
+        #var(array)anArray := self array.
+        #var(int)aLength := anArray length.
+        
+        #var(int)i := 0.
+        #loop (i < aLength)?
+        [
+            #var anArrayItem := anArray getAt &int:i.
+            
+            (aValue safeEqual:anArrayItem)
+                ? [ ^ anArrayItem. ].
+            
+            i := i + 1.
+        ].
+        
+        ^ $nil.
+    ]
+        
+    #method deepClone
+    [
+        #var(array)anArray := self array.
+        #var(int)aLength := anArray length.
+        
+        #var(array)aCopy := Array new &int:aLength.
+                
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            aCopy setAt &int:anIndex &object:(anArray getAt &int:anIndex clone).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self.
+    ]
+    
+    #method set &every:anIndexFunc
+        = self::arrayOp set &nfunc:(anIndexFunc nfunc).
+    
+    #method set &nfunc:anIndexFunc
+    [
+        #var(array)anArray := self array.
+        
+        #var(int)anIndex := 0.
+        #var(int)aLength := anArray length.
+        
+        #loop (anIndex < aLength) ?
+        [            
+            anArray setAt &int:anIndex &object:(anIndexFunc eval &int:anIndex).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self.
+    ]
+    
+    #method sort : aCompareFunc
+        = self::arrayOp sort &func2:(aCompareFunc func2).
+    
+    #method(suppress:w2) sort &func2:aCompareFunc
+    [
+        #var(array)anArray := self array.
+        
+        #var(int)i := 0.
+        #var(int)j := 0.
+        #var(int)aLength := anArray length.
+        #var aCurrent := $nil.
+        #var aNext := $nil.
+        
+        #loop (i < aLength) ?
+        [
+            aCurrent := anArray getAt &int:i.
+            
+            j := i + 1.
+            #loop (j < aLength) ?
+            [
+                aNext := anArray getAt &int:j.
+                (aCompareFunc eval:aCurrent:aNext)
+                    ! [                        
+                        anArray setAt &int:i &object:aNext.
+                        anArray setAt &int:j &object:aCurrent.
+                        
+                        aCurrent := aNext.
+                    ].
+                    
+                j := j + 1.
+            ].
+            
+            i := i + 1.
+        ].
+        
+        ^ self.
+    ]
+    
+    #method ascendant
+        = (self clone)::arrayOp sort:ifOrdered.
+    
+    #method(bool) is &empty
+    [
+        #var(array)anArray := self array.
+        #var(int)aLength := anArray length.
+        
+        ^ aLength == 0.
+    ]
+    
+    #method Subarray : aLength &at:anIndex
+        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+    
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
+        = self::arrayOp Subarray &int:(anIndex int) &int:(aLength int).
+    
+    #method Subarray &int:anIndex &int:aLength
+    [
+        #var(iterator) it := self iterator.
+        
+        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
+    ]
 }
 
-//// --- literalOp ---
-//
-//#class(extension:literal)literalOp
-//{
-//    #method indexOf : anObject
-//        = self literal indexOf:anObject &at:0.
-//
-//    #method indexOf &literal:aLiteral
-//        = self literal indexOf &literal:aLiteral &at:0.
-//
-//    #method indexOf &char:aChar
-//        = self literal indexOf &char:aChar &at:0.
-//        
-//    #method(type:literal) Substring &at:anIndex
-//        = self::literalOp Substring &int:(anIndex int).
-//        
-//    #method(type:literal,stacksafe) Substring &int:anIndex
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aLength := aLiteral length.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ aLiteral Substring &int:anIndex &int:aLength.
-//    ]        
-//    
-//    #method trimLeft &char:aChar
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLength := aLiteral length.
-//        #var(type:char)aCurrent.
-//        #var(type:int)aCharLen := aChar length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [
-//            aLiteral read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent == aChar)
-//                ! [ 
-//                    (anIndex == 0)
-//                        ? [ ^ aLiteral. ]
-//                        ! [^ aLiteral delete &int:0 &int:anIndex. ].
-//                ].
-//            
-//            anIndex := anIndex + aCharLen.
-//        ].
-//        
-//        ^ emptyLiteralValue.
-//    ]
-//    
-//    #method trimLeft
-//        = self::literalOp trimLeft &char:#32.    
-//       
-//    #method(suppress:w2) trimRight &char:aChar
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aLength := aLiteral length.
-//        #var(type:int)anIndex := aLength - 1.
-//        #var(type:int)aPrevious := aLength.
-//        #var(type:char)aCurrent.
-//        #var(type:int)aCharLen := aChar length.
-//        
-//        #loop (anIndex >= 0) ?
-//        [
-//            aLiteral read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent equal &char:aChar)
-//                ! [ ^ aLiteral delete &int:aPrevious &int:(aLength - aPrevious). ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen.
-//        ].
-//        
-//        ^ emptyLiteralValue.
-//    ]
-//    
-//    #method trimRight
-//        = self::literalOp trimRight &char:#32.
-//        
-//    #method trim &char:aChar
-//        = self::literalOp trimLeft &char:aChar trimRight &char:aChar.
-//    
-//    #method trim
-//        = self::literalOp trimLeft &char:#32 trimRight &char:#32.        
-//    
+// --- literalOp ---
+
+#class(extension:literal)literalOp
+{
+    #method indexOf : anObject
+        = self literal indexOf:anObject &at:0.
+
+    #method indexOf &literal:aLiteral
+        = self literal indexOf &literal:aLiteral &at:0.
+
+    #method indexOf &char:aChar
+        = self literal indexOf &char:aChar &at:0.
+        
+    #method(literal) Substring &at:anIndex
+        = self::literalOp Substring &int:(anIndex int).
+        
+    #method(literal,stacksafe) Substring &int:anIndex
+    [
+        #var(literal)aLiteral := self literal.        
+        #var(int)aLength := aLiteral length.
+        
+        aLength := aLength - anIndex.
+        
+        ^ aLiteral Substring &int:anIndex &int:aLength.
+    ]        
+    
+    #method trimLeft &char:aChar
+    [
+        #var(literal)aLiteral := self literal.        
+        #var(int)anIndex := 0.
+        #var(int)aLength := aLiteral length.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+        
+        #loop (anIndex < aLength) ?
+        [
+            aLiteral read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent == aChar)
+                ! [ 
+                    (anIndex == 0)
+                        ? [ ^ aLiteral. ]
+                        ! [^ aLiteral delete &int:0 &int:anIndex. ].
+                ].
+            
+            anIndex := anIndex + aCharLen.
+        ].
+        
+        ^ emptyLiteralValue.
+    ]
+    
+    #method trimLeft
+        = self::literalOp trimLeft &char:#32.    
+       
+    #method(suppress:w2) trimRight &char:aChar
+    [
+        #var(literal)aLiteral := self literal.        
+        #var(int)aLength := aLiteral length.
+        #var(int)anIndex := aLength - 1.
+        #var(int)aPrevious := aLength.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+        
+        #loop (anIndex >= 0) ?
+        [
+            aLiteral read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ aLiteral delete &int:aPrevious &int:(aLength - aPrevious). ].
+            
+            aPrevious := anIndex.
+            anIndex := anIndex - aCharLen.
+        ].
+        
+        ^ emptyLiteralValue.
+    ]
+    
+    #method trimRight
+        = self::literalOp trimRight &char:#32.
+        
+    #method trim &char:aChar
+        = self::literalOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method trim
+        = self::literalOp trimLeft &char:#32 trimRight &char:#32.        
+    
 //    #method padLeft &char:aChar &int:aLength
 //    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:int)aCurrentLength := aLiteral length.
+//        #var(literal)aLiteral := self literal.
+//        #var(int)aCurrentLength := aLiteral length.
 //        
 //        (aCurrentLength < aLength)
 //            ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
@@ -964,80 +961,77 @@
 //    
 //    #method padRight &char:aChar &int:aLength
 //    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aCurrentLength.
-//        aLiteral readLength &vint:aCurrentLength.
+//        #var(literal)aLiteral := self literal.        
+//        #var(int)aCurrentLength := aLiteral length.
 //
 //        (aCurrentLength < aLength)
 //            ? [ ^ aLiteral add &literal:(LiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
 //            
 //        ^ self.            
 //    ]
-//
-//    #method startingWith:s
-//        = self::literalOp startingWith &literal:(s literal).
-//        
-//    #method startingWith &literal:s
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:vint)n.
-//        aLiteral indexOf &int:0 &literal:s &vint:n.
-//        
-//        ^ 0 == n.
-//    ]
-//        
-//    #method endingWith &literal:s
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:int)l1.
-//        #var(type:int)l2.
-//        aLiteral readLength &vint:l1.
-//        s readLength &vint:l2.
-//
-//        #var(type:vint)n.
-//        aLiteral indexOf &int:(l1 - l2) &literal:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//
-//    #method endingWith:s
-//        = self::literalOp endingWith &literal:(s literal).
-//        
-//    #method containing &literal:s
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:int)l1 := aLiteral length.
-//        #var(type:int)l2 := s length.
-//
-//        #var(type:vint)n.
-//        aLiteral indexOf &int:0 &literal:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//
-//    #method containing:s
-//        = self::literalOp containing &literal:(s literal).
-//    
-//    #method replaceFirst &literal:aReplacee &literal:aReplacer
-//    [
-//        #var(type:literal)aLiteral := self literal.
-//        #var(type:vint) aReplaceeLen := aReplacee length.
-//        #var(type:vint)anIndex.
-//        
-//        aLiteral indexOf &int:0 &literal:aReplacee &vint:anIndex.
-//        
-//        (anIndex != -1)
-//            ? [ ^ aLiteral delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
-//            ! [ ^ aLiteral. ].
-//    ]    
-//    
+
+    #method startingWith:s
+        = self::literalOp startingWith &literal:(s literal).
+        
+    #method startingWith &literal:s
+    [
+        #var(literal)aLiteral := self literal.        
+        #var(int)n.
+        aLiteral indexOf &int:0 &literal:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+        
+    #method endingWith &literal:s
+    [
+        #var(literal)aLiteral := self literal.
+        #var(int)l1 := aLiteral length.
+        #var(int)l2 := s length.
+
+        #var(int)n.
+        aLiteral indexOf &int:(l1 - l2) &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method endingWith:s
+        = self::literalOp endingWith &literal:(s literal).
+        
+    #method containing &literal:s
+    [
+        #var(literal)aLiteral := self literal.
+        #var(int)l1 := aLiteral length.
+        #var(int)l2 := s length.
+
+        #var(int)n.
+        aLiteral indexOf &int:0 &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method containing:s
+        = self::literalOp containing &literal:(s literal).
+    
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
+    [
+        #var(literal)aLiteral := self literal.
+        #var(int)aReplaceeLen := aReplacee length.
+        #var(int)anIndex.
+        
+        aLiteral indexOf &int:0 &literal:aReplacee &vint:anIndex.
+        
+        (anIndex != -1)
+            ? [ ^ aLiteral delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
+            ! [ ^ aLiteral. ].
+    ]    
+    
 //    #method replace &literal:aReplacee &literal:aReplacer
 //    [
-//        #var(type:literal)aLiteral := self literal.        
+//        #var(literal)aLiteral := self literal.        
 //        #var aTarget := String new.
-//        #var(type:int)aStart := 0.
-//        #var(type:int)anEnd.
-//        #var(type:int)aReplaceeLen := aReplacee length.
+//        #var(int)aStart := 0.
+//        #var(int)anEnd.
+//        #var(int)aReplaceeLen := aReplacee length.
 //        
 //        aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
 //        
@@ -1056,102 +1050,102 @@
 //            ? [ aTarget append:(aLiteral::literalOp Substring &int:aStart) literal ]
 //            ! [ self literal ].
 //    ]
-//    
-//    #method(type:bool) is &empty
-//    [
-//        #var(type:literal)aLiteral := self literal.        
-//        #var(type:int)aLength := aLiteral length.
-//        
-//        ^ aLength == 0.
-//    ]    
-//}
-//
-//// --- wideOp ---
-//
-//#class(extension:wide)wideOp
-//{
-//    #method indexOf : anObject
-//        = self wide indexOf:anObject &at:0.
-//        
-//    #method indexOf &wide:aLiteral
-//        = self wide indexOf &int:0 &wide:aLiteral.
-//
-//    #method indexOf &char:aChar
-//        = self wide indexOf &int:0 &char:aChar.
-//                
-//    #method(type:wide) Substring &at:anIndex
-//        = self::wideOp Substring &int:(anIndex int).
-//        
-//    #method(type:wide,stacksafe) Substring &int:anIndex
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)aLength := aLiteral length.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ aLiteral Substring &int:anIndex &int:aLength.
-//    ]
-//     
-//    #method(suppress:w2) trimLeft &char:aChar
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)anIndex := 0.
-//        #var(type:int)aLength := aLiteral length.
-//        #var(type:char)aCurrent.
-//        #var(type:int)aCharLen := aChar length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [
-//            aLiteral read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent equal &char:aChar)
-//                ! [ ^ aLiteral delete &int:0 &int:anIndex. ].
-//            
-//            anIndex := anIndex + aCharLen.
-//        ].
-//        
-//        ^ emptyWideLiteralValue.
-//    ]
-//    
-//    #method trimLeft
-//        = self::wideOp trimLeft &char:#32.
-//       
-//    #method(suppress:w2) trimRight &char:aChar
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)aLength := aLiteral length.
-//        #var(type:char)aCurrent.
-//        #var(type:int)aCharLen := aChar length.
-//                
-//        #var(type:int)anIndex := aLength - 1.
-//        #var(type:int)aPrevious := aLength.
-//        #loop (anIndex >= 0) ?
-//        [
-//            aLiteral read &int:anIndex &vchar:aCurrent.
-//            
-//            (aCurrent equal &char:aChar)
-//                ! [ ^ aLiteral delete &int:aPrevious &int:(aLength - aPrevious). ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen.
-//        ].
-//        
-//        ^ emptyWideLiteralValue.
-//    ]
-//    
-//    #method trimRight
-//        = self::wideOp trimRight &char:#32.
-//       
-//    #method trim &char:aChar
-//        = self::wideOp trimLeft &char:aChar trimRight &char:aChar.
-//    
-//    #method trim
-//        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
-//    
+    
+    #method(bool) is &empty
+    [
+        #var(literal)aLiteral := self literal.        
+        #var(int)aLength := aLiteral length.
+        
+        ^ aLength == 0.
+    ]    
+}
+
+// --- wideOp ---
+
+#class(extension:wide)wideOp
+{
+    #method indexOf : anObject
+        = self wide indexOf:anObject &at:0.
+        
+    #method indexOf &wide:aLiteral
+        = self wide indexOf &int:0 &wide:aLiteral.
+
+    #method indexOf &char:aChar
+        = self wide indexOf &int:0 &char:aChar.
+                
+    #method(wide) Substring &at:anIndex
+        = self::wideOp Substring &int:(anIndex int).
+        
+    #method(wide,stacksafe) Substring &int:anIndex
+    [
+        #var(wide)aLiteral := self wide.        
+        #var(int)aLength := aLiteral length.
+        
+        aLength := aLength - anIndex.
+        
+        ^ aLiteral Substring &int:anIndex &int:aLength.
+    ]
+     
+    #method(suppress:w2) trimLeft &char:aChar
+    [
+        #var(wide)aLiteral := self wide.
+        #var(int)anIndex := 0.
+        #var(int)aLength := aLiteral length.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+        
+        #loop (anIndex < aLength) ?
+        [
+            aLiteral read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ aLiteral delete &int:0 &int:anIndex. ].
+            
+            anIndex := anIndex + aCharLen.
+        ].
+        
+        ^ emptyWideLiteralValue.
+    ]
+    
+    #method trimLeft
+        = self::wideOp trimLeft &char:#32.
+       
+    #method(suppress:w2) trimRight &char:aChar
+    [
+        #var(wide)aLiteral := self wide.        
+        #var(int)aLength := aLiteral length.
+        #var(char)aCurrent.
+        #var(int)aCharLen := aChar length.
+                
+        #var(int)anIndex := aLength - 1.
+        #var(int)aPrevious := aLength.
+        #loop (anIndex >= 0) ?
+        [
+            aLiteral read &int:anIndex &vchar:aCurrent.
+            
+            (aCurrent equal &char:aChar)
+                ! [ ^ aLiteral delete &int:aPrevious &int:(aLength - aPrevious). ].
+            
+            aPrevious := anIndex.
+            anIndex := anIndex - aCharLen.
+        ].
+        
+        ^ emptyWideLiteralValue.
+    ]
+    
+    #method trimRight
+        = self::wideOp trimRight &char:#32.
+       
+    #method trim &char:aChar
+        = self::wideOp trimLeft &char:aChar trimRight &char:aChar.
+    
+    #method trim
+        = self::wideOp trimLeft &char:#32 trimRight &char:#32.
+    
 //    #method padLeft &char:aChar &int:aLength
 //    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)aCurrentLength := aLiteral length.
+//        #var(wide)aLiteral := self wide.
+//        #var(int)aCurrentLength := aLiteral length.
 //        
 //        (aCurrentLength < aLength)
 //            ? [ ^ WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
@@ -1161,77 +1155,77 @@
 //    
 //    #method padRight &char:aChar &int:aLength
 //    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)aCurrentLength := aLiteral length.
+//        #var(wide)aLiteral := self wide.        
+//        #var(int)aCurrentLength := aLiteral length.
 //
 //        (aCurrentLength < aLength)
 //            ? [ ^ aLiteral add &wide:(WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
 //            
 //        ^ self.            
 //    ]
-//
-//    #method startingWith &wide:s
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)n.
-//        aLiteral indexOf &int:0 &wide:s &vint:n.
-//        
-//        ^ 0 == n.
-//    ]
-//    
-//    #method startingWith:s
-//        = self::wideOp startingWith &wide:(s wide).
-//
-//    #method endingWith &wide:s
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)l1 := aLiteral length.
-//        #var(type:int)l2 := s length.
-//        #var(type:int)n.        
-//        aLiteral indexOf &int:(l1 - l2) &wide:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//    
-//    #method endingWith:s
-//        = self::wideOp endingWith &wide:(s wide).
-//
-//    #method containing &wide:s
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int)l1 := aLiteral length.
-//        #var(type:int)l2 := s length.
-//        #var(type:int)n.
-//        
-//        aLiteral indexOf &int:0 &wide:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//    
-//    #method containing:s
-//        = self::wideOp containing &wide:(s wide).
-//
-//    #method replaceFirst &wide:aReplacee &wide:aReplacer
-//    [
-//        #var(type:wide)aLiteral := self wide.
-//        #var(type:int) aReplaceeLen := aReplacee length.
-//        #var(type:int)anIndex.
-//        
-//        aLiteral indexOf &int:0 &wide:aReplacee &vint:anIndex.
-//        
-//        (anIndex != -1)
-//            ? [ ^ aLiteral delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &wide:aReplacee. ]
-//            ! [ ^ aLiteral. ].
-//    ]
-//        
+
+    #method startingWith &wide:s
+    [
+        #var(wide)aLiteral := self wide.        
+        #var(int)n.
+        aLiteral indexOf &int:0 &wide:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+    
+    #method startingWith:s
+        = self::wideOp startingWith &wide:(s wide).
+
+    #method endingWith &wide:s
+    [
+        #var(wide)aLiteral := self wide.
+        #var(int)l1 := aLiteral length.
+        #var(int)l2 := s length.
+        #var(int)n.        
+        aLiteral indexOf &int:(l1 - l2) &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method endingWith:s
+        = self::wideOp endingWith &wide:(s wide).
+
+    #method containing &wide:s
+    [
+        #var(wide)aLiteral := self wide.
+        #var(int)l1 := aLiteral length.
+        #var(int)l2 := s length.
+        #var(int)n.
+        
+        aLiteral indexOf &int:0 &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method containing:s
+        = self::wideOp containing &wide:(s wide).
+
+    #method replaceFirst &wide:aReplacee &wide:aReplacer
+    [
+        #var(wide)aLiteral := self wide.
+        #var(int) aReplaceeLen := aReplacee length.
+        #var(int)anIndex.
+        
+        aLiteral indexOf &int:0 &wide:aReplacee &vint:anIndex.
+        
+        (anIndex != -1)
+            ? [ ^ aLiteral delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &wide:aReplacee. ]
+            ! [ ^ aLiteral. ].
+    ]
+        
 //    #method(suppress:w2) replace &wide:aReplacee &wide:aReplacer
 //    [
-//        #var(type:wide)aLiteral := self wide.
+//        #var(wide)aLiteral := self wide.
 //        
 //        #var aTarget := String new.
-//        #var(type:int)aStart := 0.
-//        #var(type:int)anEnd.
-//        #var(type:int)aReplaceeLen := aReplacee length.
+//        #var(int)aStart := 0.
+//        #var(int)anEnd.
+//        #var(int)aReplaceeLen := aReplacee length.
 //        
 //        aLiteral indexOf &int:aStart &wide:aReplacee &vint:anEnd.
 //        
@@ -1250,16 +1244,16 @@
 //            ? [ aTarget append:(aLiteral::wideOp Substring &int:aStart) wide ]
 //            ! [ aLiteral ].
 //    ]
-//
-//    #method(type:bool) is &empty
-//    [
-//        #var(type:wide)aLiteral := self wide.        
-//        #var(type:int)aLength := aLiteral length.
-//        
-//        ^ aLength == 0.
-//    ]
-//}
-//
+
+    #method(bool) is &empty
+    [
+        #var(wide)aLiteral := self wide.        
+        #var(int)aLength := aLiteral length.
+        
+        ^ aLength == 0.
+    ]
+}
+
 //// --- stringOp ---
 //
 //#symbol stringOpDispatcher =
@@ -1422,56 +1416,56 @@
 //        ^ self.
 //    ]    
 //}
-//
-//// --- charOp ---
-//
-//#class(extension:char)charOp
-//{
-//    #method(type:bool,suppress:w2)is &whitespace
-//    [
-//        #var(type:int)aCode := intConvertor convert &char:self.
-//        #var(type:bool)ret := false.
-//        
-//        aCode =>
-//            0 ? [ ret := true. ]
-//            9 ? [ ret := true. ]
-//            10 ? [ ret := true. ]
-//            11 ? [ ret := true. ]
-//            12 ? [ ret := true. ]
-//            13 ? [ ret := true. ]
-//            32 ? [ ret := true. ].
-//        
-//        ^ ret.
-//    ]
-//    
-//    #method(type:bool)is &digit
-//    [
-//        #var(type:int) ch := intConvertor convert &char:self.
-//        
-//        ^ (ch >= 30h) and: (ch <= 39h).
-//    ]
-//    
-//    #method(type:bool)is &newLine
-//    [
-//        ^ self == #10.
-//    ]
-//    
-//    #method(type:bool)is &letter
-//    [
-//        #var(type:int) ch := intConvertor convert &char:self.
-//        
-//        ((ch >= 41h) and: (ch <= 5Ah))
-//            ? [ ^ true. ].
-//        
-//        ((ch >= 61h) and: (ch <= 7Ah))
-//            ? [ ^ true. ].
-//        
-//        ((ch >= 3ACh) and: (ch <= 3CEh))
-//            ? [ ^ true. ].
-//            
-//        ((ch >= 400h) and: (ch <= 42Fh))
-//            ? [ ^ true. ].
-//            
-//        ^ false.            
-//    ]
-//}
+
+// --- charOp ---
+
+#class(extension:char)charOp
+{
+    #method(bool,suppress:w2)is &whitespace
+    [
+        #var(int)aCode := intConvertor convert &char:self.
+        #var(bool)ret := false.
+        
+        aCode =>
+            0 ? [ ret := true. ]
+            9 ? [ ret := true. ]
+            10 ? [ ret := true. ]
+            11 ? [ ret := true. ]
+            12 ? [ ret := true. ]
+            13 ? [ ret := true. ]
+            32 ? [ ret := true. ].
+        
+        ^ ret.
+    ]
+    
+    #method(bool)is &digit
+    [
+        #var(int) ch := intConvertor convert &char:(self char).
+        
+        ^ (ch >= 30h) and: (ch <= 39h).
+    ]
+    
+    #method(bool)is &newLine
+    [
+        ^ self == #10.
+    ]
+    
+    #method(bool)is &letter
+    [
+        #var(int) ch := intConvertor convert &char:(self char).
+        
+        ((ch >= 41h) and: (ch <= 5Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 61h) and: (ch <= 7Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 3ACh) and: (ch <= 3CEh))
+            ? [ ^ true. ].
+            
+        ((ch >= 400h) and: (ch <= 42Fh))
+            ? [ ^ true. ].
+            
+        ^ false.            
+    ]
+}

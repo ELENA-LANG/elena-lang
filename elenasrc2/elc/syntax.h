@@ -92,6 +92,8 @@ enum Symbol
    nsDefaultGeneric             = 0x01046,
    nsSubject                    = 0x01047,
    nsInlineClosure              = 0x01048,
+   nsMethodTemplate             = 0x01049,
+   nsFieldTemplate              = 0x0104A,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               

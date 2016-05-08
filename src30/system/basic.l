@@ -1254,7 +1254,7 @@
         = $self subtract &real:(RealNumber new &long:anOperand).
 
     /// Returns the product of numbers
-    #method(stacksafe) multiply &int:anOperand
+    #method(stacksafe,real) multiply &int:anOperand
         = $self multiply &real:(RealNumber new &int:anOperand).
 
     /// Returns the product of numbers

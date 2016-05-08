@@ -440,6 +440,8 @@ namespace _ELENA_
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
 
+   #define TARGET_PSEUDO_VAR       "target"
+
   // --- ELENA special sections ---
    #define TYPE_SECTION             "#types"
    #define EXTENSION_SECTION        "#extensions"
@@ -480,9 +482,6 @@ namespace _ELENA_
    #define HINT_STACKSAFE           "stacksafe#0$"
    #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
    #define HINT_ACTION_CLASS        "action#0$"
-//   #define HINT_TARGET             "target"
-//   #define HINT_TARGET_FIELD       "field"
-//   #define HINT_TARGET_METHOD      "method"
 
    #define HINT_WRAPPER             "class"         // obsolete
 

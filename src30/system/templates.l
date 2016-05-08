@@ -1,19 +1,17 @@
-//#template(target:field) prop
-//{
-//    #method set : value
-//    [
-//        $target := value.
-//    ]
-//    
-//    #method get = $target.
-//}
+#field prop : prop_name
+{
+    #method set &prop_name : value
+    [
+        target := value.
+    ]
+    
+    #method prop_name = target.
+}
 
 // --- outnprop ---
 
-#template outnprop : template_subj
+#method outnprop : template_subj
 {
-   #subject target.
-    
    #method(stacksafe,int,embeddable,suppress:w3) template_subj
    [
         #var(int)val.
@@ -25,10 +23,8 @@
 
 // --- innprop ---
 
-#template innprop : template_subj
+#method innprop : template_subj
 {
-   #subject target.
-    
    #method(stacksafe,suppress:w2) set &template_subj:val
    [
         $self target &int:val.
@@ -39,10 +35,8 @@
  
 // --- outlprop ---
 
-#template outlprop : template_subj
+#method outlprop : template_subj
 {
-   #subject target.
-    
    #method(stacksafe,long,embeddable,suppress:w3) template_subj
    [
         #var(long)val.
