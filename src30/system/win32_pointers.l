@@ -14,9 +14,9 @@
 //
 //    #constructor min
 //        => system'core_routines'int_init.
-//
-//    #method(type:bool,stacksafe) equal &handle:anOperand 
-//        => system'core_routines'int_equal.
+
+    #method(bool,stacksafe) equal &handle:anOperand 
+        = theHandle == anOperand.
 }
 
 //// --- RTPointer ---
@@ -118,23 +118,21 @@
         = 0 == thePointer.
 }
 
-//// --- COORD ---
-//
-//#subject(class:system'COORD)win_coord.
-//
-//#class(sealed,struct:embeddable) COORD
-//{
-//    #field(type:short)theX.
-//    #field(type:short)theY.
-//    
-//    #constructor new
-//    [
-//        theX := 0.
-//        theY := 0.
-//    ]
-//    
-//    #method win_coord = $self.
-//    
+// --- COORD ---
+
+#subject win_coord = system'COORD.
+
+#class(sealed,struct:embeddable) COORD
+{
+    #field(short)theX.
+    #field(short)theY.
+    
+    #constructor new
+    [
+        theX := 0.
+        theY := 0.
+    ]
+    
 //    #method write : anObject
 //        <= write &win_coord:(anObject win_coord).
 //    
@@ -154,67 +152,49 @@
 //        aValue readY &vshort:tmp.
 //        theY := tmp.
 //    ]
-//    
-//    #method(stacksafe) readX &vshort:aRetVal
-//    [
-//        aRetVal << theX.
-//    ]
-//    
-//    #method(stacksafe) readY &vshort:aRetVal
-//    [
-//        aRetVal << theY.
-//    ]
-//    
-//    #method x
-//    [
-//        #var(type:short)anX.
-//        $self readX &vshort:anX.
-//        
-//        ^ ShortNumber new &short:anX.
-//    ]
-//    
-//    #method y
-//    [
-//        #var(type:short)anY.
-//        $self readY &vshort:anY.
-//        
-//        ^ ShortNumber new &short:anY.
-//    ]
-//}
-//
-//// --- SMALL_RECT --
-//
-//#subject(class:system'SMALL_RECT) win_small_rect.
-//                
-//#class(sealed,struct:embeddable) SMALL_RECT
-//{
-//    #field(type:short)theLeft.
-//    #field(type:short)theTop.
-//    #field(type:short)theRight.
-//    #field(type:short)theBottom.
-//    
-//    #method win_small_rect = $self.
-//    
-//    #method(stacksafe) readLeft &vshort:aRetVal
-//    [
-//        aRetVal << theLeft.
-//    ]
-//    
-//    #method(stacksafe) readTop &vshort:aRetVal
-//    [
-//        aRetVal << theTop.
-//    ]
-//    
-//    #method(stacksafe) readRight &vshort:aRetVal
-//    [
-//        aRetVal << theRight.
-//    ]
-//    
-//    #method(stacksafe) readBottom &vshort:aRetVal
-//    [
-//        aRetVal << theBottom.
-//    ]
-//    
+    
+    #method(stacksafe,outwprop:X) readX &vshort:aRetVal
+    [
+        aRetVal := theX.
+    ]
+    
+    #method(stacksafe,outwprop:Y) readY &vshort:aRetVal
+    [
+        aRetVal := theY.
+    ]
+}
+
+// --- SMALL_RECT --
+
+#subject win_small_rect = system'SMALL_RECT.
+                
+#class(sealed,struct:embeddable) SMALL_RECT
+{
+    #field(short)theLeft.
+    #field(short)theTop.
+    #field(short)theRight.
+    #field(short)theBottom.
+    
+    #method(stacksafe,outwprop:Left) readLeft &vshort:aRetVal
+    [
+        aRetVal := theLeft.
+    ]
+    
+    #method(stacksafe,outwprop:Top) readTop &vshort:aRetVal
+    [
+        aRetVal := theTop.
+    ]
+    
+    #method(stacksafe,outwprop:Right) readRight &vshort:aRetVal
+    [
+        aRetVal := theRight.
+    ]
+    
+    #method(stacksafe,outwprop:Bottom) readBottom &vshort:aRetVal
+    [
+        aRetVal := theBottom.
+    ]
+    
 //    #method write : anObject
 //        <= write &win_small_rect:(anObject win_small_rect).
 //    
@@ -234,36 +214,4 @@
 //        aValue readBottom &vshort:tmp.
 //        theBottom := tmp.
 //    ]
-//    
-//    #method left
-//    [
-//        #var(type:short)aLeft.
-//        $self readLeft &vshort:aLeft.
-//        
-//        ^ ShortNumber new &short:aLeft.
-//    ]
-//    
-//    #method top
-//    [
-//        #var(type:short)aTop.
-//        $self readTop &vshort:aTop.
-//        
-//        ^ ShortNumber new &short:aTop.
-//    ]
-//    
-//    #method right
-//    [
-//        #var(type:short)aRight.
-//        $self readRight &vshort:aRight.
-//        
-//        ^ ShortNumber new &short:aRight.
-//    ]
-//    
-//    #method bottom
-//    [
-//        #var(type:short)aBottom.
-//        $self readBottom &vshort:aBottom.
-//        
-//        ^ ShortNumber new &short:aBottom.
-//    ]
-//}    
+}    

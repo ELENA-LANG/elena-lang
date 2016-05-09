@@ -45,3 +45,16 @@
         ^ val.
    ]
 }
+
+// --- outwprop ---
+
+#method outwprop : template_subj
+{
+   #method(stacksafe,short,embeddable,suppress:w3) template_subj
+   [
+        #var(short)val.
+        $self target &vshort:val.
+        
+        ^ val.
+   ]
+}

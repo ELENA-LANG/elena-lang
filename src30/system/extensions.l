@@ -1446,3 +1446,23 @@
         ^ false.            
     ]
 }
+
+// --- byteArrayHelper ---
+
+#symbol byteArrayHelper =
+{
+    #method(stacksafe)read &bytearray:array &int:offset &vshort:retVal
+    [
+        array read &int:offset &vshort:retVal.
+    ]
+    
+    #method(stacksafe)read &bytearray:array &int:offset &vint:retVal
+    [
+        array read &int:offset &vint:retVal.
+    ]
+    
+    #method(stacksafe)read &bytearray:array &int:offset &vchar:retVal
+    [
+        array read &int:offset &vchar:retVal.
+    ]
+}.

@@ -1,7 +1,5 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
-//
+#import system.
+
 //#subject(class:system'drawing'Pen)    pen.
 //#subject(class:system'drawing'Brush)  brush.
 //#subject(class:system'drawing'Canvas) canvas.

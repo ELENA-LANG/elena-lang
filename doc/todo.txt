@@ -21,6 +21,8 @@ In development:
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
 
               xdev - generic development
+                       * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
+                       * operation with primitive arrays should not be allowed
                        * extension should not be used stand-alone
                        * OuterFieldTest should work
                        * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation

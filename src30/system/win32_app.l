@@ -19,33 +19,33 @@
 
 #class StartUp
 {
-//    #field theFinializeEvent.
-//
-//    #method set &onAppEnd:aHandle
-//    [
-//        ($nil == theFinializeEvent)
-//            ? [ theFinializeEvent := aHandle. ]
-//            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
-//    ]
+    #field theFinializeEvent.
+
+    #method set &onAppEnd:aHandle
+    [
+        ($nil == theFinializeEvent)
+            ? [ theFinializeEvent := aHandle. ]
+            ! [ theFinializeEvent := Function1Group new &args:theFinializeEvent:aHandle. ].
+    ]
     
     #method start
     [
         'program eval
-            /*| on:
+            | on:
             {
                 Abort = e [].
                 
                 ! = e [ console writeLine:(e literal). ].
-            }*/.
+            }.
 
-//        $self $onStop:$nil.
+        $self $onStop:$nil.
     ]
     
-//    #method $onStop : arg
-//    [
-//        ($nil == theFinializeEvent)
-//            ! [ theFinializeEvent eval:arg ].
-//    ]
+    #method $onStop : arg
+    [
+        ($nil == theFinializeEvent)
+            ! [ theFinializeEvent eval:arg ].
+    ]
 }
 
 #static startUp = StartUp new.

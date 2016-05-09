@@ -1,7 +1,5 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
-//
+#import system.
+
 //// --- common types ---
 //#subject(class:system'drawing'Point)coord.
 //#subject(class:system'drawing'Dimension)dimension.

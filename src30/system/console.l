@@ -6,14 +6,14 @@
 #class $Console
 {
     #field theWriter.
-//    #field theReader.
+    #field theReader.
     #field(literal)theNewLineConstant.
 
     /// Creates a console
-    #constructor new /*&reader:aReader*/ &writer:aWriter
+    #constructor new &reader:aReader &writer:aWriter
     [
         theWriter := aWriter.
-//        theReader := aReader.
+        theReader := aReader.
         theNewLineConstant := 'newLine literal.
     ]
 
@@ -53,30 +53,30 @@
         self write:theNewLineConstant.
     ]
 
-//    /// Clears the console
-//    #method clear 
-//        => theWriter.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    #method readLine
-//        = theReader read &literal.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    #method read &literal
-//        = theReader read &literal.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    #method read &wide
-//        = theReader read &wide.
-//
-//    /// Reads the next character from the input stream
-//    #method readChar
-//        = theReader char.
-//
-//    /// Reads the next key code from the input stream
-//    #method readKey
-//        = theReader int.
+    /// Clears the console
+    #method clear 
+        => theWriter.
+
+    /// Reads the next line of characters from the standard input stream.
+    #method readLine
+        = theReader read &literal.
+
+    /// Reads the next line of characters from the standard input stream.
+    #method read &literal
+        = theReader read &literal.
+
+    /// Reads the next line of characters from the standard input stream.
+    #method read &wide
+        = theReader read &wide.
+
+    /// Reads the next character from the input stream
+    #method readChar
+        = theReader char.
+
+    /// Reads the next key code from the input stream
+    #method readKey
+        = theReader int.
 }
 
 /// A standard console
-#static console = $Console new/* &reader:system'io'stdConsoleReader */&writer:system'io'stdConsoleWriter.
+#static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.
