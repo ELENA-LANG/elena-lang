@@ -399,347 +399,345 @@
 //            
 //        ^ self.
 //    ]
-//            
-//    #method writeLine:anObject1
-//    [
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2
-//    [
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            write:(anObject6::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            write:(anObject6::convertorOp toLiteral)
-//            write:(anObject7::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            write:(anObject6::convertorOp toLiteral)
-//            write:(anObject7::convertorOp toLiteral)
-//            write:(anObject8::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            write:(anObject6::convertorOp toLiteral)
-//            write:(anObject7::convertorOp toLiteral)
-//            write:(anObject8::convertorOp toLiteral)
-//            write:(anObject9::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            write:(anObject6::convertorOp toLiteral)
-//            write:(anObject7::convertorOp toLiteral)
-//            write:(anObject8::convertorOp toLiteral)
-//            write:(anObject9::convertorOp toLiteral)
-//            write:(anObject10::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toLiteral)
-//            write:(anObject2::convertorOp toLiteral)
-//            write:(anObject3::convertorOp toLiteral)
-//            write:(anObject4::convertorOp toLiteral)
-//            write:(anObject5::convertorOp toLiteral)
-//            write:(anObject6::convertorOp toLiteral)
-//            write:(anObject7::convertorOp toLiteral)
-//            write:(anObject8::convertorOp toLiteral)
-//            write:(anObject9::convertorOp toLiteral)
-//            write:(anObject10::convertorOp toLiteral)
-//            write:(anObject11::convertorOp toLiteral)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeLine &args:Arguments
-//    [
-//        #var(type:int)aLength.
-//        Arguments readLength &vint:aLength.
-//        
-//        #var(type:int)anIndex := 0.
-//        #loop (anIndex < aLength) ?
-//        [
-//            self write:((Arguments @ anIndex)::convertorOp toLiteral).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        self writeLine.
-//    ]
-//    
-//    #method writeWideLine:anObject1
-//    [
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2
-//    [
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            write:(anObject6::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            write:(anObject6::convertorOp toWide)
-//            write:(anObject7::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            write:(anObject6::convertorOp toWide)
-//            write:(anObject7::convertorOp toWide)
-//            write:(anObject8::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            write:(anObject6::convertorOp toWide)
-//            write:(anObject7::convertorOp toWide)
-//            write:(anObject8::convertorOp toWide)
-//            write:(anObject9::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            write:(anObject6::convertorOp toWide)
-//            write:(anObject7::convertorOp toWide)
-//            write:(anObject8::convertorOp toWide)
-//            write:(anObject9::convertorOp toWide)
-//            write:(anObject10::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
-//    [ 
-//        self
-//            write:(anObject1::convertorOp toWide)
-//            write:(anObject2::convertorOp toWide)
-//            write:(anObject3::convertorOp toWide)
-//            write:(anObject4::convertorOp toWide)
-//            write:(anObject5::convertorOp toWide)
-//            write:(anObject6::convertorOp toWide)
-//            write:(anObject7::convertorOp toWide)
-//            write:(anObject8::convertorOp toWide)
-//            write:(anObject9::convertorOp toWide)
-//            write:(anObject10::convertorOp toWide)
-//            write:(anObject11::convertorOp toWide)
-//            writeLine.
-//            
-//       ^ self.
-//    ]
-//    
-//    #method writeWideLine &args:Arguments
-//    [
-//        #var(type:int)aLength.
-//        Arguments readLength &vint:aLength.
-//        
-//        #var(type:int)anIndex := 0.
-//        #loop (anIndex < aLength) ?
-//        [
-//            self write:((Arguments @ anIndex)::convertorOp toLiteral).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        self writeLine.
-//    ]
-//    
+            
+    #method writeLine:anObject1
+    [
+        self
+            write:(anObject1::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2
+    [
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral)
+            write:(anObject7::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral)
+            write:(anObject7::convertorOp toLiteral)
+            write:(anObject8::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral)
+            write:(anObject7::convertorOp toLiteral)
+            write:(anObject8::convertorOp toLiteral)
+            write:(anObject9::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral)
+            write:(anObject7::convertorOp toLiteral)
+            write:(anObject8::convertorOp toLiteral)
+            write:(anObject9::convertorOp toLiteral)
+            write:(anObject10::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    [ 
+        self
+            write:(anObject1::convertorOp toLiteral)
+            write:(anObject2::convertorOp toLiteral)
+            write:(anObject3::convertorOp toLiteral)
+            write:(anObject4::convertorOp toLiteral)
+            write:(anObject5::convertorOp toLiteral)
+            write:(anObject6::convertorOp toLiteral)
+            write:(anObject7::convertorOp toLiteral)
+            write:(anObject8::convertorOp toLiteral)
+            write:(anObject9::convertorOp toLiteral)
+            write:(anObject10::convertorOp toLiteral)
+            write:(anObject11::convertorOp toLiteral)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeLine &args:Arguments
+    [
+        #var(int)aLength := Arguments length.
+        
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            self write:((Arguments @ anIndex)::convertorOp toLiteral).
+            
+            anIndex += 1.
+        ].
+        
+        self writeLine.
+    ]
+    
+    #method writeWideLine:anObject1
+    [
+        self
+            write:(anObject1::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2
+    [
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            write:(anObject6::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            write:(anObject6::convertorOp toWide)
+            write:(anObject7::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            write:(anObject6::convertorOp toWide)
+            write:(anObject7::convertorOp toWide)
+            write:(anObject8::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            write:(anObject6::convertorOp toWide)
+            write:(anObject7::convertorOp toWide)
+            write:(anObject8::convertorOp toWide)
+            write:(anObject9::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            write:(anObject6::convertorOp toWide)
+            write:(anObject7::convertorOp toWide)
+            write:(anObject8::convertorOp toWide)
+            write:(anObject9::convertorOp toWide)
+            write:(anObject10::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine:anObject1:anObject2:anObject3:anObject4:anObject5:anObject6:anObject7:anObject8:anObject9:anObject10:anObject11
+    [ 
+        self
+            write:(anObject1::convertorOp toWide)
+            write:(anObject2::convertorOp toWide)
+            write:(anObject3::convertorOp toWide)
+            write:(anObject4::convertorOp toWide)
+            write:(anObject5::convertorOp toWide)
+            write:(anObject6::convertorOp toWide)
+            write:(anObject7::convertorOp toWide)
+            write:(anObject8::convertorOp toWide)
+            write:(anObject9::convertorOp toWide)
+            write:(anObject10::convertorOp toWide)
+            write:(anObject11::convertorOp toWide)
+            writeLine.
+            
+       ^ self.
+    ]
+    
+    #method writeWideLine &args:Arguments
+    [
+        #var(int)aLength := Arguments length.
+        
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            self write:((Arguments @ anIndex)::convertorOp toLiteral).
+            
+            anIndex += 1.
+        ].
+        
+        self writeLine.
+    ]
+    
 //    #method writeWide:anObject1
 //    [
 //        self

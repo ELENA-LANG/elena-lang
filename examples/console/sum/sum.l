@@ -12,7 +12,7 @@
 #class(extension) EReader
 {
     #method loadFrom : aStream
-        = aStream readLine convertTo:self
+        = aStream readLine convert &to:self
             | if &FormatError: e
                 [
                     console writeLine:(e message) readChar.

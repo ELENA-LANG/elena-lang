@@ -1866,6 +1866,13 @@ void x86Assembler :: compileCDQ(TokenInfo& token, ProcedureInfo& info, MemoryWri
 	token.read();
 }
 
+void x86Assembler :: compileCWDE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0x98);
+
+   token.read();
+}
+
 void x86Assembler :: compileSTC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	code->writeByte(0xF9);
@@ -3467,7 +3474,10 @@ bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, Proce
       compileCMOVCC(token, info, &writer, x86Helper::JUMP_TYPE_JGE);
       return true;
 	}
-
+   else if (token.check("cwde")) {
+      compileCWDE(token, info, &writer);
+      return true;
+   }
 	// SSE instructions
 	else if (token.check("cmpss")) {
 		compileCMPSS(token, info, &writer);

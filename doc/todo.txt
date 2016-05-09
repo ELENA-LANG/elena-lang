@@ -118,6 +118,7 @@ In development:
 
                        * elc refactoring : replace "SyntaxTree::findChild(child,..."  with "child.findChild(..."
                        * system_test should be transformed into automatic test
+                       * ecode implementation : should eax - be index, ebx - ext, esi and edi - class registers?
                        
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators

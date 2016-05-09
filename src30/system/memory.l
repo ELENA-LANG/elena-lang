@@ -1309,41 +1309,51 @@
     #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
         => system'core_routines'__wide.
 }
-//
-//// --- Variant ---
-//
-///// A basic type variant class
-//#class Variant :: String
-//{
-//    /// Tries to convert the literal value to a byte number
-//    #method byte
-//        = byteConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to a short integer number
-//    #method short
-//        = shortConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to a character
-//    #method char
-//    [
-//        #var(type:char)retVal.
-//        charConvertor $convert &int:0 &literal:theValue &vchar:retVal.
-//        
-//        ^ CharValue new &char:retVal.
-//    ]
-//
-//    /// Tries to convert the literal value to the integer number
-//    #method int
-//        = intConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to the long integer number
-//    #method long
-//        = longConvertor convert &literal:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    #method real
-//        = realConvertor convert &literal:theValue.
-//
+
+// --- Variant ---
+
+/// A basic type variant class
+#class Variant
+{
+    #field theValue.
+    
+    #constructor new : object
+    [
+        theValue := object.
+    ]
+    
+    /// Tries to convert the value to a byte number
+    #method byte
+        = byteConvertor convert:theValue.
+
+    /// Tries to convert the value to a short integer number
+    #method short
+        = shortConvertor convert:theValue.
+
+    /// Tries to convert the value to a character
+    #method char
+        = charConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the integer number
+    #method int
+        = intConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the long integer number
+    #method long
+        = longConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the real number
+    #method real
+        = realConvertor convert:theValue.
+
+    /// Returns a literal value
+    #method literal 
+        = literalConvertor convert:theValue.
+    
+    /// Returns a wide literal value
+    #method wide 
+        = wideConvertor convert:theValue.
+
 //    /// Converts the parameter into a literal string
 //    #method write &int:aValue
 //    [
@@ -1406,13 +1416,7 @@
 //
 //    #method equal : anObject
 //        = anObject equal:$self bool.
-//
-//    /// Returns a literal value
-//    #method literal = theValue.
-//    
-//    /// Returns a wide literal value
-//    #method wide = theValue wide.
-//}
+}
 
 // --- Array ---
 

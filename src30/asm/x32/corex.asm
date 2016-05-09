@@ -2117,7 +2117,11 @@ end
 // ; wread
 inline % 59h
 
-  mov ecx, [eax + ebx * 2]
+  mov edx, eax
+  mov eax, [edx + ebx * 2]
+  cwde
+  mov ecx, eax
+  mov eax, edx
 
 end
 

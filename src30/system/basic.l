@@ -1568,8 +1568,8 @@
         ^ ByteNumber new &byte:aValue.
     ]
         
-    #method convert : anObject
-        = anObject cast:%convert &to:$self.
+    #method(byte) convert : anObject
+        = anObject cast:%convert &to:$self byte.
 }.
 
 /// A 16bit integer convertor
@@ -1670,8 +1670,8 @@
         ^ ShortNumber new &short:aRetVal.
     ]
         
-    #method convert : anObject
-        = anObject cast:%convert &to:$self.
+    #method(short) convert : anObject
+        = anObject cast:%convert &to:$self short.
 }.
 
 /// An Unicode character convertor
@@ -1770,8 +1770,8 @@
         ^ CharValue new &char:aRetVal.
     ]
         
-    #method convert : anObject
-        = anObject cast:%convert &to:$self.
+    #method(char) convert : anObject
+        = anObject cast:%convert &to:$self char.
 }.
 
 /// An integer convertor
@@ -1898,8 +1898,8 @@
     #method(int,stacksafe) convert &int:anInt
         = IntNumber new &int:anInt.
         
-    #method convert : anObject
-        = anObject cast:%convert &to:$self.
+    #method(int) convert : anObject
+        = anObject cast:%convert &to:$self int.
 }.
 
 /// A long integer convertor
@@ -2019,8 +2019,8 @@
     #method(long,stacksafe) convert &long:aLong
         = LongNumber new &long:aLong.
         
-    #method convert : anObject
-        = anObject cast:%convert &to:$self.
+    #method(long) convert : anObject
+        = anObject cast:%convert &to:$self long.
 }.
 
 /// A real number convertor
@@ -2108,8 +2108,8 @@
         ^ RealNumber new &real:aRetVal.
     ]
         
-    #method convert : anObject
-        = anObject cast:%convert &to:$self.
+    #method(real) convert : anObject
+        = anObject cast:%convert &to:$self real.
 }.
 
 // --- literalConvertor ---
@@ -2283,3 +2283,11 @@
 #symbol(real)pi_value = realOpController pi.
 
 #symbol(real)e_value = realOpController e.
+
+// --- obsolete variables ---
+
+#symbol Integer =
+{
+    #method(vint,suppress:w3) new
+        = 0.
+}.
