@@ -3370,7 +3370,7 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
 
       scope.writer->appendNode(lxMessage, messageRef);
       scope.writer->appendNode(lxCallTarget, classReference);
-      //scope.writer->appendNode(lxStacksafe);
+      scope.writer->appendNode(lxStacksafe);
    }
    else if (callType == tpClosed) {
       scope.writer->insert(lxSDirctCalling, messageRef);
@@ -7247,15 +7247,19 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       assignOpArguments(node, larg, rarg);
 
       if (larg == lxOp) {
-         if (optimizeOp(scope, larg, warningLevel, mode)) {
+         if (optimizeOp(scope, larg, /*warningLevel*/0, 0)) {
             larg = SyntaxTree::findMatchedChild(node, lxObjectMask);
             rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
          }
       }
       if (rarg == lxOp) {
-         if (optimizeOp(scope, rarg, warningLevel, mode)) {
+         if (optimizeOp(scope, rarg, /*warningLevel*/0, 0)) {
             rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
          }
+      }
+      else if (rarg == lxConstantInt) {
+         int value = StringHelper::strToULong(scope.module->resolveConstant(rarg.argument), 16);
+         rarg.insertNode(lxValue, value);
       }
 
       ref_t target = 0;

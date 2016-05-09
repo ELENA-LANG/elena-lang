@@ -2,7 +2,7 @@
 #import system'collections.
 #import system'text.
 #import system'dynamic.
-//#import system'routines.
+#import system'routines.
 #import extensions.
 #import extensions'text.
 
@@ -32,22 +32,22 @@
         output write:(b literal).
     ]
     
-    eval:output &array:array
+    #method(suppress:w2) eval:output &array:array
     [
         output::jsonSerializer jsonSerialize &enumerable:array.
     ]
     
-    eval:output &enumerable:list
+    #method(suppress:w2) eval:output &enumerable:list
     [
         output::jsonSerializer jsonSerialize &enumerable:list.
     ]
     
-    eval:output &dto:object
+    #method(suppress:w2) eval:output &dto:object
     [
         output::jsonSerializer jsonSerialize &dto:object.
     ]
     
-    eval:output &struct:object
+    #method(suppress:w2) eval:output &struct:object
     [
         output::jsonSerializer jsonSerialize &struct:object.
     ]
@@ -65,35 +65,31 @@
 {
     #method jsonSerialize &struct:object
     [
-        #var(textbuffer)output := self textbuffer.
-        
-        output write:"{".
+        self write:"{".
 
         0 till:(object fieldCount) &by:2 &doEach:i
         [
             (0 == i) 
-                ! [ output write:"," ].
+                ! [ self write:"," ].
             
             #var prop := object getFieldAt:(i + 1).
-            output write:"""".
-            output write:(prop literal).
-            output write:""":".
+            self write:"""".
+            self write:(prop literal).
+            self write:""":".
             
             #var member := object getFieldAt:(i + 1).
             
-            member cast:%eval &to:jsonDispatcher &with:output.
+            member cast:%eval &to:jsonDispatcher &with:self.
         ].
                                 
-        output write:"}".
+        self write:"}".
         
         ^ self.
     ]
     
     #method jsonSerialize &dto:object
     [
-        #var(textbuffer)output := self textbuffer.
-        
-        output write:"{".
+        self write:"{".
                 
         #var(mssg:10) properties.
         #var(int)len := 10.
@@ -107,47 +103,45 @@
             [
                 #var(mssg) message := properties@i.
                 
-                output writeLiteral:"""":(message subject name):""":".
+                self writeLiteral:"""":(message subject literal):""":".
                 
-                output::jsonSerializer jsonSerialize:(object::message eval).
+                self::jsonSerializer jsonSerialize:(object::message eval).
                 
-                output write:",".
+                self write:",".
                 
                 i := i + 1.
             ].
             
-            offs := offs + len.
+            offs += len.
             
             object readMatchedEntries &mssg:%"get[0]" &int:offs &mssgarray:properties &vint:len.
         ].
         
-        #var(int)outputLen := output length.
+        #var(int)outputLen := self length.
         (outputLen > 1)
-            ? [ output setLength &int:(outputLen - 1). ].
+            ? [ self setLength &int:(outputLen - 1). ].
         
-        output write:"}".
+        self write:"}".
         
         ^ self.
     ]    
     
     #method jsonSerialize &enumerable:object
     [
-        #var(textbuffer)output := self textbuffer.
-        
-        output write:"[".
+        self write:"[".
 
-        object run:output &eachPair:(:output:object)
+        object run:self &eachPair:(:output:object)
         [
-            output::jsonSerializer jsonSerialize:object.
+            self::jsonSerializer jsonSerialize:object.
             
-            output write:",".
+            self write:",".
         ].
         
-        #var(int)outputLen := output length.
+        #var(int)outputLen := self length.
         (outputLen > 1)
-            ? [ output setLength &int:(outputLen - 1). ].
+            ? [ self setLength &int:(outputLen - 1). ].
         
-        output write:"]".
+        self write:"]".
         
         ^ self.
     ]    
@@ -167,11 +161,11 @@
 {
     #method deserializeStruct:target &enumerator:e
     [
-        #var(literal)token := $helper $readNext &enumerator:e.
+        #var(literal)token := $helper $readNext &enumerator:e literal.
         #var(bool)eof := false.
         #loop (eof)!
         [
-            #var(literal)field := $helper $getIdentifier:token.
+            #var(literal)field := $helper $getIdentifier &literal:token.
             
             ($helper $readNext &enumerator:e == ":")
                 ! [ #throw JsonException new. ].
@@ -180,9 +174,9 @@
             
             target::(Signature new &literal:field) set:object.
             
-            token := $helper $readNext &enumerator:e.
+            token := $helper $readNext &enumerator:e literal.
             token =>
-                "," ? [ token := $helper $readNext &enumerator:e. ]
+                "," ? [ token := $helper $readNext &enumerator:e literal. ]
                 "}" ? [ eof := true. ]
                 ! [ #throw JsonException new. ].
         ].
@@ -192,15 +186,15 @@
     
     #method deserializeArray:target &enumerator:e
     [
-        #var(literal)token := $helper $readNext &enumerator:e.
+        #var(literal)token := $helper $readNext &enumerator:e literal.
         #var(bool)eof := false.
         #loop (eof)!
         [
             target += $helper deserializeObject &literal:token &enumerator:e.
             
-            token := $helper $readNext &enumerator:e.
+            token := $helper $readNext &enumerator:e literal.
             token =>
-                "," ? [ token := $helper $readNext &enumerator:e. ]
+                "," ? [ token := $helper $readNext &enumerator:e literal. ]
                 "]" ? [ eof := true. ]
                 ! [ #throw JsonException new. ].
         ].
@@ -216,22 +210,22 @@
         #var(char)ch.
         token read &int:0 &vchar:ch.
         
-        ch =>
-            #34 ? [  // "
-                ^ $helper $getQuote:token.
-            ] 
-            #91 ? [ // [
-                ^ $helper deserializeArray:(ArrayList new) &enumerator:e array.
-            ]
-            #123 ? [ //{
-                ^ $helper deserializeStruct:(DynamicStruct new) &enumerator:e.
-            ]
+        (ch == #34) // "
+            ? [ ^ $helper $getQuote &literal:token. ]
             ! [
-                (ch is &digit) 
-                    ? [ ^ token toInt. ].
-                    
-                #throw JsonException new.                    
-            ].        
+                (ch == #91) // [
+                    ? [ ^ $helper deserializeArray:(ArrayList new) &enumerator:e array. ]
+                    ! [
+                        (ch == #123) //{
+                            ? [ ^ $helper deserializeStruct:(DynamicStruct new) &enumerator:e. ]
+                            ! [
+                                (ch is &digit) 
+                                    ? [ ^ token toInt. ].
+                                    
+                                #throw JsonException new.
+                            ].
+                    ]
+            ].
     ]
     
     #method deserializeStruct &object:object &enumerator:e
@@ -255,7 +249,7 @@
         ^ e get.        
     ]
     
-    $getIdentifier:field
+    #method(literal) $getIdentifier &literal:field
     [
         #var(int)len := field length.
         #var(char)fch.
@@ -264,11 +258,12 @@
         field read &int:(len - 1) &vchar:lch.
         
         ((lch == #34)&&(fch == #34))
-            ? [ ^ field Substring &int:1 &int:(len - 2). ]
             ! [ #throw JsonException new. ].
+            
+        ^ field Substring &int:1 &int:(len - 2).            
     ]
     
-    $getQuote:field
+    #method(literal) $getQuote &literal:field
     [
         #var(int)len := field length.
         #var(char)fch.
@@ -277,8 +272,9 @@
         field read &int:(len - 1) &vchar:lch.
         
         ((lch == #34)&&(fch == #34))
-            ? [ ^ field Substring &int:1 &int:(len - 2). ]
             ! [ #throw JsonException new. ].
+            
+        ^ field Substring &int:1 &int:(len - 2).
     ]
 }.
 

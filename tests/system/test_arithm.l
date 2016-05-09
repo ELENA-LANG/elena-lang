@@ -4,7 +4,7 @@
 #import system'dynamic.
 #import system'calendar.
 #import extensions.
-//#import extensions'dynamic.
+#import extensions'dynamic.
 
 #symbol XTester =
 {

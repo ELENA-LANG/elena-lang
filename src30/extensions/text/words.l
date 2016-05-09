@@ -125,7 +125,7 @@
     
     #field(token_dfa)  theDFA.
     
-    #constructor new &literal:aLiteral &token_dfa:dfa
+    #constructor(suppress:w3) new &literal:aLiteral &token_dfa:dfa
     [
         theLiteral := aLiteral.
         theIndex := 0.

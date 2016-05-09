@@ -351,8 +351,8 @@
         
         #var(int) months := Months int.
         
-        #var(int)years := months / 12.
-        months := Months::intOp mod:12.
+        #var(int)years := months / 12.        
+        months := months -  months / 12 * 12.
 
         #var(int) n.
         aSystemTime readMonth &vint:n.

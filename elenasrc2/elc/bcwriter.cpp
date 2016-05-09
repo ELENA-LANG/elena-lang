@@ -2299,6 +2299,60 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
    }
 }
 
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int immArg)
+{
+   switch (operator_id) {
+      // Note read / write operator is used for bitwise operations
+      case WRITE_MESSAGE_ID:
+         // nload
+         // shiftn -immArg
+         // nsave
+         tape.write(bcNLoad);
+         tape.write(bcShiftN, -immArg);
+         tape.write(bcNSave);
+         break;
+      // Note read / write operator is used for bitwise operations
+      case READ_MESSAGE_ID:
+         // nload
+         // shiftn immArg
+         // nsave
+         tape.write(bcNLoad);
+         tape.write(bcShiftN, immArg);
+         tape.write(bcNSave);
+         break;
+      case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
+         tape.write(bcNLoad);
+         tape.write(bcAddN, immArg);
+         tape.write(bcNSave);
+         break;
+      case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
+         tape.write(bcNLoad);
+         tape.write(bcAddN, -immArg);
+         tape.write(bcNSave);
+         break;
+      case MUL_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
+         tape.write(bcNLoad);
+         tape.write(bcMulN, immArg);
+         tape.write(bcNSave);
+         break;
+      case AND_MESSAGE_ID:
+         tape.write(bcNLoad);
+         tape.write(bcAndN, immArg);
+         tape.write(bcNSave);
+         break;
+      case OR_MESSAGE_ID:
+         tape.write(bcNLoad);
+         tape.write(bcOrN, immArg);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
+
 void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
@@ -2950,18 +3004,20 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    bool assignMode = false;
    bool selectMode = false;
    bool invertMode = false;
+   bool immOp = false;
    int  level = 0;
 
    switch (node.argument) {
       case ADD_MESSAGE_ID:
       case SUB_MESSAGE_ID:
       case MUL_MESSAGE_ID:
-      case DIV_MESSAGE_ID:
       case AND_MESSAGE_ID:
       case OR_MESSAGE_ID:
-      case XOR_MESSAGE_ID:
       case READ_MESSAGE_ID:
       case WRITE_MESSAGE_ID:
+         immOp = true;
+      case XOR_MESSAGE_ID:
+      case DIV_MESSAGE_ID:
          assignMode = true;
          break;
       case LESS_MESSAGE_ID:
@@ -2984,6 +3040,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 
    bool largSimple = isSimpleObject(larg);
    bool rargSimple = isSimpleObject(rarg);
+   bool rargConst = (rarg == lxConstantInt) && immOp;
 
    if (!largSimple) {
       if (assignMode) {
@@ -3033,7 +3090,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       else generateObjectExpression(tape, larg);
 
       if (assignMode) {
-         if (node.type == lxIntOp) {
+         if (node.type == lxIntOp && !rargConst) {
             copyBase(tape, 4);
          }
          else if (node.type == lxLongOp || node == lxRealOp) {
@@ -3047,10 +3104,15 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       popObject(tape, lxResult);
       level--;
    }
-   else generateObjectExpression(tape, rarg);
+   else if (!rargConst)
+      generateObjectExpression(tape, rarg);
 
    if (node.type == lxIntOp) {
-      doIntOperation(tape, operation);
+      if (rargConst) {
+         SNode immArg = SyntaxTree::findChild(rarg, lxValue);
+         doIntOperation(tape, operation, immArg.argument);
+      }
+      else doIntOperation(tape, operation);
    }
    else if (node == lxLongOp) {
       doLongOperation(tape, operation);

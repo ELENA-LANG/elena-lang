@@ -2,12 +2,10 @@
 In development:
 ------                              
               xdev - generic development
-                       * Typed Extensions : self should be typedcasted #40 
-                       * extension should not be used stand-alone
-
-                       * system test
+                       * test all console samples
+                       * test all file samples
                        * test all rosetta samples
-                       * test all samples
+                       * test all gui samples
                        * test string_comparision
                        * test combinations
                        * test comp_list
@@ -23,6 +21,7 @@ In development:
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
 
               xdev - generic development
+                       * extension should not be used stand-alone
                        * OuterFieldTest should work
                        * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                        * primitive operation with subject
@@ -85,6 +84,7 @@ In development:
                        * optimize pop close => nop close
                        * optimize system'dynamic'Dynamic
                        * arrayof should support iterator
+                       * optimization : equal, less, div, xor should support operation with immediate argumnt as well
 
                        * test constructor returning not compatible object
 

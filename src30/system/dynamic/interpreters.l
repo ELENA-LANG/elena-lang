@@ -103,7 +103,7 @@
         // if not found extend the structure
         (anIndex == aLength) ?
         [                                    
-            theStruct := theStruct::arrayOp reallocate &int:(aLength + 2).
+            theStruct := theStruct reallocate &int:(aLength + 2).
 
             theStruct::classROp setField &int:anIndex &object:(Signature new &subject:$subject).
         ].
