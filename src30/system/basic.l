@@ -2290,4 +2290,13 @@
 {
     #method(vint,suppress:w3) new
         = 0.
+        
+    #method(vint,suppress:w3) new &int:n
+        = n.
+}.
+
+#symbol Real =
+{
+    #method(vreal,suppress:w3) new
+        = 0.0r.
 }.

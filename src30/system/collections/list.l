@@ -448,7 +448,7 @@
 // --- ArrayList ---
 
 /// An array list object
-#class(sealed,dispatchable:array_list) ArrayList
+#class(sealed,dispatchable:enumerable) ArrayList
 {
     #field(array) theArray.
     #field(vint)  theLength.
@@ -486,10 +486,10 @@
     /// Creates the list
     #constructor(stacksafe,suppress:w3) $new &array:anArray &int:aLength
     [
-        anArray readLength &vint:theCapacity.
-        theLength := aLength.
+        #var(int)capacity := anArray length.
         
-        //anArray readLength &vint:theCapacity.
+        theCapacity := capacity.
+        theLength := aLength.
         
         theArray := anArray clone.
     ]

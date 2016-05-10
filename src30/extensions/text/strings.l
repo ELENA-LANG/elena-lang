@@ -1,8 +1,5 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
-////#define system'routines.
-//
+#import system.
+
 //// --- StringBookmark ---
 //
 //#class StringBookmark :: BaseValue
@@ -142,39 +139,43 @@
 //    
 //    #method index = theIndex int.
 //}
-//
-//// --- StringWriter ---
-//
-//#class StringWriter
-//{    
-//    #field theValue.
-//    
-//    #constructor new
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//    
+
+// --- StringWriter ---
+
+#class StringWriter
+{    
+    #field theValue.
+    
+    #constructor new
+    [
+        theValue := emptyLiteralValue.
+    ]
+    
 //    #constructor new : aText
 //    [
 //        theValue := aText.
 //    ]
-//    
-//    #method write : aText
-//    [
-//        theValue := theValue + aText.
-//    ]
-//    
-//    #method writeLine : aText
-//    [
-//        $self write:aText write:'newLine.
-//    ]
-//   
-//    #method writeLine
-//    [
-//        $self write:'newLine.
-//    ]    
-//      
-//    #method literal => theValue.
-//    
-//    #method wide => theValue.
-//}
+    
+    #method write : aText
+    [
+        theValue := theValue + aText.
+    ]
+    
+    #method writeLine : aText
+    [
+        $self write:aText write:'newLine.
+    ]
+   
+    #method writeLine
+    [
+        $self write:'newLine.
+    ]    
+
+    #method wide => theValue.
+
+    #method => theValue.
+}
+
+/// obsolete
+
+#symbol String = StringWriter.

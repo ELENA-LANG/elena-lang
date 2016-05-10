@@ -1,9 +1,9 @@
 #import system.
 #import system'routines.
 #import system'collections.
-#import system'text.
 #import extensions.
 #import extensions'routines.
+#import extensions'text.
 
 // --- WordList ---
 
@@ -39,20 +39,26 @@
     #method => theList.
 }
 
+#class(extension)helpOp
+{
+    #method saveLine &to:target
+    [
+        target write:self write:'newLine.
+        
+        ^ self.
+    ]
+}
+
 // --- Program ---
 
 #symbol Program =
 [
     console writeLine:"Enter the text(to stop press enter two times):".
 
-    #var aText := TextBuffer new.
-    #var aLine := String new.
+    #var aText := String new.
 
     // read until the empty string is not entered
-    [
-        aText << console readLine:aLine << " ".
-    ]
-    run &until:[ aLine length == 0 ].
+    control while:[ console readLine saveLine &to:aText length != 0 ].
 
     #var aList := WordList new.
 

@@ -1,10 +1,8 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
-//#import system'io.
-////#define system'text.
-//#import extensions'text.
-//
+#import system.
+#import system'io.
+//#define system'text.
+#import extensions'text.
+
 //// --- ReaderEnumerator ---
 //
 //#class ReaderEnumerator :: Enumerator
@@ -69,26 +67,26 @@
 //    #method run &eachLine:anAction
 //        = anAction run &enumerator:(ReaderEnumerator new &path:self).
 //}
-//
-//// --- stringExOp ---
-//
-//#class(extension)stringExOp
-//{
-//    #method run &eachWord:aFunction
-//        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal)).
-//        
-//    #method run &token_dfa:aStatemachine &each:aFunction
-//        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:aStatemachine).
-//}
-//
-//// --- printingLn ---
-//
-//#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
-//
-//// --- func1Op ---
-//
-//#class(extension:func1)func1Op
-//{
-//    #method asComparer
-//        = { equal : object = self eval:object. }.
-//}
+
+// --- stringExOp ---
+
+#class(extension)stringExOp
+{
+    #method run &eachWord:aFunction
+        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal)).
+        
+    #method run &token_dfa:aStatemachine &each:aFunction
+        = aFunction run &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:aStatemachine).
+}
+
+// --- printingLn ---
+
+#symbol printingLn = aLine [ 'program'output writeLine:aLine ].
+
+// --- func1Op ---
+
+#class(extension:func1)func1Op
+{
+    #method asComparer
+        = { equal : object = self eval:object bool. }.
+}
