@@ -969,105 +969,104 @@
 //        self writeLine.
 //    ]
 //}
-//
-//// --- inputOp ---
-//
-//#class(extension) inputOp
-//{
-//    #method readLine : anObject
-//    [
-//        (self read &literal)::convertorOp convertTo:anObject.
-//        
-//        ^ anObject.
-//    ]
-//
-//    #method readLine : anObject1 : anObject2
-//    [
-//        #var aLine := self read &literal.
-//        
-//        #var aParams := aLine split &char:#32.
-//        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//            
-//        ^ self.
-//    ]
-//        
-//    #method readLine : anObject1 : anObject2 : anObject3
-//    [ 
-//        #var aLine := self read &literal.
-//        
-//        #var aParams := aLine split &char:#32.
-//        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//            
-//        ^ self.
-//    ]
-//        
-//    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
-//    [
-//        #var aLine := self read &literal.
-//        
-//        #var aParams := aLine split &char:#32.
-//        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//        (aParams@3)::convertorOp convertTo:anObject4.
-//            
-//        ^ self.
-//    ]
-//        
-//    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
-//    [
-//        #var aLine := self read &literal.
-//        
-//        #var aParams := aLine split &char:#32.
-//        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//        (aParams@3)::convertorOp convertTo:anObject4.
-//        (aParams@4)::convertorOp convertTo:anObject5.
-//            
-//        ^ self.
-//    ]
-//        
-//    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
-//    [
-//        #var aLine := self read &literal.
-//        
-//        #var aParams := aLine split &char:#32.
-//        
-//        (aParams@0)::convertorOp convertTo:anObject1.
-//        (aParams@1)::convertorOp convertTo:anObject2.
-//        (aParams@2)::convertorOp convertTo:anObject3.
-//        (aParams@3)::convertorOp convertTo:anObject4.
-//        (aParams@4)::convertorOp convertTo:anObject5.
-//        (aParams@5)::convertorOp convertTo:anObject6.
-//            
-//        ^ self.
-//    ]
-//    
-//    #method readLine &args:Arguments
-//    [
-//        #var aLine := self read &literal.
-//        
-//        #var(type:array) aParams := aLine split &char:#32.
-//        
-//        #var(type:vint)aLength.        
-//        Arguments readLength &vint:aLength.
-//        
-//        #var(type:int)anIndex := 0.
-//        #loop (anIndex < aLength) ?
-//        [
-//            (aParams getAt &int:anIndex)::convertorOp convertTo:(Arguments @ anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//            
-//        ^ self.
-//    ]
-//}
+
+// --- inputOp ---
+
+#class(extension) inputOp
+{
+    #method readLine : anObject
+    [
+        (self read &literal)::convertorOp convert &to:anObject.
+        
+        ^ anObject.
+    ]
+
+    #method readLine : anObject1 : anObject2
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convert &to:anObject1.
+        (aParams@1)::convertorOp convert &to:anObject2.
+            
+        ^ self.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3
+    [ 
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convert &to:anObject1.
+        (aParams@1)::convertorOp convert &to:anObject2.
+        (aParams@2)::convertorOp convert &to:anObject3.
+            
+        ^ self.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convert &to:anObject1.
+        (aParams@1)::convertorOp convert &to:anObject2.
+        (aParams@2)::convertorOp convert &to:anObject3.
+        (aParams@3)::convertorOp convert &to:anObject4.
+            
+        ^ self.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convert &to:anObject1.
+        (aParams@1)::convertorOp convert &to:anObject2.
+        (aParams@2)::convertorOp convert &to:anObject3.
+        (aParams@3)::convertorOp convert &to:anObject4.
+        (aParams@4)::convertorOp convert &to:anObject5.
+            
+        ^ self.
+    ]
+        
+    #method readLine : anObject1 : anObject2 : anObject3 : anObject4 : anObject5 : anObject6
+    [
+        #var aLine := self read &literal.
+        
+        #var aParams := aLine split &char:#32.
+        
+        (aParams@0)::convertorOp convert &to:anObject1.
+        (aParams@1)::convertorOp convert &to:anObject2.
+        (aParams@2)::convertorOp convert &to:anObject3.
+        (aParams@3)::convertorOp convert &to:anObject4.
+        (aParams@4)::convertorOp convert &to:anObject5.
+        (aParams@5)::convertorOp convert &to:anObject6.
+            
+        ^ self.
+    ]
+    
+    #method readLine &args:Arguments
+    [
+        #var aLine := self read &literal.
+        
+        #var(array) aParams := aLine split &char:#32 array.
+        
+        #var(int)aLength := Arguments length.
+        
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength) ?
+        [
+            (aParams getAt &int:anIndex)::convertorOp convert &to:(Arguments @ anIndex).
+            
+            anIndex += 1.
+        ].
+            
+        ^ self.
+    ]
+}

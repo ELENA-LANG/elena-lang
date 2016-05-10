@@ -1408,7 +1408,7 @@
 /// A generic variable. 
 ///
 /// Extends an assigned value
-#class(sealed,varof:object) Variable
+#class(sealed,nvarof:object) Variable
 {
     /// Creates the empty variable
     #constructor new
@@ -1420,6 +1420,32 @@
     [
         $value := value.
     ]
+    
+    #method set : value
+    [
+        $value := value.
+    ]
+    
+    #method append : val
+    [
+        $value := $value + val.
+    ]
+    
+    #method reduce : val
+    [
+        $value := $value - val.
+    ]
+
+    #method multiplyBy : val
+    [
+        $value := $value * val.
+    ]
+    
+    /// Divides into the value
+    #method divideInto : val
+    [
+        $value := $value / val.
+    ]    
 }
 
 // --- KeyValue ---

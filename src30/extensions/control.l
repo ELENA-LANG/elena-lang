@@ -1,20 +1,20 @@
 #import system.
 #import system'routines.
 
-//#class(extension:int)intLoopOp
-//{
-//    #method to &int:anEnd &doEvery:aFunction
-//        = self::intLoopOp to &int:anEnd &nfunc:(aFunction nfunc).
-//    
-//    #method(stacksafe) to &int:anEnd &nfunc:aFunction
-//    [
-//       #var(type:int)aStart := self int.
-//
-//       ^ (aStart < anEnd)
-//            ? [ ^ aFunction run &int:aStart &int:anEnd &int:1. ]
-//            ! [ ^ aFunction rewind &int:aStart &int:anEnd &int:1. ].
-//    ]
-//}
+#class(extension:int)intLoopOp
+{
+    #method to &int:anEnd &doEvery:aFunction
+        = self::intLoopOp to &int:anEnd &nfunc:(aFunction nfunc).
+    
+    #method(stacksafe) to &int:anEnd &nfunc:aFunction
+    [
+       #var(int)aStart := self.
+
+       ^ (aStart < anEnd)
+            ? [ ^ aFunction run &int:aStart &int:anEnd &int:1. ]
+            ! [ ^ aFunction rewind &int:aStart &int:anEnd &int:1. ].
+    ]
+}
 
 #class(extension)forLoopOp
 {
@@ -37,40 +37,40 @@
         = aFunction retrieve &enumerator:(RangeEnumerator new &from:self &to:aMaxValue &by:aStep).
 }
 
-//#class(extension)loopOp
-//{
-//    #method doWhile:anAction
-//    [
-//        #loop (self bool)?
-//        [
-//            anAction eval.
-//        ].
-//    ]
-//    
-//    #method doWhile
-//    [
-//        #loop (self bool)?
-//        [
-//        ].
-//    ]
-//}
-//
-//// --- testOp ---
-//
-//#class(extension)testOp
-//{
-//    #method assert &ifTrue
-//    [
-//        self
-//            ! [ console writeLine:"Assertion fails!" ].
-//    ]
-//    
-//    #method assert &ifFalse
-//    [
-//        self
-//            ? [ console writeLine:"Assertion fails!" ].
-//    ]
-//}
+#class(extension)loopOp
+{
+    #method doWhile:anAction
+    [
+        #loop (self bool)?
+        [
+            anAction eval.
+        ].
+    ]
+    
+    #method doWhile
+    [
+        #loop (self bool)?
+        [
+        ].
+    ]
+}
+
+// --- testOp ---
+
+#class(extension)testOp
+{
+    #method assert &ifTrue
+    [
+        self bool
+            ! [ console writeLine:"Assertion fails!" ].
+    ]
+    
+    #method assert &ifFalse
+    [
+        self bool
+            ? [ console writeLine:"Assertion fails!" ].
+    ]
+}
 
 // --- controlOp ---
 
@@ -104,13 +104,13 @@
     while:anExpr &do:anAction
         = anAction run &if:anExpr.
 
-//    run &int:aStart &int:anEnd &every:aFunction
-//        = (aStart < anEnd)
-//            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
-//            ! [ aFunction rewind &int:aStart &int:anEnd &int:1 ].
-//    
-//    run &int:aStart &int:anEnd &int:aStep &every:aFunction
-//        = (aStart < anEnd)
-//            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
-//            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
+    run &int:aStart &int:anEnd &every:aFunction
+        = (aStart < anEnd)
+            ? [ aFunction run &int:aStart &int:anEnd &int:1 ]
+            ! [ aFunction rewind &int:aStart &int:anEnd &int:1 ].
+    
+    run &int:aStart &int:anEnd &int:aStep &every:aFunction
+        = (aStart < anEnd)
+            ? [ aFunction run &int:aStart &int:anEnd &int:aStep ]
+            ! [ aFunction rewind &int:aStart &int:anEnd &int:aStep ].
 }.

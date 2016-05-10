@@ -468,14 +468,14 @@
         
     #method reset 
     [
-        theVariable << theStart.
+        theVariable set:theStart.
 
         theForward 
             ? [ theVariable -= theStep. ]
             ! [ theVariable += theStep. ].
     ]    
     
-    #method get = theVariable value.
+    #method get = theVariable get.
     
     #method next
     [
@@ -519,14 +519,14 @@
         
     #method reset 
     [
-        theVariable << theStart.
+        theVariable set:theStart.
 
         theForward 
             ? [ theVariable -= theStep. ]
             ! [ theVariable += theStep. ].
     ]    
     
-    #method get = theVariable value.
+    #method get = theVariable get.
     
     #method next
     [
