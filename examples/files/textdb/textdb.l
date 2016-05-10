@@ -1,11 +1,11 @@
 // --- default namespaces ---
-#define system.
-#define system'io.
-#define system'routines.
-#define system'collections.
-#define extensions.
-#define extensions'routines.
-#define extensions'text.
+#import system.
+#import system'io.
+#import system'routines.
+#import system'collections.
+#import extensions.
+#import extensions'routines.
+#import extensions'text.
 
 // --- EField ---
 
@@ -35,21 +35,21 @@
     
     #method set &Name:aName
     [
-        aName convertTo:theName.
+        aName convert &to:theName.
     ]
     
     #method Age = theAge Number.
     
     #method set &Age:anAge
     [
-        anAge convertTo:theAge.
+        anAge convert &to:theAge.
     ]
     
     #method Phone = thePhone literal.
     
     #method set &Phone:aPhone
     [
-        thePhone << aPhone.
+        thePhone set:aPhone.
     ]
 
     #method literal
