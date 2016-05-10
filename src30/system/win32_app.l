@@ -1,19 +1,18 @@
-// ==== ver 3.5.1 ===
-
 // --- CommandLine ---
-//
-//#symbol $CommandLineFactory =
-//{
-//    new
-//    [
-//        #var(type:dirty_ptr)aCommandLinePtr := system'external'KERNEL32 GetCommandLineW.
-//
-//        ^ aCommandLinePtr wide.
-//    ]
-//}.
-//
-//#symbol commandLine = 
-//    $CommandLineFactory new.
+
+#symbol $CommandLineFactory =
+{
+    new
+    [
+        #var(dirty_ptr)aCommandLinePtr.
+        aCommandLinePtr set &int:(system'external'KERNEL32 GetCommandLineW).
+
+        ^ aCommandLinePtr wide.
+    ]
+}.
+
+#symbol commandLine = 
+    $CommandLineFactory new.
 
 // --- startUp ---
 

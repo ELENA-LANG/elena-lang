@@ -839,7 +839,7 @@
     
     /// Reads the array length to the output parameter
     #method(stacksafe) readLength &vint:aLength
-        => system'core_routines'__array.
+        => system'core_routines'__intarray.
 
     /// Fills the sub array with a specified value
     #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue

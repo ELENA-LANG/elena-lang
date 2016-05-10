@@ -6952,10 +6952,11 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask
 
    if (parentNode == lxAssigning) {
       if (parentNode.argument != 4) {
-         ref_t type = SyntaxTree::findChild(parentNode, lxType).argument;
-
          boxPrimitive(scope, node, -1, warningMask, mode);
       }
+   }
+   else if (parentNode == lxTypecasting) {
+      boxPrimitive(scope, node, -1, warningMask, mode);
    }
 
    SNode arg = node.firstChild();
@@ -6998,7 +6999,7 @@ void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningM
             // if it is an idle call, remove it
             node = lxExpression;
 
-            return;
+            optimizeSyntaxExpression(scope, node, warningMask, mode);
          }
       }
    }
@@ -7532,7 +7533,11 @@ void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
    // HOT FIX : box / assign primitive structures
    if (isPrimitiveRef(target.argument)) {      
       if (type == 0) {
-         raiseWarning(scope, node, errInvalidOperation, 0, 0);
+         if (target.argument == -1) {
+            target.setArgument(scope.intReference);
+            node.setArgument(4);
+         }
+         else raiseWarning(scope, node, errInvalidOperation, 0, 0);
       }
       else {
          int size = scope.defineSubjectSize(type, false);
@@ -7799,7 +7804,7 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
 
          object = SyntaxTree::findMatchedChild(node, lxObjectMask);
 
-         optimized = true;
+         optimized = true;         
       }
 
       if (!checkIfCompatible(scope, targetType, object)) {

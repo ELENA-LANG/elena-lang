@@ -1461,8 +1461,43 @@
         array read &int:offset &vint:retVal.
     ]
     
+    #method(stacksafe)read &bytearray:array &int:offset &vlong:retVal
+    [
+        array read &int:offset &vlong:retVal.
+    ]
+    
+    #method(stacksafe)read &bytearray:array &int:offset &vreal:retVal
+    [
+        array read &int:offset &vreal:retVal.
+    ]
+    
     #method(stacksafe)read &bytearray:array &int:offset &vchar:retVal
     [
         array read &int:offset &vchar:retVal.
+    ]
+    
+    #method(stacksafe)write &bytearray:array &int:offset &short:retVal
+    [
+        array write &int:offset &short:retVal.
+    ]
+    
+    #method(stacksafe)write &bytearray:array &int:offset &int:retVal
+    [
+        array write &int:offset &int:retVal.
+    ]
+    
+    #method(stacksafe)write &bytearray:array &int:offset &long:retVal
+    [
+        array write &int:offset &long:retVal.
+    ]
+    
+    #method(stacksafe)write &bytearray:array &int:offset &real:retVal
+    [
+        array write &int:offset &real:retVal.
+    ]
+    
+    #method(stacksafe)write &bytearray:array &int:offset &char:retVal
+    [
+        array write &int:offset &char:retVal.
     ]
 }.
