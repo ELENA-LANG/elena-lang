@@ -4463,6 +4463,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          case elDebugShorts:
          case elDebugBytes:
          case elDebugDPTR:
+         case elDebugQWORD:
             argType = lxExtArgument;
             break;
          default:

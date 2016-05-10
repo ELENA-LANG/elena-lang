@@ -5,11 +5,11 @@
 
 // --- program ---
 
-#symbol(const,type:int)rows = 4.
-#symbol(const,type:int)cols = 6.
+#symbol(const,int)rows = 4.
+#symbol(const,int)cols = 6.
 
-#symbol(const,type:int)runCount = 1000000.
-#symbol(const,type:int)distGroupCount = 20.
+#symbol(const,int)runCount = 1000000.
+#symbol(const,int)distGroupCount = 20.
 
 #symbol program =
 [
