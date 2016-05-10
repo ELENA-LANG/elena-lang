@@ -68,9 +68,16 @@
     /// Returns the message
     #method message = theMessage.
     
+    /// Executes the exception handler
     #method if &subject:handler
     [
         handler eval:$self.
+    ]
+
+    /// Executes the generic exception handler
+    #method if &Error:aHandler
+    [
+        aHandler eval:$self.
     ]
 
     /// default handler
@@ -263,6 +270,7 @@
 
 // --- AbortException ---
 
+/// An abort exception 
 #class(exceptionof:Abort) AbortException
 {
     #constructor new &literal:message

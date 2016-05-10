@@ -53,7 +53,7 @@
             ! [
                 theBM find:";".
                 
-                theBM Marked convertTo:aVariable.
+                theBM Marked convert &to:aVariable.
                 
                 theBM mark.
                 
@@ -82,7 +82,7 @@
         [
             anAdapter read:aPrice.
         
-            aList append:(Record new &Price:(aPrice value) &Name:(aName value)).
+            aList append:(Record new &Price:(aPrice get) &Name:(aName get)).
         ].
     ].
 

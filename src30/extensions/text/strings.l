@@ -176,6 +176,8 @@
         theValue := aText literal.
     ]
 
+    #method get = theValue.
+
     #method wide => theValue.
 
     /// Dispatches the verb to the target object

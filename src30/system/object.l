@@ -5,7 +5,7 @@
     /// Dispatches the verb to the target with a specified subject
     #method cast : verb &to:target = target::verb eval &template_subj:$self.
 
-    /// Dispatches the verb to the target object with generic subject
+    /// Dispatches the verb to the target with a specified subject providing a parameter
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
 }
 

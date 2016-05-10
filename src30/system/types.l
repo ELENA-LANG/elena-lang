@@ -1,3 +1,5 @@
+/// Provides classes that describe the basic functionality
+
 // === basic logical types ===
 #subject bool       = system'BaseBoolValue.
 
@@ -15,7 +17,12 @@
 #subject char       = system'CharValue.
 #subject mssg       = system'Message.
 #subject ext_mssg   = system'ExtensionMessage.
+
+/// A verb symbol
+///
+/// An instance of system'Verb class. 
 #subject verb       = system'Verb.
+
 #subject subject    = system'Signature.
 #subject symbol_ref = system'Symbol.
 
@@ -33,12 +40,19 @@
 //#subject(class:system'BitArray)     bitarray.
 //#subject(class:system'BitArray32)   bitset.
 
+/// An instance of system'LiteralValue class. 
 #subject literal    = system'LiteralValue.
+
 #subject wide       = system'WideLiteralValue.
 
 // === function types ===
 #subject func       = system'BaseFunction.
+
+/// An anonymous function with a generic parameter.
+///
+/// An instance of system'BaseFunction1
 #subject func1      = system'BaseFunction1.
+
 #subject func2      = system'BaseFunction2.
 #subject func3      = system'BaseFunction3.
 #subject func4      = system'BaseFunction4.
