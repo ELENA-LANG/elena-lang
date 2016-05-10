@@ -913,9 +913,9 @@
         system'core_routines'__literal copy &literal:$self &literal:aLiteral.
     ]
 
-//    /// Creates the literal string with specified length fills with spciefied character value        
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'core_routines's_fill.
+    /// Creates the literal string with specified length fills with spciefied character value        
+    #constructor(stacksafe) new &int:aSize &char:aChar
+        => system'core_routines'__literal.
 
     /// Creates the literal string copy              
     #constructor new &literal:aLiteral
@@ -1125,9 +1125,9 @@
         system'core_routines'__wide copy &wide:$self &wide:aLiteral.
     ]
 
-//    /// Creates the literal string with specified length fills with spciefied character value
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'core_routines'ws_fill.
+    /// Creates the literal string with specified length fills with spciefied character value
+    #constructor(stacksafe) new &int:aSize &char:aChar
+        => system'core_routines'__wide.
 
     /// Creates the literal string copy
     #constructor new &wide:aLiteral

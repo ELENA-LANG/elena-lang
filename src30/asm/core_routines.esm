@@ -3172,6 +3172,144 @@ labEmpty:
 
 end
 
+procedure __literal.new&int$&char$[3]
+  
+  pusha
+
+  aloadsi 4
+  nload
+  pushd
+  acopys 0
+  pushn 0
+  pushn 0
+  bcopys 0
+  pushn 0
+  pushn 0
+  
+  callextr api : chartostr
+  acopyb
+  blen
+  popi 2
+  dec
+
+  ifn lab1 1 
+  ifn lab2 2
+  ifn lab3 3
+
+  popd
+  popi 2
+  popa
+
+  pushd
+  aloadsi 3
+  shiftn -2
+  inc
+  
+  acallvi 1
+  bcopya
+
+  blen
+  dec  
+  shiftn 2
+  ecopyd
+  dcopy 0
+
+labNext4:
+  eswapsi 0
+  nwrite
+  eswapsi 0
+  addn 1
+  next labNext4
+  jump labEnd  
+  
+lab1:  
+  aloadsi 6
+  nload
+  pushd
+  inc
+  aloadsi 4
+  
+  acallvi 1
+  bcopya
+
+  popd
+  ecopyd
+  dcopy 0
+
+labNext1:
+  eswapsi 0
+  bwriteb
+  eswapsi 0
+  next labNext1
+  popi 4
+  jump labEnd  
+    
+lab2:
+  popi 2
+  popd
+  popi 2
+  popa
+
+  pushd
+  shiftn -1
+  inc
+  
+  acallvi 1
+  bcopya
+
+  blen
+  dec  
+  ecopyd
+  dcopy 0
+  
+labNext2:
+  eswapsi 0
+  bwritew
+  eswapsi 0
+  addn 1
+  next labNext2
+  jump labEnd  
+
+lab3:
+  popi 2
+  popd
+  popi 2
+  popa
+
+  pushd
+  ecopyd
+  add
+  add
+  add
+  inc
+  
+  acallvi 1
+  bcopya
+
+  blen
+  dec  
+  ecopyd
+  dcopy 0
+
+labNext3:
+  eswapsi 0
+  bwrite
+  eswapsi 0
+  addn 2
+  next labNext3
+  jump labEnd  
+
+labEnd:
+  blen
+  dec
+  ecopy 0
+  bwriteb
+
+  acopyb
+  quitn 3
+  
+end
+
 procedure __wide.new&int$&int$&chararray$[4]
   
   aloadsi 3
@@ -3214,6 +3352,78 @@ labEmpty:
   acopyb
   quitn 4  
 
+end
+
+procedure __wide.new&int$&char$[3]
+  
+  bcopya
+
+  aloadsi 3
+  nload
+  pushd
+  lessn labFill 10000h
+  
+  aloadsi 3
+  nload
+  shiftn -1
+  inc
+  acopyb
+  acallvi 1
+  
+  bcopya
+  acopys 0
+  callextr api : chartowstr
+  pop
+  
+  dcopy 0
+  nread
+  pushe
+  
+  wlen
+  dec  
+  shiftn 1
+  ecopyd
+  dcopy 0
+
+labNext2:
+  eswapsi 0
+  nwrite
+  eswapsi 0
+  addn 1
+  next labNext2
+  jump labEnd  
+  
+labFill:
+  aloadsi 3
+  nload
+  inc
+  acopyb
+  acallvi 1
+
+  bcopya
+  wlen
+  dec
+  ecopyd  
+  dcopy 0
+
+labNext:
+  eswapsi 0
+  bwritew
+  eswapsi 0
+  addn 2
+  next labNext
+
+labEnd:
+  pop
+  wlen
+  dec
+  shiftn -1
+  ecopy 0
+  bwritew
+
+  acopyb
+  quitn 3
+  
 end
 
 procedure __literal.save&int$&chararray$&vint$[4]
@@ -5197,216 +5407,6 @@ procedure ws_copyarr
   bwritew
   quitn 3
 
-end
-
-procedure s_fill
-  
-  pusha
-
-  aloadsi 4
-  nload
-  pushd
-  acopys 0
-  pushn 0
-  pushn 0
-  bcopys 0
-  pushn 0
-  pushn 0
-  
-  callextr api : chartostr
-  acopyb
-  blen
-  popi 2
-  dec
-
-  ifn lab1 1 
-  ifn lab2 2
-  ifn lab3 3
-
-  popd
-  popi 2
-  popa
-
-  pushd
-  aloadsi 3
-  shiftn -2
-  inc
-  
-  acallvi 1
-  bcopya
-
-  blen
-  dec  
-  shiftn 2
-  ecopyd
-  dcopy 0
-
-labNext4:
-  eswapsi 0
-  nwrite
-  eswapsi 0
-  addn 1
-  next labNext4
-  jump labEnd  
-  
-lab1:  
-  aloadsi 6
-  nload
-  pushd
-  inc
-  aloadsi 4
-  
-  acallvi 1
-  bcopya
-
-  popd
-  ecopyd
-  dcopy 0
-
-labNext1:
-  eswapsi 0
-  bwriteb
-  eswapsi 0
-  next labNext1
-  popi 4
-  jump labEnd  
-    
-lab2:
-  popi 2
-  popd
-  popi 2
-  popa
-
-  pushd
-  shiftn -1
-  inc
-  
-  acallvi 1
-  bcopya
-
-  blen
-  dec  
-  ecopyd
-  dcopy 0
-  
-labNext2:
-  eswapsi 0
-  bwritew
-  eswapsi 0
-  addn 1
-  next labNext2
-  jump labEnd  
-
-lab3:
-  popi 2
-  popd
-  popi 2
-  popa
-
-  pushd
-  ecopyd
-  add
-  add
-  add
-  inc
-  
-  acallvi 1
-  bcopya
-
-  blen
-  dec  
-  ecopyd
-  dcopy 0
-
-labNext3:
-  eswapsi 0
-  bwrite
-  eswapsi 0
-  addn 2
-  next labNext3
-  jump labEnd  
-
-labEnd:
-  blen
-  dec
-  ecopy 0
-  bwriteb
-
-  acopyb
-  quitn 3
-  
-end
-
-procedure ws_fill
-  
-  bcopya
-
-  aloadsi 3
-  nload
-  pushd
-  lessn labFill 10000h
-  
-  aloadsi 3
-  nload
-  shiftn -1
-  inc
-  acopyb
-  acallvi 1
-  
-  bcopya
-  acopys 0
-  callextr api : chartowstr
-  pop
-  
-  dcopy 0
-  nread
-  pushe
-  
-  wlen
-  dec  
-  shiftn 1
-  ecopyd
-  dcopy 0
-
-labNext2:
-  eswapsi 0
-  nwrite
-  eswapsi 0
-  addn 1
-  next labNext2
-  jump labEnd  
-  
-labFill:
-  aloadsi 3
-  nload
-  inc
-  acopyb
-  acallvi 1
-
-  bcopya
-  wlen
-  dec
-  ecopyd  
-  dcopy 0
-
-labNext:
-  eswapsi 0
-  bwritew
-  eswapsi 0
-  addn 2
-  next labNext
-
-labEnd:
-  pop
-  wlen
-  dec
-  shiftn -1
-  ecopy 0
-  bwritew
-
-  acopyb
-  quitn 3
-  
 end
 
 procedure arr_create

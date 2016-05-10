@@ -930,27 +930,25 @@
     #method trim
         = self::literalOp trimLeft &char:#32 trimRight &char:#32.        
     
-//    #method padLeft &char:aChar &int:aLength
-//    [
-//        #var(literal)aLiteral := self literal.
-//        #var(int)aCurrentLength := aLiteral length.
-//        
-//        (aCurrentLength < aLength)
-//            ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:aLiteral. ].
-//            
-//        ^ self.            
-//    ]
-//    
-//    #method padRight &char:aChar &int:aLength
-//    [
-//        #var(literal)aLiteral := self literal.        
-//        #var(int)aCurrentLength := aLiteral length.
-//
-//        (aCurrentLength < aLength)
-//            ? [ ^ aLiteral add &literal:(LiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
-//            
-//        ^ self.            
-//    ]
+    #method padLeft &char:aChar &int:aLength
+    [
+        #var(int)aCurrentLength := self length.
+        
+        (aCurrentLength < aLength)
+            ? [ ^ LiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &literal:self. ].
+            
+        ^ self.            
+    ]
+    
+    #method padRight &char:aChar &int:aLength
+    [
+        #var(int)aCurrentLength := self length.
+
+        (aCurrentLength < aLength)
+            ? [ ^ self add &literal:(LiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
+            
+        ^ self.            
+    ]
 
     #method startingWith:s
         = self::literalOp startingWith &literal:(s literal).
@@ -1116,27 +1114,25 @@
     #method trim
         = self::wideOp trimLeft &char:#32 trimRight &char:#32.
     
-//    #method padLeft &char:aChar &int:aLength
-//    [
-//        #var(wide)aLiteral := self wide.
-//        #var(int)aCurrentLength := aLiteral length.
-//        
-//        (aCurrentLength < aLength)
-//            ? [ ^ WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &wide:aLiteral. ].
-//            
-//        ^ self.            
-//    ]
-//    
-//    #method padRight &char:aChar &int:aLength
-//    [
-//        #var(wide)aLiteral := self wide.        
-//        #var(int)aCurrentLength := aLiteral length.
-//
-//        (aCurrentLength < aLength)
-//            ? [ ^ aLiteral add &wide:(WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
-//            
-//        ^ self.            
-//    ]
+    #method padLeft &char:aChar &int:aLength
+    [
+        #var(int)aCurrentLength := self length.
+        
+        (aCurrentLength < aLength)
+            ? [ ^ WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar add &wide:self. ].
+            
+        ^ self.            
+    ]
+    
+    #method padRight &char:aChar &int:aLength
+    [
+        #var(int)aCurrentLength := self length.
+
+        (aCurrentLength < aLength)
+            ? [ ^ self add &wide:(WideLiteralValue new &int:(aLength - aCurrentLength) &char:aChar). ].
+            
+        ^ self.            
+    ]
 
     #method startingWith &wide:s
     [
@@ -1223,168 +1219,168 @@
     ]
 }
 
-//// --- stringOp ---
-//
-//#symbol stringOpDispatcher =
-//{
-//    eval &literal:aLiteral = literalOp.
-//    
-//    eval &wide:aLiteral = wideOp.
-//}.
-//
-//#class(extension) stringOp
-//{
-//    #method Substring : anIndex
-//        = self Substring:(self length - anIndex) &at:(anIndex int).
-//            
-//    #method Substring : anIndex : aLength
-//        = self Substring:aLength &at:anIndex.
-//            
-//    #method trimLeft &char:aChar
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimLeft &char:aChar.
-//    ]
-//
-//    #method trimRight &char:aChar
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimRight &char:aChar.
-//    ]
-//
-//    #method trim &char:aChar
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trim &char:aChar.
-//    ]
-//
-//    #method trim
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trim.
-//    ]
-//
-//    #method trimLeft
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimLeft.
-//    ]
-//
-//    #method trimRight
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher trimRight.
-//    ]
-//    
-//    #method padLeft &char:aChar &length:aLength
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher padLeft &char:aChar &int:(aLength int).
-//    ]
-//    
-//    #method padRight &char:aChar &length:aLength
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher padRight &char:aChar &int:(aLength int).
-//    ]
-//    
-//    #method startingWith : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher startingWith:s.
-//    ]
-//    
-//    #method endingWith : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher endingWith:s.
-//    ]
-//    
-//    #method containing : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher containing:s.
-//    ]
-//    
-//    #method replaceFirst &literal:aReplacee &literal:aReplacer
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher replaceFirst &literal:aReplacee &literal:aReplacer.
-//    ]
-//    
-//    #method replace &literal:aReplacee &literal:aReplacer
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
-//    ]
-//    
-//    #method write : aLiteral &length:aCounter
-//        = self::stringOp write : aLiteral &int:(aCounter int).
-//            
-//    #method(stacksafe) write : aLiteral &int:aCounter
-//    [
-//        #var(type:int)aNumber := aCounter.
-//        
-//        #loop (aNumber > 0) ?
-//        [
-//            self write:aLiteral. 
-//            
-//            aNumber := aNumber - 1.
-//        ].
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &paddingLeft:aWidth &with:aChar
-//    [
-//        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self.
-//    ]
-//
-//    #method write : aLine &paddingRight:aWidth &with:aChar
-//    [
-//        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &padding:aWidth &with:aChar
-//    [
-//        #var(type:int)aWidthInt := aWidth int.
-//        #var(type:int)aLength := aLine length.        
-//        
-//        (aLength < aWidthInt)
-//            ? [
-//                #var(type:int)aLen := aWidthInt - aLength.
-//                #var(type:int)aLeftLen := aLen / 2.
-//                
-//                self::stringOp write:aChar &int:aLeftLen.
-//                self write:aLine.
-//                self::stringOp write:aChar &int:(aLen - aLeftLen).
-//            ]
-//            ! [ self write:aLine. ].
-//            
-//        ^ self.
-//    ]    
-//}
+// --- stringOp ---
+
+#symbol stringOpDispatcher =
+{
+    eval &literal:aLiteral = literalOp.
+    
+    eval &wide:aLiteral = wideOp.
+}.
+
+#class(extension) stringOp
+{
+    #method Substring : anIndex
+        = self Substring:(self length - anIndex) &at:(anIndex int).
+            
+    #method Substring : anIndex : aLength
+        = self Substring:aLength &at:anIndex.
+            
+    #method trimLeft &char:aChar
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimLeft &char:aChar.
+    ]
+
+    #method trimRight &char:aChar
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimRight &char:aChar.
+    ]
+
+    #method trim &char:aChar
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trim &char:aChar.
+    ]
+
+    #method trim
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trim.
+    ]
+
+    #method trimLeft
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimLeft.
+    ]
+
+    #method trimRight
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher trimRight.
+    ]
+    
+    #method padLeft &char:aChar &length:aLength
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher padLeft &char:aChar &int:(aLength int).
+    ]
+    
+    #method padRight &char:aChar &length:aLength
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher padRight &char:aChar &int:(aLength int).
+    ]
+    
+    #method startingWith : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher startingWith:s.
+    ]
+    
+    #method endingWith : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher endingWith:s.
+    ]
+    
+    #method containing : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher containing:s.
+    ]
+    
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher replaceFirst &literal:aReplacee &literal:aReplacer.
+    ]
+    
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
+    ]
+    
+    #method write : aLiteral &length:aCounter
+        = self::stringOp write : aLiteral &int:(aCounter int).
+            
+    #method(stacksafe) write : aLiteral &int:aCounter
+    [
+        #var(int)aNumber := aCounter.
+        
+        #loop (aNumber > 0) ?
+        [
+            self write:aLiteral. 
+            
+            aNumber -= 1.
+        ].
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &paddingLeft:aWidth &with:aChar
+    [
+        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
+            
+        ^ self.
+    ]
+
+    #method write : aLine &paddingRight:aWidth &with:aChar
+    [
+        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &padding:aWidth &with:aChar
+    [
+        #var(int)aWidthInt := aWidth int.
+        #var(int)aLength := aLine length int.        
+        
+        (aLength < aWidthInt)
+            ? [
+                #var(int)aLen := aWidthInt - aLength.
+                #var(int)aLeftLen := aLen / 2.
+                
+                self::stringOp write:aChar &int:aLeftLen.
+                self write:aLine.
+                self::stringOp write:aChar &int:(aLen - aLeftLen).
+            ]
+            ! [ self write:aLine. ].
+            
+        ^ self.
+    ]    
+}
 
 // --- charOp ---
 
