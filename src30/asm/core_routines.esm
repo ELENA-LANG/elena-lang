@@ -4443,17 +4443,13 @@ procedure __realarray.read&int$&vreal$[3]
   lessn   labErr 0
  
   shiftn -1
-  pushd
   acopyb
-  nread
-  dcopye
   bloadsi 3
-  nsave
-  popd
+  nread
+  nwritei 0
   inc
   nread
-  dcopy 1
-  nwrite
+  nwritei 1
 
   quitn 3
   
