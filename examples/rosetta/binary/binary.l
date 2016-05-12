@@ -1,3 +1,5 @@
+/// showing the sequence of binary digits for given numbers
+
 #import system.
 #import system'routines.
 #import extensions.

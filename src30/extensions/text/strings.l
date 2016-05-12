@@ -176,6 +176,11 @@
         theValue := aText literal.
     ]
 
+    #method append : aText
+    [
+        theValue := theValue add:aText literal.
+    ]
+    
     #method get = theValue.
 
     #method clear

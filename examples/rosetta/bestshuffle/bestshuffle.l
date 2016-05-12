@@ -1,3 +1,5 @@
+/// Shuffles the characters of a string in such a way that as many of the character values are in a different position as possible.
+
 #import system.
 #import system'routines.
 #import extensions.
@@ -32,7 +34,7 @@
         0 to:(anOriginal length - 1) &doEach: (:i)
             [ ((anOriginal @ i) == (aShuffled @ i)) ? [ aScore += 1. ]. ].
         
-        ^ aScore value.
+        ^ aScore get.
     ]
 }
 

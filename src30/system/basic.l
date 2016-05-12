@@ -112,6 +112,9 @@
 
     /// Divides into the value
     #method divide : anObject = anObject cast:%divide &to:$self.
+    
+    #method negative
+        = 0 - self.
 }
 
 // --- IntBaseNumber ---
@@ -351,14 +354,18 @@
 
     #method(byte,stacksafe,suppress:w3) shift &int:val
     [
-        (val < 0)
-            ? [ ^ theValue << val. ].
+        (val > 0)
+            ? [ ^ theValue >> val. ].
             
-        #var(int)neg_val := 0 - val.
+        #var(int)neg_val := 0 - val - 1.
             
-        ^ theValue >> neg_val.
+        ^ theValue << neg_val.
     ]
     
+    /// Bitwise inversion
+    #method(byte,stacksafe) inverted
+        => system'core_routines'__byte.  
+        
     /// Returns the literal presentation
     #method literal = literalConvertor convert &byte:$self.
 
@@ -594,13 +601,17 @@
 
     #method(short,stacksafe,suppress:w3) shift &int:val
     [
-        (val < 0)
-            ? [ ^ theValue << val. ].
+        (val > 0)
+            ? [ ^ theValue >> val. ].
             
-        #var(int)neg_val := 0 - val.
+        #var(int)neg_val := 0 - val - 1.
             
-        ^ theValue >> neg_val.
+        ^ theValue << neg_val.
     ]
+    
+    /// Bitwise inversion
+    #method(byte,stacksafe) inverted
+        => system'core_routines'__short.  
 
     /// Returns the literal presentation
     #method literal = literalConvertor convert &short:$self.
@@ -862,13 +873,21 @@
 
     #method(int,stacksafe,suppress:w3) shift &int:val
     [
-        (val < 0)
-            ? [ ^ theValue << val. ].
+        (val > 0)
+            ? [ ^ theValue >> val. ].
             
-        #var(int)neg_val := 0 - val.
+        #var(int)neg_val := 0 - val - 1.
             
-        ^ theValue >> neg_val.
+        ^ theValue << neg_val.
     ]
+    
+    /// Bitwise inversion
+    #method(byte,stacksafe) inverted
+        => system'core_routines'__int.  
+        
+    /// Negates the value
+    #method(stacksafe,suppress:w3) negative
+        = 0 - theValue.
 }
 
 // --- LongNumber ---
@@ -1113,13 +1132,21 @@
 
     #method(long,stacksafe,suppress:w3) shift &int:val
     [
-        (val < 0)
-            ? [ ^ theValue << val. ].
+        (val > 0)
+            ? [ ^ theValue >> val. ].
             
-        #var(int)neg_val := 0 - val.
+        #var(int)neg_val := 0 - val - 1.
             
-        ^ theValue >> neg_val.
+        ^ theValue << neg_val.
     ]
+    
+    /// Bitwise inversion
+    #method(byte,stacksafe) inverted
+        => system'core_routines'__long.  
+        
+    /// Negates the value
+    #method(stacksafe,suppress:w3) negative
+        = 0l - theValue.
 }
 
 // --- realNumber ---
@@ -1305,6 +1332,10 @@
         
         ^ aCode.
     ]
+        
+    /// Negates the value
+    #method(stacksafe,suppress:w3) negative
+        = 0.0r - theValue.
 }
 
 // --- CharValue ---

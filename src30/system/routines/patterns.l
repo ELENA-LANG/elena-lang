@@ -617,73 +617,73 @@
 //    #method next
 //        = theListEnumerator next.
 //}
-//
-//// === patterns ===
-//
-//// --- BasePattern ---
-//
-//#class BasePattern :: BaseFunction1
-//{
-//    #field theResult.
-//    
-//    #method run &enumerator:anEnumerator
-//    [
-//        $super run &enumerator:anEnumerator.
-//        
-//        ^ theResult.
-//    ]
-//}
-//
-//// --- Summing ---
-//
-//#class Summing :: BasePattern
-//{
-//    #constructor new : aVariable
-//    [
-//        theResult := aVariable.
-//    ]
-//
-//    #method eval : aParam [ theResult append:aParam. ]
-//}
-//
-//// --- Accumulating ---
-//
-//#class Accumulating :: BasePattern
-//{
-//    #field(type:func2) theOperation.
-//    
-//    #constructor new : aVariable &with:operation
-//    [
-//        theResult := aVariable.
-//        theOperation := operation func2.
-//    ]
-//
-//    #method eval : aParam [ theResult << theOperation eval:theResult:aParam. ]
-//}
+
+// === patterns ===
+
+// --- BasePattern ---
+
+#class BasePattern :: BaseFunction1
+{
+    #field theResult.
+    
+    #method run &enumerator:anEnumerator
+    [
+        $super run &enumerator:anEnumerator.
+        
+        ^ theResult.
+    ]
+}
+
+// --- Summing ---
+
+#class Summing :: BasePattern
+{
+    #constructor new : aVariable
+    [
+        theResult := aVariable.
+    ]
+
+    #method eval : aParam [ theResult append:aParam. ]
+}
+
+// --- Accumulating ---
+
+#class Accumulating :: BasePattern
+{
+    #field(func2) theOperation.
+    
+    #constructor new : aVariable &with:operation
+    [
+        theResult := aVariable.
+        theOperation := operation func2.
+    ]
+
+    #method eval : aParam [ theResult set:(theOperation eval:theResult:aParam). ]
+}
 
 // --- patternOp ---
 
 #class(extension)patternOp
 {
-//    #method summarize : aVariable
-//    [
-//        Summing new:aVariable run &enumerator:(self enumerator).
-//        
-//        ^ aVariable value.
-//    ]
-//    
-//    #method summarize
-//        = self::patternOp summarize:(Variable new).
-//        
-//    #method accumulate : aVariable &with:operation
-//    [
-//        Accumulating new:aVariable &with:operation run &enumerator:(self enumerator).
-//        
-//        ^ aVariable value.
-//    ]
-//    
-//    #method accumulate &with:operation 
-//        = self::patternOp accumulate:(Variable new) &with:operation.
+    #method summarize : aVariable
+    [
+        Summing new:aVariable run &enumerator:(self enumerator).
+        
+        ^ aVariable get.
+    ]
+    
+    #method summarize
+        = self::patternOp summarize:(Variable new).
+        
+    #method accumulate : aVariable &with:operation
+    [
+        Accumulating new:aVariable &with:operation run &enumerator:(self enumerator).
+        
+        ^ aVariable get.
+    ]
+    
+    #method accumulate &with:operation 
+        = self::patternOp accumulate:(Variable new) &with:operation.
 
     #method top:aCounter
         = TopFilter new:aCounter &enumerator:(self enumerator).
