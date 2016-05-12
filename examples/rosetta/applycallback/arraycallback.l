@@ -1,3 +1,5 @@
+/// Apply a callback to an array
+
 #import system.
 #import system'routines.
 

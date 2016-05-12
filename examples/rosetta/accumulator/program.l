@@ -18,17 +18,17 @@ ELENA is OO language, so a function is in fact an object
 
 #class(extension)op
 {
-    #method Accumulator
-        = Variable new:self mix &into:Function.
+    #method accumulator &of:func
+        = Variable new:self mix &into:func.
 }
 
 #symbol program =
 [
-    #var x := 1 Accumulator.
+    #var x := 1 accumulator &of:Function.
     
     x eval:5.
     
-    #var y := 3 Accumulator.
+    #var y := 3 accumulator &of:Function.
     
     console write:(x eval:2.3r).
 ].

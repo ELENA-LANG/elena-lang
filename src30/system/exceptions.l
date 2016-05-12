@@ -210,6 +210,10 @@
     /// Creates the exception
     #constructor new:aMessage
         <= new &literal:(aMessage literal).
+        
+    /// obsolete
+    #constructor new &message:aMessage
+        <= new &literal:(aMessage literal).
 }
 
 // --- InvalidOperationException ---
@@ -228,6 +232,10 @@
 
     /// Creates the exception
     #constructor new:aMessage
+        <= new &literal:(aMessage literal).
+        
+    /// obsolete
+    #constructor new &message:aMessage
         <= new &literal:(aMessage literal).
 }
 

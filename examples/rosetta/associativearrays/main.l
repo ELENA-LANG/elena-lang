@@ -1,3 +1,5 @@
+/// Shows how to iterate over the key-value pairs of an associative array, and print each pair out. 
+
 #import system.
 #import system'collections.
 #import system'routines.

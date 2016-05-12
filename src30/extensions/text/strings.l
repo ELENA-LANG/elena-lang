@@ -178,6 +178,11 @@
 
     #method get = theValue.
 
+    #method clear
+    [
+        theValue := emptyLiteralValue.
+    ]
+
     #method wide => theValue.
 
     /// Dispatches the verb to the target object
@@ -190,5 +195,4 @@
 }
 
 /// obsolete
-
 #symbol String = StringWriter.

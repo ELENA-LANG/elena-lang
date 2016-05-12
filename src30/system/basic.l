@@ -1405,6 +1405,25 @@
     ]
 }
 
+// === Basic Factory symbols ==
+
+#class BaseExtender
+{
+    #field theObject.
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    #method(bool) equal : anObject
+        => theObject.
+      
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget => theObject.
+    
+    /// Dispatches the verb to the target object
+    #method cast : aVerb &to:aTarget &with:aParam => theObject.
+    
+    #method => theObject.
+}
+
 /// A generic variable. 
 ///
 /// Extends an assigned value
@@ -2319,6 +2338,9 @@
         
     #method(vint,suppress:w3) new &int:n
         = n.
+        
+    #method(vint,suppress:w3) new:n
+        = n int.
 }.
 
 #symbol Real =

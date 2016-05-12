@@ -690,13 +690,13 @@
 
 //    #method last:counter
 //        = TopFilter new:counter &skipping:(self length - counter) &enumerator:(self enumerator).
-//
-//    #method filter &each:aFilter
-//        = Filter new &each:aFilter &enumerator:(self enumerator).
-//
-//    #method select &each:aSelector
-//        = Selector new &each:aSelector &enumerator:(self enumerator).
-//
+
+    #method filter &each:aFilter
+        = Filter new &each:aFilter &enumerator:(self enumerator).
+
+    #method select &each:aSelector
+        = Selector new &each:aSelector &enumerator:(self enumerator).
+
 //    #method zip:anEnumerable &into:aZipper
 //        = ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
 //

@@ -2,12 +2,10 @@
 In development:
 ------                              
               xdev - generic development
-                       * array of real
-                       * array of structures
-
-                       * test all console samples
-                       * test all file samples
                        * test all rosetta samples
+                       * test amb
+                       * test anagram
+
                        * test all gui samples
                        * test string_comparision
                        * test combinations
@@ -34,6 +32,7 @@ In development:
                        * test length operation
 
                        * arrayof:bool - a@n -> should be bool
+                       * test array of structures
 
                        * equal message should be always the second one, so we could call it directly, equal / not equal message should 
                          always return bool operand

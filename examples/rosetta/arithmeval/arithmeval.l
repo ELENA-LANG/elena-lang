@@ -1,6 +1,9 @@
+/// a program which parses and evaluates arithmetic expressions. 
+
 #import system.
 #import system'routines.
 #import extensions.
+#import extensions'text.
 
 // --- Token ---
 
@@ -11,7 +14,7 @@
     
     #constructor new &level:aLevel
     [
-        theValue := String new.
+        theValue := StringWriter new.
         theLevel := aLevel + 9.
     ]
     
@@ -19,10 +22,10 @@
     
     #method append : aChar
     [
-        theValue += aChar.
+        theValue << aChar.
     ]
     
-    #method number = theValue value toReal.
+    #method number = theValue get toReal.
 }
 
 // --- Node ---
@@ -235,7 +238,7 @@
                                     
     #method append:ch
     [
-        ((ch >= 48) and:(ch < 58))
+        ((ch >= #48) and:(ch < #58))
             ? [ theToken append:ch. ]
             ! [ #throw InvalidArgumentException new &message:"Invalid expression". ].
     ]
@@ -338,11 +341,13 @@
     #var aText := String new.
     #var aParser := Parser new.
 
-    [ (aText << console readLine) length > 0] doWhile:
+    [ console readLine save &to:aText length > 0] doWhile:
     [
         console writeLine:"=" :(aParser run:aText)
             | if &Error:e [
                     console writeLine:"Invalid Expression".
                 ].
+                
+        aText clear.                
     ].
 ].

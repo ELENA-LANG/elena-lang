@@ -153,27 +153,27 @@
 //             
 //    #method sequenceEqual:list
 //        = self::enumerableOp equal &enumerable:list.
-//                                                  
-//    #method firstMember
-//    [
-//        #var(type:enumerator)anEnumerator := self enumerator.
-//        
-//        (anEnumerator next) 
-//            ? [ ^ anEnumerator get. ]
-//            ! [ ^ $nil. ].
-//    ]
-//
-//    #method lastMember
-//    [
-//        #var(type:enumerator)anEnumerator := self enumerator.
-//        #var aLastItem := $nil.
-//        
-//        #loop (anEnumerator next) ?
-//            [ aLastItem := anEnumerator get. ].
-//            
-//        ^ aLastItem.
-//    ]
-//    
+                                                  
+    #method firstMember
+    [
+        #var(enumerator)anEnumerator := self enumerator.
+        
+        (anEnumerator next) 
+            ? [ ^ anEnumerator get. ]
+            ! [ ^ $nil. ].
+    ]
+
+    #method lastMember
+    [
+        #var(enumerator)anEnumerator := self enumerator.
+        #var aLastItem := $nil.
+        
+        #loop (anEnumerator next) ?
+            [ aLastItem := anEnumerator get. ].
+            
+        ^ aLastItem.
+    ]
+    
 //    #method(type:int) count
 //    [
 //        #var(type:enumerator)en := self enumerator.

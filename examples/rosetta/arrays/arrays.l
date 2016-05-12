@@ -1,3 +1,5 @@
+/// basic array syntax
+
 #define system.
 #define system'collections.
 #define extensions.
@@ -11,7 +13,7 @@
     anArray@1 := 2.
     anArray@2 := 3.
     
-    #var(type:intarray,size:3)aStackAllocatedArray.
+    #var(int:3)aStackAllocatedArray.
     aStackAllocatedArray@0 := 1.
     aStackAllocatedArray@1 := 2.
     aStackAllocatedArray@2 := 3.            

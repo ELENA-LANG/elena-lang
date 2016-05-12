@@ -1,13 +1,22 @@
+/// Anonymous recursion
+
 #import system.
 #import extensions.
 
-#symbol fibo = (:n)
-[
-    (n < 0)
-        ? [ #throw InvalidArgumentException new &message:"Must be non negative". ].
- 
-    ^ { eval:n [ ^ (n > 1) ? [ ($self:(n - 2)) + ($self:(n - 1)) ] ! [ n ]. ] }:n.
-].
+#class(extension)mathOp
+{
+    #method fib
+    [
+        (self < 0)
+            ? [ #throw InvalidArgumentException new &message:"Must be non negative". ].
+            
+        ^ control eval:self &for: 
+            (:n)
+                [
+                    (n > 1) ? [ this eval:(n - 2) + this eval:(n - 1) ] ! [ n ]
+                ].
+    ]
+}
 
 #symbol program =
 [
@@ -15,7 +24,7 @@
     [
         console writeLiteral:"fib(":i:")=".
         
-        console writeLine:(fibo:i) | if &InvalidArgumentError: e
+        console writeLine:(i fib) | if &InvalidArgumentError: e
             [
                 console writeLine:"invalid".
             ].

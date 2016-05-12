@@ -190,7 +190,7 @@
     #method write &index:anIndex []
     
     /// Increaments the index by specified value
-    #method append &index:anOffset
+    #method(iterator) append &index:anOffset
     [
         #var(int)anIndex := 0.
         $self readIndex &vint:anIndex.
@@ -198,6 +198,8 @@
         anIndex := anIndex + anOffset int.
         
         $self writeIndex &int:anIndex.
+        
+        ^ $self.
     ]
 
     /// Decreaments the index by specified value

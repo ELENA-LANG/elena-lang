@@ -1,3 +1,4 @@
+///  a program to find the mean (arithmetic average) of a numeric vector. 
 #import system.
 #import extensions.
 

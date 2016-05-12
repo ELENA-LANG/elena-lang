@@ -1,4 +1,6 @@
+/// concatenating two arrays in your language. 
 #import system.
+
 #import extensions.
 
 #symbol program =

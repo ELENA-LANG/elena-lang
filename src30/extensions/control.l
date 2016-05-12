@@ -80,7 +80,7 @@
     [
         target write:self.
         
-        ^ self.
+        ^   self.
     ]
 }
 
@@ -92,6 +92,9 @@
     [
         ^ anAction eval | if:aHandler.
     ]    
+    
+    eval:object &for:action
+        = action eval:object.
     
     do:anAction = anAction eval.
     

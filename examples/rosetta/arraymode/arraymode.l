@@ -1,3 +1,5 @@
+/// a program to find the mode value of a collection. 
+
 #import system.
 #import system'routines.
 #import system'collections.
