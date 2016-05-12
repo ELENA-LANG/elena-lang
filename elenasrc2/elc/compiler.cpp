@@ -7173,7 +7173,7 @@ inline LexicalType mapArrPrimitiveOp(int size)
       case 2:
          return lxShortArrOp;
       default:
-         return lxNone;
+         return lxBinArrOp;
    }
 }
 

@@ -10,37 +10,37 @@
 
 #class Matrix
 {
-    #field theMatrix.
+    #field(realmatrix) theMatrix.
     
-    #constructor new &matrix:aMatrix
+    #constructor new &realmatrix:aMatrix
     [
         theMatrix := aMatrix.
     ]
     
     #constructor new &n:anN &name:aName
-        <= new &matrix:(RealMatrix new:anN:anN set &every_ij: (&index:i &index:j)
+        <= new &realmatrix:(RealMatrix new:anN:anN set &every_ij: (&index:i &index:j)
             [  
                 console writeLiteral:"Enter ":aName:"[":i:",":j:"]=" readLine:(Real new)
             ]).
     
     #constructor newIdentity &n:anN
-        <= new &matrix:(RealMatrix new:anN:anN set &every_ij: (&index:i &index:j)
+        <= new &realmatrix:(RealMatrix new:anN:anN set &every_ij: (&index:i &index:j)
             [ (i == j) ? [ 1 ] ! [ 0 ] ]).
     
     #method add : aMatrix
-        = Matrix new &matrix:(theMatrix::matrixOp add:aMatrix).
+        = Matrix new &realmatrix:(theMatrix add:aMatrix).
 
     #method subtract : aMatrix
-        = Matrix new &matrix:(theMatrix::matrixOp subtract:aMatrix).
+        = Matrix new &realmatrix:(theMatrix subtract:aMatrix).
 
     #method multiply : aMatrix
-        = Matrix new &matrix:(theMatrix::matrixOp multiply:aMatrix).
+        = Matrix new &realmatrix:(theMatrix multiply:aMatrix).
     
     #method literal
-        = theMatrix::matrixOp literal.
+        = theMatrix literal.
 
     #method determinant
-        = theMatrix::matrixOp determinant.
+        = theMatrix determinant.
             
     #method => theMatrix.
 }

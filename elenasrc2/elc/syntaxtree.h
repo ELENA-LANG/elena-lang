@@ -81,6 +81,7 @@ enum LexicalType
    lxByteArrOp       = 0x01330, // arg - operation id
    lxShortArrOp      = 0x01331, // arg - operation id
    lxArrOp           = 0x01332, // arg - operation id
+   lxBinArrOp        = 0x01333, // arg - operation id
 
    lxNested          = 0x00101, // arg - count
    lxStruct          = 0x00102, // arg - count

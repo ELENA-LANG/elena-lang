@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -72,6 +72,15 @@ void printLine(ident_t line1, ident_t line2)
    }
 }
 
+void printLine()
+{
+   printf("\n");
+
+   if (_writer) {
+      _writer->writeNewLine();
+   }
+}
+
 void printLoadError(LoadResult result)
 {
    switch(result)
@@ -96,7 +105,7 @@ void printHelp()
    printf("?<class>                - list all class methods\n");
    printf("??<symbol>              - view symbol byte codes\n");
    printf("-o<path>                - save the output\n");
-   printf("-c<path>                - save the output\n");
+   printf("-l                      - list all classes with methods\n");
    printf("?                       - list all classes\n");
 }
 
@@ -720,7 +729,141 @@ void printSymbol(_Module* module, ident_t symbolReference, int pageSize)
    print("@end\n");
 }
 
-void listClassMethods(_Module* module, ident_t className, int pageSize)
+void listFlags(int flags)
+{
+   if (test(flags, elNestedClass))
+      printLine("@flag ", "elNestedClass");
+
+   if (test(flags, elDynamicRole))
+      printLine("@flag ", "elDynamicRole");
+
+   if (test(flags, elStructureRole))
+      printLine("@flag ", "elStructureRole");
+
+   if (test(flags, elEmbeddable))
+      printLine("@flag ", "elEmbeddable");
+
+   if (test(flags, elSealed))
+      printLine("@flag ", "elSealed");
+   else if (test(flags, elClosed))
+      printLine("@flag ", "elClosed");
+
+   if (test(flags, elWrapper))
+      printLine("@flag ", "elWrapper");
+
+   if (test(flags, elStateless))
+      printLine("@flag ", "elStateless");
+
+   if (test(flags, elGroup))
+      printLine("@flag ", "elGroup");
+
+   if (test(flags, elWithGenerics))
+      printLine("@flag ", "elWithGenerics");
+
+   if (test(flags, elReadOnlyRole))
+      printLine("@flag ", "elReadOnlyRole");
+
+   if (test(flags, elNonStructureRole))
+      printLine("@flag ", "elNonStructureRole");
+
+   if (test(flags, elSignature))
+      printLine("@flag ", "elSignature");
+
+   if (test(flags, elRole))
+      printLine("@flag ", "elRole");
+
+   if (test(flags, elExtension))
+      printLine("@flag ", "elExtension");
+
+   if (test(flags, elMessage))
+      printLine("@flag ", "elMessage");
+
+   if (test(flags, elExtMessage))
+      printLine("@flag ", "elExtMessage");
+
+   if (test(flags, elSymbol))
+      printLine("@flag ", "elSymbol");
+
+   switch (flags & elDebugMask) {
+      case elDebugDWORD:
+         printLine("@flag ", "elDebugDWORD");
+         break;
+      case elDebugReal64:
+         printLine("@flag ", "elDebugReal64");
+         break;
+      case elDebugLiteral:
+         printLine("@flag ", "elDebugLiteral");
+         break;
+      case elDebugIntegers:
+         printLine("@flag ", "elDebugIntegers");
+         break;
+      case elDebugArray:
+         printLine("@flag ", "elDebugArray");
+         break;
+      case elDebugQWORD:
+         printLine("@flag ", "elDebugQWORD");
+         break;
+      case elDebugBytes:
+         printLine("@flag ", "elDebugBytes");
+         break;
+      case elDebugShorts:
+         printLine("@flag ", "elDebugShorts");
+         break;
+      case elDebugPTR:
+         printLine("@flag ", "elDebugPTR");
+         break;
+      case elDebugWideLiteral:
+         printLine("@flag ", "elDebugWideLiteral");
+         break;
+      case elDebugReference:
+         printLine("@flag ", "elDebugReference");
+         break;
+      case elDebugSubject:
+         printLine("@flag ", "elDebugSubject");
+         break;
+      case elDebugReals:
+         printLine("@flag ", "elDebugReals");
+         break;
+      case elDebugMessage:
+         printLine("@flag ", "elDebugMessage");
+         break;
+      case elDebugDPTR:
+         printLine("@flag ", "elDebugDPTR");
+         break;
+   }
+}
+
+void listConstructorMethods(_Module* module, ident_t className, ref_t reference)
+{
+   _Memory* vmt = module->mapSection(reference | mskVMTRef, true);
+
+   // list methods
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   size_t size = vmtReader.getDWord();
+   ref_t classRef = vmtReader.getDWord();
+
+   ClassHeader header;
+   vmtReader.read((void*)&header, sizeof(ClassHeader));
+
+   VMTEntry        entry;
+
+   size -= sizeof(ClassHeader) + 4;
+   IdentifierString temp;
+   while (size > 0) {
+      vmtReader.read((void*)&entry, sizeof(VMTEntry));
+
+      // print the method name
+      temp.copy(className);
+      temp.append('.');
+      printMessage(temp, module, entry.message);
+      printLine("@constructor ", temp);
+
+      size -= sizeof(VMTEntry);
+   }
+}
+
+void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool withConstructors)
 {
    className = trim(className);
 
@@ -738,10 +881,21 @@ void listClassMethods(_Module* module, ident_t className, int pageSize)
    // read tape record size
    size_t size = vmtReader.getDWord();
 
+   ref_t classRef = vmtReader.getDWord();
    // read VMT header
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
-   int vmtSize = vmtReader.getDWord();
+
+   if (fullInfo) {
+      if (header.parentRef)
+         printLine("@parent ", module->resolveReference(header.parentRef));
+
+      listFlags(header.flags);
+   }
+
+   if (classRef != 0 && withConstructors) {
+      listConstructorMethods(module, className, classRef);
+   }
 
    VMTEntry        entry;
 
@@ -790,6 +944,31 @@ void listClassMethods(_Module* module, ident_t className, int pageSize)
 //   else wprintf(_T("No roles are found\n"));
 //}
 
+void printAPI(_Module* module, int pageSize)
+{
+   ident_t moduleName = module->Name();
+
+   ReferenceMap::Iterator it = ((Module*)module)->References();
+   while (!it.Eof()) {
+      ident_t reference = it.key();
+      NamespaceName ns(it.key());
+      if (StringHelper::compare(moduleName, ns)) {
+         ReferenceName name(it.key());
+         if (module->mapSection(*it | mskVMTRef, true)) {
+            printLine("class ", name);
+
+            listClassMethods(module, name, pageSize, true, true);
+            printLine();
+         }
+         else if (module->mapSection(*it | mskSymbolRef, true)) {
+            printLine("symbol ", name);
+         }
+      }
+
+      it++;
+   }
+}
+
 void listClasses(_Module* module, int pageSize)
 {
    ident_t moduleName = module->Name();
@@ -804,7 +983,9 @@ void listClasses(_Module* module, int pageSize)
          if (module->mapSection(*it | mskVMTRef, true)) {
             printLine("class ", name);
          }
-         else printLine("symbol ", name);
+         else if (module->mapSection(*it | mskSymbolRef, true)) {
+            printLine("symbol ", name);
+         }
 
          row++;
          if (row == pageSize) {
@@ -857,7 +1038,7 @@ void runSession(_Module* module)
          else if (line[1]==0) {
             listClasses(module, pageSize);
          }
-         else listClassMethods(module, line + 1, pageSize);
+         else listClassMethods(module, line + 1, pageSize, true, false);
       }
       else if (line[0]=='-') {
          switch(line[1]) {
@@ -865,6 +1046,9 @@ void runSession(_Module* module)
                return;
             case 'h':
                printHelp();
+               break;
+            case 'l':
+               printAPI(module, pageSize);
                break;
             //case 'c':
             //   printConstructor(module, line + 2, pageSize);

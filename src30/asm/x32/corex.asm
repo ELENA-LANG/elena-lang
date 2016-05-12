@@ -3043,6 +3043,14 @@ inline %0C0h
 
 end
 
+// ; nwritei
+
+inline % 0C1h
+
+  mov  [edi + __arg1], ecx
+
+end
+
 // ; aswapsi
 inline % 0C2h
 
@@ -3141,6 +3149,27 @@ end
 inline %0CFh
 
   mov [edi + __arg1], eax
+
+end
+
+// ; nreadi
+
+inline % 0D1h
+
+  mov  ecx, [eax + __arg1]
+
+end
+
+// ; divn
+inline %0DBh
+
+  mov  esi, __arg1
+  xor  edx, edx
+  push eax
+  mov  eax, ebx
+  idiv esi
+  mov  ebx, eax
+  pop  eax
 
 end
 

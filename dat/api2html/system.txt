@@ -11,4 +11,5 @@ Object
 #constructor=new,,object;Creates the object
 #method=cast,verb&to:object,object;Dispatches the verb to the target object with object subject
 #method=cast,verb&with:object&to:object,object;Dispatches the verb to the target object with object subject providing the parameter
+#method=dispatch,,;Implements a message dispatching in VMT
 #method=equal,object,bool;Returns true if the specified object is equal to the current object; otherwise, false.<br/>By default compares the object references.

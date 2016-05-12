@@ -4357,6 +4357,114 @@ labNext2:
 
 end
 
+procedure __realarray.read&int$&int$&realarray$[4]
+
+  aloadsi 1
+  bcopya
+  blen
+  shiftn 3
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+  ecopyd
+  aloadsi 3
+  nload
+  lessn   labErr 0
+  add
+  blen
+  shiftn 3
+  less labErr
+ 
+  aloadsi 3
+  nload
+  shiftn -1
+  eswap
+  shiftn -1
+
+  acopyb
+  bloadsi 4
+
+  callextr api : nsubcopy
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __realarray.write&int$&int$&realarray$[4]
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  blen
+  shiftn 3
+  less labErr
+  popd
+  shiftn -1
+  ecopyd
+  aloadsi 2
+  nload
+  shiftn -1
+  aloadsi 4
+  callextr api : ninsert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __realarray.read&int$&vreal$[3]
+
+  bcopya
+  blen
+  shiftn 3 
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  shiftn -1
+  pushd
+  acopyb
+  nread
+  dcopye
+  bloadsi 3
+  nsave
+  popd
+  inc
+  nread
+  dcopy 1
+  nwrite
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
 /*
 procedure byte_max
 

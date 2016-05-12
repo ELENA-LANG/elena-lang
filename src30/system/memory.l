@@ -600,59 +600,31 @@
 //    /// Dispatches the verb to the target object with intarray subject
 //    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intmatrix:$self.
 //}
-//
-//// --- RealArray ---
-//
-///// An array of real numbers
-//#class(sealed,nonstructural) RealArray
-//{
-//    #field(type:bytearray)theBinaryArray.
-//    
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//    [
-//        theBinaryArray := ByteArray new &int:(aLength * 8).
-//    ]
-//
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &realarray:anArray
-//    [
-//        theBinaryArray := ByteArray new &int:(aLength * 8).
-//        
-//        theBinaryArray write &int:anIndex &int:aLength &bytearray:(anArray bytearray).
-//    ]
-//    
-//    #method bytearray = theBinaryArray.
-//    
-//    /// Creates the array copy
-//    #constructor new &realarray:anArray
-//        <= new &int:0 &int:(anArray length int) &realarray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//    [
-//        #var(type:int)aBinLen.
-//        theBinaryArray readLength &vint:aBinLen.
-//        
-//        aBinLen shift &int:3 &vint:aLength.
-//    ]
-//
-//    /// Returns the array length
-//    #method(stacksafe,type:int,embeddable,suppress:w3) length
-//    [
-//        #var(type:int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//    
-//    /// Returns itself
-//    #method realarray = $self.
-//
+
+// --- RealArray ---
+
+/// An array of real numbers
+#class(sealed,arrayof:real,dispatchable:realarray) RealArray
+{
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        = real:aLength.
+
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &realarray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &realarray:$self.
+    ]
+
+    /// Creates the array copy
+    #constructor new &realarray:anArray
+        <= new &int:0 &int:(anArray length) &realarray:anArray.
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &real:aValue
 //    [
@@ -674,144 +646,95 @@
 //            i := i + 1.
 //        ].
 //    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &realarray:anArray
-//    [
-//        theBinaryArray read &int:(anIndex * 8) &int:(aLength * 8) &bytearray:(anArray bytearray).
-//    ]
-//    
-//    /// Copies the short array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &realarray:anArray
-//    [
-//        theBinaryArray write &int:(anIndex * 8) &int:(aLength * 8) &bytearray:(anArray bytearray).
-//    ]
-//
-//    /// Writes a real value at the specified position
-//    #method(stacksafe) write &int:anIndex &real:aValue
-//    [
-//        #var(type:int)aBinIndex := anIndex shift &int:(-3).
-//        
-//        theBinaryArray write &int:aBinIndex &real:aValue.
-//    ]
-//    
-//    /// Reads a real value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vreal:aReal
-//    [
-//        #var(type:int)aBinIndex := anIndex shift &int:(-3).
-//        
-//        theBinaryArray read &int:aBinIndex &vreal:aReal.
-//    ]
-//
-//    /// Returns a real number at the specified position
-//    #method getAt : anIndex
-//    [
-//        #var(type:real)aRetVal.
-//        $self read &int:(anIndex int) &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]        
-//
-//    /// Sets a real number at the specified position
-//    #method setAt : anIndex : aValue
-//    [
-//        $self write &int:(anIndex int) &real:(aValue real).
-//    ]
-//
-//    /// Creates the object copy
-//    #method clone = RealArray new &realarray:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &realarray:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realarray:$self.    
-//}
-//
-//// --- RealMatrix ---
-//
-//#class(sealed)RealMatrix
-//{
-//    #field(type:bytearray)theArray.
-//    #field(type:int)theRows.
-//    #field(type:int)theColumns.
-//    
-//    #constructor(stacksafe) new &int:Rows &int:Columns
-//    [
-//        theArray := ByteArray new &int:(Columns * Rows * 8).
-//        
-//        theRows := IntNumber new &int:Rows.
-//        theColumns := IntNumber new &int:Columns.
-//    ]
-//        
-//    #constructor new : Rows : Columns
-//        <= new &int:(Columns int) &int:(Rows int).
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    #method(stacksafe) readLengths &vint:Rows &vint:Columns
-//    [
-//        Columns << theColumns.
-//        Rows << theRows.
-//    ]
-//
-//    #method(type:int) length = theRows.
-//    
-//    /// Returns itself
-//    #method realmatrix = $self.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:i &int:j &real:aValue
-//    [
-//        #var(type:int)anIndex := i * theColumns + j.
-//        
-//        anIndex := anIndex shift &int:(-3).
-//        
-//        theArray write &int:anIndex &real:aValue.
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:i &int:j &vreal:aValue
-//    [
-//        #var(type:int)anIndex := i * theColumns + j.
-//        
-//        anIndex := anIndex shift &int:(-3).
-//        
-//        theArray read &int:anIndex &vreal:aValue.
-//    ]
-//
-//    #method getAt : i : j
-//    [
-//        #var(type:real)aValue.            
-//        $self read &int:(i int) &int:(j int) &vreal:aValue.
-//        
-//        ^ RealNumber new &real:aValue.
-//    ]
-//
-//    #method setAt : i : j : aValue
-//    [
-//        $self write &int:(i int) &int:(j int) &real:(aValue real).    
-//    ]
-//
-//    /// Returns a row
-//    #method getAt : i =
-//    {
-//        length = theColumns int.
-//        
-//        getAt : j
-//            = self getAt:i:j.
-//        
-//        setAt : j : aValue
-//        [
-//            self setAt:i:j:aValue.
-//        ]
-//    }.
-//
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &realmatrix:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &realmatrix:$self.
-//}
+
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &realarray:anArray
+        => system'core_routines'__realarray.
+
+    /// Copies the short array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &realarray:anArray
+        => system'core_routines'__realarray.
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vreal:aReal
+        => system'core_routines'__realarray.
+
+    /// Creates the object copy
+    #method clone = RealArray new &realarray:$self.
+}
+
+// --- RealMatrix ---
+
+#class(sealed,dispatchable:realmatrix)RealMatrix
+{
+    #field(realarray)theArray.
+    #field(int)theRows.
+    #field(int)theColumns.
+    
+    #constructor(stacksafe) new &int:Rows &int:Columns
+    [
+        theArray := RealArray new &int:(Columns * Rows).
+        
+        theRows := IntNumber new &int:Rows.
+        theColumns := IntNumber new &int:Columns.
+    ]
+        
+    #constructor new : Rows : Columns
+        <= new &int:(Columns int) &int:(Rows int).
+
+    /// Reads the matrix lengths to the output parameter
+    #method(stacksafe) readLengths &vint:Rows &vint:Columns
+    [
+        Columns := theColumns.
+        Rows := theRows.
+    ]
+
+    #method(int) length = theRows.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:i &int:j &real:aValue
+    [
+        #var(int)anIndex := i * theColumns + j.
+        
+        theArray setAt &int:anIndex &real:aValue.
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:i &int:j &vreal:aValue
+    [
+        #var(int)anIndex := i * theColumns + j.
+        
+        theArray read &int:anIndex &vreal:aValue.
+    ]
+
+    #method getAt : i : j
+    [
+        #var(real)aValue.            
+        $self read &int:(i int) &int:(j int) &vreal:aValue.
+        
+        ^ RealNumber new &real:aValue.
+    ]
+
+    #method setAt : i : j : aValue
+    [
+        $self write &int:(i int) &int:(j int) &real:(aValue real).    
+    ]
+
+    /// Returns a row
+    #method getAt : i =
+    {
+        length = theColumns.
+        
+        getAt : j
+            = self getAt:i:j.
+        
+        setAt : j : aValue
+        [
+            self setAt:i:j:aValue.
+        ]
+    }.
+}
 
 // --- CharArray ---
 

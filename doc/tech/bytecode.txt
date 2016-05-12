@@ -125,6 +125,12 @@ D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
  
  nwrite                     - base[index * 4] << ext
  
+ nwritei                    - base[i * 4] << ext
+ 
+ bwritei                    - base[i * 4] << byte[ext]
+ 
+ nreadi                     - acc[i * 4] >> ext
+ 
  rcopy                      - real index << index
  
  rsave                      - real[base] << real index
@@ -396,6 +402,8 @@ D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
  lxor                       - long[base] ~~ long[acc]     (*index and ext affected)
 
  muln n                     - index * n => index
+ 
+ divn n                     - index / n => index
  
  nadd                       - int[base] += int[acc]
  

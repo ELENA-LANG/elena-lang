@@ -189,6 +189,7 @@ enum ByteCode
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
    bcASaveBI         = 0xC0,
+   bcNWriteI         = 0xC1,
    bcASwapSI         = 0xC2,
    bcASaveSI         = 0xC3,
    bcASaveFI         = 0xC4,
@@ -205,6 +206,7 @@ enum ByteCode
    bcAXSaveBI        = 0xCF,
 
    bcPopI            = 0xD0,
+   bcNReadI          = 0xD1,
    bcSCopyF          = 0xD2,
    bcSetVerb         = 0xD3,
    bcSetSubj         = 0xD4,
@@ -214,6 +216,7 @@ enum ByteCode
    bcEAddN           = 0xD8,
    bcShiftN          = 0xD9,
    bcMulN            = 0xDA,
+   bcDivN            = 0xDB,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,

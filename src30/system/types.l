@@ -31,8 +31,8 @@
 #subject shortarray = system'ShortArray.
 #subject intarray   = system'IntArray.
 //#subject(class:system'IntMatrix)    intmatrix.
-//#subject(class:system'RealArray)    realarray.
-//#subject(class:system'RealMatrix)   realmatrix.
+#subject realarray  = system'RealArray.
+#subject realmatrix = system'RealMatrix.
 #subject chararray  = system'CharArray.
 #subject array      = system'Array.
 #subject args       = system'OpenArgs.

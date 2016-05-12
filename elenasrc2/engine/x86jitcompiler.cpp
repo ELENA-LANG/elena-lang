@@ -68,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 133;
+const int gcCommandNumber = 136;
 const int gcCommands[gcCommandNumber] =
 {   
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
@@ -82,7 +82,7 @@ const int gcCommands[gcCommandNumber] =
    bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
    bcBLoadFI, bcReserve, bcAXSaveBI, bcBLoadSI, bcBWriteB,
    bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
-   bcNSub, bcNMul, bcNDiv, bcNLoadE,
+   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
    bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
    bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
    bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
@@ -98,8 +98,8 @@ const int gcCommands[gcCommandNumber] =
    bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
    bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
-   bcESaveFI, bcWRead, bcWWrite,
-   bcNCopyB, bcLCopyB, bcCopyB
+   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
+   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI
 };
 
 // command table
@@ -141,11 +141,11 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePush, &loadFPOp, &compilePush, &compileNop, &loadIndexOp, &loadFPOp, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushS, &loadIndexOp, &loadIndexOp, &compilePushF, &loadIndexOp, &loadIndexOp,
 
-   &loadIndexOp, &compileNop, &loadIndexOp, &loadIndexOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp,
+   &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp,
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
-   &compilePopN, &compileNop, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileDMulN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileSetSubj, &compileDAndN, &compileDAddN, &compileDOrN,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &loadNOp, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
