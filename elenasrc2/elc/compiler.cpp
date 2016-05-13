@@ -3279,6 +3279,11 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
       // HOT FIX : the result of comparision with $nil is always bool
       scope.writer->appendNode(lxType, scope.moduleScope->boolType);
    }
+   // HOTFIX : primitive operations can be implemented only in the method
+   // because the symbol implementations do not open a new stack frame
+   else if (scope.getScope(Scope::slMethod) == NULL && !IsCompOperator(operator_id)) {
+      scope.writer->insert(lxCalling, encodeMessage(0, operator_id, dblOperator ? 2 : 1));
+   }
    else  scope.writer->insert(lxOp, operator_id);
 
    appendObjectInfo(scope, retVal);
