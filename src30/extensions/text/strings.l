@@ -151,10 +151,10 @@
         theValue := emptyLiteralValue.
     ]
     
-//    #constructor new : aText
-//    [
-//        theValue := aText.
-//    ]
+    #constructor new : aText
+    [
+        theValue := aText literal.
+    ]
     
     #method write : aText
     [
@@ -179,6 +179,11 @@
     #method append : aText
     [
         theValue := theValue add:aText literal.
+    ]
+    
+    #method insert:s &at:index
+    [
+        theValue := theValue insert:s &at:index literal.
     ]
     
     #method get = theValue.

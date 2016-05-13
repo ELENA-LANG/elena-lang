@@ -1858,8 +1858,8 @@ inline % 74h
 
   mov  edx, [eax+4]
   mov  esi, [eax]
-  adc [edi+4], edx
   add [edi], esi
+  adc [edi+4], edx
 
 end
 

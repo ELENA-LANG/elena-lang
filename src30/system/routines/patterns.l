@@ -1,7 +1,7 @@
 #import system.
-//#import system'collections.
+#import system'collections.
 
-//#symbol idleFunc1 = x [].
+#symbol idleFunc1 = x [].
 
 // === pattern enumerators ==
 
@@ -539,84 +539,84 @@
     ]
 }
 
-//// --- GroupingEnumerator ---
-//
-//#class GroupingEnumerator :: Enumerator
-//{
-//    #field(type:dictionary) theDictionary.
-//    #field(type:enumerator) theEnumerator.
-//    #field(type:func1)      theGroupFunc.    
-//    #field(type:enumerator) theGroupEnumerator.
-//    
-//    #constructor new &func1:grouper &enumerator:enumerator
-//    [
-//        theGroupFunc := grouper.
-//        theDictionary := Dictionary new.
-//        theEnumerator := enumerator.
-//        
-//        $self reset.
-//    ]
-//    
-//    #method reset
-//    [
-//        theEnumerator reset.
-//        
-//        #loop (theEnumerator next)?
-//        [
-//            #var item := theEnumerator get.
-//            #var key := theGroupFunc eval:item.
-//            
-//            #var groupItem := theDictionary@key.
-//            ($nil == groupItem)?
-//            [
-//                groupItem := ArrayList new.
-//                
-//                theDictionary@key := groupItem.
-//            ].
-//            
-//            groupItem += item.
-//        ].
-//        
-//        theGroupEnumerator := theDictionary enumerator.
-//    ]
-//    
-//    #method get = theGroupEnumerator get.
-//    
-//    #method next
-//        = theGroupEnumerator next.
-//}
-//
-//// --- OrderingEnumerator ---
-//
-//#class OrderingEnumerator :: Enumerator
-//{
-//    #field(type:enumerator) theEnumerator.
-//    #field(type:func2)      theOrderFunc.    
-//    #field(type:enumerator) theListEnumerator.
-//    
-//    #constructor new &func2:orderFunc &enumerator:enumerator
-//    [
-//        theOrderFunc := orderFunc.
-//        theEnumerator := enumerator.
-//        
-//        $self reset.
-//    ]
-//    
-//    #method reset
-//    [
-//        theEnumerator reset.
-//        
-//        #var(type:array) list := Summing new:(ArrayList new) run &enumerator:theEnumerator.
-//        list sort &func2:theOrderFunc.
-//        
-//        theListEnumerator := list enumerator.
-//    ]
-//    
-//    #method get = theListEnumerator get.
-//    
-//    #method next
-//        = theListEnumerator next.
-//}
+// --- GroupingEnumerator ---
+
+#class GroupingEnumerator :: Enumerator
+{
+    #field(dictionary) theDictionary.
+    #field(enumerator) theEnumerator.
+    #field(func1)      theGroupFunc.    
+    #field(enumerator) theGroupEnumerator.
+    
+    #constructor new &func1:grouper &enumerator:enumerator
+    [
+        theGroupFunc := grouper.
+        theDictionary := Dictionary new.
+        theEnumerator := enumerator.
+        
+        $self reset.
+    ]
+    
+    #method reset
+    [
+        theEnumerator reset.
+        
+        #loop (theEnumerator next)?
+        [
+            #var item := theEnumerator get.
+            #var key := theGroupFunc eval:item.
+            
+            #var groupItem := theDictionary@key.
+            ($nil == groupItem)?
+            [
+                groupItem := ArrayList new.
+                
+                theDictionary@key := groupItem.
+            ].
+            
+            groupItem += item.
+        ].
+        
+        theGroupEnumerator := theDictionary enumerator.
+    ]
+    
+    #method get = theGroupEnumerator get.
+    
+    #method next
+        = theGroupEnumerator next.
+}
+
+// --- OrderingEnumerator ---
+
+#class OrderingEnumerator :: Enumerator
+{
+    #field(enumerator) theEnumerator.
+    #field(func2)      theOrderFunc.    
+    #field(enumerator) theListEnumerator.
+    
+    #constructor new &func2:orderFunc &enumerator:enumerator
+    [
+        theOrderFunc := orderFunc.
+        theEnumerator := enumerator.
+        
+        $self reset.
+    ]
+    
+    #method reset
+    [
+        theEnumerator reset.
+        
+        #var(array) list := Summing new:(ArrayList new) run &enumerator:theEnumerator array.
+        list sort &func2:theOrderFunc.
+        
+        theListEnumerator := list enumerator.
+    ]
+    
+    #method get = theListEnumerator get.
+    
+    #method next
+        = theListEnumerator next.
+}
 
 // === patterns ===
 
@@ -688,8 +688,8 @@
     #method top:aCounter
         = TopFilter new:aCounter &enumerator:(self enumerator).
 
-//    #method last:counter
-//        = TopFilter new:counter &skipping:(self length - counter) &enumerator:(self enumerator).
+    #method last:counter
+        = TopFilter new:counter &skipping:(self length - counter) &enumerator:(self enumerator).
 
     #method filter &each:aFilter
         = Filter new &each:aFilter &enumerator:(self enumerator).
@@ -697,45 +697,45 @@
     #method select &each:aSelector
         = Selector new &each:aSelector &enumerator:(self enumerator).
 
-//    #method zip:anEnumerable &into:aZipper
-//        = ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
-//
-//    #method zip:anEnumerable &eachPair:func2
-//        = ZipEnumerator new:(:x:y)[ func2 eval:x:y ] &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator) run &each:idleFunc1.
-//
-//    #method group &by:groupFunc
-//        = GroupingEnumerator new &func1:(groupFunc func1) &enumerator:(self enumerator).                                       
-//
-//    #method order &by:orderFunc
-//        = OrderingEnumerator new &func2:(orderFunc func2) &enumerator:(self enumerator).                                       
-//
-//    #method filter &pattern:patternFun
-//        = patternFun cast:%eval &to:
-//        {
-//            eval:enumerable &func1:func1
-//                = Filter new &each:func1 &enumerator:(enumerable enumerator).
-//            
-//            eval:enumerable &func2:func2
-//                = PatternFilter2 new &func2:func2 &enumerator:(enumerable enumerator).
-//                
-//            eval:enumerable &func3:func3
-//                = PatternFilter3 new &func3:func3 &enumerator:(enumerable enumerator).
-//
-//            eval:enumerable &func4:func4
-//                = PatternFilter4 new &func4:func4 &enumerator:(enumerable enumerator).
-//
-//            eval:enumerable &func5:func5
-//                = PatternFilter5 new &func5:func5 &enumerator:(enumerable enumerator).
-//
-//            eval:enumerable &func6:func6
-//                = PatternFilter6 new &func6:func6 &enumerator:(enumerable enumerator).
-//
-//        } &with:self.
-//            
-//    /// obosolete
-//    #method repeat &each:aRepeater    
-//        = Repeater new &till:self &each:aRepeater.
-//        
-//    #method repeat &till:max &each:aRepeater
-//        = Repeater new &from:self &till:max &each:aRepeater.
+    #method zip:anEnumerable &into:aZipper
+        = ZipEnumerator new:aZipper &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator).
+
+    #method zip:anEnumerable &eachPair:func2
+        = ZipEnumerator new:(:x:y)[ func2 eval:x:y ] &enumerator:(self enumerator) &enumerator:(anEnumerable enumerator) run &each:idleFunc1.
+
+    #method group &by:groupFunc
+        = GroupingEnumerator new &func1:(groupFunc func1) &enumerator:(self enumerator).                                       
+
+    #method order &by:orderFunc
+        = OrderingEnumerator new &func2:(orderFunc func2) &enumerator:(self enumerator).                                       
+
+    #method filter &pattern:patternFun
+        = patternFun cast:%eval &to:
+        {
+            eval:enumerable &func1:func1
+                = Filter new &each:func1 &enumerator:(enumerable enumerator).
+            
+            eval:enumerable &func2:func2
+                = PatternFilter2 new &func2:func2 &enumerator:(enumerable enumerator).
+                
+            eval:enumerable &func3:func3
+                = PatternFilter3 new &func3:func3 &enumerator:(enumerable enumerator).
+
+            eval:enumerable &func4:func4
+                = PatternFilter4 new &func4:func4 &enumerator:(enumerable enumerator).
+
+            eval:enumerable &func5:func5
+                = PatternFilter5 new &func5:func5 &enumerator:(enumerable enumerator).
+
+            eval:enumerable &func6:func6
+                = PatternFilter6 new &func6:func6 &enumerator:(enumerable enumerator).
+
+        } &with:self.
+            
+    /// obosolete
+    #method repeat &each:aRepeater    
+        = Repeater new &till:self &each:aRepeater.
+        
+    #method repeat &till:max &each:aRepeater
+        = Repeater new &from:self &till:max &each:aRepeater.
 }

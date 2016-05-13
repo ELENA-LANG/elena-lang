@@ -3893,7 +3893,7 @@ void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree:
             saveReal(tape, target.type, target.argument);
          }
       }
-      else if (target == lxExpression) {
+      else if (target == lxFieldExpression || target == lxExpression) {
          SNode arg1, arg2;
 
          assignOpArguments(target, arg1, arg2);
@@ -4210,6 +4210,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
    {
       case lxExpression:
       case lxLocalUnboxing:
+      case lxFieldExpression:
          generateExpression(tape, node);
          break;
       case lxTypecasting:

@@ -16,12 +16,12 @@
     
     #method eval
     [
-        #var(type:subject) varRef := Signature new &literal:(console write:"Enter the variable name:" readLine).
+        #var(subject) varRef := Signature new &literal:(console write:"Enter the variable name:" readLine).
         theVariables::varRef set:42.
         
         #var v := theVariables::varRef get.
         
-        console writeLine:(varRef name):"=":(theVariables::varRef get).
+        console writeLine:(varRef literal):"=":(theVariables::varRef get) readChar.
     ]
 }
 

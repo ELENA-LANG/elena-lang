@@ -8,7 +8,7 @@
 {
     #method is &prime
     [
-        #var(type:int)n := self int.
+        #var(int)n := self int.
         
         (n < 2) ? [ ^ false. ].        
         (n < 4) ? [ ^ true. ].        
@@ -16,8 +16,8 @@
         (n < 9) ? [ ^ true. ].        
         (n mod:3 == 0) ? [ ^ false. ].
         
-        #var(type:int)r := n sqrt.        
-        #var(type:int)f := 5.
+        #var(int)r := n sqrt.        
+        #var(int)f := 5.
         #loop (f <= r)?
         [
             ((n mod:f == 0) || (n mod:(f + 2) == 0))
@@ -32,7 +32,7 @@
     
     #method is &rightTruncatable
     [
-        #var(type:int)n := self int.
+        #var(int)n := self int.
         
         #loop (n != 0)?
         [
@@ -47,8 +47,8 @@
 
     #method is &leftTruncatable
     [
-        #var(type:int)n := self int.
-        #var(type:int)tens := 1.
+        #var(int)n := self int.
+        #var(int)tens := 1.
         
         #loop (tens < n)
             ? [ tens := tens * 10. ].

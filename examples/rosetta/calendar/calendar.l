@@ -29,7 +29,7 @@
 
     #method writeTitle
     [        
-        theRow << 0.
+        theRow set:0.
         theDate := Date new &year:(theYear int) &month:(theMonth int) &day:1.
         DayNames run &each: aName
             [ theLine writeLiteral:" ":aName ].
@@ -52,7 +52,7 @@
                 &until:[(theDate month != theMonth)or:[theDate dayOfWeek == 1]].
             ].
         
-        #var(type:int) aLength := theLine length.
+        #var(int) aLength := theLine length.
         (aLength < 21)
             ? [ theLine write:" " &length:(21 - aLength). ].
             
@@ -63,7 +63,7 @@
     {
         available = theRow < 7.
 
-        readIndex &vint:anIndex [ anIndex << theRow int. ]
+        readIndex &vint:anIndex [ anIndex set:theRow. ]
 
         write &index:anIndex 
         [
@@ -90,8 +90,8 @@
 
 #class Calendar
 {
-    #field(type:int) theYear.
-    #field(type:int) theRowLength.
+    #field(int) theYear.
+    #field(int) theRowLength.
     
     #constructor new : aYear
     [

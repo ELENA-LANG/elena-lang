@@ -37,8 +37,8 @@
 #subject array      = system'Array.
 #subject args       = system'OpenArgs.
 #subject mssgarray  = system'MessageArray.
-//#subject(class:system'BitArray)     bitarray.
-//#subject(class:system'BitArray32)   bitset.
+#subject bitarray   = system'BitArray.
+#subject bitset     = system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
 #subject literal    = system'LiteralValue.

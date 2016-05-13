@@ -20,4 +20,6 @@
     console writeLine:"arcsin(1/2) = ":(0.5r arcsin degree):"º".
     console writeLine:"arccos(1/2) = ":(0.5r arccos degree):"º".
     console writeLine:"arctan(1/2) = ":(0.5r arctan degree):"º".
+    
+    console readChar.
 ].

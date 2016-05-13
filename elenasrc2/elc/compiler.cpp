@@ -370,16 +370,6 @@ inline int importTemplateSubject(_Module* sour, _Module* dest, ref_t sign_ref, C
    else return importSubject(sour, sign_ref, dest);
 }
 
-//inline SNode getFirstObject(SNode node)
-//{
-//   SNode child = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//   if (child == lxExpression) {
-//      child = SyntaxTree::findMatchedChild(child, lxObjectMask);
-//   }
-//
-//   return child;
-//}
-
 // --- Compiler::ModuleScope ---
 
 Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
@@ -2224,18 +2214,18 @@ void Compiler :: compileSymbolHints(DNode hints, SymbolScope& scope, bool silent
 
 void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
 {
-   //while (hints == nsHint) {
-   //   ref_t hintRef = mapHint(hints, *scope.moduleScope);
+   while (hints == nsHint) {
+      ref_t hintRef = mapHint(hints, *scope.moduleScope);
 
-   //   TerminalInfo terminal = hints.Terminal();
+      TerminalInfo terminal = hints.Terminal();
 
-   //   if (hintRef != 0) {
-   //      declareTemplateInfo(hints, scope, hintRef);
-   //   }
-   //   else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+      if (hintRef != 0) {
+         declareTemplateInfo(hints, scope, hintRef);
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
 
-   //   hints = hints.nextNode();
-   //}
+      hints = hints.nextNode();
+   }
 }
 
 void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope)
@@ -2772,7 +2762,7 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          scope.writer->newNode(lxField, object.param);
          break;
       case okOuterField:
-         scope.writer->newNode(lxExpression);
+         scope.writer->newNode(lxFieldExpression);
          scope.writer->appendNode(lxField, object.param);
          scope.writer->appendNode(lxResultField, object.extraparam);
          break;
@@ -7249,15 +7239,16 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       assignOpArguments(node, larg, rarg);
 
       if (larg == lxOp) {
-         if (optimizeOp(scope, larg, /*warningLevel*/0, 0)) {
-            larg = SyntaxTree::findMatchedChild(node, lxObjectMask);
-            rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
-         }
+         optimizeOp(scope, larg, /*warningLevel*/0, 0);
+         //HOTFIX : arguments should be reread because larg can be modified
+         larg = SyntaxTree::findMatchedChild(node, lxObjectMask);
+         rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
       }
       if (rarg == lxOp) {
-         if (optimizeOp(scope, rarg, /*warningLevel*/0, 0)) {
-            rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
-         }
+         optimizeOp(scope, rarg, /*warningLevel*/0, 0);
+
+         //HOTFIX : argument should be reread because rarg can be modified
+         rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
       }
       else if (rarg == lxConstantInt) {
          int value = StringHelper::strToULong(scope.module->resolveConstant(rarg.argument), 16);

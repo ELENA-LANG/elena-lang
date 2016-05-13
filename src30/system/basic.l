@@ -58,6 +58,27 @@
     [
         $value := $value / val template_subj.
     ]
+    
+    #method(stacksafe) append &template_subj:val
+    [
+        $value := $value + val.
+    ]
+    
+    #method(stacksafe) reduce &template_subj:val
+    [
+        $value := $value - val.
+    ]
+
+    #method(stacksafe) multiplyBy &template_subj:val
+    [
+        $value := $value * val.
+    ]
+    
+    /// Divides into the value
+    #method(stacksafe) divideInto &template_subj:val
+    [
+        $value := $value / val.
+    ]
 
     #method(suppress:w3) get = $value.
     
@@ -1478,23 +1499,31 @@
     
     #method append : val
     [
-        $value := $value + val.
+        ($nil == $value)
+            ? [ $value := val. ]
+            ! [ $value := $value + val. ].
     ]
     
     #method reduce : val
     [
-        $value := $value - val.
+        ($nil == $value)
+            ? [ #throw system'InvalidOperationException new. ]
+            ! [ $value := $value - val. ].
     ]
 
     #method multiplyBy : val
     [
-        $value := $value * val.
+        ($nil == $value)
+            ? [ #throw system'InvalidOperationException new. ]
+            ! [ $value := $value * val. ].
     ]
     
     /// Divides into the value
     #method divideInto : val
     [
-        $value := $value / val.
+        ($nil == $value)
+            ? [ #throw system'InvalidOperationException new. ]
+            ! [ $value := $value / val. ].
     ]    
 }
 
@@ -2378,4 +2407,13 @@
 {
     #method(vreal,suppress:w3) new
         = 0.0r.
+        
+    #method(vreal,suppress:w3) new : n
+        = n real.
+        
+    #method(vreal,suppress:w3) new &int:n
+        = n real.
+        
+    #method(vreal,suppress:w3) new &real:n
+        = n.
 }.

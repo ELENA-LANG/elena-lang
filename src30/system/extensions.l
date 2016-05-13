@@ -1001,31 +1001,30 @@
             ! [ ^ self. ].
     ]    
     
-//    #method replace &literal:aReplacee &literal:aReplacer
-//    [
-//        #var(literal)aLiteral := self literal.        
-//        #var aTarget := String new.
-//        #var(int)aStart := 0.
-//        #var(int)anEnd.
-//        #var(int)aReplaceeLen := aReplacee length.
-//        
-//        aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
-//        
-//        #loop (anEnd != -1) ?
-//        [
-//            aTarget 
-//                append &literal:(aLiteral Substring &int:aStart &int:(anEnd - aStart))
-//                append &literal:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            aLiteral indexOf &int:aStart &literal:aReplacee &vint:anEnd.
-//        ].
-//    
-//        ^ (aStart != 0)
-//            ? [ aTarget append:(aLiteral::literalOp Substring &int:aStart) literal ]
-//            ! [ self literal ].
-//    ]
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var(literal) aTarget := emptyLiteralValue.
+        #var(int)aStart := 0.
+        #var(int)anEnd.
+        #var(int)aReplaceeLen := aReplacee length.
+        
+        self indexOf &int:aStart &literal:aReplacee &vint:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget := aTarget
+                add &literal:(self Substring &int:aStart &int:(anEnd - aStart))
+                add &literal:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf &int:aStart &literal:aReplacee &vint:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget add &literal:(self::literalOp Substring &int:aStart) ]
+            ! [ self ].
+    ]
     
     #method(bool) is &empty
     [
@@ -1184,32 +1183,30 @@
             ! [ ^ self. ].
     ]
         
-//    #method(suppress:w2) replace &wide:aReplacee &wide:aReplacer
-//    [
-//        #var(wide)aLiteral := self wide.
-//        
-//        #var aTarget := String new.
-//        #var(int)aStart := 0.
-//        #var(int)anEnd.
-//        #var(int)aReplaceeLen := aReplacee length.
-//        
-//        aLiteral indexOf &int:aStart &wide:aReplacee &vint:anEnd.
-//        
-//        #loop (anEnd != -1) ?
-//        [
-//            aTarget 
-//                append &wide::(aLiteral Substring &int:aStart &int:(anEnd - aStart))
-//                append &wide:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            aLiteral indexOf &int:aStart &wide:aReplacee &vint:anEnd.
-//        ].
-//    
-//        ^ (aStart != 0)
-//            ? [ aTarget append:(aLiteral::wideOp Substring &int:aStart) wide ]
-//            ! [ aLiteral ].
-//    ]
+    #method(suppress:w2) replace &wide:aReplacee &wide:aReplacer
+    [
+        #var(wide) aTarget := emptyWideLiteralValue.
+        #var(int)aStart := 0.
+        #var(int)anEnd.
+        #var(int)aReplaceeLen := aReplacee length.
+        
+        self indexOf &int:aStart &wide:aReplacee &vint:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget := aTarget
+                add &wide:(self Substring &int:aStart &int:(anEnd - aStart))
+                add &wide:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf &int:aStart &wide:aReplacee &vint:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget add &wide:(self::wideOp Substring &int:aStart) ]
+            ! [ self ].
+    ]
 
     #method(bool) is &empty
     [

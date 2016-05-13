@@ -64,5 +64,5 @@
                     Node new:"b"
                  ).
                  
-    console writeTree:tree &subject:%children.
+    console writeTree:tree &subject:%children readChar.
 ].

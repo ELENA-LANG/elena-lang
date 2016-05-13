@@ -659,7 +659,7 @@
     #method array
         = Array new &int:0 &int:theLength &array:theArray.
         
-    #method value
+    #method get
         <= array.        
 }
 

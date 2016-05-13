@@ -63,7 +63,7 @@ enum LexicalType
    lxIf              = 0x2031E,  // optional arg - reference
    lxElse            = 0x2031F,  // optional arg - reference
    lxOption          = 0x00320,
-   //lxBody            = 0x00321,
+   lxFieldExpression = 0x00321,
    lxLocalUnboxing   = 0x00322, // arg - size
    lxNewFrame        = 0x00323, // if argument -1 - than with presaved message
    lxCreatingClass   = 0x00324, // arg - count

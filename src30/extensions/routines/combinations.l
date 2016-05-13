@@ -195,6 +195,9 @@
 
 #class SequentialEnumerator :: BaseRowEnumerator
 {
+    #constructor new : Arguments
+        <= new:Arguments.
+    
     #method reset
     [
         theStrategy := sequentialStart.
@@ -205,6 +208,9 @@
 
 #class ParallelEnumerator :: BaseRowEnumerator
 {
+    #constructor new : Arguments
+        <= new:Arguments.
+    
     #method reset
     [
         theStrategy := parallelStart.

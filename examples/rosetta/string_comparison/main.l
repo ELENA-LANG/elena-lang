@@ -15,7 +15,7 @@
 [
     #var s1 := "this".
     #var s2 := "that".
-    compareStrings :s1 :s2.
+    compareStrings eval:s1:s2.
     
     console readChar.
 ].

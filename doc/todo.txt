@@ -2,9 +2,15 @@
 In development:
 ------                              
               xdev - generic development
-                       * test all rosetta samples
+                       * test twelvestats
+                       * test median
                        * test amb
                        * test anagram
+                       * test combinator
+                       * test evolution
+                       * test knutalg
+                       * test gui_component
+                       * test simple gui
 
                        * test all gui samples
                        * test string_comparision
