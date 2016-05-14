@@ -66,4 +66,6 @@
             writeLiteral:"#":(attempt += 1) &paddingLeft:10
             writeLine:" ":current:" fitness: ":(current fitness &of:Target).
     ].
+    
+    console readChar.
 ].

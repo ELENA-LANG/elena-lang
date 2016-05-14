@@ -77,6 +77,8 @@
     ambOperator for &args:(1,2,4):(4,5,6) seek: (:a:b) [ a * b == 8 ] do: (:a:b)
         [ console writeLine: a : " * " : b : " = 8" ]
         | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
+        
+    console readChar.        
 ].
 
 #symbol program2 =
@@ -87,5 +89,5 @@
         do: (:a:b:c:d) [ console writeLine:a:" ":b:" ":c:" ":d. ]
         | if &InvalidArgumentError: e [ console writeLine:"AMB is angry". ].
         
-    console readChar.        
+    console readChar.
 ].

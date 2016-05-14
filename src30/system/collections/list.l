@@ -330,6 +330,10 @@
     #method getAt : anIndex
         = $self getAt &int:(anIndex int).
 
+    /// Returns the object at the specified position
+    #method setAt : anIndex : anObject
+        = $self setAt &int:(anIndex int) &object:anObject.
+
     /// Returns the list item at the specified position
     #method(list_item,stacksafe) getItemAt &int:anIndex
     [
@@ -351,6 +355,10 @@
     /// Returns the object at the specified position
     #method(stacksafe) getAt &int:anIndex
         = $self getItemAt &int:anIndex get.
+
+    /// Returns the object at the specified position
+    #method(stacksafe) setAt &int:anIndex &object:anObject
+        = $self getItemAt &int:anIndex set:anObject.
 
     /// Appends a new object to the end of the list
     #method append : anObject => theState.

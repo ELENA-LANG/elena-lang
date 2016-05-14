@@ -465,6 +465,23 @@ void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType
    tape.write(bcACopyB);
 }
 
+void ByteCodeWriter :: initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   tape.write(bcBCopyA);
+   tape.write(bcCount);
+
+   loadObject(tape, sourceType, sourceArgument);
+
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcXSet);
+   tape.write(bcNext, baCurrentLabel);
+   tape.releaseLabel();
+
+   tape.write(bcACopyB);
+}
+
 void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
 {
    loadBase(tape, field, argument);
@@ -2251,9 +2268,11 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
       case WRITE_MESSAGE_ID:
          // nload
          // not
+         // inc
          // nshift
          tape.write(bcNLoad);
          tape.write(bcNot);
+         tape.write(bcInc);
          tape.write(bcNShift);
          break;
       // Note read / write operator is used for bitwise operations
@@ -2360,9 +2379,11 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
       case WRITE_MESSAGE_ID:
          // nload
          // not
+         // inc
          // lshift
          tape.write(bcNLoad);
          tape.write(bcNot);
+         tape.write(bcInc);
          tape.write(bcLShift);
          break;
       // Note read / write operator is used for bitwise operations
@@ -4489,10 +4510,10 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
       if (size < 0) {
          loadObject(tape, lxConstantClass, target.argument);
          newDynamicObject(tape);
+         initDynamicObject(tape, lxNil);
       }
-      else newObject(tape, size, target.argument);
-
-      if (size > 0) {
+      else {
+         newObject(tape, size, target.argument);
          initObject(tape, size, lxNil);
       }
    }

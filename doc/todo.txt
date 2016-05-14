@@ -2,12 +2,7 @@
 In development:
 ------                              
               xdev - generic development
-                       * test evolution
-                       * test amb
-                       * test combinator
                        * test anagram
-                       * test knutalg
-                       * test twelvestats
                        * test gui_component
                        * test simple gui
 

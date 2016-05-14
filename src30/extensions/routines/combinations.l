@@ -198,6 +198,9 @@
     #constructor new : Arguments
         <= new:Arguments.
     
+    #constructor new &args:Arguments    
+        <= new &args:Arguments.
+
     #method reset
     [
         theStrategy := sequentialStart.

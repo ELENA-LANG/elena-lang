@@ -45,5 +45,5 @@
         ].
     ].    
     
-    console writeLine:bin.
+    console writeLine:bin readChar.
 ].
