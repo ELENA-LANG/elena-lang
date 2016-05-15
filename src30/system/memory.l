@@ -472,7 +472,7 @@
         $self setAt &int:(index int) &bool:(value bool).
     ]
     
-    #method setAt &int:index &bool:value
+    #method(stacksafe) setAt &int:index &bool:value
     [
         #var(int)bit_mask := 1.
         (index != 0)
@@ -516,8 +516,8 @@
     /// Reads the matrix lengths to the output parameter
     #method(stacksafe) readLengths &vint:Columns &vint:Rows
     [
-        Columns << theColumns.
-        Rows << theRows.
+        Columns := theColumns.
+        Rows := theRows.
     ]
 
     #method(int) length = theRows.
@@ -1905,7 +1905,7 @@
     /// Reads the current index and saves it into an output parameter
     #method readIndex  &vint:anIndex
     [
-        anIndex << theIndex.
+        anIndex := theIndex.
     ]
     
     /// Sets the index by specified value

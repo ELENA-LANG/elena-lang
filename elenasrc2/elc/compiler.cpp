@@ -6899,7 +6899,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
-void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
+bool Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
 {
    LexicalType opType = node.type;
 
@@ -6937,7 +6937,10 @@ void Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t 
       else node.appendNode(lxTarget, targetRef);
 
       node = SyntaxTree::findChild(node, opType);
+
+      return true;
    }
+   else return false;
 }
 
 void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask, int mode)
@@ -7266,14 +7269,17 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
       if (IsNumericOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            target = scope.intReference;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
+            target = scope.longReference;
             node = lxLongOp;
             boxing = true;
          }
          else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
+            target = scope.realReference;
             node = lxRealOp;
             boxing = true;
          }
@@ -7289,30 +7295,36 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             node = lxArrOp;
          }
          else if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            target = scope.intReference;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
+            target = scope.longReference;
             node = lxLongOp;
             boxing = true;
          }
       }
       else if (node.argument == WRITE_MESSAGE_ID) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            target = scope.intReference;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
+            target = scope.longReference;
             node = lxLongOp;
             boxing = true;
          }
       }
       else if (IsBitwiseOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            target = scope.intReference;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
+            target = scope.longReference;
             node = lxLongOp;
             boxing = true;
          }
@@ -7338,12 +7350,15 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       }
       else if (IsVarOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
+            target = scope.intReference;
             node = lxIntOp;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
+            target = scope.longReference;
             node = lxLongOp;
          }
          else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
+            target = scope.realReference;
             node = lxRealOp;
          }
       }
