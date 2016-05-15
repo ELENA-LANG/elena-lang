@@ -494,82 +494,73 @@
     #method iterator = BitArray32Iterator new &bitset:$self.
 }
 
-//// --- IntMatrix ---
-//
-//#class(sealed)IntMatrix
-//{
-//    #field(type:intarray)theArray.
-//    #field(type:int)theRows.
-//    #field(type:int)theColumns.
-//    
-//    #constructor new &int:Columns &int:Rows
-//    [
-//        theRows := Rows.
-//        theColumns := Columns.
-//        
-//        theArray := IntArray new &int:(Columns * Rows).        
-//    ]
-//        
-//    #constructor new : Columns : Rows
-//        <= new &int:(Columns int) &int:(Rows int).
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    #method(stacksafe) readLengths &vint:Columns &vint:Rows
-//    [
-//        Columns << theColumns.
-//        Rows << theRows.
-//    ]
-//
-//    #method(type:int) length = theRows.
-//    
-//    /// Returns itself
-//    #method intmatrix = $self.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:i &int:j &int:aValue
-//    [
-//        theArray write &int:(i * theColumns + j) &int:aValue.
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:i &int:j &vint:anInt
-//    [
-//        theArray read &int:(i * theColumns + j) &vint:anInt.
-//    ]
-//
-//    #method getAt : i : j
-//    [
-//        #var(type:int)aValue.            
-//        $self read &int:(i int) &int:(j int) &vint:aValue.
-//        
-//        ^ IntNumber new &int:aValue.
-//    ]
-//
-//    #method setAt : i : j : aValue
-//    [
-//        $self write &int:(i int) &int:(j int) &int:(aValue int).    
-//    ]
-//
-//    /// Returns a row
-//    #method getAt : i =
-//    {
-//        length = theColumns int.
-//        
-//        getAt : j
-//            = self getAt:i:j.
-//        
-//        setAt : j : aValue
-//        [
-//            self setAt:i:j:aValue.
-//        ]
-//    }.
-//
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget = aTarget::aVerb eval &intmatrix:$self.
-//    
-//    /// Dispatches the verb to the target object with intarray subject
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &intmatrix:$self.
-//}
+// --- IntMatrix ---
+
+#class(sealed,dispatchable:intmatrix)IntMatrix
+{
+    #field(intarray)theArray.
+    #field(int)theRows.
+    #field(int)theColumns.
+    
+    #constructor new &int:Columns &int:Rows
+    [
+        theRows := Rows.
+        theColumns := Columns.
+        
+        theArray := IntArray new &int:(Columns * Rows).        
+    ]
+        
+    #constructor new : Columns : Rows
+        <= new &int:(Columns int) &int:(Rows int).
+        
+    /// Reads the matrix lengths to the output parameter
+    #method(stacksafe) readLengths &vint:Columns &vint:Rows
+    [
+        Columns << theColumns.
+        Rows << theRows.
+    ]
+
+    #method(int) length = theRows.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:i &int:j &int:aValue
+    [
+        theArray write &int:(i * theColumns + j) &int:aValue.
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:i &int:j &vint:anInt
+    [
+        theArray read &int:(i * theColumns + j) &vint:anInt.
+    ]
+
+    #method getAt : i : j
+    [
+        #var(int)aValue.            
+        $self read &int:(i int) &int:(j int) &vint:aValue.
+        
+        ^ IntNumber new &int:aValue.
+    ]
+
+    #method setAt : i : j : aValue
+    [
+        $self write &int:(i int) &int:(j int) &int:(aValue int).    
+    ]
+
+    /// Returns a row
+    #method getAt : i =
+    {
+        length = theColumns int.
+        
+        getAt : j
+            = self getAt:i:j.
+        
+        setAt : j : aValue
+        [
+            self setAt:i:j:aValue.
+        ]
+    }.
+}
 
 // --- RealArray ---
 
@@ -595,28 +586,27 @@
     #constructor new &realarray:anArray
         <= new &int:0 &int:(anArray length) &realarray:anArray.
 
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &real:aValue
-//    [
-//        #var(type:int)aTotalLength := $self length.
-//        
-//        #var(type:int)i := anIndex.
-//        #var(type:int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &real:aValue.
-//            
-//            i := i + 1.
-//        ].
-//    ]
-
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &real:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self setAt &int:i &real:aValue.
+            
+            i := i + 1.
+        ].
+    ]
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &realarray:anArray
@@ -870,9 +860,9 @@
     #method(stacksafe) read &int:anIndex &vchar:aChar
         => system'core_routines'__literal.
 
-//    // Reads the byte at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vbyte:anInt
-//        => system'core_routines'bs_readbyte.
+    // Reads the byte at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
+        => system'core_routines'__literal.
 
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
@@ -980,9 +970,9 @@
     /// Returns the string enumerator
     #method enumerator = LiteralEnumerator new &literal:$self.
 
-//    /// Returns the string iterator
-//    #method iterator = LiteralIterator new &literal:$self.
-//    
+    /// Returns the string iterator
+    #method iterator = LiteralIterator new &literal:$self.
+    
     /// Clones the value
     #method clone = LiteralValue new &literal:$self.
 
@@ -1086,9 +1076,9 @@
     #method(stacksafe) read &int:anIndex &vchar:aChar
         => system'core_routines'__wide.
 
-//    // Reads the short integer at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vshort:aValue
-//        => system'core_routines'__wide.
+    // Reads the short integer at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vshort:aValue
+        => system'core_routines'__wide.
 
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
@@ -1192,8 +1182,8 @@
     /// Returns the object enumerator
     #method enumerator = WideLiteralEnumerator new &wide:$self.
     
-//    /// Returns the object iterator
-//    #method iterator = WideLiteralIterator new &wide:$self.
+    /// Returns the object iterator
+    #method iterator = WideLiteralIterator new &wide:$self.
     
     /// Clones the value
     #method clone = WideLiteralValue new &wide:$self.
@@ -1247,68 +1237,68 @@
     #method wide 
         = wideConvertor convert:theValue.
 
-//    /// Converts the parameter into a literal string
-//    #method write &int:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &short:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &byte:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &long:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &real:aValue
-//    [
-//        theValue := aValue literal.
-//    ]    
-//
-//    #method cast : aVerb &to:aTarget
-//    [
-//        #var aValue := aTarget cast:%eval &to:
-//        {
-//            eval : aVariant &int:aValue
-//                = aVariant int.
-//                
-//            eval : aVariant &byte:aValue
-//                = aVariant byte.
-//                
-//            eval : aVariant &short:aValue
-//                = aVariant short.
-//                
-//            eval : aVariant &long:aValue
-//                = aVariant long.
-//                
-//            eval : aVariant &real:aValue
-//                = aVariant real.
-//                
-//            eval : aVariant &literal:aValue
-//                = aVariant literal.
-//                
-//            eval : aVariant &wide:aValue
-//                = aVariant wide.
-//        }
-//        &with:$self.
-//        
-//        ^ aValue cast:aVerb &to:aTarget.
-//    ]
-//
-//    #method equal : anObject
-//        = anObject equal:$self bool.
+    /// Converts the parameter into a literal string
+    #method set &int:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method set &short:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &byte:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &long:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &real:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    #method cast : aVerb &to:aTarget
+    [
+        #var aValue := aTarget cast:%eval &to:
+        {
+            eval : aVariant &int:aValue
+                = aVariant int.
+                
+            eval : aVariant &byte:aValue
+                = aVariant byte.
+                
+            eval : aVariant &short:aValue
+                = aVariant short.
+                
+            eval : aVariant &long:aValue
+                = aVariant long.
+                
+            eval : aVariant &real:aValue
+                = aVariant real.
+                
+            eval : aVariant &literal:aValue
+                = aVariant literal.
+                
+            eval : aVariant &wide:aValue
+                = aVariant wide.
+        }
+        &with:$self.
+        
+        ^ aValue cast:aVerb &to:aTarget.
+    ]
+
+    #method equal : anObject
+        = anObject equal:$self bool.
 }
 
 // --- Array ---
@@ -1481,65 +1471,64 @@
     #method get = theChar.
 }
 
-//// --- LiteralIterator ---
-//
-///// A literal value iterator
-//#class LiteralIterator :: Iterator
-//{
-//    #field(type:literal) theLiteral.
-//    #field(type:vint)    theIndex.
-//    
-//    /// Creates an iterator
-//    #constructor new : anObject
-//        <= new &literal:(anObject literal).
-//    
-//    /// Creates an iterator
-//    #constructor new &literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := Integer new.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(type:int)aLength.
-//        theLiteral readLength &vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    #method get
-//    [
-//        #var(type:char)aChar.
-//        theLiteral read &int:theIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method set : anObject 
-//    [
-//        #throw system'NotSupportedException new.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex write &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theLiteral.
-//}
+// --- LiteralIterator ---
+
+/// A literal value iterator
+#class LiteralIterator :: Iterator
+{
+    #field(literal) theLiteral.
+    #field(vint)    theIndex.
+    
+    /// Creates an iterator
+    #constructor new : anObject
+        <= new &literal:(anObject literal).
+    
+    /// Creates an iterator
+    #constructor(suppress:w3) new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    #method available
+    [
+        #var(int)aLength := theLiteral length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current character
+    #method get
+    [
+        #var(char)aChar.
+        theLiteral read &int:theIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+    
+    /// Sets the index by specified value
+    #method set : anObject 
+    [
+        #throw system'NotSupportedException new.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    #method readIndex &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    #method readLength &vint:anOutput
+        => theLiteral.
+}
 
 // --- WideLiteralEnumerator ---
 
@@ -1599,59 +1588,58 @@
     #method get = theChar.
 }
 
-//// --- WideLiteralIterator ---
-//
-///// A wide literal enumerator
-//#class WideLiteralIterator :: Iterator
-//{
-//    #field(type:wide) theLiteral.
-//    #field(type:vint) theIndex.
-//    
-//    /// Creates an iterator
-//    #constructor new : anObject
-//        <= new &wide:(anObject wide).
-//    
-//    /// Creates an iterator
-//    #constructor new &wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := Integer new.
-//    ]
-//
-//    /// Returns false if the index out of range    
-//    #method available
-//    [
-//        #var(type:int)aLength.
-//        theLiteral readLength &vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    #method get
-//        = theLiteral getAt &int:theIndex.
-//    
-//    #method set : anObject 
-//    [
-//        #throw system'NotSupportedException new.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex write &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theLiteral.
-//}
+// --- WideLiteralIterator ---
+
+/// A wide literal enumerator
+#class WideLiteralIterator :: Iterator
+{
+    #field(wide) theLiteral.
+    #field(vint) theIndex.
+    
+    /// Creates an iterator
+    #constructor new : anObject
+        <= new &wide:(anObject wide).
+    
+    /// Creates an iterator
+    #constructor(suppress:w3) new &wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+
+    /// Returns false if the index out of range    
+    #method available
+    [
+        #var(int)aLength := theLiteral length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current character
+    #method get
+        = theLiteral getAt &int:theIndex.
+    
+    #method set : anObject 
+    [
+        #throw system'NotSupportedException new.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    #method readIndex &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    #method readLength &vint:anOutput
+        => theLiteral.
+}
 
 // --- ArrayIterator ---
 

@@ -751,6 +751,32 @@ procedure __literal.less&literal$[2]
   
 end
 
+procedure __literal.read&int$&vbyte$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  breadb
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
 procedure __wide.equal&wide$[2]
 
   bloadsi 2
@@ -4505,803 +4531,87 @@ procedure __long.get&inverted[1]
   
 end
 
+procedure __msgarray.read&int$&vmssg[3]
+
+  bcopya
+  nlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  nread
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __rtptr.new[2]
+
+  pusha
+
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  callextr api : alloc_index
+  bcopya
+  aloadsi 4
+  set  
+
+  popa
+  freelock
+
+  popb
+  nsave
+  acopyb
+
+  quitn 2
+
+end
+
+procedure __rtptr.get&free[1]
+                      
+  callr system'rt_sync
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  aloadsi 1
+  nload
+  callextr api : free_index
+
+  freelock
+
+  quitn 1
+  
+end
+
+procedure __rtptr.get[1]
+
+  pusha
+  callextr api : resolve_index
+
+  quitn 1
+
+end
+
 /*
-procedure byte_max
-
-  bcopya
-  dcopy 0FFh
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure int_init
-
-  bcopya
-  dcopy 0
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure byte_add
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nadd
-  acopyb
-  nload
-  andn 0FFh
-  nsave
-  quitn 2
-
-end
-
-procedure byte_sub
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nsub
-  acopyb
-  nload
-  andn 0FFh
-  nsave
-  quitn 2
-
-end
-
-procedure byte_mul
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nmul
-  acopyb
-  nload
-  andn 0FFh
-  nsave
-  quitn 2
-
-end
-
-procedure byte_div
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  ndiv
-  acopyb
-  nload
-  andn 0FFh
-  nsave
-  quitn 2
-
-end
-
-procedure byte_and
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nand
-  acopyb
-  quitn 2
-
-end
-
-procedure byte_or
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nor
-  acopyb
-  quitn 2
-
-end
-
-procedure byte_xor
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nxor
-  acopyb
-  quitn 2
-
-end
-
-procedure int_and
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nand
-  acopyb
-  quitn 2
-
-end
-
-procedure int_or
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nor
-  acopyb
-  quitn 2
-
-end
-
-procedure int_xor
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nxor
-  acopyb
-  quitn 2
-
-end
-
-procedure long_and
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  land
-  acopyb
-  quitn 2
-
-end
-
-procedure long_or
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  lor
-  acopyb
-  quitn 2
-
-end
-
-procedure long_xor
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  lxor
-  acopyb
-  quitn 2
-
-end
-                 
-procedure byte_shift
-
-  pusha
-  newn   class : system'ByteNumber 4
-  bcopya
-  aloadsi 3    // ; load index
-  nload
-  popa
-  nshift
-  acopyb
-
-  nload
-  andn 0FFh
-  nsave
-
-  quitn 2
-  
-end
-
-procedure int_save
-
-  bloadsi 2
-  ncopy
-  quitn 2
-
-end
-
-procedure short_min
-
-  bcopya
-  dcopy 0FFFF8000h
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure short_max
-
-  bcopya
-  dcopy 07FFFh
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure short_add
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nadd
-  acopyb
-  nload
-  lessn labNegative 0
-
-  andn 0FFFFh
-  nsave
-  quitn 2
-
-labNegative:
-  orn 0FFFF0000h
-  nsave
-  quitn 2
-
-end
-
-procedure short_sub
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nsub
-  acopyb
-  nload
-  lessn labNegative 0
-
-  andn 0FFFFh
-  nsave
-  quitn 2
-
-labNegative:
-  orn 0FFFF0000h
-  nsave
-  quitn 2
-
-end
-
-procedure short_mul
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nmul
-  acopyb
-  nload
-  lessn labNegative 0
-
-  andn 0FFFFh
-  nsave
-  quitn 2
-
-labNegative:
-  orn 0FFFF0000h
-  nsave
-  quitn 2
-
-end
-
-procedure short_div
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  ndiv
-  acopyb
-  nload
-  lessn labNegative 0
-
-  andn 0FFFFh
-  nsave
-  quitn 2
-
-labNegative:
-  orn 0FFFF0000h
-  nsave
-  quitn 2
-  
-end
-
-procedure short_and
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nand
-  acopyb
-  quitn 2
-
-end
-
-procedure short_or
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nor
-  acopyb
-  quitn 2
-
-end
-
-procedure short_xor
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nxor
-  acopyb
-  quitn 2
-
-end
-
-procedure short_shift
-
-  pusha
-  newn   class : system'ShortNumber 4
-  bcopya
-  aloadsi 3    // ; load index
-  nload
-  popa
-  nshift
-  acopyb
-  nload
-  lessn labNegative 0
-
-  andn 0FFFFh
-  nsave
-  quitn 3
-
-labNegative:
-  orn 0FFFF0000h
-  nsave
-  quitn 3
-
-end
-
-procedure int_min
-
-  bcopya
-  dcopy 80000000h
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure int_max
-
-  bcopya
-  dcopy 07FFFFFFFh
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure int_copyshort
-
-  bcopya
-  aloadsi 2
-  nload
-  andn 0FFFFh
-  nsave
-  acopyb
-  quitn 2
-
-end
-
-procedure int_add
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nadd
-  acopyb
-  quitn 2
-
-end
-
-procedure int_sub
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nsub
-  acopyb
-  quitn 2
-
-end
-
-procedure int_mul
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  nmul
-  acopyb
-  quitn 2
-
-end
-
-procedure int_div
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  popa
-  ncopy
-  aloadsi 2
-  ndiv
-  acopyb
-  quitn 2
-
-end
-                 
-procedure int_shift
-
-  pusha
-  newn   class : system'IntNumber 4
-  bcopya
-  aloadsi 3    // ; load index
-  nload
-  popa
-  nshift
-  acopyb
-  quitn 2
-  
-end
-                 
-procedure int_shift2
-
-  pusha
-  bloadsi 4
-  aloadsi 3    // ; load index
-  nload
-  popa
-  nshift
-  quitn 2
-  
-end
-
-procedure long_min
-
-  bcopya
-  dcopy 80000000h
-  nsave
-  dcopy 32
-  lshift
-  acopyb
-  quitn 1
-
-end
-
-procedure long_max
-
-  bcopya
-  dcopy 07FFFFFFFh
-  nsave
-  dcopy 32
-  lshift
-  dcopy 0FFFFFFFFh
-  nsave
-  acopyb
-  quitn 1
-
-end
-
-procedure long_copy
-
-  bcopya
-  aloadsi 2
-  lcopy
-  acopyb
-  quitn 2
-
-end
-
-procedure long_copyint
-  
-  bcopya
-  aloadsi 2
-  nload
-  nsave
-  dcopy 0
-  nsavei 1
-  acopyb
-  quitn 2
-
-end
-
-procedure long_copystruct
-
-  bcopya
-  aloadsi 2
-  nload
-  nsave
-  aloadsi 3
-  nload
-  nsavei 1
-  acopyb
-  quitn 3
-
-end
-
-procedure long_equal
-
-  bloadsi 2
-  lequal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure long_less
-
-  bloadsi 2
-  lless
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure long_add
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  ladd
-  acopyb
-  quitn 2
-
-end
-
-procedure long_sub
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  lsub
-  acopyb
-  quitn 2
-
-end
-
-procedure long_mul
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  lmul
-  acopyb
-  quitn 2
-
-end
-
-procedure long_div
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  ldiv
-  acopyb
-  quitn 2
-
-end
-                 
-procedure long_shift
-
-  pusha
-  newn   class : system'LongNumber 8
-  bcopya
-  aloadsi 3    // ; load index
-  nload
-  popa
-  lshift
-  acopyb
-  quitn 2
-  
-end
-
-procedure real_copyint
-  
-  bcopya
-  aloadsi 2
-  nload
-  rcopy
-  rsave
-  acopyb
-  quitn 2
-
-end
-
-procedure real_equal
-
-  bloadsi 2
-  requal
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure real_less
-
-  bloadsi 2
-  rless
-  selectr const : system'false const : system'true
-  quitn 2
-  
-end
-
-procedure real_add
-
-  pusha
-  newn   class : system'RealNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  radd
-  acopyb
-  quitn 2
-
-end
-
-procedure real_sub
-
-  pusha
-  newn   class : system'RealNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  rsub
-  acopyb
-  quitn 2
-
-end
-
-procedure real_mul
-
-  pusha
-  newn   class : system'RealNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  rmul
-  acopyb
-  quitn 2
-
-end
-
-procedure real_div
-
-  pusha
-  newn   class : system'RealNumber 8
-  bcopya
-  popa
-  lcopy
-  aloadsi 2
-  rdiv
-  acopyb
-  quitn 2
-
-end
-
-procedure bs_create
-
-  bcopya
-  aloadsi 2
-  nload
-  acopyb
-  acallvi 1
-  quitn 2
-  
-end
-
-procedure sa_create
-
-  bcopya
-  aloadsi 2
-  nload
-  acopyb
-  acallvi 1
-  quitn 2
-
-end
-
 procedure sa_copy
 
   bcopya
@@ -5536,78 +4846,6 @@ labNext:
 labSkip:
   acopyb
   quitn 2
-
-end
-
-procedure arr_empty
-
-  dcopy 0
-  acallvi 1
-  quitn 1
-
-end
-
-
-procedure api_alloc_index
-
-  pusha
-
-  callr system'rt_sync
-  pusha
-labWait:
-  snop
-  trylock
-  elsen labWait 0 
-
-  callextr api : alloc_index
-  bcopya
-  aloadsi 4
-  set  
-
-  popa
-  freelock
-
-  popb
-  nsave
-  acopyb
-
-  quitn 2
-
-end
-
-procedure api_free_index
-                      
-  callr system'rt_sync
-labWait:
-  snop
-  trylock
-  elsen labWait 0 
-
-  aloadsi 1
-  nload
-  callextr api : free_index
-
-  freelock
-
-  quitn 2
-  
-end
-
-procedure save_int
-
-  bloadsi 2
-  nload
-  nsave
-  quitn 2
-
-end
-
-procedure ptr_get
-
-  pusha
-  callextr api : resolve_index
-
-  quitn 1
 
 end
 

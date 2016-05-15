@@ -131,80 +131,42 @@
     #constructor new : aLength
         <= new &int:(aLength int).
 
-//    #method(stacksafe) write &int:anIndex &mssg:aValue
-//        => system'core_routines'ns_writedword.
-//
-//    #method(stacksafe) read &int:anIndex &vmssg:anInt
-//        => system'core_routines'ns_readdword.
-//    
-//    #method enumerator = MessageArrayEnumerator new &mssgarray:$self.
-//
-//    #method iterator = MessageArrayIterator new &mssgarray:$self.
+    #method(stacksafe) read &int:anIndex &vmssg:anInt
+        => system'core_routines'__msgarray.
+
+    #method iterator = MessageArrayIterator new &mssgarray:$self.
 }
 
-//// --- MessageArrayIterator ---
-//
-//#class MessageArrayIterator :: Iterator
-//{
-//    #field(type:mssgarray) theArray.
-//    #field(type:vint)  theIndex.
-//
-//    #constructor new &mssgarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := Integer new.
-//    ]
-//    
-//    #method available
-//    [
-//        #var(type:int)aLength.
-//        theArray readLength &vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex << theIndex.
-//    ]
-//    
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex write &int:anIndex.
-//    ]
-//}
-//
-//// --- MessageArrayEnumerator ---
-//
-//#class MessageArrayEnumerator :: Enumerator
-//{
-//    #field(type:mssgarray) theArray.
-//    #field(type:vint)  theIndex.
-//    
-//    #constructor new &mssgarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := Integer new &int:(-1).
-//    ]
-//
-//    #method reset
-//    [
-//        theIndex write &int:-1.
-//    ]
-//
-//    #method next
-//    [
-//        #var(type:int)aLength.
-//        theArray readLength &vint:aLength.
-//        
-//        theIndex append &int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    #method get
-//        = theArray getAt &int:theIndex.
-//}
+// --- MessageArrayIterator ---
+
+#class MessageArrayIterator :: Iterator
+{
+    #field(mssgarray) theArray.
+    #field(vint)  theIndex.
+
+    #constructor(suppress:w3) new &mssgarray:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    #method available
+    [
+        #var(int)aLength := theArray length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    #method get
+        = theArray getAt &int:theIndex.
+    
+    #method readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    #method writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+}

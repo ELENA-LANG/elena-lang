@@ -2257,7 +2257,6 @@
     /// Converts the parameter to the literal value with the provided radix
     #method(literal,stacksafe) convert &long:aNumber &int:aRadix
         => system'core_routines'__literalconvertor.
-//        => system'core_routines's_copylong_radix.
 
     /// Converts the parameter to the literal value
     #method(literal,stacksafe) convert &real:aNumber

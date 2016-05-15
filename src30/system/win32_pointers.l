@@ -9,45 +9,37 @@
         theHandle := h.
     ]
 
-//    #constructor(stacksafe) new &int:aHandle
-//        => system'core_routines'int_copy.
-//
-//    #constructor min
-//        => system'core_routines'int_init.
+    #constructor(stacksafe) new &int:aHandle
+    [
+        theHandle := aHandle.
+    ]
 
     #method(bool,stacksafe) equal &handle:anOperand 
         = theHandle == anOperand.
 }
 
-//// --- RTPointer ---
-//
-//#static rt_sync = Object new.
-//
-//#class(sealed,struct:embeddable) RTPointer
-//{
-//    #field(type:int)theIndex.
-//    
-//    #constructor new : anObject
-//        => system'core_routines'api_alloc_index.
-//
-//    #method rt_ptr = $self.            
-//                        
-//    #method index
-//    [
-//        ^ IntNumber new &int:theIndex.
-//    ]
-//    
-//    #method(stacksafe) readIndex &vint:aRetVal
-//    [
-//        aRetVal << theIndex.
-//    ]
-//        
-//    #method(stacksafe) get
-//        => system'core_routines'ptr_get.
-//
-//    #method(stacksafe) free
-//        => system'core_routines'api_free_index.
-//}
+// --- RTPointer ---
+
+#static rt_sync = Object new.
+
+#class(sealed,struct:embeddable) RTPointer
+{
+    #field(int)theIndex.
+    
+    #constructor new : anObject
+        => system'core_routines'__rtptr.
+
+    #method(stacksafe,outnprop:index) readIndex &vint:aRetVal
+    [
+        aRetVal := theIndex.
+    ]
+        
+    #method(stacksafe) get
+        => system'core_routines'__rtptr.
+
+    #method(stacksafe)  free
+        => system'core_routines'__rtptr.
+}
 
 // --- UnsafePointer ---
 
@@ -133,25 +125,23 @@
         theY := 0.
     ]
     
-//    #method write : anObject
-//        <= write &win_coord:(anObject win_coord).
-//    
-//    #method(stacksafe) write &short:X &short:Y
-//    [
-//        theX := X.
-//        theY := Y.
-//    ]
-//    
-//    #method(stacksafe) write &win_coord:aValue
-//    [
-//        #var(type:short)tmp.
-//        
-//        aValue readX &vshort:tmp.
-//        theX := tmp.
-//        
-//        aValue readY &vshort:tmp.
-//        theY := tmp.
-//    ]
+    #method set : anObject
+        <= write &win_coord:(anObject win_coord).
+    
+    #method(stacksafe) write &short:X &short:Y
+    [
+        theX := X.
+        theY := Y.
+    ]
+    
+    #method(stacksafe) write &win_coord:aValue
+    [
+        #var(short)tmp := aValue X.
+        theX := tmp.
+        
+        tmp := aValue Y.
+        theY := tmp.
+    ]
     
     #method(stacksafe,outwprop:X) readX &vshort:aRetVal
     [
@@ -195,23 +185,21 @@
         aRetVal := theBottom.
     ]
     
-//    #method write : anObject
-//        <= write &win_small_rect:(anObject win_small_rect).
-//    
-//    #method write &win_small_rect:aValue
-//    [
-//        #var(type:short)tmp.
-//        
-//        aValue readLeft &vshort:tmp.
-//        theLeft := tmp.
-//        
-//        aValue readTop &vshort:tmp.
-//        theTop := tmp.
-//        
-//        aValue readRight &vshort:tmp.
-//        theRight := tmp.
-//        
-//        aValue readBottom &vshort:tmp.
-//        theBottom := tmp.
-//    ]
+    #method set : anObject
+        <= write &win_small_rect:(anObject win_small_rect).
+    
+    #method write &win_small_rect:aValue
+    [
+        #var(short)tmp := aValue Left.
+        theLeft := tmp.
+        
+        tmp := aValue  Top.
+        theTop := tmp.
+        
+        tmp := aValue Right.
+        theRight := tmp.
+        
+        tmp := aValue Bottom.
+        theBottom := tmp.
+    ]
 }    

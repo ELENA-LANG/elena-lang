@@ -2,15 +2,10 @@
 In development:
 ------                              
               xdev - generic development
-                       * test anagram
                        * test gui_component
                        * test simple gui
 
                        * test all gui samples
-                       * test string_comparision
-                       * test combinations
-                       * test comp_list
-                       * test twenty_four
                        * test c_a_g
                        * test graph
                        * test notepad
@@ -87,6 +82,8 @@ In development:
                        * optimize system'dynamic'Dynamic
                        * arrayof should support iterator
                        * optimization : equal, less, div, xor should support operation with immediate argumnt as well
+                       * optimization : SMALL_RECT.write&win_small_rec[1] - should directly assign the property to the field, 
+                         the stack read optimization should work
 
                        * test constructor returning not compatible object
 

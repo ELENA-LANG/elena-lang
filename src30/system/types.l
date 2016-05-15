@@ -30,7 +30,7 @@
 #subject bytearray  = system'ByteArray.
 #subject shortarray = system'ShortArray.
 #subject intarray   = system'IntArray.
-//#subject(class:system'IntMatrix)    intmatrix.
+#subject intmatrix  = system'IntMatrix.
 #subject realarray  = system'RealArray.
 #subject realmatrix = system'RealMatrix.
 #subject chararray  = system'CharArray.
@@ -70,7 +70,7 @@
 
 // === system handles ===
 #subject handle     = system'Handle.
-//#subject(class:system'RTPointer)rt_ptr.
+#subject rt_ptr     = system'RTPointer.
 #subject dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---
