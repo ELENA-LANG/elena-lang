@@ -1,5 +1,5 @@
 #import system.
-//#import system'text.
+#import system'text.
 
 #subject console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
 
@@ -23,27 +23,23 @@
         dwSize readY &vshort:aRetVal.
     ]
 
-//    #method(stacksafe) readSize &win_coord:aCoord
-//    [
-//        #var(type:short)x.
-//        #var(type:short)y.
-//        dwSize readX &vshort:x.
-//        dwSize readY &vshort:y.
-//        
-//        aCoord write &short:x &short:y.
-//    ]
-//
-//    #method(stacksafe) readCursorPosition &win_coord:aCoord
-//    [
-//        #var(type:win_coord)aCopy := dwCursorPosition.
-//        
-//        #var(type:short)x.
-//        #var(type:short)y.
-//        aCopy readX &vshort:x.
-//        aCopy readY &vshort:y.
-//        
-//        aCoord write &short:x &short:y.
-//    ]
+    #method(stacksafe) readSize &win_coord:aCoord
+    [
+        #var(short)x := dwSize X.
+        #var(short)y := dwSize Y.
+        
+        aCoord write &short:x &short:y.
+    ]
+
+    #method(stacksafe) readCursorPosition &win_coord:aCoord
+    [
+        #var(win_coord)aCopy := dwCursorPosition.
+        
+        #var(short)x := aCopy X.
+        #var(short)y := aCopy Y.
+        
+        aCoord write &short:x &short:y.
+    ]
 }
 
 // --- $ConsoleHandleFactory --
@@ -60,10 +56,10 @@
     #method newWriter
     [
         #var(handle)handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
-/*        #var(type:int)dwMode := system'external'KERNEL32 GetFileType &int:handle.
+        #var(int)dwMode := system'external'KERNEL32 GetFileType &int:handle.
         (dwMode == FILE_TYPE_CHAR)
-            ? [*/ ^ $ConsoleWriter new &handle:handle. //]
-//            ! [ ^ $FileWriter new &handle:handle. ].
+            ? [ ^ $ConsoleWriter new &handle:handle. ]
+            ! [ ^ $FileWriter new &handle:handle. ].
     ]
 }.
 
@@ -126,88 +122,88 @@
     ]
 }
 
-//// --- $FileWriter ---
-//
-//#class(sealed,struct:embeddable) $FileWriter
-//{
-//    #field(type:handle) theHandle.
-//
-//    #constructor new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
-//    #method(stacksafe) write &bytearray:buffer &int:length
-//    [
-//        #var(type:int)written := 0.
-//        system'external'KERNEL32 WriteFile
-//            &int       : theHandle
-//            &bytearray : buffer
-//            &int       : length
-//            &vint      : written
-//            &int       : 0.
-//    ]
-//
-//    #method write &wide : literal
-//    [
-//        #var(type:bytearray,size:255)buffer.
-//        #var(type:int)length := literal length.
-//        #var(type:int)index := 0.
-//        #var(type:int)buf_len := 255.
-//        #var(type:int)subs_len := 255.
-//        #loop (index < length)?
-//        [
-//            buf_len := 255.
-//            
-//            (length < 128)
-//                ? [ subs_len := length. ]  
-//                ! [ subs_len := 128. ].
-//            
-//            OEMEncoder convert &int:index &vint:subs_len &wide:literal &bytearray:buffer &vint:buf_len.
-//            
-//            $self write &bytearray:buffer &int:buf_len.
-//            
-//            index := index + subs_len.
-//        ].
-//    ]
-//    
-//    #method write &literal : literal
-//    [
-//        #var(type:bytearray,size:255)buffer.
-//        #var(type:int)length := literal length.
-//        #var(type:int)index := 0.
-//        #var(type:int)buf_len := 255.
-//        #var(type:int)subs_len := 255.
-//        #loop (index < length)?
-//        [
-//            buf_len := 255.
-//            
-//            (length < 128)
-//                ? [ subs_len := length. ]  
-//                ! [ subs_len := 128. ].
-//            
-//            OEMEncoder convert &int:index &vint:subs_len &literal:literal &bytearray:buffer &vint:buf_len.
-//            
-//            $self write &bytearray:buffer &int:buf_len.
-//            
-//            index := index + subs_len.
-//        ].
-//    ]
-//    
-//    #method clear
-//    [
-//    ]
-//
-//    #method refresh
-//    [
-//    ]
-//
-//    #method free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            &int:theHandle.
-//    ]
-//}
+// --- $FileWriter ---
+
+#class(sealed,struct:embeddable) $FileWriter
+{
+    #field(handle) theHandle.
+
+    #constructor(stacksafe) new &handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
+    #method(stacksafe) write &bytearray:buffer &int:length
+    [
+        #var(int)written := 0.
+        system'external'KERNEL32 WriteFile
+            &int       : theHandle
+            &bytearray : buffer
+            &int       : length
+            &vint      : written
+            &int       : 0.
+    ]
+
+    #method write &wide : literal
+    [
+        #var(byte:255)buffer.
+        #var(int)length := literal length.
+        #var(int)index := 0.
+        #var(int)buf_len := 255.
+        #var(int)subs_len := 255.
+        #loop (index < length)?
+        [
+            buf_len := 255.
+            
+            (length < 128)
+                ? [ subs_len := length. ]  
+                ! [ subs_len := 128. ].
+            
+            OEMEncoder convert &int:index &vint:subs_len &wide:literal &bytearray:buffer &vint:buf_len.
+            
+            $self write &bytearray:buffer &int:buf_len.
+            
+            index := index + subs_len.
+        ].
+    ]
+    
+    #method write &literal : literal
+    [
+        #var(byte:255)buffer.
+        #var(int)length := literal length.
+        #var(int)index := 0.
+        #var(int)buf_len := 255.
+        #var(int)subs_len := 255.
+        #loop (index < length)?
+        [
+            buf_len := 255.
+            
+            (length < 128)
+                ? [ subs_len := length. ]  
+                ! [ subs_len := 128. ].
+            
+            OEMEncoder convert &int:index &vint:subs_len &literal:literal &bytearray:buffer &vint:buf_len.
+            
+            $self write &bytearray:buffer &int:buf_len.
+            
+            index := index + subs_len.
+        ].
+    ]
+    
+    #method clear
+    [
+    ]
+
+    #method refresh
+    [
+    ]
+
+    #method free
+    [
+        system'external'KERNEL32 CloseHandle
+            &int:theHandle.
+    ]
+}
 
 // --- ConsoleReader ---
 

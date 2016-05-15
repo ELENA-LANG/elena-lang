@@ -1,14 +1,12 @@
-//// ==== ver 3.4.1 ===
-//
-//#import system.
-//#import system'drawing.
-//
-//// --- classes ---
-//#symbol(type:wide) StaticClass = "Static" wide. // !! temporal
-//#symbol(type:wide) EditClass   = "Edit" wide. // !! temporal
-//#symbol(type:wide) ButtonClass = "Button" wide. // !! temporal
-//#symbol(type:wide) ComboboxClass = "Combobox" wide. // !! temporal
-//
+#import system.
+#import system'drawing.
+
+// --- classes ---
+#symbol(wide) StaticClass = "Static"w.
+#symbol(wide) EditClass   = "Edit"w.
+#symbol(wide) ButtonClass = "Button"w.
+#symbol(wide) ComboboxClass = "Combobox"w.
+
 //// --- WindowHandle ---
 //
 //#class(sealed,struct:embeddable) WindowHandle

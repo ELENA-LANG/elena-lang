@@ -132,27 +132,27 @@
     #method ifExists : aValue
         = $nil != self::enumerableOp safeSeek:aValue.
         
-//    #method equal &enumerable:list
-//    [
-//        (self length == list length)
-//            ! [ ^ false. ].
-//            
-//        #var(type:enumerator) it1 := self enumerator.
-//        #var(type:enumerator) it2 := list enumerator.
-//        
-//        #loop (it1 next)?
-//        [
-//            it2 next.
-//            
-//            (it1 get safeEqual:(it2 get))
-//                ! [ ^ false. ].
-//        ].
-//        
-//        ^ true.
-//    ]
-//             
-//    #method sequenceEqual:list
-//        = self::enumerableOp equal &enumerable:list.
+    #method equal &enumerable:list
+    [
+        (self length == list length)
+            ! [ ^ false. ].
+            
+        #var(enumerator) it1 := self enumerator.
+        #var(enumerator) it2 := list enumerator.
+        
+        #loop (it1 next)?
+        [
+            it2 next.
+            
+            (it1 get safeEqual:(it2 get) bool)
+                ! [ ^ false. ].
+        ].
+        
+        ^ true.
+    ]
+             
+    #method sequenceEqual:list
+        = self::enumerableOp equal &enumerable:list.
                                                   
     #method firstMember
     [
@@ -174,17 +174,17 @@
         ^ aLastItem.
     ]
     
-//    #method(type:int) count
-//    [
-//        #var(type:enumerator)en := self enumerator.
-//        #var(type:int)counter := 0.
-//        #loop (en next)?
-//        [
-//            counter := counter + 1.
-//        ].
-//        
-//        ^ counter.
-//    ]
+    #method(int,suppress:w3) count
+    [
+        #var(enumerator)en := self enumerator.
+        #var(int)counter := 0.
+        #loop (en next)?
+        [
+            counter += 1.
+        ].
+        
+        ^ counter.
+    ]
 }
 
 // --- indexableOp ---

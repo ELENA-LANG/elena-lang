@@ -84,6 +84,7 @@ In development:
                        * optimization : equal, less, div, xor should support operation with immediate argumnt as well
                        * optimization : SMALL_RECT.write&win_small_rec[1] - should directly assign the property to the field, 
                          the stack read optimization should work
+                       * review Point.equal&coord[1] - why typecast message is sent
 
                        * test constructor returning not compatible object
 
