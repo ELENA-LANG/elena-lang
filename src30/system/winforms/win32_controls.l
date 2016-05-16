@@ -82,7 +82,7 @@
         system'external'USER32 SendMessageW &int:theHandle &int:BM_SETCHECK &int:aValue &int:0.
     ]
 
-    #method isChecked
+    #method(bool) isChecked
     [
         #var(int)aResult := system'external'USER32 SendMessageW &int:theHandle &int:BM_GETCHECK &int:0 &int:0.
 

@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'drawing.
 #import system'winforms.
@@ -27,7 +25,7 @@
 
 #class SDIWindowListener :: SDIWindowCallback
 {
-    #field(type:sdiform)theOwner.
+    #field(sdiform)theOwner.
     
     #constructor new &sdiform:anOwner
     [
@@ -38,7 +36,7 @@
     [
         theOwner $resize &int:width &int:height.
         
-        aResult << 0.
+        aResult := 0.
     ]
     
     #method onclick &hwnd:aHandle &vint:aResult
@@ -73,7 +71,7 @@
 {
     #field theMenu.
     
-    #field(type:func1)theOpenEvent.
+    #field(func1)theOpenEvent.
     
     #method set &onOpen:aFunction
     [
@@ -92,14 +90,14 @@
     
     #method $createHandle
     [
-        #var(type:int)Styles := WS_OVERLAPPEDWINDOW.
+        #var(int)Styles := WS_OVERLAPPEDWINDOW.
         theVisible
             ? [ Styles := Styles || WS_VISIBLE. ].
         
-        #var(type:int)anX.
-        #var(type:int)anY.
-        #var(type:int)aWidth.
-        #var(type:int)aHeight.
+        #var(int)anX.
+        #var(int)anY.
+        #var(int)aWidth.
+        #var(int)aHeight.
         
         theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
         
@@ -126,14 +124,14 @@
 {
     #method $createHandle
     [
-        #var(type:int)Styles := WS_DIALOGWINDOW.
+        #var(int)Styles := WS_DIALOGWINDOW.
         theVisible
             ? [ Styles := Styles || WS_VISIBLE. ].
         
-        #var(type:int)anX.
-        #var(type:int)anY.
-        #var(type:int)aWidth.
-        #var(type:int)aHeight.
+        #var(int)anX.
+        #var(int)anY.
+        #var(int)aWidth.
+        #var(int)aHeight.
         
         theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
         
@@ -150,7 +148,7 @@
 
 #class ChildWindowListener :: ChildWindowCallback
 {
-    #field(type:form)theOwner.
+    #field(form)theOwner.
     
     #constructor new &form:anOwner
     [
@@ -161,7 +159,7 @@
     [
         theOwner $resize &int:width &int:height.
         
-        aResult << 0.
+        aResult := 0.
     ]
     
     #method onclick &hwnd:aHandle &vint:aResult
@@ -212,14 +210,14 @@
             
     #method $createHandle
     [
-        #var(type:int)Styles := WS_POPUPWINDOW || WS_DLGFRAME.
+        #var(int)Styles := WS_POPUPWINDOW || WS_DLGFRAME.
         theVisible
             ? [ Styles := Styles || WS_VISIBLE. ].
         
-        #var(type:int)anX.
-        #var(type:int)anY.
-        #var(type:int)aWidth.
-        #var(type:int)aHeight.
+        #var(int)anX.
+        #var(int)anY.
+        #var(int)aWidth.
+        #var(int)aHeight.
         
         theRegion read &vint:anX &vint:anY &vint:aWidth &vint:aHeight.
         

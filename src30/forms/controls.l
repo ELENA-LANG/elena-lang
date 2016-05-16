@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'drawing.
 
@@ -7,10 +5,10 @@
 
 #class BaseControl
 {
-    #field(type:bool)theVisible.
-    #field(type:bool)theEnabled.
-    #field(type:region)theRegion.
-    #field(type:bool)theTabStop.
+    #field(bool)   theVisible.
+    #field(bool)   theEnabled.
+    #field(region) theRegion.
+    #field(bool)   theTabStop.
     
     #field theCaption.
     #field theParent.

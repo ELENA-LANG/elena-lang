@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'collections.
 
@@ -7,7 +5,7 @@
 
 #class BaseControlCollection
 {
-    #field(type:list) theList.
+    #field(list) theList.
     
     #constructor new
     [

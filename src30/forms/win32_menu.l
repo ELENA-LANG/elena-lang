@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'collections.
 #import system'winforms.
@@ -9,7 +7,7 @@
 #class BaseMenu
 {
     #field theParent.
-    #field(type:list) theItems.
+    #field(list) theItems.
     
     #method items =
     {
@@ -33,7 +31,7 @@
     
     #method open
     [
-        #var(type:enumerator)enum := theItems enumerator.
+        #var(enumerator)enum := theItems enumerator.
         #loop (enum next)?
         [
             enum get open.
@@ -43,7 +41,7 @@
     #method retrieveMenu &int:anID
     [
         #var aRetVal.
-        #var(type:enumerator)enum := theItems enumerator.
+        #var(enumerator)enum := theItems enumerator.
         #loop (enum next)?
         [
             aRetVal := enum get retrieveMenu &int:anID.
@@ -56,7 +54,7 @@
             
     #method close
     [
-        #var(type:enumerator)enum := theItems enumerator.
+        #var(enumerator)enum := theItems enumerator.
         #loop (enum next)?
         [
             enum get close.
@@ -68,10 +66,10 @@
 
 #class MenuItem :: BaseMenu
 {
-    #field(type:func1)theClick.
-    #field(type:wide) theCaption.
-    #field(type:hmenu)theMenuHandle.
-    #field(type:int) theID.
+    #field(func1)theClick.
+    #field(wide) theCaption.
+    #field(hmenu)theMenuHandle.
+    #field(int) theID.
     
     #constructor new &parent:aParent &caption:aCaption &onClick:anAction
         <= (new)
@@ -108,7 +106,7 @@
     
     #method open
     [
-        #var(type:hmenu)hmenu := theParent hmenu.
+        #var(hmenu)hmenu := theParent hmenu.
         
         ($nil == theItems)
             ? [
@@ -140,7 +138,7 @@
 
 #class Menu :: BaseMenu
 {
-    #field(type:hmenu)theHandle.
+    #field(hmenu)theHandle.
     #field theSeed.
     
     #constructor new

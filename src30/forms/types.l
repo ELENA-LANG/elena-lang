@@ -1,23 +1,23 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 
 // --- control types ---
-#subject(class:forms'IControl)          control.
+#subject control     = forms'IControl.
 
-#subject(class:forms'Frame)             frame.
-#subject(class:forms'StaticLabel)       static.
-#subject(class:forms'Label)             label.
-#subject(class:forms'Edit)              edit.
-#subject(class:forms'Memo)              memo.
-#subject(class:forms'Button)            button.
-#subject(class:forms'RadioButton)       radiobutton.
-#subject(class:forms'Combobox)          combobox.
-#subject(class:forms'Paintbox)          paintbox.
-#subject(class:forms'Panel)             panel.
-#subject(class:forms'RadioButtonGroup)  radiogroup.
-#subject(class:forms'ImageList)         imagelist.
-#subject(class:forms'SDIForm)           sdiform.
-#subject(class:forms'ChildForm)         form.
+#subject frame       = forms'Frame.
+#subject static      = forms'StaticLabel.
+#subject label       = forms'Label.
+#subject edit        = forms'Edit.
+#subject memo        = forms'Memo.
+#subject button      = forms'Button.
+#subject radiobutton = forms'RadioButton.
+#subject combobox    = forms'Combobox.
+#subject paintbox    = forms'Paintbox.
+#subject panel       = forms'Panel.
+#subject radiogroup  = forms'RadioButtonGroup.
+#subject imagelist   = forms'ImageList.
+#subject sdiform     = forms'SDIForm.
+#subject form        = forms'ChildForm.
 
-#subject(class:forms'ControlCollection)controls.
+#subject controls    = forms'ControlCollection.
+
+#subject paintfunc   = forms'PaintAction.
