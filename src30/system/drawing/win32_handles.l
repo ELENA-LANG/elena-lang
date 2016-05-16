@@ -6,6 +6,8 @@
 #subject hpen     = system'drawing'HPEN.
 #subject hbrush   = system'drawing'HBRUSH.
 
+#subject vhdc     = varof:hdc.
+
 #subject win_rect = system'drawing'RECT.
 
 // --- Raster Operation Codes ---

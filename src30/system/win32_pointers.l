@@ -22,7 +22,7 @@
 
 #static rt_sync = Object new.
 
-#class(sealed,struct:embeddable) RTPointer
+#class(sealed,struct:embeddable,variable,const) RTPointer
 {
     #field(int)theIndex.
     
@@ -104,6 +104,11 @@
         system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
         
         ^ aLiteral.
+    ]
+    
+    #method(stacksafe) saveTo &bytearray:target &int:offs
+    [
+        target write &int:offs &int:thePointer.
     ]
     
     #method(stacksafe,bool)is &empty

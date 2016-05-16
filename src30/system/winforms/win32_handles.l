@@ -3,7 +3,7 @@
 
 // --- HInstance ---
 
-#class(sealed,struct:embeddable) HInstance
+#class(sealed,struct:embeddable,variable,const) HInstance
 {
     #field(int)theHandle.
     
@@ -65,7 +65,7 @@
 
 // --- HMENU ---
 
-#class(sealed,struct:embeddable) HMENU
+#class(sealed,struct:embeddable,variable,const) HMENU
 {
     #field(int)theHandle.
     

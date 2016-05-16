@@ -17,6 +17,8 @@ In development:
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
 
               xdev - generic development
+                       * nshift should be replaced with nshiftl, nshiftr
+
                        * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
                        * operation with primitive arrays should not be allowed
                        * extension should not be used stand-alone
