@@ -18,6 +18,9 @@
         theHandle := 0.
     ]
 
+    #constructor min
+        <= new.
+
     #constructor(stacksafe) new &hwnd:aHandle
     [
         theHandle := aHandle.

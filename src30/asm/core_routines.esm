@@ -4557,9 +4557,7 @@ labErr:
 
 end
 
-procedure __rtptr.new[2]
-
-  pusha
+procedure __rtptr.new&object&object[2]
 
   callr system'rt_sync
   pusha
@@ -4570,13 +4568,13 @@ labWait:
 
   callextr api : alloc_index
   bcopya
-  aloadsi 4
+  aloadsi 3
   set  
 
   popa
   freelock
 
-  popb
+  bloadsi 1
   nsave
   acopyb
 

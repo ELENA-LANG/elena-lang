@@ -54,6 +54,11 @@
 {
     #field(hwnd)theHandle.
 
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method(stacksafe) retrieve &hwnd:aHandle
     [
         ($nil == theHandle)
@@ -266,6 +271,11 @@
 
 #class(sealed,icontrolof:frame) Frame :: BaseWinControl
 {
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method $createHandle
     [
         #var(hwnd)aParent := theParent hwnd.
@@ -292,6 +302,11 @@
 
 #class(limited,icontrolof:frame) Label :: BaseWinControl
 {
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method $createHandle
     [
         #var(hwnd)aParent := theParent hwnd.
@@ -347,6 +362,11 @@
 #class BaseEdit :: BaseWinControl
 {
     #field(func1)theChanged.
+    
+    #constructor new
+        <= (new)
+    [
+    ]
     
     #method set &onChange:aFunction
     [
@@ -494,6 +514,11 @@
 
 #class(sealed,icontrolof:button) Button :: BaseButton
 {
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method $createHandle
     [
         #var(hwnd)aParent := theParent hwnd.
@@ -919,6 +944,11 @@
 
 #class(sealed,icontrolof:panel) Panel :: BasePanel
 {
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method controls = theControls.
             
     #method $createHandle

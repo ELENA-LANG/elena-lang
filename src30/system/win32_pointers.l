@@ -27,7 +27,9 @@
     #field(int)theIndex.
     
     #constructor new : anObject
-        => system'core_routines'__rtptr.
+    [
+        system'core_routines'__rtptr new &object:$self &object:anObject.
+    ]
 
     #method(stacksafe,outnprop:index) readIndex &vint:aRetVal
     [

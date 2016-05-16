@@ -13,7 +13,12 @@
     ]
         
     #constructor current
-        <= new &int:(system'external'KERNEL32 GetModuleHandleW &int:0).
+    [
+        #var(int)h := system'external'KERNEL32 GetModuleHandleW &int:0.
+        
+        theHandle := h.
+    ]
+//        <= new &int:(system'external'KERNEL32 GetModuleHandleW &int:0).
 
     #method hinstance = $self.
 }

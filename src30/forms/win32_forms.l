@@ -73,6 +73,11 @@
     
     #field(func1)theOpenEvent.
     
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method set &onOpen:aFunction
     [
         theOpenEvent := aFunction func1.
@@ -122,6 +127,11 @@
 
 #class SDIDialog :: SDIForm
 {
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method $createHandle
     [
         #var(int)Styles := WS_DIALOGWINDOW.
