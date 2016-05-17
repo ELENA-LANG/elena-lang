@@ -7390,6 +7390,11 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       }
       else {
          optimizeSyntaxNode(scope, larg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
+
+         // HOTFIX : if larg is boxing, the second operator should be reassigned
+         if (larg == lxBoxing) {
+            rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
+         }
          optimizeSyntaxNode(scope, rarg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
 
          if (boxing) {
@@ -7579,6 +7584,17 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
       // if no boxing hint provided
       // then boxing should be skipped
       if (test(mode, HINT_NOBOXING)) {
+         if (exprNode == lxFieldAddress && exprNode.argument > 0 && !test(mode, HINT_ASSIGNING)) {
+            ref_t target = SyntaxTree::findChild(node, lxTarget).argument;
+            if (!target)
+               throw InternalError("Boxing cann not be performed");
+
+            boxPrimitive(scope, exprNode, target, warningLevel, mode);
+
+            node = lxExpression;
+
+            return;
+         }
          boxing = false;
       }
       else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {

@@ -36,19 +36,23 @@
             aParamIndex := aPointer.
         ].
                 
-        #var(int)aHandle := system'external'USER32 CreateWindowExW
-            &int:       dwExStyle
-            &wide:      aClassName
-            &wide:      aWindowName  
-            &int:       aStyle
-            &int:       x
-            &int:       y
-            &int:       width
-            &int:       height
-            &int:       aParent
-            &int:       0
-            &int:       instance
-            &int:       aParamIndex.
+        #var(int)aHandle := 0.                
+        #extern 
+        [
+            aHandle := system'external'USER32 CreateWindowExW
+                &int:       dwExStyle
+                &wide:      aClassName
+                &wide:      aWindowName  
+                &int:       aStyle
+                &int:       x
+                &int:       y
+                &int:       width
+                &int:       height
+                &int:       aParent
+                &int:       0
+                &int:       instance
+                &int:       aParamIndex.
+        ].
 
         (aHandle==0)
             ? [ #throw WinFormsException new. ].
@@ -120,8 +124,13 @@
             
     #method refresh
     [
-        system'external'USER32 InvalidateRect &int:theHandle &int:0 &int:1.
-        system'external'USER32 UpdateWindow &int:theHandle.
+        #var(int)handle := theHandle.
+        
+        #extern 
+        [
+            system'external'USER32 InvalidateRect &int:handle &int:0 &int:1.
+            system'external'USER32 UpdateWindow &int:handle.
+        ].
     ]
     
     #method(stacksafe) setPosition &int:x &int:y &int:cx &int:cy &int:flags

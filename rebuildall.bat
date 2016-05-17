@@ -40,4 +40,3 @@ bin\elc -cexamples\gui\c_a_g\c_area_gui.prj
 bin\elc -cexamples\gui\notepad\notepad.prj
 bin\elc -cexamples\db\sqlite\sqlite_test.prj
 bin\elc -cexamples\console\pi2\pi2.prj
-bin\elc -cexamples\console\random\random.prj

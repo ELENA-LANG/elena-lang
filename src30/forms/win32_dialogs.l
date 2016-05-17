@@ -47,6 +47,9 @@
 
 #class(sealed) SaveFileDialog :: FileDialog
 {
+    #constructor new : aParent
+        <= new:aParent.
+    
     #method run
     [
         #var aDialog := system'winforms'SaveFileDialog new &hwnd:(theParent hwnd) &filters:theFilters &int:0 &int:255 &wide:(theTitle wide).

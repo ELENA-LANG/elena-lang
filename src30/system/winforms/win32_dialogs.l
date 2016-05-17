@@ -142,54 +142,54 @@
     ]
 }
 
-//// --- OpenFileDialog ---
-//
-//#class(sealed) OpenFileDialog :: BaseFileDialog
-//{
-//    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
-//        <= new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption 
-//            &int:(OFN_PATHMUSTEXIST or:OFN_EXPLORER or:OFN_LONGNAMES or:DS_CENTER or:OFN_HIDEREADONLY int).
-//    
-//    #method select
-//    [
-//        #var(type:bytearray,size:76)aStruct.
-//        
-//        $self $prepare &bytearray:aStruct.
-//        // NOTE: !! it should be any object creation between two lines
-//        #var(type:int)aRetVal := system'external'Comdlg32 GetOpenFileNameW &bytearray:aStruct.
-//        
-//        (aRetVal == 0)
-//            ? [ ^ nil. ]
-//            ! [
-//                #var(type:int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
-//                
-//                ^ WideLiteralValue $new &int:0 &int:aLength &shortarray:theFileName.
-//            ].
-//    ]
-//}
-//
-//// --- SaveFileDialog ---
-//
-//#class(sealed) SaveFileDialog :: BaseFileDialog
-//{
-//    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
-//        <= new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption 
-//            &int:(OFN_PATHMUSTEXIST or:OFN_EXPLORER or:OFN_LONGNAMES or:DS_CENTER or:OFN_HIDEREADONLY int).
-//    
-//    #method select
-//    [
-//        #var(type:bytearray,size:76)aStruct.
-//        
-//        $self $prepare &bytearray:aStruct.
-//        // NOTE: !! it should be any object creation between two lines
-//        #var(type:int)aRetVal := system'external'Comdlg32 GetSaveFileNameW &bytearray:aStruct.
-//        
-//        (aRetVal == 0)
-//            ? [ ^ nil. ]
-//            ! [
-//                #var(type:int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
-//                
-//                ^ WideLiteralValue $new &int:0 &int:aLength &shortarray:theFileName.
-//            ].        
-//    ]
-//}
+// --- OpenFileDialog ---
+
+#class(sealed) OpenFileDialog :: BaseFileDialog
+{
+    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
+        <= new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption 
+            &int:(OFN_PATHMUSTEXIST or:OFN_EXPLORER or:OFN_LONGNAMES or:DS_CENTER or:OFN_HIDEREADONLY int).
+    
+    #method select
+    [
+        #var(byte:76)aStruct.
+        
+        $self $prepare &bytearray:aStruct.
+        // NOTE: !! it should be any object creation between two lines
+        #var(int)aRetVal := system'external'Comdlg32 GetOpenFileNameW &bytearray:aStruct.
+        
+        (aRetVal == 0)
+            ? [ ^ nil. ]
+            ! [
+                #var(int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
+                
+                ^ WideLiteralValue $new &int:0 &int:aLength &shortarray:theFileName.
+            ].
+    ]
+}
+
+// --- SaveFileDialog ---
+
+#class(sealed) SaveFileDialog :: BaseFileDialog
+{
+    #constructor new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption
+        <= new &hwnd:aParent &filters:Filters &int:aFilterIndex &int:aMaxFile &wide:aCaption 
+            &int:(OFN_PATHMUSTEXIST or:OFN_EXPLORER or:OFN_LONGNAMES or:DS_CENTER or:OFN_HIDEREADONLY int).
+    
+    #method select
+    [
+        #var(byte:76)aStruct.
+        
+        $self $prepare &bytearray:aStruct.
+        // NOTE: !! it should be any object creation between two lines
+        #var(int)aRetVal := system'external'Comdlg32 GetSaveFileNameW &bytearray:aStruct.
+        
+        (aRetVal == 0)
+            ? [ ^ nil. ]
+            ! [
+                #var(int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
+                
+                ^ WideLiteralValue $new &int:0 &int:aLength &shortarray:theFileName.
+            ].        
+    ]
+}

@@ -2,13 +2,10 @@
 In development:
 ------                              
               xdev - generic development
-                       * test gui_component
-                       * test simple gui
-
-                       * test all gui samples
-                       * test c_a_g
                        * test graph
                        * test notepad
+                       * test pi2
+                       * test sqlite example
                        * live programming : provide path to the current library
                        * test live programming
                        * test calculator sample
@@ -119,6 +116,10 @@ In development:
                        * elc refactoring : replace "SyntaxTree::findChild(child,..."  with "child.findChild(..."
                        * system_test should be transformed into automatic test
                        * ecode implementation : should eax - be index, ebx - ext, esi and edi - class registers?
+                       * review gui main loop, the handle should be copied to the local variable, before executing in the
+                         external block, the problem how to signal the code that the loop should be ended
+                       * probably any stand-alone external cal should be declared in implicit extern block. If the operation
+                         does not affect GC, a special hint should be used to skip external block declaration
                        
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators
@@ -146,6 +147,7 @@ In development:
                                  #loop $self proceed.
                              ]
                          proceed message should be called directly, because the class is sealed
+                       * review winforms implementation for corex mode
                        
               idev - generic development                                          
                        * #185 : Stack allocated structures are not correctly displayed

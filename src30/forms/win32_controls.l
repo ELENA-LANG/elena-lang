@@ -832,6 +832,7 @@
         struct read &vhdc:dc.
         
         dc copy &int:0 &int:0 &int:aWidth &int:aHeight &hdc:theImageDC &int:0 &int:0 &int:SRCCOPY.
+        #var(int)err := system'external'KERNEL32 GetLastError.
                 
         struct end &hwnd:theHandle.
     ]
@@ -1024,7 +1025,7 @@
         
             (theSelected == anIndex)
                 ? [
-                    aCurrent set &checked:aValue.
+                    aCurrent object set &checked:aValue.
                     
                     ^ $self.
                 ].
