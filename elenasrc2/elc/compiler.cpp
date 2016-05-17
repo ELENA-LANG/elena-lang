@@ -336,6 +336,11 @@ inline bool isDWORD(int flags)
    return (isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD);
 }
 
+inline bool isPTR(int flags)
+{
+   return (isEmbeddable(flags) && (flags & elDebugMask) == elDebugPTR);
+}
+
 void appendTerminalInfo(SyntaxWriter* writer, TerminalInfo terminal)
 {
    writer->appendNode(lxCol, terminal.Col());
@@ -7758,6 +7763,16 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             //HOTFIX :  set the correct size
             SNode parent = object.parentNode();
             parent.setArgument(sourceInfo.size);
+         }
+         else if (sourceClassRef == -1 && isPTR(targetInfo.header.flags)) {
+            //HOTFIX : allow passing short / byte to int
+            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+            typecasted = false;
+            boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);
+
+            //HOTFIX :  set the correct size
+            SNode parent = object.parentNode();
+            parent.setArgument(4);
          }
       }
       else if (test(targetInfo.header.flags, elWrapper)) {

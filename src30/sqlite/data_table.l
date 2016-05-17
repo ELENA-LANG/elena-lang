@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'routines.
 #import system'collections.
@@ -8,8 +6,8 @@
 
 #class(sealed) DBRow
 {
-    #field(type:array)        theRow.
-    #field(type:sqlite_table) theTable.
+    #field(array)        theRow.
+    #field(sqlite_table) theTable.
     
     #constructor $new &array:aRow &sqlite_table:aTable
     [
@@ -32,7 +30,7 @@
 
     #method(stacksafe) getAt &literal:aFieldName
     [
-        #var(type:int)anIndex := -1.
+        #var(int)anIndex := -1.
 
         theTable $indexOfField:aFieldName &vint:anIndex.
                         
@@ -47,8 +45,8 @@
 
 #class(sealed) DBTable
 {
-    #field(type:array)theFieldNames.
-    #field(type:array_list) theRows.
+    #field(array)      theFieldNames.
+    #field(array_list) theRows.
     
     #constructor new &sql_field_names:aNames
     [

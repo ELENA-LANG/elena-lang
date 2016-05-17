@@ -1,13 +1,11 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'routines.
 
 #class(sealed)DBReader
 {
-    #field(type:sqlite_cmd)theCommand.
-    #field(type:handle)theCommandHandle.
-    #field(type:array) theFieldNames.
+    #field(sqlite_cmd) theCommand.
+    #field(handle)     theCommandHandle.
+    #field(array)      theFieldNames.
     
     #constructor new &sqlite_cmd:aCommand
     [
@@ -20,14 +18,14 @@
     
     #method(stacksafe) readNext &vint:aResult
     [
-        #var(type:int) aRetVal := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
+        #var(int) aRetVal := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
         
-        aResult << aRetVal.
+        aResult := aRetVal.
     ]
     
-    #method(type:bool)next
+    #method(bool)next
     [
-        #var(type:int)aResult.
+        #var(int)aResult.
         $self readNext &vint:aResult.
         
         ^ aResult == SQLITE_ROW.
@@ -56,11 +54,11 @@
     
     #method row
     [
-        #var(type:int)aCount.
+        #var(int)aCount.
         theCommand readFieldCount &vint:aCount.
         
-        #var(type:array) aRow := Array new &int:aCount.
-        #var(type:int)i := 0.
+        #var(array) aRow := Array new &int:aCount.
+        #var(int)i := 0.
         #loop (i < aCount)?
         [
             aRow setAt &int:i &object:($self getAt &int:i).
@@ -75,6 +73,6 @@
     {
         #method get = self row.
     
-        #method(type:bool) next => self.
+        #method(bool) next => self.
     }.
 }

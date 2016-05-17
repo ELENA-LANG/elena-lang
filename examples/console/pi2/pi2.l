@@ -3,7 +3,7 @@
 #import system'collections.
 #import extensions.
 
-#symbol(const,type:int)ARRAY_SIZE = 32768.
+#symbol(const,int)ARRAY_SIZE = 32768.
 
 #symbol program =
 [
@@ -14,9 +14,9 @@
     #var aStart := now.
     
 	//#var x := system'Array new &length:ARRAY_SIZE.
-    #var(type:intarray) x := system'IntArray new:ARRAY_SIZE.
-	#var(type:int) xc := 0.
-	#var(type:int) cnt := 0.
+    #var(intarray) x := system'IntArray new:ARRAY_SIZE.
+	#var(int) xc := 0.
+	#var(int) cnt := 0.
 	#loop (cnt < ARRAY_SIZE) ? [ x@cnt := 0. cnt := cnt + 1. ].
 	xc := xc + 1.
 	x@xc := x@xc + casas int.
