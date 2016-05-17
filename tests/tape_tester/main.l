@@ -1,6 +1,7 @@
 #import system.
 #import system'routines.
 #import system'dynamic.
+#import extensions'text.
 #import extensions'dynamic.
 
 #symbol InterpreterTest =
@@ -42,7 +43,7 @@
 [
     #var subj := %length.
     
-    #var subjName := %length :: subjectROp name.
+    #var subjName := %length literal.
     
     #var newSubj := Signature new &literal:subjName.
     
@@ -53,25 +54,25 @@
 
 #symbol ClassSerializerTest =
 [
-    #var aClass := Symbol new &literal:"system'Integer".
+    #var aClass := Symbol new &literal:"system'IntNumber".
     #var anInstance := aClass new.
     
     #var className := anInstance className.
     
-    (className == "system'Integer")
+    (className == "system'IntNumber")
         ? [ console writeLine:"Class serializing works". ]
         ! [ console writeLine:"Class serializing does not work". ].    
 ].
 
 #symbol Program =
 [ 
-    //SubjectSerializerTest eval.
+    SubjectSerializerTest eval.
     
-    //ClassSerializerTest eval.    
+    ClassSerializerTest eval.    
 
     InterpreterTest eval
         | if &ScriptError: e [ console writeLine:(e message). ].
 
-    //ClassTest eval.
-    //ReflectionTester eval.
+    ClassTest eval.
+    ReflectionTester eval.
 ].

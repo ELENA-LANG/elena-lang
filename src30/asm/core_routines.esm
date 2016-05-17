@@ -4856,6 +4856,37 @@ labEnd2:
   
 end
 
+procedure win_thread_start
+
+  acopys 1  
+  pusha
+  callextr api : resolve_index
+  pusha
+  callextr api : start_thread
+  ifr labError 0
+  quitn 1
+
+labError:
+  open 1
+  pushr class : system'NotSupportedException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __vmtape.eval&evaluateTape&dirty_ptr$[2]
+
+  aloadsi 2
+  nload
+  pushd
+  callextr extern : EvaluateTape
+  pop
+  pushd
+  popa
+  quitn 2
+
+end
+
 /*
 procedure sa_copy
 
@@ -5094,24 +5125,6 @@ labSkip:
 
 end
 
-procedure win_thread_start
-
-  acopys 1  
-  pusha
-  callextr api : resolve_index
-  pusha
-  callextr api : start_thread
-  ifr labError 0
-  quitn 1
-
-labError:
-  open 1
-  pushr class : system'NotSupportedException
-  pushr const : %new[0]
-  throw
-  
-end
-
 procedure long_save
 
   bloadsi 2
@@ -5201,21 +5214,4 @@ labEnd:
   equit
         
 end
-
-procedure evaluate_tape
-
-  aloadsi 2
-  nload
-  pushd
-  callextr extern : EvaluateTape
-  pop
-  pushd
-  popa
-  quitn 2
-
-end
 */
-
-procedure dummy
-
-end

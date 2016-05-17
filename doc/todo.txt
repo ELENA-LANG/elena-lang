@@ -2,14 +2,11 @@
 In development:
 ------                              
               xdev - generic development
-                       * test sqlite example
+                       * script test
                        * test calculator sample
-                       * corex test
                        * test chat sample : fix the current bug, simple implementation - direct output
                        * live programming : provide path to the current library
                        * test live programming
-
-                       * check template type before applying (i.e. method template should be declared only for the method declaration)
 
               xdev - generic development
                        * nshift should be replaced with nshiftl, nshiftr
@@ -37,6 +34,8 @@ In development:
                        * template : add typecast around parameter passed with template_subj ; make sure
                          cast methods work correct after this
                                          	
+                       * check template type before applying (i.e. method template should be declared only for the method declaration)
+
                        * review the code:
                             #var(literal) s := "Hello".    
                             #var(int)l := s length.

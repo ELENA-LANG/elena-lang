@@ -3874,7 +3874,7 @@ void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node)
    generateBoxing(tape, node);
 }
 
-void ByteCodeWriter ::generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
 {
    int size = node.argument;
 

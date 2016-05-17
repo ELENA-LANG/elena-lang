@@ -51,10 +51,10 @@ inline bool isSingleStatement(DNode expr)
    return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
 }
 
-//inline bool isSingleObject(DNode expr)
-//{
-//   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
-//}
+inline bool isSingleObject(DNode expr)
+{
+   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
+}
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
@@ -4302,30 +4302,30 @@ void Compiler :: compileLoop(DNode node, CodeScope& scope)
 ////   // implement finally block
 ////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
 //}
-//
-//void Compiler :: compileLock(DNode node, CodeScope& scope)
-//{
-//   scope.writer->newNode(lxLocking);
-//
-//   // implement the expression to be locked
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, 0);
-//
-//   scope.writer->newNode(lxBody);
-//
-//   // implement critical section
-//   CodeScope subScope(&scope);
-//   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
-//
-//   compileCode(goToSymbol(node.firstChild(), nsSubCode), subScope);
-//
-//   // HOT FIX : clear the sub block local variables
-//   if (subScope.level - 4 > scope.level) {
-//      scope.writer->appendNode(lxReleasing, subScope.level - scope.level - 4);
-//   }
-//
-//   scope.writer->closeNode();
-//   scope.writer->closeNode();
-//}
+
+void Compiler :: compileLock(DNode node, CodeScope& scope)
+{
+   scope.writer->newNode(lxLocking);
+
+   // implement the expression to be locked
+   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, 0);
+
+   scope.writer->newNode(lxBody);
+
+   // implement critical section
+   CodeScope subScope(&scope);
+   subScope.level += 4; // HOT FIX : reserve place for the lock variable and exception info
+
+   compileCode(goToSymbol(node.firstChild(), nsSubCode), subScope);
+
+   // HOT FIX : clear the sub block local variables
+   if (subScope.level - 4 > scope.level) {
+      scope.writer->appendNode(lxReleasing, subScope.level - scope.level - 4);
+   }
+
+   scope.writer->closeNode();
+   scope.writer->closeNode();
+}
 
 ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 {
@@ -4368,10 +4368,10 @@ ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileTry(statement, scope);
 //            break;
-//         case nsLock:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileLock(statement, scope);
-//            break;
+         case nsLock:
+            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+            compileLock(statement, scope);
+            break;
          case nsRetStatement:
          {
             needVirtualEnd = false;
@@ -4454,9 +4454,9 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          case elDebugMessage:
             argType = test(flags, elReadOnlyRole) ? lxIntExtArgument : lxExtArgument;
             break;
-      //   case elDebugReference:
-      //      argType = lxExtInteranlRef;
-      //      break;
+         case elDebugReference:
+            argType = lxExtInteranlRef;
+            break;
          case elDebugWideLiteral:
          case elDebugLiteral:
          case elDebugIntegers:
@@ -4473,17 +4473,17 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
 
       arg = arg.nextNode();
       if (arg == nsMessageParameter) {
-      //   if (argType == lxExtInteranlRef) {
-      //      if (isSingleObject(arg.firstChild())) {
-      //         ObjectInfo target = compileTerminal(arg.firstChild(), scope);
-      //         if (target.kind == okInternal) {
-      //            scope.writer->appendNode(lxExtInteranlRef, target.param);
-      //         }
-      //         else scope.raiseError(errInvalidOperation, terminal);
-      //      }
-      //      else scope.raiseError(errInvalidOperation, terminal);
-      //   }
-      //   else {
+         if (argType == lxExtInteranlRef) {
+            if (isSingleObject(arg.firstChild())) {
+               ObjectInfo target = compileTerminal(arg.firstChild(), scope);
+               if (target.kind == okInternal) {
+                  scope.writer->appendNode(lxExtInteranlRef, target.param);
+               }
+               else scope.raiseError(errInvalidOperation, terminal);
+            }
+            else scope.raiseError(errInvalidOperation, terminal);
+         }
+         else {
             scope.writer->newNode(argType);
 
             ObjectInfo info = compileExpression(arg.firstChild(), scope, subject, 0);
@@ -4494,7 +4494,7 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
             }
 
             scope.writer->closeNode();
-      //   }
+         }
 
          arg = arg.nextNode();
       }

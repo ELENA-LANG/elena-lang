@@ -904,7 +904,7 @@
         #var(char)ch.
         #var(int)n.
         
-        retVal << 0.
+        retVal := 0.
         s read &int:i &vchar:ch.
         #loop (ch != #125)?
         [

@@ -692,7 +692,8 @@ bool Debugger::findSignature(char* signature)
    size_t rdata = Context()->readDWord(0x4000D0);
 
    // load Executable image
-   Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE) + 1);
+   Context()->readDump(0x400000 + rdata, signature, strlen(ELENACLIENT_SIGNITURE));
+   signature[strlen(ELENACLIENT_SIGNITURE)] = 0;
 
    return true;
 }
@@ -706,7 +707,8 @@ bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& de
    }
    else if (_vmHook == 0) {
       size_t rdata = Context()->readDWord(0x4000D0);
-      _vmHook = Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE), 4));
+      //HOTFIX : the actual length should be used
+      _vmHook = Context()->readDWord(0x400000 + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
 
       // enable debug mode
       Context()->writeDWord(_vmHook, -1);
