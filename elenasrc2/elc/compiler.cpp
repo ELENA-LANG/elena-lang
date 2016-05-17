@@ -4177,7 +4177,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       }
       else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
    }
-   else if (target.extraparam > 0) {
+   else if (target.kind != okOuterField && target.extraparam > 0) {
       ClassInfo info;
       scope.moduleScope->loadClassInfo(info, target.extraparam, false);
 
@@ -7764,8 +7764,18 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             SNode parent = object.parentNode();
             parent.setArgument(sourceInfo.size);
          }
+         else if (isDWORD(targetInfo.header.flags) && isPTR(sourceInfo.header.flags)) {
+            //HOTFIX : allow passing dirty_ptr as int
+            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
+            typecasted = false;
+            boxPrimitive(scope, object, targetClassRef, 0, typecastMode);
+
+            //HOTFIX :  set the correct size
+            SNode parent = object.parentNode();
+            parent.setArgument(sourceInfo.size);
+         }
          else if (sourceClassRef == -1 && isPTR(targetInfo.header.flags)) {
-            //HOTFIX : allow passing short / byte to int
+            //HOTFIX : allow passing int as dirty_ptr
             typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
             typecasted = false;
             boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);

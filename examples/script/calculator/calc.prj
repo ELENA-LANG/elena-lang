@@ -12,7 +12,7 @@ parser.l
 control.l
 
 [forwards]
-'program=extensions'programLoop
+'program=calc'testCase
 'program'control=calc'control
 'program_test=calc'testCase
 

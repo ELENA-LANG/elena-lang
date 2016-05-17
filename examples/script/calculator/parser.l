@@ -1,10 +1,11 @@
 #define system.
 #define system'routines.
 #define system'dynamic.
+#define extensions'text.
 #define extensions'dynamic.
 
 #static esonScript
-    = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
+    = scriptEngine load &path:"~\scripts\eson.es" load &path:"calc.es".
 
 #class(extension) lexicalOp
 {

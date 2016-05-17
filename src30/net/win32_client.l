@@ -1,11 +1,9 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 #import system'net.
 #import system'text.
 #import system'threading.
 
-#subject(class:TcpClientListener) tcp_client_listener.
+#subject tcp_client_listener = TcpClientListener.
 #class(limited) TcpClientListener
 {
     #method onConnect:client []
@@ -13,22 +11,20 @@
     #method(stacksafe)onReceived:client &bytearray:buffer &int:length []
     
     #method onError:e &for:client []
-    
-    #method tcp_client_listener = $self.
 }
 
 // --- TcpClient ---
 
 #class(sealed) TcpClient
 {
-    #field(type:thread)theListenThread.
+    #field(thread)theListenThread.
     #field theLock.
     
-    #field(type:socket)theSocket.
-    #field(type:bytearray)theBuffer.
-    #field(type:int)theMaxLength.
+    #field(socket)theSocket.
+    #field(bytearray)theBuffer.
+    #field(int)theMaxLength.
     
-    #field(type:tcp_client_listener)theListener.
+    #field(tcp_client_listener)theListener.
     
     #constructor new
         <= new &bufferSize:1024.
@@ -47,7 +43,7 @@
     #method connect &ip:anAddress &port:aPort
     [
         //resolve server address and port
-        #var(type:addrinfo)addrinfo.
+        #var(addrinfo)addrinfo.
         
         // set address info
         addrinfo clear.
@@ -55,16 +51,16 @@
         addrinfo setSocketType &int:SOCK_STREAM.
         addrinfo setProtocol &int:IPPROTO_TCP.
         
-        #var(type:addr_reader)aReader := AddrInfoReader new &literal:(anAddress literal) &literal:(aPort literal) &addrinfo:addrinfo.
+        #var(addr_reader)aReader := AddrInfoReader new &literal:(anAddress literal) &literal:(aPort literal) &addrinfo:addrinfo.
         #loop (aReader is &available)?
         [
             aReader read &addrinfo:addrinfo.
             
-            #var(type:int)ai_family.
-            #var(type:int)ai_socktype.
-            #var(type:int)ai_protocol.
-            #var(type:int)ai_addrlen.
-            #var(type:dirty_ptr)ai_addrptr.
+            #var(int)ai_family.
+            #var(int)ai_socktype.
+            #var(int)ai_protocol.
+            #var(int)ai_addrlen.
+            #var(dirty_ptr)ai_addrptr.
             addrinfo readInfo &vint:ai_family &vint:ai_socktype &vint:ai_protocol.
             
             theSocket := Socket new &int:ai_family &int:ai_socktype &int:ai_protocol.
@@ -91,7 +87,7 @@
 
     #method set &blocking:aValue
     [
-        #var(type:int)aMode.
+        #var(int)aMode.
         
         aValue 
             ? [
@@ -138,14 +134,14 @@
         ($nil != theListener)
             ? [ theListener onError:e &for:$self. ].
         
-        #var(type:int) err := e error_code.
+        #var(int) err := e error_code.
         (err == WSAECONNRESET)
             ? [ $self $close. ].
     ]
     
     #method readServer
     [
-        #var(type:int)received.
+        #var(int)received.
         theSocket read &bytearray:theBuffer &int:theMaxLength &int:0 &vint:received
                 | if &SocketError:e
                 [
@@ -162,16 +158,16 @@
     
     #method(stacksafe) write &int:index &bytearray:buffer &int:length
     [
-        #var(type:int)sent.
+        #var(int)sent.
         theSocket write &bytearray:buffer &int:length &int:0 &vint:sent.
     ]
     
     #method(stacksafe) write &literal:s
     [
-        #var(type:bytearray,size:256)buffer.
-        #var(type:int)len := s length.
-        #var(type:int)buf_len := 256.
-        #var(type:int)index := 0.
+        #var(byte:256)buffer.
+        #var(int)len := s length.
+        #var(int)buf_len := 256.
+        #var(int)index := 0.
         #loop (len > 0)?
         [
             (len < 256)
@@ -189,7 +185,7 @@
     
     #method(stacksafe) write &int:n
     [
-        #var(type:bytearray,size:4)buffer.
+        #var(byte:4)buffer.
         buffer write &int:0 &int:n.
         
         $self write &int:0 &bytearray:buffer &int:4.

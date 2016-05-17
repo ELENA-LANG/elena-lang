@@ -1,14 +1,15 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 
 // --- types ---
-#subject(class:net'TcpClient)tcp_client.
-#subject(class:net'TcpRemoteClient)tcp_remoteclient.
-#subject(class:net'TcpServer)tcp_server.
+#subject tcp_client       = net'TcpClient.
+#subject tcp_remoteclient = net'TcpRemoteClient.
+#subject tcp_server       = net'TcpServer.
 
-#class TcpClientException :: Exception
+#class(exceptionof:TcpClientError) TcpClientException
 {
-    #constructor(stacksafe) new:aMessage
-        <= new &literal:(aMessage literal) &subject: %TcpClientError.
+    #constructor(stacksafe) new:message
+    [
+        theMessage := message literal.
+        theCallStack := CallStack new.
+    ]
 }

@@ -6,10 +6,10 @@
 #import system'net.
 #import system'threading.
 
-#subject(class:TcpRemoteClient)tcp_remoteclient.
+#subject tcp_remoteclient = TcpRemoteClient.
 #class(sealed)TcpRemoteClient
 {
-    #field(type:socket)theSocket.
+    #field(socket)theSocket.
     #field theParameter.
     
     #constructor new &socket:socket
@@ -24,7 +24,7 @@
     
     #method(stacksafe) write &bytearray:buffer &int:length
     [
-        #var(type:int)sent.
+        #var(int)sent.
         theSocket write &bytearray:buffer &int:length &int:0 &vint:sent.
     ]
     
@@ -41,7 +41,7 @@
     #method Parameter = theParameter.
 }
 
-#subject(class:TcpServerListener) tcp_server_listener.
+#subject tcp_server_listener = TcpServerListener.
 #class(limited) TcpServerListener
 {
     #method onConnect:client []
@@ -57,13 +57,13 @@
 
 #class(sealed)TcpServer
 {
-    #field(type:socket)theListenSocket.
-    #field(type:array_list)theClients.
-    #field(type:thread)theListenThread.
-    #field(type:bytearray)theBuffer.
-    #field(type:int)theMaxLength.
+    #field(socket)theListenSocket.
+    #field(array_list)theClients.
+    #field(thread)theListenThread.
+    #field(bytearray)theBuffer.
+    #field(int)theMaxLength.
     
-    #field(type:tcp_server_listener)theListener.
+    #field(tcp_server_listener)theListener.
     
     #constructor new &port:port
         <= new &port:port &bufferSize:1024.
@@ -79,7 +79,7 @@
         WSAStartUp22.
         
         //resolve server address and port
-        #var(type:addrinfo)addrinfo.
+        #var(addrinfo)addrinfo.
         
         // set address info
         addrinfo clear.
@@ -89,14 +89,14 @@
         addrinfo setFlags &int:AI_PASSIVE.
         
         // Create a SOCKET for connecting to server
-        #var(type:addr_reader)aReader := AddrInfoReader new &literal:(aPort literal) &addrinfo:addrinfo.        
+        #var(addr_reader)aReader := AddrInfoReader new &literal:(aPort literal) &addrinfo:addrinfo.        
         aReader read &addrinfo:addrinfo.
         
-        #var(type:int)ai_family.
-        #var(type:int)ai_socktype.
-        #var(type:int)ai_protocol.
-        #var(type:int)ai_addrlen.
-        #var(type:dirty_ptr)ai_addrptr.
+        #var(int)ai_family.
+        #var(int)ai_socktype.
+        #var(int)ai_protocol.
+        #var(int)ai_addrlen.
+        #var(dirty_ptr)ai_addrptr.
         addrinfo readInfo &vint:ai_family &vint:ai_socktype &vint:ai_protocol.
         
         theListenSocket := Socket new &int:ai_family &int:ai_socktype &int:ai_protocol.
@@ -117,7 +117,7 @@
 
     #method set &blocking:aValue
     [
-        #var(type:int)aMode.
+        #var(int)aMode.
         
         aValue 
             ? [
@@ -173,20 +173,20 @@
         ($nil != theListener)
             ? [ theListener onError:e &for:client. ].
         
-        #var(type:int) err := e error_code.
+        #var(int) err := e error_code.
         (err == WSAECONNRESET)
             ? [ $self closeClient:client. ].
     ]
     
     #method readClients
     [
-        #var(type:int)i := 0.
-        #var(type:int)counter := theClients length.
+        #var(int)i := 0.
+        #var(int)counter := theClients length.
         
         #loop (i < counter)?
         [
-            #var(type:tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
-            #var(type:int)received.
+            #var(tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
+            #var(int)received.
             client read &bytearray:theBuffer &int:theMaxLength &vint:received
                 | if &SocketError:e
                 [
@@ -230,12 +230,12 @@
     
     #method(stacksafe) sendAll &bytearray:buffer &int:length
     [
-        #var(type:int)i := 0.
-        #var(type:int)counter := theClients length.
+        #var(int)i := 0.
+        #var(int)counter := theClients length.
         
         #loop (i < counter)?
         [
-            #var(type:tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
+            #var(tcp_remoteclient) client := theClients getAt &int:i tcp_remoteclient.
             
             client write &bytearray:buffer &int:length.
             
