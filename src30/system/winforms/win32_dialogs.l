@@ -185,7 +185,7 @@
         #var(int)aRetVal := system'external'Comdlg32 GetSaveFileNameW &bytearray:aStruct.
         
         (aRetVal == 0)
-            ? [ ^ nil. ]
+            ? [ ^ $nil. ]
             ! [
                 #var(int)aLength := system'external'KERNEL32 lstrlenW &shortarray:theFileName.
                 
