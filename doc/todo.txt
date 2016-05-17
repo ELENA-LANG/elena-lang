@@ -2,11 +2,11 @@
 In development:
 ------                              
               xdev - generic development
-                       * live programming : provide path to the current library
-                       * test live programming
                        * test calculator sample
 
-              xdev - generic development
+                       * live programming : correctly handle backspace
+                       * live programming : provide path to the current library automatically
+
                        * nshift should be replaced with nshiftl, nshiftr
 
                        * optimize #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:1. - assigning is done three times!!

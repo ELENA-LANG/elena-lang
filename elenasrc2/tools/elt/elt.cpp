@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   1
+#define ELT_BUILD_NUMBER   2
  
 // global variables
 int   _encoding = feAnsi;
@@ -55,9 +55,7 @@ void executeTape(void* tape)
    if (!retVal) {
       ident_t error = GetVMLastError();
       if (!emptystr(error)) {
-         _ELENA_::WideString message(error);
-
-         wprintf(L"\nFailed:%s", (const wchar_t*)message);
+         printf("\nFailed:%s", error);
       }
    }
 }
@@ -70,9 +68,7 @@ void executeScript(const char* script)
       int length = GetStatus(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
-         _ELENA_::WideString message(error);
-
-         wprintf(L"\nFailed:%s", (const wchar_t*)message);
+         printf("\nFailed:%s", error);
       }
       return;
    }
@@ -89,9 +85,7 @@ void loadScript(const char* path)
       int length = GetStatus(error, 0x200);
       error[length] = 0;
       if (!emptystr(error)) {
-         _ELENA_::WideString message(error);
-
-         wprintf(L"\nFailed:%s", (const wchar_t*)message);
+         printf("\nFailed:%s", error);
       }
       return;
    }
@@ -128,7 +122,7 @@ bool executeCommand(const char* line)
 
 void runSession()
 {
-   wchar_t          buffer[MAX_LINE];
+   char          buffer[MAX_LINE];
    IdentifierString line;
    bool             running = true;
 
@@ -136,7 +130,7 @@ void runSession()
       try {
          print("\n>");
 
-         fgetws(buffer, MAX_LINE, stdin);
+         fgets(buffer, MAX_LINE, stdin);
          IdentifierString line(buffer, getlength(buffer));
 
          while (!emptystr(line) && line[getlength(line) - 1]=='\r' || line[getlength(line) - 1]=='\n')

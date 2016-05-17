@@ -44,50 +44,50 @@ void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
          }
          //else throw EParseError(reader.info.column, reader.info.row);
       }
-//      else if (StringHelper::compare(token, "#map")) {
-//         token = reader.read();
-//
-//         IdentifierString forward;
-//         if (reader.info.state == dfaFullIdentifier) {
-//            forward.append(token);
-//
-//            token = reader.read();
-//            if (!StringHelper::compare(token, "="))
-//               throw EParseError(reader.info.column, reader.info.row);
-//
-//            token = reader.read();
-//            if (reader.info.state == dfaFullIdentifier) {
-//               forward.append('=');
-//               forward.append(token);
-//               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
-//         }
-//         else throw EParseError(reader.info.column, reader.info.row);
-//      }
-//      else if (StringHelper::compare(token, "#use")) {
-//         token = reader.read();
-//
-//         if (reader.info.state == dfaQuote) {
-//            writer.writeCommand(USE_VM_MESSAGE_ID, reader.token);
-//         }
-//         else {
-//            IdentifierString package;
-//            package.append(token);
-//
-//            token = reader.read();
-//            if (!StringHelper::compare(token, "="))
-//               throw EParseError(reader.info.column, reader.info.row);
-//
-//            token = reader.read();
-//            if (reader.info.state == dfaQuote) {
-//               package.append('=');
-//               package.append(reader.token);
-//               writer.writeCommand(USE_VM_MESSAGE_ID, package);
-//            }
-//            else throw EParseError(reader.info.column, reader.info.row);
-//         }
-//      }
+      else if (reader.compare("#map")) {
+         ScriptBookmark bm = reader.read();
+
+         IdentifierString forward;
+         if (bm.state == dfaFullIdentifier) {
+            forward.append(reader.lookup(bm));
+
+            bm = reader.read();
+            if (!reader.compare("="))
+               throw EParseError(bm.column, bm.row);
+
+            bm = reader.read();
+            if (bm.state == dfaFullIdentifier) {
+               forward.append('=');
+               forward.append(reader.lookup(bm));
+               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+            }
+            else throw EParseError(bm.column, bm.row);
+         }
+         else throw EParseError(bm.column, bm.row);
+      }
+      else if (reader.compare("#use")) {
+         ScriptBookmark bm = reader.read();
+
+         if (bm.state == dfaQuote) {
+            writer.writeCommand(USE_VM_MESSAGE_ID, reader.lookup(bm));
+         }
+         else {
+            IdentifierString package;
+            package.append(reader.lookup(bm));
+
+            bm = reader.read();
+            if (!reader.compare("="))
+               throw EParseError(bm.column, bm.row);
+
+            bm = reader.read();
+            if (bm.state == dfaQuote) {
+               package.append('=');
+               package.append(reader.lookup(bm));
+               writer.writeCommand(USE_VM_MESSAGE_ID, package);
+            }
+            else throw EParseError(bm.column, bm.row);
+         }
+      }
       else return;
 
       reader.read();
@@ -141,6 +141,8 @@ void* Session :: translate(TextReader* source)
 
    parseMetaScript(_tape, scriptReader);
    parseScript(_tape, scriptReader);
+
+   _lastError.copy("done");
 
    return _tape.get(offset);
 }

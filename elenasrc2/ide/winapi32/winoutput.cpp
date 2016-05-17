@@ -65,7 +65,12 @@ LRESULT Output ::_OutputProc(HWND hWnd, size_t Message, WPARAM wParam, LPARAM lP
          if ((wchar_t)wParam == 13) {
             _redirector->write("\r\n", 2);
          }
-         else _redirector->write((wchar_t)wParam);
+         else if ((wchar_t)wParam == 0x8) {
+            _redirector->write(0x8);
+         }
+         else if ((wchar_t)wParam >= 0x20) {
+            _redirector->write((wchar_t)wParam);
+         }
 
          break;
       }
