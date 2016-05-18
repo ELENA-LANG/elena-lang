@@ -119,8 +119,7 @@ BEGIN
     POPUP "&Debug"
     BEGIN
        MENUITEM "&Run\tF9",                    IDM_DEBUG_RUN
-       MENUITEM "&Next Statement\tF8",         IDM_DEBUG_NEXTSTATEMENT
-       MENUITEM "&Step Over\tShift+F8",        IDM_DEBUG_STEPOVER
+       MENUITEM "&Step Over\tF8",              IDM_DEBUG_STEPOVER
        MENUITEM "Step &Into\tF7",              IDM_DEBUG_STEPINTO
        MENUITEM "&Goto to Cursor\tF4",         IDM_DEBUG_RUNTO
        MENUITEM SEPARATOR
@@ -202,8 +201,7 @@ BEGIN
     VK_F5,          IDM_DEBUG_BREAKPOINT,   VIRTKEY
     VK_F5,          IDM_DEBUG_CLEARBREAKPOINT,  VIRTKEY, SHIFT, CONTROL
     VK_F7,          IDM_DEBUG_STEPINTO,     VIRTKEY
-    VK_F8,          IDM_DEBUG_STEPOVER,     VIRTKEY, SHIFT
-    VK_F8,          IDM_DEBUG_NEXTSTATEMENT,    VIRTKEY
+    VK_F8,          IDM_DEBUG_STEPOVER,     VIRTKEY
     VK_F9,          IDM_DEBUG_RUN,          VIRTKEY
     VK_F9,          IDM_PROJECT_COMPILE,    VIRTKEY, CONTROL
 END

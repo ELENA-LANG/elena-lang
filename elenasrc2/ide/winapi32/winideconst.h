@@ -13,7 +13,7 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDE_REVISION_NUMBER                     3
+#define IDE_REVISION_NUMBER                     4
 
 // --- Command line arguments ---
 
@@ -137,7 +137,6 @@
    #define IDM_DEBUG_INSPECT                    (IDM_DEBUG + 8)
    #define IDM_DEBUG_SWITCHHEXVIEW              (IDM_DEBUG + 9)
    #define IDM_DEBUG_GOTOSOURCE                 (IDM_DEBUG + 10)
-   #define IDM_DEBUG_NEXTSTATEMENT              (IDM_DEBUG + 11)
 
 #define IDM_TOOLS                               (IDM + 7000)
    #define IDM_EDITOR_OPTIONS                   (IDM_TOOLS + 1)

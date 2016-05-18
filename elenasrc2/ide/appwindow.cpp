@@ -1471,7 +1471,6 @@ void IDEController :: onUIChange()
       _view->enableMenuItemById(IDM_DEBUG_RUNTO, runEnabled, false);
       _view->enableMenuItemById(IDM_DEBUG_STEPOVER, runEnabled, true);
       _view->enableMenuItemById(IDM_DEBUG_STEPINTO, runEnabled, true);
-      _view->enableMenuItemById(IDM_DEBUG_NEXTSTATEMENT, runEnabled, false);
 
       bool stopEnabled = hasProject && debugging;
       _view->enableMenuItemById(IDM_DEBUG_STOP, stopEnabled, true);

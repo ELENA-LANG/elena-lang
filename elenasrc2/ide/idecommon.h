@@ -486,7 +486,6 @@ public:
    virtual void doCompileProject() = 0;
    virtual void doStepOver() = 0;
    virtual void doStepInto() = 0;
-   virtual void doNextStatement() = 0;
    virtual void doDebugStop() = 0;
    virtual void doDebugRunTo() = 0;
 

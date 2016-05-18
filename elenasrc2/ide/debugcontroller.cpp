@@ -644,34 +644,6 @@ void DebugController :: runToCursor(ident_t name, path_t path, int col, int row)
    _events.setEvent(DEBUG_RESUME);
 }
 
-void DebugController :: stepOverLine()
-{
-   if (_running || !_debugger.isStarted())
-      return;
-
-   if (!_started) {
-      _started = true;
-
-      if (_debugInfoPtr == 0 && _entryPoint != 0)
-         _postponed.setStepMode();
-
-      _debugger.setBreakpoint(_entryPoint, false);
-   }
-   else {
-      DebugLineInfo* lineInfo = seekDebugLineInfo((size_t)_debugger.Context()->State());
-
-      // if next step is available set the breakpoint
-      DebugLineInfo* nextStep = getEndStep(lineInfo);
-
-      if (nextStep/* && nextStep->symbol != dsVirtualEnd*/) {
-         _debugger.setBreakpoint(nextStep->addresses.step.address, true);
-      }
-      // else set step mode
-      else _debugger.setStepMode();
-   }
-   _events.setEvent(DEBUG_RESUME);
-}
-
 void DebugController :: stepInto()
 {
    if (_running || !_debugger.isStarted())

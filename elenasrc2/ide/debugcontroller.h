@@ -263,7 +263,6 @@ public:
    void runToCursor(ident_t name, path_t path, int col, int row);
    void stepOver();
    void stepInto();
-   void stepOverLine();
    void stop();
 
    void loadBreakpoints(List<Breakpoint>& breakpoints);

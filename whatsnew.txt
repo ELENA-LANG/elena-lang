@@ -9,6 +9,7 @@
 
 [IDE]
 [-] #185 : Stack allocated structures are not correctly displayed
+[-] #233 : IDE Debugger : next statement menu deprecated
 
 ******************************************************************************
                              What's New in 2.0.1

@@ -309,14 +309,6 @@ class IDEController : public _Controller
          }
       }
    }
-   virtual void doNextStatement()
-   {
-      if (!_ELENA_::test(_model->state, uiIDEBusy)) {
-         if (onDebugAction(IDM_DEBUG_STEPINTO, true)) {
-            _debugController.stepOverLine();
-         }
-      }
-   }
    virtual void doDebugRunTo()
    {
       if (!_ELENA_::test(_model->state, uiIDEBusy)) {

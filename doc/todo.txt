@@ -2,7 +2,6 @@
 In development:
 ------                              
               idev - generic development                                          
-                       * #233 : IDE Debugger : stepover vs next statement 
                        * #221 : Breakpoints are triggered even after removing
 
               xdev - generic development
