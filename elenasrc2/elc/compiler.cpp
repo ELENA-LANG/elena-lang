@@ -3268,6 +3268,8 @@ ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo
    if (dblOperator)
       compileExpression(node.nextNode().firstChild(), scope, 0, 0);
 
+   recordDebugStep(scope, node.Terminal(), dsStep);
+
    if (IsCompOperator(operator_id)) {
       if (notOperator) {
          scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);

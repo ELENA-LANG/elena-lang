@@ -1,7 +1,13 @@
 ------                                 
 In development:
 ------                              
+              idev - generic development                                          
+                       * #185 : Stack allocated structures are not correctly displayed
+
               xdev - generic development
+                       * implicit boxing : int -> vint, int -> dirty_ptr(?), int -> hwnd(?) 
+                       * implicit unboxing : vint -> int, int -> dirty_ptr, hwnd -> int, int -> short, short -> int
+
                        * test calculator sample
 
                        * live programming : correctly handle backspace
@@ -154,7 +160,6 @@ In development:
                        * review winforms implementation for corex mode
                        
               idev - generic development                                          
-                       * #185 : Stack allocated structures are not correctly displayed
                        * #191 : IDE : block commenting
                        * #219 : IDE : Callstack for vm console application 
                        
