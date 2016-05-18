@@ -2,7 +2,8 @@
 In development:
 ------                              
               idev - generic development                                          
-                       * #185 : Stack allocated structures are not correctly displayed
+                       * #233 : IDE Debugger : stepover vs next statement 
+                       * #221 : Breakpoints are triggered even after removing
 
               xdev - generic development
                        * implicit boxing : int -> vint, int -> dirty_ptr(?), int -> hwnd(?) 
@@ -150,7 +151,6 @@ In development:
                        * #229 : unboxing optimization
                        * #200 : unboxing explicit local allocated extension  
                        * #220 : s_copyint_radix / ws_copyint_radix
-                       * #221 : Breakpoints are triggered even after removing
                        * in the following code:
                              theListenThread := Thread new &func:
                              [

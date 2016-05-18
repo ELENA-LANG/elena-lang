@@ -1781,6 +1781,19 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
          writer.appendNode(lxFrameAttr);
          writer.closeNode();
       }
+      else if (scope.stackSafe && (*it).subj_ref != 0) {
+         ref_t classRef = scope.moduleScope->subjectHints.get((*it).subj_ref);
+         if (classRef != 0 && isEmbeddable(scope.moduleScope->getClassFlags(classRef))) {
+            writer.newNode(lxBinaryVariable);
+            writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+         }
+         else writer.newNode(lxVariable, -1);
+         
+         writer.appendNode(lxTerminal, it.key());
+         writer.appendNode(lxLevel, -1 - (*it).offset);
+         writer.appendNode(lxFrameAttr);
+         writer.closeNode();
+      }
       else {
          writer.newNode(lxVariable, -1);
          writer.appendNode(lxTerminal, it.key());
