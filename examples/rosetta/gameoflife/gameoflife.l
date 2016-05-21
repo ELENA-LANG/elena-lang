@@ -1,4 +1,21 @@
+#import system.
+
 // ---- program ---
+
+#class GameOfLine
+{
+    #field(intmatrix)theBoard.
+    
+    #constructor new &n:n &m:m
+    [
+        theBoard := IntMatrix new:n:m.
+    ]
+    
+    #method next
+    [
+        
+    ]
+}
 
 #symbol program =
 [

@@ -1,6 +1,6 @@
 #import system.
 #import system'io.
-//#define system'text.
+#import system'text.
 #import extensions'text.
 
 // --- ReaderEnumerator ---
@@ -66,6 +66,9 @@
 {
     #method run &eachLine:anAction
         = anAction run &enumerator:(ReaderEnumerator new &path:self).
+        
+    #method run &for:anEncoder &eachLine:anAction
+        = anAction run &enumerator:(ReaderEnumerator new &path:self &encoder:(anEncoder encoder)).
 }
 
 // --- stringExOp ---

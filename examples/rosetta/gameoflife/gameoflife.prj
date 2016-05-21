@@ -9,6 +9,3 @@ warn:unresolved=0
 universe.l
 gameoflife.l
 
-[forwards]
-'program=gameoflife'program
-

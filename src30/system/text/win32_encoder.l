@@ -28,19 +28,19 @@
                 ptr set:aByteArray.
                 ptr offset &int:anIndex.
 
-                system'external'KERNEL32 MultiByteToWideChar &int:theCodePage &int:$MB_ERR_INVALID_CHARS &dirty_ptr:ptr &int:n &shortarray:temp_buf &vint:aConverted.
+                aConverted := system'external'KERNEL32 MultiByteToWideChar &int:theCodePage &int:$MB_ERR_INVALID_CHARS &dirty_ptr:ptr &int:n &shortarray:temp_buf &int:127.
             ]
             ! [
-                system'external'KERNEL32 MultiByteToWideChar 
+                aConverted := system'external'KERNEL32 MultiByteToWideChar 
                     &int:theCodePage 
                     &int:$MB_ERR_INVALID_CHARS 
                     &bytearray:aByteArray 
                     &int:n 
                     &shortarray:temp_buf 
-                    &vint:aConverted.
+                    &int:127.
             ].
         
-        aConverted *= 2.
+        //aConverted *= 2.
         UTF16Encoding convert &int:0 &int:aConverted &shortarray:temp_buf &chararray:anOutput &vint:anOutputLength.
     ]
 

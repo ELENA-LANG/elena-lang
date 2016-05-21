@@ -50,3 +50,4 @@
 ..\..\bin\elc -ctwelvestats\twelvestats.prj
 ..\..\bin\elc -ctruncprime\truncprime.prj
 ..\..\bin\elc -ctreeview\treeview.prj
+..\..\bin\elc -cgameoflife\gameoflife.prj

@@ -29,6 +29,8 @@ Redirector :: Redirector(bool readOnly, size_t waitTime)
    _dwThreadId = 0;
    _dwWaitTime = waitTime;
    _readOnly = readOnly;
+
+   _offset = 0;
 }
 
 Redirector :: ~Redirector()
@@ -189,18 +191,43 @@ bool Redirector :: start(const wchar_t* path, const wchar_t* cmdLine, const wcha
    return true;
 }
 
+void Redirector :: flush()
+{
+   DWORD dwWritten;
+   ::WriteFile(_hStdinWrite, _buffer, _offset, &dwWritten, NULL);
+
+   //!! should be moved if dwWritten != _offset
+   _offset = 0;
+}
+
 bool Redirector :: write(const char* line, size_t length)
 {
    if (!_hStdinWrite)
       return false;
 
-   DWORD dwWritten;
-   return ::WriteFile(_hStdinWrite, line, length, &dwWritten, NULL);
+   if (_offset + length < BUF_SIZE) {
+      memcpy(_buffer + _offset, line, length);
+      _offset += length;
+
+      if (line[length - 1] == '\n')
+         flush();
+
+      return true;
+   }
+   else return false;
 }
 
 bool Redirector :: write(wchar_t ch)
 {
-   return write((const char*)&ch, 1);
+   if (ch == 8) {
+      if (_offset > 0) {
+         _offset--;
+
+         return true;
+      }
+      else return false;
+   }
+   else return write((const char*)&ch, 1);
 }
 
 int Redirector :: redirectStdout()

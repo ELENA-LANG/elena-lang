@@ -1,4 +1,4 @@
-//#define system.
+#import system.
 //#define system'collections.
 //
 //// --- Point ---

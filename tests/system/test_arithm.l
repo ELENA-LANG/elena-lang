@@ -487,7 +487,7 @@
 #symbol LoopTest =
 [
     #var i := 5.
-        
+            
     console writeLine:"Loop running...".
     #loop (i > 0) ?
     [

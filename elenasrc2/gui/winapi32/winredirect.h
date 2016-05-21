@@ -24,6 +24,8 @@ public:
    virtual ~RedirectorListener() {}
 };
 
+const int BUF_SIZE = 512;
+
 class Redirector
 {
    bool   _readOnly;
@@ -32,6 +34,9 @@ class Redirector
    HANDLE _hEvtStop;		// event to notify the redir thread to exit
    DWORD  _dwThreadId;		// id of the redir thread
    DWORD  _dwWaitTime;		// wait time to check the status of the child process
+
+   char   _buffer[BUF_SIZE];
+   int    _offset;
 
 protected:
    HANDLE _hStdinWrite;	// write end of child's stdin pipe
@@ -58,6 +63,8 @@ public:
 
    bool write(const char* line, size_t length);
    bool write(wchar_t ch);
+
+   void flush();
 
    Redirector(bool readOnly, size_t waitTime);
    virtual ~Redirector();

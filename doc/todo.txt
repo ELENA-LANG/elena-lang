@@ -1,17 +1,32 @@
 ------                                 
 In development:
 ------                              
-              idev - generic development                                          
-                       * #221 : Breakpoints are triggered even after removing
-
               xdev - generic development
+                       * tryTypecast : if method hint #new&<source_type> exists - use implicit constructor : creates an object, calls the implicit constructor
+                       * declaring implicit constructor
+                       * tryTypecast : if the target is embeddable - it should be stack allocated (boxPrimitive) and implicit constructor called
+                       * implicit constructor in template
+
+                       * implicit constructor : #250
+
+                       * get rid of wrapper flag
+                       * get rid of variable hint
+
                        * implicit boxing : int -> vint, int -> dirty_ptr(?), int -> hwnd(?) 
                        * implicit unboxing : vint -> int, int -> dirty_ptr, hwnd -> int, int -> short, short -> int
 
-                       * test calculator sample
+                       * use implicit constructors in LIB30
 
-                       * live programming : correctly handle backspace
-                       * live programming : provide path to the current library automatically
+              fdev - net app
+                       * implement simple chat system to test socket api
+ 
+------                                 
+Pipeline:
+------                                                                                         
+              xdev - generic development
+                       * #237 : Multidimensional arrays 
+
+                       * test calculator sample
 
                        * nshift should be replaced with nshiftl, nshiftr
 
@@ -131,6 +146,12 @@ In development:
                        * probably any stand-alone external cal should be declared in implicit extern block. If the operation
                          does not affect GC, a special hint should be used to skip external block declaration
                        
+              fdev - evolution
+                       * game of life : simple implementation
+                       * game of life : create an engine (time slots)
+                       * game of life : rules should be declared in external file
+                       * game of life : viewer
+
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators
 
@@ -161,12 +182,15 @@ In development:
               idev - generic development                                          
                        * #191 : IDE : block commenting
                        * #219 : IDE : Callstack for vm console application 
+                       * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
                        
              xdev - linux
+                       * migrate to 2.0
                        * implement debugger
                        * port elide to linux
                        
               fdev - live programming
+                       * provide path to the current library automatically
                        * change syntax to be standart one
                        * test unicode symbols
                        * interact with the current project objects
@@ -174,11 +198,10 @@ In development:
               adev - lib30     
                        * implement #33 (tcp/ip socket)
 
-              fdev - net app
-                       * implement simple chat system to test socket api
- 
-              fdev - samples
+              edev - calc
                        * calculator : parse -2+3
+
+              fdev - samples
                        * calculator : operations with brackets
                        * calculator : move lexicalOp to the script
                        * reimplement script samples: interpreter, helloworld, vmconsole
@@ -229,9 +252,6 @@ In development:
               sdev - rosetta code samples
                        * linux : migrate two rosetta samples to linux
 
-------                                 
-Pipeline:
-------                                                                                         
               xdev - usability
                        * ecv : dynamically define the page size
 
@@ -514,7 +534,4 @@ Pipeline:
                        * implementing
                        * play with chaotic computer player
                        * add network players
-
-              fdev - evolution
-                       * game of life
 
