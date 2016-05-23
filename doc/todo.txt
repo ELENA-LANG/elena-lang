@@ -2,7 +2,8 @@
 In development:
 ------                              
               xdev - generic development
-                       * tryTypecast : if method hint #new&<source_type> exists - use implicit constructor : creates an object, calls the implicit constructor
+                       * tryTypecast : if method hint #new&<source_type> exists - use implicit constructor : creates an object, 
+                         calls the implicit constructor
                        * declaring implicit constructor
                        * tryTypecast : if the target is embeddable - it should be stack allocated (boxPrimitive) and implicit constructor called
                        * implicit constructor in template
