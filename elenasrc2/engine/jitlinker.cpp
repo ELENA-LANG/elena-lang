@@ -469,7 +469,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          
          // NOTE : private message is not added to VMT
          if (getVerb(entry.message) == PRIVATE_MESSAGE_ID) {
-            _staticMethods.add(MethodInfo(vaddress, entry.message), methodPosition);
+            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
          }
          else _compiler->addVMTEntry(refHelper, entry.message, methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
