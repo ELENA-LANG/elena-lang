@@ -59,6 +59,7 @@ __define TYPE                   4167
 __define INLINE_CLOSURE         4168
 __define METHOD_TEMPLATE        4169
 __define FIELD_TEMPLATE         4170
+__define IMPLICIT_ARGUMENT      4171
 
 __define eof            	12291
 __define literal		12292
@@ -348,6 +349,10 @@ DEFAULT ->
 CONSTRUCTOR ->
 	identifier METHOD_ARGUMENTS CONSTRUCTOR_BODY
 	| private METHOD_ARGUMENTS CONSTRUCTOR_BODY
+	| IMPLICIT_ARGUMENT CONSTRUCTOR_BODY
+
+IMPLICIT_ARGUMENT ->
+	& SUBJECT_ARG : PARAMETER
 	
 VARIABLE ->
 	identifier VARIABLE_BODY

@@ -594,6 +594,15 @@ inline ref_t overwriteSubject(ref_t message, ref_t subject)
    return message;
 }
 
+inline ref_t overwriteVerb(ref_t message, int verb)
+{
+   message &= ~VERB_MASK;
+   message |= (verb << 24);
+
+   return message;
+
+}
+
 inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
 {
    verbId = (message & VERB_MASK) >> 24;

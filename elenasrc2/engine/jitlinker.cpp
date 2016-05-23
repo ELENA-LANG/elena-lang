@@ -162,6 +162,20 @@ void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask, int alignme
    return _virtualMode ? (void*)(writer->Position() | mask) : writer->Address();
 }
 
+int JITLinker :: resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID)
+{
+   void* refVAddress = resolve(_loader->retrieveReference(module, reference, mskVMTRef), mskVMTRef, false);
+
+   int address = _staticMethods.get(MethodInfo(refVAddress, messageID));
+   if (address == -1) {      
+      address = getVMTMethodAddress(refVAddress, messageID);
+
+      _staticMethods.add(MethodInfo(refVAddress, messageID), address);
+   }
+   
+   return address;
+}
+
 void JITLinker :: fixReferences(References& references, _Memory* image)
 {
    // fix not loaded references
@@ -182,7 +196,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          size_t offset = it.key();
          size_t messageID = (*image)[offset];
 
-         (*image)[offset] = getVMTMethodAddress(refVAddress, messageID);
+         (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, messageID);
          if (_virtualMode) {
             image->addReference(mskRelCodeRef, offset);
          }
@@ -453,7 +467,11 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          codeReader.seek(entry.address);
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
-         _compiler->addVMTEntry(refHelper, entry.message, methodPosition, (VMTEntry*)vmtImage->get(position), count);
+         // NOTE : private message is not added to VMT
+         if (getVerb(entry.message) == PRIVATE_MESSAGE_ID) {
+            _staticMethods.add(MethodInfo(vaddress, entry.message), methodPosition);
+         }
+         else _compiler->addVMTEntry(refHelper, entry.message, methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
          size -= sizeof(VMTEntry);
       }

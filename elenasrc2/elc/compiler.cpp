@@ -924,7 +924,9 @@ int Compiler::ModuleScope :: checkMethod(ClassInfo& info, ref_t message, ref_t& 
       }
       else return tpNormal | hint;
    }
-   else return tpUnknown;
+   //HOTFIX : to recognize the sealed private method call
+   //         hint search should be done even if the method is not declared
+   else return info.methodHints.get(Attribute(message, maHint));;
 }
 
 int Compiler::ModuleScope :: checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType)
@@ -1254,7 +1256,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->rootToFree = 1;
    this->withOpenArg = false;
    this->stackSafe = false;
-//   this->embeddable = false;
+   this->privat = false;
    this->generic = false;
 
    //NOTE : tape has to be overridden in the constructor
@@ -2381,7 +2383,7 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
             scope.generic = true;
          }
          else if (hintRef == moduleScope->sealedHint) {
-            writer.appendNode(lxClassMethodAttr, tpSealed);
+            writer.appendNode(lxClassMethodAttr, scope.privat ? tpPrivate : tpSealed);
          }
          else if (hintRef == moduleScope->stackHint) {
             writer.appendNode(lxClassMethodAttr, tpStackSafe);
@@ -3364,6 +3366,11 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
       retVal.param = target.param;
 
       // constructors are always sealed
+      callType = tpSealed;
+   }
+   else if (target.kind == okThisParam && callType == tpPrivate) {
+      messageRef = overwriteVerb(messageRef, PRIVATE_MESSAGE_ID);
+
       callType = tpSealed;
    }
    else if (classReference == scope.moduleScope->signatureReference) {
@@ -4718,6 +4725,8 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
 	   }
 	   else if (verb_id == 0) {
          sign_id = scope.mapSubject(verb, signature);
+         if (verb == tsPrivate)
+            scope.privat = true;
 	   }
    }
 
@@ -5330,6 +5339,10 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
                int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
                methodScope.stackSafe = test(hint, tpStackSafe);
                methodScope.generic = test(hint, tpGeneric);
+               if ((hint & tpMask) == tpPrivate) {
+                  //HOTFIX : overwrite the message verb for the private method
+                  methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
+               }
 
                compileMethodHints(hints, writer, methodScope, warningsOnly);
 
@@ -5457,6 +5470,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
 
          declareArgumentList(member, methodScope, hints);
+
          int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
          methodScope.stackSafe = test(hint, tpStackSafe);
 
@@ -5506,7 +5520,8 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
       if (member == methodSymbol || member == nsDefaultGeneric) {
          MethodScope methodScope(&scope);
 
-         if (member.firstChild() == nsDispatchHandler) {
+         DNode firstChild = member.firstChild();
+         if (firstChild == nsDispatchHandler) {
             methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
          }
          else if (member == nsDefaultGeneric) {
@@ -5524,33 +5539,14 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          appendTerminalInfo(&writer, member.Terminal());
 
          compileMethodHints(hints, writer, methodScope, false);
-
-         //// if the constructor is embeddable
-         //// method hint should be added
-         //// the special method should be declared as well
-         //if (member == nsConstructor && methodScope.embeddable) {
-         //   MethodScope specialMethodScope(&scope);
-
-         //   IdentifierString signature(scope.moduleScope->module->resolveSubject(getSignature(methodScope.message)));
-         //   signature.append(EMBEDDED_PREFIX);
-
-         //   specialMethodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(signature, false));
-
-         //   writer.newNode(lxClassMethodOpt, maEmbeddedInit);
-         //   writer.appendNode(lxMessage, specialMethodScope.message);
-         //   writer.closeNode();
-         //   writer.closeNode();
-
-         //   writer.newNode(lxClassMethod, specialMethodScope.message);
-         //   writer.closeNode();
-         //}
-         /*else */writer.closeNode();
+         
+         writer.closeNode();
 
          if (methodScope.generic)
             writer.appendNode(lxClassFlag, elWithGenerics);
 
-         // save extensions if any
-         if (scope.extensionMode != 0) {
+         // save extensions if required ; private method should be ignored
+         if (scope.extensionMode != 0 && !methodScope.privat) {
             if (scope.extensionMode != -1)
                scope.info.fieldTypes.add(-1, scope.extensionMode);
 
@@ -5941,11 +5937,17 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
 
          int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint));
 
+         //HOTFIX : overwrite the private message verb
+         int message = current.argument;
+         if ((methodHints & tpMask) == tpPrivate) {
+            message = overwriteVerb(message, PRIVATE_MESSAGE_ID);
+         }
+
          // check if there is no duplicate method
-         if (scope.info.methods.exist(current.argument, true))
+         if (scope.info.methods.exist(message, true))
             scope.raiseError(errDuplicatedMethod, current);
 
-         bool included = scope.include(current.argument);
+         bool included = scope.include(message);
          bool sealedMethod = (methodHints & tpMask) == tpSealed;
          // if the class is closed, no new methods can be declared
          if (included && closed)

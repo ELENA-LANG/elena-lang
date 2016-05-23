@@ -65,7 +65,7 @@
 ].
 
 #symbol Program =
-[ 
+[
     SubjectSerializerTest eval.
     
     ClassSerializerTest eval.    

@@ -1351,7 +1351,13 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    ClassInfo info;
    info.load(&reader);
 
-   info.header.count = info.methods.Count(); // set VMT length
+   // set VMT length
+   info.header.count = 0;
+   for (ClassInfo::MethodMap::Iterator it = info.methods.start(); !it.Eof(); it++) {
+      //NOTE : ingnore private methods
+      if (getVerb(it.key()) != PRIVATE_MESSAGE_ID)
+         info.header.count++;
+   }
 
    vmtWriter.writeDWord(info.classClassRef);                   // vmt class reference
 

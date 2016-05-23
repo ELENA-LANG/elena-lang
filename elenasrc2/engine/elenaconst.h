@@ -91,7 +91,9 @@ namespace _ELENA_
    #define CREATE_MESSAGE_ID       0x003F
    #define IS_MESSAGE_ID           0x0040
    #define ROLLBACK_MESSAGE_ID     0x0041
-   #define REPLACE_MESSAGE_ID      0x0043          
+   #define REPLACE_MESSAGE_ID      0x0043  
+
+   #define PRIVATE_MESSAGE_ID      0x007F
 
    // ---- ELENAVM command masks ---
    #define VM_MASK                 0x0200             // vm command mask

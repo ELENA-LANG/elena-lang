@@ -99,12 +99,16 @@ class JITLinker
       }
    };
 
+   typedef Pair<void*, int>                  MethodInfo;
+   typedef MemoryMap<MethodInfo, int, false> MethodMap;
+
    _JITLoader*    _loader;
    _JITCompiler*  _compiler; 
    bool           _virtualMode;
    bool           _withDebugInfo;
    void*          _codeBase;
    int            _statLength;
+   MethodMap      _staticMethods;
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
@@ -114,6 +118,7 @@ class JITLinker
 
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
+   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
    int getVMTMethodAddress(void* vaddress, int messageID);
    int getVMTMethodIndex(void* vaddress, int messageID);
    size_t getVMTFlags(void* vaddress);
@@ -156,6 +161,7 @@ public:
    ref_t parseMessage(ident_t reference);
 
    JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase)
+      : _staticMethods(-1)
    {
       _loader = loader;
       _compiler = compiler;

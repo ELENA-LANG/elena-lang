@@ -43,6 +43,7 @@ public:
       _constReferences.clear();
       _numberReferences.clear();
       _literalReferences.clear();
+      _characterReferences.clear();
       _wideReferences.clear();
       _bssReferences.clear();
       _subjects.clear();

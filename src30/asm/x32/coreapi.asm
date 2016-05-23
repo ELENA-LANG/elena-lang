@@ -2682,11 +2682,11 @@ procedure coreapi'sequal
   add  ecx, 1
 Lab2:
   mov  ebx, [esi]
-  cmp  ebx,  [edx]
+  cmp  bl,  byte ptr [edx]
   jnz  short Lab1
-  lea  esi, [esi+4]
-  lea  edx, [edx+4]
-  add  ecx, 4
+  lea  esi, [esi+1]
+  lea  edx, [edx+1]
+  add  ecx, 1
   js   short Lab2
   mov  eax, 1
 Lab1:

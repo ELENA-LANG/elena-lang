@@ -77,6 +77,7 @@ public:
       tpClosed     = 0x02,
       tpNormal     = 0x03,
       tpDispatcher = 0x04,
+      tpPrivate    = 0x05,
       tpStackSafe  = 0x10,
       tpEmbeddable = 0x20,
       tpGeneric    = 0x40,
@@ -624,8 +625,8 @@ private:
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       bool         withOpenArg;
       bool         stackSafe;
-//      bool         embeddable;
       bool         generic;
+      bool         privat;
 
       virtual Scope* getScope(ScopeLevel level)
       {

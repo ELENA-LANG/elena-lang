@@ -374,6 +374,16 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key.value1 > key.value1);
    }
 
+   bool operator ==(Pair<void*, int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<void*, int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
+
    ident_t getKey(ident_t key) const
    {
       if (KeyStored) {
@@ -1797,6 +1807,11 @@ public:
    }
 
    ref_t storeKey(size_t position, Pair<size_t, int>)
+   {
+      return position;
+   }
+
+   ref_t storeKey(size_t position, Pair<void*, int>)
    {
       return position;
    }

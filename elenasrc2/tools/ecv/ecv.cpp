@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   2
+#define REVISION_VERSION   3
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -197,6 +197,9 @@ ref_t resolveMessage(_Module* module, ident_t method)
       else if (StringHelper::compare(verbName, "#new")) {
          verb = NEWOBJECT_MESSAGE_ID;
       }
+      else if (StringHelper::compare(verbName, "#private")) {
+         verb = PRIVATE_MESSAGE_ID;
+      }
       else {
          printLine("Unknown verb ", verbName);
 
@@ -362,6 +365,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
 
    if (verb == DISPATCH_MESSAGE_ID) {
       command.append("dispatch");
+   }
+   else if (verb == PRIVATE_MESSAGE_ID) {
+      command.append("#private");
    }
    else if (verb == NEWOBJECT_MESSAGE_ID) {
       command.append("#new");
