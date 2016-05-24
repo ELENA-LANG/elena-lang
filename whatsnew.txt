@@ -9,6 +9,7 @@
 
 [ELENA]
 [*] #172 : private / internal methods
+[+] #250 : Implicit constructors
 
 [IDE]
 [-] #185 : Stack allocated structures are not correctly displayed

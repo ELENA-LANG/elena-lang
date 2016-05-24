@@ -926,7 +926,7 @@ private:
    void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope, bool warningsOnly);
-   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol);
+   void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool classClassMode);
 
    bool declareImportedTemplates(ClassScope& scope, SyntaxWriter& writer);
    bool declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);

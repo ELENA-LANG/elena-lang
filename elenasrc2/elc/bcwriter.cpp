@@ -4334,6 +4334,10 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 
          generateCodeBlock(tape, node);
          break;
+      case lxCreatingClass:
+      case lxCreatingStruct:
+         generateCreating(tape, node);
+         break;
       default:
          loadObject(tape, node);
          break;

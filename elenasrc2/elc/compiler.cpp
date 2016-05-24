@@ -4716,7 +4716,7 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
    bool first = true;
 
    TerminalInfo verb = node.Terminal();
-   if (node != nsDefaultGeneric) {
+   if (node != nsDefaultGeneric && node != nsImplicitConstructor) {
 	   verb_id = _verbs.get(verb.value);
 
 	   // if it is a generic verb, make sure no parameters are provided
@@ -4733,7 +4733,10 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
    DNode arg = node.firstChild();
    if (verb_id == 0) {
       // if followed by argument list - it is a EVAL verb
-      if (arg == nsSubjectArg || arg == nsMethodParameter) {
+      if (node == nsImplicitConstructor) {
+         verb_id = EVAL_MESSAGE_ID;
+      }
+      else if (arg == nsSubjectArg || arg == nsMethodParameter) {
          verb_id = EVAL_MESSAGE_ID;
          first = false;
       }
@@ -5365,6 +5368,18 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
             compileMethod(member, writer, methodScope);
             break;
          }
+         case nsImplicitConstructor:
+         {
+            MethodScope methodScope(&scope);
+            declareArgumentList(member, methodScope, hints);
+
+            // override message with private verb
+            methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
+
+            compileMethod(member, writer, methodScope);
+
+            break;
+         }
       }
       writer.removeBookmark();
 
@@ -5441,7 +5456,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    writer.appendNode(lxClassFlag, elStateless);
 
    DNode member = node.firstChild();
-   declareVMT(member, writer, classClassScope, nsConstructor);
+   declareVMT(member, writer, classClassScope, true);
    
    // add virtual constructor
    writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
@@ -5512,12 +5527,25 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
    generateClassImplementation(classClassScope);
 }
 
-void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, Symbol methodSymbol)
+inline bool isClassMethod(Symbol symbol)
+{
+   switch (symbol)
+   {
+      case nsMethod:
+      case nsDefaultGeneric:
+      case nsImplicitConstructor:
+         return true;
+      default:
+         return false;
+   }
+}
+
+void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool classClassMode)
 {
    while (member != nsNone) {
       DNode hints = skipHints(member);
 
-      if (member == methodSymbol || member == nsDefaultGeneric) {
+      if ((classClassMode && member == nsConstructor) || (!classClassMode && isClassMethod(member))) {
          MethodScope methodScope(&scope);
 
          DNode firstChild = member.firstChild();
@@ -5532,6 +5560,11 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
             // mark as having generic methods
             writer.appendNode(lxClassFlag, elWithGenerics);
+         }
+         else if (member == nsImplicitConstructor) {
+            declareArgumentList(member, methodScope, hints);
+
+            methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
          }
          else declareArgumentList(member, methodScope, hints);
 
@@ -6226,7 +6259,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    compileClassHints(hints, writer, scope);
    compileFieldDeclarations(member, writer, scope);
-   declareVMT(member, writer, scope, nsMethod);
+   declareVMT(member, writer, scope, false);
 
    // declare imported methods / flags
    if (!declareImportedTemplates(scope, writer))
@@ -6638,7 +6671,7 @@ void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope&
 
    compileSingletonHints(hints, writer, scope);
 
-   declareVMT(node.firstChild(), writer, scope, nsMethod);
+   declareVMT(node.firstChild(), writer, scope, false);
 
    // declare imported methods / flags
    if (!declareImportedTemplates(scope, writer))
@@ -7818,6 +7851,24 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
 
          typecasted = false;
       }
+      // check if there is implicit constructors
+      else if (test(targetInfo.header.flags, elSealed) && sourceType != 0) {
+         int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
+         if (targetInfo.methods.exist(implicitMessage)) {
+            node = lxCalling;
+            node.setArgument(implicitMessage);
+            if (test(targetInfo.header.flags, elStructureRole)) {
+               node.insertNode(lxCreatingStruct, targetInfo.size);
+               SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
+            }
+            else {
+               node.insertNode(lxCreatingClass, targetInfo.fields.Count());
+               SyntaxTree::findChild(node, lxCreatingClass).appendNode(lxTarget, targetClassRef);
+            }
+            node.appendNode(lxCallTarget, targetClassRef);
+            typecasted = false;
+         }
+      }
    }
 
    return typecastMode;
@@ -7890,12 +7941,16 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
       node = lxExpression;
    }
 
-   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
-      optimizeBoxing(scope, node, warningMask, 0);
-   }
+   //if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
+   //   optimizeBoxing(scope, node, warningMask, 0);
+   //}
 
-   if (!optimized)
-      optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
+   if (!optimized) {
+      if (typecasted) {
+         optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
+      }
+      else optimizeSyntaxNode(scope, node, warningMask, typecastMode);
+   }
 
    raiseWarning(scope, node, wrnTypeMismatch, WARNING_LEVEL_2, warningMask, typecasted);
 }

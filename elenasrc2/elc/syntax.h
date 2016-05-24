@@ -94,6 +94,7 @@ enum Symbol
    nsInlineClosure              = 0x01048,
    nsMethodTemplate             = 0x01049,
    nsFieldTemplate              = 0x0104A,
+   nsImplicitConstructor        = 0x0104B,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               
