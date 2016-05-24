@@ -2,10 +2,8 @@
 In development:
 ------                              
               xdev - generic development
-                       * tryTypecast : if the target is embeddable - it should be stack allocated (boxPrimitive) and implicit constructor called
-                       * implicit constructor in template
-
-                       * implicit constructor : #250
+                       * idle implicit constructor : stacksafe
+                       * if the structure is embeddable and the implicit constructor is idle - use boxPrimitibe
 
                        * get rid of wrapper flag
                        * get rid of variable hint
@@ -13,7 +11,7 @@ In development:
                        * implicit boxing : int -> vint, int -> dirty_ptr(?), int -> hwnd(?) 
                        * implicit unboxing : vint -> int, int -> dirty_ptr, hwnd -> int, int -> short, short -> int
 
-                       * use implicit constructors in LIB30
+                       * implicit constructor in template
 
               fdev - net app
                        * implement simple chat system to test socket api
@@ -22,7 +20,13 @@ In development:
 Pipeline:
 ------                                                                                         
               xdev - generic development
+                       * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
+
+                       * #250 : embeddable structure : implicit constructor should be called without creating the object
+
                        * #237 : Multidimensional arrays 
+
+                       * #250 : Implicit constructor should not have return statements
 
                        * test calculator sample
 
@@ -194,6 +198,7 @@ Pipeline:
                        * interact with the current project objects
 
               adev - lib30     
+                       * use implicit constructors in LIB30
                        * implement #33 (tcp/ip socket)
 
               edev - calc

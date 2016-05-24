@@ -7941,11 +7941,10 @@ void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMas
       node = lxExpression;
    }
 
-   //if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
-   //   optimizeBoxing(scope, node, warningMask, 0);
-   //}
-
-   if (!optimized) {
+   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
+      optimizeBoxing(scope, node, warningMask, 0);
+   }
+   else if (!optimized) {
       if (typecasted) {
          optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
       }
