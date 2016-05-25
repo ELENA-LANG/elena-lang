@@ -1091,7 +1091,7 @@ private:
    void optimizeSymbolTree(SourceScope& scope);
 
    bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
-   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
+   bool recognizeEmbeddableIdle(ClassScope& classScope, SyntaxTree& tree, SyntaxTree::Node node);
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
 public:

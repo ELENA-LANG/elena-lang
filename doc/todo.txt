@@ -2,19 +2,17 @@
 In development:
 ------                              
               xdev - generic development
-                       * idle implicit constructor : stacksafe
-                       * if the structure is embeddable and the implicit constructor is idle - use boxPrimitibe
-
-                       * int => vint - implicit constructor
+                       * int => vint
                        * vint => int ??
+                       * int -> dirty_ptr(?)
+                       * int -> hwnd(?) 
+                       * int -> dirty_ptr
+                       * hwnd -> int 
+                       * int -> short
+                       * short -> int
 
                        * get rid of wrapper flag
                        * get rid of variable hint
-
-                       * implicit boxing : int -> vint, int -> dirty_ptr(?), int -> hwnd(?) 
-                       * implicit unboxing : vint -> int, int -> dirty_ptr, hwnd -> int, int -> short, short -> int
-
-                       * implicit constructor in template
 
               fdev - net app
                        * implement simple chat system to test socket api
