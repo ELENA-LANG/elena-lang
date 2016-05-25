@@ -5,6 +5,9 @@ In development:
                        * idle implicit constructor : stacksafe
                        * if the structure is embeddable and the implicit constructor is idle - use boxPrimitibe
 
+                       * int => vint - implicit constructor
+                       * vint => int ??
+
                        * get rid of wrapper flag
                        * get rid of variable hint
 

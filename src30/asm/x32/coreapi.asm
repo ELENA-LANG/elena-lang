@@ -2921,7 +2921,7 @@ end
 
 procedure coreapi'wadd
 
-  shl  esi, 1
+  shl  ebx, 1
   shl  ecx, 1
 
   mov  edx, ebx         // ; dst index
