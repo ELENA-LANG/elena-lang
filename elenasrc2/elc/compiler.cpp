@@ -331,6 +331,11 @@ inline bool isEmbeddable(ClassInfo& localInfo)
    return false;
 }
 
+inline bool isWrappable(int flags)
+{
+   return !test(flags, elWrapper) && test(flags, elSealed);
+}
+
 inline bool isDWORD(int flags)
 {
    return (isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD);
@@ -6004,26 +6009,6 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    // generate fields
    generateClassFields(scope, root);
 
-   // verify fif the class may be a wrapper
-   if (test(scope.info.header.flags, elWrapper)) {
-      if (scope.info.fields.Count() != 1 || !test(scope.info.header.flags, elSealed)) {
-         // wrapper should have only single field and be sealed
-         scope.info.header.flags &= ~elWrapper;
-      }
-      else {
-         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(*scope.info.fieldTypes.start());
-
-         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
-         if (isEmbeddable(fieldFlags) && test(scope.info.header.flags, elStructureRole)) {
-            // wrapper around embeddable object should be marked as embeddable wrapper
-            scope.info.header.flags |= elEmbeddableWrapper;
-
-            if ((scope.info.header.flags & elDebugMask) == 0)
-               scope.info.header.flags |= fieldFlags & elDebugMask;
-         }
-      }
-   }
-
    // define the data type for the array
    if (test(scope.info.header.flags, elDynamicRole) && (scope.info.header.flags & elDebugMask) == 0) {
       if (test(scope.info.header.flags, elStructureRole)) {
@@ -6070,6 +6055,25 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
 
    // generate methods
    generateMethodDeclarations(scope, root, closed);
+
+   // verify if the class may be a wrapper
+   if (isWrappable(scope.info.header.flags) && scope.info.fields.Count() == 1 &&
+      test(scope.info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
+   {
+      if (test(scope.info.header.flags, elStructureRole)) {
+         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(*scope.info.fieldTypes.start());
+         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
+
+         if (isEmbeddable(fieldFlags)) {
+            // wrapper around embeddable object should be marked as embeddable wrapper
+            scope.info.header.flags |= elEmbeddableWrapper;
+
+            if ((scope.info.header.flags & elDebugMask) == 0)
+               scope.info.header.flags |= fieldFlags & elDebugMask;
+         }
+      }
+      else scope.info.header.flags |= elWrapper;
+   }
 
    // declare virtual methods
    if (!closed)
@@ -7832,29 +7836,21 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             //HOTFIX :  set the correct size
             SNode parent = object.parentNode();
             parent.setArgument(4);
-         }
-         // !! temporal : code duplication
+         }         
          else if (test(targetInfo.header.flags, elSealed)) {
+            // !! code duplication
             int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
             if (targetInfo.methods.exist(implicitMessage)) {
-               bool idle = targetInfo.methodHints.get(Attribute(implicitMessage, maEmbeddableIdle)) == -1;
-               if (idle && test(mode, HINT_NOBOXING)) {
-                  // if boxing is not required (stack safe) and can be passed directly
-                  typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-                  node = lxExpression;
-               }
-               else {
-                  node = lxCalling;
-                  node.setArgument(implicitMessage);
-                  node.insertNode(lxCreatingStruct, targetInfo.size);
-                  SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
+               node = lxCalling;
+               node.setArgument(implicitMessage);
+               node.insertNode(lxCreatingStruct, targetInfo.size);
+               SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
 
-                  node.appendNode(lxCallTarget, targetClassRef);
-               }
+               node.appendNode(lxCallTarget, targetClassRef);
+
                typecasted = false;
             }
          }
-
       }
       else if (test(targetInfo.header.flags, elWrapper)) {
          // if the target is generic wrapper (container)
@@ -7876,27 +7872,12 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
       else if (test(targetInfo.header.flags, elSealed) && sourceType != 0) {
          int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
          if (targetInfo.methods.exist(implicitMessage)) {
-            bool idle = targetInfo.methodHints.get(Attribute(implicitMessage, maEmbeddableIdle)) == -1;
-            bool structure = test(targetInfo.header.flags, elStructureRole);
-            if (idle && test(mode, HINT_NOBOXING) && structure) {
-               // if boxing is not required (stack safe) and can be passed directly
-               typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-               node = lxExpression;
-            }
-            else {
-               node = lxCalling;
-               node.setArgument(implicitMessage);
-               if (structure) {
-                  node.insertNode(lxCreatingStruct, targetInfo.size);
-                  SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
-               }
-               else {
-                  node.insertNode(lxCreatingClass, targetInfo.fields.Count());
-                  SyntaxTree::findChild(node, lxCreatingClass).appendNode(lxTarget, targetClassRef);
-               }
+            node = lxCalling;
+            node.setArgument(implicitMessage);
+            node.insertNode(lxCreatingClass, targetInfo.fields.Count());
+            SyntaxTree::findChild(node, lxCreatingClass).appendNode(lxTarget, targetClassRef);
 
-               node.appendNode(lxCallTarget, targetClassRef);
-            }
+            node.appendNode(lxCallTarget, targetClassRef);
             typecasted = false;            
          }
       }
@@ -8087,7 +8068,7 @@ void Compiler :: optimizeClassTree(ClassScope& scope)
          optimizeSyntaxExpression(*scope.moduleScope, current, warningMask);
 
          if (test(_optFlag, 1)) {
-            if (test(scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint)), tpEmbeddable)) {
+            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
                defineEmbeddableAttributes(scope, current);
             }
          }
@@ -8176,54 +8157,22 @@ bool Compiler :: recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SN
    return false;
 }
 
-bool Compiler :: recognizeEmbeddableIdle(ClassScope& classScope, SyntaxTree& tree, SNode methodNode)
+bool Compiler :: recognizeEmbeddableIdle(SyntaxTree& tree, SNode methodNode)
 {
-   ref_t sign, verb;
-   int paramCount;
-   decodeMessage(methodNode.argument, sign, verb, paramCount);
+   SNode object = tree.findPattern(methodNode, 4,
+      SNodePattern(lxNewFrame),
+      SNodePattern(lxReturning),
+      SNodePattern(lxExpression),
+      SNodePattern(lxLocal));
 
-   if (verb == PRIVATE_MESSAGE_ID && paramCount == 1 && isEmbeddable(classScope.info.header.flags) && classScope.info.fieldTypes.exist(0, sign) 
-      && classScope.info.fields.Count() == 1) 
-   {
-      SNode expr = SyntaxTree::findChild(methodNode, lxNewFrame);
-
-      // make sure it is the single statement
-      if (SyntaxTree::findSecondMatchedChild(expr, lxObjectMask) != lxLocal)
-         return false;
-
-      SNode object = tree.findPattern(methodNode, 4,
-         SNodePattern(lxNewFrame),
-         SNodePattern(lxExpression),
-         SNodePattern(lxAssigning),
-         SNodePattern(lxFieldAddress));
-
-      if (object == lxFieldAddress) {
-         object = tree.findPattern(methodNode, 4,
-            SNodePattern(lxNewFrame),
-            SNodePattern(lxExpression),
-            SNodePattern(lxAssigning),
-            SNodePattern(lxLocal));
-
-         return (object == lxLocal && object.argument == -2);
-      }
-      else return false;      
-   }
-   else {
-      SNode object = tree.findPattern(methodNode, 4,
+   if (object == lxNone) {
+      object = tree.findPattern(methodNode, 3,
          SNodePattern(lxNewFrame),
          SNodePattern(lxReturning),
-         SNodePattern(lxExpression),
          SNodePattern(lxLocal));
-
-      if (object == lxNone) {
-         object = tree.findPattern(methodNode, 3,
-            SNodePattern(lxNewFrame),
-            SNodePattern(lxReturning),
-            SNodePattern(lxLocal));
-      }
-
-      return (object == lxLocal && object.argument == -1);
    }
+
+   return (object == lxLocal && object.argument == -1);
 }
 
 void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
@@ -8236,7 +8185,7 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    }
 
    // Optimization : subject'get = self
-   if (recognizeEmbeddableIdle(classScope, *methodNode.Tree(), methodNode)) {
+   if (recognizeEmbeddableIdle(*methodNode.Tree(), methodNode)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), -1);
    }
 }

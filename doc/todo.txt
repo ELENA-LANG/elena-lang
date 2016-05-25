@@ -2,17 +2,21 @@
 In development:
 ------                              
               xdev - generic development
-                       * int => vint
-                       * vint => int ??
                        * int -> dirty_ptr(?)
                        * int -> hwnd(?) 
                        * int -> dirty_ptr
                        * hwnd -> int 
                        * int -> short
                        * short -> int
+                       * object => ref
+                       * ref => object
 
-                       * get rid of wrapper flag
-                       * get rid of variable hint
+                       * arithmetic operation with vint
+                       * comparision operation with vint
+
+                       * get rid of variable hint, wrapper flag should be set automatically
+
+                       * get rid of virtual dispatcher for wrapper
 
               fdev - net app
                        * implement simple chat system to test socket api
@@ -24,10 +28,10 @@ Pipeline:
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
                        * #250 : embeddable structure : implicit constructor should be called without creating the object
-
                        * #237 : Multidimensional arrays 
-
                        * #250 : Implicit constructor should not have return statements
+
+                       * embeddable dispatcher validation : only redirection to the field is allowed
 
                        * test calculator sample
 
