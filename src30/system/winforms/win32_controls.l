@@ -9,7 +9,7 @@
 
 // --- WindowHandle ---
 
-#class(sealed,struct:embeddable,variable,const) WindowHandle
+#class(sealed,struct:reference,const) WindowHandle
 {
     #field(int)theHandle.
     

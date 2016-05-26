@@ -131,7 +131,7 @@
 
 // --- Socket ---
 
-#class(sealed,struct:embeddable,variable,const)Socket
+#class(sealed,struct:reference,const)Socket
 {
     #field(int)theHandle.
     

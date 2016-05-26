@@ -2,21 +2,7 @@
 In development:
 ------                              
               xdev - generic development
-                       * int -> dirty_ptr(?)
-                       * int -> hwnd(?) 
-                       * int -> dirty_ptr
-                       * hwnd -> int 
-                       * int -> short
-                       * short -> int
-                       * object => ref
-                       * ref => object
-
-                       * arithmetic operation with vint
-                       * comparision operation with vint
-
-                       * get rid of variable hint, wrapper flag should be set automatically
-
-                       * get rid of virtual dispatcher for wrapper
+                       * test LIB30
 
               fdev - net app
                        * implement simple chat system to test socket api

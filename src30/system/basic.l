@@ -1,5 +1,5 @@
 
-#template(variable) varof : template_subj
+#template varof : template_subj
 {
     #field(template_subj)$value.
     
@@ -22,9 +22,11 @@
     
     #method(suppress:w3) equal : anObject
         => $value.
+        
+    #method(embeddable,suppress:w3) => $value.
 }
 
-#template(variable) nvarof : template_subj
+#template nvarof : template_subj
 {
     #field(template_subj)$value.
     
@@ -89,6 +91,8 @@
     
     #method(suppress:w3) equal : anObject
         => $value.
+        
+    #method(embeddable,suppress:w3) => $value.
 }
 
 // === Numeric Variables ===
@@ -176,7 +180,12 @@
 #class(struct:embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
     #field(integerof:1)theValue.
-    
+
+    #constructor(stacksafe) &int:n
+    [
+        theValue := n.
+    ]
+            
     /// Returns the minimal value (0)
     #constructor min
         = 0.
@@ -416,6 +425,11 @@
 {
     #field(integerof:2)theValue.    
     
+    #constructor(stacksafe)&int:n
+    [
+        theValue := n.
+    ]
+    
     /// Returns the minimal value (-32768)
     #constructor min
         = -32768.
@@ -631,7 +645,7 @@
     ]
     
     /// Bitwise inversion
-    #method(byte,stacksafe) inverted
+    #method(short,stacksafe) inverted
         => system'core_routines'__short.  
 
     /// Returns the literal presentation
@@ -662,6 +676,16 @@
 #class(struct:embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
 {
     #field(integerof:4)theValue.    
+    
+    #constructor(stacksafe)&byte:n
+    [
+        theValue := n.
+    ]
+    
+    #constructor(stacksafe)&short:n
+    [
+        theValue := n.
+    ]
     
     /// Creates the object with the minimal value
     #constructor min
@@ -903,7 +927,7 @@
     ]
     
     /// Bitwise inversion
-    #method(byte,stacksafe) inverted
+    #method(int,stacksafe) inverted
         => system'core_routines'__int.  
         
     /// Negates the value
@@ -1162,7 +1186,7 @@
     ]
     
     /// Bitwise inversion
-    #method(byte,stacksafe) inverted
+    #method(long,stacksafe) inverted
         => system'core_routines'__long.  
         
     /// Negates the value
@@ -1362,7 +1386,7 @@
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-#class(struct:embeddable,sealed,dispatchable:char,const) CharValue :: BaseValue
+#class(struct:reference,sealed,dispatchable:char,const) CharValue :: BaseValue
 {
     #field(int)theValue.
     

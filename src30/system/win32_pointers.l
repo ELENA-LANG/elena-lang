@@ -1,8 +1,13 @@
 // --- Handler ---
 
-#class(sealed,struct:embeddable,variable,dispatchable:handle,const) Handle
+#class(sealed,struct:reference,dispatchable:handle,const) Handle
 {
     #field(int)theHandle.
+    
+    #constructor(stacksafe) &int:n
+    [
+        theHandle := n.
+    ]
     
     #constructor(stacksafe) new &handle:h
     [
@@ -22,9 +27,14 @@
 
 #static rt_sync = Object new.
 
-#class(sealed,struct:embeddable,variable,const) RTPointer
+#class(sealed,struct:reference,const) RTPointer
 {
     #field(int)theIndex.
+    
+    #constructor(stacksafe) &int:n
+    [
+        theIndex := n.
+    ]
     
     #constructor new : anObject
     [
@@ -45,7 +55,7 @@
 
 // --- UnsafePointer ---
 
-#class(sealed,struct:embeddable,dispatchable:dirty_ptr) UnsafePointer
+#class(sealed,struct:reference,dispatchable:dirty_ptr) UnsafePointer
 {
     #field(int)thePointer.
 

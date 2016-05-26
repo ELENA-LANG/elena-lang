@@ -310,7 +310,6 @@ private:
       ref_t integerHint;
       ref_t realHint;
       ref_t literalHint;
-      ref_t varHint;
       ref_t signHint;
       ref_t mssgHint;
       ref_t stackHint;
@@ -320,6 +319,7 @@ private:
       ref_t structHint;
       ref_t structOfHint;
       ref_t embedHint;
+      ref_t ptrHint;
       ref_t extensionHint;
       ref_t extensionOfHint;
       ref_t genericHint;

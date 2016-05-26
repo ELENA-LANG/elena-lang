@@ -336,7 +336,7 @@
     #method $createHandle
     [
         #var(hwnd)aParent := theParent hwnd.
-        (aParent == 0)
+        (0 == aParent)
             ? [ #throw InvalidOperationException new:"The parent window is closed". ].
         
         #var(int)Styles := WS_CHILD || SS_SIMPLE.

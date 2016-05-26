@@ -116,7 +116,7 @@
     
     #method(stacksafe) wm_command &hwnd:anHWND &int:aMessage &int:wParam &hwnd:aControl &vint:aRetVal
     [
-        (aControl == 0)
+        (0 == aControl)
             ? [ $self onmenu &int:wParam &vint:aRetVal. ^ $self. ].
 
         #var(int)aCommand := wParam >> 16.

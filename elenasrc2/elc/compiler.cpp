@@ -418,7 +418,6 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    integerHint = module->mapSubject(HINT_INTEGER_NUMBER, false);
    realHint = module->mapSubject(HINT_FLOAT_NUMBER, false);
    literalHint = module->mapSubject(HINT_STRING, false);
-   varHint = module->mapSubject(HINT_VARIABLE, false);
    limitedHint = module->mapSubject(HINT_LIMITED, false);
    signHint = module->mapSubject(HINT_SIGNATURE, false);
    extMssgHint = module->mapSubject(HINT_EXT_MESSAGE, false);
@@ -430,6 +429,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    structHint = module->mapSubject(HINT_STRUCT, false);
    structOfHint = module->mapSubject(HINT_STRUCTOF, false);
    embedHint = module->mapSubject(HINT_EMBEDDABLE, false);
+   ptrHint = module->mapSubject(HINT_POINTER, false);
    boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
    extensionHint = module->mapSubject(HINT_EXTENSION, false);
    extensionOfHint = module->mapSubject(HINT_EXTENSIONOF, false);
@@ -1673,7 +1673,11 @@ bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree
 
       switch (nodeRef) {
          case -1:
-            return (flags & elDebugMask) == elDebugDWORD;
+            return isDWORD(flags) || isPTR(flags);
+         case -2:
+            return (flags & elDebugMask) == elDebugQWORD;
+         case -4:
+            return (flags & elDebugMask) == elDebugReal64;
          default:
             return false;
       }
@@ -1684,7 +1688,7 @@ bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree
    else if (node == lxConstantInt) {
       int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
 
-      return isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD;
+      return isEmbeddable(flags) && (isDWORD(flags) || isPTR(flags));
    }
    else if (node == lxConstantReal) {
       int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
@@ -2132,11 +2136,6 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
 
       return true;
    }
-   else if (hintRef == moduleScope->varHint) {
-      writer.appendNode(lxClassFlag, elWrapper);
-
-      return true;
-   }
    else if (hintRef == moduleScope->dynamicHint) {
       writer.appendNode(lxClassFlag, elDynamicRole);
 
@@ -2190,6 +2189,11 @@ bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& 
          ref_t optionRef = mapHint(option, *moduleScope);
          if (optionRef == moduleScope->embedHint) {
             writer.appendNode(lxClassFlag, elEmbeddable);
+
+            return true;
+         }
+         else if (optionRef == moduleScope->ptrHint) {
+            writer.appendNode(lxClassFlag, elPointer);
 
             return true;
          }
@@ -4489,8 +4493,8 @@ void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, Externa
          case elDebugIntegers:
          case elDebugShorts:
          case elDebugBytes:
-         case elDebugDPTR:
          case elDebugQWORD:
+         case elDebugDPTR:
             argType = lxExtArgument;
             break;
          default:
@@ -6037,8 +6041,8 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
    }
 
    //HOTFIX : recognize pointer structure
-   if (test(scope.info.header.flags, elStructureRole | elEmbeddable)
-      && ((scope.info.header.flags & elDebugMask) == 0) && scope.info.fields.Count() == 1) 
+   if (test(scope.info.header.flags, elStructureRole | elPointer)
+      && ((scope.info.header.flags & elDebugMask) == 0) && scope.info.fields.Count() == 1)
    {
       switch (scope.moduleScope->getTypeFlags(scope.info.fieldTypes.get(0)) & elDebugMask)
       {
@@ -6049,10 +6053,10 @@ void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
             scope.info.header.flags |= elDebugDPTR;
             break;
          default:
+            scope.info.header.flags &= ~elPointer;
             break;
       }
    }
-
    // generate methods
    generateMethodDeclarations(scope, root, closed);
 
@@ -6599,16 +6603,6 @@ void Compiler :: compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope)
          }
       }
       c_it++;
-   }
-
-   // auto generate dispatch handler for wrapper class
-   if (test(scope.info.header.flags, elWrapper) && !scope.info.methods.exist(DISPATCH_MESSAGE_ID, true)) {
-      scope.info.header.flags |= elWithGenerics;
-
-      MethodScope methodScope(&scope);
-      methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);;
-
-      compileVirtualDispatchMethod(writer, methodScope, lxResultField, 0);
    }
 }
 
@@ -7327,17 +7321,17 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
       if (IsNumericOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-            target = scope.intReference;
+            target = -1;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
-            target = scope.longReference;
+            target = -2;
             node = lxLongOp;
             boxing = true;
          }
          else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
-            target = scope.realReference;
+            target = -4;
             node = lxRealOp;
             boxing = true;
          }
@@ -7353,36 +7347,36 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
             node = lxArrOp;
          }
          else if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-            target = scope.intReference;
+            target = -1;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
-            target = scope.longReference;
+            target = -2;
             node = lxLongOp;
             boxing = true;
          }
       }
       else if (node.argument == WRITE_MESSAGE_ID) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-            target = scope.intReference;
+            target = -1;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
-            target = scope.longReference;
+            target = -2;
             node = lxLongOp;
             boxing = true;
          }
       }
       else if (IsBitwiseOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-            target = scope.intReference;
+            target = -1;
             node = lxIntOp;
             boxing = true;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
-            target = scope.longReference;
+            target = -2;
             node = lxLongOp;
             boxing = true;
          }
@@ -7408,15 +7402,15 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
       }
       else if (IsVarOperator(node.argument)) {
          if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-            target = scope.intReference;
+            target = -1;
             node = lxIntOp;
          }
          else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
-            target = scope.longReference;
+            target = -2;
             node = lxLongOp;
          }
          else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
-            target = scope.realReference;
+            target = -4;
             node = lxRealOp;
          }
       }
@@ -7457,7 +7451,24 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
          if (boxing) {
             if (isPrimitiveRef(target)) {
-               target = scope.subjectHints.get(destType);
+               if (destType != 0) {
+                  target = scope.subjectHints.get(destType);
+               }
+               else {
+                  switch (target) {
+                     case -1:
+                        target = scope.intReference;
+                        break;
+                     case -2:
+                        target = scope.longReference;
+                        break;
+                     case -4:
+                        target = scope.longReference;
+                        break;
+                     default:
+                        break;
+                  }
+               }
             }
 
             boxPrimitive(scope, node, target, warningLevel, mode);
@@ -7807,16 +7818,6 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
             typecasted = false;
          }
-         else if (isDWORD(targetInfo.header.flags) && isDWORD(sourceInfo.header.flags)) {
-            //HOTFIX : allow passing short / byte to int
-            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-            typecasted = false;
-            boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);
-
-            //HOTFIX :  set the correct size
-            SNode parent = object.parentNode();
-            parent.setArgument(sourceInfo.size);
-         }
          else if (isDWORD(targetInfo.header.flags) && isPTR(sourceInfo.header.flags)) {
             //HOTFIX : allow passing dirty_ptr as int
             typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
@@ -7827,26 +7828,24 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
             SNode parent = object.parentNode();
             parent.setArgument(sourceInfo.size);
          }
-         else if (sourceClassRef == -1 && isPTR(targetInfo.header.flags)) {
-            //HOTFIX : allow passing int as dirty_ptr
-            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-            typecasted = false;
-            boxPrimitive(scope, object, sourceClassRef, 0, typecastMode);
-
-            //HOTFIX :  set the correct size
-            SNode parent = object.parentNode();
-            parent.setArgument(4);
-         }         
          else if (test(targetInfo.header.flags, elSealed)) {
-            // !! code duplication
             int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
             if (targetInfo.methods.exist(implicitMessage)) {
-               node = lxCalling;
-               node.setArgument(implicitMessage);
-               node.insertNode(lxCreatingStruct, targetInfo.size);
-               SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
+               if (test(mode, HINT_ASSIGNING | HINT_NOUNBOXING) && test(targetInfo.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe)) {
+                  // if embeddable call is possible - assigning should be replaced with direct method call
+                  SNode parent = node.parentNode();
+                  parent = lxDirectCalling;
+                  parent.setArgument(implicitMessage);
+                  parent.appendNode(lxCallTarget, targetClassRef);
+               }
+               else {
+                  node = lxCalling;
+                  node.setArgument(implicitMessage);
+                  node.insertNode(lxCreatingStruct, targetInfo.size);
+                  SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
 
-               node.appendNode(lxCallTarget, targetClassRef);
+                  node.appendNode(lxCallTarget, targetClassRef);
+               }
 
                typecasted = false;
             }

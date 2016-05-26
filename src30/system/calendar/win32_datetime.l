@@ -32,7 +32,7 @@
     ]
 }.
 
-#class(sealed,struct:embeddable,const) SystemTime :: BaseValue
+#class(sealed,struct:reference,const) SystemTime :: BaseValue
 {
     #field(long)theValue.
     

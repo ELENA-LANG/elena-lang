@@ -304,6 +304,7 @@ namespace _ELENA_
    const int elExtMessage          = 0x00208000;
    const int elSymbol              = 0x00100000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
+   const int elPointer             = 0x00800010;
 
    const int elDebugMask           = 0x000F0000;
    const int elDebugDWORD          = 0x00010000;
@@ -464,7 +465,6 @@ namespace _ELENA_
    #define HINT_STRUCT              "struct#0$"
    #define HINT_INTEGER_NUMBER      "integerof#1$"      // class representing an integer number
    #define HINT_FLOAT_NUMBER        "floatof#1$"
-   #define HINT_VARIABLE            "variable#0$"
    #define HINT_DYNAMIC             "dynamic#0$"
    #define HINT_STRING              "string#0$"
 // #define HINT_SAFEPOINT          "safepoint"
@@ -484,6 +484,7 @@ namespace _ELENA_
    #define HINT_STACKSAFE           "stacksafe#0$"
    #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
    #define HINT_ACTION_CLASS        "action#0$"
+   #define HINT_POINTER             "reference#0$"
 
    #define HINT_WRAPPER             "class"         // obsolete
 

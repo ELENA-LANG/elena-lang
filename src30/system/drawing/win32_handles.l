@@ -70,9 +70,14 @@
 
 // --- HDC ---
 
-#class(sealed,struct:embeddable,const,variable) HDC
+#class(sealed,struct:reference,const) HDC
 {
     #field(int)theHandle.
+
+    #constructor(stacksafe)&int:handle
+    [
+        theHandle := handle.
+    ]
 
     #constructor(stacksafe) new &hdc:aHandle
     [
@@ -143,7 +148,7 @@
 
 // --- HBITMAP ---
 
-#class(sealed,struct:embeddable,const,variable) HBITMAP
+#class(sealed,struct:reference,const) HBITMAP
 {
     #field(int)theHandle.
 
@@ -184,7 +189,7 @@
 
 // --- HPEN ---
 
-#class(sealed,struct:embeddable,const,variable) HPEN
+#class(sealed,struct:reference,const) HPEN
 {
     #field(int)theHandle.
     
@@ -208,7 +213,7 @@
 
 // --- HBRUSH ---
 
-#class(sealed,struct:embeddable,const,variable) HBRUSH
+#class(sealed,struct:reference,const) HBRUSH
 {
     #field(int)theHandle.
 
