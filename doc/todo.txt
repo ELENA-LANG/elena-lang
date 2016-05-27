@@ -2,15 +2,6 @@
 In development:
 ------                              
               xdev - generic development
-                       * passing short field to int  variable - should allocate it into the local variable
-
-                       * test dtcalculator
-                       * test calendar
-                       * test combinations
-                       * test truncprime
-                       * test twelvestat
-                       * test c_a_g
-                       * test LIB30
                        * optimize pi
 
               fdev - net app

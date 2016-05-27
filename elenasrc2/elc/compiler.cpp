@@ -7480,13 +7480,13 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
 
                   flags &= elDebugMask;
 
-                  if (lflags == elDebugDWORD && target == -1) {
+                  if (flags == elDebugDWORD && target == -1) {
                      target = scope.subjectHints.get(destType);
                   }
-                  else if (lflags == elDebugQWORD && target == -2) {
+                  else if (flags == elDebugQWORD && target == -2) {
                      target = scope.subjectHints.get(destType);
                   }
-                  else if (lflags == elDebugReal64 && target == -4) {
+                  else if (flags == elDebugReal64 && target == -4) {
                      target = scope.subjectHints.get(destType);
                   }
                }

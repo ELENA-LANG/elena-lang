@@ -3372,9 +3372,9 @@ end
 procedure coreapi's_encode
 
   push edi
+  add  eax, ebx
   push eax
   push ebx
-  add  eax, ebx
   
 labNext:
   xor  ebx, ebx
@@ -3519,9 +3519,9 @@ end
 procedure coreapi'ws_encode
 
   push edi
+  add  eax, ebx
   push eax
   push ebx
-  add  eax, ebx
 
 labNext:
   mov  ebx, dword ptr [eax]
@@ -3584,9 +3584,9 @@ end
 procedure coreapi's_decode
 
    push edi
+   lea  eax, [eax + ebx * 4]
    push eax
    push ebx
-   lea  eax, [eax + ebx * 4]
 
 labNext:
    mov  ebx, [eax]
@@ -3693,9 +3693,9 @@ end
 procedure coreapi'ws_decode
 
    push edi
+   lea  eax, [eax + ebx * 4]
    push eax
    push ebx
-   lea  eax, [eax + ebx * 4]
 
 labNext:
    mov  ebx, [eax]
