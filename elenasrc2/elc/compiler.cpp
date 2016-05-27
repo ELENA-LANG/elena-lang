@@ -7452,22 +7452,41 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          if (boxing) {
             if (isPrimitiveRef(target)) {
                if (destType != 0) {
-                  target = scope.subjectHints.get(destType);
-               }
-               else {
-                  switch (target) {
-                     case -1:
-                        target = scope.intReference;
-                        break;
-                     case -2:
-                        target = scope.longReference;
-                        break;
-                     case -4:
-                        target = scope.longReference;
-                        break;
-                     default:
-                        break;
+                  //if destination type is known try to check the compatibility
+                  int flags = scope.getTypeFlags(destType);
+                  if (test(flags, elWrapper)) {
+                     ClassInfo destInfo;
+                     scope.loadClassInfo(destInfo, scope.subjectHints.get(destType));
+                     destType = destInfo.fieldTypes.get(0);
+
+                     flags = scope.getTypeFlags(destType);
                   }
+
+                  flags &= elDebugMask;
+
+                  if (lflags == elDebugDWORD && target == -1) {
+                     target = scope.subjectHints.get(destType);
+                  }
+                  else if (lflags == elDebugQWORD && target == -2) {
+                     target = scope.subjectHints.get(destType);
+                  }
+                  else if (lflags == elDebugReal64 && target == -4) {
+                     target = scope.subjectHints.get(destType);
+                  }
+               }
+
+               switch (target) {
+                  case -1:
+                     target = scope.intReference;
+                     break;
+                  case -2:
+                     target = scope.longReference;
+                     break;
+                  case -4:
+                     target = scope.longReference;
+                     break;
+                  default:
+                     break;
                }
             }
 
