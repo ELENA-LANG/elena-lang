@@ -2165,8 +2165,11 @@ end
 // ; breadw
 inline % 60h
 
-  mov ecx, [eax + ebx]
-  and ecx, 0FFFFh  
+  mov edx, eax
+  mov ax, word ptr [eax + ebx]
+  cwde
+  mov ecx, eax
+  mov eax, edx
 
 end
 

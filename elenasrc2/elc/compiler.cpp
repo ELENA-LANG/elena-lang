@@ -1232,7 +1232,19 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
       if (reference != -1) {
          if (test(info.header.flags, elStructureRole)) {
             int offset = reference;
-            return ObjectInfo(okFieldAddress, offset, 0, info.fieldTypes.get(offset));
+            ref_t type = info.fieldTypes.get(offset);
+            if (type == 0) {
+               // if it is a primitive field
+               switch (info.header.flags & elDebugMask) {
+                  case elDebugDWORD:
+                     return ObjectInfo(okFieldAddress, offset, -1);
+                  case elDebugQWORD:
+                     return ObjectInfo(okFieldAddress, offset, -2);
+                  case elDebugReal64:
+                     return ObjectInfo(okFieldAddress, offset, -3);
+               }
+            }
+            return ObjectInfo(okFieldAddress, offset, 0, type);
          }
          // otherwise it is a normal field
          else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
@@ -4204,6 +4216,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       scope.moduleScope->loadClassInfo(info, resolveObjectReference(scope, objectInfo), true);
 
       if (target.extraparam == -1 && ((info.header.flags & elDebugMask)  == elDebugDWORD)) {
+
          // allow assigning an int wrapper to the primitive int
       }
       else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
@@ -5384,6 +5397,9 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
             // override message with private verb
             methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
+
+            int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+            methodScope.stackSafe = test(hint, tpStackSafe);
 
             compileMethod(member, writer, methodScope);
 
@@ -7483,7 +7499,7 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
                      target = scope.longReference;
                      break;
                   case -4:
-                     target = scope.longReference;
+                     target = scope.realReference;
                      break;
                   default:
                      break;
@@ -7856,6 +7872,14 @@ int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node
                   parent = lxDirectCalling;
                   parent.setArgument(implicitMessage);
                   parent.appendNode(lxCallTarget, targetClassRef);
+
+                  if (sourceInfo.size < targetInfo.size) {
+                     // if the source is smaller than the target it should be boxed
+                     boxPrimitive(scope, object, sourceClassRef, 0, HINT_NOBOXING);
+                     //HOTFIX :  set the correct size
+                     SNode objectParent = object.parentNode();
+                     objectParent.setArgument(sourceInfo.size);
+                  }
                }
                else {
                   node = lxCalling;

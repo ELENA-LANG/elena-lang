@@ -2223,7 +2223,6 @@ void ByteCodeWriter :: copyShort(CommandTape& tape, int offset)
    tape.write(bcDCopy, offset);
    tape.write(bcBReadW);
    tape.write(bcDCopyE);
-   tape.write(bcAndN, 0xFFFF);
    tape.write(bcNSave);
    tape.write(bcACopyB);
 }
