@@ -175,6 +175,7 @@ enum ByteCode
    bcPushN           = 0xB0,
    bcELoadFI         = 0xB1,
    bcPushR           = 0xB2,
+   bcBSaveSI         = 0xB3,
    bcPushAI          = 0xB4,
    bcESaveFI         = 0xB5,
    bcPushFI          = 0xB6,

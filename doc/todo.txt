@@ -1,12 +1,13 @@
 ------                                 
 In development:
 ------                              
-              xdev - generic development
-                       * optimize pi
-
               fdev - net app
                        * implement simple chat system to test socket api
  
+              xdev - generic development
+                       * optimize n := n + m.
+                       * optimize n := n + 1.
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -58,9 +59,6 @@ Pipeline:
                             #var(int)l := s length.
 
                           acopyf fp:-2 is implemented twice in row
-
-                       * optimize n := n + m.
-                       * optimize n := n + 1.
 
                        * support old style variable / field declaration (with type keyword)
                        * support old style subject declaration (with class keyword)

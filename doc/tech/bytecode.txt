@@ -161,6 +161,8 @@ D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
  bloadfi i                  - [fp+i] => base
 
  bloadsi i                  - [sp+i] => base
+
+ bsavesi i                  - [sp+i] <= base
  
  bswapsi i                  - [sp+i] <=> base
 

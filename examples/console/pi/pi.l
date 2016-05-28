@@ -3,17 +3,18 @@
 #import system'calendar.
 #import extensions.
 
-#symbol(const) MAX = 1000000.
+#symbol(const,int) MAX = 1000000.
 
 #symbol program =
 [
     #var aStart := now.
 
-    #var pi := Real new.
+    #var(vreal) pi := Real new.
     
     control run &int:0 &int:MAX &every: (&int:i)
     [
-        pi += -1.0r power &int:i / (2*i+1) * 4.
+        //pi += -1.0r power &int:i / (2*i+1) * 4.
+        pi += -1.0r power &int:i divide &int:(2*i+1) multiply &int:4.
     ].
 
     #var anEnd := now.

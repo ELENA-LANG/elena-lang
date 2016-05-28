@@ -2488,6 +2488,13 @@ inline % 0B1h
 
 end
 
+// ; bsavesi
+inline % 0B3h
+
+  mov  [esp+__arg1], edi
+
+end
+
 // ; pushai
 inline % 0B4h
 

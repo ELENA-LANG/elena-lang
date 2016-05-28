@@ -1200,7 +1200,12 @@
 #class(struct:embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
 {
     #field(floatof:8)theValue.
-    
+
+    #constructor(stacksafe)&int:n
+    [
+        realConvertor convert &int:n &vreal:$self.
+    ]
+            
     /// Returns the minimal value
     #constructor min
         = -1.7976931348623157e+308r.
@@ -1327,7 +1332,11 @@
 
     /// Returns the product of numbers
     #method(stacksafe,real) multiply &int:anOperand
-        = $self multiply &real:(RealNumber new &int:anOperand).
+    [
+        #var(real)n := anOperand.
+        
+        ^ $self multiply &real:n.
+    ]
 
     /// Returns the product of numbers
     #method(stacksafe) multiply &byte:anOperand
@@ -1343,7 +1352,11 @@
 
     /// Returns the result of the division
     #method(stacksafe) divide &int:anOperand
-        = $self divide &real:(RealNumber new &int:anOperand).
+    [
+        #var(real)n := anOperand.
+        
+        ^ $self divide &real:n.
+    ]
 
     /// Returns the result of the division
     #method(stacksafe) divide &byte:anOperand
