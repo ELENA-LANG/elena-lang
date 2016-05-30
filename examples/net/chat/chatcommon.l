@@ -1,4 +1,4 @@
 #import system.
 
 
-#symbol(const,type:int)INTRODUCTION = 1.
+#symbol(const,int)INTRODUCTION = 1.

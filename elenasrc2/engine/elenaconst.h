@@ -221,10 +221,11 @@ namespace _ELENA_
       dsIntArrayLocalPtr        = 0x0D05,
       dsStructPtr               = 0x0E05,
       dsStructInfo              = 0x0F05,
+      dsLocalPtr                = 0x1005,
 
       dsDebugMask               = 0x00F0,
-      dsTypeMask                = 0x0F00,
-      dsDebugTypeMask           = 0x0FFF,
+      dsTypeMask                = 0x1F00,
+      dsDebugTypeMask           = 0x1FFF,
    };
 
    // predefined debug module sections

@@ -1120,6 +1120,14 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
             watch->append(this, (ident_t)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
          }
+         else if (lineInfo[index].symbol == dsLocalPtr) {
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            ref_t classPtr = _classNames.get((ident_t)lineInfo[index + 1].addresses.source.nameRef);
+
+            readObject(watch, localPtr, (ident_t)lineInfo[index + 1].addresses.source.nameRef, (ident_t)lineInfo[index].addresses.local.nameRef);
+
+            watch->append(this, (ident_t)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
+         }
          else if (lineInfo[index].symbol == dsStack) {
             // write local variable
             int localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);

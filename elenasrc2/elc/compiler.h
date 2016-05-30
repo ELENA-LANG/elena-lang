@@ -390,8 +390,18 @@ private:
 
 //      bool recognizePrimitive(ident_t name, ident_t value, size_t& roleMask, int& size);
 
-      int defineStructSize(ref_t classReference, bool embeddableOnly = true);
-      int defineSubjectSize(ref_t type_ref, bool embeddableOnly = true);
+      int defineStructSizeEx(ref_t classReference, bool& variable, bool embeddableOnly = true);
+      int defineStructSize(ref_t classReference, bool embeddableOnly = true)
+      {
+         bool dummy;
+         return defineStructSizeEx(classReference, dummy, embeddableOnly);
+      }
+      int defineSubjectSizeEx(ref_t type_ref, bool& variable, bool embeddableOnly = true);
+      int defineSubjectSize(ref_t type_ref, bool embeddableOnly = true)
+      {
+         bool dummy;
+         return defineSubjectSizeEx(type_ref, dummy, embeddableOnly);
+      }
 
       int checkMethod(ClassInfo& info, ref_t message, ref_t& outputType);
       int checkMethod(ref_t reference, ref_t message, bool& found, ref_t& outputType);
@@ -646,6 +656,12 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope ? scope->info.header.flags : 0;
+      }
+      ref_t getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
       }
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -1071,7 +1087,12 @@ private:
    int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode);
+   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable);
+   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
+   {
+      bool dummy;
+      return boxPrimitive(scope, node, targetRef, warningLevel, mode, dummy);
+   }
    void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
@@ -1081,7 +1102,8 @@ private:
    void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeBoolOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 
-   void defineTargetSize(ModuleScope& scope, SNode& node);
+   // NOTE : return true if the target is required unboxing
+   bool defineTargetSize(ModuleScope& scope, SNode& node);
 
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);

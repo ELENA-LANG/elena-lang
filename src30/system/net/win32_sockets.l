@@ -50,7 +50,31 @@
         ptr set &dirty_ptr:ai_addr.
         len := ai_addrlen.
     ]
-    
+
+    #method(stacksafe)readAddrInfo &literal:aNode &literal:aService &dirty_ptr:addr
+    [
+        #var(int)aRetVal := system'external'WS2_32 getaddrinfo
+            &literal:aNode
+            &literal:aService
+            &addrinfo:$self
+            &dirty_ptr:addr.
+            
+        (0 == aRetVal)
+            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].
+    ]
+            
+    #method(stacksafe)readAddrInfo &literal:aService &dirty_ptr:addr
+    [
+        #var(int)aRetVal := system'external'WS2_32 getaddrinfo
+            &int:0
+            &literal:aService
+            &addrinfo:$self
+            &dirty_ptr:addr.
+            
+        (0 == aRetVal)
+            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].        
+    ]
+            
     #method(stacksafe) clear
     [
         ai_flags := 0.
@@ -73,32 +97,16 @@
     #field(dirty_ptr)paddrinfo.
     #field(dirty_ptr)prootinfo.
     
-    #constructor(stacksafe,embeddable) new &literal:aNode &literal:aService &addrinfo:aHint
+    #constructor(stacksafe) &dirty_ptr:addr
     [
-        #var(int)aRetVal := system'external'WS2_32 getaddrinfo
-            &literal:aNode
-            &literal:aService
-            &addrinfo:aHint
-            &dirty_ptr:paddrinfo.
-            
-        (0 == aRetVal)
-            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].
-            
-        prootinfo := paddrinfo.
+        paddrinfo := addr.
+        prootinfo := addr.
     ]
     
-    #constructor(stacksafe,embeddable) new &literal:aService &addrinfo:aHint
+    #constructor(stacksafe) new &dirty_ptr:addr
     [
-        #var(int)aRetVal := system'external'WS2_32 getaddrinfo
-            &int:0
-            &literal:aService
-            &addrinfo:aHint
-            &dirty_ptr:paddrinfo.
-            
-        (0 == aRetVal)
-            ! [ #throw SocketException new:"getaddrinfo failed" &error_code:(IntNumber new &int:aRetVal). ].
-            
-        prootinfo := paddrinfo.
+        paddrinfo := addr.
+        prootinfo := addr.
     ]
     
     #method(stacksafe,bool)is &available

@@ -51,7 +51,10 @@
         addrinfo setSocketType &int:SOCK_STREAM.
         addrinfo setProtocol &int:IPPROTO_TCP.
         
-        #var(addr_reader)aReader := AddrInfoReader new &literal:(anAddress literal) &literal:(aPort literal) &addrinfo:addrinfo.
+        #var(dirty_ptr)ptr.
+        addrinfo readAddrInfo &literal:(anAddress literal) &literal:(aPort literal) &dirty_ptr:ptr.
+        
+        #var(addr_reader)aReader := ptr.
         #loop (aReader is &available)?
         [
             aReader read &addrinfo:addrinfo.

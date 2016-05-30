@@ -184,6 +184,14 @@ void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, i
    }      
 }
 
+void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStructSelf, (ref_t)localName, level);
+      tape.write(bdLocalInfo, (ref_t)className);
+   }
+}
+
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
    if (!emptystr(localName))
@@ -1561,6 +1569,11 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bdStruct:
             writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsStructPtr, 0);
+            it++;
+            writeInfo(scope, dsStructInfo, (ident_t)(*it).Argument());
+            break;
+         case bdStructSelf:
+            writeLocal(scope, (ident_t)(*it).Argument(), (*it).additional, dsLocalPtr, frameLevel);
             it++;
             writeInfo(scope, dsStructInfo, (ident_t)(*it).Argument());
             break;
@@ -4472,6 +4485,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxSelfVariable:
             declareSelfInfo(tape, current.argument);
+            break;
+         case lxBinarySelf:
+            declareSelfStructInfo(tape, THIS_VAR, current.argument, SyntaxTree::findChild(current, lxClassName).identifier());
             break;
          default:
             generateObjectExpression(tape, current);

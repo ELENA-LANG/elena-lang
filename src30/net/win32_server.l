@@ -88,8 +88,11 @@
         addrinfo setProtocol &int:IPPROTO_TCP.
         addrinfo setFlags &int:AI_PASSIVE.
         
+        #var(dirty_ptr)ptr.
+        addrinfo readAddrInfo &literal:(aPort literal) &dirty_ptr:ptr.
+        
         // Create a SOCKET for connecting to server
-        #var(addr_reader)aReader := AddrInfoReader new &literal:(aPort literal) &addrinfo:addrinfo.        
+        #var(addr_reader)aReader := ptr.
         aReader read &addrinfo:addrinfo.
         
         #var(int)ai_family.

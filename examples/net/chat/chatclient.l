@@ -5,7 +5,7 @@
 
 #class ChatClient
 {
-    #field(type:tcp_client)theNetworkClient.
+    #field(tcp_client)theNetworkClient.
     #field theAddress.
     #field thePort.
     #field theUserName.
@@ -21,8 +21,8 @@
     
     #method sendNickname
     [
-        #var(type:literal)json := DTO{ Command = INTRODUCTION. Value = theUserName. } toJson literal.
-        #var(type:int)len := json length.
+        #var(literal)json := DTO{ Command = INTRODUCTION. Value = theUserName. } toJson literal.
+        #var(int)len := json length.
         
         theNetworkClient write &int:len write &literal:json.
     ]

@@ -868,32 +868,32 @@ _Memory* Compiler::ModuleScope :: loadTemplateInfo(ident_t symbol, _Module* &arg
 //   return false;
 //}
 
-int Compiler::ModuleScope :: defineStructSize(ref_t classReference, bool embeddableOnly)
+int Compiler::ModuleScope :: defineStructSizeEx(ref_t classReference, bool& variable, bool embeddableOnly)
 {
    ClassInfo classInfo;
    if(loadClassInfo(classInfo, module->resolveReference(classReference), true) == 0)
       return 0;
 
+   variable = !test(classInfo.header.flags, elReadOnlyRole);
+
    if (!embeddableOnly && test(classInfo.header.flags, elStructureRole)) {
       return classInfo.size;
    }
    else if (isEmbeddable(classInfo)) {
-      //   variable = !test(classInfo.header.flags, elReadOnlyRole);
-
       return classInfo.size;
    }
 
    return 0;
 }
 
-int Compiler::ModuleScope :: defineSubjectSize(ref_t type_ref, bool embeddableOnly /*, ref_t& classReference, bool& variable*/)
+int Compiler::ModuleScope :: defineSubjectSizeEx(ref_t type_ref, bool& variable, bool embeddableOnly)
 {
    if (type_ref == 0)
       return 0;
 
    ref_t classReference = subjectHints.get(type_ref);
    if (classReference != 0) {
-      return defineStructSize(classReference, embeddableOnly/*, variable*/);
+      return defineStructSizeEx(classReference, variable, embeddableOnly);
    }
    else return 0;
 }
@@ -1827,9 +1827,15 @@ void Compiler :: declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& wri
 
       it++;
    }
-   if (withThis)
-      writer.appendNode(lxSelfVariable, 1);
-
+   if (withThis) {
+      if (scope.stackSafe && isEmbeddable(scope.getClassFlags())) {
+         writer.newNode(lxBinarySelf, 1);
+         writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(scope.getClassRef()));
+         writer.closeNode();
+      }
+      else writer.appendNode(lxSelfVariable, 1);
+   }
+      
    if (withSelf)
       writer.appendNode(lxSelfVariable, -1);
 
@@ -6968,17 +6974,18 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
-bool Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
+bool Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable)
 {
    LexicalType opType = node.type;
 
    int size = 0;
    if (isPrimitiveRef(targetRef)) {
+      variable = false;
       if (targetRef == -1) {
          size = 4;
       }
    }
-   else size = scope.defineStructSize(targetRef);
+   else size = scope.defineStructSizeEx(targetRef, variable);
 
    if (size != 0) {
       int offset = allocateStructure(scope, node, size);
@@ -7639,8 +7646,10 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    //}
 }
 
-void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
+bool Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
 {
+   bool variable = false;
+
    SNode target = SyntaxTree::findChild(node, lxTarget);
    ref_t type = SyntaxTree::findChild(node, lxType).argument;
 
@@ -7661,7 +7670,7 @@ void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
          else raiseWarning(scope, node, errInvalidOperation, 0, 0);
       }
       else {
-         int size = scope.defineSubjectSize(type, false);
+         int size = scope.defineSubjectSizeEx(type, variable, false);
 
          if (target.argument == -3) {
             node.setArgument(-size);
@@ -7672,13 +7681,16 @@ void Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
       }
    }
    else if (node.argument == 0) {
-      node.setArgument(scope.defineStructSize(target.argument));
+      node.setArgument(scope.defineStructSizeEx(target.argument, variable));
    }
+
+   return variable;
 }
 
 void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {
    bool boxing = true;
+   bool variable = false;
 
    SNode exprNode = SyntaxTree::findMatchedChild(node, lxObjectMask);
    if (exprNode == lxNewOp) {
@@ -7691,11 +7703,11 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
          if (exprNode == lxFieldAddress && exprNode.argument > 0 && !test(mode, HINT_ASSIGNING)) {
             ref_t target = SyntaxTree::findChild(node, lxTarget).argument;
             if (!target)
-               throw InternalError("Boxing cann not be performed");
+               throw InternalError("Boxing can not be performed");
 
-            boxPrimitive(scope, exprNode, target, warningLevel, mode);
+            boxPrimitive(scope, exprNode, target, warningLevel, mode, variable);
 
-            node = lxExpression;
+            node = variable ? lxLocalUnboxing : lxExpression;
 
             return;
          }
@@ -7707,7 +7719,9 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel
    }
 
    if (boxing) {
-      defineTargetSize(scope, node);
+      variable = defineTargetSize(scope, node);
+      if (variable)
+         node = lxUnboxing;
    }
    // ignore boxing operation if allowed
    else node = lxExpression;

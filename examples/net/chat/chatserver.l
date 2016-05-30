@@ -7,12 +7,12 @@
 #import extensions'dynamic.
 #import net.
 
-#subject(class:ChatMember)chatter.
+#subject chatter = ChatMember.
 
 #class(sealed) ChatMember
 {
-    #field(type:membuffer)theBuffer.
-    #field(type:tcp_remoteclient) theOwner.
+    #field(membuffer)theBuffer.
+    #field(tcp_remoteclient) theOwner.
 
     #field(prop:Name) theName.
 
@@ -30,10 +30,10 @@
     
     #method readCommand
     [
-        #var(type:int)len := theBuffer length.
+        #var(int)len := theBuffer length.
         (len > 0)?
         [
-            #var(type:int)package_len.
+            #var(int)package_len.
             theBuffer read &int:0 &vint:package_len.
             
             (package_len + 4 <= len)?
@@ -58,8 +58,8 @@
 {
     #field theLock.
     
-    #field(type:tcp_server)theNetworkServer.
-    #field(type:thread)theBroadcastThread.
+    #field(tcp_server)theNetworkServer.
+    #field(thread)theBroadcastThread.
     
     #constructor new &port:port
     [

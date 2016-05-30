@@ -2,6 +2,8 @@
 In development:
 ------                              
               fdev - net app
+                       * embeddable constructor, review implementation
+                       * embeddable constructor
                        * implement simple chat system to test socket api
  
               xdev - generic development
@@ -26,7 +28,6 @@ Pipeline:
 
                        * optimize #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:1. - assigning is done three times!!
 
-                       * embeddable constructor, review implementation
 
                        * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
                        * operation with primitive arrays should not be allowed
@@ -151,7 +152,6 @@ Pipeline:
                        * fix #12 : Extension with stack allocated object
                        * implement #167 : stack allocated variable and $nil                       
                        * optimize thread_wait
-                       * test if embeddable constructor works
                        * test raising exception inside lock statement
 
                        * review pi performance
@@ -255,7 +255,6 @@ Pipeline:
                        * start server / connect to server
                        
               xdev - general implementation
-                       * reimplement embeddable constructor
                        * implementing 2.0.0 issues
                        * vm console should use startUp symbol
                        * variable: no need to store nil if the variable statement has initializing part

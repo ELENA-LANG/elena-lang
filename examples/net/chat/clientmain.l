@@ -1,6 +1,6 @@
 #import system.
 
-#symbol(const,type:int)DEFAULT_PORT = 6881.
+#symbol(const,int)DEFAULT_PORT = 6881.
 
 #symbol program =
 [
