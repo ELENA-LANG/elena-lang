@@ -341,6 +341,7 @@ void ByteCodeWriter :: declareTry(CommandTape& tape)
    // hook labAlt
 
    tape.write(bcHook, baCurrentLabel);
+   tape.write(bcAllocStack, 3);
 }
 
 void ByteCodeWriter :: declareCatch(CommandTape& tape)
@@ -962,6 +963,7 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    // labEnd
 
    tape.setLabel();
+   tape.write(bcFreeStack, 3);
 }
 
 void ByteCodeWriter :: endAlt(CommandTape& tape)
@@ -969,6 +971,7 @@ void ByteCodeWriter :: endAlt(CommandTape& tape)
    // labEnd
 
    tape.setLabel();
+   tape.write(bcFreeStack, 3);
 }
 
 void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)

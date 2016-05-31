@@ -189,7 +189,7 @@
     #method(stacksafe) write &int:n
     [
         #var(byte:4)buffer.
-        buffer write &int:0 &int:n.
+        byteArrayHelper write &bytearray:buffer &int:0 &int:n.
         
         $self write &int:0 &bytearray:buffer &int:4.
     ]
