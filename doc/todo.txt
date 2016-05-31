@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                              
-              fdev - net app
-                       * implement simple chat system to test socket api
- 
               xdev - generic development
                        * optimize n := n + m.
                        * optimize n := n + 1.

@@ -22,6 +22,7 @@ OutputBaseFilename=elena-setup
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes
+AlwaysRestart=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

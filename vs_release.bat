@@ -700,10 +700,15 @@ md examples\rosetta\treeview
 copy %1\examples\rosetta\treeview\*.l examples\rosetta\treeview
 copy %1\examples\rosetta\treeview\*.prj examples\rosetta\treeview
 
+md examples\net\chat
+copy %1\examples\net\chat\*.l examples\net\chat
+copy %1\examples\net\chat\*.prj examples\net\chat
+
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 bin\elc -csrc30\forms\forms.prj
 bin\elc -csrc30\sqlite\sqlite.prj
+bin\elc -csrc30\net\net.prj
 
 goto:eof
 ::ERRORS

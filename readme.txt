@@ -52,6 +52,8 @@ You may need to add a path to BIN folder to system environment (e.g. <app root>\
 
 Otherwise you may use setup executable.
 
+The language requires Visual C++ Redistributable for VS 2015
+
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
 (<app root>\bin\elide.exe) or ELENA Command Line Compiler 
 (<app root>\bin\elc.exe).
