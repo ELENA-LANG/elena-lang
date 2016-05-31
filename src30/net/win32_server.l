@@ -5,6 +5,7 @@
 #import system'routines.
 #import system'net.
 #import system'threading.
+#import system'text.
 
 #subject tcp_remoteclient = TcpRemoteClient.
 #class(sealed)TcpRemoteClient
@@ -244,6 +245,35 @@
             
             i := i + 1.
         ].
+    ]
+    
+    #method(stacksafe) sendAll &literal:s
+    [
+        #var(byte:256)buffer.
+        #var(int)len := s length.
+        #var(int)buf_len := 256.
+        #var(int)index := 0.
+        #loop (len > 0)?
+        [
+            (len < 256)
+                ? [ buf_len := len. ]
+                ! [ buf_len := 256. ].
+            
+            UTF8Encoding convert &int:index &int:buf_len &literal:s &bytearray:buffer.
+            
+            $self sendAll &bytearray:buffer &int:buf_len.
+            
+            len := len - buf_len.
+            index := index + buf_len.
+        ].
+    ]
+    
+    #method(stacksafe) sendAll &int:n
+    [
+        #var(byte:4)buffer.
+        byteArrayHelper write &bytearray:buffer &int:0 &int:n.
+        
+        $self sendAll &bytearray:buffer &int:4.
     ]
     
     #method(stacksafe) send &int:index &bytearray:buffer &int:length    

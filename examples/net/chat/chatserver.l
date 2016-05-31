@@ -9,47 +9,22 @@
 
 #subject chatter = ChatMember.
 
-#class(sealed) ChatMember
+#class(sealed) ChatMember :: BaseClient
 {
-    #field(membuffer)theBuffer.
     #field(tcp_remoteclient) theOwner.
-
+    #field theServer.
+    
     #field(prop:Name) theName.
 
-    #constructor new : owner
+    #constructor new : owner &of:server
+        <= (new)
     [
-        theBuffer := MemoryBuffer new.
-        
         theOwner := owner tcp_remoteclient.
+        
+        theServer := server.
     ]    
     
-    #method(stacksafe)write &bytearray:buffer &int:length
-    [
-        theBuffer write &int:0 &int:length &bytearray:buffer.
-    ]
-    
-    #method readCommand
-    [
-        #var(int)len := theBuffer length.
-        (len > 0)?
-        [
-            #var(int)package_len.
-            theBuffer read &int:0 &vint:package_len.
-            
-            (package_len + 4 <= len)?
-            [
-                #var literal := UTF8Encoding toLiteral &int:4 &int:package_len &bytearray:(theBuffer bytearray).
-                
-                #var llen := literal length.
-                
-                theBuffer delete &int:0 &int:(package_len + 4).
-                
-                ^ literal fromJson.
-            ].
-        ].
-        
-        ^ $nil.
-    ]
+    #method server = theServer.
     
     #method chatter = $self.
 }
@@ -70,6 +45,13 @@
         theNetworkServer set &blocking:false.
     ]
     
+    #method translate : command
+    [
+        #var(literal)json := command toJson literal.
+        
+        theNetworkServer sendAll &int:(json length) sendAll &literal:json.
+    ]
+    
     #method proceed
     [
         theNetworkServer run &eachConnection:client
@@ -88,6 +70,12 @@
                                     member set &Name:(command Value).
                                     
                                     console writeLine:(command Value):" joined".
+                                ]
+                                SEND ?
+                                [
+                                    console writeLine:(member Name):":":(command Value).
+                                    
+                                    member server translate:DTO { Command = TRANSLATE. Value = command Value. User = member Name. }.
                                 ].
                         ].                
                 ].
@@ -107,7 +95,7 @@
                 [
                     console writeLine:"new client joint".
                 
-                    client set &Parameter:(ChatMember new:client).
+                    client set &Parameter:(ChatMember new:client &of:$owner).
                 ].                    
             ]
             

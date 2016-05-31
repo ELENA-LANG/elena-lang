@@ -10,3 +10,7 @@ chatcommon.l
 chatclient.l
 clientmain.l
 
+[forwards]
+'program=extensions'programLoop
+'program'control=chat'control
+

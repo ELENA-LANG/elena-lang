@@ -2,8 +2,6 @@
 In development:
 ------                              
               fdev - net app
-                       * embeddable constructor, review implementation
-                       * embeddable constructor
                        * implement simple chat system to test socket api
  
               xdev - generic development

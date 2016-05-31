@@ -15,6 +15,9 @@
 [-] #185 : Stack allocated structures are not correctly displayed
 [-] #233 : IDE Debugger : next statement menu deprecated
 
+[Samples]
+[+] net sample : chat
+
 ******************************************************************************
                              What's New in 2.0.1
 ******************************************************************************

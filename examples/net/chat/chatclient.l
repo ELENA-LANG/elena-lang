@@ -3,14 +3,16 @@
 #import extensions'dynamic.
 #import net.
 
-#class ChatClient
+#class ChatClient :: BaseClient
 {
-    #field(tcp_client)theNetworkClient.
+    #field(tcp_client) theNetworkClient.
+    
     #field theAddress.
     #field thePort.
-    #field theUserName.
+    #field theUserName.    
     
     #constructor new &ip:ip &port:port &userName:userName
+        <= (new)
     [
         theNetworkClient := TcpClient new.
         
@@ -22,6 +24,14 @@
     #method sendNickname
     [
         #var(literal)json := DTO{ Command = INTRODUCTION. Value = theUserName. } toJson literal.
+        #var(int)len := json length.
+        
+        theNetworkClient write &int:len write &literal:json.
+    ]
+    
+    #method send &text:text
+    [
+        #var(literal)json := DTO{ Command = SEND. Value = text. } toJson literal.
         #var(int)len := json length.
         
         theNetworkClient write &int:len write &literal:json.
@@ -41,6 +51,20 @@
             onError:e &for:client
             [
                 console writeLine:"Exception #":(e error_code).
+            ]
+            
+            onReceived:client &bytearray:buffer &int:length
+            [
+                $owner write &bytearray:buffer &int:length.
+                #var command := $owner readCommand.
+                ($nil != command)
+                    ? [
+                        (command Command) =>
+                            TRANSLATE ?
+                            [
+                                console writeLine writeLine:(command User):":":(command Value) write:">".
+                            ].
+                    ].                
             ]
         }.
         

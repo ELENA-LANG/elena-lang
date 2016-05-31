@@ -21,7 +21,12 @@
     [
         // if grettings is not defined - do nothing
         console writeLine:(theControl greeting)
-            | if &Error:e [].
+            | on:
+            {
+                Abort = e [ #throw e. ].
+                
+                ! = e [].
+            }.
         
         #var aPrompt := theControl prompt.
         
