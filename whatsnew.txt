@@ -7,6 +7,9 @@
                              What's New in 2.0.3
 ******************************************************************************
 
+[ELC]
+[-] #257 : Raising an exception in static symbol
+
 [Samples]
 [+] script sample : calc
 

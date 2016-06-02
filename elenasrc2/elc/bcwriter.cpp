@@ -1067,7 +1067,7 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
    tape.write(bcBCopyA);
    tape.write(bcPopA);
    freeLock(tape);
-   tape.write(bcACopyB);
+   tape.write(bcPushB);
 
    // throw
    tape.write(bcThrow);
@@ -4015,7 +4015,7 @@ void ByteCodeWriter ::generateLocking(CommandTape& tape, SyntaxTree::Node node)
    loadBase(tape, lxResult);
    popObject(tape, lxResult);
    freeLock(tape);
-   assignBaseTo(tape, lxResult);
+   tape.write(bcPushB);
    
    throwCurrent(tape);
 

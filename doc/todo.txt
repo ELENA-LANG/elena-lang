@@ -1,9 +1,6 @@
 ------                                 
 In development:
 ------                              
-              idev - generic development                                          
-                       * fix vm console : Default exception handler #257 
-
               edev - calc
                        * test calculator sample
                        * parse -2+3
