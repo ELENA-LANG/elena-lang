@@ -23,6 +23,8 @@
 
 #symbol testCase =
 [
+    console writeLine:"Press any key to start" readChar.
+    
     #var aCase1 := "2".
     
     #var aCaseResult1 := aCase1 evaluated.    

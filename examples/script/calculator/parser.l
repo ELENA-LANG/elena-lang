@@ -5,7 +5,7 @@
 #define extensions'dynamic.
 
 #static esonScript
-    = scriptEngine load &path:"~\scripts\eson.es" load &path:"calc.es".
+    = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
 
 #class(extension) lexicalOp
 {

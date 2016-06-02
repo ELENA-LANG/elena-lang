@@ -73,8 +73,8 @@ labDefault:
   open 1
   bcopyf -1
   pushb
-  //pushr class : system'MethodNotFoundException
-  //pushr const : %new&mssg$[1]
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
   throw
   
 end
@@ -3996,10 +3996,12 @@ labQuit:
   quitn 1
   
 labEnd:
-  popi 3
+  popi 2
   open 1
+  bcopyf -1
+  pushb
   pushr class : system'MethodNotFoundException
-  pushr const : %new[0]
+  pushr const : %new&mssg$[1]
   throw
 
 end

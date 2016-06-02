@@ -1,14 +1,24 @@
 ------                                 
 In development:
 ------                              
-              xdev - generic development
-                       * optimize n := n + m.
-                       * optimize n := n + 1.
+              edev - calc
+                       * test calculator sample
+                       * parse -2+3
+                       * operations with brackets
 
+              xdev - general implementation     
+                       * core_vm'eval - provide default exception handler
+                       *  Exception call stack #255 
+
+              idev - generic development                                          
+                       * calc sample : debugger watch does not recognize an instance of system'dynamic'Tape
 ------                                 
 Pipeline:
 ------                                                                                         
               xdev - generic development
+                       * optimize n := n + m.
+                       * optimize n := n + 1.
+
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
                        * #250 : embeddable structure : implicit constructor should be called without creating the object
@@ -16,8 +26,6 @@ Pipeline:
                        * #250 : Implicit constructor should not have return statements
 
                        * embeddable dispatcher validation : only redirection to the field is allowed
-
-                       * test calculator sample
 
                        * nshift should be replaced with nshiftl, nshiftr
 
@@ -166,6 +174,7 @@ Pipeline:
                        * review winforms implementation for corex mode
                        
               idev - generic development                                          
+                       * project view : delays in openning the window
                        * #191 : IDE : block commenting
                        * #219 : IDE : Callstack for vm console application 
                        * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
@@ -185,11 +194,8 @@ Pipeline:
                        * use implicit constructors in LIB30
                        * implement #33 (tcp/ip socket)
 
-              edev - calc
-                       * calculator : parse -2+3
 
               fdev - samples
-                       * calculator : operations with brackets
                        * calculator : move lexicalOp to the script
                        * reimplement script samples: interpreter, helloworld, vmconsole
 

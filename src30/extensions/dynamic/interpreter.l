@@ -68,6 +68,26 @@
             
         system'external'elenasm Release &dirty_ptr:tape.            
     ]
+    
+    #method(stacksafe) evalScriptFile &literal:path &int:anEncoding &int:anAutoDetect
+    [
+        #var(dirty_ptr)tape := system'external'elenasm InterpretFile
+            &literal:path
+            &int:anEncoding
+            &int:anAutoDetect.
+            
+        (tape is &empty)
+            ? [ #throw ScriptEngineException new. ].
+            
+        #var retVal := $self evaluateTape &dirty_ptr:tape.
+        
+        system'external'elenasm Release &dirty_ptr:tape.
+        
+        ($nil == retVal)
+            ? [ #throw ScriptEngineException new:($self $lastVMError). ].
+            
+        ^ retVal.            
+    ]
         
     evaluate : aScript
         = $self evaluateScript &literal:(aScript literal).
@@ -76,6 +96,9 @@
     [
         $self loadScriptFile &literal:(aPath literal) &int:0 &int:-1.
     ]
+        
+    eval &path:aPath
+        = $self evalScriptFile &literal:(aPath literal) &int:0 &int:-1.
 }.
 
 // --- globlas ---

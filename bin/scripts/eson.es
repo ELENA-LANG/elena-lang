@@ -16,6 +16,7 @@
    #define object     ::= <= $literal =>;
    #define object     ::= <= $numeric =>;
    #define object     ::= "(" expression ")" ;
+   #define object     ::= <= [ *system'dynamic'Struct => struct <= ] =>;
    #define operation  ::= "." message parameters;
    #define operation  ::= $eps;
    #define message    ::= <= ^ $identifier =>;
@@ -44,11 +45,18 @@
    #define fobject     ::= <= $numeric =>;
    #define fobject     ::= <= ( % "system'dynamic'tapeOp.<#%&var&args$" $var ) =>;
    #define fobject     ::= "(" fexpression ")" ;
-   #define foperation  ::= "." fmessage fparameters;
+   #define fobject     ::= <= ( system'dynamic'Dynamic % new ) => "{" ffields;
+   #define ffields     ::= ffield ffield_exp next_ffield ;
+   #define ffield      ::= <= set & $identifier =>;
+   #define ffield_exp  ::= <= ( => ":" fexpression <= ) =>;   
+   #define next_ffield ::= "," ffields;
+   #define next_ffield ::= "}";   
+
+   #define foperation  ::= "." fmessage fparameters foperation;
    #define foperation  ::= $eps;
    #define fmessage    ::= <= $identifier =>;
-   #define fparameters ::= "(" fobject fnext_param;
+   #define fparameters ::= "(" fexpression fnext_param;
    #define fparameters ::= $eps;
-   #define fnext_param ::= "," fobject fnext_param;
+   #define fnext_param ::= "," fexpression fnext_param;
    #define fnext_param ::= ")";
 ]]
