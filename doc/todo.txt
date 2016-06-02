@@ -1,6 +1,10 @@
 ------                                 
 In development:
 ------                              
+              idev - generic development                                          
+                       * calc sample : debugger watch does not recognize an instance of system'dynamic'Tape time to time
+                       * fix vm console : Default exception handler #257 
+
               edev - calc
                        * test calculator sample
                        * parse -2+3
@@ -9,9 +13,6 @@ In development:
               xdev - general implementation     
                        * core_vm'eval - provide default exception handler
                        *  Exception call stack #255 
-
-              idev - generic development                                          
-                       * calc sample : debugger watch does not recognize an instance of system'dynamic'Tape
 ------                                 
 Pipeline:
 ------                                                                                         

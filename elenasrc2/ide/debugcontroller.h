@@ -94,11 +94,12 @@ protected:
 
       virtual bool read(void* s, size_t length)
       {
-         _debugger->Context()->readDump(_address + _position, (char*)s, length);
+         if (_debugger->Context()->readDump(_address + _position, (char*)s, length)) {
+            _position += length;
 
-         _position += length;
-
-         return true;
+            return true;
+         }
+         else return false;
       }
 
       virtual const char* getLiteral(const char* def) { return def; } // !! temporal not supported
@@ -212,6 +213,7 @@ protected:
    {
       _classes.clear();
       _modules.clear();
+      _classNames.clear();
 
       //_tape.clear();
 

@@ -187,11 +187,13 @@ unsigned char ThreadContext :: setSoftwareBreakpoint(size_t breakpoint)
    return code;
 }
 
-void ThreadContext :: readDump(size_t address, char* dump, size_t length)
+bool ThreadContext :: readDump(size_t address, char* dump, size_t length)
 {
    unsigned long   size = 0;
 
    ReadProcessMemory(hProcess, (void*)(address), dump, length, &size);
+
+   return size != 0;
 }
 
 void ThreadContext :: writeDump(size_t address, char* dump, size_t length)

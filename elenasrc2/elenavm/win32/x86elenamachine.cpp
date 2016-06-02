@@ -15,10 +15,10 @@ using namespace _ELENA_;
 
 x86Instance :: x86Instance(ELENAMachine* machine)
    : Instance(machine),
-     _debugProcess(0x10000, true, false),
-     _codeProcess(0x100000, false, true),
-     _dataProcess(0x100000, false, false),
-     _bssProcess(0x100, true, false),
+     _debugProcess(0x200000, true, false),
+     _codeProcess(0x500000, false, true),
+     _dataProcess(0x500000, false, false),
+     _bssProcess(0x1000, true, false),
      _statProcess(0x10000, true, false)  // !! temporal
 {
    _rootPath = machine->getRootPath();

@@ -1115,10 +1115,11 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          else if (lineInfo[index].symbol == dsStructPtr) {
             int localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
             ref_t classPtr = _classNames.get((ident_t)lineInfo[index + 1].addresses.source.nameRef);
+            if (classPtr != 0) {
+               readObject(watch, localPtr, (ident_t)lineInfo[index + 1].addresses.source.nameRef, (ident_t)lineInfo[index].addresses.local.nameRef);
 
-            readObject(watch, localPtr, (ident_t)lineInfo[index + 1].addresses.source.nameRef, (ident_t)lineInfo[index].addresses.local.nameRef);
-
-            watch->append(this, (ident_t)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
+               watch->append(this, (ident_t)lineInfo[index].addresses.local.nameRef, localPtr, classPtr);
+            }
          }
          else if (lineInfo[index].symbol == dsLocalPtr) {
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
