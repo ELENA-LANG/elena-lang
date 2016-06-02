@@ -143,6 +143,8 @@
     [
         theStatemachine := esonScript.
 
+        #throw InvalidArgumentException new.
+        
         theCurrentState := theStatemachine start_state:theStatemachine.
     ]
     

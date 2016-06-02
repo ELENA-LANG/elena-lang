@@ -360,11 +360,13 @@ void DebugController :: onInitBreakpoint()
          _debugger.initDebugInfo(true, reader, _debugInfoPtr);
       }
       // !! notify if the executable is not supported
+      _debugInfoSize = 4;
    }
 
-   DebugReader reader(&_debugger, _debugInfoPtr, _debugInfoSize);
-      // the debug section starts with size field
+   DebugReader reader(&_debugger, _debugInfoPtr, 0);
+   // the debug section starts with size field
    reader.setSize(reader.getDWord());
+   reader.seek(_debugInfoSize);
 
    // if there are new records in debug section
    if (!reader.Eof()) {

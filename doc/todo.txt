@@ -2,7 +2,6 @@
 In development:
 ------                              
               idev - generic development                                          
-                       * calc sample : debugger watch does not recognize an instance of system'dynamic'Tape time to time
                        * fix vm console : Default exception handler #257 
 
               edev - calc
