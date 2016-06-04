@@ -1,16 +1,14 @@
 {
+   level : system'Integer.new,
+
    state0 :
    {
       digit : function(machine, ch, tree) 
               { 
-                 machine.state1
+                 tree.append(calc'TreeLeaf.new(
+                                            {
+                                               order : machine.level.add(3)
+                                            }))
               }
-   },
-
-   state1 : 
-   {
-      digit : function(machine,ch,tree) { machine.state1 },
-   },
-
-   start_state : function(machine) { machine.state0 }
+   }
 }

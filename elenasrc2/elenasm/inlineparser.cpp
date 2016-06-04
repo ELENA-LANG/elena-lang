@@ -133,11 +133,15 @@ int InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, 
          case dfaIdentifier:
             if (command != NEW_TAPE_MESSAGE_ID) {
                if (!empty) {
-                  message.append('&');
+                  message.insert("&",0);
+                  message.insert(token, 0);
+                  counter--; // HOTFIX : if it is the message subject, counter should not be changed
                }
-               else empty = false;
+               else {
+                  empty = false;
 
-               message.append(token);
+                  message.append(token);
+               }
             }
             else writeObject(writer, bm.state, token);
 
@@ -196,6 +200,24 @@ inline void appendBookmark(ScriptStack& stack, Stack<ScriptStack::Iterator>& bra
    else stack.push(bm);
 }
 
+inline void insertBookmark(ScriptStack& stack, ScriptStack::Iterator it, ScriptBookmark bm)
+{
+   int level = 1;
+   while (!it.Eof()) {
+      if ((*it).state == -1) {
+         level++;
+      }
+      else if ((*it).state == -2) {
+         level--;
+         if (level == 0) {
+            stack.insert(it, bm);
+         }
+      }
+
+      it++;
+   }
+}
+
 inline void appendScope(ScriptStack& stack, Stack<ScriptStack::Iterator>& brackets, ScriptBookmark bm)
 {
    if (brackets.Count() != 0) {
@@ -237,6 +259,13 @@ void InlineScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark&
       }
       else if (reader.compare(")")) {
          brackets.pop();
+      }
+      else if (reader.compare(";")) {
+         appendScope(stack, brackets, ScriptBookmark(-1, -1));
+
+         ScriptStack::Iterator it = brackets.pop();
+
+         insertBookmark(stack, it, ScriptBookmark(-1, -2));
       }
       else if (reader.compare("[")) {
          appendScope(stack, brackets, ScriptBookmark(-1, -2));

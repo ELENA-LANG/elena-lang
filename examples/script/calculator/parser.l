@@ -143,7 +143,11 @@
     [
         theStatemachine := esonScript.
         
-        theCurrentState := theStatemachine start_state:theStatemachine.
+        #var o := theStatemachine state0.
+        
+        #var r := o digit:theStatemachine:#32:theDerivationTree.
+        
+//        theCurrentState := theStatemachine start_state:theStatemachine.
     ]
     
     #constructor new
