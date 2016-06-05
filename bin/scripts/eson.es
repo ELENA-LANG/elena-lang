@@ -47,10 +47,11 @@
    #define fobject     ::= <= $numeric =>;
    #define fobject     ::= <= ( % "system'dynamic'tapeOp.<#%&var&args$" $var ) =>;
    #define fobject     ::= "(" fexpression ")" ;
-   #define fobject     ::= <= ( system'dynamic'Dynamic new ) => "{" ffields;
+   #define fobject     ::= <= ( system'dynamic'Dynamic new  => "{" ffields <= ) =>;
    #define ffields     ::= ffield ffield_exp next_ffield ;
-   #define ffield      ::= <= set $identifier =>;
+   #define ffield      ::= <= ; set $identifier =>;
    #define ffield_exp  ::= <= ( => ":" fexpression <= ) =>;   
+   #define ffield_exp  ::= ":" func;   
    #define next_ffield ::= "," ffields;
    #define next_ffield ::= "}";   
 

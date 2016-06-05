@@ -202,9 +202,9 @@ inline void appendBookmark(ScriptStack& stack, Stack<ScriptStack::Iterator>& bra
 
 inline void insertBookmark(ScriptStack& stack, ScriptStack::Iterator it, ScriptBookmark bm)
 {
-   int level = 1;
+   int level = 0;
    while (!it.Eof()) {
-      if ((*it).state == -1) {
+      if ((*it).state == -1 || (*it).state == -4) {
          level++;
       }
       else if ((*it).state == -2) {
