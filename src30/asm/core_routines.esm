@@ -17,9 +17,11 @@ define INV_PARAM_MASK       0FFFFFFF0h
 procedure __object.dispatch[1]
 
   bsredirect  
-  pushe
-  open 1
-  bcopyf -1
+
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -69,9 +71,10 @@ procedure __verb.dispatch[1]
   
 labDefault:
   bsredirect  
-  pushe
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -95,9 +98,10 @@ procedure __extmessage.dispatch[1]
   ajumpi 1
 
 labEnd:
-  pushd
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  dsavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -105,9 +109,10 @@ labEnd:
 
 labDefault:
   bsredirect  
-  pushe
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -129,9 +134,10 @@ procedure __signature.dispatch[1]
   
 labDefault:
   bsredirect  
-  pushe
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -622,9 +628,10 @@ procedure __message.dispatch[1]
   ajumpvi 0
 
 labEnd:
-  pushd
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  dsavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -632,9 +639,10 @@ labEnd:
 
 labDefault:
   bsredirect  
-  pushe
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -3997,8 +4005,11 @@ labQuit:
   
 labEnd:
   popi 2
-  open 1
-  bcopyf -1
+  pope
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -4087,9 +4098,10 @@ labEnd:
 labDefault:
   ecopyd
   bsredirect  
-  pushe
-  open 1
-  bcopyf -1
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]
@@ -4127,8 +4139,12 @@ labNext:
   count
   less labNext
 
-  open 1
-  bcopyf -1
+  pope
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+
   pushb
   pushr class : system'MethodNotFoundException
   pushr const : %new&mssg$[1]

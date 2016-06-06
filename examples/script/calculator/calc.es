@@ -13,6 +13,18 @@
                                             })
                                           .append(ch)); 
                  machine.state1
+              },
+
+      minus : function(machine, ch, tree) 
+              { 
+                 tree.append(calc'TreeLeaf.new(
+                                            {
+                                               order : machine.level.add(3),
+                              
+                                               evalToken : function(ch) { system'realConvertor.convert(ch) }
+                                            })
+                                          .append(ch)); 
+                 machine.state1
               }
    },
 

@@ -2,13 +2,8 @@
 In development:
 ------                              
               edev - calc
-                       * test calculator sample
-                       * parse -2+3
                        * operations with brackets
 
-              xdev - general implementation     
-                       * core_vm'eval - provide default exception handler
-                       *  Exception call stack #255 
 ------                                 
 Pipeline:
 ------                                                                                         

@@ -10,6 +10,9 @@
 [ELC]
 [-] #257 : Raising an exception in static symbol
 
+[LIB]
+[-] #255 : Exception call stack 
+
 [Samples]
 [+] script sample : calc
 

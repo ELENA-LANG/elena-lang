@@ -25,7 +25,7 @@
 [    
 //    console writeLine:"Press any key to start" readChar.
     
-    #var aCase1 := "2".
+    #var aCase1 := "-2+3".
     
     #var aCaseResult1 := aCase1 evaluated.    
     console writeLine:aCase1:" evaluated as ":aCaseResult1.
