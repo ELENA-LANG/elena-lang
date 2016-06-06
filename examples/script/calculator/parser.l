@@ -26,6 +26,12 @@
         (self == #47)
             ? [ ^ %slash. ].
             
+        (self == #40)
+            ? [ ^ %opening. ].
+            
+        (self == #41)
+            ? [ ^ %closing. ].
+            
         ^ %unknown.            
     ]
 }

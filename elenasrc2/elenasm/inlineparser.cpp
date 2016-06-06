@@ -179,7 +179,11 @@ int InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, 
          writer.writeCommand(command, counter);
          counter = 1;
       }
-      else writeMessage(writer, message, paramCounter, command);
+      else {
+         writeMessage(writer, message, paramCounter, command);
+         if (command == SEND_TAPE_MESSAGE_ID)
+            counter = 1;
+      }
    }
 
    return counter;

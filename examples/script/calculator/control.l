@@ -34,4 +34,9 @@
     
     #var aCaseResult2 := aCase2 evaluated.
     console writeLine:aCase2:" evaluated as ":aCaseResult2.
+    
+    #var aCase3 := "(2+3)*4".
+    
+    #var aCaseResult3 := aCase3 evaluated.
+    console writeLine:aCase3:" evaluated as ":aCaseResult3.
 ].

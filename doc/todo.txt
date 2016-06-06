@@ -1,8 +1,10 @@
 ------                                 
 In development:
 ------                              
-              edev - calc
-                       * operations with brackets
+
+              fdev - upndown
+                       * implementing
+                       * play with chaotic computer player
 
 ------                                 
 Pipeline:
@@ -243,9 +245,6 @@ Pipeline:
               fdev - db app
                        * implement passing an object over tcp/ip
                        * implement remote database access
-------                                 
-              fdev - upndown
-                       * start server / connect to server
                        
               xdev - general implementation
                        * implementing 2.0.0 issues
@@ -515,7 +514,6 @@ Pipeline:
 
               fdev - upndown
                        * network game
-                       * implementing
-                       * play with chaotic computer player
                        * add network players
+                       * add AI player
 

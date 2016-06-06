@@ -25,6 +25,13 @@
                                             })
                                           .append(ch)); 
                  machine.state1
+              },
+
+      opening : function(machine, ch, tree) 
+              { 
+                 machine.level.append(10);
+
+                 machine.state0
               }
    },
 
@@ -78,7 +85,14 @@
                                             })) ; 
 
                 machine.state0
-             }
+             },
+
+      closing : function(machine, ch, tree) 
+              { 
+                 machine.level.reduce(10);
+
+                 machine.state1
+              }
    },
 
    start_state : function(machine) { machine.state0 }
