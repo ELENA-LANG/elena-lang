@@ -6,6 +6,9 @@ In development:
                        * implementing
                        * play with chaotic computer player
 
+              xdev - general implementation     
+                       * #259 : memory reservation
+
 ------                                 
 Pipeline:
 ------                                                                                         
@@ -515,5 +518,6 @@ Pipeline:
               fdev - upndown
                        * network game
                        * add network players
+                       * use db for statistic info
                        * add AI player
 

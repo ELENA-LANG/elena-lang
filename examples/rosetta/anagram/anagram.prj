@@ -1,7 +1,7 @@
 ﻿[project]
 executable=anagram.exe
 namespace=anagram
-template=consolex
+template=mta_console
 debuginfo=-1
 warn:unresolved=0
 

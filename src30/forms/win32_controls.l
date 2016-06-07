@@ -333,6 +333,11 @@
 
 #class StaticLabel :: Label
 {
+    #constructor new
+        <= (new)
+    [
+    ]
+    
     #method $createHandle
     [
         #var(hwnd)aParent := theParent hwnd.

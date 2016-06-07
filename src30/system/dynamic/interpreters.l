@@ -1,28 +1,32 @@
 #import system.
 //#import system'routines.
 
-#subject struct = system'dynamic'Struct.
+#subject struct   = system'dynamic'Struct.
+#subject castover = system'dynamic'CastOver.
 
-//// --- CastOver ---
-//
-//#class(group) CastOver :: BaseArray
-//{
-//    #constructor new &args:aMembers
-//        <= (new &int:(aMembers length int))
-//    [
-//        #var(type:int)i := 0.
-//        #var(type:int)l := aMembers length.
-//        
-//        #loop (i < l)?
-//        [
-//            $self setField &int:i &object:(aMembers@i).
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//    
-//    #method => system'core_routines'handle_castover.
-//}
+// --- CastOver ---
+
+#class(sealed,arrayof:object,group) CastOver
+{
+    #constructor(stacksafe) $new &int:aLength
+        = object:aLength.
+        
+    #constructor new &args:aMembers
+        <= ($new &int:(aMembers length))
+    [
+        #var(int)i := 0.
+        #var(int)l := aMembers length.
+        
+        #loop (i < l)?
+        [
+            $self setField &int:i &object:(aMembers@i).
+            
+            i := i + 1.
+        ].
+    ]
+    
+    #method => system'core_routines'__castover.
+}
 
 // --- Tape ---
 
