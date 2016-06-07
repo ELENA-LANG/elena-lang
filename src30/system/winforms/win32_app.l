@@ -10,7 +10,6 @@
 
 #class SDIApplication :: BaseApplication
 {
-    #field(hwnd) theHandle.
     #field       theMainWindow.
     
     #constructor new
@@ -29,20 +28,20 @@
         #var(win_msg)msg.
         #var(int)proceeded.
         #var(int)result.
-        theHandle := theMainWindow hwnd.
+        #var(hwnd)handleCopy := theMainWindow hwnd.
         
         #extern
         [
-            result := system'external'USER32 GetMessageW &win_msg:msg &int:theHandle &int:0 &int:0.
+            result := system'external'USER32 GetMessageW &win_msg:msg &int:0 &int:0 &int:0.
             #loop (result != 0)?
             [
-                proceeded := system'external'USER32 IsDialogMessageW &int:theHandle &win_msg:msg.
+                proceeded := system'external'USER32 IsDialogMessageW &int:handleCopy &win_msg:msg.
                 (proceeded == 0) ?
                 [
                     system'external'USER32 TranslateMessage &win_msg:msg.
                     system'external'USER32 DispatchMessageW &win_msg:msg.
                 ].
-                result := system'external'USER32 GetMessageW &win_msg:msg &int:theHandle &int:0 &int:0.
+                result := system'external'USER32 GetMessageW &win_msg:msg &int:0 &int:0 &int:0.
             ].
             
         ].
@@ -78,8 +77,6 @@
             
     #method stop
     [
-        theHandle := WindowHandle new.
-        
         system'external'USER32 PostQuitMessage &int:0.
     ]
 }
