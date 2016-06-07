@@ -4,12 +4,8 @@
 
 // --- configuator ---
 
-#static configuator = CastOver new &args:upndown'testConfigurator/*:upndown'ai'aiConfigurator*/.
+#static configuator = CastOver new &args:upndown'testConfigurator:upndown'ai'aiConfigurator.
 
-////// --- namespace shortcuts ---
-////#define upndown'ai'*  = cardgame'upndown'ai'*.
-////#define engine'*      = cardgame'engine'*.
-//
 //// === Groups ==
 //
 //#symbol ConnectorGroup = GroupVariable

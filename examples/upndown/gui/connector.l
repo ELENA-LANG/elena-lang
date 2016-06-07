@@ -381,16 +381,16 @@
         {
             addPlayer : aPlayer
             [
-                $self $addPlayer:aPlayer.
+                $owner $addPlayer:aPlayer.
             ]
         }.
     ]
     
-    #method $addPlayer : aPlayer
+    #method $addPlayer : aPlayerInfo
     [
-        SecondPlayer items append:aPlayer &as:(aPlayer Name).
-        ThirdPlayer items append:aPlayer &as:(aPlayer Name).
-        FourthPlayer items append:aPlayer &as:(aPlayer Name).
+        SecondPlayer items append:aPlayerInfo &as:(aPlayerInfo caption).
+        ThirdPlayer items append:aPlayerInfo &as:(aPlayerInfo caption).
+        FourthPlayer items append:aPlayerInfo &as:(aPlayerInfo caption).
     ]
     
     #method $onUserNameChange

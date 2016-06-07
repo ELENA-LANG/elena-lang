@@ -8,6 +8,11 @@
     #method prop_name = target.
 }
 
+#field outprop : prop_name
+{
+    #method prop_name = target.
+}
+
 // --- outnprop ---
 
 #method outnprop : template_subj

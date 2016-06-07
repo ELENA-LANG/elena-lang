@@ -1,6 +1,7 @@
 // --- namespace shortcuts ---
 #define system.
-//
+#define upndown.
+
 //#symbol JokerOptions = (cards'Big_Card, cards'Diamonds_Min, cards'Hearts_Min, cards'Clubs_Min, cards'Spades_Min).
 //
 //// --- EConnector ---
@@ -94,6 +95,13 @@
 {
     configConnector : aConnector
     [
-        aConnector addPlayer:(upndown'BasePlayer new).
+        #var counter := Integer new.
+        
+        aConnector addPlayer:
+        {
+            new = BasePlayer new &name:("Chaotic " + [ counter += 1 ]).
+            
+            caption = "Chaotic AI".
+        }.
     ]
 }.

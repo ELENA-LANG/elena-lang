@@ -665,6 +665,8 @@
             #var aKeyValue := theList getAt &int:i.
             
             theHandle sendMessage &int:CB_ADDSTRING &int:0 &wide:(aKeyValue key wide).
+            
+            i += 1.
         ].
     ]
     

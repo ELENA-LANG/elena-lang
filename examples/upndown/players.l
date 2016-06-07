@@ -7,19 +7,17 @@
 
 #class BasePlayer
 {
-//    #field theName.
+//    #field(literal,outprop:name) theName.
 //    #field theHand.
 //    #field theTrump.
-//
+
 //    #method new & name : aPlayerName
 //    [
 //        theHand := cards'Hand.
-//        theName := WideStrValue::aPlayerName.
+//        theName := aPlayerName literal.
 //        theTrump := 0.
 //    ]
-//
-//    #method name'get = theName.
-//
+
 //    #method hand =
 //    {
 //        count = theHand count.
