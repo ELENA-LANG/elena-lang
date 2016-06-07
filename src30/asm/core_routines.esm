@@ -4603,15 +4603,17 @@ end
 procedure __rtptr.get&free[1]
                       
   callr system'rt_sync
+  pusha
 labWait:
   snop
   trylock
   elsen labWait 0 
 
-  aloadsi 1
+  aloadsi 2
   nload
   callextr api : free_index
 
+  popa
   freelock
 
   quitn 1
