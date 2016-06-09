@@ -53,7 +53,7 @@
     
     #method int = theDBHandle.
     
-    #method is &available = theOpen.
+    #method(bool) is &available = theOpen.
     
     #method open
     [
@@ -155,6 +155,8 @@
     [
         theConnection := aConnection.
             
+        theConnection is &available ! [ #throw DBException new &message:"SQLite database is not open.". ].
+
         $self $prepare &literal:(aText literal).
     ]
     
@@ -185,7 +187,7 @@
         (aRetPrc != SQLITE_DONE)? [ #throw DBException new &message:"Could not execute SQL statement.". ].
     ]
     
-    #method evalNext
+    #method(bool) evalNext
     [
         #var(int) aRetPrc := system'external'sqlite3 sqlite3_step &int:theCommandHandle.
 

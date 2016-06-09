@@ -2022,8 +2022,12 @@ void Compiler :: declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& sco
    //appendTerminalInfo(&writer, hint.Terminal());
 
    SNode attr = node.firstChild();
+   TemplateInfo templateInfo;
    while (attr != lxNone) {
       if (attr == lxTemplateSubject) {
+         int index = 1 + templateInfo.parameters.Count();
+
+         templateInfo.parameters.add(index, attr.argument);
          writer.appendNode(lxTemplateSubject, attr.argument);
       }
       attr = attr.nextNode();
@@ -2036,6 +2040,39 @@ void Compiler :: declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& sco
 
    writer.closeNode(); //HOTFIX : close the root node
 
+   //HOTFIX : declare field template methods
+   _Module* extModule = NULL;
+   _Memory* section = moduleScope->loadTemplateInfo(hintRef, extModule);
+   if (!section)
+      return;
+
+   SyntaxWriter classWriter(*node.Tree(), true);
+
+   SyntaxTree tree(section);
+   SNode current = tree.readRoot();
+   current = current.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, moduleScope->module, getSignature(current.argument), templateInfo));
+
+         classWriter.newNode(lxTemplateMethod, messageRef);
+         SNode attr = current.firstChild();
+         while (attr != lxNone) {
+            if (attr == lxClassMethodAttr) {
+               classWriter.appendNode(lxClassMethodAttr, attr.argument);
+            }
+            else if (attr == lxType) {
+               classWriter.appendNode(lxType, importTemplateSubject(extModule, moduleScope->module, attr.argument, templateInfo));
+            }
+
+            attr = attr.nextNode();
+         }
+         classWriter.closeNode();
+      }
+
+      current = current.nextNode();
+   }
+   classWriter.closeNode(); // close root
 }
 
 void Compiler :: importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info)

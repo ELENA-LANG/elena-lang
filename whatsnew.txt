@@ -9,6 +9,7 @@
 
 [ELENA]
 [-] critical bug fix of class'RTPointer
+[-] critical bug fix in field template routine
 
 [ELC]
 [-] #257 : Raising an exception in static symbol

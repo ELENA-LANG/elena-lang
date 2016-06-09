@@ -22,7 +22,9 @@
     #method(stacksafe) setLocation &int:x &int:y []
     
     #method open []
-    
+
+    #method change []
+        
     #method close []
 }
 
@@ -33,6 +35,8 @@
         object = $owner.
         
         open [ $owner open. ]
+    
+        change [ $owner change. ]
     
         close [ $owner close. ]
     
@@ -608,11 +612,29 @@
 #class BaseList :: BaseWinControl
 {
     #field(array_list)theList.
+    #field(index_changed,event:index_changed)theChangeAction.
     
     #constructor new
         <= (new)
     [
         theList := ArrayList new.
+    ]
+    
+    #method(stacksafe,outnprop:SelectedIndex)readSelectedIndex &vint:retVal
+    [
+        #var(int)index := system'external'USER32 SendMessageW &int:theHandle &int:CB_GETCURSEL &int:0 &int:0.
+        
+        retVal := index.
+    ]
+    
+    #method change 
+    [
+//        ($nil != theChangeAction)?
+//        [
+//            #var(int)index := $self SelectedIndex.
+//            
+//            theChangeAction onIndexChange:$self &int:index.
+//        ].
     ]
     
     #method items =

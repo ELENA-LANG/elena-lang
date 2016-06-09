@@ -1,6 +1,25 @@
 #import system.
 #import system'drawing.
 
+// --- Events ---
+
+#field event : prop_name
+{
+    #method set &prop_name : value
+    [
+        target := value.
+    ]
+}
+
+#subject index_changed = IndexChangedAction.
+
+#class(limited,dispatchable:index_changed) IndexChangedAction
+{
+    #method(action,stacksafe)onIndexChange:sender &int:index
+    [
+    ]
+}
+
 // --- BaseControl ---
 
 #class BaseControl

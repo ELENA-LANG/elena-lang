@@ -126,6 +126,9 @@
 
         (aCommand == EN_CHANGE)
             ? [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
+
+        (aCommand == CBN_SELCHANGE)
+            ? [ $self onchange &hwnd:aControl &vint:aRetVal. ^ $self. ].
     ]
 
     #method(stacksafe) eval &hwnd:anHWND &int:aMessage &hwnd:aControl &int:aLParam &vint:aRetVal

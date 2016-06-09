@@ -64,10 +64,13 @@
 #symbol(const,int)BM_GETCHECK      = 00F0h.
 
 #symbol(const,int)CB_ADDSTRING     = 0143h.
+#symbol(const,int)CB_GETCURSEL     = 0147h.
 
 // --- Notifications ---
 #symbol(const,int)BN_CLICKED       = 0000h.
 #symbol(const,int)EN_CHANGE        = 0300h.
+
+#symbol(const,int)CBN_SELCHANGE    = 0001h.
 
 //#symbol(const,int)SW_SHOW          = 5.
 
