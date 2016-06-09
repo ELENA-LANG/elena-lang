@@ -3458,15 +3458,8 @@ ObjectInfo Compiler :: compileMessage(DNode node, CodeScope& scope, ObjectInfo t
       scope.writer->appendNode(lxCallTarget, classReference);
       scope.writer->appendNode(lxStacksafe);
    }
-   else if (callType == tpClosed) {
-      scope.writer->insert(lxSDirctCalling, messageRef);
-
-      scope.writer->appendNode(lxCallTarget, classReference);
-      if (test(methodHint, tpStackSafe))
-         scope.writer->appendNode(lxStacksafe);
-   }
-   else if (callType == tpSealed) {
-      scope.writer->insert(lxDirectCalling, messageRef);
+   else if (callType == tpClosed || callType == tpSealed) {
+      scope.writer->insert(callType == tpClosed ? lxSDirctCalling : lxDirectCalling, messageRef);
 
       scope.writer->appendNode(lxCallTarget, classReference);
       if (test(methodHint, tpStackSafe))
@@ -5561,20 +5554,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
 
          compileMethodHints(hints, writer, methodScope, true);
 
-         //// if the constructor is stack safe, embeddable and the class is an embeddable structure
-         //// the special method should be compiled
-         //if (test(hint, tpEmbeddable)) {
-         //   // make sure the constructor has no redirect / dispatch statements
-         //   if (node.select(nsResendExpression) != nsNone || node.select(nsDispatchExpression))
-         //      methodScope.raiseError(errInvalidOperation, member.Terminal());
-
-         //   // make sure the class is embeddable
-         //   if (!test(classScope.info.header.flags, elStructureRole | elEmbeddable) || !methodScope.stackSafe)
-         //      methodScope.raiseError(errInvalidOperation, member.Terminal());
-
-         //   compileEmbeddableConstructor(member, writer, methodScope, classClassScope);
-         //}
-         /*else */compileConstructor(member, writer, methodScope, classClassScope);
+         compileConstructor(member, writer, methodScope, classClassScope);
 
          writer.removeBookmark();
       }
@@ -7601,25 +7581,6 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, S
          callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
       }
    }
-
-   //subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddedInit));
-   //// if it is possible to replace constructor call with embeddaded initialization without creating a temporal dynamic object
-   //if (subject != 0) {
-   //   // move assigning target into the call node
-   //   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-   //   SNode callTarget = callNode.findPattern(SNodePattern(lxConstantClass));
-   //   if (callTarget != lxNone && assignTarget != lxNone) {
-   //      // removing assinging operation
-   //      assignNode = lxExpression;
-
-   //      // move assigning target into the call node
-   //      callTarget = assignTarget.type;
-   //      callTarget.setArgument(assignTarget.argument);
-   //      assignTarget = lxExpression;
-
-   //      callNode.setArgument(overwriteSubject(callNode.argument, subject));
-   //   }
-   //}
 }
 
 void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLevel)
@@ -7657,7 +7618,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    }
 
    if (node.argument != 0) {
-      SNode directCall = findSubNode(node, lxDirectCalling);
+      SNode directCall = findSubNode(node, lxDirectCalling, lxSDirctCalling);
       if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
          optimizeEmbeddableCall(scope, node, directCall);
       }
@@ -8275,6 +8236,9 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    ref_t returnType = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maType));
    if (recognizeEmbeddableGet(*classScope.moduleScope, *methodNode.Tree(), methodNode, returnType, type)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
+
+      // HOTFIX : allowing to recognize embeddable get in the class itself
+      classScope.save();
    }
 
    // Optimization : subject'get = self

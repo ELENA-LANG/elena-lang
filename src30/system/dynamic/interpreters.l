@@ -6,7 +6,7 @@
 
 // --- CastOver ---
 
-#class(sealed,arrayof:object,group) CastOver
+#class(sealed,arrayof:object,group) Cast
 {
     #constructor(stacksafe) $new &int:aLength
         = object:aLength.

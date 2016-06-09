@@ -65,6 +65,7 @@
 
 #symbol(const,int)CB_ADDSTRING     = 0143h.
 #symbol(const,int)CB_GETCURSEL     = 0147h.
+#symbol(const,int)CB_GETITEMDATA   = 0150h.
 
 // --- Notifications ---
 #symbol(const,int)BN_CLICKED       = 0000h.

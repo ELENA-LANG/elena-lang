@@ -620,23 +620,6 @@
         theList := ArrayList new.
     ]
     
-    #method(stacksafe,outnprop:SelectedIndex)readSelectedIndex &vint:retVal
-    [
-        #var(int)index := system'external'USER32 SendMessageW &int:theHandle &int:CB_GETCURSEL &int:0 &int:0.
-        
-        retVal := index.
-    ]
-    
-    #method change 
-    [
-//        ($nil != theChangeAction)?
-//        [
-//            #var(int)index := $self SelectedIndex.
-//            
-//            theChangeAction onIndexChange:$self &int:index.
-//        ].
-    ]
-    
     #method items =
     {
         append : anObject &as:aCaption
@@ -667,6 +650,30 @@
     #constructor new
         <= (new)
     [
+    ]
+    
+    #method(stacksafe,outnprop:selected_index) readSelectedIndex &vint:retVal
+    [
+        #var(int)index := system'external'USER32 SendMessageW &int:theHandle &int:CB_GETCURSEL &int:0 &int:0.
+        
+        retVal := index.
+    ]
+    
+    #method selected 
+    [
+        #var(int)index := $self selected_index.
+            
+        ^ theList getAt &int:index key.
+    ]
+    
+    #method change 
+    [
+        ($nil != theChangeAction)?
+        [
+            #var(int)index := $self selected_index.
+            
+            theChangeAction onIndexChange:$self &int:index.
+        ].
     ]
     
     #method $appendItem &wide:aCaption

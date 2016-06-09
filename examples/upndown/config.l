@@ -4,7 +4,7 @@
 
 // --- configuator ---
 
-#static configuator = CastOver new &args:upndown'testConfigurator:upndown'ai'aiConfigurator.
+#static configuator = Cast new &args:upndown'testConfigurator:upndown'ai'aiConfigurator.
 
 //// === Groups ==
 //

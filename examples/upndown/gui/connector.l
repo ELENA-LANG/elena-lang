@@ -13,6 +13,21 @@
 
 // --- Dialog ---
 
+#class(extension)$helper
+{
+    #method(bool)ifPlayerSelected
+    [
+        self is &visible
+            ? [
+                #var text := self selected.
+                
+                ^ text is &nonempty and:("Not responded" != text).
+            ].
+            
+        ^ true.
+    ]
+}
+
 #class Connector
 {
     #field theForm.
@@ -343,15 +358,19 @@
             [ theForm close. 'program stop. ].
 
         rbgConnectType set &onIndexChanged: 
-            args [ $self $onConnectTypeChange:(rbgConnectType selected_index). ].
+            args [ $owner $onConnectTypeChange:(rbgConnectType selected_index). ].
 
         txtUserName set &onChange:
-            args [ $self $onUserNameChange. ].
+            args [ $owner $onUserNameChange. ].
 
-//        (SecondPlayer, ThirdPlayer, FourthPlayer)~egroupevents +=
-//        { 
-//            onChange'eval [ self $onPlayerSelect. ] 
-//        }.
+        #var onChange := (&onIndexChange:sender &int:index)
+        [
+            $owner $onPlayerSelect.
+        ].
+
+        SecondPlayer set &index_changed:onChange.
+        ThirdPlayer set &index_changed:onChange.
+        FourthPlayer set &index_changed:onChange.
 
         GameVariant set &onIndexChanged: 
             args [ $self $onGameVariantChange:(GameVariant selected_index). ].
@@ -395,28 +414,14 @@
     
     #method $onUserNameChange
     [
-        #var f := txtUserName value is &nonempty.
-
-        cmdSearch set &enabled:f.        
+        cmdSearch enabled := txtUserName value is &nonempty.
     ]
 
-//    #method $onPlayerSelect 
-//    [
-//        #var aCheck := { 
-//            if : aCombo
-//            [
-//                #if aCombo visible'is
-//                    | [ ^ $self. ].
-//
-//                #var aText := aCombo selected_item.
-//
-//                ctrl'Control if:((aText length != 0) and:("Not responded" != aText)).
-//            ]
-//        }.
-//
-//        cmdAccept enabled'set:(aCheck if:SecondPlayer if:ThirdPlayer if:FourthPlayer back:true | back:false).
-//    ]
-//
+    #method $onPlayerSelect 
+    [
+        cmdAccept enabled := (SecondPlayer ifPlayerSelected) and:(ThirdPlayer ifPlayerSelected) and:(FourthPlayer ifPlayerSelected)
+    ]
+
 //    #method $acceptPlayers
 //    [
 //        cmdStart set &enabled:true.

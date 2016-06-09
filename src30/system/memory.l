@@ -826,6 +826,14 @@
         => system'core_routines'__literal.
 
     /// Compares the values
+    #method(bool) equal &wide : aLiteral
+        = $self wide equal &wide:aLiteral.
+
+    /// Compares the values
+    #method(bool) less &wide : aLiteral
+        = $self wide less &wide:aLiteral.
+
+    /// Compares the values
     #method(bool) equal &char : aChar
         <= %equal &literal:(aChar literal).
 

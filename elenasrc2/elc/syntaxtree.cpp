@@ -23,6 +23,16 @@ SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type)
    else return child;
 }
 
+SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2)
+{
+   SyntaxTree::Node child = SyntaxTree::findChild(node, type1, type2, lxExpression);
+   if (child == lxExpression)
+   {
+      return SyntaxTree::findChild(child, type1, type2);
+   }
+   else return child;
+}
+
 SyntaxTree::Node _ELENA_::findSubNodeMask(SyntaxTree::Node node, int mask)
 {
    SyntaxTree::Node child = SyntaxTree::findMatchedChild(node, mask);

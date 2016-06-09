@@ -646,6 +646,7 @@ public:
 };
 
 SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
+SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2);
 SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
 
 typedef SyntaxTree::Writer       SyntaxWriter;
