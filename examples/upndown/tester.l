@@ -95,5 +95,8 @@
 {
     configConnector : aConnector
     [
+        (aConnector GameVariant) selected_index := 0.
+        (aConnector SecondPlayer) selected_index := 0.
+        (aConnector UserName) caption := "Alex".
     ]
 }.

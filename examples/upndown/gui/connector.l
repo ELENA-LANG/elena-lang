@@ -4,13 +4,6 @@
 
 #import upndown.
 
-//// --- Control IDs ---
-//#symbol SecondPlayerID = 1.
-//#symbol ThirdPlayerID  = 2.
-//#symbol ForthPlayerID  = 3.
-//#symbol GameVariantID  = 4.
-//#symbol UserNameID     = 5.
-
 // --- Dialog ---
 
 #class(extension)$helper
@@ -379,30 +372,43 @@
 //        {
 //            onClick = self $searchClients. 
 //        }.
-//        cmdStart~eevents +=
-//        {
-//            onClick'eval = self $startGame. 
-//        }.
+        cmdStart onClick := sender
+        [
+            $owner $startGame. 
+        ].
 //        #group(events'EHandler, cmdConnect) +=
 //        {
 //            ongui'Click = self $connectToServer. 
 //        }.
-//        cmdAccept~eevents +=
-//        {
-//            onClick'eval = self $acceptPlayers. 
-//        }.
-//        cmdDeny~eevents +=
-//        {
-//            onClick'eval = self $denyPlayers. 
-//        }.
+        cmdAccept onClick := sender
+        [
+            $owner $acceptPlayers. 
+        ].
+        cmdDeny onClick := sender
+        [
+            $owner $denyPlayers. 
+        ].
 
-        configuator configConnector:
-        {
-            addPlayer : aPlayer
-            [
-                $owner $addPlayer:aPlayer.
-            ]
-        }.
+        theForm onOpen := sender
+        [
+            configuator configConnector:
+            {
+                addPlayer : aPlayer
+                [
+                    $owner $addPlayer:aPlayer.
+                ]
+                
+                SecondPlayer = SecondPlayer.
+                
+                ThirdPlayer  = ThirdPlayer.
+                
+                ForthPlayer  = FourthPlayer.
+                
+                GameVariant  = GameVariant.
+                
+                UserName     = txtUserName.
+            }.
+        ].
     ]
     
     #method $addPlayer : aPlayerInfo
@@ -422,23 +428,50 @@
         cmdAccept enabled := (SecondPlayer ifPlayerSelected) and:(ThirdPlayer ifPlayerSelected) and:(FourthPlayer ifPlayerSelected)
     ]
 
-//    #method $acceptPlayers
-//    [
-//        cmdStart set &enabled:true.
-//        cmdAccept close.
-//        cmdDeny open.
-//    ]
+    #method $acceptPlayers
+    [
+        cmdStart enabled := true.
+        cmdAccept visible := false.
+        cmdDeny visible := true.
+        
+        SecondPlayer enabled := false.
+        ThirdPlayer enabled := false.
+        FourthPlayer enabled := false.
+        
+        rbgConnectType enabled := false.
+        GameVariant enabled := false.
+        
+        txtUserName enabled := false.
+        txtPassword enabled := false.
+    ]
+    
+    #method $denyPlayers
+    [
+        cmdStart enabled := false.
+        cmdAccept visible := true.
+        cmdDeny visible := false.
+        
+        SecondPlayer enabled := true.
+        ThirdPlayer enabled := true.
+        FourthPlayer enabled := true.
+        
+        rbgConnectType enabled := true.
+        GameVariant enabled := true.
+        
+        txtUserName enabled := true.
+        txtPassword enabled := true.
+    ]
 
     #method $onConnectTypeChange : anIndex
     [
         (anIndex != 0)
             ? [
-                pnlClient set &visible:true.
-                pnlHost set &visible:false.
+                pnlClient visible := true.
+                pnlHost visible := false.
               ]
             ! [
-                pnlClient set &visible:false.
-                pnlHost set &visible:true.
+                pnlClient visible := false.
+                pnlHost visible := true.
                 
                 GameVariant set &selected_index:0.
             ].
@@ -448,27 +481,27 @@
     [
         anIndex =>
             0 ? [
-                ThirdPlayer set &visible:false.
-                TPLabel set &visible:false.
-                FourthPlayer set &visible:false.
-                FPLabel set &visible:false.
+                ThirdPlayer visible := false.
+                TPLabel visible := false.
+                FourthPlayer visible := false.
+                FPLabel visible := false.
             ]
             1 ? [
-                ThirdPlayer set &visible:true.
-                TPLabel set &visible:true.
-                FourthPlayer set &visible:false.
-                FPLabel set &visible:false.
+                ThirdPlayer visible := true.
+                TPLabel visible := true.
+                FourthPlayer visible := false.
+                FPLabel visible := false.
             ]
             2 ? [
-                ThirdPlayer set &visible:true.
-                TPLabel set &visible:true.
-                FourthPlayer set &visible:true.
-                FPLabel set &visible:true.
+                ThirdPlayer visible := true.
+                TPLabel visible := true.
+                FourthPlayer visible := true.
+                FPLabel visible := true.
             ].
     ]
 
-//    #method $startGame
-//    [
+    #method $startGame
+    [
 //        // add human player
 //        engine'GameMaster players
 //            += config'HostPlayerGroup::
@@ -498,7 +531,7 @@
 //
 //            ^ nil.
 //        ]).
-//    ]
+    ]
 
     #method => theForm.
 }

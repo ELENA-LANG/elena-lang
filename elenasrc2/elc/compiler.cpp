@@ -1404,9 +1404,15 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
    // if owner reference is not yet mapped, add it
    if (owner.outerObject.kind == okUnknown) {
       owner.reference = info.fields.Count();
-      owner.outerObject.kind = okThisParam;
-      owner.outerObject.param = 1;
-      owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
+
+      TerminalInfo identifier;
+      identifier.symbol = tsPrivate;
+      identifier.value = THIS_VAR;
+
+      owner.outerObject = parent->mapObject(identifier);
+      if (owner.outerObject.extraparam == 0)
+         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
+
       // Compiler magic : if the owner is a template - switch to template closure mode
       if (isTemplateRef(owner.outerObject.extraparam)) {
          templateMode = true;

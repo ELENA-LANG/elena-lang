@@ -6,12 +6,27 @@
 
 #class BaseWinForm :: BaseWinContainer
 {
+    #field(func1)theOpenEvent.
+    
     #constructor new
         <= (new)
     [
     ]
     
     #method controls = theControls.
+
+    #method set &onOpen:aFunction
+    [
+        theOpenEvent := aFunction func1.
+    ]        
+    
+    #method open
+    [
+        $super open.
+        
+        ($nil != theOpenEvent)
+            ? [ theOpenEvent eval:self. ].
+    ]
     
     #method close
     [
@@ -71,16 +86,9 @@
 {
     #field theMenu.
     
-    #field(func1)theOpenEvent.
-    
     #constructor new
         <= (new)
     [
-    ]
-    
-    #method set &onOpen:aFunction
-    [
-        theOpenEvent := aFunction func1.
     ]
     
     #method sdiform = $self.
@@ -112,14 +120,6 @@
                         &hwnd:(WindowHandle min) 
                         &hinstance:CurrentInstance 
                         &object:(SDIWindowListener new &sdiform:$self).
-    ]
-    
-    #method open
-    [
-        $super open.
-        
-        ($nil != theOpenEvent)
-            ? [ theOpenEvent eval:self. ].
     ]
 }
 

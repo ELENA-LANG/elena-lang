@@ -659,6 +659,13 @@
         retVal := index.
     ]
     
+    #method(stacksafe,innprop:selected_index) setSelectedIndex &int:index
+    [
+        system'external'USER32 SendMessageW &int:theHandle &int:CB_SETCURSEL &int:index &int:0.
+        
+        $self change.
+    ]
+    
     #method selected 
     [
         #var(int)index := $self selected_index.
