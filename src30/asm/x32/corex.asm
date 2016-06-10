@@ -12,9 +12,6 @@ define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
 define EXIT                 1001Dh
-define CALC_SIZE            1001Eh
-define SET_COUNT            1001Fh
-define GET_COUNT            10020h
 define THREAD_WAIT          10021h
 define NEW_HEAP             10025h
 define BREAK                10026h
@@ -67,20 +64,18 @@ define page_size               10h
 define page_size_order          4h
 define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
-define page_ceil               1Fh
+define page_ceil               0Fh
 
 // Object header fields
-define elObjectOffset        0010h
-define elSyncOffset          0010h
-define elSizeOffset          000Ch
-define elCountOffset         0008h
+define elObjectOffset        0008h
+define elSyncOffset          0008h
+define elSizeOffset          0008h
 define elVMTOffset           0004h 
 define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 
-define elPageSizeOffset      0004h //  ; = elObjectOffset - elSizeOffset
-
 define subj_mask         80FFFFF0h
+define page_align_mask   000FFFFFh
 
 // --- System Core Preloaded Routines --
 
@@ -112,7 +107,7 @@ structure %CORE_GC_TABLE
 end
 
 // --- GC_ALLOC ---
-// in: ecx - counter ; ebx - size ; out: eax - created object ; edi contains the object or zero ; ecx is not used but its value saved
+// in: ecx - counter ; ebx - size ; ecx - actual size ; out: eax - created object ; edi contains the object or zero
 procedure %GC_ALLOC
 
   // ; GCXT: set lock
@@ -125,18 +120,15 @@ labWait:
   jnz  short labWait
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  esi, ebx
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  esi, eax
-  cmp  esi, edx
+  add  ecx, eax
+  cmp  ecx, edx
   jae  short labYGCollect
   mov  [eax + elPageSizeOffset], ebx
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], esi
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   
   // ; GCXT: clear sync field
-  mov  [eax], 0                  
   mov  edx, 0FFFFFFFFh
-  mov  esi, data : %CORE_GC_TABLE + gc_lock
   lea  eax, [eax + elObjectOffset]
   
   // ; GCXT: free lock
@@ -428,9 +420,9 @@ labCollectFrame:
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  [eax + elPageSizeOffset], ebx
-  add  ebx, eax
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ebx
+  mov  [eax], ebx
+  add  ecx, eax
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  edi, [eax + elObjectOffset]
 
   // ; GCXT: signal the collecting thread that GC is ended
@@ -481,11 +473,12 @@ labMGCollectFrame:
 
   // ; skip the permanent part
 labMGSkipNext:
-  mov  ecx, [esi + elPageSizeOffset]
+  mov  ecx, [esi]
   test ecx, ecx
   jns  short labMGSkipEnd
+  add  ecx, page_ceil
   mov  eax, esi
-  neg  ecx
+  and  ecx, page_align_mask
   lea  eax, [eax + elObjectOffset]
   add  esi, ecx
   mov  [edi], eax
@@ -506,11 +499,12 @@ labMGCompactNext:
   jae  short labMGCompactEnd
 
 labMGCompactNext2:
-  mov  ecx, [esi + elPageSizeOffset]
+  mov  ecx, [esi]
   test ecx, ecx
   jns  short labMGCompactNext
+  add  ecx, page_ceil
   mov  eax, ebp
-  neg  ecx
+  and  ecx, page_align_mask
   lea  eax, [eax + elObjectOffset]
   mov  [edi], eax
   mov  eax, ecx
@@ -546,11 +540,12 @@ labYGPromNext:
   cmp  esi, edx
   jae  short labYGPromEnd
 labYGPromNext2:
-  mov  ecx, [esi + elPageSizeOffset]
+  mov  ecx, [esi]
   test ecx, ecx
   jns  short labYGPromNext
+  add  ecx, page_ceil
   mov  eax, ebp
-  neg  ecx
+  and  ecx, page_align_mask
   // ; raise an exception if it is not enough memory to promote object
   lea  eax, [eax + elObjectOffset]
   sub  ebx, ecx
@@ -616,12 +611,13 @@ labClearWBar:
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  [eax + elPageSizeOffset], ebx
+  mov  [eax], ebx
+  mov  ecx, [esp]
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  ebx, eax
-  cmp  ebx, edx
+  add  ecx, eax
+  cmp  ecx, edx
   jae  short labError2
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ebx
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  edi, [eax + elObjectOffset]
 
   // ; GCXT: signal the collecting thread that GC is ended
@@ -648,11 +644,9 @@ labError:
   pop  edi 
 
 labError2:
-  push 0
-  push 0
-  push 1
-  push 0C0000017h
-  call extern 'dlls'KERNEL32.RaiseException
+
+  mov  ebx, 0C0000017h
+  call code : % BREAK
   ret  
 
   // start collecting: esi => ebp, [ebx, edx] ; ecx - count
@@ -689,58 +683,50 @@ labYGCheck:
   // ; save previous ecx field
   push ecx
 
-  // ; === GCXT: Copy Object Header ===
   // ; copy object size
-  mov  [ebp + elPageSizeOffset], edi
-
-  // ; copy sync field
-  mov  ecx, [eax - elSyncOffset]
-  mov  [ebp], ecx
+  mov  [ebp], edi
   
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 0Ch], ecx
+  mov  [ebp + 04h], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
 
   // ; reserve shadow YG
   mov  ecx, edi
+  add  ecx, page_ceil
   lea  edi, [ebp + elObjectOffset]
+  and  ecx, page_align_mask  
+  mov  [esi], edi          // ; update reference 
   add  ebp, ecx
 
-  // ; update reference
-  mov  [esi], edi
-
   // ; get object size
-  mov  ecx, [eax - elCountOffset]
+  mov  ecx, [eax]
+  and  ecx, 8FFFFFh
 
   // ; save ESI
   push esi
   mov  esi, eax
 
-  // ; copy object size
-  mov  [edi - elCountOffset], ecx
-
   // ; save new reference
   mov  [eax - elVMTOffset], edi
 
   // ; check if the object has fields
-  cmp  ecx, 0 // probaly will be enough just test ecx, ecx and analize c flag
+  test  ecx, 00800000h
 
   // ; save original reference
   push eax
 
   // ; collect object fields if it has them
-  jg   labYGCheck
+  jz   labYGCheck
 
   lea  esp, [esp+4]
   jz   short labYGSkipCopyData
 
   // ; copy meta data object to shadow YG
-  neg  ecx  
   add  ecx, 3
-  and  ecx, 0FFFFFFFCh
+  and  ecx, 0FFFFCh
 
 labYGCopyData:
   mov  eax, [esi]
@@ -821,58 +807,50 @@ labYGPromMinBegin:
   // ; save previous ecx field
   push ecx
 
-  // ; === GCXT: Copy Object Header ===
   // ; copy object size
-  mov  [ebp + 4], edi
-
-  // ; copy sync field
-  mov  ecx, [eax - elSyncOffset]
-  mov  [ebp], ecx
+  mov  [ebp], edi
   
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 0Ch], ecx
+  mov  [ebp + 04h], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
 
   // ; reserve MG
   mov  ecx, edi
+  add  ecx, page_ceil
   lea  edi, [ebp + elObjectOffset]
+  and  ecx, page_align_mask
+  mov  [esi], edi  // ; update reference
   add  ebp, ecx
 
-  // ; update reference
-  mov  [esi], edi
-
   // ; get object size
-  mov  ecx, [eax - elCountOffset]
+  mov  ecx, [eax - elSizeOffset]
+  and  ecx, 8FFFFFh
 
   // ; save ESI
   push esi
   mov  esi, eax
 
-  // ; copy object size
-  mov  [edi - elCountOffset], ecx
-
   // ; save new reference
   mov  [eax - elVMTOffset], edi
 
   // ; check if the object has fields
-  cmp  ecx, 0
+  test  ecx, 00800000h
 
   // ; save original reference
   push eax
 
   // ; collect object fields if it has them
-  jg   labYGPromMinCheck
+  jz   labYGPromMinCheck
 
   lea  esp, [esp+4]
   jz   short labYGPromMinSkipCopyData
 
   // ; copy meta data object to MG
-  neg  ecx  
   add  ecx, 3
-  and  ecx, 0FFFFFFFCh
+  and  ecx, 0FFFFCh
 
 labYGPromMinCopyData:
   mov  eax, [esi]
@@ -962,20 +940,22 @@ labMGCheck:
   js   short labMGNext
 
   // ; mark as collected
-  neg  edi
-  cmp  [eax - elCountOffset], 0
-  mov  [eax - elSizeOffset], edi
+  or  [eax - elSizeOffset], 080000000h
 
+  shl  edi, 8
+  cmp  edi, 0
   jle  short labMGNext
 
   // ; save previous ecx field
   push ecx
 
   // ; get object size
-  mov  ecx, [eax - elCountOffset]
+  mov  ecx, [eax - elSizeOffset]
 
   // ; save ESI
   push esi
+  and  ecx, 0FFFFFh
+
   mov  esi, eax
 
   // ; collect object fields if it has them
@@ -1027,17 +1007,18 @@ labFixCheck:
   test edi, edi
   jns  short labFixNext
 
-  neg  edi
+  and  edi, 7FFFFFFFh
   mov  [eax - elSizeOffset], edi
 
-  cmp  [eax - elCountOffset], 0
+  shl  edi, 8
   jle  short labFixNext
 
   // ; save previous ecx field
   push ecx
 
   // ; get object size
-  mov  ecx, [eax - elCountOffset]
+  mov  ecx, [eax - elSizeOffset]
+  and  ecx, 0FFFFFh
 
   // ; save ESI
   push esi
@@ -1516,43 +1497,6 @@ labWait:
 
 end
 
-// ; ebx - a new length
-procedure % CALC_SIZE
-
-  shl  ebx, 2
-  add  ebx, page_ceil
-  and  ebx, page_mask  
-  ret
-
-end
-
-procedure % SET_COUNT
-
-  mov  esi, [eax - elSizeOffset]
-  mov  edx, ebx
-  lea  esi, [esi - elObjectOffset]
-
-  shl  edx, 2
-  cmp  esi, edx
-  jl   short labErr
-
-  mov  [eax - elCountOffset], edx
-  ret
-
-labErr:
-  xor  ebx, ebx
-  ret
-
-end
-
-procedure % GET_COUNT
-
-  mov  ebx, [eax - elCountOffset]
-  shr  ebx, 2
-  ret
-
-end
-
 // ; ==== Command Set ==
 
 // ; snop
@@ -1623,7 +1567,9 @@ end
 
 inline % 11h
 
-  mov  ebx, [eax-8]
+  mov  edx, 0FFFFFh
+  mov  ebx, [eax-elSizeOffset]
+  and  ebx, edx
   shr  ebx, 2
 
 end
@@ -1682,8 +1628,10 @@ end
 // ; count
 inline % 1Ch
 
-  mov  ecx, [edi-8]
-  shr  ecx, 2
+  mov  edx, 0FFFFFh
+  mov  ebx, [edi-elSizeOffset]
+  and  ebx, edx
+  shr  ebx, 2
 
 end
 
@@ -1713,10 +1661,9 @@ inline % 1Fh
   shl  ebx, 2  
   push eax  
   mov  ecx, ebx
-  add  ebx, page_ceil
-  and  ebx, page_mask  
+  add  ecx, page_ceil
+  and  ecx, page_mask  
   call code : %GC_ALLOC
-  mov  [eax-8], ecx
   pop  edx
   mov  [eax-4], edx
   
@@ -1752,7 +1699,7 @@ inline % 27h
   mov esi, [esp]
   xor eax, eax
   mov ebx, 1
-  lock cmpxchg dword ptr[esi - elSyncOffset], ebx
+  lock cmpxchg byte ptr[esi - elSyncOffset], bl
   mov  ebx, eax
   mov  eax, esi
 
@@ -1764,7 +1711,7 @@ inline % 28h
   mov  edx, -1
 
   // ; free lock
-  lock xadd [eax - elSyncOffset], edx
+  lock xadd byte ptr [eax - elSyncOffset], dl
 
 end
 
@@ -1794,7 +1741,9 @@ inline % 2Eh
 
   mov  ecx, [edi-8]
   mov  esi, eax
+  add  ecx, 3
   mov  ebx, edi
+  and  ecx, 0FFFFCh
 labCopy:
   mov  edx, [esi]
   mov  [ebx], edx
@@ -1817,7 +1766,9 @@ end
 
 inline % 30h
 
+  mov  edx, 0FFFFFh
   mov  ecx, [eax-8]
+  and  ecx, edx
   shr  ecx, 2
 
 end
@@ -1825,8 +1776,9 @@ end
 // ; blen
 inline % 31h
 
+  mov  edx, 0FFFFFh
   mov  ebx, [eax-8]
-  neg  ebx
+  and  ecx, edx
 
 end
 
@@ -1834,8 +1786,9 @@ end
 // ;in : eax - object, esi - size
 inline % 32h
 
+  mov  edx, 0FFFFFh
   mov  ebx, [eax-8]
-  neg  ebx
+  and  ecx, edx
   shr  ebx, 1
   
 end
@@ -1853,8 +1806,9 @@ end
 // ;in : eax - object, esi - size
 inline % 34h
 
+  mov  edx, 0FFFFFh
   mov  ebx, [eax-8]
-  neg  ebx
+  and  ecx, edx
   shr  ebx, 2
   
 end
@@ -2062,11 +2016,9 @@ inline % 4Fh
   shl  ebx, 2
   push eax  
   mov  ecx, ebx
-  add  ebx, page_ceil
-  neg  ecx
-  and  ebx, page_mask  
+  add  ecx, struct_page_ceil
+  and  ecx, page_mask  
   call code : %GC_ALLOC
-  mov  [eax-8], ecx
   pop  edx
   mov  [eax-4], edx
 
@@ -2096,14 +2048,16 @@ inline % 52h
 
   mov  ecx, [edi-8]
   mov  esi, edi
+  add  ecx, 3
   mov  ebx, eax
+  and  ecx, 0FFFFCh
 labCopy:
   mov  edx, [esi]
   mov  [ebx], edx
   lea  esi, [esi+4]
   lea  ebx, [ebx+4]
   add  ecx, 4
-  js   short labCopy
+  jnz  short labCopy
 
 end
 
@@ -2152,11 +2106,9 @@ inline % 5Fh
   shl  ebx, 1
   push eax  
   mov  ecx, ebx
-  add  ebx, page_ceil
-  neg  ecx
-  and  ebx, page_mask  
+  add  ecx, struct_page_ceil
+  and  ecx, page_mask  
   call code : %GC_ALLOC
-  mov  [eax-8], ecx
   pop  edx
   mov  [eax-4], edx
 
@@ -2260,11 +2212,9 @@ inline % 6Fh
 
   push eax  
   mov  ecx, ebx
-  add  ebx, page_ceil
-  neg  ecx
-  and  ebx, page_mask  
+  add  ecx, struct_page_ceil
+  and  ecx, page_mask  
   call code : %GC_ALLOC
-  mov  [eax-8], ecx
   pop  edx
   mov  [eax-4], edx
 
@@ -3187,10 +3137,8 @@ end
 
 inline % 0F0h
 	
-  mov  ecx, __arg1
+  mov  ebx, __arg1
   call code : %GC_ALLOC
-
-  mov  [eax-8], ecx
 
 end
 
@@ -3198,10 +3146,8 @@ end
 
 inline % 0F1h
 
-  mov  ecx, __arg1
+  mov  ebx, __arg1
   call code : %GC_ALLOC
-
-  mov  [eax-8], ecx
   
 end
 

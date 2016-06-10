@@ -184,134 +184,128 @@ procedure __lazyexpression.dispatch[1]
 
 end
 
-procedure __literalconvertor.convert&int$[2]
+procedure __literalconvertor.convert&int$&bytearray$&vint$[4]
 
-  dcopy 10
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
   
   callextr api : inttostr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 
 end
 
-procedure __literalconvertor.convert&short$[2]
+procedure __literalconvertor.convert&short$&bytearray$&vint$[4]
 
-  dcopy 10
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
   
   callextr api : inttostr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 
 end
 
-procedure __literalconvertor.convert&byte$[2]
+procedure __literalconvertor.convert&byte$&bytearray$&vint$[4]
 
-  dcopy 10
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
   
   callextr api : inttostr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 
 end
 
-procedure __literalconvertor.convert&long$[2]
+procedure __literalconvertor.convert&long$&bytearray$&vint$[4]
 
-  dcopy 64
-  acopyr class : system'LiteralValue  
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
-
+  
   callextr api : longtostr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
 
 end
 
-procedure __literalconvertor.convert&int$&int$[3]
+procedure __literalconvertor.convert&int$&int$&bytearray$&vint$[5]
 
-  dcopy 32
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
-
+  
   callextr api : inttostr
 
-  acopyb
-  quitn 3
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
-procedure __literalconvertor.convert&short$&int$[3]
+procedure __literalconvertor.convert&short$&int$&bytearray$&vint$[5]
 
-  dcopy 32
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
-
+  
   callextr api : inttostr
 
-  acopyb
-  quitn 3
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
-procedure __literalconvertor.convert&byte$&int$[3]
+procedure __literalconvertor.convert&byte$&int$&bytearray$&vint$[5]
 
-  dcopy 32
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
-
+  
   callextr api : inttostr
 
-  acopyb
-  quitn 3
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
-procedure __literalconvertor.convert&long$&int$[3]
+procedure __literalconvertor.convert&long$&int$&bytearray$&vint$[5]
 
-  dcopy 64
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
+  
   callextr api : longtostr
-  acopyb
-  quitn 3
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
@@ -329,128 +323,127 @@ procedure __literalconvertor.convert&real$[2]
 
 end
 
-procedure __wideconvertor.convert&int$[2]
+procedure __wideconvertor.convert&int$&shortarray$&vint$[4]
 
-  dcopy 10
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
-
+  
   callextr api : inttowstr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor.convert&short$&shortarray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
   
 end
 
-procedure __wideconvertor.convert&short$[2]
+procedure __wideconvertor.convert&byte$&shortarray$&vint$[4]
 
-  dcopy 10
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
-
+  
   callextr api : inttowstr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
   
 end
 
-procedure __wideconvertor.convert&byte$[2]
+procedure __wideconvertor.convert&long$&shortarray$&vint$[4]
 
-  dcopy 10
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 10
-
-  callextr api : inttowstr
-
-  acopyb
-  quitn 2
   
-end
-
-procedure __wideconvertor.convert&long$[2]
-
-  dcopy 64
-  acopyr class : system'WideLiteralValue  
-  wcreate
-  bcopya
-  aloadsi 2
-  dcopy 10
-
   callextr api : longtowstr
 
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 
 end
 
-procedure __wideconvertor.convert&int$&int$[3]
+procedure __wideconvertor.convert&int$&int$&shortarray$&vint$[5]
 
-  dcopy 32
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
+  
   callextr api : inttowstr
-  acopyb
-  quitn 3
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
-procedure __wideconvertor.convert&short$&int$[3]
+procedure __wideconvertor.convert&short$&int$&shortarray$&vint$[5]
 
-  dcopy 32
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
+  
   callextr api : inttowstr
-  acopyb
-  quitn 3
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
-procedure __wideconvertor.convert&byte$&int$[3]
+procedure __wideconvertor.convert&byte$&int$&shortarray$&vint$[5]
 
-  dcopy 32
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
+  
   callextr api : inttowstr
-  acopyb
-  quitn 3
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
-procedure __wideconvertor.convert&long$&int$[3]
+procedure __wideconvertor.convert&long$&int$&shortarray$&vint$[5]
 
-  dcopy 64
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-
+  bloadsi 3
   aloadsi 3
   nload
   aloadsi 2
+  
   callextr api : longtowstr
-  acopyb
-  quitn 3
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 5
 
 end
 
@@ -1636,31 +1629,24 @@ labErr:
 
 end
 
-procedure __literalconvertor.convert&char$[2]
+procedure __literalconvertor.convert&char$&bytearray$&vint$[4]
 
   aloadsi 2
   nload
   ifn labEmpty 0
 
-  dcopy 8
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-  aloadsi 2
+  bloadsi 3
+
   callextr api : chartostr
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+  quitn 4
   
 labEmpty:
-  dcopy 1
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
-  aloadsi 2
-  nload
-  nsave
-  acopyb
-  quitn 2
+  ecopy 0
+  bloadsi 4
+  nwritei 0
+  quitn 4
 
 end
 
@@ -1679,32 +1665,24 @@ procedure __literalconvertor.convert&wide$[2]
   
 end
 
-procedure __wideconvertor.convert&char$[2]
+procedure __wideconvertor.convert&char$&shortarray$&vint$[4]
 
   aloadsi 2
   nload
   ifn labEmpty 0
 
-  dcopy 3
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   callextr api : chartowstr
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+  quitn 4
 
 labEmpty:
-  dcopy 1
-
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
-  aloadsi 2
-  nload
-  nsave
-  acopyb
-  quitn 2
+  ecopy 0
+  bloadsi 4
+  nwritei 0
+  quitn 4
 
 end
 
@@ -2522,8 +2500,8 @@ procedure __literal.indexOf&int$&char$&vint$[4]
   pushn 0
   bcopys 0
   pushn 0
-  pushn 0FFFFFFFEh
   callextr api : chartostr
+  pushe
 
   aloadsi 7                 // ; load index
   nload
@@ -2732,11 +2710,10 @@ procedure __wide.indexOf&int$&char$&vint$[4]
   pusha
   aloadsi 4
   pushn 0
-  pushn 0
   bcopys 0
   pushn 0
-  pushn 0FFFFFFFEh
   callextr api : chartowstr
+  pushe
 
   aloadsi 7                 // ; load index
   nload
@@ -3217,14 +3194,9 @@ procedure __literal.new&int$&char$[3]
   pushn 0
   pushn 0
   bcopys 0
-  pushn 0
-  pushn 0
   
   callextr api : chartostr
-  acopyb
-  blen
-  popi 2
-  dec
+  dcopye
 
   ifn lab1 1 
   ifn lab2 2

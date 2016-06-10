@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 // --- ELENA Object constants ---
 const int gcPageSize       = 0x0010;           // a heap page size constant
-const int elObjectOffset   = 0x0010;           // object header / offset constant
+const int elObjectOffset   = 0x0008;           // object header / offset constant
 
 // --- ELENA CORE built-in routines
 #define GC_ALLOC	           0x10001
@@ -31,9 +31,6 @@ const int elObjectOffset   = 0x0010;           // object header / offset constan
 #define NEWTHREAD            0x1001B
 #define CLOSETHREAD          0x1001C
 #define EXIT                 0x1001D
-#define CALC_SIZE            0x1001E
-#define SET_COUNT            0x1001F
-#define GET_COUNT            0x10020
 #define THREAD_WAIT          0x10021
 #define NEW_HEAP             0x10025
 #define BREAK                0x10026
@@ -58,13 +55,12 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 22;
+const int coreFunctionNumber = 19;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
-   CALC_SIZE, SET_COUNT, GET_COUNT, THREAD_WAIT, EXITTHREAD,
-   PREPARE, NEW_EVENT
+   THREAD_WAIT, EXITTHREAD, PREPARE, NEW_EVENT
 };
 
 // preloaded gc commands
@@ -809,8 +805,8 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
 
    scope.argument <<= 2;
 
-   // mov  ebx, #gc_page + (length - 1)
-   scope.code->writeByte(0xBB);
+   // mov ecx, #gc_page + (length - 1)
+   scope.code->writeByte(0xB9);
    scope.code->writeDWord(align(scope.argument + scope.objectSize, gcPageSize));
    
    loadNOp(opcode, scope);
@@ -830,10 +826,10 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 
    int size = align(scope.argument + scope.objectSize, gcPageSize);
 
-   scope.argument = -scope.argument;  // mark object as a binary structure
+   scope.argument | = 0x800000;  // mark object as a binary structure
 
-   // mov  ebx, #gc_page + (size - 1)
-   scope.code->writeByte(0xBB);
+   // mov  ecx, #gc_page + (size - 1)
+   scope.code->writeByte(0xB8);
    scope.code->writeDWord(size);
 
    loadNOp(opcode, scope);

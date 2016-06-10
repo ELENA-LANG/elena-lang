@@ -8,6 +8,8 @@
 ******************************************************************************
 
 [ELENA]
+[!] binary incompatible due to implementing issues #259
+[!] GC optimized / refactored
 [-] critical bug fix of class'RTPointer
 [-] critical bug fix in field template routine
 

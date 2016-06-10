@@ -86,22 +86,11 @@ NOTE: VM Table is empty for stand-alone application
 
 4) Object (GC)
 +---------------------+
-+      Page Size      +    ; if negative: stack allocated
++      Lock field     +    ; lock field, size = 8 bits
 +---------------------+
-+       Length        +    ; if negative: data length ; if positive: number of fields
++      Flags          +    ; flags field, size = 1 bit , 1 = struct
 +---------------------+
-+    VMT reference    +    
-+---------------------+
-
-
-
-5) Object (GCX)
-+---------------------+
-+      Sync Field     +    
-+---------------------+
-+      Page Size      +    ; if negative: stack allocated
-+---------------------+
-+       Length        +    ; if negative: data length ; if positive: number of fields * sizeof(dword)
++       Length        +    ; the object length, size = 23 bits
 +---------------------+
 +    VMT reference    +    
 +---------------------+

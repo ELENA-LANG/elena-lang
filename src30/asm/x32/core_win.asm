@@ -12,9 +12,6 @@ define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
 define EXIT                 1001Dh
-define CALC_SIZE            1001Eh
-define SET_COUNT            1001Fh
-define GET_COUNT            10020h
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h
