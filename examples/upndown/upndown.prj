@@ -9,6 +9,7 @@ warn:unresolved=0
 [files]
 config.l
 players.l
+engine.l
 ai\chaotic.l
 gui\connector.l
 gui\main.l

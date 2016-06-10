@@ -7,6 +7,8 @@ In development:
                        * play with chaotic computer player
 
               xdev - general implementation     
+                       * yg size : 15000h
+                       * page size : 20h
                        * #259 : memory reservation
 
 ------                                 

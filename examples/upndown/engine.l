@@ -1,4 +1,6 @@
-//// --- namespace shortcuts ---
+// --- namespace shortcuts ---
+#import system.
+
 //#define std'dictionary'*.
 //#define std'basic'*.
 //#define sys'dynamics'*.
@@ -15,41 +17,17 @@
 //
 //// --- Engine private subjects ---
 //#subject __top.
-//
-//// --- GameMaster ---
-//
-//#static GameMaster = config'GameMasterGroup.
-//
-//// --- BaseMaster ---
-//#class BaseMaster
-//{
-//    #field thePlayers.
-//    #field thePlayerList.
-//
-//    #field theLastID.
-//    #field thePlayerNumber.
-//
-//    #role NotStarted
-//    {
-//        #method $nextID
-//        [
-//            theLastID += 1.
-//            
-//            ^ NewInt32Value::theLastID.
-//        ]
-//
-//        #method players'get =
-//        {
-//            += aPlayer
-//            [
-//                aPlayer group_member'append &player'id:(self $nextID).
-//    
-//                thePlayers += aPlayer group_content.
-//            ]
-//        }.
-//
-//        #method start
-//        [
+
+// --- GameMaster ---
+
+#class GameMaster
+{
+    #constructor new
+    [
+    ]
+    
+    #method start
+    [
 //            thePlayerNumber := NewInt32Value::(thePlayers count).
 //
 //            #shift.
@@ -83,6 +61,41 @@
 //            }.
 //            
 //            self run.
+    ]
+}
+
+//#static GameMaster = config'GameMasterGroup.
+//
+//// --- BaseMaster ---
+//#class BaseMaster
+//{
+//    #field thePlayers.
+//    #field thePlayerList.
+//
+//    #field theLastID.
+//    #field thePlayerNumber.
+//
+//    #role NotStarted
+//    {
+//        #method $nextID
+//        [
+//            theLastID += 1.
+//            
+//            ^ NewInt32Value::theLastID.
+//        ]
+//
+//        #method players'get =
+//        {
+//            += aPlayer
+//            [
+//                aPlayer group_member'append &player'id:(self $nextID).
+//    
+//                thePlayers += aPlayer group_content.
+//            ]
+//        }.
+//
+//        #method start
+//        [
 //        ]
 //    }
 //

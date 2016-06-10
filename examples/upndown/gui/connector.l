@@ -1,5 +1,6 @@
 // --- default namespaces ---
 #import system.
+#import extensions.
 #import forms.
 
 #import upndown.
@@ -502,7 +503,18 @@
 
     #method $startGame
     [
-//        // add human player
+        #var gameMaster := GameMaster new.
+        
+//        gameMaster players append:(Human new &name:txtUserName).
+            
+        threadControl start &func:
+        [
+            gameMaster start.
+        ].
+        
+        theForm close.
+        
+        // add human player
 //        engine'GameMaster players
 //            += config'HostPlayerGroup::
 //            {

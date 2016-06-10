@@ -123,7 +123,7 @@
         theForm
             set &x:50 &y:50 
             set &width:800 &height:520
-            set &caption:"Up'N'Down 0.9".
+            set &caption:"Up'N'Down 1.0".
 
 ////        thePaintbox
 ////            set &x:0 &y:0 set &width:800 &height:500
