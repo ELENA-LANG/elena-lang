@@ -2810,12 +2810,34 @@
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    #method(literal,stacksafe) convert &long:aNumber &int:aRadix
+    #method(stacksafe) convert &long:aNumber &int:aRadix &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(literal,stacksafe) convert &long:aNumber
+    [
+        #var(byte:64)buffer.
+        #var(int)length := 0.
+        
+        $self convert &long:aNumber &int:radix &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &real:aNumber &bytearray:buffer &vint:length.
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value
     #method(literal,stacksafe) convert &real:aNumber
-        => system'core_routines'__literalconvertor.
+    [
+        #var(byte:32)buffer.
+        #var(int)length := 0.
+        
+        $self convert &real:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
 
     /// Converts UTF-16 literal to UTF-8 one
     #method(literal,stacksafe) convert &wide:aLiteral

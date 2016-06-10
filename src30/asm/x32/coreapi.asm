@@ -1624,7 +1624,7 @@ Lab8:
    
 end
 
-procedure coreapi'realtostr // !!
+procedure coreapi'realtostr
 
    mov   ecx, eax
    push  ebp
@@ -1941,16 +1941,13 @@ finish1:
    lea   edi, [edi+1]
 
 finish2:
-   xor   ecx, ecx
-   mov   byte ptr [edi], cl
    lea   ebx, [edi+1]
    pop   edi
    add   esp, 52
    pop   ebp
 
    sub   ebx, edi
-   neg   ebx
-   mov   [edi-8], ebx
+   mov   ecx, ebx
 
    jmp   short finish3
 
@@ -2294,16 +2291,13 @@ finish1:
    lea   edi, [edi+2]
 
 finish2:
-   xor   ecx, ecx
-   mov   word ptr [edi], cx
    lea   ebx, [edi+2]
    pop   edi
    add   esp, 52
    pop   ebp
 
    sub   ebx, edi
-   neg   ebx
-   mov   [edi-8], ebx
+   mov   ecx, ebx
 
    jmp   short finish3
 
@@ -2326,7 +2320,7 @@ unpacked:- (52)  // -32
   ret
 end
 
-procedure coreapi'wstrtostr
+procedure coreapi'wstrtostr // !!
 
   push edi
   push eax

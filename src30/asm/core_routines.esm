@@ -309,18 +309,18 @@ procedure __literalconvertor.convert&long$&int$&bytearray$&vint$[5]
 
 end
 
-procedure __literalconvertor.convert&real$[2]
+procedure __literalconvertor.convert&real$&bytearray$&vint$[4]
 
-  dcopy 30
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 24
+  
   callextr api : realtostr
-  acopyb
-  quitn 2
 
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 end
 
 procedure __wideconvertor.convert&int$&shortarray$&vint$[4]
@@ -447,19 +447,36 @@ procedure __wideconvertor.convert&long$&int$&shortarray$&vint$[5]
 
 end
 
-procedure __wideconvertor.convert&real$[2]
+procedure __wideconvertor.convert&real$&shortarray$&vint$[4]
 
-  dcopy 30
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya
+  bloadsi 3
   aloadsi 2
   dcopy 24
+  
   callextr api : realtowstr
-  acopyb
-  quitn 2
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 
 end
+
+procedure __wideconvertor.convert&long$
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : longtowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
 
 procedure __shortconvertor.convert&byte$&vshort$[3]
 
