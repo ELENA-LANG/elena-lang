@@ -2320,7 +2320,7 @@ unpacked:- (52)  // -32
   ret
 end
 
-procedure coreapi'wstrtostr // !!
+procedure coreapi'wstrtostr
 
   push edi
   push eax
@@ -2427,8 +2427,6 @@ labSave:
   pop  eax
   pop  edi
   sub  ecx, edi
-  neg  ecx
-  mov  [edi-elSizeOffset], ecx
   ret
 
 end
@@ -2531,8 +2529,6 @@ labw1:
   pop  eax
   pop  edi
   sub  ecx, edi
-  neg  ecx
-  mov  [edi-elSizeOffset], ecx
   ret
     
 end
@@ -2656,18 +2652,21 @@ procedure coreapi'sequal
   mov  esi, edi              // s2
   mov  edx, eax              // s1
   mov  ecx, [edx-8]          // s1.length
+  mov  ebx, [esi-8]
+  and  ecx, 0FFFFFh 
+  and  ebx, 0FFFFFh 
   mov  eax, 0
-  cmp  ecx, [esi-8]          // compare with s2.length
+  cmp  ecx, ebx              // compare with s2.length
   jnz  short Lab1
-  add  ecx, 1
+  sub  ecx, 1
 Lab2:
   mov  ebx, [esi]
   cmp  bl,  byte ptr [edx]
   jnz  short Lab1
   lea  esi, [esi+1]
   lea  edx, [edx+1]
-  add  ecx, 1
-  js   short Lab2
+  sub  ecx, 1
+  jnz  short Lab2
   mov  eax, 1
 Lab1:
   mov  ebx, eax
@@ -2681,18 +2680,20 @@ procedure coreapi'wequal
   mov  esi, edi              // s2
   mov  edx, eax              // s1
   mov  ecx, [edx-8]          // s1.length
+  mov  ebx, [esi-8]
+  and  ecx, 0FFFFCh 
+  and  ebx, 0FFFFCh 
   mov  eax, 0
-  cmp  ecx, [esi-8]          // compare with s2.length
+  cmp  ecx, ebx              // compare with s2.length
   jnz  short Lab1
-  add  ecx, 2
 Lab2:
   mov  ebx, [esi]
   cmp  ebx,  [edx]
   jnz  short Lab1
   lea  esi, [esi+4]
   lea  edx, [edx+4]
-  add  ecx, 4
-  js   short Lab2
+  sub  ecx, 4
+  jnz  short Lab2
   mov  eax, 1
 Lab1:
   mov  ebx, eax
@@ -2706,17 +2707,14 @@ procedure coreapi'wless
   mov  esi, edi              // s2
   mov  edx, eax              // s1
   mov  ecx, [edx-8]          // s1 length
-
-  cmp  ecx, [esi-8]
   mov  eax, 0
-  jbe  short Lab3
-  mov  ecx, [esi-8]
-Lab3:
-  neg  ecx
+  and  ecx, 0FFFFFh
 Lab2:
   mov  ebx, [edx]              // s1[i] 
   cmp  bx, word ptr [esi]      // compare s2[i] with 
   jb   short Lab1
+  nop
+  nop
   ja   short LabEnd
   lea  esi, [esi+2]
   lea  edx, [edx+2]
@@ -2741,17 +2739,14 @@ procedure coreapi'sless
   mov  esi, edi              // s2
   mov  edx, eax              // s1
   mov  ecx, [edx-8]          // s1 length
-
-  cmp  ecx, [esi-8]
   mov  eax, 0
-  jbe  short Lab3
-  mov  ecx, [esi-8]
-Lab3:
-  neg  ecx
+  and  ecx, 0FFFFFh
 Lab2:
   mov  ebx, [edx]              // s1[i] 
   cmp  bl, byte ptr [esi]      // compare s2[i] with 
   jb   short Lab1
+  nop 
+  nop
   ja   short LabEnd
   lea  esi, [esi+1]
   lea  edx, [edx+1]
@@ -2780,8 +2775,8 @@ procedure coreapi'sseek
   push edi
   
   mov  ebx, [edi-8]   // get total length  
+  and  ebx, 0FFFFFh
   
-  neg  ebx
   sub  ebx, edx
   jbe  short labEnd
 
@@ -2793,9 +2788,9 @@ labNext:
   mov  esi, [esp+4]
   mov  ecx, [esi-8]
   sub  ebx, 1
-  lea  ecx, [ecx+1]
+  lea  ecx, [ecx-1]
   jz   short labEnd
-  neg  ecx
+  and  ecx, 0FFFFFh
   cmp  ebx, ecx
   jb   short labEnd
   mov  edi, [esp]
@@ -2832,8 +2827,8 @@ procedure coreapi'wseek
   push edi
   
   mov  ebx, [edi-8]   // get total length  
+  and  ebx, 0FFFFFh
 
-  neg  ebx
   shl  edx, 1
   sub  ebx, edx
   jbe  short labEnd
@@ -2846,9 +2841,9 @@ labNext:
   mov  esi, [esp+4]
   mov  ecx, [esi-8]
   sub  ebx, 2
-  lea  ecx, [ecx+2]
+  lea  ecx, [ecx-2]
   jz   short labEnd
-  neg  ecx
+  and  ecx, 0FFFFFh
   cmp  ebx, ecx
   jb   short labEnd
   mov  edi, [esp]
@@ -2882,9 +2877,10 @@ procedure coreapi'sadd
   mov  edx, ebx         // ; dst index
   mov  esi, ecx         // ; src index
   
-  add  ecx, [eax-8]  
-
+  mov  ebx, [eax-8]
+  and  ebx, 0FFFFFh
   add  edx, edi
+  sub  ecx, ebx
   add  esi, eax
   
 labNext2:
@@ -2907,9 +2903,11 @@ procedure coreapi'wadd
   mov  edx, ebx         // ; dst index
   mov  esi, ecx         // ; src index
   
-  add  ecx, [eax-8]  
+  mov  ebx, [eax-8]
+  and  ebx, 0FFFFFh
 
   add  edx, edi
+  sub  ecx, ebx
   add  esi, eax
   
 labNext2:

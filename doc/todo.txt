@@ -9,6 +9,7 @@ In development:
               xdev - general implementation     
                        * page size : 10h, object header : 8h ; gc, coreapi (intostr, realtostr, ... - #220)
                        * test LiteralValue / WideLiteralValue new&int&char
+                       * test wideliteralvalue compare
                        * test after redesign
 
                        * yg size : 15000h

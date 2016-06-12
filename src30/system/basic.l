@@ -2840,8 +2840,40 @@
     ]
 
     /// Converts UTF-16 literal to UTF-8 one
-    #method(literal,stacksafe) convert &wide:aLiteral
+    #method(stacksafe) convert &wide:aLiteral &bytearray:buffer &vint:length
         => system'core_routines'__literalconvertor.
+
+    #method(literal,stacksafe) convert &wide:aLiteral
+    [
+        #var(int)i := 0.
+        #var(int)m := 0.
+        #var(int)page := 0.
+        #var(int)l := aLiteral length.
+        #var(byte:256)buffer.
+        (l < 128)?
+        [
+            $self convert &wide:aLiteral &bytearray:buffer &vint:m.
+            
+            ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
+        ].
+        
+        #var(literal)retVal := emptyLiteralValue.
+        #loop (l > 0)?
+        [
+            page := l.
+            (page > 127)?
+            [
+                page := 127.
+            ].
+            
+            $self convert &wide:(aLiteral Substring &int:i &int:page) &bytearray:buffer &vint:m.
+            
+            retVal := retVal + LiteralValue $new &int:0 &int:m &bytearray:buffer.
+            
+            i += page.
+            l -= page.
+        ].
+    ]
 
     /// Returns the literal presentation of the parameter
     #method(literal,stacksafe) convert : anObject
@@ -2996,9 +3028,42 @@
         => system'core_routines'__wideconvertor.
 
     /// Converts UTF-8 literal to UTF-16e
-    #method(wide,stacksafe) convert &literal:aLiteral
+    #method(stacksafe) convert &literal:aLiteral &shortarray:buffer &vint:length
         => system'core_routines'__wideconvertor.
+
+    /// Converts UTF-8 literal to UTF-16e
+    #method(wide,stacksafe) convert &literal:aLiteral
+    [
+        #var(int)i := 0.
+        #var(int)m := 0.
+        #var(int)page := 0.
+        #var(int)l := aLiteral length.
+        #var(short:256)buffer.
+        (l < 256)?
+        [
+            $self convert &wide:aLiteral &shortarray:buffer &vint:m.
+            
+            ^ WideLiteralValue $new &int:0 &int:m &shortarray:buffer.
+        ].
         
+        #var(literal)retVal := emptyLiteralValue.
+        #loop (l > 0)?
+        [
+            page := l.
+            (page > 256)?
+            [
+                page := 256.
+            ].
+            
+            $self convert &wide:(aLiteral Substring &int:i &int:page) &shortarray:buffer &vint:m.
+            
+            retVal := retVal + WideLiteralValue $new &int:0 &int:m &shortarray:buffer.
+            
+            i += page.
+            l -= page.
+        ].
+    ]        
+                        
     /// Returns the literal presentation of the parameter
     #method(wide,stacksafe) convert : anObject
         = anObject wide.

@@ -145,17 +145,15 @@ labDefault:
   
 end
 
-procedure __wideconvertor.convert&literal$[2]
+procedure __wideconvertor.convert&literal$&shortarray$&vint$[4]
 
   aloadsi 2
-  blen
-  acopyr class : system'WideLiteralValue
-  wcreate
-  bcopya  
-  aloadsi 2
+  bloadsi 3
   callextr api : strtowstr
-  acopyb
-  quitn 2  
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
 
 end
 
@@ -1667,18 +1665,14 @@ labEmpty:
 
 end
 
-procedure __literalconvertor.convert&wide$[2]
+procedure __literalconvertor.convert&wide$&bytearray$&vint$[4]
 
   aloadsi 2
-  wlen
-  shiftn -1
-  acopyr class : system'LiteralValue
-  bcreate
-  bcopya  
-  aloadsi 2
+  bloadsi 3
   callextr api : wstrtostr
-  acopyb
-  quitn 2
+  bloadsi 4
+  nwritei 0
+  quitn 4
   
 end
 
