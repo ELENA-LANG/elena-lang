@@ -7,7 +7,7 @@ In development:
                        * play with chaotic computer player
 
               xdev - general implementation     
-                       * page size : 10h, object header : 8h ; gc, coreapi (intostr, realtostr, ... - #220)
+                       * test all
                        * test LiteralValue / WideLiteralValue new&int&char
                        * test wideliteralvalue compare
                        * test after redesign

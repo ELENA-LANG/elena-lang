@@ -774,7 +774,12 @@ void x86Assembler :: compileXADD(PrefixInfo& prefix, TokenInfo& token, Procedure
       code->writeByte(0xC1);
 		x86Helper::writeModRM(code, dest, sour);
 	}
-	else token.raiseErr("Invalid command (%d)");
+   else if ((test(sour.type, x86Helper::otR8) || test(sour.type, x86Helper::otM8)) && test(dest.type, x86Helper::otR8)) {
+      code->writeByte(0x0F);
+      code->writeByte(0xC0);
+      x86Helper::writeModRM(code, dest, sour);
+   }
+   else token.raiseErr("Invalid command (%d)");
 }
 
 void x86Assembler :: compileXORPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -3217,6 +3222,11 @@ void x86Assembler :: compileCMPXCHG(PrefixInfo& prefix, TokenInfo& token, Proced
 		code->writeByte(0xB1);
 		x86Helper::writeModRM(code, dest, sour);
 	}
+   else if ((test(sour.type, x86Helper::otR8) || test(sour.type, x86Helper::otM8)) && test(dest.type, x86Helper::otR8)) {
+      code->writeByte(0x0F);
+      code->writeByte(0xB0);
+      x86Helper::writeModRM(code, dest, sour);
+   }
    else token.raiseErr("Invalid command (%d)");
 }
 

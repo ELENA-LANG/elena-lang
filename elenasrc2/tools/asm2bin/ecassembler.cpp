@@ -80,9 +80,9 @@ void ECodesAssembler :: readMessage(TokenInfo& token, int& verbId, IdentifierStr
    if (token.value[0] == '[') {
       paramCount = token.readInteger(constants);
    }
-   else token.raiseErr("Invalid operand");
+   else token.raiseErr("Invalid operand (%d)");
 
-   token.read("]", "Invalid operand");
+   token.read("]", "Invalid operand (%d)");
 }
 
 void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& message)
@@ -147,7 +147,7 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       return 0;
    }
    else if (StringHelper::compare(word, "const")) {
-      token.read(":", "Invalid operand");
+      token.read(":", "Invalid operand (%d)");
       token.read();
 
       if (StringHelper::compare(word, "%")) {
@@ -158,12 +158,12 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       else return binary->mapReference(token.value) | mskConstantRef;
    }
    else if (StringHelper::compare(word, "class")) {
-      token.read(":", "Invalid operand");
+      token.read(":", "Invalid operand (%d)");
       token.read();
       return binary->mapReference(token.value) | mskVMTRef;
    }
    else if (StringHelper::compare(word, "intern")) {
-      token.read(":", "Invalid operand");
+      token.read(":", "Invalid operand (%d)");
       token.read();
 
       return binary->mapReference(token.value) | mskInternalRef;
@@ -190,7 +190,7 @@ void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWr
 {
    size_t reference1 = compileRArg(token, binary);
 
-   token.read("%", "Invalid operand");
+   token.read("%", "Invalid operand (%d)");
    token.read();
    size_t reference2 = compileMessageArg(token, binary);
 
@@ -215,7 +215,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       else token.raiseErr("Invalid number (%d)\n");
    }
    else if (StringHelper::compare(word, "subject")) {
-      token.read(":", "Invalid operand");
+      token.read(":", "Invalid operand (%d)");
       token.read();
 
       int paramCount = 0; // NOTE: paramCount might be not equal to stackCount (the actual stack size) in the case if variables are used for virtual methods
@@ -241,9 +241,9 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       if (token.value[0] == '[') {
          paramCount = token.readInteger(constants);
       }
-      else token.raiseErr("Invalid operand");
+      else token.raiseErr("Invalid operand (%d)");
 
-      token.read("]", "Invalid operand");
+      token.read("]", "Invalid operand (%d)");
 
       ref_t subj = binary->mapSubject(subject, false);
 
@@ -272,7 +272,7 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 {
    ident_t word = token.read();
    if (StringHelper::compare(word, "extern")) {
-      token.read(":", "Invalid operand");
+      token.read(":", "Invalid operand (%d)");
       token.read();
       if (StringHelper::compare(token.value, "'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
@@ -300,7 +300,7 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
       }
    }
    else if (StringHelper::compare(word, "api")) {
-      token.read(":", "Invalid operand");
+      token.read(":", "Invalid operand (%d)");
       token.read();
 
       ReferenceNs functionName(NATIVE_MODULE, CORE_MODULE);

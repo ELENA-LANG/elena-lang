@@ -826,7 +826,7 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 
    int size = align(scope.argument + scope.objectSize, gcPageSize);
 
-   scope.argument | = 0x800000;  // mark object as a binary structure
+   scope.argument |= 0x800000;  // mark object as a binary structure
 
    // mov  ecx, #gc_page + (size - 1)
    scope.code->writeByte(0xB8);

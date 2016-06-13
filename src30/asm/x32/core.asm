@@ -191,7 +191,8 @@ labWBMark:
   test edx, 0FFh
   jz   short labWBMark2
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
 
 labWBMark2:
@@ -199,7 +200,8 @@ labWBMark2:
   test edx, 0FF00h
   jz   short labWBMark3
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
 
 labWBMark3:
@@ -207,7 +209,8 @@ labWBMark3:
   test edx, 0FF0000h
   jz   short labWBMark4
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
 
 labWBMark4:
@@ -215,7 +218,8 @@ labWBMark4:
   test edx, 0FF000000h
   jz   short labWBNext
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
   jmp  short labWBNext
   
@@ -582,8 +586,9 @@ labYGResume:
   test edi, edi
   jz   short labYGEnd
 
-  mov  ecx, [edi-elCountOffset]
+  mov  ecx, [edi-elSizeOffset]
   mov  esi, [edi - elVMTOffset]
+  and  ecx, 0FFFFFh
 
 labYGCopy:
   mov  eax, [edi]
@@ -713,8 +718,9 @@ labYGPromMinResume:
   jmp  labYGNext
 
 labYGPromMinResume2:
-  mov  ecx, [edi-elCountOffset]
+  mov  ecx, [edi-elSizeOffset]
   mov  esi, [edi - elVMTOffset]
+  and  ecx, 0FFFFFh
 
 labYGPromMinCopy:
   mov  eax, [edi]

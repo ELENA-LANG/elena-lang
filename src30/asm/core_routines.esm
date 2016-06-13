@@ -460,22 +460,6 @@ procedure __wideconvertor.convert&real$&shortarray$&vint$[4]
 
 end
 
-procedure __wideconvertor.convert&long$
-
-  bloadsi 3
-  aloadsi 2
-  dcopy 10
-  
-  callextr api : longtowstr
-
-  bloadsi 4
-  nwritei 0
-
-  quitn 4
-
-end
-
-
 procedure __shortconvertor.convert&byte$&vshort$[3]
 
   aloadsi 2

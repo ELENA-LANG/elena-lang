@@ -65,6 +65,7 @@ define page_size_order          4h
 define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
 define page_ceil               0Fh
+define struct_page_ceil    80000Fh
 
 // Object header fields
 define elObjectOffset        0008h
@@ -124,7 +125,7 @@ labWait:
   add  ecx, eax
   cmp  ecx, edx
   jae  short labYGCollect
-  mov  [eax + elPageSizeOffset], ebx
+  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   
   // ; GCXT: clear sync field
@@ -334,7 +335,8 @@ labWBMark:
   test edx, 0FFh
   jz   short labWBMark2
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
 
 labWBMark2:
@@ -342,7 +344,8 @@ labWBMark2:
   test edx, 0FF00h
   jz   short labWBMark3
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
 
 labWBMark3:
@@ -350,7 +353,8 @@ labWBMark3:
   test edx, 0FF0000h
   jz   short labWBMark4
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
 
 labWBMark4:
@@ -358,7 +362,8 @@ labWBMark4:
   test edx, 0FF000000h
   jz   short labWBNext
   push eax
-  mov  ecx, [eax-elCountOffset]
+  mov  ecx, [eax-elSizeOffset]
+  and  ecx, 0FFFFFh
   push ecx
   jmp  short labWBNext
 
@@ -747,8 +752,9 @@ labYGResume:
   test edi, edi
   jz   short labYGEnd
 
-  mov  ecx, [edi-elCountOffset]
+  mov  ecx, [edi-elSizeOffset]
   mov  esi, [edi - elVMTOffset]
+  and  ecx, 0FFFFFh
 
 labYGCopy:
   mov  eax, [edi]
@@ -878,8 +884,9 @@ labYGPromMinResume:
   jmp  labYGNext
 
 labYGPromMinResume2:
-  mov  ecx, [edi-elCountOffset]
+  mov  ecx, [edi-elSizeOffset]
   mov  esi, [edi - elVMTOffset]
+  and  ecx, 0FFFFFh
 
 labYGPromMinCopy:
   mov  eax, [edi]
