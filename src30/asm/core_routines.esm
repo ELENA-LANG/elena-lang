@@ -245,14 +245,14 @@ end
 
 procedure __literalconvertor.convert&int$&int$&bytearray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : inttostr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -261,14 +261,14 @@ end
 
 procedure __literalconvertor.convert&short$&int$&bytearray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : inttostr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -277,14 +277,14 @@ end
 
 procedure __literalconvertor.convert&byte$&int$&bytearray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : inttostr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -293,14 +293,14 @@ end
 
 procedure __literalconvertor.convert&long$&int$&bytearray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : longtostr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -383,14 +383,14 @@ end
 
 procedure __wideconvertor.convert&int$&int$&shortarray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : inttowstr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -399,14 +399,14 @@ end
 
 procedure __wideconvertor.convert&short$&int$&shortarray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : inttowstr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -415,14 +415,14 @@ end
 
 procedure __wideconvertor.convert&byte$&int$&shortarray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : inttowstr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5
@@ -431,14 +431,14 @@ end
 
 procedure __wideconvertor.convert&long$&int$&shortarray$&vint$[5]
 
-  bloadsi 3
+  bloadsi 4
   aloadsi 3
   nload
   aloadsi 2
   
   callextr api : longtowstr
 
-  bloadsi 4
+  bloadsi 5
   nwritei 0
 
   quitn 5

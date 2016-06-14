@@ -1459,7 +1459,7 @@ Lab8:
    and  eax, edx
    mov  word ptr [esi], ax
    add  esi, 2
-   add  ecx, 2
+   sub  ecx, 2
    jnz  short Lab2
    mov  ecx, esi
    sub  ecx, edi
