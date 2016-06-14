@@ -4198,12 +4198,14 @@ labReturn:
   equit
   
 labNotFound:  
-  dloadsi 5
+  dloadsi 7
   address labReturn
   else labContinueError
 
+  restore 1
   close
-  popi 2
+  close
+  popi 1
   bloadfi 1
   jump labNext
 

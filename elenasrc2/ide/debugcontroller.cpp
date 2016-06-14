@@ -855,7 +855,7 @@ void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident
 
    // get bytearray size
    getValue(address - 8, (char*)&length, 4);
-   length = -length;
+   length &= 0xFFFFF;
 
    if (length > DEBUG_MAX_LIST_LENGTH)
       length = DEBUG_MAX_LIST_LENGTH;
@@ -872,7 +872,8 @@ void DebugController::readShortArray(_DebuggerWatch* watch, size_t address, iden
 
    // get bytearray size
    getValue(address - 8, (char*)&length, 4);
-   length = -length >> 1;
+   length &= 0xFFFFF;
+   length = length >> 1;
 
    if (length > DEBUG_MAX_LIST_LENGTH)
       length = DEBUG_MAX_LIST_LENGTH;
@@ -889,7 +890,8 @@ void DebugController::readIntArray(_DebuggerWatch* watch, size_t address, ident_
 
    // get bytearray size
    getValue(address - 8, (char*)&length, 4);
-   length = -length >> 2;
+   length &= 0xFFFFF;
+   length = length >> 2;
 
    if (length > DEBUG_MAX_LIST_LENGTH)
       length = DEBUG_MAX_LIST_LENGTH;
@@ -1154,7 +1156,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
             int length = 0;
             getValue(selfPtr - 8, (char*)&length, 4);
 
-            length = -length;
+            length &= 0xFFFFF;
 
             if (length > DEBUG_MAX_STR_LENGTH) {
                length = DEBUG_MAX_STR_LENGTH;
@@ -1168,7 +1170,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
             int length = 0;
             getValue(selfPtr - 8, (char*)&length, 4);
 
-            length = -length;
+            length &= 0xFFFFF;
             length >>= 1;
 
             if (length > DEBUG_MAX_STR_LENGTH) {

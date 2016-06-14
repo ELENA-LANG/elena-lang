@@ -37,7 +37,7 @@ void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-4);
+   writer->writeDWord(0x800004);
    writer->writeDWord(0);
 
    // object body
@@ -49,7 +49,7 @@ void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-8);
+   writer->writeDWord(0x800008);
    writer->writeDWord(0);
 
    // object body
@@ -61,7 +61,7 @@ void JITCompiler32 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-8);
+   writer->writeDWord(0x800008);
    writer->writeDWord(0);
 
    // object body
@@ -74,7 +74,7 @@ void JITCompiler32::compileInt64(MemoryWriter* writer, int low, int high)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-8);
+   writer->writeDWord(0x800008);
    writer->writeDWord(0);
 
    // object body
@@ -87,7 +87,7 @@ void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-8);
+   writer->writeDWord(0x800008);
    writer->writeDWord(0);
 
    // object body
@@ -101,7 +101,7 @@ void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-length);
+   writer->writeDWord(0x800000 | length);
    writer->writeDWord(0);
 
    // object body
@@ -116,7 +116,7 @@ void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wide_c* val
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-length);
+   writer->writeDWord(0x800000 | length);
    writer->writeDWord(0);
 
    // object body
@@ -133,7 +133,7 @@ void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-4);
+   writer->writeDWord(0x800004);
    writer->writeDWord(0);
 
    // object body
@@ -147,7 +147,7 @@ void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(-(int)length);
+   writer->writeDWord(0x800000 | length);
    writer->writeDWord(0);
 
    // object body

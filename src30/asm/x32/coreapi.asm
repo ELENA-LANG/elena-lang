@@ -2325,7 +2325,8 @@ procedure coreapi'wstrtostr
   push edi
   push eax
   mov  esi, [eax - elSizeOffset]
-  neg  esi
+  and  esi, 0FFFFFh
+  sub  esi, 2
 
 labNext:  
   mov  ebx, [eax]
@@ -2436,7 +2437,8 @@ procedure coreapi'strtowstr
   push edi
   push eax
   mov  esi, [eax - elSizeOffset]
-  neg  esi
+  and  esi, 0FFFFFh
+  sub  esi, 1
 
 labNext:  
 
@@ -2529,6 +2531,7 @@ labw1:
   pop  eax
   pop  edi
   sub  ecx, edi
+  shr  ecx, 1
   ret
     
 end

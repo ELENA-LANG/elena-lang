@@ -4380,7 +4380,7 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
 void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
 {
    loadObject(tape, lxLocalAddress, offset + 2);
-   saveIntConstant(tape, -node.argument);
+   saveIntConstant(tape, 0x800000 + node.argument);
 }
 
 void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node)

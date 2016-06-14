@@ -49,8 +49,8 @@ define page_size               10h
 define page_size_order          4h
 define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
-define page_ceil               0Fh
-define struct_page_ceil    80000Fh
+define page_ceil               17h
+define struct_mask         800000h
 
 // Object header fields
 define elObjectOffset        0008h
@@ -1215,9 +1215,9 @@ end
 inline % 1Ch
 
   mov  edx, 0FFFFFh
-  mov  ebx, [edi-elSizeOffset]
-  and  ebx, edx
-  shr  ebx, 2
+  mov  ecx, [edi-elSizeOffset]
+  and  ecx, edx
+  shr  ecx, 2
 
 end
 
@@ -1343,7 +1343,7 @@ inline % 31h
 
   mov  edx, 0FFFFFh
   mov  ebx, [eax-8]
-  and  ecx, edx
+  and  ebx, edx
 
 end
 
@@ -1353,7 +1353,7 @@ inline % 32h
 
   mov  edx, 0FFFFFh
   mov  ebx, [eax-8]
-  and  ecx, edx
+  and  ebx, edx
   shr  ebx, 1
   
 end
@@ -1373,7 +1373,7 @@ inline % 34h
 
   mov  edx, 0FFFFFh
   mov  ebx, [eax-8]
-  and  ecx, edx
+  and  ebx, edx
   shr  ebx, 2
   
 end
@@ -1582,7 +1582,8 @@ inline % 4Fh
   shl  ebx, 2
   push eax  
   mov  ecx, ebx
-  add  ecx, struct_page_ceil
+  add  ecx, page_ceil
+  or   ebx, struct_mask
   and  ecx, page_mask  
   call code : %GC_ALLOC
   pop  edx
@@ -1672,7 +1673,8 @@ inline % 5Fh
   shl  ebx, 1
   push eax  
   mov  ecx, ebx
-  add  ecx, struct_page_ceil
+  add  ecx, page_ceil
+  or   ebx, struct_mask
   and  ecx, page_mask  
   call code : %GC_ALLOC
   pop  edx
@@ -1778,7 +1780,8 @@ inline % 6Fh
 
   push eax  
   mov  ecx, ebx
-  add  ecx, struct_page_ceil
+  add  ecx, page_ceil
+  or   ebx, struct_mask
   and  ecx, page_mask  
   call code : %GC_ALLOC
   pop  edx

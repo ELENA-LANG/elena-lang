@@ -18,6 +18,7 @@
 
 [LIB]
 [-] #255 : Exception call stack 
+[-] #220 : optimizing literalConvertor / wideConvertor
 
 [Samples]
 [+] script sample : calc

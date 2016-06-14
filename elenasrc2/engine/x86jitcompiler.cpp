@@ -829,7 +829,7 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
    scope.argument |= 0x800000;  // mark object as a binary structure
 
    // mov  ecx, #gc_page + (size - 1)
-   scope.code->writeByte(0xB8);
+   scope.code->writeByte(0xB9);
    scope.code->writeDWord(size);
 
    loadNOp(opcode, scope);
