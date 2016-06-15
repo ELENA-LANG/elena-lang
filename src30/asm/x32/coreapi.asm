@@ -2327,6 +2327,7 @@ procedure coreapi'wstrtostr
   mov  esi, [eax - elSizeOffset]
   and  esi, 0FFFFFh
   sub  esi, 2
+  jz   labEnd
 
 labNext:  
   mov  ebx, [eax]
@@ -2424,6 +2425,7 @@ labSave:
   sub  esi, 2
   jnz  labNext
 
+labEnd:
   mov  ecx, edi
   pop  eax
   pop  edi
@@ -2439,6 +2441,7 @@ procedure coreapi'strtowstr
   mov  esi, [eax - elSizeOffset]
   and  esi, 0FFFFFh
   sub  esi, 1
+  jz   labEnd
 
 labNext:  
 
@@ -2527,6 +2530,7 @@ labw1:
   lea  eax, [eax + 1]
   sub  esi, 1
   jnz  labNext
+labEnd:
   mov  ecx, edi
   pop  eax
   pop  edi

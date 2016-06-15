@@ -15,6 +15,7 @@
 
 [ELC]
 [-] #257 : Raising an exception in static symbol
+[+] #259 : memory auto reservation
 
 [LIB]
 [-] #255 : Exception call stack 

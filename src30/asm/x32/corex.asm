@@ -16,6 +16,7 @@ define THREAD_WAIT          10021h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
+define EXPAND_HEAP          10028h
 define NEW_EVENT            10101h
 
 define CORE_EXCEPTION_TABLE 20001h
@@ -43,7 +44,6 @@ define gc_shadow_end         0018h
 define gc_mg_start           001Ch
 define gc_mg_current         0020h
 define gc_end                0024h
-define gc_promotion          0028h
 define gc_mg_wbar            002Ch
 define gc_lock               0030h
 define gc_signal             0034h
@@ -98,7 +98,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_mg_start           : +1Ch
   dd 0 // ; gc_mg_current         : +20h
   dd 0 // ; gc_end                : +24h
-  dd 0 // ; gc_promotion          : +28h
+  dd 0 // ; reserved              : +28h
   dd 0 // ; gc_mg_wbar            : +2Ch
   dd 0 // ; gc_lock               : +30h
   dd 0 // ; gc_signal             : +34h
@@ -294,14 +294,6 @@ labYGNextFrame:
   jnz  short labYGNextThread
   // ; == GCXT: end ==
   
-  // ; check if major collection should be performed
-  mov  edx, [data : %CORE_GC_TABLE + gc_end]
-  mov  ebx, [data : %CORE_GC_TABLE + gc_yg_end]
-  sub  edx, [data : %CORE_GC_TABLE + gc_mg_current] // ; mg free space
-  sub  ebx, [data : %CORE_GC_TABLE + gc_yg_start]   // ; size to promote 
-  cmp  ebx, edx                                     // ; currently it is presumed that all objects
-  jae  short labFullCollect                         // ; can be promoted
-
   // === Minor collection ===
   mov [ebp-4], esp
 
@@ -334,8 +326,8 @@ labWBMark:
   
   test edx, 0FFh
   jz   short labWBMark2
-  push eax
   mov  ecx, [eax-elSizeOffset]
+  push eax
   and  ecx, 0FFFFFh
   push ecx
 
@@ -343,8 +335,8 @@ labWBMark2:
   lea  eax, [eax + page_size]
   test edx, 0FF00h
   jz   short labWBMark3
-  push eax
   mov  ecx, [eax-elSizeOffset]
+  push eax
   and  ecx, 0FFFFFh
   push ecx
 
@@ -352,8 +344,8 @@ labWBMark3:
   lea  eax, [eax + page_size]
   test edx, 0FF0000h
   jz   short labWBMark4
-  push eax
   mov  ecx, [eax-elSizeOffset]
+  push eax
   and  ecx, 0FFFFFh
   push ecx
 
@@ -361,8 +353,8 @@ labWBMark4:
   lea  eax, [eax + page_size]
   test edx, 0FF000000h
   jz   short labWBNext
-  push eax
   mov  ecx, [eax-elSizeOffset]
+  push eax
   and  ecx, 0FFFFFh
   push ecx
   jmp  short labWBNext
@@ -392,7 +384,6 @@ labCollectFrame:
   jnz short labCollectFrame 
   
   // ; save gc_yg_current to mark survived objects
-  mov  [data : %CORE_GC_TABLE + gc_promotion], ebp
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ebp
   
   // ; switch main YG heap with a shadow one
@@ -447,8 +438,35 @@ labCollectFrame:
   ret
 
 labFullCollect:
-  // ====== Major Collection ====
-  push ebp                      // ; save the stack restore-point
+  // ; ====== Major Collection ====
+  // ; save the stack restore-point
+  push ebp                     
+	
+  // ; expand MG if required
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_mg_current]
+  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
+  sub  edx, [data : %CORE_GC_TABLE + gc_yg_start]
+  cmp  ecx, edx
+  ja   labSkipExpand
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_end]
+  mov  ecx, 15000h
+  call code : % EXPAND_HEAP
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_header]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+  shr  ecx, page_size_order_minus2
+  add  eax, ecx
+  mov  ecx, 5400h
+  call code : % EXPAND_HEAP
+
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  add  ecx, 15000h
+  mov  [data : %CORE_GC_TABLE + gc_end], ecx
+
+labSkipExpand:
 
   // ; mark both yg and mg objects
   mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
@@ -577,7 +595,6 @@ labYGPromEnd:
   mov  [data : %CORE_GC_TABLE + gc_mg_current], ebp
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_start]
   mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
-  mov  [data : %CORE_GC_TABLE + gc_promotion], eax
   
   // ; fix roots
   lea  eax, [esp+4]
@@ -681,10 +698,6 @@ labYGCheck:
   test edi, edi
   js   labYGContinue
 
-  // ; check if the object should be promoted
-  cmp  eax, [data : %CORE_GC_TABLE + gc_promotion]
-  jb   labYGPromMin
-
   // ; save previous ecx field
   push ecx
 
@@ -777,146 +790,6 @@ labYGContinue:
   mov  edi, [eax - elVMTOffset]
   mov  [esi], edi
   jmp  labYGNext
-
-  // ; ---- minor promotion to mg ---
-labYGPromMin:
-
-  // ; save yg pointer
-  push ecx
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ebp
-  push 0
-  mov  ebp, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  ecx, 4
-  jmp  short labYGPromMinBegin
-
-labYGPromMinNext:
-  lea  esi, [esi+4]
-  sub  ecx, 4
-  jz   labYGPromMinResume
-
-labYGPromMinCheck:
-  mov  eax, [esi]
-
-  // ; check if it valid reference
-  cmp  eax, ebx
-  jl   short labYGPromMinNext 
-  nop
-  cmp  edx, eax
-  jl   short labYGPromMinNext
-
-  // ; check if it was collected
-  mov  edi, [eax-elSizeOffset]
-  test edi, edi
-  js   labYGPromMinContinue
-
-labYGPromMinBegin:
-  // ; save previous ecx field
-  push ecx
-
-  // ; copy object size
-  mov  [ebp], edi
-  
-  // ; copy object vmt
-  mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 04h], ecx
-  
-  // ; mark as collected
-  or   [eax - elSizeOffset], 80000000h
-
-  // ; reserve MG
-  mov  ecx, edi
-  add  ecx, page_ceil
-  lea  edi, [ebp + elObjectOffset]
-  and  ecx, page_align_mask
-  mov  [esi], edi  // ; update reference
-  add  ebp, ecx
-
-  // ; get object size
-  mov  ecx, [eax - elSizeOffset]
-  and  ecx, 8FFFFFh
-
-  // ; save ESI
-  push esi
-  mov  esi, eax
-
-  // ; save new reference
-  mov  [eax - elVMTOffset], edi
-
-  // ; check if the object has fields
-  test  ecx, 00800000h
-
-  // ; save original reference
-  push eax
-
-  // ; collect object fields if it has them
-  jz   labYGPromMinCheck
-
-  lea  esp, [esp+4]
-  jz   short labYGPromMinSkipCopyData
-
-  // ; copy meta data object to MG
-  add  ecx, 3
-  and  ecx, 0FFFFCh
-
-labYGPromMinCopyData:
-  mov  eax, [esi]
-  sub  ecx, 4
-  mov  [edi], eax
-  lea  esi, [esi+4]
-  lea  edi, [edi+4]
-  jnz  short labYGPromMinCopyData
-
-labYGPromMinSkipCopyData:
-  pop  esi
-  pop  ecx
-  jmp  labYGPromMinNext
-
-labYGPromMinResume:
-  // ; copy object to shadow MG
-  pop  edi
-  test edi, edi
-  jnz   short labYGPromMinResume2
-
-  lea  esi, [esi-4]
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], ebp
-  pop  ecx
-  mov  ebp, [data : %CORE_GC_TABLE + gc_yg_current]
-  jmp  labYGNext
-
-labYGPromMinResume2:
-  mov  ecx, [edi-elSizeOffset]
-  mov  esi, [edi - elVMTOffset]
-  and  ecx, 0FFFFFh
-
-labYGPromMinCopy:
-  mov  eax, [edi]
-  sub  ecx, 4
-  mov  [esi], eax
-  lea  esi, [esi+4]
-  lea  edi, [edi+4]
-  jnz  short labYGPromMinCopy
-
-  pop  esi
-  pop  ecx
-  jmp  labYGPromMinNext
-  
-labYGPromMinContinue:
-  // ; bad luck, the referred object cannot be promoted
-  // ; we have to mark in WB card
-  push ecx
-  mov  ecx, [esp+8]
-  // ; get the promoted object (the referree object) address
-  mov  ecx, [ecx] 
-  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
-  shr  ecx, page_size_order
-  add  ecx, [data : %CORE_GC_TABLE + gc_header]
-  mov  byte ptr [ecx], 1  
-  pop  ecx
-
-  // ; update reference
-  mov  edi, [eax - elVMTOffset]
-  mov  [esi], edi
-  jmp  labYGPromMinNext
 
   // ---- start collecting: esi => ebp, [ebx, edx] ; ecx - count ---
 labCollectMG:
@@ -1081,62 +954,45 @@ clear:
   jnz  short clear
 
 labNext:
-  // ;calculate total heap size
-  // ; mg size
-  mov  edi, [data : %CORE_GC_SIZE]             
-  and  edi, 0FFFFFF80h     // align to 128
-  mov  eax, edi
-  
-  // ; yg size
-  mov  esi, [data : %CORE_GC_SIZE + gcs_YGSize]
-  and  esi, 0FFFFFF80h    // align to 128
-  add  eax, esi
-  add  eax, esi
-  
-  // ; add header
-  mov  ebx, eax
-  shl  eax, page_size_order   
-  shl  ebx, 2
-  push ebx
-  add  eax, ebx
-
-  // ; create heap
+  mov  ecx, 10000000h
+  mov  ebx, [data : %CORE_GC_SIZE]
+  and  ebx, 0FFFFFF80h     // ; align to 128
+  shr  ebx, page_size_order_minus2
   call code : %NEW_HEAP
-
-  shl  esi, page_size_order
-  shl  edi, page_size_order
-
-  // ; initialize gc table
-  pop  ecx
   mov  [data : %CORE_GC_TABLE + gc_header], eax
 
-  // ; skip header
-  add  eax, ecx           
+  mov  ecx, 40000000h
+  mov  ebx, [data : %CORE_GC_SIZE]
+  and  ebx, 0FFFFFF80h     // align to 128
+  call code : %NEW_HEAP
+  mov  [data : %CORE_GC_TABLE + gc_start], eax
 
   // ; initialize yg
   mov  [data : %CORE_GC_TABLE + gc_start], eax
   mov  [data : %CORE_GC_TABLE + gc_yg_start], eax
   mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
-  mov  [data : %CORE_GC_TABLE + gc_promotion], eax
 
   // ; initialize gc end
-  mov  ecx, eax
-  add  ecx, esi
-  add  ecx, esi
-  add  ecx, edi
+  mov  ecx, [data : %CORE_GC_SIZE]
+  and  ecx, 0FFFFFF80h     // ; align to 128
+  add  ecx, eax
   mov  [data : %CORE_GC_TABLE + gc_end], ecx
-  
-  add  eax, esi
+
+  // ; initialize gc shadow
+  mov  ecx, [data : %CORE_GC_SIZE + gcs_YGSize]
+  and  ecx, page_mask
+  add  eax, ecx
   mov  [data : %CORE_GC_TABLE + gc_yg_end], eax
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax
 
-  add  eax, esi
+  // ; initialize gc mg
+  add  eax, ecx
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], eax
   mov  [data : %CORE_GC_TABLE + gc_mg_start], eax
   mov  [data : %CORE_GC_TABLE + gc_mg_current], eax
   
   // ; initialize wbar start
-  mov  edx, [data : %CORE_GC_TABLE + gc_mg_start]
+  mov  edx, eax
   sub  edx, [data : %CORE_GC_TABLE + gc_start]
   shr  edx, page_size_order
   add  edx, [data : %CORE_GC_TABLE + gc_header]

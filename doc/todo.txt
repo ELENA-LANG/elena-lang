@@ -6,18 +6,14 @@ In development:
                        * implementing
                        * play with chaotic computer player
 
-              xdev - general implementation     
+              xdev - general implementation    
+                       * test pi,pi2,random
                        * test all
                        * test LiteralValue / WideLiteralValue new&int&char
                        * test wideliteralvalue compare
                        * test after redesign
 
-                       * yg size : 15000h
-                       * wbcard table only yg, get rid of gc_header flag
-                       * full collect : redesign, wbcard cannot be used
-
                        * #259 : memory reservation, #137, #139
-                       * redesign allocation table
 
 ------                                 
 Pipeline:
