@@ -76,7 +76,7 @@ define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 
 define subj_mask         80FFFFF0h
-define page_align_mask   000FFFFFh
+define page_align_mask   000FFFF0h
 
 // --- System Core Preloaded Routines --
 
@@ -720,7 +720,7 @@ labYGCheck:
   add  ebp, ecx
 
   // ; get object size
-  mov  ecx, [eax]
+  mov  ecx, [eax-elSizeOffset]
   and  ecx, 8FFFFFh
 
   // ; save ESI

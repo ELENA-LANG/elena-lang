@@ -60,7 +60,7 @@ define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 
 define subj_mask         80FFFFF0h
-define page_align_mask   000FFFFFh
+define page_align_mask   000FFFF0h
 
 // --- System Core Preloaded Routines --
 
@@ -94,6 +94,11 @@ end
 // --- GC_ALLOC ---
 // in: ecx - counter ; ebx - size ; ecx - actual size ; out: eax - created object ; edi contains the object or zero
 procedure %GC_ALLOC
+
+  cmp  ebx, 20h
+  jnz  short labSkip
+  mov  ebx, 20h
+labSkip:
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
@@ -553,7 +558,7 @@ labYGCheck:
   add  ebp, ecx
 
   // ; get object size
-  mov  ecx, [eax]
+  mov  ecx, [eax-elSizeOffset]
   and  ecx, 8FFFFFh
 
   // ; save ESI
