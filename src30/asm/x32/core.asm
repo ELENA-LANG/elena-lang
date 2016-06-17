@@ -95,11 +95,6 @@ end
 // in: ecx - counter ; ebx - size ; ecx - actual size ; out: eax - created object ; edi contains the object or zero
 procedure %GC_ALLOC
 
-  cmp  ebx, 20h
-  jnz  short labSkip
-  mov  ebx, 20h
-labSkip:
-
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
   add  ecx, eax
@@ -111,6 +106,8 @@ labSkip:
   ret
 
 labYGCollect:
+  // ; restore ecx
+  sub  ecx, eax
 
   // ; save registers
   push edi                             
@@ -258,7 +255,7 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx]                           // ; restore object size
+  mov  ebx, [ebx+4]                           // ; restore object size
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
@@ -569,13 +566,13 @@ labYGCheck:
   mov  [eax - elVMTOffset], edi
 
   // ; check if the object has fields
-  test  ecx, 00800000h
+  cmp  ecx, 800000h
 
   // ; save original reference
   push eax
 
   // ; collect object fields if it has them
-  jz   labYGCheck
+  jb   labYGCheck
 
   lea  esp, [esp+4]
   jz   short labYGSkipCopyData
@@ -660,9 +657,8 @@ labMGCheck:
   // ; mark as collected
   or  [eax - elSizeOffset], 080000000h
 
-  shl  edi, 8
-  cmp  edi, 0
-  jle  short labMGNext
+  cmp  edi, 0800000h
+  jae  short labMGNext
 
   // ; save previous ecx field
   push ecx
@@ -728,8 +724,8 @@ labFixCheck:
   and  edi, 7FFFFFFFh
   mov  [eax - elSizeOffset], edi
 
-  shl  edi, 8
-  jle  short labFixNext
+  cmp  edi, 0800000h
+  jae  short labFixNext
 
   // ; save previous ecx field
   push ecx
@@ -1101,9 +1097,12 @@ end
 inline % 1Fh
 
   shl  ebx, 2  
+  setz dl
   push eax  
   mov  ecx, ebx
+  shl  edx, 23
   add  ecx, page_ceil
+  or   ebx, edx
   and  ecx, page_mask  
   call code : %GC_ALLOC
   pop  edx
@@ -2553,7 +2552,7 @@ inline %0DBh
 
 end
 
-// ; new (ebx - size, __arg1 - length)
+// ; new (ecx - size, __arg1 - length)
 
 inline % 0F0h
 	
@@ -2562,7 +2561,7 @@ inline % 0F0h
 
 end
 
-// ; newn (ebx - size, __arg1 - length)
+// ; newn (ecx - size, __arg1 - length)
 
 inline % 0F1h
 

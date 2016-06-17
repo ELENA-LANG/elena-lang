@@ -90,7 +90,7 @@ NOTE: VM Table is empty for stand-alone application
 +---------------------+
 +      Flags          +    ; flags field, size = 1 bit , 1 = struct
 +---------------------+
-+       Length        +    ; the object length, size = 23 bits
++       Length        +    ; the object length, size = 23 bits ; NOTE : Length cannot be zero, the empty length is - 800000
 +---------------------+
 +    VMT reference    +    
 +---------------------+

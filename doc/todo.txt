@@ -7,8 +7,9 @@ In development:
                        * play with chaotic computer player
 
               xdev - general implementation    
-                       * vreal - get - cast[2]/[3], equal, dispatch
-                                            
+                       * realtostr -> look at pi
+                       * test Array new &int:0                     
+
                        * test pi,pi2,random
                        * test all
                        * test LiteralValue / WideLiteralValue new&int&char

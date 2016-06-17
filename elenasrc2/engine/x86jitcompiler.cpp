@@ -809,6 +809,11 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    scope.code->writeByte(0xB9);
    scope.code->writeDWord(align(scope.argument + scope.objectSize, gcPageSize));
    
+   //NOTE : empty length should be equal to 800000h
+   // due to current GC algorithm
+   if (scope.argument == 0)
+      scope.argument = 0x800000;
+
    loadNOp(opcode, scope);
 
    // set vmt reference

@@ -139,6 +139,8 @@ labWait:
   ret
 
 labYGCollect:
+  // ; restore ecx
+  sub  ecx, eax
 
   // ; GCXT: find the current thread entry
   mov  edx, fs:[2Ch]
@@ -396,7 +398,7 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx]                           // ; restore object size  
+  mov  ebx, [ebx+4]                           // ; restore object size  
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
@@ -731,13 +733,13 @@ labYGCheck:
   mov  [eax - elVMTOffset], edi
 
   // ; check if the object has fields
-  test  ecx, 00800000h
+  cmp  ecx, 800000h
 
   // ; save original reference
   push eax
 
   // ; collect object fields if it has them
-  jz   labYGCheck
+  jb   labYGCheck
 
   lea  esp, [esp+4]
   jz   short labYGSkipCopyData
@@ -822,8 +824,7 @@ labMGCheck:
   // ; mark as collected
   or  [eax - elSizeOffset], 080000000h
 
-  shl  edi, 8
-  cmp  edi, 0
+  cmp  edi, 0800000h
   jle  short labMGNext
 
   // ; save previous ecx field
@@ -890,8 +891,8 @@ labFixCheck:
   and  edi, 7FFFFFFFh
   mov  [eax - elSizeOffset], edi
 
-  shl  edi, 8
-  jle  short labFixNext
+  cmp  edi, 0800000h
+  jae  short labFixNext
 
   // ; save previous ecx field
   push ecx
@@ -1522,9 +1523,12 @@ end
 inline % 1Fh
 
   shl  ebx, 2  
+  setz dl
   push eax  
   mov  ecx, ebx
+  shl  edx, 23
   add  ecx, page_ceil
+  or   ebx, edx
   and  ecx, page_mask  
   call code : %GC_ALLOC
   pop  edx
