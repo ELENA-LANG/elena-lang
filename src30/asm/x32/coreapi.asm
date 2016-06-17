@@ -1941,7 +1941,7 @@ finish1:
    lea   edi, [edi+1]
 
 finish2:
-   lea   ebx, [edi+1]
+   mov   ebx, edi
    pop   edi
    add   esp, 52
    pop   ebp
@@ -2291,7 +2291,7 @@ finish1:
    lea   edi, [edi+2]
 
 finish2:
-   lea   ebx, [edi+2]
+   mov   ebx, edi
    pop   edi
    add   esp, 52
    pop   ebp

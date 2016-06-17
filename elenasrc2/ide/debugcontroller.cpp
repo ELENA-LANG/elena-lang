@@ -1204,6 +1204,8 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
             // get array size
             getValue(selfPtr - 8, (char*)&length, 4);
+            if (length == 0x800000)
+               length = 0;
 
             if (length > sizeof(list))
                length = sizeof(list);

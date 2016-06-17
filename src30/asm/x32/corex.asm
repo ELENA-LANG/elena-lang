@@ -1522,6 +1522,7 @@ end
 // ; create
 inline % 1Fh
 
+  xor  edx, edx
   shl  ebx, 2  
   setz dl
   push eax  
