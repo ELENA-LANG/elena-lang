@@ -7,13 +7,11 @@ In development:
                        * play with chaotic computer player
 
               xdev - general implementation    
-                       * test pi,pi2,random
-                       * test all
+                       * #259 : memory reservation, #137, #139
+
                        * test LiteralValue / WideLiteralValue new&int&char
                        * test wideliteralvalue compare
-                       * test after redesign
-
-                       * #259 : memory reservation, #137, #139
+                       * test all
 
 ------                                 
 Pipeline:

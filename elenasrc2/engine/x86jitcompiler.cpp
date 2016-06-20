@@ -31,6 +31,8 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define NEWTHREAD            0x1001B
 #define CLOSETHREAD          0x1001C
 #define EXIT                 0x1001D
+#define CALC_SIZE            0x1001F
+#define GET_COUNT            0x10020
 #define THREAD_WAIT          0x10021
 #define NEW_HEAP             0x10025
 #define BREAK                0x10026
@@ -55,11 +57,11 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 19;
+const int coreFunctionNumber = 21;
 const int coreFunctions[coreFunctionNumber] =
 {
    NEW_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
-   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT,
+   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT, CALC_SIZE, GET_COUNT,
    THREAD_WAIT, EXITTHREAD, PREPARE, NEW_EVENT
 };
 

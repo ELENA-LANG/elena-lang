@@ -10,6 +10,8 @@ define CLOSEFRAME        1001Ah
 define NEWTHREAD         1001Bh
 define CLOSETHREAD       1001Ch
 define EXIT              1001Dh
+define CALC_SIZE         1001Fh
+define GET_COUNT         10020h
 define PREPARE           10027h
 define EXITTHREAD        1002Ah
 
@@ -4040,6 +4042,128 @@ procedure coreapi'vm_console_entry
   pop  ecx
   pop  ebx
                                                            
+  ret
+
+end
+
+procedure coreapi'allocate
+
+  push ebx
+  shl  ebx, 2
+  call code : %CALC_SIZE
+  nop
+  nop
+  call code : %GC_ALLOC
+  xor  edx, edx
+  pop  ecx
+labCopy:
+  sub  ecx, 1
+  mov  [eax+ecx*4], edx
+  test ecx, ecx
+  jnz  short labCopy
+
+  ret
+
+end
+
+procedure coreapi'reallocate
+
+  push ebx
+  shl  ebx, 2
+  push eax
+  call code : %CALC_SIZE
+  nop
+  nop
+  call code : %GC_ALLOC
+  mov  edi, eax
+  pop  eax
+  call code : %GET_COUNT
+  xor  esi, esi
+labCopy:
+  mov  edx, [eax+esi*4]
+  mov  [edi+esi*4], edx
+  add  esi, 1
+  cmp  esi, ebx
+  jb   short labCopy
+  pop  ebx
+  xor  edx, edx
+labFill:
+  mov  [edi+esi*4], edx
+  add  esi, 1
+  cmp  esi, ebx
+  jb   short labFill
+
+  ret
+
+end
+
+procedure coreapi'alloc_index
+
+  mov  eax, [stat : "$elena'@referencetable"]
+  
+  test eax, eax
+  jnz  short labStart
+
+  mov  ebx, 020h
+  call code : "$native'coreapi'allocate"
+
+  mov  [stat : "$elena'@referencetable"], eax
+
+labStart:
+  // ; try to reuse existing slots
+  call code : %GET_COUNT
+  mov  ecx, ebx
+  xor  ebx, ebx
+labNext:
+  cmp  [eax+ebx*4], 0
+  jz   short labReuse
+  add  ebx, 1
+  cmp  ebx, ecx
+  jb   short labNext                                                                                               
+
+  // ; if no place reallocate the reference table
+  call code : %GET_COUNT
+  add  ebx, 10h
+
+  call code : "$native'coreapi'reallocate"
+
+  mov  [stat : "$elena'@referencetable"], eax
+  jmp  labStart
+
+labReuse:
+  mov  [eax + ebx * 4], const : "system'nil"
+
+  ret
+
+end
+
+// ; free_index
+procedure coreapi'free_index
+
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  [esi + ebx * 4], 0
+  
+  ret
+
+end
+
+// ; resolve_index (index)
+procedure coreapi'resolve_index
+
+  mov  esi, [esp + 4]
+  mov  edx, [esi]
+  mov  ebx, [stat : "$elena'@referencetable"]
+  mov  eax, [ebx + edx * 4]
+  
+  ret 4
+
+end
+
+procedure coreapi'resolve_index_value
+
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  eax, [esi + ebx * 4]
+  
   ret
 
 end

@@ -12,6 +12,8 @@ define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
 define EXIT                 1001Dh
+define CALC_SIZE            1001Fh
+define GET_COUNT            10020h
 define THREAD_WAIT          10021h
 define NEW_HEAP             10025h
 define BREAK                10026h
@@ -1358,6 +1360,31 @@ labWait:
   pop  eax
 
   ret
+
+end
+
+procedure % CALC_SIZE
+
+  mov  ecx, ebx
+  add  ecx, page_ceil
+  and  ecx, page_mask
+
+  ret
+
+end
+
+procedure % GET_COUNT
+
+  mov  ebx, [eax - elSizeOffset]
+  test ebx, 0800000h
+  jnz  short labErr
+  and  ebx, 0FFFFFFh
+  shr  ebx, 2
+  ret
+
+labErr:
+  xor  ebx, ebx
+  ret 
 
 end
 
