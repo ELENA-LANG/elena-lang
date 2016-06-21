@@ -65,7 +65,7 @@ procedure % EXPAND_HEAP
 
   push 4
   push 00001000h
-  push ebx
+  push ecx
   push eax
   call extern 'dlls'KERNEL32.VirtualAlloc
 

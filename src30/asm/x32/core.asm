@@ -164,7 +164,6 @@ labYGNextFrame:
   jz   labWBEnd                                        // ; skip if it is zero
   mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
   shr  ebx, page_size_order
-  lea  esi, [esi + 1]
   // ; lea  edi, [edi + elObjectOffset]
 
 labWBNext:
@@ -182,7 +181,7 @@ labWBMark:
   sub  eax, [data : %CORE_GC_TABLE + gc_mg_wbar]
   mov  edx, [esi-4]
   shl  eax, page_size_order
-  lea  eax, [edi + eax]
+  lea  eax, [edi + eax + elObjectOffset]
   
   test edx, 0FFh
   jz   short labWBMark2
@@ -294,13 +293,13 @@ labFullCollect:
   // ; expand MG if required
   mov  ecx, [data : %CORE_GC_TABLE + gc_end]
   sub  ecx, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
+  mov  edx, [data : %CORE_GC_TABLE + gc_yg_current]
   sub  edx, [data : %CORE_GC_TABLE + gc_yg_start]
   cmp  ecx, edx
   ja   labSkipExpand
 
   mov  eax, [data : %CORE_GC_TABLE + gc_end]
-  mov  ecx, 15000h
+  mov  ecx, 2A000h
   call code : % EXPAND_HEAP
 
   mov  eax, [data : %CORE_GC_TABLE + gc_header]
@@ -308,7 +307,7 @@ labFullCollect:
   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
   shr  ecx, page_size_order_minus2
   add  eax, ecx
-  mov  ecx, 5400h
+  mov  ecx, 0A800h
   call code : % EXPAND_HEAP
 
   mov  ecx, [data : %CORE_GC_TABLE + gc_end]
@@ -358,13 +357,18 @@ labMGSkipNext:
   add  edi, ecx
   cmp  esi, edx
   jb   short labMGSkipNext
+  // ; !! undefined behaviour
+  xor  ecx, ecx
 
-labMGSkipEnd:
+labMGSkipEnd:  
   mov  ebp, esi
   
-  // ; compact
+  // ; compact	
 labMGCompactNext:
-  add  esi, ecx
+  add  ecx, page_ceil
+  and  ecx, page_align_mask  
+  add  esi, ecx  
+  
   shr  ecx, page_size_order_minus2
   add  edi, ecx
   cmp  esi, edx
@@ -406,6 +410,8 @@ labMGCompactEnd:
   jmp  short labYGPromNext2
 
 labYGPromNext:
+  add  ecx, page_ceil
+  and  ecx, page_align_mask
   add  esi, ecx
   shr  ecx, page_size_order_minus2
   add  edi, ecx
@@ -465,7 +471,7 @@ labFixRoot:
 
   // ; clear WBar
   mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end ] // !!
   xor  eax, eax
   sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
   shr  ecx, page_size_order
@@ -485,11 +491,11 @@ labClearWBar:
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  [eax], ebx
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
   add  ecx, eax
   cmp  ecx, edx
-  jae  short labError2
+  jae  labBigAlloc
+  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  eax, [eax + elObjectOffset]
   ret
@@ -503,12 +509,78 @@ labError:
   pop  edi 
 
 labError2:
-
   mov  ebx, 0C0000017h
   call code : % BREAK
   ret  
 
-  // start collecting: esi => ebp, [ebx, edx] ; ecx - count
+// ; bad luck, we have to expand GC
+labBigAlloc2:
+  push ecx
+  push ebx
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_end]
+  mov  ecx, 2A000h
+  call code : % EXPAND_HEAP
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_header]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+  shr  ecx, page_size_order_minus2
+  add  eax, ecx
+  mov  ecx, 0A800h
+  call code : % EXPAND_HEAP
+
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  add  ecx, 15000h
+  mov  [data : %CORE_GC_TABLE + gc_end], ecx
+
+  pop  ebx
+  pop  ecx
+
+labBigAlloc:
+  // ; try to allocate in the mg
+  sub  ecx, eax
+  cmp  ecx, 800000h
+  jae  labError2
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_mg_current]
+  mov  edx, [data : %CORE_GC_TABLE + gc_end]
+  add  ecx, eax
+  cmp  ecx, edx
+  jae  labBigAlloc2
+  mov  [eax], ebx
+  mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
+  lea  eax, [eax + elObjectOffset]
+
+/*
+  // ; clear WB
+  mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  xor  edx, edx
+  sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
+  shr  ecx, page_size_order
+
+labClearWBar2:
+  mov  [esi], edx
+  sub  ecx, 4
+  lea  esi, [esi+4]
+  ja   short labClearWBar2
+*/
+
+  // ; mark it as root in WB
+  cmp  ebx, 0800000h
+  jae  short labSkipBigAlloc
+
+  mov  ecx, eax
+  mov  esi, [data : %CORE_GC_TABLE + gc_header]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+  shr  ecx, page_size_order
+  mov  byte ptr [ecx + esi], 1  
+
+labSkipBigAlloc:
+  ret  
+
+  // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
 labCollectYG:
   push 0
 
