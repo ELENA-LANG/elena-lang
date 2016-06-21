@@ -419,6 +419,7 @@ labCollectFrame:
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
+  mov  ecx, [esp]
   mov  [eax], ebx
   add  ecx, eax
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
