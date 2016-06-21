@@ -6,13 +6,6 @@ In development:
                        * implementing
                        * play with chaotic computer player
 
-              xdev - general implementation    
-                       * #259 : memory reservation, #137, #139
-
-                       * test LiteralValue / WideLiteralValue new&int&char
-                       * test wideliteralvalue compare
-                       * test all
-
 ------                                 
 Pipeline:
 ------                                                                                         

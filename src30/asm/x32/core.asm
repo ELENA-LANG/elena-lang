@@ -471,7 +471,7 @@ labFixRoot:
 
   // ; clear WBar
   mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end ] // !!
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end ]
   xor  eax, eax
   sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
   shr  ecx, page_size_order
@@ -551,21 +551,6 @@ labBigAlloc:
   mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
   lea  eax, [eax + elObjectOffset]
-
-/*
-  // ; clear WB
-  mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  xor  edx, edx
-  sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
-  shr  ecx, page_size_order
-
-labClearWBar2:
-  mov  [esi], edx
-  sub  ecx, 4
-  lea  esi, [esi+4]
-  ja   short labClearWBar2
-*/
 
   // ; mark it as root in WB
   cmp  ebx, 0800000h
