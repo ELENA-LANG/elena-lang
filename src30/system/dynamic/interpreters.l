@@ -2,7 +2,7 @@
 //#import system'routines.
 
 #subject struct   = system'dynamic'Struct.
-#subject castover = system'dynamic'CastOver.
+#subject cast = system'dynamic'Cast.
 
 // --- CastOver ---
 
@@ -11,15 +11,17 @@
     #constructor(stacksafe) $new &int:aLength
         = object:aLength.
         
-    #constructor new &args:aMembers
-        <= ($new &int:(aMembers length))
+    #constructor new &args:objects
+        <= ($new &int:(objects length))
     [
+//        $self copy &args:objects.
+        
         #var(int)i := 0.
-        #var(int)l := aMembers length.
+        #var(int)l := objects length.
         
         #loop (i < l)?
         [
-            $self setField &int:i &object:(aMembers@i).
+            $self setField &int:i &object:(objects@i).
             
             i := i + 1.
         ].

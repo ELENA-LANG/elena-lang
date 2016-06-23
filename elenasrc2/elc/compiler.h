@@ -1107,6 +1107,7 @@ private:
 
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeArgUnboxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void optimizeClassTree(ClassScope& scope);

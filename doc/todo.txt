@@ -2,7 +2,12 @@
 In development:
 ------                              
 
+              xdev - generic development
+                       * unboxing open argument list
+
               fdev - upndown
+                       * configurating Gamemaster
+                       * configurating Connector / Player
                        * implementing
                        * play with chaotic computer player
 
@@ -57,9 +62,6 @@ Pipeline:
                             #var(int)l := s length.
 
                           acopyf fp:-2 is implemented twice in row
-
-                       * support old style variable / field declaration (with type keyword)
-                       * support old style subject declaration (with class keyword)
 
                        * check subject duplicates
 
@@ -153,7 +155,6 @@ Pipeline:
 
                        * review pi performance
                        * review warnings
-                       * unboxing open argument list
 	               * test external call : return real value	               
 
                        * #229 : unboxing optimization

@@ -7691,6 +7691,15 @@ bool Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
    return variable;
 }
 
+void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, int warningLevel)
+{
+   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
+   if (object == lxArgBoxing)
+      object = lxExpression;
+
+   optimizeSyntaxExpression(scope, node, warningLevel);
+}
+
 void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
 {
    bool boxing = true;
@@ -8097,6 +8106,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
       case lxNested:
       case lxMember:
          optimizeSyntaxExpression(scope, current, warningMask);
+         break;
+      case lxArgUnboxing:
+         optimizeArgUnboxing(scope, current, warningMask);
          break;
       default:
          if (test(current.type, lxExpressionMask)) {

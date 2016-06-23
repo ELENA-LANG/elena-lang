@@ -24,6 +24,14 @@
 {
     #field $item.
     
+    #constructor(stacksafe) $new &int:aLength
+        = object:aLength.
+        
+    #constructor new &args:objects
+        <= ($new &int:(objects length))
+    [
+    ]
+    
     #method => system'core_routines'__group.
 }
 

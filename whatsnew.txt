@@ -14,6 +14,7 @@
 [-] critical bug fix in field template routine
 
 [ELC]
+[-] critical bug fix : unboxing open argument list
 [-] #257 : Raising an exception in static symbol
 [+] #259 : memory auto reservation
 
