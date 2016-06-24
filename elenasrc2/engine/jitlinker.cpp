@@ -38,7 +38,7 @@ SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* m
 
    ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
 
-   return _owner->_loader->getSectionInfo(referenceName, reference & mskAnyRef);
+   return _owner->_loader->getSectionInfo(referenceName, reference & mskAnyRef, false);
 }
 
 SectionInfo JITLinker::ReferenceHelper :: getCoreSection(ref_t reference)
@@ -501,6 +501,10 @@ void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassS
    // fix not loaded references
    fixReferences(references, _loader->getTargetSection(mskClassRef));
 
+   //HOTFIX : resolve class symbol as well
+   if (_classSymbolAutoLoadMode)
+      resolve(reference, mskSymbolRef, true);
+
    return vaddress;
 }
 
@@ -578,7 +582,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    }
    else if (vmtVAddress == LOADER_NOTLOADED) {
       // resolve constant value
-      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef);
+      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
       _compiler->compileBinary(&writer, sectionInfo.section);
 
       // resolve section references
@@ -860,15 +864,15 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
       switch (mask) {
          case mskSymbolRef:
 //         case mskClassRef:
-            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask));
+            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
             break;
          case mskInternalRef:
          case mskInternalRelRef:
-            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0));
+            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
             break;
          case mskSymbolRelRef:
 //         case mskClassRelRef:
-            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef));
+            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef, silentMode));
             break;
          case mskVMTRef:
             vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef, silentMode));
@@ -876,10 +880,10 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskNativeCodeRef:
          case mskNativeDataRef:
          case mskNativeRDataRef:
-            vaddress = resolveNativeSection(reference, mask, _loader->getSectionInfo(reference, mask));
+            vaddress = resolveNativeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
             break;
          case mskNativeRelCodeRef:
-            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef));
+            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
             break;
          case mskConstantRef:
          case mskLiteralRef:

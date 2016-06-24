@@ -251,6 +251,8 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
       return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
    case _ELENA_::opDebugSubjectInfo:
       return config.getSetting(PROJECT_CATEGORY, ELC_SUBJECTINFO);
+   case _ELENA_::opClassSymbolAutoLoad:
+      return config.getSetting(PROJECT_CATEGORY, ELC_CLASSSYMBOLLOAD);
    case _ELENA_::opThreadMax:
       return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
    case _ELENA_::opL0:

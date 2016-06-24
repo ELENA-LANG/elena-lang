@@ -2,11 +2,9 @@
 In development:
 ------                              
 
-              xdev - generic development
-                       * unboxing open argument list
-
               fdev - upndown
                        * configurating Gamemaster
+
                        * configurating Connector / Player
                        * implementing
                        * play with chaotic computer player

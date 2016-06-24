@@ -69,7 +69,7 @@
         
         #var(bool)whitespace := aChar is &whitespace.
         #var(bool)digit := aChar is &digit.
-        #var(bool)letter := aChar is &letter.
+        #var(bool)letter := aChar is &ltoken.
         whitespace
             ? [
                 theSpaceMode

@@ -1438,6 +1438,26 @@
             
         ^ false.            
     ]
+    
+    #method(bool,stacksafe)is &ltoken
+    [
+        #var(int) ch.
+        intConvertor convert &char:self &vint:ch.
+        
+        ((ch >= 41h) and: (ch <= 5Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 61h) and: (ch <= 7Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 3ACh) and: (ch <= 3CEh))
+            ? [ ^ true. ].
+            
+        ((ch >= 400h) and: (ch <= 42Fh))
+            ? [ ^ true. ].
+            
+        ^ ch == 39.
+    ]
 }
 
 // --- byteArrayHelper ---

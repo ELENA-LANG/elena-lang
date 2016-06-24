@@ -14,17 +14,7 @@
     #constructor new &args:objects
         <= ($new &int:(objects length))
     [
-//        $self copy &args:objects.
-        
-        #var(int)i := 0.
-        #var(int)l := objects length.
-        
-        #loop (i < l)?
-        [
-            $self setField &int:i &object:(objects@i).
-            
-            i := i + 1.
-        ].
+        $self setFields &args:objects.
     ]
     
     #method => system'core_routines'__castover.

@@ -68,7 +68,7 @@
         aResultLength := retVal.
     ]
     
-    #method copy &args:objects
+    #method setFields &args:objects
     [
         #var(int)i := 0.
         #var(int)l := objects length.
@@ -79,6 +79,8 @@
             
             i += 1.
         ].
+        
+        ^ self.
     ]
 }
 

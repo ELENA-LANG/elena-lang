@@ -1526,10 +1526,6 @@ void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tap
    size_t codeSize = tapeReader.getDWord();
    size_t endPos = tapeReader.Position() + codeSize;
 
-//   // ; copy the parameter from the previous frame to simulate embedded symbol
-//   // push [esp+4]
-//   codeWriter.writeDWord(0x042474FF);
-
    compileTape(tapeReader, endPos, scope);
 
    // ; copy the parameter to the accumulator to simulate embedded symbol

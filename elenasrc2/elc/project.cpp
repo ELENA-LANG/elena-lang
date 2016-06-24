@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA Project interface.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -205,6 +205,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
    loadBoolOption(config, opDebugSubjectInfo);
+   loadBoolOption(config, opClassSymbolAutoLoad);
    loadOption(config, opTemplate);
 
    // load compiler settings

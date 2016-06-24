@@ -106,6 +106,7 @@ class JITLinker
    _JITCompiler*  _compiler; 
    bool           _virtualMode;
    bool           _withDebugInfo;
+   bool           _classSymbolAutoLoadMode;
    void*          _codeBase;
    int            _statLength;
    MethodMap      _staticMethods;
@@ -160,7 +161,7 @@ public:
 
    ref_t parseMessage(ident_t reference);
 
-   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase)
+   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool autoLoadMode = false)
       : _staticMethods(-1)
    {
       _loader = loader;
@@ -169,6 +170,7 @@ public:
       _withDebugInfo = compiler->isWithDebugInfo();
       _codeBase = codeBase;
       _statLength = 0;
+      _classSymbolAutoLoadMode = autoLoadMode;
 
 //      _uniqueID = 0;
    }

@@ -39,7 +39,8 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _signature = project->resolveForward(SIGNATURE_FORWARD);
    _verb = project->resolveForward(VERB_FORWARD);
 
-   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef);
+   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef, 
+      project->BoolSetting(ProjectSetting::opClassSymbolAutoLoad));
 
    // save root namespace
    _debug.writeLiteral(_debug.Length(), getNamespace());
@@ -95,18 +96,19 @@ _Memory* ExecutableImage :: getTargetSection(size_t mask)
    }
 }
 
-SectionInfo ExecutableImage :: getSectionInfo(ident_t reference, size_t mask)
+SectionInfo ExecutableImage :: getSectionInfo(ident_t reference, size_t mask, bool silentMode)
 {
    SectionInfo sectionInfo;
 
    ref_t referenceID = 0;
    sectionInfo.module = _project->resolveModule(reference, referenceID);
    if (sectionInfo.module == NULL || referenceID == 0) {
-      throw JITUnresolvedException(reference);
+      if (!silentMode)
+         throw JITUnresolvedException(reference);
    }
    else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
 
-   if (sectionInfo.section == NULL) {
+   if (sectionInfo.section == NULL && !silentMode) {
       throw JITUnresolvedException(reference);
    }
 
