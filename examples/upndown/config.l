@@ -38,6 +38,28 @@
                     ]
                     ! [ stack push:arg. ].  
                 ]
+                "[" ? [ counter *= 16. ]
+                "]" ? [
+                    #var(int) argCounter := counter int mod:16.
+                    counter /= 16.
+                    
+                    #var arg := $nil.
+                    #loop (argCounter > 0)?
+                    [
+                        arg := stack pop cast &with:arg.
+                        
+                        argCounter -= 1.
+                    ].
+                    
+                    #var target := stack pop.
+                    ($nil != target)?
+                    [
+                        ($nil == arg)
+                            ? [ stack push:(target new). ]
+                            ! [ stack push:(target new:arg). ].                                        
+                    ]
+                    ! [ stack push:arg. ].  
+                ]
                 "," ? [ ]
                 ! [
                     counter += 1.
@@ -50,12 +72,18 @@
     ]
 }
 
-// --- configuator ---
+// --- configuations ---
 
-#static configuator = Cast new &args:upndown'ai'aiConfigurator:upndown'testConfigurator.
+#symbol dummyLoader = (upndown'ai'aiConfigurator,upndown'testConfigurator).
 
-//// === Groups ==
-//
+#symbol testAIConnectorConfig = "[upndown'ai'aiConfigurator,upndown'testConfigurator]".
+
+// === Groups ==
+
+//#static configuator = Cast new &args:upndown'ai'aiConfigurator:upndown'testConfigurator.
+
+#symbol connectorGroup = 'connectorConfig loadConfiguration.
+
 //#symbol ConnectorGroup = GroupVariable
 ///*    insert &group_member:cardgame'tester'EConnector
 //    insert &group_member:upndown'ai'EConnector*/.

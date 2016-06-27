@@ -2,23 +2,6 @@
 //#import system'routines.
 
 #subject struct   = system'dynamic'Struct.
-#subject cast = system'dynamic'Cast.
-
-// --- CastOver ---
-
-#class(sealed,arrayof:object,group) Cast
-{
-    #constructor(stacksafe) $new &int:aLength
-        = object:aLength.
-        
-    #constructor new &args:objects
-        <= ($new &int:(objects length))
-    [
-        $self setFields &args:objects.
-    ]
-    
-    #method => system'core_routines'__castover.
-}
 
 // --- Tape ---
 

@@ -392,7 +392,7 @@
 
         theForm onOpen := sender
         [
-            configuator configConnector:
+            connectorGroup configConnector:
             {
                 addPlayer : aPlayer
                 [

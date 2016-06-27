@@ -18,4 +18,5 @@ tester.l
 
 [forwards]
 'mainWindow=upndown'gui'Playground
+'connectorConfig=upndown'testAIConnectorConfig
 
