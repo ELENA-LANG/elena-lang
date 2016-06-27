@@ -515,7 +515,3 @@
 ////        theForm refresh.
 ////    ]
 ////}
-//
-//// --- Connector ---
-//
-//#symbol Connector : aParent = config'ConnectorGroup group_member'append:connector'dialog::aParent.

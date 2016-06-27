@@ -22,8 +22,11 @@
 
 #class GameMaster
 {
-    #constructor new
+    #field theExtension.
+    
+    #constructor new : extension
     [
+        theExtension := extension.
     ]
     
     #method start
@@ -62,6 +65,8 @@
 //            
 //            self run.
     ]
+    
+    #method => theExtension.
 }
 
 //#static GameMaster = config'GameMasterGroup.

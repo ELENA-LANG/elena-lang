@@ -7,16 +7,26 @@
 
 #class BasePlayer
 {
-//    #field(literal,outprop:name) theName.
+    #field(literal,outprop:name) theName.
 //    #field theHand.
 //    #field theTrump.
 
-//    #method new & name : aPlayerName
-//    [
+    #field theExtension.
+
+    #constructor new &name:aPlayerName
+    [
 //        theHand := cards'Hand.
-//        theName := aPlayerName literal.
+        theName := aPlayerName literal.
 //        theTrump := 0.
-//    ]
+    ]
+
+    #method new : extension
+    [
+        ($nil != theExtension)
+            ? [ #throw InvalidOperationException new. ].
+        
+        theExtension := extension.
+    ]
 
 //    #method hand =
 //    {

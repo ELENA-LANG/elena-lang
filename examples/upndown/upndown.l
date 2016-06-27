@@ -782,3 +782,10 @@
 //        self stop &game.
 //    ]
 //}
+
+#class UpNDown
+{
+    #constructor new
+    [
+    ]
+}

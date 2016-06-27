@@ -503,7 +503,7 @@
 
     #method $startGame
     [
-        #var gameMaster := GameMaster new.
+        #var gameMaster := 'game loadConfiguration.
         
 //        gameMaster players append:(Human new &name:txtUserName).
             

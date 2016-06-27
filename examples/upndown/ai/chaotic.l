@@ -95,11 +95,11 @@
 {
     configConnector : aConnector
     [
-        #var counter := Integer new.
+//        #var counter := Integer new.
         
         aConnector addPlayer:
         {
-            new = BasePlayer new &name:("Chaotic " + [ counter += 1 ]).
+            new = chaoticAIConfig loadConfiguration/*:(BasePlayer new &name:("Chaotic " + [ counter += 1 ]))*/.
             
             caption = "Chaotic AI".
         }.

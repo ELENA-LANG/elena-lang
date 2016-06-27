@@ -11,6 +11,7 @@ classsymbolload=-1
 config.l
 players.l
 engine.l
+upndown.l
 ai\chaotic.l
 gui\connector.l
 gui\main.l
@@ -19,4 +20,5 @@ tester.l
 [forwards]
 'mainWindow=upndown'gui'Playground
 'connectorConfig=upndown'testAIConnectorConfig
+'game=upndown'upndownGame
 

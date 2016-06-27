@@ -7,10 +7,13 @@
 #import extensions'text.
 
 #class(extension)configOp
-{
+{    
     #method loadConfiguration
+        = self loadConfiguration:$nil.
+
+    #method loadConfiguration : target
     [
-        #var stack := Stack new push:$nil.
+        #var stack := Stack new push:target.
         #var counter := Integer new.
         
         TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new) run &each:token
@@ -74,9 +77,13 @@
 
 // --- configuations ---
 
-#symbol dummyLoader = (upndown'ai'aiConfigurator,upndown'testConfigurator).
+#symbol dummyLoader = (upndown'ai'aiConfigurator,upndown'testConfigurator,upndown'GameMaster,upndown'UpNDown,upndown'BasePlayer).
 
 #symbol testAIConnectorConfig = "[upndown'ai'aiConfigurator,upndown'testConfigurator]".
+
+#symbol chaoticAIConfig = "upndown'BasePlayer".
+
+#symbol upndownGame = "upndown'GameMaster(upndown'UpNDown())".
 
 // === Groups ==
 
