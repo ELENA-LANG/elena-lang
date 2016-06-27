@@ -62,7 +62,7 @@ EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, ident_c* buffer, size_t ma
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }

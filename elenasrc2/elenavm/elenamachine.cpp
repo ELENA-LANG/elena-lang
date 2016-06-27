@@ -306,7 +306,7 @@ _Module* Instance::resolveModule(ident_t referenceName, LoadResult& result, ref_
    return _loader.resolveModule(referenceName, result, reference);
 }
 
-SectionInfo Instance::getSectionInfo(ident_t reference, size_t mask)
+SectionInfo Instance::getSectionInfo(ident_t reference, size_t mask, bool silentMode)
 {
    SectionInfo sectionInfo;
 
@@ -319,7 +319,7 @@ SectionInfo Instance::getSectionInfo(ident_t reference, size_t mask)
 
    sectionInfo.section = sectionInfo.module ? sectionInfo.module->mapSection(referenceID | mask, true) : NULL;
 
-   if (sectionInfo.section == NULL) {
+   if (sectionInfo.section == NULL && !silentMode) {
       throw JITUnresolvedException(reference);
    }
 

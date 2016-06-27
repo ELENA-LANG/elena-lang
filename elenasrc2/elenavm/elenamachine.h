@@ -206,7 +206,7 @@ protected:
 
    _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
 
-   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask);
+   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode);
    virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode);
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 

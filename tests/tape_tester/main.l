@@ -1,5 +1,6 @@
 #import system.
 #import system'routines.
+#import system'collections.
 #import system'dynamic.
 #import extensions'text.
 #import extensions'dynamic.
@@ -62,6 +63,106 @@
     (className == "system'IntNumber")
         ? [ console writeLine:"Class serializing works". ]
         ! [ console writeLine:"Class serializing does not work". ].    
+].
+
+#class A
+{
+    #method a
+    [
+        console writeLine:"A.a called".
+    ]
+}
+
+#class B
+{
+    #method b
+    [
+        console writeLine:"B.b called".
+    ]
+}
+
+#class C
+{
+    #field theObject.
+    
+    #constructor new : object
+    [
+        theObject := object.
+    ]
+
+    #method a
+    [
+        console writeLine:"C.a called".
+        
+        theObject a.
+    ]
+
+    #method b
+    [
+        console writeLine:"C.b called".
+        
+        theObject b.
+    ]
+                
+    #method c
+    [
+        console writeLine:"C.c called".
+    ]
+    
+    #method => theObject.
+}
+
+#class(extension)configOp
+{
+    #method loadConfiguration
+    [
+        #var stack := Stack new push:$nil.
+        #var counter := Integer new.
+        
+        TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new) run &each:token
+        [
+            token =>
+                "(" ? [ counter *= 16. ]
+                ")" ? [
+                    #var(int) argCounter := counter int mod:16.
+                    counter /= 16.
+                    
+                    #var arg := $nil.
+                    #loop (argCounter > 0)?
+                    [
+                        arg := stack pop group &with:arg.
+                        
+                        argCounter -= 1.
+                    ].
+                    
+                    #var target := stack pop.
+                    ($nil != target)?
+                    [
+                        ($nil == arg)
+                            ? [ stack push:(target new). ]
+                            ! [ stack push:(target new:arg). ].                                        
+                    ]
+                    ! [ stack push:arg. ].  
+                ]
+                "," ? [ ]
+                ! [
+                    counter += 1.
+                    
+                    stack push:(Symbol new &literal:(token literal)).
+                ].
+        ].
+        
+        ^ stack pop.
+    ]
+}
+
+#symbol configTest = 
+[
+    #var g := "mytest'C(mytest'A(),mytest'B())" loadConfiguration.
+    
+    g a.
+    g b.
+    g c.
 ].
 
 #symbol Program =

@@ -45,6 +45,9 @@
         
     #method group &with:object
     [
+        ($nil == object)
+            ? [ ^ self. ].
+        
         (Group == self class)
             ? [ 
                 #var(int)length := self fieldCount.
@@ -64,6 +67,27 @@
                 
                 ^ retVal.
             ]
-            ! [ ^ Group new &args:self:object. ].
+            ! [ 
+                (Group == object class)
+                    ? [
+                        #var(int)length := object fieldCount.
+                    
+                        #var retVal := Group $new &int:(length + 1).
+                                        
+                        #var(int)i := 0.
+                        
+                        #loop (i < length)?
+                        [
+                            retVal setField &int:(i + 1) &object:(self getField &int:i).
+                            
+                            i += 1.
+                        ].
+                        
+                        retVal setField &int:0 &object:object.
+                        
+                        ^ retVal.
+                    ]
+                    ! [ ^ Group new &args:self:object. ].            
+            ].
     ]        
 }
