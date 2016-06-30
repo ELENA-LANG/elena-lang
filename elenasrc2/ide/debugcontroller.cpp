@@ -255,7 +255,10 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleNa
                else if (prev != 0 && info[prev].addresses.step.address < address && info[i].addresses.step.address >= address && info[i].row >= 0) {
                   return info + i;
                }
-               prev = i;
+               /*if (info[i].symbol == dsEOP) {
+                  prev = 0;
+               }
+               else */prev = i;
             }
          }
       }
@@ -757,11 +760,12 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
    RTManager manager;
    manager.readCallStack(reader, _debugger.Context()->Frame(), _debugger.Context()->IP(), writer);
 
-   ident_t path = NULL;
-   ident_t moduleName = NULL;
-   ident_t className = NULL;
-   ident_t methodName = NULL;
    for(size_t pos = 0 ; pos < retPoints.Length(); pos += 4) {
+      ident_t path = NULL;
+      ident_t moduleName = NULL;
+      ident_t className = NULL;
+      ident_t methodName = NULL;
+
       DebugLineInfo* info = seekLineInfo((size_t)retPoints[pos], moduleName, className, methodName, path);
       if (info != NULL) {
          watch->write(moduleName, className, methodName, path, info->col + 1, info->row + 1, (size_t)retPoints[pos]);

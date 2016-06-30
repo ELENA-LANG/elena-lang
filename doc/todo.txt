@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              idev - generic development
+                       * #219 : IDE : Callstack for vm console application 
+
               fdev - upndown
                        * configurating Gamemaster
 
@@ -169,7 +172,6 @@ Pipeline:
               idev - generic development                                          
                        * project view : delays in openning the window
                        * #191 : IDE : block commenting
-                       * #219 : IDE : Callstack for vm console application 
                        * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
                        
              xdev - linux

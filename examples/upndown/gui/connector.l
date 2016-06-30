@@ -505,16 +505,14 @@
     [
         #var gameMaster := 'game loadConfiguration.
         
-//        gameMaster players append:(Human new &name:txtUserName).
-            
-        threadControl start &func:
-        [
-            gameMaster start.
-        ].
-        
-        theForm close.
-        
+//        gameMaster players append:(Human new &name:txtUserName).        
         // add human player
+        gameMaster players append:'hostPlayer loadConfiguration new:
+        {
+            name = txtUserName literal.
+        }.
+        
+        
 //        engine'GameMaster players
 //            += config'HostPlayerGroup::
 //            {
@@ -535,6 +533,13 @@
 //            ].
 //        ].
 //
+            
+        threadControl start &func:
+        [
+            gameMaster start.
+        ].
+        
+        theForm close.
 //        self set &forms'dialog_result: => (engine'GameMaster start | ~econtrol then: =>
 //        [
 //            dialogs'MessageBox::{ &dialogs'error_text:"The program flow is broken." &caption:"Up'N'Down" &control_parent:self } open &forms'modal.

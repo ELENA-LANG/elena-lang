@@ -4577,6 +4577,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    bool open = false;
    bool exit = false;
    SyntaxTree::Node current = node.firstChild();
+   ref_t messageRef = -1;
    while (current != lxNone) {
       if (current == lxImporting) {
          if (!open)
@@ -4589,6 +4590,8 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          if (!open) {
             declareMethod(tape, node.argument, sourcePathRef, reserved, current.argument == -1);
             open = true;
+            if (messageRef != -1)
+               declareMessageInfo(tape, messageRef);
          }  
          else newFrame(tape, reserved);
 
@@ -4600,6 +4603,8 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
       else if (current == lxCalling && current.argument == -1) {
          if (!open) {
             declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
+            if (messageRef != -1)
+               declareMessageInfo(tape, messageRef);
 
             open = true;
          }
@@ -4622,13 +4627,19 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          generateCreating(tape, current);
       }
       else if (current == lxMessageVariable) {
-         declareMessageInfo(tape, current.argument);
+         if (open) {
+            declareMessageInfo(tape, current.argument);
+         }
+         else messageRef = current.argument;
       }
       else if (test(current.type, lxExpressionMask)) {
          if (!open) {
             open = true;
 
             declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
+
+            if (messageRef != -1)
+               declareMessageInfo(tape, messageRef);
          }
 
          generateObjectExpression(tape, current);
