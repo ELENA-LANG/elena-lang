@@ -228,9 +228,17 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleNa
          DebugLineInfo* info = (DebugLineInfo*)section->get(4);
          int count = section->Length() / sizeof(DebugLineInfo);
          int prev = 0;
+         bool loaded = false;
          for (int i = 0 ; i < count ; i++) {
             if (info[i].symbol == dsClass || info[i].symbol == dsSymbol) {
                className = (ident_t)strings->get(info[i].addresses.symbol.nameRef);
+               if (info[i].symbol == dsClass) {
+                  loaded = _classNames.exist(className);
+               }
+               else loaded = true;
+            }
+            else if (!loaded) {
+               // skip not loaded classes
             }
             else if (info[i].symbol == dsProcedure) {
                procPath = (ident_t)strings->get(info[i].addresses.source.nameRef);

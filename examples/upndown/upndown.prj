@@ -21,4 +21,5 @@ tester.l
 'mainWindow=upndown'gui'Playground
 'connectorConfig=upndown'testAIConnectorConfig
 'game=upndown'upndownGame
+'hostPlayer=upndown'hostUpndownPlayer
 

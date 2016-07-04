@@ -85,6 +85,8 @@
 
 #symbol upndownGame = "upndown'GameMaster(upndown'UpNDown())".
 
+#symbol hostUpndownPlayer = "upndown'BasePlayer".
+
 // === Groups ==
 
 //#static configuator = Cast new &args:upndown'ai'aiConfigurator:upndown'testConfigurator.
