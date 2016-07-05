@@ -1,5 +1,6 @@
 // --- namespace shortcuts ---
 #import system.
+#import system'collections.
 
 //#define std'dictionary'*.
 //#define std'basic'*.
@@ -23,11 +24,28 @@
 #class GameMaster
 {
     #field theExtension.
-    
+    #field thePlayerList.
+
+    #constructor new
+    [
+        thePlayerList := CircleList new.
+    ]
+        
     #constructor new : extension
+        <= (new)
     [
         theExtension := extension.
     ]
+    
+    #method $appendPlayer:player
+    [
+        thePlayerList append:player.
+    ]
+    
+    #method players =
+    {
+        append : player [ $owner $appendPlayer:player. ]
+    }.
     
     #method start
     [
@@ -75,7 +93,6 @@
 //#class BaseMaster
 //{
 //    #field thePlayers.
-//    #field thePlayerList.
 //
 //    #field theLastID.
 //    #field thePlayerNumber.

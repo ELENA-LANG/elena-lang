@@ -670,7 +670,7 @@
     [
         #var(int)index := $self selected_index.
             
-        ^ theList getAt &int:index key.
+        ^ theList getAt &int:index.
     ]
     
     #method change 

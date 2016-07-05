@@ -2,9 +2,6 @@
 In development:
 ------                              
 
-              idev - generic development
-                       * #219 : IDE : Callstack for vm console application 
-
               fdev - upndown
                        * configurating Gamemaster
 

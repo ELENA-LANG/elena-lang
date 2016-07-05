@@ -95,11 +95,12 @@
 {
     configConnector : aConnector
     [
-        #var counter := Integer new.
+//        #var counter := Integer new.
         
         aConnector addPlayer:
         {
-//            new : parameters = chaoticAIConfig loadConfiguration invite &as:(parameters name + [ counter += 1 ]).
+            invite:playerInfo &to:game
+                = chaoticAIConfig loadConfiguration invite:playerInfo &to:game.
             
             caption = "Chaotic AI".
         }.

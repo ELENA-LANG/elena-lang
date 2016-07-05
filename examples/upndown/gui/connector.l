@@ -1,5 +1,6 @@
 // --- default namespaces ---
 #import system.
+#import system'routines.
 #import extensions.
 #import forms.
 
@@ -13,7 +14,7 @@
     [
         self is &visible
             ? [
-                #var text := self selected.
+                #var text := self selected key.
                 
                 ^ text is &nonempty and:("Not responded" != text).
             ].
@@ -505,34 +506,29 @@
     [
         #var gameMaster := 'game loadConfiguration.
         
-//        gameMaster players append:(Human new &name:txtUserName).        
         // add human player
-        gameMaster players append:'hostPlayer loadConfiguration new:
-        {
-            name = txtUserName literal.
-        }.
+        'hostPlayer loadConfiguration invite:
+            {
+                name = txtUserName literal.
+                
+                playground = $owner.
+            }
+            &to:gameMaster.
         
-        
-//        engine'GameMaster players
-//            += config'HostPlayerGroup::
-//            {
-//                playground = theParent.
-//
-//                player = player'Human::{ &player'name:txtUserName }.
-//            }.
-//
-//        // add other players                                    
-//        ctrl'Scan::(SecondPlayer, ThirdPlayer, FourthPlayer) run: aControl =>
-//        [
-//            #if aControl visible'is
-//            [
-//                #var aPlayerInfo := aControl selected_item control_tag.
-//
-//                engine'GameMaster players
-//                    += config'ClientPlayerGroup::aPlayerInfo.
-//            ].
-//        ].
-//
+        // add other players
+        (SecondPlayer, ThirdPlayer, FourthPlayer) run &each: control
+        [
+            (control is &visible)?
+            [
+                control selected invite:
+                {
+                    name = control caption.
+                    
+                    playground = $owner.
+                }
+                &to:gameMaster.
+            ].
+        ].
             
         threadControl start &func:
         [

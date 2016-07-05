@@ -81,11 +81,11 @@
 
 #symbol testAIConnectorConfig = "[upndown'ai'aiConfigurator,upndown'testConfigurator]".
 
-#symbol chaoticAIConfig = "upndown'BasePlayer".
+#symbol chaoticAIConfig = "upndown'BasePlayer()".
 
 #symbol upndownGame = "upndown'GameMaster(upndown'UpNDown())".
 
-#symbol hostUpndownPlayer = "upndown'BasePlayer".
+#symbol hostUpndownPlayer = "upndown'BasePlayer()".
 
 // === Groups ==
 

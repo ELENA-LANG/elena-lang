@@ -7,26 +7,35 @@
 
 #class BasePlayer
 {
-    #field(literal,outprop:name) theName.
+//    #field(literal,outprop:name) theName.
 //    #field theHand.
 //    #field theTrump.
 
-    #field theExtension.
+//    #field theExtension.
 
-    #constructor new &name:aPlayerName
+    #constructor new
     [
-//        theHand := cards'Hand.
-        theName := aPlayerName literal.
-//        theTrump := 0.
     ]
 
-    #method new : extension
+//    #constructor new &name:aPlayerName
+//    [
+////        theHand := cards'Hand.
+//        theName := aPlayerName literal.
+////        theTrump := 0.
+//    ]
+//
+    #method invite:playerInfo &to:game
     [
-        ($nil != theExtension)
-            ? [ #throw InvalidOperationException new. ].
-        
-        theExtension := extension.
+        game players append:$self.
     ]
+
+//    #method new : extension
+//    [
+//        ($nil != theExtension)
+//            ? [ #throw InvalidOperationException new. ].
+//        
+//        theExtension := extension.
+//    ]
 
 //    #method hand =
 //    {
