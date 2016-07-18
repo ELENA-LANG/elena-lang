@@ -7624,30 +7624,40 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    }
 
    if (node.argument != 0) {
-      SNode directCall = findSubNode(node, lxDirectCalling, lxSDirctCalling);
-      if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
-         optimizeEmbeddableCall(scope, node, directCall);
+      SNode intValue = findSubNode(node, lxConstantInt);
+      if (intValue != lxNone) {
+         int value = StringHelper::strToULong(scope.module->resolveConstant(intValue.argument), 16);
+         intValue.insertNode(lxValue, value);
+
+         node = lxIntOp;
+         node.setArgument(SET_MESSAGE_ID);
+      }
+      else {
+         SNode directCall = findSubNode(node, lxDirectCalling, lxSDirctCalling);
+         if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
+            optimizeEmbeddableCall(scope, node, directCall);
+         }
       }
    }
 
-   //// assignment operation
-   //SNode assignNode = findSubNode(node, lxAssigning);
-   //if (assignNode != lxNone) {
-   //   SNode operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
-   //   if (operationNode != lxNone) {
-   //      SNode larg = findSubNodeMask(operationNode, lxObjectMask);
-   //      SNode target = SyntaxTree::findMatchedChild(node, lxObjectMask);
-   //      if (larg.type == target.type && larg.argument == target.argument) {
-   //         // remove an extra assignment
-   //         larg = findSubNodeMask(assignNode, lxObjectMask);
+   // assignment operation
+   SNode assignNode = findSubNode(node, lxAssigning);
+   if (assignNode != lxNone) {
+      SNode operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
+      if (operationNode != lxNone) {
+         SNode larg = findSubNodeMask(operationNode, lxObjectMask);
+         SNode target = SyntaxTree::findMatchedChild(node, lxObjectMask);
+         if (larg.type == target.type && larg.argument == target.argument) {
+            // remove an extra assignment
+            larg = findSubNodeMask(assignNode, lxObjectMask);
 
-   //         larg = target.type;
-   //         larg.setArgument(target.argument);
-   //         node = lxExpression;
-   //         target = lxExpression;
-   //      }
-   //   }
-   //}
+            larg = target.type;
+            larg.setArgument(target.argument);
+            node = lxExpression;
+            target = lxIdle;
+         }
+      }
+   }
 }
 
 bool Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)

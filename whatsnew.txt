@@ -18,6 +18,7 @@
 [-] #257 : Raising an exception in static symbol
 [+] #259 : memory auto reservation
 [-] #262 : system'Symbol - loading class in stand-alone application
+[*] #246 : output code optimization
 
 [LIB]
 [-] #255 : Exception call stack 

@@ -9,13 +9,13 @@ In development:
                        * implementing
                        * play with chaotic computer player
 
+              xdev - generic development
+                       * optimoize n := a@3.    // #246 - close ticket
+
 ------                                 
 Pipeline:
 ------                                                                                         
               xdev - generic development
-                       * optimize n := n + m.
-                       * optimize n := n + 1.
-
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
                        * #250 : embeddable structure : implicit constructor should be called without creating the object

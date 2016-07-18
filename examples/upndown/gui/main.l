@@ -81,20 +81,17 @@
 {
     #field theForm.
     
-    #field fff.
-    #field ddd.
-    
-////    #field theStatusbar.
-////    #field lblPlayer1.
-////    #field lblPlayer2.
-////    #field lblPlayer3.
-////    #field lblPlayer4.
-////
-////    #field thePaintbox.
-////    #field theImageList.
-////
-////    #field theImageSize.
-////    #field theHandRect.
+//    #field theStatusbar.
+    #field lblPlayer1.
+    #field lblPlayer2.
+    #field lblPlayer3.
+    #field lblPlayer4.
+
+//    #field thePaintbox.
+//    #field theImageList.
+//
+//    #field theImageSize.
+//    #field theHandRect.
 
     #constructor new
     [
@@ -103,24 +100,30 @@
         theForm := SDIDialog new.
         
 //        super initializing:Args.
+
+////        #group(events'EHandler, 'system) +=
+////        {
+////            on'Application'Error'do [ self $onError. ] 
+////        }.
+//        
+//        theStatusbar := controls'Statusbar::(self~EInjector::EID::StatusBarID). 
+
+        lblPlayer1 := StaticLabel new.
+        lblPlayer2 := StaticLabel new.
+        lblPlayer3 := StaticLabel new.
+        lblPlayer4 := StaticLabel new.
+
+//        thePaintbox := controls'Paintbox::self.
+//        theImageList := __group(EJokerAdapter, controls'ImageList::self). // !! probably it should extended in upndown'gui module, because it is game specific
 //
-//////        #group(events'EHandler, 'system) +=
-//////        {
-//////            on'Application'Error'do [ self $onError. ] 
-//////        }.
-////        
-////        theStatusbar := controls'Statusbar::(self~EInjector::EID::StatusBarID). 
-////
-////        lblPlayer1 := controls'StaticLabel::self.
-////        lblPlayer2 := controls'StaticLabel::self.
-////        lblPlayer3 := controls'StaticLabel::self.
-////        lblPlayer4 := controls'StaticLabel::self.
-////
-////        thePaintbox := controls'Paintbox::self.
-////        theImageList := __group(EJokerAdapter, controls'ImageList::self). // !! probably it should extended in upndown'gui module, because it is game specific
-////
-////        #if self $loadImageList
-////            | [ dialogs'MessageBox::{ &dialogs'error_text:"Cannot load image files" &caption:"Up'N'Down" &control_parent:self } run. $self fail. ].
+//        #if self $loadImageList
+//            | [ dialogs'MessageBox::{ &dialogs'error_text:"Cannot load image files" &caption:"Up'N'Down" &control_parent:self } run. $self fail. ].
+        
+        theForm controls
+            append:lblPlayer1
+            append:lblPlayer2
+            append:lblPlayer3
+            append:lblPlayer4.            
         
         theForm
             set &x:50 &y:50 
@@ -135,7 +138,7 @@
 ////                    set &x:0 &y:467 set &width:700 &height:20.
 ////            
 ////        theStatusBar
-////            append &control_item &caption:"Up'N'Down V. 0.4"
+////            append &control_item &caption:"Up'N'Down V. 0.5"
 ////            append &control_item &caption:""
 ////            append &control_item &caption:""
 ////            append &control_item &caption:"".
@@ -336,6 +339,11 @@
 ////    ]
 
     #method => theForm.
+}
+
+// --- UIPlayer ---
+#class UIPlayer
+{
 }
 
 ////// --- EPlayer ---

@@ -154,6 +154,15 @@
         theTale += 1.
     ]
     
+    #method shift : offset
+    [
+        theTop += offset.
+        #loop (theTop >= theTale)?
+        [
+            theTop -= theTale.
+        ].
+    ]
+    
     #method clear
     [
         theList clear.

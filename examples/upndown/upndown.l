@@ -1,27 +1,5 @@
-//// --- default namespaces ---
-//#define std'dictionary'*.
-//#define std'basic'*.
-//#define std'patterns'*.
-//#define std'collections'*.
-//#define sys'dynamics'*.
-////#define ext'patterns'*.
-//#define ext'convertors'*.
-//
-//// --- namespace shortcuts ---
-//#define utils'*     = ext'utils'*.
-//#define engine'*    = cardgame'engine'*.
-//#define player'*    = cardgame'players'*.
-//#define cards'*     = cardgame'cards'*.
-//
-//#define cardgame'dictionary'*.
-//#define cardgame'dictionary'upndown'*.
-//
-//// protected subjects
-//#subject __distributor.
-//#subject __order, __taken, __score.
-//
-//// private operations
-//#subject __next_distributor, __beforeRound, __afterRound.
+// --- namespace shortcuts ---
+#import system.
 //
 //// --- PlayerInfo ---
 //
@@ -786,6 +764,10 @@
 #class UpNDown
 {
     #constructor new
+    [
+    ]
+    
+    #method start
     [
     ]
 }

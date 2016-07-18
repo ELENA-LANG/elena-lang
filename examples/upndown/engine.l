@@ -2,33 +2,20 @@
 #import system.
 #import system'collections.
 
-//#define std'dictionary'*.
-//#define std'basic'*.
-//#define sys'dynamics'*.
-//#define std'routines'*.
-//#define std'patterns'*.
-////#define ext'patterns'*.
-//#define std'collections'*.
-//#define cardgame'dictionary'*.
-//
-//#define cards'*  = cardgame'cards'*.
-//#define config'* = cardgame'config'*.
-//#define player'* = cardgame'players'*.
-//
-//
-//// --- Engine private subjects ---
-//#subject __top.
-
 // --- GameMaster ---
 
 #class GameMaster
 {
     #field theExtension.
-    #field thePlayerList.
+    #field thePlayers.
+    
+    #field(bool)theStarted.
 
     #constructor new
     [
-        thePlayerList := CircleList new.
+        thePlayers := CircleList new.
+        
+        theStarted := false.
     ]
         
     #constructor new : extension
@@ -39,7 +26,10 @@
     
     #method $appendPlayer:player
     [
-        thePlayerList append:player.
+        theStarted?
+            [ #throw NotSupportedException new. ].
+        
+        thePlayers append:player.
     ]
     
     #method players =
@@ -49,6 +39,15 @@
     
     #method start
     [
+        theStarted := true.
+        
+        thePlayers length repeat &each: x
+        [
+            thePlayers@0 start.
+            
+            thePlayers shift:1.
+        ].
+
 //            thePlayerNumber := NewInt32Value::(thePlayers count).
 //
 //            #shift.
@@ -133,16 +132,6 @@
 //    #method players'get = thePlayerList.
 //
 //    #method __top = (thePlayers~EArray)@0.
-//
-//    #method game'start
-//    [
-//        loop::{ &for:1 &to:thePlayerNumber } run: =>
-//        [
-//            #try (thePlayers~earray @ 0) game'start &players:thePlayers.
-//
-//            thePlayers seek &first_item:1.
-//        ].
-//    ]
 //
 //    #method game'proceed
 //    [

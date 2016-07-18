@@ -30,6 +30,7 @@ enum LexicalType
    lxNone            = 0x00000,
    lxInvalid         = 0x00001,
    lxRoot            = 0x00002,
+   lxIdle            = 0x00003,
 
    lxExpression      = 0x00301,
    lxBoxing          = 0x00302,   // boxing of the argument, arg - size

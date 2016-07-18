@@ -2334,6 +2334,10 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
       case LESS_MESSAGE_ID:
          tape.write(bcNLess);
          break;
+      case SET_MESSAGE_ID:
+         tape.write(bcNLoad);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -2386,6 +2390,10 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
       case OR_MESSAGE_ID:
          tape.write(bcNLoad);
          tape.write(bcOrN, immArg);
+         tape.write(bcNSave);
+         break;
+      case SET_MESSAGE_ID:
+         tape.write(bcDCopy, immArg);
          tape.write(bcNSave);
          break;
       default:
@@ -3364,6 +3372,9 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          selectMode = true;
          operation = LESS_MESSAGE_ID;
          break;
+      case SET_MESSAGE_ID:
+         immOp = true;
+         break;
    }
 
    SNode larg;
@@ -3373,9 +3384,14 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
    else assignOpArguments(node, larg, rarg);
 
+   if (larg == lxExpression)
+      larg = findSubNodeMask(larg, lxObjectMask);
+   if (rarg == lxExpression)
+      rarg = findSubNodeMask(rarg, lxObjectMask);
+
    bool largSimple = isSimpleObject(larg);
    bool rargSimple = isSimpleObject(rarg);
-   bool rargConst = (rarg == lxConstantInt) && immOp;
+   bool rargConst = immOp && (rarg == lxConstantInt);
 
    if (!largSimple) {
       if (assignMode) {
@@ -3417,6 +3433,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    }
 
    if (targetSet) {
+      assignBaseTo(tape, lxResult);
    }
    else {
       if (!largSimple) {
