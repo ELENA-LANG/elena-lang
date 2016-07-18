@@ -1732,6 +1732,9 @@ void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t so
    if (target == lxResult) {
       tape.write(bcNLoad);
    }
+   else if (target == lxConstantInt) {
+      tape.write(bcDCopy, sourceArgument);
+   }
 }
 
 void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
@@ -2516,7 +2519,7 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
    }
 }
 
-void ByteCodeWriter::doIntArrayOperation(CommandTape& tape, int operator_id)
+void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
       case REFER_MESSAGE_ID:
@@ -3251,9 +3254,13 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);   
 
+   if (rarg == lxExpression)
+      rarg = findSubNodeMask(rarg, lxObjectMask);
+
    bool largSimple = isSimpleObject(larg);
    bool rargSimple = isSimpleObject(rarg);
    bool rarg2Simple = isSimpleObject(rarg2);
+   bool immIndex = rarg == lxConstantInt;
 
    if (setMode) {
       generateObjectExpression(tape, larg);
@@ -3268,8 +3275,15 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          pushObject(tape, lxResult);
       }
 
-      generateObjectExpression(tape, rarg);
-      loadIndex(tape, lxResult);
+      if (immIndex) {
+         int index = SyntaxTree::findChild(rarg, lxValue).argument;
+
+         loadIndex(tape, rarg.type, index);
+      }
+      else {
+         generateObjectExpression(tape, rarg);
+         loadIndex(tape, lxResult);
+      }
 
       if (!rarg2Simple) {
          popObject(tape, lxResult);
@@ -3296,8 +3310,15 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          pushObject(tape, lxResult);
       }
 
-      generateObjectExpression(tape, rarg);
-      loadIndex(tape, lxResult);
+      if (immIndex) {
+         int index = SyntaxTree::findChild(rarg, lxValue).argument;
+
+         loadIndex(tape, rarg.type, index);
+      }
+      else {
+         generateObjectExpression(tape, rarg);
+         loadIndex(tape, lxResult);
+      }
 
       if (!largSimple) {
          popObject(tape, lxResult);

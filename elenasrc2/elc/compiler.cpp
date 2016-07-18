@@ -2819,6 +2819,10 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
          break;
       case okIntConstant:
          scope.writer->newNode(lxConstantInt, object.param);
+
+         scope.writer->appendNode(lxValue, 
+            StringHelper::strToULong(scope.moduleScope->module->resolveConstant(object.param), 16));
+
          break;
       case okLongConstant:
          scope.writer->newNode(lxConstantLong, object.param);
@@ -7356,10 +7360,6 @@ bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, in
          //HOTFIX : argument should be reread because rarg can be modified
          rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
       }
-      else if (rarg == lxConstantInt) {
-         int value = StringHelper::strToULong(scope.module->resolveConstant(rarg.argument), 16);
-         rarg.insertNode(lxValue, value);
-      }
 
       ref_t target = 0;
       int lflags = mapOpArg(scope, larg, target);
@@ -7626,9 +7626,6 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLe
    if (node.argument != 0) {
       SNode intValue = findSubNode(node, lxConstantInt);
       if (intValue != lxNone) {
-         int value = StringHelper::strToULong(scope.module->resolveConstant(intValue.argument), 16);
-         intValue.insertNode(lxValue, value);
-
          node = lxIntOp;
          node.setArgument(SET_MESSAGE_ID);
       }
