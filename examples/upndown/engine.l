@@ -1,6 +1,7 @@
 // --- namespace shortcuts ---
 #import system.
 #import system'collections.
+#import system'routines.
 
 // --- GameMaster ---
 
@@ -13,7 +14,7 @@
 
     #constructor new
     [
-        thePlayers := CircleList new.
+        thePlayers := Queue new.
         
         theStarted := false.
     ]
@@ -29,7 +30,7 @@
         theStarted?
             [ #throw NotSupportedException new. ].
         
-        thePlayers append:player.
+        thePlayers push:player.
     ]
     
     #method players =
@@ -41,9 +42,9 @@
     [
         theStarted := true.
         
-        thePlayers length repeat &each: x
+        thePlayers length counting run &each: x
         [
-            thePlayers@0 start.
+            thePlayers peek start.
             
             thePlayers shift:1.
         ].

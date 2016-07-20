@@ -11,31 +11,22 @@
 //    #field theHand.
 //    #field theTrump.
 
-//    #field theExtension.
+    #field theExtension.
 
-    #constructor new
+    #constructor new : extension
     [
+        ($nil != theExtension)
+            ? [ #throw InvalidOperationException new. ].
+        
+        theExtension := extension.
     ]
 
-//    #constructor new &name:aPlayerName
-//    [
-////        theHand := cards'Hand.
-//        theName := aPlayerName literal.
-////        theTrump := 0.
-//    ]
-//
     #method invite:playerInfo &to:game
     [
+        theExtension invite:playerInfo &to:game.
+        
         game players append:$self.
     ]
-
-//    #method new : extension
-//    [
-//        ($nil != theExtension)
-//            ? [ #throw InvalidOperationException new. ].
-//        
-//        theExtension := extension.
-//    ]
 
 //    #method hand =
 //    {
@@ -79,6 +70,8 @@
 //    
 //        theTrump := 0.
 //    ]
+
+    #method => theExtension.
 }
 
 //// --- Human ---

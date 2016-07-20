@@ -11,9 +11,9 @@
 //// --- gui events ---
 //
 //#subject onPlayGroundPaint, onDeskHit.
-//
-////// --- PlayerInfo ---
-////
+
+// --- PlayerInfo ---
+
 ////#class PlayerInfo
 ////{
 ////    #field theID.    
@@ -341,9 +341,18 @@
     #method => theForm.
 }
 
+
 // --- UIPlayer ---
+
 #class UIPlayer
 {
+    #constructor new
+    [
+    ]
+    
+    #method invite:playerInfo &to:game
+    [
+    ]
 }
 
 ////// --- EPlayer ---

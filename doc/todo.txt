@@ -2,15 +2,15 @@
 In development:
 ------                              
 
+              idev - generic development                                          
+                       * #263 - IDE : MTA Debugging 
+
               fdev - upndown
                        * configurating Gamemaster
 
                        * configurating Connector / Player
                        * implementing
                        * play with chaotic computer player
-
-              xdev - generic development
-                       * optimoize n := a@3.    // #246 - close ticket
 
 ------                                 
 Pipeline:

@@ -89,6 +89,15 @@
 ////    ]
 ////}
 
+// --- ChaoticPlayer ---
+
+#class ChaoticPlayer
+{
+    #method invite:playerInfo &to:game
+    [
+    ]
+}
+
 // --- aiConfigurator ---
 
 #symbol aiConfigurator =

@@ -738,4 +738,7 @@
         
     #method repeat &till:max &each:aRepeater
         = Repeater new &from:self &till:max &each:aRepeater.
+        
+    #method counting
+        = RangeEnumerator new &from:0 &to:(self int) &by:1.
 }

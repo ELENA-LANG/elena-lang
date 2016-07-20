@@ -77,15 +77,22 @@
 
 // --- configuations ---
 
-#symbol dummyLoader = (upndown'ai'aiConfigurator,upndown'testConfigurator,upndown'GameMaster,upndown'UpNDown,upndown'BasePlayer).
+#symbol dummyLoader = (
+    upndown'ai'aiConfigurator,
+    upndown'testConfigurator,
+    upndown'GameMaster,
+    upndown'UpNDown,
+    upndown'BasePlayer,
+    upndown'gui'UIPlayer,
+    upndown'ai'ChaoticPlayer).
 
 #symbol testAIConnectorConfig = "[upndown'ai'aiConfigurator,upndown'testConfigurator]".
 
-#symbol chaoticAIConfig = "upndown'BasePlayer()".
+#symbol chaoticAIConfig = "upndown'BasePlayer(upndown'ai'ChaoticPlayer())".
 
 #symbol upndownGame = "upndown'GameMaster(upndown'UpNDown())".
 
-#symbol hostUpndownPlayer = "upndown'BasePlayer()".
+#symbol hostUpndownPlayer = "upndown'BasePlayer(upndown'gui'UIPlayer())".
 
 // === Groups ==
 

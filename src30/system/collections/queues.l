@@ -38,7 +38,12 @@
     ]
     
     #method peek
-        = theList getAt &int:(theTop - 1).
+    [
+        (0 == theTop)
+            ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
+            
+        ^ theList getAt &int:(theTop - 1).
+    ]        
     
     #method pop
     [
@@ -91,12 +96,17 @@
     ]
     
     #method peek
-        = theList getAt &int:(theTop - 1).
+    [
+        (theTale == theTop)
+            ? [ #throw InvalidOperationException new &message:"Queue is empty". ].
+            
+        ^ theList getAt &int:theTop.  
+    ]
     
     #method pop
     [
         (theTale == theTop)
-            ? [ #throw InvalidOperationException new &message:"Stack is empty". ].
+            ? [ #throw InvalidOperationException new &message:"Queue is empty". ].
 
         #var item := theList getAt &int:theTop.
                                     
@@ -126,48 +136,22 @@
         theTop set &int:0.
         theTale set &int:0.
     ]
-}
-
-// --- CircleList ---
-
-#class CircleList
-{
-    #field(array_list)theList.
-    #field(vint)theTop.
-    #field(vint)theTale.
-    
-    #constructor(suppress:w3) new
-    [
-        theList := ArrayList new.
-        theTop := 0.
-        theTale := 0.
-    ]
-    
-    #method append : anObject
-    [
-        #var(int)aCapacity := theList length.
-        
-        (theTale < aCapacity)
-            ? [ theList setAt &int:theTale &object:anObject. ]
-            ! [ theList append:anObject. ].
-            
-        theTale += 1.
-    ]
     
     #method shift : offset
     [
-        theTop += offset.
-        #loop (theTop >= theTale)?
+        #var(int)i := theTop.
+        #var(int)n := theTale - 1.
+        
+        #var topItem := theList getAt &int:i.
+        
+        #loop (i < n)?
         [
-            theTop -= theTale.
+            theList setAt &int:i &object:(theList getAt &int:(i + 1)).
+            
+            i += 1.
         ].
-    ]
-    
-    #method clear
-    [
-        theList clear.
-        theTop set &int:0.
-        theTale set &int:0.
+        
+        theList setAt &int:i &object:topItem.
     ]
 }
 
