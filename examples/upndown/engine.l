@@ -36,6 +36,10 @@
     #method players =
     {
         append : player [ $owner $appendPlayer:player. ]
+        
+        enumerator => thePlayers.
+        
+        length => thePlayers.
     }.
     
     #method start

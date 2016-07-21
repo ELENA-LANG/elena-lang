@@ -1,43 +1,31 @@
 // --- namespace shortcuts ---
 #import system.
+#import system'collections.
+#import system'routines.
 #import forms.
-
-//// --- gui subjects ---
-//#subject player_labels, player_desk.
-//
-//#subject player_label/*, player_card*/.
-//#subject player_status, turn_status.
-//
-//// --- gui events ---
-//
-//#subject onPlayGroundPaint, onDeskHit.
 
 // --- PlayerInfo ---
 
-////#class PlayerInfo
-////{
-////    #field theID.    
-////    #field theName.    
-////    #field theLabel.
-////
-////    #method player'id = theID.
-////    
-////    #method player'name = theName.
-////
-////    #method player_label = theLabel.
-////
-////    #method new : aPlayer
-////    [
-////        theID := NewInt32Value::(aPlayer player'id).
-////        theName := WideStrValue::(aPlayer player'name).
-////        theLabel := aPlayer player_label.
-////
-////        theLabel set &caption:theName.
-////    ]
-////
-//////    #annex theLabel.
-////}
-////
+#class PlayerInfo
+{
+//    #field theID.    
+    #field(outprop:player_name) theName.
+    
+    #field(outprop:player_label) theLabel.
+
+//    #method player'id = theID.
+
+    #constructor new &name:name &label:label
+    [
+        theName := name literal.
+        theLabel := label label.
+        
+        theLabel caption := theName.
+        
+//        theID := NewInt32Value::(aPlayer player'id).
+    ]
+}
+
 ////// === Constants ===
 ////
 ////#symbol StatusBarID = 10h.
@@ -149,10 +137,10 @@
 ////        (theStatusBar @ 3) set &width:690.
 ////
 ////        theStatusbar open.
-////        
-////        lblPlayer1
-////            set &x:182 &y:433 set &width:200 &height:15.
-//
+        
+        lblPlayer1
+            set &x:182 &y:433 set &width:200 &height:15.
+
         theForm
             set &onOpen:aSender [ Connector new &parent:aSender run. ].
 
@@ -170,8 +158,8 @@
 ////        }.             
     ]
 
-////    #method player_labels = (lblPlayer1,lblPlayer2,lblPlayer3,lblPlayer4).
-////
+    #method player_labels = (lblPlayer1,lblPlayer2,lblPlayer3,lblPlayer4).
+
 ////    #method $loadImageList
 ////    [
 ////        theImageList += "..\img\Mask.bmp".
@@ -230,43 +218,43 @@
 //////        #external win32'71(anError).
 //////    ]
 
-////    #method $setPlayerNumber : aPlayerNumber
-////    [
-////        lblPlayer1 open.
-////
-////        #if aPlayerNumber 
-////            == 2 ?
-////            [
-////                lblPlayer2
-////                    set &x:201 &y:8 set &width:200 &height:15
-////                    open.
-////            ]
-////            | == 3 ?
-////            [
-////                lblPlayer2
-////                    set &x:45 &y:18 set &width:200 &height:15
-////                    open.
-////
-////                lblPlayer3
-////                    set &x:341 &y:18 set &width:200 &height:15
-////                    open.
-////            ]
-////            | == 4 ?
-////            [
-////                lblPlayer2
-////                    set &x:13 &y:32 set &width:200 &height:15
-////                    open.
-////
-////                lblPlayer3
-////                    set &x:201 &y:8 set &width:200 &height:15
-////                    open.
-////                    
-////                lblPlayer4
-////                    set &x:357 &y:32 set &width:200 &height:15
-////                    open.
-////            ].
-////    ]
-////
+    #method $setPlayerNumber : aPlayerNumber
+    [
+        lblPlayer1 visible := true.
+
+        aPlayerNumber =>
+            2 ? [
+                lblPlayer2
+                    set &x:201 &y:8 set &width:200 &height:15.
+
+                lblPlayer2 visible := true.
+            ]
+            3 ? [
+                lblPlayer2
+                    set &x:45 &y:18 set &width:200 &height:15.
+
+                lblPlayer3
+                    set &x:341 &y:18 set &width:200 &height:15.
+                    
+                lblPlayer2 visible := true.
+                lblPlayer3 visible := true.
+            ]
+            4 ? [
+                lblPlayer2
+                    set &x:13 &y:32 set &width:200 &height:15.
+
+                lblPlayer3
+                    set &x:201 &y:8 set &width:200 &height:15.
+                    
+                lblPlayer4
+                    set &x:357 &y:32 set &width:200 &height:15.
+                    
+                lblPlayer2 visible := true.
+                lblPlayer3 visible := true.
+                lblPlayer4 visible := true.
+            ].
+    ]
+
 ////    #method cardgame'dictionary'playground'save : aCanvas
 ////    [
 ////        // Drawing hand
@@ -346,12 +334,40 @@
 
 #class UIPlayer
 {
+    #field theForm.
+    #field theGame.
+    #field thePlayers.
+    
     #constructor new
     [
     ]
     
     #method invite:playerInfo &to:game
     [
+        theForm := playerInfo playground.
+        theGame := game.
+    ]
+    
+    #method start
+    [
+//        #var anExtendedForm := theForm~self.
+//
+//        theForm~eevents +=
+//        {
+//            onPlaygroundPaint : aCanvas = anExtendedForm save &cardgame'dictionary'playground:aCanvas. 
+//
+//            onDeskHit : anArg = anExtendedForm onDeskHit:anArg.
+//        }.
+//
+//        theDesk := List.
+
+        #var labels := theForm player_labels.
+        #var count := theGame players length.
+        theForm $setPlayerNumber:count.
+
+        thePlayers := theGame players zip:labels &into:(:p:l) [ PlayerInfo new &name:(p name) &label:l ] summarize:(ArrayList new) array.
+
+//        theForm refresh.
     ]
 }
 
@@ -415,30 +431,6 @@
 ////
 ////    #method game'start &players : Players
 ////    [
-////        #var anExtendedForm := theForm~self.
-////
-////        theForm~eevents +=
-////        {
-////            onPlaygroundPaint : aCanvas = anExtendedForm save &cardgame'dictionary'playground:aCanvas. 
-////
-////            onDeskHit : anArg = anExtendedForm onDeskHit:anArg.
-////        }.
-////
-////        theDesk := List.
-////
-////        #var Labels := theForm player_labels.
-////        #var aCount := Players count.
-////        theForm $setPlayerNumber:aCount.
-////
-////        thePlayers := NewInitializedArray &&factory'init_action: anItem =>
-////        [
-////            #var aPlayer := Players~earray @ anItem index.
-////            #var aLabel := Labels~earray @ anItem index.
-////
-////            ^ self player_label'create:(aPlayer~{ player_label = aLabel. }).
-////        ] &count:aCount.
-////
-////        theForm refresh.
 ////    ]
 ////
 ////    #method game'proceed : aRound

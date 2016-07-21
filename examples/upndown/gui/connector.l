@@ -511,7 +511,7 @@
             {
                 name = txtUserName literal.
                 
-                playground = $owner.
+                playground = theUI.
             }
             &to:gameMaster.
         

@@ -7,7 +7,7 @@
 
 #class BasePlayer
 {
-//    #field(literal,outprop:name) theName.
+    #field(literal,outprop:name) theName.
 //    #field theHand.
 //    #field theTrump.
 
@@ -23,6 +23,8 @@
 
     #method invite:playerInfo &to:game
     [
+        theName := playerInfo name.
+        
         theExtension invite:playerInfo &to:game.
         
         game players append:$self.

@@ -96,6 +96,10 @@
     #method invite:playerInfo &to:game
     [
     ]
+    
+    #method start
+    [
+    ]
 }
 
 // --- aiConfigurator ---

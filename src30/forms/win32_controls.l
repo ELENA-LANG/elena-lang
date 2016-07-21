@@ -304,7 +304,7 @@
 
 // --- Label ---
 
-#class(limited,icontrolof:frame) Label :: BaseWinControl
+#class(limited,icontrolof:label) Label :: BaseWinControl
 {
     #constructor new
         <= (new)
