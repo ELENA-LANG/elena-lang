@@ -128,13 +128,14 @@
     #var o2 := l.
 ].
 
-//// --- OuterFieldTest ---
-//
-//#symbol OuterFieldTest =
-//[
-//    #var(int) i := 0.
-//    { eval : n [ i := n. ] } eval:3.
-//].
+// --- OuterFieldTest ---
+
+#symbol OuterFieldTest =
+[
+    #var(int) i := 0.
+    
+    { eval : n [ i := n. ] } eval:3.
+].
 
 #symbol BoxingTester =
 {

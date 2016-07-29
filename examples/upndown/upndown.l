@@ -1,6 +1,7 @@
 // --- namespace shortcuts ---
 #import system.
-//
+#import extensions.
+
 //// --- PlayerInfo ---
 //
 //#class PlayerInfo
@@ -736,17 +737,6 @@
 //        }.
 //    ]
 //
-//    #method game'start
-//    [
-//        $next game'start.
-//
-//        #var anID := 1 + utils'RandomValue::(self players count).
-//
-//        self~egroup group_member'replace &from:$self &to:(UpRound::self).
-//
-//        self __distributor'set &player'id:anID.
-//    ]
-//    
 //    #method run
 //    [
 //        self start &game.
@@ -769,5 +759,10 @@
     
     #method start
     [
+        #var distributor := randomGenerator eval:(self players length).
+
+//        self~egroup group_member'replace &from:$self &to:(UpRound::self).
+//
+//        self __distributor'set &player'id:anID.
     ]
 }

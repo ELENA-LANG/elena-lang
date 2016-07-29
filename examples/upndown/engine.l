@@ -53,6 +53,8 @@
             thePlayers shift:1.
         ].
 
+        //theExtension start.
+        
 //            thePlayerNumber := NewInt32Value::(thePlayers count).
 //
 //            #shift.

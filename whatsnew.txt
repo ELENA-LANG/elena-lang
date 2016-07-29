@@ -12,6 +12,7 @@
 [!] GC optimized / refactored
 [-] critical bug fix of class'RTPointer
 [-] critical bug fix in field template routine
+[+] #264 : Assigning an outer variable 
 
 [ELC]
 [-] critical bug fix : unboxing open argument list

@@ -2,8 +2,25 @@
 In development:
 ------                              
 
+              xdev - generic development
+                       * generateNestedExpression should be exapnded to support unboxable variable
+                       * Assigning outer variable #264 : outer parameter should be marked as boxable and unboxed after the operation
+                       * OuterFieldTest should work
+
               idev - generic development                                          
                        * #263 - IDE : MTA Debugging 
+
+              sdev - samples
+	               * Distributed programming
+                       * Metaprogramming
+                       * Object serialization
+
+              xdev - generic development
+                       * review the code:
+                            #var(literal) s := "Hello".    
+                            #var(int)l := s length.
+
+                          acopyf fp:-2 is implemented twice in row
 
               fdev - upndown
                        * configurating Gamemaster
@@ -32,7 +49,6 @@ Pipeline:
                        * implicit boxing (int to vint) should be possible only for stack allocated local variable, structure fields
                        * operation with primitive arrays should not be allowed
                        * extension should not be used stand-alone
-                       * OuterFieldTest should work
                        * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
                        * primitive operation with subject
 
@@ -54,12 +70,6 @@ Pipeline:
                          cast methods work correct after this
                                          	
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
-
-                       * review the code:
-                            #var(literal) s := "Hello".    
-                            #var(int)l := s length.
-
-                          acopyf fp:-2 is implemented twice in row
 
                        * check subject duplicates
 
