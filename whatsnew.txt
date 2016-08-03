@@ -1,8 +1,15 @@
 ﻿
                                 ELENA Language 
 
-                                Version 2.0.3
+                                Version 2.0.4
  
+******************************************************************************
+                             What's New in 2.0.4
+******************************************************************************
+
+[ELENA]
+[+] #264 : Assigning an outer variable 
+
 ******************************************************************************
                              What's New in 2.0.3
 ******************************************************************************
@@ -12,7 +19,6 @@
 [!] GC optimized / refactored
 [-] critical bug fix of class'RTPointer
 [-] critical bug fix in field template routine
-[+] #264 : Assigning an outer variable 
 
 [ELC]
 [-] critical bug fix : unboxing open argument list

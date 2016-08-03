@@ -762,16 +762,19 @@ private:
       struct Outer
       {
          int        reference;
+         bool       preserved;
          ObjectInfo outerObject;
 
          Outer()
          {
             reference = -1;
+            preserved = false;
          }
          Outer(int reference, ObjectInfo outerObject)
          {
             this->reference = reference;
             this->outerObject = outerObject;
+            this->preserved = false;
          }
       };
 
@@ -781,6 +784,8 @@ private:
       ClassInfo::FieldTypeMap outerFieldTypes;
 
       Outer mapSelf();
+
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {

@@ -1489,6 +1489,27 @@ ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
    }
 }
 
+bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
+{
+   if (object.kind == okOuter) {
+      Map<ident_t, Outer>::Iterator it = outers.start();
+      while (!it.Eof()) {
+         if ((*it).reference == object.param) {
+            if ((*it).outerObject.kind == okLocal) {
+               (*it).preserved = true;
+
+               return true;
+            }
+            break;
+         }
+
+         it++;
+      }
+   }
+
+   return false;
+}
+
 // --- Compiler::TemplateScope ---
 
 Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
@@ -3668,6 +3689,13 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
             size = info.size;
             currentObject.kind = (object.kind == okParam) ? okParamField : okOuterField;
          }
+         // Compiler magic : allowing to assign outer local variables
+         else if (object.kind == okOuter) {
+            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+
+            if (!closure->markAsPresaved(object))
+               scope.raiseError(errInvalidOperation, node.Terminal());
+         }
          else scope.raiseError(errInvalidOperation, node.Terminal());
       }
       else if (object.kind == okTemplateTarget) {
@@ -3983,7 +4011,7 @@ ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineC
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
-         ownerScope.writer->newNode(lxMember, (*outer_it).reference);
+         ownerScope.writer->newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
          ownerScope.writer->newBookmark();
 
          writeTerminal(TerminalInfo(), ownerScope, info);
@@ -4218,6 +4246,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       case okLocalAddress:
       case okFieldAddress:
       case okParamField:
+      case okOuter:
          break;
       case okTemplateLocal:
          mode |= HINT_VIRTUAL_FIELD; // HOTFIX : typecast it like a virtual field

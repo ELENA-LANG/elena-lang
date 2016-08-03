@@ -3752,6 +3752,13 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          presavedCount++;
          unboxMode = true;
       }
+      // presave the nested object if outer operation is required
+      else if (current == lxNested && SyntaxTree::existChild(current, lxOuterMember)) {
+         generateObjectExpression(tape, current);
+         pushObject(tape, lxResult);
+         presavedCount++;
+         unboxMode = true;
+      }
 
       if (current == lxExpression && !isSimpleObjectExpression(current, true)) {
          // ignore nested expression
@@ -3785,6 +3792,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
                presavedCount--;
             }
             else loadObject(tape, lxLocal, tempLocal.argument);
+         }
+         else if (current == lxNested && SyntaxTree::existChild(current, lxOuterMember)) {
+            loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
+            presavedCount--;
          }
          else generateObjectExpression(tape, current);
 
@@ -3883,6 +3894,28 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
          else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
 
          tape.write(bcPopB);
+      }
+      else if (current == lxNested) {
+         bool unboxing = false;
+         SNode member = current.firstChild();
+         while (member != lxNone) {
+            if (member == lxOuterMember) {
+               unboxing = true;
+
+               SNode target = SyntaxTree::findMatchedChild(member, lxObjectMask);
+
+               loadObject(tape, lxCurrent, 0);
+
+               tape.write(bcPushB);
+               loadBase(tape, target.type, target.argument);
+               saveBase(tape, false, lxResult, current.argument);
+               tape.write(bcPopB);
+            }
+
+            member = member.nextNode();
+         }
+         if (unboxing)
+            releaseObject(tape);
       }
 
       index++;
@@ -4204,7 +4237,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    // presave all the members which could create new objects
    SNode current = node.lastChild();
    while (current != lxNone) {
-      if (current.type == lxMember) {
+      if (current.type == lxMember || current.type == lxOuterMember) {
          if (!isSimpleObjectExpression(current)) {
             generateExpression(tape, current);
             pushObject(tape, lxResult);
@@ -4220,7 +4253,7 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
 
    current = node.firstChild();
    while (current != lxNone) {
-      if (current.type == lxMember) {
+      if (current.type == lxMember || current.type == lxOuterMember) {
          if (!isSimpleObjectExpression(current)) {
             popObject(tape, lxResult);
          }
