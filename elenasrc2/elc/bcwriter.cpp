@@ -3758,6 +3758,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          pushObject(tape, lxResult);
          presavedCount++;
          unboxMode = true;
+         directMode = false;
       }
 
       if (current == lxExpression && !isSimpleObjectExpression(current, true)) {
@@ -3904,12 +3905,24 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
 
                SNode target = SyntaxTree::findMatchedChild(member, lxObjectMask);
 
+               // load outer field
                loadObject(tape, lxCurrent, 0);
+               loadObject(tape, lxResultField, member.argument);
 
-               tape.write(bcPushB);
-               loadBase(tape, target.type, target.argument);
-               saveBase(tape, false, lxResult, current.argument);
-               tape.write(bcPopB);
+               // save to the original variable
+               if (target.type == lxBoxing) {
+                  SNode localNode = SyntaxTree::findMatchedChild(target, lxObjectMask);
+
+                  tape.write(bcPushB);
+                  loadBase(tape, localNode.type, localNode.argument);
+                  if (target.argument != 0) {
+                     copyBase(tape, target.argument);
+                  }
+                  else tape.write(bcCopy);
+                  
+                  tape.write(bcPopB);
+               }
+               else saveObject(tape, target.type, target.argument);
             }
 
             member = member.nextNode();

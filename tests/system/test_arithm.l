@@ -135,6 +135,10 @@
     #var(int) i := 0.
     
     { eval : n [ i := n. ] } eval:3.
+    
+    (i == 3)
+        ? [ console writeLine:"OuterFieldTest works!!!". ]
+        ! [ console writeLine:"OuterFieldTest fails!!!". ].
 ].
 
 #symbol BoxingTester =

@@ -2,11 +2,6 @@
 In development:
 ------                              
 
-              xdev - generic development
-                       * generateNestedExpression should be expanded to support unboxable variable
-                       * Assigning outer variable #264 : outer parameter should be marked as boxable and unboxed after the operation
-                       * OuterFieldTest should work
-
               idev - generic development                                          
                        * #263 - IDE : MTA Debugging 
 

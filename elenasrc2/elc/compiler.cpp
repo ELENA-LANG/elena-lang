@@ -1495,7 +1495,7 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
       Map<ident_t, Outer>::Iterator it = outers.start();
       while (!it.Eof()) {
          if ((*it).reference == object.param) {
-            if ((*it).outerObject.kind == okLocal) {
+            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
                (*it).preserved = true;
 
                return true;

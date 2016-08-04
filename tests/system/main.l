@@ -31,7 +31,7 @@
     ListTest eval.
     DictionaryTest eval.
     BoxingTest eval.
-//    OuterFieldTest eval.
+    OuterFieldTest eval.
     LocalTest eval.
     StructTest eval.
     GroupTest eval.
