@@ -280,6 +280,18 @@
 //    ]
 //}
 //
+#symbol upRound =
+{
+    #method nextRound
+    [
+        #var round := self $round.
+        
+        round += 1.
+        
+        ^ round < 36 / self players length.
+    ]
+}.
+
 //// --- NormalRound ---
 //#class NormalRound (BaseRound)
 //{
@@ -753,16 +765,35 @@
 
 #class UpNDown
 {
+    #field(vint) theRound.
+    #field theRoundStrategy.
+    #field theDistributor.
+    
     #constructor new
     [
     ]
     
+    #method $round = theRound.
+    
     #method start
     [
-        #var distributor := randomGenerator eval:(self players length).
-
-//        self~egroup group_member'replace &from:$self &to:(UpRound::self).
-//
+        theDistributor := randomGenerator eval:(self players length).        
+        theRound := 0.
+        theRoundStrategy := upRound.
+    ]
+    
+    #method playRound
+    [
+        self notify:DTO
+        {
+//            type = 
+            
+            distributor = theDistributor.
+        }.
+        
 //        self __distributor'set &player'id:anID.
     ]
+    
+    #method nextRound
+        = self::theRoundStrategy nextRound.
 }

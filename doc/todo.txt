@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              xdev - generic development
+                       * #265 : enumeration list
+
               idev - generic development                                          
                        * #263 - IDE : MTA Debugging 
 
@@ -18,9 +21,6 @@ In development:
                           acopyf fp:-2 is implemented twice in row
 
               fdev - upndown
-                       * configurating Gamemaster
-
-                       * configurating Connector / Player
                        * implementing
                        * play with chaotic computer player
 

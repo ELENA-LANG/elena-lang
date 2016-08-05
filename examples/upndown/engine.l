@@ -53,43 +53,14 @@
             thePlayers shift:1.
         ].
 
-        //theExtension start.
+        self::theExtension start.
         
-//            thePlayerNumber := NewInt32Value::(thePlayers count).
-//
-//            #shift.
-//
-//            thePlayerList := 
-//            {
-//                count'get = thePlayerNumber.
-//                
-//                run : anAction
-//                [
-//                    ^ Scan::thePlayers run:anAction.
-//                ]
-//
-//                seek : aPlayer
-//                [
-//                    #loop (player'PlayerValue::aPlayer != (thePlayers~EArray)@0)?
-//                    [
-//                        thePlayers seek &first_item:1.
-//                    ].
-//                ]
-//
-//                find : aPlayer
-//                [
-//                    ^ It::thePlayers find:player'PlayerValue::aPlayer content.
-//                ]
-//
-//                __top'proceed
-//                [
-//                    thePlayers seek &first_item:1.
-//                ]
-//            }.
-//            
-//            self run.
+        #loop (self nextRound)?
+        [
+            self playRound.
+        ].
     ]
-    
+            
     #method => theExtension.
 }
 
