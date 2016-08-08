@@ -18,7 +18,7 @@ const int gcPageSize       = 0x0010;           // a heap page size constant
 const int elObjectOffset   = 0x0008;           // object header / offset constant
 
 // --- ELENA CORE built-in routines
-#define GC_ALLOC	           0x10001
+#define GC_ALLOC             0x10001
 #define HOOK                 0x10010
 #define INIT_RND             0x10012
 #define INIT                 0x10013
@@ -68,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 // preloaded gc commands
 const int gcCommandNumber = 137;
 const int gcCommands[gcCommandNumber] =
-{   
+{
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, //bcMessage,
    bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
    bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
@@ -810,7 +810,7 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    // mov ecx, #gc_page + (length - 1)
    scope.code->writeByte(0xB9);
    scope.code->writeDWord(align(scope.argument + scope.objectSize, gcPageSize));
-   
+
    //NOTE : empty length should be equal to 800000h
    // due to current GC algorithm
    if (scope.argument == 0)
@@ -950,7 +950,7 @@ void _ELENA_::compileDCopyVerb(int, x86JITScope& scope)
    // and ebx, VERB_MASK
    scope.code->writeWord(0xD98B);
    scope.code->writeWord(0xE381);
-   scope.code->writeDWord(VERB_MASK | MESSAGE_MASK);   
+   scope.code->writeDWord(VERB_MASK | MESSAGE_MASK);
 }
 
 void _ELENA_::compileDCopyCount(int, x86JITScope& scope)
@@ -959,7 +959,7 @@ void _ELENA_::compileDCopyCount(int, x86JITScope& scope)
    // and ebx, VERB_MASK
    scope.code->writeWord(0xD98B);
    scope.code->writeWord(0xE381);
-   scope.code->writeDWord(PARAM_MASK);   
+   scope.code->writeDWord(PARAM_MASK);
 }
 
 void _ELENA_::compileDCopySubj(int, x86JITScope& scope)
@@ -968,7 +968,7 @@ void _ELENA_::compileDCopySubj(int, x86JITScope& scope)
    // and ebx, VERB_MASK
    scope.code->writeWord(0xD98B);
    scope.code->writeWord(0xE381);
-   scope.code->writeDWord(SIGN_MASK | MESSAGE_MASK);   
+   scope.code->writeDWord(SIGN_MASK | MESSAGE_MASK);
 }
 
 //void _ELENA_::compileLoad(int opcode, x86JITScope& scope)
@@ -1000,7 +1000,7 @@ void _ELENA_::compilePushFI(int, x86JITScope& scope)
 
 void _ELENA_:: compilePushF(int, x86JITScope& scope)
 {
-   scope.argument = -(scope.argument << 2);   
+   scope.argument = -(scope.argument << 2);
 
    loadNOp(bcPushF, scope);
 }
@@ -1156,7 +1156,7 @@ void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 void _ELENA_::compileACopyS(int, x86JITScope& scope)
 {
    // lea eax, [esp + index]
-   x86Helper::leaRM32disp(                     
+   x86Helper::leaRM32disp(
       scope.code, x86Helper::otEAX, x86Helper::otESP, scope.argument << 2);
 }
 
@@ -1431,7 +1431,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    rdataWriter.writeDWord(0);
 
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
-   
+
    x86JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0 ; i < coreFunctionNumber ; i++) {
       if (!_preloaded.exist(coreFunctions[i])) {
@@ -1531,7 +1531,7 @@ void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tap
    // ; copy the parameter to the accumulator to simulate embedded symbol
    // ; exit the procedure
    // ret
-   codeWriter.writeByte(0xC3);  
+   codeWriter.writeByte(0xC3);
 
    alignCode(&codeWriter, 0x04, true);
 }

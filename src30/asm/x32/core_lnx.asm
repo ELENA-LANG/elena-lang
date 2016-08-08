@@ -18,6 +18,7 @@ define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define PREPARE              10027h
+define EXPAND_HEAP          10028h
 define EXITTHREAD           1002Ah
 define NEW_EVENT            10101h
 
@@ -41,7 +42,7 @@ procedure % PREPARE
 
 end
 
-// ; in - eax - total size
+// ; in - ecx - total size, ebx - reserved
 // ; out - eax - heap
 procedure % NEW_HEAP
 
@@ -51,10 +52,18 @@ procedure % NEW_HEAP
   push 0FFFFFFFFh
   push MAP_ANONYMOUS
   push PROT_READ_WRITE
-  push eax
+  push ecx
   push 0
   call extern : "libc.so.6.mmap"
   add  esp, 24
+  ret
+
+end
+
+// ; in - eax - heap, ebx - size
+// ; out - eax - heap
+procedure % EXPAND_HEAP
+
   ret
 
 end

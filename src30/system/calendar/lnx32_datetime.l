@@ -105,7 +105,7 @@
        ^ tv_sec < sec.
     ]
     
-    #method(stacksafe) write &__time:aValue
+    #method(stacksafe) write &__time:anOperand
     [
        #var(int)sec.
        #var(int)usec.
