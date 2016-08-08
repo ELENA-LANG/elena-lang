@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #define system.
 #define system'text.
 
@@ -7,7 +5,7 @@
 
 #class(struct) FileStream :: Stream
 {
-    #field(type:handle) theHandle.
+    #field(handle) theHandle.
   
     #constructor openForRead &path:aPath
         <= %new &path:aPath &attributes:"r+".
@@ -39,13 +37,13 @@
 
     #method read &bytearray:aDump &vint:aLength
     [
-        #var(type:int)n := system'external'libc fread
+        #var(int)n := system'external'libc fread
             &bytearray : aDump        
             &int       : 1
             &int       : aLength
             &int       : theHandle.
 
-        aLength << n.
+        aLength := n.
     ]
 
 //    #method readIndex &vint:anIndex
@@ -87,7 +85,7 @@
 
 #symbol $fileStreamHelper =
 {
-    #method(type:stream)openForWrite &path:aPath &bool:anAppendMode
+    #method(stream)openForWrite &path:aPath &bool:anAppendMode
     [
         anAppendMode ? [ ^ FileStream openForAppend &path:aPath. ].
         
@@ -99,8 +97,8 @@
 
 #class StreamWriter :: TextWriter
 {
-    #field(type:stream) theStream.
-    #field(type:encoder) theEncoder.
+    #field(stream) theStream.
+    #field(encoder) theEncoder.
 
     #constructor new &stream:aStream &encoder:anEncoder
         <= (new)
@@ -123,11 +121,11 @@
         
     #method write &chararray:anInput &int:aLength
     [
-        #var(type:int)aTotal := aLength.
-        #var(type:bytearray,size:64)aBuffer.
-        #var(type:int)aBlockLength.
-        #var(type:int)aBufferLength.
-        #var(type:int)anOffset := 0.
+        #var(int)aTotal := aLength.
+        #var(byte:64)aBuffer.
+        #var(int)aBlockLength.
+        #var(int)aBufferLength.
+        #var(int)anOffset := 0.
         
         #loop (aTotal > 0) ?
         [
@@ -154,9 +152,9 @@
 
 #class StreamReader :: TextReader
 {
-    #field(type:stream) theStream.
-    #field(type:encoder) theEncoder.
-    #field(type:bool) theOpen.
+    #field(stream) theStream.
+    #field(encoder) theEncoder.
+    #field(bool) theOpen.
 
     #constructor new &stream:aStream &encoder:anEncoder
         <= ( %new )
@@ -180,13 +178,13 @@
 
     #method read &chararray:anOutput &vint:aLength
     [
-        #var(type:int)aBufferLength := 64.
-        #var(type:bytearray,size:64)aBuffer.
+        #var(int)aBufferLength := 64.
+        #var(byte:64)aBuffer.
         theStream read &bytearray:aBuffer &vint:aBufferLength.
         (aBufferLength == 0)
             ? [ theOpen := false. aLength << 0. ]
             ! [
-                #var(type:int)aRead := aBufferLength.
+                #var(int)aRead := aBufferLength.
                         
                 theEncoder convert &int:0 &vint:aBufferLength &bytearray:aBuffer &chararray:anOutput &vint:aLength.
                 

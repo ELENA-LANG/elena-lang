@@ -8,6 +8,10 @@ In development:
               idev - generic development                                          
                        * #263 - IDE : MTA Debugging 
 
+             xdev - linux
+                       * implement UnsafePointer.get&literal / UnsafePointer.get&wide
+                       * migrate to 2.0
+
               sdev - samples
 	               * Distributed programming
                        * Metaprogramming
@@ -177,7 +181,6 @@ Pipeline:
                        * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
                        
              xdev - linux
-                       * migrate to 2.0
                        * implement debugger
                        * port elide to linux
                        

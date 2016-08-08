@@ -1,23 +1,22 @@
-// ==== ver 3.4.1 ===
-
 #import system.
 
-#subject(class:system'calendar'SystemTime)    __time.
-#subject(class:system'calendar'TimeStruct)    __time_st.
+#subject __time    = system'calendar'SystemTime.
+#subject __time_st = system'calendar'TimeStruct.
+#subject __vtime   = varof:__time.
 
 // --- SystemTime ---
 
 #symbol $factory =
 {
-    #method(type:__time) utcNow
+    #method(__time) utcNow
     [
-        #var(type:__time)time.
+        #var(__time)time.
                       
         system'external'libc gettimeofday 
             &__time:time
             &int:0.
 
-        #var(type:__time_st)tm.
+        #var(__time_st)tm.
         tm writeUTC &__time:time.
 
         tm read &__time:time.
@@ -25,9 +24,9 @@
         ^ SystemTime new &__time:time.
     ]
     
-    #method(type:__time) now
+    #method(__time) now
     [
-        #var(type:__time)time.
+        #var(__time)time.
                       
         system'external'libc gettimeofday 
             &__time:time
@@ -37,31 +36,33 @@
     ]
 }.
 
-#class(sealed,struct:embeddable) SystemTime :: BaseValue
+#class(sealed,struct:reference,const) SystemTime :: BaseValue
 {
-    #field(type:int)tv_sec.
-    #field(type:int)tv_usec.
+    #field(int)tv_sec.
+    #field(int)tv_usec.
 
     #constructor(stacksafe,embeddable) $new &int:sec &int:usec
-        => system'core_routines'long_copystruct.
-
-    #constructor(stacksafe,embeddable) $new &long:nanosec
     [
-        #var(type:long)secs := nanosec / 1000000000l.
+        tv_sec := sec.
+        tv_usec := usec.
+    ]
+
+    #constructor(stacksafe) $new &long:nanosec
+    [
+        #var(long)secs := nanosec / 1000000000l.
         
-        #var(type:long)rem := nanosec - secs * 1000000000l.
+        #var(long)rem := nanosec - secs * 1000000000l.
         rem := rem / 1000l.
                         
-        #var(type:int)tmp.
-        intConvertor convert &long:secs &vint:tmp.
+        #var(int)tmp := intConvertor convert &long:secs.
         tv_sec := tmp.
         
-        intConvertor convert &long:rem &vint:tmp.
+        tmp := intConvertor convert &long:rem.
         tv_usec := tmp.        
     ]
 
-    #constructor new &__time:aValue
-        => system'core_routines'long_copy.
+    #constructor new &__time:value
+        = value.
 
     #constructor now
         <= new &__time:($factory now).
@@ -71,22 +72,31 @@
                         
     #method(stacksafe) $read &vint:aSeconds &vint:aMicroSeconds 
     [
-       aSeconds << tv_sec.
-       aMicroSeconds << tv_usec.
+       aSeconds := tv_sec.
+       aMicroSeconds := tv_usec.
     ]
 
     #method(stacksafe)readMSec &vint:aMicroSeconds 
     [
-       aMicroSeconds << tv_usec.
+       aMicroSeconds := tv_usec.
     ]
 
-    #method(stacksafe,type:bool) equal &__time:anOperand
-        => system'core_routines'long_equal.
-        
-    #method(stacksafe,type:bool) less &__time:anOperand
+    #method(stacksafe,bool) equal &__time:anOperand
     [
-       #var(type:int)sec.
-       #var(type:int)usec.
+       #var(int)sec.
+       #var(int)usec.
+       anOperand $read &vint:sec &vint:usec.
+  
+       (sec == tv_sec)?
+           [ ^ tv_usec == usec. ].
+
+       ^ false.
+    ]
+        
+    #method(stacksafe,bool) less &__time:anOperand
+    [
+       #var(int)sec.
+       #var(int)usec.
        anOperand $read &vint:sec &vint:usec.
   
        (sec == tv_sec)?
@@ -96,31 +106,36 @@
     ]
     
     #method(stacksafe) write &__time:aValue
-        => system'core_routines'long_copy.
+    [
+       #var(int)sec.
+       #var(int)usec.
+       anOperand $read &vint:sec &vint:usec.
+       
+       tv_sec := sec.
+       tv_usec := usec.       
+    ]
     
     #method(stacksafe) read &vlong:aRetVal
     [
-        #var(type:long)l.
-        longConvertor convert &int:tv_sec &vlong:l.
+        #var(long)l := longConvertor convert &int:tv_sec.
         
         l := l * 10000000l.
         
-        #var(type:long)l2.
-        longConvertor convert &int:tv_usec &vlong:l2.
+        #var(long)l2 := longConvertor convert &int:tv_usec.
         l2 := l2 * 10l.
         
         l := l + l2.
         
-        aRetVal << l.
+        aRetVal := l.
     ]
         
-    #method(stacksafe,type:__time) subtract &__time:anOperand
+    #method(stacksafe,__time) subtract &__time:anOperand
     [
-       #var(type:int)sec.
-       #var(type:int)usec.
+       #var(int)sec.
+       #var(int)usec.
        anOperand $read &vint:sec &vint:usec.
 
-       #var(type:int)ms := tv_usec.
+       #var(int)ms := tv_usec.
        (usec > tv_usec)
           ? [  sec := sec + 1. ms := ms + 1000000. ].
 
@@ -129,13 +144,13 @@
        ^ SystemTime $new &int:(tv_sec - sec) &int:ms.
     ]
         
-    #method(stacksafe,type:__time) add &__time:anOperand
+    #method(stacksafe,__time) add &__time:anOperand
     [
-       #var(type:int)sec.
-       #var(type:int)usec.
+       #var(int)sec.
+       #var(int)usec.
        anOperand $read &vint:sec &vint:usec.
 
-       #var(type:int)ms := tv_usec + usec.
+       #var(int)ms := tv_usec + usec.
 
        (ms > 1000000)
           ? [  sec := sec + 1. ms := ms - 1000000. ].
@@ -150,20 +165,20 @@
 
 #class(struct:embeddable,sealed) TimeStruct
 {
-    #field(type:int) tm_sec.         /* seconds */
-    #field(type:int) tm_min.         /* minutes */
-    #field(type:int) tm_hour.        /* hours */
-    #field(type:int) tm_mday.        /* day of the month */
-    #field(type:int) tm_mon.         /* month */
-    #field(type:int) tm_year.        /* year */
-    #field(type:int) tm_wday.        /* day of the week */
-    #field(type:int) tm_yday.        /* day in the year */
-    #field(type:int) tm_isdst.       /* daylight saving time */
+    #field(int) tm_sec.         /* seconds */
+    #field(int) tm_min.         /* minutes */
+    #field(int) tm_hour.        /* hours */
+    #field(int) tm_mday.        /* day of the month */
+    #field(int) tm_mon.         /* month */
+    #field(int) tm_year.        /* year */
+    #field(int) tm_wday.        /* day of the week */
+    #field(int) tm_yday.        /* day in the year */
+    #field(int) tm_isdst.       /* daylight saving time */
 
-    #field(type:int) tmp1.
-    #field(type:int) tmp2.
+    #field(int) tmp1.
+    #field(int) tmp2.
     
-    #field(type:int) tm_usec.
+    #field(int) tm_usec.
     
     #constructor new 
     [
@@ -179,38 +194,38 @@
 
     #method(stacksafe) readYear &vint:aRetVal
     [
-        #var(type:int)aYear := tm_year.
-        aYear := aYear + 1900.
+        #var(int)aYear := tm_year.
+        aYear += 1900.
 
-        aRetVal << aYear.
+        aRetVal := aYear.
     ]
 
     #method(stacksafe) readMonth &vint:aRetVal
     [
-        #var(type:int)aMonth := tm_mon.
-        aMonth := aMonth + 1.
+        #var(int)aMonth := tm_mon.
+        aMonth += 1.
 
-        aRetVal << aMonth.
+        aRetVal := aMonth.
     ]
 
     #method(stacksafe) readDayOfWeek &vint:aRetVal
     [
-        aRetVal << tm_wday.
+        aRetVal := tm_wday.
     ]
     
     #method(stacksafe) readDay &vint:aRetVal
     [
-        aRetVal << tm_mday.
+        aRetVal := tm_mday.
     ]
 
     #method(stacksafe) readHour &vint:aRetVal
     [
-        aRetVal << tm_hour.
+        aRetVal := tm_hour.
     ]
 
     #method hour
     [
-        #var(type:int)n.
+        #var(int)n.
         $self readHour &vint:n.
 
         ^ n.
@@ -218,20 +233,20 @@
 
     #method(stacksafe) readMinute &vint:aRetVal
     [
-        aRetVal << tm_min.
+        aRetVal := tm_min.
     ]
 
     #method(stacksafe) readSecond &vint:aRetVal
     [
-        aRetVal << tm_sec.
+        aRetVal := tm_sec.
     ]
 
     #method(stacksafe) readMillisecond &vint:aRetVal
     [
-        #var(type:int)n := tm_usec.
-        n := n / 1000. 
+        #var(int)n := tm_usec.
+        n /= 1000. 
 
-        aRetVal << n.
+        aRetVal := n.
     ]
 
     #method(stacksafe) writeYear &int:aValue
@@ -266,8 +281,8 @@
 
     #method(stacksafe) writeMillisecond &int:aValue 
     [ 
-        #var(type:int)n := aValue.
-        n := n * 1000. 
+        #var(int)n := aValue.
+        n *= 1000. 
 
         tm_usec := n.
     ]
@@ -277,8 +292,8 @@
        // HOTFIX
        tm_isdst := -1.
 
-       #var(type:int)tm_sec := system'external'libc mktime &__time_st:$self.
-       #var(type:__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
+       #var(int)tm_sec := system'external'libc mktime &__time_st:$self.
+       #var(__time)tm := SystemTime $new &int:tm_sec &int:tm_usec.
 
        aRetVal write &__time:tm. 
     ]    
@@ -290,32 +305,30 @@
 
     #method(stacksafe) write &__time:aTime
     [
-       #var(type:dirty_ptr)ptr := system'external'libc localtime &__time:aTime.
+       #var(dirty_ptr)ptr := system'external'libc localtime &__time:aTime.
 
        system'external'libc memcpy &__time_st:$self &int:ptr &int:44.
 
-       #var(type:int)tmp.     
+       #var(int)tmp.     
        aTime readMSec &vint:tmp.
        tm_usec := tmp.
-
-       //system'console writeLine:(tm_hour). 
     ]
     
     #method(stacksafe) writeUTC &__time:aTime                                     
     [
-       #var(type:int)ptr := system'external'libc gmtime &__time:aTime.
+       #var(int)ptr := system'external'libc gmtime &__time:aTime.
 
        system'external'libc memcpy &__time_st:$self &int:ptr &int:44.
 
-       #var(type:int)tmp.     
+       #var(int)tmp.     
        aTime readMSec &vint:tmp.
        tm_usec := tmp.
     ]
      
     #method(stacksafe) toShortDate
     [
-        #var(type:int)aYear.
-        #var(type:int)aMonth.
+        #var(int)aYear.
+        #var(int)aMonth.
         $self readYear &vint:aYear.
         $self readMonth &vint:aMonth. 
 

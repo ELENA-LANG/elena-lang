@@ -1,5 +1,3 @@
-// ==== ver 3.4.1 ===
-
 #define system.
 
 // --- CommandLine ---
@@ -8,19 +6,19 @@
 {
     new                                                                                                                                 
     [
-        #var(type:bytearray,size:256)buf.
-        #var(type:int)len.
-        #var(type:int)argc := system'external core_getargc.
+        #var(byte:256)buf.
+        #var(int)len.
+        #var(int)argc := system'external core_getargc.
 
         #var args := Array new &int:argc.
-        #var(type:int)i := 0.
+        #var(int)i := 0.
         #loop (i < argc)?
         [
             len := system'external core_getarg &int:(i+1) &bytearray:buf &int:255.
 
             args setAt &int:i &object:(LiteralValue $new &int:0 &int:len &bytearray:buf).
 
-            i := i + 1.
+            i += 1.
         ].
 
         ^ args.
