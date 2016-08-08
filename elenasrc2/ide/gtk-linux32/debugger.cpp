@@ -219,7 +219,7 @@ unsigned char ThreadContext :: setSoftwareBreakpoint(size_t breakpoint)
    return code;
 }
 
-void ThreadContext :: readDump(size_t address, char* dump, size_t length)
+bool ThreadContext :: readDump(size_t address, char* dump, size_t length)
 {
    int index = 0;
    long val;
@@ -239,6 +239,8 @@ void ThreadContext :: readDump(size_t address, char* dump, size_t length)
 
       index++;
    }
+
+   return true;
 }
 
 void ThreadContext :: writeDump(size_t address, char* dump, size_t length)

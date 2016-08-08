@@ -39,8 +39,8 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _signature = project->resolveForward(SIGNATURE_FORWARD);
    _verb = project->resolveForward(VERB_FORWARD);
 
-   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef, 
-      project->BoolSetting(ProjectSetting::opClassSymbolAutoLoad));
+   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
+      project->BoolSetting(opClassSymbolAutoLoad));
 
    // save root namespace
    _debug.writeLiteral(_debug.Length(), getNamespace());

@@ -125,7 +125,7 @@ public:
    size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
    size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
 
-   void readDump(size_t address, char* dump, size_t length);
+   bool readDump(size_t address, char* dump, size_t length);
    void writeDump(size_t address, char* dump, size_t length);
 
    size_t readDWord(size_t address)
