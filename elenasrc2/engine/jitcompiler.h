@@ -89,6 +89,10 @@ public:
    virtual void* getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
+
+   virtual void generateProgramStart(MemoryDump& tape) = 0;
+   virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;
+   virtual void generateProgramEnd(MemoryDump& tape) = 0;
 };
 
 // --- JITCompiler32 class ---
@@ -120,6 +124,9 @@ public:
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
    virtual void fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode);
+
+   virtual void generateProgramStart(MemoryDump& tape);
+   virtual void generateProgramEnd(MemoryDump& tape);
 };
 
 } // _ELENA_

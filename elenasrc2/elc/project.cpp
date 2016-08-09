@@ -197,7 +197,6 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 {
    // load project settings (if setting is absent previous value is used)
    loadOption(config, opNamespace);
-   loadOption(config, opEntry);
    loadPathOption(config, opLibPath, configPath);
    loadPathOption(config, opTarget, configPath);
    loadOption(config, opOutputPath);

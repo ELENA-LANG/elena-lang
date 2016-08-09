@@ -13,8 +13,8 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     2                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0
-   #define ENGINE_RELEASE_VERSION   4
+   #define ENGINE_MINOR_VERSION     1
+   #define ENGINE_RELEASE_VERSION   1
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -149,7 +149,7 @@ namespace _ELENA_
       mskNativeRDataRef      = 0x48000000,
       mskNativeDataRef       = 0xA8000000,
       mskPreloadCodeRef      = 0x1C000000,
-      mskPreloadRelCodeRef   = 0x2C000000,
+      mskPreloadRelCodeRef   = 0x3C000000,
       mskPreloadDataRef      = 0xAC000000,
       mskNativeVariable      = 0xAD000000,
       mskLockVariable        = 0xAE000000,   // HOTFIX : used to fool trylock opcode, adding virtual offset
@@ -179,7 +179,7 @@ namespace _ELENA_
       mskSignature           = 0x09000000,   // message signature constant
       mskVerb                = 0x0A000000,   // message verb constant
       mskExtMessage          = 0x0B000000,   // external message verb constant
-      mskPreloaded           = 0x0C000000,   // prelooded mask, should be used in combination with image mask
+      mskPreloaded           = 0x0C000000,   // preloaded mask, should be used in combination with image mask
    };
 
    // --- ELENA Debug symbol constants ---

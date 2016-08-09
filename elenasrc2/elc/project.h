@@ -43,7 +43,6 @@ enum ProjectSetting
    opNamespace             = 0x0004,
    opTarget                = 0x0006,
    opOutputPath            = 0x0008,
-   opEntry                 = 0x0009,
    opDebugMode             = 0x000A,
    opTemplate              = 0x000C,
    opThreadMax             = 0x0013,

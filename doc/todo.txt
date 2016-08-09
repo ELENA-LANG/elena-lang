@@ -3,7 +3,13 @@ In development:
 ------                              
 
               xdev - generic development
-                       * #265 : enumeration list
+                       * #267 : Module initializers : stand-alone, vm client
+
+              xdev - byte code optimization                               
+                       * #269 : short-circuit boolean operation
+
+              xdev - generic development
+                       * #265 : enumeration list (declaration,pool of possible values,literal representation)
 
               idev - generic development                                          
                        * #263 - IDE : MTA Debugging 

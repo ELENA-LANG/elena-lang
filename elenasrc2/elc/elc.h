@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0071
+#define ELC_REVISION_NUMBER             0x0001
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -35,7 +35,6 @@
 #define ELC_PRM_SUBJECTINFO         'ds'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
-#define ELC_PRM_START               's'
 #define ELC_PRM_TARGET              't'
 #define ELC_PRM_WARNING             'w'
 #define ELC_W_UNRESOLVED            "wun"
@@ -68,7 +67,6 @@
 #define ELC_DEBUGINFO               "debuginfo"
 #define ELC_SUBJECTINFO             "subjectinfo"
 #define ELC_CLASSSYMBOLLOAD         "classsymbolload"
-#define ELC_PROJECT_ENTRY           "entry"
 #define ELC_TARGET                  "executable"
 #define ELC_MG_SIZE                 "mgsize"
 //#define ELC_HEAP_COMMIT             "heapcommit"

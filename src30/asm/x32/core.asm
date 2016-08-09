@@ -909,6 +909,9 @@ procedure % NEWFRAME
   push edx
   mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ebx
 
+  mov  ebx, code : "$native'coreapi'default_handler"
+  call code : % INIT_ET
+
   ret
 
 end

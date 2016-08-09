@@ -149,6 +149,8 @@ public:
 
    void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
 
+   void* resolveEntry(void* programEntry);
+
    bool getDebugMode() const { return _withDebugInfo; }
 
    size_t getStaticCount() const 

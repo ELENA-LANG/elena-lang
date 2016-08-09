@@ -99,8 +99,24 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
    }
 
    // try to resolve immediately
-   void* vaddress = _owner->_loader->resolveReference(
-      _owner->_loader->retrieveReference(module, refID, mask), mask);
+   void* vaddress = LOADER_NOTLOADED;
+   switch (mask) {
+      case mskPreloadCodeRef:
+         vaddress = _owner->_compiler->getPreloadedReference(refID);
+         mask = mskNativeCodeRef;
+         break;
+      case mskPreloadRelCodeRef:
+         vaddress = _owner->_compiler->getPreloadedReference(refID);
+         mask = mskNativeRelCodeRef;
+         break;
+      case mskCodeRef:
+      case mskRelCodeRef:
+         vaddress = (void*)refID;
+         break;
+      default:
+         vaddress = _owner->_loader->resolveReference(_owner->_loader->retrieveReference(module, refID, mask), mask);
+         break;
+   }
 
    if (vaddress != LOADER_NOTLOADED) {
       resolveReference(writer.Memory(), position, (ref_t)vaddress, mask, _owner->_virtualMode);
@@ -838,7 +854,7 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
    MemoryWriter writer(image);
    void* vaddress = calculateVAddress(&writer, mskCodeRef);
 
-   if (_withDebugInfo) {
+   if (_withDebugInfo && !emptystr(reference)) {
       // it it is a debug mode a special debug record is created containing link to tape
       size_t sizePtr = 0;
       createNativeDebugInfo(reference, param, sizePtr);
@@ -854,6 +870,28 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
    else _compiler->compileProcedure(helper, reader, writer);
 
    return vaddress;
+}
+
+void* JITLinker ::resolveEntry(void* programEntry)
+{
+   MemoryDump   ecodes;
+
+   _compiler->generateProgramStart(ecodes);
+
+   _compiler->generateSymbolCall(ecodes, programEntry);
+
+   _compiler->generateProgramEnd(ecodes);
+
+   References references(RefInfo(0, NULL));
+   ReferenceHelper refHelper(this, NULL, &references);
+   MemoryReader reader(&ecodes);
+
+   void* entry = resolveTemporalByteCode(refHelper, reader, NULL, NULL);
+
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mskCodeRef));
+
+   return entry;
 }
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication

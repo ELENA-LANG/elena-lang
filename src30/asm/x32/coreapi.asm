@@ -3962,9 +3962,6 @@ procedure coreapi'start_thread
   test eax, eax
   jz   short lErr
 
-  mov  ebx, code : "$native'coreapi'core_thread_handler"
-  call code : % INIT_ET
-
   push  eax
   mov   ecx, EXEC_MESSAGE_ID
   mov   esi, [eax - 4]
@@ -3991,30 +3988,6 @@ procedure coreapi'closeframe
 
   mov ebx, code : % CLOSEFRAME
   jmp ebx
-
-end
-
-// ; entry()
-procedure coreapi'entry
-
-  call code : % PREPARE
-  call code : % INIT
-  call code : % NEWFRAME
-  mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-
-  // 'program start
-  xor  edi, edi
-  call code : "'startUp"
-
-  mov  ecx, START_MESSAGE_ID
-  mov  esi, [eax - 4]
-  call [esi + 4]
-
-  // ; exit code
-  call code : % EXIT
-
-  ret
 
 end
 

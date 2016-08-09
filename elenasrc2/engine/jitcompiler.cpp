@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                              (C)2005-2014, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -314,3 +314,16 @@ void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, 
    }
 }
    
+void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeDWord(0);            // write size place holder
+}
+
+void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   tape[0] = ecodes.Position() - 4;
+}

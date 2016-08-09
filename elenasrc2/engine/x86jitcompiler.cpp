@@ -489,10 +489,11 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
 void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
 {
    // if it is internal native call
-   if ((scope.argument & mskAnyRef) == mskNativeCodeRef) {
-      compileCallR(opcode, scope);
-
-      return;
+   switch (scope.argument & mskAnyRef) {
+      case mskNativeCodeRef:
+      case mskPreloadCodeRef:
+         compileCallR(opcode, scope);
+         return;
    }
 
    MemoryWriter* writer = scope.code;
@@ -1568,4 +1569,37 @@ void x86JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& write
       it++;
    }
    writer.seekEOF();
+}
+
+void x86JITCompiler :: generateProgramStart(MemoryDump& tape)
+{
+   JITCompiler32::generateProgramStart(tape);
+
+   MemoryWriter ecodes(&tape);
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(INIT | mskPreloadCodeRef);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
+}
+
+void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallR);
+   ecodes.writeDWord((size_t)address | mskCodeRef);
+}
+
+void x86JITCompiler :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
+
+   JITCompiler32::generateProgramEnd(tape);
 }

@@ -1122,6 +1122,9 @@ procedure % NEWFRAME
   // ; set thread table length
   mov  ebx, 1
   mov  [data : %CORE_GC_TABLE + tt_ptr], ebx   
+
+  mov  ebx, code : "$native'coreapi'default_handler"
+  call code : % INIT_ET
   
   ret
 
@@ -1306,6 +1309,10 @@ labSkipSave:
 
   // ; restore return pointer
   push edx              
+
+  mov  ebx, code : "$native'coreapi'core_thread_handler"
+  call code : % INIT_ET
+
   ret
 
 lErr:

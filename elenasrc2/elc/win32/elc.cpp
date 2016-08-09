@@ -217,8 +217,6 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
 {
    switch (setting)
    {
-   case _ELENA_::opEntry:
-      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_ENTRY);
    case _ELENA_::opNamespace:
       return config.getSetting(PROJECT_CATEGORY, ELC_NAMESPACE);
    case _ELENA_::opGCMGSize:
@@ -391,9 +389,6 @@ void _ELC_::Project :: setOption(const wchar_t* value)
          break;
       case ELC_PRM_TARGET:
          _settings.add(_ELENA_::opTarget, _ELENA_::StringHelper::clone(valueName + 1));
-         break;
-      case ELC_PRM_START:
-         _settings.add(_ELENA_::opEntry, _ELENA_::StringHelper::clone(valueName + 1));
          break;
       case ELC_PRM_DEBUGINFO:
          if (_ELENA_::StringHelper::compare(valueName, ELC_SUBJECTINFO)) {

@@ -50,13 +50,13 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    // initialize compiler inline code
    linker.prepareCompiler();
 
-   // load starting symbol (it shouldn't be forward)
-   ident_t entry = project->StrSetting(opEntry);
-
    // create the image
-   _entryPoint = linker.resolve(entry, mskNativeCodeRef, true);
+   _entryPoint = linker.resolve(project->resolveForward(STARTUP_CLASS), mskCodeRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
-      throw JITUnresolvedException(project->StrSetting(opEntry));
+      throw JITUnresolvedException(STARTUP_CLASS);
+
+   // create an entry point
+   _entryPoint = linker.resolveEntry(_entryPoint);
 
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
