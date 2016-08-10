@@ -340,11 +340,6 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
    // CALL_TAPE_MESSAGE_ID 'program
    writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, STARTUP_CLASS);
 
-   // SEND_MESSAGE
-   IdentifierString verb("0#");
-   verb.append(0x20 + START_MESSAGE_ID);
-   writeTapeRecord(data, SEND_TAPE_MESSAGE_ID, verb);
-
    data.writeDWord(0);
 
    return tapeRef;

@@ -425,7 +425,7 @@ bool Instance :: initLoader(InstanceConfig& config)
 
 bool Instance :: restart(bool debugMode)
 {
-   printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION);
+   printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION);
    printInfo(L"Initializing...");
 
    clearReferences();

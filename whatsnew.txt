@@ -10,6 +10,7 @@
 [ELENA]
 [!] binary incompatible due to implementing issues #267
 [+] #264 : Assigning an outer variable 
+[+] #267 : Module initializers 
 
 ******************************************************************************
                              What's New in 2.0.3
