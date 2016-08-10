@@ -51,7 +51,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    linker.prepareCompiler();
 
    // create the image
-   _entryPoint = linker.resolve(project->resolveForward(STARTUP_CLASS), mskCodeRef, true);
+   _entryPoint = linker.resolve(project->resolveForward(STARTUP_CLASS), mskSymbolRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
       throw JITUnresolvedException(STARTUP_CLASS);
 

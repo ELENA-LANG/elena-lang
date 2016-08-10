@@ -47,4 +47,4 @@
     ]
 }
 
-#static startUp = StartUp new.
+#static startUp = StartUp new start.
