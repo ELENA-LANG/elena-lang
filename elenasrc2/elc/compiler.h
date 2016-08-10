@@ -305,29 +305,18 @@ private:
       ref_t arrayReference;
 
       // cached subjects / hints
-      ref_t sealedHint;
-      ref_t limitedHint;
-      ref_t integerHint;
-      ref_t realHint;
-      ref_t literalHint;
-      ref_t signHint;
-      ref_t mssgHint;
-      ref_t stackHint;
-      ref_t warnHint;
-      ref_t dynamicHint;
-      ref_t constHint;
-      ref_t structHint;
-      ref_t structOfHint;
-      ref_t embedHint;
-      ref_t ptrHint;
-      ref_t extensionHint;
-      ref_t extensionOfHint;
-      ref_t genericHint;
-      ref_t actionHint;
-      ref_t nonstructHint;
-      ref_t symbolHint;
-      ref_t extMssgHint;
-      ref_t groupHint;
+      ref_t sealedHint, limitedHint;
+      ref_t integerHint, realHint;
+      ref_t literalHint, signHint;
+      ref_t mssgHint, stackHint;
+      ref_t warnHint, dynamicHint;
+      ref_t constHint, structHint;
+      ref_t structOfHint, embedHint;
+      ref_t ptrHint, extensionHint;
+      ref_t extensionOfHint, genericHint;
+      ref_t actionHint, nonstructHint;
+      ref_t symbolHint, extMssgHint;
+      ref_t groupHint, preloadedHint;
 
       ref_t boolType;
 
@@ -609,6 +598,7 @@ private:
    struct SymbolScope : public SourceScope
    {
       bool  constant;
+      bool  preloaded;
       ref_t typeRef;      
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
@@ -1042,6 +1032,7 @@ private:
    void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
+   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
    void compileVirtualTypecastMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
    void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);

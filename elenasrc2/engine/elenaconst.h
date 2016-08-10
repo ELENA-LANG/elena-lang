@@ -487,6 +487,7 @@ namespace _ELENA_
    #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
    #define HINT_ACTION_CLASS        "action#0$"
    #define HINT_POINTER             "reference#0$"
+   #define HINT_PRELOADED           "preloaded#0$"
 
    #define HINT_WRAPPER             "class"         // obsolete
 

@@ -75,6 +75,8 @@ _Module* LibraryManager :: loadModule(ident_t package, LoadResult& result, bool 
          return NULL;
       }
       else _modules.add(package, module);
+
+      onModuleLoad(module);
    }
    else result = lrSuccessful;
 

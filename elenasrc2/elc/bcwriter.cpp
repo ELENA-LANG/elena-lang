@@ -76,6 +76,12 @@ ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
    else return 0;
 }
 
+void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
+{
+   // symbol-begin:
+   tape.write(blBegin, bsInitializer, reference);
+}
+
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
 {
    // symbol-begin:
@@ -1059,6 +1065,12 @@ void ByteCodeWriter :: endSymbol(CommandTape& tape)
    tape.write(blEnd, bsSymbol);
 }
 
+void ByteCodeWriter :: endInitializer(CommandTape& tape)
+{
+   // symbol-end:
+   tape.write(blEnd, bsInitializer);
+}
+
 void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
 {
    // finally block - should free the lock if the exception was thrown
@@ -1291,7 +1303,7 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
 }
 
 void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, 
-   _Memory* strings, int sourcePathRef)
+   _Memory* strings, int sourcePathRef, bool appendMode)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
@@ -1299,6 +1311,7 @@ void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Modul
    Scope scope;
    scope.codeStrings = strings;
    scope.code = &codeWriter;
+   scope.appendMode = appendMode;
 
    // create debug info if debugModule available
    if (debugModule) {
@@ -1338,7 +1351,10 @@ void ByteCodeWriter :: save(CommandTape& tape, _Module* module, _Module* debugMo
             writeClass(reference, ++it, module, debugModule, strings, sourcePathRef);
          }
          else if ((*it).Argument() == bsSymbol) {
-            writeSymbol(reference, ++it, module, debugModule, strings, sourcePathRef);
+            writeSymbol(reference, ++it, module, debugModule, strings, sourcePathRef, false);
+         }
+         else if ((*it).Argument() == bsInitializer) {
+            writeSymbol(reference, ++it, module, debugModule, strings, sourcePathRef, true);
          }
       }
       it++;
@@ -1429,8 +1445,11 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
       it++;
    }
 
-   scope.code->writeDWord(0);                                // write size place holder
-   size_t procPosition = scope.code->Position();
+   size_t procPosition = 4;
+   if (!scope.appendMode || scope.code->Position() == 0) {
+      scope.code->writeDWord(0);                                // write size place holder
+      procPosition = scope.code->Position();
+   }
 
    Map<int, int> labels;
    Map<int, int> fwdJumps;
@@ -4762,6 +4781,13 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, ref_t reference, Lexica
    declareSymbol(tape, reference, (size_t)-1);
    loadObject(tape, type, argument);
    endSymbol(tape);
+}
+
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
+{
+   declareInitializer(tape, reference);
+   loadObject(tape, type, argument);
+   endInitializer(tape);
 }
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic)

@@ -300,6 +300,7 @@ enum TapeStructure
    bsMethod      = 0x3,
    bsBranch      = 0x5,
    bsImport      = 0x6,
+   bsInitializer = 0x7,
 };
 
 struct ByteCommand

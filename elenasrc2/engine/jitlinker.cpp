@@ -886,7 +886,7 @@ void JITLinker :: generateInitTape(MemoryDump& tape)
       ReferenceNs initSymbol((*it)->Name(), INITIALIZER_SECTION);
       ref_t initRef = (*it)->mapReference(initSymbol, true);
       if (initRef != 0) {
-         void* initializer = resolveBytecodeSection(initSymbol, mskSymbolRef, helper.getSection(initRef, *it));
+         void* initializer = resolveBytecodeSection(initSymbol, mskSymbolRef, helper.getSection(initRef | mskSymbolRef, *it));
          if (initializer != LOADER_NOTLOADED)
             _compiler->generateSymbolCall(tape, initializer);
       }

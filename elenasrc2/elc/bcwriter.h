@@ -26,6 +26,7 @@ class ByteCodeWriter
       MemoryWriter* debug;
       MemoryWriter* debugStrings;
       int           defaultNameRef;
+      bool          appendMode;
 
       Scope()
       {
@@ -33,6 +34,7 @@ class ByteCodeWriter
          debug = debugStrings = NULL;
          codeStrings = NULL;
          defaultNameRef = -1;
+         appendMode = false;
       }
    };
 
@@ -111,9 +113,10 @@ class ByteCodeWriter
 
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
    void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
 
+   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -215,6 +218,7 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
+   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
@@ -249,13 +253,13 @@ class ByteCodeWriter
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
    int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
@@ -302,6 +306,7 @@ public:
 
    void generateClass(CommandTape& tape, SyntaxTree& tree);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic);
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);

@@ -118,6 +118,14 @@ public:
    void addListener(_JITLoaderListener* listener)
    {
       _listeners.add(listener);
+
+      // notify the listener on already loaded modules
+      ModuleMap::Iterator it = _modules.start();
+      while (!it.Eof()) {
+         onModuleLoad(*it);
+
+         it++;
+      }
    }
 
    LibraryManager();

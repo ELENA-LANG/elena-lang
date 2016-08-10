@@ -179,6 +179,7 @@ public:
       _statLength = 0;
       _classSymbolAutoLoadMode = autoLoadMode;
 
+      loader->addListener(this);
 //      _uniqueID = 0;
    }
 };

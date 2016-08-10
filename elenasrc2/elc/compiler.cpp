@@ -426,6 +426,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    warnHint = module->mapSubject(HINT_SUPPRESS_WARNINGS, false);
    dynamicHint = module->mapSubject(HINT_DYNAMIC, false);
    constHint = module->mapSubject(HINT_CONSTANT, false);
+   preloadedHint = module->mapSubject(HINT_PRELOADED, false);
    structHint = module->mapSubject(HINT_STRUCT, false);
    structOfHint = module->mapSubject(HINT_STRUCTOF, false);
    embedHint = module->mapSubject(HINT_EMBEDDABLE, false);
@@ -1137,24 +1138,6 @@ void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
    actionHints.add(mssg_ref, reference);
 }
 
-//ref_t Compiler::ModuleScope :: defineType(ref_t classRef)
-//{
-//   while (classRef != 0) {
-//      ref_t type = retrieveKey(typeHints.start(), classRef, 0);
-//
-//      if (type != 0)
-//         return type;
-//
-//      ClassInfo sourceInfo;
-//      if (loadClassInfo(sourceInfo, module->resolveReference(classRef), true) == 0)
-//         break;
-//
-//      classRef = sourceInfo.header.parentRef;
-//   }
-//
-//   return 0;
-//}
-
 bool Compiler::ModuleScope :: checkIfCompatible(ref_t typeRef, ref_t classRef)
 {
    ClassInfo sourceInfo;
@@ -1191,6 +1174,7 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
 {
    typeRef = 0;
    constant = false;
+   preloaded = false;
 
    syntaxTree.writeString(parent->sourcePath);
 }
@@ -2312,6 +2296,9 @@ void Compiler :: compileSymbolHints(DNode hints, SymbolScope& scope, bool silent
       ref_t hintRef = mapHint(hints, *scope.moduleScope);
       if (hintRef == scope.moduleScope->constHint) {
          scope.constant = true;
+      }
+      else if (hintRef == scope.moduleScope->preloadedHint) {
+         scope.preloaded = true;
       }
       else if (scope.moduleScope->subjectHints.get(hintRef) != 0) {
          scope.typeRef = hintRef;
@@ -5535,6 +5522,19 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
       scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
 }
 
+void Compiler :: compilePreloadedCode(SymbolScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbol, scope.reference);
+
+   // create byte code sections
+   _writer.save(tape, module, NULL, NULL, 0);
+}
+
 void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
    SyntaxWriter writer(classClassScope.syntaxTree);
@@ -7013,6 +7013,10 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
          scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
       }
       else scope.raiseError(errInvalidOperation, expression.FirstTerminal());
+   }
+
+   if (scope.preloaded) {
+      compilePreloadedCode(scope);
    }
 
    // NOTE : close root node
