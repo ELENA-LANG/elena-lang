@@ -872,11 +872,39 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
    return vaddress;
 }
 
-void* JITLinker ::resolveEntry(void* programEntry)
+void JITLinker :: onModuleLoad(_Module* module)
+{
+   _loadedModules.add(module);
+}
+
+void JITLinker :: generateInitTape(MemoryDump& tape)
+{
+   ReferenceHelper helper(this, NULL, NULL);
+
+   ModuleList::Iterator it = _loadedModules.start();
+   while (!it.Eof()) {
+      ReferenceNs initSymbol((*it)->Name(), INITIALIZER_SECTION);
+      ref_t initRef = (*it)->mapReference(initSymbol, true);
+      if (initRef != 0) {
+         void* initializer = resolveBytecodeSection(initSymbol, mskSymbolRef, helper.getSection(initRef, *it));
+         if (initializer != LOADER_NOTLOADED)
+            _compiler->generateSymbolCall(tape, initializer);
+      }
+
+      it++;
+   }
+
+   _loadedModules.clear();
+}
+
+void* JITLinker :: resolveEntry(void* programEntry)
 {
    MemoryDump   ecodes;
 
    _compiler->generateProgramStart(ecodes);
+
+   // generate module initializers
+   generateInitTape(ecodes);
 
    _compiler->generateSymbolCall(ecodes, programEntry);
 

@@ -90,6 +90,11 @@ public:
       _subjects.write(writer);
    }
 
+   virtual void addListener(_JITLoaderListener* listener)
+   {
+      _project->addLoaderListener(listener);
+   }
+
    ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper);
 };
 

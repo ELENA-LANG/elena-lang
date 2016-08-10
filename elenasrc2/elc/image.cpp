@@ -27,7 +27,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _project = project;
    _objectHeaderSize = compiler->getObjectHeaderSize();
 
-   // load default forwards
+  // load default forwards
    _literal = project->resolveForward(STR_FORWARD);
    _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
    _character = project->resolveForward(CHAR_FORWARD);
@@ -42,20 +42,20 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
       project->BoolSetting(opClassSymbolAutoLoad));
 
-   // save root namespace
+  // save root namespace
    _debug.writeLiteral(_debug.Length(), getNamespace());
 
    helper.beforeLoad(compiler, *this);
 
-   // initialize compiler inline code
+  // initialize compiler inline code
    linker.prepareCompiler();
 
-   // create the image
+  // create the image
    _entryPoint = linker.resolve(project->resolveForward(STARTUP_CLASS), mskSymbolRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
       throw JITUnresolvedException(STARTUP_CLASS);
 
-   // create an entry point
+  // inject initializing code into the entry point
    _entryPoint = linker.resolveEntry(_entryPoint);
 
   // fix up static table size

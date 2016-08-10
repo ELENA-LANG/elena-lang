@@ -85,6 +85,14 @@ struct ClassSectionInfo
    }
 };
 
+// --- _LoaderListener ---
+
+class _JITLoaderListener
+{
+public:
+   virtual void onModuleLoad(_Module*) = 0;
+};
+
 // --- _JITLoader ---
 
 class _JITLoader
@@ -117,6 +125,8 @@ public:
    virtual void* resolveReference(ident_t reference, size_t mask) = 0;
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask) = 0;
+
+   virtual void addListener(_JITLoaderListener* listener) = 0;
 
    virtual ~_JITLoader() {}
 };
@@ -556,6 +566,7 @@ inline size_t mapReferenceKey(ident_t key)
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
+typedef List<_Module*> ModuleList;
 
 // --- Reference mapping types ---
 typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;

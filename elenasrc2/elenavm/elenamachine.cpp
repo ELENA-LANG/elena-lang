@@ -767,6 +767,12 @@ int Instance::interprete(void* tape, ident_t interpreter)
    MemoryDump   ecodes;
    translate(tapeReader, helper, ecodes, 0);
 
+   // generate module initializers
+   MemoryDump  initTape(0);
+   _linker->generateInitTape(initTape);
+   if (initTape.Length() > 0)
+      ecodes.insert(0, initTape.get(0), initTape.Length());
+
    // compile byte code
    MemoryReader reader(&ecodes);
 

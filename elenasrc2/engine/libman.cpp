@@ -29,6 +29,16 @@ LibraryManager :: LibraryManager(path_t root, ident_t package)
 {
 }
 
+void LibraryManager :: onModuleLoad(_Module* module)
+{
+   LoaderListeners::Iterator it = _listeners.start();
+   while (!it.Eof()) {
+      (*it)->onModuleLoad(module);
+
+      it++;
+   }
+}
+
 _Module* LibraryManager :: createModule(ident_t package, LoadResult& result)
 {
    _Module* module = _modules.get(package);

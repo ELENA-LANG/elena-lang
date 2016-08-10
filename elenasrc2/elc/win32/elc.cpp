@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 command-line compiler
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #define __MSVCRT_VERSION__ 0x0800

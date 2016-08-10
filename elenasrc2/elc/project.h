@@ -204,6 +204,11 @@ public:
       }
    }
 
+   void addLoaderListener(_JITLoaderListener* listener)
+   {
+      _loader.addListener(listener);
+   }
+
    virtual ident_t resolveForward(ident_t forward);
 
    // loader

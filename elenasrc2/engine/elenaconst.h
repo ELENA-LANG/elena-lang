@@ -450,6 +450,7 @@ namespace _ELENA_
    #define TYPE_SECTION             "#types"
    #define EXTENSION_SECTION        "#extensions"
    #define ACTION_SECTION           "#actions"
+   #define INITIALIZER_SECTION      "#initializer"
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"

@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  1
+#define ELENAVM_REVISION  2
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
@@ -375,6 +375,11 @@ public:
 
    //bool loadSubjectInfo(size_t subjectId, ident_c* buffer, size_t& maxLength);
    //bool loadMessageInfo(size_t messageId, ident_c* buffer, size_t& maxLength);
+
+   virtual void addListener(_JITLoaderListener* listener)
+   {
+      _loader.addListener(listener);
+   }
 
    Instance(ELENAMachine* machine);
    virtual ~Instance();

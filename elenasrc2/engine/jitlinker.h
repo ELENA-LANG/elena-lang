@@ -39,7 +39,7 @@ struct JITConstantExpectedException
 };
 
 // --- JITLinker class ---
-class JITLinker
+class JITLinker : _JITLoaderListener
 {
    struct RefInfo
    {
@@ -110,6 +110,7 @@ class JITLinker
    void*          _codeBase;
    int            _statLength;
    MethodMap      _staticMethods;
+   ModuleList     _loadedModules;
 //   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
@@ -151,6 +152,8 @@ public:
 
    void* resolveEntry(void* programEntry);
 
+   void generateInitTape(MemoryDump& tape);
+
    bool getDebugMode() const { return _withDebugInfo; }
 
    size_t getStaticCount() const 
@@ -162,6 +165,8 @@ public:
    void* calculateVAddress(MemoryWriter* writer, int mask);
 
    ref_t parseMessage(ident_t reference);
+
+   virtual void onModuleLoad(_Module* module);
 
    JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool autoLoadMode = false)
       : _staticMethods(-1)

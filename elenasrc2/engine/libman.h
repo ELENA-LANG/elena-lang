@@ -12,6 +12,8 @@
 namespace _ELENA_
 {
 
+typedef _ELENA_::List<_JITLoaderListener*> LoaderListeners;
+
 // --- LibraryManager ---
 
 class LibraryManager : public _LibraryManager
@@ -27,6 +29,10 @@ class LibraryManager : public _LibraryManager
 
    PathMap           _binaryPaths;
    PathMap           _packagePaths;
+
+   LoaderListeners   _listeners;
+
+   void onModuleLoad(_Module* module);
 
 public:
    void setRootPath(path_t root)
@@ -108,6 +114,11 @@ public:
    _Module* resolveCore(ref_t reference, LoadResult& result);
    virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+
+   void addListener(_JITLoaderListener* listener)
+   {
+      _listeners.add(listener);
+   }
 
    LibraryManager();
    LibraryManager(path_t root, ident_t package);
