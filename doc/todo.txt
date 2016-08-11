@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xdev - generic development
-                       * #267 : Module initializers : stand-alone, vm client
+                       * #266 : Static fields 
 
               xdev - byte code optimization                               
                        * #269 : short-circuit boolean operation

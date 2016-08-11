@@ -340,10 +340,10 @@ namespace _ELENA_
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.2."       // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "VM.ELENA.2."    // the ELENAVM client
+   #define ELENA_SIGNITURE          "ELENA.3."       // the stand alone image
+   #define ELENACLIENT_SIGNITURE    "VM.ELENA.3."    // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.2.1"      // the module version
+   #define MODULE_SIGNATURE         "ELENA.3.0"      // the module version
    #define DEBUG_MODULE_SIGNATURE   "ED!2"
 
   // --- ELENA core module names ---
@@ -458,6 +458,7 @@ namespace _ELENA_
    #define GENERIC_PREFIX           "#generic"
    #define EMBEDDED_PREFIX          "#embedded"
    #define TARGET_POSTFIX           "##"
+   #define STATICFIELD_POSTFIX      "#static"
 
   // --- ELENA modifiers ---
    #define HINT_CONSTANT            "const#0$"
@@ -488,6 +489,7 @@ namespace _ELENA_
    #define HINT_ACTION_CLASS        "action#0$"
    #define HINT_POINTER             "reference#0$"
    #define HINT_PRELOADED           "preloaded#0$"
+   #define HINT_STATIC              "static#0$"
 
    #define HINT_WRAPPER             "class"         // obsolete
 

@@ -107,6 +107,7 @@ protected:
    friend void compileACopyR(int opcode, x86JITScope& scope);
    friend void compileBCopyR(int opcode, x86JITScope& scope);
    friend void compileALoadR(int opcode, x86JITScope& scope);
+   friend void compileBLoadR(int opcode, x86JITScope& scope);
    friend void compilePushA(int opcode, x86JITScope& scope);
    friend void compileACopyB(int opcode, x86JITScope& scope);
    friend void compileInvokeVMT(int opcode, x86JITScope& scope);
@@ -229,6 +230,7 @@ void compileSelectR(int opcode, x86JITScope& scope);
 void compileACopyR(int opcode, x86JITScope& scope);
 void compileBCopyR(int opcode, x86JITScope& scope);
 void compileALoadR(int opcode, x86JITScope& scope);
+void compileBLoadR(int opcode, x86JITScope& scope);
 void compilePushA(int opcode, x86JITScope& scope);
 void compileACopyB(int opcode, x86JITScope& scope);
 void compileInvokeVMT(int opcode, x86JITScope& scope);

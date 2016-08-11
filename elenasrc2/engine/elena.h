@@ -401,20 +401,23 @@ enum MethodAttribute
 
 struct ClassInfo
 {
-   typedef Pair<ref_t, int>                   Attribute;
-   typedef MemoryMap<ref_t, bool, false>      MethodMap;
-   typedef MemoryMap<ident_t, int, true>      FieldMap;
-   typedef MemoryMap<int, ref_t>              FieldTypeMap;
-   typedef MemoryMap<Attribute, ref_t, false> MethodInfoMap;
+   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
+   typedef Pair<ref_t, int>                     Attribute;
+   typedef MemoryMap<ref_t, bool, false>        MethodMap;
+   typedef MemoryMap<ident_t, int, true>        FieldMap;
+   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
+   typedef MemoryMap<int, ref_t>                FieldTypeMap;
+   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
 
-   ClassHeader   header;
-   size_t        size;           // Object size
-   ref_t         classClassRef;  // reference to class class VMT
-   MethodMap     methods;
-   FieldMap      fields;
+   ClassHeader    header;
+   size_t         size;           // Object size
+   ref_t          classClassRef;  // reference to class class VMT
+   MethodMap      methods;
+   FieldMap       fields;
+   StaticFieldMap statics;
 
-   FieldTypeMap  fieldTypes;
-   MethodInfoMap methodHints;
+   FieldTypeMap   fieldTypes;
+   MethodInfoMap  methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
@@ -426,6 +429,7 @@ struct ClassInfo
          fields.write(writer);
          fieldTypes.write(writer);
          methodHints.write(writer);
+         statics.write(writer);
       }
    }
 
@@ -439,11 +443,12 @@ struct ClassInfo
          fields.read(reader);
          fieldTypes.read(reader);
          methodHints.read(reader);
+         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0)
+      : fields(-1), methods(0), methodHints(0), statics(StaticInfo(0, 0))
    {
       header.flags = 0;
       classClassRef = 0;

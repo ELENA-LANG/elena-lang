@@ -124,6 +124,7 @@ public:
       okSignatureConstant,            // param - reference 
       okVerbConstant,                 // param - reference 
       okField,                        // param - field offset
+      okStaticField,                  // param - reference
       okFieldAddress,                 // param - field offset
       okOuter,                        // param - field offset
       okOuterField,                   // param - field offset, extraparam - outer field offset
@@ -305,7 +306,7 @@ private:
       ref_t arrayReference;
 
       // cached subjects / hints
-      ref_t sealedHint, limitedHint;
+      ref_t sealedHint, limitedHint, staticHint;
       ref_t integerHint, realHint;
       ref_t literalHint, signHint;
       ref_t mssgHint, stackHint;
@@ -1046,6 +1047,9 @@ private:
    void declareVirtualMethods(ClassScope& scope);
 
    ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
+
+   void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
+   void generateClassStaticField(ClassScope& scope, SNode current);
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);

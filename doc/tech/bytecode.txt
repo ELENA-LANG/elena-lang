@@ -89,6 +89,8 @@ D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
  axsavebi i                 - [base::i] <= acc;
                                direct
  
+ bloadr r                   - [r] => base
+
  bread                      - acc[index] >> ext                               
  
  breadb                     - acc[index] >> [byte]ext

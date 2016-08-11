@@ -218,6 +218,7 @@ enum ByteCode
    bcShiftN          = 0xD9,
    bcMulN            = 0xDA,
    bcDivN            = 0xDB,
+   bcBLoadR          = 0xDC,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
@@ -421,6 +422,7 @@ public:
          case bcSelectR:
          case bcXJumpRM:
          case bcXIndexRM:
+         case bcBLoadR:
             return true;
          default:
             return false;

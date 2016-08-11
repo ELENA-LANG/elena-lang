@@ -439,6 +439,7 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    nonstructHint = module->mapSubject(HINT_NONSTRUCTURE, false);
    symbolHint = module->mapSubject(HINT_SYMBOL, false);
    groupHint = module->mapSubject(HINT_GROUP, false);
+   staticHint = module->mapSubject(HINT_STATIC, false);
 
    defaultNs.add(module->Name());
 
@@ -745,6 +746,18 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
             value);
 
          mtype_it++;
+      }
+
+      // import static fields
+      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
+      while (!static_it.Eof()) {
+         ClassInfo::StaticInfo info(
+            importReference(exporter, (*static_it).value2, module), 
+            importSubject(exporter, (*static_it).value2, module));
+
+         target.statics.add(static_it.key(), info);
+
+         static_it++;
       }
    }
    // import class class reference
@@ -1233,7 +1246,13 @@ ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
          // otherwise it is a normal field
          else return ObjectInfo(okField, reference, 0, info.fieldTypes.get(reference));
       }
-     else return Scope::mapObject(identifier);
+      else {
+         ClassInfo::StaticInfo staticInfo = info.statics.get(identifier);
+         if (staticInfo.value1 != 0) {
+            return ObjectInfo(okStaticField, staticInfo.value1, 0, staticInfo.value2);
+         }
+         else return Scope::mapObject(identifier);
+      }
    }
 }
 
@@ -2393,6 +2412,9 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
             writer.appendNode(lxTarget, -10);
             writer.appendNode(lxSize, 8);
          }
+         else if (hintRef == scope.moduleScope->staticHint) {
+            writer.appendNode(lxStaticAttr);
+         }
          else if(scope.moduleScope->subjectHints.exist(hintRef)) {
             writer.appendNode(lxType, hintRef);
          }
@@ -2862,6 +2884,9 @@ void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectIn
       case okField:
       case okOuter:
          scope.writer->newNode(lxField, object.param);
+         break;
+      case okStaticField:
+         scope.writer->newNode(lxStaticField, object.param);
          break;
       case okOuterField:
          scope.writer->newNode(lxFieldExpression);
@@ -3664,7 +3689,7 @@ ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo
       else if (object.kind == okFieldAddress) {
          size = scope.moduleScope->defineSubjectSize(object.type);
       }
-      else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField) {
+      else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField || object.kind == okStaticField) {
 
       }
       else if (object.kind == okParam || object.kind == okOuter) {
@@ -4234,6 +4259,7 @@ ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, C
       case okFieldAddress:
       case okParamField:
       case okOuter:
+      case okStaticField:
          break;
       case okTemplateLocal:
          mode |= HINT_VIRTUAL_FIELD; // HOTFIX : typecast it like a virtual field
@@ -5842,6 +5868,167 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
    return true;
 }
 
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, bool singleField)
+{
+   int offset = 0;
+   ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
+
+   ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
+
+   // a role cannot have fields
+   if (test(scope.info.header.flags, elStateless))
+      scope.raiseError(errIllegalField, current);
+
+   int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
+   ref_t target = SyntaxTree::findChild(current, lxTarget).argument;
+
+   int size = (typeHint != 0) ? scope.moduleScope->defineSubjectSize(typeHint) : 0;
+   if (sizeHint != 0) {
+      if (size < 0) {
+         size = sizeHint * (-size);
+      }
+      else if (size == 0) {
+         size = sizeHint;
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
+
+   if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
+      // wrapper may have only one field
+      scope.raiseError(errIllegalField, current);
+   }
+   else if (isPrimitiveRef(target)) {
+      if (testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
+         scope.raiseError(errIllegalField, current);
+
+      if (test(scope.info.header.flags, elStructureRole)) {
+         scope.info.fields.add(terminal, scope.info.size);
+         scope.info.size += size;
+      }
+      else scope.raiseError(errIllegalField, current);
+
+      // if it is a primitive field
+      if (singleField && scope.info.fields.Count() == 1) {
+         switch (target) {
+         case -1:
+            scope.info.header.flags |= (elDebugDWORD | elReadOnlyRole);
+            break;
+         case -2:
+            scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
+            break;
+         case -4:
+            scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
+            break;
+         case -7:
+            scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
+            break;
+         case -8:
+            scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
+            break;
+         case -9:
+            scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
+            break;
+         case -10:
+            scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
+            break;
+         default:
+            scope.raiseError(errIllegalField, current);
+            break;
+         }
+      }
+   }
+   // a class with a dynamic length structure must have no fields
+   else if (test(scope.info.header.flags, elDynamicRole)) {
+      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
+         // compiler magic : turn a field declaration into an array or string one 
+         if (size != 0) {
+            if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
+               scope.info.header.flags &= ~elDebugMask;
+               if (size == 2) {
+                  scope.info.header.flags |= elDebugWideLiteral;
+               }
+               else if (size == 1) {
+                  scope.info.header.flags |= elDebugLiteral;
+               }
+            }
+            scope.info.header.flags |= elStructureRole;
+            scope.info.size = -size;
+         }
+
+         scope.info.fieldTypes.add(-1, typeHint);
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
+   else {
+      if (scope.info.fields.exist(terminal))
+         scope.raiseError(errDuplicatedField, current);
+
+      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+      if (!test(scope.info.header.flags, elNonStructureRole) && singleField
+         && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
+      {
+         scope.info.header.flags |= elStructureRole;
+         scope.info.size = size;
+
+         if (size < 0) {
+            scope.info.header.flags |= elDynamicRole;
+         }
+
+         scope.info.fields.add(terminal, 0);
+         scope.info.fieldTypes.add(0, typeHint);
+      }
+      // if it is a structure field
+      else if (test(scope.info.header.flags, elStructureRole)) {
+         if (size <= 0)
+            scope.raiseError(errIllegalField, current);
+
+         if (scope.info.size != 0 && scope.info.fields.Count() == 0)
+            scope.raiseError(errIllegalField, current);
+
+         offset = scope.info.size;
+         scope.info.size += size;
+
+         scope.info.fields.add(terminal, offset);
+         scope.info.fieldTypes.add(offset, typeHint);
+      }
+      // if it is a normal field
+      else {
+         scope.info.header.flags |= elNonStructureRole;
+
+         offset = scope.info.fields.Count();
+         scope.info.fields.add(terminal, offset);
+
+         if (typeHint != 0)
+            scope.info.fieldTypes.add(offset, typeHint);
+      }
+   }
+
+   // handle field template
+   SNode templateNode = SyntaxTree::findChild(current, lxTemplate);
+   if (templateNode.argument != 0) {
+      declareFieldTemplateInfo(templateNode, scope, templateNode.argument, offset);
+   }
+}
+
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
+   ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
+
+   if (scope.info.statics.exist(terminal))
+      scope.raiseError(errDuplicatedField, current);
+
+   // generate static reference
+   ReferenceNs name(module->resolveReference(scope.reference));
+   name.append(STATICFIELD_POSTFIX);
+
+   findUninqueName(module, name);
+
+   scope.info.statics.add(terminal, ClassInfo::StaticInfo(module->mapReference(name), typeHint));
+}
+
 void Compiler :: generateClassFields(ClassScope& scope, SNode root)
 {
    bool singleField = SyntaxTree::countChild(root, lxClassField, lxTemplateField) == 1;
@@ -5849,149 +6036,11 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassField || current == lxTemplateField) {
-         int offset = 0;
-         ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
-
-         // a role cannot have fields
-         if (test(scope.info.header.flags, elStateless))
-            scope.raiseError(errIllegalField, current);
-
-         ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
-         int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
-         ref_t target = SyntaxTree::findChild(current, lxTarget).argument;
-
-         int size = (typeHint != 0) ? scope.moduleScope->defineSubjectSize(typeHint) : 0;
-         if (sizeHint != 0) {
-            if (size < 0) {
-               size = sizeHint * (-size);
-            }
-            else if (size == 0) {
-               size = sizeHint;
-            }
-            else scope.raiseError(errIllegalField, current);
+         bool isStatic = SyntaxTree::existChild(current, lxStaticAttr);
+         if (isStatic) {
+            generateClassStaticField(scope, current);
          }
-
-         if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
-            // wrapper may have only one field
-            scope.raiseError(errIllegalField, current);
-         }
-         else if (isPrimitiveRef(target)) {
-            if (testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
-               scope.raiseError(errIllegalField, current);
-
-            if (test(scope.info.header.flags, elStructureRole)) {
-               scope.info.fields.add(terminal, scope.info.size);
-               scope.info.size += size;
-            }
-            else scope.raiseError(errIllegalField, current);
-
-            // if it is a primitive field
-            if (singleField && scope.info.fields.Count() == 1) {
-               switch (target) {
-                  case -1:
-                     scope.info.header.flags |= (elDebugDWORD | elReadOnlyRole);
-                     break;
-                  case -2:
-                     scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole) ;
-                     break;
-                  case -4:
-                     scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
-                     break;
-                  case -7:
-                     scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
-                     break;
-                  case -8:
-                     scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
-                     break;
-                  case -9:
-                     scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
-                     break;
-                  case -10:
-                     scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
-                     break;
-                  default:
-                     scope.raiseError(errIllegalField, current);
-                     break;
-               }
-            }
-         }
-         // a class with a dynamic length structure must have no fields
-         else if (test(scope.info.header.flags, elDynamicRole)) {
-            if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
-               // compiler magic : turn a field declaration into an array or string one 
-               if (size != 0) {
-                  if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
-                     scope.info.header.flags &= ~elDebugMask;
-                     if (size == 2) {                        
-                        scope.info.header.flags |= elDebugWideLiteral;
-                     }
-                     else if (size == 1) {
-                        scope.info.header.flags |= elDebugLiteral;
-                     }
-                  }
-                  scope.info.header.flags |= elStructureRole;
-                  scope.info.size = -size;
-               }
-
-               scope.info.fieldTypes.add(-1, typeHint);
-            }
-            else scope.raiseError(errIllegalField, current);
-         }   
-         else {
-            if (scope.info.fields.exist(terminal))
-               scope.raiseError(errDuplicatedField, current);
-
-            // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-            if (!test(scope.info.header.flags, elNonStructureRole) && singleField
-               && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
-            {
-               scope.info.header.flags |= elStructureRole;
-               scope.info.size = size;
-
-               if (size < 0) {
-                  scope.info.header.flags |= elDynamicRole;
-               }
-
-               scope.info.fields.add(terminal, 0);
-               scope.info.fieldTypes.add(0, typeHint);
-            }
-            // if it is a structure field
-            else if (test(scope.info.header.flags, elStructureRole)) {
-               if (size <= 0)
-                  scope.raiseError(errIllegalField, current);
-
-               if (scope.info.size != 0 && scope.info.fields.Count() == 0)
-                  scope.raiseError(errIllegalField, current);
-
-               offset = scope.info.size;
-               scope.info.size += size;
-
-               scope.info.fields.add(terminal, offset);
-               scope.info.fieldTypes.add(offset, typeHint);
-            }
-            // if it is a normal field
-            else {
-               scope.info.header.flags |= elNonStructureRole;
-
-               offset = scope.info.fields.Count();
-               scope.info.fields.add(terminal, offset);
-
-               if (typeHint != 0)
-                  scope.info.fieldTypes.add(offset, typeHint);
-
-               //// byref variable may have only one field
-               //if (test(scope.info.header.flags, elWrapper)) {
-               //   if (scope.info.fields.Count() > 1)
-               //      scope.raiseError(errIllegalField, current);
-               //}
-            }
-         }
-
-         // handle field template
-         SNode templateNode = SyntaxTree::findChild(current, lxTemplate);
-         if (templateNode.argument != 0) {
-            declareFieldTemplateInfo(templateNode, scope, templateNode.argument, offset);
-         }
+         else generateClassField(scope, current, singleField);
       }
 
       current = current.nextNode();

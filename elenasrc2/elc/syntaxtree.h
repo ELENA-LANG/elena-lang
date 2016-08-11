@@ -91,11 +91,11 @@ enum LexicalType
    lxSymbol          = 0x20103, // arg - reference
    lxConstantSymbol  = 0x24104, // arg - reference
    lxField           = 0x00105, // arg - offset
-   lxFieldAddress    = 0x00106, // arg - offset
-   lxLocalAddress    = 0x04107, // arg - offset
-   lxBlockLocalAddr  = 0x04108, // arg - offset
-   lxLocal           = 0x04109, // arg - offset
-   //lxBoxableLocal    = 0x0410A, // arg - offset7
+   lxStaticField     = 0x20106, // arg - reference
+   lxFieldAddress    = 0x00107, // arg - offset
+   lxLocalAddress    = 0x04108, // arg - offset
+   lxBlockLocalAddr  = 0x04109, // arg - offset
+   lxLocal           = 0x0410A, // arg - offset
    lxBlockLocal      = 0x0410B, // arg - offset
    lxConstantString  = 0x8410C, // arg - reference
    lxConstantWideStr = 0x8410D, // arg - reference
@@ -147,6 +147,7 @@ enum LexicalType
    lxReserved        = 0x0080D,
    lxParamCount      = 0x0080E,
    lxSubject         = 0x4080F,
+   lxStaticAttr      = 0x00810,
 
    lxBreakpoint      = 0x02001,
    lxCol             = 0x02002,

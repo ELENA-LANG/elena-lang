@@ -10,7 +10,8 @@
 [ELENA]
 [!] binary incompatible due to implementing issues #267
 [+] #264 : Assigning an outer variable 
-[+] #267 : Module initializers 
+[+] #267 : Module initializers (preloaded attribute)
+[+] #266 : Static fields 
 
 ******************************************************************************
                              What's New in 2.0.3
