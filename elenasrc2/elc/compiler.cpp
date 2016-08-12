@@ -7665,7 +7665,7 @@ void Compiler :: optimizeEmbeddableCall(ModuleScope& scope, SNode& assignNode, S
       SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
       if (assignTarget != lxNone) {
          callNode.appendNode(assignTarget.type, assignTarget.argument);
-         assignTarget = lxExpression;
+         assignTarget = lxIdle;
          callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
       }
    }

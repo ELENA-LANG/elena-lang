@@ -3,7 +3,13 @@ In development:
 ------                              
 
               xdev - generic development
-                       * #266 : Static fields 
+                       * #238 : Library version 
+                       * #236 : Namespace sharing
+                       * #188 : Make possible to provide alternative path to lib
+                       * #163 : try finally catch statement
+                       * #131 : it should be possible to change the order of source files in the project 
+                       * #100 : classOp : test if object is subclass of 
+                       * #167 : stack allocated variable and $nil
 
               xdev - byte code optimization                               
                        * #269 : short-circuit boolean operation
@@ -22,13 +28,6 @@ In development:
 	               * Distributed programming
                        * Metaprogramming
                        * Object serialization
-
-              xdev - generic development
-                       * review the code:
-                            #var(literal) s := "Hello".    
-                            #var(int)l := s length.
-
-                          acopyf fp:-2 is implemented twice in row
 
               fdev - upndown
                        * implementing
