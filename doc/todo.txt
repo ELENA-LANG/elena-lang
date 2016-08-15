@@ -3,8 +3,9 @@ In development:
 ------                              
 
               xdev - generic development
-                       * #271 : constant array
                        * #238 : Library / Program version / Manifest
+                       * #238 : ecv - show manifest info on load
+
                        * #236 : Namespace sharing
                        * #188 : Make possible to provide alternative path to lib
                        * #163 : try finally catch statement
@@ -187,6 +188,7 @@ Pipeline:
                        * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
                        
              xdev - linux
+                       * support manifest info
                        * implement debugger
                        * port elide to linux
                        

@@ -14,7 +14,6 @@ using namespace _ELENA_;
 
 // --- ELENA Class constants ---
 const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
-const int elVMTOffset32           = 0x0010;           // a VMT header size , NOTE - it should be aligned to VA_ALIGNMENT
 
 inline void insertVMTEntry(VMTEntry* entries, int count, int index)
 {
@@ -230,13 +229,16 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
+void JITCompiler32 :: allocateVMT(_ReferenceHelper& helper, MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, ref_t packageRef)
 {
    alignCode(&vmtWriter, VA_ALIGNMENT, false);   
 
    // create VMT header:
-   //   type
-   vmtWriter.writeDWord(0);
+   //   package
+   if (packageRef != 0) {
+      helper.writeReference(vmtWriter, packageRef | mskConstArray, 0, NULL);
+   }
+   else vmtWriter.writeDWord(0);
 
    //   vmt length
    vmtWriter.writeDWord(vmtLength);
@@ -308,7 +310,7 @@ void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, 
 {
    _Memory* image = vmtWriter.Memory();   
 
-   // update class vmt reference if available
+      // update class vmt reference if available
    if (classClassVAddress != NULL) {
       vmtWriter.seek(vmtWriter.Position() - 4);
 

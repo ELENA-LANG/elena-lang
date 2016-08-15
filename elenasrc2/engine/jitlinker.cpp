@@ -436,9 +436,6 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
    // read tape record size
    size_t size = vmtReader.getDWord();
 
-   // read class reference
-   ref_t classClassRef = vmtReader.getDWord();
-
    // read VMT header
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
@@ -450,7 +447,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
+   _compiler->allocateVMT(refHelper, vmtWriter, header.flags, header.count, header.packageRef);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -476,7 +473,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
       size_t          methodPosition;
       VMTEntry        entry;
 
-      size -= sizeof(ClassHeader) + 4;
+      size -= sizeof(ClassHeader);
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(VMTEntry));
    
@@ -498,7 +495,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
          throw InternalError("VMT structure is corrupt");
 
       // load class class
-      void* classClassVAddress = getVMTAddress(sectionInfo.module, classClassRef, references);
+      void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
 
       // fix VMT
       _compiler->fixVMT(vmtWriter, classClassVAddress, count, _virtualMode);

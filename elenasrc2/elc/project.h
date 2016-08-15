@@ -76,7 +76,12 @@ enum ProjectSetting
    opTemplates             = 0x0063,
    opExternals             = 0x0064,
    opWinAPI                = 0x0065,   // used only for WIN32
-   opReferences            = 0x0066
+   opReferences            = 0x0066,
+
+   // compiler manfifest
+   opManifestName          = 0x0070,
+   opManifestVersion       = 0x0071,
+   opManifestAuthor        = 0x0072
 };
 
 // --- ModuleInfo ---

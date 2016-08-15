@@ -380,6 +380,8 @@ struct VMTEntry
 
 struct ClassHeader
 {
+   ref_t  packageRef;      // package header
+   ref_t  classRef;        // class class reference
    size_t count;
    size_t flags;
    ref_t  parentRef;
@@ -411,7 +413,6 @@ struct ClassInfo
 
    ClassHeader    header;
    size_t         size;           // Object size
-   ref_t          classClassRef;  // reference to class class VMT
    MethodMap      methods;
    FieldMap       fields;
    StaticFieldMap statics;
@@ -423,7 +424,6 @@ struct ClassInfo
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
-      writer->writeDWord(classClassRef);
       if (!headerAndSizeOnly) {
          methods.write(writer);
          fields.write(writer);
@@ -437,7 +437,6 @@ struct ClassInfo
    {
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
-      classClassRef = reader->getDWord();
       if (!headerOnly) {
          methods.read(reader);
          fields.read(reader);
@@ -451,7 +450,7 @@ struct ClassInfo
       : fields(-1), methods(0), methodHints(0), statics(StaticInfo(0, 0))
    {
       header.flags = 0;
-      classClassRef = 0;
+      header.classRef = 0;
    }
 };
 

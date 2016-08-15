@@ -415,6 +415,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 
    this->forwardsUnresolved = forwardsUnresolved;
 
+   packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
+
    warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
    warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
    warningMask = project->getWarningMask();
@@ -665,8 +667,8 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
          }
          // if it is a normal class
          // then the symbol is reference to the class class
-         else if (test(info.header.flags, elStandartVMT) && info.classClassRef != 0) {
-            return ObjectInfo(okConstantClass, reference, info.classClassRef);
+         else if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
+            return ObjectInfo(okConstantClass, reference, info.header.classRef);
          }
       }
       else {
@@ -736,7 +738,6 @@ ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool exi
 void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
 {
    target.header = copy.header;
-   target.classClassRef = copy.classClassRef;
    target.size = copy.size;
 
    if (!headerOnly) {
@@ -786,8 +787,8 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
       }
    }
    // import class class reference
-   if (target.classClassRef != 0)
-      target.classClassRef = importReference(exporter, target.classClassRef, module);
+   if (target.header.classRef != 0)
+      target.header.classRef = importReference(exporter, target.header.classRef, module);
 
    // import parent reference
    target.header.parentRef = importReference(exporter, target.header.parentRef, module);
@@ -1230,8 +1231,9 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
    info.header.parentRef =   moduleScope->superReference;
    info.header.flags = elStandartVMT;
    info.header.count = 0;
+   info.header.classRef = 0;
+   info.header.packageRef = parent->packageReference;
    info.size = 0;
-   info.classClassRef = 0;
 
    extensionMode = 0;
 
@@ -1933,7 +1935,8 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    ModuleScope* moduleScope = scope.moduleScope;
 
    size_t flagCopy = scope.info.header.flags;
-   size_t classClassCopy = scope.info.classClassRef;
+   size_t classClassCopy = scope.info.header.classRef;
+   size_t packageRefCopy = scope.info.header.packageRef;
 
    // get module reference
    ref_t moduleRef = 0;
@@ -1970,8 +1973,9 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
 
       // restore parent and flags
       scope.info.header.parentRef = parentRef;
-      scope.info.classClassRef = classClassCopy;
+      scope.info.header.classRef = classClassCopy;
       scope.info.header.flags |= flagCopy;
+      scope.info.header.packageRef = packageRefCopy;
 
       return irSuccessfull;
    }
@@ -5106,8 +5110,8 @@ void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope
       while (parent != 0) {
          moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
 
-         if (moduleScope->checkMethod(info.classClassRef, messageRef) != tpUnknown) {
-            classRef = info.classClassRef;
+         if (moduleScope->checkMethod(info.header.classRef, messageRef) != tpUnknown) {
+            classRef = info.header.classRef;
             found = true;
 
             break;
@@ -6248,7 +6252,7 @@ void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
       scope.info.header.flags |= elStateless;
 
       // stateless inline class is its own class class
-      scope.info.classClassRef = scope.reference;
+      scope.info.header.classRef = scope.reference;
    }
    else scope.info.header.flags &= ~elStateless;
 }
@@ -6435,14 +6439,14 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
    // if it is a role
    if (test(scope.info.header.flags, elRole)) {
       // class is its own class class
-      scope.info.classClassRef = scope.reference;
+      scope.info.header.classRef = scope.reference;
    }
    else {
       // define class class name
       IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
       classClassName.append(CLASSCLASS_POSTFIX);
 
-      scope.info.classClassRef = scope.moduleScope->module->mapReference(classClassName);
+      scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
    }
 
    // save declaration
@@ -8562,8 +8566,8 @@ void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
             compileClassDeclaration(member, classScope, hints);
 
             // compile class class if it available
-            if (classScope.info.classClassRef != classScope.reference) {
-               ClassScope classClassScope(&scope, classScope.info.classClassRef);
+            if (classScope.info.header.classRef != classScope.reference) {
+               ClassScope classClassScope(&scope, classScope.info.header.classRef);
                compileClassClassDeclaration(member, classClassScope, classScope);
             }
 
@@ -8645,8 +8649,8 @@ void Compiler :: compileImplementations(DNode member, ModuleScope& scope)
             compileClassImplementation(member, classScope);
 
             // compile class class if it available
-            if (classScope.info.classClassRef != classScope.reference) {
-               ClassScope classClassScope(&scope, classScope.info.classClassRef);
+            if (classScope.info.header.classRef != classScope.reference) {
+               ClassScope classClassScope(&scope, classScope.info.header.classRef);
                scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
 
                compileClassClassImplementation(member, classClassScope, classScope);
@@ -8748,6 +8752,55 @@ void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
    compileModule(reader.readRoot(), scope);
 }
 
+void Compiler :: createPackageInfo(_Module* module, Project& project)
+{
+   ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
+   ref_t reference = module->mapReference(sectionName);
+   ref_t vmtReference = module->mapReference(project.resolveForward(SUPER_FORWARD));
+
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxConstantList, reference);
+   writer.appendNode(lxTarget, vmtReference);
+
+   // namespace
+   writer.newNode(lxMember);
+   writer.appendNode(lxConstantString, module->Name());
+   writer.closeNode();
+
+   // package name
+   writer.newNode(lxMember);
+   ident_t str = project.StrSetting(opManifestName);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, str);
+   }
+   else writer.appendNode(lxNil);   
+   writer.closeNode();
+
+   // package version
+   writer.newNode(lxMember);
+   str = project.StrSetting(opManifestVersion);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, str);
+   }
+   else writer.appendNode(lxNil);
+   writer.closeNode();
+
+   // package author
+   writer.newNode(lxMember);
+   str = project.StrSetting(opManifestAuthor);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, str);
+   }
+   else writer.appendNode(lxNil);
+   writer.closeNode();
+
+   writer.closeNode();
+
+   _writer.generateConstantList(tree.readRoot(), module, reference);
+}
+
 bool Compiler :: run(Project& project)
 {
    bool withDebugInfo = project.BoolSetting(opDebugMode);
@@ -8772,6 +8825,8 @@ bool Compiler :: run(Project& project)
             info.codeModule = project.createModule(name);
             if (withDebugInfo)
                info.debugModule = project.createDebugModule(name);
+
+            createPackageInfo(info.codeModule, project);
 
             modules.add(name, info);
          }

@@ -448,6 +448,7 @@ namespace _ELENA_
    #define EXTENSION_SECTION        "#extensions"
    #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
+   #define PACKAGE_SECTION          "#package"
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"

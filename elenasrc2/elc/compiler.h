@@ -306,6 +306,8 @@ private:
       ref_t verbReference;
       ref_t arrayReference;
 
+      ref_t packageReference;
+
       // cached subjects / hints
       ref_t sealedHint, limitedHint, staticHint;
       ref_t integerHint, realHint;
@@ -1119,6 +1121,8 @@ private:
    bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
    bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+
+   void createPackageInfo(_Module* module, Project& project);
 
 public:
    void loadRules(StreamReader* optimization);

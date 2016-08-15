@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0009
+#define ELC_REVISION_NUMBER             0x000A
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -62,6 +62,7 @@
 #define WINAPI_CATEGORY             "winapi"
 #define EXTERNALS_CATEGORY          "externals"
 #define REFERENCE_CATEGORY          "references"
+#define MANIFEST_CATEGORY           "manifest"
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "debuginfo"
@@ -87,8 +88,12 @@
 #define ELC_L0                      "l0"                // optimization: byte code optimization
 #define ELC_L1                      "l1"                // optimization: source code optimization
 
+#define ELC_MANIFEST_NAME           "name"
+#define ELC_MANIFEST_VERSION        "version"
+#define ELC_MANIFEST_AUTHOR         "author"
+
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA 2 command-line compiler %d.%d.%d (C)2005-2016 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2016 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."

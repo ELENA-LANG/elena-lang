@@ -192,77 +192,81 @@ void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path)
 
 _ELENA_::ConfigCategoryIterator _ELC_::Project :: getCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting)
 {
-   switch (setting)
-   {
-   case _ELENA_::opTemplates:
-      return config.getCategoryIt(TEMPLATE_CATEGORY);
-   case _ELENA_::opPrimitives:
-      return config.getCategoryIt(PRIMITIVE_CATEGORY);
-   case _ELENA_::opSources:
-      return config.getCategoryIt(SOURCE_CATEGORY);
-   case _ELENA_::opForwards:
-      return config.getCategoryIt(FORWARD_CATEGORY);
-   case _ELENA_::opExternals:
-      return config.getCategoryIt(EXTERNALS_CATEGORY);
-   case _ELENA_::opReferences:
-      return config.getCategoryIt(REFERENCE_CATEGORY);
-   case _ELENA_::opWinAPI:
-      return config.getCategoryIt(WINAPI_CATEGORY);
-   default:
-      return _ELENA_::ConfigCategoryIterator();
+   switch (setting) {
+      case _ELENA_::opTemplates:
+         return config.getCategoryIt(TEMPLATE_CATEGORY);
+      case _ELENA_::opPrimitives:
+         return config.getCategoryIt(PRIMITIVE_CATEGORY);
+      case _ELENA_::opSources:
+         return config.getCategoryIt(SOURCE_CATEGORY);
+      case _ELENA_::opForwards:
+         return config.getCategoryIt(FORWARD_CATEGORY);
+      case _ELENA_::opExternals:
+         return config.getCategoryIt(EXTERNALS_CATEGORY);
+      case _ELENA_::opReferences:
+         return config.getCategoryIt(REFERENCE_CATEGORY);
+      case _ELENA_::opWinAPI:
+         return config.getCategoryIt(WINAPI_CATEGORY);
+      default:
+         return _ELENA_::ConfigCategoryIterator();
    }
 }
 
 _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting)
 {
-   switch (setting)
-   {
-   case _ELENA_::opNamespace:
-      return config.getSetting(PROJECT_CATEGORY, ELC_NAMESPACE);
-   case _ELENA_::opGCMGSize:
-      return config.getSetting(LINKER_CATEGORY, ELC_MG_SIZE);
-   case _ELENA_::opGCYGSize:
-      return config.getSetting(LINKER_CATEGORY, ELC_YG_SIZE);
-//   case _ELENA_::opSizeOfStackReserv:
-//      return config.getSetting(LINKER_CATEGORY, ELC_STACK_RESERV);
-//   case _ELENA_::opSizeOfStackCommit:
-//      return config.getSetting(LINKER_CATEGORY, ELC_STACK_COMMIT);
-//   case _ELENA_::opSizeOfHeapReserv:
-//      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_RESERV);
-//   case _ELENA_::opSizeOfHeapCommit:
-//      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_COMMIT);
-//   case _ELENA_::opImageBase:
-//      return config.getSetting(LINKER_CATEGORY, ELC_YG_IMAGEBASE);
-   case _ELENA_::opPlatform:
-      return config.getSetting(SYSTEM_CATEGORY, ELC_PLATFORMTYPE);
-   case _ELENA_::opTarget:
-      return config.getSetting(PROJECT_CATEGORY, ELC_TARGET);
-   case _ELENA_::opLibPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_LIB_PATH);
-   case _ELENA_::opOutputPath:
-      return config.getSetting(PROJECT_CATEGORY, ELC_OUTPUT_PATH);
-   case _ELENA_::opWarnOnUnresolved:
-      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_UNRESOLVED);
-//   case _ELENA_::opWarnOnSignature:
-//      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
-   case _ELENA_::opDebugMode:
-      return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
-   case _ELENA_::opDebugSubjectInfo:
-      return config.getSetting(PROJECT_CATEGORY, ELC_SUBJECTINFO);
-   case _ELENA_::opClassSymbolAutoLoad:
-      return config.getSetting(PROJECT_CATEGORY, ELC_CLASSSYMBOLLOAD);
-   case _ELENA_::opThreadMax:
-      return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
-   case _ELENA_::opL0:
-      return config.getSetting(COMPILER_CATEGORY, ELC_L0);
-   case _ELENA_::opL1:
-      return config.getSetting(COMPILER_CATEGORY, ELC_L1);
-//   case _ELENA_::opL2:
-//      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-   case _ELENA_::opTemplate:
-      return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
-   default:
-      return NULL;
+   switch (setting) {
+      case _ELENA_::opNamespace:
+         return config.getSetting(PROJECT_CATEGORY, ELC_NAMESPACE);
+      case _ELENA_::opGCMGSize:
+         return config.getSetting(LINKER_CATEGORY, ELC_MG_SIZE);
+      case _ELENA_::opGCYGSize:
+         return config.getSetting(LINKER_CATEGORY, ELC_YG_SIZE);
+   //   case _ELENA_::opSizeOfStackReserv:
+   //      return config.getSetting(LINKER_CATEGORY, ELC_STACK_RESERV);
+   //   case _ELENA_::opSizeOfStackCommit:
+   //      return config.getSetting(LINKER_CATEGORY, ELC_STACK_COMMIT);
+   //   case _ELENA_::opSizeOfHeapReserv:
+   //      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_RESERV);
+   //   case _ELENA_::opSizeOfHeapCommit:
+   //      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_COMMIT);
+   //   case _ELENA_::opImageBase:
+   //      return config.getSetting(LINKER_CATEGORY, ELC_YG_IMAGEBASE);
+      case _ELENA_::opPlatform:
+         return config.getSetting(SYSTEM_CATEGORY, ELC_PLATFORMTYPE);
+      case _ELENA_::opTarget:
+         return config.getSetting(PROJECT_CATEGORY, ELC_TARGET);
+      case _ELENA_::opLibPath:
+         return config.getSetting(PROJECT_CATEGORY, ELC_LIB_PATH);
+      case _ELENA_::opOutputPath:
+         return config.getSetting(PROJECT_CATEGORY, ELC_OUTPUT_PATH);
+      case _ELENA_::opWarnOnUnresolved:
+         return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_UNRESOLVED);
+   //   case _ELENA_::opWarnOnSignature:
+   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
+      case _ELENA_::opDebugMode:
+         return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
+      case _ELENA_::opDebugSubjectInfo:
+         return config.getSetting(PROJECT_CATEGORY, ELC_SUBJECTINFO);
+      case _ELENA_::opClassSymbolAutoLoad:
+         return config.getSetting(PROJECT_CATEGORY, ELC_CLASSSYMBOLLOAD);
+      case _ELENA_::opThreadMax:
+         return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
+      case _ELENA_::opL0:
+         return config.getSetting(COMPILER_CATEGORY, ELC_L0);
+      case _ELENA_::opL1:
+         return config.getSetting(COMPILER_CATEGORY, ELC_L1);
+   //   case _ELENA_::opL2:
+   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
+      case _ELENA_::opTemplate:
+         return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
+      case _ELENA_::opManifestName:
+         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_NAME);
+      case _ELENA_::opManifestVersion:
+         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_VERSION);
+      case _ELENA_::opManifestAuthor:
+         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_AUTHOR);
+      default:
+         return NULL;
    }
 }
 

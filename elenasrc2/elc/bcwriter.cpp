@@ -1382,15 +1382,13 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    ClassInfo info;
    info.load(&reader);
 
-   // set VMT length
+   // reset VMT length
    info.header.count = 0;
    for (ClassInfo::MethodMap::Iterator it = info.methods.start(); !it.Eof(); it++) {
       //NOTE : ingnore private methods
       if (getVerb(it.key()) != PRIVATE_MESSAGE_ID)
          info.header.count++;
    }
-
-   vmtWriter.writeDWord(info.classClassRef);                   // vmt class reference
 
    vmtWriter.write((void*)&info.header, sizeof(ClassHeader));  // header
 
@@ -4880,6 +4878,9 @@ void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t r
          case lxConstantWideStr:
          case lxConstantSymbol:
             writer.writeRef(object.argument | defineConstantMask(object.type), 0);
+            break;
+         case lxNil:
+            writer.writeDWord(0);
             break;
       }
       current = current.nextNode();

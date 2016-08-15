@@ -237,6 +237,11 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 
    // load forwards
    loadForwardCategory(config);
+
+   // load manifest info
+   loadOption(config, opManifestName);
+   loadOption(config, opManifestVersion);
+   loadOption(config, opManifestAuthor);
 }
 
 //void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
