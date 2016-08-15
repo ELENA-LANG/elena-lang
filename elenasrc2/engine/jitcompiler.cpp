@@ -162,15 +162,12 @@ void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    writer->seek(writer->Position() - 8);
 
    // object header
-   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(length);
    writer->writeDWord(0);
 
    // object body
-   for (int i = 0; i < length; i += 4) {
-      ref_t reference = (*binary)[i];
-
-      writer->writeRef(reference, 0);
-   }
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
 }
 
 size_t JITCompiler32 :: findFlags(void* refVMT)

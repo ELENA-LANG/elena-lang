@@ -4879,9 +4879,13 @@ void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t r
          case lxConstantString:
          case lxConstantWideStr:
          case lxConstantSymbol:
-            writer.writeDWord(object.argument | defineConstantMask(object.type));
+            writer.writeRef(object.argument | defineConstantMask(object.type), 0);
             break;
       }
       current = current.nextNode();
    }
+
+   // add vmt reference
+   if (target != lxNone)
+      writer.Memory()->addReference(target.argument | mskVMTRef, -4);
 }

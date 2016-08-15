@@ -123,6 +123,7 @@ public:
       okExtMessageConstant,           // param - reference 
       okSignatureConstant,            // param - reference 
       okVerbConstant,                 // param - reference 
+      okArrayConst,
       okField,                        // param - field offset
       okStaticField,                  // param - reference
       okFieldAddress,                 // param - field offset
@@ -1067,6 +1068,7 @@ private:
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
    void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
+   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
    void declareSubject(DNode& member, ModuleScope& scope, DNode hints);
    void compileSubject(DNode& member, ModuleScope& scope, DNode hints);
