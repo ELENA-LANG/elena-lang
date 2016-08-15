@@ -524,6 +524,28 @@ void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassS
    return vaddress;
 }
 
+void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress)
+{
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+   ref_t currentMask = 0;
+   ref_t currentRef = 0;
+   while (!it.Eof()) {
+      currentMask = it.key() & mskAnyRef;
+      currentRef = it.key() & ~mskAnyRef;
+
+      void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+      if (*it == -4) {
+         // resolve the constant vmt reference
+         vmtVAddress = refVAddress;
+      }
+      else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+
+      it++;
+   }
+}
+
 void* JITLinker :: resolveConstant(ident_t reference, int mask)
 {
    bool constantValue = true;
@@ -596,29 +618,20 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    else if (mask == mskRealRef) {
       _compiler->compileReal64(&writer, StringHelper::strToDouble(value));
    }
+   else if (mask == mskConstArray) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
+      _compiler->compileCollection(&writer, sectionInfo.section);
+
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      constantValue = true;
+   }
    else if (vmtVAddress == LOADER_NOTLOADED) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
       _compiler->compileBinary(&writer, sectionInfo.section);
 
-      // resolve section references
-      _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-      ref_t currentMask = 0;
-      ref_t currentRef = 0;
-      while (!it.Eof()) {
-         currentMask = it.key() & mskAnyRef;
-         currentRef = it.key() & ~mskAnyRef;
-
-         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-
-         if (*it == -4) {
-            // resolve the constant vmt reference
-            vmtVAddress = refVAddress;
-         }
-         else resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
-
-         it++;
-      }
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
       constantValue = true;
    }
 
@@ -958,6 +971,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskInt32Ref:
          case mskRealRef:
          case mskInt64Ref:
+         case mskConstArray:
             vaddress = resolveConstant(reference, mask);
             break;
          case mskStatSymbolRef:

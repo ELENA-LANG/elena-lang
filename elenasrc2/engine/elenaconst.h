@@ -180,6 +180,7 @@ namespace _ELENA_
       mskVerb                = 0x0A000000,   // message verb constant
       mskExtMessage          = 0x0B000000,   // external message verb constant
       mskPreloaded           = 0x0C000000,   // preloaded mask, should be used in combination with image mask
+      mskConstArray          = 0x0D000000    // constant array
    };
 
    // --- ELENA Debug symbol constants ---
@@ -323,10 +324,6 @@ namespace _ELENA_
    const int elDebugReals          = 0x000D0000;
    const int elDebugMessage        = 0x000E0000;
    const int elDebugDPTR           = 0x000F0000;
-
-  //// --- ELENA class roles ---
-  // const int crRoleMask            = 0xFFFFFFF0;
-  // const int crInteger             = 0x00000010;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;

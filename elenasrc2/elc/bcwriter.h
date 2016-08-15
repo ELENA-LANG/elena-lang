@@ -308,6 +308,7 @@ public:
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic);
+   void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
 

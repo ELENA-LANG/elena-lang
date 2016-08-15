@@ -3,7 +3,8 @@ In development:
 ------                              
 
               xdev - generic development
-                       * #238 : Library version 
+                       * #271 : constant array
+                       * #238 : Library / Program version / Manifest
                        * #236 : Namespace sharing
                        * #188 : Make possible to provide alternative path to lib
                        * #163 : try finally catch statement
@@ -261,7 +262,6 @@ Pipeline:
                        * implementing 2.0.0 issues
                        * vm console should use startUp symbol
                        * variable: no need to store nil if the variable statement has initializing part
-                       * constant array
                        * drop message flag for message ids, messages should be saved in raw data stack frame
                        * external call: stack should be excluded only if the method is marked as threadsafe
                        * DFA : replace current hotfix with character terminal with correct solution (probably in DFA should be two different states

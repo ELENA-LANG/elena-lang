@@ -1049,7 +1049,7 @@ private:
    ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
 
    void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current);
+   void generateClassStaticField(ClassScope& scope, SNode current);   
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
@@ -1108,6 +1108,7 @@ private:
    void optimizeBoxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeArgUnboxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
    void optimizeClassTree(ClassScope& scope);

@@ -115,6 +115,7 @@ enum LexicalType
    lxCurrentMessage  = 0x0411B,
    lxThisLocal       = 0x0411C,
    lxCurrentField    = 0x0411D, // arg -offset
+   lxConstantList    = 0x2411E, // arg - reference
 
    lxVariable        = 0x00407, // debug info only if lxFrameAttr is included
    lxIntVariable     = 0x00408,

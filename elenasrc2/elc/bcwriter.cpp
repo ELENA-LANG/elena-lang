@@ -3036,6 +3036,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskSignature;
       case lxVerbConstant:
          return mskVerb;
+      case lxConstantList:
+         return mskConstArray;
       default:
          return mskConstantRef;
    }
@@ -3071,6 +3073,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxExtMessageConstant:
       case lxSignatureConstant:
       case lxVerbConstant:
+      case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -3150,6 +3153,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxExtMessageConstant:
       case lxSignatureConstant:
       case lxVerbConstant:
+      case lxConstantList:
          // pushr reference
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
@@ -4856,4 +4860,28 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SyntaxTree& tree, bool 
       endStaticSymbol(tape, root.argument);
    }
    else endSymbol(tape);
+}
+
+void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
+{
+   SNode target = SyntaxTree::findChild(node, lxTarget);
+   MemoryWriter writer(module->mapSection(reference | mskRDataRef, false));
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode object = findSubNodeMask(current, lxObjectMask);
+      switch (object.type) {
+         case lxConstantChar:
+         case lxConstantClass:
+         case lxConstantInt:
+         case lxConstantLong:
+         case lxConstantList:
+         case lxConstantReal:
+         case lxConstantString:
+         case lxConstantWideStr:
+         case lxConstantSymbol:
+            writer.writeDWord(object.argument | defineConstantMask(object.type));
+            break;
+      }
+      current = current.nextNode();
+   }
 }

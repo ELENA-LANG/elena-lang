@@ -8145,6 +8145,48 @@ int Compiler :: allocateStructure(ModuleScope& scope, SNode node, int& size)
    return offset;
 }
 
+void Compiler :: optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node current, int warningLevel, int mode)
+{
+   if (current == lxNested) {
+      // check if the nested collection can be treated like constant one
+      bool constant = true;
+      SNode member = current.firstChild();
+      while (constant && member != lxNone) {
+         if (member == lxMember) {
+            SNode object = findSubNodeMask(member, lxObjectMask);
+            switch (object.type) {
+               case lxConstantChar:
+               case lxConstantClass:
+               case lxConstantInt:
+               case lxConstantLong:
+               case lxConstantList:
+               case lxConstantReal:
+               case lxConstantString:
+               case lxConstantWideStr:
+               case lxConstantSymbol:
+                  break;
+               default:
+                  constant = false;
+                  break;
+            }
+         }
+         member = member.nextNode();
+      }
+
+      // replace with constant array if possible
+      if (constant) {
+         ref_t reference = scope.mapNestedExpression();
+
+         current = lxConstantList;
+         current.setArgument(reference | mskConstArray);
+
+         _writer.generateConstantList(current, scope.module, reference);
+      }
+   }
+
+   optimizeSyntaxExpression(scope, current, warningLevel, mode);
+}
+
 void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
 {
    switch (current.type) {
@@ -8194,7 +8236,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current
          break;
       case lxNested:
       case lxMember:
-         optimizeSyntaxExpression(scope, current, warningMask);
+         optimizeNestedExpression(scope, current, warningMask);
          break;
       case lxArgUnboxing:
          optimizeArgUnboxing(scope, current, warningMask);

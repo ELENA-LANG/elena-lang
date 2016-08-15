@@ -155,6 +155,24 @@ void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
    writer->align(4, 0);
 }
 
+void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(0);
+
+   // object body
+   for (int i = 0; i < length; i += 4) {
+      ref_t reference = (*binary)[i];
+
+      writer->writeRef(reference, 0);
+   }
+}
+
 size_t JITCompiler32 :: findFlags(void* refVMT)
 {
    return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant

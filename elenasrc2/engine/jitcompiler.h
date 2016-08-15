@@ -60,6 +60,7 @@ public:
    virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
    virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
+   virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
@@ -108,6 +109,7 @@ public:
    virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
    virtual void compileChar32(MemoryWriter* writer, const char* value);
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
+   virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
 
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
