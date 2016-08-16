@@ -84,6 +84,23 @@
     ]
 }
 
+// --- manifestOp ---
+
+#class(extension) manifestOp
+{
+    #method packageNamespace
+        => system'core_routines'__object.
+        
+    #method packageName
+        => system'core_routines'__object.
+        
+    #method packageVersion
+        => system'core_routines'__object.
+        
+    #method packageAuthor
+        => system'core_routines'__object.
+}
+
 //// --- subjectOp ---
 //
 //#class(extension:subject) subjectROp

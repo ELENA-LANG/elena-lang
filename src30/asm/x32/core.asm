@@ -60,6 +60,7 @@ define elSizeOffset          0008h
 define elVMTOffset           0004h 
 define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
+define elPackageOffset       0010h
 
 define subj_mask         80FFFFF0h
 define page_align_mask   000FFFF0h
@@ -1323,6 +1324,15 @@ inline % 34h
   and  ebx, edx
   shr  ebx, 2
   
+end
+
+// ; package
+
+inline % 35h
+
+  mov eax, [edi - elVMTOffset]
+  mov eax, [eax - elPackageOffset]
+
 end
 
 // ; class

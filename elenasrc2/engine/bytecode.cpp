@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "ecopyd", "dcopye", "pushd", "popd", "unknown", "include", "exclude", "trylock",
    "freelock", "unknown", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
 
-   "xlen", "blen", "wlen", "flag", "nlen", "unknown", "class", "mindex",
+   "xlen", "blen", "wlen", "flag", "nlen", "package", "class", "mindex",
    "unknown", "acallvd", "validate", "unknown", "unknown", "unknown", "unknown", "unknown",
 
    "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",

@@ -8752,6 +8752,16 @@ void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope)
    compileModule(reader.readRoot(), scope);
 }
 
+inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
+{
+   writer.newNode(lxMember);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, module->mapConstant(str));
+   }
+   else writer.appendNode(lxNil);
+   writer.closeNode();
+}
+
 void Compiler :: createPackageInfo(_Module* module, Project& project)
 {
    ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
@@ -8765,36 +8775,16 @@ void Compiler :: createPackageInfo(_Module* module, Project& project)
    writer.appendNode(lxTarget, vmtReference);
 
    // namespace
-   writer.newNode(lxMember);
-   writer.appendNode(lxConstantString, module->Name());
-   writer.closeNode();
+   addPackageItem(writer, module, module->Name());
 
    // package name
-   writer.newNode(lxMember);
-   ident_t str = project.StrSetting(opManifestName);
-   if (!emptystr(str)) {
-      writer.appendNode(lxConstantString, str);
-   }
-   else writer.appendNode(lxNil);   
-   writer.closeNode();
+   addPackageItem(writer, module, project.StrSetting(opManifestName));
 
    // package version
-   writer.newNode(lxMember);
-   str = project.StrSetting(opManifestVersion);
-   if (!emptystr(str)) {
-      writer.appendNode(lxConstantString, str);
-   }
-   else writer.appendNode(lxNil);
-   writer.closeNode();
+   addPackageItem(writer, module, project.StrSetting(opManifestVersion));
 
    // package author
-   writer.newNode(lxMember);
-   str = project.StrSetting(opManifestAuthor);
-   if (!emptystr(str)) {
-      writer.appendNode(lxConstantString, str);
-   }
-   else writer.appendNode(lxNil);
-   writer.closeNode();
+   addPackageItem(writer, module, project.StrSetting(opManifestAuthor));
 
    writer.closeNode();
 

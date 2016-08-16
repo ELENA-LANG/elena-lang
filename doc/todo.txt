@@ -3,8 +3,8 @@ In development:
 ------                              
 
               xdev - generic development
-                       * #238 : Library / Program version / Manifest
                        * #238 : ecv - show manifest info on load
+                       * #238 : Program version / Manifest
 
                        * #236 : Namespace sharing
                        * #188 : Make possible to provide alternative path to lib
@@ -12,6 +12,7 @@ In development:
                        * #131 : it should be possible to change the order of source files in the project 
                        * #100 : classOp : test if object is subclass of 
                        * #167 : stack allocated variable and $nil
+                       * #272 : it should be possible to set manifest
 
               xdev - byte code optimization                               
                        * #269 : short-circuit boolean operation

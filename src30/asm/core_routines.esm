@@ -4296,6 +4296,42 @@ procedure __object.get&class[1]
 
 end
 
+procedure __object.get&packageNamespace[1]
+
+  bloadsi 1
+  package
+  aloadai 0
+  quitn 1
+
+end
+
+procedure __object.get&packageName[1]
+
+  bloadsi 1
+  package
+  aloadai 1
+  quitn 1
+
+end
+
+procedure __object.get&packageVersion[1]
+
+  bloadsi 1
+  package
+  aloadai 2
+  quitn 1
+
+end
+
+procedure __object.get&packageAuthor[1]
+
+  bloadsi 1
+  package
+  aloadai 3
+  quitn 1
+
+end
+
 procedure __object.eval&respondTo&mssg$[2]
 
   bloadsi 1
