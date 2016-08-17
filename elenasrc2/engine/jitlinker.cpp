@@ -968,6 +968,8 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskInt32Ref:
          case mskRealRef:
          case mskInt64Ref:
+            vaddress = resolveConstant(reference, mask);
+            break;
          case mskConstArray:
             vaddress = resolveConstant(reference, mask);
             break;

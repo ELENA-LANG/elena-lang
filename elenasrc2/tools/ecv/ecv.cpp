@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1073,6 +1073,34 @@ void runSession(_Module* module)
       else printHelp();
    }
 }
+
+const char* manifestParameters[4] = { "namespace","name     ","version  ","author   " };
+
+void printManifest(_Module* module)
+{
+   ReferenceNs name(module->Name(), PACKAGE_SECTION);
+
+   _Memory* section = module->mapSection(module->mapReference(name, false) | mskRDataRef, true);
+   if (section != NULL) {
+
+      _ELENA_::RelocationMap::Iterator it(section->getReferences());
+      ref_t currentMask = 0;
+      ref_t currentRef = 0;
+      while (!it.Eof()) {
+         int i = *it >> 2;
+         currentMask = it.key() & mskAnyRef;
+         currentRef = it.key() & ~mskAnyRef;
+
+         if (currentMask == mskLiteralRef) {
+            //printf(manifestParameters[i]);
+            ident_t value = module->resolveConstant(currentRef);
+            printf("%s : %s\n", manifestParameters[i], value);
+         }
+         it++;
+      }
+   }
+}
+
 // === Main Program ===
 int main(int argc, char* argv[])
 {
@@ -1122,7 +1150,11 @@ int main(int argc, char* argv[])
 
       return -1;
    }
-   else printLine(moduleName, " module loaded");
+   else {
+      printLine(moduleName, " module loaded");
+
+      printManifest(module);
+   }
 
    ByteCodeCompiler::loadVerbs(_verbs);
 

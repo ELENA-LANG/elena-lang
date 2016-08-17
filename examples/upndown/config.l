@@ -77,7 +77,7 @@
 
 // --- configuations ---
 
-#symbol dummyLoader = (
+#symbol(preloaded) dummyLoader = (
     upndown'ai'aiConfigurator,
     upndown'testConfigurator,
     upndown'GameMaster,

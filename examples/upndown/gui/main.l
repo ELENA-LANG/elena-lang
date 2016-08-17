@@ -83,8 +83,6 @@
 
     #constructor new
     [
-        upndown'dummyLoader. // !!
-        
         theForm := SDIDialog new.
         
 //        super initializing:Args.

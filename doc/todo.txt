@@ -2,17 +2,18 @@
 In development:
 ------                              
 
-              xdev - generic development
-                       * #238 : ecv - show manifest info on load
-                       * #238 : Program version / Manifest
+              fdev - upndown
+                       * implementing
+                       * play with chaotic computer player
 
+------                                 
+Pipeline:
+------                                                                                         
+              xdev - generic development
                        * #236 : Namespace sharing
-                       * #188 : Make possible to provide alternative path to lib
                        * #163 : try finally catch statement
-                       * #131 : it should be possible to change the order of source files in the project 
                        * #100 : classOp : test if object is subclass of 
                        * #167 : stack allocated variable and $nil
-                       * #272 : it should be possible to set manifest
 
               xdev - byte code optimization                               
                        * #269 : short-circuit boolean operation
@@ -32,13 +33,6 @@ In development:
                        * Metaprogramming
                        * Object serialization
 
-              fdev - upndown
-                       * implementing
-                       * play with chaotic computer player
-
-------                                 
-Pipeline:
-------                                                                                         
               xdev - generic development
                        * support the following syntax : #throw(exceptionof:MyError)"My message" (using implicit constructors for exceptions)
 
@@ -151,6 +145,7 @@ Pipeline:
                          external block, the problem how to signal the code that the loop should be ended
                        * probably any stand-alone external cal should be declared in implicit extern block. If the operation
                          does not affect GC, a special hint should be used to skip external block declaration
+                       * #238 : Manifest - store the manifest info into the resource
                        
               fdev - evolution
                        * game of life : simple implementation
@@ -187,11 +182,14 @@ Pipeline:
                        * project view : delays in openning the window
                        * #191 : IDE : block commenting
                        * #221 : Breakpoints are triggered even after removing (??can not reproduce at the moment)
+                       * #272 : it should be possible to set manifest
+                       * #131 : it should be possible to change the order of source files in the project 
+                       * #188 : Make possible to provide alternative path to lib
                        
              xdev - linux
-                       * support manifest info
                        * implement debugger
                        * port elide to linux
+                       * support manifest info
                        
               fdev - live programming
                        * provide path to the current library automatically
