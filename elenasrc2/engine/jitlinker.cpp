@@ -447,7 +447,7 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(refHelper, vmtWriter, header.flags, header.count, header.packageRef);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -496,9 +496,12 @@ void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSe
 
       // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
+      void* packageVAddress = NULL;
+      if (header.packageRef != 0)
+         packageVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
 
       // fix VMT
-      _compiler->fixVMT(vmtWriter, classClassVAddress, count, _virtualMode);
+      _compiler->fixVMT(vmtWriter, classClassVAddress, packageVAddress, count, _virtualMode);
    }
 
    return vaddress;

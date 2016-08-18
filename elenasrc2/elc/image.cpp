@@ -50,7 +50,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
   // initialize compiler inline code
    linker.prepareCompiler();
 
-   linker.resolve("system", mskLiteralRef, true); // !! hot fix : preload literal vmt
+//   linker.resolve("system", mskLiteralRef, true); // !! hot fix : preload literal vmt
 
   // create the image
    _entryPoint = linker.resolve(project->resolveForward(STARTUP_CLASS), mskSymbolRef, true);

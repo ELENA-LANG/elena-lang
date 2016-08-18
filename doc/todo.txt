@@ -29,6 +29,7 @@ Pipeline:
                        * migrate to 2.0
 
               sdev - samples
+                       * test all samples
 	               * Distributed programming
                        * Metaprogramming
                        * Object serialization

@@ -229,16 +229,13 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-void JITCompiler32 :: allocateVMT(_ReferenceHelper& helper, MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, ref_t packageRef)
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
 {
    alignCode(&vmtWriter, VA_ALIGNMENT, false);   
 
    // create VMT header:
-   //   package
-   if (packageRef != 0) {
-      helper.writeReference(vmtWriter, packageRef | mskConstArray, 0, NULL);
-   }
-   else vmtWriter.writeDWord(0);
+   //   dummy package reference
+   vmtWriter.writeDWord(0);
 
    //   vmt length
    vmtWriter.writeDWord(vmtLength);
@@ -306,11 +303,24 @@ void JITCompiler32 :: addVMTEntry(_ReferenceHelper& helper, ref_t message, size_
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, int count, bool virtualMode)
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, void* packageVAddress, int count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();   
 
-      // update class vmt reference if available
+   // update class package reference if available
+   if (packageVAddress != NULL) {
+      int position = vmtWriter.Position();
+      vmtWriter.seek(position - 0x10);
+
+      if (virtualMode) {
+         vmtWriter.writeRef((ref_t)packageVAddress, 0);
+      }
+      else vmtWriter.writeDWord((int)packageVAddress);
+
+      vmtWriter.seek(position);
+   }
+
+   // update class vmt reference if available
    if (classClassVAddress != NULL) {
       vmtWriter.seek(vmtWriter.Position() - 4);
 

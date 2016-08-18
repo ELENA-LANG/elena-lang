@@ -665,12 +665,11 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    // read VMT header
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
-   int vmtSize = vmtReader.getDWord();
 
    VMTEntry        entry;
 
    // read VMT while the entry not found
-   size -= sizeof(ClassHeader) + 4;
+   size -= sizeof(ClassHeader);
    bool found = false;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(VMTEntry));
