@@ -309,7 +309,7 @@ void _ELC_::Project :: cleanUp()
 
 void _ELC_ :: Project::loadConfig(_ELENA_::path_t path, bool root, bool requiered)
 {
-   ElcConfigFile config;
+   ElcConfigFile config(true);
    _ELENA_::Path configPath;
 
    configPath.copySubPath(path);

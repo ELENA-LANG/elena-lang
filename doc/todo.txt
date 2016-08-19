@@ -2,6 +2,9 @@
 In development:
 ------                              
 
+              adev - lib40
+                       * implementing
+
               fdev - upndown
                        * implementing
                        * play with chaotic computer player
