@@ -55,7 +55,7 @@
 
 // --- WSAStartUp ---
 
-#class(sealed,struct:embeddable) WSADATA
+#class(sealed,embeddable) WSADATA
 {
     #field(short)    wVersion.
     #field(short)    wHighVersion.

@@ -81,6 +81,7 @@ public:
       tpStackSafe  = 0x10,
       tpEmbeddable = 0x20,
       tpGeneric    = 0x40,
+      tpAction     = 0x80,
    };
 
    struct Unresolved
@@ -215,6 +216,7 @@ public:
       ref_t   targetType;
       int     targetOffset;
       ref_t   messageSubject;
+      ref_t   targetMessage;
       ref_t   ownerRef;
 
       int     sourceCol, sourceRow;
@@ -229,6 +231,7 @@ public:
          targetOffset = -1;
          messageSubject = 0;
          ownerRef = 0;
+         targetMessage = 0;
 
          sourceCol = sourceRow = 0;
       }
@@ -309,18 +312,14 @@ private:
       ref_t packageReference;
 
       // cached subjects / hints
-      ref_t sealedHint, limitedHint, staticHint;
+      ref_t staticHint;
       ref_t integerHint, realHint;
-      ref_t literalHint, signHint;
-      ref_t mssgHint, stackHint;
-      ref_t warnHint, dynamicHint;
-      ref_t constHint, structHint;
-      ref_t structOfHint, embedHint;
-      ref_t ptrHint, extensionHint;
-      ref_t extensionOfHint, genericHint;
-      ref_t actionHint, nonstructHint;
+      ref_t signHint;
+      ref_t mssgHint;
+      ref_t warnHint;
+      ref_t constHint;
       ref_t symbolHint, extMssgHint;
-      ref_t groupHint, preloadedHint;
+      ref_t preloadedHint;
 
       ref_t boolType;
 
@@ -922,6 +921,7 @@ private:
 
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
    bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
+   void declareMethodTemplateInfo(ClassScope& scope, ref_t hintRef, ref_t message);
    void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
    void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void readTemplateInfo(SyntaxTree::Node node, TemplateInfo& info);

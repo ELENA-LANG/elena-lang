@@ -4,7 +4,7 @@
 
 // --- ThreadHandle ---
 
-#class(struct:embeddable,sealed) ThreadHandle
+#class(embeddable,sealed) ThreadHandle
 {
     #field(int) theHandle.
     #field(rt_ptr) theActionPtr.

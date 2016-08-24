@@ -1,3 +1,27 @@
+/// Method attributes
+#mtemplate(40h) generic {}
+#mtemplate(10h) stacksafe {}
+#mtemplate(20h) embeddable {}
+#mtemplate(80h) action {}
+#mtemplate(01h) sealed {}
+
+/// Class attributes
+#template(0120h) sealed  {}
+#template(0004h) dynamic {}
+#template(0020h) limited {}
+#template(0200h) group   {}
+#template(0800h) const   {}
+#template(0008h) struct  {}
+#template(1000h) nonstructural {}
+
+#template(0120h,4980h)         extension {}
+#template(0120h,4980h,subject) extension : subject {}
+
+/// Class data attributes
+#template(30000h,8h,4h)  string {}
+#template(0008h,0010h)   embeddable {}
+#template(0008h,800010h) reference {}
+
 /// Provides classes that describe the basic functionality
 
 // === basic logical types ===

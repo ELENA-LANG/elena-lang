@@ -36,7 +36,7 @@
     ]
 }.
 
-#class(sealed,struct:reference,const) SystemTime :: BaseValue
+#class(sealed,reference,const) SystemTime :: BaseValue
 {
     #field(int)tv_sec.
     #field(int)tv_usec.
@@ -163,7 +163,7 @@
 
 // --- TimeStruct ---
 
-#class(struct:embeddable,sealed) TimeStruct
+#class(embeddable,sealed) TimeStruct
 {
     #field(int) tm_sec.         /* seconds */
     #field(int) tm_min.         /* minutes */

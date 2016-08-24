@@ -2,7 +2,7 @@
 
 // --- TimeSpan --
 
-#class(sealed,struct:embeddable,dispatchable:timespan) TimeSpan :: BaseNumber
+#class(sealed,embeddable,dispatchable:timespan) TimeSpan :: BaseNumber
 {
     #field(__time)theValue.
 
@@ -177,7 +177,7 @@
 
 // --- Date ---
 
-#class(sealed,struct:embeddable,dispatchable:datetime) Date :: BaseNumber
+#class(sealed,embeddable,dispatchable:datetime) Date :: BaseNumber
 {
     #field(__time)theValue.
 

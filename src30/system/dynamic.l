@@ -1,7 +1,7 @@
 // --- Symbol ---
 
 /// A dynamic symbol
-#class(sealed,struct:embeddable) Symbol
+#class(sealed,embeddable) Symbol
 {
     #field(symbol)theValue.
     
@@ -18,7 +18,7 @@
 // --- Verb ---
 
 /// A dynamic verb extender
-#class(sealed,struct:embeddable) Verb
+#class(sealed,embeddable) Verb
 {
     #field(signature)theValue.
     
@@ -33,7 +33,7 @@
 // --- Message ---
 
 /// A message constant
-#class(sealed,struct:embeddable) Message
+#class(sealed,embeddable) Message
 {
     #field(message)theValue.
     
@@ -59,7 +59,7 @@
 // --- ExtensionMessage ---
 
 /// An extended message constant
-#class(sealed,struct:embeddable) ExtensionMessage
+#class(sealed,embeddable) ExtensionMessage
 {
     #field(extension_message)theValue.
     
@@ -81,7 +81,7 @@
 // --- Signature ---
 
 /// A dynamic signature extender
-#class(sealed,struct:embeddable) Signature
+#class(sealed,embeddable) Signature
 {
     #field(signature)theValue.
     

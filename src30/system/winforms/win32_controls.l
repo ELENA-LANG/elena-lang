@@ -9,7 +9,7 @@
 
 // --- WindowHandle ---
 
-#class(sealed,struct:reference,const) WindowHandle
+#class(sealed,reference,const) WindowHandle
 {
     #field(int)theHandle.
     
@@ -171,7 +171,7 @@
 
 // --- PAINTSTRUCT ---
 
-#class(sealed,struct:embeddable)PAINTSTRUCT
+#class(sealed,embeddable)PAINTSTRUCT
 {
     #field(hdc)      theHDC.
     #field(int)      theErase.

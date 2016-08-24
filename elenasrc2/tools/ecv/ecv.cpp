@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   2
+#define REVISION_VERSION   3
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -846,14 +846,13 @@ void listConstructorMethods(_Module* module, ident_t className, ref_t reference)
    MemoryReader vmtReader(vmt);
    // read tape record size
    size_t size = vmtReader.getDWord();
-   ref_t classRef = vmtReader.getDWord();
 
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
 
    VMTEntry        entry;
 
-   size -= sizeof(ClassHeader) + 4;
+   size -= sizeof(ClassHeader);
    IdentifierString temp;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(VMTEntry));
@@ -886,7 +885,6 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    // read tape record size
    size_t size = vmtReader.getDWord();
 
-   ref_t classRef = vmtReader.getDWord();
    // read VMT header
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
@@ -898,13 +896,13 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       listFlags(header.flags);
    }
 
-   if (classRef != 0 && withConstructors) {
-      listConstructorMethods(module, className, classRef);
+   if (header.classRef != 0 && withConstructors) {
+      listConstructorMethods(module, className, header.classRef);
    }
 
    VMTEntry        entry;
 
-   size -= sizeof(ClassHeader) + 4;
+   size -= sizeof(ClassHeader);
    IdentifierString temp;
    int row = 0;
    while (size > 0) {

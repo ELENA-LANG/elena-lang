@@ -438,31 +438,16 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 
    // cache the frequently used subjects / hints
-   sealedHint = module->mapSubject(HINT_SEALED, false);
    integerHint = module->mapSubject(HINT_INTEGER_NUMBER, false);
    realHint = module->mapSubject(HINT_FLOAT_NUMBER, false);
-   literalHint = module->mapSubject(HINT_STRING, false);
-   limitedHint = module->mapSubject(HINT_LIMITED, false);
    signHint = module->mapSubject(HINT_SIGNATURE, false);
    extMssgHint = module->mapSubject(HINT_EXT_MESSAGE, false);
    mssgHint = module->mapSubject(HINT_MESSAGE, false);
-   stackHint = module->mapSubject(HINT_STACKSAFE, false);
    warnHint = module->mapSubject(HINT_SUPPRESS_WARNINGS, false);
-   dynamicHint = module->mapSubject(HINT_DYNAMIC, false);
    constHint = module->mapSubject(HINT_CONSTANT, false);
    preloadedHint = module->mapSubject(HINT_PRELOADED, false);
-   structHint = module->mapSubject(HINT_STRUCT, false);
-   structOfHint = module->mapSubject(HINT_STRUCTOF, false);
-   embedHint = module->mapSubject(HINT_EMBEDDABLE, false);
-   ptrHint = module->mapSubject(HINT_POINTER, false);
    boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
-   extensionHint = module->mapSubject(HINT_EXTENSION, false);
-   extensionOfHint = module->mapSubject(HINT_EXTENSIONOF, false);
-   genericHint = module->mapSubject(HINT_GENERIC, false);
-   actionHint = module->mapSubject(HINT_ACTION_CLASS, false);
-   nonstructHint = module->mapSubject(HINT_NONSTRUCTURE, false);
    symbolHint = module->mapSubject(HINT_SYMBOL, false);
-   groupHint = module->mapSubject(HINT_GROUP, false);
    staticHint = module->mapSubject(HINT_STATIC, false);
 
    defaultNs.add(module->Name());
@@ -1289,6 +1274,15 @@ void Compiler::ClassScope :: compileClassHint(SNode hint)
    {
       case lxClassFlag:
          info.header.flags |= hint.argument;
+         if (test(info.header.flags, elExtension))
+            extensionMode = -1;
+         break;
+      case lxType:
+         if (test(info.header.flags, elExtension)) {
+            extensionMode = hint.argument;
+
+            info.fieldTypes.add(-1, extensionMode);
+         }
          break;
    }
 }
@@ -2067,6 +2061,25 @@ bool Compiler :: declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRe
    return true;
 }
 
+void Compiler :: declareMethodTemplateInfo(ClassScope& scope, ref_t hintRef, ref_t message)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
+
+   SyntaxTree::Writer writer(moduleScope->templates, true);
+
+   writer.newNode(lxClass, scope.reference);
+   writer.newNode(lxTemplate, hintRef);
+   writer.newNode(lxTargetMethod, message);
+
+   //appendTerminalInfo(&writer, hint.Terminal());
+
+   writer.closeNode();
+   writer.closeNode();
+   writer.closeNode();
+
+   writer.closeNode(); //HOTFIX : close the root node
+}
+
 void Compiler :: declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -2200,6 +2213,9 @@ void Compiler :: readTemplateInfo(SNode node, TemplateInfo& info)
       else if (current == lxRow) {
          info.sourceRow = current.argument;
       }
+      else if (current == lxTargetMethod) {
+         info.targetMessage = current.argument;
+      }
 
       current = current.nextNode();
    }
@@ -2228,8 +2244,10 @@ ref_t Compiler :: mapHint(DNode hint, ModuleScope& scope)
       int count = countSymbol(hint, nsHintValue);
       IdentifierString hintName(terminal);
 
-      hintName.append('#');
-      hintName.appendInt(count);
+      if (count != 0) {
+         hintName.append('#');
+         hintName.appendInt(count);
+      }
 
       hintRef = scope.resolveSubjectRef(hintName, false);
    }
@@ -2239,89 +2257,31 @@ ref_t Compiler :: mapHint(DNode hint, ModuleScope& scope)
 
 bool Compiler :: compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope, bool directiveOnly)
 {
-   ModuleScope* moduleScope = scope.moduleScope;
-   ref_t hintRef = mapHint(hint, *moduleScope);
-
    TerminalInfo terminal = hint.Terminal();
 
    // if it is a class modifier
-   if (hintRef == moduleScope->sealedHint) {
-      writer.appendNode(lxClassFlag, elSealed);
+   if (terminal == tsInteger) {
+      writer.appendNode(lxClassFlag, StringHelper::strToInt(terminal));
 
       return true;
    }
-   else if (hintRef == moduleScope->dynamicHint) {
-      writer.appendNode(lxClassFlag, elDynamicRole);
+   else if (terminal == tsHexInteger) {
+      writer.appendNode(lxClassFlag, StringHelper::strToULong(terminal, 16));
 
       return true;
    }
-   else if (hintRef == moduleScope->limitedHint) {
-      writer.appendNode(lxClassFlag, elClosed);
+   else if (scope.isVirtualSubject(terminal)) {
+      writer.appendNode(lxType, scope.moduleScope->mapSubject(terminal, false));
 
       return true;
    }
-   if (hintRef == moduleScope->groupHint) {
-      writer.appendNode(lxClassFlag, elGroup);
+   else {
+      ModuleScope* moduleScope = scope.moduleScope;
+      ref_t hintRef = mapHint(hint, *moduleScope);
 
-      return true;
-   }
-   else if (hintRef == moduleScope->literalHint) {
-      writer.appendNode(lxClassFlag, elDebugLiteral); // NOTE : template importer should tweak it depending on character size
-      writer.appendNode(lxClassFlag, elStructureRole | elDynamicRole);
-
-      return true;
-   }
-   else if (hintRef == moduleScope->constHint) {
-      writer.appendNode(lxClassFlag, elReadOnlyRole);
-
-      return true;
-   }
-   else if (hintRef == moduleScope->extensionHint) {
-      scope.extensionMode = -1;
-
-      writer.appendNode(lxClassFlag, elExtension);
-      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
-
-      return true;
-   }
-   else if (hintRef == moduleScope->extensionOfHint) {
-      DNode value = hint.select(nsHintValue);
-      scope.extensionMode = scope.moduleScope->mapSubject(value.Terminal());
-      if (!scope.extensionMode)
-         scope.raiseError(errUnknownSubject, value.Terminal());
-
-      writer.appendNode(lxClassFlag, elExtension);
-      writer.appendNode(lxClassFlag, elSealed);    // extension should be sealed
-
-      return true;
-   }
-   else if (hintRef == moduleScope->structHint || hintRef == moduleScope->structOfHint) {
-      writer.appendNode(lxClassFlag, elStructureRole);
-
-      if (hintRef == moduleScope->structOfHint) {
-         DNode option = hint.select(nsHintValue);
-         ref_t optionRef = mapHint(option, *moduleScope);
-         if (optionRef == moduleScope->embedHint) {
-            writer.appendNode(lxClassFlag, elEmbeddable);
-
-            return true;
-         }
-         else if (optionRef == moduleScope->ptrHint) {
-            writer.appendNode(lxClassFlag, elPointer);
-
-            return true;
-         }
-         else scope.raiseError(wrnInvalidHint, terminal);
+      if (hintRef != 0) {
+         return declareTemplateInfo(hint, scope, hintRef);
       }
-      else return true;
-   }
-   else if (hintRef == moduleScope->nonstructHint) {
-      writer.appendNode(lxClassFlag, elNonStructureRole);
-
-      return true;
-   }
-   else if (hintRef != 0) {
-      return declareTemplateInfo(hint, scope, hintRef);
    }
 
    return false;
@@ -2376,12 +2336,20 @@ void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassS
 
 void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope)
 {
-   // define class flags
-   while (hints == nsHint) {
-      if (!compileClassHint(hints, writer, scope, true))
-         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
+   if (scope.type == TemplateScope::ttClass) {
+      while (hints == nsHint) {
+         if (!compileClassHint(hints, writer, scope, true))
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
 
-      hints = hints.nextNode();
+         hints = hints.nextNode();
+      }
+   }
+   else if (scope.type == TemplateScope::ttMethod) {
+      MethodScope methodScope(&scope);
+
+      writer.newNode(lxTargetMethod);
+      compileMethodHints(hints, writer, methodScope, false);
+      writer.closeNode();
    }
 }
 
@@ -2486,6 +2454,9 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
       if (!warningsOnly && hints.firstChild() != nsHintValue && scope.isVirtualSubject(terminal)) {
          writer.appendNode(lxType, scope.mapSubject(terminal));
       }
+      else if (!warningsOnly && terminal == tsHexInteger) {
+         writer.appendNode(lxClassMethodAttr, StringHelper::strToULong(terminal, 16));
+      }
       else {
          ref_t hintRef = mapHint(hints, *moduleScope);
 
@@ -2506,31 +2477,17 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
          else if (moduleScope->subjectHints.exist(hintRef)) {
             writer.appendNode(lxType, hintRef);
          }
-         else if (hintRef == moduleScope->genericHint) {
-            writer.appendNode(lxClassMethodAttr, tpGeneric);
-
-            scope.generic = true;
-         }
-         else if (hintRef == moduleScope->sealedHint) {
-            writer.appendNode(lxClassMethodAttr, scope.privat ? tpPrivate : tpSealed);
-         }
-         else if (hintRef == moduleScope->stackHint) {
-            writer.appendNode(lxClassMethodAttr, tpStackSafe);
-         }
-         else if (hintRef == moduleScope->embedHint) {
-            writer.appendNode(lxClassMethodAttr, tpEmbeddable);
-         }
-         else if (hintRef == moduleScope->actionHint) {
-            writer.appendNode(lxActionAttr);
-         }
          else if (hintRef != 0) {
-            // Method templates can be applied only for methods with custom verbs
+            // Method templates with parameter can be applied only for methods with custom verbs
             if (getVerb(scope.message) == EVAL_MESSAGE_ID && getSignature(scope.message) != 0) {
                ident_t signature = moduleScope->module->resolveSubject(getSignature(scope.message));
                IdentifierString customVerb(signature, StringHelper::find(signature, '&', getlength(signature)));
                ref_t messageSubject = moduleScope->module->mapSubject(customVerb, false);
 
                declareTemplateInfo(hints, *classScope, hintRef, messageSubject);
+            }
+            else if (hints.firstChild() == nsNone) {
+               declareMethodTemplateInfo(*classScope, hintRef, scope.message);
             }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
          }
@@ -4948,18 +4905,19 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
       }
    }
 
-   while (hints == nsHint) {
-      TerminalInfo terminal = hints.Terminal();
-      ref_t hintRef = mapHint(hints, *scope.moduleScope);
-      if (hintRef == scope.moduleScope->genericHint) {
-         if (!emptystr(signature))
-            scope.raiseError(errInvalidHint, terminal);
+   // !! temporal
+   //while (hints == nsHint) {
+   //   TerminalInfo terminal = hints.Terminal();
+   //   ref_t hintRef = mapHint(hints, *scope.moduleScope);
+   //   if (hintRef == scope.moduleScope->genericHint) {
+   //      if (!emptystr(signature))
+   //         scope.raiseError(errInvalidHint, terminal);
 
-         signature.copy(GENERIC_PREFIX);
-      }
+   //      signature.copy(GENERIC_PREFIX);
+   //   }
 
-      hints = hints.nextNode();
-   }
+   //   hints = hints.nextNode();
+   //}
 
    // if signature is presented
    if (!emptystr(signature)) {
@@ -5716,20 +5674,12 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          writer.newNode(lxClassMethod, methodScope.message);
          appendTerminalInfo(&writer, member.Terminal());
 
+         if (methodScope.privat)
+            writer.appendNode(lxClassMethodAttr, tpPrivate);
+
          compileMethodHints(hints, writer, methodScope, false);
          
          writer.closeNode();
-
-         if (methodScope.generic)
-            writer.appendNode(lxClassFlag, elWithGenerics);
-
-         // save extensions if required ; private method should be ignored
-         if (scope.extensionMode != 0 && !methodScope.privat) {
-            if (scope.extensionMode != -1)
-               scope.info.fieldTypes.add(-1, scope.extensionMode);
-
-            scope.moduleScope->saveExtension(methodScope.message, scope.extensionMode, scope.reference);
-         }
       }
       member = member.nextNode();
    }
@@ -5865,12 +5815,16 @@ bool Compiler :: declareTemplate(ClassScope& scope, SyntaxWriter& writer, Templa
       else if (current == lxTemplateSubject) {
          templateInfo.parameters.add(templateInfo.parameters.Count() + 1, templateInfo.messageSubject);
       }
-      else if (current == lxClassMethod) {
+      else if (current == lxClassMethod || current == lxTargetMethod) {
          bool withGenericAttr = false;
+         ref_t messageRef = templateInfo.targetMessage;
+         if (current == lxClassMethod) {
+            messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, moduleScope->module, getSignature(current.argument), templateInfo));
 
-         ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, moduleScope->module, getSignature(current.argument), templateInfo));
-         
-         writer.newNode(lxTemplateMethod, messageRef);
+            writer.newNode(lxTemplateMethod, messageRef);
+         }
+         else writer.newNode(lxTargetMethod, messageRef);
+                  
          SNode attr = current.firstChild();
          while (attr != lxNone) {
             if (attr == lxClassMethodAttr) {
@@ -6084,19 +6038,21 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
    ref_t outputType = 0;
    bool hintChanged = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
+   int methodType = hint & tpMask;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethodAttr) {
-         hint |= current.argument;
+         if ((current.argument & tpMask) == 0 || methodType == 0)
+            hint |= current.argument;
+
+         if (current.argument == tpAction)
+            scope.moduleScope->saveAction(message, scope.reference);
 
          hintChanged = true;
       }
       else if (current == lxType) {
          outputType = current.argument;
-      }
-      else if (current == lxActionAttr) {
-         scope.moduleScope->saveAction(message, scope.reference);
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -6133,6 +6089,9 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
                scope.info.methods.add(current.argument, false);
          }
       }
+      else if (current == lxTargetMethod) {
+         generateMethodHints(scope, current, current.argument);
+      }
       else if (current == lxClassMethod) {
          generateMethodHints(scope, current, current.argument);
 
@@ -6140,9 +6099,14 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
 
          //HOTFIX : overwrite the private message verb
          int message = current.argument;
+         bool privat = false;
          if ((methodHints & tpMask) == tpPrivate) {
             message = overwriteVerb(message, PRIVATE_MESSAGE_ID);
+            privat = true;
          }
+
+         if (test(methodHints, tpGeneric))
+            scope.info.header.flags |= elWithGenerics;
 
          // check if there is no duplicate method
          if (scope.info.methods.exist(message, true))
@@ -6157,6 +6121,11 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
          // if the method is sealed, it cannot be overridden
          if (!included && sealedMethod)
             scope.raiseError(errClosedMethod, current);
+
+         // save extensions if required ; private method should be ignored
+         if (test(scope.info.header.flags, elExtension) && !privat) {
+            scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
+         }
       }
       current = current.nextNode();
    }

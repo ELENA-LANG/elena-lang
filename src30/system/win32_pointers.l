@@ -1,6 +1,6 @@
 // --- Handler ---
 
-#class(sealed,struct:reference,dispatchable:handle,const) Handle
+#class(sealed,reference,dispatchable:handle,const) Handle
 {
     #field(int)theHandle.
     
@@ -27,7 +27,7 @@
 
 #static rt_sync = Object new.
 
-#class(sealed,struct:reference,const) RTPointer
+#class(sealed,reference,const) RTPointer
 {
     #field(int)theIndex.
     
@@ -55,7 +55,7 @@
 
 // --- UnsafePointer ---
 
-#class(sealed,struct:reference,dispatchable:dirty_ptr) UnsafePointer
+#class(sealed,reference,dispatchable:dirty_ptr) UnsafePointer
 {
     #field(int)thePointer.
 
@@ -131,7 +131,7 @@
 
 #subject win_coord = system'COORD.
 
-#class(sealed,struct:embeddable) COORD
+#class(sealed,embeddable) COORD
 {
     #field(short)theX.
     #field(short)theY.
@@ -175,7 +175,7 @@
 
 #subject win_small_rect = system'SMALL_RECT.
                 
-#class(sealed,struct:embeddable) SMALL_RECT
+#class(sealed,embeddable) SMALL_RECT
 {
     #field(short)theLeft.
     #field(short)theTop.

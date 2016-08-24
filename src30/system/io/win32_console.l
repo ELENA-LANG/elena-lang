@@ -5,7 +5,7 @@
 
 #symbol(int,const)FILE_TYPE_CHAR = 2.
 
-#class(struct:embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
+#class(embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
 {
     #field(win_coord)dwSize.    
     #field(win_coord)dwCursorPosition.    
@@ -124,7 +124,7 @@
 
 // --- $FileWriter ---
 
-#class(sealed,struct:embeddable) $FileWriter
+#class(sealed,embeddable) $FileWriter
 {
     #field(handle) theHandle.
 
@@ -207,7 +207,7 @@
 
 // --- ConsoleReader ---
 
-#class(sealed,struct:embeddable) $ConsoleReader
+#class(sealed,embeddable) $ConsoleReader
 {
     #field(handle) theHandle.
     

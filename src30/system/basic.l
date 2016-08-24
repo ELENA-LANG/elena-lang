@@ -177,7 +177,7 @@
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-#class(struct:embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
+#class(embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
     #field(integerof:1)theValue.
 
@@ -421,7 +421,7 @@
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-#class(struct:embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
+#class(embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
 {
     #field(integerof:2)theValue.    
     
@@ -673,7 +673,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(struct:embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
+#class(embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
 {
     #field(integerof:4)theValue.    
     
@@ -938,7 +938,7 @@
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-#class(struct:embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
+#class(embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
 {
     #field(integerof:8)theValue.
     
@@ -1197,7 +1197,7 @@
 // --- realNumber ---
 
 /// A 64bit float numeric value
-#class(struct:embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
+#class(embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
 {
     #field(floatof:8)theValue.
 
@@ -1399,7 +1399,7 @@
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-#class(struct:reference,sealed,dispatchable:char,const) CharValue :: BaseValue
+#class(reference,sealed,dispatchable:char,const) CharValue :: BaseValue
 {
     #field(int)theValue.
     

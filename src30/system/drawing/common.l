@@ -7,7 +7,7 @@
 
 // --- Point ---
 
-#class(sealed,struct:embeddable,dispatchable:coord)Point :: BaseNumber
+#class(sealed,embeddable,dispatchable:coord)Point :: BaseNumber
 {
     #field(int)theX.
     #field(int)theY.
@@ -105,7 +105,7 @@
 
 // --- Dimension ---
 
-#class(sealed,struct:embeddable,dispatchable:dimension)Dimension :: BaseValue
+#class(sealed,embeddable,dispatchable:dimension)Dimension :: BaseValue
 {
     #field(int)theWidth.
     #field(int)theHeight.
@@ -175,7 +175,7 @@
 
 // --- Region ---
 
-#class(sealed,struct:embeddable,dispatchable:region)Region :: BaseValue
+#class(sealed,embeddable,dispatchable:region)Region :: BaseValue
 {
     #field(int)theX.
     #field(int)theY.

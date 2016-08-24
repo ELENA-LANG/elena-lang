@@ -3,7 +3,7 @@
 
 // --- HInstance ---
 
-#class(sealed,struct:reference,const) HInstance
+#class(sealed,reference,const) HInstance
 {
     #field(int)theHandle.
     
@@ -29,7 +29,7 @@
 
 // --- MSG ---
 
-#class(sealed,struct:embeddable) MSG 
+#class(sealed,embeddable) MSG 
 {
     #field(handle)theHWND.
     #field(int)   theMessage.
@@ -47,7 +47,7 @@
 
 // --- CREATESTRUCT ---
 
-#class(sealed,struct:embeddable)CREATESTRUCT
+#class(sealed,embeddable)CREATESTRUCT
 {
     #field(int)       theCreateParam.
     #field(hinstance) theInstance.    
@@ -70,7 +70,7 @@
 
 // --- HMENU ---
 
-#class(sealed,struct:reference,const) HMENU
+#class(sealed,reference,const) HMENU
 {
     #field(int)theHandle.
     

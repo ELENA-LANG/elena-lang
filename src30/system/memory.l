@@ -431,7 +431,7 @@
 
 // --- BitArray32 ---
 
-#class(sealed,struct:embeddable,dispatchable:bitset) BitArray32
+#class(sealed,embeddable,dispatchable:bitset) BitArray32
 {
     #field(int)theValue.
     

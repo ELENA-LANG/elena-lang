@@ -1,6 +1,6 @@
 // --- Handler ---
 
-#class(sealed,struct:reference,dispatchable:handle,const) Handle
+#class(sealed,reference,dispatchable:handle,const) Handle
 {
     #field(int)theHandle.
 
@@ -30,7 +30,7 @@
 
 #static rt_sync = Object new.
 
-#class(sealed,struct:embeddable) RTPointer
+#class(sealed,embeddable) RTPointer
 {
     #field(int)theIndex.
     
@@ -58,7 +58,7 @@
 
 // --- UnsafePointer ---
 
-#class(sealed,struct:reference,dispatchable:dirty_ptr) UnsafePointer
+#class(sealed,reference,dispatchable:dirty_ptr) UnsafePointer
 {
     #field(int)thePointer.
 

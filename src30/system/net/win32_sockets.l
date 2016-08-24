@@ -2,7 +2,7 @@
 
 // --- AddrInfo ---
 
-#class(sealed,struct:embeddable) AddrInfo
+#class(sealed,embeddable) AddrInfo
 {
     #field(int) ai_flags.
     #field(int) ai_family.
@@ -92,7 +92,7 @@
 
 #subject addr_reader = AddrInfoReader.
 
-#class(sealed,struct:embeddable) AddrInfoReader
+#class(sealed,embeddable) AddrInfoReader
 {
     #field(dirty_ptr)paddrinfo.
     #field(dirty_ptr)prootinfo.
@@ -139,7 +139,7 @@
 
 // --- Socket ---
 
-#class(sealed,struct:reference,const)Socket
+#class(sealed,reference,const)Socket
 {
     #field(int)theHandle.
     

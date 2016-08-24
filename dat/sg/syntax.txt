@@ -99,7 +99,7 @@ INCLUDE_DECLARATION ->
 TEMPLATE_DECLARATION ->
 	#template HINTS TEMPLATE
 	| #field FIELD_TEMPLATE
-	| #method METHOD_TEMPLATE
+	| #mtemplate HINTS METHOD_TEMPLATE
 	
 CLASS_DECLARATION ->
 	#class HINTS CLASS
@@ -293,6 +293,8 @@ ALT_OPERATIONS ->
 HINT -> identifier HINT_BODY
 	| private HINT_BODY
 	| reference
+	| integer
+	| hex
 	
 INCLUDE ->
 	identifier INCLUDE_BODY DECLARATION_END
@@ -313,6 +315,7 @@ FIELD_TEMPLATE ->
 
 TEMPLATE_PARAMETERS ->
 	: PARAMETER
+	| eps
 
 CLASS ->
 	identifier CLASS_BODY

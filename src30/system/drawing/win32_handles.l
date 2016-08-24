@@ -20,7 +20,7 @@
 
 // --- RECT ---
 
-#class(sealed,struct:embeddable)RECT
+#class(sealed,embeddable)RECT
 {
     #field(int)       theLeft.
     #field(int)       theTop.
@@ -70,7 +70,7 @@
 
 // --- HDC ---
 
-#class(sealed,struct:reference,const) HDC
+#class(sealed,reference,const) HDC
 {
     #field(int)theHandle.
 
@@ -148,7 +148,7 @@
 
 // --- HBITMAP ---
 
-#class(sealed,struct:reference,const) HBITMAP
+#class(sealed,reference,const) HBITMAP
 {
     #field(int)theHandle.
 
@@ -189,7 +189,7 @@
 
 // --- HPEN ---
 
-#class(sealed,struct:reference,const) HPEN
+#class(sealed,reference,const) HPEN
 {
     #field(int)theHandle.
     
@@ -213,7 +213,7 @@
 
 // --- HBRUSH ---
 
-#class(sealed,struct:reference,const) HBRUSH
+#class(sealed,reference,const) HBRUSH
 {
     #field(int)theHandle.
 

@@ -2,12 +2,29 @@
 In development:
 ------                              
 
-              adev - lib40
-                       * implementing
+              xdev
+                 * use method template to declare method hints : generic, ...
+                 * #method_template and #field_template (or #mtemplate / #ftemplate) should be used
+                 * all hints should be explicitly declared
+                 * lib40 : implementing
 
-              fdev - upndown
-                       * implementing
-                       * play with chaotic computer player
+              xmaint
+                 * issue
+
+              ydev
+                 * upndown : implementing, play with chaotic computer player
+
+              zdev 
+                 * bf traditional : implement
+                 * bf tape : implement
+                 * live programming
+                 * eldoc
+
+              zevo
+                 * game of life : simple implementation
+                 * game of life : create an engine (time slots)
+                 * game of life : rules should be declared in external file
+                 * game of life : viewer
 
 ------                                 
 Pipeline:
@@ -69,7 +86,7 @@ Pipeline:
                          always return bool operand
 
                        * templates : make sure it is not possible to assign array (see arrayof, stringof) 
-                         (probably assigning is not correct for numeric template as well)
+                         (probably assigning is not #correct for numeric template as well)
 
                        * template : add typecast around parameter passed with template_subj ; make sure
                          cast methods work correct after this
@@ -151,12 +168,6 @@ Pipeline:
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
                        
-              fdev - evolution
-                       * game of life : simple implementation
-                       * game of life : create an engine (time slots)
-                       * game of life : rules should be declared in external file
-                       * game of life : viewer
-
               xdev - general implementation     
                        * replace all operation with StringHelper with some built-in operators
 
@@ -533,4 +544,3 @@ Pipeline:
                        * add network players
                        * use db for statistic info
                        * add AI player
-
