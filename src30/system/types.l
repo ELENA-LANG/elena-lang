@@ -1,3 +1,15 @@
+/// Field attributes
+#ftemplate(-1,1) int8 {}
+#ftemplate(-1,2) int16 {}
+#ftemplate(-1,4) int32 {}
+#ftemplate(-2,8) int64 {}
+#ftemplate(-4,8) float64 {}
+#ftemplate(-7,4) symbol {}
+#ftemplate(-8,4) signature {}
+#ftemplate(-9,4) message {}
+#ftemplate(-10,8) extension_message {}
+#ftemplate(-20) static {}
+
 /// Method attributes
 #mtemplate(40h) generic {}
 #mtemplate(10h) stacksafe {}

@@ -179,7 +179,7 @@
 /// An unsigned 8 bit integer
 #class(embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
-    #field(integerof:1)theValue.
+    #field(int8)theValue.
 
     #constructor(stacksafe) &int:n
     [
@@ -423,7 +423,7 @@
 /// A signed 16 bit integer
 #class(embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
 {
-    #field(integerof:2)theValue.    
+    #field(int16)theValue.    
     
     #constructor(stacksafe)&int:n
     [
@@ -675,7 +675,7 @@
 /// A signed 32 bit integer
 #class(embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
 {
-    #field(integerof:4)theValue.    
+    #field(int32)theValue.    
     
     #constructor(stacksafe)&byte:n
     [
@@ -940,7 +940,7 @@
 /// A signed 64 bit integer value
 #class(embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
 {
-    #field(integerof:8)theValue.
+    #field(int64)theValue.
     
     /// Returns the minimal value
     #constructor min
@@ -1199,7 +1199,7 @@
 /// A 64bit float numeric value
 #class(embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
 {
-    #field(floatof:8)theValue.
+    #field(float64)theValue.
 
     #constructor(stacksafe)&int:n
     [

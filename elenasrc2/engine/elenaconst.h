@@ -462,17 +462,10 @@ namespace _ELENA_
    #define HINT_CONSTANT            "const#0$"
 //   #define HINT_TYPE               "type"              // type hint
 //   #define HINT_SIZE               "size"
-   #define HINT_INTEGER_NUMBER      "integerof#1$"      // class representing an integer number
-   #define HINT_FLOAT_NUMBER        "floatof#1$"
 // #define HINT_SAFEPOINT          "safepoint"
 // #define HINT_LOCK               "sync"
-   #define HINT_MESSAGE             "message#0$"
-   #define HINT_SIGNATURE           "signature#0$"
-   #define HINT_EXT_MESSAGE         "extension_message#0$"
-   #define HINT_SYMBOL              "symbol#0$"
    #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
    #define HINT_PRELOADED           "preloaded#0$"
-   #define HINT_STATIC              "static#0$"
 
    #define HINT_WRAPPER             "class"         // obsolete
 

@@ -3,10 +3,13 @@ In development:
 ------                              
 
               xdev
-                 * use method template to declare method hints : generic, ...
-                 * #method_template and #field_template (or #mtemplate / #ftemplate) should be used
+                 * ftemplate : simple (type,target,size,template) - direct import, with methods, nested - copy type,target,size,template
+                   reference
+
+                 * redesign template routine
                  * all hints should be explicitly declared
-                 * lib40 : implementing
+                 * test templates (nvarof,varof,dispatchable,nprop,...)
+                 * lib40 : minimal application
 
               xmaint
                  * issue
@@ -25,6 +28,11 @@ In development:
                  * game of life : create an engine (time slots)
                  * game of life : rules should be declared in external file
                  * game of life : viewer
+
+              xdev
+                 * lib40 : true / false could be member of enumeration list 
+                 * lib40 : review predefined boolean constants (bool,true,false), could we get rid of them from lib40 config file
+                 * lib40 : implementing
 
 ------                                 
 Pipeline:
