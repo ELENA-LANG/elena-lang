@@ -3,11 +3,10 @@ In development:
 ------                              
 
               xdev
-                 * ftemplate : simple (type,target,size,template) - direct import, with methods, nested - copy type,target,size,template
-                   reference
-
+                 * nested templates / templates in template
                  * redesign template routine
                  * all hints should be explicitly declared
+                 * symbol hints
                  * test templates (nvarof,varof,dispatchable,nprop,...)
                  * lib40 : minimal application
 

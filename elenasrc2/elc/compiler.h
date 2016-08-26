@@ -205,7 +205,7 @@ public:
    typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef Map<ref_t, ref_t>              ClassMap;
-   typedef Map<int, ref_t>                RoleMap;
+   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
    typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 
@@ -222,6 +222,36 @@ public:
       int     sourceCol, sourceRow;
 
       RoleMap parameters;
+
+      void save(MemoryWriter& writer)
+      {
+         writer.writeDWord(templateRef);
+         writer.writeDWord(templateParent);
+         writer.writeDWord(targetType);
+         writer.writeDWord(targetOffset);
+         writer.writeDWord(messageSubject);
+         writer.writeDWord(targetMessage);
+         writer.writeDWord(ownerRef);
+         writer.writeDWord(sourceCol);
+         writer.writeDWord(sourceRow);
+
+         parameters.write(&writer);
+      }
+
+      void load(MemoryReader& reader)
+      {
+         templateRef = reader.getDWord();
+         templateParent = reader.getDWord();
+         targetType = reader.getDWord();
+         targetOffset = reader.getDWord();
+         messageSubject = reader.getDWord();
+         targetMessage = reader.getDWord();
+         ownerRef = reader.getDWord();
+         sourceCol = reader.getDWord();
+         sourceRow = reader.getDWord();
+
+         parameters.read(&reader);
+      }
 
       TemplateInfo()
       {
@@ -289,9 +319,6 @@ private:
 
       // action hints
       SubjectMap        actionHints;
-
-      //// templates
-      //SyntaxTree        templates;
 
       // cached references
       ref_t superReference;
@@ -533,6 +560,7 @@ private:
    struct SourceScope : public Scope
    {
       SyntaxTree syntaxTree;
+      MemoryDump imported;
 
       CommandTape    tape;
       ref_t          reference;
@@ -548,7 +576,7 @@ private:
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
-      //void compileClassHint(SyntaxTree::Node hint);
+      void compileClassHint(SyntaxTree::Node hint);
       //void compileFieldHints(DNode hints, int& size, ref_t& type);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -916,15 +944,13 @@ private:
 
    void readFieldTermplateHints(ModuleScope& scope, ref_t templateRef, ref_t& target, int& size);
 
-   //void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
+   bool declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef);
+   void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
    //bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
-   //void declareMethodTemplateInfo(ClassScope& scope, ref_t hintRef, ref_t message);
    //void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
    //void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
-   //void readTemplateInfo(SyntaxTree::Node node, TemplateInfo& info);
-   void copyNode(SourceScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
-   void copyTemplate(SourceScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, TemplateInfo& info);
-   bool copyTemplate(SourceScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer);
+   void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, TemplateInfo& info);
+   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
@@ -932,9 +958,9 @@ private:
    void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
 
    //void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
-   bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope/*, bool directiveOnly*/);
-   //void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
-   //void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope);
+   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    //void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
@@ -942,13 +968,13 @@ private:
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope/*, bool warningsOnly*/);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool classClassMode);
 
-   //bool declareImportedTemplates(ClassScope& scope, SyntaxWriter& writer);
-   //bool declareTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
-   //void importTemplates(ClassScope& scope, SyntaxWriter& writerf);
-   //void importTemplate(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
-   //void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
-   //void importNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
-   //void importTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+   bool importTemplateDeclarations(ClassScope& scope, SyntaxWriter& writer);
+   bool importTemplateDeclaration(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
+   void importTemplateImplementations(ClassScope& scope, SyntaxWriter& writerf);
+   void importTemplateImplementation(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
+   void importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SyntaxTree::Node node, TemplateInfo& info, _Module* templateModule);
+   void copyNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
+   void copyTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
 
    ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
@@ -1021,7 +1047,7 @@ private:
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
    void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope, DNode hints);
-   void compileSingletonClass(DNode member, ClassScope& scope);
+   void compileSingletonClass(DNode member, ClassScope& scope, DNode hints);
 
    void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression, DNode hints);
 
@@ -1043,7 +1069,7 @@ private:
    void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
    void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
 
-   void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool warningsOnly = true);
+   void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope);
 
    void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
    void declareVirtualMethods(ClassScope& scope);
@@ -1063,7 +1089,7 @@ private:
    void generateClassImplementation(ClassScope& scope);
 
    void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
-   void compileClassImplementation(DNode node, ClassScope& scope);
+   void compileClassImplementation(DNode node, ClassScope& scope, DNode hints);
    void compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints);
    void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);

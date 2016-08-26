@@ -17,8 +17,6 @@
     /// Creates the object
     #constructor new []
 
-    #method(generic)add []
-
     /// Returns true if the specified object is equal to the current object; otherwise, false.
     ///
     /// By default compares the object references.
