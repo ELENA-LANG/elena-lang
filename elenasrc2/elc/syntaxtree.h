@@ -168,18 +168,19 @@ enum LexicalType
    lxClassMethodAttr = 0x04007,
    //lxClassMethodOpt  = 0x04008,
    lxWarningMask     = 0x04009,
+   lxPrivateAttr     = 0x0000A,
 
-   lxTemplate         = 0x4000A,
-   lxTemplateField    = 0x0000B,
-   lxTemplateFieldType= 0x0000C,
-   lxTemplateSubject  = 0x0000D,
-   lxTemplateMethod   = 0x0000E,
-   lxNestedTemplate   = 0x0000F, // arg - count
-   lxNestedTemplateOwner  = 0x00010, // indicates the nested template owner
-   lxNestedTemplateParent = 0x20811,
-   lxTemplateParam    = 0x00012,
-   lxClass            = 0x00013,
-   lxTemplateType     = 0x40014,
+   lxTemplate         = 0x4000B,
+   lxTemplateField    = 0x0000C,
+   lxTemplateFieldType= 0x0000D,
+   lxTemplateSubject  = 0x0000E,
+   lxTemplateMethod   = 0x0000F,
+   lxNestedTemplate   = 0x00010, // arg - count
+   lxNestedTemplateOwner  = 0x00011, // indicates the nested template owner
+   lxNestedTemplateParent = 0x20812,
+   lxTemplateParam    = 0x00013,
+   lxClass            = 0x00014,
+   lxTemplateType     = 0x40015,
    lxTargetMethod     = 0x10016
 };
 

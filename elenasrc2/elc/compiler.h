@@ -946,11 +946,13 @@ private:
 
    bool declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef);
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
+
    //bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
    //void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
    //void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, TemplateInfo& info);
    bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer);
+   void copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(DNode node, ClassScope& scope);
@@ -963,7 +965,7 @@ private:
    void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 
    void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
-   //void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
+   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
    void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope/*, bool warningsOnly*/);
    void declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scope, bool classClassMode);

@@ -1,4 +1,4 @@
-#field prop : prop_name
+#ftemplate prop : prop_name
 {
     #method set &prop_name : value
     [
@@ -8,14 +8,14 @@
     #method prop_name = target.
 }
 
-#field outprop : prop_name
+#ftemplate outprop : prop_name
 {
     #method prop_name = target.
 }
 
 // --- outnprop ---
 
-#method outnprop : template_subj
+#mtemplate outnprop : template_subj
 {
    #method(stacksafe,int,embeddable,suppress:w3) template_subj
    [
@@ -28,7 +28,7 @@
 
 // --- innprop ---
 
-#method innprop : template_subj
+#mtemplate innprop : template_subj
 {
    #method(stacksafe,suppress:w2) set &template_subj:val
    [
@@ -40,7 +40,7 @@
  
 // --- outlprop ---
 
-#method outlprop : template_subj
+#mtemplate outlprop : template_subj
 {
    #method(stacksafe,long,embeddable,suppress:w3) template_subj
    [
@@ -53,7 +53,7 @@
 
 // --- outwprop ---
 
-#method outwprop : template_subj
+#mtemplate outwprop : template_subj
 {
    #method(stacksafe,short,embeddable,suppress:w3) template_subj
    [

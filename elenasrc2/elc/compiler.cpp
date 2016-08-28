@@ -2207,18 +2207,22 @@ bool Compiler :: copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, 
 void Compiler :: copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, TemplateInfo& info)
 {
    bool containsMethods = false;
+   bool containsFields = false;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod/* || current == lxTemplateMethod*/) {
          containsMethods = true;
       }
+      else if (current == lxTemplateField) {
+         containsFields = true;
+      }
       else copyNode(scope, current, writer, templateModule, info);
    
       current = current.nextNode();
    }
 
-   if (containsMethods) {
+   if (containsMethods || containsFields) {
       // if the template should be injected into the class
       MemoryWriter writer(&scope.imported);
       info.save(writer);
@@ -2437,78 +2441,78 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
    }
 }
 
-//void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size)
-//{
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//      if (terminal == tsInteger) {
-//         int value = StringHelper::strToInt(terminal);
-//         // negative value defines the target type
-//         if (value < 0) {
-//            classRef = value;
-//         }
-//         // positive value defines the target size
-//         else size = value;
-//      }
-//      else {
-//         ref_t hintRef = mapHint(hints, *scope.moduleScope, 2000);
-//
-//         if (hintRef != 0) {
-//            if (scope.moduleScope->subjectHints.exist(hintRef)) {
-//               if (type == 0 && classRef == 0) {
-//                  type = hintRef;
-//
-//                  TerminalInfo target = hints.firstChild().Terminal();
-//                  if (target != nsNone) {
-//                     if (target.symbol == tsInteger) {
-//                        size = StringHelper::strToInt(target);
-//
-//                        classRef = -3; // NOTE : -3 means an array of type
-//                     }
-//                     else scope.raiseError(errInvalidHint, terminal);
-//                  }
-//                  else classRef = scope.moduleScope->subjectHints.get(type);
-//               }
-//               else scope.raiseError(errInvalidHint, terminal);
-//            }
-//            else {
-//               if (type != 0)
-//                  scope.raiseError(errInvalidHint, terminal);
-//
-//               TemplateInfo templateInfo;
-//               templateInfo.templateRef = hintRef;
-//               templateInfo.sourceCol = terminal.Col();
-//               templateInfo.sourceRow = terminal.Row();
-//
-//               declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
-//
-//               ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
-//               RoleMap::Iterator it = templateInfo.parameters.start();
-//               while (!it.Eof()) {
-//                  name.append('@');
-//                  name.append(scope.moduleScope->module->resolveSubject(*it));
-//
-//                  it++;
-//               }
-//
-//               //HOTFIX: validate if the subjects are virtual
-//               if (scope.isVirtualSubject(hints.firstChild().Terminal())) {
-//                  classRef = -6;
-//                  type = scope.moduleScope->module->mapSubject(name, false);
-//               }
-//               else {
-//                  classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
-//                  if (classRef == 0)
-//                     scope.raiseError(errInvalidHint, terminal);
-//               }
-//            }
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
-//      }
-//
-//      hints = hints.nextNode();
-//   }
-//}
+void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size)
+{
+   while (hints == nsHint) {
+      TerminalInfo terminal = hints.Terminal();
+      if (terminal == tsInteger) {
+         int value = StringHelper::strToInt(terminal);
+         // negative value defines the target type
+         if (value < 0) {
+            classRef = value;
+         }
+         // positive value defines the target size
+         else size = value;
+      }
+      else {
+         ref_t hintRef = mapHint(hints, *scope.moduleScope, 2000);
+
+         if (hintRef != 0) {
+            if (scope.moduleScope->subjectHints.exist(hintRef)) {
+               if (type == 0 && classRef == 0) {
+                  type = hintRef;
+
+                  TerminalInfo target = hints.firstChild().Terminal();
+                  if (target != nsNone) {
+                     if (target.symbol == tsInteger) {
+                        size = StringHelper::strToInt(target);
+
+                        classRef = -3; // NOTE : -3 means an array of type
+                     }
+                     else scope.raiseError(errInvalidHint, terminal);
+                  }
+                  else classRef = scope.moduleScope->subjectHints.get(type);
+               }
+               else scope.raiseError(errInvalidHint, terminal);
+            }
+            else {
+               if (type != 0)
+                  scope.raiseError(errInvalidHint, terminal);
+
+               TemplateInfo templateInfo;
+               templateInfo.templateRef = hintRef;
+               templateInfo.sourceCol = terminal.Col();
+               templateInfo.sourceRow = terminal.Row();
+
+               declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
+
+               ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
+               RoleMap::Iterator it = templateInfo.parameters.start();
+               while (!it.Eof()) {
+                  name.append('@');
+                  name.append(scope.moduleScope->module->resolveSubject(*it));
+
+                  it++;
+               }
+
+               //HOTFIX: validate if the subjects are virtual
+               if (scope.isVirtualSubject(hints.firstChild().Terminal())) {
+                  classRef = -6;
+                  type = scope.moduleScope->module->mapSubject(name, false);
+               }
+               else {
+                  classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
+                  if (classRef == 0)
+                     scope.raiseError(errInvalidHint, terminal);
+               }
+            }
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+      }
+
+      hints = hints.nextNode();
+   }
+}
 
 void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
 {
@@ -2592,155 +2596,155 @@ void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchVa
 
 void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
 {
-   //TerminalInfo terminal = node.Terminal();
+   TerminalInfo terminal = node.Terminal();
 
-   //if (!scope.locals.exist(terminal)) {
-   //   ref_t type = 0;
-   //   ref_t classRef = 0;
-   //   int size = 0;
-   //   compileLocalHints(hints, scope, type, classRef, size);
+   if (!scope.locals.exist(terminal)) {
+      ref_t type = 0;
+      ref_t classRef = 0;
+      int size = 0;
+      compileLocalHints(hints, scope, type, classRef, size);
 
-   //   ObjectInfo variable(okLocal, 0, classRef, type);
+      ObjectInfo variable(okLocal, 0, classRef, type);
 
-   //   ClassInfo localInfo;
-   //   bool bytearray = false;
-   //   if (isTemplateRef(classRef)) {
-   //      variable.kind = okTemplateLocal;
-   //   }
-   //   else if (isPrimitiveRef(classRef)) {
-   //      if (classRef == -1) {
-   //         localInfo.header.flags = elDebugDWORD;
-   //      }
-   //      else if (classRef == -2) {
-   //         localInfo.header.flags = elDebugQWORD;
-   //      }
-   //      else if (classRef == -4) {
-   //         localInfo.header.flags = elDebugReal64;
-   //      }
-   //      else if (classRef == -3) {
-   //         scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
-   //         size = size * localInfo.size;
-   //         bytearray = true;
-   //      }
-   //   }
-   //   else if (classRef != 0) {
-   //      scope.moduleScope->loadClassInfo(localInfo, classRef, true);
+      ClassInfo localInfo;
+      bool bytearray = false;
+      if (isTemplateRef(classRef)) {
+         variable.kind = okTemplateLocal;
+      }
+      else if (isPrimitiveRef(classRef)) {
+         if (classRef == -1) {
+            localInfo.header.flags = elDebugDWORD;
+         }
+         else if (classRef == -2) {
+            localInfo.header.flags = elDebugQWORD;
+         }
+         else if (classRef == -4) {
+            localInfo.header.flags = elDebugReal64;
+         }
+         else if (classRef == -3) {
+            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
+            size = size * localInfo.size;
+            bytearray = true;
+         }
+      }
+      else if (classRef != 0) {
+         scope.moduleScope->loadClassInfo(localInfo, classRef, true);
 
-   //      if (isEmbeddable(localInfo))
-   //         size = localInfo.size;
-   //   }      
+         if (isEmbeddable(localInfo))
+            size = localInfo.size;
+      }      
 
-   //   if (size > 0) {
-   //      if (!allocateStructure(scope, size, localInfo.header.flags, bytearray, variable))
-   //         scope.raiseError(errInvalidOperation, node.Terminal());
+      if (size > 0) {
+         if (!allocateStructure(scope, size, localInfo.header.flags, bytearray, variable))
+            scope.raiseError(errInvalidOperation, node.Terminal());
 
-   //      // make the reservation permanent
-   //      scope.saved = scope.reserved;
+         // make the reservation permanent
+         scope.saved = scope.reserved;
 
-   //      if (bytearray) {
-   //         switch (localInfo.header.flags & elDebugMask)
-   //         {
-   //            case elDebugDWORD:
-   //               if (localInfo.size == 4) {
-   //                  scope.writer->newNode(lxIntsVariable, size);
-   //                  scope.writer->appendNode(lxTerminal, terminal.value);
-   //                  scope.writer->appendNode(lxLevel, variable.param);
-   //                  scope.writer->closeNode();
-   //               }
-   //               else if (localInfo.size == 2) {
-   //                  scope.writer->newNode(lxShortsVariable, size);
-   //                  scope.writer->appendNode(lxTerminal, terminal.value);
-   //                  scope.writer->appendNode(lxLevel, variable.param);
-   //                  scope.writer->closeNode();
-   //               }
-   //               else if (localInfo.size == 1) {
-   //                  scope.writer->newNode(lxBytesVariable, size);
-   //                  scope.writer->appendNode(lxTerminal, terminal.value);
-   //                  scope.writer->appendNode(lxLevel, variable.param);
-   //                  scope.writer->closeNode();
-   //               }
-   //               break;
-   ////            case elDebugQWORD:
-   ////               break;
-   ////            default:
-   ////               // HOTFIX : size should be provide only for dynamic variables
-   ////               scope.writer->newNode(lxBinaryVariable, size);
-   ////               scope.writer->appendNode(lxTerminal, terminal.value);
-   ////               scope.writer->appendNode(lxLevel, variable.param);
-   ////               
-   ////               //if (type != 0) {
-   ////               //   ref_t classRef = scope.moduleScope->typeHints.get(type);
-   ////               //
-   ////               //   scope.writer->appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
-   ////               //}
-   ////               
-   ////               scope.writer->closeNode();
-   ////               break;
-   //         }
-   //      }
-   //      else {
-   //         switch (localInfo.header.flags & elDebugMask)
-   //         {
-   //            case elDebugDWORD:
-   //               scope.writer->newNode(lxIntVariable);
-   //               scope.writer->appendNode(lxTerminal, terminal.value);
-   //               scope.writer->appendNode(lxLevel, variable.param);
-   //               scope.writer->closeNode();
-   //               break;
+         if (bytearray) {
+            switch (localInfo.header.flags & elDebugMask)
+            {
+               case elDebugDWORD:
+                  if (localInfo.size == 4) {
+                     scope.writer->newNode(lxIntsVariable, size);
+                     scope.writer->appendNode(lxTerminal, terminal.value);
+                     scope.writer->appendNode(lxLevel, variable.param);
+                     scope.writer->closeNode();
+                  }
+                  else if (localInfo.size == 2) {
+                     scope.writer->newNode(lxShortsVariable, size);
+                     scope.writer->appendNode(lxTerminal, terminal.value);
+                     scope.writer->appendNode(lxLevel, variable.param);
+                     scope.writer->closeNode();
+                  }
+                  else if (localInfo.size == 1) {
+                     scope.writer->newNode(lxBytesVariable, size);
+                     scope.writer->appendNode(lxTerminal, terminal.value);
+                     scope.writer->appendNode(lxLevel, variable.param);
+                     scope.writer->closeNode();
+                  }
+                  break;
    //            case elDebugQWORD:
-   //               scope.writer->newNode(lxLongVariable);
-   //               scope.writer->appendNode(lxTerminal, terminal.value);
-   //               scope.writer->appendNode(lxLevel, variable.param);
-   //               scope.writer->closeNode();
-   //               break;
-   //            case elDebugReal64:
-   //               scope.writer->newNode(lxReal64Variable);
-   //               scope.writer->appendNode(lxTerminal, terminal.value);
-   //               scope.writer->appendNode(lxLevel, variable.param);
-   //               scope.writer->closeNode();
    //               break;
    //            default:
-   //               scope.writer->newNode(lxBinaryVariable);
+   //               // HOTFIX : size should be provide only for dynamic variables
+   //               scope.writer->newNode(lxBinaryVariable, size);
    //               scope.writer->appendNode(lxTerminal, terminal.value);
    //               scope.writer->appendNode(lxLevel, variable.param);
-
-   //               if (type != 0) {
-   //                  ref_t classRef = scope.moduleScope->subjectHints.get(type);
    //               
-   //                  scope.writer->appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
-   //               }
-
+   //               //if (type != 0) {
+   //               //   ref_t classRef = scope.moduleScope->typeHints.get(type);
+   //               //
+   //               //   scope.writer->appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+   //               //}
+   //               
    //               scope.writer->closeNode();
    //               break;
-   //         }
-   //      }
-   //   }
-   //   else {
-   //      int level = scope.newLocal();
+            }
+         }
+         else {
+            switch (localInfo.header.flags & elDebugMask)
+            {
+               case elDebugDWORD:
+                  scope.writer->newNode(lxIntVariable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
+                  scope.writer->closeNode();
+                  break;
+               case elDebugQWORD:
+                  scope.writer->newNode(lxLongVariable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
+                  scope.writer->closeNode();
+                  break;
+               case elDebugReal64:
+                  scope.writer->newNode(lxReal64Variable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
+                  scope.writer->closeNode();
+                  break;
+               default:
+                  scope.writer->newNode(lxBinaryVariable);
+                  scope.writer->appendNode(lxTerminal, terminal.value);
+                  scope.writer->appendNode(lxLevel, variable.param);
 
-   //      scope.writer->newNode(lxVariable);
-   //      scope.writer->appendNode(lxTerminal, terminal.value);
-   //      scope.writer->appendNode(lxLevel, level);
-   //      scope.writer->closeNode();
+                  if (type != 0) {
+                     ref_t classRef = scope.moduleScope->subjectHints.get(type);
+                  
+                     scope.writer->appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+                  }
 
-   //      variable.param = level;
+                  scope.writer->closeNode();
+                  break;
+            }
+         }
+      }
+      else {
+         int level = scope.newLocal();
 
-   //      size = 0; // to indicate assigning by ref
-   //   }
+         scope.writer->newNode(lxVariable);
+         scope.writer->appendNode(lxTerminal, terminal.value);
+         scope.writer->appendNode(lxLevel, level);
+         scope.writer->closeNode();
 
-   //   DNode assigning = node.firstChild();
-   //   if (assigning == nsAssigning) {
-   //      scope.writer->newNode(lxAssigning, size);
-   //      writeTerminal(terminal, scope, variable);
+         variable.param = level;
 
-   //      compileAssigningExpression(node, assigning, scope, variable);
+         size = 0; // to indicate assigning by ref
+      }
 
-   //      scope.writer->closeNode();
-   //   }
+      DNode assigning = node.firstChild();
+      if (assigning == nsAssigning) {
+         scope.writer->newNode(lxAssigning, size);
+         writeTerminal(terminal, scope, variable);
 
-   //   scope.mapLocal(node.Terminal(), variable.param, type, classRef, size);
-   //}
-   //else scope.raiseError(errDuplicatedLocal, terminal);
+         compileAssigningExpression(node, assigning, scope, variable);
+
+         scope.writer->closeNode();
+      }
+
+      scope.mapLocal(node.Terminal(), variable.param, type, classRef, size);
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
 void Compiler :: writeTerminal(TerminalInfo terminal, CodeScope& scope, ObjectInfo object)
@@ -5610,7 +5614,7 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          appendTerminalInfo(&writer, member.Terminal());
 
          if (methodScope.privat)
-            writer.appendNode(lxClassMethodAttr, tpPrivate);
+            writer.appendNode(lxPrivateAttr);
 
          compileMethodHints(hints, writer, methodScope);
          
@@ -5622,53 +5626,53 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
 
 ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
 {
-   //int initialParamCount = templateInfo.parameters.Count();
+   int initialParamCount = templateInfo.parameters.Count();
 
-   //if (!reference) {
-   //   reference = moduleScope.mapNestedExpression();
-   //}
+   if (!reference) {
+      reference = moduleScope.mapNestedExpression();
+   }
 
-   //ClassInfo info;
-   //if (moduleScope.loadClassInfo(info, reference, true)) {
-   //   return reference;
-   //}
+   ClassInfo info;
+   if (moduleScope.loadClassInfo(info, reference, true)) {
+      return reference;
+   }
 
    ClassScope scope(&moduleScope, reference);
 
-   //SyntaxWriter writer(scope.syntaxTree);
-   //writer.newNode(lxRoot, scope.reference);
+   SyntaxWriter writer(scope.syntaxTree);
+   writer.newNode(lxRoot, scope.reference);
 
-   //if (templateInfo.templateParent != 0) {
-   //   compileParentDeclaration(DNode(), scope, templateInfo.templateParent);
-   //}
-   //else compileParentDeclaration(DNode(), scope);
+   if (templateInfo.templateParent != 0) {
+      compileParentDeclaration(DNode(), scope, templateInfo.templateParent);
+   }
+   else compileParentDeclaration(DNode(), scope);
 
-   //writer.appendNode(lxClassFlag, elSealed);
+   writer.appendNode(lxClassFlag, elSealed);
 
-   //declareTemplate(scope, writer, templateInfo);   
-   //declareImportedTemplates(scope, writer);           // HOTFIX : import templates declared in templates
+   importTemplateDeclaration(scope, writer, templateInfo);
+   importTemplateDeclarations(scope, writer);
 
-   //writer.closeNode();
+   writer.closeNode();
 
-   //generateClassDeclaration(scope, false);
-   //scope.save();
+   generateClassDeclaration(scope, false);
+   scope.save();
 
-   //// HOTFIX : generate syntax once again to properly import the template code
-   //writer.clear();
-   //writer.newNode(lxRoot, scope.reference);
+   // HOTFIX : generate syntax once again to properly import the template code
+   writer.clear();
+   writer.newNode(lxRoot, scope.reference);
 
-   //// HOT FIX : declare external parameters once again, 
-   //// intitial parameters must be preserved
-   //while (templateInfo.parameters.Count() > initialParamCount)
-   //   templateInfo.parameters.erase(templateInfo.parameters.end());
+   // HOT FIX : declare external parameters once again, 
+   // intitial parameters must be preserved
+   while (templateInfo.parameters.Count() > initialParamCount)
+      templateInfo.parameters.exclude(templateInfo.parameters.Count());
 
-   //importTemplate(scope, writer, templateInfo);
-   //importTemplates(scope, writer);                 // HOTFIX : import templates declared in templates
-   //compileVirtualMethods(writer, scope);
+   importTemplateImplementation(scope, writer, templateInfo);
+   importTemplateImplementations(scope, writer);                 // HOTFIX : import templates declared in templates
+   compileVirtualMethods(writer, scope);
 
-   //writer.closeNode();
+   writer.closeNode();
 
-   //generateClassImplementation(scope);
+   generateClassImplementation(scope);
 
    return scope.reference;
 }
@@ -5810,143 +5814,143 @@ void Compiler :: readFieldTermplateHints(ModuleScope& scope, ref_t hintRef, ref_
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, bool singleField)
 {
-   //int offset = 0;
-   //ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
+   int offset = 0;
+   ident_t terminal = SyntaxTree::findChild(current, lxTerminal).identifier();
 
-   //ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
+   ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
 
-   //// a role cannot have fields
-   //if (test(scope.info.header.flags, elStateless))
-   //   scope.raiseError(errIllegalField, current);
+   // a role cannot have fields
+   if (test(scope.info.header.flags, elStateless))
+      scope.raiseError(errIllegalField, current);
 
-   //int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
-   //ref_t target = SyntaxTree::findChild(current, lxTarget).argument;
+   int sizeHint = SyntaxTree::findChild(current, lxSize).argument;
+   ref_t target = SyntaxTree::findChild(current, lxTarget).argument;
 
    //SNode templateNode = SyntaxTree::findChild(current, lxTemplate);
    //// HOTFIX : read field attributes
    //if (templateNode.argument != 0)
    //   readFieldTermplateHints(*scope.moduleScope, templateNode.argument, target, sizeHint);
 
-   //int size = (typeHint != 0) ? scope.moduleScope->defineSubjectSize(typeHint) : 0;
-   //if (sizeHint != 0) {
-   //   if (size < 0) {
-   //      size = sizeHint * (-size);
-   //   }
-   //   else if (size == 0) {
-   //      size = sizeHint;
-   //   }
-   //   else scope.raiseError(errIllegalField, current);
-   //}
+   int size = (typeHint != 0) ? scope.moduleScope->defineSubjectSize(typeHint) : 0;
+   if (sizeHint != 0) {
+      if (size < 0) {
+         size = sizeHint * (-size);
+      }
+      else if (size == 0) {
+         size = sizeHint;
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
 
-   //if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
-   //   // wrapper may have only one field
-   //   scope.raiseError(errIllegalField, current);
-   //}
-   //else if (isPrimitiveRef(target)) {
-   //   if (testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
-   //      scope.raiseError(errIllegalField, current);
+   if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
+      // wrapper may have only one field
+      scope.raiseError(errIllegalField, current);
+   }
+   else if (isPrimitiveRef(target)) {
+      if (testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
+         scope.raiseError(errIllegalField, current);
 
-   //   if (test(scope.info.header.flags, elStructureRole)) {
-   //      scope.info.fields.add(terminal, scope.info.size);
-   //      scope.info.size += size;
-   //   }
-   //   else scope.raiseError(errIllegalField, current);
+      if (test(scope.info.header.flags, elStructureRole)) {
+         scope.info.fields.add(terminal, scope.info.size);
+         scope.info.size += size;
+      }
+      else scope.raiseError(errIllegalField, current);
 
-   //   // if it is a primitive field
-   //   if (singleField && scope.info.fields.Count() == 1) {
-   //      switch (target) {
-   //         case -1:
-   //            scope.info.header.flags |= (elDebugDWORD | elReadOnlyRole);
-   //            break;
-   //         case -2:
-   //            scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
-   //            break;
-   //         case -4:
-   //            scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
-   //            break;
-   //         case -7:
-   //            scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
-   //            break;
-   //         case -8:
-   //            scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
-   //            break;
-   //         case -9:
-   //            scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
-   //            break;
-   //         case -10:
-   //            scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
-   //            break;
-   //         default:
-   //            scope.raiseError(errIllegalField, current);
-   //            break;
-   //      }
-   //   }
-   //}
-   //// a class with a dynamic length structure must have no fields
-   //else if (test(scope.info.header.flags, elDynamicRole)) {
-   //   if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
-   //      // compiler magic : turn a field declaration into an array or string one 
-   //      if (size != 0) {
-   //         if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
-   //            scope.info.header.flags &= ~elDebugMask;
-   //            if (size == 2) {
-   //               scope.info.header.flags |= elDebugWideLiteral;
-   //            }
-   //            else if (size == 1) {
-   //               scope.info.header.flags |= elDebugLiteral;
-   //            }
-   //         }
-   //         scope.info.header.flags |= elStructureRole;
-   //         scope.info.size = -size;
-   //      }
+      // if it is a primitive field
+      if (singleField && scope.info.fields.Count() == 1) {
+         switch (target) {
+            case -1:
+               scope.info.header.flags |= (elDebugDWORD | elReadOnlyRole);
+               break;
+            case -2:
+               scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
+               break;
+            case -4:
+               scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
+               break;
+            case -7:
+               scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
+               break;
+            case -8:
+               scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
+               break;
+            case -9:
+               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
+               break;
+            case -10:
+               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
+               break;
+            default:
+               scope.raiseError(errIllegalField, current);
+               break;
+         }
+      }
+   }
+   // a class with a dynamic length structure must have no fields
+   else if (test(scope.info.header.flags, elDynamicRole)) {
+      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
+         // compiler magic : turn a field declaration into an array or string one 
+         if (size != 0) {
+            if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
+               scope.info.header.flags &= ~elDebugMask;
+               if (size == 2) {
+                  scope.info.header.flags |= elDebugWideLiteral;
+               }
+               else if (size == 1) {
+                  scope.info.header.flags |= elDebugLiteral;
+               }
+            }
+            scope.info.header.flags |= elStructureRole;
+            scope.info.size = -size;
+         }
 
-   //      scope.info.fieldTypes.add(-1, typeHint);
-   //   }
-   //   else scope.raiseError(errIllegalField, current);
-   //}
-   //else {
-   //   if (scope.info.fields.exist(terminal))
-   //      scope.raiseError(errDuplicatedField, current);
+         scope.info.fieldTypes.add(-1, typeHint);
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
+   else {
+      if (scope.info.fields.exist(terminal))
+         scope.raiseError(errDuplicatedField, current);
 
-   //   // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-   //   if (!test(scope.info.header.flags, elNonStructureRole) && singleField
-   //      && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
-   //   {
-   //      scope.info.header.flags |= elStructureRole;
-   //      scope.info.size = size;
+      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+      if (!test(scope.info.header.flags, elNonStructureRole) && singleField
+         && test(scope.info.header.flags, elSealed) && size != 0 && scope.info.fields.Count() == 0)
+      {
+         scope.info.header.flags |= elStructureRole;
+         scope.info.size = size;
 
-   //      if (size < 0) {
-   //         scope.info.header.flags |= elDynamicRole;
-   //      }
+         if (size < 0) {
+            scope.info.header.flags |= elDynamicRole;
+         }
 
-   //      scope.info.fields.add(terminal, 0);
-   //      scope.info.fieldTypes.add(0, typeHint);
-   //   }
-   //   // if it is a structure field
-   //   else if (test(scope.info.header.flags, elStructureRole)) {
-   //      if (size <= 0)
-   //         scope.raiseError(errIllegalField, current);
+         scope.info.fields.add(terminal, 0);
+         scope.info.fieldTypes.add(0, typeHint);
+      }
+      // if it is a structure field
+      else if (test(scope.info.header.flags, elStructureRole)) {
+         if (size <= 0)
+            scope.raiseError(errIllegalField, current);
 
-   //      if (scope.info.size != 0 && scope.info.fields.Count() == 0)
-   //         scope.raiseError(errIllegalField, current);
+         if (scope.info.size != 0 && scope.info.fields.Count() == 0)
+            scope.raiseError(errIllegalField, current);
 
-   //      offset = scope.info.size;
-   //      scope.info.size += size;
+         offset = scope.info.size;
+         scope.info.size += size;
 
-   //      scope.info.fields.add(terminal, offset);
-   //      scope.info.fieldTypes.add(offset, typeHint);
-   //   }
-   //   // if it is a normal field
-   //   else {
-   //      scope.info.header.flags |= elNonStructureRole;
+         scope.info.fields.add(terminal, offset);
+         scope.info.fieldTypes.add(offset, typeHint);
+      }
+      // if it is a normal field
+      else {
+         scope.info.header.flags |= elNonStructureRole;
 
-   //      offset = scope.info.fields.Count();
-   //      scope.info.fields.add(terminal, offset);
+         offset = scope.info.fields.Count();
+         scope.info.fields.add(terminal, offset);
 
-   //      if (typeHint != 0)
-   //         scope.info.fieldTypes.add(offset, typeHint);
-   //   }
-   //}
+         if (typeHint != 0)
+            scope.info.fieldTypes.add(offset, typeHint);
+      }
+   }
 
    //// handle field template   
    //if (templateNode.argument != 0) {
@@ -5995,6 +5999,7 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
 {
    ref_t outputType = 0;
    bool hintChanged = false;
+   bool privateMethod = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
    int methodType = hint & tpMask;
 
@@ -6011,6 +6016,9 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
       }
       else if (current == lxType) {
          outputType = current.argument;
+      }
+      else if (current == lxPrivateAttr) {
+         privateMethod = true;
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -6030,6 +6038,10 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
    }
 
    if (hintChanged) {
+      //HOTFIX : private sealed method should be marked appropriately
+      if (privateMethod && (hint & tpMask) == tpSealed)
+         hint = (hint & ~tpMask) | tpPrivate;
+
       scope.info.methodHints.exclude(Attribute(message, maHint));
       scope.info.methodHints.add(Attribute(message, maHint), hint);
    }
@@ -6267,6 +6279,25 @@ void Compiler :: compileTemplateFieldDeclaration(DNode& member, SyntaxWriter& wr
    }
 }
 
+void Compiler :: copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer)
+{
+   writer.newNode(lxTemplate, info.templateRef);
+   writer.appendNode(lxCol, info.sourceCol);
+   writer.appendNode(lxRow, info.sourceRow);
+
+   RoleMap::Iterator it = info.parameters.start();
+   while (!it.Eof()) {
+      writer.appendNode(lxTemplateSubject, *it);
+
+      it++;
+   }
+
+   if (info.messageSubject != 0)
+      writer.appendNode(lxTemplateSubject, info.messageSubject);
+
+   writer.closeNode();
+}
+
 void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints)
 {
    SyntaxWriter writer(scope.syntaxTree);
@@ -6300,15 +6331,14 @@ void Compiler :: compileTemplateDeclaration(DNode node, TemplateScope& scope, DN
 
    compileVMT(member, writer, scope);
 
-   //// declare template in template
-   //SNode templateNode = scope.moduleScope->templates.readRoot().firstChild();
-   //while (templateNode != lxNone) {
-   //   if (templateNode.type == lxClass && templateNode.argument == scope.reference) {
-   //      copyTemplateInfo(templateNode, writer);
-   //   }
+   // copy template in template
+   MemoryReader reader(&scope.imported);
+   while (!reader.Eof()) {
+      TemplateInfo info;
+      info.load(reader);
 
-   //   templateNode = templateNode.nextNode();
-   //}
+      copyTemplateInfo(info, writer);
+   }
 
    writer.closeNode();
 
@@ -6495,12 +6525,6 @@ void Compiler :: copyNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWri
    }
    else if (current == lxRow && current.parentNode() != lxBreakpoint) {
       writer.newNode(lxRow, info.sourceRow);
-   }
-   else if (current == lxTarget) {
-      if (current.argument < 0) {
-         writer.newNode(current.type, current.argument);
-      }
-      else writer.newNode(current.type, importTemplateSubject(templateModule, scope.moduleScope->module, current.argument, info));
    }
    else if (test(current.type, lxMessageMask)) {
       ref_t signature = importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info);
