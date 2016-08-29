@@ -249,7 +249,7 @@
         byteArrayHelper read &bytearray:aDump &int:14 &vchar:aChar.
     ]
 
-    #method(stacksafe,suppress:w2) read &vint:aKey
+    #method(stacksafe,w2) read &vint:aKey
     [
         #var(byte:20)aDump.
         #var(int)aNumberRead.

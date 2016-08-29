@@ -64,7 +64,7 @@
         anY := theY.
     ]
     
-    #method(bool,suppress:w2) equal &coord:aPoint
+    #method(bool,w2) equal &coord:aPoint
     [
         #var(int)anX := aPoint x.
         #var(int)anY := aPoint y.
@@ -162,7 +162,7 @@
     
     #method clone = Dimension new &int:theWidth &int:theHeight.
     
-    #method(bool,suppress:w2) equal &dimension:aDimension
+    #method(bool,w2) equal &dimension:aDimension
     [
         #var(int)aWidth.
         #var(int)aHeight.
@@ -294,7 +294,7 @@
     #method dimension
         = Dimension new &int:theWidth &int:theHeight.
     
-    #method(bool,suppress:w2) equal &region:aRegion
+    #method(bool,w2) equal &region:aRegion
     [
         #var(int)aWidth.
         #var(int)aHeight.

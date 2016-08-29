@@ -174,7 +174,7 @@
         ^ aLastItem.
     ]
     
-    #method(int,suppress:w3) count
+    #method(int,w3) count
     [
         #var(enumerator)en := self enumerator.
         #var(int)counter := 0.
@@ -223,7 +223,7 @@
         ].
     ]
     
-    #method(suppress:w2) indexOf : anObject
+    #method(w2) indexOf : anObject
     [
         #var(iterator)anIndexer := self iterator.
         
@@ -277,7 +277,7 @@
     #method sort : aCompareFunc
         = self::indexableOp sort &func2:(aCompareFunc func2).
     
-    #method(suppress:w2) sort &func2:aCompareFunc
+    #method(w2) sort &func2:aCompareFunc
     [
         #var(iterator) aFormer := self iterator.
         #var(iterator) aLater := self iterator.
@@ -322,7 +322,7 @@
         ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
     ]
     
-    #method(suppress:w2) equal &indexable:anArray
+    #method(w2) equal &indexable:anArray
     [
         (self length != anArray length)
             ? [ ^ false. ].

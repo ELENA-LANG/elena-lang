@@ -26,7 +26,7 @@
     
     #method bytearray = theBuffer.
     
-    #method(stacksafe,suppress:w3) reserve &int:len
+    #method(stacksafe,w3) reserve &int:len
     [
         theCapacity := theUsed + len.
         theCapacity := (theCapacity / $TextPageSize + 1) * $TextPageSize.
@@ -59,7 +59,7 @@
         ].
     ]
     
-    #method(stacksafe,suppress:w3) write &int:index &int:length &bytearray:array
+    #method(stacksafe,w3) write &int:index &int:length &bytearray:array
     [
         (index > theUsed)
             ? [ #throw OutOfRangeException new. ].
@@ -85,7 +85,7 @@
         theBuffer read &int:index &vint:retVal.
     ]
     
-    #method(stacksafe,suppress:w3) delete &int:anIndex &int:aLength
+    #method(stacksafe,w3) delete &int:anIndex &int:aLength
     [
         #var(int)n := 0 - aLength.
         #var(int)l := theUsed.

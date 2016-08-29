@@ -11,7 +11,7 @@
     #field(array_list)theList.
     #field(vint)theTop.
     
-    #constructor(suppress:w3) new
+    #constructor(w3) new
     [
         theList := ArrayList new.
         theTop := 0.
@@ -73,7 +73,7 @@
     #field(vint)theTop.
     #field(vint)theTale.
     
-    #constructor(suppress:w3) new
+    #constructor(w3) new
     [
         theList := ArrayList new.
         theTop := 0.

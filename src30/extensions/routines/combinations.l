@@ -26,7 +26,7 @@
 {
     result = true.
     
-    #method(suppress:w2) eval : Indexers &int:aLength
+    #method(w2) eval : Indexers &int:aLength
     [
         ($nil == (Indexers seek &each: anIndexer 
                 [
@@ -99,7 +99,7 @@
         ^ Array new &int:aLength set &nfunc: (&int:i) [ Indexers array getAt &int:i get ].
     ]
         
-    #method(suppress:w2) eval : Indexers &int:aLength
+    #method(w2) eval : Indexers &int:aLength
     [
         #var(array)anArray := Indexers array.
         #var(int)k := anArray length.

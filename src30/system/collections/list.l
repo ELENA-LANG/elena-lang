@@ -95,7 +95,7 @@
         theLength set &int:0.        
     ]
     
-    #method(suppress:w3) enumerator 
+    #method(w3) enumerator 
     [
         #var(vint)index := -1.
         #var(int)length := theLength.
@@ -127,7 +127,7 @@
 
 #class(listof:object,sealed) ObjectList
 {
-    #constructor(suppress:w3) new
+    #constructor(w3) new
     [
         theArray := object:32.
         theLength := 0.
@@ -217,7 +217,7 @@
     #field(vint)      theIndex.
     
     /// Creates a list iterator
-    #constructor(suppress:w3) new &list:aList
+    #constructor(w3) new &list:aList
     [
         theList := aList.
         theCurrent := aList topItem.
@@ -281,7 +281,7 @@
     #field(list_item) theLast.
 
     /// Creates a list
-    #constructor(suppress:w3) new
+    #constructor(w3) new
     [
         theState := %empty.
         theCount := 0.
@@ -385,7 +385,7 @@
     ]
 
     /// Removes an object at the specified position
-    #method(suppress:w2) remove &int:anIndex
+    #method(w2) remove &int:anIndex
     [
         ($nil == theTop)
             ? [ #throw OutOfRangeException new. ].
@@ -463,7 +463,7 @@
     #field(vint)  theCapacity.
     
     /// Creates the list
-    #constructor(suppress:w3) new
+    #constructor(w3) new
     [
         theCapacity := 32.
         theLength := 0.
@@ -471,7 +471,7 @@
     ]
     
     /// Creates the list
-    #constructor(suppress:w2) new : param
+    #constructor(w2) new : param
         <= (new &int:(param cast:%eval &to:
                         { 
                             int : n = n. 
@@ -484,7 +484,7 @@
         $self append &array:(param cast:%eval &to:{ array : a = a. ! : o = $nil. }).
     ]
     
-    #constructor(suppress:w3) new &int:aCapacity
+    #constructor(w3) new &int:aCapacity
     [
         theCapacity := aCapacity.
         theLength := 0.
@@ -492,7 +492,7 @@
     ]
     
     /// Creates the list
-    #constructor(stacksafe,suppress:w3) $new &array:anArray &int:aLength
+    #constructor(stacksafe,w3) $new &array:anArray &int:aLength
     [
         #var(int)capacity := anArray length.
         
@@ -680,7 +680,7 @@
     #field(vint)       theIndex.
     
     /// Creates a list enumerator
-    #constructor(suppress:w3) new &array_list:aList
+    #constructor(w3) new &array_list:aList
     [
         theList := aList.
         theIndex := -1.
@@ -719,7 +719,7 @@
     #field(vint)      theIndex.
     
     /// Creates a list iterator
-    #constructor(suppress:w3) new &array_list:aList
+    #constructor(w3) new &array_list:aList
     [
         theList := aList.
         theIndex := 0.
@@ -803,14 +803,14 @@
         = aKey cast:%getAt &to:$self.
         
     /// Sets a dictionary item with the specified key
-    #method(suppress:w2) setAt : aKey : anObject
+    #method(w2) setAt : aKey : anObject
     [
         #var(int)aHashCode := aKey hash_code.
         
         $self $getItem &int:aHashCode &key:aKey set &object:anObject.
     ]
         
-    #method(stacksafe,suppress:w2) $getItem &int:aCode &key:aKey
+    #method(stacksafe,w2) $getItem &int:aCode &key:aKey
     [
         #var(int)aHashCode := aCode && theHashMask.
         
@@ -867,7 +867,7 @@
         ^ aNewItem.
     ]    
         
-    #method(generic,suppress:w2)getAt : aKey
+    #method(generic,w2)getAt : aKey
     [
         #var(int)aHashCode := aKey hash_code.
         

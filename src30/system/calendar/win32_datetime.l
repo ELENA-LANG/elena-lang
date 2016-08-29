@@ -36,7 +36,7 @@
 {
     #field(long)theValue.
     
-    #constructor(stacksafe,suppress:w3) new &__time:value
+    #constructor(stacksafe,w3) new &__time:value
         = value.
 
     #constructor(stacksafe) $new &long:aValue

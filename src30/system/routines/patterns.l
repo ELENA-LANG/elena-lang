@@ -13,14 +13,14 @@
     #field(vint)theCounter.    
     #field(enumerator)theEnumerator.
     
-    #constructor(suppress:w3) new : aCounter &enumerator:anEnumerator
+    #constructor(w3) new : aCounter &enumerator:anEnumerator
     [
         theCounter := aCounter int.
         theOffset := 0.
         theEnumerator := anEnumerator.
     ]
     
-    #constructor(suppress:w3) new : counter &skipping:offset &enumerator:enumerator
+    #constructor(w3) new : counter &skipping:offset &enumerator:enumerator
     [
         theCounter := counter int.
         theOffset := offset int.
@@ -68,7 +68,7 @@
     
     #method get = theEnumerator get.
     
-    #method(suppress:w2) next
+    #method(w2) next
     [
         #loop (theEnumerator next)?
         [
@@ -101,7 +101,7 @@
     
     #method get = theEnumerator get.
     
-    #method(suppress:w2) next
+    #method(w2) next
     [
         ($nil == thePrevious) ?
         [
@@ -140,7 +140,7 @@
     
     #method get = theEnumerator get.
     
-    #method(suppress:w2) next
+    #method(w2) next
     [
         ($nil == thePrevious) ?
         [
@@ -186,7 +186,7 @@
     
     #method get = theEnumerator get.
     
-    #method(suppress:w2) next
+    #method(w2) next
     [
         ($nil == thePrevious) ?
         [
@@ -239,7 +239,7 @@
     
     #method get = theEnumerator get.
     
-    #method(suppress:w2) next
+    #method(w2) next
     [
         ($nil == thePrevious) ?
         [
@@ -299,7 +299,7 @@
     
     #method get = theEnumerator get.
     
-    #method(suppress:w2) next
+    #method(w2) next
     [
         ($nil == thePrevious) ?
         [
@@ -386,7 +386,7 @@
         theFunc := func func1.
     ]
     
-    #constructor(suppress:w3) new &from:minValue &till:maxValue &each:func
+    #constructor(w3) new &from:minValue &till:maxValue &each:func
     [
         theMin := minValue int.
         theMax := maxValue int.
@@ -396,12 +396,12 @@
     
     #method get = theFunc eval:theCurrent.
     
-    #method(suppress:w3) reset
+    #method(w3) reset
     [
         theCurrent := theMin - 1.
     ]
     
-    #method(suppress:w3) next
+    #method(w3) next
     [
         theCurrent := theCurrent + 1.
         

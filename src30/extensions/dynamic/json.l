@@ -32,22 +32,22 @@
         output write:(b literal).
     ]
     
-    #method(suppress:w2) eval:output &array:array
+    #method(w2) eval:output &array:array
     [
         output::jsonSerializer jsonSerialize &enumerable:array.
     ]
     
-    #method(suppress:w2) eval:output &enumerable:list
+    #method(w2) eval:output &enumerable:list
     [
         output::jsonSerializer jsonSerialize &enumerable:list.
     ]
     
-    #method(suppress:w2) eval:output &dto:object
+    #method(w2) eval:output &dto:object
     [
         output::jsonSerializer jsonSerialize &dto:object.
     ]
     
-    #method(suppress:w2) eval:output &struct:object
+    #method(w2) eval:output &struct:object
     [
         output::jsonSerializer jsonSerialize &struct:object.
     ]

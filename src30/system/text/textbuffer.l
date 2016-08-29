@@ -11,7 +11,7 @@
     #field(chararray) theBuffer.
     #field(vint)      theLength.
 
-    #constructor(suppress:w3) new
+    #constructor(w3) new
     [
         theBuffer := CharArray new &int:$TextPageSize.
         theLength := 0.

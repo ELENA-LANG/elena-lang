@@ -2359,6 +2359,10 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
       }
       else {
          ref_t hintRef = mapHint(hints, *moduleScope, 2000);
+         // HOTFIX : to support template classes
+         if (hintRef == 0)
+            hintRef = mapHint(hints, *moduleScope, 0);
+
          if (hintRef != 0) {
             if (scope.moduleScope->subjectHints.exist(hintRef)) {
                writer.appendNode(lxType, hintRef);
@@ -2448,7 +2452,7 @@ void Compiler :: compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, r
          else size = value;
       }
       else {
-         ref_t hintRef = mapHint(hints, *scope.moduleScope, 2000);
+         ref_t hintRef = mapHint(hints, *scope.moduleScope, 0);
 
          if (hintRef != 0) {
             if (scope.moduleScope->subjectHints.exist(hintRef)) {
@@ -6249,6 +6253,10 @@ void Compiler :: compileTemplateFieldDeclaration(DNode& member, SyntaxWriter& wr
                }
                else {
                   ref_t hintRef = mapHint(fieldHints, *scope.moduleScope, 2000);
+                  // HOTFIX : to support template classes
+                  if (hintRef == 0)
+                     hintRef = mapHint(fieldHints, *scope.moduleScope, 0);
+
                   if (hintRef != 0) {
                      if (scope.moduleScope->subjectHints.exist(hintRef)) {
                         writer.appendNode(lxType, hintRef);

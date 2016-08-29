@@ -73,7 +73,7 @@
         ^ anOutput wide.
     ]
     
-    #method(int,suppress:w2)length
+    #method(int,w2)length
     [
         #var(stream)stream := FileStream openForRead &path:self.
         #var(int) fileLen := stream length.        

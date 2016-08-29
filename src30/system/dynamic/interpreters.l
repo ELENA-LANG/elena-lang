@@ -62,7 +62,7 @@
     /// Dispatches the verb to the target object with generic subject
     #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &struct:theStruct.
     
-    #method(generic,suppress:w2)set : anObject
+    #method(generic,w2)set : anObject
     [
         // looking for the current subject
         #var(int)anIndex := 0.

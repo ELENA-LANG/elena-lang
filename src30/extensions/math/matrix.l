@@ -314,7 +314,7 @@
         ^ Extension({ Even = even. }, a).
     ]
 
-    #method(suppress:w2) determinant
+    #method(w2) determinant
     [
         #var lum := self::matrixOp decomposed.
         #var(real) deter := 1.0r.

@@ -3,7 +3,7 @@
 
 // --- Events ---
 
-#field event : prop_name
+#ftemplate event : prop_name
 {
     #method set &prop_name : value
     [
