@@ -8,7 +8,9 @@
 #ftemplate(-8,4) signature {}
 #ftemplate(-9,4) message {}
 #ftemplate(-10,8) extension_message {}
-#ftemplate(-20) static {}
+#ftemplate(-32)  static {}
+#ftemplate(-33)  const {}
+#ftemplate(-34)  preloaded {}
 
 /// Method attributes
 #mtemplate(40h) generic {}

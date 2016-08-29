@@ -652,7 +652,7 @@ private:
       bool         withOpenArg;
       bool         stackSafe;
       bool         generic;
-      bool         privat;
+      bool         sealed;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -943,15 +943,18 @@ private:
    void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
 
    void readFieldTermplateHints(ModuleScope& scope, ref_t templateRef, ref_t& target, int& size);
+   bool readSymbolTermplateHints(SymbolScope& scope, ref_t templateRef);
 
-   bool declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef);
+   bool declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef, RoleMap* attributes = NULL);
+   bool declareMethodAttribute(DNode hint, MethodScope& scope, SyntaxWriter& writer, ref_t hintRef);
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
 
    //bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
    //void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
    //void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
-   void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, TemplateInfo& info);
-   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer);
+   void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
+                                 TemplateInfo& info, RoleMap* attributes);
+   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes);
    void copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
@@ -959,7 +962,7 @@ private:
    void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope); 
    void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
 
-   //void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
+   void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
    bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope);
    void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
    void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
@@ -1044,7 +1047,7 @@ private:
 
    ObjectInfo compileCode(DNode node, CodeScope& scope);
 
-   void declareArgumentList(DNode node, MethodScope& scope, DNode hints);
+   void declareArgumentList(DNode node, MethodScope& scope);
    ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 

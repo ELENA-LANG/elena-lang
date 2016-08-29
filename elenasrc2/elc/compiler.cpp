@@ -1286,8 +1286,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->rootToFree = 1;
    this->withOpenArg = false;
    this->stackSafe = false;
-   this->privat = false;
    this->generic = false;
+   this->sealed = false;
 
    //NOTE : tape has to be overridden in the constructor
    this->tape = &parent->tape;
@@ -2010,7 +2010,7 @@ void Compiler :: compileParentDeclaration(DNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-bool Compiler :: declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef)
+bool Compiler :: declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef, RoleMap* attributes)
 {
    //               writer.newNode(lxTemplate, hintRef);
    //               appendTerminalInfo(&writer, terminal);
@@ -2036,9 +2036,23 @@ bool Compiler :: declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& w
       paramNode = paramNode.nextNode();
    }
 
-   return copyTemplateDeclaration(scope, templateInfo, writer);
+   return copyTemplateDeclaration(scope, templateInfo, writer, attributes);
 
    //               writer.closeNode();
+}
+
+bool Compiler :: declareMethodAttribute(DNode hint, MethodScope& scope, SyntaxWriter& writer, ref_t hintRef)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   RoleMap attributes;
+
+   if (declareAttribute(hint, *classScope, writer, hintRef, &attributes)) {
+      scope.generic = attributes.exist(lxClassMethodAttr, tpGeneric);
+      scope.sealed = attributes.exist(lxClassMethodAttr, tpSealed);
+
+      return true;
+   }
+   else return false;
 }
 
 //bool Compiler :: declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject)
@@ -2191,7 +2205,7 @@ void Compiler :: declareTemplateParameters(DNode hint, ModuleScope& scope, RoleM
    }
 }
 
-bool Compiler :: copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer)
+bool Compiler :: copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes)
 {
    _Module* extModule = NULL;
    _Memory* section = scope.moduleScope->loadTemplateInfo(info.templateRef, extModule);
@@ -2199,30 +2213,35 @@ bool Compiler :: copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, 
       return false;
    
    SyntaxTree tree(section);
-   copyTemplateDeclaration(scope, tree.readRoot(), writer, extModule, info);
+   copyTemplateDeclaration(scope, tree.readRoot(), writer, extModule, info, attributes);
    
    return true;
 }
 
-void Compiler :: copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, TemplateInfo& info)
+void Compiler :: copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
+                                          TemplateInfo& info, RoleMap* attributes)
 {
-   bool containsMethods = false;
-   bool containsFields = false;
+   bool importMode = false;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod/* || current == lxTemplateMethod*/) {
-         containsMethods = true;
+         importMode = true;
       }
       else if (current == lxTemplateField) {
-         containsFields = true;
+         importMode = true;
       }
-      else copyNode(scope, current, writer, templateModule, info);
+      else {
+         if (attributes != NULL && test(current.type, lxAttrMask)) {
+            attributes->add(current.type, current.argument);
+         }
+         copyNode(scope, current, writer, templateModule, info);
+      }
    
       current = current.nextNode();
    }
 
-   if (containsMethods || containsFields) {
+   if (importMode) {
       // if the template should be injected into the class
       MemoryWriter writer(&scope.imported);
       info.save(writer);
@@ -2294,25 +2313,23 @@ void Compiler :: compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope
    }
 }
 
-//void Compiler :: compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode)
-//{
-//   while (hints == nsHint) {
-//      ref_t hintRef = mapHint(hints, *scope.moduleScope, 3000);
-//      if (hintRef == scope.moduleScope->constHint) {
-//         scope.constant = true;
-//      }
-//      else if (hintRef == scope.moduleScope->preloadedHint) {
-//         scope.preloaded = true;
-//      }
-//      else if (scope.moduleScope->subjectHints.get(hintRef) != 0) {
-//         scope.typeRef = hintRef;
-//      }
-//      else if (!silentMode)
-//         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
-//
-//      hints = hints.nextNode();
-//   }
-//}
+void Compiler :: compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode)
+{
+   while (hints == nsHint) {
+      ref_t hintRef = mapHint(hints, *scope.moduleScope, 2000);
+      if (scope.moduleScope->subjectHints.get(hintRef) != 0) {
+         scope.typeRef = hintRef;
+      }
+      else if (hintRef != 0) {
+         if (!readSymbolTermplateHints(scope, hintRef) && !silentMode)
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+      }
+      else if (!silentMode)
+         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
+
+      hints = hints.nextNode();
+   }
+}
 
 void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
 {
@@ -2362,8 +2379,8 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
          int value = StringHelper::strToInt(terminal);
          // negative value defines the target type
          if (value < 0) {
-            if (value == -20) {
-               writer.appendNode(lxStaticAttr);
+            if (value <= -32) {
+               writer.appendNode((LexicalType)(value | lxAttrMask));
             }
             else writer.appendNode(lxTarget, value);
          }
@@ -2391,7 +2408,6 @@ void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope
 
 void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope)
 {
-   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
    ModuleScope* moduleScope = scope.moduleScope;
 
    while (hints == nsHint) {
@@ -2430,7 +2446,7 @@ void Compiler :: compileMethodHints(DNode hints, SyntaxWriter& writer, MethodSco
 ////               declareTemplateInfo(hints, *classScope, hintRef, messageSubject);
 //            }
 //            else if (hints.firstChild() == nsNone) {
-               if (!declareAttribute(hints, *classScope, writer, hintRef))
+               if (!declareMethodAttribute(hints, scope, writer, hintRef))
                   scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
             //}
             //else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
@@ -4746,7 +4762,7 @@ ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
    return encodeMessage(sign_id, EVAL_MESSAGE_ID, scope.parameters.Count());
 }
 
-void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints)
+void Compiler :: declareArgumentList(DNode node, MethodScope& scope)
 {
    IdentifierString signature;
    ref_t verb_id = 0;
@@ -4763,8 +4779,9 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
 	   }
 	   else if (verb_id == 0) {
          sign_id = scope.mapSubject(verb, signature);
-         if (verb == tsPrivate)
-            scope.privat = true;
+         if (scope.sealed && verb == tsPrivate) {
+            verb_id = PRIVATE_MESSAGE_ID;
+         }            
 	   }
    }
 
@@ -4844,19 +4861,12 @@ void Compiler :: declareArgumentList(DNode node, MethodScope& scope, DNode hints
       }
    }
 
-   // !! temporal
-   //while (hints == nsHint) {
-   //   TerminalInfo terminal = hints.Terminal();
-   //   ref_t hintRef = mapHint(hints, *scope.moduleScope);
-   //   if (hintRef == scope.moduleScope->genericHint) {
-   //      if (!emptystr(signature))
-   //         scope.raiseError(errInvalidHint, terminal);
+   if (scope.generic) {
+      if (!emptystr(signature))
+         scope.raiseError(errInvalidHint, verb);
 
-   //      signature.copy(GENERIC_PREFIX);
-   //   }
-
-   //   hints = hints.nextNode();
-   //}
+      signature.copy(GENERIC_PREFIX);
+   }
 
    // if signature is presented
    if (!emptystr(signature)) {
@@ -5376,17 +5386,13 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
             }
             // if it is a normal method
             else {
-               declareArgumentList(member, methodScope, hints);
+               compileMethodHints(hints, writer, methodScope);
+
+               declareArgumentList(member, methodScope);
 
                int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
                methodScope.stackSafe = test(hint, tpStackSafe);
                methodScope.generic = test(hint, tpGeneric);
-               if ((hint & tpMask) == tpPrivate) {
-                  //HOTFIX : overwrite the message verb for the private method
-                  methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
-               }
-
-               compileMethodHints(hints, writer, methodScope);
 
                compileMethod(member, writer, methodScope);
             }
@@ -5395,7 +5401,7 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          case nsDefaultGeneric:
          {
             MethodScope methodScope(&scope);
-            declareArgumentList(member, methodScope, hints);
+            declareArgumentList(member, methodScope);
 
             // override subject with generic postfix
             methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
@@ -5410,7 +5416,7 @@ void Compiler :: compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
          case nsImplicitConstructor:
          {
             MethodScope methodScope(&scope);
-            declareArgumentList(member, methodScope, hints);
+            declareArgumentList(member, methodScope);
 
             // override message with private verb
             methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
@@ -5539,7 +5545,7 @@ void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classCl
       if (member == nsConstructor) {
          MethodScope methodScope(&classScope);
 
-         declareArgumentList(member, methodScope, hints);
+         declareArgumentList(member, methodScope);
 
          int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
          methodScope.stackSafe = test(hint, tpStackSafe);
@@ -5590,35 +5596,32 @@ void Compiler :: declareVMT(DNode member, SyntaxWriter& writer, ClassScope& scop
       if ((classClassMode && member == nsConstructor) || (!classClassMode && isClassMethod(member))) {
          MethodScope methodScope(&scope);
 
+         writer.newBookmark();
+         compileMethodHints(hints, writer, methodScope);
+
          DNode firstChild = member.firstChild();
          if (firstChild == nsDispatchHandler) {
             methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
          }
-         else if (member == nsDefaultGeneric) {
-            declareArgumentList(member, methodScope, hints);
-
-            // override subject with generic postfix
-            methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
-
-            // mark as having generic methods
-            writer.appendNode(lxClassFlag, elWithGenerics);
+         else {
+            declareArgumentList(member, methodScope);
+            if (member == nsDefaultGeneric) {
+               // override subject with generic postfix
+               methodScope.message = overwriteSubject(methodScope.message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
+            }
+            else if (member == nsImplicitConstructor) {
+               methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
+            }
          }
-         else if (member == nsImplicitConstructor) {
-            declareArgumentList(member, methodScope, hints);
-
-            methodScope.message = overwriteVerb(methodScope.message, PRIVATE_MESSAGE_ID);
-         }
-         else declareArgumentList(member, methodScope, hints);
-
-         writer.newNode(lxClassMethod, methodScope.message);
-         appendTerminalInfo(&writer, member.Terminal());
-
-         if (methodScope.privat)
-            writer.appendNode(lxPrivateAttr);
-
-         compileMethodHints(hints, writer, methodScope);
          
+         writer.insert(lxClassMethod, methodScope.message);
+         appendTerminalInfo(&writer, member.Terminal());
+         writer.removeBookmark();
          writer.closeNode();
+
+         // mark as having generic methods
+         if (member == nsDefaultGeneric)
+            writer.appendNode(lxClassFlag, elWithGenerics);
       }
       member = member.nextNode();
    }
@@ -5812,6 +5815,38 @@ void Compiler :: readFieldTermplateHints(ModuleScope& scope, ref_t hintRef, ref_
    }
 }
 
+bool Compiler :: readSymbolTermplateHints(SymbolScope& scope, ref_t hintRef)
+{
+   //HOTFIX : declare field template methods
+   _Module* extModule = NULL;
+   _Memory* section = scope.moduleScope->loadTemplateInfo(hintRef, extModule);
+   if (!section)
+      return false;
+
+   SyntaxTree tree(section);
+   SNode current = tree.readRoot();
+   current = current.firstChild();
+   while (current != lxNone) {
+      if (current == lxTarget) {
+         switch (current.argument) {
+            case lxConstAttr:
+               scope.constant = true;
+               break;
+            case lxPreloadedAttr:
+               scope.preloaded = true;
+               break;
+            default:
+               return false;
+         }
+      }
+      else return false;
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, bool singleField)
 {
    int offset = 0;
@@ -5999,7 +6034,6 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
 {
    ref_t outputType = 0;
    bool hintChanged = false;
-   bool privateMethod = false;
    int hint = scope.info.methodHints.get(Attribute(message, maHint));
    int methodType = hint & tpMask;
 
@@ -6016,9 +6050,6 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
       }
       else if (current == lxType) {
          outputType = current.argument;
-      }
-      else if (current == lxPrivateAttr) {
-         privateMethod = true;
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -6039,7 +6070,7 @@ void Compiler :: generateMethodHints(ClassScope& scope, SNode node, ref_t messag
 
    if (hintChanged) {
       //HOTFIX : private sealed method should be marked appropriately
-      if (privateMethod && (hint & tpMask) == tpSealed)
+      if ((hint & tpMask) == tpSealed && getVerb(message) == PRIVATE_MESSAGE_ID)
          hint = (hint & ~tpMask) | tpPrivate;
 
       scope.info.methodHints.exclude(Attribute(message, maHint));
@@ -6063,20 +6094,17 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
       //   generateMethodHints(scope, current, current.argument);
       //}
       else if (current == lxClassMethod) {
-         generateMethodHints(scope, current, current.argument);
+         ref_t message = current.argument;
+         generateMethodHints(scope, current, message);
 
-         int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(current.argument, maHint));
+         int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
+         bool privat = (methodHints & tpMask) == tpPrivate;
 
-         //HOTFIX : overwrite the private message verb
-         int message = current.argument;
-         bool privat = false;
-         if ((methodHints & tpMask) == tpPrivate) {
-            message = overwriteVerb(message, PRIVATE_MESSAGE_ID);
-            privat = true;
-         }
+         if (test(methodHints, tpGeneric)) {
+            message = overwriteSubject(message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
 
-         if (test(methodHints, tpGeneric))
             scope.info.header.flags |= elWithGenerics;
+         }            
 
          // check if there is no duplicate method
          if (scope.info.methods.exist(message, true))
@@ -6877,9 +6905,9 @@ void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode 
          declareSingletonAction(classScope, objNode, objNode, hints);
          singleton = true;
       }
-      //else compileSymbolHints(hints, scope, false);
+      else compileSymbolHints(hints, scope, false);
    }
-   //else compileSymbolHints(hints, scope, false);
+   else compileSymbolHints(hints, scope, false);
 
    if (!singleton && (scope.typeRef != 0 || scope.constant)) {
       SymbolExpressionInfo info;
@@ -7054,7 +7082,7 @@ void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNo
 
    CodeScope codeScope(&scope, &writer);
    if (retVal.kind == okUnknown) {
-      //compileSymbolHints(hints, scope, true);
+      compileSymbolHints(hints, scope, true);
       
       // compile symbol body, if it is not a singleton
       recordDebugStep(codeScope, expression.FirstTerminal(), dsStep);

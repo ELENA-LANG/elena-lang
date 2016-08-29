@@ -10,6 +10,8 @@ In development:
                  * symbol hints
                  * test templates (nvarof,varof,dispatchable,nprop,...)
                  * test private sealed method implementation
+                 * test const / preloaded symbol attributes
+                 * generic attribute may be applied only for generic method (without subject)
                  * lib40 : minimal application
 
               xmaint
