@@ -458,17 +458,6 @@ namespace _ELENA_
    #define TARGET_POSTFIX           "##"
    #define STATICFIELD_POSTFIX      "#static"
 
-  // --- ELENA modifiers ---
-   #define HINT_CONSTANT            "const#0$"
-//   #define HINT_TYPE               "type"              // type hint
-//   #define HINT_SIZE               "size"
-// #define HINT_SAFEPOINT          "safepoint"
-// #define HINT_LOCK               "sync"
-   #define HINT_SUPPRESS_WARNINGS   "suppress#1$"
-   #define HINT_PRELOADED           "preloaded#0$"
-
-   #define HINT_WRAPPER             "class"         // obsolete
-
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
    #define RTDLL_FORWARD            "$rt"

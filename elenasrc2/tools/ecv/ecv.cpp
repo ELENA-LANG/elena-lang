@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   3
+#define REVISION_VERSION   4
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1110,18 +1110,19 @@ int main(int argc, char* argv[])
 
    // prepare library manager
    Path configPath;
-   Path::loadPath(configPath, "elc.cfg");
+   Path::loadPath(configPath, "templates\\lib.cfg");
 
    Path rootPath;
 
    // get viewing module name
    IdentifierString moduleName(argv[1]);
 
-   // load config attributes
-   IniConfigFile config;
-   if (config.load(configPath, feUTF8)) {
-      Path::loadPath(rootPath, config.getSetting(PROJECT_SECTION, ROOTPATH_OPTION, DEFAULT_STR));
-   }
+   //// load config attributes
+   //IniConfigFile config;
+   //if (config.load(configPath, feUTF8)) {
+   //   Path::loadPath(rootPath, config.getSetting(PROJECT_SECTION, ROOTPATH_OPTION, DEFAULT_STR));
+   //}
+   Path::loadPath(rootPath, "..\\lib30");
 
    LibraryManager loader(rootPath, NULL);
    LoadResult result = lrNotFound;

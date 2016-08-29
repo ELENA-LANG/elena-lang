@@ -13,17 +13,17 @@
         $value := val.
     ]
 
-    #method(suppress:w3) get = $value.
+    #method(w3) get = $value.
     
-    #method(suppress:w3) cast : verb &to:target => $value.
+    #method(w3) cast : verb &to:target => $value.
 
     /// Dispatches the verb to the target object with generic subject
-    #method(suppress:w3) cast : aVerb &to:aTarget &with:aParam => $value.
+    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
     
-    #method(suppress:w3) equal : anObject
+    #method(w3) equal : anObject
         => $value.
         
-    #method(embeddable,suppress:w3) => $value.
+    #method(embeddable,w3) => $value.
 }
 
 #template nvarof : template_subj
@@ -40,23 +40,23 @@
         $value := val.
     ]
     
-    #method(suppress:w3) append : val
+    #method append : val
     [
         $value := $value + val template_subj.
     ]
     
-    #method(suppress:w3) reduce : val
+    #method reduce : val
     [
         $value := $value - val template_subj.
     ]
 
-    #method(suppress:w3) multiplyBy : val
+    #method multiplyBy : val
     [
         $value := $value * val template_subj.
     ]
     
     /// Divides into the value
-    #method(suppress:w3) divideInto : val
+    #method divideInto : val
     [
         $value := $value / val template_subj.
     ]
@@ -82,17 +82,17 @@
         $value := $value / val.
     ]
 
-    #method(suppress:w3) get = $value.
+    #method(w3) get = $value.
     
-    #method(suppress:w3) cast : verb &to:target => $value.
+    #method(w3) cast : verb &to:target => $value.
 
     /// Dispatches the verb to the target object with generic subject
-    #method(suppress:w3) cast : aVerb &to:aTarget &with:aParam => $value.
+    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
     
-    #method(suppress:w3) equal : anObject
+    #method(w3) equal : anObject
         => $value.
         
-    #method(embeddable,suppress:w3) => $value.
+    #method(embeddable,w3) => $value.
 }
 
 // === Numeric Variables ===
@@ -195,7 +195,7 @@
         = 255.
     
     /// Creates the object with a specified value
-    #constructor(stacksafe,suppress:w3) new &byte:value
+    #constructor(stacksafe,w3) new &byte:value
         = value.
 
     /// Creates the object with a specified value
@@ -255,19 +255,19 @@
         = RealNumber new &byte:$self less &real:anOperand.
 
     /// Returns the sum
-    #method(byte,stacksafe,suppress:w3) add &byte:anOperand
+    #method(byte,stacksafe,w3) add &byte:anOperand
         = theValue + anOperand.
 
     /// Returns the sum
-    #method(byte,stacksafe,suppress:w3) subtract &byte:anOperand
+    #method(byte,stacksafe,w3) subtract &byte:anOperand
         = theValue - anOperand.
 
     /// Returns the product
-    #method(byte,stacksafe,suppress:w3) multiply &byte:anOperand
+    #method(byte,stacksafe,w3) multiply &byte:anOperand
         = theValue * anOperand.
 
     /// Returns the result of integer division
-    #method(byte,stacksafe,suppress:w3) divide &byte:anOperand
+    #method(byte,stacksafe,w3) divide &byte:anOperand
         = theValue / anOperand.
 
     /// Returns the sum
@@ -335,15 +335,15 @@
         = RealNumber new &byte:$self divide &real:anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(byte,stacksafe,suppress:w3) and &byte:anOperand
+    #method(byte,stacksafe,w3) and &byte:anOperand
         = theValue && anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(byte,stacksafe,suppress:w3) or &byte:anOperand
+    #method(byte,stacksafe,w3) or &byte:anOperand
         = theValue || anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(byte,stacksafe,suppress:w3) xor &byte:anOperand
+    #method(byte,stacksafe,w3) xor &byte:anOperand
         = theValue ^^ anOperand.
 
     /// Returns the result of bitwise AND operation
@@ -382,7 +382,7 @@
     #method(long,stacksafe) xor &long:anOperand
         = LongNumber new &byte:$self xor &long:anOperand.
 
-    #method(byte,stacksafe,suppress:w3) shift &int:val
+    #method(byte,stacksafe,w3) shift &int:val
     [
         (val > 0)
             ? [ ^ theValue >> val. ].
@@ -397,10 +397,10 @@
         => system'core_routines'__byte.  
         
     /// Returns the literal presentation
-    #method(suppress:w2) literal = system'literalConvertor convert &byte:$self.
+    #method(w2) literal = system'literalConvertor convert &byte:$self.
 
     /// Returns the literal presentation
-    #method(suppress:w2) wide = system'wideConvertor convert &byte:$self.
+    #method(w2) wide = system'wideConvertor convert &byte:$self.
 
     /// Clones the value
     #method clone = ByteNumber new &byte:$self.
@@ -409,7 +409,7 @@
     #method(stacksafe) readHashCode &vint:aCode 
         => system'core_routines'__int.
     
-    #method(embeddable,int,suppress:w3) hash_code
+    #method(embeddable,int,w3) hash_code
     [
         #var(int)aCode.
         $self readHashCode &vint:aCode.
@@ -443,7 +443,7 @@
         = shortConvertor convert &byte:value.
         
     /// Creates the object with specified value
-    #constructor(stacksafe,suppress:w3) new &short:value
+    #constructor(stacksafe,w3) new &short:value
         = value.
 
     /// Creates the object with a default value (0)
@@ -507,19 +507,19 @@
         = RealNumber new &short:$self less &real:anOperand.
 
     /// Returns the sum
-    #method(short,stacksafe,suppress:w3) add &short:anOperand
+    #method(short,stacksafe,w3) add &short:anOperand
         = theValue + anOperand.
 
     /// Returns the sum
-    #method(short,stacksafe,suppress:w3) subtract &short:anOperand
+    #method(short,stacksafe,w3) subtract &short:anOperand
         = theValue - anOperand.
 
     /// Returns the product
-    #method(short,stacksafe,suppress:w3) multiply &short:anOperand
+    #method(short,stacksafe,w3) multiply &short:anOperand
         = theValue * anOperand.
 
     /// Returns the result of integer division
-    #method(short,stacksafe,suppress:w3) divide &short:anOperand
+    #method(short,stacksafe,w3) divide &short:anOperand
         = theValue / anOperand.
 
     /// Returns the sum
@@ -587,15 +587,15 @@
         = RealNumber new &short:$self divide &real:anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(short,stacksafe,suppress:w3) and &short:anOperand
+    #method(short,stacksafe,w3) and &short:anOperand
         = theValue && anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(short,stacksafe,suppress:w3) or &short:anOperand
+    #method(short,stacksafe,w3) or &short:anOperand
         = theValue || anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(short,stacksafe,suppress:w3) xor &short:anOperand
+    #method(short,stacksafe,w3) xor &short:anOperand
         = theValue ^^ anOperand.
         
     /// Returns the result of bitwise AND operation
@@ -634,7 +634,7 @@
     #method(stacksafe) xor &long:anOperand
         = LongNumber new &short:$self xor &long:anOperand.        
 
-    #method(short,stacksafe,suppress:w3) shift &int:val
+    #method(short,stacksafe,w3) shift &int:val
     [
         (val > 0)
             ? [ ^ theValue >> val. ].
@@ -649,10 +649,10 @@
         => system'core_routines'__short.  
 
     /// Returns the literal presentation
-    #method(suppress:w2) literal = system'literalConvertor convert &short:$self.
+    #method(w2) literal = system'literalConvertor convert &short:$self.
 
     /// Returns the literal presentation
-    #method(suppress:w2) wide = system'wideConvertor convert &short:$self.
+    #method(w2) wide = system'wideConvertor convert &short:$self.
 
     /// Clones the value
     #method clone = ShortNumber new &short:$self.    
@@ -661,7 +661,7 @@
     #method(stacksafe) readHashCode &vint:aCode 
         => system'core_routines'__int.
     
-    #method(embeddable,int,suppress:w3) hash_code
+    #method(embeddable,int,w3) hash_code
     [
         #var(int)aCode.
         $self readHashCode &vint:aCode.
@@ -696,7 +696,7 @@
         = 2147483647.
     
     /// Creates the object with specified value
-    #constructor(stacksafe,suppress:w3) new &int:value
+    #constructor(stacksafe,w3) new &int:value
         = value.
 
     /// Creates the object with specified value
@@ -736,31 +736,31 @@
         = theValue < anOperand.
         
     /// Returns the sum
-    #method(int,stacksafe,suppress:w3) add &int:anOperand
+    #method(int,stacksafe,w3) add &int:anOperand
         = theValue + anOperand.
 
     /// Returns the sum
-    #method(int,stacksafe,suppress:w3) subtract &int:anOperand
+    #method(int,stacksafe,w3) subtract &int:anOperand
         = theValue - anOperand.
 
     /// Returns the product
-    #method(int,stacksafe,suppress:w3) multiply &int:anOperand
+    #method(int,stacksafe,w3) multiply &int:anOperand
         = theValue * anOperand.
 
     /// Returns the result of integer division
-    #method(int,stacksafe,suppress:w3) divide &int:anOperand
+    #method(int,stacksafe,w3) divide &int:anOperand
         = theValue / anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(int,stacksafe,suppress:w3) and &int:anOperand
+    #method(int,stacksafe,w3) and &int:anOperand
         = theValue && anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(int,stacksafe,suppress:w3) or &int:anOperand
+    #method(int,stacksafe,w3) or &int:anOperand
         = theValue || anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(int,stacksafe,suppress:w3) xor &int:anOperand
+    #method(int,stacksafe,w3) xor &int:anOperand
         = theValue ^^ anOperand.    
 
     /// Compares the integer value
@@ -896,10 +896,10 @@
         = LongNumber new &int:$self xor &long:anOperand.
 
     /// Returns the literal presentation
-    #method(suppress:w2) literal = system'literalConvertor convert &int:$self.
+    #method(w2) literal = system'literalConvertor convert &int:$self.
 
     /// Returns the literal presentation
-    #method(suppress:w2) wide = system'wideConvertor convert &int:$self.
+    #method(w2) wide = system'wideConvertor convert &int:$self.
 
     /// Clones the value
     #method clone = IntNumber new &int:$self.
@@ -908,7 +908,7 @@
     #method(stacksafe) readHashCode &vint:aCode 
         => system'core_routines'__int.
     
-    #method(embeddable,int,suppress:w3) hash_code
+    #method(embeddable,int,w3) hash_code
     [
         #var(int)aCode.
         $self readHashCode &vint:aCode.
@@ -916,7 +916,7 @@
         ^ aCode.
     ]        
 
-    #method(int,stacksafe,suppress:w3) shift &int:val
+    #method(int,stacksafe,w3) shift &int:val
     [
         (val > 0)
             ? [ ^ theValue >> val. ].
@@ -931,7 +931,7 @@
         => system'core_routines'__int.  
         
     /// Negates the value
-    #method(stacksafe,suppress:w3) negative
+    #method(stacksafe/*,suppress:w3*/) negative
         = 0 - theValue.
 }
 
@@ -955,7 +955,7 @@
         <= new &long:0l.
 
     /// Creates the object with specified value
-    #constructor(stacksafe,suppress:w3) new &long:value
+    #constructor(stacksafe,w3) new &long:value
         = value.
 
     /// Creates the object with specified value
@@ -995,31 +995,31 @@
         = theValue < anOperand.
         
     /// Returns the sum
-    #method(long,stacksafe,suppress:w3) add &long:anOperand
+    #method(long,stacksafe,w3) add &long:anOperand
         = theValue + anOperand.
 
     /// Returns the sum
-    #method(long,stacksafe,suppress:w3) subtract &long:anOperand
+    #method(long,stacksafe,w3) subtract &long:anOperand
         = theValue - anOperand.
 
     /// Returns the product
-    #method(long,stacksafe,suppress:w3) multiply &long:anOperand
+    #method(long,stacksafe,w3) multiply &long:anOperand
         = theValue * anOperand.
 
     /// Returns the result of integer division
-    #method(long,stacksafe,suppress:w3) divide &long:anOperand
+    #method(long,stacksafe,w3) divide &long:anOperand
         = theValue / anOperand.
 
     /// Returns the result of bitwise AND operation
-    #method(long,stacksafe,suppress:w3) and &long:anOperand
+    #method(long,stacksafe,w3) and &long:anOperand
         = theValue && anOperand.
 
     /// Returns the result of bitwise OR operation
-    #method(long,stacksafe,suppress:w3) or &long:anOperand
+    #method(long,stacksafe,w3) or &long:anOperand
         = theValue || anOperand.
 
     /// Returns the result of bitwise XOR operation
-    #method(long,stacksafe,suppress:w3) xor &long:anOperand
+    #method(long,stacksafe,w3) xor &long:anOperand
         = theValue ^^ anOperand.    
 
     /// Compares the integer value
@@ -1155,10 +1155,10 @@
         = $self xor &long:(LongNumber new &byte:anOperand).
 
     /// Returns the literal presentation
-    #method(suppress:w2) literal = system'literalConvertor convert &long:$self.
+    #method(w2) literal = system'literalConvertor convert &long:$self.
 
     /// Returns the literal presentation
-    #method(suppress:w2) wide = system'wideConvertor convert &long:$self.
+    #method(w2) wide = system'wideConvertor convert &long:$self.
 
     /// Clones the value
     #method clone = LongNumber new &long:$self.
@@ -1167,7 +1167,7 @@
     #method(stacksafe) readHashCode &vint:aCode
         => system'core_routines'__int.
     
-    #method(int,embeddable,suppress:w3) hash_code
+    #method(int,embeddable,w3) hash_code
     [
         #var(int)aCode.
         $self readHashCode &vint:aCode.
@@ -1175,7 +1175,7 @@
         ^ aCode.
     ]
 
-    #method(long,stacksafe,suppress:w3) shift &int:val
+    #method(long,stacksafe,w3) shift &int:val
     [
         (val > 0)
             ? [ ^ theValue >> val. ].
@@ -1190,7 +1190,7 @@
         => system'core_routines'__long.  
         
     /// Negates the value
-    #method(stacksafe,suppress:w3) negative
+    #method(stacksafe/*,suppress:w3*/) negative
         = 0l - theValue.
 }
 
@@ -1219,7 +1219,7 @@
         <= new &real:0.0r.
 
     /// Creates the object with specified value
-    #constructor(stacksafe,suppress:w3) new &real:value
+    #constructor(stacksafe,w3) new &real:value
         = value.
   
     /// Creates the object with specified value
@@ -1251,19 +1251,19 @@
         = theValue < anOperand.
         
     /// Returns the sum
-    #method(real,stacksafe,suppress:w3) add &real:anOperand
+    #method(real,stacksafe,w3) add &real:anOperand
         = theValue + anOperand.
 
     /// Returns the sum
-    #method(real,stacksafe,suppress:w3) subtract &real:anOperand
+    #method(real,stacksafe,w3) subtract &real:anOperand
         = theValue - anOperand.
 
     /// Returns the product
-    #method(real,stacksafe,suppress:w3) multiply &real:anOperand
+    #method(real,stacksafe,w3) multiply &real:anOperand
         = theValue * anOperand.
 
     /// Returns the result of integer division
-    #method(real,stacksafe,suppress:w3) divide &real:anOperand
+    #method(real,stacksafe,w3) divide &real:anOperand
         = theValue / anOperand.
         
     /// Compares the numeric values
@@ -1371,10 +1371,10 @@
         = $self divide &real:(RealNumber new &long:anOperand).
 
     /// Returns the literal presentation
-    #method(suppress:w2) literal = system'literalConvertor convert &real:$self.
+    #method(w2) literal = system'literalConvertor convert &real:$self.
     
     /// Returns the literal presentation
-    #method(suppress:w2) wide = system'wideConvertor convert &real:$self.
+    #method(w2) wide = system'wideConvertor convert &real:$self.
 
     /// Clones the value    
     #method clone = RealNumber new &real:$self.
@@ -1383,7 +1383,7 @@
     #method(stacksafe) readHashCode &vint:aCode
         => system'core_routines'__int.
     
-    #method(int,embeddable,suppress:w3) hash_code
+    #method(int,embeddable,w3) hash_code
     [
         #var(int)aCode.
         $self readHashCode &vint:aCode.
@@ -1392,7 +1392,7 @@
     ]
         
     /// Negates the value
-    #method(stacksafe,suppress:w3) negative
+    #method(stacksafe/*,suppress:w3*/) negative
         = 0.0r - theValue.
 }
 
@@ -1408,7 +1408,7 @@
         <= new &char:#0.
 
     /// Creates the object with specified value
-    #constructor(stacksafe,suppress:w3) new &char:value
+    #constructor(stacksafe,w3) new &char:value
         = value.
 
     /// Creates the object with specified value
@@ -1434,10 +1434,10 @@
     #method clone = CharValue new &char:$self.
 
     /// Returns the literal value
-    #method(suppress:w2) literal = system'literalConvertor convert &char:$self.
+    #method(w2) literal = system'literalConvertor convert &char:$self.
 
     /// Returns the wide literal value
-    #method(suppress:w2) wide = system'wideConvertor convert &char:$self.
+    #method(w2) wide = system'wideConvertor convert &char:$self.
     
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readLength &vint:aLength
@@ -1456,7 +1456,7 @@
     ]
         
     /// Retuns the number of bytes to represent the symbol        
-    #method(stacksafe,int,embeddable,suppress:w3) length
+    #method(stacksafe,int,embeddable,w3) length
     [
         #var(int)aLength.
         $self readLength &vint:aLength.
@@ -1465,7 +1465,7 @@
     ]
     
     /// Retuns the number of short integers to represent the symbol
-    #method(stacksafe,int,embeddable,suppress:w3) wideLength
+    #method(stacksafe,int,embeddable,w3) wideLength
     [
         #var(int)aLength.
         $self readWideLength &vint:aLength.
@@ -1485,7 +1485,7 @@
     #method(stacksafe) readHashCode &vint:aCode 
         => system'core_routines'__int.
     
-    #method(embeddable,int,suppress:w3) hash_code
+    #method(embeddable,int,w3) hash_code
     [
         #var(int)aCode.
         $self readHashCode &vint:aCode.
@@ -2289,7 +2289,7 @@
     #method(stacksafe) pi &vreal:aRetVal
         => system'core_routines'__real.
         
-    #method(real,embeddable,suppress:w3,stacksafe) pi
+    #method(real,embeddable,w3,stacksafe) pi
     [
         #var(real)aRetVal.
         $self pi &vreal:aRetVal.
@@ -2297,7 +2297,7 @@
         ^ aRetVal.
     ]        
     
-    #method(real,suppress:w3,stacksafe) e
+    #method(real,w3,stacksafe) e
     [
         #var(real)aRetVal.
         $self exp &real:1.0r &vreal:aRetVal.
@@ -2314,27 +2314,27 @@
 
 #symbol Integer =
 {
-    #method(vint,suppress:w3) new
+    #method(vint,w3) new
         = 0.
         
-    #method(vint,suppress:w3) new &int:n
+    #method(vint,w3) new &int:n
         = n.
         
-    #method(vint,suppress:w3) new:n
+    #method(vint,w3) new:n
         = n int.
 }.
 
 #symbol Real =
 {
-    #method(vreal,suppress:w3) new
+    #method(vreal,w3) new
         = 0.0r.
         
-    #method(vreal,suppress:w3) new : n
+    #method(vreal,w3) new : n
         = n real.
         
-    #method(vreal,suppress:w3) new &int:n
+    #method(vreal,w3) new &int:n
         = n real.
         
-    #method(vreal,suppress:w3) new &real:n
+    #method(vreal,w3) new &real:n
         = n.
 }.

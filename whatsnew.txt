@@ -12,6 +12,8 @@
 [+] #264 : Assigning an outer variable 
 [+] #267 : Module initializers (preloaded attribute)
 [+] #266 : Static fields 
+[+] template syntax modified, suppress hint is obsolete (w2 and w3 can be
+    used directly)
 
 [ELC]
 [+] #271 : constant array

@@ -19,6 +19,9 @@
 #mtemplate(80h) action {}
 #mtemplate(01h) sealed {}
 
+#mtemplate(-2) w2 {}
+#mtemplate(-3) w3 {}
+
 /// Class attributes
 #template(0120h) sealed  {}
 #template(0004h) dynamic {}

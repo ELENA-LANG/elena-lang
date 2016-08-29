@@ -23,7 +23,7 @@
     #field(signature)theValue.
     
     /// Loads a dynamic verb
-    #constructor(stacksafe,suppress:w3) new &verb:aVerb
+    #constructor(stacksafe,w3) new &verb:aVerb
         = aVerb.
 
     /// Dispatches incoming messages and redirects to the target
@@ -38,7 +38,7 @@
     #field(message)theValue.
     
     /// Loads a message
-    #constructor(stacksafe,suppress:w3) new &mssg:message
+    #constructor(stacksafe,w3) new &mssg:message
         = message.
 
     #method(stacksafe) subject
@@ -64,7 +64,7 @@
     #field(extension_message)theValue.
     
     /// Loads a message
-    #constructor(stacksafe,suppress:w3) new &ext_mssg:message
+    #constructor(stacksafe,w3) new &ext_mssg:message
         = message.
 
     #method(stacksafe) subject
@@ -92,7 +92,7 @@
     ]
         
     /// Creates a dynamic signature
-    #constructor(stacksafe,suppress:w3) new &subject:subject
+    #constructor(stacksafe,w3) new &subject:subject
         = subject.
 
     /// Creates a dynamic signature
@@ -144,7 +144,7 @@
     #field(mssgarray) theArray.
     #field(vint)  theIndex.
 
-    #constructor(suppress:w3) new &mssgarray:anArray
+    #constructor(w3) new &mssgarray:anArray
     [
         theArray := anArray.
         theIndex := 0.

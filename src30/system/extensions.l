@@ -40,7 +40,7 @@
     #method is &numeric
         = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
         
-    #method(bool,suppress:w2) is &empty
+    #method(bool,w2) is &empty
         = self length == 0.
         
     #method(bool) is &nonempty
@@ -72,7 +72,7 @@
         ^ ByteNumber new &byte:n.
     ]
     
-    #method(byte,suppress:w2) mod : anOperand
+    #method(byte,w2) mod : anOperand
     [
         #var retVal := self / anOperand * anOperand.
         
@@ -136,7 +136,7 @@
         ^ ShortNumber new &short:n.
     ]
     
-    #method(short,suppress:w2) mod : anOperand
+    #method(short,w2) mod : anOperand
     [
         #var retVal := self / anOperand * anOperand.
         
@@ -733,7 +733,7 @@
     #method indexOf : anObject
         = self::arrayOp indexOf &int:0 &object:anObject.
         
-    #method(suppress:w2) safeSeek : aValue
+    #method(w2) safeSeek : aValue
     [
         #var(int)aLength := self length.
         
@@ -789,7 +789,7 @@
     #method sort : aCompareFunc
         = self::arrayOp sort &func2:(aCompareFunc func2).
     
-    #method(suppress:w2) sort &func2:aCompareFunc
+    #method(w2) sort &func2:aCompareFunc
     [
         #var(int)i := 0.
         #var(int)j := 0.
@@ -899,7 +899,7 @@
     #method trimLeft
         = self::literalOp trimLeft &char:#32.    
        
-    #method(suppress:w2) trimRight &char:aChar
+    #method(w2) trimRight &char:aChar
     [
         #var(int)aLength := self length.
         #var(int)anIndex := aLength - 1.
@@ -1183,7 +1183,7 @@
             ! [ ^ self. ].
     ]
         
-    #method(suppress:w2) replace &wide:aReplacee &wide:aReplacer
+    #method(w2) replace &wide:aReplacee &wide:aReplacer
     [
         #var(wide) aTarget := emptyWideLiteralValue.
         #var(int)aStart := 0.

@@ -339,10 +339,6 @@ private:
       ref_t packageReference;
 
       // cached subjects / hints
-      ref_t warnHint;
-      ref_t constHint;
-      ref_t preloadedHint;
-
       ref_t boolType;
 
       // warning mapiing
@@ -587,11 +583,11 @@ private:
          else return Scope::getScope(level);
       }
 
-      //virtual bool validateTemplate(ref_t hintRef)
-      //{
-      //   _Module* extModule = NULL;
-      //   return moduleScope->loadTemplateInfo(hintRef, extModule) != 0;
-      //}
+      virtual bool validateTemplate(ref_t hintRef)
+      {
+         _Module* extModule = NULL;
+         return moduleScope->loadTemplateInfo(hintRef, extModule) != 0;
+      }
 
       void save()
       {
@@ -837,7 +833,7 @@ private:
 
       virtual ObjectInfo mapObject(TerminalInfo identifier);
 
-      //virtual bool validateTemplate(ref_t reference);
+      virtual bool validateTemplate(ref_t reference);
 
       virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
       {
@@ -948,13 +944,14 @@ private:
    bool declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef, RoleMap* attributes = NULL);
    bool declareMethodAttribute(DNode hint, MethodScope& scope, SyntaxWriter& writer, ref_t hintRef);
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
+   void updateMethodTemplateInfo(MethodScope& scope, size_t rollbackPosition);
 
    //bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
    //void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
-   //void importTemplateInfo(SyntaxTree::Node node, ModuleScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
+   void importTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
                                  TemplateInfo& info, RoleMap* attributes);
-   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes);
+   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes = NULL);
    void copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer);
 
    void compileParentDeclaration(DNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);

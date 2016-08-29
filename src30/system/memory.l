@@ -4,7 +4,7 @@
 {
     #field(template_subj)$target.
 
-    #method(suppress:w3) enumerator 
+    #method(w3) enumerator 
     [
         #var(vint)index := -1.
         #var(int)length := 0.
@@ -35,7 +35,7 @@
         retVal := len.
     ]
 
-    #method(suppress:w3,stacksafe,template_subj) getAt &int:n
+    #method(w3,stacksafe,template_subj) getAt &int:n
     [
         (n < 0)
             ? [ #throw InvalidArgumentException new. ].
@@ -49,7 +49,7 @@
             
     ]
 
-    #method(suppress:w3,stacksafe) setAt &int:n &template_subj:item
+    #method(w3,stacksafe) setAt &int:n &template_subj:item
     [
         (n < 0)
             ? [ #throw InvalidArgumentException new. ].
@@ -67,7 +67,7 @@
         <= %getAt &int:(aParam int).
         
     /// Returns the item at the specified index
-    #method(suppress:w2) setAt : index : value
+    #method(w2) setAt : index : value
         <= %setAt &int:(index int) &template_subj:value.
 }
 
@@ -363,7 +363,7 @@
     #field(int)      theLength.
     
     /// Creates the array with the specified length
-    #constructor(stacksafe,suppress:w3) new &int:length
+    #constructor(stacksafe,w3) new &int:length
     [
         theLength := length.
         theArray := IntArray new &int:(length / 32 + 1).
@@ -1843,7 +1843,7 @@
         <= new &literal:(anObject literal).
     
     /// Creates an enumerator
-    #constructor(suppress:w3) new &literal:aLiteral
+    #constructor(w3) new &literal:aLiteral
     [
         theLiteral := aLiteral.
         theIndex := -1.
@@ -1897,7 +1897,7 @@
         <= new &literal:(anObject literal).
     
     /// Creates an iterator
-    #constructor(suppress:w3) new &literal:aLiteral
+    #constructor(w3) new &literal:aLiteral
     [
         theLiteral := aLiteral.
         theIndex := 0.
@@ -1958,7 +1958,7 @@
         <= new &wide:(anObject wide).
     
     /// Creates an enumerator
-    #constructor(suppress:w3) new &wide:aLiteral
+    #constructor(w3) new &wide:aLiteral
     [
         theLiteral := aLiteral.
         theIndex := -1.
@@ -2014,7 +2014,7 @@
         <= new &wide:(anObject wide).
     
     /// Creates an iterator
-    #constructor(suppress:w3) new &wide:aLiteral
+    #constructor(w3) new &wide:aLiteral
     [
         theLiteral := aLiteral.
         theIndex := 0.
@@ -2067,7 +2067,7 @@
         <= new &array:(anArray array).
     
     /// Returns the parameter iterator
-    #constructor(suppress:w3) new &array:anArray
+    #constructor(w3) new &array:anArray
     [
         theArray := anArray.
         theIndex := 0.
@@ -2122,7 +2122,7 @@
         <= new &array:(anArray array).
     
     /// Creates an array enumerator
-    #constructor(suppress:w3) new &array:anArray
+    #constructor(w3) new &array:anArray
     [
         theArray := anArray.
         theIndex := -1.
@@ -2199,7 +2199,7 @@
         <= new &bitarray:(anArray bitarray).
     
     /// Returns the parameter iterator
-    #constructor(suppress:w3) new &bitarray:anArray
+    #constructor(w3) new &bitarray:anArray
     [
         theArray := anArray.
         theIndex := 0.
@@ -2253,7 +2253,7 @@
         <= new &bitarray:(anArray bitarray).
     
     /// Creates an array enumerator
-    #constructor(suppress:w3) new &bitarray:anArray
+    #constructor(w3) new &bitarray:anArray
     [
         theArray := anArray.
         theIndex := -1.
@@ -2293,7 +2293,7 @@
         <= new &bitset:(anArray bitset).
     
     /// Returns the parameter iterator
-    #constructor(suppress:w3) new &bitset:anArray
+    #constructor(w3) new &bitset:anArray
     [
         theArray := anArray.
         theIndex := 0.
@@ -2345,7 +2345,7 @@
         <= new &bitset:(anArray bitset).
     
     /// Creates an array enumerator
-    #constructor(suppress:w3) new &bitset:anArray
+    #constructor(w3) new &bitset:anArray
     [
         theArray := anArray.
         theIndex := -1.
