@@ -2,14 +2,11 @@
 In development:
 ------                              
 
-              xdev
-                 * lib40 : refactoring - super class should contain default dispatcher
-                 * lib40 : minimal application
-
               ydev
                  * upndown : implementing, play with chaotic computer player
 
               xmaint
+                 * refactoring : introduce ident_t as a class wrapper around const char*
                  * issue
 
               zdev 
@@ -25,10 +22,12 @@ In development:
                  * game of life : viewer
 
               xdev
+                 * lib40 : hello world
                  * lib40 : true / false could be member of enumeration list 
-                 * refactoring
                  * lib40 : review predefined boolean constants (bool,true,false), could we get rid of them from lib40 config file
                  * lib40 : implementing
+                 * refactoring : minimalistic library should be able to work with only super class declared (currently at least literal
+                   object should be declared)
 
 ------                                 
 Pipeline:

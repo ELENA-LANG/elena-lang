@@ -415,8 +415,6 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
 
    this->forwardsUnresolved = forwardsUnresolved;
 
-   packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
-
    warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
    warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
    warningMask = project->getWarningMask();
@@ -436,6 +434,12 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
+
+   // HOTFIX : package section should be created if at least literal class is declated
+   if (literalReference != 0) {
+      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
+   }
+   else packageReference = 0;
 
    // cache the frequently used subjects
    boolType = mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
@@ -6452,7 +6456,7 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
 
    // if it is a super class validate it
    if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
-      if (!scope.info.methods.exist(DISPATCH_MESSAGE_ID))
+      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
          scope.raiseError(errNoDispatcher, node.Terminal());
    }
 

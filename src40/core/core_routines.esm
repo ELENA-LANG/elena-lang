@@ -12,7 +12,7 @@ procedure __object.dispatch[1]
   pushb
   // !! temporal
   pushr class : system'Object // system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
+  // pushr const : %new&mssg$[1]
   throw
 
 end
