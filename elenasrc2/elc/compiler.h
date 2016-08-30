@@ -947,8 +947,6 @@ private:
    void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
    void updateMethodTemplateInfo(MethodScope& scope, size_t rollbackPosition);
 
-   //bool declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject = 0);
-   //void declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset);
    void importTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
    void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
                                  TemplateInfo& info, RoleMap* attributes);

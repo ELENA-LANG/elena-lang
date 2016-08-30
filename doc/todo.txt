@@ -2,8 +2,11 @@
 In development:
 ------                              
 
+              xdev
+                 * templates
+
               ydev
-                 * upndown : implementing, play with chaotic computer player
+                 * upndown : playing a round
 
               xmaint
                  * refactoring : introduce ident_t as a class wrapper around const char*
@@ -28,6 +31,9 @@ In development:
                  * lib40 : implementing
                  * refactoring : minimalistic library should be able to work with only super class declared (currently at least literal
                    object should be declared)
+
+              ydev
+                 * upndown : implementing, play with chaotic computer player
 
 ------                                 
 Pipeline:

@@ -2065,113 +2065,6 @@ bool Compiler :: declareMethodAttribute(DNode hint, MethodScope& scope, SyntaxWr
    else return false;
 }
 
-//bool Compiler :: declareTemplateInfo(DNode hint, ClassScope& scope, ref_t hintRef, ref_t messageSubject)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   if (!scope.validateTemplate(hintRef))
-//      return false;
-//
-//   SyntaxTree::Writer writer(moduleScope->templates, true);
-//
-//   writer.newNode(lxClass, scope.reference);
-//   writer.newNode(lxTemplate, hintRef);
-//   appendTerminalInfo(&writer, hint.Terminal());
-//
-//   DNode paramNode = hint.firstChild();
-//   while (paramNode != nsNone) {
-//      if (paramNode == nsHintValue) {
-//         TerminalInfo param = paramNode.Terminal();
-//         if (param == tsIdentifier) {
-//            ref_t subject = scope.mapSubject(param, false);
-//            if (subject == 0)
-//               subject = moduleScope->module->mapSubject(param, false);
-//
-//            writer.appendNode(lxTemplateSubject, subject);
-//         }
-//         else scope.raiseError(errInvalidHintValue, param);
-//      }
-//      paramNode = paramNode.nextNode();
-//   }
-//
-//   if (messageSubject != 0)
-//      writer.appendNode(lxTemplateSubject, messageSubject);   
-//
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   writer.closeNode(); //HOTFIX : close the root node
-//
-//   return true;
-//}
-//
-//void Compiler :: declareFieldTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t hintRef, int fieldOffset)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   //if (!scope.validateTemplate(hintRef))
-//   //   return false;
-//
-//   SyntaxTree::Writer writer(moduleScope->templates, true);
-//
-//   writer.newNode(lxClass, scope.reference);
-//   writer.newNode(lxTemplate, hintRef);
-//   //appendTerminalInfo(&writer, hint.Terminal());
-//
-//   SNode attr = node.firstChild();
-//   TemplateInfo templateInfo;
-//   while (attr != lxNone) {
-//      if (attr == lxTemplateSubject) {
-//         int index = 1 + templateInfo.parameters.Count();
-//
-//         templateInfo.parameters.add(index, attr.argument);
-//         writer.appendNode(lxTemplateSubject, attr.argument);
-//      }
-//      attr = attr.nextNode();
-//   }
-//
-//   writer.appendNode(lxTemplateField, fieldOffset);
-//
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   writer.closeNode(); //HOTFIX : close the root node
-//
-//   //HOTFIX : declare field template methods
-//   _Module* extModule = NULL;
-//   _Memory* section = moduleScope->loadTemplateInfo(hintRef, extModule);
-//   if (!section)
-//      return;
-//
-//   SyntaxWriter classWriter(*node.Tree(), true);
-//
-//   SyntaxTree tree(section);
-//   SNode current = tree.readRoot();
-//   current = current.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(extModule, moduleScope->module, getSignature(current.argument), templateInfo));
-//
-//         classWriter.newNode(lxTemplateMethod, messageRef);
-//         SNode attr = current.firstChild();
-//         while (attr != lxNone) {
-//            if (attr == lxClassMethodAttr) {
-//               classWriter.appendNode(lxClassMethodAttr, attr.argument);
-//            }
-//            else if (attr == lxType) {
-//               classWriter.appendNode(lxType, importTemplateSubject(extModule, moduleScope->module, attr.argument, templateInfo));
-//            }
-//
-//            attr = attr.nextNode();
-//         }
-//         classWriter.closeNode();
-//      }
-//
-//      current = current.nextNode();
-//   }
-//   classWriter.closeNode(); // close root
-//}
-
 void Compiler :: declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters)
 {
    DNode paramNode = hint.firstChild();
@@ -5088,13 +4981,6 @@ void Compiler :: compileResendExpression(DNode node, CodeScope& scope, CommandTa
    scope.writer->appendNode(lxParamCount, getParamCount(methodScope->message) + 1);
 }
 
-//void Compiler :: compileImportCode(DNode node, CodeScope& codeScope, ref_t message, ident_t function, CommandTape* tape)
-//{
-//   _writer.declareIdleMethod(*tape, message);
-//   importCode(node, *codeScope.moduleScope, tape, function);
-//   _writer.endIdleMethod(*tape);
-//}
-
 void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
 {
    int paramCount = getParamCount(scope.message);
@@ -5168,24 +5054,6 @@ void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& sc
 
    writer.closeNode();
 }
-//
-//void Compiler :: compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope)
-//{
-//   ref_t originalMethodRef = scope.message;
-//   ref_t embedddedMethodRef = overwriteSubject(scope.message, classClassScope.info.methodHints.get(Attribute(scope.message, maEmbeddedInit)));
-//
-//   // compile an embedded constructor
-//   // HOTFIX: embedded constructor is declared in class class but should be executed if the class scope
-//   scope.tape = &classClassScope.tape;
-//   scope.message = embedddedMethodRef;
-//   writer.newBookmark();
-//   compileMethod(node, writer, scope);
-//   writer.removeBookmark();
-//
-//   // compile a constructor calling the embedded method
-//   scope.message = originalMethodRef;
-//   compileConstructor(DNode(), writer, scope, classClassScope, embedddedMethodRef);
-//}
 
 void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
 {
@@ -6804,12 +6672,12 @@ void Compiler :: compileClassImplementation(DNode node, ClassScope& scope, DNode
    compileClassHints(hints, writer, scope);
    compileFieldDeclarations(node, writer, scope);
 
-   // import templates
-   importTemplateImplementations(scope, writer);
-
    DNode member = node.firstChild();
    compileVMT(member, writer, scope);
    compileVirtualMethods(writer, scope);
+
+   // import templates
+   importTemplateImplementations(scope, writer);
 
    writer.closeNode();
 
