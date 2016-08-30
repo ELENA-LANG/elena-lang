@@ -355,6 +355,7 @@ private:
       ObjectInfo mapObject(TerminalInfo identifier);
 
       ref_t mapReference(ident_t reference, bool existing = false);
+      ref_t mapSubject(ident_t reference, bool existing);
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 

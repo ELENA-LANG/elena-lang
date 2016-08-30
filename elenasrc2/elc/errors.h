@@ -67,8 +67,11 @@ namespace _ELENA_
    #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
    #define errIllegalConstructor    "%s(%d:%d): error 149: Dynamic class requires implicit default constructor\n"
    #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
+   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
 
-   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exists\n"
+   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
+   #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
+   #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
 //   #define errInternalError         "internal error 599"
 //   #define errInvalidDynamicError   "internal error 600"
    #define errCommandSetAbsent     "internal error 600: command set is not defined"

@@ -71,13 +71,13 @@ move %1\dat\sg\syntax.dat %1\bin
 move %1\dat\og\rules.dat %1\bin
 
 md lib30
-%1\bin\asm2binx %1\src30\asm\core_routines.esm lib30\system
+%1\bin\asm2binx %1\asm\core_routines.esm lib30\system
 
-%1\bin\asm2binx %1\src30\asm\x32\commands.asm %1\bin\x32
-%1\bin\asm2binx %1\src30\asm\x32\core.asm %1\bin\x32
-%1\bin\asm2binx %1\src30\asm\x32\coreapi.asm %1\bin\x32
-%1\bin\asm2binx %1\src30\asm\x32\core_vm.asm %1\bin\x32
-%1\bin\asm2binx %1\src30\asm\x32\core_win.asm %1\bin\x32
+%1\bin\asm2binx %1\asm\x32\commands.asm %1\bin\x32
+%1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
+%1\bin\asm2binx %1\asm\x32\coreapi.asm %1\bin\x32
+%1\bin\asm2binx %1\asm\x32\core_vm.asm %1\bin\x32
+%1\bin\asm2binx %1\asm\x32\core_win.asm %1\bin\x32
 
 echo ========== copying bin files.. ===============
 
@@ -458,10 +458,10 @@ echo copying src3 files
 md src30
 copy %1\src30\*.l src27
 
-md src30\asm
-md src30\asm\x32
-copy %1\src30\asm\x32\*.asm src30\asm\x32
-copy %1\src30\asm\*.esm src30\asm
+md asm
+md asm\x32
+copy %1\asm\x32\*.asm asm\x32
+copy %1\asm\*.esm asm
 
 md src30\system
 xcopy %1\src30\system\*.l src30\system /s

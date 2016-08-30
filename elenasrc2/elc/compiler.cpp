@@ -437,8 +437,8 @@ Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module
    falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 
-   // cache the frequently used subjects / hints
-   boolType = module->mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
+   // cache the frequently used subjects
+   boolType = mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
 
    defaultNs.add(module->Name());
 
@@ -666,6 +666,16 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    // otherwise it is a normal one
    return ObjectInfo(okSymbol, reference);
 }
+
+
+ref_t Compiler::ModuleScope ::mapSubject(ident_t reference, bool existing)
+{
+   if (emptystr(reference))
+      return 0;
+
+   return module->mapSubject(reference, existing);
+}
+
 
 ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
 {
@@ -5488,7 +5498,7 @@ void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClass
    // if no construtors are defined inherits the default one
    if (!findSymbol(node.firstChild(), nsConstructor)) {
       if (classScope.info.header.parentRef == 0)
-         classScope.raiseError(errInvalidParent, node.FirstTerminal());
+         classScope.raiseError(errNoConstructorDefined, node.FirstTerminal());
 
       IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
       classClassParentName.append(CLASSCLASS_POSTFIX);
@@ -6438,6 +6448,12 @@ void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hi
       classClassName.append(CLASSCLASS_POSTFIX);
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
+   }
+
+   // if it is a super class validate it
+   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
+      if (!scope.info.methods.exist(DISPATCH_MESSAGE_ID))
+         scope.raiseError(errNoDispatcher, node.Terminal());
    }
 
    // save declaration
@@ -8698,6 +8714,9 @@ void Compiler :: compileModule(DNode node, ModuleScope& scope)
 
    compileIncludeSection(member, scope);
 
+   if (scope.superReference == 0)
+      scope.raiseError(errNotDefinedBaseClass, member.FirstTerminal());
+
    // first pass - declaration
    compileDeclarations(member, scope);
 
@@ -8758,11 +8777,20 @@ inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
    writer.closeNode();
 }
 
+inline ref_t mapForwardRef(_Module* module, Project& project, ident_t forward)
+{
+   ident_t name = project.resolveForward(forward);
+   
+   return emptystr(name) ? 0 : module->mapReference(name);
+}
+
 void Compiler :: createPackageInfo(_Module* module, Project& project)
 {
    ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
    ref_t reference = module->mapReference(sectionName);
-   ref_t vmtReference = module->mapReference(project.resolveForward(SUPER_FORWARD));
+   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
+   if (vmtReference == 0)
+      return;
 
    SyntaxTree tree;
    SyntaxWriter writer(tree);

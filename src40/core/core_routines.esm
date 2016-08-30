@@ -1,0 +1,18 @@
+//        ELENA Language 2.0
+//      inline system library
+
+procedure __object.dispatch[1]
+
+  bsredirect  
+
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  // !! temporal
+  pushr class : system'Object // system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
+end
