@@ -6517,10 +6517,11 @@ void Compiler :: importTemplateTree(ClassScope& scope, SyntaxWriter& writer, SNo
       if (current == lxTemplateSubject) {
          info.parameters.add(info.parameters.Count() + 1, info.messageSubject);
       }
-//      else if (current == lxTemplate) {
-//         // templates should be already imported
-//      }
-      /*else */if (current == lxClassMethod) {
+      else if (current == lxTemplate) {
+         TemplateInfo extTemplate;
+         importTemplateInfo(current, scope, scope.reference, templateModule, info);
+      }
+      else if (current == lxClassMethod) {
          ref_t messageRef = overwriteSubject(current.argument, importTemplateSubject(templateModule, scope.moduleScope->module, getSignature(current.argument), info));
 
          // method should not be imported if it was already declared in the class scope
