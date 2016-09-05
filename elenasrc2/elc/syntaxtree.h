@@ -1,21 +1,25 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA Engine Syntax Tree classes
-////
-////                                              (C)2005-2016, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#ifndef syntaxTreeH
-//#define syntaxTreeH 1
+//		This file contains ELENA Engine Syntax Tree classes
 //
-//namespace _ELENA_
-//{
-//
-//// --- SyntaxType ---
-//
-//enum LexicalType
-//{
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef syntaxTreeH
+#define syntaxTreeH 1
+
+namespace _ELENA_
+{
+
+// --- SyntaxType ---
+
+enum LexicalType
+{
+   lxEnding = -1,
+
+   lxNone   = 0,
+
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
 //   lxAttrMask        = 0x00800,
@@ -25,10 +29,7 @@
 //   lxReferenceMask   = 0x20000,
 //   lxSubjectMask     = 0x40000,
 //   lxConstantMask    = 0x80000,
-//
-//   lxEnding          = -1,
-//
-//   lxNone            = 0x00000,
+
 //   lxInvalid         = 0x00001,
 //   lxRoot            = 0x00002,
 //   lxIdle            = 0x00003,
@@ -185,16 +186,16 @@
 //   lxClass            = 0x00014,
 //   lxTemplateType     = 0x40015,
 //   lxTargetMethod     = 0x10016
-//};
-//
-//// --- SyntaxTree ---
-//
-//class SyntaxTree
-//{
+};
+
+// --- SyntaxTree ---
+
+class SyntaxTree
+{
 //   MemoryDump _body;
 //   MemoryDump _strings;
-//
-//public:
+
+public:
 //   // --- SyntaxWriter ---
 //
 //   class Writer
@@ -311,18 +312,18 @@
 //   };
 //
 //   struct NodePattern;
-//
-//   // --- Node ---
-//   class Node
-//   {
+
+   // --- Node ---
+   class Node
+   {
 //      friend class SyntaxTree;
 //
 //      SyntaxTree*   tree;
 //      size_t        position;
 //
 //      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument);
-//
-//   public:
+
+   public:
 //      LexicalType   type;
 //      ref_t         argument;
 //
@@ -423,16 +424,16 @@
 //      {
 //         return tree->findPattern(*this, 1, pattern);
 //      }
-//
-//      Node()
-//      {
+
+      Node()
+      {
 //         type = lxNone;
 //         argument = 0;
 //
 //         tree = NULL;
-//      }
-//   };
-//
+      }
+   };
+
 //   struct NodePattern
 //   {
 //      LexicalType type;
@@ -462,8 +463,8 @@
 //
 //private:
 //   Node read(StreamReader& reader);
-//
-//public:
+
+public:
 //   static int countChild(Node node, LexicalType type)
 //   {
 //      int counter = 0;
@@ -640,10 +641,10 @@
 //      writer.writeDWord(_strings.Length());
 //      writer.write(_strings.get(0), _strings.Length());
 //   }
-//
-//   SyntaxTree()
-//   {
-//   }
+
+   SyntaxTree()
+   {
+   }
 //   SyntaxTree(_Memory* dump)
 //   {
 //      MemoryReader reader(dump);
@@ -651,17 +652,16 @@
 //      _body.load(&reader, reader.getDWord());
 //      _strings.load(&reader, reader.getDWord());
 //   }
-//};
-//
+};
+
 //SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
 //SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2);
 //SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
 //
 //typedef SyntaxTree::Writer       SyntaxWriter;
-//typedef SyntaxTree::Node         SNode;
+typedef SyntaxTree::Node         SNode;
 //typedef SyntaxTree::NodePattern  SNodePattern;
-//
-//
-//} // _ELENA_
-//
-//#endif // syntaxTreeH
+
+} // _ELENA_
+
+#endif // syntaxTreeH

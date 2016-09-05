@@ -442,9 +442,9 @@ public:
 //   bool seek(long position);
 //
 //   bool write(const void* s, size_t length);
-//
-//   bool read(void* s, size_t length);
-//
+
+   bool read(void* s, size_t length);
+
 //   bool writeLiteral(const wide_c* s, size_t length);
 //   bool writeLiteral(const char* s, size_t length);
 //   bool writeNewLine();
@@ -460,73 +460,73 @@ public:
    ~File();
 };
 
-////// --- FileReader class ---
-////
-////class FileReader : public StreamReader
-////{
-////   File _file;
-////
-////public:
-////   bool isOpened() const { return _file.isOpened(); }
-////
-////   virtual bool Eof() { return _file.Eof(); }
-////
-////   int getEncoding() const { return _file.getEncoding(); }
-////
-////   virtual size_t Position() { return _file.Position(); }
-////   virtual size_t Length() { return _file.Length(); }
-////
-////   virtual bool seek(size_t position) { return _file.seek(position); }
-////
-////   virtual bool read(void* s, size_t length);
-////
-////   bool readText(wide_c* s, size_t length, size_t& wasread)
-////   {
-////      return _file.readLiteral(s, length, wasread);
-////   }
-////
-////   bool readText(char* s, size_t length, size_t& wasread)
-////   {
-////      return _file.readLiteral(s, length, wasread);
-////   }
-////
-////   virtual const char* getLiteral(const char* def) { return def; }
-////   virtual const wide_c* getLiteral(const wide_c* def) { return def; }
-////
-////   FileReader(path_t path, int encoding, bool withBOM);
-////   FileReader(path_t path, path_t mode, int encoding, bool withBOM);
-////};
-////
-////// --- FileWriter class ---
-////
-////class FileWriter : public StreamWriter
-////{
-////   File _file;
-////
-////public:
-////   int getEncoding() const { return _file.getEncoding(); }
-////
-////   virtual size_t Position() const { return _file.Position(); }
-////   virtual size_t Length()   { return _file.Length(); }
-////
-////   virtual bool isOpened() { return _file.isOpened(); }
-////
-////   virtual bool write(const void* s, size_t length);
-////
-////   bool writeText(const wide_c* s, size_t length)
-////   {
-////      return _file.writeLiteral(s, length);
-////   }
-////
-////   bool writeText(const char* s, size_t length)
-////   {
-////      return _file.writeLiteral(s, length);
-////   }
-////
-////   virtual void align(int alignment);
-////
-////   FileWriter(path_t path, int encoding, bool withBOM);
-////};
+// --- FileReader class ---
+
+class FileReader : public StreamReader
+{
+   File _file;
+
+public:
+   bool isOpened() const { return _file.isOpened(); }
+
+//   virtual bool Eof() { return _file.Eof(); }
+//
+//   int getEncoding() const { return _file.getEncoding(); }
+//
+//   virtual size_t Position() { return _file.Position(); }
+//   virtual size_t Length() { return _file.Length(); }
+//
+//   virtual bool seek(size_t position) { return _file.seek(position); }
+
+   virtual bool read(void* s, size_t length);
+
+//   bool readText(wide_c* s, size_t length, size_t& wasread)
+//   {
+//      return _file.readLiteral(s, length, wasread);
+//   }
+//
+//   bool readText(char* s, size_t length, size_t& wasread)
+//   {
+//      return _file.readLiteral(s, length, wasread);
+//   }
+//
+//   virtual const char* getLiteral(const char* def) { return def; }
+//   virtual const wide_c* getLiteral(const wide_c* def) { return def; }
+
+   FileReader(path_t path, int encoding, bool withBOM);
+   FileReader(path_t path, path_t mode, int encoding, bool withBOM);
+};
+
+//// --- FileWriter class ---
+//
+//class FileWriter : public StreamWriter
+//{
+//   File _file;
+//
+//public:
+//   int getEncoding() const { return _file.getEncoding(); }
+//
+//   virtual size_t Position() const { return _file.Position(); }
+//   virtual size_t Length()   { return _file.Length(); }
+//
+//   virtual bool isOpened() { return _file.isOpened(); }
+//
+//   virtual bool write(const void* s, size_t length);
+//
+//   bool writeText(const wide_c* s, size_t length)
+//   {
+//      return _file.writeLiteral(s, length);
+//   }
+//
+//   bool writeText(const char* s, size_t length)
+//   {
+//      return _file.writeLiteral(s, length);
+//   }
+//
+//   virtual void align(int alignment);
+//
+//   FileWriter(path_t path, int encoding, bool withBOM);
+//};
 
 // --- TextFileReader class ---
 

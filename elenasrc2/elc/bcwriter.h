@@ -1,20 +1,20 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA byte code writer class.
-////
-////                                              (C)2005-2016, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#ifndef bcwriterH
-//#define bcwriterH 1
+//		This file contains ELENA byte code writer class.
 //
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef bcwriterH
+#define bcwriterH 1
+
 //#include "bytecode.h"
-//#include "syntaxtree.h"
-//
-//namespace _ELENA_
-//{
-//
+#include "syntaxtree.h"
+
+namespace _ELENA_
+{
+
 //// --- ByteCodeWriter class ---
 //class ByteCodeWriter
 //{
@@ -327,7 +327,7 @@
 //bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
-//
-//} // _ELENA_
-//
-//#endif // bcwriterH
+
+} // _ELENA_
+
+#endif // bcwriterH

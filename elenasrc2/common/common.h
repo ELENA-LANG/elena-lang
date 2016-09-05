@@ -27,8 +27,8 @@ namespace _ELENA_
    typedef wchar_t      wide_c;
    typedef unsigned int unic_c;
 
-////   typedef unsigned char   uident_c;
-//   typedef size_t          ref_t;
+//   typedef unsigned char   uident_c;
+   typedef size_t          ref_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
@@ -44,8 +44,8 @@ namespace _ELENA_
    typedef unsigned short  wide_c;
    typedef unsigned int    unic_c;
 
-////   typedef unsigned char   uident_c;
-//   typedef size_t          ref_t;
+//   typedef unsigned char   uident_c;
+   typedef size_t          ref_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };

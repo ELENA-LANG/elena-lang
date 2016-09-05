@@ -218,24 +218,24 @@ bool File :: readLine(char* s, size_t length)
 //{
 //   return writeLiteral("\r\n", 2);
 //}
+
+// --- FileReader ---
+
+FileReader::FileReader(path_t path, int encoding, bool withBOM)
+   : _file(path, L"rb", encoding, withBOM)
+{
+}
+
+//// --- FileWriter ---
 //
-////// --- FileReader ---
-////
-////FileReader::FileReader(path_t path, int encoding, bool withBOM)
-////   : _file(path, L"rb", encoding, withBOM)
-////{
-////}
-////
-////// --- FileWriter ---
-////
-////FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
-////   : _file(path, L"wb+", encoding, withBOM)
-////{
-////   if (encoding == feUTF16 && isOpened()) {
-////      unsigned short signature = 0xFEFF;
-////      _file.write((void*)&signature, 2);
-////   }
-////}
+//FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
+//   : _file(path, L"wb+", encoding, withBOM)
+//{
+//   if (encoding == feUTF16 && isOpened()) {
+//      unsigned short signature = 0xFEFF;
+//      _file.write((void*)&signature, 2);
+//   }
+//}
 
 // --- TextFileReader ---
 
@@ -388,24 +388,24 @@ bool Path :: isRelative(const char* path, size_t length)
 ////{
 ////   return writeLiteral("\n", 1);
 ////}
-////
-////// --- FileReader ---
-////
-////FileReader::FileReader(path_t path, int encoding, bool withBOM)
-////   : _file(path, "rb", encoding, withBOM)
-////{
-////}
-////
-////// --- FileWriter ---
-////
-////FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
-////   : _file(path, "wb+", encoding, withBOM)
-////{
-////   if (encoding == feUTF16 && isOpened()) {
-////      unsigned short signature = 0xFEFF;
-////      _file.write((void*)&signature, 2);
-////   }
-////}
+
+// --- FileReader ---
+
+FileReader::FileReader(path_t path, int encoding, bool withBOM)
+   : _file(path, "rb", encoding, withBOM)
+{
+}
+
+//// --- FileWriter ---
+//
+//FileWriter :: FileWriter(path_t path, int encoding, bool withBOM)
+//   : _file(path, "wb+", encoding, withBOM)
+//{
+//   if (encoding == feUTF16 && isOpened()) {
+//      unsigned short signature = 0xFEFF;
+//      _file.write((void*)&signature, 2);
+//   }
+//}
 
 // --- TextFileReader ---
 
@@ -587,12 +587,12 @@ File :: ~File()
 //{
 //   return fseek(_file, position, SEEK_SET) == 0;
 //}
-//
-//bool File :: read(void* s, size_t length)
-//{
-//   return (fread(s, 1, length, _file) > 0);
-//}
-//
+
+bool File :: read(void* s, size_t length)
+{
+   return (fread(s, 1, length, _file) > 0);
+}
+
 //bool File :: write(const void* s, size_t length)
 //{
 //   return (fwrite((const char*)s, 1, length, _file) > 0);
@@ -610,25 +610,25 @@ bool TextFileReader :: read(char* s, size_t length)
    return _file.readLine(s, length);
 }
 
-////// --- FileReader ---
-////
-////FileReader :: FileReader(path_t path, path_t mode, int encoding, bool withBOM)
-////   : _file(path, mode, encoding, withBOM)
-////{
-////}
-////
-////bool FileReader :: read(void* s, size_t length)
-////{
-////   return _file.read(s, length);
-////}
-////
-////// --- FileWriter ---
-////
-////bool FileWriter :: write(const void* s, size_t length)
-////{
-////   return _file.write(s, length);
-////}
-////
+// --- FileReader ---
+
+FileReader :: FileReader(path_t path, path_t mode, int encoding, bool withBOM)
+   : _file(path, mode, encoding, withBOM)
+{
+}
+
+bool FileReader :: read(void* s, size_t length)
+{
+   return _file.read(s, length);
+}
+
+//// --- FileWriter ---
+//
+//bool FileWriter :: write(const void* s, size_t length)
+//{
+//   return _file.write(s, length);
+//}
+//
 ////void FileWriter :: align(int alignment)
 ////{
 ////   int len = ::align(_file.Position(), alignment) - _file.Position();

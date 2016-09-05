@@ -189,40 +189,40 @@ inline void freestr(unsigned short* s)
 
 // --- alignment routines ---
 
-//inline unsigned int align(unsigned int number, const unsigned int alignment)
-//{
-//   if (number & (alignment - 1)) {
-//      return (number & ~(alignment - 1)) + alignment;
-//   }
-//   else return number & ~(alignment - 1);
-//}
-//
-//// --- miscellaneous routines ---
-//
-//inline bool ifAny(int target, int value1, int value2)
-//{
-//   return target == value1 || target == value2;
-//}
-//
-//inline bool test(int number, int mask)
-//{
-//   return ((number & mask) == mask);
-//}
-//
-//inline bool test(int number, int mask, int value)
-//{
-//   return ((number & mask) == value);
-//}
-//
-//inline bool testany(int number, int mask)
-//{
-//   return ((number & mask) != 0);
-//}
-//
-//inline bool isbetween(int starting, int len , int value)
-//{
-//   return (starting < value && value < starting + len);
-//}
+inline unsigned int align(unsigned int number, const unsigned int alignment)
+{
+   if (number & (alignment - 1)) {
+      return (number & ~(alignment - 1)) + alignment;
+   }
+   else return number & ~(alignment - 1);
+}
+
+// --- miscellaneous routines ---
+
+inline bool ifAny(int target, int value1, int value2)
+{
+   return target == value1 || target == value2;
+}
+
+inline bool test(int number, int mask)
+{
+   return ((number & mask) == mask);
+}
+
+inline bool test(int number, int mask, int value)
+{
+   return ((number & mask) == value);
+}
+
+inline bool testany(int number, int mask)
+{
+   return ((number & mask) != 0);
+}
+
+inline bool isbetween(int starting, int len , int value)
+{
+   return (starting < value && value < starting + len);
+}
 //
 //inline bool isNumeric(ident_t s, int length)
 //{
@@ -234,7 +234,7 @@ inline void freestr(unsigned short* s)
 //
 //   return true;
 //}
-//
+
 //// --- calcTabShift ---
 //
 //inline size_t calcTabShift(int col, int tabSize)

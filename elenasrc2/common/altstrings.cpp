@@ -489,12 +489,12 @@ bool compare(const char* s1, const char* s2, size_t n)
 //   if (s1 && s2) return (strncmp(s1, s2, n) > 0);
 //   else return (n > 0);
 //}
-//
-////bool StringHelper :: greater(const char* s1, const char* s2)
-////{
-////   if (s1 && s2) return (strcmp(s1, s2) > 0);
-////   else return (s1 == s2);
-////}
+
+bool greater(const char* s1, const char* s2)
+{
+   if (s1 && s2) return (strcmp(s1, s2) > 0);
+   else return (s1 == s2);
+}
 
 char* _ELENA_::__lower(char* s)
 {
@@ -675,12 +675,12 @@ bool compare(const wchar_t* s1, const wchar_t* s2, size_t n)
 //   if (s1 && s2) return (wcsncmp(s1, s2, n) > 0);
 //   else return (n > 0);
 //}
-//
-//bool StringHelper :: greater(const wchar_t* s1, const wchar_t* s2)
-//{
-//   if (s1 && s2) return (wcscmp(s1, s2) > 0);
-//   else return (s1 == s2);
-//}
+
+bool greater(const wchar_t* s1, const wchar_t* s2)
+{
+   if (s1 && s2) return (wcscmp(s1, s2) > 0);
+   else return (s1 == s2);
+}
 
 int __find(const wchar_t* s, wchar_t c, int defValue)
 {
@@ -849,11 +849,11 @@ bool compare(const unsigned short* s1, const unsigned short* s2, size_t n)
 //   }
 //   else return (n > 0);
 //}
-//
-//bool StringHelper :: greater(const unsigned short* s1, const unsigned short* s2)
-//{
-//   return greater(s1, s2, getlength(s1) + 1);
-//}
+
+bool greater(const unsigned short* s1, const unsigned short* s2)
+{
+   return greater(s1, s2, getlength(s1) + 1);
+}
 
 int _ELENA_::__find(const unsigned short* s, unsigned short c, int defValue)
 {
@@ -1275,6 +1275,11 @@ bool ident_t :: compare(const char* s)
    return ::compare(_string, s);
 }
 
+bool ident_t::greater(const char* s)
+{
+   return ::greater(_string, s);
+}
+
 bool ident_t::compare(const char* s, size_t length)
 {
    return ::compare(_string, s, length);
@@ -1320,6 +1325,11 @@ wide_c* wide_t :: clone(int index)
 bool wide_t :: compare(const wide_c* s)
 {
    return ::compare(_string, s);
+}
+
+bool wide_t :: greater(const wide_c* s)
+{
+   return ::greater(_string, s);
 }
 
 bool wide_t::compare(const wide_c* s, size_t length)

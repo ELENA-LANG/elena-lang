@@ -12,11 +12,11 @@
 // --------------------------------------------------------------------------
 #include "elc.h"
 #include "constants.h"
-//#include "errors.h"
+#include "errors.h"
 #include "compiler.h"
-////#include "linker.h"
-////#include "image.h"
-////#include "x86jitcompiler.h"
+//#include "linker.h"
+//#include "image.h"
+//#include "x86jitcompiler.h"
 
 #include <stdarg.h>
 #include <windows.h>
@@ -502,16 +502,14 @@ int main()
       // Compiling..
       print(ELC_COMPILING);
 
-//      _ELENA_::Path syntaxPath;
-//      _ELENA_::Path::loadPath(syntaxPath, project.StrSetting(_ELENA_::opAppPath));
-//      _ELENA_::Path::combinePath(syntaxPath, SYNTAX_FILE);
-//      _ELENA_::FileReader syntaxFile(syntaxPath, _ELENA_::feRaw, false);
-//      if (!syntaxFile.isOpened())
-//         project.raiseErrorIf(true, errInvalidFile, SYNTAX_FILE);
+      _ELENA_::Path syntaxPath(project.StrSetting(_ELENA_::opAppPath), SYNTAX_FILE);
+      _ELENA_::FileReader syntaxFile(syntaxPath, _ELENA_::feRaw, false);
+      if (!syntaxFile.isOpened())
+         project.raiseErrorIf(true, errInvalidFile, SYNTAX_FILE);
 
       // compile normal project
       bool result = false;
-      _ELENA_::Compiler compiler/*(&syntaxFile)*/;
+      _ELENA_::Compiler compiler(&syntaxFile);
 //      setCompilerOptions(project, compiler);
 
       result = compiler.run(project);

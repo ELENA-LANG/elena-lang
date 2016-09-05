@@ -2,8 +2,8 @@
 #class Object
 {
     /// Creates the object
-    #constructor new []
+//    #constructor new []
     
     /// Implements a message dispatching in VMT
-    #method => system'core_routines'__object.    
+//    #method => system'core_routines'__object.    
 }

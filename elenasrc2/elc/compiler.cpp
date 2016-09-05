@@ -1595,8 +1595,8 @@ using namespace _ELENA_;
 
 // --- Compiler ---
 
-Compiler :: Compiler(/*StreamReader* syntax*/)
-//   : _parser(syntax), _verbs(0)
+Compiler :: Compiler(StreamReader* syntax)
+   : _parser(syntax)//, _verbs(0)
 {
 //   _optFlag = 0;
 //
@@ -8618,8 +8618,8 @@ Compiler :: Compiler(/*StreamReader* syntax*/)
 //   }
 //}
 
-void Compiler :: compile(ident_t source/*, MemoryDump* buffer, ModuleScope& scope*/)
-{
+//void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope*/)
+//{
 //   Path path;
 //   Path::loadPath(path, source);
 //
@@ -8638,7 +8638,7 @@ void Compiler :: compile(ident_t source/*, MemoryDump* buffer, ModuleScope& scop
 //   DerivationReader reader(&bufReader);
 //
 //   compileModule(reader.readRoot(), scope);
-}
+//}
 
 //inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
 //{
@@ -8687,6 +8687,16 @@ void Compiler :: compile(ident_t source/*, MemoryDump* buffer, ModuleScope& scop
 //
 //   _writer.generateConstantList(tree.readRoot(), module, reference);
 //}
+
+void Compiler :: compile(SNode node)
+{
+
+}
+
+void Compiler :: compile(ident_t source)
+{
+
+}
 
 bool Compiler :: run(Project& project)
 {

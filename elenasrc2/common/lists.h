@@ -171,31 +171,31 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return key.compare(this->key);
    }
 
-   bool operator !=(const char* key) const
+   bool operator !=(ident_t key) const
    {
       return !key.compare(this->key);
    }
 
-//   bool operator <=(const char* key) const
-//   {
-//      return !StringHelper::greater(this->key, key);
-//   }
-//
-//   bool operator <(const char* key) const
-//   {
-//      return StringHelper::greater(key, this->key);
-//   }
-//
-//   bool operator >=(const char* key) const
-//   {
-//      return StringHelper::greater(this->key, key) || compstr(this->key, key);
-//   }
-//
-//   bool operator >(const char* key) const
-//   {
-//      return StringHelper::greater(this->key, key);
-//   }
-//
+   bool operator <=(ident_t key) const
+   {
+      return !(this->key)->greater(key);
+   }
+
+   bool operator <(ident_t key) const
+   {
+      return key.greater(this->key);
+   }
+
+   bool operator >=(ident_t key) const
+   {
+      return (this->key).greater(key) || (this->key).compstr(key);
+   }
+
+   bool operator >(ident_t key) const
+   {
+      return (this->key).greater(key);
+   }
+
 ////   void rename(const wchar16_t* key)
 ////   {
 ////      if (KeyStored) {
@@ -269,10 +269,10 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    Key    key;       // for Key=TCHAR* if keyStored is true, key is an offset in the map buffer
    T      item;
 
-//   int getKey(int key) const
-//   {
-//      return key;
-//   }
+   int getKey(int key) const
+   {
+      return key;
+   }
 
    bool operator ==(int key) const
    {
@@ -284,30 +284,30 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key != key);
    }
 
-//   bool operator <=(int key) const
-//   {
-//      return (this->key <= key);
-//   }
-//
-//   bool operator <(int key) const
-//   {
-//      return (this->key < key);
-//   }
-//
-//   bool operator >=(int key) const
-//   {
-//      return (this->key >= key);
-//   }
-//
-//   bool operator >(int key) const
-//   {
-//      return (this->key > key);
-//   }
-//
-//   size_t getKey(size_t key) const
-//   {
-//      return key;
-//   }
+   bool operator <=(int key) const
+   {
+      return (this->key <= key);
+   }
+
+   bool operator <(int key) const
+   {
+      return (this->key < key);
+   }
+
+   bool operator >=(int key) const
+   {
+      return (this->key >= key);
+   }
+
+   bool operator >(int key) const
+   {
+      return (this->key > key);
+   }
+
+   size_t getKey(size_t key) const
+   {
+      return key;
+   }
 
    bool operator ==(size_t key) const
    {
@@ -319,26 +319,26 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key != key);
    }
 
-//   bool operator <=(size_t key) const
-//   {
-//      return (this->key <= key);
-//   }
-//
-//   bool operator <(size_t key) const
-//   {
-//      return (this->key < key);
-//   }
-//
-//   bool operator >=(size_t key) const
-//   {
-//      return (this->key >= key);
-//   }
-//
-//   bool operator >(size_t key) const
-//   {
-//      return (this->key > key);
-//   }
-//
+   bool operator <=(size_t key) const
+   {
+      return (this->key <= key);
+   }
+
+   bool operator <(size_t key) const
+   {
+      return (this->key < key);
+   }
+
+   bool operator >=(size_t key) const
+   {
+      return (this->key >= key);
+   }
+
+   bool operator >(size_t key) const
+   {
+      return (this->key > key);
+   }
+
 //   Pair<size_t, int> getKey(Pair<size_t, int> key) const
 //   {
 //      return key;
@@ -383,19 +383,19 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
 //   {
 //      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
 //   }
-//
-//   const char* getKey(const char* key) const
-//   {
-//      if (KeyStored) {
-//         return (char*)((int)this + (int)this->key);
-//      }
-//      else return key;
-//   }
+
+   ident_t getKey(ident_t key) const
+   {
+      if (KeyStored) {
+         return (const char*)this->key + (int)this;
+      }
+      else return key;
+   }
 
    bool operator ==(ident_t key) const
    {
       if (KeyStored) {
-         return key.compare((char*)((int)this + (int)this->key));
+         return key.compare((const char*)this->key + (int)this);
       }
       else return key.compare(this->key);
    }
@@ -620,7 +620,7 @@ public:
 
    bool Eof() const { return _top==NULL; }
 
-//   size_t Count() const { return _count; }
+   size_t Count() const { return _count; }
 
    Iterator start() { return Iterator(_top); }
 
@@ -800,7 +800,7 @@ template <class T> class _BList
 public:
    typedef _Iterator<T, Item> Iterator;
 
-//   size_t Count() const { return _count; }
+   size_t Count() const { return _count; }
 
    Iterator start() { return Iterator(_top); }
 
@@ -968,7 +968,7 @@ template <class T> class List
 public:
    typedef _Iterator<T, _Item<T> >    Iterator;
 
-//   size_t Count() const { return _list.Count(); }
+   size_t Count() const { return _list.Count(); }
 
    Iterator start()
    {
@@ -1077,49 +1077,49 @@ public:
       return it;
    }
 
-//   size_t Count() const { return _list.Count(); }
-//
-//   T peek()
-//   {
-//      if (!_list.Eof()) {
-//         return _list.peek();
-//      }
-//      else return _defaultItem;
-//   }
-//
-//   void push (T item)
-//   {
-//      _list.addToTop(item);
-//   }
-//
-//   T pop()
-//   {
-//      if (!_list.Eof()) {
-//         return _list.cutTop();
-//      }
-//      else return _defaultItem;
-//   }
-//
-//   void cut(Iterator it)
-//   {
-//      _list.cut(it);
-//   }
-//
-//   void insert(Iterator it, T item)
-//   {
-//      if (it.Eof()) {
-//         _list.addToTale(item);
-//      }
-//      else _list.insertAfter(it, item);
-//   }
-//
-//   void insertBefore(Iterator& it, T item)
-//   {
-//      if (it.Eof()) {
-//         _list.addToTop(item);
-//      }
-//      else _list.insertBefore(it, item);
-//   }
+   size_t Count() const { return _list.Count(); }
+
+   T peek()
+   {
+      if (!_list.Eof()) {
+         return _list.peek();
+      }
+      else return _defaultItem;
+   }
+
+   void push (T item)
+   {
+      _list.addToTop(item);
+   }
+
+   T pop()
+   {
+      if (!_list.Eof()) {
+         return _list.cutTop();
+      }
+      else return _defaultItem;
+   }
+
+   void cut(Iterator it)
+   {
+      _list.cut(it);
+   }
+
+   void insert(Iterator it, T item)
+   {
+      if (it.Eof()) {
+         _list.addToTale(item);
+      }
+      else _list.insertAfter(it, item);
+   }
+
+   void insertBefore(Iterator& it, T item)
+   {
+      if (it.Eof()) {
+         _list.addToTop(item);
+      }
+      else _list.insertBefore(it, item);
+   }
 
    void clear()
    {
@@ -1161,25 +1161,25 @@ public:
       return _list.end();
    }
 
-//   size_t Count() const { return _list.Count(); }
-//
-//   void insert(T item)
-//   {
-//      _list.addToTop(item);
-//   }
-//
-//   void push (T item)
-//   {
-//      _list.addToTale(item);
-//   }
-//
-//   T pop()
-//   {
-//      if (!_list.Eof()) {
-//         return _list.cutTop();
-//      }
-//      else return _defaultItem;
-//   }
+   size_t Count() const { return _list.Count(); }
+
+   void insert(T item)
+   {
+      _list.addToTop(item);
+   }
+
+   void push (T item)
+   {
+      _list.addToTale(item);
+   }
+
+   T pop()
+   {
+      if (!_list.Eof()) {
+         return _list.cutTop();
+      }
+      else return _defaultItem;
+   }
 
    Iterator get(int index)
    {
@@ -1191,10 +1191,10 @@ public:
       return it;
    }
 
-//   void cut()
-//   {
-//      _list.clear();
-//   }
+   void cut()
+   {
+      _list.clear();
+   }
 
    void clear()
    {
@@ -1227,7 +1227,7 @@ template <class T> class BList
 public:
    typedef _Iterator<T, _BItem<T> >     Iterator;
 
-//   size_t Count() const { return _list.Count(); }
+   size_t Count() const { return _list.Count(); }
 
    Iterator start() { return _list.start(); }
 
@@ -1288,7 +1288,7 @@ template <class T> class CList
 public:
    typedef _Iterator<T, _BItem<T> >     Iterator;
 
-//   size_t Count() const { return _list.Count(); }
+   size_t Count() const { return _list.Count(); }
 
    Iterator start() { return _list.start(); }
 
@@ -1370,9 +1370,9 @@ template <class Key, class T, bool KeyStored = true> class Map
 public:
    typedef _Iterator<T, Item, Key> Iterator;
 
-//   T DefaultValue() const { return _defaultItem; }
-//
-//   size_t Count() const { return _count; }
+   T DefaultValue() const { return _defaultItem; }
+
+   size_t Count() const { return _count; }
 
    Iterator start() const
    {
@@ -1570,26 +1570,26 @@ public:
       _count--;
    }
 
-////   void write(StreamWriter* writer)
-////   {
-////      writer->writeDWord(_count);
-////      Iterator it = start();
-////      while (!it.Eof()) {
-////         _writeIterator(writer, it.key(), *it);
-////
-////         it++;
-////      }
-////   }
-////
-////   void read(StreamReader* reader)
-////   {
-////      Key key;
-////      T   value = _defaultItem;
-////
-////      size_t counter = 0;
-////      reader->readDWord(counter);
-////      _readToMap(reader, this, counter, key, value);
-////   }
+   void write(StreamWriter* writer)
+   {
+      writer->writeDWord(_count);
+      Iterator it = start();
+      while (!it.Eof()) {
+         _writeIterator(writer, it.key(), *it);
+
+         it++;
+      }
+   }
+
+   void read(StreamReader* reader)
+   {
+      Key key;
+      T   value = _defaultItem;
+
+      size_t counter = 0;
+      reader->readDWord(counter);
+      _readToMap(reader, this, counter, key, value);
+   }
 
    void clear()
    {
@@ -1636,8 +1636,6 @@ template <class Key, class T, bool KeyStored = true> class MemoryMap
 {
    typedef _MemoryMapItem<Key, T, KeyStored> Item;
 
-   //friend class _MemoryIterator<T, Item, Key, KeyStored>;
-
    MemoryDump _buffer;
 
    size_t _tale;
@@ -1648,9 +1646,9 @@ template <class Key, class T, bool KeyStored = true> class MemoryMap
 public:
    typedef _MemoryIterator<T, Item, MemoryMap<Key, T, KeyStored>, Key> Iterator;
 
-//   T DefaultValue() const { return _defaultItem; }
-//
-//   size_t Count() const { return _count; }
+   T DefaultValue() const { return _defaultItem; }
+
+   size_t Count() const { return _count; }
 
    Iterator start() const
    {
@@ -1664,10 +1662,10 @@ public:
       }
    }
 
-//   void* getAddress(size_t position) const
-//   {
-//      return _buffer.get(position);
-//   }
+   void* getAddress(size_t position) const
+   {
+      return _buffer.get(position);
+   }
 
    Iterator getIt(Key key) const
    {
@@ -1801,32 +1799,32 @@ public:
       return false;
    }
 
-//   size_t storeKey(size_t, size_t key)
-//   {
-//      return key;
-//   }
-//
-//   ref_t storeKey(size_t position, Pair<size_t, int>)
-//   {
-//      return position;
-//   }
-//
-//   ref_t storeKey(size_t position, Pair<void*, int>)
-//   {
-//      return position;
-//   }
-//
-//   ident_t storeKey(size_t position, ident_t key)
-//   {
-//      if (KeyStored) {
-//         size_t keyPos = _buffer.Length();
-//
-//         _buffer.writeLiteral(keyPos, key);
-//
-//         return (ident_t)(keyPos - position);
-//      }
-//      else return key;
-//   }
+   size_t storeKey(size_t, size_t key)
+   {
+      return key;
+   }
+
+   //ref_t storeKey(size_t position, Pair<size_t, int>)
+   //{
+   //   return position;
+   //}
+
+   //ref_t storeKey(size_t position, Pair<void*, int>)
+   //{
+   //   return position;
+   //}
+
+   const char* storeKey(size_t position, ident_t key)
+   {
+      if (KeyStored) {
+         size_t keyPos = _buffer.Length();
+
+         _buffer.writeLiteral(keyPos, key);
+
+         return (const char*)(keyPos - position);
+      }
+      else return key;
+   }
 
    void add(Key key, T value)
    {
@@ -1883,27 +1881,27 @@ public:
       }
    }
 
-//   void write(StreamWriter* writer)
-//   {
-//      writer->writeDWord(_buffer.Length());
-//      writer->writeDWord(_count);
-//      writer->writeDWord(_tale);
-//
-//      MemoryReader reader(&_buffer);
-//      writer->read(&reader, _buffer.Length());
-//   }
-//
-//   void read(StreamReader* reader)
-//   {
-//      int length = reader->getDWord();
-//      _buffer.reserve(length);
-//
-//      _count = reader->getDWord();
-//      _tale = reader->getDWord();
-//
-//      MemoryWriter writer(&_buffer);
-//      writer.read(reader, length);
-//   }
+   void write(StreamWriter* writer)
+   {
+      writer->writeDWord(_buffer.Length());
+      writer->writeDWord(_count);
+      writer->writeDWord(_tale);
+
+      MemoryReader reader(&_buffer);
+      writer->read(&reader, _buffer.Length());
+   }
+
+   void read(StreamReader* reader)
+   {
+      int length = reader->getDWord();
+      _buffer.reserve(length);
+
+      _count = reader->getDWord();
+      _tale = reader->getDWord();
+
+      MemoryWriter writer(&_buffer);
+      writer.read(reader, length);
+   }
 
    void clear()
    {
@@ -2027,9 +2025,9 @@ private:
 public:
    typedef CachedMemoryMapIterator Iterator;
 
-//   T DefaultValue() const { return _map.DefaultValue(); }
-//
-//   size_t Count() const { return _cached ? _count : _map.Count(); }
+   T DefaultValue() const { return _map.DefaultValue(); }
+
+   size_t Count() const { return _cached ? _count : _map.Count(); }
 
    Iterator start()
    {
@@ -2136,28 +2134,28 @@ public:
 //      }
 //      else return _map.exclude(key);
 //   }
-//
-//   void write(StreamWriter* writer)
-//   {
-//      writer->writeDWord(_cached ? -1 : 0);
-//
-//      if (_cached) {
-//         writer->writeDWord(_count);
-//         writer->write(&_cache, sizeof(Item) * _count);
-//      }
-//      else _map.write(writer);
-//   }
-//
-//   void read(StreamReader* reader)
-//   {
-//      _cached = (reader->getDWord() == -1);
-//
-//      if(_cached) {
-//         _count = reader->getDWord();
-//         reader->read(&_cache, sizeof(Item) * _count);
-//      }
-//      else _map.read(reader);
-//   }
+
+   void write(StreamWriter* writer)
+   {
+      writer->writeDWord(_cached ? -1 : 0);
+
+      if (_cached) {
+         writer->writeDWord(_count);
+         writer->write(&_cache, sizeof(Item) * _count);
+      }
+      else _map.write(writer);
+   }
+
+   void read(StreamReader* reader)
+   {
+      _cached = (reader->getDWord() == -1);
+
+      if(_cached) {
+         _count = reader->getDWord();
+         reader->read(&_cache, sizeof(Item) * _count);
+      }
+      else _map.read(reader);
+   }
 
    void clear()
    {
@@ -2266,9 +2264,9 @@ template <class Key, class T, int(_scaleKey)(Key), int hashSize> class HashTable
 public:
    typedef HashTableIterator    Iterator;
 
-//   T DefaultValue() const { return _defaultItem; }
-//
-//   size_t Count() const { return _count; }
+   T DefaultValue() const { return _defaultItem; }
+
+   size_t Count() const { return _count; }
 
    Iterator start() const
    {
@@ -2345,26 +2343,26 @@ public:
       else return false;
    }
 
-//   void write(StreamWriter* writer)
-//   {
-//      writer->writeDWord(_count);
-//      Iterator it = start();
-//      while (!it.Eof()) {
-//         _writeIterator(writer, it.key(), *it);
-//
-//         it++;
-//      }
-//   }
-//
-//   void read(StreamReader* reader)
-//   {
-//      Key key;
-//      T   value = _defaultItem;
-//
-//      size_t counter = 0;
-//      reader->readDWord(counter);
-//      _readToMap(reader, this, counter, key, value);
-//   }
+   void write(StreamWriter* writer)
+   {
+      writer->writeDWord(_count);
+      Iterator it = start();
+      while (!it.Eof()) {
+         _writeIterator(writer, it.key(), *it);
+
+         it++;
+      }
+   }
+
+   void read(StreamReader* reader)
+   {
+      Key key;
+      T   value = _defaultItem;
+
+      size_t counter = 0;
+      reader->readDWord(counter);
+      _readToMap(reader, this, counter, key, value);
+   }
 
    void clear()
    {
@@ -2505,9 +2503,9 @@ template <class Key, class T, size_t(_scaleKey)(Key), size_t hashSize, bool KeyS
 public:
    typedef MemoryHashTableIterator Iterator;
 
-//   size_t Count() const { return _count; }
-//
-//   T DefaultValue() const { return _defaultItem; }
+   size_t Count() const { return _count; }
+
+   T DefaultValue() const { return _defaultItem; }
 
    Iterator start() const
    {
@@ -2566,22 +2564,22 @@ public:
       else return false;
    }
 
-//   ref_t storeKey(size_t, ref_t key)
-//   {
-//      return key;
-//   }
-//
-//   ident_t storeKey(size_t position, ident_t key)
-//   {
-//      if (KeyStored) {
-//         size_t keyPos = _buffer.Length();
-//
-//         _buffer.writeLiteral(keyPos, key);
-//
-//         return (ident_t)(keyPos - position);
-//      }
-//      else return key;
-//   }
+   ref_t storeKey(size_t, ref_t key)
+   {
+      return key;
+   }
+
+   ident_t storeKey(size_t position, ident_t key)
+   {
+      if (KeyStored) {
+         size_t keyPos = _buffer.Length();
+
+         _buffer.writeLiteral(keyPos, key);
+
+         return (ident_t)(keyPos - position);
+      }
+      else return key;
+   }
 
    void add(Key key, T value)
    {
@@ -2634,29 +2632,29 @@ public:
       else return false;
    }
 
-//   void write(StreamWriter* writer)
-//   {
-//      writer->writeDWord(_buffer.Length());
-//      writer->writeDWord(_count);
-//
-//      MemoryReader reader(&_buffer);
-//      writer->read(&reader, _buffer.Length());
-//   }
-//
-//   void read(StreamReader* reader)
-//   {
-//      _buffer.clear();
-//
-//      int length = reader->getDWord();
-//      if (length > 0) {
-//         _buffer.reserve(length);
-//
-//         _count = reader->getDWord();
-//
-//         MemoryWriter writer(&_buffer);
-//         writer.read(reader, length);
-//      }
-//   }
+   void write(StreamWriter* writer)
+   {
+      writer->writeDWord(_buffer.Length());
+      writer->writeDWord(_count);
+
+      MemoryReader reader(&_buffer);
+      writer->read(&reader, _buffer.Length());
+   }
+
+   void read(StreamReader* reader)
+   {
+      _buffer.clear();
+
+      int length = reader->getDWord();
+      if (length > 0) {
+         _buffer.reserve(length);
+
+         _count = reader->getDWord();
+
+         MemoryWriter writer(&_buffer);
+         writer.read(reader, length);
+      }
+   }
 
    void clear()
    {
@@ -2869,13 +2867,13 @@ public:
       }
    };
 
-//   T DefaultValue() const { return _defaultValue; }
-//
-//   size_t Count() const { return _buffer[0]; }
-//
-//   size_t Size() const { return _buffer.Length(); }
-//
-//   void* Array() const { return _buffer.get(0); }
+   T DefaultValue() const { return _defaultValue; }
+
+   size_t Count() const { return _buffer[0]; }
+
+   size_t Size() const { return _buffer.Length(); }
+
+   void* Array() const { return _buffer.get(0); }
 
    Iterator start() const
    {
@@ -2954,21 +2952,21 @@ public:
       else return false;
    }
 
-//   void write(StreamWriter* writer)
-//   {
-//      writer->write(_buffer.get(0), _buffer.Length());
-//   }
-//
-//   void read(StreamReader* reader)
-//   {
-//      size_t count = reader->getDWord();
-//
-//      _buffer.clear();
-//      _buffer.writeDWord(0, count);
-//
-//      if (count > 0)
-//         _buffer.load(reader, count << 3);
-//   }
+   void write(StreamWriter* writer)
+   {
+      writer->write(_buffer.get(0), _buffer.Length());
+   }
+
+   void read(StreamReader* reader)
+   {
+      size_t count = reader->getDWord();
+
+      _buffer.clear();
+      _buffer.writeDWord(0, count);
+
+      if (count > 0)
+         _buffer.load(reader, count << 3);
+   }
 
    void clear()
    {
@@ -3453,8 +3451,8 @@ public:
 //   }
 };
 
-//// --- mapKey routine ---
-//
+// --- mapKey routine ---
+
 //template<class Map, class Key, class T> T mapKey(Map& map, Key key, T newValue)
 //{
 //   T value = map.get(key);
@@ -3477,31 +3475,31 @@ public:
 //      it++;
 //   }
 //}
-//
-//// --- retrieveKey routine ---
-//
-//template<class Key, class T, class Iterator> Key goToKey(Iterator& it, T value, Key defaultKey)
-//{
-//   while (!it.Eof()) {
-//      if (*it == value)
-//         return it.key();
-//
-//      it++;
-//   }
-//   return defaultKey;
-//}
-//
-//template<class Key, class T, class Iterator> Key retrieveKey(Iterator it, T value, Key defaultKey)
-//{
-//   while (!it.Eof()) {
-//      if (*it == value)
-//         return it.key();
-//
-//      it++;
-//   }
-//   return defaultKey;
-//}
-//
+
+// --- retrieveKey routine ---
+
+template<class Key, class T, class Iterator> Key goToKey(Iterator& it, T value, Key defaultKey)
+{
+   while (!it.Eof()) {
+      if (*it == value)
+         return it.key();
+
+      it++;
+   }
+   return defaultKey;
+}
+
+template<class Key, class T, class Iterator> Key retrieveKey(Iterator it, T value, Key defaultKey)
+{
+   while (!it.Eof()) {
+      if (*it == value)
+         return it.key();
+
+      it++;
+   }
+   return defaultKey;
+}
+
 //template<class Iterator> Iterator retrieveIt(Iterator it, int value)
 //{
 //   while (!it.Eof()) {

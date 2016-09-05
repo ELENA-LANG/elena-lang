@@ -42,56 +42,56 @@ MemoryDump :: MemoryDump(MemoryDump& copy)
    memcpy(_buffer, copy._buffer, _total);
 }
 
-//void* MemoryDump :: get(size_t position) const
-//{
-//   if (position < _used) {
-//      return _buffer + position;
-//   }
-//   else return NULL;
-//}
-//
-//void MemoryDump :: reserve(size_t size)
-//{
-//   if (size > _total) {
-//      _total = align(size, SECTION_PAGE_SIZE);
-//
-//      _buffer = (char*)realloc(_buffer, _total);
-//   }
-//}
-//
-//void MemoryDump :: resize(size_t size)
-//{
-//   if (size > _used) {
-//      _used = size;
-//
-//      reserve(size);
-//   }
-//}
-//
-//bool MemoryDump :: write(size_t position, const void* s, size_t length)
-//{
-//   if (position <= _used) {
-//      resize(position + length);
-//
-//      memcpy(_buffer + position, s, length);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool MemoryDump :: writeBytes(size_t position, char value, size_t length)
-//{
-//   if (position <= _used && length > 0) {
-//      resize(position + length);
-//
-//      memset(_buffer + position, value, length);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+void* MemoryDump :: get(size_t position) const
+{
+   if (position < _used) {
+      return _buffer + position;
+   }
+   else return NULL;
+}
+
+void MemoryDump :: reserve(size_t size)
+{
+   if (size > _total) {
+      _total = align(size, SECTION_PAGE_SIZE);
+
+      _buffer = (char*)realloc(_buffer, _total);
+   }
+}
+
+void MemoryDump :: resize(size_t size)
+{
+   if (size > _used) {
+      _used = size;
+
+      reserve(size);
+   }
+}
+
+bool MemoryDump :: write(size_t position, const void* s, size_t length)
+{
+   if (position <= _used) {
+      resize(position + length);
+
+      memcpy(_buffer + position, s, length);
+
+      return true;
+   }
+   else return false;
+}
+
+bool MemoryDump :: writeBytes(size_t position, char value, size_t length)
+{
+   if (position <= _used && length > 0) {
+      resize(position + length);
+
+      memset(_buffer + position, value, length);
+
+      return true;
+   }
+   else return false;
+}
+
 //void MemoryDump :: insert(size_t position, const void* s, size_t length)
 //{
 //   if (position <= _used) {
@@ -101,17 +101,17 @@ MemoryDump :: MemoryDump(MemoryDump& copy)
 //      memcpy(_buffer + position, s, length);
 //   }
 //}
-//
-//bool MemoryDump :: read(size_t position, void* s, size_t length)
-//{
-//   if (position < _used && _used >= position + length) {
-//      memcpy(s, _buffer + position, length);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+
+bool MemoryDump :: read(size_t position, void* s, size_t length)
+{
+   if (position < _used && _used >= position + length) {
+      memcpy(s, _buffer + position, length);
+
+      return true;
+   }
+   else return false;
+}
+
 //void MemoryDump :: load(StreamReader* reader, size_t length)
 //{
 //   reserve(_used + length);

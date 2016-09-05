@@ -14,21 +14,21 @@
 ////#include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0018
+#define ELC_REVISION_NUMBER             0x0019
 
-////// --- ELC default file names ---
-////#ifdef _WIN32
-////
-////#define SYNTAX_FILE                 "syntax.dat"
-////#define RULES_FILE                  "rules.dat"
-////
-////#else
-////
-////#define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
-////#define RULES_FILE                  "/usr/share/elena/rules.dat"
-////
-////#endif
-//
+// --- ELC default file names ---
+#ifdef _WIN32
+
+#define SYNTAX_FILE                 "syntax.dat"
+//#define RULES_FILE                  "rules.dat"
+
+#else
+
+#define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
+//#define RULES_FILE                  "/usr/share/elena/rules.dat"
+
+#endif
+
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
 //#define ELC_PRM_DEBUGINFO           'd'

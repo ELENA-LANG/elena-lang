@@ -278,12 +278,12 @@ namespace _ELENA_
 //      dbmActive     = -1
 //   };
 
-//   // --- ELENA Parse Table constants ---
-//   const int cnHashSize            = 0x0100;              // the parse table hash size
-//   const int cnTablePower          = 0x0010;
-//   const int cnTableKeyPower       = cnTablePower + 1;
-//   const int cnSyntaxPower         = 0x0008;
-//
+   // --- ELENA Parse Table constants ---
+   const int cnHashSize            = 0x0100;              // the parse table hash size
+   const int cnTablePower          = 0x0010;
+   const int cnTableKeyPower       = cnTablePower + 1;
+   const int cnSyntaxPower         = 0x0008;
+
 //  // --- ELENA VMT flags ---
 //   const int elStandartVMT         = 0x00000001;
 //   const int elNestedClass         = 0x00000002;

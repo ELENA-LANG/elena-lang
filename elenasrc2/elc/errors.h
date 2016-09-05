@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jeterrorsH
@@ -76,13 +76,13 @@ namespace _ELENA_
 ////   #define errInvalidDynamicError   "internal error 600"
 //   #define errCommandSetAbsent     "internal error 600: command set is not defined"
 //   #define errFatalLinker          "internal error 601: linker fatal error"
-//
-//  // --- Linker error messages ---
+
+  // --- Linker error messages ---
 //   #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
 //   #define errUnresovableLink       "linker: error 202: Link '%s' is not resolved\n"
 //   #define errInvalidModule	      "linker: error 203: Invalid module file '%s'\n"
 //   #define errCannotCreate	         "linker: error 204: Cannot create a file '%s'\n"
-//   #define errInvalidFile           "linker: error 205: Invalid file '%s'\n"
+   #define errInvalidFile           "linker: error 205: Invalid file '%s'\n"
 //   #define errDuplicatedModule      "linker: error 208: Module '%s' already exists in the project\n"
 //   #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
 //   #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"

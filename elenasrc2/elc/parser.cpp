@@ -1,18 +1,18 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA Parser class implementation.
-////
-////                                              (C)2005-2016, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "parser.h"
+//		This file contains ELENA Parser class implementation.
+//
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "parser.h"
 //#include "errors.h"
-//
-//using namespace _ELENA_ ;
-//
+
+using namespace _ELENA_ ;
+
 //// --- SyntaxError ---
 //
 //SyntaxError :: SyntaxError(int column, int row, ident_t token)
@@ -101,14 +101,14 @@
 //   }
 //   return terminal;
 //}
-//
-//// --- Parser ---
-//
-//Parser :: Parser(StreamReader* syntax)
-//{
+
+// --- Parser ---
+
+Parser :: Parser(StreamReader* syntax)
+{
 //   _table.load(syntax);
-//}
-//
+}
+
 //bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, DerivationWriter* writer, bool& traceble)
 //{
 //   Symbol current = (Symbol)stack.pop();

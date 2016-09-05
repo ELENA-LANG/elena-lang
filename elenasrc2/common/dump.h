@@ -21,50 +21,50 @@ protected:
    size_t _total;
    size_t _used;
 
-//   void resize(size_t size);
+   void resize(size_t size);
 
 public:
 //   size_t getFreeSpace() const { return _total - _used; }
-//
-//   virtual size_t Length() const { return _used; }
-//
-//   virtual void* get(size_t position) const;
-//
-//   void reserve(size_t size);
-//
-//   virtual bool read(size_t position, void* s, size_t length);
-//
+
+   virtual size_t Length() const { return _used; }
+
+   virtual void* get(size_t position) const;
+
+   void reserve(size_t size);
+
+   virtual bool read(size_t position, void* s, size_t length);
+
 //   virtual void load(StreamReader* reader, size_t length);
-//
-//   virtual bool write(size_t position, const void* s, size_t length);
-//
-//   virtual bool writeBytes(size_t position, char value, size_t length);
-//
-//   bool writeDWord(size_t position, int value)
-//   {
-//      return write(position, (void*)&value, 4);
-//   }
-//   bool writeWord(size_t position, short value)
-//   {
-//      return write(position, (void*)&value, 2);
-//   }
-//   bool writeByte(size_t position, char value)
-//   {
-//      return write(position, (void*)&value, 1);
-//   }
-//
-//   bool writeLiteral(size_t position, const char* s)
-//   {
-//      if (!emptystr(s)) {
-//         return write(position, s, strlen(s) + 1);
-//      }
-//      else return writeWord(position, 0);
-//   }
-//
+
+   virtual bool write(size_t position, const void* s, size_t length);
+
+   virtual bool writeBytes(size_t position, char value, size_t length);
+
+   bool writeDWord(size_t position, int value)
+   {
+      return write(position, (void*)&value, 4);
+   }
+   bool writeWord(size_t position, short value)
+   {
+      return write(position, (void*)&value, 2);
+   }
+   bool writeByte(size_t position, char value)
+   {
+      return write(position, (void*)&value, 1);
+   }
+
+   bool writeLiteral(size_t position, const char* s)
+   {
+      if (!emptystr(s)) {
+         return write(position, s, strlen(s) + 1);
+      }
+      else return writeWord(position, 0);
+   }
+
 //   virtual void insert(size_t position, const void* s, size_t length);
-//
-//   virtual void clear() { _used = 0; }
-//
+
+   virtual void clear() { _used = 0; }
+
 //   virtual void trim(size_t size)
 //   {
 //      _used = size;

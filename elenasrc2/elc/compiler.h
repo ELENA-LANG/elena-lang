@@ -10,8 +10,8 @@
 #define compilerH
 
 #include "project.h"
-//#include "parser.h"
-//#include "bcwriter.h"
+#include "parser.h"
+#include "bcwriter.h"
 
 namespace _ELENA_
 {
@@ -886,8 +886,8 @@ public:
 //   };
 //
 //   ByteCodeWriter _writer;
-//   Parser         _parser;
-//
+   Parser         _parser;
+
 //   MessageMap     _verbs;                            // list of verbs
 //   MessageMap     _operators;                        // list of operators
 //
@@ -1107,7 +1107,7 @@ public:
 //
 //   virtual void compileModule(DNode node, ModuleScope& scope);
 
-   void compile(ident_t source/*, MemoryDump* buffer, ModuleScope& scope*/);
+   //void compile(ident_t source, MemoryDump* buffer, ModuleScope& scope);
 
 //   bool validate(Project& project, _Module* module, int reference);
 //   void validateUnresolved(Unresolveds& unresolveds, Project& project);
@@ -1157,9 +1157,12 @@ public:
 //      _optFlag |= level;
 //   }
 
+   void compile(SNode node);
+   void compile(ident_t source);
+
    bool run(Project& project);
 
-   Compiler(/*StreamReader* syntax*/);
+   Compiler(StreamReader* syntax);
 };
 
 } // _ELENA_

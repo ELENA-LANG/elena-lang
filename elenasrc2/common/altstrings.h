@@ -50,6 +50,8 @@ public:
    bool compare(const char* s);
    bool compare(const char* s, size_t length);
 
+   bool greater(const char* s);
+
    ident_t()
    {
       _string = NULL;
@@ -88,6 +90,8 @@ public:
 
    bool compare(const wide_c* s);
    bool compare(const wide_c* s, size_t length);
+
+   bool greater(const wide_c* s);
 
    wide_t()
    {
