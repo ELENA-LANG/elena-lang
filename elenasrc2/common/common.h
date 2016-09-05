@@ -23,15 +23,12 @@
 
 namespace _ELENA_
 {
-   typedef const wchar_t*  path_t;
-   typedef wchar_t         path_c;
-   typedef wchar_t         wide_c;
-   typedef unsigned int    unic_c;
+   typedef wchar_t      path_c;
+   typedef wchar_t      wide_c;
+   typedef unsigned int unic_c;
 
-   typedef const char*     ident_t;
-   typedef char            ident_c;
-   typedef unsigned char   uident_c;
-   typedef size_t          ref_t;
+////   typedef unsigned char   uident_c;
+//   typedef size_t          ref_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
@@ -43,15 +40,12 @@ namespace _ELENA_
 
 namespace _ELENA_
 {
-   typedef const char*     path_t;
-   typedef char            path_c;
+   typedef char*           path_c;
    typedef unsigned short  wide_c;
    typedef unsigned int    unic_c;
 
-   typedef const char*     ident_t;
-   typedef char            ident_c;
-   typedef unsigned char   uident_c;
-   typedef size_t          ref_t;
+////   typedef unsigned char   uident_c;
+//   typedef size_t          ref_t;
 
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
@@ -85,22 +79,22 @@ public:
    virtual ConfigCategoryIterator getCategoryIt(ident_t name) = 0;
 
    virtual ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL) = 0;
-   virtual int getIntSetting(ident_t category, ident_t key, int defaultValue = 0)
-   {
-      String<char, 255> value(getSetting(category, key));
-
-      return value.toInt(defaultValue);
-   }
-
-   virtual bool getBoolSetting(ident_t category, ident_t key, bool defaultValue = false)
-   {
-      String<char, 255> value(getSetting(category, key));
-
-      if (!emptystr(value)) {
-         return value.compare("-1");
-      }
-      else return defaultValue;
-   }
+//   virtual int getIntSetting(const char* category, const char* key, int defaultValue = 0)
+//   {
+//      ident_t value = getSetting(category, key);
+//
+//      return emptystr(value) ? defaultValue : value.toInt();
+//   }
+//
+//   virtual bool getBoolSetting(ident_t category, ident_t key, bool defaultValue = false)
+//   {
+//      ident_t value = getSetting(category, key);
+//
+//      if (!emptystr(value)) {
+//         return value.compare("-1");
+//      }
+//      else return defaultValue;
+//   }
 
    virtual ~_ConfigFile() {}
 };
@@ -117,15 +111,15 @@ public:
    WideString(ident_t message)
    {
       size_t length = 0x100;
-      StringHelper::copy(_string, message, getlength(message), length);
+      message.copyTo(_string, length);
       _string[length] = 0;
    }
-   WideString(ident_t message, size_t length)
-   {
-      size_t wideLength = 0x100;
-      StringHelper::copy(_string, message, length, wideLength);
-      _string[wideLength] = 0;
-   }
+//   WideString(ident_t message, size_t length)
+//   {
+//      size_t wideLength = 0x100;
+//      StringHelper::copy(_string, message, length, wideLength);
+//      _string[wideLength] = 0;
+//   }
 };
 
 } // _ELENA_

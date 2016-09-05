@@ -11,204 +11,295 @@
 
 #include "common.h"
 #include "elenaconst.h"
-#include "section.h"
+//#include "section.h"
 
 namespace _ELENA_
 {
 
-// --- _Module interface ---
-
-class _Module
-{
-public:
-   virtual ident_t Name() const = 0;
-
-   virtual ident_t resolveReference(ref_t reference) = 0;
-   virtual ident_t resolveSubject(ref_t reference) = 0;
-   virtual ident_t resolveConstant(ref_t reference) = 0;
-
-   virtual ref_t mapReference(ident_t reference) = 0;
-   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
-
-   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
-   virtual ref_t mapConstant(ident_t reference) = 0;
-
-   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
-
-   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-
-   virtual bool save(StreamWriter& writer) = 0;
-
-   virtual ~_Module() {}
-};
+//// --- _Module interface ---
+//
+//class _Module
+//{
+//public:
+////   virtual ident_t Name() const = 0;
+////
+////   virtual ident_t resolveReference(ref_t reference) = 0;
+////   virtual ident_t resolveSubject(ref_t reference) = 0;
+////   virtual ident_t resolveConstant(ref_t reference) = 0;
+////
+////   virtual ref_t mapReference(ident_t reference) = 0;
+////   virtual ref_t mapReference(ident_t reference, bool existing) = 0;
+////
+////   virtual ref_t mapSubject(ident_t reference, bool existing) = 0;
+////   virtual ref_t mapConstant(ident_t reference) = 0;
+////
+////   virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
+////
+////   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+////
+////   virtual bool save(StreamWriter& writer) = 0;
+//
+//   virtual ~_Module() {}
+//};
 
 // --- _LibraryManager ---
 
 class _LibraryManager
 {
 public:
-   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
-   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+//   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+//   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
-// --- SectionInfo ---
+//// --- SectionInfo ---
+//
+//struct SectionInfo
+//{
+//   _Module* module;
+//   _Memory* section;
+//
+//   SectionInfo()
+//   {
+//      module = NULL;
+//      section = NULL;
+//   }
+//   SectionInfo(_Module* module, _Memory* section)
+//   {
+//      this->module = module;
+//      this->section = section;
+//   }
+//};
+//
+//// --- ClassSectionInfo ---
+//
+//struct ClassSectionInfo
+//{
+//   _Module* module;
+//   _Memory* codeSection;
+//   _Memory* vmtSection;
+//
+//   ClassSectionInfo()
+//   {
+//      module = NULL;
+//      codeSection = vmtSection = NULL;
+//   }
+//};
+//
+//// --- _LoaderListener ---
+//
+//class _JITLoaderListener
+//{
+//public:
+//   virtual void onModuleLoad(_Module*) = 0;
+//};
+//
+//// --- _JITLoader ---
+//
+//class _JITLoader
+//{
+//public:
+//   virtual _Memory* getTargetSection(size_t mask) = 0;
+//
+//   virtual _Memory* getTargetDebugSection() = 0;
+//
+//   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode) = 0;
+//   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask) = 0;
+//   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
+//
+//   virtual size_t getLinkerConstant(int id) = 0;
+//
+//   virtual ident_t getLiteralClass() = 0;
+//   virtual ident_t getWideLiteralClass() = 0;
+//   virtual ident_t getCharacterClass() = 0;
+//   virtual ident_t getIntegerClass() = 0;
+//   virtual ident_t getRealClass() = 0;
+//   virtual ident_t getLongClass() = 0;
+//   virtual ident_t getMessageClass() = 0;
+//   virtual ident_t getExtMessageClass() = 0;
+//   virtual ident_t getSignatureClass() = 0;
+//   virtual ident_t getVerbClass() = 0;
+//   virtual ident_t getNamespace() = 0;
+//
+//   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+//
+//   virtual void* resolveReference(ident_t reference, size_t mask) = 0;
+//
+//   virtual void mapReference(ident_t reference, void* vaddress, size_t mask) = 0;
+//
+//   virtual void addListener(_JITLoaderListener* listener) = 0;
+//
+//   virtual ~_JITLoader() {}
+//};
 
-struct SectionInfo
-{
-   _Module* module;
-   _Memory* section;
+//// --- ReferenceName ---
+//
+//class ReferenceName : public IdentifierString
+//{
+//public:
+//   ReferenceName()
+//   {
+//   }
+//   ReferenceName(ident_t reference)
+//   {
+//      copy(reference + StringHelper::findLast(reference, '\'') + 1);
+//   }
+//   ReferenceName(ident_t reference, ident_t package)
+//   {
+//      int length = getlength(package);
+//
+//      if (StringHelper::compare(reference, package, length) && reference[length] == '\'') {
+//         copy(reference + length + 1);
+//      }
+//      else copy(reference + StringHelper::findLast(reference, '\'') + 1);
+//   }
+//};
 
-   SectionInfo()
-   {
-      module = NULL;
-      section = NULL;
-   }
-   SectionInfo(_Module* module, _Memory* section)
-   {
-      this->module = module;
-      this->section = section;
-   }
-};
+// --- NamespaceName ---
 
-// --- ClassSectionInfo ---
-
-struct ClassSectionInfo
-{
-   _Module* module;
-   _Memory* codeSection;
-   _Memory* vmtSection;
-
-   ClassSectionInfo()
-   {
-      module = NULL;
-      codeSection = vmtSection = NULL;
-   }
-};
-
-// --- _LoaderListener ---
-
-class _JITLoaderListener
+class NamespaceName : public String <char, IDENTIFIER_LEN>
 {
 public:
-   virtual void onModuleLoad(_Module*) = 0;
-};
-
-// --- _JITLoader ---
-
-class _JITLoader
-{
-public:
-   virtual _Memory* getTargetSection(size_t mask) = 0;
-
-   virtual _Memory* getTargetDebugSection() = 0;
-
-   virtual SectionInfo getSectionInfo(ident_t reference, size_t mask, bool silentMode) = 0;
-   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask) = 0;
-   virtual ClassSectionInfo getClassSectionInfo(ident_t reference, size_t codeMask, size_t vmtMask, bool silentMode) = 0;
-
-   virtual size_t getLinkerConstant(int id) = 0;
-
-   virtual ident_t getLiteralClass() = 0;
-   virtual ident_t getWideLiteralClass() = 0;
-   virtual ident_t getCharacterClass() = 0;
-   virtual ident_t getIntegerClass() = 0;
-   virtual ident_t getRealClass() = 0;
-   virtual ident_t getLongClass() = 0;
-   virtual ident_t getMessageClass() = 0;
-   virtual ident_t getExtMessageClass() = 0;
-   virtual ident_t getSignatureClass() = 0;
-   virtual ident_t getVerbClass() = 0;
-   virtual ident_t getNamespace() = 0;
-
-   virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
-
-   virtual void* resolveReference(ident_t reference, size_t mask) = 0;
-
-   virtual void mapReference(ident_t reference, void* vaddress, size_t mask) = 0;
-
-   virtual void addListener(_JITLoaderListener* listener) = 0;
-
-   virtual ~_JITLoader() {}
-};
-
-class IdentifierString : public String < ident_c, IDENTIFIER_LEN >
-{
-public:
-   static ident_c* clonePath(path_t value)
+   static bool isIncluded(ident_t root, ident_t ns)
    {
-      ident_c buf[IDENTIFIER_LEN];
+      size_t length = getlength(root);
+      if (getlength(ns) <= length) {
+         return root.compare(ns);
+      }
+      else if (ns[length]=='\'') {
+         return root.compare(ns, length);
+      }
+      else return false;
+   }
+
+//   NamespaceName(ident_t reference)
+//   {
+//      int pos = StringHelper::findLast(reference, '\'', 0);
+//      copy(reference, pos);
+//      _string[pos] = 0;
+//   }
+//
+//   static bool compare(ident_t reference, ident_t ns)
+//   {
+//      size_t pos = StringHelper::findLast(reference, '\'', 0);
+//      if (pos == 0 && getlength(ns) == 0)
+//         return true;
+//      else if (getlength(ns) == pos) {
+//         return StringHelper::compare(reference, ns, pos);
+//      }
+//      else return false;
+//   }
+//
+//   bool compare(ident_t reference)
+//   {
+//      return NamespaceName::compare(reference, _string);
+//   }
+};
+
+// --- IdentifierString ---
+
+class IdentifierString : public String <char, IDENTIFIER_LEN>
+{
+public:
+   operator ident_t() const { return _string; }
+
+   static char* clonePath(path_t value)
+   {
+      char buf[IDENTIFIER_LEN];
       size_t length = IDENTIFIER_LEN;
-      StringHelper::copy(buf, value, getlength(value), length);
+      value.copyTo(buf, length);
       buf[length] = 0;
-
-      return StringHelper::clone(buf);
+   
+      return ((ident_t)buf).clone();
    }
+
+   bool compare(ident_t value)
+   {
+      return ((ident_t)_string).compare(value);
+   }
+
+   bool compare(ident_t value, size_t length)
+   {
+      return ((ident_t)_string).compare(value, length);
+   }
+
+   char* clone()
+   {
+      return ((ident_t)_string).clone();
+   }
+
+   char* clone(size_t index)
+   {
+      return ((ident_t)_string).clone(index);
+   }
+
    IdentifierString()
    {
    }
-   IdentifierString(ident_t value)
-      : String(value)
-   {
-   }
-   IdentifierString(ident_t value, size_t length)
-      : String(value, length)
-   {
-   }
-   IdentifierString(ident_t value1, ident_t value2)
-      : String(value1, value2)
-   {
-   }
-   IdentifierString(ident_t value1, ident_t value2, ident_t value3)
-      : String(value1, value2, value3)
-   {
-   }
-   IdentifierString(ident_t value1, ident_t value2, ident_t value3, ident_t value4)
-      : String(value1, value2, value3, value4)
-   {
-   }
-   IdentifierString(const wide_c* value, size_t sourLength)
-   {
-      size_t length = IDENTIFIER_LEN;
-      StringHelper::copy(_string, value, sourLength, length);
-      _string[length] = 0;
-   }
+   //   IdentifierString(ident_t value)
+   //      : String(value)
+   //   {
+   //   }
+   //   IdentifierString(ident_t value, size_t length)
+   //      : String(value, length)
+   //   {
+   //   }
+   //   IdentifierString(ident_t value1, ident_t value2)
+   //      : String(value1, value2)
+   //   {
+   //   }
+   //   IdentifierString(ident_t value1, ident_t value2, ident_t value3)
+   //      : String(value1, value2, value3)
+   //   {
+   //   }
+   //   IdentifierString(ident_t value1, ident_t value2, ident_t value3, ident_t value4)
+   //      : String(value1, value2, value3, value4)
+   //   {
+   //   }
+   //   IdentifierString(const wide_c* value, size_t sourLength)
+   //   {
+   //      size_t length = IDENTIFIER_LEN;
+   //      StringHelper::copy(_string, value, sourLength, length);
+   //      _string[length] = 0;
+   //   }
    IdentifierString(const wide_c* value)
    {
       size_t length = IDENTIFIER_LEN;
-      StringHelper::copy(_string, value, getlength(value), length);
+      ((wide_t)value).copyTo(_string, getlength(value), length);
       _string[length] = 0;
    }
 };
 
 // --- ReferenceNs ---
 
-class ReferenceNs : public String<ident_c, IDENTIFIER_LEN * 2>
+class ReferenceNs : public String<char, IDENTIFIER_LEN * 2>
 {
 public:
+   operator ident_t() const { return _string; }
+
    void pathToName(path_t path)
    {
-      ident_c buf[IDENTIFIER_LEN];
+      char buf[IDENTIFIER_LEN];
       size_t bufLen;
 
       while (!emptystr(path)) {
          if (!emptystr(_string)) {
             append('\'');
          }
-         int pos = StringHelper::find(path, PATH_SEPARATOR);
+         int pos = path.find(PATH_SEPARATOR);
          if (pos != -1) {
             bufLen = IDENTIFIER_LEN;
-            StringHelper::copy(buf, path, pos, bufLen);
+            path.copyTo(buf, pos, bufLen);
 
             append(buf, bufLen);
             path += pos + 1;
          }
          else {
-            pos = StringHelper::findLast(path, '.');
+            pos = path.findLast('.');
             if (pos == -1)
                pos = getlength(path);
 
             bufLen = IDENTIFIER_LEN;
-            StringHelper::copy(buf, path, pos, bufLen);
+            path.copyTo(buf, pos, bufLen);
             append(buf, bufLen);
 
             break;
@@ -226,7 +317,7 @@ public:
    {
    }
    ReferenceNs(ident_t properName)
-      : String<ident_c, IDENTIFIER_LEN * 2>(properName)
+      : String<char, IDENTIFIER_LEN * 2>(properName)
    {
    }
    ReferenceNs(ident_t moduleName, ident_t properName)
@@ -239,282 +330,218 @@ public:
    }
 };
 
-// --- ReferenceName ---
-
-class ReferenceName : public IdentifierString
-{
-public:
-   ReferenceName()
-   {
-   }
-   ReferenceName(ident_t reference)
-   {
-      copy(reference + StringHelper::findLast(reference, '\'') + 1);
-   }
-   ReferenceName(ident_t reference, ident_t package)
-   {
-      int length = getlength(package);
-
-      if (StringHelper::compare(reference, package, length) && reference[length] == '\'') {
-         copy(reference + length + 1);
-      }
-      else copy(reference + StringHelper::findLast(reference, '\'') + 1);
-   }
-};
-
-// --- NamespaceName ---
-
-class NamespaceName : public String < ident_c, IDENTIFIER_LEN >
-{
-public:
-   static bool isIncluded(ident_t root, ident_t ns)
-   {
-      size_t length = getlength(root);
-      if (getlength(ns) <= length) {
-         return StringHelper::compare(root, ns);
-      }
-      else if (ns[length]=='\'') {
-         return StringHelper::compare(root, ns, length);
-      }
-      else return false;
-   }
-
-   NamespaceName(ident_t reference)
-   {
-      int pos = StringHelper::findLast(reference, '\'', 0);
-      copy(reference, pos);
-      _string[pos] = 0;
-   }
-
-   static bool compare(ident_t reference, ident_t ns)
-   {
-      size_t pos = StringHelper::findLast(reference, '\'', 0);
-      if (pos == 0 && getlength(ns) == 0)
-         return true;
-      else if (getlength(ns) == pos) {
-         return StringHelper::compare(reference, ns, pos);
-      }
-      else return false;
-   }
-
-   bool compare(ident_t reference)
-   {
-      return NamespaceName::compare(reference, _string);
-   }
-};
-
-// --- Quote ---
-
-template<class S> class QuoteTemplate
-{
-   S _string;
-
-public:
-   size_t Length() { return _string.Length(); }
-
-   operator ident_t() const { return _string; }
-
-   QuoteTemplate(ident_t string)
-   {
-      int mode = 0; // 1 - normal, 2 - character code
-      int index = 0;
-      for (size_t i = 0 ; i <= getlength(string) ; i++) {
-         switch (mode) {
-            case 0:
-               if (string[i]=='"') {
-                  mode = 1;
-               }
-               else if (string[i]=='#') {
-                  mode = 2;
-                  index = i + 1;
-               }
-               else return;
-
-               break;
-            case 1:
-               if (string[i]==0) {
-                  mode = 0;
-               }
-               else if (string[i]=='"') {
-                  if (string[i + 1]=='"')
-                     _string.append(string[i]);
-
-                  mode = 0;
-               }
-               else _string.append(string[i]);
-               break;
-            case 2:
-               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
-                  String<ident_c, 12> number(string + index, i - index);
-                  unic_c ch = (string[i] == 'h') ? number.toLong(16) : number.toInt();
-
-                  ident_c temp[5];
-                  size_t temp_len = 4;
-                  StringHelper::copy(temp, &ch, 1, temp_len);
-                  _string.append(temp, temp_len);
-
-                  if(string[i] == '"') {
-                     mode = 1;
-                  }
-                  else if(string[i] == '#') {
-                     index = i + 1;
-                     mode = 2;
-                  }
-                  else mode = 0;
-               }
-               break;
-         }
-      }
-   }
-};
-
-// --- VMTEntry ---
-
-struct VMTEntry
-{
-   size_t message;
-   int address;
-};
-
-// --- ClassHeader ---
-
-struct ClassHeader
-{
-   ref_t  packageRef;      // package header
-   ref_t  classRef;        // class class reference
-   size_t count;
-   size_t flags;
-   ref_t  parentRef;
-};
-
-// --- ClassInfo ---
-
-enum MethodAttribute
-{
-   maSubjectMask        = 0x100,
-
-   maNone               = 0x000,
-   maHint               = 0x001,
-   maType               = 0x102,
-   maEmbeddableGet      = 0x103,
-//   maEmbeddedInit   = 0x104,
-   maEmbeddableIdle     = 0x005,
-};
-
-struct ClassInfo
-{
-   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
-   typedef Pair<ref_t, int>                     Attribute;
-   typedef MemoryMap<ref_t, bool, false>        MethodMap;
-   typedef MemoryMap<ident_t, int, true>        FieldMap;
-   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
-   typedef MemoryMap<int, ref_t>                FieldTypeMap;
-   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
-
-   ClassHeader    header;
-   size_t         size;           // Object size
-   MethodMap      methods;
-   FieldMap       fields;
-   StaticFieldMap statics;
-
-   FieldTypeMap   fieldTypes;
-   MethodInfoMap  methodHints;
-
-   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-   {
-      writer->write((void*)this, sizeof(ClassHeader));
-      writer->writeDWord(size);
-      if (!headerAndSizeOnly) {
-         methods.write(writer);
-         fields.write(writer);
-         fieldTypes.write(writer);
-         methodHints.write(writer);
-         statics.write(writer);
-      }
-   }
-
-   void load(StreamReader* reader, bool headerOnly = false)
-   {
-      reader->read((void*)&header, sizeof(ClassHeader));
-      size = reader->getDWord();
-      if (!headerOnly) {
-         methods.read(reader);
-         fields.read(reader);
-         fieldTypes.read(reader);
-         methodHints.read(reader);
-         statics.read(reader);
-      }
-   }
-
-   ClassInfo()
-      : fields(-1), methods(0), methodHints(0), statics(StaticInfo(0, 0))
-   {
-      header.flags = 0;
-      header.classRef = 0;
-   }
-};
-
-// --- SymbolExpressionInfo ---
-
-struct SymbolExpressionInfo
-{
-   ref_t expressionTypeRef;
-   ref_t listRef;
-   bool  constant;
-
-   void save(StreamWriter* writer)
-   {
-      writer->writeDWord(expressionTypeRef);
-      writer->writeDWord(listRef);
-      writer->writeDWord(constant ? -1: 0);
-   }
-
-   void load(StreamReader* reader)
-   {
-      expressionTypeRef = reader->getDWord();
-      listRef = reader->getDWord();
-      constant = (reader->getDWord() != 0);
-   }
-
-   SymbolExpressionInfo()
-   {
-      expressionTypeRef = 0;
-      listRef = 0;
-      constant = false;
-   }
-};
-
-// --- DebugLineInfo ---
-
-struct DebugLineInfo
-{
-   DebugSymbol symbol;
-   int         col, row, length;
-   union
-   {
-      struct Source { int nameRef; } source;
-      struct Module { int nameRef; int flags; } symbol;
-      struct Step   { size_t address;         } step;
-      struct Local  { int nameRef; int level; } local;
-      struct Field  { int nameRef; int size;  } field;
-   } addresses;
-
-   DebugLineInfo()
-   {
-      symbol = dsNone;
-      col = row = length = 0;
-   }
-   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
-   {
-      this->symbol = symbol;
-      this->col = col;
-      this->row = row;
-      this->length = length;
-
-      this->addresses.symbol.nameRef = 0;
-      this->addresses.symbol.flags = 0;
-   }
-};
+////// --- Quote ---
+////
+////template<class S> class QuoteTemplate
+////{
+////   S _string;
+////
+////public:
+////   size_t Length() { return _string.Length(); }
+////
+////   operator ident_t() const { return _string; }
+////
+////   QuoteTemplate(ident_t string)
+////   {
+////      int mode = 0; // 1 - normal, 2 - character code
+////      int index = 0;
+////      for (size_t i = 0 ; i <= getlength(string) ; i++) {
+////         switch (mode) {
+////            case 0:
+////               if (string[i]=='"') {
+////                  mode = 1;
+////               }
+////               else if (string[i]=='#') {
+////                  mode = 2;
+////                  index = i + 1;
+////               }
+////               else return;
+////
+////               break;
+////            case 1:
+////               if (string[i]==0) {
+////                  mode = 0;
+////               }
+////               else if (string[i]=='"') {
+////                  if (string[i + 1]=='"')
+////                     _string.append(string[i]);
+////
+////                  mode = 0;
+////               }
+////               else _string.append(string[i]);
+////               break;
+////            case 2:
+////               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
+////                  String<ident_c, 12> number(string + index, i - index);
+////                  unic_c ch = (string[i] == 'h') ? number.toLong(16) : number.toInt();
+////
+////                  ident_c temp[5];
+////                  size_t temp_len = 4;
+////                  StringHelper::copy(temp, &ch, 1, temp_len);
+////                  _string.append(temp, temp_len);
+////
+////                  if(string[i] == '"') {
+////                     mode = 1;
+////                  }
+////                  else if(string[i] == '#') {
+////                     index = i + 1;
+////                     mode = 2;
+////                  }
+////                  else mode = 0;
+////               }
+////               break;
+////         }
+////      }
+////   }
+////};
+////
+////// --- VMTEntry ---
+////
+////struct VMTEntry
+////{
+////   size_t message;
+////   int address;
+////};
+////
+////// --- ClassHeader ---
+////
+////struct ClassHeader
+////{
+////   ref_t  packageRef;      // package header
+////   ref_t  classRef;        // class class reference
+////   size_t count;
+////   size_t flags;
+////   ref_t  parentRef;
+////};
+////
+////// --- ClassInfo ---
+////
+////enum MethodAttribute
+////{
+////   maSubjectMask        = 0x100,
+////
+////   maNone               = 0x000,
+////   maHint               = 0x001,
+////   maType               = 0x102,
+////   maEmbeddableGet      = 0x103,
+//////   maEmbeddedInit   = 0x104,
+////   maEmbeddableIdle     = 0x005,
+////};
+////
+////struct ClassInfo
+////{
+////   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
+////   typedef Pair<ref_t, int>                     Attribute;
+////   typedef MemoryMap<ref_t, bool, false>        MethodMap;
+////   typedef MemoryMap<ident_t, int, true>        FieldMap;
+////   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
+////   typedef MemoryMap<int, ref_t>                FieldTypeMap;
+////   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
+////
+////   ClassHeader    header;
+////   size_t         size;           // Object size
+////   MethodMap      methods;
+////   FieldMap       fields;
+////   StaticFieldMap statics;
+////
+////   FieldTypeMap   fieldTypes;
+////   MethodInfoMap  methodHints;
+////
+////   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+////   {
+////      writer->write((void*)this, sizeof(ClassHeader));
+////      writer->writeDWord(size);
+////      if (!headerAndSizeOnly) {
+////         methods.write(writer);
+////         fields.write(writer);
+////         fieldTypes.write(writer);
+////         methodHints.write(writer);
+////         statics.write(writer);
+////      }
+////   }
+////
+////   void load(StreamReader* reader, bool headerOnly = false)
+////   {
+////      reader->read((void*)&header, sizeof(ClassHeader));
+////      size = reader->getDWord();
+////      if (!headerOnly) {
+////         methods.read(reader);
+////         fields.read(reader);
+////         fieldTypes.read(reader);
+////         methodHints.read(reader);
+////         statics.read(reader);
+////      }
+////   }
+////
+////   ClassInfo()
+////      : fields(-1), methods(0), methodHints(0), statics(StaticInfo(0, 0))
+////   {
+////      header.flags = 0;
+////      header.classRef = 0;
+////   }
+////};
+////
+////// --- SymbolExpressionInfo ---
+////
+////struct SymbolExpressionInfo
+////{
+////   ref_t expressionTypeRef;
+////   ref_t listRef;
+////   bool  constant;
+////
+////   void save(StreamWriter* writer)
+////   {
+////      writer->writeDWord(expressionTypeRef);
+////      writer->writeDWord(listRef);
+////      writer->writeDWord(constant ? -1: 0);
+////   }
+////
+////   void load(StreamReader* reader)
+////   {
+////      expressionTypeRef = reader->getDWord();
+////      listRef = reader->getDWord();
+////      constant = (reader->getDWord() != 0);
+////   }
+////
+////   SymbolExpressionInfo()
+////   {
+////      expressionTypeRef = 0;
+////      listRef = 0;
+////      constant = false;
+////   }
+////};
+////
+////// --- DebugLineInfo ---
+////
+////struct DebugLineInfo
+////{
+////   DebugSymbol symbol;
+////   int         col, row, length;
+////   union
+////   {
+////      struct Source { int nameRef; } source;
+////      struct Module { int nameRef; int flags; } symbol;
+////      struct Step   { size_t address;         } step;
+////      struct Local  { int nameRef; int level; } local;
+////      struct Field  { int nameRef; int size;  } field;
+////   } addresses;
+////
+////   DebugLineInfo()
+////   {
+////      symbol = dsNone;
+////      col = row = length = 0;
+////   }
+////   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
+////   {
+////      this->symbol = symbol;
+////      this->col = col;
+////      this->row = row;
+////      this->length = length;
+////
+////      this->addresses.symbol.nameRef = 0;
+////      this->addresses.symbol.flags = 0;
+////   }
+////};
 
 // --- Exception base class ---
 
@@ -526,178 +553,178 @@ struct _Exception
 
 struct InternalError : _Exception
 {
-   const char* message;
+   ident_t message;
 
-   InternalError(const char* message)
+   InternalError(ident_t message)
    {
       this->message = message;
    }
 };
 
-// --- EAbortException ---
-
-class EAbortException : _Exception
-{
-};
-
-// --- key mapping routines ---
-
-inline int simpleRule(int key)
-{
-   return key;
-}
-
-inline size_t syntaxRule(size_t key)
-{
-   return key >> cnSyntaxPower;
-}
-
-inline size_t tableRule(size_t key)
-{
-   return key >> cnTableKeyPower;
-}
-
-// --- mapping keys ---
-inline size_t mapReferenceKey(ident_t key)
-{
-   ident_t p = key + StringHelper::findLast(key, '\'', 0) + 1;
-
-   int position = *p - 'a';
-   if (position > 26)
-      position = 26;
-   else if (position < 0)
-      position = 0;
-
-   return position;
-}
-
-// --- Common type definitions ---
-
-typedef Map<ident_t, _Module*> ModuleMap;
-typedef List<_Module*> ModuleList;
-
-// --- Reference mapping types ---
-typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
-
-// --- Message mapping types ---
-typedef Map<ident_t, ref_t> MessageMap;
-
-// --- ParserTable auxiliary types ---
-typedef Stack<int>                                           ParserStack;
-typedef MemoryMap<ident_t, int>                              SymbolMap;
-typedef MemoryHashTable<size_t, int, syntaxRule, cnHashSize> SyntaxHash;
-typedef MemoryHashTable<size_t, int, tableRule, cnHashSize>  TableHash;
-
-// --- miscellaneous routines ---
-
-inline bool isWeakReference(ident_t referenceName)
-{
-   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
-}
-
-inline ref_t encodeMessage(ref_t signatureRef, ref_t verbId, int paramCount)
-{
-   return (verbId << 24) + (signatureRef << 4) + paramCount;
-}
-
-inline ref_t encodeVerb(int verbId)
-{
-   return encodeMessage(0, verbId, 0);
-}
-
-inline ref_t overwriteSubject(ref_t message, ref_t subject)
-{
-   message &= ~SIGN_MASK;
-   message |= (subject << 4);
-
-   return message;
-}
-
-inline ref_t overwriteVerb(ref_t message, int verb)
-{
-   message &= ~VERB_MASK;
-   message |= (verb << 24);
-
-   return message;
-
-}
-
-inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
-{
-   verbId = (message & VERB_MASK) >> 24;
-   signatureRef = (message & SIGN_MASK) >> 4;
-   paramCount = message & PARAM_MASK;
-}
-
-inline int getParamCount(ref_t message)
-{
-   int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
-
-   if (paramCount >= OPEN_ARG_COUNT)
-      return paramCount - OPEN_ARG_COUNT;
-
-   return paramCount;
-}
-
-inline ref_t getVerb(ref_t message)
-{
-   int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
-
-   return verb;
-}
-
-inline ref_t getSignature(ref_t message)
-{
-   int   paramCount;
-   ref_t verb, signature;
-   decodeMessage(message, signature, verb, paramCount);
-
-   return signature;
-}
-
-inline bool IsExprOperator(int operator_id)
-{
-   switch (operator_id) {
-      case ADD_MESSAGE_ID:
-      case SUB_MESSAGE_ID:
-      case MUL_MESSAGE_ID:
-      case DIV_MESSAGE_ID:
-      case AND_MESSAGE_ID:
-      case OR_MESSAGE_ID:
-      case XOR_MESSAGE_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-inline bool IsShiftOperator(int operator_id)
-{
-   switch (operator_id) {
-      case READ_MESSAGE_ID:
-      case WRITE_MESSAGE_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-inline bool IsRealExprOperator(int operator_id)
-{
-   switch (operator_id) {
-   case ADD_MESSAGE_ID:
-   case SUB_MESSAGE_ID:
-   case MUL_MESSAGE_ID:
-   case DIV_MESSAGE_ID:
-      return true;
-   default:
-      return false;
-   }
-}
+////// --- EAbortException ---
+////
+////class EAbortException : _Exception
+////{
+////};
+////
+////// --- key mapping routines ---
+////
+////inline int simpleRule(int key)
+////{
+////   return key;
+////}
+////
+////inline size_t syntaxRule(size_t key)
+////{
+////   return key >> cnSyntaxPower;
+////}
+////
+////inline size_t tableRule(size_t key)
+////{
+////   return key >> cnTableKeyPower;
+////}
+////
+////// --- mapping keys ---
+////inline size_t mapReferenceKey(ident_t key)
+////{
+////   ident_t p = key + StringHelper::findLast(key, '\'', 0) + 1;
+////
+////   int position = *p - 'a';
+////   if (position > 26)
+////      position = 26;
+////   else if (position < 0)
+////      position = 0;
+////
+////   return position;
+////}
+////
+////// --- Common type definitions ---
+////
+////typedef Map<ident_t, _Module*> ModuleMap;
+////typedef List<_Module*> ModuleList;
+////
+////// --- Reference mapping types ---
+////typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
+////
+////// --- Message mapping types ---
+////typedef Map<ident_t, ref_t> MessageMap;
+////
+////// --- ParserTable auxiliary types ---
+////typedef Stack<int>                                           ParserStack;
+////typedef MemoryMap<ident_t, int>                              SymbolMap;
+////typedef MemoryHashTable<size_t, int, syntaxRule, cnHashSize> SyntaxHash;
+////typedef MemoryHashTable<size_t, int, tableRule, cnHashSize>  TableHash;
+////
+////// --- miscellaneous routines ---
+////
+////inline bool isWeakReference(ident_t referenceName)
+////{
+////   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0]=='\'');
+////}
+////
+////inline ref_t encodeMessage(ref_t signatureRef, ref_t verbId, int paramCount)
+////{
+////   return (verbId << 24) + (signatureRef << 4) + paramCount;
+////}
+////
+////inline ref_t encodeVerb(int verbId)
+////{
+////   return encodeMessage(0, verbId, 0);
+////}
+////
+////inline ref_t overwriteSubject(ref_t message, ref_t subject)
+////{
+////   message &= ~SIGN_MASK;
+////   message |= (subject << 4);
+////
+////   return message;
+////}
+////
+////inline ref_t overwriteVerb(ref_t message, int verb)
+////{
+////   message &= ~VERB_MASK;
+////   message |= (verb << 24);
+////
+////   return message;
+////
+////}
+////
+////inline void decodeMessage(ref_t message, ref_t& signatureRef, ref_t& verbId, int& paramCount)
+////{
+////   verbId = (message & VERB_MASK) >> 24;
+////   signatureRef = (message & SIGN_MASK) >> 4;
+////   paramCount = message & PARAM_MASK;
+////}
+////
+////inline int getParamCount(ref_t message)
+////{
+////   int   paramCount;
+////   ref_t verb, signature;
+////   decodeMessage(message, signature, verb, paramCount);
+////
+////   if (paramCount >= OPEN_ARG_COUNT)
+////      return paramCount - OPEN_ARG_COUNT;
+////
+////   return paramCount;
+////}
+////
+////inline ref_t getVerb(ref_t message)
+////{
+////   int   paramCount;
+////   ref_t verb, signature;
+////   decodeMessage(message, signature, verb, paramCount);
+////
+////   return verb;
+////}
+////
+////inline ref_t getSignature(ref_t message)
+////{
+////   int   paramCount;
+////   ref_t verb, signature;
+////   decodeMessage(message, signature, verb, paramCount);
+////
+////   return signature;
+////}
+////
+////inline bool IsExprOperator(int operator_id)
+////{
+////   switch (operator_id) {
+////      case ADD_MESSAGE_ID:
+////      case SUB_MESSAGE_ID:
+////      case MUL_MESSAGE_ID:
+////      case DIV_MESSAGE_ID:
+////      case AND_MESSAGE_ID:
+////      case OR_MESSAGE_ID:
+////      case XOR_MESSAGE_ID:
+////         return true;
+////      default:
+////         return false;
+////   }
+////}
+////
+////inline bool IsShiftOperator(int operator_id)
+////{
+////   switch (operator_id) {
+////      case READ_MESSAGE_ID:
+////      case WRITE_MESSAGE_ID:
+////         return true;
+////      default:
+////         return false;
+////   }
+////}
+////
+////inline bool IsRealExprOperator(int operator_id)
+////{
+////   switch (operator_id) {
+////   case ADD_MESSAGE_ID:
+////   case SUB_MESSAGE_ID:
+////   case MUL_MESSAGE_ID:
+////   case DIV_MESSAGE_ID:
+////      return true;
+////   default:
+////      return false;
+////   }
+////}
 
 } // _ELENA_
 

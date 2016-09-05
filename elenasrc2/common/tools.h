@@ -9,47 +9,47 @@
 #ifndef toolsH
 #define toolsH 1
 
-#if !defined(max)
-#define max(a, b)       ((a) > (b) ? (a) : (b))
-#endif
-
-#if !defined(min)
-#define min(a, b)       ((a) < (b) ? (a) : (b))
-#endif
+//#if !defined(max)
+//#define max(a, b)       ((a) > (b) ? (a) : (b))
+//#endif
+//
+//#if !defined(min)
+//#define min(a, b)       ((a) < (b) ? (a) : (b))
+//#endif
 
 #ifdef _LINUX32
 
-#include <ctype.h>
-
-#define _strdup strdup
+//#include <ctype.h>
+//
+//#define _strdup strdup
 
 namespace _ELENA_
 {
 
-inline static size_t wcslen(const unsigned short* s)
-{
-   const unsigned short* p = s;
-
-   while (*p) p++;
-
-   return (size_t)(p - s);
-}
-
-inline char* _strlwr(char* str)
-{
-   char* it = str;
-   while (*it != 0) { *it = tolower(*it); ++it; }
-
-   return str;
-}
-
-inline char* _strupr(char* str)
-{
-   char* it = str;
-   while (*it != 0) { *it = toupper(*it); ++it; }
-
-   return str;
-}
+//inline static size_t wcslen(const unsigned short* s)
+//{
+//   const unsigned short* p = s;
+//
+//   while (*p) p++;
+//
+//   return (size_t)(p - s);
+//}
+//
+//inline char* _strlwr(char* str)
+//{
+//   char* it = str;
+//   while (*it != 0) { *it = tolower(*it); ++it; }
+//
+//   return str;
+//}
+//
+//inline char* _strupr(char* str)
+//{
+//   char* it = str;
+//   while (*it != 0) { *it = toupper(*it); ++it; }
+//
+//   return str;
+//}
 
 ////int _itow(int val, wchar_t* s, int radix)
 ////{
@@ -129,33 +129,33 @@ inline static size_t getlength(const char* s)
    return (s == NULL) ? 0 : strlen(s);
 }
 
-////inline wchar_t wchlwr(wchar_t ch)
+//inline wchar_t wchlwr(wchar_t ch)
+//{
+//   wchar_t temp[2];
+//   temp[0] = ch;
+//   temp[1] = 0;
+//
+//   wcslwr(temp);
+//
+//   return temp[0];
+//}
+//
+////inline char *strrev(char *str)
 ////{
-////   wchar_t temp[2];
-////   temp[0] = ch;
-////   temp[1] = 0;
+////      char *p1, *p2;
 ////
-////   wcslwr(temp);
+////      if (! str || ! *str)
+////            return str;
 ////
-////   return temp[0];
+////      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
+////      {
+////            *p1 ^= *p2;
+////            *p2 ^= *p1;
+////            *p1 ^= *p2;
+////      }
+////      return str;
 ////}
-////
-//////inline char *strrev(char *str)
-//////{
-//////      char *p1, *p2;
-//////
-//////      if (! str || ! *str)
-//////            return str;
-//////
-//////      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
-//////      {
-//////            *p1 ^= *p2;
-//////            *p2 ^= *p1;
-//////            *p1 ^= *p2;
-//////      }
-//////      return str;
-//////}
-//////#endif
+////#endif
 
 // --- resource freeing routines ---
 
@@ -189,67 +189,67 @@ inline void freestr(unsigned short* s)
 
 // --- alignment routines ---
 
-inline unsigned int align(unsigned int number, const unsigned int alignment)
-{
-   if (number & (alignment - 1)) {
-      return (number & ~(alignment - 1)) + alignment;
-   }
-   else return number & ~(alignment - 1);
-}
-
-// --- miscellaneous routines ---
-
-inline bool ifAny(int target, int value1, int value2)
-{
-   return target == value1 || target == value2;
-}
-
-inline bool test(int number, int mask)
-{
-   return ((number & mask) == mask);
-}
-
-inline bool test(int number, int mask, int value)
-{
-   return ((number & mask) == value);
-}
-
-inline bool testany(int number, int mask)
-{
-   return ((number & mask) != 0);
-}
-
-inline bool isbetween(int starting, int len , int value)
-{
-   return (starting < value && value < starting + len);
-}
-
-inline bool isNumeric(ident_t s, int length)
-{
-   for (int i = 0 ; i < length ; i++)
-   {
-      if (s[i] < '0' || s[i] > '9')
-         return false;
-   }
-
-   return true;
-}
-
-// --- calcTabShift ---
-
-inline size_t calcTabShift(int col, int tabSize)
-{
-   int nextCol = (col / tabSize * tabSize) + tabSize;
-
-   return nextCol - col;
-}
-
-// --- __abs ---
-
-inline int __abs(int x)
-{
-   return (x ^ (x>>31)) - (x>>31);
-}
+//inline unsigned int align(unsigned int number, const unsigned int alignment)
+//{
+//   if (number & (alignment - 1)) {
+//      return (number & ~(alignment - 1)) + alignment;
+//   }
+//   else return number & ~(alignment - 1);
+//}
+//
+//// --- miscellaneous routines ---
+//
+//inline bool ifAny(int target, int value1, int value2)
+//{
+//   return target == value1 || target == value2;
+//}
+//
+//inline bool test(int number, int mask)
+//{
+//   return ((number & mask) == mask);
+//}
+//
+//inline bool test(int number, int mask, int value)
+//{
+//   return ((number & mask) == value);
+//}
+//
+//inline bool testany(int number, int mask)
+//{
+//   return ((number & mask) != 0);
+//}
+//
+//inline bool isbetween(int starting, int len , int value)
+//{
+//   return (starting < value && value < starting + len);
+//}
+//
+//inline bool isNumeric(ident_t s, int length)
+//{
+//   for (int i = 0 ; i < length ; i++)
+//   {
+//      if (s[i] < '0' || s[i] > '9')
+//         return false;
+//   }
+//
+//   return true;
+//}
+//
+//// --- calcTabShift ---
+//
+//inline size_t calcTabShift(int col, int tabSize)
+//{
+//   int nextCol = (col / tabSize * tabSize) + tabSize;
+//
+//   return nextCol - col;
+//}
+//
+//// --- __abs ---
+//
+//inline int __abs(int x)
+//{
+//   return (x ^ (x>>31)) - (x>>31);
+//}
 
 } // _ELENA_
 

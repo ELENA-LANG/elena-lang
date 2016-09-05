@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -48,94 +48,94 @@ bool IniConfigFile :: load(path_t path, int encoding)
          if (emptystr(key)) {
             return false;
          }
-         if (line.find('=') != -1) {
-            int pos = line.find('=');
+         int pos = ((ident_t)line).find('=');
+         if (pos != -1) {
             subKey.copy(line, pos);
 
-            _settings.add(key, subKey, line.clone(pos + 1));
+            _settings.add((ident_t)key, (ident_t)subKey, ((ident_t)line).clone(pos + 1));
          }
-         else _settings.add(key, line, (char*)NULL);
+         else _settings.add((ident_t)key, (ident_t)line, (char*)NULL);
       }
    }
    return true;
 }
 
-bool IniConfigFile :: save(path_t path, int encoding)
-{
-   TextFileWriter  writer(path, encoding, true);
-
-   if (!writer.isOpened())
-      return false;
-
-   // goes through the section keys
-   _Iterator<ConfigSettings::VItem, _MapItem<const char*, ConfigSettings::VItem>, const char*> it = _settings.start();
-   while (!it.Eof()) {
-      ConfigCategoryIterator cat_it = _settings.getIt(it.key());
-      if (!cat_it.Eof()) {
-         writer.writeLiteral("[");
-         writer.writeLiteral(it.key());
-         writer.writeLiteralNewLine("]");
-
-         while (!cat_it.Eof()) {
-            writer.writeLiteral(cat_it.key());
-            const char* value = *cat_it;
-            if (!emptystr(value)) {
-               writer.writeLiteral("=");
-               writer.writeLiteralNewLine(value);
-            }
-            else writer.writeNewLine();
-
-            cat_it++;
-         }
-         writer.writeNewLine();
-      }
-      it++;
-   }
-   return true;
-}
-
-void IniConfigFile :: setSetting(const char* category, const char* key, const char* value)
-{
-   _settings.add(category, key, StringHelper::clone(value));
-}
-
-void IniConfigFile :: setSetting(const char* category, const char* key, int value)
-{
-   String<char, 15> string;
-   string.appendInt(value);
-
-   _settings.add(category, key, string.clone());
-}
-
-void IniConfigFile :: setSetting(const char* category, const char* key, size_t value)
-{
-   String<char, 15> string;
-   string.appendInt(value);
-
-   _settings.add(category, key, string.clone());
-}
-
-void IniConfigFile :: setSetting(const char* category, const char* key, bool value)
-{
-   _settings.add(category, key, value ? "-1" : "0");
-}
+//bool IniConfigFile :: save(path_t path, int encoding)
+//{
+//   TextFileWriter  writer(path, encoding, true);
+//
+//   if (!writer.isOpened())
+//      return false;
+//
+//   // goes through the section keys
+//   _Iterator<ConfigSettings::VItem, _MapItem<const char*, ConfigSettings::VItem>, const char*> it = _settings.start();
+//   while (!it.Eof()) {
+//      ConfigCategoryIterator cat_it = _settings.getIt(it.key());
+//      if (!cat_it.Eof()) {
+//         writer.writeLiteral("[");
+//         writer.writeLiteral(it.key());
+//         writer.writeLiteralNewLine("]");
+//
+//         while (!cat_it.Eof()) {
+//            writer.writeLiteral(cat_it.key());
+//            const char* value = *cat_it;
+//            if (!emptystr(value)) {
+//               writer.writeLiteral("=");
+//               writer.writeLiteralNewLine(value);
+//            }
+//            else writer.writeNewLine();
+//
+//            cat_it++;
+//         }
+//         writer.writeNewLine();
+//      }
+//      it++;
+//   }
+//   return true;
+//}
+//
+//void IniConfigFile :: setSetting(const char* category, const char* key, const char* value)
+//{
+//   _settings.add(category, key, ((ident_t)value).clone());
+//}
+//
+//void IniConfigFile :: setSetting(const char* category, const char* key, int value)
+//{
+//   String<char, 15> string;
+//   string.appendInt(value);
+//
+//   _settings.add(category, key, ((ident_t)string).clone());
+//}
+//
+//void IniConfigFile :: setSetting(const char* category, const char* key, size_t value)
+//{
+//   String<char, 15> string;
+//   string.appendInt(value);
+//
+//   _settings.add(category, key, ((ident_t)string).clone());
+//}
+//
+//void IniConfigFile :: setSetting(const char* category, const char* key, bool value)
+//{
+//   _settings.add(category, key, value ? "-1" : "0");
+//}
 
 ident_t IniConfigFile :: getSetting(ident_t category, ident_t key, ident_t defaultValue)
 {
    return _settings.get(category, key, defaultValue);
 }
 
-void IniConfigFile :: clear(const char* category, const char* key)
-{
-	_settings.clear(category, key);
-}
-
-void IniConfigFile :: clear(const char* category)
-{
-   _settings.clear(category);
-}
-
-void IniConfigFile :: clear()
-{
-    _settings.clear();
-}
+//void IniConfigFile :: clear(const char* category, const char* key)
+//{
+//	_settings.clear(category, key);
+//}
+//
+//void IniConfigFile :: clear(const char* category)
+//{
+//   _settings.clear(category);
+//}
+//
+//void IniConfigFile :: clear()
+//{
+//    _settings.clear();
+//}
