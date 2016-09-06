@@ -1,34 +1,34 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA JIT compiler class implementation.
-////
-////                                              (C)2005-2016, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "jitcompiler.h"
+//		This file contains ELENA JIT compiler class implementation.
 //
-//using namespace _ELENA_;
-//
-//// --- ELENA Class constants ---
-//const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
-//
-//inline void insertVMTEntry(VMTEntry* entries, int count, int index)
-//{
-//   for (int i = count ; i > index ; i--) {
-//      entries[i] = entries[i-1];
-//   }
-//}
-//
-//// --- _JITCompiler ---
-//
-//void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter)
-//{
-//   compileProcedure(helper, reader, codeWriter);
-//}
-//
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "jitcompiler.h"
+
+using namespace _ELENA_;
+
+// --- ELENA Class constants ---
+const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
+
+inline void insertVMTEntry(VMTEntry* entries, int count, int index)
+{
+   for (int i = count ; i > index ; i--) {
+      entries[i] = entries[i-1];
+   }
+}
+
+// --- _JITCompiler ---
+
+void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter)
+{
+   compileProcedure(helper, reader, codeWriter);
+}
+
 //// --- JITCompiler32 ---
 //
 //void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
@@ -173,43 +173,43 @@
 //{
 //   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
 //}
-//
-//size_t JITCompiler32 :: findLength(void* refVMT)
-//{
-//   int count = *(int*)((int)refVMT - elVMTCountOffset32);
-//   return count;
-//}
-//
-//int JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
-//{
-//   VMTEntry* entries = (VMTEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != message) {
-//      i++;
-//   }
-//
-//   // return the method address
-//   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-//   return (i < count) ? entries[i].address : entries[0].address;
-//}
-//
-//int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
-//{
-//   VMTEntry* entries = (VMTEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != message) {
-//      i++;
-//   }
-//
-//   // return the method address
-//   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
-//   return (i < count) ? i : 0;
-//}
-//
+
+size_t JITCompiler32 :: findLength(void* refVMT)
+{
+   int count = *(int*)((int)refVMT - elVMTCountOffset32);
+   return count;
+}
+
+int JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
+{
+   VMTEntry* entries = (VMTEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != message) {
+      i++;
+   }
+
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
+   return (i < count) ? entries[i].address : entries[0].address;
+}
+
+int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
+{
+   VMTEntry* entries = (VMTEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != message) {
+      i++;
+   }
+
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE index should be used (the first method entry)
+   return (i < count) ? i : 0;
+}
+
 //int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
 //{
 //   writer.writeBytes(0, objectOffset);
@@ -218,17 +218,17 @@
 //
 //   return writer.Position() - 4;
 //}
-//
-//void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
-//{
-//   writer.writeDWord(0);
-//}
-//
-//void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
-//{
-//   writer.writeBytes(0, count * 4);
-//}
-//
+
+void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
+{
+   writer.writeDWord(0);
+}
+
+void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
+{
+   writer.writeBytes(0, count * 4);
+}
+
 //void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength)
 //{
 //   alignCode(&vmtWriter, VA_ALIGNMENT, false);   
@@ -340,17 +340,17 @@
 //      }
 //   }
 //}
-//   
-//void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeDWord(0);            // write size place holder
-//}
-//
-//void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   tape[0] = ecodes.Position() - 4;
-//}
+   
+void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeDWord(0);            // write size place holder
+}
+
+void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   tape[0] = ecodes.Position() - 4;
+}

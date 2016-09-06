@@ -74,23 +74,23 @@ namespace _ELENA_
 //   #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
 ////   #define errInternalError         "internal error 599"
 ////   #define errInvalidDynamicError   "internal error 600"
-//   #define errCommandSetAbsent     "internal error 600: command set is not defined"
+   #define errCommandSetAbsent     "internal error 600: command set is not defined"
 //   #define errFatalLinker          "internal error 601: linker fatal error"
 
   // --- Linker error messages ---
-//   #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
-//   #define errUnresovableLink       "linker: error 202: Link '%s' is not resolved\n"
-//   #define errInvalidModule	      "linker: error 203: Invalid module file '%s'\n"
-//   #define errCannotCreate	         "linker: error 204: Cannot create a file '%s'\n"
+   #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
+   #define errUnresovableLink       "linker: error 202: Link '%s' is not resolved\n"
+   #define errInvalidModule	      "linker: error 203: Invalid module file '%s'\n"
+   #define errCannotCreate	         "linker: error 204: Cannot create a file '%s'\n"
    #define errInvalidFile           "linker: error 205: Invalid file '%s'\n"
-//   #define errDuplicatedModule      "linker: error 208: Module '%s' already exists in the project\n"
-//   #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
-//   #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
-//   #define errEmptyTarget           "linker: error 212: Target is not specified\n"
-//
-////  // --- Compiler internal error messages ---
-////   #define errReferenceOverflow     "error 301: The section reference overflow\n"
-//
+   #define errDuplicatedModule      "linker: error 208: Module '%s' already exists in the project\n"
+   #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
+   #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
+   #define errEmptyTarget           "linker: error 212: Target is not specified\n"
+
+//  // --- Compiler internal error messages ---
+//   #define errReferenceOverflow     "error 301: The section reference overflow\n"
+
 //  // --- Compiler warnings ---
 //   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
 //   #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown hint '%s'\n"

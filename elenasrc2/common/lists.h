@@ -12,25 +12,25 @@
 namespace _ELENA_
 {
 
-//// --- Pair template ---
-//
-//template <class T1, class T2> struct Pair
-//{
-//   T1 value1;
-//   T2 value2;
-//
-//   Pair()
-//   {
-//      this->value1 = 0;
-//      this->value2 = 0;
-//   }
-//   Pair(T1 value1, T2 value2)
-//   {
-//      this->value1 = value1;
-//      this->value2 = value2;
-//   }
-//};
-//
+// --- Pair template ---
+
+template <class T1, class T2> struct Pair
+{
+   T1 value1;
+   T2 value2;
+
+   Pair()
+   {
+      this->value1 = 0;
+      this->value2 = 0;
+   }
+   Pair(T1 value1, T2 value2)
+   {
+      this->value1 = value1;
+      this->value2 = value2;
+   }
+};
+
 
 // --- template forward declarations ---
 template <class T> class _BList;
@@ -339,50 +339,50 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key > key);
    }
 
-//   Pair<size_t, int> getKey(Pair<size_t, int> key) const
-//   {
-//      return key;
-//   }
-//
-//   bool operator ==(Pair<size_t, int> key) const
-//   {
-//      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
-//   }
-//
-//   bool operator !=(Pair<size_t, int> key) const
-//   {
-//      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
-//   }
-//
-//   bool operator <=(Pair<size_t, int> key) const
-//   {
-//      return (this->key.value1 <= key.value1);
-//   }
-//
-//   bool operator <(Pair<size_t, int> key) const
-//   {
-//      return (this->key.value1 < key.value1);
-//   }
-//
-//   bool operator >=(Pair<size_t, int> key) const
-//   {
-//      return (this->key.value1 >= key.value1);
-//   }
-//
-//   bool operator >(Pair<size_t, int> key) const
-//   {
-//      return (this->key.value1 > key.value1);
-//   }
-//
-//   bool operator ==(Pair<void*, int> key) const
-//   {
-//      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
-//   }
-//
-//   bool operator !=(Pair<void*, int> key) const
-//   {
-//      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
-//   }
+   Pair<size_t, int> getKey(Pair<size_t, int> key) const
+   {
+      return key;
+   }
+
+   bool operator ==(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
+
+   bool operator <=(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 <= key.value1);
+   }
+
+   bool operator <(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 < key.value1);
+   }
+
+   bool operator >=(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 >= key.value1);
+   }
+
+   bool operator >(Pair<size_t, int> key) const
+   {
+      return (this->key.value1 > key.value1);
+   }
+
+   bool operator ==(Pair<void*, int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<void*, int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
 
    ident_t getKey(ident_t key) const
    {
@@ -400,42 +400,41 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       else return key.compare(this->key);
    }
 
-   bool operator !=(const char* key) const
+   bool operator !=(ident_t key) const
    {
       if (KeyStored) {
-         return !StringHelper::compare((char*)((int)this + (int)this->key), key);
+         return !key.compare((const char*)this->key + (int)this);
       }
-      else return !StringHelper::compare(this->key, key);
+      else return !key.compare(this->key);
    }
 
-//   bool operator <=(const char* key) const
-//   {
-//      if (KeyStored) {
-//         return !StringHelper::greater((ident_c*)((int)this + (int)this->key), key);
-//      }
-//      else return !StringHelper::greater(this->key, key);
-//   }
-//
-//   bool operator <(ident_t key) const
-//   {
-//      if (KeyStored) {
-//         return StringHelper::greater(key, (ident_c*)((int)this + (int)this->key));
-//      }
-//      else return StringHelper::greater(key, this->key);
-//   }
-//
-//   bool operator >=(ident_t key) const
-//   {
-//      return (this > key || this == key);
-//   }
-//
-//   bool operator >(ident_t key) const
-//   {
-//      if (KeyStored) {
-//         return StringHelper::greater((ident_c*)((int)this + (int)this->key), key);
-//      }
-//      else return StringHelper::greater(this->key, key);
-//   }
+   bool operator <=(ident_t key) const
+   {
+      ident_t s = KeyStored ? (const char*)this->key + (int)this : this->key;
+
+      return !s.greater(key);
+   }
+
+   bool operator <(ident_t key) const
+   {
+      if (KeyStored) {
+         return key.greater((const char*)this->key + (int)this);
+      }
+      else return key.greater(this->key);
+   }
+
+   bool operator >=(ident_t key) const
+   {
+      return (this > key || this == key);
+   }
+
+   bool operator >(ident_t key) const
+   {
+      if (KeyStored) {
+         return StringHelper::greater((ident_c*)((int)this + (int)this->key), key);
+      }
+      else return StringHelper::greater(this->key, key);
+   }
 
    _MemoryMapItem()
    {
@@ -589,7 +588,7 @@ public:
 
    bool Eof() const { return (_current == NULL); }
 
-//   size_t Position() const { return _position; }
+   size_t Position() const { return _position; }
 
    _MemoryIterator(const Map* map, size_t position, Item* current)
    {
@@ -633,22 +632,22 @@ public:
 //
 //      it._current->item = item;
 //   }
-//
-//   void insertBefore(Iterator& it, T item)
-//   {
-//      it._current->next = new Item(it._current->item, it._current->next);
-//      it._current->item = item;
-//
-//      _count++;
-//      it++;
-//   }
-//
-//   void insertAfter(Iterator& it, T item)
-//   {
-//      it._current->next = new Item(item, it._current->next);
-//
-//      _count++;
-//   }
+
+   void insertBefore(Iterator& it, T item)
+   {
+      it._current->next = new Item(it._current->item, it._current->next);
+      it._current->item = item;
+
+      _count++;
+      it++;
+   }
+
+   void insertAfter(Iterator& it, T item)
+   {
+      it._current->next = new Item(item, it._current->next);
+
+      _count++;
+   }
 
    void addToTop(T item)
    {
@@ -813,34 +812,34 @@ public:
 //
 //      it.current->item = item;
 //   }
-//
-//   void insertAfter(Iterator it, T item)
-//   {
-//      Item* nextItem = it._current->next;
-//
-//      it._current->next = new Item(item, it._current, nextItem);
-//
-//      if (nextItem) {
-//         nextItem->previous = it._current->next;
-//      }
-//      else _tale = it._current->next;
-//
-//      _count++;
-//   }
-//
-//   void insertBefore(Iterator it, T item)
-//   {
-//      Item* previousItem = it._current->previous;
-//
-//      it._current->previous = new Item(item, previousItem, it._current);
-//
-//      if (previousItem) {
-//         previousItem->next = it._current->previous;
-//      }
-//      else _top = it._current->previous;
-//
-//      _count++;
-//   }
+
+   void insertAfter(Iterator it, T item)
+   {
+      Item* nextItem = it._current->next;
+
+      it._current->next = new Item(item, it._current, nextItem);
+
+      if (nextItem) {
+         nextItem->previous = it._current->next;
+      }
+      else _tale = it._current->next;
+
+      _count++;
+   }
+
+   void insertBefore(Iterator it, T item)
+   {
+      Item* previousItem = it._current->previous;
+
+      it._current->previous = new Item(item, previousItem, it._current);
+
+      if (previousItem) {
+         previousItem->next = it._current->previous;
+      }
+      else _top = it._current->previous;
+
+      _count++;
+   }
 
    void addToTale(T item)
    {
@@ -990,22 +989,22 @@ public:
 //   {
 //      _list.addToTop(item);
 //   }
-//
-//   void insertBefore(Iterator& it, T item)
-//   {
-//      if (it.Eof()) {
-//         add(item);
-//      }
-//      else _list.insertBefore(it, item);
-//   }
-//
-//   void insertAfter(Iterator it, T item)
-//   {
-//      if (it.Eof()) {
-//         add(item);
-//      }
-//      else _list.insertAfter(it, item);
-//   }
+
+   void insertBefore(Iterator& it, T item)
+   {
+      if (it.Eof()) {
+         add(item);
+      }
+      else _list.insertBefore(it, item);
+   }
+
+   void insertAfter(Iterator it, T item)
+   {
+      if (it.Eof()) {
+         add(item);
+      }
+      else _list.insertAfter(it, item);
+   }
 
    void add(T item)
    {
@@ -1237,27 +1236,27 @@ public:
 //   {
 //      _list.set(it, item);
 //   }
-//
-//   void insertAfter(Iterator it, T item)
-//   {
-//      if (it.Eof()) {
-//         add(item);
-//      }
-//      else _list.insertAfter(it, item);
-//   }
-//
-//   void insertBefore(Iterator it, T item)
-//   {
-//      if (it.Eof()) {
-//         add(item);
-//      }
-//      else _list.insertBefore(it, item);
-//   }
-//
-//   void cut(Iterator& it)
-//   {
-//      _list.cut(it);
-//   }
+
+   void insertAfter(Iterator it, T item)
+   {
+      if (it.Eof()) {
+         add(item);
+      }
+      else _list.insertAfter(it, item);
+   }
+
+   void insertBefore(Iterator it, T item)
+   {
+      if (it.Eof()) {
+         add(item);
+      }
+      else _list.insertBefore(it, item);
+   }
+
+   void cut(Iterator& it)
+   {
+      _list.cut(it);
+   }
 
    void add(T item)
    {
@@ -1308,37 +1307,37 @@ public:
 //   {
 //      _list.set(it, item);
 //   }
-//
-//   void insertAfter(Iterator it, T item)
-//   {
-//      if (it.Eof()) {
-//         add(item);
-//      }
-//      else _list.insertAfter(it, item);
-//   }
-//
-//   void insertBefore(Iterator it, T item)
-//   {
-//      if (it.Eof()) {
-//         add(item);
-//      }
-//      else _list.insertBefore(it, item);
-//   }
+
+   void insertAfter(Iterator it, T item)
+   {
+      if (it.Eof()) {
+         add(item);
+      }
+      else _list.insertAfter(it, item);
+   }
+
+   void insertBefore(Iterator it, T item)
+   {
+      if (it.Eof()) {
+         add(item);
+      }
+      else _list.insertBefore(it, item);
+   }
 
    void add(T item)
    {
       _list.circle(item);
    }
 
-//   T cut(T item)
-//   {
-//      return _list.cut(item);
-//   }
-//
-//   T cut(Iterator& it)
-//   {
-//      return _list.cut(it);
-//   }
+   T cut(T item)
+   {
+      return _list.cut(item);
+   }
+
+   T cut(Iterator& it)
+   {
+      return _list.cut(it);
+   }
 
    void clear()
    {
@@ -1473,40 +1472,40 @@ public:
    //   }
    //}
 
-//   T exclude(Key key)
-//   {
-//      Item* tmp = NULL;
-//      if (!_top);
-//      else if (*_top==key) {
-//         tmp = _top;
-//         if (_top==_tale)
-//            _tale = NULL;
-//         _top = _top->next;
-//      }
-//      else {
-//         Item* cur = _top;
-//         while (cur->next) {
-//            if (*cur->next == key) {
-//               if (cur->next==_tale)
-//                  _tale = cur;
-//
-//               tmp = cur->next;
-//               cur->next = tmp->next;
-//               break;
-//            }
-//            cur = cur->next;
-//         }
-//      }
-//      if (tmp) {
-//         T item = tmp->item;
-//
-//         delete tmp;
-//
-//         _count--;
-//         return item;
-//      }
-//     else return _defaultItem;
-//   }
+   T exclude(Key key)
+   {
+      Item* tmp = NULL;
+      if (!_top);
+      else if (*_top==key) {
+         tmp = _top;
+         if (_top==_tale)
+            _tale = NULL;
+         _top = _top->next;
+      }
+      else {
+         Item* cur = _top;
+         while (cur->next) {
+            if (*cur->next == key) {
+               if (cur->next==_tale)
+                  _tale = cur;
+
+               tmp = cur->next;
+               cur->next = tmp->next;
+               break;
+            }
+            cur = cur->next;
+         }
+      }
+      if (tmp) {
+         T item = tmp->item;
+
+         delete tmp;
+
+         _count--;
+         return item;
+      }
+     else return _defaultItem;
+   }
 
    void erase(Key key)
    {
@@ -1732,46 +1731,46 @@ public:
       return _defaultItem;
    }
 
-//   T exclude(Key key)
-//   {
-//      size_t beginning = (size_t)_buffer.get(0);
-//      size_t previous = (size_t)-1;
-//
-//      if (_buffer.Length() > 0) {
-//         // get top item position
-//         size_t position = _buffer[0];
-//         Item* current = NULL;
-//         while (position != 0) {
-//            current = (Item*)(beginning + position);
-//
-//            if (*current == key) {
-//               // if it is top item
-//               if (previous == -1) {
-//                  _buffer[0] = current->next;
-//
-//                  if (_count == 1)
-//                     _tale = 0;
-//               }
-//               else {
-//                  Item* prevItem = (Item*)(beginning + previous);
-//                  prevItem->next = current->next;
-//
-//                  if (_tale == position)
-//                     _tale = previous;
-//               }
-//
-//               _count--;
-//
-//               return current->item;
-//            }
-//
-//            // offset is used instead of pointer due to possible buffer relocation
-//            previous = position;
-//            position = current->next;
-//         }
-//      }
-//      return _defaultItem;
-//   }
+   T exclude(Key key)
+   {
+      size_t beginning = (size_t)_buffer.get(0);
+      size_t previous = (size_t)-1;
+
+      if (_buffer.Length() > 0) {
+         // get top item position
+         size_t position = _buffer[0];
+         Item* current = NULL;
+         while (position != 0) {
+            current = (Item*)(beginning + position);
+
+            if (*current == key) {
+               // if it is top item
+               if (previous == -1) {
+                  _buffer[0] = current->next;
+
+                  if (_count == 1)
+                     _tale = 0;
+               }
+               else {
+                  Item* prevItem = (Item*)(beginning + previous);
+                  prevItem->next = current->next;
+
+                  if (_tale == position)
+                     _tale = previous;
+               }
+
+               _count--;
+
+               return current->item;
+            }
+
+            // offset is used instead of pointer due to possible buffer relocation
+            previous = position;
+            position = current->next;
+         }
+      }
+      return _defaultItem;
+   }
 
    bool exist(Key key) const
    {
@@ -1804,15 +1803,15 @@ public:
       return key;
    }
 
-   //ref_t storeKey(size_t position, Pair<size_t, int>)
-   //{
-   //   return position;
-   //}
+   ref_t storeKey(size_t position, Pair<size_t, int>)
+   {
+      return position;
+   }
 
-   //ref_t storeKey(size_t position, Pair<void*, int>)
-   //{
-   //   return position;
-   //}
+   ref_t storeKey(size_t position, Pair<void*, int>)
+   {
+      return position;
+   }
 
    const char* storeKey(size_t position, ident_t key)
    {
@@ -2114,26 +2113,26 @@ public:
       else return false;
    }
 
-//   T exclude(Key key)
-//   {
-//      if (_cached) {
-//         for (size_t i = 0 ; i < _count ; i++) {
-//            if (_cache[i].key == key) {
-//               T item = _cache[i].item;
-//
-//               for (size_t j = i + 1 ; j < _count ; j++) {
-//                  _cache[i] = _cache[j];
-//               }
-//
-//               _count--;
-//
-//               return item;
-//            }
-//         }
-//         return _map.DefaultValue();
-//      }
-//      else return _map.exclude(key);
-//   }
+   T exclude(Key key)
+   {
+      if (_cached) {
+         for (size_t i = 0 ; i < _count ; i++) {
+            if (_cache[i].key == key) {
+               T item = _cache[i].item;
+
+               for (size_t j = i + 1 ; j < _count ; j++) {
+                  _cache[i] = _cache[j];
+               }
+
+               _count--;
+
+               return item;
+            }
+         }
+         return _map.DefaultValue();
+      }
+      else return _map.exclude(key);
+   }
 
    void write(StreamWriter* writer)
    {
@@ -2569,14 +2568,14 @@ public:
       return key;
    }
 
-   ident_t storeKey(size_t position, ident_t key)
+   const char* storeKey(size_t position, ident_t key)
    {
       if (KeyStored) {
          size_t keyPos = _buffer.Length();
 
          _buffer.writeLiteral(keyPos, key);
 
-         return (ident_t)(keyPos - position);
+         return (const char*)(keyPos - position);
       }
       else return key;
    }
@@ -2722,13 +2721,13 @@ template<class Key, class T, size_t cacheSize> class Cache
    int _top;
    int _tale;
 
-//   void incIndex(int& index) const
-//   {
-//      index++;
-//
-//      if (index==cacheSize)
-//         index = 0;
-//   }
+   void incIndex(int& index) const
+   {
+      index++;
+
+      if (index==cacheSize)
+         index = 0;
+   }
 
 public:
    T get(Key key) const
@@ -2808,15 +2807,15 @@ public:
          return *this;
       }
 
-//      bool operator ==(const Iterator& it)
-//      {
-//         return (this->_position == it._position && this->_array == it._array);
-//      }
-//
-//      bool operator !=(const Iterator& it)
-//      {
-//         return !(*this == it);
-//      }
+      bool operator ==(const Iterator& it)
+      {
+         return (this->_position == it._position && this->_array == it._array);
+      }
+
+      bool operator !=(const Iterator& it)
+      {
+         return !(*this == it);
+      }
 
       Iterator& operator ++()
       {
@@ -2900,10 +2899,10 @@ public:
       return it.Eof() ? _defaultValue : *it;
    }
 
-//   T& operator[](size_t index)
-//   {
-//      return *(T*)(_buffer.get(8 + (sizeof(T) + 4) * index));
-//   }
+   T& operator[](size_t index)
+   {
+      return *(T*)(_buffer.get(8 + (sizeof(T) + 4) * index));
+   }
 
    T* getPtr(size_t key) const
    {
@@ -3213,102 +3212,102 @@ public:
       }
    };
 
-//   size_t addRootNode(T value)
-//   {
-//      // add new node
-//      size_t position = _buffer.Length();
-//      Node node(value, -1);
-//      _buffer.write(position, &node, sizeof(Node));
-//
-//      return position;
-//   }
-//
-//   size_t addNode(size_t parent, T value)
-//   {
-//      // add new node
-//      size_t position = _buffer.Length();
-//      Node node(value, parent);
-//      _buffer.write(position, &node, sizeof(Node));
-//
-//      addChildLink(parent, position);
-//
-//      return position;
-//   }
-//
-//   void addChildLink(size_t parent, size_t child)
-//   {
-//      // add new child link
-//      size_t linkPosition = _buffer.Length();
-//      ChildLink link(child, 0);
-//      _buffer.write(linkPosition, &link, sizeof(ChildLink));
-//
-//      // update parent
-//      Node parentNode;
-//      _buffer.read(parent, &parentNode, sizeof(Node));
-//
-//      if (parentNode.firstChildLink == 0) {
-//         parentNode.firstChildLink = linkPosition;
-//
-//         _buffer.write(parent, &parentNode, sizeof(Node));
-//      }
-//      else {
-//         ChildLink link(0, parentNode.firstChildLink);
-//         size_t position = parentNode.firstChildLink;
-//         do {
-//            position = link.nextChildLink;
-//
-//            _buffer.read(position, &link, sizeof(ChildLink));
-//         } while (link.nextChildLink != 0);
-//
-//         link.nextChildLink = linkPosition;
-//         _buffer.write(position, &link, sizeof(ChildLink));
-//      }
-//   }
-//
-//   Node getNode(size_t position)
-//   {
-//      Node node(_defValue);
-//      _buffer.read(position, &node, sizeof(Node));
-//
-//      return node;
-//   }
-//
-//   size_t getLinkNodePosition(size_t linkPosition)
-//   {
-//      if (linkPosition != 0) {
-//         ChildLink link(0, 0);
-//         _buffer.read(linkPosition, &link, sizeof(ChildLink));
-//
-//         return link.node;
-//      }
-//      else return 0;
-//   }
-//
-//   size_t getNextLink(size_t linkPosition)
-//   {
-//      ChildLink link;
-//      _buffer.read(linkPosition, &link, sizeof(ChildLink));
-//
-//      return link.nextChildLink;
-//   }
-//
-//
-//   void save(StreamWriter* writer)
-//   {
-//      writer->writeDWord(_buffer.Length());
-//
-//      MemoryReader reader(&_buffer);
-//      writer->read(&reader, _buffer.Length());
-//   }
-//
-//   void load(StreamReader* reader)
-//   {
-//      int length = reader->getDWord();
-//      _buffer.reserve(length);
-//
-//      MemoryWriter writer(&_buffer);
-//      writer.read(reader, length);
-//   }
+   size_t addRootNode(T value)
+   {
+      // add new node
+      size_t position = _buffer.Length();
+      Node node(value, -1);
+      _buffer.write(position, &node, sizeof(Node));
+
+      return position;
+   }
+
+   size_t addNode(size_t parent, T value)
+   {
+      // add new node
+      size_t position = _buffer.Length();
+      Node node(value, parent);
+      _buffer.write(position, &node, sizeof(Node));
+
+      addChildLink(parent, position);
+
+      return position;
+   }
+
+   void addChildLink(size_t parent, size_t child)
+   {
+      // add new child link
+      size_t linkPosition = _buffer.Length();
+      ChildLink link(child, 0);
+      _buffer.write(linkPosition, &link, sizeof(ChildLink));
+
+      // update parent
+      Node parentNode;
+      _buffer.read(parent, &parentNode, sizeof(Node));
+
+      if (parentNode.firstChildLink == 0) {
+         parentNode.firstChildLink = linkPosition;
+
+         _buffer.write(parent, &parentNode, sizeof(Node));
+      }
+      else {
+         ChildLink link(0, parentNode.firstChildLink);
+         size_t position = parentNode.firstChildLink;
+         do {
+            position = link.nextChildLink;
+
+            _buffer.read(position, &link, sizeof(ChildLink));
+         } while (link.nextChildLink != 0);
+
+         link.nextChildLink = linkPosition;
+         _buffer.write(position, &link, sizeof(ChildLink));
+      }
+   }
+
+   Node getNode(size_t position)
+   {
+      Node node(_defValue);
+      _buffer.read(position, &node, sizeof(Node));
+
+      return node;
+   }
+
+   size_t getLinkNodePosition(size_t linkPosition)
+   {
+      if (linkPosition != 0) {
+         ChildLink link(0, 0);
+         _buffer.read(linkPosition, &link, sizeof(ChildLink));
+
+         return link.node;
+      }
+      else return 0;
+   }
+
+   size_t getNextLink(size_t linkPosition)
+   {
+      ChildLink link;
+      _buffer.read(linkPosition, &link, sizeof(ChildLink));
+
+      return link.nextChildLink;
+   }
+
+
+   void save(StreamWriter* writer)
+   {
+      writer->writeDWord(_buffer.Length());
+
+      MemoryReader reader(&_buffer);
+      writer->read(&reader, _buffer.Length());
+   }
+
+   void load(StreamReader* reader)
+   {
+      int length = reader->getDWord();
+      _buffer.reserve(length);
+
+      MemoryWriter writer(&_buffer);
+      writer.read(reader, length);
+   }
 
    MemoryTrie(T defValue)
    {
@@ -3329,47 +3328,47 @@ template <class T> class MemoryTrieNode
 public:
    typedef typename MemoryTrie<T>::Node Node;
 
-//   MemoryTrie<T>* Trie() { return _trie; }
-//
-//   size_t Position() { return _position; }
-//
-//   T Value()
-//   {
-//      Node node = _trie->getNode(_position);
-//
-//      return node.value;
-//   }
-//
-//   void link(MemoryTrieNode& node)
-//   {
-//      _trie->addChildLink(_position, node.Position());
-//   }
-//
-//   MemoryTrieNode Parent()
-//   {
-//      Node node = _trie->getNode(_position);
-//
-//      return MemoryTrieNode(_trie, node.parent);
-//   }
-//
-//   MemoryTrieNode FirstNode()
-//   {
-//      Node node = _trie->getNode(_position);
-//
-//      ref_t childPosition = _trie->getLinkNodePosition(node.firstChildLink);
-//
-//      return MemoryTrieNode(_trie, childPosition);
-//   }
-//
-//   bool operator ==(MemoryTrieNode& node) const
-//   {
-//      return (this->_position == node._position);
-//   }
-//
-//   bool operator !=(MemoryTrieNode& node) const
-//   {
-//      return (this->_position != node._position);
-//   }
+   MemoryTrie<T>* Trie() { return _trie; }
+
+   size_t Position() { return _position; }
+
+   T Value()
+   {
+      Node node = _trie->getNode(_position);
+
+      return node.value;
+   }
+
+   void link(MemoryTrieNode& node)
+   {
+      _trie->addChildLink(_position, node.Position());
+   }
+
+   MemoryTrieNode Parent()
+   {
+      Node node = _trie->getNode(_position);
+
+      return MemoryTrieNode(_trie, node.parent);
+   }
+
+   MemoryTrieNode FirstNode()
+   {
+      Node node = _trie->getNode(_position);
+
+      ref_t childPosition = _trie->getLinkNodePosition(node.firstChildLink);
+
+      return MemoryTrieNode(_trie, childPosition);
+   }
+
+   bool operator ==(MemoryTrieNode& node) const
+   {
+      return (this->_position == node._position);
+   }
+
+   bool operator !=(MemoryTrieNode& node) const
+   {
+      return (this->_position != node._position);
+   }
 
    MemoryTrieNode()
    {
@@ -3402,31 +3401,31 @@ public:
       }
 
    public:
-//      MemoryTrieNode Node()
-//      {
-//         size_t position = _trie->getLinkNodePosition(_linkPosition);
-//
-//         return MemoryTrieNode(_trie, position);
-//      }
-//
-//      bool Eof()
-//      {
-//         return (_linkPosition == 0);
-//      }
-//
-//      ChildEnumerator& operator ++()
-//      {
-//         _linkPosition = _trie->getNextLink(_linkPosition);
-//
-//         return *this;
-//      }
-//      ChildEnumerator operator ++(int)
-//      {
-//         ChildEnumerator tmp = *this;
-//         ++*this;
-//
-//         return tmp;
-//      }
+      MemoryTrieNode Node()
+      {
+         size_t position = _trie->getLinkNodePosition(_linkPosition);
+
+         return MemoryTrieNode(_trie, position);
+      }
+
+      bool Eof()
+      {
+         return (_linkPosition == 0);
+      }
+
+      ChildEnumerator& operator ++()
+      {
+         _linkPosition = _trie->getNextLink(_linkPosition);
+
+         return *this;
+      }
+      ChildEnumerator operator ++(int)
+      {
+         ChildEnumerator tmp = *this;
+         ++*this;
+
+         return tmp;
+      }
 
       ChildEnumerator()
       {
@@ -3434,47 +3433,47 @@ public:
       }
    };
 
-//   ChildEnumerator Children()
-//   {
-//      Node node = _trie->getNode(_position);
-//
-//      return ChildEnumerator(_trie, node.firstChildLink);
-//   }
-//
-//   ChildEnumerator find(T value)
-//   {
-//      ChildEnumerator children = Children();
-//      while (!children.Eof() && children.Node().Value() != value)
-//         children++;
-//
-//      return children;
-//   }
+   ChildEnumerator Children()
+   {
+      Node node = _trie->getNode(_position);
+
+      return ChildEnumerator(_trie, node.firstChildLink);
+   }
+
+   ChildEnumerator find(T value)
+   {
+      ChildEnumerator children = Children();
+      while (!children.Eof() && children.Node().Value() != value)
+         children++;
+
+      return children;
+   }
 };
 
 // --- mapKey routine ---
 
-//template<class Map, class Key, class T> T mapKey(Map& map, Key key, T newValue)
-//{
-//   T value = map.get(key);
-//   if (map.DefaultValue() == value) {
-//      map.add(key, newValue);
-//
-//      return newValue;
-//   }
-//   else return value;
-//}
-//
-//// --- shift routine ---
-//
-//template <class Iterator, class T> void shift(Iterator it, T minValue, const int displacement)
-//{
-//   while (!it.Eof()) {
-//      if ((*it) >= minValue)
-//         *it += displacement;
-//
-//      it++;
-//   }
-//}
+template<class Map, class Key, class T> T mapKey(Map& map, Key key, T newValue)
+{
+   T value = map.get(key);
+   if (map.DefaultValue() == value) {
+      map.add(key, newValue);
+
+      return newValue;
+   }
+   else return value;
+}
+
+// --- shift routine ---
+
+template <class Iterator, class T> void shift(Iterator it, T minValue, const int displacement)
+{
+   while (!it.Eof()) {
+      if ((*it) >= minValue)
+         *it += displacement;
+
+      it++;
+   }
+}
 
 // --- retrieveKey routine ---
 

@@ -19,6 +19,8 @@ enum LexicalType
    lxEnding = -1,
 
    lxNone   = 0x0000,
+
+   lxRoot   = 0x0001,
    lxClass  = 0x000E
 
 //   lxObjectMask      = 0x00100,
@@ -32,7 +34,6 @@ enum LexicalType
 //   lxConstantMask    = 0x80000,
 
 //   lxInvalid         = 0x00001,
-//   lxRoot            = 0x00002,
 //   lxIdle            = 0x00003,
 //
 //   lxNested = 0x00101, // arg - count
@@ -266,17 +267,17 @@ public:
 //         insert(lxEnding, 0);
 //         insert(type, argument);
 //      }
-//
-//      void newNode(LexicalType type, ref_t argument);
+
+      void newNode(LexicalType type, ref_t argument);
 //      void newNode(LexicalType type, ident_t argument)
 //      {
 //         newNode(type, _stringWriter.Position());
 //         _stringWriter.writeLiteral(argument);
 //      }
-//      void newNode(LexicalType type)
-//      {
-//         newNode(type, 0u);
-//      }
+      void newNode(LexicalType type)
+      {
+         newNode(type, 0u);
+      }
 //      void appendNode(LexicalType type, ref_t argument)
 //      {
 //         newNode(type, argument);
@@ -292,9 +293,9 @@ public:
 //         newNode(type);
 //         closeNode();
 //      }
-//
-//      void closeNode();
-//
+
+      void closeNode();
+
 //      Writer(SyntaxTree& tree)
 //         : _writer(&tree._body), _stringWriter(&tree._strings)
 //      {
@@ -317,17 +318,17 @@ public:
    // --- Node ---
    class Node
    {
-//      friend class SyntaxTree;
-//
-//      SyntaxTree*   tree;
-//      size_t        position;
-//
-//      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument);
+      friend class SyntaxTree;
+
+      SyntaxTree*   tree;
+      size_t        position;
+
+      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument);
 
    public:
-//      LexicalType   type;
-//      ref_t         argument;
-//
+      LexicalType   type;
+      ref_t         argument;
+
 //      SyntaxTree* Tree()
 //      {
 //         return tree;
@@ -340,16 +341,18 @@ public:
 //         }
 //         else return NULL;
 //      }
-//
-//      bool operator == (LexicalType type)
-//      {
-//         return this->type == type;
-//      }
-//      bool operator != (LexicalType type)
-//      {
-//         return this->type != type;
-//      }
-//
+
+      operator LexicalType() const { return type; }
+
+      bool operator == (LexicalType type)
+      {
+         return this->type == type;
+      }
+      bool operator != (LexicalType type)
+      {
+         return this->type != type;
+      }
+
 //      void operator = (LexicalType type)
 //      {
 //         this->type = type;
@@ -366,15 +369,15 @@ public:
 //         MemoryReader reader(&tree->_body, position - 4);
 //         *(int*)(reader.Address()) = (int)argument;
 //      }
-//
-//      Node firstChild() const
-//      {
-//         if (tree != NULL) {
-//            return tree->readFirstNode(position);
-//         }
-//         else return Node();
-//      }
-//
+
+      Node firstChild() const
+      {
+         if (tree != NULL) {
+            return tree->readFirstNode(position);
+         }
+         else return Node();
+      }
+
 //      Node lastChild() const
 //      {
 //         Node current = firstChild();
@@ -385,12 +388,12 @@ public:
 //         }
 //         return current;
 //      }
-//
-//      Node nextNode() const
-//      {
-//         return tree->readNextNode(position);
-//      }
-//
+
+      Node nextNode() const
+      {
+         return tree->readNextNode(position);
+      }
+
 //      Node prevNode() const
 //      {
 //         return tree->readPreviousNode(position);
@@ -428,10 +431,10 @@ public:
 
       Node()
       {
-//         type = lxNone;
-//         argument = 0;
-//
-//         tree = NULL;
+         type = lxNone;
+         argument = 0;
+
+         tree = NULL;
       }
    };
 
@@ -461,9 +464,9 @@ public:
 //         this->alt_type1 = type2;
 //      }
 //   };
-//
-//private:
-//   Node read(StreamReader& reader);
+
+private:
+   Node read(StreamReader& reader);
 
 public:
 //   static int countChild(Node node, LexicalType type)
@@ -607,10 +610,10 @@ public:
 //   }
 //
 //   _Memory* Strings() { return &_strings; }
-//
-//   Node readRoot();
-//   Node readFirstNode(size_t position);
-//   Node readNextNode(size_t position);
+
+   Node readRoot();
+   Node readFirstNode(size_t position);
+   Node readNextNode(size_t position);
 //   Node readPreviousNode(size_t position);
 //   Node readParentNode(size_t position);
 //

@@ -24,7 +24,7 @@ protected:
    void resize(size_t size);
 
 public:
-//   size_t getFreeSpace() const { return _total - _used; }
+   size_t getFreeSpace() const { return _total - _used; }
 
    virtual size_t Length() const { return _used; }
 
@@ -61,24 +61,24 @@ public:
       else return writeWord(position, 0);
    }
 
-//   virtual void insert(size_t position, const void* s, size_t length);
+   virtual void insert(size_t position, const void* s, size_t length);
 
    virtual void clear() { _used = 0; }
 
-//   virtual void trim(size_t size)
-//   {
-//      _used = size;
-//   }
-//
-//   char* extract()
-//   {
-//      char* buffer = _buffer;
-//
-//      _buffer = NULL;
-//      _used = _total = 0;
-//
-//      return buffer;
-//   }
+   virtual void trim(size_t size)
+   {
+      _used = size;
+   }
+
+   char* extract()
+   {
+      char* buffer = _buffer;
+
+      _buffer = NULL;
+      _used = _total = 0;
+
+      return buffer;
+   }
 
    MemoryDump();
    MemoryDump(size_t capacity);

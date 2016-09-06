@@ -18,7 +18,18 @@ using namespace _ELENA_;
 
 void DerivationWriter :: writeSymbol(Symbol symbol)
 {
-//   _writer->writeDWord(symbol);
+   switch (symbol)
+   {
+      case nsStart:
+      case nsClass:
+         _writer->newNode((LexicalType)(symbol & ~mskAnySymbolMask));
+         break;
+      case nsNone:
+         _writer->closeNode();
+         break;
+      default:
+         break;
+   }
 }
 
 void DerivationWriter :: writeTerminal(TerminalInfo& terminal)

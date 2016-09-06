@@ -526,11 +526,11 @@ int strToInt(const char* s)
    return atoi(s);
 }
 
-//long StringHelper :: strToLong(const char* s, int radix)
-//{
-//   return strtol(s, NULL, radix);
-//}
-//
+long strToLong(const char* s, int radix)
+{
+   return strtol(s, NULL, radix);
+}
+
 //long StringHelper::strToULong(const char* s, int radix)
 //{
 //   return strtoul(s, NULL, radix);
@@ -730,11 +730,11 @@ int strToInt(const wchar_t* s)
    return _wtoi(s);
 }
 
-//long StringHelper :: strToLong(const wchar_t* s, int radix)
-//{
-//   return wcstoul(s, NULL, radix);
-//}
-//
+long strToLong(const wchar_t* s, int radix)
+{
+   return wcstoul(s, NULL, radix);
+}
+
 //long long StringHelper :: strToLongLong(const wchar_t* s, int radix)
 //{
 //   long long number = 0;
@@ -948,41 +948,41 @@ int strToInt(const unsigned short* s)
    return n;
 }
 
-//long StringHelper :: strToLong(const unsigned short* s, int radix)
-//{
-//   int n = 0;
-//   bool neg = false;
-//
-//   //!! temporal
-//   if (*s == '-') {
-//      s++;
-//      neg = true;
-//   }
-//   while (*s) {
-//      n *= radix;
-//
-//      unsigned short c = *s;
-//      if(c >= '0' && c <= '9') {
-//         n += (c - '0');
-//      }
-//      else if(c >= 'A' && c <= 'F') {
-//         n += (c - 'A');
-//         n += 0x0A;
-//      }
-//      else if(c >= 'a' && c <= 'f') {
-//         n += (c - 'a');
-//         n += 0x0A;
-//      }
-//      else return 0;
-//
-//      s++;
-//   }
-//   if (neg)
-//      n *= -1;
-//
-//   return n;
-//}
-//
+long strToLong(const unsigned short* s, int radix)
+{
+   int n = 0;
+   bool neg = false;
+
+   //!! temporal
+   if (*s == '-') {
+      s++;
+      neg = true;
+   }
+   while (*s) {
+      n *= radix;
+
+      unsigned short c = *s;
+      if(c >= '0' && c <= '9') {
+         n += (c - '0');
+      }
+      else if(c >= 'A' && c <= 'F') {
+         n += (c - 'A');
+         n += 0x0A;
+      }
+      else if(c >= 'a' && c <= 'f') {
+         n += (c - 'a');
+         n += 0x0A;
+      }
+      else return 0;
+
+      s++;
+   }
+   if (neg)
+      n *= -1;
+
+   return n;
+}
+
 ////long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
 ////{
 ////   long long number = 0;
@@ -1255,6 +1255,15 @@ int ident_t :: toInt(int index)
    return strToInt(_string + index);
 }
 
+long ident_t :: toLong(int radix)
+{
+   return strToLong(_string, radix);
+}
+
+long ident_t :: toLong(int radix, int index)
+{
+   return strToLong(_string + index, radix);
+}
 int ident_t :: find(char c, int defValue)
 {
    return __find(_string, c, defValue);
@@ -1310,6 +1319,16 @@ int wide_t :: toInt()
 int wide_t :: toInt(int index)
 {
    return strToInt(_string + index);
+}
+
+long wide_t :: toLong(int radix)
+{
+   return strToLong(_string, radix);
+}
+
+long wide_t :: toLong(int radix, int index)
+{
+   return strToLong(_string + index, radix);
 }
 
 int wide_t :: find(wide_c c, int defValue)

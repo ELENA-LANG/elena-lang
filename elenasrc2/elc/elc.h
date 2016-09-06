@@ -11,10 +11,10 @@
 
 #include "project.h"
 #include "config.h"
-////#include "jitcompiler.h"
+#include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x001A
+#define ELC_REVISION_NUMBER             0x001C
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -31,11 +31,11 @@
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_CONFIG              'c'
-//#define ELC_PRM_DEBUGINFO           'd'
+#define ELC_PRM_DEBUGINFO           'd'
 //#define ELC_PRM_SUBJECTINFO         'ds'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
-//#define ELC_PRM_TARGET              't'
+#define ELC_PRM_TARGET              't'
 //#define ELC_PRM_WARNING             'w'
 //#define ELC_W_UNRESOLVED            "wun"
 //#define ELC_W_WEAKUNRESOLVED        "wwun"
@@ -54,37 +54,37 @@
 //#define COMPILER_CATEGORY           "compiler"
 #define SOURCE_CATEGORY             "files"
 //#define FORWARD_CATEGORY            "forwards"
-//#define LINKER_CATEGORY             "linker"
+#define LINKER_CATEGORY             "linker"
 //#define PRIMITIVE_CATEGORY          "primitives"
 #define PROJECT_CATEGORY            "project"
 #define SYSTEM_CATEGORY             "system"
 #define TEMPLATE_CATEGORY           "templates"
 //#define WINAPI_CATEGORY             "winapi"
 //#define EXTERNALS_CATEGORY          "externals"
-//#define REFERENCE_CATEGORY          "references"
+#define REFERENCE_CATEGORY          "references"
 //#define MANIFEST_CATEGORY           "manifest"
 
 // --- ELC config settings ---
-//#define ELC_DEBUGINFO               "debuginfo"
-//#define ELC_SUBJECTINFO             "subjectinfo"
-//#define ELC_CLASSSYMBOLLOAD         "classsymbolload"
-//#define ELC_TARGET                  "executable"
-//#define ELC_MG_SIZE                 "mgsize"
-////#define ELC_HEAP_COMMIT             "heapcommit"
-////#define ELC_HEAP_RESERV             "heapresrv"
-////#define ELC_YG_IMAGEBASE            "imagebase"
+#define ELC_DEBUGINFO               "debuginfo"
+#define ELC_SUBJECTINFO             "subjectinfo"
+#define ELC_CLASSSYMBOLLOAD         "classsymbolload"
+#define ELC_TARGET                  "executable"
+#define ELC_MG_SIZE                 "mgsize"
+#define ELC_HEAP_COMMIT             "heapcommit"
+#define ELC_HEAP_RESERV             "heapresrv"
+#define ELC_YG_IMAGEBASE            "imagebase"
 #define ELC_LIB_PATH                "libpath"
-//#define ELC_SYSTEM_THREADMAX        "maxthread"
+#define ELC_SYSTEM_THREADMAX        "maxthread"
 #define ELC_OUTPUT_PATH             "output"
 #define ELC_NAMESPACE               "namespace"
-////#define ELC_STACK_COMMIT            "stackcommit"
-////#define ELC_STACK_RESERV            "stackresrv"
-////#define ELC_PROJECT_START           "start"
+#define ELC_STACK_COMMIT            "stackcommit"
+#define ELC_STACK_RESERV            "stackresrv"
+//#define ELC_PROJECT_START           "start"
 #define ELC_PROJECT_TEMPLATE        "template"
 #define ELC_PLATFORMTYPE            "platform"
 //#define ELC_WARNON_UNRESOLVED       "warn:unresolved"
 ////#define ELC_WARNON_SIGNATURE        "warn:signature"
-//#define ELC_YG_SIZE                 "ygsize"
+#define ELC_YG_SIZE                 "ygsize"
 //#define ELC_L0                      "l0"                // optimization: byte code optimization
 //#define ELC_L1                      "l1"                // optimization: source code optimization
 //
@@ -97,12 +97,12 @@
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."
-//#define ELC_LINKING                 "Linking..."
+#define ELC_LINKING                 "Linking..."
 #define ELC_SUCCESSFUL_COMPILATION  "\nSuccessfully compiled\n"
 #define ELC_WARNING_COMPILATION     "Compiled with warnings\n"
 #define ELC_UNSUCCESSFUL            "Compiled with errors\n"
-//#define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
-//#define ELC_UNKNOWN_PLATFORM        "Unsupported platform\n"
+#define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
+#define ELC_UNKNOWN_PLATFORM        "Unsupported platform\n"
 #define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
 
 #define ELC_WIN32CONSOLE            "sta win32 console"
@@ -139,7 +139,7 @@ public:
    _ELENA_::Path appPath;
    _ELENA_::IdentifierString projectName;
 
-//   _ELENA_::_JITCompiler* createJITCompiler();
+   _ELENA_::_JITCompiler* createJITCompiler();
 
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
 

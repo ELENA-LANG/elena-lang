@@ -15,10 +15,11 @@ namespace _ELENA_
 // --- ELENA Parser Symbol constants ---
 enum Symbol
 {
-   mskAnySymbolMask             = 0x07000,               // masks
+   mskAnySymbolMask             = 0x0F000,               // masks
    mskTraceble                  = 0x01000,
    mskTerminal                  = 0x02000,
    mskError                     = 0x04000,
+   //mskScope                     = 0x08000,
 
    nsNone                       = 0x00000,               // defaults
    nsStart                      = 0x00001,

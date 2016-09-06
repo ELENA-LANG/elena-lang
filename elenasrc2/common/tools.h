@@ -244,12 +244,12 @@ inline size_t calcTabShift(int col, int tabSize)
    return nextCol - col;
 }
 
-//// --- __abs ---
-//
-//inline int __abs(int x)
-//{
-//   return (x ^ (x>>31)) - (x>>31);
-//}
+// --- __abs ---
+
+inline int __abs(int x)
+{
+   return (x ^ (x>>31)) - (x>>31);
+}
 
 } // _ELENA_
 

@@ -9,31 +9,31 @@
 #include "elena.h"
 // -------------------------------------------------------
 #include "project.h"
-//#include "errors.h"
+#include "errors.h"
 //#include "module.h"
 
 using namespace _ELENA_;
 
-//#define NMODULE_LEN getlength(NATIVE_MODULE)
+#define NMODULE_LEN getlength(NATIVE_MODULE)
 
-//inline ident_t getLoadError(LoadResult result)
-//{
-//   switch(result)
-//   {
-//   case lrDuplicate:
-//      return errDuplicatedModule;
-//   case lrNotFound:
-//      return errUnknownModule;
-//   case lrWrongStructure:
-//      return errInvalidModule;
-//   case lrWrongVersion:
-//      return errInvalidModuleVersion;
-//   case lrCannotCreate:
-//      return errCannotCreate;
-//   default:
-//      return NULL;
-//   }
-//}
+inline ident_t getLoadError(LoadResult result)
+{
+   switch(result)
+   {
+   case lrDuplicate:
+      return errDuplicatedModule;
+   case lrNotFound:
+      return errUnknownModule;
+   case lrWrongStructure:
+      return errInvalidModule;
+   case lrWrongVersion:
+      return errInvalidModuleVersion;
+   case lrCannotCreate:
+      return errCannotCreate;
+   default:
+      return NULL;
+   }
+}
 
 // --- Project ---
 
@@ -64,44 +64,44 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
    }
 }
 
-////void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
-////{
-////   ident_t value = getOption(config, setting);
-////   if (value) {
-////      _settings.add(setting, (int)StringHelper::strToLong(value, 16));
-////   }
-////}
-////
-////void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue)
-////{
-////   ident_t value = getOption(config, setting);
-////   if (value) {
-////      int intValue = StringHelper::strToInt(value);
-////      if (minValue > intValue)
-////         intValue = minValue;
-////      else if (maxValue < intValue)
-////         intValue = maxValue;
-////
-////      _settings.add(setting, intValue);
-////   }
-////}
-//
-//void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment)
-//{
-//   ident_t value = getOption(config, setting);
-//   if (value) {
-//      _settings.add(setting, align(StringHelper::strToInt(value), alignment));
-//   }
-//}
-//
-//void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
-//{
-//   ident_t value = getOption(config, setting);
-//   if (value) {
-//      if (StringHelper::strToInt(value) != 0)
-//         _settings.add(setting, -1);
-//   }
-//}
+void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
+{
+   ident_t value = getOption(config, setting);
+   if (value) {
+      _settings.add(setting, (int)value.toLong(16));
+   }
+}
+
+void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue)
+{
+   ident_t value = getOption(config, setting);
+   if (value) {
+      int intValue = value.toInt();
+      if (minValue > intValue)
+         intValue = minValue;
+      else if (maxValue < intValue)
+         intValue = maxValue;
+
+      _settings.add(setting, intValue);
+   }
+}
+
+void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment)
+{
+   ident_t value = getOption(config, setting);
+   if (value) {
+      _settings.add(setting, align(value.toInt(), alignment));
+   }
+}
+
+void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
+{
+   ident_t value = getOption(config, setting);
+   if (value) {
+      if (value.toInt() != 0)
+         _settings.add(setting, -1);
+   }
+}
 
 bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t rootPath)
 {
@@ -141,15 +141,15 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t
    }
 }
 
-//void Project :: loadForwardCategory(_ConfigFile& config)
-//{
-//   ConfigCategoryIterator it = getCategory(config, opForwards);
-//   while (!it.Eof()) {
-//      _settings.add(opForwards, it.key(), StringHelper::clone(*it));
-//
-//      it++;
-//   }
-//}
+void Project :: loadForwardCategory(_ConfigFile& config)
+{
+   ConfigCategoryIterator it = getCategory(config, opForwards);
+   while (!it.Eof()) {
+      _settings.add(opForwards, it.key(), ((ident_t)*it).clone());
+
+      it++;
+   }
+}
 
 //void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
 //{
@@ -195,29 +195,29 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    // load project settings (if setting is absent previous value is used)
    loadOption(config, opNamespace);
    loadPathOption(config, opLibPath, configPath);
-//   loadPathOption(config, opTarget, configPath);
+   loadPathOption(config, opTarget, configPath);
    loadOption(config, opOutputPath);
 //   loadBoolOption(config, opWarnOnUnresolved);
 //   //loadBoolOption(config, opWarnOnSignature);
-//   loadBoolOption(config, opDebugMode);
-//   loadBoolOption(config, opDebugSubjectInfo);
-//   loadBoolOption(config, opClassSymbolAutoLoad);
+   loadBoolOption(config, opDebugMode);
+   loadBoolOption(config, opDebugSubjectInfo);
+   loadBoolOption(config, opClassSymbolAutoLoad);
 //   loadOption(config, opTemplate);
 
-//   // load compiler settings
-//   loadIntOption(config, opThreadMax, 0, 60);
+   // load compiler settings
+   loadIntOption(config, opThreadMax, 0, 60);
 
    // load linker settings
-//   loadHexOption(config, opGCMGSize);
-//   loadHexOption(config, opGCYGSize);
+   loadHexOption(config, opGCMGSize);
+   loadHexOption(config, opGCYGSize);
    loadIntOption(config, opPlatform);
 
-//   loadIntOption(config, opSizeOfStackReserv);
-//   loadIntOption(config, opSizeOfStackCommit);
-//   loadIntOption(config, opSizeOfHeapReserv);
-//   loadIntOption(config, opSizeOfHeapCommit);
-//   loadAlignedIntOption(config, opImageBase, 0x400000);
-//
+   loadIntOption(config, opSizeOfStackReserv);
+   loadIntOption(config, opSizeOfStackCommit);
+   loadIntOption(config, opSizeOfHeapReserv);
+   loadIntOption(config, opSizeOfHeapCommit);
+   loadAlignedIntOption(config, opImageBase, 0x400000);
+
 //   // load compiler engine options
 //   loadIntOption(config, opL0);
 //
@@ -227,14 +227,14 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 ////   // load external aliases
 ////   loadCategory(config, opExternals, NULL);
 ////   loadCategory(config, opWinAPI, NULL);
-////   loadCategory(config, opReferences, configPath);
+   loadCategory(config, opReferences, configPath);
 
    // load sources
    loadSourceCategory(config, configPath);
 
-//   // load forwards
-//   loadForwardCategory(config);
-//
+   // load forwards
+   loadForwardCategory(config);
+
 //   // load manifest info
 //   loadOption(config, opManifestName);
 //   loadOption(config, opManifestVersion);
@@ -261,93 +261,93 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 ////   }
 ////   else return module;
 ////}
-////
-////_Module* Project::createModule(ident_t name)
-////{
-////   LoadResult result = lrNotFound;
-////   _Module* module = _loader.createModule(name, result);
-////
-////   if (result != lrSuccessful && result != lrDuplicate) {
-////      raiseError(getLoadError(lrCannotCreate), name);
-////
-////      return NULL;
-////   }
-////   else return module;
-////}
-////
-////_Module* Project :: createDebugModule(ident_t name)
-////{
-////   return new Module(name);
-////}
-////
-////void Project :: saveModule(_Module* module, ident_t extension)
-////{
-////   ident_t name = module->Name();
-////   Path path;
-////   _loader.nameToPath(name, path, extension);
-////
-////   Path outputPath;
-////   Path::loadPath(outputPath, StrSetting(opProjectPath));
-////   Path::combinePath(outputPath, StrSetting(opOutputPath));
-////
-////   Path::create(outputPath, path);
-////
-////   FileWriter writer(path, feRaw, false);
-////   if(!module->save(writer))
-////      raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
-////}
-////
-////ident_t Project :: resolveForward(ident_t forward)
-////{
-////   return _settings.get(opForwards, forward, DEFAULT_STR);
-////}
-////
-////_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
-////{
-////   while (isWeakReference(referenceName)) {
-////      referenceName = resolveForward(referenceName);
-////   }
-////
-////   if (emptystr(referenceName))
-////      return NULL;
-////
-////   LoadResult result = lrNotFound;
-////   _Module* module = NULL;
-////   if (StringHelper::compare(referenceName, NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
-////      module = _loader.resolveNative(referenceName, result, reference);
-////   }
-////   else module = _loader.resolveModule(referenceName, result, reference);
-////
-////   if (result != lrSuccessful) {
-////      if (!silentMode)
-////         raiseError(getLoadError(result), referenceName);
-////
-////      return NULL;
-////   }
-////   else return module;
-////}
-////
-////_Module* Project :: resolveCore(ref_t reference, bool silentMode)
-////{
-////   LoadResult result = lrNotFound;
-////   _Module* module = _loader.resolveCore(reference, result);
-////
-////   if (result != lrSuccessful) {
-////      if (!silentMode)
-////         raiseError(getLoadError(result), CORE_ALIAS);
-////
-////      return NULL;
-////   }
-////   else return module;
-////}
-////
-////ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
-////{
-////   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
-////   if (!emptystr(dll)) {
-////      stdCall = true;
-////
-////      return dll;
-////   }
-////   else return _settings.get(opExternals, alias, DEFAULT_STR);
-////}
+//
+//_Module* Project::createModule(ident_t name)
+//{
+//   LoadResult result = lrNotFound;
+//   _Module* module = _loader.createModule(name, result);
+//
+//   if (result != lrSuccessful && result != lrDuplicate) {
+//      raiseError(getLoadError(lrCannotCreate), name);
+//
+//      return NULL;
+//   }
+//   else return module;
+//}
+//
+//_Module* Project :: createDebugModule(ident_t name)
+//{
+//   return new Module(name);
+//}
+//
+//void Project :: saveModule(_Module* module, ident_t extension)
+//{
+//   ident_t name = module->Name();
+//   Path path;
+//   _loader.nameToPath(name, path, extension);
+//
+//   Path outputPath;
+//   Path::loadPath(outputPath, StrSetting(opProjectPath));
+//   Path::combinePath(outputPath, StrSetting(opOutputPath));
+//
+//   Path::create(outputPath, path);
+//
+//   FileWriter writer(path, feRaw, false);
+//   if(!module->save(writer))
+//      raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
+//}
+
+ident_t Project :: resolveForward(ident_t forward)
+{
+   return _settings.get(opForwards, forward, DEFAULT_STR);
+}
+
+_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
+{
+   while (isWeakReference(referenceName)) {
+      referenceName = resolveForward(referenceName);
+   }
+
+   if (emptystr(referenceName))
+      return NULL;
+
+   LoadResult result = lrNotFound;
+   _Module* module = NULL;
+   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+      module = _loader.resolveNative(referenceName, result, reference);
+   }
+   else module = _loader.resolveModule(referenceName, result, reference);
+
+   if (result != lrSuccessful) {
+      if (!silentMode)
+         raiseError(getLoadError(result), referenceName);
+
+      return NULL;
+   }
+   else return module;
+}
+
+_Module* Project :: resolveCore(ref_t reference, bool silentMode)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.resolveCore(reference, result);
+
+   if (result != lrSuccessful) {
+      if (!silentMode)
+         raiseError(getLoadError(result), CORE_ALIAS);
+
+      return NULL;
+   }
+   else return module;
+}
+
+//ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
+//{
+//   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
+//   if (!emptystr(dll)) {
+//      stdCall = true;
+//
+//      return dll;
+//   }
+//   else return _settings.get(opExternals, alias, DEFAULT_STR);
+//}

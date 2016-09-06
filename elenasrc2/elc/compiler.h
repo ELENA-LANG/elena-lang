@@ -460,9 +460,9 @@ private:
       ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
    };
 
-//   // - Scope -
-//   struct Scope
-//   {
+   // - Scope -
+   struct Scope
+   {
 //      enum ScopeLevel
 //      {
 //         slClass,
@@ -472,10 +472,10 @@ private:
 //         slOwnerClass,
 //         slTemplate,
 //      };
-//
-//      ModuleScope* moduleScope;
-//      Scope*       parent;
-//
+
+      ModuleScope* moduleScope;
+      Scope*       parent;
+
 //      void raiseError(const char* message, TerminalInfo terminal)
 //      {
 //         moduleScope->raiseError(message, terminal);
@@ -540,34 +540,34 @@ private:
 //         }
 //         else return moduleScope->mapSubject(terminal, implicitOnly);
 //      }
-//
-//      Scope(ModuleScope* moduleScope)
-//      {
-//         this->parent = NULL;
-//         this->moduleScope = moduleScope;
-//      }
-//      Scope(Scope* parent)
-//      {
-//         this->parent = parent;
-//         this->moduleScope = parent->moduleScope;
-//      }
-//   };
-//
-//   // - SourceScope -
-//   struct SourceScope : public Scope
-//   {
+
+      Scope(ModuleScope* moduleScope)
+      {
+         this->parent = NULL;
+         this->moduleScope = moduleScope;
+      }
+      Scope(Scope* parent)
+      {
+         this->parent = parent;
+         this->moduleScope = parent->moduleScope;
+      }
+   };
+
+   // - SourceScope -
+   struct SourceScope : public Scope
+   {
 //      SyntaxTree syntaxTree;
 //      MemoryDump imported;
 //
 //      CommandTape    tape;
 //      ref_t          reference;
-//
-//      SourceScope(ModuleScope* parent, ref_t reference);
-//   };
-//
-//   // - ClassScope -
-//   struct ClassScope : public SourceScope
-//   {
+
+      SourceScope(ModuleScope* parent/*, ref_t reference*/);
+   };
+
+   // - ClassScope -
+   struct ClassScope : public SourceScope
+   {
 //      ClassInfo   info;
 //      ref_t       extensionMode;
 //
@@ -589,15 +589,15 @@ private:
 //         _Module* extModule = NULL;
 //         return moduleScope->loadTemplateInfo(hintRef, extModule) != 0;
 //      }
-//
+
 //      void save()
-//      {
+      //{
 //         // save class meta data
 //         MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
 //         metaWriter.Memory()->trim(0);
 //         info.save(&metaWriter);
-//      }
-//
+      //}
+
 //      bool include(ref_t message)
 //      {
 //         // check if the method is inhreited and update vmt size accordingly
@@ -613,10 +613,10 @@ private:
 //            return false;
 //         }
 //      }
-//
-//      ClassScope(ModuleScope* parent, ref_t reference);
-//   };
-//
+
+      ClassScope(ModuleScope* parent/*, ref_t reference*/);
+   };
+
 //   // - SymbolScope -
 //   struct SymbolScope : public SourceScope
 //   {
@@ -1084,13 +1084,13 @@ private:
 //   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
 //   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
 //   void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
-//   void generateClassDeclaration(ClassScope& scope, bool closed);
+   //void generateClassDeclaration(/*ClassScope& scope, bool closed*/);
 //   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
 //
 //   void generateClassImplementation(ClassScope& scope);
-//
-//   void compileClassDeclaration(DNode node, ClassScope& scope, DNode hints);
-//   void compileClassImplementation(DNode node, ClassScope& scope, DNode hints);
+
+   void compileClassDeclaration(SNode node, ClassScope& scope/*, DNode hints*/);
+   void compileClassImplementation(SNode node, ClassScope& scope/*, DNode hints*/);
 //   void compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints);
 //   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
@@ -1100,13 +1100,11 @@ private:
 //   void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
 //   void declareSubject(DNode& member, ModuleScope& scope, DNode hints);
 //   void compileSubject(DNode& member, ModuleScope& scope, DNode hints);
-//
-//   void compileDeclarations(DNode member, ModuleScope& scope);
-//   void compileImplementations(DNode member, ModuleScope& scope);
+
+   void compileDeclarations(SNode member, ModuleScope& scope);
+   void compileImplementations(SNode member, ModuleScope& scope);
 //   void compileIncludeSection(DNode& node, ModuleScope& scope);
 //
-//   virtual void compileModule(DNode node, ModuleScope& scope);
-
 //   bool validate(Project& project, _Module* module, int reference);
 //   void validateUnresolved(Unresolveds& unresolveds, Project& project);
 //
@@ -1155,8 +1153,8 @@ public:
 //      _optFlag |= level;
 //   }
 
-   void compile(SNode node);
-   void compile(ident_t source, /*MemoryDump* buffer, */ModuleScope& scope);
+   void compileModule(SNode node, ModuleScope& scope);
+   void compileModule(ident_t source, ModuleScope& scope);
 
    bool run(Project& project);
 

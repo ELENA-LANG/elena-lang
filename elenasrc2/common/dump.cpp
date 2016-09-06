@@ -92,15 +92,15 @@ bool MemoryDump :: writeBytes(size_t position, char value, size_t length)
    else return false;
 }
 
-//void MemoryDump :: insert(size_t position, const void* s, size_t length)
-//{
-//   if (position <= _used) {
-//      resize(_used + length);
-//
-//      memmove(_buffer + position + length, _buffer + position, _used - position - length);
-//      memcpy(_buffer + position, s, length);
-//   }
-//}
+void MemoryDump :: insert(size_t position, const void* s, size_t length)
+{
+   if (position <= _used) {
+      resize(_used + length);
+
+      memmove(_buffer + position + length, _buffer + position, _used - position - length);
+      memcpy(_buffer + position, s, length);
+   }
+}
 
 bool MemoryDump :: read(size_t position, void* s, size_t length)
 {

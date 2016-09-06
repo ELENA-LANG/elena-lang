@@ -1,18 +1,18 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA Engine Syntax Tree class implementation
-////
-////                                              (C)2005-2016, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "syntaxtree.h"
+//		This file contains ELENA Engine Syntax Tree class implementation
+//
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "syntaxtree.h"
 //#include <stdarg.h>
-//
-//using namespace _ELENA_;
-//
+
+using namespace _ELENA_;
+
 //SyntaxTree::Node _ELENA_::findSubNode(SyntaxTree::Node node, LexicalType type)
 //{
 //   SyntaxTree::Node child = SyntaxTree::findChild(node, type, lxExpression);
@@ -41,9 +41,9 @@
 //   }
 //   else return child;
 //}
-//
-//// --- SyntaxWriter ---
-//
+
+// --- SyntaxWriter ---
+
 //void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 //{
 //   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
@@ -60,31 +60,31 @@
 //      it++;
 //   }
 //}
-//
-//void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
-//{
-//   // writer node
-//   _writer.writeDWord(type);
-//   _writer.writeDWord(argument);
-//}
-//
-//void SyntaxWriter :: closeNode()
-//{
-//   _writer.writeDWord(-1);
-//   _writer.writeDWord(0);
-//}
-//
-//// --- SyntaxTree::Node ---
-//
-//SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument)
-//{
-//   this->tree = tree;
-//   this->position = position;
-//
-//   this->type = type;
-//   this->argument = argument;
-//}
-//
+
+void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
+{
+   // writer node
+   _writer.writeDWord(type);
+   _writer.writeDWord(argument);
+}
+
+void SyntaxWriter :: closeNode()
+{
+   _writer.writeDWord(-1);
+   _writer.writeDWord(0);
+}
+
+// --- SyntaxTree::Node ---
+
+SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument)
+{
+   this->tree = tree;
+   this->position = position;
+
+   this->type = type;
+   this->argument = argument;
+}
+
 //// --- SyntaxReader ---
 //
 //SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
@@ -106,53 +106,52 @@
 //   MemoryReader reader(&_body, start_position);
 //   return read(reader);
 //}
-//
-//SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
-//{
-//   int type = reader.getDWord();
-//   ref_t arg = reader.getDWord();
-//
-//   if (type == -1) {
-//      return Node();
-//   }
-//   else return Node(this, reader.Position(), (LexicalType)type, arg);
-//}
-//
-//SyntaxTree::Node SyntaxTree:: readRoot()
-//{
-//   MemoryReader reader(&_body, 0);
-//
-//   return read(reader);
-//}
-//
-//SyntaxTree::Node SyntaxTree:: readFirstNode(size_t position)
-//{
-//   MemoryReader reader(&_body, position);
-//
-//   return read(reader);
-//}
-//
-//SyntaxTree::Node SyntaxTree:: readNextNode(size_t position)
-//{
-//   MemoryReader reader(&_body, position);
-//
-//   int level = 1;
-//
-//   do {
-//      int type = reader.getDWord();
-//      ref_t arg = reader.getDWord();
-//
-//      if (type == -1) {
-//         level--;
-//      }
-//      else level++;
-//
-//   } while (level > 0);
-//
-//   return read(reader);
-//}
-//
-//
+
+SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
+{
+   int type = reader.getDWord();
+   ref_t arg = reader.getDWord();
+
+   if (type == -1) {
+      return Node();
+   }
+   else return Node(this, reader.Position(), (LexicalType)type, arg);
+}
+
+SyntaxTree::Node SyntaxTree:: readRoot()
+{
+   MemoryReader reader(&_body, 0);
+
+   return read(reader);
+}
+
+SyntaxTree::Node SyntaxTree:: readFirstNode(size_t position)
+{
+   MemoryReader reader(&_body, position);
+
+   return read(reader);
+}
+
+SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
+{
+   MemoryReader reader(&_body, position);
+
+   int level = 1;
+
+   do {
+      int type = reader.getDWord();
+      ref_t arg = reader.getDWord();
+
+      if (type == -1) {
+         level--;
+      }
+      else level++;
+
+   } while (level > 0);
+
+   return read(reader);
+}
+
 //size_t SyntaxTree :: seekNodeEnd(size_t position)
 //{
 //   MemoryReader reader(&_body, position);

@@ -45,6 +45,9 @@ public:
    int toInt();
    int toInt(int index);
 
+   long toLong(int radix);
+   long toLong(int radix, int index);
+
    char* clone();
    char* clone(int index);
 
@@ -87,6 +90,9 @@ public:
    int toInt();
    int toInt(int index);
 
+   long toLong(int radix);
+   long toLong(int radix, int index);
+
    wide_c* clone();
    wide_c* clone(int index);
 
@@ -112,56 +118,56 @@ template <class T, size_t size> class String
 protected:
    T _string[size + 1];
 
-//   static void intToStr(int n, T* s, int radix)
-//   {
-//      int  rem = 0;
-//      int  pos = 0;
-//      int start = 0;
-//      if (n < 0) {
-//         start++;
-//         n = -n;
-//         s[pos++] = '-';
-//      }
-//   
-//      do
-//      {
-//         rem = (unsigned int)n % radix;
-//         n /= radix;
-//         switch(rem) {
-//            case 10:
-//               s[pos++] = 'a';
-//               break;
-//            case 11:
-//               s[pos++] = 'b';
-//               break;
-//            case 12:
-//               s[pos++] = 'c';
-//               break;
-//            case 13:
-//               s[pos++] = 'd';
-//               break;
-//            case 14:
-//               s[pos++] = 'e';
-//               break;
-//            case 15:
-//               s[pos++] = 'f';
-//               break;
-//            default:
-//               if (rem < 10) {
-//                  s[pos++] = (char)(rem + 0x30);
-//               }
-//         }
-//      }
-//      while( n != 0 );
-//   
-//      s[pos] = 0;
-//      pos--;
-//      while (start < pos) {
-//         char tmp = s[start];
-//         s[start++] = s[pos];
-//         s[pos--] = tmp;
-//      }
-//   }
+   static void intToStr(int n, T* s, int radix)
+   {
+      int  rem = 0;
+      int  pos = 0;
+      int start = 0;
+      if (n < 0) {
+         start++;
+         n = -n;
+         s[pos++] = '-';
+      }
+   
+      do
+      {
+         rem = (unsigned int)n % radix;
+         n /= radix;
+         switch(rem) {
+            case 10:
+               s[pos++] = 'a';
+               break;
+            case 11:
+               s[pos++] = 'b';
+               break;
+            case 12:
+               s[pos++] = 'c';
+               break;
+            case 13:
+               s[pos++] = 'd';
+               break;
+            case 14:
+               s[pos++] = 'e';
+               break;
+            case 15:
+               s[pos++] = 'f';
+               break;
+            default:
+               if (rem < 10) {
+                  s[pos++] = (char)(rem + 0x30);
+               }
+         }
+      }
+      while( n != 0 );
+   
+      s[pos] = 0;
+      pos--;
+      while (start < pos) {
+         char tmp = s[start];
+         s[start++] = s[pos];
+         s[pos--] = tmp;
+      }
+   }
 
 public:
    operator const T*() const { return _string; }
@@ -225,13 +231,18 @@ public:
       append(&c, 1);
    }
 
-//   void appendInt(int n)
-//   {
-//      int pos = getlength(_string);
-//
-//      intToStr(n, _string + pos, 10);
-//   }
-//
+   void appendInt(int n)
+   {
+      int pos = getlength(_string);
+
+      intToStr(n, _string + pos, 10);
+   }
+
+   void copyInt(int n)
+   {
+      intToStr(n, _string, 10);
+   }
+
 ////   void appendHex(int n)
 ////   {
 ////      int pos = getlength(_string);
@@ -307,29 +318,29 @@ public:
    {
       copy(s);
    }
-//   String(const T* s1, const T* s2)
-//   {
-//      copy(s1);
-//      append(s2);
-//   }
-//   String(const T* s1, const T* s2, const T* s3)
-//   {
-//      copy(s1);
-//      append(s2);
-//      append(s3);
-//   }
-//   String(const T* s1, const T* s2, const T* s3, const T* s4)
-//   {
-//      copy(s1);
-//      append(s2);
-//      append(s3);
-//      append(s4);
-//   }
-//   String(const T* s, size_t length)
-//   {
-//      copy(s, length);
-//      _string[length] = 0;
-//   }
+   String(const T* s1, const T* s2)
+   {
+      copy(s1);
+      append(s2);
+   }
+   String(const T* s1, const T* s2, const T* s3)
+   {
+      copy(s1);
+      append(s2);
+      append(s3);
+   }
+   String(const T* s1, const T* s2, const T* s3, const T* s4)
+   {
+      copy(s1);
+      append(s2);
+      append(s3);
+      append(s4);
+   }
+   String(const T* s, size_t length)
+   {
+      copy(s, length);
+      _string[length] = 0;
+   }
 };
 
 ////// --- DynamicString ---
@@ -501,12 +512,12 @@ wchar_t* __allocate(size_t size, const wchar_t* value);
 char* __lower(char* s);
 wchar_t* __lower(wide_c* s);
 
-////inline void copystr(char* d, const char* s)
-////{
-////   size_t len = strlen(s);
-////   StringHelper::copy(d, s, len, len);
-////   d[len] = 0;
-////}
+inline void copystr(char* d, const char* s)
+{
+   size_t len = strlen(s);
+   ((ident_t)s).copyTo(d, len, len);
+   d[len] = 0;
+}
 
 } // _ELENA_
 

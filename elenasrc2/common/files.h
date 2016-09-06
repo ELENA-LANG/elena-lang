@@ -88,6 +88,8 @@ public:
 
    static bool isRelative(path_t path, size_t length);
    
+   static bool create(path_t root, path_t path);
+   
    void nameToPath(ident_t name, path_t extension)
    {
       path_c buf[LOCAL_PATH_LENGTH];
@@ -234,8 +236,6 @@ public:
 ////class Path : public String<path_c, LOCAL_PATH_LENGTH>
 ////{
 ////public:
-////   static bool create(path_t root, path_t path);
-////
 ////   static bool comparePaths(path_t s1, path_t s2, size_t length);
 ////
 ////   static void loadPath(Path& dest, ident_t sour)
@@ -433,24 +433,24 @@ class File
 public:
    bool isOpened() const { return (_file != NULL); }
 
-//   int getEncoding() const { return _encoding; }
-//
-//   bool Eof();
-//   long Position() const;
-//   long Length();
-//
-//   bool seek(long position);
-//
-//   bool write(const void* s, size_t length);
+   int getEncoding() const { return _encoding; }
+
+   bool Eof();
+   long Position() const;
+   long Length();
+
+   bool seek(long position);
+
+   bool write(const void* s, size_t length);
 
    bool read(void* s, size_t length);
 
-//   bool writeLiteral(const wide_c* s, size_t length);
-//   bool writeLiteral(const char* s, size_t length);
-//   bool writeNewLine();
-//
-//   bool readLiteral(wide_c* s, size_t length, size_t& wasread);
-//   bool readLiteral(char* s, size_t length, size_t& wasread);
+   bool writeLiteral(const wide_c* s, size_t length);
+   bool writeLiteral(const char* s, size_t length);
+   bool writeNewLine();
+
+   bool readLiteral(wide_c* s, size_t length, size_t& wasread);
+   bool readLiteral(char* s, size_t length, size_t& wasread);
 
    bool readLine(char* s, size_t length);
 
@@ -469,14 +469,14 @@ class FileReader : public StreamReader
 public:
    bool isOpened() const { return _file.isOpened(); }
 
-//   virtual bool Eof() { return _file.Eof(); }
-//
-//   int getEncoding() const { return _file.getEncoding(); }
-//
-//   virtual size_t Position() { return _file.Position(); }
-//   virtual size_t Length() { return _file.Length(); }
-//
-//   virtual bool seek(size_t position) { return _file.seek(position); }
+   virtual bool Eof() { return _file.Eof(); }
+
+   int getEncoding() const { return _file.getEncoding(); }
+
+   virtual size_t Position() { return _file.Position(); }
+   virtual size_t Length() { return _file.Length(); }
+
+   virtual bool seek(size_t position) { return _file.seek(position); }
 
    virtual bool read(void* s, size_t length);
 
@@ -497,36 +497,36 @@ public:
    FileReader(path_t path, path_t mode, int encoding, bool withBOM);
 };
 
-//// --- FileWriter class ---
-//
-//class FileWriter : public StreamWriter
-//{
-//   File _file;
-//
-//public:
-//   int getEncoding() const { return _file.getEncoding(); }
-//
-//   virtual size_t Position() const { return _file.Position(); }
-//   virtual size_t Length()   { return _file.Length(); }
-//
-//   virtual bool isOpened() { return _file.isOpened(); }
-//
-//   virtual bool write(const void* s, size_t length);
-//
-//   bool writeText(const wide_c* s, size_t length)
-//   {
-//      return _file.writeLiteral(s, length);
-//   }
-//
-//   bool writeText(const char* s, size_t length)
-//   {
-//      return _file.writeLiteral(s, length);
-//   }
-//
-//   virtual void align(int alignment);
-//
-//   FileWriter(path_t path, int encoding, bool withBOM);
-//};
+// --- FileWriter class ---
+
+class FileWriter : public StreamWriter
+{
+   File _file;
+
+public:
+   int getEncoding() const { return _file.getEncoding(); }
+
+   virtual size_t Position() const { return _file.Position(); }
+   virtual size_t Length()   { return _file.Length(); }
+
+   virtual bool isOpened() { return _file.isOpened(); }
+
+   virtual bool write(const void* s, size_t length);
+
+   bool writeText(const wide_c* s, size_t length)
+   {
+      return _file.writeLiteral(s, length);
+   }
+
+   bool writeText(const char* s, size_t length)
+   {
+      return _file.writeLiteral(s, length);
+   }
+
+   virtual void align(int alignment);
+
+   FileWriter(path_t path, int encoding, bool withBOM);
+};
 
 // --- TextFileReader class ---
 
@@ -535,16 +535,16 @@ class TextFileReader : public TextReader
    File _file;
 
 public:
-//   virtual void reset()
-//   {
-//      _file.rewind();
-//   }
-//
-//   virtual size_t Position() { return _file.Position(); }
-//
-//   virtual bool seek(size_t position) { return _file.seek(position); }
-//
-//   int getEncoding() const { return _file.getEncoding(); }
+   virtual void reset()
+   {
+      _file.rewind();
+   }
+
+   virtual size_t Position() { return _file.Position(); }
+
+   virtual bool seek(size_t position) { return _file.seek(position); }
+
+   int getEncoding() const { return _file.getEncoding(); }
 
    bool isOpened() const { return _file.isOpened(); }
 
@@ -553,24 +553,24 @@ public:
    TextFileReader(path_t path, int encoding, bool withBOM);
 };
 
-//// --- TextFileWriter class ---
-//
-//class TextFileWriter : public TextWriter
-//{
-//   File _file;
-//
-//public:
-//   int getEncoding() const { return _file.getEncoding(); }
-//
-//   bool isOpened() const { return _file.isOpened(); }
-//
-//   virtual bool write(const wide_c* s, size_t length);
-//   virtual bool write(const char* s, size_t length);
-//
-//   virtual bool writeNewLine();
-//
-//   TextFileWriter(path_t path, int encoding, bool withBOM);
-//};
+// --- TextFileWriter class ---
+
+class TextFileWriter : public TextWriter
+{
+   File _file;
+
+public:
+   int getEncoding() const { return _file.getEncoding(); }
+
+   bool isOpened() const { return _file.isOpened(); }
+
+   virtual bool write(const wide_c* s, size_t length);
+   virtual bool write(const char* s, size_t length);
+
+   virtual bool writeNewLine();
+
+   TextFileWriter(path_t path, int encoding, bool withBOM);
+};
 
 } // _ELENA_
 

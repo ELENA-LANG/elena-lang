@@ -2,8 +2,9 @@
 In development:
 ------                              
 
-              xdev
-                 * templates
+              xrev
+                 * DerivationWriter : try to get rid of big switch statement
+                 * compliation should be based on ste of rules
 
               ydev
                  * upndown : playing a round

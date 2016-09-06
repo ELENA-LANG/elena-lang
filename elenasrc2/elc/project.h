@@ -29,7 +29,7 @@ typedef Dictionary2D<int, ident_t> ProjectSettings;
 typedef Map<ident_t, char*>        Sources;
 
 typedef Map<ident_t, char*> :: Iterator                                                    SourceIterator;
-////typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
+typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 
 // --- ELENA Project options ---
 enum ProjectSetting
@@ -41,26 +41,26 @@ enum ProjectSetting
    opProjectPath           = 0x0002,
    opLibPath               = 0x0003,
    opNamespace             = 0x0004,
-//   opTarget                = 0x0006,
+   opTarget                = 0x0006,
    opOutputPath            = 0x0008,
-//   opDebugMode             = 0x000A,
+   opDebugMode             = 0x000A,
 //   opTemplate              = 0x000C,
-//   opThreadMax             = 0x0013,
-//   opDebugSubjectInfo      = 0x0014,
-//   opClassSymbolAutoLoad   = 0x0015,
-//
-////   // linker options
-////   opImageBase             = 0x0020,
-////   opSectionAlignment      = 0x0021,
-////   opFileAlignment         = 0x0022,
-////   opGCMGSize              = 0x0024,
-////   opSizeOfStackReserv     = 0x0026,
-////   opSizeOfStackCommit     = 0x0027,
-////   opSizeOfHeapReserv      = 0x0028,
-////   opSizeOfHeapCommit      = 0x0029,
+   opThreadMax             = 0x0013,
+   opDebugSubjectInfo      = 0x0014,
+   opClassSymbolAutoLoad   = 0x0015,
+
+   // linker options
+   opImageBase             = 0x0020,
+   opSectionAlignment      = 0x0021,
+   opFileAlignment         = 0x0022,
+   opGCMGSize              = 0x0024,
+   opSizeOfStackReserv     = 0x0026,
+   opSizeOfStackCommit     = 0x0027,
+   opSizeOfHeapReserv      = 0x0028,
+   opSizeOfHeapCommit      = 0x0029,
    opPlatform              = 0x002A,      // defines the project platform type
-//   opGCYGSize              = 0x002B,
-//
+   opGCYGSize              = 0x002B,
+
 //   // compiler engine options
 //   opWarnOnUnresolved      = 0x0041,
 //   opWarnOnWeakUnresolved  = 0x0042,
@@ -71,13 +71,13 @@ enum ProjectSetting
 //   opL1                    = 0x0051,   // source-code optimization
 
 //   opPrimitives            = 0x0060,
-//   opForwards              = 0x0061,
+   opForwards              = 0x0061,
    opSources               = 0x0062,
    opTemplates             = 0x0063,
 //   opExternals             = 0x0064,
 //   opWinAPI                = 0x0065,   // used only for WIN32
-//   opReferences            = 0x0066,
-//
+   opReferences            = 0x0066,
+
 //   // compiler manfifest
 //   opManifestName          = 0x0070,
 //   opManifestVersion       = 0x0071,
@@ -120,16 +120,16 @@ protected:
 
    bool loadOption(_ConfigFile& config, ProjectSetting setting);
    void loadIntOption(_ConfigFile& config, ProjectSetting setting);
-//   void loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue);
-//   void loadHexOption(_ConfigFile& config, ProjectSetting setting);
-//   void loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment);
-//   void loadBoolOption(_ConfigFile& config, ProjectSetting setting);
+   void loadIntOption(_ConfigFile& config, ProjectSetting setting, int minValue, int maxValue);
+   void loadHexOption(_ConfigFile& config, ProjectSetting setting);
+   void loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting, int alignment);
+   void loadBoolOption(_ConfigFile& config, ProjectSetting setting);
    bool loadPathOption(_ConfigFile& config, ProjectSetting setting, path_t path);
 
    void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
    void loadSourceCategory(_ConfigFile& config, path_t configPath);
 //   void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
-//   void loadForwardCategory(_ConfigFile& config);
+   void loadForwardCategory(_ConfigFile& config);
 
 public:
    virtual int getDefaultEncoding() = 0;
@@ -164,13 +164,13 @@ public:
 //   {
 //      return _settings.getIt(opForwards);
 //   }
-//
-//   ident_t resolvePrimitive(ident_t alias) const
-//   {
-//      return _loader.resolvePrimitive(alias);
-//   }
-//
-////   ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
+
+   ident_t resolvePrimitive(ident_t alias) const
+   {
+      return _loader.resolvePrimitive(alias);
+   }
+
+//   ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
@@ -195,31 +195,29 @@ public:
          _loader.setRootPath(libPath);
       }
          
-//      // if package is set we need to set the loader package as well
-//      Path outputPath;
-//      Path::loadPath(outputPath, StrSetting(opProjectPath));
-//      Path::combinePath(outputPath, StrSetting(opOutputPath));
-//
-//      _loader.setNamespace(StrSetting(opNamespace), outputPath);
-//
-//      // add references to the additional libraries
-//      for (ForwardIterator it = _settings.getIt(opReferences); !it.Eof(); it++) {
-//         _loader.addPackage(it.key(), *it);
-//      }
+      // if package is set we need to set the loader package as well
+      Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+
+      _loader.setNamespace(StrSetting(opNamespace), outputPath);
+
+      // add references to the additional libraries
+      for (ForwardIterator it = _settings.getIt(opReferences); !it.Eof(); it++) {
+         _loader.addPackage(it.key(), *it);
+      }
    }
 
-//   void addLoaderListener(_JITLoaderListener* listener)
-//   {
-//      _loader.addListener(listener);
-//   }
-//
-//   virtual ident_t resolveForward(ident_t forward);
-//
+   void addLoaderListener(_JITLoaderListener* listener)
+   {
+      _loader.addListener(listener);
+   }
+
+   virtual ident_t resolveForward(ident_t forward);
+
 //   // loader
 //   virtual _Module* loadModule(ident_t package, bool silentMode);
-//
-//   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
-//   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
+
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
+   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    bool HasWarnings() const { return _hasWarning; }
 

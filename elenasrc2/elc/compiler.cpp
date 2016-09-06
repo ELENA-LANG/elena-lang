@@ -1183,15 +1183,15 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //
 //   return false;
 //}
-//
-//// --- Compiler::SourceScope ---
-//
-//Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
-//   : Scope(moduleScope)
-//{
+
+// --- Compiler::SourceScope ---
+
+Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope/*, ref_t reference*/)
+   : Scope(moduleScope)
+{
 //   this->reference = reference;
-//}
-//
+}
+
 //// --- Compiler::SymbolScope ---
 //
 //Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
@@ -1208,12 +1208,12 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //{
 //   return Scope::mapObject(identifier);
 //}
-//
-//// --- Compiler::ClassScope ---
-//
-//Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
+
+// --- Compiler::ClassScope ---
+
+Compiler::ClassScope :: ClassScope(ModuleScope* parent/*, ref_t reference*/)
+   : SourceScope(parent/*, reference*/)
+{
 //   info.header.parentRef =   moduleScope->superReference;
 //   info.header.flags = elStandartVMT;
 //   info.header.count = 0;
@@ -1224,8 +1224,8 @@ Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Modu
 //   extensionMode = 0;
 //
 //   syntaxTree.writeString(parent->sourcePath);
-//}
-//
+}
+
 //ObjectInfo Compiler::ClassScope :: mapObject(TerminalInfo identifier)
 //{
 //   if (StringHelper::compare(identifier, SUPER_VAR)) {
@@ -5995,8 +5995,8 @@ Compiler :: Compiler(StreamReader* syntax)
 //      current = current.nextNode();
 //   }
 //}
-//
-//void Compiler :: generateClassDeclaration(ClassScope& scope, bool closed)
+
+//void Compiler :: generateClassDeclaration(/*ClassScope& scope, bool closed*/)
 //{
 //   SNode root = scope.syntaxTree.readRoot();
 //
@@ -6076,7 +6076,7 @@ Compiler :: Compiler(StreamReader* syntax)
 //   if (!closed)
 //      declareVirtualMethods(scope);
 //}
-//
+
 //void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
 //{
 //   generateClassDeclaration(scope, closed);
@@ -6282,9 +6282,9 @@ Compiler :: Compiler(StreamReader* syntax)
 //
 //   return true;
 //}
-//
-//void Compiler :: compileClassDeclaration(DNode node, ClassScope& scope, DNode hints)
-//{
+
+void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope/*, DNode hints*/)
+{
 //   SyntaxWriter writer(scope.syntaxTree);
 //   writer.newNode(lxRoot, scope.reference);
 //
@@ -6307,9 +6307,9 @@ Compiler :: Compiler(StreamReader* syntax)
 //      scope.raiseError(errInvalidHint, node.FirstTerminal());
 //
 //   writer.closeNode();
-//
-//   generateClassDeclaration(scope, test(flagCopy, elClosed));
-//
+
+//   generateClassDeclaration(/*scope, test(flagCopy, elClosed)*/);
+
 //   // if it is a role
 //   if (test(scope.info.header.flags, elRole)) {
 //      // class is its own class class
@@ -6328,11 +6328,11 @@ Compiler :: Compiler(StreamReader* syntax)
 //      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
 //         scope.raiseError(errNoDispatcher, node.Terminal());
 //   }
-//
-//   // save declaration
+
+   // save declaration
 //   scope.save();
-//}
-//
+}
+
 //void Compiler :: generateClassImplementation(ClassScope& scope)
 //{
 //   optimizeClassTree(scope);
@@ -6656,9 +6656,9 @@ Compiler :: Compiler(StreamReader* syntax)
 //      importTemplateImplementation(scope, writer, info);
 //   }
 //}
-//
-//void Compiler :: compileClassImplementation(DNode node, ClassScope& scope, DNode hints)
-//{
+
+void Compiler :: compileClassImplementation(SNode node, ClassScope& scope/*, DNode hints*/)
+{
 //   if (test(scope.info.header.flags, elExtension)) {
 //      scope.extensionMode = scope.info.fieldTypes.get(-1);
 //      if (scope.extensionMode == 0)
@@ -6689,8 +6689,8 @@ Compiler :: Compiler(StreamReader* syntax)
 //   // extension cannot be used stand-alone, so the symbol should not be generated
 //   if (scope.extensionMode == 0)
 //      compileSymbolCode(scope);
-//}
-//
+}
+
 //void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope, DNode hints)
 //{
 //   SyntaxWriter writer(scope.syntaxTree);
@@ -8422,20 +8422,20 @@ Compiler :: Compiler(StreamReader* syntax)
 //         scope.raiseError(errInvalidHint, body.Terminal());
 //   }
 //}
-//
-//void Compiler::compileDeclarations(DNode member, ModuleScope& scope)
-//{
-//   while (member != nsNone) {
+
+void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
+{
+   while (member != lxNone) {
 //      DNode hints = skipHints(member);
 //
 //      TerminalInfo name = member.Terminal();
-//
-//      switch (member) {
+
+      switch (member) {
 //         case nsSubject:
 //            declareSubject(member, scope, hints);
 //            break;
-//         case nsClass:
-//         {
+         case lxClass:
+         {
 //            ref_t reference = scope.mapTerminal(name);
 //
 //            // check for duplicate declaration
@@ -8443,19 +8443,19 @@ Compiler :: Compiler(StreamReader* syntax)
 //               scope.raiseError(errDuplicatedSymbol, name);
 //
 //            scope.module->mapSection(reference | mskSymbolRef, false);
-//
-//            // compile class
-//            ClassScope classScope(&scope, reference);
-//            compileClassDeclaration(member, classScope, hints);
-//
+
+            // compile class
+            ClassScope classScope(&scope/*, reference*/);
+            compileClassDeclaration(member, classScope/*, hints*/);
+
 //            // compile class class if it available
 //            if (classScope.info.header.classRef != classScope.reference) {
 //               ClassScope classClassScope(&scope, classScope.info.header.classRef);
 //               compileClassClassDeclaration(member, classClassScope, classScope);
 //            }
 //
-//            break;
-//         }
+            break;
+         }
 //         case nsTemplate:
 //         case nsFieldTemplate:
 //         case nsMethodTemplate:
@@ -8509,31 +8509,31 @@ Compiler :: Compiler(StreamReader* syntax)
 //            compileSymbolDeclaration(member, symbolScope, hints);
 //            break;
 //         }
-//      }
-//      member = member.nextNode();
-//   }
-//}
-//
-//void Compiler :: compileImplementations(DNode member, ModuleScope& scope)
-//{
-//   while (member != nsNone) {
+      }
+      member = member.nextNode();
+   }
+}
+
+void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
+{
+   while (member != nsNone) {
 //      DNode hints = skipHints(member);
 //
 //      TerminalInfo name = member.Terminal();
-//
-//      switch (member) {
+
+      switch (member) {
 //         case nsSubject:
 //            compileSubject(member, scope, hints);
 //            break;
-//         case nsClass:
-//         {
+         case nsClass:
+         {
 //            ref_t reference = scope.mapTerminal(name);
-//
-//            // compile class
-//            ClassScope classScope(&scope, reference);
+
+            // compile class
+            ClassScope classScope(&scope/*, reference*/);
 //            scope.loadClassInfo(classScope.info, scope.module->resolveReference(reference), false);
-//            compileClassImplementation(member, classScope, hints);
-//
+            compileClassImplementation(member, classScope/*, hints*/);
+
 //            // compile class class if it available
 //            if (classScope.info.header.classRef != classScope.reference) {
 //               ClassScope classClassScope(&scope, classScope.info.header.classRef);
@@ -8541,8 +8541,8 @@ Compiler :: Compiler(StreamReader* syntax)
 //
 //               compileClassClassImplementation(member, classClassScope, classScope);
 //            }
-//            break;
-//         }
+            break;
+         }
 //         case nsSymbol:
 //         case nsStatic:
 //         {
@@ -8552,11 +8552,11 @@ Compiler :: Compiler(StreamReader* syntax)
 //            compileSymbolImplementation(member, symbolScope, hints, (member == nsStatic));
 //            break;
 //         }
-//      }
-//      member = member.nextNode();
-//   }
-//}
-//
+      }
+      member = member.nextNode();
+   }
+}
+
 //void Compiler :: compileIncludeSection(DNode& member, ModuleScope& scope)
 //{
 //   while (member != nsNone) {
@@ -8667,12 +8667,21 @@ Compiler :: Compiler(StreamReader* syntax)
 //   _writer.generateConstantList(tree.readRoot(), module, reference);
 //}
 
-void Compiler :: compile(SNode node)
+void Compiler :: compileModule(SNode node, ModuleScope& scope)
 {
-
+   //   compileIncludeSection(member, scope);
+   //
+   //   if (scope.superReference == 0)
+   //      scope.raiseError(errNotDefinedBaseClass, member.FirstTerminal());
+   
+   // first pass - declaration
+   compileDeclarations(node.firstChild(), scope);
+   
+   // second pass - implementation
+   compileImplementations(node.firstChild(), scope);
 }
 
-void Compiler :: compile(ident_t source, /*MemoryDump* buffer, */ModuleScope& scope)
+void Compiler :: compileModule(ident_t source, ModuleScope& scope)
 {
    Path path(source);
 
@@ -8681,16 +8690,13 @@ void Compiler :: compile(ident_t source, /*MemoryDump* buffer, */ModuleScope& sc
    if (!sourceFile.isOpened())
       scope.project->raiseError(errInvalidFile, source);
    
-   //   MemoryWriter bufWriter(buffer);
    SyntaxTree tree;
-   DerivationWriter writer(&tree);
+   SyntaxWriter syntaxWriter(tree);
+   DerivationWriter writer(&syntaxWriter);
    _parser.parse(&sourceFile, writer, scope.project->getTabSize());
-   //
-   //   // compile
-   //   MemoryReader bufReader(buffer);
-   //   DerivationReader reader(&bufReader);
-   //
-   //   compileModule(reader.readRoot(), scope);
+   
+   // compile
+   compileModule(tree.readRoot(), scope);
 }
 
 bool Compiler :: run(Project& project)
@@ -8698,7 +8704,6 @@ bool Compiler :: run(Project& project)
 //   bool withDebugInfo = project.BoolSetting(opDebugMode);
 //   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
 //
-//   MemoryDump  buffer;                // temporal derivation buffer
 //   Unresolveds unresolveds(Unresolved(), NULL);
 //
 //   Path modulePath;
@@ -8730,7 +8735,7 @@ bool Compiler :: run(Project& project)
          project.printInfo("%s", it.key());
 
          // compile source
-         compile(*it, /*&buffer, */scope);
+         compileModule(*it, scope);
       }
       catch (LineTooLong& e)
       {

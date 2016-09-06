@@ -12,7 +12,7 @@
 namespace _ELENA_
 {
 
-//typedef _ELENA_::List<_JITLoaderListener*> LoaderListeners;
+typedef _ELENA_::List<_JITLoaderListener*> LoaderListeners;
 
 // --- LibraryManager ---
 
@@ -21,18 +21,18 @@ class LibraryManager : public _LibraryManager
    typedef Map<ident_t, char*> PathMap;
 
    Path              _rootPath;
-//   IdentifierString  _namespace;
-//
-//   ModuleMap         _modules;
-//   ModuleMap         _debugModules;
-//   ModuleMap         _binaries;
-//
-//   PathMap           _binaryPaths;
+   IdentifierString  _namespace;
+
+   ModuleMap         _modules;
+   ModuleMap         _debugModules;
+   ModuleMap         _binaries;
+
+   PathMap           _binaryPaths;
    PathMap           _packagePaths;
 
-//   LoaderListeners   _listeners;
-//
-//   void onModuleLoad(_Module* module);
+   LoaderListeners   _listeners;
+
+   void onModuleLoad(_Module* module);
 
 public:
    void setRootPath(path_t root)
@@ -40,31 +40,31 @@ public:
       _rootPath.copy(root);
    }
 
-//   ident_t getNamespace() const
-//   {
-//      return _namespace;
-//   }
-//   void setNamespace(ident_t package, path_t path)
-//   {
-//      _namespace.copy(package);
-//      _packagePaths.add(package, IdentifierString::clonePath(path));
-//   }
-//   void setNamespace(ident_t package)
-//   {
-//      _namespace.copy(package);
-//      _packagePaths.add(package, NULL);
-//   }
-//
-//   void addPackage(ident_t package, path_t path)
-//   {
-//      _packagePaths.add(package, IdentifierString::clonePath(path));
-//   }
-//#ifdef _WIN32
-//   void addPackage(ident_t package, ident_t path)
-//   {
-//      _packagePaths.add(package, StringHelper::clone(path));
-//   }
-//#endif
+   ident_t getNamespace() const
+   {
+      return _namespace;
+   }
+   void setNamespace(ident_t package, path_t path)
+   {
+      _namespace.copy(package);
+      _packagePaths.add(package, IdentifierString::clonePath(path));
+   }
+   void setNamespace(ident_t package)
+   {
+      _namespace.copy(package);
+      _packagePaths.add(package, NULL);
+   }
+
+   void addPackage(ident_t package, path_t path)
+   {
+      _packagePaths.add(package, IdentifierString::clonePath(path));
+   }
+#ifdef _WIN32
+   void addPackage(ident_t package, ident_t path)
+   {
+      _packagePaths.add(package, path.clone());
+   }
+#endif
    void nameToPath(ident_t moduleName, Path& path, ident_t extension)
    {
       Path ext(extension);
@@ -86,46 +86,46 @@ public:
       path.nameToPath(moduleName, ext);
    }
 
-//   void addPrimitivePath(ident_t alias, path_t path)
-//   {
-//      _binaryPaths.erase(alias);
-//      _binaryPaths.add(alias, IdentifierString::clonePath(path));
-//   }
-//   ident_t resolvePrimitive(ident_t alias) const
-//   {
-//      return _binaryPaths.get(alias);
-//   }
-//
-//   void addCorePath(path_t path)
-//   {
-//      _binaryPaths.add(NULL, IdentifierString::clonePath(path));
-//   }
-//
-//   _Module* createModule(ident_t package, LoadResult& result);
-//
-//   _Module* loadNative(ident_t package, LoadResult& result);
-//   _Module* loadModule(ident_t package, LoadResult& result, bool readOnly = true);
-//   _Module* loadDebugModule(ident_t package, LoadResult& result);
-//
-//   bool loadCore(LoadResult& result);
-//
-//   _Module* resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference);
-//   _Module* resolveCore(ref_t reference, LoadResult& result);
-//   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
-//   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
-//
-//   void addListener(_JITLoaderListener* listener)
-//   {
-//      _listeners.add(listener);
-//
-//      // notify the listener on already loaded modules
-//      ModuleMap::Iterator it = _modules.start();
-//      while (!it.Eof()) {
-//         onModuleLoad(*it);
-//
-//         it++;
-//      }
-//   }
+   void addPrimitivePath(ident_t alias, path_t path)
+   {
+      _binaryPaths.erase(alias);
+      _binaryPaths.add(alias, IdentifierString::clonePath(path));
+   }
+   ident_t resolvePrimitive(ident_t alias) const
+   {
+      return _binaryPaths.get(alias);
+   }
+
+   void addCorePath(path_t path)
+   {
+      _binaryPaths.add(NULL, IdentifierString::clonePath(path));
+   }
+
+   _Module* createModule(ident_t package, LoadResult& result);
+
+   _Module* loadNative(ident_t package, LoadResult& result);
+   _Module* loadModule(ident_t package, LoadResult& result, bool readOnly = true);
+   _Module* loadDebugModule(ident_t package, LoadResult& result);
+
+   bool loadCore(LoadResult& result);
+
+   _Module* resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference);
+   _Module* resolveCore(ref_t reference, LoadResult& result);
+   virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+
+   void addListener(_JITLoaderListener* listener)
+   {
+      _listeners.add(listener);
+
+      // notify the listener on already loaded modules
+      ModuleMap::Iterator it = _modules.start();
+      while (!it.Eof()) {
+         onModuleLoad(*it);
+
+         it++;
+      }
+   }
 
    LibraryManager();
    LibraryManager(path_t root, ident_t package);

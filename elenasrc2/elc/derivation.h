@@ -114,15 +114,15 @@ namespace _ELENA_
 
 class DerivationWriter : public _DerivationWriter
 {
-   SyntaxTree* _tree;
+   SyntaxWriter* _writer;
 
 public:
    void writeSymbol(Symbol symbol);
    void writeTerminal(TerminalInfo& terminal);
 
-   DerivationWriter(SyntaxTree* tree)
+   DerivationWriter(SyntaxWriter* writer)
    {
-      _tree = tree;
+      _writer = writer;
    } 
 };
 

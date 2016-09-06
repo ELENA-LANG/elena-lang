@@ -151,4 +151,6 @@ void Parser :: parse(TextReader* reader, _DerivationWriter& writer, int tabSize)
          writer.writeTerminal(terminal);
 
    } while (terminal != tsEof);
+
+   writer.writeSymbol(nsNone);
 }
