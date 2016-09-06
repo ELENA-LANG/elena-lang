@@ -399,45 +399,45 @@ bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
    return result;
 }
 
-////char* StringHelper :: allocate(size_t size, const char* value)
-////{
-////   char*s = (char*)malloc(size);
-////
-////   if (!emptystr(value))
-////      memcpy(s, value, size);
-////
-////   return s;
-////}
-////
-////void StringHelper :: insert(char* s, int pos, const char* subs)
-////{
-////   size_t len = getlength(subs);
-////
-////   //s[getlength(s) + len + 1] = 0;
-////   for (int i = getlength(s) ; i >= pos ; i--) {
-////      s[i+len] = s[i];
-////   }
-////   memcpy(s + pos, subs, len);
-////}
-////
-////void StringHelper :: move(char* s1, const char* s2, size_t length)
-////{
-////   memmove(s1, s2, length);
-////}
-////
-////char* StringHelper :: reallocate(char* s, size_t size)
-////{
-////   return (char*)realloc(s, size);
-////}
-////
-////int find(const char* s, const char* subs, int defValue)
-////{
-////   const char* p = strstr(s, subs);
-////   if (p==NULL) {
-////      return defValue;
-////   }
-////   else return p - s;
-////}
+char* _ELENA_::__allocate(size_t size, const char* value)
+{
+   char*s = (char*)malloc(size);
+
+   if (!emptystr(value))
+      memcpy(s, value, size);
+
+   return s;
+}
+
+//void StringHelper :: insert(char* s, int pos, const char* subs)
+//{
+//   size_t len = getlength(subs);
+//
+//   //s[getlength(s) + len + 1] = 0;
+//   for (int i = getlength(s) ; i >= pos ; i--) {
+//      s[i+len] = s[i];
+//   }
+//   memcpy(s + pos, subs, len);
+//}
+//
+//void StringHelper :: move(char* s1, const char* s2, size_t length)
+//{
+//   memmove(s1, s2, length);
+//}
+//
+//char* StringHelper :: reallocate(char* s, size_t size)
+//{
+//   return (char*)realloc(s, size);
+//}
+//
+//int find(const char* s, const char* subs, int defValue)
+//{
+//   const char* p = strstr(s, subs);
+//   if (p==NULL) {
+//      return defValue;
+//   }
+//   else return p - s;
+//}
 
 int __find(const char* s, char c, int defValue)
 {
@@ -633,16 +633,16 @@ int strToInt(const char* s)
 
 #ifdef _WIN32
 
-////wchar_t* StringHelper :: allocate(size_t size, const wchar_t* value)
-////{
-////   wchar_t* s = (wchar_t*)malloc(size << 1);
-////
-////   if (value)
-////      wcsncpy(s, value, size);
-////
-////   return s;
-////}
-////
+wchar_t* _ELENA_::__allocate(size_t size, const wchar_t* value)
+{
+   wchar_t* s = (wchar_t*)malloc(size << 1);
+
+   if (value)
+      wcsncpy(s, value, size);
+
+   return s;
+}
+
 ////wchar_t* StringHelper :: reallocate(wchar_t* s, size_t size)
 ////{
 ////   return (wchar_t*)realloc(s, size << 1);
@@ -784,20 +784,20 @@ int strToInt(const wchar_t* s)
 
 #else
 
-////unsigned short* StringHelper :: allocate(size_t size, const unsigned short* value)
-////{
-////   unsigned short* s = (unsigned short*)malloc(size << 1);
-////   if (value)
-////      memcpy(s, value, size << 1);
-////
-////   return s;
-////}
-////
-////unsigned short* StringHelper :: reallocate(unsigned short* s, size_t size)
-////{
-////   return (unsigned short*)realloc(s, size << 1);
-////}
-////
+unsigned short* _ELENA_::__allocate(size_t size, const unsigned short* value)
+{
+   unsigned short* s = (unsigned short*)malloc(size << 1);
+   if (value)
+      memcpy(s, value, size << 1);
+
+   return s;
+}
+
+//unsigned short* StringHelper :: reallocate(unsigned short* s, size_t size)
+//{
+//   return (unsigned short*)realloc(s, size << 1);
+//}
+//
 ////void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
 ////{
 ////   memmove(s1, s2, length << 1);
@@ -1250,6 +1250,11 @@ int ident_t :: toInt()
    return strToInt(_string);
 }
 
+int ident_t :: toInt(int index)
+{
+   return strToInt(_string + index);
+}
+
 int ident_t :: find(char c, int defValue)
 {
    return __find(_string, c, defValue);
@@ -1270,7 +1275,7 @@ char* ident_t :: clone(int index)
    return ::clone(_string + index);
 }
 
-bool ident_t :: compare(const char* s)
+bool ident_t :: compare(const char* s) const
 {
    return ::compare(_string, s);
 }
@@ -1280,7 +1285,7 @@ bool ident_t::greater(const char* s)
    return ::greater(_string, s);
 }
 
-bool ident_t::compare(const char* s, size_t length)
+bool ident_t::compare(const char* s, size_t length) const
 {
    return ::compare(_string, s, length);
 }
@@ -1300,6 +1305,11 @@ bool wide_t :: copyTo(wide_c* dest, size_t length, size_t& destLength)
 int wide_t :: toInt()
 {
    return strToInt(_string);
+}
+
+int wide_t :: toInt(int index)
+{
+   return strToInt(_string + index);
 }
 
 int wide_t :: find(wide_c c, int defValue)
@@ -1322,7 +1332,7 @@ wide_c* wide_t :: clone(int index)
    return ::clone(_string + index);
 }
 
-bool wide_t :: compare(const wide_c* s)
+bool wide_t :: compare(const wide_c* s) const
 {
    return ::compare(_string, s);
 }
@@ -1332,7 +1342,7 @@ bool wide_t :: greater(const wide_c* s)
    return ::greater(_string, s);
 }
 
-bool wide_t::compare(const wide_c* s, size_t length)
+bool wide_t::compare(const wide_c* s, size_t length) const
 {
    return ::compare(_string, s, length);
 }
@@ -1355,6 +1365,11 @@ void _ELENA_::__copy(wide_c* dest, const char* sour, size_t sourLength, size_t& 
 }
 
 void _ELENA_::__copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
+{
+   copy(dest, sour, sourLength, destLength);
+}
+
+void _ELENA_::__copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
 {
    copy(dest, sour, sourLength, destLength);
 }

@@ -1,69 +1,26 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////               
-////		This file contains ELENA Engine Derivation Tree classes
-////
-////                                              (C)2005-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
+//               
+//		This file contains ELENA Engine Derivation Tree classes
 //
-//#ifndef derivationH
-//#define derivationH 1
-//
-//#include "syntax.h"
-//
-//namespace _ELENA_
-//{
-//
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef derivationH
+#define derivationH 1
+
+#include "syntax.h"
+#include "syntaxtree.h"
+
+namespace _ELENA_
+{
+
 //// --- DerivationReader class ---
 //class DerivationReader
 //{
 //   StreamReader* _reader;
 //
 //public:
-//   // --- TerminalInfo structure ---
-//   struct TerminalInfo
-//   {
-//      Symbol   symbol;
-//
-//      size_t   disp;          // number of symbols (tab considered as a single char)
-//      size_t   row;
-//      size_t   col;           // virtual column
-//      size_t   length;
-//      ident_t  value;
-//
-//      operator ident_t() const { return value; }
-//
-//      bool operator == (const TerminalInfo& terminal) const
-//      {
-//         return (symbol == terminal.symbol && StringHelper::compare(value, terminal.value));
-//      }
-//
-//      bool operator != (const TerminalInfo& terminal) const
-//      {
-//         return (symbol != terminal.symbol || !StringHelper::compare(value, terminal.value));
-//      }
-//
-//      bool operator == (const Symbol& symbol) const
-//      {
-//         return (this->symbol == symbol);
-//      }
-//
-//      bool operator != (const Symbol& symbol) const
-//      {
-//         return (this->symbol != symbol);
-//      }
-//
-//      int Row() const { return row; }
-//
-//      int Col() const { return col; }
-//
-//      TerminalInfo()
-//      {
-//         this->symbol = nsNone;
-//         this->value = NULL;
-//      }
-//   };
-//
 //   // --- Node structure ---
 //   struct Node
 //   {
@@ -152,27 +109,26 @@
 //      _reader = reader;
 //   }
 //};
-//
-//// --- DerivationWriter ---
-//
-//class DerivationWriter
-//{
-//   StreamWriter* _writer;
-//
-//public:
-//   void writeSymbol(Symbol symbol);
-//   void writeTerminal(DerivationReader::TerminalInfo terminal);
-//
-//   DerivationWriter(StreamWriter* writer)
-//   {
-//      _writer = writer;
-//   } 
-//};
-//
+
+// --- DerivationWriter ---
+
+class DerivationWriter : public _DerivationWriter
+{
+   SyntaxTree* _tree;
+
+public:
+   void writeSymbol(Symbol symbol);
+   void writeTerminal(TerminalInfo& terminal);
+
+   DerivationWriter(SyntaxTree* tree)
+   {
+      _tree = tree;
+   } 
+};
+
 //// common type definitions
 //typedef DerivationReader::Node         DNode;
-//typedef DerivationReader::TerminalInfo TerminalInfo;
-//
-//} // _ELENA_
-//
-//#endif // derivationH
+
+} // _ELENA_
+
+#endif // derivationH

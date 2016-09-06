@@ -212,6 +212,11 @@ public:
       return ((ident_t)buf).clone();
    }
 
+   ident_t ident() const
+   {
+      return ident_t(_string);
+   }
+
    bool compare(ident_t value)
    {
       return ((ident_t)_string).compare(value);

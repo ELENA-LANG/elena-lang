@@ -290,12 +290,12 @@ public:
 //         this->sourceCol = this->sourceRow = 0;
 //      }
 //   };
-//
-//private:
-//   // - ModuleScope -
-//   struct ModuleScope
-//   {
-//      Project*       project;
+
+private:
+   // - ModuleScope -
+   struct ModuleScope
+   {
+      Project*       project;
 //      _Module*       module;
 //      _Module*       debugModule;
 //
@@ -456,10 +456,10 @@ public:
 //
 //      ref_t mapNestedExpression();
 //      ref_t mapNestedTemplate();
-//
-//      ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
-//   };
-//
+
+      ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
+   };
+
 //   // - Scope -
 //   struct Scope
 //   {
@@ -1107,8 +1107,6 @@ public:
 //
 //   virtual void compileModule(DNode node, ModuleScope& scope);
 
-   //void compile(ident_t source, MemoryDump* buffer, ModuleScope& scope);
-
 //   bool validate(Project& project, _Module* module, int reference);
 //   void validateUnresolved(Unresolveds& unresolveds, Project& project);
 //
@@ -1158,7 +1156,7 @@ public:
 //   }
 
    void compile(SNode node);
-   void compile(ident_t source);
+   void compile(ident_t source, /*MemoryDump* buffer, */ModuleScope& scope);
 
    bool run(Project& project);
 

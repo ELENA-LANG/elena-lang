@@ -112,14 +112,14 @@ bool MemoryDump :: read(size_t position, void* s, size_t length)
    else return false;
 }
 
-//void MemoryDump :: load(StreamReader* reader, size_t length)
-//{
-//   reserve(_used + length);
-//
-//   reader->read(_buffer + _used, length);
-//
-//   _used += length;
-//}
+void MemoryDump :: load(StreamReader* reader, size_t length)
+{
+   reserve(_used + length);
+
+   reader->read(_buffer + _used, length);
+
+   _used += length;
+}
 
 // --- ByteArray ---
 

@@ -71,11 +71,11 @@ template <char dfaMaxChar, char dfaStart, char dfaWhitespace, int maxLength> cla
 protected:
    const char** _dfa;
 
-   TextReader*  _source;
-   int          _tabSize;
-   ident_c*     _line;
-   size_t       _position;
-   size_t       _column, _row;
+   TextReader* _source;
+   int         _tabSize;
+   char*       _line;
+   size_t      _position;
+   size_t      _column, _row;
 
    void nextColumn(size_t& position)
    {
@@ -161,7 +161,7 @@ public:
       _tabSize = tabSize;
       _source = source;
       _row = 0;
-      _line = StringHelper::allocate(maxLength + 1, DEFAULT_STR);
+      _line = __allocate(maxLength + 1, DEFAULT_STR);
 
       _dfa = dfa;
 

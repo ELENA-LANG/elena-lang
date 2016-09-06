@@ -10,48 +10,39 @@
 #define parserH 1
 
 #include "parsertable.h"
-//#include "derivation.h"
-//#include "source.h"
+#include "syntax.h"
+#include "source.h"
 
 namespace _ELENA_
 {
 
-//const ident_c _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i', 'l', 'e', '>', 0 };
-//
-//// --- SyntaxError ---
-//
-//class SyntaxError : public _Exception
-//{
-//public:
-//   const char* error; 
-//   ident_t     token;
-//   int         column, row;
-//
-//   SyntaxError(int column, int row, ident_t token);
-//   SyntaxError(int column, int row, ident_t token, const char* error);
-//};
+const char _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i', 'l', 'e', '>', 0 };
 
-//// --- _DerivationWriter ---
-//
-//class _DerivationWriter
-//{
-//public:
-//   virtual void writeSymbol(Symbol symbol) = 0;
-//   virtual void writeTerminal(DerivationReader::TerminalInfo terminal) = 0;
-//};
+// --- SyntaxError ---
+
+class SyntaxError : public _Exception
+{
+public:
+   const char* error; 
+   ident_t     token;
+   int         column, row;
+
+   SyntaxError(int column, int row, ident_t token);
+   SyntaxError(int column, int row, ident_t token, const char* error);
+};
 
 // --- Parser class ---
 
 class Parser
 {
-//   ident_c _buffer[IDENTIFIER_LEN + 1];
+   char _buffer[IDENTIFIER_LEN + 1];
 
    ParserTable _table;
 
-//   bool derive(TerminalInfo& terminal, ParserStack& stack, DerivationWriter* writer, bool& traceble);
+   bool derive(TerminalInfo& terminal, ParserStack& stack, _DerivationWriter& writer, bool& traceble);
 
 public:
-//   void parse(TextReader* reader, DerivationWriter* writer, int tabSize);
+   void parse(TextReader* reader, _DerivationWriter& writer, int tabSize);
 
    Parser(StreamReader* syntax);
    ~Parser() {}

@@ -34,7 +34,7 @@ public:
 
    virtual bool read(size_t position, void* s, size_t length);
 
-//   virtual void load(StreamReader* reader, size_t length);
+   virtual void load(StreamReader* reader, size_t length);
 
    virtual bool write(size_t position, const void* s, size_t length);
 

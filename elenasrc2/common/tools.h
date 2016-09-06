@@ -235,15 +235,15 @@ inline bool isbetween(int starting, int len , int value)
 //   return true;
 //}
 
-//// --- calcTabShift ---
-//
-//inline size_t calcTabShift(int col, int tabSize)
-//{
-//   int nextCol = (col / tabSize * tabSize) + tabSize;
-//
-//   return nextCol - col;
-//}
-//
+// --- calcTabShift ---
+
+inline size_t calcTabShift(int col, int tabSize)
+{
+   int nextCol = (col / tabSize * tabSize) + tabSize;
+
+   return nextCol - col;
+}
+
 //// --- __abs ---
 //
 //inline int __abs(int x)

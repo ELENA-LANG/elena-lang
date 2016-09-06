@@ -174,8 +174,8 @@ public:
 
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
-////   virtual void raiseError(const char* msg) = 0;
-//   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+//   virtual void raiseError(const char* msg) = 0;
+   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
    virtual void raiseError(ident_t msg, ident_t value) = 0;
 
    virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
@@ -223,8 +223,8 @@ public:
 
    bool HasWarnings() const { return _hasWarning; }
 
-//   virtual int getTabSize() { return 4; }
-//
+   virtual int getTabSize() { return 4; }
+
 //   int getWarningMask() const { return _warningMasks; }
 //
 //   bool indicateWarning()

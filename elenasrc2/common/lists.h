@@ -670,93 +670,93 @@ public:
       _count++;
    }
 
-//   T peek()
-//   {
-//      return _top->item;
-//   }
-//
-//   T cutTop()
-//   {
-//      Item* tmp = _top;
-//      _top = _top->next;
-//      _count--;
-//
-//      if (tmp==_tale)
-//         _tale = NULL;
-//
-//      T item = tmp->item;
-//      freeobj(tmp);
-//
-//      return item;
-//   }
-//
-//   void cut(T item)
-//   {
-//      Item* tmp = NULL;
-//      Item* previous = NULL;
-//
-//      if (_top->item==item)
-//         tmp = _top;
-//      else {
-//         previous = _top;
-//         while (previous->next) {
-//            if (previous->next->item==item) {
-//               tmp = previous->next;
-//               break;
-//            }
-//            previous = previous->next;
-//         }
-//      }
-//      if (tmp) {
-//         _count--;
-//
-//         if (tmp==_tale)
-//            _tale = previous;
-//         if (previous==NULL) {
-//            _top = _top->next;
-//         }
-//         else previous->next = tmp->next;
-//
-//         if (_freeT)
-//            _freeT(tmp->item);
-//
-//         delete tmp;
-//      }
-//   }
-//
-//   void cut(Iterator it)
-//   {
-//      Item* tmp = NULL;
-//      Item* previous = NULL;
-//
-//      if (_top==it._current)
-//         tmp = _top;
-//      else {
-//         previous = _top;
-//         while (previous->next) {
-//            if (previous->next==it._current) {
-//               tmp = previous->next;
-//               break;
-//            }
-//            previous = previous->next;
-//         }
-//      }
-//      if (tmp) {
-//         _count--;
-//
-//         if (tmp==_tale)
-//            _tale = previous;
-//         if (previous==NULL) {
-//            _top = _top->next;
-//         }
-//         else previous->next = tmp->next;
-//
-//         if (_freeT)
-//            _freeT(tmp->item);
-//
-//         delete tmp;
-//      }
-//   }
+   T peek()
+   {
+      return _top->item;
+   }
+
+   T cutTop()
+   {
+      Item* tmp = _top;
+      _top = _top->next;
+      _count--;
+
+      if (tmp==_tale)
+         _tale = NULL;
+
+      T item = tmp->item;
+      freeobj(tmp);
+
+      return item;
+   }
+
+   void cut(T item)
+   {
+      Item* tmp = NULL;
+      Item* previous = NULL;
+
+      if (_top->item==item)
+         tmp = _top;
+      else {
+         previous = _top;
+         while (previous->next) {
+            if (previous->next->item==item) {
+               tmp = previous->next;
+               break;
+            }
+            previous = previous->next;
+         }
+      }
+      if (tmp) {
+         _count--;
+
+         if (tmp==_tale)
+            _tale = previous;
+         if (previous==NULL) {
+            _top = _top->next;
+         }
+         else previous->next = tmp->next;
+
+         if (_freeT)
+            _freeT(tmp->item);
+
+         delete tmp;
+      }
+   }
+
+   void cut(Iterator it)
+   {
+      Item* tmp = NULL;
+      Item* previous = NULL;
+
+      if (_top==it._current)
+         tmp = _top;
+      else {
+         previous = _top;
+         while (previous->next) {
+            if (previous->next==it._current) {
+               tmp = previous->next;
+               break;
+            }
+            previous = previous->next;
+         }
+      }
+      if (tmp) {
+         _count--;
+
+         if (tmp==_tale)
+            _tale = previous;
+         if (previous==NULL) {
+            _top = _top->next;
+         }
+         else previous->next = tmp->next;
+
+         if (_freeT)
+            _freeT(tmp->item);
+
+         delete tmp;
+      }
+   }
 
    void clear()
    {

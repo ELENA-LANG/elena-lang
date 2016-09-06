@@ -43,12 +43,13 @@ public:
    int findLast(char c, int defValue = -1);
 
    int toInt();
+   int toInt(int index);
 
    char* clone();
    char* clone(int index);
 
-   bool compare(const char* s);
-   bool compare(const char* s, size_t length);
+   bool compare(const char* s) const;
+   bool compare(const char* s, size_t length) const;
 
    bool greater(const char* s);
 
@@ -84,12 +85,13 @@ public:
    int findLast(wide_c c, int defValue = -1);
 
    int toInt();
+   int toInt(int index);
 
    wide_c* clone();
    wide_c* clone(int index);
 
-   bool compare(const wide_c* s);
-   bool compare(const wide_c* s, size_t length);
+   bool compare(const wide_c* s) const;
+   bool compare(const wide_c* s, size_t length) const;
 
    bool greater(const wide_c* s);
 
@@ -489,8 +491,12 @@ void __copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
 void __copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
 void __copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 void __copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+void __copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
 void __append(char* dest, const char* sour, size_t length);
 void __append(wide_c* dest, const wide_c* sour, size_t length);
+
+char* __allocate(size_t size, const char* value);
+wchar_t* __allocate(size_t size, const wchar_t* value);
 
 char* __lower(char* s);
 wchar_t* __lower(wide_c* s);

@@ -120,23 +120,23 @@ _ELC_::Project :: Project()
    _settings.add(_ELENA_::opAppPath, _ELENA_::IdentifierString::clonePath(appPath));
    _settings.add(_ELENA_::opNamespace, ((_ELENA_::ident_t)"unnamed").clone());
 
-//   _tabSize = 4;
+   _tabSize = 4;
    _encoding = _ELENA_::feUTF8;
 
 //   // !! temporally
 //   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
 }
 
-//void _ELC_::Project :: raiseError(const char* msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
-//{
-//   _ELENA_::WideString wMsg(msg);
-//   _ELENA_::WideString wPath(path);
-//   _ELENA_::WideString wTerminal(terminal);
-//
-//   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
-//
-//   throw _ELENA_::_Exception();
-//}
+void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
+{
+   _ELENA_::WideString wMsg(msg);
+   _ELENA_::WideString wPath(path);
+   _ELENA_::WideString wTerminal(terminal);
+
+   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
+
+   throw _ELENA_::_Exception();
+}
 
 void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t identifier)
 {
@@ -346,13 +346,13 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
          _settings.add(_ELENA_::opOutputPath, valueName.clone(1));
          break;
       case ELC_PRM_EXTRA:
-//         if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_TABSIZE, 4)) {
-//            _tabSize = _ELENA_::StringHelper::strToInt(value + 4);
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_CODEPAGE, 3)) {
-//            _encoding = _ELENA_::StringHelper::strToInt(value + 3);
-//         }
-         /*else */if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
+         if (valueName.compare(ELC_PRM_TABSIZE, 4)) {
+            _tabSize = valueName.ident().toInt(4);
+         }
+         else if (valueName.compare(ELC_PRM_CODEPAGE, 3)) {
+            _encoding = valueName.ident().toInt(3);
+         }
+         else if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
             _settings.add(_ELENA_::opProjectPath, valueName.clone(_ELENA_::getlength(ELC_PRM_PROJECTPATH)));
          }
 //         else if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_OPTOFF)) {

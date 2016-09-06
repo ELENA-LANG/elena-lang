@@ -14,7 +14,7 @@
 ////#include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0019
+#define ELC_REVISION_NUMBER             0x001A
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -44,9 +44,9 @@
 //#define ELC_W_LEVEL3                "w3"
 //#define ELC_W_OFF                   "w-"
 #define ELC_PRM_EXTRA               'x'
-//#define ELC_PRM_TABSIZE             "xtab"
+#define ELC_PRM_TABSIZE             "xtab"
 #define ELC_PRM_PROJECTPATH         "xpath"
-//#define ELC_PRM_CODEPAGE            "xcp"
+#define ELC_PRM_CODEPAGE            "xcp"
 //#define ELC_PRM_OPTOFF              "xo-"
 //#define ELC_PRM_OPT1OFF             "xo1-"
 
@@ -130,7 +130,7 @@ typedef _ELENA_::IniConfigFile ElcConfigFile;
 // --- Command Line Project ---
 class Project : public _ELENA_::Project
 {
-   int /*_tabSize, */_encoding;
+   int _tabSize, _encoding;
 
    virtual _ELENA_::ConfigCategoryIterator getCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
    virtual _ELENA_::ident_t getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
@@ -144,7 +144,7 @@ public:
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
 
    //virtual void raiseError(const char* msg);
-//   virtual void raiseError(const char* msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value);
    virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
@@ -164,7 +164,7 @@ public:
 
    virtual int getDefaultEncoding() { return _encoding; }
 
-//   //virtual int getTabSize() { return _tabSize; }
+   virtual int getTabSize() { return _tabSize; }
 
    void cleanUp();
 

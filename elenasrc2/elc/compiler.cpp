@@ -9,7 +9,8 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compiler.h"
-//#include "errors.h"
+#include "errors.h"
+#include "derivation.h"
 //#include <errno.h>
 
 using namespace _ELENA_;
@@ -401,13 +402,13 @@ using namespace _ELENA_;
 //   }
 //   else return importSubject(sour, sign_ref, dest);
 //}
-//
-//// --- Compiler::ModuleScope ---
-//
-//Compiler::ModuleScope::ModuleScope(Project* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
+
+// --- Compiler::ModuleScope ---
+
+Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/)
 //   : constantHints((ref_t)-1), extensions(NULL, freeobj)
-//{
-//   this->project = project;
+{
+   this->project = project;
 //   this->sourcePath = sourcePath;
 //   this->module = module;
 //   this->debugModule = debugModule;
@@ -447,8 +448,8 @@ using namespace _ELENA_;
 //   defaultNs.add(module->Name());
 //
 //   loadModuleInfo(module);
-//}
-//
+}
+
 //ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
 //{
 //   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
@@ -8618,28 +8619,6 @@ Compiler :: Compiler(StreamReader* syntax)
 //   }
 //}
 
-//void Compiler :: compile(ident_t source, MemoryDump* buffer, ModuleScope& scope*/)
-//{
-//   Path path;
-//   Path::loadPath(path, source);
-//
-//   // parse
-//   TextFileReader sourceFile(path, scope.project->getDefaultEncoding(), true);
-//   if (!sourceFile.isOpened())
-//      scope.project->raiseError(errInvalidFile, source);
-//
-//   buffer->clear();
-//   MemoryWriter bufWriter(buffer);
-//   DerivationWriter writer(&bufWriter);
-//   _parser.parse(&sourceFile, &writer, scope.project->getTabSize());
-//
-//   // compile
-//   MemoryReader bufReader(buffer);
-//   DerivationReader reader(&bufReader);
-//
-//   compileModule(reader.readRoot(), scope);
-//}
-
 //inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
 //{
 //   writer.newNode(lxMember);
@@ -8693,9 +8672,25 @@ void Compiler :: compile(SNode node)
 
 }
 
-void Compiler :: compile(ident_t source)
+void Compiler :: compile(ident_t source, /*MemoryDump* buffer, */ModuleScope& scope)
 {
+   Path path(source);
 
+   // parse
+   TextFileReader sourceFile(path, scope.project->getDefaultEncoding(), true);
+   if (!sourceFile.isOpened())
+      scope.project->raiseError(errInvalidFile, source);
+   
+   //   MemoryWriter bufWriter(buffer);
+   SyntaxTree tree;
+   DerivationWriter writer(&tree);
+   _parser.parse(&sourceFile, writer, scope.project->getTabSize());
+   //
+   //   // compile
+   //   MemoryReader bufReader(buffer);
+   //   DerivationReader reader(&bufReader);
+   //
+   //   compileModule(reader.readRoot(), scope);
 }
 
 bool Compiler :: run(Project& project)
@@ -8710,7 +8705,7 @@ bool Compiler :: run(Project& project)
 //   ReferenceNs name(project.StrSetting(opNamespace));
 //   int rootLength = name.Length();
    for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
-//      try {
+      try {
 //         // build module namespace
 //         Path::loadSubPath(modulePath, it.key());
 //         name.truncate(rootLength);
@@ -8727,33 +8722,33 @@ bool Compiler :: run(Project& project)
 //
 //            modules.add(name, info);
 //         }
-//
-//         ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
+
+         ModuleScope scope(&project/*, it.key(), info.codeModule, info.debugModule, &unresolveds*/);
 //         // HOTFIX : the module path should be presaved
 //         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
          project.printInfo("%s", it.key());
 
          // compile source
-         compile(*it/*, &buffer, scope*/);
-//      }
-//      catch (LineTooLong& e)
-//      {
-//         project.raiseError(errLineTooLong, it.key(), e.row, 1);
-//      }
-//      catch (InvalidChar& e)
-//      {
-//         size_t destLength = 6;
-//
-//         String<ident_c, 6> symbol;
-//         StringHelper::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
-//
-//         project.raiseError(errInvalidChar, it.key(), e.row, e.column, symbol);
-//      }
-//      catch (SyntaxError& e)
-//      {
-//         project.raiseError(e.error, it.key(), e.row, e.column, e.token);
-//      }
+         compile(*it, /*&buffer, */scope);
+      }
+      catch (LineTooLong& e)
+      {
+         project.raiseError(errLineTooLong, it.key(), e.row, 1);
+      }
+      catch (InvalidChar& e)
+      {
+         size_t destLength = 6;
+
+         String<char, 6> symbol;
+         __copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+
+         project.raiseError(errInvalidChar, it.key(), e.row, e.column, (const char*)symbol);
+      }
+      catch (SyntaxError& e)
+      {
+         project.raiseError(e.error, it.key(), e.row, e.column, e.token);
+      }
    }
 
 //   Map<ident_t, ModuleInfo>::Iterator it = modules.start();

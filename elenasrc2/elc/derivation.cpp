@@ -1,28 +1,28 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA Engine Derivation Tree class implementation
-////
-////                                              (C)2005-2015, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "derivation.h"
+//		This file contains ELENA Engine Derivation Tree class implementation
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2016, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "derivation.h"
+
+using namespace _ELENA_;
+
 //typedef String<ident_c, 0x100> TempString;
-//
-//// --- DerivationWriter ---
-//
-//void DerivationWriter :: writeSymbol(Symbol symbol)
-//{
+
+// --- DerivationWriter ---
+
+void DerivationWriter :: writeSymbol(Symbol symbol)
+{
 //   _writer->writeDWord(symbol);
-//}
-//
-//void DerivationWriter :: writeTerminal(TerminalInfo terminal)
-//{
+}
+
+void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
+{
 //   // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
 //   if (terminal == tsCharacter && StringHelper::findSubStr(terminal.value + 1, '#', terminal.length) != -1) {
 //      terminal.symbol = tsLiteral;
@@ -48,8 +48,8 @@
 //      }
 //   }
 //   else _writer->writeLiteral(terminal.value);
-//}
-//
+}
+
 //// --- DerivationReader ---
 //
 //DNode DerivationReader :: readRoot()

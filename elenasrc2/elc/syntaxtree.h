@@ -18,7 +18,8 @@ enum LexicalType
 {
    lxEnding = -1,
 
-   lxNone   = 0,
+   lxNone   = 0x0000,
+   lxClass  = 0x000E
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -192,19 +193,19 @@ enum LexicalType
 
 class SyntaxTree
 {
-//   MemoryDump _body;
-//   MemoryDump _strings;
+   MemoryDump _body;
+   MemoryDump _strings;
 
 public:
-//   // --- SyntaxWriter ---
-//
-//   class Writer
-//   {
-//      MemoryWriter  _writer;
-//      MemoryWriter  _stringWriter;
+   // --- SyntaxWriter ---
+
+   class Writer
+   {
+      MemoryWriter  _writer;
+      MemoryWriter  _stringWriter;
 //      Stack<size_t> _bookmarks;
-//
-//   public:
+
+   public:
 //      int setBookmark(size_t position)
 //      {
 //         _bookmarks.push(position);
@@ -298,19 +299,19 @@ public:
 //         : _writer(&tree._body), _stringWriter(&tree._strings)
 //      {
 //      }
-//
-//      /// parameter : appendMode - when true, the ending node is removed
-//      Writer(SyntaxTree& tree, bool appendMode)
-//         : _writer(&tree._body), _stringWriter(&tree._strings)
-//      {
+
+      /// parameter : appendMode - when true, the ending node is removed
+      Writer(SyntaxTree& tree/*, bool appendMode*/)
+         : _writer(&tree._body), _stringWriter(&tree._strings)
+      {
 //         if (appendMode && tree._body.Length() >= 8) {
 //            tree._body.trim(tree._body.Length() - 8);
 //            _writer.seekEOF();
 //         }
 //            
-//      }
-//   };
-//
+      }
+   };
+
 //   struct NodePattern;
 
    // --- Node ---
@@ -645,20 +646,20 @@ public:
    SyntaxTree()
    {
    }
-//   SyntaxTree(_Memory* dump)
-//   {
-//      MemoryReader reader(dump);
-//
-//      _body.load(&reader, reader.getDWord());
-//      _strings.load(&reader, reader.getDWord());
-//   }
+   SyntaxTree(_Memory* dump)
+   {
+      MemoryReader reader(dump);
+
+      _body.load(&reader, reader.getDWord());
+      _strings.load(&reader, reader.getDWord());
+   }
 };
 
 //SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
 //SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2);
 //SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
-//
-//typedef SyntaxTree::Writer       SyntaxWriter;
+
+typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
 //typedef SyntaxTree::NodePattern  SNodePattern;
 
