@@ -22,6 +22,7 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
    {
       case nsStart:
       case nsClass:
+      case nsSymbol:
          _writer->newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          break;
       case nsNone:

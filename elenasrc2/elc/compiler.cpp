@@ -405,7 +405,7 @@ using namespace _ELENA_;
 
 // --- Compiler::ModuleScope ---
 
-Compiler::ModuleScope::ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/)
+Compiler::ModuleScope :: ModuleScope(_ProjectManager* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/)
 //   : constantHints((ref_t)-1), extensions(NULL, freeobj)
 {
    this->project = project;
@@ -1192,18 +1192,18 @@ Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope/*, ref_t reference
 //   this->reference = reference;
 }
 
-//// --- Compiler::SymbolScope ---
-//
-//Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
+// --- Compiler::SymbolScope ---
+
+Compiler::SymbolScope :: SymbolScope(ModuleScope* parent/*, ref_t reference*/)
+   : SourceScope(parent/*, reference*/)
+{
 //   typeRef = 0;
 //   constant = false;
 //   preloaded = false;
 //
 //   syntaxTree.writeString(parent->sourcePath);
-//}
-//
+}
+
 //ObjectInfo Compiler::SymbolScope :: mapObject(TerminalInfo identifier)
 //{
 //   return Scope::mapObject(identifier);
@@ -6763,9 +6763,9 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope/*, DNo
 //
 //   generateClassImplementation(scope);
 //}
-//
-//void Compiler :: compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints)
-//{
+
+void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope/*, DNode hints*/)
+{
 //   bool singleton = false;
 //   
 //   DNode expression = node.firstChild();
@@ -6818,8 +6818,8 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope/*, DNo
 //      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
 //      info.save(&metaWriter);
 //   }
-//}
-//
+}
+
 //bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
 //{
 //   if (retVal.kind == okIntConstant) {
@@ -6917,9 +6917,9 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope/*, DNo
 //
 //   return true;
 //}
-//
-//void Compiler :: compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic)
-//{
+
+void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/)
+{
 //   ObjectInfo retVal;
 //   DNode expression = node.firstChild();
 //   // if it is a singleton
@@ -7019,8 +7019,8 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope/*, DNo
 //   // create byte code sections
 //   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
 //      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
-//}
-//
+}
+
 //bool Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable)
 //{
 //   LexicalType opType = node.type;
@@ -8494,9 +8494,9 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
 //
 //            break;
 //         }
-//         case nsSymbol:
+         case lxSymbol:
 //         case nsStatic:
-//         {
+         {
 //            ref_t reference = scope.mapTerminal(name);
 //
 //            // check for duplicate declaration
@@ -8504,11 +8504,11 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
 //               scope.raiseError(errDuplicatedSymbol, name);
 //
 //            scope.module->mapSection(reference | mskSymbolRef, false);
-//
-//            SymbolScope symbolScope(&scope, reference);
-//            compileSymbolDeclaration(member, symbolScope, hints);
-//            break;
-//         }
+
+            SymbolScope symbolScope(&scope/*, reference*/);
+            compileSymbolDeclaration(member, symbolScope/*, hints*/);
+            break;
+         }
       }
       member = member.nextNode();
    }
@@ -8543,15 +8543,15 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
 //            }
             break;
          }
-//         case nsSymbol:
+         case lxSymbol:
 //         case nsStatic:
-//         {
+         {
 //            ref_t reference = scope.mapTerminal(name);
-//
-//            SymbolScope symbolScope(&scope, reference);
-//            compileSymbolImplementation(member, symbolScope, hints, (member == nsStatic));
-//            break;
-//         }
+
+            SymbolScope symbolScope(&scope/*, reference*/);
+            compileSymbolImplementation(member, symbolScope/*, hints, (member == nsStatic)*/);
+            break;
+         }
       }
       member = member.nextNode();
    }
@@ -8699,7 +8699,7 @@ void Compiler :: compileModule(ident_t source, ModuleScope& scope)
    compileModule(tree.readRoot(), scope);
 }
 
-bool Compiler :: run(Project& project)
+bool Compiler :: run(_ProjectManager& project)
 {
 //   bool withDebugInfo = project.BoolSetting(opDebugMode);
 //   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));

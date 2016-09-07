@@ -21,7 +21,8 @@ enum LexicalType
    lxNone   = 0x0000,
 
    lxRoot   = 0x0001,
-   lxClass  = 0x000E
+   lxClass  = 0x000E,
+   lxSymbol = 0x0011,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,

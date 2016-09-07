@@ -151,31 +151,31 @@ void Project :: loadForwardCategory(_ConfigFile& config)
    }
 }
 
-//void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
-//{
-//   ConfigCategoryIterator it = getCategory(config, opPrimitives);
-//   while (!it.Eof()) {
-//      // copy value or key if the value is absent
-//      ident_t value = *it;
-//      if (emptystr(value))
-//         value = it.key();
-//
-//      // add path if provided
-//      Path filePath(path);
-//      // if path starts with tilda - skip path
-//      if (value[0] == '~') {         
-//         Path::loadPath(filePath, value + 1);
-//      }
-//      else Path::combinePath(filePath, value);
-//
-//      if (StringHelper::compare(it.key(), CORE_ALIAS)) {
-//         _loader.addCorePath(filePath);
-//      }
-//      else _loader.addPrimitivePath(it.key(), filePath);
-//
-//      it++;
-//   }
-//}
+void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
+{
+   ConfigCategoryIterator it = getCategory(config, opPrimitives);
+   while (!it.Eof()) {
+      // copy value or key if the value is absent
+      ident_t value = *it;
+      if (emptystr(value))
+         value = it.key();
+
+      // add path if provided
+      Path filePath(path);
+      // if path starts with tilda - skip path
+      if (value[0] == '~') {
+         filePath.copy(value + 1);
+      }
+      else filePath.combine(value);
+
+      if (it.key().compare(CORE_ALIAS)) {
+         _loader.addCorePath(filePath);
+      }
+      else _loader.addPrimitivePath(it.key(), filePath);
+
+      it++;
+   }
+}
 
 void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
 {
@@ -218,15 +218,15 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadIntOption(config, opSizeOfHeapCommit);
    loadAlignedIntOption(config, opImageBase, 0x400000);
 
-//   // load compiler engine options
-//   loadIntOption(config, opL0);
-//
-//   // load primitive aliases
-//   loadPrimitiveCategory(config, configPath);
-//
-////   // load external aliases
-////   loadCategory(config, opExternals, NULL);
-////   loadCategory(config, opWinAPI, NULL);
+   //// load compiler engine options
+   //loadIntOption(config, opL0);
+
+   // load primitive aliases
+   loadPrimitiveCategory(config, configPath);
+
+   // load external aliases
+   loadCategory(config, opExternals, NULL);
+   loadCategory(config, opWinAPI, NULL);
    loadCategory(config, opReferences, configPath);
 
    // load sources

@@ -9,7 +9,6 @@
 #ifndef compilerH
 #define compilerH
 
-#include "project.h"
 #include "parser.h"
 #include "bcwriter.h"
 
@@ -295,7 +294,7 @@ private:
    // - ModuleScope -
    struct ModuleScope
    {
-      Project*       project;
+      _ProjectManager* project;
 //      _Module*       module;
 //      _Module*       debugModule;
 //
@@ -457,7 +456,7 @@ private:
 //      ref_t mapNestedExpression();
 //      ref_t mapNestedTemplate();
 
-      ModuleScope(Project* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
+      ModuleScope(_ProjectManager* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
    };
 
    // - Scope -
@@ -617,9 +616,9 @@ private:
       ClassScope(ModuleScope* parent/*, ref_t reference*/);
    };
 
-//   // - SymbolScope -
-//   struct SymbolScope : public SourceScope
-//   {
+   // - SymbolScope -
+   struct SymbolScope : public SourceScope
+   {
 //      bool  constant;
 //      bool  preloaded;
 //      ref_t typeRef;      
@@ -633,10 +632,10 @@ private:
 //         }
 //         else return Scope::getScope(level);
 //      }
-//
-//      SymbolScope(ModuleScope* parent, ref_t reference);
-//   };
-//
+
+      SymbolScope(ModuleScope* parent/*, ref_t reference*/);
+   };
+
 //   // - MethodScope -
 //   struct MethodScope : public Scope
 //   {
@@ -1094,8 +1093,8 @@ private:
 //   void compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints);
 //   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileSymbolDeclaration(DNode node, SymbolScope& scope, DNode hints);
-//   void compileSymbolImplementation(DNode node, SymbolScope& scope, DNode hints, bool isStatic);
+   void compileSymbolDeclaration(SNode node, SymbolScope& scope/*, DNode hints*/);
+   void compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
 //   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 //   void compileIncludeModule(DNode node, ModuleScope& scope, DNode hints);
 //   void declareSubject(DNode& member, ModuleScope& scope, DNode hints);
@@ -1156,7 +1155,7 @@ public:
    void compileModule(SNode node, ModuleScope& scope);
    void compileModule(ident_t source, ModuleScope& scope);
 
-   bool run(Project& project);
+   bool run(_ProjectManager& project);
 
    Compiler(StreamReader* syntax);
 };

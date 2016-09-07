@@ -28,7 +28,6 @@ namespace _ELENA_
 typedef Dictionary2D<int, ident_t> ProjectSettings;
 typedef Map<ident_t, char*>        Sources;
 
-typedef Map<ident_t, char*> :: Iterator                                                    SourceIterator;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 
 // --- ELENA Project options ---
@@ -70,12 +69,12 @@ enum ProjectSetting
 //   opL0                    = 0x0050,   // byte-code optimization
 //   opL1                    = 0x0051,   // source-code optimization
 
-//   opPrimitives            = 0x0060,
+   opPrimitives            = 0x0060,
    opForwards              = 0x0061,
    opSources               = 0x0062,
    opTemplates             = 0x0063,
-//   opExternals             = 0x0064,
-//   opWinAPI                = 0x0065,   // used only for WIN32
+   opExternals             = 0x0064,
+   opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
 
 //   // compiler manfifest
@@ -104,7 +103,7 @@ enum ProjectSetting
 
 // --- Project ---
 
-class Project
+class Project : public _ProjectManager
 {
 protected:
    bool            _hasWarning;
@@ -128,12 +127,10 @@ protected:
 
    void loadCategory(_ConfigFile& config, ProjectSetting setting, path_t configPath);
    void loadSourceCategory(_ConfigFile& config, path_t configPath);
-//   void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
+   void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
 
 public:
-   virtual int getDefaultEncoding() = 0;
-
    // project
    virtual int IntSetting(ProjectSetting key, int defaultValue = 0)
    {
@@ -155,7 +152,7 @@ public:
 //      return _settings.exist(key);
 //   }
 
-   SourceIterator getSourceIt()
+   virtual SourceIterator getSourceIt()
    {
       return _sources.start();
    }
@@ -171,17 +168,6 @@ public:
    }
 
 //   ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
-
-   virtual void printInfo(const char* msg, ident_t value) = 0;
-
-//   virtual void raiseError(const char* msg) = 0;
-   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   virtual void raiseError(ident_t msg, ident_t value) = 0;
-
-   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
-
-//   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-//   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
 
 ////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
@@ -219,7 +205,7 @@ public:
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
-   bool HasWarnings() const { return _hasWarning; }
+   virtual bool HasWarnings() const { return _hasWarning; }
 
    virtual int getTabSize() { return 4; }
 

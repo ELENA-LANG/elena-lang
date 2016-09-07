@@ -317,55 +317,55 @@ int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
 //
 //   return _virtualMode ? position : (size_t)writer.Memory()->get(position);
 //}
-//
-//void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo)
-//{
-//   if (sectionInfo.section == NULL)
-//      return LOADER_NOTLOADED;
-//
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mask);
-//   MemoryWriter writer(image);
-//
-//   void* vaddress = calculateVAddress(&writer, mask & mskImageMask);
-//   size_t position = writer.Position();
-//
-//   _loader->mapReference(reference, vaddress, mask);
-//
-//   // load section into target image
-//   MemoryReader reader(sectionInfo.section);
-//   writer.read(&reader, sectionInfo.section->Length());
-//
-//   // resolve section references
-//   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-//   ref_t currentMask = 0;
-//   ref_t currentRef = 0;
-//   while (!it.Eof()) {
-//      currentMask = it.key() & mskAnyRef;
-//      currentRef = it.key() & ~mskAnyRef;
-//
-//      if (currentMask == mskPreloadDataRef) {
-//         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeDataRef, _virtualMode);
-//      }
-//      else if (currentMask == mskPreloadCodeRef) {
-//         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeCodeRef, _virtualMode);
-//      }
-//      else if (currentMask == mskPreloadRelCodeRef) {
-//         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
-//      }
-//      else if (currentMask == 0) {
-//         (*image)[*it + position] = resolveMessage(sectionInfo.module, currentRef);
-//      }
-//      else {
-//         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-//
-//         resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
-//      }
-//      it++;
-//   }
-//   return vaddress;
-//}
-//
+
+void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo)
+{
+   if (sectionInfo.section == NULL)
+      return LOADER_NOTLOADED;
+
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mask);
+   MemoryWriter writer(image);
+
+   void* vaddress = calculateVAddress(&writer, mask & mskImageMask);
+   size_t position = writer.Position();
+
+   _loader->mapReference(reference, vaddress, mask);
+
+   // load section into target image
+   MemoryReader reader(sectionInfo.section);
+   writer.read(&reader, sectionInfo.section->Length());
+
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+   ref_t currentMask = 0;
+   ref_t currentRef = 0;
+   while (!it.Eof()) {
+      currentMask = it.key() & mskAnyRef;
+      currentRef = it.key() & ~mskAnyRef;
+
+      if (currentMask == mskPreloadDataRef) {
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeDataRef, _virtualMode);
+      }
+      else if (currentMask == mskPreloadCodeRef) {
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeCodeRef, _virtualMode);
+      }
+      else if (currentMask == mskPreloadRelCodeRef) {
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
+      }
+      else if (currentMask == 0) {
+         (*image)[*it + position] = resolveMessage(sectionInfo.module, currentRef);
+      }
+      else {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+         resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
+      it++;
+   }
+   return vaddress;
+}
+
 //void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
 //{
 //   // get target image & resolve virtual address
@@ -941,10 +941,10 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
    void* vaddress = _loader->resolveReference(reference, mask);
    if (vaddress==LOADER_NOTLOADED) {
       switch (mask) {
-//         case mskSymbolRef:
-////         case mskClassRef:
-//            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
-//            break;
+         case mskSymbolRef:
+//         case mskClassRef:
+            vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
+            break;
 //         case mskInternalRef:
 //         case mskInternalRelRef:
 //            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
@@ -956,14 +956,14 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskVMTRef:
 //            vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef, silentMode));
 //            break;
-//         case mskNativeCodeRef:
-//         case mskNativeDataRef:
-//         case mskNativeRDataRef:
-//            vaddress = resolveNativeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
-//            break;
-//         case mskNativeRelCodeRef:
-//            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
-//            break;
+         case mskNativeCodeRef:
+         case mskNativeDataRef:
+         case mskNativeRDataRef:
+            vaddress = resolveNativeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
+            break;
+         case mskNativeRelCodeRef:
+            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
+            break;
 //         case mskConstantRef:
 //         case mskLiteralRef:
 //         case mskWideLiteralRef:

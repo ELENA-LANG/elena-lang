@@ -40,7 +40,7 @@ enum Symbol
    nsClass                      = 0x0100E,               // non-terminals
    //nsTemplate                   = 0x0100F,
    //nsSubjectArg                 = 0x01010,
-   //nsSymbol                     = 0x01011,
+   nsSymbol                     = 0x01011,
    //nsExpression                 = 0x01012,
    //nsField                      = 0x01013,
    //nsHint                       = 0x01014,

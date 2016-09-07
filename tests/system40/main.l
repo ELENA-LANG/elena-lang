@@ -1,10 +1,10 @@
-#import system.
+//#import system.
 
-#class MyCode
+/*#class MyCode
 {
     #method start
     [
     ]
-}
+}*/
 
-#symbol entry = MyCode new start.
+#symbol entry = Object/* MyCode new */ start:1.

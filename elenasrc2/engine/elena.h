@@ -51,6 +51,30 @@ public:
    virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
+// --- _Project ---
+
+typedef Map<ident_t, char*>::Iterator SourceIterator;
+
+class _ProjectManager
+{
+public:
+   virtual int getDefaultEncoding() = 0;
+   virtual int getTabSize() = 0;
+   virtual SourceIterator getSourceIt() = 0;
+   virtual bool HasWarnings() const = 0;
+
+   virtual void printInfo(const char* msg, ident_t value) = 0;
+
+   //   virtual void raiseError(const char* msg) = 0;
+   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseError(ident_t msg, ident_t value) = 0;
+
+   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
+
+   //   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   //   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
+};
+
 // --- SectionInfo ---
 
 struct SectionInfo

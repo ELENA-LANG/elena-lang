@@ -195,18 +195,18 @@ _ELENA_::ConfigCategoryIterator _ELC_::Project :: getCategory(_ELENA_::_ConfigFi
    switch (setting) {
       case _ELENA_::opTemplates:
          return config.getCategoryIt(TEMPLATE_CATEGORY);
-//      case _ELENA_::opPrimitives:
-//         return config.getCategoryIt(PRIMITIVE_CATEGORY);
+      case _ELENA_::opPrimitives:
+         return config.getCategoryIt(PRIMITIVE_CATEGORY);
       case _ELENA_::opSources:
          return config.getCategoryIt(SOURCE_CATEGORY);
-//      case _ELENA_::opForwards:
-//         return config.getCategoryIt(FORWARD_CATEGORY);
-//      case _ELENA_::opExternals:
-//         return config.getCategoryIt(EXTERNALS_CATEGORY);
+      case _ELENA_::opForwards:
+         return config.getCategoryIt(FORWARD_CATEGORY);
+      case _ELENA_::opExternals:
+         return config.getCategoryIt(EXTERNALS_CATEGORY);
       case _ELENA_::opReferences:
          return config.getCategoryIt(REFERENCE_CATEGORY);
-//      case _ELENA_::opWinAPI:
-//         return config.getCategoryIt(WINAPI_CATEGORY);
+      case _ELENA_::opWinAPI:
+         return config.getCategoryIt(WINAPI_CATEGORY);
       default:
          return _ELENA_::ConfigCategoryIterator();
    }

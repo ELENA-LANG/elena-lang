@@ -53,14 +53,14 @@
 // --- ELC config categories ---
 //#define COMPILER_CATEGORY           "compiler"
 #define SOURCE_CATEGORY             "files"
-//#define FORWARD_CATEGORY            "forwards"
+#define FORWARD_CATEGORY            "forwards"
 #define LINKER_CATEGORY             "linker"
-//#define PRIMITIVE_CATEGORY          "primitives"
+#define PRIMITIVE_CATEGORY          "primitives"
 #define PROJECT_CATEGORY            "project"
 #define SYSTEM_CATEGORY             "system"
 #define TEMPLATE_CATEGORY           "templates"
-//#define WINAPI_CATEGORY             "winapi"
-//#define EXTERNALS_CATEGORY          "externals"
+#define WINAPI_CATEGORY             "winapi"
+#define EXTERNALS_CATEGORY          "externals"
 #define REFERENCE_CATEGORY          "references"
 //#define MANIFEST_CATEGORY           "manifest"
 
