@@ -10,7 +10,7 @@
 // -------------------------------------------------------
 #include "project.h"
 #include "errors.h"
-//#include "module.h"
+#include "module.h"
 
 using namespace _ELENA_;
 
@@ -41,8 +41,8 @@ Project :: Project()
    : _sources(NULL, freestr)
 {
    _hasWarning = false;
-//   _numberOfWarnings = 100;
-//   _warningMasks = WARNING_MASK_1;
+   _numberOfWarnings = 100;
+   _warningMasks = WARNING_MASK_1;
 }
 
 bool Project :: loadOption(_ConfigFile& config, ProjectSetting setting)
@@ -241,61 +241,59 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 //   loadOption(config, opManifestAuthor);
 }
 
-//////void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
-//////{
-//////   ReferenceNs fwd(forward);
-//////
-//////   _settings.add(opForwards, fwd, StringHelper::clone(reference));
-//////}
-////
-////_Module* Project :: loadModule(ident_t package, bool silentMode)
+////void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
 ////{
-////   LoadResult result = lrNotFound;
-////   _Module* module = _loader.loadModule(package, result);
-////   if (result != lrSuccessful) {
-////      if (!silentMode) {
-////         raiseError(getLoadError(result), package);
-////      }
+////   ReferenceNs fwd(forward);
 ////
-////      return NULL;
-////   }
-////   else return module;
+////   _settings.add(opForwards, fwd, StringHelper::clone(reference));
 ////}
 //
-//_Module* Project::createModule(ident_t name)
+//_Module* Project :: loadModule(ident_t package, bool silentMode)
 //{
 //   LoadResult result = lrNotFound;
-//   _Module* module = _loader.createModule(name, result);
-//
-//   if (result != lrSuccessful && result != lrDuplicate) {
-//      raiseError(getLoadError(lrCannotCreate), name);
+//   _Module* module = _loader.loadModule(package, result);
+//   if (result != lrSuccessful) {
+//      if (!silentMode) {
+//         raiseError(getLoadError(result), package);
+//      }
 //
 //      return NULL;
 //   }
 //   else return module;
 //}
-//
-//_Module* Project :: createDebugModule(ident_t name)
-//{
-//   return new Module(name);
-//}
-//
-//void Project :: saveModule(_Module* module, ident_t extension)
-//{
-//   ident_t name = module->Name();
-//   Path path;
-//   _loader.nameToPath(name, path, extension);
-//
-//   Path outputPath;
-//   Path::loadPath(outputPath, StrSetting(opProjectPath));
-//   Path::combinePath(outputPath, StrSetting(opOutputPath));
-//
-//   Path::create(outputPath, path);
-//
-//   FileWriter writer(path, feRaw, false);
-//   if(!module->save(writer))
-//      raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
-//}
+
+_Module* Project::createModule(ident_t name)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.createModule(name, result);
+
+   if (result != lrSuccessful && result != lrDuplicate) {
+      raiseError(getLoadError(lrCannotCreate), name);
+
+      return NULL;
+   }
+   else return module;
+}
+
+_Module* Project :: createDebugModule(ident_t name)
+{
+   return new Module(name);
+}
+
+void Project :: saveModule(_Module* module, ident_t extension)
+{
+   ident_t name = module->Name();
+   Path path;
+   _loader.nameToPath(name, path, extension);
+
+   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+
+   Path::create(outputPath, path);
+
+   FileWriter writer(path, feRaw, false);
+   if(!module->save(writer))
+      raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
+}
 
 ident_t Project :: resolveForward(ident_t forward)
 {

@@ -167,28 +167,28 @@ void _ELC_::Project::raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _EL
       throw _ELENA_::_Exception();
 }
 
-////void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
-////{
-////   if (!indicateWarning())
-////      return;
-////
-////   _ELENA_::WideString wMsg(msg);
-////   _ELENA_::WideString wPath(path);
-////   _ELENA_::WideString wTerminal(terminal);
-////
-////   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
-////}
-////
-////void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path)
-////{
-////   if (!indicateWarning())
-////      return;
-////
-////   _ELENA_::WideString wMsg(msg);
-////   _ELENA_::WideString wPath(path);
-////
-////   print(wMsg, (const wchar_t*)wPath);
-////}
+void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
+{
+   if (!indicateWarning())
+      return;
+
+   _ELENA_::WideString wMsg(msg);
+   _ELENA_::WideString wPath(path);
+   _ELENA_::WideString wTerminal(terminal);
+
+   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
+}
+
+void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path)
+{
+   if (!indicateWarning())
+      return;
+
+   _ELENA_::WideString wMsg(msg);
+   _ELENA_::WideString wPath(path);
+
+   print(wMsg, (const wchar_t*)wPath);
+}
 
 _ELENA_::ConfigCategoryIterator _ELC_::Project :: getCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting)
 {
@@ -512,7 +512,7 @@ int main()
       _ELENA_::Compiler compiler(&syntaxFile);
 //      setCompilerOptions(project, compiler);
 
-      result = compiler.run(project);
+      result = compiler.run(project, project.BoolSetting(_ELENA_::opDebugMode));
 
       if (result)
          print(ELC_SUCCESSFUL_COMPILATION);

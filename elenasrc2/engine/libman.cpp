@@ -39,21 +39,21 @@ void LibraryManager :: onModuleLoad(_Module* module)
    }
 }
 
-//_Module* LibraryManager :: createModule(ident_t package, LoadResult& result)
-//{
-//   _Module* module = _modules.get(package);
-//   if (module) {
-//      result = lrDuplicate;
-//   }
-//   else {
-//      module = new Module(package);
-//      result = lrSuccessful;
-//
-//      _modules.add(package, module);
-//   }
-//
-//   return module;
-//}
+_Module* LibraryManager :: createModule(ident_t package, LoadResult& result)
+{
+   _Module* module = _modules.get(package);
+   if (module) {
+      result = lrDuplicate;
+   }
+   else {
+      module = new Module(package);
+      result = lrSuccessful;
+
+      _modules.add(package, module);
+   }
+
+   return module;
+}
 
 _Module* LibraryManager :: loadModule(ident_t package, LoadResult& result, bool readOnly)
 {

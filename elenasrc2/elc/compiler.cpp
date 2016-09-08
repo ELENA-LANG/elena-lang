@@ -15,6 +15,24 @@
 
 using namespace _ELENA_;
 
+// --- ModuleInfo ---
+struct ModuleInfo
+{
+   _Module* codeModule;
+   _Module* debugModule;
+
+   ModuleInfo()
+   {
+      codeModule = debugModule = NULL;
+   }
+
+   ModuleInfo(_Module* codeModule, _Module* debugModule)
+   {
+      this->codeModule = codeModule;
+      this->debugModule = debugModule;
+   }
+};
+
 //// --- Hint constants ---
 //#define HINT_MASK             0xFFFFF000
 //
@@ -405,17 +423,17 @@ using namespace _ELENA_;
 
 // --- Compiler::ModuleScope ---
 
-Compiler::ModuleScope :: ModuleScope(_ProjectManager* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/)
+Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved)
 //   : constantHints((ref_t)-1), extensions(NULL, freeobj)
 {
    this->project = project;
-//   this->sourcePath = sourcePath;
-//   this->module = module;
-//   this->debugModule = debugModule;
-//   this->sourcePathRef = -1;
-//
-//   this->forwardsUnresolved = forwardsUnresolved;
-//
+   this->sourcePath = sourcePath;
+   this->module = module;
+   this->debugModule = debugModule;
+   this->sourcePathRef = -1;
+
+   this->forwardsUnresolved = forwardsUnresolved;
+
 //   warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
 //   warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
 //   warningMask = project->getWarningMask();
@@ -6918,8 +6936,10 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope/*, DNod
 //   return true;
 //}
 
-void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/)
+void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints*/)
 {
+   bool isStatic = (node == lxStatic);
+
 //   ObjectInfo retVal;
 //   DNode expression = node.firstChild();
 //   // if it is a singleton
@@ -7010,15 +7030,15 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //   if (scope.preloaded) {
 //      compilePreloadedCode(scope);
 //   }
-//
-//   _writer.generateSymbol(scope.tape, scope.syntaxTree, isStatic);
-//
+
+   _writer.generateSymbol(scope.tape, node, isStatic);
+
 //   // optimize
 //   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
-//      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
+
+   // create byte code sections
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
+      scope.moduleScope->sourcePathRef);
 }
 
 //bool Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable)
@@ -8495,7 +8515,7 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
 //            break;
 //         }
          case lxSymbol:
-//         case nsStatic:
+         case lxStatic:
          {
 //            ref_t reference = scope.mapTerminal(name);
 //
@@ -8544,12 +8564,12 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
             break;
          }
          case lxSymbol:
-//         case nsStatic:
+         case lxStatic:
          {
 //            ref_t reference = scope.mapTerminal(name);
 
             SymbolScope symbolScope(&scope/*, reference*/);
-            compileSymbolImplementation(member, symbolScope/*, hints, (member == nsStatic)*/);
+            compileSymbolImplementation(member, symbolScope/*, hints*/);
             break;
          }
       }
@@ -8597,27 +8617,27 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
 //   // second pass - implementation
 //   compileImplementations(member, scope);
 //}
-//
-//bool Compiler :: validate(Project& project, _Module* module, int reference)
-//{
-//   int   mask = reference & mskAnyRef;
-//   ref_t extReference = 0;
-//   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
-//   _Module* extModule = project.resolveModule(refName, extReference, true);
-//
-//   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
-//}
-//
-//void Compiler :: validateUnresolved(Unresolveds& unresolveds, Project& project)
-//{
-//   for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
-//      if (!validate(project, (*it).module, (*it).reference)) {
-//         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
-//
-//         project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
-//      }
-//   }
-//}
+
+bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
+{
+   int   mask = reference & mskAnyRef;
+   ref_t extReference = 0;
+   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
+   _Module* extModule = project.resolveModule(refName, extReference, true);
+
+   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
+}
+
+void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project)
+{
+   for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
+      if (!validate(project, (*it).module, (*it).reference)) {
+         ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
+
+         project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
+      }
+   }
+}
 
 //inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
 //{
@@ -8691,51 +8711,51 @@ void Compiler :: compileModule(ident_t source, ModuleScope& scope)
       scope.project->raiseError(errInvalidFile, source);
    
    SyntaxTree tree;
-   SyntaxWriter syntaxWriter(tree);
-   DerivationWriter writer(&syntaxWriter);
+   DerivationWriter writer(tree);
    _parser.parse(&sourceFile, writer, scope.project->getTabSize());
    
    // compile
    compileModule(tree.readRoot(), scope);
 }
 
-bool Compiler :: run(_ProjectManager& project)
+bool Compiler :: run(_ProjectManager& project, bool withDebugInfo)
 {
-//   bool withDebugInfo = project.BoolSetting(opDebugMode);
-//   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
-//
-//   Unresolveds unresolveds(Unresolved(), NULL);
-//
-//   Path modulePath;
-//   ReferenceNs name(project.StrSetting(opNamespace));
-//   int rootLength = name.Length();
+   Map<ident_t, ModuleInfo> modules(ModuleInfo(NULL, NULL));
+
+   Unresolveds unresolveds(Unresolved(), NULL);
+
+   Path modulePath;
+   ReferenceNs name(project.Namespace());
+   int rootLength = name.Length();
    for (SourceIterator it = project.getSourceIt(); !it.Eof(); it++) {
       try {
-//         // build module namespace
-//         Path::loadSubPath(modulePath, it.key());
-//         name.truncate(rootLength);
-//         name.pathToName(modulePath);
-//
-//         // create or update module
-//         ModuleInfo info = modules.get(name);
-//         if (info.codeModule == NULL) {
-//            info.codeModule = project.createModule(name);
-//            if (withDebugInfo)
-//               info.debugModule = project.createDebugModule(name);
-//
-//            createPackageInfo(info.codeModule, project);
-//
-//            modules.add(name, info);
-//         }
+         // build module namespace
+         modulePath.copySubPath(it.key());
+         name.truncate(rootLength);
+         name.pathToName(modulePath);
 
-         ModuleScope scope(&project/*, it.key(), info.codeModule, info.debugModule, &unresolveds*/);
-//         // HOTFIX : the module path should be presaved
-//         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
+         // create or update module
+         ModuleInfo info = modules.get(name);
+         if (info.codeModule == NULL) {
+            info.codeModule = project.createModule(name);
+            if (withDebugInfo)
+               info.debugModule = project.createDebugModule(name);
+
+//            createPackageInfo(info.codeModule, project);
+
+            modules.add(name, info);
+         }
+
+         ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
+         // HOTFIX : the module path should be presaved
+         scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
 
          project.printInfo("%s", it.key());
 
          // compile source
          compileModule(*it, scope);
+
+         _writer.clear();
       }
       catch (LineTooLong& e)
       {
@@ -8756,22 +8776,20 @@ bool Compiler :: run(_ProjectManager& project)
       }
    }
 
-//   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
-//   while (!it.Eof()) {
-//      ModuleInfo info = *it;
-//
-//      project.saveModule(info.codeModule, "nl");
-//
-//      if (info.debugModule)
-//         project.saveModule(info.debugModule, "dnl");
-//
-//      it++;
-//   }
-//
-//   // validate the unresolved forward refereces if unresolved reference warning is enabled
-//   validateUnresolved(unresolveds, project);
-//
-//   _writer.clearImportInfo();
+   Map<ident_t, ModuleInfo>::Iterator it = modules.start();
+   while (!it.Eof()) {
+      ModuleInfo info = *it;
+
+      project.saveModule(info.codeModule, "nl");
+
+      if (info.debugModule)
+         project.saveModule(info.debugModule, "dnl");
+
+      it++;
+   }
+
+   // validate the unresolved forward refereces if unresolved reference warning is enabled
+   validateUnresolved(unresolveds, project);
 
    return !project.HasWarnings();
 }

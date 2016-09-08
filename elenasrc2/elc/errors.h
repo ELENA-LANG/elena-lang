@@ -88,11 +88,11 @@ namespace _ELENA_
    #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
    #define errEmptyTarget           "linker: error 212: Target is not specified\n"
 
-//  // --- Compiler internal error messages ---
+  // --- Compiler internal error messages ---
 //   #define errReferenceOverflow     "error 301: The section reference overflow\n"
 
-//  // --- Compiler warnings ---
-//   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
+  // --- Compiler warnings ---
+   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
 //   #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown hint '%s'\n"
 ////   #define wrnUnknownHintValue      "%s(%d:%d): warning 405: Unknown class hint value '%s'\n"
 //   #define wrnInvalidHint           "%s(%d:%d): warning 406: Hint '%s' cannot be applied here\n"

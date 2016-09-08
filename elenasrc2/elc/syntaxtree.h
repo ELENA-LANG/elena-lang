@@ -23,6 +23,7 @@ enum LexicalType
    lxRoot   = 0x0001,
    lxClass  = 0x000E,
    lxSymbol = 0x0011,
+   lxStatic = 0x0022,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -196,7 +197,6 @@ enum LexicalType
 class SyntaxTree
 {
    MemoryDump _body;
-   MemoryDump _strings;
 
 public:
    // --- SyntaxWriter ---
@@ -204,7 +204,6 @@ public:
    class Writer
    {
       MemoryWriter  _writer;
-      MemoryWriter  _stringWriter;
 //      Stack<size_t> _bookmarks;
 
    public:
@@ -297,21 +296,21 @@ public:
 
       void closeNode();
 
-//      Writer(SyntaxTree& tree)
-//         : _writer(&tree._body), _stringWriter(&tree._strings)
-//      {
-//      }
+      Writer(SyntaxTree& tree)
+         : _writer(&tree._body)
+      {
+      }
 
       /// parameter : appendMode - when true, the ending node is removed
-      Writer(SyntaxTree& tree/*, bool appendMode*/)
-         : _writer(&tree._body), _stringWriter(&tree._strings)
-      {
-//         if (appendMode && tree._body.Length() >= 8) {
-//            tree._body.trim(tree._body.Length() - 8);
+      //Writer(SyntaxTree& tree/*, bool appendMode*/)
+      //   : _writer(&tree._body), _stringWriter(&tree._strings)
+      //{
+//         if (appendMode && tree._body.Length() >= 12) {
+//            tree._body.trim(tree._body.Length() - 12);
 //            _writer.seekEOF();
 //         }
 //            
-      }
+//      }
    };
 
 //   struct NodePattern;
@@ -324,11 +323,12 @@ public:
       SyntaxTree*   tree;
       size_t        position;
 
-      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument);
+      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int length);
 
    public:
       LexicalType   type;
       ref_t         argument;
+      int           argLength;   // if argLength is not zero - it contains the length of the argument string
 
 //      SyntaxTree* Tree()
 //      {
@@ -434,6 +434,7 @@ public:
       {
          type = lxNone;
          argument = 0;
+         argLength = 0;
 
          tree = NULL;
       }
@@ -647,6 +648,11 @@ public:
 //      writer.write(_strings.get(0), _strings.Length());
 //   }
 
+   void clear()
+   {
+      _body.clear();
+   }
+
    SyntaxTree()
    {
    }
@@ -655,7 +661,6 @@ public:
       MemoryReader reader(dump);
 
       _body.load(&reader, reader.getDWord());
-      _strings.load(&reader, reader.getDWord());
    }
 };
 

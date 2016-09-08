@@ -66,23 +66,26 @@ void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
    // writer node
    _writer.writeDWord(type);
    _writer.writeDWord(argument);
+   _writer.writeDWord(0);
 }
 
 void SyntaxWriter :: closeNode()
 {
    _writer.writeDWord(-1);
    _writer.writeDWord(0);
+   _writer.writeDWord(0);
 }
 
 // --- SyntaxTree::Node ---
 
-SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument)
+SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int length)
 {
    this->tree = tree;
    this->position = position;
 
    this->type = type;
    this->argument = argument;
+   this->argLength = length;
 }
 
 //// --- SyntaxReader ---
@@ -111,11 +114,15 @@ SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {
    int type = reader.getDWord();
    ref_t arg = reader.getDWord();
+   int length = reader.getDWord();
+   // skip the argument body
+   if (length > 0)
+      reader.seek(reader.Position() + length);
 
    if (type == -1) {
       return Node();
    }
-   else return Node(this, reader.Position(), (LexicalType)type, arg);
+   else return Node(this, reader.Position(), (LexicalType)type, arg, length);
 }
 
 SyntaxTree::Node SyntaxTree:: readRoot()
@@ -141,6 +148,10 @@ SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
    do {
       int type = reader.getDWord();
       ref_t arg = reader.getDWord();
+      int length = reader.getDWord();
+      // skip the argument body
+      if (length > 0)
+         reader.seek(reader.Position() + length);
 
       if (type == -1) {
          level--;

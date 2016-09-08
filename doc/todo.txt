@@ -4,7 +4,8 @@ In development:
 
               xrev
                  * DerivationWriter : try to get rid of big switch statement
-                 * compliation should be based on ste of rules
+                 * compliation should be based on set of rules
+                 * compile package info
 
               ydev
                  * upndown : playing a round

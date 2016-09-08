@@ -57,7 +57,7 @@ enum Symbol
    //nsL4Operation                = 0x0101F,
    //nsDispatchExpression         = 0x01020,
    //nsAssigning                  = 0x01021,
-   //nsStatic                     = 0x01022,
+   nsStatic                     = 0x01022,
    //nsBaseClass                  = 0x01023,
    //nsConstructor                = 0x01024,
    //nsL3Operation                = 0x01025,

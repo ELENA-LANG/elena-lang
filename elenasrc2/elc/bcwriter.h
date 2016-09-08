@@ -9,35 +9,33 @@
 #ifndef bcwriterH
 #define bcwriterH 1
 
-//#include "bytecode.h"
+#include "bytecode.h"
 #include "syntaxtree.h"
 
 namespace _ELENA_
 {
 
-//// --- ByteCodeWriter class ---
-//class ByteCodeWriter
-//{
-//   struct Scope
-//   {
-//      _Memory*      codeStrings;
-//      MemoryWriter* vmt;
-//      MemoryWriter* code;
-//      MemoryWriter* debug;
-//      MemoryWriter* debugStrings;
-//      int           defaultNameRef;
-//      bool          appendMode;
-//
-//      Scope()
-//      {
-//         vmt = code = NULL;
-//         debug = debugStrings = NULL;
-//         codeStrings = NULL;
-//         defaultNameRef = -1;
-//         appendMode = false;
-//      }
-//   };
-//
+// --- ByteCodeWriter class ---
+class ByteCodeWriter
+{
+   struct Scope
+   {
+      MemoryWriter* vmt;
+      MemoryWriter* code;
+      MemoryWriter* debug;
+      MemoryWriter* debugStrings;
+      int           defaultNameRef;
+      bool          appendMode;
+
+      Scope()
+      {
+         vmt = code = NULL;
+         debug = debugStrings = NULL;
+         defaultNameRef = -1;
+         appendMode = false;
+      }
+   };
+
 //   struct ExternalScope
 //   {
 //      struct ParamInfo
@@ -81,45 +79,46 @@ namespace _ELENA_
 //   };
 //
 //   List<ImportScope> imports;
-//
-//   ByteCode peekNext(ByteCodeIterator it)
-//   {
-//      it++;
-//
-//      return (*it).code;
-//   }
-//
-//   ByteCode peekPrevious(ByteCodeIterator it)
-//   {
-//      it--;
-//
-//      return (*it).code;
-//   }
-//
-//   void writeNewStatement(MemoryWriter* debug);
-//   void writeNewBlock(MemoryWriter* debug);
-//   void writeSelf(Scope& scope, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
-//   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
-//   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
-//   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
-//
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
-//   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
-//   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-//   void writeProcedureDebugInfo(Scope& scope, ident_t path);
-//   void writeDebugInfoStopper(MemoryWriter* debug);
-//
-//   void writeProcedure(ByteCodeIterator& it, Scope& scope);
-//   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-//   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef, bool appendMode);
-//   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
-//
+   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
+
+   ByteCode peekNext(ByteCodeIterator it)
+   {
+      it++;
+
+      return (*it).code;
+   }
+
+   ByteCode peekPrevious(ByteCodeIterator it)
+   {
+      it--;
+
+      return (*it).code;
+   }
+
+   void writeNewStatement(MemoryWriter* debug);
+   void writeNewBlock(MemoryWriter* debug);
+   void writeSelf(Scope& scope, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
+   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
+   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
+
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
+   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
+   void writeProcedureDebugInfo(Scope& scope, ident_t path);
+   void writeDebugInfoStopper(MemoryWriter* debug);
+
+   void writeProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef, bool appendMode);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef);
+
 //   void declareInitializer(CommandTape& tape, ref_t reference);
 //   void declareClass(CommandTape& tape, ref_t reference);
-//   void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
-//   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
+   void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
+   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
 //   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
 //   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
@@ -133,10 +132,10 @@ namespace _ELENA_
 //   void declareElseBlock(CommandTape& tape);
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
-//   void declareTry(CommandTape& tape);
-//   void declareCatch(CommandTape& tape);
+   void declareTry(CommandTape& tape);
+   void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
-//
+
 //   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
@@ -193,21 +192,21 @@ namespace _ELENA_
 //   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 //
 //   void jumpIfEqual(CommandTape& tape, ref_t ref);
-//   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
-//
+   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
+
 //   void throwCurrent(CommandTape& tape);
-//
-//   void tryLock(CommandTape& tape);
-//   void freeLock(CommandTape& tape);
-//
+
+   void tryLock(CommandTape& tape);
+   void freeLock(CommandTape& tape);
+
 //   void gotoEnd(CommandTape& tape, PseudoArg label);
 //
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
 //   void freeVirtualStack(CommandTape& tape, int count);
-//
-//   void endCatch(CommandTape& tape);
+
+   void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
 //   void endThenBlock(CommandTape& tape, bool withStackContro = true);
 //   void endLoop(CommandTape& tape);
@@ -217,9 +216,9 @@ namespace _ELENA_
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
 //   void endClass(CommandTape& tape);
-//   void endSymbol(CommandTape& tape);
+   void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
-//   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
 //   void closeFrame(CommandTape& tape);
@@ -292,38 +291,39 @@ namespace _ELENA_
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
+   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 //
 //   void generateMethod(CommandTape& tape, SyntaxTree::Node node);
 //
 //   void importCode(CommandTape& tape, ImportScope& scope);
-//
-//public:
-//   ref_t writeSourcePath(_Module* debugModule, ident_t path);
-//
+
+public:
+   ref_t writeSourcePath(_Module* debugModule, ident_t path);
+
 //   void generateClass(CommandTape& tape, SyntaxTree& tree);
-//   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   //void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-//   void generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic);
+   void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
 //   void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
-//
-//   void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
-//
+
+   void save(CommandTape& tape, _Module* module, _Module* debugModule, int sourcePathRef);
+
 //   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
 //   {
 //      imports.add(ImportScope(section, sour, dest));
 //
 //      return imports.Count();
 //   }
-//   void clearImportInfo()
-//   {
+   void clear()
+   {
+      _strings.clear();
 //      imports.clear();
-//   }
-//};
-//
+   }
+};
+
 //bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);

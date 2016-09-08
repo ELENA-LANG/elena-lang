@@ -300,10 +300,10 @@ public:
       _string[0] = 0;
    }
 
-//   void truncate(size_t pos)
-//   {
-//      _string[pos] = 0;
-//   }
+   void truncate(size_t pos)
+   {
+      _string[pos] = 0;
+   }
 
    size_t Length() const
    {

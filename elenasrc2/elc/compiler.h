@@ -82,29 +82,29 @@ public:
 //      tpGeneric    = 0x40,
 //      tpAction     = 0x80,
 //   };
-//
-//   struct Unresolved
-//   {
-//      ident_t    fileName;
-//      ref_t      reference;
-//      _Module*   module;
-//      size_t     row;
-//      size_t     col;           // virtual column
-//
-//      Unresolved()
-//      {
-//         reference = 0;
-//      }
-//      Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
-//      {
-//         this->fileName = fileName;
-//         this->reference = reference;
-//         this->module = module;
-//         this->row = row;
-//         this->col = col;
-//      }
-//   };
-//
+
+   struct Unresolved
+   {
+      ident_t    fileName;
+      ref_t      reference;
+      _Module*   module;
+      size_t     row;
+      size_t     col;           // virtual column
+
+      Unresolved()
+      {
+         reference = 0;
+      }
+      Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
+      {
+         this->fileName = fileName;
+         this->reference = reference;
+         this->module = module;
+         this->row = row;
+         this->col = col;
+      }
+   };
+
 //   enum ObjectKind
 //   {
 //      okUnknown = 0,
@@ -205,7 +205,7 @@ public:
 //   typedef Map<ref_t, ref_t>              SubjectMap;
 //   typedef Map<ref_t, ref_t>              ClassMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
-//   typedef List<Unresolved>               Unresolveds;
+   typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
 //
 //   struct TemplateInfo
@@ -295,12 +295,12 @@ private:
    struct ModuleScope
    {
       _ProjectManager* project;
-//      _Module*       module;
-//      _Module*       debugModule;
-//
-//      ident_t        sourcePath;
-//      int            sourcePathRef;
-//
+      _Module*       module;
+      _Module*       debugModule;
+
+      ident_t        sourcePath;
+      ref_t          sourcePathRef;
+
 //      // default namespaces
 //      List<ident_t> defaultNs;
 //      ForwardMap    forwards;       // forward declarations
@@ -344,10 +344,10 @@ private:
 //      bool warnOnUnresolved;
 //      bool warnOnWeakUnresolved;
 //      int  warningMask;
-//
-//      // list of references to the current module which should be checked after the project is compiled
-//      Unresolveds* forwardsUnresolved;
-//
+
+      // list of references to the current module which should be checked after the project is compiled
+      Unresolveds* forwardsUnresolved;
+
 //      // list of typified classes which may need get&type message
 //      ClassMap typifiedClasses;
 //
@@ -456,7 +456,7 @@ private:
 //      ref_t mapNestedExpression();
 //      ref_t mapNestedTemplate();
 
-      ModuleScope(_ProjectManager* project/*, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved*/);
+      ModuleScope(_ProjectManager* project, ident_t sourcePath, _Module* module, _Module* debugModule, Unresolveds* forwardsUnresolved);
    };
 
    // - Scope -
@@ -557,8 +557,8 @@ private:
    {
 //      SyntaxTree syntaxTree;
 //      MemoryDump imported;
-//
-//      CommandTape    tape;
+
+      CommandTape    tape;
 //      ref_t          reference;
 
       SourceScope(ModuleScope* parent/*, ref_t reference*/);
@@ -883,8 +883,8 @@ private:
 //         syntaxTree.save(section);
 //      }
 //   };
-//
-//   ByteCodeWriter _writer;
+
+   ByteCodeWriter _writer;
    Parser         _parser;
 
 //   MessageMap     _verbs;                            // list of verbs
@@ -1103,10 +1103,10 @@ private:
    void compileDeclarations(SNode member, ModuleScope& scope);
    void compileImplementations(SNode member, ModuleScope& scope);
 //   void compileIncludeSection(DNode& node, ModuleScope& scope);
-//
-//   bool validate(Project& project, _Module* module, int reference);
-//   void validateUnresolved(Unresolveds& unresolveds, Project& project);
-//
+
+   bool validate(_ProjectManager& project, _Module* module, int reference);
+   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
+
 ////   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
@@ -1155,7 +1155,7 @@ public:
    void compileModule(SNode node, ModuleScope& scope);
    void compileModule(ident_t source, ModuleScope& scope);
 
-   bool run(_ProjectManager& project);
+   bool run(_ProjectManager& project, bool withDebugInfo);
 
    Compiler(StreamReader* syntax);
 };

@@ -183,55 +183,55 @@ namespace _ELENA_
       mskConstArray          = 0x0D000000    // constant array
    };
 
-//   // --- ELENA Debug symbol constants ---
-//   enum DebugSymbol
-//   {
-//      dsNone                    = 0x0000,
-//
-//      dsStep                    = 0x0010,
-//      dsEOP                     = 0x0011,    // end of procedure
-//      dsVirtualEnd              = 0x0013,    // virtual end of expreession; it should be skipped by debugger
-//      dsProcedureStep           = 0x0014,    // check the step result
-//      dsAtomicStep              = 0x0018,    // "step into" is always treated as step over, used for external code
-//
-//      dsSymbol                  = 0x0001,
-//      dsClass                   = 0x0002,
-//      dsField                   = 0x0004,
-//      dsLocal                   = 0x0005,
-//      dsMessage                 = 0x0006,
-//      dsProcedure               = 0x0007,
-//      dsConstructor             = 0x0008,
-//      dsStack                   = 0x0009,
-//      dsStatement               = 0x000A,
-//      dsVirtualBlock            = 0x000B,
-//      dsEnd                     = 0x000F,
-//      dsIntLocal                = 0x0105,
-//      dsLongLocal               = 0x0205,
-//      dsRealLocal               = 0x0305,
-//      dsParamsLocal             = 0x0405,
-//      dsByteArrayLocal          = 0x0505,
-//      dsShortArrayLocal         = 0x0605,
-//      dsIntArrayLocal           = 0x0705,
-//
-//      // primitive variables
-//      dsIntLocalPtr             = 0x0805,
-//      dsLongLocalPtr            = 0x0905,
-//      dsRealLocalPtr            = 0x0A05,
-//      dsByteArrayLocalPtr       = 0x0B05,
-//      dsShortArrayLocalPtr      = 0x0C05,
-//      dsIntArrayLocalPtr        = 0x0D05,
-//      dsStructPtr               = 0x0E05,
-//      dsStructInfo              = 0x0F05,
-//      dsLocalPtr                = 0x1005,
-//
-//      dsDebugMask               = 0x00F0,
-//      dsTypeMask                = 0x1F00,
-//      dsDebugTypeMask           = 0x1FFF,
-//   };
-//
-//   // predefined debug module sections
-//   #define DEBUG_LINEINFO_ID      (size_t)-1
-//   #define DEBUG_STRINGS_ID       (size_t)-2
+   // --- ELENA Debug symbol constants ---
+   enum DebugSymbol
+   {
+      dsNone                    = 0x0000,
+
+      dsStep                    = 0x0010,
+      dsEOP                     = 0x0011,    // end of procedure
+      dsVirtualEnd              = 0x0013,    // virtual end of expreession; it should be skipped by debugger
+      dsProcedureStep           = 0x0014,    // check the step result
+      dsAtomicStep              = 0x0018,    // "step into" is always treated as step over, used for external code
+
+      dsSymbol                  = 0x0001,
+      dsClass                   = 0x0002,
+      dsField                   = 0x0004,
+      dsLocal                   = 0x0005,
+      dsMessage                 = 0x0006,
+      dsProcedure               = 0x0007,
+      dsConstructor             = 0x0008,
+      dsStack                   = 0x0009,
+      dsStatement               = 0x000A,
+      dsVirtualBlock            = 0x000B,
+      dsEnd                     = 0x000F,
+      dsIntLocal                = 0x0105,
+      dsLongLocal               = 0x0205,
+      dsRealLocal               = 0x0305,
+      dsParamsLocal             = 0x0405,
+      dsByteArrayLocal          = 0x0505,
+      dsShortArrayLocal         = 0x0605,
+      dsIntArrayLocal           = 0x0705,
+
+      // primitive variables
+      dsIntLocalPtr             = 0x0805,
+      dsLongLocalPtr            = 0x0905,
+      dsRealLocalPtr            = 0x0A05,
+      dsByteArrayLocalPtr       = 0x0B05,
+      dsShortArrayLocalPtr      = 0x0C05,
+      dsIntArrayLocalPtr        = 0x0D05,
+      dsStructPtr               = 0x0E05,
+      dsStructInfo              = 0x0F05,
+      dsLocalPtr                = 0x1005,
+
+      dsDebugMask               = 0x00F0,
+      dsTypeMask                = 0x1F00,
+      dsDebugTypeMask           = 0x1FFF,
+   };
+
+   // predefined debug module sections
+   #define DEBUG_LINEINFO_ID      (size_t)-1
+   #define DEBUG_STRINGS_ID       (size_t)-2
 
    // --- LoadResult enum ---
    enum LoadResult
@@ -284,11 +284,11 @@ namespace _ELENA_
    const int cnTableKeyPower       = cnTablePower + 1;
    const int cnSyntaxPower         = 0x0008;
 
-//  // --- ELENA VMT flags ---
-//   const int elStandartVMT         = 0x00000001;
+  // --- ELENA VMT flags ---
+   const int elStandartVMT         = 0x00000001;
 //   const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
-//   const int elStructureRole       = 0x00000008;
+   const int elStructureRole       = 0x00000008;
 //   const int elEmbeddable          = 0x00000010;
 //   const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
@@ -302,7 +302,7 @@ namespace _ELENA_
 //   const int elSignature           = 0x00002000;
 //   const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
-//   const int elMessage             = 0x00008000;
+   const int elMessage             = 0x00008000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elSymbol              = 0x00100000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
@@ -432,10 +432,10 @@ namespace _ELENA_
    #define WRITE_OPERATOR           "<<"
    #define READ_OPERATOR            ">>"
 
-//  // --- ELENA explicit variables ---
+  // --- ELENA explicit variables ---
 //   #define METHOD_SELF_VAR         "this"             // the current method self
-//   #define SELF_VAR                "self"             // the main object self
-//   #define THIS_VAR                "$self"            // the current class instance
+   #define SELF_VAR                "self"             // the main object self
+   #define THIS_VAR                "$self"            // the current class instance
 //   #define OWNER_VAR               "$owner"           // the current method self
 //   #define SUPER_VAR               "$super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message

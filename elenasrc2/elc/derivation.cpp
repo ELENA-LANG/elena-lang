@@ -16,20 +16,58 @@ using namespace _ELENA_;
 
 // --- DerivationWriter ---
 
-void DerivationWriter :: writeSymbol(Symbol symbol)
+void DerivationWriter :: unpackNode(SNode node)
 {
-   switch (symbol)
-   {
-      case nsStart:
+   Symbol symbol = (Symbol)node.type;
+   switch (symbol) {
       case nsClass:
       case nsSymbol:
-         _writer->newNode((LexicalType)(symbol & ~mskAnySymbolMask));
-         break;
-      case nsNone:
-         _writer->closeNode();
+      case nsStatic:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
+         unpackChildren(node);
+         _writer.closeNode();
          break;
       default:
          break;
+   }
+}
+
+void DerivationWriter :: unpackChildren(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      unpackNode(current);
+
+      current = current.nextNode();
+   }
+}
+
+void DerivationWriter :: writeSymbol(Symbol symbol)
+{
+   if (symbol != nsNone) {
+      if (_level > 0) {
+         SyntaxWriter tempWriter(_buffer);
+
+         tempWriter.newNode((LexicalType)symbol);
+      }
+      else _writer.newNode((LexicalType)symbol);
+
+      _level++;
+   }
+   else {
+      _level--;
+      if (_level > 0) {
+         SyntaxWriter tempWriter(_buffer);
+
+         tempWriter.closeNode();
+
+         if (_level == 1) {
+            unpackNode(_buffer.readRoot());
+            _buffer.clear();
+         }
+            
+      }
+      else _writer.closeNode();
    }
 }
 

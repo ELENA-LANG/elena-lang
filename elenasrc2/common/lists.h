@@ -3113,7 +3113,7 @@ public:
 //      return setting ? setting->Count() : 0;
 //   }
 
-   template<class Value> Value get(Key key, Value defaultValue)
+   template<class Value> Value get(Key key, Value defaultValue) const
    {
       if (_items.exist(key)) {
 	      return _items.get(key);

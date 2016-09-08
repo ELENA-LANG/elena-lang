@@ -58,6 +58,8 @@ typedef Map<ident_t, char*>::Iterator SourceIterator;
 class _ProjectManager
 {
 public:
+   virtual ident_t Namespace() const = 0;
+
    virtual int getDefaultEncoding() = 0;
    virtual int getTabSize() = 0;
    virtual SourceIterator getSourceIt() = 0;
@@ -71,8 +73,15 @@ public:
 
    virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
 
-   //   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   //   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
+   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
+
+   virtual _Module* createModule(ident_t name) = 0;
+   virtual _Module* createDebugModule(ident_t name) = 0 ;
+
+   virtual void saveModule(_Module* module, ident_t extension) = 0;
+
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 };
 
 // --- SectionInfo ---
@@ -432,19 +441,19 @@ struct VMTEntry
    int address;
 };
 
-//// --- ClassHeader ---
-//
-//struct ClassHeader
-//{
-//   ref_t  packageRef;      // package header
-//   ref_t  classRef;        // class class reference
-//   size_t count;
-//   size_t flags;
-//   ref_t  parentRef;
-//};
-//
-//// --- ClassInfo ---
-//
+// --- ClassHeader ---
+
+struct ClassHeader
+{
+   ref_t  packageRef;      // package header
+   ref_t  classRef;        // class class reference
+   size_t count;
+   size_t flags;
+   ref_t  parentRef;
+};
+
+// --- ClassInfo ---
+
 //enum MethodAttribute
 //{
 //   maSubjectMask        = 0x100,
@@ -456,121 +465,121 @@ struct VMTEntry
 ////   maEmbeddedInit   = 0x104,
 //   maEmbeddableIdle     = 0x005,
 //};
+
+struct ClassInfo
+{
+//   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
+//   typedef Pair<ref_t, int>                     Attribute;
+   typedef MemoryMap<ref_t, bool, false>        MethodMap;
+   typedef MemoryMap<ident_t, int, true>        FieldMap;
+//   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
+//   typedef MemoryMap<int, ref_t>                FieldTypeMap;
+//   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
+
+   ClassHeader    header;
+   size_t         size;           // Object size
+   MethodMap      methods;
+   FieldMap       fields;
+//   StaticFieldMap statics;
 //
-////struct ClassInfo
-////{
-////   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
-////   typedef Pair<ref_t, int>                     Attribute;
-////   typedef MemoryMap<ref_t, bool, false>        MethodMap;
-////   typedef MemoryMap<ident_t, int, true>        FieldMap;
-////   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
-////   typedef MemoryMap<int, ref_t>                FieldTypeMap;
-////   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
-////
-////   ClassHeader    header;
-////   size_t         size;           // Object size
-////   MethodMap      methods;
-////   FieldMap       fields;
-////   StaticFieldMap statics;
-////
-////   FieldTypeMap   fieldTypes;
-////   MethodInfoMap  methodHints;
-////
-////   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-////   {
-////      writer->write((void*)this, sizeof(ClassHeader));
-////      writer->writeDWord(size);
-////      if (!headerAndSizeOnly) {
-////         methods.write(writer);
-////         fields.write(writer);
-////         fieldTypes.write(writer);
-////         methodHints.write(writer);
-////         statics.write(writer);
-////      }
-////   }
-////
-////   void load(StreamReader* reader, bool headerOnly = false)
-////   {
-////      reader->read((void*)&header, sizeof(ClassHeader));
-////      size = reader->getDWord();
-////      if (!headerOnly) {
-////         methods.read(reader);
-////         fields.read(reader);
-////         fieldTypes.read(reader);
-////         methodHints.read(reader);
-////         statics.read(reader);
-////      }
-////   }
-////
-////   ClassInfo()
-////      : fields(-1), methods(0), methodHints(0), statics(StaticInfo(0, 0))
-////   {
-////      header.flags = 0;
-////      header.classRef = 0;
-////   }
-////};
-////
-////// --- SymbolExpressionInfo ---
-////
-////struct SymbolExpressionInfo
-////{
-////   ref_t expressionTypeRef;
-////   ref_t listRef;
-////   bool  constant;
-////
-////   void save(StreamWriter* writer)
-////   {
-////      writer->writeDWord(expressionTypeRef);
-////      writer->writeDWord(listRef);
-////      writer->writeDWord(constant ? -1: 0);
-////   }
-////
-////   void load(StreamReader* reader)
-////   {
-////      expressionTypeRef = reader->getDWord();
-////      listRef = reader->getDWord();
-////      constant = (reader->getDWord() != 0);
-////   }
-////
-////   SymbolExpressionInfo()
-////   {
-////      expressionTypeRef = 0;
-////      listRef = 0;
-////      constant = false;
-////   }
-////};
-////
-////// --- DebugLineInfo ---
-////
-////struct DebugLineInfo
-////{
-////   DebugSymbol symbol;
-////   int         col, row, length;
-////   union
-////   {
-////      struct Source { int nameRef; } source;
-////      struct Module { int nameRef; int flags; } symbol;
-////      struct Step   { size_t address;         } step;
-////      struct Local  { int nameRef; int level; } local;
-////      struct Field  { int nameRef; int size;  } field;
-////   } addresses;
-////
-////   DebugLineInfo()
-////   {
-////      symbol = dsNone;
-////      col = row = length = 0;
-////   }
-////   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
-////   {
-////      this->symbol = symbol;
-////      this->col = col;
-////      this->row = row;
-////      this->length = length;
-////
-////      this->addresses.symbol.nameRef = 0;
-////      this->addresses.symbol.flags = 0;
-////   }
-////};
+//   FieldTypeMap   fieldTypes;
+//   MethodInfoMap  methodHints;
+
+   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+   {
+      writer->write((void*)this, sizeof(ClassHeader));
+      writer->writeDWord(size);
+      if (!headerAndSizeOnly) {
+         methods.write(writer);
+         fields.write(writer);
+//         fieldTypes.write(writer);
+//         methodHints.write(writer);
+//         statics.write(writer);
+      }
+   }
+
+   void load(StreamReader* reader, bool headerOnly = false)
+   {
+      reader->read((void*)&header, sizeof(ClassHeader));
+      size = reader->getDWord();
+      if (!headerOnly) {
+         methods.read(reader);
+         fields.read(reader);
+//         fieldTypes.read(reader);
+//         methodHints.read(reader);
+//         statics.read(reader);
+      }
+   }
+
+   ClassInfo()
+      : fields(-1)//, methods(0), methodHints(0), statics(StaticInfo(0, 0))
+   {
+      header.flags = 0;
+      header.classRef = 0;
+   }
+};
+
+//// --- SymbolExpressionInfo ---
+//
+//struct SymbolExpressionInfo
+//{
+//   ref_t expressionTypeRef;
+//   ref_t listRef;
+//   bool  constant;
+//
+//   void save(StreamWriter* writer)
+//   {
+//      writer->writeDWord(expressionTypeRef);
+//      writer->writeDWord(listRef);
+//      writer->writeDWord(constant ? -1: 0);
+//   }
+//
+//   void load(StreamReader* reader)
+//   {
+//      expressionTypeRef = reader->getDWord();
+//      listRef = reader->getDWord();
+//      constant = (reader->getDWord() != 0);
+//   }
+//
+//   SymbolExpressionInfo()
+//   {
+//      expressionTypeRef = 0;
+//      listRef = 0;
+//      constant = false;
+//   }
+//};
+
+// --- DebugLineInfo ---
+
+struct DebugLineInfo
+{
+   DebugSymbol symbol;
+   int         col, row, length;
+   union
+   {
+      struct Source { int nameRef; } source;
+      struct Module { int nameRef; int flags; } symbol;
+      struct Step   { size_t address;         } step;
+      struct Local  { int nameRef; int level; } local;
+      struct Field  { int nameRef; int size;  } field;
+   } addresses;
+
+   DebugLineInfo()
+   {
+      symbol = dsNone;
+      col = row = length = 0;
+   }
+   DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
+   {
+      this->symbol = symbol;
+      this->col = col;
+      this->row = row;
+      this->length = length;
+
+      this->addresses.symbol.nameRef = 0;
+      this->addresses.symbol.flags = 0;
+   }
+};
 
 // --- Exception base class ---
 

@@ -14,14 +14,14 @@
 namespace _ELENA_
 {
 
-//// --- Project warning levels
-//const int WARNING_LEVEL_1 = 1;
-//const int WARNING_LEVEL_2 = 2;
-//const int WARNING_LEVEL_3 = 4;
-//
-//const int WARNING_MASK_1 = 1;
-//const int WARNING_MASK_2 = 3;
-//const int WARNING_MASK_3 = 7;
+// --- Project warning levels
+const int WARNING_LEVEL_1 = 1;
+const int WARNING_LEVEL_2 = 2;
+const int WARNING_LEVEL_3 = 4;
+
+const int WARNING_MASK_1 = 1;
+const int WARNING_MASK_2 = 3;
+const int WARNING_MASK_3 = 7;
 
 // --- Project list types ---
 ////typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
@@ -83,32 +83,14 @@ enum ProjectSetting
 //   opManifestAuthor        = 0x0072
 };
 
-////// --- ModuleInfo ---
-////struct ModuleInfo
-////{
-////   _Module* codeModule;
-////   _Module* debugModule;
-////
-////   ModuleInfo()
-////   {
-////      codeModule = debugModule = NULL;
-////   }
-////
-////   ModuleInfo(_Module* codeModule, _Module* debugModule)
-////   {
-////      this->codeModule = codeModule;
-////      this->debugModule = debugModule;
-////   }
-////};
-
 // --- Project ---
 
 class Project : public _ProjectManager
 {
 protected:
    bool            _hasWarning;
-//   int             _numberOfWarnings;
-//   int             _warningMasks;
+   int             _numberOfWarnings;
+   int             _warningMasks;
 
    LibraryManager  _loader;
    ProjectSettings _settings;
@@ -137,7 +119,7 @@ public:
       return _settings.get(key, defaultValue);
    }
 
-   virtual ident_t StrSetting(ProjectSetting key)
+   virtual ident_t StrSetting(ProjectSetting key) const
    {
       return _settings.get(key, DEFAULT_STR);
    }
@@ -209,26 +191,31 @@ public:
 
    virtual int getTabSize() { return 4; }
 
-//   int getWarningMask() const { return _warningMasks; }
-//
-//   bool indicateWarning()
-//   {
-//      if (_warningMasks == 0)
-//         return false;
-//
-//      _hasWarning = true;
-//
-//      if (_numberOfWarnings > 0) {
-//         _numberOfWarnings--;
-//         return true;
-//      }
-//      else return false;
-//   }
-//
-//   virtual _Module* createModule(ident_t name);
-//   virtual _Module* createDebugModule(ident_t name);
-//
-//   virtual void saveModule(_Module* module, ident_t extension);
+   int getWarningMask() const { return _warningMasks; }
+
+   bool indicateWarning()
+   {
+      if (_warningMasks == 0)
+         return false;
+
+      _hasWarning = true;
+
+      if (_numberOfWarnings > 0) {
+         _numberOfWarnings--;
+         return true;
+      }
+      else return false;
+   }
+
+   virtual _Module* createModule(ident_t name);
+   virtual _Module* createDebugModule(ident_t name);
+
+   virtual void saveModule(_Module* module, ident_t extension);
+
+   virtual ident_t Namespace() const
+   {
+      return StrSetting(opNamespace);
+   }
 
    Project();
    virtual ~Project() {}

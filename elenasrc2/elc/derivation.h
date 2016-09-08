@@ -114,15 +114,23 @@ namespace _ELENA_
 
 class DerivationWriter : public _DerivationWriter
 {
-   SyntaxWriter* _writer;
+   SyntaxWriter _writer;
+
+   SyntaxTree   _buffer;
+
+   int          _level; // tree node level ; starting from level=1 the content is buffered and unpacked on the level=0
+
+   void unpackNode(SNode node);
+   void unpackChildren(SNode node);
 
 public:
    void writeSymbol(Symbol symbol);
    void writeTerminal(TerminalInfo& terminal);
 
-   DerivationWriter(SyntaxWriter* writer)
+   DerivationWriter(SyntaxTree& target)
+      : _writer(target)
    {
-      _writer = writer;
+      _level = 0;
    } 
 };
 
