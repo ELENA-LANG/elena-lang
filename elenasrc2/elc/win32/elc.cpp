@@ -239,10 +239,10 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
          return config.getSetting(PROJECT_CATEGORY, ELC_LIB_PATH);
       case _ELENA_::opOutputPath:
          return config.getSetting(PROJECT_CATEGORY, ELC_OUTPUT_PATH);
-//      case _ELENA_::opWarnOnUnresolved:
-//         return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_UNRESOLVED);
-//   //   case _ELENA_::opWarnOnSignature:
-//   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
+      case _ELENA_::opWarnOnUnresolved:
+         return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_UNRESOLVED);
+   //   case _ELENA_::opWarnOnSignature:
+   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
       case _ELENA_::opDebugMode:
          return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);
       case _ELENA_::opDebugSubjectInfo:
@@ -364,27 +364,27 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
 //         }
          else raiseError(ELC_ERR_INVALID_OPTION, valueName);
          break;
-//      case ELC_PRM_WARNING:
-//         if (_ELENA_::StringHelper::compare(valueName, ELC_W_UNRESOLVED)) {
-//            _settings.add(_ELENA_::opWarnOnUnresolved, -1);
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_WEAKUNRESOLVED)) {
-//            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL1)) {
-//            _warningMasks = _ELENA_::WARNING_MASK_1;
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL2)) {
-//            _warningMasks = _ELENA_::WARNING_MASK_2;
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_LEVEL3)) {
-//            _warningMasks = _ELENA_::WARNING_MASK_3;
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_W_OFF)) {
-//            _warningMasks = 0;
-//         }
-//         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
-//         break;
+      case ELC_PRM_WARNING:
+         if (valueName.compare(ELC_W_UNRESOLVED)) {
+            _settings.add(_ELENA_::opWarnOnUnresolved, -1);
+         }
+         else if (valueName.compare(ELC_W_WEAKUNRESOLVED)) {
+            _settings.add(_ELENA_::opWarnOnWeakUnresolved, -1);
+         }
+         else if (valueName.compare(ELC_W_LEVEL1)) {
+            _warningMasks = _ELENA_::WARNING_MASK_1;
+         }
+         else if (valueName.compare(ELC_W_LEVEL2)) {
+            _warningMasks = _ELENA_::WARNING_MASK_2;
+         }
+         else if (valueName.compare(ELC_W_LEVEL3)) {
+            _warningMasks = _ELENA_::WARNING_MASK_3;
+         }
+         else if (valueName.compare(ELC_W_OFF)) {
+            _warningMasks = 0;
+         }
+         else raiseError(ELC_ERR_INVALID_OPTION, valueName);
+         break;
       case ELC_PRM_TARGET:
          _settings.add(_ELENA_::opTarget, valueName.clone(1));
          break;

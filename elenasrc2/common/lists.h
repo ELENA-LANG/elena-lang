@@ -3509,42 +3509,42 @@ template<class Key, class T, class Iterator> Key retrieveKey(Iterator it, T valu
 //   }
 //   return it;
 //}
-//
-//template<class Iterator> const char* retrieve(Iterator it, const char* value, const char* defaultValue)
+
+template<class Iterator> const char* retrieve(Iterator it, const char* value, const char* defaultValue)
+{
+   while (!it.Eof()) {
+      if ((*it).compare(value))
+         return *it;
+
+      it++;
+   }
+   return defaultValue;
+}
+
+template<class Iterator> const wide_c* retrieve(Iterator it, const wide_c* value, const wide_c* defaultValue)
+{
+   while (!it.Eof()) {
+      if ((*it).compare(value))
+         return *it;
+
+      it++;
+   }
+   return defaultValue;
+}
+
+//template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
 //{
+//   int index = 0;
 //   while (!it.Eof()) {
-//      if (StringHelper::compare(*it, value))
-//         return *it;
+//      if (*it == value)
+//         return index;
 //
+//      index++;
 //      it++;
 //   }
-//   return defaultValue;
+//
+//   return -1;
 //}
-//
-//template<class Iterator> const wide_c* retrieve(Iterator it, const wide_c* value, const wide_c* defaultValue)
-//{
-//   while (!it.Eof()) {
-//      if (StringHelper::compare(*it, value))
-//         return *it;
-//
-//      it++;
-//   }
-//   return defaultValue;
-//}
-//
-////template<class Iterator, class T> int retrieveIndex(Iterator it, T value)
-////{
-////   int index = 0;
-////   while (!it.Eof()) {
-////      if (*it == value)
-////         return index;
-////
-////      index++;
-////      it++;
-////   }
-////
-////   return -1;
-////}
 
 } // _ELENA_
 

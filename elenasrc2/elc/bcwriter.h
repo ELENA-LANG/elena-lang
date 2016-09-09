@@ -256,11 +256,11 @@ class ByteCodeWriter
 //
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
-//
+
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node);
-//   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void loadObject(CommandTape& tape, SyntaxTree::Node node);
-//
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void loadObject(CommandTape& tape, SyntaxTree::Node node);
+
 //   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 //
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
@@ -292,7 +292,7 @@ class ByteCodeWriter
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 //

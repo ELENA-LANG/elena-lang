@@ -44,22 +44,22 @@ using namespace _ELENA_;
 
 // --- SyntaxWriter ---
 
-//void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
-//{
-//   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
-//
-//   _writer.insertDWord(position, type);
-//   _writer.insertDWord(position + 4, argument);
-//
-//   Stack<size_t>::Iterator it = _bookmarks.start();
-//   while (!it.Eof()) {
-//      if (*it > position) {
-//         *it = *it + 8;
-//      }
-//
-//      it++;
-//   }
-//}
+void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
+{
+   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+
+   _writer.insertDWord(position, type);
+   _writer.insertDWord(position + 4, argument);
+
+   Stack<size_t>::Iterator it = _bookmarks.start();
+   while (!it.Eof()) {
+      if (*it > position) {
+         *it = *it + 8;
+      }
+
+      it++;
+   }
+}
 
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 {
@@ -98,18 +98,18 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
    this->argLength = length;
 }
 
-//// --- SyntaxReader ---
-//
-//SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
-//{
-//   SyntaxWriter writer(*this);
-//
-//   writer.insertChild(writer.setBookmark(position), type, argument);
-//
-//   MemoryReader reader(&_body, position);
-//   return read(reader);
-//}
-//
+// --- SyntaxReader ---
+
+SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
+{
+   SyntaxWriter writer(*this);
+
+   writer.insertChild(writer.setBookmark(position), type, argument);
+
+   MemoryReader reader(&_body, position);
+   return read(reader);
+}
+
 //SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
 //{
 //   SyntaxWriter writer(*this);

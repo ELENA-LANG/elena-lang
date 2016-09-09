@@ -124,6 +124,9 @@ class DerivationWriter : public _DerivationWriter
    void unpackChildren(SNode node);
    void copyChildren(SNode node);
 
+   void copyExpression(SNode node);
+   void copyObject(SNode node);
+
 public:
    void writeSymbol(Symbol symbol);
    void writeTerminal(TerminalInfo& terminal);

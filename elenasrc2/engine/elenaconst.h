@@ -336,7 +336,16 @@ namespace _ELENA_
 //  // ELENA run-time exceptions
 //   #define ELENA_ERR_OUTOF_MEMORY  0x190
 
-  // --- ELENA Module structure constants ---
+  // --- Project warning levels
+   const int WARNING_LEVEL_1 = 1;
+   const int WARNING_LEVEL_2 = 2;
+   const int WARNING_LEVEL_3 = 4;
+
+   const int WARNING_MASK_1 = 1;
+   const int WARNING_MASK_2 = 3;
+   const int WARNING_MASK_3 = 7;
+
+   // --- ELENA Module structure constants ---
    #define ELENA_SIGNITURE          "ELENA.3."       // the stand alone image
    #define ELENACLIENT_SIGNITURE    "VM.ELENA.3."    // the ELENAVM client
 
@@ -482,8 +491,8 @@ namespace _ELENA_
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
-//   // predefined system forwards
-//   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
+   // predefined system forwards
+   #define SUPER_FORWARD            "'$super"                        // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
 //   #define INT_FORWARD              "'$int"
 //   #define LONG_FORWARD             "'$long"

@@ -14,15 +14,6 @@
 namespace _ELENA_
 {
 
-// --- Project warning levels
-const int WARNING_LEVEL_1 = 1;
-const int WARNING_LEVEL_2 = 2;
-const int WARNING_LEVEL_3 = 4;
-
-const int WARNING_MASK_1 = 1;
-const int WARNING_MASK_2 = 3;
-const int WARNING_MASK_3 = 7;
-
 // --- Project list types ---
 ////typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
 typedef Dictionary2D<int, ident_t> ProjectSettings;
@@ -61,10 +52,10 @@ enum ProjectSetting
    opGCYGSize              = 0x002B,
 
 //   // compiler engine options
-//   opWarnOnUnresolved      = 0x0041,
-//   opWarnOnWeakUnresolved  = 0x0042,
-////   opWarnOnSignature       = 0x0043,
-//
+   opWarnOnUnresolved      = 0x0041,
+   opWarnOnWeakUnresolved  = 0x0042,
+//   opWarnOnSignature       = 0x0043,
+
 //   // compiler optimization options
 //   opL0                    = 0x0050,   // byte-code optimization
 //   opL1                    = 0x0051,   // source-code optimization
@@ -124,7 +115,7 @@ public:
       return _settings.get(key, DEFAULT_STR);
    }
 
-   virtual bool BoolSetting(ProjectSetting key)
+   virtual bool BoolSetting(ProjectSetting key) const
    {
       return (_settings.get(key, 0) != 0);
    }
@@ -181,8 +172,8 @@ public:
 
    virtual ident_t resolveForward(ident_t forward);
 
-//   // loader
-//   virtual _Module* loadModule(ident_t package, bool silentMode);
+   // loader
+   virtual _Module* loadModule(ident_t package, bool silentMode);
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
@@ -215,6 +206,14 @@ public:
    virtual ident_t Namespace() const
    {
       return StrSetting(opNamespace);
+   }
+   virtual bool WarnOnUnresolved() const
+   {
+      return BoolSetting(opWarnOnUnresolved);
+   }
+   virtual bool WarnOnWeakUnresolved() const
+   {
+      return BoolSetting(opWarnOnWeakUnresolved);
    }
 
    Project();

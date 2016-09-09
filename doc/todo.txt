@@ -6,6 +6,7 @@ In development:
                  * DerivationWriter : try to get rid of big switch statement
                  * compliation should be based on set of rules
                  * compile package info
+                 * test optimized / direct operations
 
               ydev
                  * upndown : playing a round

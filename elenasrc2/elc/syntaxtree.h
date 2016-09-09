@@ -17,6 +17,8 @@ namespace _ELENA_
 enum LexicalType
 {
    lxParameter   = 0x10000,
+   lxObjectMask  = 0x08000,
+   lxExprMask    = 0x0C000,
 
    lxEnding       = -1,
    lxNone         = 0x00000,
@@ -25,24 +27,30 @@ enum LexicalType
    lxRoot         = 0x00001,
    lxClass        = 0x0000E,
    lxSymbol       = 0x00011,
+   lxExpression   = 0x0C012,
    lxStatic       = 0x00022,
 
    // parameters
-   lxLiteral      = 0x10004,
-   lxIdentifier   = 0x10005,
-   lxPrivate      = 0x10006,
-   lxReference    = 0x10007,
-   lxInteger      = 0x10008,
-   lxHexInteger   = 0x10009,
-   lxReal         = 0x1000A,
-   lxCharacter    = 0x1000B,
-   lxLong         = 0x1000C,
-   lxWide         = 0x1000D,
+   lxLiteral      = 0x18004,
+   lxIdentifier   = 0x18005,
+   lxPrivate      = 0x18006,
+   lxReference    = 0x18007,
+   lxInteger      = 0x18008,
+   lxHexInteger   = 0x18009,
+   lxReal         = 0x1800A,
+   lxCharacter    = 0x1800B,
+   lxLong         = 0x1800C,
+   lxWide         = 0x1800D,
+
+   lxSymbolRef    = 0x18107,
 
    // attributes
    lxSourcePath   = 0x20001,
    lxCol          = 0x20002,
    lxRow          = 0x20003,
+   lxLength       = 0x02004,
+   lxBreakpoint   = 0x20005,
+   lxImport       = 0x20006,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -88,7 +96,6 @@ enum LexicalType
 //   lxCurrentField = 0x0411D, // arg -offset
 //   lxConstantList = 0x2411E, // arg - reference
 //
-//   lxExpression      = 0x00301,
 //   lxBoxing          = 0x00302,   // boxing of the argument, arg - size
 //   lxCondBoxing      = 0x00303,   // conditional boxing, arg - size
 //   lxUnboxing        = 0x00304,   // boxing and unboxing of the argument, arg - size
@@ -181,10 +188,6 @@ enum LexicalType
 //   //lxClassMethodOpt  = 0x04008,
 //   lxWarningMask     = 0x00809,
 //
-//   lxBreakpoint      = 0x02001,
-//   lxCol             = 0x02002,
-//   lxRow             = 0x02003,
-//   lxLength          = 0x02004,
 //   lxTerminal        = 0x02005,
 //   lxLevel           = 0x02006,
 //   lxClassName       = 0x02007, // arg - reference
@@ -223,15 +226,15 @@ public:
    class Writer
    {
       MemoryWriter  _writer;
-//      Stack<size_t> _bookmarks;
+      Stack<size_t> _bookmarks;
 
    public:
-//      int setBookmark(size_t position)
-//      {
-//         _bookmarks.push(position);
-//         return _bookmarks.Count();
-//      }
-//
+      int setBookmark(size_t position)
+      {
+         _bookmarks.push(position);
+         return _bookmarks.Count();
+      }
+
 //      int newBookmark()
 //      {
 //         _bookmarks.push(_writer.Position());
@@ -257,8 +260,8 @@ public:
 //         _writer.seek(position);
 //         _bookmarks.clear();
 //      }
-//
-//      void insert(int bookmark, LexicalType type, ref_t argument);
+
+      void insert(int bookmark, LexicalType type, ref_t argument);
 //      void insert(int bookmark, LexicalType type)
 //      {
 //         insert(type, 0);
@@ -271,16 +274,16 @@ public:
 //      {
 //         insert(0, type, 0);
 //      }
-//      void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
-//      {
-//         insert(end_bookmark, lxEnding, 0);
-//         insert(start_bookmark, type, argument);
-//      }
-//      void insertChild(int bookmark, LexicalType type, ref_t argument)
-//      {
-//         insert(bookmark, lxEnding, 0);
-//         insert(bookmark, type, argument);
-//      }
+      //void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
+      //{
+      //   insert(end_bookmark, lxEnding, 0);
+      //   insert(start_bookmark, type, argument);
+      //}
+      void insertChild(int bookmark, LexicalType type, ref_t argument)
+      {
+         insert(bookmark, lxEnding, 0);
+         insert(bookmark, type, argument);
+      }
 //      void insertChild(LexicalType type, ref_t argument)
 //      {
 //         insert(lxEnding, 0);
@@ -298,11 +301,11 @@ public:
          newNode(type, argument);
          closeNode();
       }
-//      void appendNode(LexicalType type, ident_t argument)
-//      {
-//         appendNode(type, _stringWriter.Position());
-//         _stringWriter.writeLiteral(argument);
-//      }
+      void appendNode(LexicalType type, ident_t argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
       void appendNode(LexicalType type)
       {
          newNode(type);
@@ -394,6 +397,17 @@ public:
          else return Node();
       }
 
+      Node firstChild(LexicalType mask) const
+      {
+         Node node = firstChild();
+
+         while (node != lxNone && !test(node.type, mask))
+            node = node.nextNode();
+
+         return node;
+      }
+
+
 //      Node lastChild() const
 //      {
 //         Node current = firstChild();
@@ -419,12 +433,12 @@ public:
 //      {
 //         return tree->readParentNode(position);
 //      }
-//
-//      void insertNode(LexicalType type, int argument = 0)
-//      {
-//         tree->insertNode(position, type, argument);
-//      }
-//
+
+      void insertNode(LexicalType type, int argument = 0)
+      {
+         tree->insertNode(position, type, argument);
+      }
+
 //      void appendNode(LexicalType type, int argument = 0)
 //      {
 //         int end_position = tree->seekNodeEnd(position);
@@ -635,8 +649,8 @@ public:
 //   Node readParentNode(size_t position);
 //
 //   size_t seekNodeEnd(size_t position);
-//
-//   Node insertNode(size_t position, LexicalType type, int argument);
+
+   Node insertNode(size_t position, LexicalType type, int argument);
 //   Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 //
 //   bool matchPattern(Node node, int mask, int counter, ...);

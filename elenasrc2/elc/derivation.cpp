@@ -25,6 +25,9 @@ void DerivationWriter :: unpackNode(SNode node)
          unpackChildren(node);
          _writer.closeNode();
          break;
+      case nsImport:
+         _writer.appendNode(lxImport, node.findChild((LexicalType)tsIdentifier).identifier());
+         break;
       case tsIdentifier:
       case tsCharacter:
       case tsHexInteger:
@@ -35,9 +38,15 @@ void DerivationWriter :: unpackNode(SNode node)
       case tsReal:
       case tsLong:
       case tsWide:
-         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxParameter), node.identifier());
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxParameter | lxObjectMask), node.identifier());
          copyChildren(node);
          _writer.closeNode();
+         break;
+      case nsExpression:
+         copyExpression(node);
+         break;
+      case nsObject:
+         copyObject(node);
          break;
       default:
          break;
@@ -69,6 +78,23 @@ void DerivationWriter :: copyChildren(SNode node)
 
       current = current.nextNode();
    }
+}
+
+void DerivationWriter :: copyExpression(SNode node)
+{
+   _writer.newNode(lxExpression);
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      unpackNode(current);
+
+      current = current.nextNode();
+   }
+   _writer.closeNode();
+}
+
+void DerivationWriter :: copyObject(SNode node)
+{
+   unpackChildren(node);
 }
 
 void DerivationWriter :: writeSymbol(Symbol symbol)
@@ -126,10 +152,9 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
       else tempWriter.newNode((LexicalType)terminal.symbol, terminal.value);
 
       tempWriter.appendNode(lxCol, terminal.col);
-      tempWriter.appendNode(lxCol, terminal.col);
       tempWriter.appendNode(lxRow, terminal.row);
+      tempWriter.appendNode(lxLength, terminal.length);
       //   _writer->writeDWord(terminal.disp);
-      //   _writer->writeDWord(terminal.length);
 
       tempWriter.closeNode();
    }
