@@ -16,14 +16,33 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxEnding = -1,
+   lxParameter   = 0x10000,
 
-   lxNone   = 0x0000,
+   lxEnding       = -1,
+   lxNone         = 0x00000,
 
-   lxRoot   = 0x0001,
-   lxClass  = 0x000E,
-   lxSymbol = 0x0011,
-   lxStatic = 0x0022,
+   // scopes
+   lxRoot         = 0x00001,
+   lxClass        = 0x0000E,
+   lxSymbol       = 0x00011,
+   lxStatic       = 0x00022,
+
+   // parameters
+   lxLiteral      = 0x10004,
+   lxIdentifier   = 0x10005,
+   lxPrivate      = 0x10006,
+   lxReference    = 0x10007,
+   lxInteger      = 0x10008,
+   lxHexInteger   = 0x10009,
+   lxReal         = 0x1000A,
+   lxCharacter    = 0x1000B,
+   lxLong         = 0x1000C,
+   lxWide         = 0x1000D,
+
+   // attributes
+   lxSourcePath   = 0x20001,
+   lxCol          = 0x20002,
+   lxRow          = 0x20003,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -269,30 +288,26 @@ public:
 //      }
 
       void newNode(LexicalType type, ref_t argument);
-//      void newNode(LexicalType type, ident_t argument)
-//      {
-//         newNode(type, _stringWriter.Position());
-//         _stringWriter.writeLiteral(argument);
-//      }
+      void newNode(LexicalType type, ident_t argument);
       void newNode(LexicalType type)
       {
          newNode(type, 0u);
       }
-//      void appendNode(LexicalType type, ref_t argument)
-//      {
-//         newNode(type, argument);
-//         closeNode();
-//      }
+      void appendNode(LexicalType type, ref_t argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
 //      void appendNode(LexicalType type, ident_t argument)
 //      {
 //         appendNode(type, _stringWriter.Position());
 //         _stringWriter.writeLiteral(argument);
 //      }
-//      void appendNode(LexicalType type)
-//      {
-//         newNode(type);
-//         closeNode();
-//      }
+      void appendNode(LexicalType type)
+      {
+         newNode(type);
+         closeNode();
+      }
 
       void closeNode();
 
@@ -334,14 +349,14 @@ public:
 //      {
 //         return tree;
 //      }
-//
-//      ident_t identifier()
-//      {
-//         if (type != lxNone) {
-//            return (ident_t)tree->_strings.get(argument);
-//         }
-//         else return NULL;
-//      }
+
+      ident_t identifier()
+      {
+         if (argLength > 0) {
+            return (const char*)(tree->_body.get(position));
+         }
+         else return NULL;
+      }
 
       operator LexicalType() const { return type; }
 
@@ -354,27 +369,27 @@ public:
          return this->type != type;
       }
 
-//      void operator = (LexicalType type)
-//      {
-//         this->type = type;
-//
-//         MemoryReader reader(&tree->_body, position - 8);
-//
-//         *(int*)(reader.Address()) = (int)type;
-//      }
-//
-//      void setArgument(ref_t argument)
-//      {
-//         this->argument = argument;
-//
-//         MemoryReader reader(&tree->_body, position - 4);
-//         *(int*)(reader.Address()) = (int)argument;
-//      }
+      void operator = (LexicalType type)
+      {
+         this->type = type;
+
+         MemoryReader reader(&tree->_body, position - 12);
+
+         *(int*)(reader.Address()) = (int)type;
+      }
+
+      void setArgument(ref_t argument)
+      {
+         this->argument = argument;
+
+         MemoryReader reader(&tree->_body, position - 8);
+         *(int*)(reader.Address()) = (int)argument;
+      }
 
       Node firstChild() const
       {
          if (tree != NULL) {
-            return tree->readFirstNode(position);
+            return tree->readFirstNode(position + argLength);
          }
          else return Node();
       }
@@ -392,7 +407,7 @@ public:
 
       Node nextNode() const
       {
-         return tree->readNextNode(position);
+         return tree->readNextNode(position + argLength);
       }
 
 //      Node prevNode() const
@@ -429,6 +444,30 @@ public:
 //      {
 //         return tree->findPattern(*this, 1, pattern);
 //      }
+
+      Node findChild(LexicalType type)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type) {
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2)
+      {
+         Node current = firstChild();
+      
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+      
+            current = current.nextNode();
+         }
+      
+         return current;
+      }
 
       Node()
       {
@@ -501,16 +540,6 @@ public:
 //      return counter;
 //   }
 //
-//   static Node findChild(Node node, LexicalType type)
-//   {
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone && current != type) {
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
 //
 //   static Node findMatchedChild(Node node, int mask)
 //   {
@@ -535,20 +564,6 @@ public:
 //            }
 //            else return current;
 //         }
-//         current = current.nextNode();
-//      }
-//
-//      return current;
-//   }
-//
-//   static Node findChild(Node node, LexicalType type1, LexicalType type2)
-//   {
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone && current != type1) {
-//         if (current == type2)
-//            return current;
-//
 //         current = current.nextNode();
 //      }
 //

@@ -12,8 +12,6 @@
 
 using namespace _ELENA_;
 
-//typedef String<ident_c, 0x100> TempString;
-
 // --- DerivationWriter ---
 
 void DerivationWriter :: unpackNode(SNode node)
@@ -27,6 +25,20 @@ void DerivationWriter :: unpackNode(SNode node)
          unpackChildren(node);
          _writer.closeNode();
          break;
+      case tsIdentifier:
+      case tsCharacter:
+      case tsHexInteger:
+      case tsLiteral:
+      case tsPrivate:
+      case tsReference:
+      case tsInteger:
+      case tsReal:
+      case tsLong:
+      case tsWide:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxParameter), node.identifier());
+         copyChildren(node);
+         _writer.closeNode();
+         break;
       default:
          break;
    }
@@ -37,6 +49,23 @@ void DerivationWriter :: unpackChildren(SNode node)
    SNode current = node.firstChild();
    while (current != lxNone) {
       unpackNode(current);
+
+      current = current.nextNode();
+   }
+}
+
+void DerivationWriter :: copyChildren(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.argLength > 0) {
+         _writer.newNode(current.type, current.identifier());
+      }
+      else _writer.newNode(current.type, current.argument);
+
+      copyChildren(current);
+
+      _writer.closeNode();
 
       current = current.nextNode();
    }
@@ -73,31 +102,37 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 
 void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 {
-//   // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
-//   if (terminal == tsCharacter && StringHelper::findSubStr(terminal.value + 1, '#', terminal.length) != -1) {
-//      terminal.symbol = tsLiteral;
-//   }
-//
-//   _writer->writeDWord(terminal.symbol);
-//   _writer->writeDWord(terminal.disp);
-//   _writer->writeDWord(terminal.row);
-//   _writer->writeDWord(terminal.col);
-//   _writer->writeDWord(terminal.length);
-//
-//   if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
-//      // try to use local storage if the quote is not too big
-//      if (getlength(terminal.value) < 0x100) {
-//         QuoteTemplate<TempString> quote(terminal.value);
-//
-//         _writer->writeLiteral(quote);
-//      }
-//      else {
-//         QuoteTemplate<DynamicString<ident_c> > quote(terminal.value);
-//
-//         _writer->writeLiteral(quote);
-//      }
-//   }
-//   else _writer->writeLiteral(terminal.value);
+   // HOT FIX : if there are several constants e.g. #10#13, it should be treated like literal terminal
+   if (terminal == tsCharacter && terminal.value.findSubStr(1, '#', terminal.length, -1) != -1) {
+      terminal.symbol = tsLiteral;
+   }
+
+   if (_level > 1) {
+      SyntaxWriter tempWriter(_buffer);
+
+      if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
+         // try to use local storage if the quote is not too big
+         if (getlength(terminal.value) < 0x100) {
+            QuoteTemplate<IdentifierString> quote(terminal.value);
+      
+            tempWriter.newNode((LexicalType)terminal.symbol, quote);
+         }
+         else {
+            QuoteTemplate<DynamicString<char> > quote(terminal.value);
+      
+            tempWriter.newNode((LexicalType)terminal.symbol, quote);
+         }
+      }
+      else tempWriter.newNode((LexicalType)terminal.symbol, terminal.value);
+
+      tempWriter.appendNode(lxCol, terminal.col);
+      tempWriter.appendNode(lxCol, terminal.col);
+      tempWriter.appendNode(lxRow, terminal.row);
+      //   _writer->writeDWord(terminal.disp);
+      //   _writer->writeDWord(terminal.length);
+
+      tempWriter.closeNode();
+   }
 }
 
 //// --- DerivationReader ---

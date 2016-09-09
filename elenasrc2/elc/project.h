@@ -191,7 +191,7 @@ public:
 
    virtual int getTabSize() { return 4; }
 
-   int getWarningMask() const { return _warningMasks; }
+   virtual int getWarningMask() const { return _warningMasks; }
 
    bool indicateWarning()
    {

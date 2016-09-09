@@ -69,6 +69,16 @@ void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
    _writer.writeDWord(0);
 }
 
+void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
+{
+   // writer node
+   _writer.writeDWord(type);
+   _writer.writeDWord(0);
+   _writer.writeDWord(getlength(argument) + 5);
+   _writer.writeLiteral(argument);
+   _writer.writeDWord(getlength(argument) + 1);
+}
+
 void SyntaxWriter :: closeNode()
 {
    _writer.writeDWord(-1);
@@ -115,9 +125,6 @@ SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
    int type = reader.getDWord();
    ref_t arg = reader.getDWord();
    int length = reader.getDWord();
-   // skip the argument body
-   if (length > 0)
-      reader.seek(reader.Position() + length);
 
    if (type == -1) {
       return Node();

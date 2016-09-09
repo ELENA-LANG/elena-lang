@@ -302,6 +302,7 @@ class ByteCodeWriter
 
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
+   int writeString(ident_t path);
 
 //   void generateClass(CommandTape& tape, SyntaxTree& tree);
    //void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);

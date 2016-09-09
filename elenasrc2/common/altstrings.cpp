@@ -424,12 +424,12 @@ char* _ELENA_::__allocate(size_t size, const char* value)
 //{
 //   memmove(s1, s2, length);
 //}
-//
-//char* StringHelper :: reallocate(char* s, size_t size)
-//{
-//   return (char*)realloc(s, size);
-//}
-//
+
+char* _ELENA_ :: __reallocate(char* s, size_t size)
+{
+   return (char*)realloc(s, size);
+}
+
 //int find(const char* s, const char* subs, int defValue)
 //{
 //   const char* p = strstr(s, subs);
@@ -457,15 +457,15 @@ int __findLast(const char* s, char c, int defValue)
    else return p - s;
 }
 
-////int findSubStr(const char* s, char c, size_t length, int defValue)
-////{
-////   for (size_t i = 0; i < length; i++) {
-////      if (s[i] == c)
-////         return i;
-////   }
-////
-////   return defValue;
-////}
+int findSubStr(const char* s, char c, size_t length, int defValue)
+{
+   for (size_t i = 0; i < length; i++) {
+      if (s[i] == c)
+         return i;
+   }
+
+   return defValue;
+}
 
 void append(char* dest, const char* sour, int length)
 {
@@ -643,15 +643,15 @@ wchar_t* _ELENA_::__allocate(size_t size, const wchar_t* value)
    return s;
 }
 
-////wchar_t* StringHelper :: reallocate(wchar_t* s, size_t size)
-////{
-////   return (wchar_t*)realloc(s, size << 1);
-////}
-////
-////void StringHelper::move(wchar_t* s1, const wchar_t* s2, size_t length)
-////{
-////   memmove(s1, s2, length << 1);
-////}
+wchar_t* _ELENA_ :: __reallocate(wchar_t* s, size_t size)
+{
+   return (wchar_t*)realloc(s, size << 1);
+}
+
+//void StringHelper::move(wchar_t* s1, const wchar_t* s2, size_t length)
+//{
+//   memmove(s1, s2, length << 1);
+//}
 
 void append(wchar_t* dest, const wchar_t* sour, size_t length)
 {
@@ -782,6 +782,16 @@ long strToLong(const wchar_t* s, int radix)
 ////   return _i64toa(n, s, radix);
 ////}
 
+int findSubStr(const wchar_t* s, wchar_t c, size_t length, int defValue)
+{
+   for (size_t i = 0; i < length; i++) {
+      if (s[i] == c)
+         return i;
+   }
+
+   return defValue;
+}
+
 #else
 
 unsigned short* _ELENA_::__allocate(size_t size, const unsigned short* value)
@@ -793,15 +803,15 @@ unsigned short* _ELENA_::__allocate(size_t size, const unsigned short* value)
    return s;
 }
 
-//unsigned short* StringHelper :: reallocate(unsigned short* s, size_t size)
+unsigned short* _ELENA_ :: __reallocate(unsigned short* s, size_t size)
+{
+   return (unsigned short*)realloc(s, size << 1);
+}
+
+//void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
 //{
-//   return (unsigned short*)realloc(s, size << 1);
+//   memmove(s1, s2, length << 1);
 //}
-//
-////void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
-////{
-////   memmove(s1, s2, length << 1);
-////}
 
 void append(unsigned short* dest, const unsigned short* sour, size_t length)
 {
@@ -1102,6 +1112,16 @@ long strToLong(const unsigned short* s, int radix)
 ////   return s;
 ////}
 
+int findSubStr(const unsigned short* s, unsigned short c, size_t length, int defValue)
+{
+   for (size_t i = 0; i < length; i++) {
+      if (s[i] == c)
+         return i;
+   }
+
+   return defValue;
+}
+
 #endif
 
 //////int StringHelper :: find(const wchar_t* s, const wchar_t* subs, int defValue)
@@ -1274,6 +1294,11 @@ int ident_t :: findLast(char c, int defValue)
    return __findLast(_string, c, defValue);
 }
 
+int ident_t :: findSubStr(int index, char c, size_t length, int defValue)
+{
+   return ::findSubStr(_string + index, c, length, defValue);
+}
+
 char* ident_t :: clone()
 {
    return ::clone(_string);
@@ -1339,6 +1364,11 @@ int wide_t :: find(wide_c c, int defValue)
 int wide_t :: findLast(wide_c c, int defValue)
 {
    return __findLast(_string, c, defValue);
+}
+
+int wide_t :: findSubStr(int index, wide_c c, size_t length, int defValue)
+{
+   return ::findSubStr(_string + index, c, length, defValue);
 }
 
 wide_c* wide_t :: clone()

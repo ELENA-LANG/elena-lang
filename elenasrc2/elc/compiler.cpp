@@ -436,8 +436,8 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 
 //   warnOnUnresolved = project->BoolSetting(opWarnOnUnresolved);
 //   warnOnWeakUnresolved = project->BoolSetting(opWarnOnWeakUnresolved);
-//   warningMask = project->getWarningMask();
-//
+   warningMask = project->getWarningMask();
+
 //   // cache the frequently used references
 //   superReference = mapReference(project->resolveForward(SUPER_FORWARD));
 //   intReference = mapReference(project->resolveForward(INT_FORWARD));
@@ -462,9 +462,9 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //
 //   // cache the frequently used subjects
 //   boolType = mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
-//
-//   defaultNs.add(module->Name());
-//
+
+   defaultNs.add(module->Name());
+
 //   loadModuleInfo(module);
 }
 
@@ -489,21 +489,21 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   }
 //   else return ObjectInfo();
 //}
-//
-//ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
-//{
-//   List<ident_t>::Iterator it = defaultNs.start();
-//   while (!it.Eof()) {
-//      ReferenceNs name(*it, identifier);
-//
-//      if (checkReference(name))
-//         return module->mapReference(name);
-//
-//      it++;
-//   }
-//   return 0;
-//}
-//
+
+ref_t Compiler::ModuleScope :: resolveIdentifier(ident_t identifier)
+{
+   List<ident_t>::Iterator it = defaultNs.start();
+   while (!it.Eof()) {
+      ReferenceNs name(*it, identifier);
+
+      if (checkReference(name))
+         return module->mapReference(name);
+
+      it++;
+   }
+   return 0;
+}
+
 //ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)
 //{
 //   IdentifierString fullName(terminal);
@@ -586,29 +586,29 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //
 //   return subjRef;
 //}
-//
-//ref_t Compiler::ModuleScope :: mapTerminal(TerminalInfo terminal, bool existing)
-//{
-//   if (terminal == tsIdentifier) {
-//      ref_t reference = forwards.get(terminal);
-//      if (reference == 0) {
-//         if (!existing) {
-//            ReferenceNs name(module->Name(), terminal);
-//
-//            return module->mapReference(name);
-//         }
-//         else return resolveIdentifier(terminal);
-//      }
-//      else return reference;
-//   }
-//   else if (terminal == tsPrivate) {
-//      ReferenceNs name(module->Name(), terminal);
-//
-//      return mapReference(name, existing);
-//   }
-//   else return mapReference(terminal, existing);
-//}
-//
+
+ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
+{
+   if (terminal == lxIdentifier) {
+      ref_t reference = forwards.get(terminal.identifier());
+      if (reference == 0) {
+         if (!existing) {
+            ReferenceNs name(module->Name(), terminal.identifier());
+
+            return module->mapReference(name);
+         }
+         else return resolveIdentifier(terminal.identifier());
+      }
+      else return reference;
+   }
+   else if (terminal == lxPrivate) {
+      ReferenceNs name(module->Name(), terminal.identifier());
+
+      return mapReference(name, existing);
+   }
+   else return mapReference(terminal.identifier(), existing);
+}
+
 //ref_t Compiler::ModuleScope :: mapNestedExpression()
 //{
 //   // otherwise auto generate the name
@@ -628,18 +628,18 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //
 //   return module->mapSubject(name, false);
 //}
-//
-//bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
-//{
-//   ref_t moduleRef = 0;
-//   _Module* module = project->resolveModule(referenceName, moduleRef, true);
-//
-//   if (module == NULL || moduleRef == 0)
-//      return false;
-//
-//   return module->mapReference(referenceName, true) != 0;
-//}
-//
+
+bool Compiler::ModuleScope :: checkReference(ident_t referenceName)
+{
+   ref_t moduleRef = 0;
+   _Module* module = project->resolveModule(referenceName, moduleRef, true);
+
+   if (module == NULL || moduleRef == 0)
+      return false;
+
+   return module->mapReference(referenceName, true) != 0;
+}
+
 //ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool checkState)
 //{
 //   // if reference is zero the symbol is unknown
@@ -698,30 +698,29 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //
 //   return module->mapSubject(reference, existing);
 //}
-//
-//
-//ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
-//{
-//   if (emptystr(referenceName))
-//      return 0;
-//
-//   ref_t reference = 0;
-//   if (!isWeakReference(referenceName)) {
-//      if (existing) {
-//         // check if the reference does exist
-//         ref_t moduleRef = 0;
-//         _Module* argModule = project->resolveModule(referenceName, moduleRef);
-//
-//         if (argModule != NULL && moduleRef != 0)
-//            reference = module->mapReference(referenceName);
-//      }
-//      else reference = module->mapReference(referenceName, existing);
-//   }
-//   else reference = module->mapReference(referenceName, existing);
-//
-//   return reference;
-//}
-//
+
+ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing)
+{
+   if (emptystr(referenceName))
+      return 0;
+
+   ref_t reference = 0;
+   if (!isWeakReference(referenceName)) {
+      if (existing) {
+         // check if the reference does exist
+         ref_t moduleRef = 0;
+         _Module* argModule = project->resolveModule(referenceName, moduleRef);
+
+         if (argModule != NULL && moduleRef != 0)
+            reference = module->mapReference(referenceName);
+      }
+      else reference = module->mapReference(referenceName, existing);
+   }
+   else reference = module->mapReference(referenceName, existing);
+
+   return reference;
+}
+
 //ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
 //{
 //   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
@@ -1012,12 +1011,15 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //      }
 //   }
 //}
-//
-//void Compiler::ModuleScope :: raiseError(const char* message, TerminalInfo terminal)
-//{
-//   raiseError(message, terminal.Row(), terminal.Col(), terminal.value);
-//}
-//
+
+void Compiler::ModuleScope :: raiseError(const char* message, SNode terminal)
+{
+   int col = terminal.findChild(lxCol).argument;
+   int row = terminal.findChild(lxRow).argument;
+
+   raiseError(message, row, col, terminal.identifier());
+}
+
 //void Compiler::ModuleScope :: raiseWarning(int level, const char* message, TerminalInfo terminal)
 //{
 //   raiseWarning(level, message, terminal.Row(), terminal.Col(), terminal.value);
@@ -1028,12 +1030,12 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   if (test(warningMask, level))
 //      project->raiseWarning(message, sourcePath, row, col, terminal);
 //}
-//
-//void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t terminal)
-//{
-//   project->raiseError(message, sourcePath, row, col, terminal);
-//}
-//
+
+void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, ident_t terminal)
+{
+   project->raiseError(message, sourcePath, row, col, terminal);
+}
+
 //void Compiler::ModuleScope :: loadActions(_Module* extModule)
 //{
 //   if (extModule) {
@@ -8449,6 +8451,7 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
 //      DNode hints = skipHints(member);
 //
 //      TerminalInfo name = member.Terminal();
+      SNode name = member.findChild(lxIdentifier, lxPrivate);
 
       switch (member) {
 //         case nsSubject:
@@ -8456,13 +8459,13 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
 //            break;
          case lxClass:
          {
-//            ref_t reference = scope.mapTerminal(name);
-//
-//            // check for duplicate declaration
-//            if (scope.module->mapSection(reference | mskSymbolRef, true))
-//               scope.raiseError(errDuplicatedSymbol, name);
-//
-//            scope.module->mapSection(reference | mskSymbolRef, false);
+            member.argument = scope.mapTerminal(name);
+
+            // check for duplicate declaration
+            if (scope.module->mapSection(member.argument | mskSymbolRef, true))
+               scope.raiseError(errDuplicatedSymbol, name);
+
+            scope.module->mapSection(member.argument | mskSymbolRef, false);
 
             // compile class
             ClassScope classScope(&scope/*, reference*/);
@@ -8517,8 +8520,8 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
          case lxSymbol:
          case lxStatic:
          {
-//            ref_t reference = scope.mapTerminal(name);
-//
+            ref_t reference = scope.mapTerminal(name);
+
 //            // check for duplicate declaration
 //            if (scope.module->mapSection(reference | mskSymbolRef, true))
 //               scope.raiseError(errDuplicatedSymbol, name);
@@ -8747,15 +8750,18 @@ bool Compiler :: run(_ProjectManager& project, bool withDebugInfo)
          }
 
          ModuleScope scope(&project, it.key(), info.codeModule, info.debugModule, &unresolveds);
-         // HOTFIX : the module path should be presaved
+
+         // HOTFIX : the module path should be presaved in debug section
          scope.sourcePathRef = _writer.writeSourcePath(info.debugModule, scope.sourcePath);
+
+         // HOTFIX : the module path should be the first saved string
+         _writer.clear();
+         _writer.writeString(it.key());
 
          project.printInfo("%s", it.key());
 
          // compile source
          compileModule(*it, scope);
-
-         _writer.clear();
       }
       catch (LineTooLong& e)
       {

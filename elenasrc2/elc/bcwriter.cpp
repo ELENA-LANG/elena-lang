@@ -62,6 +62,17 @@ void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 
 // --- ByteCodeWriter ---
 
+int ByteCodeWriter :: writeString(ident_t path)
+{
+   MemoryWriter writer(&_strings);
+
+   int position = writer.Position();
+
+   writer.writeLiteral(path);
+
+   return position;
+}
+
 ref_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 {
    if (debugModule != NULL) {
@@ -4841,7 +4852,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic)
 {
-   SNode sourceNode = SyntaxTree::findChild(root, lxSourcePath);
+   SNode sourceNode = root.findChild(lxSourcePath);
 
    if (isStatic) {
       declareStaticSymbol(tape, root.argument, sourceNode.argument);

@@ -42,6 +42,8 @@ public:
    int find(char c, int defValue = -1);
    int findLast(char c, int defValue = -1);
 
+   int findSubStr(int index, char c, size_t length, int defValue);
+
    int toInt();
    int toInt(int index);
 
@@ -87,6 +89,8 @@ public:
    int find(wide_c c, int defValue = -1);
    int findLast(wide_c c, int defValue = -1);
 
+   int findSubStr(int index, wide_c c, size_t length, int defValue);
+
    int toInt();
    int toInt(int index);
 
@@ -113,11 +117,9 @@ public:
 
 // --- String ---
 
-template <class T, size_t size> class String
+template <class T> class BaseString
 {
 protected:
-   T _string[size + 1];
-
    static void intToStr(int n, T* s, int radix)
    {
       int  rem = 0;
@@ -128,38 +130,37 @@ protected:
          n = -n;
          s[pos++] = '-';
       }
-   
+
       do
       {
          rem = (unsigned int)n % radix;
          n /= radix;
-         switch(rem) {
-            case 10:
-               s[pos++] = 'a';
-               break;
-            case 11:
-               s[pos++] = 'b';
-               break;
-            case 12:
-               s[pos++] = 'c';
-               break;
-            case 13:
-               s[pos++] = 'd';
-               break;
-            case 14:
-               s[pos++] = 'e';
-               break;
-            case 15:
-               s[pos++] = 'f';
-               break;
-            default:
-               if (rem < 10) {
-                  s[pos++] = (char)(rem + 0x30);
-               }
+         switch (rem) {
+         case 10:
+            s[pos++] = 'a';
+            break;
+         case 11:
+            s[pos++] = 'b';
+            break;
+         case 12:
+            s[pos++] = 'c';
+            break;
+         case 13:
+            s[pos++] = 'd';
+            break;
+         case 14:
+            s[pos++] = 'e';
+            break;
+         case 15:
+            s[pos++] = 'f';
+            break;
+         default:
+            if (rem < 10) {
+               s[pos++] = (char)(rem + 0x30);
+            }
          }
-      }
-      while( n != 0 );
-   
+      } while (n != 0);
+
       s[pos] = 0;
       pos--;
       while (start < pos) {
@@ -168,6 +169,12 @@ protected:
          s[pos--] = tmp;
       }
    }
+};
+
+template <class T, size_t size> class String : BaseString<T>
+{
+protected:
+   T _string[size + 1];
 
 public:
    operator const T*() const { return _string; }
@@ -343,158 +350,172 @@ public:
    }
 };
 
-////// --- DynamicString ---
-////
-////template <class T, size_t pageSize = 0x20> class DynamicString
-////{
-////protected:
-////   T*     _string;
-////   size_t _size;
-////
-////   void assignOrCopy(const T* value, T* &ptr, size_t& size)
-////   {
-////      ptr = value;
-////      size = 0;
-////   }
-////
-////   void create(T*, size_t size)
-////   {
-////      if (_size == 0) {
-////         _size = align(size, pageSize);
-////         _string = StringHelper::allocate(_size, (const T*)NULL);
-////         _string[0] = 0;
-////      }
-////      else {
-////         int length = getlength(_string);
-////
-////         _size = align(size, pageSize);
-////         _string = StringHelper::reallocate(_string, _size);
-////
-////         _string[length] = 0;
-////      }
-////   }
-////
-////
-////public:
-////   operator const T*() const { return _string; }
-////
-////   T& operator[](size_t index)
-////   {
-////      return *(_string + index);
-////   }
-////
-////   T& operator[](int index)
-////   {
-////      return *(_string + index);
-////   }
-////
-////   bool isEmpty() const { return emptystr(_string); }
-////
-////   int findLast(T ch)
-////   {
-////      return StringHelper::findLast(_string, ch, -1);
-////   }
-////
-////   int find(T ch)
-////   {
-////      return StringHelper::find(_string, ch, -1);
-////   }
-////
-////   int find(int index, T ch)
-////   {
-////      return StringHelper::find(_string + index, ch, -1);
-////   }
-////
-////   bool compare(const T* s)
-////   {
-////      return StringHelper::compare(_string, s);
-////   }
-////
-////   void copy(const T* s, size_t length)
-////   {
-////      if (_size <= length) {
-////         create(_string, length + 1);
-////      }
-////      StringHelper::copy(_string, s, length);
-////      _string[length] = 0;
-////   }
-////   void copy(const T* s)
-////   {
-////      size_t length = getlength(s);
-////      if (length == 0) {
-////         _string[0] = 0;
-////      }
-////      else copy(s, length);
-////   }
-////
-////   void append(const T* s, size_t length)
-////   {
-////      size_t newLength = getlength(_string) + length + 1;
-////      if (newLength > _size)
-////         create(_string, newLength);
-////
-////      StringHelper::append(_string, s, length);
-////   }
-////   void append(const T* s)
-////   {
-////      size_t length = getlength(s);
-////      if (length > 0) {
-////         append(s, length);
-////      }
-////   }
-////   void append(T c)
-////   {
-////      append(&c, 1);
-////   }
-////
-////   void lower()
-////   {
-////      StringHelper::lower(_string);
-////   }
-////
-////   void trim(T ch)
-////   {
-////      StringHelper::trim(_string, ch);
-////   }
-////
-////   T* clone()
-////   {
-////      return StringHelper::clone(_string);
-////   }
-////
-////   T* clone(int pos)
-////   {
-////      return StringHelper::clone(_string + pos);
-////   }
-////
-////   int toInt()
-////   {
-////      return StringHelper::strToInt(_string);
-////   }
-////
-////   void clear()
-////   {
-////      if (_string)
-////         _string[0] = 0;
-////   }
-////
-////   size_t Length()
-////   {
-////      return getlength(_string);
-////   }
-////
-////   DynamicString()
-////   {
-////      _size = 0;
-////      _string = NULL;
-////   }
-////   DynamicString(const T* value)
-////   {
-////      assignOrCopy(value, _string, _size);
-////   }
-////
-////   ~DynamicString() { if (_size > 0) freestr(_string); }
-////};
+// --- DynamicString ---
+
+template <class T, size_t pageSize = 0x20> class DynamicString : BaseString<T>
+{
+protected:
+   T*     _string;
+   size_t _size;
+
+//   void assignOrCopy(const T* value, T* &ptr, size_t& size)
+//   {
+//      ptr = value;
+//      size = 0;
+//   }
+
+   void create(T*, size_t size)
+   {
+      if (_size == 0) {
+         _size = align(size, pageSize);
+         _string = __allocate(_size, (const T*)NULL);
+         _string[0] = 0;
+      }
+      else {
+         int length = getlength(_string);
+
+         _size = align(size, pageSize);
+         _string = __reallocate(_string, _size);
+
+         _string[length] = 0;
+      }
+   }
+
+public:
+   operator const T*() const { return _string; }
+
+   operator T*() { return _string; }
+
+   T& operator[](size_t index)
+   {
+      return *(_string + index);
+   }
+
+   T& operator[](int index)
+   {
+      return *(_string + index);
+   }
+
+//   bool isEmpty() const { return emptystr(_string); }
+//
+//   int findLast(T ch)
+//   {
+//      return StringHelper::findLast(_string, ch, -1);
+//   }
+//
+//   int find(T ch)
+//   {
+//      return StringHelper::find(_string, ch, -1);
+//   }
+//
+//   int find(int index, T ch)
+//   {
+//      return StringHelper::find(_string + index, ch, -1);
+//   }
+//
+//   bool compare(const T* s)
+//   {
+//      return StringHelper::compare(_string, s);
+//   }
+
+   void copy(const T* s, size_t length)
+   {
+      if (_size <= length) {
+         create(_string, length + 1);
+      }
+      __copy(_string, s, length, length);
+      _string[length] = 0;
+   }
+   void copy(const T* s)
+   {
+      size_t length = getlength(s);
+      if (length == 0) {
+         _string[0] = 0;
+      }
+      else copy(s, length);
+   }
+
+   void append(const T* s, size_t length)
+   {
+      size_t newLength = getlength(_string) + length + 1;
+      if (newLength > _size)
+         create(_string, newLength);
+
+      __append(_string, s, length);
+      _string[newLength] = 0;
+   }
+   void append(const T* s)
+   {
+      size_t length = getlength(s);
+      if (length > 0) {
+         append(s, length);
+      }
+   }
+   void append(T c)
+   {
+      append(&c, 1);
+   }
+
+   void appendInt(int n)
+   {
+      int pos = getlength(_string);
+
+      intToStr(n, _string + pos, 10);
+   }
+
+   void copyInt(int n)
+   {
+      intToStr(n, _string, 10);
+   }
+
+//   void lower()
+//   {
+//      StringHelper::lower(_string);
+//   }
+//
+//   void trim(T ch)
+//   {
+//      StringHelper::trim(_string, ch);
+//   }
+//
+//   T* clone()
+//   {
+//      return StringHelper::clone(_string);
+//   }
+//
+//   T* clone(int pos)
+//   {
+//      return StringHelper::clone(_string + pos);
+//   }
+//
+//   int toInt()
+//   {
+//      return StringHelper::strToInt(_string);
+//   }
+//
+//   void clear()
+//   {
+//      if (_string)
+//         _string[0] = 0;
+//   }
+//
+//   size_t Length()
+//   {
+//      return getlength(_string);
+//   }
+
+   DynamicString()
+   {
+      _size = 0;
+      _string = NULL;
+   }
+   DynamicString(const T* value)
+   {
+      assignOrCopy(value, _string, _size);
+   }
+
+   ~DynamicString() { if (_size > 0) freestr(_string); }
+};
 
 // --- HOTFIX : internal conversion routines ---
 
@@ -507,7 +528,9 @@ void __append(char* dest, const char* sour, size_t length);
 void __append(wide_c* dest, const wide_c* sour, size_t length);
 
 char* __allocate(size_t size, const char* value);
+char* __reallocate(char* s, size_t size);
 wchar_t* __allocate(size_t size, const wchar_t* value);
+wchar_t* __reallocate(wchar_t* s, size_t size);
 
 char* __lower(char* s);
 wchar_t* __lower(wide_c* s);

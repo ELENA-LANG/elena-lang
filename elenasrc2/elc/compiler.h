@@ -199,8 +199,8 @@ public:
 //         this->type = type;
 //      }
 //   };
-//
-//   typedef Map<ident_t, ref_t, false>     ForwardMap;
+
+   typedef Map<ident_t, ref_t, false>     ForwardMap;
 //   typedef Map<ident_t, Parameter, false> LocalMap;
 //   typedef Map<ref_t, ref_t>              SubjectMap;
 //   typedef Map<ref_t, ref_t>              ClassMap;
@@ -301,10 +301,10 @@ private:
       ident_t        sourcePath;
       ref_t          sourcePathRef;
 
-//      // default namespaces
-//      List<ident_t> defaultNs;
-//      ForwardMap    forwards;       // forward declarations
-//
+      // default namespaces
+      List<ident_t> defaultNs;
+      ForwardMap    forwards;       // forward declarations
+
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
 //
@@ -339,11 +339,11 @@ private:
 //
 //      // cached subjects / hints
 //      ref_t boolType;
-//
-//      // warning mapiing
+
+      // warning mapiing
 //      bool warnOnUnresolved;
 //      bool warnOnWeakUnresolved;
-//      int  warningMask;
+      int  warningMask;
 
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
@@ -352,8 +352,8 @@ private:
 //      ClassMap typifiedClasses;
 //
 //      ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      ref_t mapReference(ident_t reference, bool existing = false);
+
+      ref_t mapReference(ident_t reference, bool existing = false);
 //      ref_t mapSubject(ident_t reference, bool existing);
 //
 //      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
@@ -362,17 +362,17 @@ private:
 //      {
 //         constantHints.add(reference, classReference);
 //      }
-//
-//      void raiseError(const char* message, int row, int col, ident_t terminal);
-//      void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
-//
-//      void raiseError(const char* message, TerminalInfo terminal);
-//      void raiseWarning(int level, const char* message, TerminalInfo terminal);
-//
-//      bool checkReference(ident_t referenceName);
-//
-//      ref_t resolveIdentifier(ident_t name);
-//
+
+      void raiseError(const char* message, int row, int col, ident_t terminal);
+      //void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
+
+      void raiseError(const char* message, SNode terminal);
+      //void raiseWarning(int level, const char* message, TerminalInfo terminal);
+
+      bool checkReference(ident_t referenceName);
+
+      ref_t resolveIdentifier(ident_t name);
+
 //      ref_t mapNewSubject(ident_t terminal);
 //
 //      // NOTE : the function returns 0 for implicit subjects
@@ -380,9 +380,9 @@ private:
 //      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
 //      ref_t mapSubject(TerminalInfo terminal, bool explicitOnly = true);
 //      ref_t resolveSubjectRef(ident_t name, bool explicitOnly = true);
-//
-//      ref_t mapTerminal(TerminalInfo terminal, bool existing = false);
-//
+
+      ref_t mapTerminal(SNode terminal, bool existing = false);
+
 //      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 //
 //      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);

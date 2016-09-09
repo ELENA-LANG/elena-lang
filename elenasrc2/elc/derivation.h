@@ -122,6 +122,7 @@ class DerivationWriter : public _DerivationWriter
 
    void unpackNode(SNode node);
    void unpackChildren(SNode node);
+   void copyChildren(SNode node);
 
 public:
    void writeSymbol(Symbol symbol);
