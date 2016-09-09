@@ -1527,22 +1527,22 @@ inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& sc
    }
 }
 
-//void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
-//{
-//   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
-//
-//   size_t codeSize = tapeReader.getDWord();
-//   size_t endPos = tapeReader.Position() + codeSize;
-//
-//   compileTape(tapeReader, endPos, scope);
-//
-//   // ; copy the parameter to the accumulator to simulate embedded symbol
-//   // ; exit the procedure
-//   // ret
-//   codeWriter.writeByte(0xC3);
-//
-//   alignCode(&codeWriter, 0x04, true);
-//}
+void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
+{
+   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
+
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
+
+   compileTape(tapeReader, endPos, scope);
+
+   // ; copy the parameter to the accumulator to simulate embedded symbol
+   // ; exit the procedure
+   // ret
+   codeWriter.writeByte(0xC3);
+
+   alignCode(&codeWriter, 0x04, true);
+}
 
 void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {

@@ -1206,16 +1206,16 @@ void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, 
 
 // --- Compiler::SourceScope ---
 
-Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope/*, ref_t reference*/)
+Compiler::SourceScope :: SourceScope(ModuleScope* moduleScope, ref_t reference)
    : Scope(moduleScope)
 {
-//   this->reference = reference;
+   this->reference = reference;
 }
 
 // --- Compiler::SymbolScope ---
 
-Compiler::SymbolScope :: SymbolScope(ModuleScope* parent/*, ref_t reference*/)
-   : SourceScope(parent/*, reference*/)
+Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
+   : SourceScope(parent, reference)
 {
 //   typeRef = 0;
 //   constant = false;
@@ -1231,8 +1231,8 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent/*, ref_t reference*/)
 
 // --- Compiler::ClassScope ---
 
-Compiler::ClassScope :: ClassScope(ModuleScope* parent/*, ref_t reference*/)
-   : SourceScope(parent/*, reference*/)
+Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
+   : SourceScope(parent, reference)
 {
 //   info.header.parentRef =   moduleScope->superReference;
 //   info.header.flags = elStandartVMT;
@@ -8468,7 +8468,7 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
             scope.module->mapSection(member.argument | mskSymbolRef, false);
 
             // compile class
-            ClassScope classScope(&scope/*, reference*/);
+            ClassScope classScope(&scope, member.argument);
             compileClassDeclaration(member, classScope/*, hints*/);
 
 //            // compile class class if it available
@@ -8520,15 +8520,15 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
          case lxSymbol:
          case lxStatic:
          {
-            ref_t reference = scope.mapTerminal(name);
+            member.setArgument(scope.mapTerminal(name));
 
-//            // check for duplicate declaration
-//            if (scope.module->mapSection(reference | mskSymbolRef, true))
-//               scope.raiseError(errDuplicatedSymbol, name);
-//
-//            scope.module->mapSection(reference | mskSymbolRef, false);
+            // check for duplicate declaration
+            if (scope.module->mapSection(member.argument | mskSymbolRef, true))
+               scope.raiseError(errDuplicatedSymbol, name);
 
-            SymbolScope symbolScope(&scope/*, reference*/);
+            scope.module->mapSection(member.argument | mskSymbolRef, false);
+
+            SymbolScope symbolScope(&scope, member.argument);
             compileSymbolDeclaration(member, symbolScope/*, hints*/);
             break;
          }
@@ -8550,10 +8550,8 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
 //            break;
          case nsClass:
          {
-//            ref_t reference = scope.mapTerminal(name);
-
             // compile class
-            ClassScope classScope(&scope/*, reference*/);
+            ClassScope classScope(&scope, member.argument);
 //            scope.loadClassInfo(classScope.info, scope.module->resolveReference(reference), false);
             compileClassImplementation(member, classScope/*, hints*/);
 
@@ -8569,9 +8567,7 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
          case lxSymbol:
          case lxStatic:
          {
-//            ref_t reference = scope.mapTerminal(name);
-
-            SymbolScope symbolScope(&scope/*, reference*/);
+            SymbolScope symbolScope(&scope, member.argument);
             compileSymbolImplementation(member, symbolScope/*, hints*/);
             break;
          }

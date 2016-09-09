@@ -559,9 +559,9 @@ private:
 //      MemoryDump imported;
 
       CommandTape    tape;
-//      ref_t          reference;
+      ref_t          reference;
 
-      SourceScope(ModuleScope* parent/*, ref_t reference*/);
+      SourceScope(ModuleScope* parent, ref_t reference);
    };
 
    // - ClassScope -
@@ -613,7 +613,7 @@ private:
 //         }
 //      }
 
-      ClassScope(ModuleScope* parent/*, ref_t reference*/);
+      ClassScope(ModuleScope* parent, ref_t reference);
    };
 
    // - SymbolScope -
@@ -633,7 +633,7 @@ private:
 //         else return Scope::getScope(level);
 //      }
 
-      SymbolScope(ModuleScope* parent/*, ref_t reference*/);
+      SymbolScope(ModuleScope* parent, ref_t reference);
    };
 
 //   // - MethodScope -
