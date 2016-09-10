@@ -50,11 +50,12 @@ void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 
    _writer.insertDWord(position, type);
    _writer.insertDWord(position + 4, argument);
+   _writer.insertDWord(position + 8, 0);
 
    Stack<size_t>::Iterator it = _bookmarks.start();
    while (!it.Eof()) {
       if (*it > position) {
-         *it = *it + 8;
+         *it = *it + 12;
       }
 
       it++;

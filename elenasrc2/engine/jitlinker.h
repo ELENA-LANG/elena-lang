@@ -115,11 +115,11 @@ class JITLinker : _JITLoaderListener
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
    void createNativeSymbolDebugInfo(ident_t reference, void* address, size_t& sizePtr);
-//   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
+   void createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
-//   void* getVMTAddress(_Module* module, ref_t reference, References& references);
-//   void* getVMTReference(_Module* module, ref_t reference, References& references);
+   void* getVMTAddress(_Module* module, ref_t reference, References& references);
+   void* getVMTReference(_Module* module, ref_t reference, References& references);
    int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
    int getVMTMethodAddress(void* vaddress, int messageID);
    int getVMTMethodIndex(void* vaddress, int messageID);
@@ -128,21 +128,21 @@ class JITLinker : _JITLoaderListener
    void fixReferences(References& relocations, _Memory* image);
 //   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
 
-//   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
+   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
    ref_t resolveMessage(_Module* module, ref_t reference);
 
 //   void* resolveNativeVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
-//   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
-//   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
+   void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
+   void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
 //   void* resolveConstant(ident_t reference, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
-//////   void* resolveDump(const wchar16_t*  reference, int size, int mask);
+//   void* resolveDump(const wchar16_t*  reference, int size, int mask);
 //   void* resolveMessage(ident_t reference, ident_t vmt);
 //   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
-//////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
+//   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
    void prepareCompiler();

@@ -238,39 +238,39 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
    }
 }
 
-//void* JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& references)
-//{
-//   if (reference != 0) {
-//      ident_t referenceName = _loader->retrieveReference(module, reference, mskVMTRef);
-//
-//      void* vaddress = _loader->resolveReference(referenceName, mskVMTRef);
-//
-//      if (vaddress==LOADER_NOTLOADED) {
-//         // create VMT table without resolving references to prevent circular reference
-//         vaddress = createBytecodeVMTSection(referenceName, mskVMTRef, _loader->getClassSectionInfo(referenceName, mskClassRef, mskVMTRef, false), references);
-//
-//         if (vaddress == LOADER_NOTLOADED)
-//            throw JITUnresolvedException(referenceName);
-//      }
-//      return vaddress;
-//   }
-//   else return NULL;
-//}
-//
-//void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References& references)
-//{
-//   void* vaddress = getVMTAddress(module, reference, references);
-//
-//   if (vaddress != NULL) {
-//      if (_virtualMode) {
-//         _Memory* image = _loader->getTargetSection(mskVMTRef);
-//
-//         return image->get((ref_t)vaddress & ~mskAnyRef);
-//      }
-//      else return vaddress;
-//   }
-//   else return NULL;
-//}
+void* JITLinker :: getVMTAddress(_Module* module, ref_t reference, References& references)
+{
+   if (reference != 0) {
+      ident_t referenceName = _loader->retrieveReference(module, reference, mskVMTRef);
+
+      void* vaddress = _loader->resolveReference(referenceName, mskVMTRef);
+
+      if (vaddress==LOADER_NOTLOADED) {
+         // create VMT table without resolving references to prevent circular reference
+         vaddress = createBytecodeVMTSection(referenceName, mskVMTRef, _loader->getClassSectionInfo(referenceName, mskClassRef, mskVMTRef, false), references);
+
+         if (vaddress == LOADER_NOTLOADED)
+            throw JITUnresolvedException(referenceName);
+      }
+      return vaddress;
+   }
+   else return NULL;
+}
+
+void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References& references)
+{
+   void* vaddress = getVMTAddress(module, reference, references);
+
+   if (vaddress != NULL) {
+      if (_virtualMode) {
+         _Memory* image = _loader->getTargetSection(mskVMTRef);
+
+         return image->get((ref_t)vaddress & ~mskAnyRef);
+      }
+      else return vaddress;
+   }
+   else return NULL;
+}
 
 int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
 {
@@ -307,16 +307,16 @@ int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
 //   }
 //   else return _compiler->findFlags(vaddress);
 //}
-//
-//size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
-//{
-//   size_t position = writer.Position();
-//
-//   // method just in time compilation
-//   _compiler->compileProcedure(refHelper, reader, writer);
-//
-//   return _virtualMode ? position : (size_t)writer.Memory()->get(position);
-//}
+
+size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
+{
+   size_t position = writer.Position();
+
+   // method just in time compilation
+   _compiler->compileProcedure(refHelper, reader, writer);
+
+   return _virtualMode ? position : (size_t)writer.Memory()->get(position);
+}
 
 void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo)
 {
@@ -424,106 +424,106 @@ void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionIn
    return vaddress;
 }
 
-//void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references)
-//{
-//   if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
-//      return LOADER_NOTLOADED;
-//
-//   ReferenceHelper refHelper(this, sectionInfo.module, &references);
-//
-//   // VMT just in time compilation
-//   MemoryReader vmtReader(sectionInfo.vmtSection);
-//   // read tape record size
-//   size_t size = vmtReader.getDWord();
-//
-//   // read VMT header
-//   ClassHeader header;
-//   vmtReader.read((void*)&header, sizeof(ClassHeader));
-//
-//   // get target image & resolve virtual address
-//   _Memory* vmtImage = _loader->getTargetSection(mask);
-//   _Memory* codeImage = _loader->getTargetSection(mskClassRef);
-//
-//   MemoryWriter vmtWriter(vmtImage);
-//
-//   // allocate space and make VTM offset
-//   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
-//
-//   void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
-//
-//   _loader->mapReference(reference, vaddress, mask);
-//
-//   // if it is a standard VMT
-//   if (test(header.flags, elStandartVMT)) {
-//      size_t position = vmtWriter.Position();
-//
-//      // load parent class
-//      void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
-//      size_t count = _compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position));
-//
-//      // create native debug info header if debug info enabled
-//      size_t sizePtr = (size_t)-1;
-//      if (_withDebugInfo)
-//         createNativeClassDebugInfo(reference, vaddress, sizePtr);
-//
-//      // read and compile VMT entries
-//      MemoryWriter   codeWriter(codeImage);
-//      MemoryReader   codeReader(sectionInfo.codeSection);
-//
-//      size_t          methodPosition;
-//      VMTEntry        entry;
-//
-//      size -= sizeof(ClassHeader);
-//      while (size > 0) {
-//         vmtReader.read((void*)&entry, sizeof(VMTEntry));
-//   
-//         codeReader.seek(entry.address);
-//         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
-//         
-//         // NOTE : private message is not added to VMT
-//         if (getVerb(entry.message) == PRIVATE_MESSAGE_ID) {
-//            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
-//         }
-//         else _compiler->addVMTEntry(refHelper, entry.message, methodPosition, (VMTEntry*)vmtImage->get(position), count);
-//
-//         size -= sizeof(VMTEntry);
-//      }
-//      if (_withDebugInfo)
-//         endNativeDebugInfo(sizePtr);
-//
-//      if (count != header.count)
-//         throw InternalError("VMT structure is corrupt");
-//
-//      // load class class
-//      void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
-//      void* packageVAddress = NULL;
-//      if (header.packageRef != 0)
-//         packageVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
-//
-//      // fix VMT
-//      _compiler->fixVMT(vmtWriter, classClassVAddress, packageVAddress, count, _virtualMode);
-//   }
-//
-//   return vaddress;
-//}
-//
-//void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo)
-//{
-//   References      references(RefInfo(0, NULL));
-//
-//   // create VMT
-//   void* vaddress = createBytecodeVMTSection(reference, mask, sectionInfo, references);
-//
-//   // fix not loaded references
-//   fixReferences(references, _loader->getTargetSection(mskClassRef));
-//
-//   //HOTFIX : resolve class symbol as well
-//   if (_classSymbolAutoLoadMode)
-//      resolve(reference, mskSymbolRef, true);
-//
-//   return vaddress;
-//}
-//
+void* JITLinker :: createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references)
+{
+   if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
+      return LOADER_NOTLOADED;
+
+   ReferenceHelper refHelper(this, sectionInfo.module, &references);
+
+   // VMT just in time compilation
+   MemoryReader vmtReader(sectionInfo.vmtSection);
+   // read tape record size
+   size_t size = vmtReader.getDWord();
+
+   // read VMT header
+   ClassHeader header;
+   vmtReader.read((void*)&header, sizeof(ClassHeader));
+
+   // get target image & resolve virtual address
+   _Memory* vmtImage = _loader->getTargetSection(mask);
+   _Memory* codeImage = _loader->getTargetSection(mskClassRef);
+
+   MemoryWriter vmtWriter(vmtImage);
+
+   // allocate space and make VTM offset
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count);
+
+   void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
+
+   _loader->mapReference(reference, vaddress, mask);
+
+   // if it is a standard VMT
+   if (test(header.flags, elStandartVMT)) {
+      size_t position = vmtWriter.Position();
+
+      // load parent class
+      void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
+      size_t count = _compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position));
+
+      // create native debug info header if debug info enabled
+      size_t sizePtr = (size_t)-1;
+      if (_withDebugInfo)
+         createNativeClassDebugInfo(reference, vaddress, sizePtr);
+
+      // read and compile VMT entries
+      MemoryWriter   codeWriter(codeImage);
+      MemoryReader   codeReader(sectionInfo.codeSection);
+
+      size_t          methodPosition;
+      VMTEntry        entry;
+
+      size -= sizeof(ClassHeader);
+      while (size > 0) {
+         vmtReader.read((void*)&entry, sizeof(VMTEntry));
+   
+         codeReader.seek(entry.address);
+         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
+         
+         // NOTE : private message is not added to VMT
+         if (getVerb(entry.message) == PRIVATE_MESSAGE_ID) {
+            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
+         }
+         else _compiler->addVMTEntry(refHelper, entry.message, methodPosition, (VMTEntry*)vmtImage->get(position), count);
+
+         size -= sizeof(VMTEntry);
+      }
+      if (_withDebugInfo)
+         endNativeDebugInfo(sizePtr);
+
+      if (count != header.count)
+         throw InternalError("VMT structure is corrupt");
+
+      // load class class
+      void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
+      void* packageVAddress = NULL;
+      if (header.packageRef != 0)
+         packageVAddress = resolve(sectionInfo.module->resolveReference(header.packageRef), mskConstArray, true);
+
+      // fix VMT
+      _compiler->fixVMT(vmtWriter, classClassVAddress, packageVAddress, count, _virtualMode);
+   }
+
+   return vaddress;
+}
+
+void* JITLinker :: resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo)
+{
+   References      references(RefInfo(0, NULL));
+
+   // create VMT
+   void* vaddress = createBytecodeVMTSection(reference, mask, sectionInfo, references);
+
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mskClassRef));
+
+   //HOTFIX : resolve class symbol as well
+   if (_classSymbolAutoLoadMode)
+      resolve(reference, mskSymbolRef, true);
+
+   return vaddress;
+}
+
 //void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress)
 //{
 //   // resolve section references
@@ -835,22 +835,22 @@ void JITLinker :: createNativeSymbolDebugInfo(ident_t reference, void* address, 
    else writer.writeRef((ref_t)address, 0);
 }
 
-//void JITLinker :: createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr)
-//{
-//   _Memory* debug = _loader->getTargetDebugSection();
-//
-//   MemoryWriter writer(debug);
-//   writer.writeLiteral(reference);
-//
-//   sizePtr = writer.Position();   
-//   writer.writeDWord(0); // size place holder
-//
-//   // save VMT address
-//   if (!_virtualMode || vaddress == NULL) {
-//      writer.writeDWord((size_t)vaddress);
-//   }
-//   else writer.writeRef((ref_t)vaddress, 0);
-//}
+void JITLinker :: createNativeClassDebugInfo(ident_t reference, void* vaddress, size_t& sizePtr)
+{
+   _Memory* debug = _loader->getTargetDebugSection();
+
+   MemoryWriter writer(debug);
+   writer.writeLiteral(reference);
+
+   sizePtr = writer.Position();   
+   writer.writeDWord(0); // size place holder
+
+   // save VMT address
+   if (!_virtualMode || vaddress == NULL) {
+      writer.writeDWord((size_t)vaddress);
+   }
+   else writer.writeRef((ref_t)vaddress, 0);
+}
 
 void JITLinker :: endNativeDebugInfo(size_t sizePtr)
 {
@@ -949,13 +949,13 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskInternalRelRef:
 //            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
 //            break;
-//         case mskSymbolRelRef:
-////         case mskClassRelRef:
-//            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef, silentMode));
-//            break;
-//         case mskVMTRef:
-//            vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef, silentMode));
-//            break;
+         case mskSymbolRelRef:
+//         case mskClassRelRef:
+            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef, silentMode));
+            break;
+         case mskVMTRef:
+            vaddress = resolveBytecodeVMTSection(reference, mask, _loader->getClassSectionInfo(reference, mskClassRef, mskVMTRef, silentMode));
+            break;
          case mskNativeCodeRef:
          case mskNativeDataRef:
          case mskNativeRDataRef:

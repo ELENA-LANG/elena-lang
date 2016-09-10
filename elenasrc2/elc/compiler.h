@@ -112,7 +112,7 @@ public:
 //      okObject,                       // param - class reference
       okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference, extraparam - class reference
-//      okConstantClass,                // param - reference, extraparam - class reference
+      okConstantClass,                // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference 
 //      okWideLiteralConstant,          // param - reference 
 //      okCharConstant,                 // param - reference
@@ -153,21 +153,21 @@ public:
    {
       ObjectKind kind;
       ref_t      param;
-//      ref_t      extraparam;
+      ref_t      extraparam;
 //      ref_t      type;
    
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
 //      ObjectInfo(ObjectKind kind, ObjectInfo copy)
@@ -181,16 +181,16 @@ public:
       {
          this->kind = kind;
          this->param = param;
-//         this->extraparam = 0;
+         this->extraparam = 0;
 //         this->type = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
 //         this->type = 0;
-//      }
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
 //      {
 //         this->kind = kind;
@@ -385,11 +385,11 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//      ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
-//      {
-//         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
-//      }
+      ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+      ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+      {
+         return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+      }
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 //
 //      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
@@ -442,9 +442,9 @@ private:
 //      }
 //
 //      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
-////      ref_t defineType(ref_t classRef);
-//
-//      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
+//      ref_t defineType(ref_t classRef);
+
+      void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
 
       void loadModuleInfo(_Module* extModule)
       {
@@ -901,10 +901,10 @@ private:
 //   bool optimizeJumps(CommandTape& tape);
 //   void optimizeTape(CommandTape& tape);
    
-   //void recordDebugStep(SNode terminal, int stepType)
-   //{
-   //   terminal.insertNode(lxBreakpoint, stepType);
-   //}
+   void recordDebugStep(SNode terminal, int stepType)
+   {
+      terminal.insertNode(lxBreakpoint, stepType);
+   }
 //   void recordDebugVirtualStep(CodeScope& scope, int stepType)
 //   {
 //      scope.writer->newNode(lxBreakpoint, stepType);
@@ -1054,9 +1054,9 @@ private:
 //   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
 //   void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 ////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
-//
+
 //   void compilePreloadedCode(SymbolScope& scope);
-//   void compileSymbolCode(ClassScope& scope);
+   void compileSymbolCode(ClassScope& scope);
 //   void compileVirtualTypecastMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 //
@@ -1079,8 +1079,8 @@ private:
 //   void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
    //void generateClassDeclaration(/*ClassScope& scope, bool closed*/);
 //   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
-//
-//   void generateClassImplementation(ClassScope& scope);
+
+   void generateClassImplementation(SNode node, ClassScope& scope);
 
    void compileClassDeclaration(SNode node, ClassScope& scope/*, DNode hints*/);
    void compileClassImplementation(SNode node, ClassScope& scope/*, DNode hints*/);

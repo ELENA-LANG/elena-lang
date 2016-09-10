@@ -96,29 +96,29 @@ typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting com
 //{
 //   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
 //}
-//
-//inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   ref_t verbId = 0;
-//   ref_t signRef = 0;
-//   int paramCount = 0;
-//
-//   decodeMessage(exportRef, signRef, verbId, paramCount);
-//
-//   // if it is generic message
-//   if (signRef == 0) {
-//      return exportRef;
-//   }
-//
-//   // otherwise signature and custom verb should be imported
-//   if (signRef != 0) {
-//      ident_t subject = exporter->resolveSubject(signRef);
-//
-//      signRef = importer->mapSubject(subject, false);
-//   }
-//   return encodeMessage(signRef, verbId, paramCount);
-//}
-//
+
+inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   ref_t verbId = 0;
+   ref_t signRef = 0;
+   int paramCount = 0;
+
+   decodeMessage(exportRef, signRef, verbId, paramCount);
+
+   // if it is generic message
+   if (signRef == 0) {
+      return exportRef;
+   }
+
+   // otherwise signature and custom verb should be imported
+   if (signRef != 0) {
+      ident_t subject = exporter->resolveSubject(signRef);
+
+      signRef = importer->mapSubject(subject, false);
+   }
+   return encodeMessage(signRef, verbId, paramCount);
+}
+
 //inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer)
 //{
 //   // otherwise signature and custom verb should be imported
@@ -129,17 +129,17 @@ typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting com
 //   }
 //   return exportRef;
 //}
-//
-//inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   if (exportRef) {
-//      ident_t reference = exporter->resolveReference(exportRef);
-//
-//      return importer->mapReference(reference);
-//   }
-//   else return 0;
-//}
-//
+
+inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (exportRef) {
+      ident_t reference = exporter->resolveReference(exportRef);
+
+      return importer->mapReference(reference);
+   }
+   else return 0;
+}
+
 //inline ref_t importConstant(_Module* exporter, ref_t exportRef, _Module* importer)
 //{
 //   if (exportRef) {
@@ -650,21 +650,21 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    //else if (constantHints.exist(reference)) {
    //   return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
    //}
-   //else if (checkState) {
-   //   ClassInfo info;
-   //   // check if the object can be treated like a constant object
-   //   ref_t r = loadClassInfo(info, module->resolveReference(reference), true);
-   //   if (r) {
+   else if (checkState) {
+      ClassInfo info;
+      // check if the object can be treated like a constant object
+      ref_t r = loadClassInfo(info, module->resolveReference(reference), true);
+      if (r) {
    //      // if it is a stateless symbol
    //      if (test(info.header.flags, elStateless)) {
    //         return ObjectInfo(okConstantSymbol, reference, reference);
    //      }
-   //      // if it is a normal class
-   //      // then the symbol is reference to the class class
-   //      else if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
-   //         return ObjectInfo(okConstantClass, reference, info.header.classRef);
-   //      }
-   //   }
+         // if it is a normal class
+         // then the symbol is reference to the class class
+         /*else */if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
+            return ObjectInfo(okConstantClass, reference, info.header.classRef);
+         }
+      }
    //   else {
    //      // check if the object is typed expression
    //      SymbolExpressionInfo symbolInfo;
@@ -684,7 +684,7 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
    //         }
    //      }
    //   }
-   //}
+   }
 
    // otherwise it is a normal one
    return ObjectInfo(okSymbol, reference);
@@ -736,102 +736,102 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 //
 //   return defineObjectInfo(referenceID);
 //}
-//
-//void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
-//{
-//   target.header = copy.header;
-//   target.size = copy.size;
-//
-//   if (!headerOnly) {
-//      // import method references and mark them as inherited
-//      ClassInfo::MethodMap::Iterator it = copy.methods.start();
-//      while (!it.Eof()) {
-//         target.methods.add(importMessage(exporter, it.key(), module), false);
-//
-//         it++;
-//      }
-//
-//      target.fields.add(copy.fields);
-//
-//      // import field types
-//      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-//      while (!type_it.Eof()) {
-//         target.fieldTypes.add(type_it.key(), importSubject(exporter, *type_it, module));
-//
-//         type_it++;
-//      }
-//
-//      // import method types
-//      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
-//      while (!mtype_it.Eof()) {
-//         Attribute key = mtype_it.key();
-//         ref_t value = *mtype_it;
-//         if (test(key.value2, maSubjectMask))
-//            value = importSubject(exporter, value, module);
-//
-//         target.methodHints.add(
-//            Attribute(importMessage(exporter, key.value1, module), key.value2),
-//            value);
-//
-//         mtype_it++;
-//      }
-//
-//      // import static fields
-//      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
-//      while (!static_it.Eof()) {
-//         ClassInfo::StaticInfo info(
-//            importReference(exporter, (*static_it).value2, module), 
-//            importSubject(exporter, (*static_it).value2, module));
-//
-//         target.statics.add(static_it.key(), info);
-//
-//         static_it++;
-//      }
-//   }
-//   // import class class reference
-//   if (target.header.classRef != 0)
-//      target.header.classRef = importReference(exporter, target.header.classRef, module);
-//
-//   // import parent reference
-//   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
-//}
-//
-//ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
-//{
-//   _Module* argModule;
-//
-//   if (emptystr(vmtName))
-//      return 0;
-//
-//   // load class meta data
-//   ref_t moduleRef = 0;
-//   argModule = project->resolveModule(vmtName, moduleRef);
-//
-//   if (argModule == NULL || moduleRef == 0)
-//      return 0;
-//
-//   // load argument VMT meta data
-//   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-//   if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
-//      return 0;
-//
-//   MemoryReader reader(metaData);
-//
-//   if (argModule != module) {
-//      ClassInfo copy;
-//      copy.load(&reader, headerOnly);
-//
-//      importClassInfo(copy, info, argModule, headerOnly);
-//   }
-//   else info.load(&reader, headerOnly);
-//
-//   if (argModule != module) {
-//      // import reference
-//      importReference(argModule, moduleRef, module);
-//   }
-//   return moduleRef;
-//}
-//
+
+void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
+{
+   target.header = copy.header;
+   target.size = copy.size;
+
+   if (!headerOnly) {
+      // import method references and mark them as inherited
+      ClassInfo::MethodMap::Iterator it = copy.methods.start();
+      while (!it.Eof()) {
+         target.methods.add(importMessage(exporter, it.key(), module), false);
+
+         it++;
+      }
+
+      target.fields.add(copy.fields);
+
+      //// import field types
+      //ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+      //while (!type_it.Eof()) {
+      //   target.fieldTypes.add(type_it.key(), importSubject(exporter, *type_it, module));
+
+      //   type_it++;
+      //}
+
+      //// import method types
+      //ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
+      //while (!mtype_it.Eof()) {
+      //   Attribute key = mtype_it.key();
+      //   ref_t value = *mtype_it;
+      //   if (test(key.value2, maSubjectMask))
+      //      value = importSubject(exporter, value, module);
+
+      //   target.methodHints.add(
+      //      Attribute(importMessage(exporter, key.value1, module), key.value2),
+      //      value);
+
+      //   mtype_it++;
+      //}
+
+      //// import static fields
+      //ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
+      //while (!static_it.Eof()) {
+      //   ClassInfo::StaticInfo info(
+      //      importReference(exporter, (*static_it).value2, module), 
+      //      importSubject(exporter, (*static_it).value2, module));
+
+      //   target.statics.add(static_it.key(), info);
+
+      //   static_it++;
+      //}
+   }
+   // import class class reference
+   if (target.header.classRef != 0)
+      target.header.classRef = importReference(exporter, target.header.classRef, module);
+
+   // import parent reference
+   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
+}
+
+ref_t Compiler::ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
+{
+   _Module* argModule;
+
+   if (emptystr(vmtName))
+      return 0;
+
+   // load class meta data
+   ref_t moduleRef = 0;
+   argModule = project->resolveModule(vmtName, moduleRef);
+
+   if (argModule == NULL || moduleRef == 0)
+      return 0;
+
+   // load argument VMT meta data
+   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
+      return 0;
+
+   MemoryReader reader(metaData);
+
+   if (argModule != module) {
+      ClassInfo copy;
+      copy.load(&reader, headerOnly);
+
+      importClassInfo(copy, info, argModule, headerOnly);
+   }
+   else info.load(&reader, headerOnly);
+
+   if (argModule != module) {
+      // import reference
+      importReference(argModule, moduleRef, module);
+   }
+   return moduleRef;
+}
+
 //ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
 //{
 //   if (emptystr(symbol))
@@ -2687,9 +2687,10 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
          terminal = lxSymbolRef;
          terminal.setArgument(object.param);
          break;
-//      case okConstantClass:
-//         scope.writer->newNode(lxConstantClass, object.param);
-//         break;
+      case okConstantClass:
+         terminal = lxConstantClass;
+         terminal.setArgument(object.param);
+         break;
 //      case okConstantSymbol:
 //         scope.writer->newNode(lxConstantSymbol, object.param);
 //         break;
@@ -5360,21 +5361,21 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //      member = member.nextNode();
 //   }
 //}
-//
-//void Compiler :: compileSymbolCode(ClassScope& scope)
-//{
-//   CommandTape tape;
-//
-//   // creates implicit symbol
-//   SymbolScope symbolScope(scope.moduleScope, scope.reference);
-//
-//   _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
-//
-//   // create byte code sections
-//   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
-//      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
-//}
-//
+
+void Compiler :: compileSymbolCode(ClassScope& scope)
+{
+   CommandTape tape;
+
+   // creates implicit symbol
+   SymbolScope symbolScope(scope.moduleScope, scope.reference);
+
+   _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
+
+   // create byte code sections
+   _writer.save(tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
+      scope.moduleScope->sourcePathRef);
+}
+
 //void Compiler :: compilePreloadedCode(SymbolScope& scope)
 //{
 //   _Module* module = scope.moduleScope->module;
@@ -6358,21 +6359,21 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope/*, DNode 
    scope.save();
 }
 
-//void Compiler :: generateClassImplementation(ClassScope& scope)
-//{
+void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
+{
 //   optimizeClassTree(scope);
-//
-//   _writer.generateClass(scope.tape, scope.syntaxTree);
-//
+
+   _writer.generateClass(scope.tape, node);
+
 //   // optimize
 //   optimizeTape(scope.tape);
-//
-//   // create byte code sections
-//   scope.save();
-//   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
-//      scope.syntaxTree.Strings(), scope.moduleScope->sourcePathRef);
-//}
-//
+
+   // create byte code sections
+   scope.save();
+   _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 
+      scope.moduleScope->sourcePathRef);
+}
+
 //void Compiler :: copyNode(ClassScope& scope, SyntaxTree::Node current, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info)
 //{
 //   if (current.type == lxTemplateTarget) {
@@ -6707,13 +6708,13 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope/*, DNo
 //   importTemplateImplementations(scope, writer);
 //
 //   writer.closeNode();
-//
-//   generateClassImplementation(scope);
-//
-//   // compile explicit symbol
-//   // extension cannot be used stand-alone, so the symbol should not be generated
-//   if (scope.extensionMode == 0)
-//      compileSymbolCode(scope);
+
+   generateClassImplementation(node, scope);
+
+   // compile explicit symbol
+   // extension cannot be used stand-alone, so the symbol should not be generated
+   //if (scope.extensionMode == 0)
+      compileSymbolCode(scope);
 }
 
 //void Compiler :: declareSingletonClass(DNode node, DNode parentNode, ClassScope& scope, DNode hints)
@@ -7008,7 +7009,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //      compileSymbolHints(hints, scope, true);
       
       // compile symbol body, if it is not a singleton
-//      recordDebugStep(expression, dsStep);
+      recordDebugStep(expression, dsStep);
 //      writer.newNode(lxExpression);
       /*retVal = */compileExpression(expression, codeScope/*, scope.typeRef, 0*/);
 //      writer.closeNode();
@@ -8460,7 +8461,7 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
          //   break;
          case lxClass:
          {
-            member.argument = scope.mapTerminal(name);
+            member.setArgument(scope.mapTerminal(name));
 
             // check for duplicate declaration
             if (scope.module->mapSection(member.argument | mskSymbolRef, true))
@@ -8549,11 +8550,11 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
 //         case nsSubject:
 //            compileSubject(member, scope, hints);
 //            break;
-         case nsClass:
+         case lxClass:
          {
             // compile class
             ClassScope classScope(&scope, member.argument);
-//            scope.loadClassInfo(classScope.info, scope.module->resolveReference(reference), false);
+            scope.loadClassInfo(classScope.info, scope.module->resolveReference(member.argument), false);
             compileClassImplementation(member, classScope/*, hints*/);
 
 //            // compile class class if it available

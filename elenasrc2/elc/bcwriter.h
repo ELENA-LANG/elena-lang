@@ -116,7 +116,7 @@ class ByteCodeWriter
    void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef);
 
 //   void declareInitializer(CommandTape& tape, ref_t reference);
-//   void declareClass(CommandTape& tape, ref_t reference);
+   void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
 //   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
@@ -148,9 +148,9 @@ class ByteCodeWriter
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareSelfInfo(CommandTape& tape, int level);
 //   void declareMessageInfo(CommandTape& tape, ref_t stringRef);
-//   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
-//   void declareBlock(CommandTape& tape);
-//
+   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
+   void declareBlock(CommandTape& tape);
+
 //   void newFrame(CommandTape& tape, int reserved);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
@@ -215,7 +215,7 @@ class ByteCodeWriter
 //   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
-//   void endClass(CommandTape& tape);
+   void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
@@ -248,9 +248,9 @@ class ByteCodeWriter
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
-//
-//   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
-//
+
+   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
+
 //   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
 //   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 //
@@ -304,11 +304,11 @@ public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
    int writeString(ident_t path);
 
-//   void generateClass(CommandTape& tape, SyntaxTree& tree);
-   //void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateClass(CommandTape& tape, SNode root);
+   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
-//   void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
+   //void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, int sourcePathRef);
 

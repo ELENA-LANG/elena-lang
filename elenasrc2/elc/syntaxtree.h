@@ -16,41 +16,42 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxParameter   = 0x10000,
-   lxObjectMask  = 0x08000,
-   lxExprMask    = 0x0C000,
+   lxParameter    = 0x10000,
+   lxObjectMask   = 0x08000,
+   lxExprMask     = 0x0C000,
 
-   lxEnding       = -1,
-   lxNone         = 0x00000,
+   lxEnding        = -1,
+   lxNone          = 0x00000,
 
    // scopes
-   lxRoot         = 0x00001,
-   lxClass        = 0x0000E,
-   lxSymbol       = 0x00011,
-   lxExpression   = 0x0C012,
-   lxStatic       = 0x00022,
+   lxRoot          = 0x00001,
+   lxClass         = 0x0000E,
+   lxSymbol        = 0x00011,
+   lxExpression    = 0x0C012,
+   lxStatic        = 0x00022,
 
    // parameters
-   lxLiteral      = 0x18004,
-   lxIdentifier   = 0x18005,
-   lxPrivate      = 0x18006,
-   lxReference    = 0x18007,
-   lxInteger      = 0x18008,
-   lxHexInteger   = 0x18009,
-   lxReal         = 0x1800A,
-   lxCharacter    = 0x1800B,
-   lxLong         = 0x1800C,
-   lxWide         = 0x1800D,
+   lxLiteral       = 0x18004,
+   lxIdentifier    = 0x18005,
+   lxPrivate       = 0x18006,
+   lxReference     = 0x18007,
+   lxInteger       = 0x18008,
+   lxHexInteger    = 0x18009,
+   lxReal          = 0x1800A,
+   lxCharacter     = 0x1800B,
+   lxLong          = 0x1800C,
+   lxWide          = 0x1800D,
 
-   lxSymbolRef    = 0x18107,
+   lxSymbolRef     = 0x18107,
+   lxConstantClass = 0x18112, // arg - reference
 
    // attributes
-   lxSourcePath   = 0x20001,
-   lxCol          = 0x20002,
-   lxRow          = 0x20003,
-   lxLength       = 0x02004,
-   lxBreakpoint   = 0x20005,
-   lxImport       = 0x20006,
+   lxSourcePath    = 0x20001,
+   lxCol           = 0x20002,
+   lxRow           = 0x20003,
+   lxLength        = 0x02004,
+   lxBreakpoint    = 0x20005,
+   lxImport        = 0x20006,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -82,7 +83,6 @@ enum LexicalType
 //   lxConstantInt = 0x8410F, // arg - reference
 //   lxConstantLong = 0x84110, // arg - reference
 //   lxConstantReal = 0x84111, // arg - reference
-//   lxConstantClass = 0x24112, // arg - reference
 //   lxMessageConstant = 0x24113, // arg - rererence
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
@@ -407,6 +407,15 @@ public:
          return node;
       }
 
+      Node findNext(LexicalType mask) const
+      {
+         Node node = *this;
+
+         while (node != lxNone && !test(node.type, mask))
+            node = node.nextNode();
+
+         return node;
+      }
 
 //      Node lastChild() const
 //      {
