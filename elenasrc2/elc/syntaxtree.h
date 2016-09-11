@@ -27,7 +27,7 @@ enum LexicalType
    lxRoot          = 0x00001,
    lxClass         = 0x0000E,
    lxSymbol        = 0x00011,
-   lxExpression    = 0x0C012,
+   lxClassMethod   = 0x00016,
    lxStatic        = 0x00022,
 
    // parameters
@@ -42,8 +42,12 @@ enum LexicalType
    lxLong          = 0x1800C,
    lxWide          = 0x1800D,
 
+   lxImporting     = 0x08101,
    lxSymbolRef     = 0x18107,
    lxConstantClass = 0x18112, // arg - reference
+
+   lxExpression    = 0x0C012,
+   lxDispatching   = 0x0C036,   // dispatching a message, optional arg - message
 
    // attributes
    lxSourcePath    = 0x20001,
@@ -52,6 +56,8 @@ enum LexicalType
    lxLength        = 0x02004,
    lxBreakpoint    = 0x20005,
    lxImport        = 0x20006,
+   lxReserved      = 0x20007,
+   lxParamCount    = 0x20008,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -105,7 +111,6 @@ enum LexicalType
 //   lxDirectCalling   = 0x10308,   // calling a method, arg - message
 //   lxSDirctCalling   = 0x10309,   // calling a virtual method, arg - message
 //   lxResending       = 0x1030A,   // resending a message, optional arg - message
-//   lxDispatching     = 0x1030B,   // dispatching a message, optional arg - message
 //   lxTrying          = 0x0030C,   // try-catch expression
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
@@ -161,7 +166,6 @@ enum LexicalType
 //   lxMessageVariable = 0x00430, // debug info only
 //   lxSelfVariable    = 0x00431, // debug info only
 //   lxReleasing       = 0x00432,
-//   lxImporting       = 0x00433,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //   lxBinarySelf      = 0x00435, // debug info only
 //
@@ -177,8 +181,6 @@ enum LexicalType
 //   lxMessage         = 0x1044A, // arg - message
 //   lxEmbeddable      = 0x0044B,
 //   lxSize            = 0x0044C,
-//   lxReserved        = 0x0044D,
-//   lxParamCount      = 0x0044E,
 //   lxSubject         = 0x4044F,
 //
 //   lxStaticAttr      = 0x00820,
@@ -198,7 +200,6 @@ enum LexicalType
 //   lxClassFlag       = 0x04001,      // class fields
 //   //lxClassArray      = 0x04003,
 //   lxClassField      = 0x04005,
-//   lxClassMethod     = 0x14006,
 //
 //   lxTemplate         = 0x4000B,
 //   lxTemplateField    = 0x0000C,

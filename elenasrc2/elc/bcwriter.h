@@ -57,28 +57,28 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   struct ImportScope
-//   {
-//      _Memory*    section; 
-//      _Module*    sour;
-//      _Module*    dest;
-//
-//      ImportScope()
-//      {
-//         section = NULL;
-//         sour = NULL;
-//         dest = NULL;
-//      }
-//      ImportScope(_Memory* section, _Module* sour, _Module* dest)
-//      {
-//         this->section = section;
-//         this->sour = sour;
-//         this->dest = dest;
-//      }
-//   };
-//
-//   List<ImportScope> imports;
+
+   struct ImportScope
+   {
+      _Memory*    section; 
+      _Module*    sour;
+      _Module*    dest;
+
+      ImportScope()
+      {
+         section = NULL;
+         sour = NULL;
+         dest = NULL;
+      }
+      ImportScope(_Memory* section, _Module* sour, _Module* dest)
+      {
+         this->section = section;
+         this->sour = sour;
+         this->dest = dest;
+      }
+   };
+
+   List<ImportScope> imports;
    MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
@@ -119,7 +119,7 @@ class ByteCodeWriter
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
-//   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
+   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
 //   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
@@ -212,9 +212,9 @@ class ByteCodeWriter
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
-//   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
-//   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
-//   void endIdleMethod(CommandTape& tape);
+   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
+   void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
@@ -295,10 +295,10 @@ class ByteCodeWriter
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void generateMethod(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void importCode(CommandTape& tape, ImportScope& scope);
+
+   void generateMethod(CommandTape& tape, SyntaxTree::Node node);
+
+   void importCode(CommandTape& tape, ImportScope& scope);
 
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
@@ -312,16 +312,16 @@ public:
 
    void save(CommandTape& tape, _Module* module, _Module* debugModule, int sourcePathRef);
 
-//   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
-//   {
-//      imports.add(ImportScope(section, sour, dest));
-//
-//      return imports.Count();
-//   }
+   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
+   {
+      imports.add(ImportScope(section, sour, dest));
+
+      return imports.Count();
+   }
    void clear()
    {
       _strings.clear();
-//      imports.clear();
+      imports.clear();
    }
 };
 

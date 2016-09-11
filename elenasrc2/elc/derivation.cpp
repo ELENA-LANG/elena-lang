@@ -21,6 +21,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsClass:
       case nsSymbol:
       case nsStatic:
+      case nsMethod:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          unpackChildren(node);
          _writer.closeNode();
@@ -43,6 +44,7 @@ void DerivationWriter :: unpackNode(SNode node)
          _writer.closeNode();
          break;
       case nsExpression:
+      case nsDispatchHandler:
          copyExpression(node);
          break;
       case nsObject:
@@ -82,7 +84,7 @@ void DerivationWriter :: copyChildren(SNode node)
 
 void DerivationWriter :: copyExpression(SNode node)
 {
-   _writer.newNode(lxExpression);
+   _writer.newNode((LexicalType)(node.type & ~mskAnySymbolMask | lxExprMask));
    SNode current = node.firstChild();
    while (current != lxNone) {
       unpackNode(current);

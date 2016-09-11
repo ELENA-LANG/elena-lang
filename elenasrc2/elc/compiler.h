@@ -202,8 +202,8 @@ public:
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
 //   typedef Map<ident_t, Parameter, false> LocalMap;
-//   typedef Map<ref_t, ref_t>              SubjectMap;
-//   typedef Map<ref_t, ref_t>              ClassMap;
+   typedef Map<ref_t, ref_t>              SubjectMap;
+   typedef Map<ref_t, ref_t>              ClassMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -311,11 +311,11 @@ private:
 //      // extensions
 //      SubjectMap        extensionHints; 
 //      ExtensionMap      extensions;
-//
-//      // type hints
-//      MessageMap        subjects;
-//      SubjectMap        subjectHints;
-//
+
+      // type hints
+      MessageMap        subjects;
+      SubjectMap        subjectHints;
+
 //      // action hints
 //      SubjectMap        actionHints;
 
@@ -348,14 +348,14 @@ private:
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
 
-//      // list of typified classes which may need get&type message
-//      ClassMap typifiedClasses;
+      // list of typified classes which may need get&type message
+      ClassMap typifiedClasses;
 
       ObjectInfo mapObject(SNode identifier);
 
       ref_t mapReference(ident_t reference, bool existing = false);
-//      ref_t mapSubject(ident_t reference, bool existing);
-//
+      ref_t mapSubject(ident_t reference, bool existing);
+
 //      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 //
 //      void defineConstantSymbol(ref_t reference, ref_t classReference)
@@ -374,12 +374,12 @@ private:
       ref_t resolveIdentifier(ident_t name);
 
 //      ref_t mapNewSubject(ident_t terminal);
-//
-//      // NOTE : the function returns 0 for implicit subjects
-//      // in any case output is set (for explicit one - the namespace is copied as well)
-//      ref_t mapSubject(TerminalInfo terminal, IdentifierString& output);
-//      ref_t mapSubject(TerminalInfo terminal, bool explicitOnly = true);
-//      ref_t resolveSubjectRef(ident_t name, bool explicitOnly = true);
+
+      // NOTE : the function returns 0 for implicit subjects
+      // in any case output is set (for explicit one - the namespace is copied as well)
+      ref_t mapSubject(SNode terminal, IdentifierString& output);
+      ref_t mapSubject(SNode terminal, bool explicitOnly = true);
+      ref_t resolveSubjectRef(ident_t name, bool explicitOnly = true);
 
       ref_t mapTerminal(SNode terminal, bool existing = false);
 
@@ -421,8 +421,8 @@ private:
 //         ref_t dummyRef;
 //         return checkMethod(reference, message, dummy, dummyRef);
 //      }
-//
-//      void loadSubjects(_Module* module);
+
+      void loadSubjects(_Module* module);
 //      void loadExtensions(TerminalInfo terminal, _Module* module);
 //      void loadActions(_Module* module);
 //
@@ -448,7 +448,7 @@ private:
 
       void loadModuleInfo(_Module* extModule)
       {
-         //loadSubjects(extModule);
+         loadSubjects(extModule);
          //loadExtensions(TerminalInfo(), extModule);
          //loadActions(extModule);
       }
@@ -515,15 +515,15 @@ private:
 //         }
 //         else return NULL;
 //      }
-//
-//      virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
-//      {
-//         if (parent) {
-//            return parent->mapSubject(terminal, output);
-//         }
-//         else return moduleScope->mapSubject(terminal, output);
-//      }
-//
+
+      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
+      {
+         if (parent) {
+            return parent->mapSubject(terminal, output);
+         }
+         else return moduleScope->mapSubject(terminal, output);
+      }
+
 //      virtual bool isVirtualSubject(TerminalInfo terminal)
 //      {
 //         if (parent) {
@@ -597,21 +597,21 @@ private:
          info.save(&metaWriter);
       }
 
-//      bool include(ref_t message)
-//      {
-//         // check if the method is inhreited and update vmt size accordingly
-//         ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
-//         if (it.Eof()) {
-//            info.methods.add(message, true);
-//         
-//            return true;
-//         }
-//         else {
-//            (*it) = true;
-//         
-//            return false;
-//         }
-//      }
+      bool include(ref_t message)
+      {
+         // check if the method is inhreited and update vmt size accordingly
+         ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
+         if (it.Eof()) {
+            info.methods.add(message, true);
+         
+            return true;
+         }
+         else {
+            (*it) = true;
+         
+            return false;
+         }
+      }
 
       ClassScope(ModuleScope* parent, ref_t reference);
    };
@@ -636,12 +636,12 @@ private:
       SymbolScope(ModuleScope* parent, ref_t reference);
    };
 
-//   // - MethodScope -
-//   struct MethodScope : public Scope
-//   {
+   // - MethodScope -
+   struct MethodScope : public Scope
+   {
 //      CommandTape* tape;
-//
-//      ref_t        message;
+
+      ref_t        message;
 //      LocalMap     parameters;
 //      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 //      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
@@ -677,10 +677,10 @@ private:
 //      }
 //
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
-//
-//      MethodScope(ClassScope* parent);
-//   };
-//
+
+      MethodScope(ClassScope* parent);
+   };
+
 //   // - ActionScope -
 //   struct ActionScope : public MethodScope
 //   {
@@ -887,7 +887,7 @@ private:
    ByteCodeWriter _writer;
    Parser         _parser;
 
-//   MessageMap     _verbs;                            // list of verbs
+   MessageMap     _verbs;                            // list of verbs
 //   MessageMap     _operators;                        // list of operators
 //
 //   int            _optFlag;
@@ -923,9 +923,9 @@ private:
 //
 //   ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
-//
-//   void importCode(DNode node, ModuleScope& scope, SyntaxWriter& writer, ident_t reference, ref_t message);
-//
+
+   void importCode(SNode node, ModuleScope& scope, ident_t reference, ref_t message);
+
 //   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 //
 //   ref_t declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef);
@@ -960,7 +960,7 @@ private:
 //   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
 //   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 //   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope/*, bool warningsOnly*/);
-   void declareVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope, bool classClassMode);
+   void declareVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope/*, bool classClassMode*/);
 
 //   bool importTemplateDeclarations(ClassScope& scope, SyntaxWriter& writer);
 //   bool importTemplateDeclaration(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
@@ -1035,8 +1035,8 @@ private:
 //   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 //
 //   ObjectInfo compileCode(DNode node, CodeScope& scope);
-//
-//   void declareArgumentList(DNode node, MethodScope& scope);
+
+   void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
 //   bool declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared);
 //
@@ -1047,8 +1047,8 @@ private:
 //
 //   void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
-//   void compileDispatcher(DNode node, SyntaxWriter& writer, MethodScope& scope, bool withGenericMethods = false);
-//   
+   void compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodScope& scope/*, bool withGenericMethods = false*/);
+
 //   void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
 //   void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
@@ -1062,9 +1062,9 @@ private:
 //
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
 //   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
-//
-//   void compileVMT(DNode member, SyntaxWriter& writer, ClassScope& scope);
-//
+
+   void compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope);
+
 //   void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
 //   void declareVirtualMethods(ClassScope& scope);
 //
@@ -1076,8 +1076,8 @@ private:
 //   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
 //   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
 //   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
-//   void generateMethodDeclarations(ClassScope& scope, SyntaxTree::Node root, bool closed);
-   //void generateClassDeclaration(/*ClassScope& scope, bool closed*/);
+   void generateMethodDeclarations(ClassScope& scope, SNode node/*, bool closed*/);
+   void generateClassDeclaration(SNode node, ClassScope& scope/*, bool closed*/);
 //   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
 
    void generateClassImplementation(SNode node, ClassScope& scope);

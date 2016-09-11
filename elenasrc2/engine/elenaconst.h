@@ -453,7 +453,7 @@ namespace _ELENA_
 //   #define TARGET_PSEUDO_VAR       "target"
 
   // --- ELENA special sections ---
-//   #define TYPE_SECTION             "#types"
+   #define TYPE_SECTION             "#types"
 //   #define EXTENSION_SECTION        "#extensions"
 //   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
@@ -471,16 +471,16 @@ namespace _ELENA_
    #define DLL_NAMESPACE            "$dlls"
    #define RTDLL_FORWARD            "$rt"
 
-//   #define STANDARD_MODULE_LEN      6
-//   #define INTERNAL_MASK_LEN        12
+   #define STANDARD_MODULE_LEN      6
+   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5 
 //
 //   #define CORE_MODULE              "coreapi"
-//   #define STANDARD_MODULE          "system"                         // the standard module name
+   #define STANDARD_MODULE          "system"                         // the standard module name
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
-//                                                                     // will be treated like internal core api one
-//   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
+                                                                     // will be treated like internal core api one
+   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 
    #define NATIVE_MODULE            "$native"
 
