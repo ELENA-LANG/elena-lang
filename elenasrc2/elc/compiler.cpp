@@ -5210,22 +5210,21 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 //   writer.closeNode();
 }
 
-void Compiler :: compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope)
+void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-   // check if the method is inhreited and update vmt size accordingly
-   // NOTE: the method is class class member though it is compiled within class scope
-   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
-   if (it.Eof()) {
-      classClassScope.info.methods.add(scope.message, true);
-   }
-   else (*it) = true;
+   //// check if the method is inhreited and update vmt size accordingly
+   //// NOTE: the method is class class member though it is compiled within class scope
+   //ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
+   //if (it.Eof()) {
+   //   classClassScope.info.methods.add(scope.message, true);
+   //}
+   //else (*it) = true;
 
    //// HOTFIX: constructor is declared in class class but should be executed if the class scope
    //scope.tape = &classClassScope.tape;
 
-   writer.newNode(lxClassMethod, scope.message);
    //writer.appendNode(lxSourcePath);  // the source path is first string
 
    //if (test(classScope->info.header.flags, elStructureRole)) {
@@ -5236,12 +5235,8 @@ void Compiler :: compileDefaultConstructor(MethodScope& scope, SyntaxWriter& wri
    //   }
    //}
    //else if (!test(classScope->info.header.flags, elDynamicRole)) {
-      writer.newNode(lxCreatingClass, classScope->info.fields.Count());
-      writer.appendNode(lxTarget, classScope->reference);
-      writer.closeNode();
+      node.appendNode(lxCreatingClass, classScope->info.fields.Count()).appendNode(lxTarget, classScope->reference);
    //}
-
-   writer.closeNode();
 }
 
 //void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope)
@@ -5475,15 +5470,8 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
 
    copyConstructors(writer, node);
 
-   // create a virtual constructor
-   MethodScope methodScope(&classScope);
-   methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
-   
-   /*if (test(classScope.info.header.flags, elDynamicRole)) {
-      compileDynamicDefaultConstructor(methodScope, classClassScope);
-   }
-   else */compileDefaultConstructor(methodScope, writer, classClassScope);
-   
+   writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
+
    writer.closeNode();
 
    SNode member = tree.readRoot().firstChild();
@@ -5493,18 +5481,26 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
       if (member == lxClassMethod) {
          MethodScope methodScope(&classScope);
    
-         //writer.newBookmark();
-   
-         //compileMethodHints(hints, writer, methodScope);
-         declareArgumentList(member, methodScope);
-         member.setArgument(methodScope.message);
-   
-         //int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
-         //methodScope.stackSafe = test(hint, tpStackSafe);         
-   
-         compileConstructor(member, methodScope, classClassScope);
-   
-         //writer.removeBookmark();
+         if (member.argument == encodeVerb(NEWOBJECT_MESSAGE_ID)) {
+            /*if (test(classScope.info.header.flags, elDynamicRole)) {
+            compileDynamicDefaultConstructor(methodScope, classClassScope);
+            }
+            else */compileDefaultConstructor(member, methodScope, classClassScope);
+         }
+         else {
+            //writer.newBookmark();
+
+            //compileMethodHints(hints, writer, methodScope);
+            declareArgumentList(member, methodScope);
+            member.setArgument(methodScope.message);
+
+            //int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
+            //methodScope.stackSafe = test(hint, tpStackSafe);         
+
+            compileConstructor(member, methodScope, classClassScope);
+
+            //writer.removeBookmark();
+         }
       }
       member = member.nextNode();
    }

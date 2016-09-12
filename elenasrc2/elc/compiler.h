@@ -1054,7 +1054,7 @@ private:
    void compileDispatcher(SNode node, MethodScope& scope/*, bool withGenericMethods = false*/);
 
    void compileMethod(SNode node, MethodScope& scope);
-   void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
+   void compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);

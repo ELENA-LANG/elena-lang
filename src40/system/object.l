@@ -4,7 +4,7 @@
     /// Creates the object
     #constructor new []
 
-    #method test []
+    #method start []
             
     /// Implements a message dispatching in VMT
     #method => system'core_routines'__object.    

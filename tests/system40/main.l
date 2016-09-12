@@ -7,4 +7,4 @@
     ]
 }*/
 
-#symbol entry = Object/* MyCode new start:1 */.
+#symbol entry = Object/* MyCode*/ new /*start:1 */.

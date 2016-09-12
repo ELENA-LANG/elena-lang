@@ -454,11 +454,11 @@ public:
          tree->insertNode(position + argLength, type, argument);
       }
 
-      void appendNode(LexicalType type, int argument = 0)
+      Node appendNode(LexicalType type, int argument = 0)
       {
          int end_position = tree->seekNodeEnd(position + argLength);
 
-         tree->insertNode(end_position, type, argument);
+         return tree->insertNode(end_position, type, argument);
       }
 
 //      void injectNode(LexicalType type, int argument = 0)
