@@ -15,6 +15,16 @@
 
 using namespace _ELENA_;
 
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//
+//}
+
 // --- ModuleInfo ---
 struct ModuleInfo
 {
@@ -1291,15 +1301,15 @@ ObjectInfo Compiler::ClassScope :: mapObject(SNode identifier)
 //   }
 }
 
-//void Compiler::ClassScope :: compileClassHint(SNode hint)
-//{
-//   switch (hint.type)
-//   {
-//      case lxClassFlag:
-//         info.header.flags |= hint.argument;
+void Compiler::ClassScope :: compileClassHint(SNode hint)
+{
+   switch (hint.type)
+   {
+      case lxClassFlag:
+         info.header.flags |= hint.argument;
 //         if (test(info.header.flags, elExtension))
 //            extensionMode = -1;
-//         break;
+         break;
 //      case lxType:
 //         if (test(info.header.flags, elExtension)) {
 //            extensionMode = hint.argument;
@@ -1307,8 +1317,8 @@ ObjectInfo Compiler::ClassScope :: mapObject(SNode identifier)
 //            info.fieldTypes.add(-1, extensionMode);
 //         }
 //         break;
-//   }
-//}
+   }
+}
 
 // --- Compiler::MetodScope ---
 
@@ -1316,8 +1326,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    : Scope(parent)//, parameters(Parameter())
 {
    this->message = 0;
-//   this->reserved = 0;
-//   this->rootToFree = 1;
+   this->reserved = 0;
+   this->rootToFree = 1;
 //   this->withOpenArg = false;
 //   this->stackSafe = false;
 //   this->generic = false;
@@ -1386,24 +1396,24 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 
 // --- Compiler::CodeScope ---
 
-Compiler::CodeScope :: CodeScope(SymbolScope* parent/*, SyntaxWriter* writer*/)
+Compiler::CodeScope :: CodeScope(SymbolScope* parent)
    : Scope(parent)//, locals(Parameter(0))
 {
 //   this->writer = writer;
-//   this->level = 0;
-//   this->saved = this->reserved = 0;
+   this->level = 0;
+   this->saved = this->reserved = 0;
 //   //this->rootBookmark = -1;
 }
 
-//Compiler::CodeScope :: CodeScope(MethodScope* parent, SyntaxWriter* writer)
-//   : Scope(parent), locals(Parameter(0))
-//{
+Compiler::CodeScope :: CodeScope(MethodScope* parent)
+   : Scope(parent)//, locals(Parameter(0))
+{
 //   this->writer = writer;
-//   this->level = 0;
-//   this->saved = this->reserved = 0;
+   this->level = 0;
+   this->saved = this->reserved = 0;
 //   //this->rootBookmark = -1;
-//}
-//
+}
+
 //Compiler::CodeScope :: CodeScope(CodeScope* parent)
 //   : Scope(parent), locals(Parameter(0))
 //{
@@ -1948,80 +1958,80 @@ void Compiler :: importCode(SNode node, ModuleScope& scope, ident_t function, re
    else scope.raiseError(errInvalidLink, node);
 }
 
-//Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   size_t flagCopy = scope.info.header.flags;
-//   size_t classClassCopy = scope.info.header.classRef;
-//   size_t packageRefCopy = scope.info.header.packageRef;
-//
-//   // get module reference
-//   ref_t moduleRef = 0;
-//   _Module* module = moduleScope->project->resolveModule(moduleScope->module->resolveReference(parentRef), moduleRef);
-//
-//   if (module == NULL || moduleRef == 0)
-//      return irUnsuccessfull;
-//
-//   // load parent meta data
-//   _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
-//   if (metaData != NULL) {
-//      MemoryReader reader(metaData);
-//      // import references if we inheriting class from another module
-//      if (moduleScope->module != module) {
-//         ClassInfo copy;
-//         copy.load(&reader);
-//
-//         moduleScope->importClassInfo(copy, scope.info, module, false);
-//      }
-//      else {
-//         scope.info.load(&reader);
-//
-//         // mark all methods as inherited
-//         ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
-//         while (!it.Eof()) {
-//            (*it) = false;
-//
-//            it++;
-//         }
-//      }
-//
-//      if (!ignoreSealed && test(scope.info.header.flags, elSealed))
-//         return irSealed;
-//
-//      // restore parent and flags
-//      scope.info.header.parentRef = parentRef;
-//      scope.info.header.classRef = classClassCopy;
-//      scope.info.header.flags |= flagCopy;
-//      scope.info.header.packageRef = packageRefCopy;
-//
-//      return irSuccessfull;
-//   }
-//   else return irUnsuccessfull;
-//}
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/)
+{
+   ModuleScope* moduleScope = scope.moduleScope;
 
-void Compiler :: compileParentDeclaration(/*DNode baseNode, */ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/)
+   size_t flagCopy = scope.info.header.flags;
+   size_t classClassCopy = scope.info.header.classRef;
+   size_t packageRefCopy = scope.info.header.packageRef;
+
+   // get module reference
+   ref_t moduleRef = 0;
+   _Module* module = moduleScope->project->resolveModule(moduleScope->module->resolveReference(parentRef), moduleRef);
+
+   if (module == NULL || moduleRef == 0)
+      return irUnsuccessfull;
+
+   // load parent meta data
+   _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData != NULL) {
+      MemoryReader reader(metaData);
+      // import references if we inheriting class from another module
+      if (moduleScope->module != module) {
+         ClassInfo copy;
+         copy.load(&reader);
+
+         moduleScope->importClassInfo(copy, scope.info, module, false);
+      }
+      else {
+         scope.info.load(&reader);
+
+         // mark all methods as inherited
+         ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
+         while (!it.Eof()) {
+            (*it) = false;
+
+            it++;
+         }
+      }
+
+      //if (!ignoreSealed && test(scope.info.header.flags, elSealed))
+      //   return irSealed;
+
+      // restore parent and flags
+      scope.info.header.parentRef = parentRef;
+      scope.info.header.classRef = classClassCopy;
+      scope.info.header.flags |= flagCopy;
+      scope.info.header.packageRef = packageRefCopy;
+
+      return irSuccessfull;
+   }
+   else return irUnsuccessfull;
+}
+
+void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/)
 {
    scope.info.header.parentRef = parentRef;
    InheritResult res = irSuccessfull;
-//   if (scope.info.header.parentRef != 0) {
-//      res = inheritClass(scope, scope.info.header.parentRef, ignoreSealed);
-//   }
-//
-//   //if (res == irObsolete) {
-//   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
-//   //}
-//   if (res == irInvalid) {
-//      scope.raiseError(errInvalidParent, baseNode.Terminal());
-//   }
-//   if (res == irSealed) {
-//      scope.raiseError(errSealedParent, baseNode.Terminal());
-//   }
-//   else if (res == irUnsuccessfull)
-//      scope.raiseError(errUnknownBaseClass, baseNode.Terminal());
+   if (scope.info.header.parentRef != 0) {
+      res = inheritClass(scope, scope.info.header.parentRef/*, ignoreSealed*/);
+   }
+
+   //if (res == irObsolete) {
+   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
+   //}
+   if (res == irInvalid) {
+      scope.raiseError(errInvalidParent, baseNode);
+   }
+   //if (res == irSealed) {
+   //   scope.raiseError(errSealedParent, baseNode.Terminal());
+   //}
+   else if (res == irUnsuccessfull)
+      scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
-void Compiler :: compileParentDeclaration(/*DNode node, */ClassScope& scope)
+void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 {
    ref_t parentRef = scope.info.header.parentRef;
 
@@ -2042,7 +2052,7 @@ void Compiler :: compileParentDeclaration(/*DNode node, */ClassScope& scope)
 //         scope.raiseError(errUnknownClass, identifier);
 //   }
 
-   compileParentDeclaration(/*node, */scope, parentRef);
+   compileParentDeclaration(node, scope, parentRef);
 }
 
 //bool Compiler :: declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef, RoleMap* attributes)
@@ -4316,27 +4326,27 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //   scope.writer->closeNode();
 //   scope.writer->closeNode();
 //}
-//
-//ObjectInfo Compiler :: compileCode(DNode node, CodeScope& scope)
-//{
+
+/*ObjectInfo*/void Compiler :: compileCode(SNode node, CodeScope& scope)
+{
 //   ObjectInfo retVal;
-//
-//   bool needVirtualEnd = true;
-//   DNode statement = node.firstChild();
-//
+
+   bool needVirtualEnd = true;
+   SNode statement = node.firstChild();
+
 //   //// make a root bookmark for temporal variable allocating
 //   //scope.rootBookmark = scope.writer->newBookmark();
 //
 //   // skip subject argument
 //   while (statement == nsSubjectArg || statement == nsMethodParameter)
 //      statement= statement.nextNode();
-//
-//   while (statement != nsNone) {
+
+   while (statement != lxNone) {
 //      DNode hints = skipHints(statement);
-//
-//      //_writer.declareStatement(*scope.tape);
-//
-//      switch(statement) {
+
+      //_writer.declareStatement(*scope.tape);
+
+      switch(statement) {
 //         case nsExpression:
 //         case nsRootExpression:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
@@ -4383,27 +4393,27 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //            compileCode(statement, scope);
 //            scope.writer->closeNode();
 //            break;
-//         case nsCodeEnd:
-//            needVirtualEnd = false;
-//            recordDebugStep(scope, statement.Terminal(), dsEOP);
-//            break;
-//      }
-//
-//      scope.freeSpace();
-//
-//      statement = statement.nextNode();
-//   }
-//
-//   if (needVirtualEnd) {
-//      recordDebugVirtualStep(scope, dsVirtualEnd);
-//   }
-//
+         case lxEOF:
+            needVirtualEnd = false;
+            setDebugStep(statement, dsEOP);
+            break;
+      }
+
+      scope.freeSpace();
+
+      statement = statement.nextNode();
+   }
+
+   if (needVirtualEnd) {
+      appendDebugStep(node, dsVirtualEnd);
+   }
+
 //  //scope.rootBookmark = -1;
 //  // scope.writer->removeBookmark();
 //
 //   return retVal;
-//}
-//
+}
+
 //void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -4700,7 +4710,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //   }
 //
 //   DNode arg = node.firstChild();
-//   if (verb_id == 0) {
+   if (verb_id == 0) {
 //      // if followed by argument list - it is a EVAL verb
 //      if (node == nsImplicitConstructor) {
 //         verb_id = EVAL_MESSAGE_ID;
@@ -4709,9 +4719,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         verb_id = EVAL_MESSAGE_ID;
 //         first = false;
 //      }
-//      // otherwise it is GET message
-//      else verb_id = GET_MESSAGE_ID;
-//   }
+      // otherwise it is GET message
+      /*else */verb_id = GET_MESSAGE_ID;
+   }
 
    int paramCount = 0;
 //   // if method has generic (unnamed) argument list
@@ -5006,13 +5016,13 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //
 //   scope.writer->appendNode(lxParamCount, getParamCount(methodScope->message) + 1);
 //}
-//
-//void Compiler :: compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
-//{
-//   int paramCount = getParamCount(scope.message);
-//
-//   CodeScope codeScope(&scope, &writer);
-//
+
+void Compiler :: compileMethod(SNode node, MethodScope& scope)
+{
+   int paramCount = getParamCount(scope.message);
+
+   CodeScope codeScope(&scope);
+
 //   CommandTape* tape = scope.tape;
 //
 //   // HOTFIX : insert the node to make sure method hints are inside the method node
@@ -5034,12 +5044,16 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //      else compileDispatchExpression(dispatchBody.firstChild(), codeScope, tape);
 //   }
 //   else {
-//      // new stack frame
-//      // stack already contains current $self reference
-//      // the original message should be restored if it is a generic method
-//      writer.newNode(lxNewFrame, scope.generic ? -1 : 0u);
-//
-//      codeScope.level++;
+      SNode body = node.findChild(lxCode);
+      bool expr = body != lxCode;
+
+      body = lxNewFrame;
+      //body.setArgument(scope.generic ? -1 : 0u);
+
+      // new stack frame
+      // stack already contains current $self reference
+      // the original message should be restored if it is a generic method
+      codeScope.level++;
 //      // declare the current subject for a generic method
 //      if (scope.generic) {
 //         codeScope.level++;
@@ -5047,16 +5061,15 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //      }
 //
 //      declareParameterDebugInfo(scope, writer, true, test(codeScope.getClassFlags(), elRole));
-//
-//      DNode body = node.select(nsSubCode);
-//      // if method body is a returning expression
-//      if (body==nsNone) {
+
+      // if method body is a returning expression
+      if (expr) {
 //         compileCode(node, codeScope);
-//      }
-//      // if method body is a set of statements
-//      else {
-//         ObjectInfo retVal = compileCode(body, codeScope);
-//
+      }
+      // if method body is a set of statements
+      else {
+         /*ObjectInfo retVal = */compileCode(body, codeScope);
+
 //         // if the method returns itself
 //         if(retVal.kind == okUnknown) {
 //            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -5070,31 +5083,36 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //            }
 //            else writer.appendNode(lxLocal, 1);
 //         }
-//      }
+      }
 //
 //      writer.closeNode();
-//      writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
+      node.appendNode(lxParamCount, paramCount + scope.rootToFree);
 //   }
-//
-//   writer.appendNode(lxReserved, scope.reserved);
-//
+
+   node.appendNode(lxReserved, scope.reserved);
+
 //   writer.closeNode();
-//}
-//
-//void Compiler :: compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
-//{
-//   CodeScope codeScope(&scope, &writer);
-//
-//   // HOTFIX: constructor is declared in class class but should be executed if the class scope
-//   scope.tape = &classClassScope.tape;
-//
+}
+
+void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
+{
+   CodeScope codeScope(&scope);
+
+   //// HOTFIX: constructor is declared in class class but should be executed if the class scope
+   //scope.tape = &classClassScope.tape;
+
 //   writer.insert(lxClassMethod, scope.message);
 //   writer.appendNode(lxSourcePath);  // the source path is first string
-//
-//   bool withFrame = false;
+
+   bool withFrame = false;
 //   int classFlags = codeScope.getClassFlags();
-//
+
+//   if (!test(classFlags, elDynamicRole)) {
+         node.insertNode(lxCalling, -1);
+//   }
+
 //   DNode bodyNode = goToSymbol(node.firstChild(), nsRetStatement, nsSubCode);
+   SNode bodyNode = node.findChild(lxCode);
 //   DNode resendBody = node.select(nsResendExpression);
 //   DNode dispatchBody = node.select(nsDispatchExpression);
 //   if (dispatchBody != nsNone) {
@@ -5109,20 +5127,21 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //   }
 //   // if no redirect statement - call virtual constructor implicitly
 //   else if (!test(classFlags, elDynamicRole)) {
-//      writer.appendNode(lxCalling, -1);
+//         node.insertNode(lxCalling, -1);
 //   }
 //   // if it is a dynamic object implicit constructor call is not possible
 //   else scope.raiseError(errIllegalConstructor, node.Terminal());
-//
-//   if (bodyNode != nsNone) {
-//      if (!withFrame) {
-//         withFrame = true;
-//
-//         // new stack frame
-//         // stack already contains $self value
-//         writer.newNode(lxNewFrame);
-//         codeScope.level++;
-//      }
+
+   if (bodyNode != nsNone) {
+      if (!withFrame) {
+         withFrame = true;
+
+         bodyNode = lxNewFrame;
+
+         // new stack frame
+         // stack already contains $self value
+         codeScope.level++;
+      }
 //      else {
 //         writer.newNode(lxAssigning);
 //         writer.appendNode(lxLocal, 1);
@@ -5164,11 +5183,11 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //         writer.closeNode();
 //      }
 //      else {
-//         compileCode(bodyNode, codeScope);
-//
-//         codeScope.writer->appendNode(lxLocal, 1);
+         compileCode(bodyNode, codeScope);
+
+         bodyNode.appendNode(lxLocal, 1);
 //      }
-//   }
+   }
 //   //// if the constructor has a body
 //   ///*else */if (body != nsNone) {
 //   //// if the constructor should call embeddable method
@@ -5184,47 +5203,47 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //
 //   if (withFrame)
 //      writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, getParamCount(scope.message) + 1);
-//   writer.appendNode(lxReserved, scope.reserved);
-//
+
+   node.appendNode(lxParamCount, getParamCount(scope.message) + 1);
+   node.appendNode(lxReserved, scope.reserved);
+
 //   writer.closeNode();
-//}
-//
-//void Compiler :: compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//   // check if the method is inhreited and update vmt size accordingly
-//   // NOTE: the method is class class member though it is compiled within class scope
-//   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
-//   if (it.Eof()) {
-//      classClassScope.info.methods.add(scope.message, true);
-//   }
-//   else (*it) = true;
-//
-//   // HOTFIX: constructor is declared in class class but should be executed if the class scope
-//   scope.tape = &classClassScope.tape;
-//
-//   writer.newNode(lxClassMethod, scope.message);
-//   writer.appendNode(lxSourcePath);  // the source path is first string
-//
-//   if (test(classScope->info.header.flags, elStructureRole)) {
-//      if (!test(classScope->info.header.flags, elDynamicRole)) {
-//         writer.newNode(lxCreatingStruct, classScope->info.size);
-//         writer.appendNode(lxTarget, classScope->reference);
-//         writer.closeNode();
-//      }
-//   }
-//   else if (!test(classScope->info.header.flags, elDynamicRole)) {
-//      writer.newNode(lxCreatingClass, classScope->info.fields.Count());
-//      writer.appendNode(lxTarget, classScope->reference);
-//      writer.closeNode();
-//   }
-//
-//   writer.closeNode();
-//}
-//
+}
+
+void Compiler :: compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   // check if the method is inhreited and update vmt size accordingly
+   // NOTE: the method is class class member though it is compiled within class scope
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
+   if (it.Eof()) {
+      classClassScope.info.methods.add(scope.message, true);
+   }
+   else (*it) = true;
+
+   //// HOTFIX: constructor is declared in class class but should be executed if the class scope
+   //scope.tape = &classClassScope.tape;
+
+   writer.newNode(lxClassMethod, scope.message);
+   //writer.appendNode(lxSourcePath);  // the source path is first string
+
+   //if (test(classScope->info.header.flags, elStructureRole)) {
+   //   if (!test(classScope->info.header.flags, elDynamicRole)) {
+   //      writer.newNode(lxCreatingStruct, classScope->info.size);
+   //      writer.appendNode(lxTarget, classScope->reference);
+   //      writer.closeNode();
+   //   }
+   //}
+   //else if (!test(classScope->info.header.flags, elDynamicRole)) {
+      writer.newNode(lxCreatingClass, classScope->info.fields.Count());
+      writer.appendNode(lxTarget, classScope->reference);
+      writer.closeNode();
+   //}
+
+   writer.closeNode();
+}
+
 //void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope)
 //{
 //   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -5274,8 +5293,8 @@ void Compiler :: compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& 
 
                compileDispatcher(member.firstChild(lxExpression), /*writer, */methodScope/*, test(scope.info.header.flags, elWithGenerics)*/);
             }
-//            // if it is a normal method
-//            else {
+            // if it is a normal method
+            else {
 //               size_t bm = scope.imported.Length();
 //               compileMethodHints(hints, writer, methodScope);
 //               declareArgumentList(member, methodScope);
@@ -5286,9 +5305,9 @@ void Compiler :: compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& 
 //               int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
 //               methodScope.stackSafe = test(hint, tpStackSafe);
 //               methodScope.generic = test(hint, tpGeneric);
-//
-//               compileMethod(member, writer, methodScope);
-//            }
+
+               compileMethod(member, methodScope);
+            }
             break;
          }
 //         case nsDefaultGeneric:
@@ -5388,85 +5407,111 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 //   // create byte code sections
 //   _writer.save(tape, module, NULL, NULL, 0);
 //}
-//
-//void Compiler :: compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
-//   SyntaxWriter writer(classClassScope.syntaxTree);
-//   writer.newNode(lxRoot, classClassScope.reference);
-//
-//   // if no construtors are defined inherits the default one
-//   if (!findSymbol(node.firstChild(), nsConstructor)) {
-//      if (classScope.info.header.parentRef == 0)
-//         classScope.raiseError(errNoConstructorDefined, node.FirstTerminal());
-//
-//      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
-//      classClassParentName.append(CLASSCLASS_POSTFIX);
-//
-//      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-//   }
-//   compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef);
-//   
-//   // class class is always stateless
-//   writer.appendNode(lxClassFlag, elStateless);
-//
-//   DNode member = node.firstChild();
-//   declareVMT(member, writer, classClassScope, true);
-//   
-//   // add virtual constructor
-//   writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
+
+inline bool copyConstructors(SyntaxWriter& writer, SNode node)
+{
+   // copy constructors
+   SNode member = node.firstChild();
+   bool inheritedConstructors = true;
+   while (member != lxNone) {
+      if (member == lxConstructor) {
+         writer.newNode(lxClassMethod);
+         SyntaxTree::copyNode(writer, member);
+         writer.closeNode();
+
+         inheritedConstructors = false;
+      }
+      member = member.nextNode();
+   }
+
+   return inheritedConstructors;
+}
+
+void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxClass, classClassScope.reference);
+
+   bool inheritedConstructors = copyConstructors(writer, node);
+
+   // if no construtors are defined inherits the default one
+   if (inheritedConstructors) {
+      if (classScope.info.header.parentRef == 0)
+         classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
+
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.moduleScope->superReference));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
+
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   }
+   compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef);
+
+   // class class is always stateless
+   writer.appendNode(lxClassFlag, elStateless);
+
+   SNode member = tree.readRoot();
+   declareVMT(member.firstChild(), classClassScope);
+
+   // add virtual constructor
+   writer.appendNode(lxClassMethod, encodeVerb(NEWOBJECT_MESSAGE_ID));
 //   writer.appendNode(lxSourcePath);  // the source path is first string
-//
-//   writer.closeNode();
-//
-//   generateClassDeclaration(classClassScope, false);
-//
-//   // save declaration
-//   classClassScope.save();
-//}
-//
-//void Compiler :: compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
-//   ModuleScope* moduleScope = classClassScope.moduleScope;
-//
-//   SyntaxWriter writer(classClassScope.syntaxTree);
-//   writer.newNode(lxRoot, classClassScope.reference);
-//
-//   DNode member = node.firstChild();
-//   while (member != nsNone) {
-//      DNode hints = skipHints(member);
-//
-//      if (member == nsConstructor) {
-//         MethodScope methodScope(&classScope);
-//
-//         writer.newBookmark();
-//
-//         compileMethodHints(hints, writer, methodScope);
-//         declareArgumentList(member, methodScope);
-//
-//         int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
-//         methodScope.stackSafe = test(hint, tpStackSafe);         
-//
-//         compileConstructor(member, writer, methodScope, classClassScope);
-//
-//         writer.removeBookmark();
-//      }
-//      member = member.nextNode();
-//   }
-//
-//   // create a virtual constructor
-//   MethodScope methodScope(&classScope);
-//   methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
-//
-//   if (test(classScope.info.header.flags, elDynamicRole)) {
-//      compileDynamicDefaultConstructor(methodScope, writer, classClassScope);
-//   }
-//   else compileDefaultConstructor(methodScope, writer, classClassScope);
-//
-//   writer.closeNode();
-//
-//   generateClassImplementation(classClassScope);
-//}
-//
+
+   writer.closeNode();
+
+   generateClassDeclaration(member, classClassScope/*, false*/);
+
+   // save declaration
+   classClassScope.save();
+}
+
+void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxClass, classClassScope.reference);
+
+   copyConstructors(writer, node);
+
+   // create a virtual constructor
+   MethodScope methodScope(&classScope);
+   methodScope.message = encodeVerb(NEWOBJECT_MESSAGE_ID);
+   
+   /*if (test(classScope.info.header.flags, elDynamicRole)) {
+      compileDynamicDefaultConstructor(methodScope, classClassScope);
+   }
+   else */compileDefaultConstructor(methodScope, writer, classClassScope);
+   
+   writer.closeNode();
+
+   SNode member = tree.readRoot().firstChild();
+   while (member != nsNone) {
+      //DNode hints = skipHints(member);
+   
+      if (member == lxClassMethod) {
+         MethodScope methodScope(&classScope);
+   
+         //writer.newBookmark();
+   
+         //compileMethodHints(hints, writer, methodScope);
+         declareArgumentList(member, methodScope);
+         member.setArgument(methodScope.message);
+   
+         //int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
+         //methodScope.stackSafe = test(hint, tpStackSafe);         
+   
+         compileConstructor(member, methodScope, classClassScope);
+   
+         //writer.removeBookmark();
+      }
+      member = member.nextNode();
+   }
+   
+   generateClassImplementation(tree.readRoot(), classClassScope);
+}
+
 //inline bool isClassMethod(Symbol symbol)
 //{
 //   switch (symbol)
@@ -5480,14 +5525,13 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 //   }
 //}
 
-void Compiler :: declareVMT(SNode member/*, SyntaxWriter& writer*/, ClassScope& scope/*, bool classClassMode*/)
+void Compiler :: declareVMT(SNode member, ClassScope& scope)
 {
    while (member != lxNone) {
 //      DNode hints = skipHints(member);
 
-//      if ((classClassMode && member == lxConstructor) || (!classClassMode && isClassMethod(member))) {
       if (member == lxClassMethod) {
-         SNode name = member.findChild(lxIdentifier, lxPrivate);
+         bool dispatchMethod = member == lxClassMethod && member.findChild(lxIdentifier, lxPrivate) == lxNone;
 
          MethodScope methodScope(&scope);
 
@@ -5496,7 +5540,7 @@ void Compiler :: declareVMT(SNode member/*, SyntaxWriter& writer*/, ClassScope& 
 //
 //         DNode firstChild = member.firstChild();
 //         if (firstChild == nsDispatchHandler) {
-         if (name == lxNone) {
+         if (dispatchMethod) {
             methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
          }
          else {
@@ -5577,17 +5621,17 @@ void Compiler :: declareVMT(SNode member/*, SyntaxWriter& writer*/, ClassScope& 
 //
 //   return scope.reference;
 //}
-//
-//void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
-//{
-//   SNode current = root.firstChild();
-//   while (current != lxNone) {
-//      scope.compileClassHint(current);
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
+{
+   SNode current = root.firstChild();
+   while (current != lxNone) {
+      scope.compileClassHint(current);
+
+      current = current.nextNode();
+   }
+}
+
 //ref_t Compiler :: declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef)
 //{
 //   TemplateInfo fieldTemplate;
@@ -6031,10 +6075,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root/*, boo
 void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, bool closed*/)
 {
 //   SNode root = scope.syntaxTree.readRoot();
-//
-//   // generate flags
-//   generateClassFlags(scope, root);
-//
+
+   // generate flags
+   generateClassFlags(scope, node);
+
 //   // generate fields
 //   generateClassFields(scope, root);
 //
@@ -6326,7 +6370,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope/*, DNode 
 //
 //      member = member.nextNode();
 //   }
-   /*else */compileParentDeclaration(/*DNode(), */scope);
+   /*else */compileParentDeclaration(SNode(), scope);
 //
 //   int flagCopy = scope.info.header.flags;
 //
@@ -6348,11 +6392,11 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope/*, DNode 
 //      scope.info.header.classRef = scope.reference;
 //   }
 //   else {
-//      // define class class name
-//      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
-//      classClassName.append(CLASSCLASS_POSTFIX);
-//
-//      scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
+      // define class class name
+      IdentifierString classClassName(scope.moduleScope->module->resolveReference(scope.reference));
+      classClassName.append(CLASSCLASS_POSTFIX);
+
+      scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
 //   }
 //
 //   // if it is a super class validate it
@@ -7015,7 +7059,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //      compileSymbolHints(hints, scope, true);
       
       // compile symbol body, if it is not a singleton
-      recordDebugStep(expression, dsStep);
+      insertDebugStep(expression, dsStep);
 //      writer.newNode(lxExpression);
       /*retVal = */compileExpression(expression, codeScope/*, scope.typeRef, 0*/);
 //      writer.closeNode();
@@ -8479,12 +8523,12 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
             ClassScope classScope(&scope, member.argument);
             compileClassDeclaration(member, classScope/*, hints*/);
 
-//            // compile class class if it available
-//            if (classScope.info.header.classRef != classScope.reference) {
-//               ClassScope classClassScope(&scope, classScope.info.header.classRef);
-//               compileClassClassDeclaration(member, classClassScope, classScope);
-//            }
-//
+            // compile class class if it available
+            if (classScope.info.header.classRef != classScope.reference) {
+               ClassScope classClassScope(&scope, classScope.info.header.classRef);
+               compileClassClassDeclaration(member, classClassScope, classScope);
+            }
+
             break;
          }
 //         case nsTemplate:
@@ -8563,13 +8607,13 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
             scope.loadClassInfo(classScope.info, scope.module->resolveReference(member.argument), false);
             compileClassImplementation(member, classScope/*, hints*/);
 
-//            // compile class class if it available
-//            if (classScope.info.header.classRef != classScope.reference) {
-//               ClassScope classClassScope(&scope, classScope.info.header.classRef);
-//               scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
-//
-//               compileClassClassImplementation(member, classClassScope, classScope);
-//            }
+            // compile class class if it available
+            if (classScope.info.header.classRef != classScope.reference) {
+               ClassScope classClassScope(&scope, classScope.info.header.classRef);
+               scope.loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
+
+               compileClassClassImplementation(member, classClassScope, classScope);
+            }
             break;
          }
          case lxSymbol:

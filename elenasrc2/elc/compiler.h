@@ -462,15 +462,15 @@ private:
    // - Scope -
    struct Scope
    {
-//      enum ScopeLevel
-//      {
-//         slClass,
-//         slSymbol,
-//         slMethod,
-//         slCode,
-//         slOwnerClass,
-//         slTemplate,
-//      };
+      enum ScopeLevel
+      {
+         slClass,
+         slSymbol,
+         slMethod,
+         slCode,
+         slOwnerClass,
+         slTemplate,
+      };
 
       ModuleScope* moduleScope;
       Scope*       parent;
@@ -508,13 +508,13 @@ private:
          else return moduleScope->mapObject(identifier);
       }
 
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (parent) {
-//            return parent->getScope(level);
-//         }
-//         else return NULL;
-//      }
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (parent) {
+            return parent->getScope(level);
+         }
+         else return NULL;
+      }
 
       virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
       {
@@ -572,17 +572,17 @@ private:
 
       virtual ObjectInfo mapObject(SNode identifier);
 
-//      void compileClassHint(SyntaxTree::Node hint);
+      void compileClassHint(SyntaxTree::Node hint);
 //      //void compileFieldHints(DNode hints, int& size, ref_t& type);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass || level == slOwnerClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass || level == slOwnerClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      virtual bool validateTemplate(ref_t hintRef)
 //      {
 //         _Module* extModule = NULL;
@@ -625,13 +625,13 @@ private:
 
       virtual ObjectInfo mapObject(SNode identifier);
 
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slSymbol) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slSymbol) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
 
       SymbolScope(ModuleScope* parent, ref_t reference);
    };
@@ -643,21 +643,21 @@ private:
 
       ref_t        message;
 //      LocalMap     parameters;
-//      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
-//      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
+      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool         withOpenArg;
 //      bool         stackSafe;
 //      bool         generic;
 //      bool         sealed;
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slMethod) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slMethod) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      ref_t getReturningType() const
 //      {
 //         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
@@ -697,12 +697,12 @@ private:
 //
 //      // scope local variables
 //      LocalMap     locals;
-//      int          level;
-//
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
-//
+      int          level;
+
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
+
 //      int newLocal()
 //      {
 //         level++;
@@ -718,22 +718,22 @@ private:
 //      {
 //         locals.add(local, Parameter(level, type, class_ref, size));
 //      }
-//
-//      void freeSpace()
-//      {
-//         reserved = saved;
-//      }
+
+      void freeSpace()
+      {
+         reserved = saved;
+      }
 
       virtual ObjectInfo mapObject(SNode identifier);
 
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slCode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      int getMessageID()
 //      {
 //         MethodScope* scope = (MethodScope*)getScope(slMethod);
@@ -762,8 +762,8 @@ private:
 //         return scope ? scope->info.header.flags : 0;
 //      }
 
-      CodeScope(SymbolScope* parent/*, SyntaxWriter* writer*/);
-//      CodeScope(MethodScope* parent, SyntaxWriter* writer);
+      CodeScope(SymbolScope* parent);
+      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
    };
 
@@ -901,16 +901,20 @@ private:
 //   bool optimizeJumps(CommandTape& tape);
 //   void optimizeTape(CommandTape& tape);
    
-   void recordDebugStep(SNode terminal, int stepType)
+   void insertDebugStep(SNode& node, int stepType)
    {
-      terminal.insertNode(lxBreakpoint, stepType);
+      node.insertNode(lxBreakpoint, stepType);
    }
-//   void recordDebugVirtualStep(CodeScope& scope, int stepType)
-//   {
-//      scope.writer->newNode(lxBreakpoint, stepType);
-//      scope.writer->closeNode();
-//   }
-//
+   void appendDebugStep(SNode& node, int stepType)
+   {
+      node.appendNode(lxBreakpoint, stepType);
+   }
+   void setDebugStep(SNode& node, int stepType)
+   {
+      node = lxBreakpoint;
+      node.setArgument(stepType);
+   }
+
 //   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
@@ -926,8 +930,8 @@ private:
 
    void importCode(SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
-//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-//
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
+
 //   ref_t declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef);
 //
 //   void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
@@ -946,8 +950,8 @@ private:
 //   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes = NULL);
 //   void copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer);
 
-   void compileParentDeclaration(/*DNode baseNode, */ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
-   void compileParentDeclaration(/*DNode node, */ClassScope& scope);
+   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
+   void compileParentDeclaration(SNode node, ClassScope& scope);
 //   void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope); 
 //   void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
 //
@@ -960,7 +964,7 @@ private:
 //   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
 //   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 //   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope/*, bool warningsOnly*/);
-   void declareVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope/*, bool classClassMode*/);
+   void declareVMT(SNode member, ClassScope& scope);
 
 //   bool importTemplateDeclarations(ClassScope& scope, SyntaxWriter& writer);
 //   bool importTemplateDeclaration(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
@@ -1033,8 +1037,8 @@ private:
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
 //   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
 //   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
-//
-//   ObjectInfo compileCode(DNode node, CodeScope& scope);
+
+   /*ObjectInfo*/void compileCode(SNode node, CodeScope& scope);
 
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
@@ -1047,13 +1051,13 @@ private:
 //
 //   void compileActionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
-   void compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodScope& scope/*, bool withGenericMethods = false*/);
+   void compileDispatcher(SNode node, MethodScope& scope/*, bool withGenericMethods = false*/);
 
-//   void compileMethod(DNode node, SyntaxWriter& writer, MethodScope& scope);
-//   void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
+   void compileMethod(SNode node, MethodScope& scope);
+   void compileDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
 //   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
-//   void compileConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
-////   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
+   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
+//   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 
 //   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
@@ -1072,8 +1076,8 @@ private:
 //
 //   void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current);   
-//
-//   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
+
+   void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
 //   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
 //   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SNode node/*, bool closed*/);
@@ -1085,8 +1089,8 @@ private:
    void compileClassDeclaration(SNode node, ClassScope& scope/*, DNode hints*/);
    void compileClassImplementation(SNode node, ClassScope& scope/*, DNode hints*/);
 //   void compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints);
-//   void compileClassClassDeclaration(DNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileClassClassImplementation(DNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope/*, DNode hints*/);
    void compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
 //   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);

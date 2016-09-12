@@ -111,6 +111,23 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int
    return read(reader);
 }
 
+void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.argLength > 0) {
+         writer.newNode(current.type, current.identifier());
+      }
+      else writer.newNode(current.type, current.argument);
+
+      copyNode(writer, current);
+
+      writer.closeNode();
+
+      current = current.nextNode();
+   }
+}
+
 //SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
 //{
 //   SyntaxWriter writer(*this);
@@ -171,26 +188,34 @@ SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
    return read(reader);
 }
 
-//size_t SyntaxTree :: seekNodeEnd(size_t position)
-//{
-//   MemoryReader reader(&_body, position);
-//
-//   int level = 1;
-//
-//   do {
-//      int type = reader.getDWord();
-//      ref_t arg = reader.getDWord();
-//
-//      if (type == -1) {
-//         level--;
-//      }
-//      else level++;
-//
-//   } while (level > 0);
-//
-//   return reader.Position() - 8;
-//}
-//
+size_t SyntaxTree :: seekNodeEnd(size_t position)
+{
+   MemoryReader reader(&_body, position);
+
+   int level = 1;
+   size_t endPosition = 0;
+
+   do {
+      endPosition = reader.Position();
+
+      int type = reader.getDWord();
+      ref_t arg = reader.getDWord();
+      int length = reader.getDWord();
+
+      // skip the argument body
+      if (length > 0)
+         reader.seek(reader.Position() + length);
+
+      if (type == -1) {
+         level--;
+      }
+      else level++;
+
+   } while (level > 0);
+
+   return endPosition;
+}
+
 //SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
 //{
 //   MemoryReader reader(&_body);

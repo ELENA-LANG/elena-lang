@@ -3,10 +3,12 @@ In development:
 ------                              
 
               xrev
-                 * DerivationWriter : try to get rid of big switch statement
+                 * support implicit constructors
+                 * check sealed / limited class attributes
                  * compliation should be based on set of rules
                  * compile package info
                  * test optimized / direct operations
+                 * DerivationWriter : try to get rid of big switch statement
 
               ydev
                  * upndown : playing a round

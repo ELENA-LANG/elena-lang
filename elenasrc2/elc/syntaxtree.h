@@ -16,9 +16,11 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxParameter    = 0x10000,
-   lxObjectMask   = 0x08000,
-   lxExprMask     = 0x0C000,
+   lxParameter     = 0x10000,
+   lxObjectMask    = 0x08000,
+   lxCodeScopeMask = 0x04000,
+   lxExprMask      = 0x0C000,
+   lxReferenceMask = 0x40000,
 
    lxEnding        = -1,
    lxNone          = 0x00000,
@@ -28,9 +30,12 @@ enum LexicalType
    lxClass         = 0x0000E,
    lxSymbol        = 0x00011,
    lxClassMethod   = 0x00016,
+   lxCode          = 0x0001A,
    lxStatic        = 0x00022,
+   lxConstructor   = 0x00024,
 
    // parameters
+   lxEOF           = 0x18003, // indicating closing code bracket
    lxLiteral       = 0x18004,
    lxIdentifier    = 0x18005,
    lxPrivate       = 0x18006,
@@ -44,10 +49,16 @@ enum LexicalType
 
    lxImporting     = 0x08101,
    lxSymbolRef     = 0x18107,
+   lxLocal         = 0x0810A, // arg - offset
    lxConstantClass = 0x18112, // arg - reference
+   lxNil           = 0x08117,
 
+   lxCalling       = 0x04007,   // sending a message, arg - message
    lxExpression    = 0x0C012,
-   lxDispatching   = 0x0C036,   // dispatching a message, optional arg - message
+   lxNewFrame      = 0x04024, // if argument -1 - than with presaved message
+   lxCreatingClass = 0x0C025, // arg - count
+   lxCreatingStruct= 0x0C026, // arg - size
+   lxDispatching   = 0x04036, // dispatching a message, optional arg - message
 
    // attributes
    lxSourcePath    = 0x20001,
@@ -58,6 +69,8 @@ enum LexicalType
    lxImport        = 0x20006,
    lxReserved      = 0x20007,
    lxParamCount    = 0x20008,
+   lxClassFlag     = 0x20009, // class fields
+   lxTarget        = 0x6000A, // arg - reference
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -81,7 +94,6 @@ enum LexicalType
 //   lxFieldAddress = 0x00107, // arg - offset
 //   lxLocalAddress = 0x04108, // arg - offset
 //   lxBlockLocalAddr = 0x04109, // arg - offset
-//   lxLocal = 0x0410A, // arg - offset
 //   lxBlockLocal = 0x0410B, // arg - offset
 //   lxConstantString = 0x8410C, // arg - reference
 //   lxConstantWideStr = 0x8410D, // arg - reference
@@ -93,7 +105,6 @@ enum LexicalType
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
 //   lxVerbConstant = 0x24116, // arg - reference
-//   lxNil = 0x04117,
 //   lxCurrent = 0x04118, // arg -offset
 //   lxResult = 0x04119, // arg -offset
 //   lxResultField = 0x0411A, // arg -offset
@@ -107,7 +118,6 @@ enum LexicalType
 //   lxUnboxing        = 0x00304,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
-//   lxCalling         = 0x10307,   // sending a message, arg - message
 //   lxDirectCalling   = 0x10308,   // calling a method, arg - message
 //   lxSDirctCalling   = 0x10309,   // calling a virtual method, arg - message
 //   lxResending       = 0x1030A,   // resending a message, optional arg - message
@@ -135,9 +145,6 @@ enum LexicalType
 //   lxOption          = 0x00321,
 //   lxFieldExpression = 0x00322,
 //   lxLocalUnboxing   = 0x00323, // arg - size
-//   lxNewFrame        = 0x00324, // if argument -1 - than with presaved message
-//   lxCreatingClass   = 0x00325, // arg - count
-//   lxCreatingStruct  = 0x00326, // arg - size
 //   lxExternFrame     = 0x00327,
 //   lxNewOp           = 0x20328,
 //   lxBody            = 0x00329,
@@ -169,7 +176,6 @@ enum LexicalType
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //   lxBinarySelf      = 0x00435, // debug info only
 //
-//   lxTarget          = 0x20441, // arg - reference
 //   lxCallTarget      = 0x20442, // arg - reference
 //   lxType            = 0x40443, // arg - subject
 //   //lxSubject         = 0x40804, // arg - subject
@@ -197,7 +203,6 @@ enum LexicalType
 //   lxFrameAttr       = 0x02009,
 //   lxSourcePath      = 0x0200A,
 //
-//   lxClassFlag       = 0x04001,      // class fields
 //   //lxClassArray      = 0x04003,
 //   lxClassField      = 0x04005,
 //
@@ -446,16 +451,16 @@ public:
 
       void insertNode(LexicalType type, int argument = 0)
       {
-         tree->insertNode(position, type, argument);
+         tree->insertNode(position + argLength, type, argument);
       }
 
-//      void appendNode(LexicalType type, int argument = 0)
-//      {
-//         int end_position = tree->seekNodeEnd(position);
-//
-//         tree->insertNode(end_position, type, argument);
-//      }
-//
+      void appendNode(LexicalType type, int argument = 0)
+      {
+         int end_position = tree->seekNodeEnd(position + argLength);
+
+         tree->insertNode(end_position, type, argument);
+      }
+
 //      void injectNode(LexicalType type, int argument = 0)
 //      {
 //         int start_position = position;
@@ -534,6 +539,8 @@ private:
    Node read(StreamReader& reader);
 
 public:
+   static void copyNode(Writer& writer, Node node);
+
 //   static int countChild(Node node, LexicalType type)
 //   {
 //      int counter = 0;
@@ -657,8 +664,8 @@ public:
    Node readNextNode(size_t position);
 //   Node readPreviousNode(size_t position);
 //   Node readParentNode(size_t position);
-//
-//   size_t seekNodeEnd(size_t position);
+
+   size_t seekNodeEnd(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
 //   Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);

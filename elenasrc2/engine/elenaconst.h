@@ -293,7 +293,7 @@ namespace _ELENA_
 //   const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
-//   const int elStateless           = 0x00000080;
+   const int elStateless           = 0x00000080;
 //   const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
@@ -458,10 +458,10 @@ namespace _ELENA_
 //   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
 //   #define PACKAGE_SECTION          "#package"
-//
-//  // --- ELENA class prefixes / postfixes ---
+
+  // --- ELENA class prefixes / postfixes ---
 //   #define INLINE_POSTFIX           "#inline"
-//   #define CLASSCLASS_POSTFIX       "#class"
+   #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
 //   #define EMBEDDED_PREFIX          "#embedded"
 //   #define TARGET_POSTFIX           "##"

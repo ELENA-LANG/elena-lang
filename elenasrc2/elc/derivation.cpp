@@ -22,6 +22,8 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsSymbol:
       case nsStatic:
       case nsMethod:
+      case nsConstructor:
+      case nsSubCode:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          unpackChildren(node);
          _writer.closeNode();
@@ -50,6 +52,11 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsObject:
          copyObject(node);
          break;
+      case nsCodeEnd:
+         _writer.newNode(lxEOF);
+         copyChildren(node.firstChild());
+         _writer.closeNode();
+         break;
       default:
          break;
    }
@@ -67,19 +74,7 @@ void DerivationWriter :: unpackChildren(SNode node)
 
 void DerivationWriter :: copyChildren(SNode node)
 {
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current.argLength > 0) {
-         _writer.newNode(current.type, current.identifier());
-      }
-      else _writer.newNode(current.type, current.argument);
-
-      copyChildren(current);
-
-      _writer.closeNode();
-
-      current = current.nextNode();
-   }
+   SyntaxTree::copyNode(_writer, node);
 }
 
 void DerivationWriter :: copyExpression(SNode node)

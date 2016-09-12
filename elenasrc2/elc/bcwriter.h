@@ -120,7 +120,7 @@ class ByteCodeWriter
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
-//   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
@@ -147,27 +147,27 @@ class ByteCodeWriter
 //   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ref_t stringRef);
+   void declareMessageInfo(CommandTape& tape, ref_t stringRef);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-//   void newFrame(CommandTape& tape, int reserved);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize);
-//   void newDynamicWStructure(CommandTape& tape);
-//   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+   void newFrame(CommandTape& tape, int reserved);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
+   void newDynamicStructure(CommandTape& tape, int itemSize);
+   void newDynamicWStructure(CommandTape& tape);
+   void newDynamicNStructure(CommandTape& tape);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
-//   void newDynamicObject(CommandTape& tape);
-//
+   void newDynamicObject(CommandTape& tape);
+
 //   void popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //
 //   void copyBase(CommandTape& tape, int size);
 //   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void initBase(CommandTape& tape, int fieldCount);
-//   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initBase(CommandTape& tape, int fieldCount);
+   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
@@ -180,8 +180,8 @@ class ByteCodeWriter
 //   void releaseArgList(CommandTape& tape);
 //
 //   void setSubject(CommandTape& tape, ref_t subject);
-//
-//   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
 //   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
 //   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //
@@ -236,7 +236,7 @@ class ByteCodeWriter
 //   void copyShort(CommandTape& tape, int offset);
 //   void copyStructure(CommandTape& tape, int offset, int size);
 //   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
-//   void saveSubject(CommandTape& tape);
+   void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 //   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
 //   void doIntOperation(CommandTape& tape, int operator_id);
@@ -294,7 +294,7 @@ class ByteCodeWriter
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
+   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node);
 

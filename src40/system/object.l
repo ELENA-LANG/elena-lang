@@ -2,7 +2,7 @@
 #class Object
 {
     /// Creates the object
-//    #constructor new []
+    #constructor new []
 
     #method test []
             

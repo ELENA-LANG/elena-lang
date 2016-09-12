@@ -54,7 +54,7 @@ namespace _ELENA_
    #define errInvalidLink           "%s(%d:%d): error 136: The link '%s' cannot be resolved\n"
 //   #define errInvalidInlineClass    "%s(%d:%d): error 137: Inline structure cannot have external dependencies\n"
 //   #define errUnknownExtRole        "%s(%d:%d): error 138: Unknown external role '%s' mapping\n"
-//   #define errInvalidParent         "%s(%d:%d): error 139: Invalid parent class %s\n"
+   #define errInvalidParent         "%s(%d:%d): error 139: Invalid parent class %s\n"
 ////   #define errInvalidSync           "%s(%d:%d): error 140: The method %s cannot have a sync hint\n"
 //   #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
 //   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
@@ -67,13 +67,13 @@ namespace _ELENA_
 //   #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
 //   #define errIllegalConstructor    "%s(%d:%d): error 149: Dynamic class requires implicit default constructor\n"
 //   #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
-//   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
-//
-//   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
+   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
+
+   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
 //   #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
 //   #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
-////   #define errInternalError         "internal error 599"
-////   #define errInvalidDynamicError   "internal error 600"
+//   #define errInternalError         "internal error 599"
+//   #define errInvalidDynamicError   "internal error 600"
    #define errCommandSetAbsent     "internal error 600: command set is not defined"
 //   #define errFatalLinker          "internal error 601: linker fatal error"
 
