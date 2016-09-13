@@ -696,6 +696,13 @@ public:
       if (position <= _position)
          _position += 1;
    }
+   void insert(size_t position, void* value, size_t length)
+   {
+      _memory->insert(position, value, length);
+
+      if (position <= _position)
+         _position += length;
+   }
 
    bool writeRef(ref_t reference, size_t value)
    {

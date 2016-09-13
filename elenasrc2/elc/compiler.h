@@ -109,7 +109,7 @@ public:
    {
       okUnknown = 0,
    
-//      okObject,                       // param - class reference
+      okObject,                       // param - class reference
       okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
@@ -918,7 +918,7 @@ private:
 //   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
-//   void writeMessage(ModuleScope& scope, SyntaxWriter& writer, ref_t messageRef);
+   void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
 //   ref_t mapHint(DNode hint, ModuleScope& scope, int offset);
 //
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
@@ -933,9 +933,9 @@ private:
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
 
 //   ref_t declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef);
-//
-//   void declareParameterDebugInfo(MethodScope& scope, SyntaxWriter& writer, bool withThis, bool withSelf);
-//
+
+   void declareParameterDebugInfo(SNode node, MethodScope& scope, bool withThis, bool withSelf);
+
 //   void readFieldTermplateHints(ModuleScope& scope, ref_t templateRef, ref_t& target, int& size);
 //   bool readSymbolTermplateHints(SymbolScope& scope, ref_t templateRef);
 //
@@ -974,8 +974,8 @@ private:
 //   void copyNode(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 //   void copyTree(ClassScope& scope, SyntaxTree::Node node, SyntaxWriter& writer, _Module* templateModule, TemplateInfo& info);
 ////   bool validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod);
-//
-//   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count, bool& argsUnboxing);
+
+   ref_t mapMessage(SNode node, CodeScope& scope, size_t& count/*, bool& argsUnboxing*/);
 //   ref_t mapMessage(DNode node, CodeScope& scope, size_t& count)
 //   {
 //      bool dummy = false;
@@ -994,7 +994,7 @@ private:
    void setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object);
 
    ObjectInfo compileTerminal(SNode node, CodeScope& scope);
-   /*ObjectInfo*/void compileObject(SNode objectNode, CodeScope& scope/*, int mode*/);
+   ObjectInfo compileObject(SNode objectNode, CodeScope& scope, int mode);
 
 //   int mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target);
 //   int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
@@ -1002,18 +1002,18 @@ private:
 //   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 //   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-//
-//   ref_t compileMessageParameters(DNode node, CodeScope& scope);
-//
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object);
-//   ObjectInfo compileMessage(DNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
+
+   ref_t compileMessageParameters(SNode node, CodeScope& scope);
+
+   ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo object);
+   ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 //
 //   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigning(DNode node, CodeScope& scope, ObjectInfo target, int mode);
-//   ObjectInfo compileOperations(DNode node, CodeScope& scope, ObjectInfo target, int mode);   
+   ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
-   /*ObjectInfo */void compileExpression(SNode node, CodeScope& scope/*, ref_t targetType, int mode*/);
+   ObjectInfo compileExpression(SNode node, CodeScope& scope/*, ref_t targetType*/, int mode);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 //

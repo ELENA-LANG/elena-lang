@@ -50,7 +50,7 @@ enum Symbol
    //nsNestedClass                = 0x01018,
    nsObject                     = 0x01019,
    nsSubCode                    = 0x0101A,
-   //nsMessageOperation           = 0x0101B,
+   nsMessageOperation           = 0x0101B,
    //nsMessageParameter           = 0x0101C,
    nsCodeEnd                    = 0x0101D,
    //nsVariable                   = 0x0101E,

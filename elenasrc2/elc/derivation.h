@@ -126,6 +126,7 @@ class DerivationWriter : public _DerivationWriter
 
    void copyExpression(SNode node);
    void copyObject(SNode node);
+   void copyMessage(SNode node);
 
 public:
    void writeSymbol(Symbol symbol);

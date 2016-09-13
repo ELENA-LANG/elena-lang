@@ -249,15 +249,18 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 //{
 //   tape.write(bdParamsLocal, (ref_t)localName, level);
 //}
-//
-//void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
-//{
-//   tape.write(bdSelf, 0, level);
-//}
 
-void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ref_t stringRef)
+void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
-   tape.write(bdMessage, 0, stringRef);
+   tape.write(bdSelf, 0, level);
+}
+
+void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ident_t message)
+{
+   MemoryWriter writer(&_strings);
+
+   tape.write(bdMessage, 0, writer.Position());
+   writer.writeLiteral(message);
 }
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
@@ -3145,7 +3148,7 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
 {
    switch (type) {
-      case lxSymbolRef:
+      case lxSymbolReference:
          tape.write(bcCallR, argument | mskSymbolRef);
          break;
 //      case lxConstantString:
@@ -4599,9 +4602,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //               SyntaxTree::findChild(current, lxTerminal).identifier(),
 //               SyntaxTree::findChild(current, lxLevel).argument, SyntaxTree::existChild(current, lxFrameAttr));
 //            break;
-//         case lxMessageVariable:
-//            declareMessageInfo(tape, current.argument);
-//            break;
+         case lxMessageVariable:
+            declareMessageInfo(tape, current.identifier());
+            break;
 //         case lxParamsVariable:
 //            declareLocalParamsInfo(tape,
 //               SyntaxTree::findChild(current, lxTerminal).identifier(),
@@ -4653,9 +4656,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxReleasing:
 //            releaseObject(tape, current.argument);
 //            break;
-//         case lxSelfVariable:
-//            declareSelfInfo(tape, current.argument);
-//            break;
+         case lxSelfVariable:
+            declareSelfInfo(tape, current.argument);
+            break;
 //         case lxBinarySelf:
 //            declareSelfStructInfo(tape, THIS_VAR, current.argument, SyntaxTree::findChild(current, lxClassName).identifier());
 //            break;
@@ -4744,7 +4747,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    bool open = false;
    bool exit = false;
    SyntaxTree::Node current = node.firstChild();
-   ref_t messageRef = -1;
+   ident_t message = NULL;
    while (current != lxNone) {
       if (current == lxImporting) {
          if (!open)
@@ -4757,8 +4760,8 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
          if (!open) {
             declareMethod(tape, node.argument, sourcePathRef, reserved, current.argument == -1);
             open = true;
-            if (messageRef != -1)
-               declareMessageInfo(tape, messageRef);
+            if (!emptystr(message))
+               declareMessageInfo(tape, message);
          }  
          else newFrame(tape, reserved);
 
@@ -4770,8 +4773,8 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
       else if (current == lxCalling && current.argument == -1) {
          if (!open) {
             declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
-            if (messageRef != -1)
-               declareMessageInfo(tape, messageRef);
+            if (!emptystr(message))
+               declareMessageInfo(tape, message);
 
             open = true;
          }
@@ -4793,12 +4796,12 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 
          generateCreating(tape, current);
       }
-//      else if (current == lxMessageVariable) {
-//         if (open) {
-//            declareMessageInfo(tape, current.argument);
-//         }
-//         else messageRef = current.argument;
-//      }
+      else if (current == lxMessageVariable) {
+         if (open) {
+            declareMessageInfo(tape, current.identifier());
+         }
+         else message = current.identifier();
+      }
 //      else if (test(current.type, lxExpressionMask)) {
 //         if (!open) {
 //            open = true;

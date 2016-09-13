@@ -47,7 +47,12 @@ void DerivationWriter :: unpackNode(SNode node)
          break;
       case nsExpression:
       case nsDispatchHandler:
+         _writer.newBookmark();
          copyExpression(node);
+         _writer.removeBookmark();
+         break;
+      case nsMessageOperation:
+         copyMessage(node);
          break;
       case nsObject:
          copyObject(node);
@@ -92,6 +97,29 @@ void DerivationWriter :: copyExpression(SNode node)
 void DerivationWriter :: copyObject(SNode node)
 {
    unpackChildren(node);
+}
+
+void DerivationWriter :: copyMessage(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch ((Symbol)current.type) {
+         case tsIdentifier:
+         case tsPrivate:
+         case tsReference:
+            _writer.newNode(lxMessage);
+            copyChildren(node);
+            _writer.closeNode();
+            break;
+         default:
+            unpackNode(node);
+            break;
+      }
+      current = current.nextNode();
+   }
+
+   _writer.insert(lxExpression);
+   _writer.closeNode();
 }
 
 void DerivationWriter :: writeSymbol(Symbol symbol)

@@ -16,61 +16,64 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxParameter     = 0x10000,
-   lxObjectMask    = 0x08000,
-   lxCodeScopeMask = 0x04000,
-   lxExprMask      = 0x0C000,
-   lxReferenceMask = 0x40000,
+   lxParameter       = 0x10000,
+   lxObjectMask      = 0x08000,
+   lxCodeScopeMask   = 0x04000,
+   lxExprMask        = 0x0C000,
+   lxReferenceMask   = 0x40000,
 
-   lxEnding        = -1,
-   lxNone          = 0x00000,
+   lxEnding          = -1,
+   lxNone            = 0x00000,
 
    // scopes
-   lxRoot          = 0x00001,
-   lxClass         = 0x0000E,
-   lxSymbol        = 0x00011,
-   lxClassMethod   = 0x00016,
-   lxCode          = 0x0001A,
-   lxStatic        = 0x00022,
-   lxConstructor   = 0x00024,
+   lxRoot            = 0x00001,
+   lxClass           = 0x0000E,
+   lxSymbol          = 0x00011,
+   lxClassMethod     = 0x00016,
+   lxCode            = 0x0001A,
+   lxStatic          = 0x00022,
+   lxConstructor     = 0x00024,
 
    // parameters
-   lxEOF           = 0x18003, // indicating closing code bracket
-   lxLiteral       = 0x18004,
-   lxIdentifier    = 0x18005,
-   lxPrivate       = 0x18006,
-   lxReference     = 0x18007,
-   lxInteger       = 0x18008,
-   lxHexInteger    = 0x18009,
-   lxReal          = 0x1800A,
-   lxCharacter     = 0x1800B,
-   lxLong          = 0x1800C,
-   lxWide          = 0x1800D,
+   lxEOF             = 0x18003, // indicating closing code bracket
+   lxLiteral         = 0x18004,
+   lxIdentifier      = 0x18005,
+   lxPrivate         = 0x18006,
+   lxReference       = 0x18007,
+   lxInteger         = 0x18008,
+   lxHexInteger      = 0x18009,
+   lxReal            = 0x1800A,
+   lxCharacter       = 0x1800B,
+   lxLong            = 0x1800C,
+   lxWide            = 0x1800D,
 
-   lxImporting     = 0x08101,
-   lxSymbolRef     = 0x18107,
-   lxLocal         = 0x0810A, // arg - offset
-   lxConstantClass = 0x18112, // arg - reference
-   lxNil           = 0x08117,
+   lxImporting       = 0x08101,
+   lxSymbolReference = 0x18107,
+   lxLocal           = 0x0810A, // arg - offset
+   lxConstantClass   = 0x18112, // arg - reference
+   lxNil             = 0x08117,
 
-   lxCalling       = 0x04007,   // sending a message, arg - message
-   lxExpression    = 0x0C012,
-   lxNewFrame      = 0x04024, // if argument -1 - than with presaved message
-   lxCreatingClass = 0x0C025, // arg - count
-   lxCreatingStruct= 0x0C026, // arg - size
-   lxDispatching   = 0x04036, // dispatching a message, optional arg - message
+   lxCalling         = 0x04007,   // sending a message, arg - message
+   lxExpression      = 0x0C012,
+   lxNewFrame        = 0x04024, // if argument -1 - than with presaved message
+   lxCreatingClass   = 0x0C025, // arg - count
+   lxCreatingStruct  = 0x0C026, // arg - size
+   lxDispatching     = 0x04036, // dispatching a message, optional arg - message
 
    // attributes
-   lxSourcePath    = 0x20001,
-   lxCol           = 0x20002,
-   lxRow           = 0x20003,
-   lxLength        = 0x02004,
-   lxBreakpoint    = 0x20005,
-   lxImport        = 0x20006,
-   lxReserved      = 0x20007,
-   lxParamCount    = 0x20008,
-   lxClassFlag     = 0x20009, // class fields
-   lxTarget        = 0x6000A, // arg - reference
+   lxSourcePath      = 0x20001,
+   lxCol             = 0x20002,
+   lxRow             = 0x20003,
+   lxLength          = 0x02004,
+   lxBreakpoint      = 0x20005,
+   lxImport          = 0x20006,
+   lxReserved        = 0x20007,
+   lxParamCount      = 0x20008,
+   lxClassFlag       = 0x20009, // class fields
+   lxTarget          = 0x6000A, // arg - reference
+   lxMessageVariable = 0x2000B, // debug info only
+   lxSelfVariable    = 0x2000C, // debug info only
+   lxMessage         = 0x1044A, // arg - message
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -170,8 +173,6 @@ enum LexicalType
 //   lxIntsVariable    = 0x0042D,
 //   lxBinaryVariable  = 0x0042E,
 //   lxParamsVariable  = 0x0042F,
-//   lxMessageVariable = 0x00430, // debug info only
-//   lxSelfVariable    = 0x00431, // debug info only
 //   lxReleasing       = 0x00432,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //   lxBinarySelf      = 0x00435, // debug info only
@@ -184,7 +185,6 @@ enum LexicalType
 //   lxOverridden      = 0x00447,
 //   lxIfValue         = 0x20448, // arg - reference
 //   lxElseValue       = 0x20449, // arg - reference
-//   lxMessage         = 0x1044A, // arg - message
 //   lxEmbeddable      = 0x0044B,
 //   lxSize            = 0x0044C,
 //   lxSubject         = 0x4044F,
@@ -241,24 +241,24 @@ public:
          return _bookmarks.Count();
       }
 
-//      int newBookmark()
-//      {
-//         _bookmarks.push(_writer.Position());
-//
-//         return _bookmarks.Count();
-//      }
-//
-//      void removeBookmark()
-//      {
-//         _bookmarks.pop();
-//      }
-//
-//      void clear()
-//      {
-//         _writer.seek(0);
-//         _bookmarks.clear();
-//      }
-//
+      int newBookmark()
+      {
+         _bookmarks.push(_writer.Position());
+
+         return _bookmarks.Count();
+      }
+
+      void removeBookmark()
+      {
+         _bookmarks.pop();
+      }
+
+      void clear()
+      {
+         _writer.seek(0);
+         _bookmarks.clear();
+      }
+
 //      void clear(int bookmark)
 //      {
 //         size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
@@ -268,18 +268,19 @@ public:
 //      }
 
       void insert(int bookmark, LexicalType type, ref_t argument);
+      void insert(int bookmark, LexicalType type, ident_t argument);
 //      void insert(int bookmark, LexicalType type)
 //      {
 //         insert(type, 0);
 //      }
-//      void insert(LexicalType type, ref_t argument)
-//      {
-//         insert(0, type, argument);
-//      }
-//      void insert(LexicalType type)
-//      {
-//         insert(0, type, 0);
-//      }
+      void insert(LexicalType type, ref_t argument)
+      {
+         insert(0, type, argument);
+      }
+      void insert(LexicalType type)
+      {
+         insert(0, type, 0);
+      }
       //void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
       //{
       //   insert(end_bookmark, lxEnding, 0);
@@ -290,7 +291,12 @@ public:
          insert(bookmark, lxEnding, 0);
          insert(bookmark, type, argument);
       }
-//      void insertChild(LexicalType type, ref_t argument)
+      void insertChild(int bookmark, LexicalType type, ident_t argument)
+      {
+         insert(bookmark, lxEnding, 0);
+         insert(bookmark, type, argument);
+      }
+      //      void insertChild(LexicalType type, ref_t argument)
 //      {
 //         insert(lxEnding, 0);
 //         insert(type, argument);
@@ -450,6 +456,11 @@ public:
 //      }
 
       void insertNode(LexicalType type, int argument = 0)
+      {
+         tree->insertNode(position + argLength, type, argument);
+      }
+
+      void insertNode(LexicalType type, ident_t argument)
       {
          tree->insertNode(position + argLength, type, argument);
       }
@@ -668,6 +679,7 @@ public:
    size_t seekNodeEnd(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
+   Node insertNode(size_t position, LexicalType type, ident_t argument);
 //   Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 //
 //   bool matchPattern(Node node, int mask, int counter, ...);

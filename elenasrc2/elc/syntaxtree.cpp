@@ -62,6 +62,27 @@ void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
    }
 }
 
+void SyntaxWriter::insert(int bookmark, LexicalType type, ident_t argument)
+{
+   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+   size_t length = getlength(argument);
+
+   _writer.insertDWord(position, length + 1);
+   _writer.insert(position, (void*)((const char*)argument), length + 1);
+   _writer.insertDWord(position, length + 5);
+   _writer.insertDWord(position, 0);
+   _writer.insertDWord(position, type);
+
+   Stack<size_t>::Iterator it = _bookmarks.start();
+   while (!it.Eof()) {
+      if (*it > position) {
+         *it = *it + 12;
+      }
+
+      it++;
+   }
+}
+
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 {
    // writer node
@@ -102,6 +123,16 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
 // --- SyntaxReader ---
 
 SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
+{
+   SyntaxWriter writer(*this);
+
+   writer.insertChild(writer.setBookmark(position), type, argument);
+
+   MemoryReader reader(&_body, position);
+   return read(reader);
+}
+
+SyntaxTree::Node SyntaxTree::insertNode(size_t position, LexicalType type, ident_t argument)
 {
    SyntaxWriter writer(*this);
 
