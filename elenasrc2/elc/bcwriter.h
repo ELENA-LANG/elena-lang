@@ -125,7 +125,7 @@ class ByteCodeWriter
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
-//   void declareArgumentList(CommandTape& tape, int count);
+   void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -251,13 +251,13 @@ class ByteCodeWriter
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
-//   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
-//
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
-//   void pushObject(CommandTape& tape, SyntaxTree::Node node);
+   void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
@@ -274,8 +274,8 @@ class ByteCodeWriter
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
-//
+   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
+
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
 //   void generateLocking(CommandTape& tape, SyntaxTree::Node node);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
@@ -286,7 +286,7 @@ class ByteCodeWriter
 //   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
@@ -325,7 +325,7 @@ public:
    }
 };
 
-//bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
+bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
 

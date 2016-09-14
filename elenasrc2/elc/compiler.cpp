@@ -43,11 +43,11 @@ struct ModuleInfo
    }
 };
 
-//// --- Hint constants ---
+// --- Hint constants ---
 //#define HINT_MASK             0xFFFFF000
-//
+
 //#define HINT_ROOT             0x80000000
-//#define HINT_NOBOXING         0x40000000
+#define HINT_NOBOXING         0x40000000
 //#define HINT_NOUNBOXING       0x20000000
 //#define HINT_EXTERNALOP       0x10000000
 //#define HINT_NOCONDBOXING     0x08000000
@@ -2895,8 +2895,8 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
    ObjectInfo result;
 
 //   DNode member = objectNode.firstChild();
-//   switch (member)
-//   {
+   switch (objectNode.type)
+   {
 //      case nsNestedClass:
 //      case nsRetStatement:
 //         if (objectNode.Terminal() != nsNone) {
@@ -2914,7 +2914,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //      case nsInlineExpression:
 //         result = compileClosure(objectNode, scope, HINT_ACTION);
 //         break;
-//      case nsExpression:
+      case lxExpression:
 //         if (isCollection(member)) {
 //            TerminalInfo parentInfo = objectNode.Terminal();
 //            // if the parent class is defined
@@ -2927,14 +2927,14 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //            }
 //            else result = compileCollection(member, scope, mode);
 //         }
-//         else result = compileExpression(member, scope, 0, HINT_NOBOXING);
-//         break;
+         /*else */result = compileExpression(objectNode, scope, /*0, */HINT_NOBOXING);
+         break;
 //      case nsMessageReference:
 //         result = compileMessageReference(member, scope);
 //         break;
-//      default:
+      default:
          result = compileTerminal(objectNode, scope);
-//   }
+   }
 
    return result;
 }
@@ -3081,12 +3081,12 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    while (arg != lxNone) {
       if (arg == lxMessage) {
          // read the message identifier
-         arg = arg.firstChild();
+         SNode name = arg.firstChild();
 
          if (verb_id == 0) {
-            verb_id = _verbs.get(arg.identifier());
+            verb_id = _verbs.get(name.identifier());
             if (verb_id == 0) {
-               ref_t id = scope.mapSubject(arg, signature);
+               ref_t id = scope.mapSubject(name, signature);
 
                // if followed by argument list - it is EVAL verb
                if (arg.nextNode() != lxNone) {
@@ -3412,7 +3412,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 //   //   scope.writer->insert(lxTemplateCalling, messageRef);
 //   //}
 //   else {
-//      scope.writer->insert(lxCalling, messageRef);
+      node.set(lxCalling, messageRef);
 //
 //      // if the class found and the message is not supported - warn the programmer and raise an exception
 //      if (classFound && callType == tpUnknown) {
@@ -3426,9 +3426,9 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 //   if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID && scope.moduleScope->subjectHints.exist(signRef)) {
 //      retVal.type = signRef;
 //   }
-//
-//   recordDebugStep(scope, node.Terminal(), dsStep);
-//
+      // set a breakpoint
+      setDebugStep(node.findChild(lxMessage), dsStep);
+
 //   appendObjectInfo(scope, retVal);
 //   appendTerminalInfo(scope.writer, node.FirstTerminal());
 //
@@ -3450,19 +3450,21 @@ ref_t Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
    size_t paramCount = 0;
    ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
 
-   SNode object = node.firstChild();
-   while (object != lxNone) {
-
-
-      object = object.nextNode();
-   }
-
-//   int paramMode = 0;
+   int paramMode = 0;
 //   //// HOTFIX : if open argument list has to be unboxed
 //   //// alternative boxing routine should be used (using a temporal variable)
 //   //if (argsUnboxing)
 //   //   paramMode |= HINT_ALTBOXING;
 //
+   SNode object = node.firstChild();
+   while (object != lxNone) {
+      if (test(object.type, lxObjectMask)) {
+         compileObject(object, scope, paramMode);
+      }
+
+      object = object.nextNode();
+   }
+
 //   DNode arg;
 //   if (node == nsMessageParameter) {
 //      arg = node;
@@ -4104,6 +4106,7 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
    if (member == lxMessage) {
       objectInfo = compileMessage(node, scope, objectInfo);
    }
+   else objectInfo = compileObject(node.firstChild(lxObjectMask), scope, mode);
 
 //   if (/*node != nsObject*/node == lxExpression) {
 //      SNode member = node.firstChild(lxObjectMask);

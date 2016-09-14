@@ -108,7 +108,7 @@ void DerivationWriter :: copyMessage(SNode node)
          case tsPrivate:
          case tsReference:
             _writer.newNode(lxMessage);
-            copyChildren(node);
+            unpackChildren(node);
             _writer.closeNode();
             break;
          default:

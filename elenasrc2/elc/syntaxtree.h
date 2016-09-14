@@ -52,8 +52,10 @@ enum LexicalType
    lxLocal           = 0x0810A, // arg - offset
    lxConstantClass   = 0x18112, // arg - reference
    lxNil             = 0x08117,
+   lxCurrent         = 0x08118, // arg -offset
+   lxResult          = 0x08119, // arg -offset
 
-   lxCalling         = 0x04007,   // sending a message, arg - message
+   lxCalling         = 0x0C007,   // sending a message, arg - message
    lxExpression      = 0x0C012,
    lxNewFrame        = 0x04024, // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025, // arg - count
@@ -79,7 +81,6 @@ enum LexicalType
 //   lxExpressionMask  = 0x00200,
 //   lxAttrMask        = 0x00800,
 //   lxPrimitiveOpMask = 0x01000,
-//   lxSimpleMask      = 0x04000,   // idicates if the implementation does not affect base / other registers
 //   lxMessageMask     = 0x10000,
 //   lxReferenceMask   = 0x20000,
 //   lxSubjectMask     = 0x40000,
@@ -108,8 +109,6 @@ enum LexicalType
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
 //   lxVerbConstant = 0x24116, // arg - reference
-//   lxCurrent = 0x04118, // arg -offset
-//   lxResult = 0x04119, // arg -offset
 //   lxResultField = 0x0411A, // arg -offset
 //   lxCurrentMessage = 0x0411B,
 //   lxThisLocal = 0x0411C,
@@ -393,6 +392,12 @@ public:
          *(int*)(reader.Address()) = (int)type;
       }
 
+      void set(LexicalType type, ref_t argument)
+      {
+         (*this) = type;
+         setArgument(argument);
+      }
+
       void setArgument(ref_t argument)
       {
          this->argument = argument;
@@ -421,12 +426,12 @@ public:
 
       Node findNext(LexicalType mask) const
       {
-         Node node = *this;
+         Node current = *this;
 
-         while (node != lxNone && !test(node.type, mask))
-            node = node.nextNode();
+         while (current != lxNone && !test(current.type, mask))
+            current = current.nextNode();
 
-         return node;
+         return current;
       }
 
 //      Node lastChild() const

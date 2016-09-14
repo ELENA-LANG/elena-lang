@@ -911,8 +911,7 @@ private:
    }
    void setDebugStep(SNode& node, int stepType)
    {
-      node = lxBreakpoint;
-      node.setArgument(stepType);
+      node.set(lxBreakpoint, stepType);
    }
 
 //   void raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered = true);
