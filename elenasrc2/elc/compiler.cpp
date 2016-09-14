@@ -1397,7 +1397,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(SymbolScope* parent)
-   : Scope(parent)//, locals(Parameter(0))
+   : Scope(parent), locals(Parameter(0))
 {
 //   this->writer = writer;
    this->level = 0;
@@ -2531,12 +2531,12 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //
 //   scope.writer->closeNode();
 //}
-//
-//void Compiler :: compileVariable(DNode node, CodeScope& scope, DNode hints)
-//{
-//   TerminalInfo terminal = node.Terminal();
-//
-//   if (!scope.locals.exist(terminal)) {
+
+void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
+{
+   SNode terminal = node.findChild(lxIdentifier, lxPrivate);
+
+   if (!scope.locals.exist(terminal.identifier())) {
 //      ref_t type = 0;
 //      ref_t classRef = 0;
 //      int size = 0;
@@ -2658,8 +2658,10 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //         }
 //      }
 //      else {
-//         int level = scope.newLocal();
-//
+         int level = scope.newLocal();
+
+         node.appendNode(lxLevel, level);
+
 //         scope.writer->newNode(lxVariable);
 //         scope.writer->appendNode(lxTerminal, terminal.value);
 //         scope.writer->appendNode(lxLevel, level);
@@ -2681,9 +2683,9 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //      }
 //
 //      scope.mapLocal(node.Terminal(), variable.param, type, classRef, size);
-//   }
-//   else scope.raiseError(errDuplicatedLocal, terminal);
-//}
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
+}
 
 void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object)
 {
@@ -2712,13 +2714,13 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //      case okCharConstant:
 //         scope.writer->newNode(lxConstantChar, object.param);
 //         break;
-      case okIntConstant:
-         terminal.set(lxConstantInt, object.param);
-
-//         scope.writer->appendNode(lxValue, 
-//            StringHelper::strToULong(scope.moduleScope->module->resolveConstant(object.param), 16));
-
-         break;
+//      case okIntConstant:
+//         terminal.set(lxConstantInt, object.param);
+//
+////         scope.writer->appendNode(lxValue, 
+////            StringHelper::strToULong(scope.moduleScope->module->resolveConstant(object.param), 16));
+//
+//         break;
 //      case okLongConstant:
 //         scope.writer->newNode(lxConstantLong, object.param);
 //         break;
@@ -4373,9 +4375,9 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 //   scope.writer->closeNode();
 //}
 
-/*ObjectInfo*/void Compiler :: compileCode(SNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 {
-//   ObjectInfo retVal;
+   ObjectInfo retVal;
 
    bool needVirtualEnd = true;
    SNode statement = node.firstChild();
@@ -4430,10 +4432,10 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 //
 //            break;
 //         }
-//         case nsVariable:
+         case lxVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            compileVariable(statement, scope, hints);
-//            break;
+            compileVariable(statement, scope/*, hints*/);
+            break;
 //         case nsExtern:
 //            scope.writer->newNode(lxExternFrame);
 //            compileCode(statement, scope);
@@ -4456,8 +4458,8 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 
 //  //scope.rootBookmark = -1;
 //  // scope.writer->removeBookmark();
-//
-//   return retVal;
+
+   return retVal;
 }
 
 //void Compiler :: compileExternalArguments(DNode arg, CodeScope& scope/*, ExternalScope& externalScope*/)

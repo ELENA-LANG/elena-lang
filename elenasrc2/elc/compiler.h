@@ -19,27 +19,27 @@ namespace _ELENA_
 class Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int    offset;
+   struct Parameter
+   {
+      int    offset;
 //      ref_t  subj_ref;
 //      size_t class_ref;
 //      int    size;
-//
-//      Parameter()
-//      {
-//         offset = -1;
+
+      Parameter()
+      {
+         offset = -1;
 //         subj_ref = 0;
 //         class_ref = 0;
 //         size = 0;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
 //         this->subj_ref = 0;
 //         this->class_ref = 0;
 //         this->size = 0;
-//      }
+      }
 //      Parameter(int offset, ref_t subj_ref)
 //      {
 //         this->offset = offset;
@@ -54,7 +54,7 @@ public:
 //         this->class_ref = class_ref;
 //         this->size = size;
 //      }
-//   };
+   };
 
    // InheritResult
    enum InheritResult
@@ -201,7 +201,7 @@ public:
    };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
-//   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef Map<ident_t, Parameter, false> LocalMap;
    typedef Map<ref_t, ref_t>              SubjectMap;
    typedef Map<ref_t, ref_t>              ClassMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
@@ -694,22 +694,22 @@ private:
    {
 //      SyntaxWriter* writer;
 ////      int           rootBookmark;   // !! should be removed??
-//
-//      // scope local variables
-//      LocalMap     locals;
+
+      // scope local variables
+      LocalMap     locals;
       int          level;
 
       // scope stack allocation
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
-//
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
 //      void mapLocal(ident_t local, int level, ref_t type)
 //      {
 //         locals.add(local, Parameter(level, type));
@@ -982,8 +982,8 @@ private:
 //   }
 //
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
-//   void compileVariable(DNode node, CodeScope& scope, DNode hints);
-//
+   void compileVariable(SNode node, CodeScope& scope/*, DNode hints*/);
+
 //   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, int mode);
 //   ObjectInfo compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
@@ -1037,7 +1037,7 @@ private:
 //   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
 //   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
 
-   /*ObjectInfo*/void compileCode(SNode node, CodeScope& scope);
+   ObjectInfo compileCode(SNode node, CodeScope& scope);
 
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);

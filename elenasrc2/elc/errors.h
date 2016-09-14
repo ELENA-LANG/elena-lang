@@ -34,7 +34,7 @@ namespace _ELENA_
    #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
    #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
 //   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exists\n"
-//   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
+   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
    #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
 //   #define errInvalidOperation	   "%s(%d:%d): error 107: Invalid operation with '%s'\n"
 //   #define errDuplicatedField       "%s(%d:%d): error 109: Field '%s' already exists in the class\n"

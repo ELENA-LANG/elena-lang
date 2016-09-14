@@ -63,6 +63,8 @@ enum LexicalType
    lxCreatingStruct  = 0x0C026, // arg - size
    lxDispatching     = 0x04036, // dispatching a message, optional arg - message
 
+   lxVariable        = 0x10037, // debug info only if lxFrameAttr is included
+
    // attributes
    lxSourcePath      = 0x20001,
    lxCol             = 0x20002,
@@ -76,7 +78,9 @@ enum LexicalType
    lxTarget          = 0x6000A, // arg - reference
    lxMessageVariable = 0x2000B, // debug info only
    lxSelfVariable    = 0x2000C, // debug info only
-   lxMessage         = 0x1044A, // arg - message
+   lxMessage         = 0x2000D, // arg - message
+   lxAssign          = 0x2000F,
+   lxLevel           = 0x20010,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -163,7 +167,6 @@ enum LexicalType
 //   lxArrOp           = 0x01333, // arg - operation id
 //   lxBinArrOp        = 0x01334, // arg - operation id
 //
-//   lxVariable        = 0x00427, // debug info only if lxFrameAttr is included
 //   lxIntVariable     = 0x00428,
 //   lxLongVariable    = 0x00429,
 //   lxReal64Variable  = 0x0042A,
@@ -196,7 +199,6 @@ enum LexicalType
 //   lxWarningMask     = 0x00809,
 //
 //   lxTerminal        = 0x02005,
-//   lxLevel           = 0x02006,
 //   lxClassName       = 0x02007, // arg - reference
 //   lxValue           = 0x02008,
 //   lxFrameAttr       = 0x02009,

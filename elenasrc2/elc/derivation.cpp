@@ -51,6 +51,9 @@ void DerivationWriter :: unpackNode(SNode node)
          copyExpression(node);
          _writer.removeBookmark();
          break;
+      case nsVariable:
+         copyVariable(node);
+         break;
       case nsMessageOperation:
          copyMessage(node);
          break;
@@ -123,6 +126,24 @@ void DerivationWriter :: copyMessage(SNode node)
    }
 
    _writer.insert(lxExpression);
+   _writer.closeNode();
+}
+
+void DerivationWriter :: copyVariable(SNode node)
+{
+   SNode local = node.firstChild();
+
+   _writer.newNode(lxVariable);
+   unpackNode(local);
+   _writer.closeNode();
+
+   _writer.newNode(lxExpression);
+   _writer.appendNode(lxAssign);
+   unpackNode(local);
+
+   SNode current = node.findChild((LexicalType)nsAssigning);
+   unpackChildren(current);
+
    _writer.closeNode();
 }
 
