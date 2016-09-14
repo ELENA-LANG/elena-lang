@@ -116,7 +116,7 @@ public:
 //      okLiteralConstant,              // param - reference 
 //      okWideLiteralConstant,          // param - reference 
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference 
+      okIntConstant,                  // param - reference 
 //      okLongConstant,                 // param - reference 
 //      okRealConstant,                 // param - reference 
 //      okMessageConstant,              // param - reference 

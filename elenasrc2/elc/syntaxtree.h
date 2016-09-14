@@ -50,6 +50,7 @@ enum LexicalType
    lxImporting       = 0x08101,
    lxSymbolReference = 0x18107,
    lxLocal           = 0x0810A, // arg - offset
+   lxConstantInt     = 0x1810F, // arg - reference
    lxConstantClass   = 0x18112, // arg - reference
    lxNil             = 0x08117,
    lxCurrent         = 0x08118, // arg -offset
@@ -102,7 +103,6 @@ enum LexicalType
 //   lxConstantString = 0x8410C, // arg - reference
 //   lxConstantWideStr = 0x8410D, // arg - reference
 //   lxConstantChar = 0x8410E, // arg - reference
-//   lxConstantInt = 0x8410F, // arg - reference
 //   lxConstantLong = 0x84110, // arg - reference
 //   lxConstantReal = 0x84111, // arg - reference
 //   lxMessageConstant = 0x24113, // arg - rererence

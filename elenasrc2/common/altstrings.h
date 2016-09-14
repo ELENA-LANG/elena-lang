@@ -250,14 +250,15 @@ public:
       intToStr(n, _string, 10);
    }
 
-////   void appendHex(int n)
-////   {
-////      int pos = getlength(_string);
-////
-////      StringHelper::ulongToStr(n, _string + pos, 16);
-////      StringHelper::upper(_string + pos);
-////   }
-////
+   void appendHex(int n)
+   {
+      int pos = getlength(_string);
+
+      intToStr(n, _string + pos, 16);
+
+      __upper(_string + pos);
+   }
+
 ////   void appendDouble(double n)
 ////   {
 ////      int pos = getlength(_string);
@@ -534,6 +535,8 @@ wchar_t* __reallocate(wchar_t* s, size_t size);
 
 char* __lower(char* s);
 wchar_t* __lower(wide_c* s);
+char* __upper(char* s);
+wchar_t* __upper(wide_c* s);
 
 inline void copystr(char* d, const char* s)
 {

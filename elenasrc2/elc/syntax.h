@@ -51,7 +51,7 @@ enum Symbol
    nsObject                     = 0x01019,
    nsSubCode                    = 0x0101A,
    nsMessageOperation           = 0x0101B,
-   //nsMessageParameter           = 0x0101C,
+   nsMessageParameter           = 0x0101C,
    nsCodeEnd                    = 0x0101D,
    //nsVariable                   = 0x0101E,
    //nsL4Operation                = 0x0101F,

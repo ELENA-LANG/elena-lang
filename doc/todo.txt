@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xrev
+                 * support abstract attribute
                  * support implicit constructors
                  * check sealed / limited class attributes
                  * compliation should be based on set of rules

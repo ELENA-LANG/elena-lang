@@ -511,10 +511,10 @@ char* _ELENA_::__lower(char* s)
 //   return s[0];
 //}
 
-//char* StringHelper :: upper(char* s)
-//{
-//   return _strupr(s);
-//}
+char* _ELENA_::__upper(char* s)
+{
+   return _strupr(s);
+}
 
 char* clone(const char* s)
 {
@@ -715,10 +715,10 @@ wchar_t* _ELENA_::__lower(wchar_t* s)
 //   return s[0];
 //}
 
-//wchar_t* StringHelper :: upper(wchar_t* s)
-//{
-//   return _wcsupr(s);
-//}
+wchar_t* _ELENA_ :: __upper(wchar_t* s)
+{
+   return _wcsupr(s);
+}
 
 wchar_t* clone(const wchar_t* s)
 {
@@ -906,15 +906,15 @@ unsigned short* _ELENA_::__lower(unsigned short* s)
 //{
 //   return tolower(c); // !! temporal: currently only ascii symbols are handled
 //}
-//
-//unsigned short* StringHelper :: upper(unsigned short* s)
-//{
-//   while (*s) {
-//      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
-//      s++;
-//   }
-//   return s;
-//}
+
+unsigned short* _ELENA_::__upper(unsigned short* s)
+{
+   while (*s) {
+      *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
+      s++;
+   }
+   return s;
+}
 
 unsigned short* clone(const unsigned short* s)
 {

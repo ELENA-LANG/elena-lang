@@ -2712,13 +2712,13 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //      case okCharConstant:
 //         scope.writer->newNode(lxConstantChar, object.param);
 //         break;
-//      case okIntConstant:
-//         scope.writer->newNode(lxConstantInt, object.param);
-//
+      case okIntConstant:
+         terminal.set(lxConstantInt, object.param);
+
 //         scope.writer->appendNode(lxValue, 
 //            StringHelper::strToULong(scope.moduleScope->module->resolveConstant(object.param), 16));
-//
-//         break;
+
+         break;
 //      case okLongConstant:
 //         scope.writer->newNode(lxConstantLong, object.param);
 //         break;
@@ -2822,6 +2822,7 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 {
 //   TerminalInfo terminal = node.Terminal();
+   ident_t token = terminal.identifier();
 
    ObjectInfo object;
 //   if (terminal==tsLiteral) {
@@ -2833,19 +2834,18 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
 //   }
-//   else if (terminal == tsInteger) {
-//      String<ident_c, 20> s(terminal.value, getlength(terminal.value));
-//
-//      long integer = s.toInt();
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // convert back to string as a decimal integer
-//      s.clear();
-//      s.appendHex(integer);
-//
-//      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+/*   else*/ if (terminal == tsInteger) {
+      String<char, 20> s;
+
+      long integer = token.toInt();
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // convert back to string as a decimal integer
+      s.appendHex(integer);
+
+      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s));
+   }
 //   else if (terminal == tsLong) {
 //      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
 //      s.append(terminal.value, getlength(terminal.value) - 1);
@@ -2882,7 +2882,7 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //
 //      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
 //   }
-//   else if (!emptystr(terminal))
+   else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
    setTerminal(terminal, scope, object);
@@ -6440,12 +6440,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope/*, DNode 
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
 //   }
-//
-//   // if it is a super class validate it
-//   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
-//      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
-//         scope.raiseError(errNoDispatcher, node.Terminal());
-//   }
+
+   // if it is a super class validate it
+   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
+      if (!scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID)))
+         scope.raiseError(errNoDispatcher, node.findChild(lxIdentifier, lxPrivate));
+   }
 
    // save declaration
    scope.save();
@@ -8784,8 +8784,8 @@ void Compiler :: compileModule(SNode node, ModuleScope& scope)
 {
    compileIncludeSection(node.firstChild(), scope);
    
-   //if (scope.superReference == 0)
-   //   scope.raiseError(errNotDefinedBaseClass, member.FirstTerminal());
+   if (scope.superReference == 0)
+      scope.raiseError(errNotDefinedBaseClass, node.firstChild().findChild(lxParameter));
    
    // first pass - declaration
    compileDeclarations(node.firstChild(), scope);

@@ -108,12 +108,16 @@ void DerivationWriter :: copyMessage(SNode node)
          case tsPrivate:
          case tsReference:
             _writer.newNode(lxMessage);
-            unpackChildren(node);
+            unpackNode(current);
             _writer.closeNode();
+            //copyMessageParameters(current);
             break;
-         default:
-            unpackNode(node);
+         case nsMessageParameter:
+            unpackChildren(current);
             break;
+         //default:
+         //   unpackNode(current);
+         //   break;
       }
       current = current.nextNode();
    }
