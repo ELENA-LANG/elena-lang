@@ -124,7 +124,7 @@ class ByteCodeWriter
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
-//   void declareVariable(CommandTape& tape, int value);
+   void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape, bool withStackControl = true);
@@ -136,7 +136,7 @@ class ByteCodeWriter
    void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
 
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -283,7 +283,7 @@ class ByteCodeWriter
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);

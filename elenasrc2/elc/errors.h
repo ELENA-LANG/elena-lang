@@ -36,7 +36,7 @@ namespace _ELENA_
 //   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exists\n"
    #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
    #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
-//   #define errInvalidOperation	   "%s(%d:%d): error 107: Invalid operation with '%s'\n"
+   #define errInvalidOperation	   "%s(%d:%d): error 107: Invalid operation with '%s'\n"
 //   #define errDuplicatedField       "%s(%d:%d): error 109: Field '%s' already exists in the class\n"
 //   #define errIllegalField          "%s(%d:%d): error 111: Illegal field declaration '%s'\n"
 //   #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"

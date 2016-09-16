@@ -208,13 +208,13 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 //      tape.write(bdLocalInfo, (ref_t)className);
 //   }
 //}
-//
-//void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   if (!emptystr(localName))
-//      tape.write(bdLocal, (ref_t)localName, level);
-//}
-//
+
+void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
+{
+   if (!emptystr(localName))
+      tape.write(bdLocal, writeString(localName), level);
+}
+
 //void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 //{
 //   tape.write(bdIntLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
@@ -283,12 +283,12 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
       tape.write(bcPushN, 0);
 }
 
-//void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
-//{
-//   // pushn  value
-//   tape.write(bcPushN, value);
-//}
-//
+void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+{
+   // pushn  value
+   tape.write(bcPushN, value);
+}
+
 //int ByteCodeWriter :: declareLoop(CommandTape& tape, bool threadFriendly)
 //{
 //   // loop-begin
@@ -1546,7 +1546,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             writeSelf(scope, (*it).additional, frameLevel);
             break;
          case bdLocal:
-            writeLocal(scope, (const char*)(*it).Argument(), (*it).additional, frameLevel);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, frameLevel);
             break;
          case bdIntLocal:
             if ((*it).predicate == bpFrame) {
@@ -4069,29 +4069,29 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //   generateExpression(tape, node);
 //   generateBoxing(tape, node);
 //}
-//
-//void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
+
+void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node)
+{
 //   int size = node.argument;
-//
-//   SNode target;
-//   SNode source;
-//
-//   SNode child = node.firstChild();
-//   while (child != lxNone) {
-//      if (test(child.type, lxObjectMask)) {
-//         if (target == lxNone) {
-//            target = child;
-//         }
-//         else if (child == lxExpression) {
-//            source = findSubNodeMask(child, lxObjectMask);
-//         }
-//         else source = child;
-//      }
-//
-//      child = child.nextNode();
-//   }
-//
+
+   SNode target;
+   SNode source;
+
+   SNode child = node.firstChild();
+   while (child != lxNone) {
+      if (test(child.type, lxObjectMask)) {
+         if (target == lxNone) {
+            target = child;
+         }
+         //else if (child == lxExpression) {
+         //   source = child.findSubNodeMask(lxObjectMask);
+         //}
+         else source = child;
+      }
+
+      child = child.nextNode();
+   }
+
 //   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp) ||
 //      IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)))
 //   {
@@ -4100,8 +4100,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //      generateObjectExpression(tape, source);
 //   }
 //   else {
-//      generateObjectExpression(tape, source);
-//
+      generateObjectExpression(tape, source);
+
 //      if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
 //         if (node.argument == 4) {
 //            saveInt(tape, target.type, target.argument);
@@ -4150,17 +4150,17 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //         }
 //      }
 //      else {
-//         // if assinging the result of primitive assigning operation
-//         // it should be boxed before
+         // if assinging the result of primitive assigning operation
+         // it should be boxed before
 //         if (source == lxAssigning && source.argument > 0) {
 //            generateBoxing(tape, source);
 //         }
-//
-//         saveObject(tape, target.type, target.argument);
+
+         saveObject(tape, target.type, target.argument);
 //      }
 //   }
-//}
-//
+}
+
 //void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   excludeFrame(tape);
@@ -4425,11 +4425,11 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 {
    switch (node.type)
    {
-//      case lxExpression:
+      case lxExpression:
 //      case lxLocalUnboxing:
 //      case lxFieldExpression:
-//         generateExpression(tape, node);
-//         break;
+         generateExpression(tape, node);
+         break;
 //      case lxTypecasting:
       case lxCalling:
 //      case lxDirectCalling:
@@ -4462,9 +4462,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxUnboxing:
 //         generateBoxingExpression(tape, node);
 //         break;
-//      case lxAssigning:
-//         generateAssigningExpression(tape, node);
-//         break;
+      case lxAssigning:         
+         generateAssigningExpression(tape, node);
+         break;
 //      case lxBranching:
 //         generateBranching(tape, node);
 //         break;
@@ -4576,28 +4576,28 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             generateExpression(tape, current);
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
             break;
-//         case lxAssigning:
+         case lxAssigning:
 //         case lxReturning:
-//            declareBlock(tape);
-//            generateObjectExpression(tape, current);
-//            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//            break;
+            declareBlock(tape);
+            generateObjectExpression(tape, current);
+            declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            break;
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;
 //         case lxBreakpoint:
 //            translateBreakpoint(tape, current);
 //            break;
-//         case lxVariable:
+         case lxVariable:
 //            // if the FrameAttr included, than it is a method parameter
 //            // so no need to allocate the place
 //            if (!SyntaxTree::existChild(current, lxFrameAttr))
-//               declareVariable(tape, current.argument);
-//
-//            declareLocalInfo(tape,
-//               SyntaxTree::findChild(current, lxTerminal).identifier(),
-//               SyntaxTree::findChild(current, lxLevel).argument);
-//            break;
+               declareVariable(tape, current.argument);
+
+            declareLocalInfo(tape,
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
 //         case lxIntVariable:
 //            declareLocalIntInfo(tape,
 //               SyntaxTree::findChild(current, lxTerminal).identifier(),

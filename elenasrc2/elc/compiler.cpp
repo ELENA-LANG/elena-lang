@@ -46,7 +46,7 @@ struct ModuleInfo
 // --- Hint constants ---
 //#define HINT_MASK             0xFFFFF000
 
-//#define HINT_ROOT             0x80000000
+#define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
 //#define HINT_NOUNBOXING       0x20000000
 //#define HINT_EXTERNALOP       0x10000000
@@ -566,19 +566,21 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, bool explicitOnly)
 {
    ident_t identifier = NULL;
    if (terminal.type == lxIdentifier || terminal.type == lxPrivate) {
-      identifier = terminal.identifier();
+      identifier = terminal.findChild(lxTerminal).identifier();
    }
    else raiseError(errInvalidSubject, terminal);
 
-   return resolveSubjectRef(terminal.identifier(), explicitOnly);
+   return resolveSubjectRef(identifier, explicitOnly);
 }
 
 ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
 {
+   ident_t identifier = terminal.findChild(lxTerminal).identifier();
+
    // add a namespace for the private message
    if (terminal.type == lxPrivate) {
       output.append(project->Namespace());
-      output.append(terminal.identifier());
+      output.append(identifier);
 
       return 0;
    }
@@ -588,7 +590,7 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& outp
       output.append(module->resolveSubject(subjRef));
    }
    else if (terminal.type != lxReference) {
-      output.append(terminal.identifier());
+      output.append(identifier);
    }
    else raiseError(errInvalidSubject, terminal);
 
@@ -597,24 +599,25 @@ ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& outp
 
 ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
 {
+   ident_t identifier = terminal.findChild(lxTerminal).identifier();
    if (terminal == lxIdentifier) {
-      ref_t reference = forwards.get(terminal.identifier());
+      ref_t reference = forwards.get(identifier);
       if (reference == 0) {
          if (!existing) {
-            ReferenceNs name(module->Name(), terminal.identifier());
+            ReferenceNs name(module->Name(), identifier);
 
             return module->mapReference(name);
          }
-         else return resolveIdentifier(terminal.identifier());
+         else return resolveIdentifier(identifier);
       }
       else return reference;
    }
    else if (terminal == lxPrivate) {
-      ReferenceNs name(module->Name(), terminal.identifier());
+      ReferenceNs name(module->Name(), identifier);
 
       return mapReference(name, existing);
    }
-   else return mapReference(terminal.identifier(), existing);
+   else return mapReference(identifier, existing);
 }
 
 //ref_t Compiler::ModuleScope :: mapNestedExpression()
@@ -1021,20 +1024,27 @@ void Compiler::ModuleScope :: validateReference(SNode terminal, ref_t reference)
    }
 }
 
-void Compiler::ModuleScope :: raiseError(const char* message, SNode terminal)
+void Compiler::ModuleScope :: raiseError(const char* message, SNode node)
 {
+   SNode terminal = node;
+   while (terminal != lxNone && terminal.findChild(lxTerminal) == nsNone) {
+      terminal = terminal.firstChild(lxObjectMask);
+   }
+
    int col = terminal.findChild(lxCol).argument;
    int row = terminal.findChild(lxRow).argument;
+   ident_t identifier = terminal.findChild(lxTerminal).identifier();
 
-   raiseError(message, row, col, terminal.identifier());
+   raiseError(message, row, col, identifier);
 }
 
 void Compiler::ModuleScope :: raiseWarning(int level, const char* message, SNode terminal)
 {
    int col = terminal.findChild(lxCol).argument;
    int row = terminal.findChild(lxRow).argument;
+   ident_t identifier = terminal.identifier();
 
-   raiseWarning(level, message, row, col, terminal.identifier());
+   raiseWarning(level, message, row, col, identifier);
 }
 
 void Compiler::ModuleScope :: raiseWarning(int level, const char* message, int row, int col, ident_t terminal)
@@ -1426,8 +1436,8 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 
 ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
 {
-//   Parameter local = locals.get(identifier);
-//   if (local.offset) {
+   Parameter local = locals.get(identifier.findChild(lxTerminal).identifier());
+   if (local.offset) {
 //      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
 //         return ObjectInfo(okSubject, local.offset);
 //      }
@@ -1437,9 +1447,9 @@ ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
 //      else if (local.size != 0) {
 //         return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
 //      }
-//      else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
-//   }
-   /*else */return Scope::mapObject(identifier);
+      /*else */return ObjectInfo(okLocal, local.offset/*, local.class_ref, local.subj_ref*/);
+   }
+   else return Scope::mapObject(identifier);
 }
 
 //// --- Compiler::InlineClassScope ---
@@ -2535,15 +2545,16 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 {
    SNode terminal = node.findChild(lxIdentifier, lxPrivate);
+   ident_t identifier = terminal.findChild(lxTerminal).identifier();
 
-   if (!scope.locals.exist(terminal.identifier())) {
+   if (!scope.locals.exist(identifier)) {
 //      ref_t type = 0;
 //      ref_t classRef = 0;
 //      int size = 0;
 //      compileLocalHints(hints, scope, type, classRef, size);
-//
-//      ObjectInfo variable(okLocal, 0, classRef, type);
-//
+
+      ObjectInfo variable(okLocal, 0/*, classRef, type*/);
+
 //      ClassInfo localInfo;
 //      bool bytearray = false;
 //      if (isTemplateRef(classRef)) {
@@ -2666,9 +2677,9 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 //         scope.writer->appendNode(lxTerminal, terminal.value);
 //         scope.writer->appendNode(lxLevel, level);
 //         scope.writer->closeNode();
-//
-//         variable.param = level;
-//
+
+         variable.param = level;
+
 //         size = 0; // to indicate assigning by ref
 //      }
 //
@@ -2681,8 +2692,8 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 //
 //         scope.writer->closeNode();
 //      }
-//
-//      scope.mapLocal(node.Terminal(), variable.param, type, classRef, size);
+
+      scope.mapLocal(identifier, variable.param/*, type, classRef, size*/);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -2733,14 +2744,14 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //      case okTemplateLocal:
 //         scope.writer->newNode(lxLocal, object.param);
 //         break;
-//      case okLocal:
+      case okLocal:
 //      case okParam:
 //         if (object.extraparam == -1) {
 //            scope.writer->newNode(lxCondBoxing);
 //            scope.writer->appendNode(lxLocal, object.param);
 //         }
-//         else scope.writer->newNode(lxLocal, object.param);
-//         break;
+         /*else */terminal.set(lxLocal, object.param);
+         break;
 //      case okThisParam:
 //         if (object.extraparam == -1) {
 //            scope.writer->newNode(lxCondBoxing);
@@ -2824,7 +2835,7 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 {
 //   TerminalInfo terminal = node.Terminal();
-   ident_t token = terminal.identifier();
+   ident_t token = terminal.findChild(lxTerminal).identifier();
 
    ObjectInfo object;
 //   if (terminal==tsLiteral) {
@@ -3354,7 +3365,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 //   return compileOperator(node, scope, object, mode, operator_id);
 //}
 
-ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
+ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int messageRef, int mode)
 {
    ObjectInfo retVal(okObject);
 
@@ -3525,7 +3536,7 @@ ref_t Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
    return messageRef;
 }
 
-ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo object)
+ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope)
 {
    ref_t messageRef = compileMessageParameters(node, scope);
 //   ref_t extensionRef = mapExtension(scope, messageRef, object);
@@ -3537,13 +3548,13 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo o
 //      }
 //   }
 
-   return compileMessage(node, scope, object, messageRef, 0);
+   return compileMessage(node, scope, messageRef, 0);
 }
 
-//ObjectInfo Compiler :: compileAssigning(DNode node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   int assignMode = 0;
-//
+ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
+{
+   int assignMode = 0;
+
 //   DNode member = node.nextNode();
 //
 //   // if it setat operator
@@ -3580,9 +3591,11 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo o
 //      return compileMessage(member, scope, object, messageRef, 0);
 //   }
 //   else {
-//      ObjectInfo currentObject = object;
-//
-//      LexicalType assignType = lxAssigning;
+      SNode target = node.firstChild(lxObjectMask);
+
+      ObjectInfo currentObject = compileObject(target, scope, mode);
+
+      node = lxAssigning;
 //      ref_t classReference = 0;
 //      int size = 0;
 //      if (object.kind == okLocalAddress) {
@@ -3598,9 +3611,9 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo o
 //      else if (object.kind == okFieldAddress) {
 //         size = scope.moduleScope->defineSubjectSize(object.type);
 //      }
-//      else if (object.kind == okLocal || object.kind == okField || object.kind == okOuterField || object.kind == okStaticField) {
+      /*else */if (currentObject.kind == okLocal/* || object.kind == okField || object.kind == okOuterField || object.kind == okStaticField*/) {
 //
-//      }
+      }
 //      else if (object.kind == okParam || object.kind == okOuter) {
 //         // Compiler magic : allowing to assign byref / variable parameter
 //         classReference = scope.moduleScope->subjectHints.get(object.type);
@@ -3627,18 +3640,18 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo o
 //         if (currentObject.type == 0)
 //            assignMode |= HINT_VIRTUAL_FIELD;
 //      }
-//      else scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//      currentObject = compileAssigningExpression(node, member, scope, currentObject, assignMode);
-//
+      else scope.raiseError(errInvalidOperation, node.findChild(lxIdentifier, lxPrivate));
+
+      currentObject = compileAssigningExpression(node, target.nextNode(lxObjectMask), scope, currentObject, assignMode);
+
 //      if (size >= 0) {
 //         scope.writer->insert(assignType, size);
 //         scope.writer->closeNode();
 //      }
 //
-//      return currentObject;
+      return currentObject;
 //   }   
-//}
+}
 
 //ObjectInfo Compiler :: compileOperations(SNode node, CodeScope& scope, ObjectInfo object, int mode)
 //{
@@ -4104,9 +4117,12 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 
    ObjectInfo objectInfo;
 
-   SNode member = node.findChild(lxMessage);
+   SNode member = node.findChild(lxMessage, lxAssign);
    if (member == lxMessage) {
-      objectInfo = compileMessage(node, scope, objectInfo);
+      objectInfo = compileMessage(node, scope);
+   }
+   else if (member == lxAssign) {
+      objectInfo = compileAssigning(node, scope, mode);
    }
    else objectInfo = compileObject(node.firstChild(lxObjectMask), scope, mode);
 
@@ -4122,7 +4138,7 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 //            objectInfo = compileObject(member, scope, mode);
 ////         }
 ////         if (findSymbol(member, nsAssigning)) {
-////            objectInfo = compileAssigning(member, scope, objectInfo, mode);
+////            
 ////         }
 ////         else if (findSymbol(member, nsAltMessageOperation)) {
 ////            scope.writer->insert(lxVariable);
@@ -4163,12 +4179,12 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode)
-//{      
+ObjectInfo Compiler :: compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode)
+{
 //   ref_t targetType = target.type;
-//   switch (target.kind)
-//   {
-//      case okLocal:
+   switch (target.kind)
+   {
+      case okLocal:
 //      case okField:
 //      case okOuterField:
 //      case okLocalAddress:
@@ -4176,21 +4192,23 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 //      case okParamField:
 //      case okOuter:
 //      case okStaticField:
-//         break;
+         break;
 //      case okTemplateLocal:
 //         mode |= HINT_VIRTUAL_FIELD; // HOTFIX : typecast it like a virtual field
 //         break;
 //      case okUnknown:
 //         scope.raiseError(errUnknownObject, node.Terminal());
-//      default:
-//         scope.raiseError(errInvalidOperation, node.Terminal());
-//         break;
-//   }
-//
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+   }
+
 //   scope.writer->newBookmark();
-//
-//   ObjectInfo objectInfo = compileExpression(assigning.firstChild(), scope, 0, 0);
-//
+
+   insertDebugStep(assigning, dsStep);
+
+   ObjectInfo objectInfo = compileExpression(assigning, scope/*, 0*/, 0);
+
 //   if (test(mode, HINT_VIRTUAL_FIELD)) {
 //      // HOTFIX : if it is a virtual field, provide an idle typecast
 //      scope.writer->insert(lxTypecasting);
@@ -4254,10 +4272,10 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 //   }
 //
 //   scope.writer->removeBookmark();
-//
-//   return objectInfo;
-//}
-//
+
+   return objectInfo;
+}
+
 //ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
 //{
 //   CodeScope subScope(&scope);
@@ -4395,14 +4413,15 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
       //_writer.declareStatement(*scope.tape);
 
       switch(statement) {
-//         case nsExpression:
+         case lxExpression:
 //         case nsRootExpression:
+            insertDebugStep(statement, dsStep);
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            scope.writer->newNode(lxExpression);
 //            appendTerminalInfo(scope.writer, node.FirstTerminal());
-//            compileExpression(statement, scope, 0, HINT_ROOT);
+            compileExpression(statement, scope, /*0, */HINT_ROOT);
 //            scope.writer->closeNode();
-//            break;
+            break;
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
 //            break;
@@ -4743,7 +4762,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate);
 //   if (node != nsDefaultGeneric && node != nsImplicitConstructor) {
-	   verb_id = _verbs.get(verb.identifier());
+	   verb_id = _verbs.get(verb.findChild(lxTerminal).identifier());
 //
 //	   // if it is a generic verb, make sure no parameters are provided
 //	   if (verb_id == DISPATCH_MESSAGE_ID) {
@@ -4859,7 +4878,7 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //   writer.appendNode(lxSourcePath);  // the source path is first string
 //
    if (isImportRedirect(node)) {
-      importCode(node, *scope.moduleScope, node.findChild(lxReference).identifier(), scope.message);
+      importCode(node, *scope.moduleScope, node.findChild(lxReference).findChild(lxTerminal).identifier(), scope.message);
    }
    else {
 //      writer.newNode(lxDispatching);
@@ -5116,7 +5135,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
       }
       // if method body is a set of statements
       else {
-         /*ObjectInfo retVal = */compileCode(body, codeScope);
+         ObjectInfo retVal = compileCode(body, codeScope);
 
 //         // if the method returns itself
 //         if(retVal.kind == okUnknown) {
@@ -8457,7 +8476,7 @@ void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope/*, DNode hint
    //if (hints != nsNone)
    //   scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
 
-   ident_t name = ns.identifier();
+   ident_t name = ns.findChild(lxIdentifier).findChild(lxTerminal).identifier();
 
    // check if the module exists
    _Module* module = scope.project->loadModule(name, true);

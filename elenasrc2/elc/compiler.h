@@ -129,7 +129,7 @@ public:
 //      okFieldAddress,                 // param - field offset
 //      okOuter,                        // param - field offset
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
+      okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
 //      okParam,                        // param - parameter offset
 //      okParamField,
 //      okSubject,                      // param - parameter offset
@@ -710,10 +710,10 @@ private:
          return level;
       }
 
-//      void mapLocal(ident_t local, int level, ref_t type)
-//      {
-//         locals.add(local, Parameter(level, type));
-//      }
+      void mapLocal(ident_t local, int level/*, ref_t type*/)
+      {
+         locals.add(local, Parameter(level/*, type*/));
+      }
 //      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref, int size)
 //      {
 //         locals.add(local, Parameter(level, type, class_ref, size));
@@ -1004,18 +1004,18 @@ private:
 
    ref_t compileMessageParameters(SNode node, CodeScope& scope);
 
-   ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo object);
-   ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo object, int messageRef, int mode);
+   ObjectInfo compileMessage(SNode node, CodeScope& scope);
+   ObjectInfo compileMessage(SNode node, CodeScope& scope, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 //
 //   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigning(DNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(SNode node, CodeScope& scope/*, ref_t targetType*/, int mode);
 //   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigningExpression(DNode node, DNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
-//
+   ObjectInfo compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
+
 //   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 //
 //   void compileLoop(DNode node, CodeScope& scope);

@@ -33,15 +33,6 @@ using namespace _ELENA_;
 //   else return child;
 //}
 //
-//SyntaxTree::Node _ELENA_::findSubNodeMask(SyntaxTree::Node node, int mask)
-//{
-//   SyntaxTree::Node child = SyntaxTree::findMatchedChild(node, mask);
-//   if (child == lxExpression) {
-//      return SyntaxTree::findMatchedChild(child, mask);
-//   }
-//   else return child;
-//}
-
 // --- SyntaxWriter ---
 
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)

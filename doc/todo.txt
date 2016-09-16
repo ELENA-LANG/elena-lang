@@ -5,6 +5,7 @@ In development:
               xrev
                  * support abstract attribute
                  * support implicit constructors
+                 * support a x := 2. syntax
                  * check sealed / limited class attributes
                  * compliation should be based on set of rules
                  * compile package info

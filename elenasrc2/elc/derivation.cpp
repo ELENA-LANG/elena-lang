@@ -29,7 +29,9 @@ void DerivationWriter :: unpackNode(SNode node)
          _writer.closeNode();
          break;
       case nsImport:
-         _writer.appendNode(lxImport, node.findChild((LexicalType)tsIdentifier).identifier());
+         _writer.newNode(lxImport);
+         unpackChildren(node);
+         _writer.closeNode();
          break;
       case tsIdentifier:
       case tsCharacter:
@@ -41,7 +43,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case tsReal:
       case tsLong:
       case tsWide:
-         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxParameter | lxObjectMask), node.identifier());
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxParameter | lxObjectMask));
          copyChildren(node);
          _writer.closeNode();
          break;
@@ -111,7 +113,7 @@ void DerivationWriter :: copyMessage(SNode node)
          case tsPrivate:
          case tsReference:
             _writer.newNode(lxMessage);
-            unpackNode(current);
+            copyChildren(current);
             _writer.closeNode();
             //copyMessageParameters(current);
             break;
@@ -186,20 +188,22 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
    if (_level > 1) {
       SyntaxWriter tempWriter(_buffer);
 
+      tempWriter.newNode((LexicalType)terminal.symbol);
+
       if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
          // try to use local storage if the quote is not too big
          if (getlength(terminal.value) < 0x100) {
             QuoteTemplate<IdentifierString> quote(terminal.value);
       
-            tempWriter.newNode((LexicalType)terminal.symbol, quote);
+            tempWriter.appendNode(lxTerminal, quote);
          }
          else {
             QuoteTemplate<DynamicString<char> > quote(terminal.value);
       
-            tempWriter.newNode((LexicalType)terminal.symbol, quote);
+            tempWriter.appendNode(lxTerminal, quote);
          }
       }
-      else tempWriter.newNode((LexicalType)terminal.symbol, terminal.value);
+      else tempWriter.appendNode(lxTerminal, terminal.value);
 
       tempWriter.appendNode(lxCol, terminal.col);
       tempWriter.appendNode(lxRow, terminal.row);

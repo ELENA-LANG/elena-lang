@@ -62,23 +62,25 @@ enum LexicalType
    lxCreatingClass   = 0x0C025, // arg - count
    lxCreatingStruct  = 0x0C026, // arg - size
    lxDispatching     = 0x04036, // dispatching a message, optional arg - message
+   lxAssigning       = 0x0C037,  // an assigning expression, arg - size
 
    lxVariable        = 0x10037, // debug info only if lxFrameAttr is included
 
    // attributes
    lxSourcePath      = 0x20001,
-   lxCol             = 0x20002,
-   lxRow             = 0x20003,
-   lxLength          = 0x02004,
-   lxBreakpoint      = 0x20005,
-   lxImport          = 0x20006,
-   lxReserved        = 0x20007,
-   lxParamCount      = 0x20008,
-   lxClassFlag       = 0x20009, // class fields
-   lxTarget          = 0x6000A, // arg - reference
-   lxMessageVariable = 0x2000B, // debug info only
-   lxSelfVariable    = 0x2000C, // debug info only
-   lxMessage         = 0x2000D, // arg - message
+   lxTerminal        = 0x20002,
+   lxCol             = 0x20003,
+   lxRow             = 0x20004,
+   lxLength          = 0x02005,
+   lxBreakpoint      = 0x20006,
+   lxImport          = 0x20007,
+   lxReserved        = 0x20008,
+   lxParamCount      = 0x20009,
+   lxClassFlag       = 0x2000A, // class fields
+   lxTarget          = 0x6000B, // arg - reference
+   lxMessageVariable = 0x2000C, // debug info only
+   lxSelfVariable    = 0x2000D, // debug info only
+   lxMessage         = 0x2000E, // arg - message
    lxAssign          = 0x2000F,
    lxLevel           = 0x20010,
 
@@ -144,7 +146,6 @@ enum LexicalType
 //   lxInternalCall    = 0x2031A,  // calling an internal function, arg - reference
 //   lxMember          = 0x0031B,  // a collection member, arg - offset
 //   lxOuterMember     = 0x0031C,  // a collection member, arg - offset
-//   lxAssigning       = 0x0031D,  // an assigning expression, arg - size
 //   lxArgUnboxing     = 0x0031E,
 //   lxIf              = 0x2031F,  // optional arg - reference
 //   lxElse            = 0x20320,  // optional arg - reference
@@ -436,6 +437,15 @@ public:
          return current;
       }
 
+      Node findSubNodeMask(LexicalType mask)
+      {
+         Node child = firstChild(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
+
 //      Node lastChild() const
 //      {
 //         Node current = firstChild();
@@ -452,7 +462,17 @@ public:
          return tree->readNextNode(position + argLength);
       }
 
-//      Node prevNode() const
+      Node nextNode(LexicalType mask) const
+      {
+         Node node = nextNode();
+
+         while (node != lxNone && !test(node.type, mask))
+            node = node.nextNode();
+
+         return node;
+      }
+
+      //      Node prevNode() const
 //      {
 //         return tree->readPreviousNode(position);
 //      }
