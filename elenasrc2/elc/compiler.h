@@ -116,7 +116,7 @@ public:
 //      okLiteralConstant,              // param - reference 
 //      okWideLiteralConstant,          // param - reference 
 //      okCharConstant,                 // param - reference
-      okIntConstant,                  // param - reference 
+//      okIntConstant,                  // param - reference 
 //      okLongConstant,                 // param - reference 
 //      okRealConstant,                 // param - reference 
 //      okMessageConstant,              // param - reference 
@@ -531,14 +531,14 @@ private:
 //         }
 //         else return false;
 //      }
-//
-//      virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
-//      {
-//         if (parent) {
-//            return parent->mapSubject(terminal, implicitOnly);
-//         }
-//         else return moduleScope->mapSubject(terminal, implicitOnly);
-//      }
+
+      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
+      {
+         if (parent) {
+            return parent->mapSubject(terminal, implicitOnly);
+         }
+         else return moduleScope->mapAttribute(terminal, implicitOnly);
+      }
 
       Scope(ModuleScope* moduleScope)
       {
@@ -740,14 +740,14 @@ private:
 //
 //         return scope ? scope->message : 0;
 //      }
-//
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
-//
+
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
+
 //      ref_t getFieldType(int offset, bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -884,6 +884,8 @@ private:
 //      }
 //   };
 
+   _CompilerLogic* _logic;
+
    ByteCodeWriter _writer;
    Parser         _parser;
 
@@ -922,8 +924,8 @@ private:
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
-//
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+
 //   ref_t mapNestedExpression(CodeScope& scope);
 //   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
@@ -1002,10 +1004,10 @@ private:
 //   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
-   ref_t compileMessageParameters(SNode node, CodeScope& scope);
+   ObjectInfo compileMessageParameters(SNode node, CodeScope& scope);   // returns an info of the first operand
 
    ObjectInfo compileMessage(SNode node, CodeScope& scope);
-   ObjectInfo compileMessage(SNode node, CodeScope& scope, int messageRef, int mode);
+   ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
 //
 //   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
@@ -1094,7 +1096,7 @@ private:
    void compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
 //   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope/*, DNode hints*/);
-//   void declareSubject(DNode& member, ModuleScope& scope, DNode hints);
+   void declareSubject(SNode member, ModuleScope& scope);
 //   void compileSubject(DNode& member, ModuleScope& scope, DNode hints);
 
    void compileDeclarations(SNode member, ModuleScope& scope);
@@ -1107,6 +1109,7 @@ private:
 ////   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
+   void typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
 //
 //   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 //   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable);
@@ -1154,7 +1157,7 @@ public:
 
    bool run(_ProjectManager& project, bool withDebugInfo);
 
-   Compiler(StreamReader* syntax);
+   Compiler(StreamReader* syntax, _CompilerLogic* logic);
 };
 
 } // _ELENA_

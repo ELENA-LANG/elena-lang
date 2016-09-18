@@ -14,6 +14,7 @@
 #include "constants.h"
 #include "errors.h"
 #include "compiler.h"
+#include "compilerlogic.h"
 #include "linker.h"
 #include "image.h"
 #include "x86jitcompiler.h"
@@ -509,7 +510,8 @@ int main()
 
       // compile normal project
       bool result = false;
-      _ELENA_::Compiler compiler(&syntaxFile);
+      _ELENA_::CompilerLogic elenaLogic;
+      _ELENA_::Compiler compiler(&syntaxFile, &elenaLogic);
 //      setCompilerOptions(project, compiler);
 
       result = compiler.run(project, project.BoolSetting(_ELENA_::opDebugMode));

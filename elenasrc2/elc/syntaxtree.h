@@ -35,6 +35,7 @@ enum LexicalType
    lxCode            = 0x0001A,
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
+   lxSubject         = 0x00047,
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket
@@ -69,8 +70,9 @@ enum LexicalType
    lxDispatching     = 0x04036, // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,  // an assigning expression, arg - size
 
-   lxBaseParent      = 0x10023, 
-   lxVariable        = 0x10037, 
+   lxBaseParent      = 0x10023,
+   lxForward         = 0x1002E,
+   lxVariable        = 0x10037,
 
    // attributes
    lxAttribute       = 0x20000,
@@ -561,6 +563,11 @@ public:
          }
 
          return current;
+      }
+
+      bool existChild(LexicalType type)
+      {
+         return findChild(type) == type;
       }
 
       Node()

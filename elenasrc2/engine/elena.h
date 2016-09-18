@@ -588,6 +588,14 @@ struct DebugLineInfo
    }
 };
 
+// --- _CompilerLogic ---
+
+class _CompilerLogic
+{
+public:
+   virtual bool isCompatible(ref_t targetRef, ref_t sourceRef) = 0;
+};
+
 // --- Exception base class ---
 
 struct _Exception

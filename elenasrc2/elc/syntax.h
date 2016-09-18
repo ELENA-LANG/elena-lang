@@ -39,7 +39,7 @@ enum Symbol
 
    nsClass                      = 0x0100E,               // non-terminals
    nsTemplate                   = 0x0100F,
-   //nsSubjectArg                 = 0x01010,
+   nsSubjectArg                 = 0x01010,
    nsSymbol                     = 0x01011,
    nsExpression                 = 0x01012,
    nsField                      = 0x01013,
@@ -69,7 +69,7 @@ enum Symbol
    //nsExtension                  = 0x0102B,
    //nsAltMessageOperation        = 0x0102C,
    //nsInclude                    = 0x0102D,
-   //nsForward                    = 0x0102E,
+   nsForward                    = 0x0102E,
    //nsCatchMessageOperation      = 0x0102F,
    //nsLoop                       = 0x01030,
    //nsResendExpression           = 0x01031,
@@ -91,7 +91,7 @@ enum Symbol
    //nsSizeValue                  = 0x01042,
    //nsL0Operation                = 0x01043,
    //nsDefaultGeneric             = 0x01046,
-   //nsSubject                    = 0x01047,
+   nsSubject                    = 0x01047,
    //nsInlineClosure              = 0x01048,
    //nsMethodTemplate             = 0x01049,
    //nsFieldTemplate              = 0x0104A,

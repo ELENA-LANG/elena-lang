@@ -26,6 +26,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsSubCode:
       case nsTemplate:
       case nsField:
+      case nsSubject:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {
             copyHints(_hints);
@@ -40,6 +41,11 @@ void DerivationWriter :: unpackNode(SNode node)
          unpackChildren(node);
          _writer.closeNode();
          break;
+      case nsForward:
+         _writer.newNode(lxForward);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
       case nsBaseClass:
          _writer.newNode(lxBaseParent);
          unpackChildren(node);
@@ -47,6 +53,11 @@ void DerivationWriter :: unpackNode(SNode node)
          break;
       case nsMethodParameter:
          _writer.newNode(lxMethodParameter);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
+      case nsSubjectArg:
+         _writer.newNode(lxMessage);
          unpackChildren(node);
          _writer.closeNode();
          break;
@@ -135,12 +146,18 @@ void DerivationWriter :: copyMessage(SNode node)
          case tsPrivate:
          case tsReference:
             _writer.newNode(lxMessage);
-            copyChildren(current);
+            unpackNode(current);
             _writer.closeNode();
-            //copyMessageParameters(current);
+            break;
+         case nsSubjectArg:
+            _writer.newNode(lxMessage);
+            unpackChildren(current);
+            _writer.closeNode();
             break;
          case nsMessageParameter:
+            _writer.newNode(lxExpression);
             unpackChildren(current);
+            _writer.closeNode();
             break;
          //default:
          //   unpackNode(current);
