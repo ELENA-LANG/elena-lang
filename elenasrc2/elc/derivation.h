@@ -117,6 +117,7 @@ class DerivationWriter : public _DerivationWriter
    SyntaxWriter _writer;
 
    SyntaxTree   _buffer;
+   SNode        _hints;
 
    int          _level; // tree node level ; starting from level=1 the content is buffered and unpacked on the level=0
 
@@ -128,6 +129,8 @@ class DerivationWriter : public _DerivationWriter
    void copyObject(SNode node);
    void copyMessage(SNode node);
    void copyVariable(SNode node);
+   void copyAssigning(SNode node);
+   void copyHints(SNode node);
 
 public:
    void writeSymbol(Symbol symbol);

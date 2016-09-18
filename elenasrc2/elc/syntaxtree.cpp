@@ -39,9 +39,9 @@ void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {
    size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
 
-   _writer.insertDWord(position, type);
-   _writer.insertDWord(position + 4, argument);
-   _writer.insertDWord(position + 8, 0);
+   _bodyWriter.insertDWord(position, type);
+   _bodyWriter.insertDWord(position + 4, argument);
+   _bodyWriter.insertDWord(position + 8, -1);
 
    Stack<size_t>::Iterator it = _bookmarks.start();
    while (!it.Eof()) {
@@ -58,11 +58,11 @@ void SyntaxWriter::insert(int bookmark, LexicalType type, ident_t argument)
    size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
    size_t length = getlength(argument);
 
-   _writer.insertDWord(position, length + 1);
-   _writer.insert(position, (void*)((const char*)argument), length + 1);
-   _writer.insertDWord(position, length + 5);
-   _writer.insertDWord(position, 0);
-   _writer.insertDWord(position, type);
+   _bodyWriter.insertDWord(position, _stringWriter.Position());
+   _bodyWriter.insertDWord(position, 0);
+   _bodyWriter.insertDWord(position, type);
+
+   _stringWriter.writeLiteral(argument, getlength(argument) + 1);   
 
    Stack<size_t>::Iterator it = _bookmarks.start();
    while (!it.Eof()) {
@@ -77,38 +77,38 @@ void SyntaxWriter::insert(int bookmark, LexicalType type, ident_t argument)
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 {
    // writer node
-   _writer.writeDWord(type);
-   _writer.writeDWord(argument);
-   _writer.writeDWord(0);
+   _bodyWriter.writeDWord(type);
+   _bodyWriter.writeDWord(argument);
+   _bodyWriter.writeDWord(-1);
 }
 
 void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
 {
    // writer node
-   _writer.writeDWord(type);
-   _writer.writeDWord(0);
-   _writer.writeDWord(getlength(argument) + 5);
-   _writer.writeLiteral(argument);
-   _writer.writeDWord(getlength(argument) + 1);
+   _bodyWriter.writeDWord(type);
+   _bodyWriter.writeDWord(0);
+   _bodyWriter.writeDWord(_stringWriter.Position());
+
+   _stringWriter.writeLiteral(argument, getlength(argument) + 1);
 }
 
 void SyntaxWriter :: closeNode()
 {
-   _writer.writeDWord(-1);
-   _writer.writeDWord(0);
-   _writer.writeDWord(0);
+   _bodyWriter.writeDWord(-1);
+   _bodyWriter.writeDWord(0);
+   _bodyWriter.writeDWord(-1);
 }
 
 // --- SyntaxTree::Node ---
 
-SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int length)
+SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int strArgument)
 {
    this->tree = tree;
    this->position = position;
 
    this->type = type;
    this->argument = argument;
-   this->argLength = length;
+   this->strArgument = strArgument;
 }
 
 // --- SyntaxReader ---
@@ -133,11 +133,30 @@ SyntaxTree::Node SyntaxTree::insertNode(size_t position, LexicalType type, ident
    return read(reader);
 }
 
+void SyntaxTree :: saveNode(Node node, _Memory* dump)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxRoot);
+   copyNode(writer, node);
+   writer.closeNode();
+
+   tree.save(dump);
+}
+
+void SyntaxTree :: loadNode(Node node, _Memory* dump)
+{
+   SyntaxTree tree(dump);
+
+   copyNode(tree.readRoot(), node);
+}
+
 void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current.argLength > 0) {
+      if (current.strArgument >= 0) {
          writer.newNode(current.type, current.identifier());
       }
       else writer.newNode(current.type, current.argument);
@@ -145,6 +164,19 @@ void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
       copyNode(writer, current);
 
       writer.closeNode();
+
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
+{
+   SNode current = source.firstChild();
+   while (current != lxNone) {
+      if (current.strArgument >= 0) {
+         copyNode(current, destination.appendNode(current.type, current.identifier()));
+      }
+      else copyNode(current, destination.appendNode(current.type, current.argument));
 
       current = current.nextNode();
    }
@@ -164,12 +196,12 @@ SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {
    int type = reader.getDWord();
    ref_t arg = reader.getDWord();
-   int length = reader.getDWord();
+   int str = reader.getDWord();
 
    if (type == -1) {
       return Node();
    }
-   else return Node(this, reader.Position(), (LexicalType)type, arg, length);
+   else return Node(this, reader.Position(), (LexicalType)type, arg, str);
 }
 
 SyntaxTree::Node SyntaxTree:: readRoot()
@@ -195,10 +227,7 @@ SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
    do {
       int type = reader.getDWord();
       ref_t arg = reader.getDWord();
-      int length = reader.getDWord();
-      // skip the argument body
-      if (length > 0)
-         reader.seek(reader.Position() + length);
+      int str = reader.getDWord();
 
       if (type == -1) {
          level--;
@@ -222,11 +251,7 @@ size_t SyntaxTree :: seekNodeEnd(size_t position)
 
       int type = reader.getDWord();
       ref_t arg = reader.getDWord();
-      int length = reader.getDWord();
-
-      // skip the argument body
-      if (length > 0)
-         reader.seek(reader.Position() + length);
+      int str = reader.getDWord();
 
       if (type == -1) {
          level--;

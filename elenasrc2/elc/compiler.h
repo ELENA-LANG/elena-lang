@@ -124,16 +124,16 @@ public:
 //      okSignatureConstant,            // param - reference 
 //      okVerbConstant,                 // param - reference 
 //      okArrayConst,
-//      okField,                        // param - field offset
+      okField,                        // param - field offset
 //      okStaticField,                  // param - reference
 //      okFieldAddress,                 // param - field offset
 //      okOuter,                        // param - field offset
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
-//      okParam,                        // param - parameter offset
+      okParam,                        // param - parameter offset
 //      okParamField,
 //      okSubject,                      // param - parameter offset
-//      okThisParam,                    // param - parameter offset
+      okThisParam,                    // param - parameter offset
 //      okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, class reference
@@ -313,8 +313,8 @@ private:
 //      ExtensionMap      extensions;
 
       // type hints
-      MessageMap        subjects;
-      SubjectMap        subjectHints;
+      MessageMap        attributes;
+      SubjectMap        attributeHints;
 
 //      // action hints
 //      SubjectMap        actionHints;
@@ -354,7 +354,7 @@ private:
       ObjectInfo mapObject(SNode identifier);
 
       ref_t mapReference(ident_t reference, bool existing = false);
-      ref_t mapSubject(ident_t reference, bool existing);
+      ref_t mapAttribute(ident_t reference, bool existing);
 
 //      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 //
@@ -373,13 +373,13 @@ private:
 
       ref_t resolveIdentifier(ident_t name);
 
-//      ref_t mapNewSubject(ident_t terminal);
+      ref_t mapNewAttribute(ident_t terminal);
 
       // NOTE : the function returns 0 for implicit subjects
       // in any case output is set (for explicit one - the namespace is copied as well)
-      ref_t mapSubject(SNode terminal, IdentifierString& output);
-      ref_t mapSubject(SNode terminal, bool explicitOnly = true);
-      ref_t resolveSubjectRef(ident_t name, bool explicitOnly = true);
+      ref_t mapAttribute(SNode terminal, IdentifierString& output);
+      ref_t mapAttribute(SNode terminal, bool explicitOnly = true);
+      ref_t resolveAttributeRef(ident_t name, bool explicitOnly = true);
 
       ref_t mapTerminal(SNode terminal, bool existing = false);
 
@@ -391,13 +391,13 @@ private:
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
 //      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
-//
-//      _Memory* loadTemplateInfo(ref_t reference, _Module* &argModule)
-//      {
-//         return loadTemplateInfo(module->resolveSubject(reference), argModule);
-//      }
-//      _Memory* loadTemplateInfo(ident_t symbol, _Module* &argModule);
-//
+
+      _Memory* loadAttributeInfo(ref_t reference/*, _Module* &argModule*/)
+      {
+         return loadAttributeInfo(module->resolveSubject(reference)/*, argModule*/);
+      }
+      _Memory* loadAttributeInfo(ident_t attribute/*, _Module* &argModule*/);
+
 ////      bool recognizePrimitive(ident_t name, ident_t value, size_t& roleMask, int& size);
 //
 //      int defineStructSizeEx(ref_t classReference, bool& variable, bool embeddableOnly = true);
@@ -422,11 +422,11 @@ private:
 //         return checkMethod(reference, message, dummy, dummyRef);
 //      }
 
-      void loadSubjects(_Module* module);
+      void loadAttributes(_Module* module);
 //      void loadExtensions(TerminalInfo terminal, _Module* module);
 //      void loadActions(_Module* module);
-//
-//      void saveSubject(ref_t type_ref, ref_t classReference, bool internalType);
+
+      void saveAttribute(ref_t attrRef, ref_t classReference, bool internalType);
 //      void saveTemplate(ref_t template_ref);
 //      bool saveExtension(ref_t message, ref_t type, ref_t role);
 //      void saveAction(ref_t message, ref_t reference);
@@ -448,7 +448,7 @@ private:
 
       void loadModuleInfo(_Module* extModule)
       {
-         loadSubjects(extModule);
+         loadAttributes(extModule);
          //loadExtensions(TerminalInfo(), extModule);
          //loadActions(extModule);
       }
@@ -479,10 +479,10 @@ private:
       {
          moduleScope->raiseError(message, terminal);
       }
-//      void raiseWarning(int level, const char* message, TerminalInfo terminal)
-//      {
-//         moduleScope->raiseWarning(level, message, terminal);
-//      }
+      void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         moduleScope->raiseWarning(level, message, terminal);
+      }
 //      void raiseError(const char* message, SyntaxTree::Node node)
 //      {
 //         SyntaxTree::Node row = SyntaxTree::findChild(node, lxRow);
@@ -521,7 +521,7 @@ private:
          if (parent) {
             return parent->mapSubject(terminal, output);
          }
-         else return moduleScope->mapSubject(terminal, output);
+         else return moduleScope->mapAttribute(terminal, output);
       }
 
 //      virtual bool isVirtualSubject(TerminalInfo terminal)
@@ -572,7 +572,7 @@ private:
 
       virtual ObjectInfo mapObject(SNode identifier);
 
-      void compileClassHint(SyntaxTree::Node hint);
+      void compileClassAttribute(SyntaxTree::Node hint);
 //      //void compileFieldHints(DNode hints, int& size, ref_t& type);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -642,7 +642,7 @@ private:
 //      CommandTape* tape;
 
       ref_t        message;
-//      LocalMap     parameters;
+      LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool         withOpenArg;
@@ -675,8 +675,8 @@ private:
 //
 //         return scope ? scope->reference : 0;
 //      }
-//
-//      virtual ObjectInfo mapObject(TerminalInfo identifier);
+
+      virtual ObjectInfo mapObject(SNode identifier);
 
       MethodScope(ClassScope* parent);
    };
@@ -918,8 +918,8 @@ private:
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
-//   ref_t mapHint(DNode hint, ModuleScope& scope, int offset);
-//
+   ref_t mapAttribute(SNode attribute, ModuleScope& scope/*, int offset*/);
+
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -929,7 +929,7 @@ private:
 
    void importCode(SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
-   InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 
 //   ref_t declareInlineTemplate(ModuleScope& scope, SNode node, TemplateInfo& templateInfo, ref_t inlineTemplateRef);
 
@@ -949,14 +949,14 @@ private:
 //   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes = NULL);
 //   void copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer);
 
-   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
+   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-//   void compileFieldDeclarations(DNode& member, SyntaxWriter& writer, ClassScope& scope); 
+   void compileFieldDeclarations(SNode member, ClassScope& scope); 
 //   void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
 //
 //   void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
 //   bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope);
-//   void compileClassHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileClassAttributes(SNode node, ClassScope& scope);
 //   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 //
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
@@ -1072,12 +1072,12 @@ private:
 //   void declareVirtualMethods(ClassScope& scope);
 //
 //   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
-//
-//   void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
+
+   void generateClassField(ClassScope& scope, SyntaxTree::Node node/*, bool singleField*/);
 //   void generateClassStaticField(ClassScope& scope, SNode current);   
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
-//   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
+   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
 //   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SNode node/*, bool closed*/);
    void generateClassDeclaration(SNode node, ClassScope& scope/*, bool closed*/);
@@ -1085,7 +1085,7 @@ private:
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
-   void compileClassDeclaration(SNode node, ClassScope& scope/*, DNode hints*/);
+   void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(SNode node, ClassScope& scope/*, DNode hints*/);
 //   void compileTemplateDeclaration(DNode node, TemplateScope& scope, DNode hints);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);

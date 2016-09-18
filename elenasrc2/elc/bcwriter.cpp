@@ -21,10 +21,10 @@ bool isSimpleObject(SNode node, bool ignoreFields = false)
          if (!isSimpleObjectExpression(node, ignoreFields))
             return false;
       }
-      /*else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
+      else if (ignoreFields && (node.type == lxField/* || node.type == lxFieldAddress*/)) {
          // ignore fields if required
       }
-      else*/ if (test(node.type, lxCodeScopeMask))
+      else if (test(node.type, lxCodeScopeMask))
          return false;
    }
 
@@ -3100,7 +3100,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxThisLocal:
+      case lxThisLocal:
          //case lxBoxableLocal:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
@@ -3117,15 +3117,15 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushsi index
          tape.write(bcPushSI, argument);
          break;
-//      case lxField:
-//         // aloadfi 1
-//         // pushai offset / pusha
-//         tape.write(bcALoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcPushA);
-//         }
-//         else tape.write(bcPushAI, argument);
-//         break;
+      case lxField:
+         // aloadfi 1
+         // pushai offset / pusha
+         tape.write(bcALoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcPushA);
+         }
+         else tape.write(bcPushAI, argument);
+         break;
 //      case lxStaticField:
 //         // aloadr r
 //         // pusha
@@ -3179,7 +3179,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcACopyR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxThisLocal:
+      case lxThisLocal:
       //case lxBoxableLocal:
          // aloadfi index
          tape.write(bcALoadFI, argument, bpFrame);
@@ -3198,15 +3198,15 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // acopyr 0
          tape.write(bcACopyR);
          break;
-//      case lxField:
-//         // bloadfi 1
-//         // aloadbi / acopyb
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcACopyB);
-//         }
-//         else tape.write(bcALoadBI, argument);
-//         break;
+      case lxField:
+         // bloadfi 1
+         // aloadbi / acopyb
+         tape.write(bcBLoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcACopyB);
+         }
+         else tape.write(bcALoadBI, argument);
+         break;
 //      case lxStaticField:
 //         // aloadr r
 //         tape.write(bcALoadR, argument | mskStatSymbolRef);
@@ -3244,7 +3244,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    switch (type)
    {
       case lxLocal:
-//      case lxThisLocal:
+      case lxThisLocal:
       //case lxBoxableLocal:
          // asavefi index
          tape.write(bcASaveFI, argument, bpFrame);
@@ -3253,12 +3253,12 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // asavesi index
          tape.write(bcASaveSI, argument);
          break;
-//      case lxField:
-//         // bloadfi 1
-//         // asavebi index
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcASaveBI, argument);
-//         break;
+      case lxField:
+         // bloadfi 1
+         // asavebi index
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcASaveBI, argument);
+         break;
 //      case lxStaticField:
 //         // asaver arg
 //         tape.write(bcASaveR, argument | mskStatSymbolRef);
@@ -4589,10 +4589,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //            translateBreakpoint(tape, current);
 //            break;
          case lxVariable:
-//            // if the FrameAttr included, than it is a method parameter
-//            // so no need to allocate the place
-//            if (!SyntaxTree::existChild(current, lxFrameAttr))
-               declareVariable(tape, current.argument);
+            declareVariable(tape, current.argument);
 
             declareLocalInfo(tape,
                current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
@@ -4667,9 +4664,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxReleasing:
 //            releaseObject(tape, current.argument);
 //            break;
-         case lxSelfVariable:
-            declareSelfInfo(tape, current.argument);
-            break;
 //         case lxBinarySelf:
 //            declareSelfStructInfo(tape, THIS_VAR, current.argument, SyntaxTree::findChild(current, lxClassName).identifier());
 //            break;
@@ -4748,50 +4742,77 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
    }
 }
 
+void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxMessageVariable:
+            declareMessageInfo(tape, current.identifier());
+            break;
+         case lxVariable:
+            declareLocalInfo(tape,
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
+         case lxSelfVariable:
+            declareSelfInfo(tape, current.argument);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 {
    int reserved = node.findChild(lxReserved).argument;
    int paramCount = node.findChild(lxParamCount).argument;
    ref_t sourcePathRef = node.findChild(lxSourcePath).argument;
 
+
    bool withNewFrame = false;
    bool open = false;
    bool exit = false;
    SyntaxTree::Node current = node.firstChild();
-   ident_t message = NULL;
    while (current != lxNone) {
-      if (current == lxImporting) {
-         if (!open)
-            declareIdleMethod(tape, node.argument, sourcePathRef);
+      switch (current.type) {
+         case lxCalling:
+            if (current.argument == -1) {
+               if (!open) {
+                  open = true;
 
-         importCode(tape, *imports.get(current.argument - 1));
-      }
-      else if (current == lxNewFrame) {
-         withNewFrame = true;
-         if (!open) {
-            declareMethod(tape, node.argument, sourcePathRef, reserved, current.argument == -1);
-            open = true;
-            if (!emptystr(message))
-               declareMessageInfo(tape, message);
-         }  
-         else newFrame(tape, reserved);
+                  declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
+               }
+               // HOTFIX: -1 indicates the stack is not consumed by the constructor
+               callMethod(tape, 1, -1);
+            }
+            break;
+         case lxImporting:
+         case lxCreatingClass:
+         case lxCreatingStruct:
+            if (!open)
+               declareIdleMethod(tape, node.argument, sourcePathRef);
 
-         if (current.argument == -1)
-            saveSubject(tape);
+            if (current == lxImporting) {
+               importCode(tape, *imports.get(current.argument - 1));
+            }
+            else generateCreating(tape, current);
+            break;
+         case lxNewFrame:
+            withNewFrame = true;
+            if (!open) {
+               declareMethod(tape, node.argument, sourcePathRef, reserved, current.argument == -1);
+               open = true;
+            }
+            else newFrame(tape, reserved);
 
-         generateCodeBlock(tape, current);
-      }
-      else if (current == lxCalling && current.argument == -1) {
-         if (!open) {
-            declareMethod(tape, node.argument, sourcePathRef, 0, false, false);
-            if (!emptystr(message))
-               declareMessageInfo(tape, message);
+            if (current.argument == -1)
+               saveSubject(tape);
 
-            open = true;
-         }
-            
-         // HOTFIX: -1 indicates the stack is not consumed by the constructor
-         callMethod(tape, 1, -1);
+            generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
+            generateCodeBlock(tape, current);
+            break;
       }
 //      else if (current == lxDispatching) {
 //         exit = true;
@@ -4801,19 +4822,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
 //
 //         generateDispatching(tape, current);
 //      }
-      else if (current == lxCreatingClass || current == lxCreatingStruct) {
-         if (!open)
-            declareIdleMethod(tape, node.argument, sourcePathRef);
-
-         generateCreating(tape, current);
-      }
-      else if (current == lxMessageVariable) {
-         if (open) {
-            declareMessageInfo(tape, current.identifier());
-         }
-         else message = current.identifier();
-      }
-//      else if (test(current.type, lxExpressionMask)) {
+      //      else if (test(current.type, lxExpressionMask)) {
 //         if (!open) {
 //            open = true;
 //

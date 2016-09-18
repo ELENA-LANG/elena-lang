@@ -24,12 +24,29 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsMethod:
       case nsConstructor:
       case nsSubCode:
+      case nsTemplate:
+      case nsField:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
+         if (_hints != lxNone) {
+            copyHints(_hints);
+            _hints = lxNone;
+         }            
+
          unpackChildren(node);
          _writer.closeNode();
          break;
       case nsImport:
          _writer.newNode(lxImport);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
+      case nsBaseClass:
+         _writer.newNode(lxBaseParent);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
+      case nsMethodParameter:
+         _writer.newNode(lxMethodParameter);
          unpackChildren(node);
          _writer.closeNode();
          break;
@@ -47,6 +64,8 @@ void DerivationWriter :: unpackNode(SNode node)
          copyChildren(node);
          _writer.closeNode();
          break;
+      case nsRootExpression:
+         node = lxExpression;
       case nsExpression:
       case nsDispatchHandler:
          _writer.newBookmark();
@@ -55,6 +74,9 @@ void DerivationWriter :: unpackNode(SNode node)
          break;
       case nsVariable:
          copyVariable(node);
+         break;
+      case nsAssigning:
+         copyAssigning(node);
          break;
       case nsMessageOperation:
          copyMessage(node);
@@ -149,6 +171,24 @@ void DerivationWriter :: copyVariable(SNode node)
    _writer.closeNode();
 }
 
+void DerivationWriter :: copyAssigning(SNode node)
+{
+   _writer.appendNode(lxAssign);
+
+   unpackChildren(node);
+}
+
+void DerivationWriter :: copyHints(SNode current)
+{
+   while (((LexicalType)current.type) == nsHint) {
+      _writer.newNode(lxAttribute);
+      unpackChildren(current);
+      _writer.closeNode();
+
+      current = current.nextNode();
+   }
+}
+
 void DerivationWriter :: writeSymbol(Symbol symbol)
 {
    if (symbol != nsNone) {
@@ -169,8 +209,18 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
          tempWriter.closeNode();
 
          if (_level == 1) {
-            unpackNode(_buffer.readRoot());
-            _buffer.clear();
+            SNode root = _buffer.readRoot();
+            if (_hints != lxNone) {
+               // skipping hints
+               while ((LexicalType)root.type == nsHint)
+                  root = root.nextNode();
+            }
+            // hints should be injected into the buffer
+            if ((LexicalType)root.type != nsHint) {
+               unpackNode(root);
+               _buffer.clear();
+            }
+            else _hints = root;
          }
             
       }

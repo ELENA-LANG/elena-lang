@@ -297,6 +297,7 @@ class ByteCodeWriter
    void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node);
+   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
    void importCode(CommandTape& tape, ImportScope& scope);
 

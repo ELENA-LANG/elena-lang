@@ -3,6 +3,10 @@ In development:
 ------                              
 
               xrev
+                 * templates : importing
+                 * templates : compiling
+                 * get rid of ftemplate / mtemplate, ....
+
                  * support abstract attribute
                  * support implicit constructors
                  * support a x := 2. syntax

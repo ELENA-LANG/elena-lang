@@ -166,7 +166,7 @@ namespace _ELENA_
       mskVMTMethodAddress    = 0x43000000,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000,   // meta data
       mskVMTEntryOffset      = 0x45000000,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
-//      mskSyntaxTreeRef       = 0x46000000,   // template, declared in subject namespace
+      mskSyntaxTreeRef       = 0x46000000,   // template, declared in subject namespace
 
       mskConstantRef         = 0x01000000,   // reference to constant
       mskLiteralRef          = 0x02000000,   // reference to constant literal
@@ -294,11 +294,11 @@ namespace _ELENA_
 //   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
-//   const int elSealed              = 0x00000120;
+   const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
 //   const int elReadOnlyRole        = 0x00000800;
-//   const int elNonStructureRole    = 0x00001000;
+   const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
 //   const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
@@ -453,7 +453,7 @@ namespace _ELENA_
 //   #define TARGET_PSEUDO_VAR       "target"
 
   // --- ELENA special sections ---
-   #define TYPE_SECTION             "#types"
+   #define ATTRIBUTE_SECTION        "#attributes"
 //   #define EXTENSION_SECTION        "#extensions"
 //   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
