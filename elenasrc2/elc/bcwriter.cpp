@@ -974,12 +974,12 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, boo
 //   // throw
 //   tape.write(bcThrow);
 //}
-//
-//void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
-//{
-//   // jump labEnd
-//   tape.write(bcJump, label);
-//}
+
+void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+{
+   // jump labEnd
+   tape.write(bcJump, label);
+}
 
 void ByteCodeWriter :: endCatch(CommandTape& tape)
 {
@@ -4027,14 +4027,14 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //
 //   assignBaseTo(tape, lxResult);
 //}
-//
-//void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
-//{
-//   generateExpression(tape, node);
-//
-//   gotoEnd(tape, baFirstLabel);
-//}
-//
+
+void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
+{
+   generateExpression(tape, node);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
 //void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
 //{
 //   generateExpression(tape, node);
@@ -4442,9 +4442,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxAlt:
 //         generateAlt(tape, node);
 //         break;
-//      case lxReturning:
-//         generateReturnExpression(tape, node);
-//         break;
+      case lxReturning:
+         generateReturnExpression(tape, node);
+         break;
 //      case lxThrowing:
 //         generateThrowExpression(tape, node);
 //         break;
@@ -4577,7 +4577,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
             break;
          case lxAssigning:
-//         case lxReturning:
+         case lxReturning:
             declareBlock(tape);
             generateObjectExpression(tape, current);
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -4769,7 +4769,6 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    int reserved = node.findChild(lxReserved).argument;
    int paramCount = node.findChild(lxParamCount).argument;
    ref_t sourcePathRef = node.findChild(lxSourcePath).argument;
-
 
    bool withNewFrame = false;
    bool open = false;

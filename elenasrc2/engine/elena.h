@@ -461,27 +461,27 @@ struct ClassHeader
 
 // --- ClassInfo ---
 
-//enum MethodAttribute
-//{
-//   maSubjectMask        = 0x100,
-//
-//   maNone               = 0x000,
+enum MethodAttribute
+{
+   maSubjectMask        = 0x100,
+
+   maNone               = 0x000,
 //   maHint               = 0x001,
-//   maType               = 0x102,
+   maType               = 0x102,
 //   maEmbeddableGet      = 0x103,
 ////   maEmbeddedInit   = 0x104,
 //   maEmbeddableIdle     = 0x005,
-//};
+};
 
 struct ClassInfo
 {
 //   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
-//   typedef Pair<ref_t, int>                     Attribute;
+   typedef Pair<ref_t, int>                     Attribute;
    typedef MemoryMap<ref_t, bool, false>        MethodMap;
    typedef MemoryMap<ident_t, int, true>        FieldMap;
 //   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
 //   typedef MemoryMap<int, ref_t>                FieldTypeMap;
-//   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
+   typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
 
    ClassHeader    header;
    size_t         size;           // Object size
@@ -490,7 +490,7 @@ struct ClassInfo
 //   StaticFieldMap statics;
 //
 //   FieldTypeMap   fieldTypes;
-//   MethodInfoMap  methodHints;
+   MethodInfoMap  methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
@@ -500,7 +500,7 @@ struct ClassInfo
          methods.write(writer);
          fields.write(writer);
 //         fieldTypes.write(writer);
-//         methodHints.write(writer);
+         methodHints.write(writer);
 //         statics.write(writer);
       }
    }
@@ -513,13 +513,13 @@ struct ClassInfo
          methods.read(reader);
          fields.read(reader);
 //         fieldTypes.read(reader);
-//         methodHints.read(reader);
+         methodHints.read(reader);
 //         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1)//, methods(0), methodHints(0), statics(StaticInfo(0, 0))
+      : fields(-1), /*methods(0), */methodHints(0)//, statics(StaticInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;

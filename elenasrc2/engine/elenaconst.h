@@ -93,6 +93,7 @@ namespace _ELENA_
    #define ROLLBACK_MESSAGE_ID     0x0041
    #define REPLACE_MESSAGE_ID      0x0043  
 
+   #define VALUES_MESSAGE_ID       0x007E             // virtual method returning the list of enum values
    #define PRIVATE_MESSAGE_ID      0x007F
 
 //   // ---- ELENAVM command masks ---

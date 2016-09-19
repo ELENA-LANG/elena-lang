@@ -123,7 +123,7 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int
    return read(reader);
 }
 
-SyntaxTree::Node SyntaxTree::insertNode(size_t position, LexicalType type, ident_t argument)
+SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ident_t argument)
 {
    SyntaxWriter writer(*this);
 
@@ -182,15 +182,15 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    }
 }
 
-//SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
-//{
-//   SyntaxWriter writer(*this);
-//
-//   writer.insertChild(writer.setBookmark(start_position), writer.setBookmark(end_position), type, argument);
-//
-//   MemoryReader reader(&_body, start_position);
-//   return read(reader);
-//}
+SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
+{
+   SyntaxWriter writer(*this);
+
+   writer.insertChild(writer.setBookmark(start_position), writer.setBookmark(end_position), type, argument);
+
+   MemoryReader reader(&_body, start_position);
+   return read(reader);
+}
 
 SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {

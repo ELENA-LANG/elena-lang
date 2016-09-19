@@ -23,21 +23,21 @@ public:
    {
       int    offset;
 //      ref_t  subj_ref;
-//      size_t class_ref;
+      size_t class_ref;
 //      int    size;
 
       Parameter()
       {
          offset = -1;
 //         subj_ref = 0;
-//         class_ref = 0;
+         class_ref = 0;
 //         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
 //         this->subj_ref = 0;
-//         this->class_ref = 0;
+         this->class_ref = 0;
 //         this->size = 0;
       }
 //      Parameter(int offset, ref_t subj_ref)
@@ -47,13 +47,13 @@ public:
 //         this->class_ref = 0;
 //         this->size = 0;
 //      }
-//      Parameter(int offset, ref_t subj_ref, size_t class_ref, int size)
-//      {
-//         this->offset = offset;
+      Parameter(int offset/*, ref_t subj_ref*/, size_t class_ref/*, int size*/)
+      {
+         this->offset = offset;
 //         this->subj_ref = subj_ref;
-//         this->class_ref = class_ref;
+         this->class_ref = class_ref;
 //         this->size = size;
-//      }
+      }
    };
 
    // InheritResult
@@ -130,7 +130,7 @@ public:
 //      okOuter,                        // param - field offset
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
-      okParam,                        // param - parameter offset
+      okParam,                        // param - parameter offset, extraparam - class reference
 //      okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset
@@ -734,12 +734,12 @@ private:
          else return parent->getScope(level);
       }
 
-//      int getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->message : 0;
-//      }
+      int getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->message : 0;
+      }
 
       ref_t getClassRefId(bool ownerClass = true)
       {
@@ -920,7 +920,7 @@ private:
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
-   ref_t mapAttribute(SNode attribute, ModuleScope& scope/*, int offset*/);
+   ref_t mapAttribute(SNode attribute, int paramCounter, ModuleScope& scope);
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -964,7 +964,7 @@ private:
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
 //   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
 //   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
-//   void compileMethodHints(DNode hints, SyntaxWriter& writer, MethodScope& scope/*, bool warningsOnly*/);
+   void compileMethodAttributes(SNode hints, MethodScope& scope);
    void declareVMT(SNode member, ClassScope& scope);
 
 //   bool importTemplateDeclarations(ClassScope& scope, SyntaxWriter& writer);
@@ -1015,7 +1015,7 @@ private:
    ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
 //   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
    ObjectInfo compileExpression(SNode node, CodeScope& scope/*, ref_t targetType*/, int mode);
-//   ObjectInfo compileRetExpression(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
 //   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
@@ -1062,7 +1062,7 @@ private:
 
 //   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
-//   void compileVirtualTypecastMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
+   void compileVirtualTypecastMethod(SNode node, MethodScope& scope, LexicalType target, int argument = 0);
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 //
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
@@ -1070,7 +1070,7 @@ private:
 
    void compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope);
 
-//   void compileVirtualMethods(SyntaxWriter& writer, ClassScope& scope);
+   void compileVirtualMethods(SNode node, ClassScope& scope);
 //   void declareVirtualMethods(ClassScope& scope);
 //
 //   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
@@ -1080,7 +1080,7 @@ private:
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
-//   void generateMethodHints(ClassScope& scope, SyntaxTree::Node node, ref_t message);
+   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SNode node/*, bool closed*/);
    void generateClassDeclaration(SNode node, ClassScope& scope/*, bool closed*/);
 //   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
@@ -1109,7 +1109,7 @@ private:
 ////   void compileWarningHints(ModuleScope& scope, DNode hints, SyntaxWriter& writer);
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
-   void typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
+   ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
 //
 //   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 //   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable);

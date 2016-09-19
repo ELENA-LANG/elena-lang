@@ -32,7 +32,6 @@ void DerivationWriter :: unpackNode(SNode node)
             copyHints(_hints);
             _hints = lxNone;
          }            
-
          unpackChildren(node);
          _writer.closeNode();
          break;
@@ -79,6 +78,7 @@ void DerivationWriter :: unpackNode(SNode node)
          node = lxExpression;
       case nsExpression:
       case nsDispatchHandler:
+      case nsRetStatement:
          _writer.newBookmark();
          copyExpression(node);
          _writer.removeBookmark();
@@ -99,6 +99,11 @@ void DerivationWriter :: unpackNode(SNode node)
          _writer.newNode(lxEOF);
          copyChildren(node.firstChild());
          _writer.closeNode();
+         break;
+      case nsHint:
+         if (_hints == lxNone) {
+            _hints = node;
+         }
          break;
       default:
          break;

@@ -199,8 +199,8 @@ class ByteCodeWriter
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
 
-//   void gotoEnd(CommandTape& tape, PseudoArg label);
-//
+   void gotoEnd(CommandTape& tape, PseudoArg label);
+
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
@@ -284,7 +284,7 @@ class ByteCodeWriter
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);

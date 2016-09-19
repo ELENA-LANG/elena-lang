@@ -67,6 +67,7 @@ enum LexicalType
    lxNewFrame        = 0x04024, // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025, // arg - count
    lxCreatingStruct  = 0x0C026, // arg - size
+   lxReturning       = 0x0C027,
    lxDispatching     = 0x04036, // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,  // an assigning expression, arg - size
 
@@ -92,6 +93,7 @@ enum LexicalType
    lxMessage         = 0x2000E, // arg - message
    lxAssign          = 0x2000F,
    lxLevel           = 0x20010,
+   lxType            = 0x20011, // arg - subject
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -142,7 +144,6 @@ enum LexicalType
 //   lxBranching       = 0x0030F,   // branch expression
 //   lxSwitching       = 0x00310,
 //   lxLooping         = 0x00311,
-//   lxReturning       = 0x00312,
 //   lxThrowing        = 0x00313,
 //   lxStdExternalCall = 0x20314,  // calling an external function, arg - reference
 //   lxExternalCall    = 0x20315,  // calling an external function, arg - reference
@@ -188,7 +189,6 @@ enum LexicalType
 //   lxBinarySelf      = 0x00435, // debug info only
 //
 //   lxCallTarget      = 0x20442, // arg - reference
-//   lxType            = 0x40443, // arg - subject
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,
 //   lxTempLocal       = 0x00446,
@@ -291,11 +291,11 @@ public:
       {
          insert(0, type, 0);
       }
-      //void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
-      //{
-      //   insert(end_bookmark, lxEnding, 0);
-      //   insert(start_bookmark, type, argument);
-      //}
+      void insertChild(int start_bookmark, int end_bookmark, LexicalType type, ref_t argument)
+      {
+         insert(end_bookmark, lxEnding, 0);
+         insert(start_bookmark, type, argument);
+      }
       void insertChild(int bookmark, LexicalType type, ref_t argument)
       {
          insert(bookmark, lxEnding, 0);
@@ -368,7 +368,7 @@ public:
    public:
       LexicalType   type;
       ref_t         argument;
-      int           strArgument;   // if argLength is not -1 - it contains the position of the argument string
+      int           strArgument;   // if strArgument is not -1 - it contains the position of the argument string
 
 //      SyntaxTree* Tree()
 //      {
@@ -513,14 +513,14 @@ public:
          return tree->insertNode(end_position, type, argument);
       }
 
-//      void injectNode(LexicalType type, int argument = 0)
-//      {
-//         int start_position = position;
-//         int end_position = tree->seekNodeEnd(position);
-//         
-//         tree->insertNode(start_position, end_position, type, argument);
-//      }
-//
+      Node injectNode(LexicalType type, int argument = 0)
+      {
+         int start_position = position;
+         int end_position = tree->seekNodeEnd(position);
+         
+         return tree->insertNode(start_position, end_position, type, argument);
+      }
+
 //      Node findPattern(NodePattern pattern)
 //      {
 //         return tree->findPattern(*this, 1, pattern);
@@ -744,8 +744,8 @@ public:
 
    Node insertNode(size_t position, LexicalType type, int argument);
    Node insertNode(size_t position, LexicalType type, ident_t argument);
-//   Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
-//
+   Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
+
 //   bool matchPattern(Node node, int mask, int counter, ...);
 //   Node findPattern(Node node, int counter, ...);
 //
