@@ -4845,6 +4845,18 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node)
    else endMethod(tape, paramCount, reserved, withNewFrame);
 }
 
+void ByteCodeWriter :: generateTemplateMethods(CommandTape& tape, SNode root)
+{
+   SyntaxTree::Node current = root.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         generateMethod(tape, current);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root)
 {
    declareClass(tape, root.argument);
@@ -4852,6 +4864,9 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root)
    while (current != lxNone) {
       if (current == lxClassMethod) {
          generateMethod(tape, current);
+      }
+      else if (current == lxTemplate) {
+         generateTemplateMethods(tape, current);
       }
 
       current = current.nextNode();

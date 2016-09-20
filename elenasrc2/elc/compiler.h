@@ -11,48 +11,49 @@
 
 #include "parser.h"
 #include "bcwriter.h"
+#include "compilercommon.h" 
 
 namespace _ELENA_
 {
 
 // --- Compiler class ---
-class Compiler
+class Compiler : public _Compiler
 {
 public:
    struct Parameter
    {
       int    offset;
-//      ref_t  subj_ref;
-      size_t class_ref;
-//      int    size;
+      ref_t  class_ref;
+      ref_t  subj_ref;
+      int    size;
 
       Parameter()
       {
          offset = -1;
-//         subj_ref = 0;
+         subj_ref = 0;
          class_ref = 0;
-//         size = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
-//         this->subj_ref = 0;
+         this->subj_ref = 0;
          this->class_ref = 0;
-//         this->size = 0;
+         this->size = 0;
       }
-//      Parameter(int offset, ref_t subj_ref)
-//      {
-//         this->offset = offset;
-//         this->subj_ref = subj_ref;
-//         this->class_ref = 0;
-//         this->size = 0;
-//      }
-      Parameter(int offset/*, ref_t subj_ref*/, size_t class_ref/*, int size*/)
+      Parameter(int offset, ref_t subj_ref)
       {
          this->offset = offset;
-//         this->subj_ref = subj_ref;
+         this->subj_ref = subj_ref;
+         this->class_ref = 0;
+         this->size = 0;
+      }
+      Parameter(int offset, ref_t subj_ref, ref_t class_ref)
+      {
+         this->offset = offset;
+         this->subj_ref = subj_ref;
          this->class_ref = class_ref;
-//         this->size = size;
+         this->size = 0;
       }
    };
 
@@ -124,12 +125,12 @@ public:
 //      okSignatureConstant,            // param - reference 
 //      okVerbConstant,                 // param - reference 
 //      okArrayConst,
-      okField,                        // param - field offset
+      okField,                        // param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
 //      okFieldAddress,                 // param - field offset
 //      okOuter,                        // param - field offset
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
-      okLocal,                        // param - local / out parameter offset, extraparam : -1 indicates boxable / class reference for constructor call
+      okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam - class reference
 //      okParamField,
 //      okSubject,                      // param - parameter offset
@@ -154,21 +155,21 @@ public:
       ObjectKind kind;
       ref_t      param;
       ref_t      extraparam;
-//      ref_t      type;
+      ref_t      type;
    
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->extraparam = 0;
-//         this->type = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->extraparam = 0;
-//         this->type = 0;
+         this->type = 0;
       }
 //      ObjectInfo(ObjectKind kind, ObjectInfo copy)
 //      {
@@ -182,28 +183,27 @@ public:
          this->kind = kind;
          this->param = param;
          this->extraparam = 0;
-//         this->type = 0;
+         this->type = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
-//         this->type = 0;
+         this->type = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->type = type;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t type)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         this->type = type;
+      }
    };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
-   typedef Map<ref_t, ref_t>              SubjectMap;
-   typedef Map<ref_t, ref_t>              ClassMap;
+   typedef Map<ref_t, ref_t>              SubjectMap;   
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -292,7 +292,7 @@ public:
 
 private:
    // - ModuleScope -
-   struct ModuleScope
+   struct ModuleScope : _CompilerScope
    {
       _ProjectManager* project;
       _Module*       module;
@@ -347,9 +347,6 @@ private:
 
       // list of references to the current module which should be checked after the project is compiled
       Unresolveds* forwardsUnresolved;
-
-      // list of typified classes which may need get&type message
-      ClassMap typifiedClasses;
 
       ObjectInfo mapObject(SNode identifier);
 
@@ -660,7 +657,9 @@ private:
 
 //      ref_t getReturningType() const
 //      {
-//         return ((ClassScope*)parent)->info.methodHints.get(ClassInfo::Attribute(message, maType));
+//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+//
+//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
 //      }
 //
 //      ref_t getClassFlags(bool ownerClass = true)
@@ -811,10 +810,10 @@ private:
 //
 //      InlineClassScope(CodeScope* owner, ref_t reference);
 //   };
-//
-//   // --- TemplateScope ---
-//   struct TemplateScope : public ClassScope
-//   {
+
+   // --- TemplateScope ---
+   struct TemplateScope : ClassScope
+   {
 //      enum Type
 //      {
 //         ttNone = 0,
@@ -866,15 +865,15 @@ private:
 //         }
 //         else return Scope::mapSubject(terminal, implicitOnly);
 //      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slTemplate) {
-//            return this;
-//         }
-//         else return ClassScope::getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slTemplate) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      void save()
 //      {
 //         _Memory* section = moduleScope->module->mapSection(templateRef | mskSyntaxTreeRef, false);
@@ -882,9 +881,16 @@ private:
 //
 //         syntaxTree.save(section);
 //      }
-//   };
 
-   _CompilerLogic* _logic;
+      TemplateScope(ClassScope* parent)
+         : ClassScope(parent->moduleScope, parent->reference)
+      {
+         this->parent = parent;
+         this->info.header.flags = 0;
+      }
+   };
+
+   _CompilerLogic*  _logic;
 
    ByteCodeWriter _writer;
    Parser         _parser;
@@ -963,7 +969,7 @@ private:
 //
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
 //   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
-//   void compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
+   void compileFieldAttributes(SNode hints, ClassScope& scope);
    void compileMethodAttributes(SNode hints, MethodScope& scope);
    void declareVMT(SNode member, ClassScope& scope);
 
@@ -1062,7 +1068,6 @@ private:
 
 //   void compilePreloadedCode(SymbolScope& scope);
    void compileSymbolCode(ClassScope& scope);
-   void compileVirtualTypecastMethod(SNode node, MethodScope& scope, LexicalType target, int argument = 0);
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 //
 //   void compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared = false);
@@ -1070,7 +1075,6 @@ private:
 
    void compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope);
 
-   void compileVirtualMethods(SNode node, ClassScope& scope);
 //   void declareVirtualMethods(ClassScope& scope);
 //
 //   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
@@ -1081,7 +1085,7 @@ private:
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
-   void generateMethodDeclarations(ClassScope& scope, SNode node/*, bool closed*/);
+   void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates/*, bool closed*/);
    void generateClassDeclaration(SNode node, ClassScope& scope/*, bool closed*/);
 //   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
 
@@ -1110,6 +1114,7 @@ private:
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
    ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
+   bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ref_t sourceRef);
 //
 //   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 //   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable);
@@ -1156,6 +1161,9 @@ public:
    void compileModule(ident_t source, ModuleScope& scope);
 
    bool run(_ProjectManager& project, bool withDebugInfo);
+
+   // _Compiler interface implementation
+   virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
 
    Compiler(StreamReader* syntax, _CompilerLogic* logic);
 };

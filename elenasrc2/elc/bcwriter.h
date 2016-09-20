@@ -301,6 +301,8 @@ class ByteCodeWriter
 
    void importCode(CommandTape& tape, ImportScope& scope);
 
+   void generateTemplateMethods(CommandTape& tape, SNode root);
+
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
    int writeString(ident_t path);

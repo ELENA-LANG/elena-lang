@@ -475,12 +475,12 @@ enum MethodAttribute
 
 struct ClassInfo
 {
-//   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
+   typedef Pair<ref_t, ref_t>                   FieldInfo;       // value1 - reference ; value2 - type
    typedef Pair<ref_t, int>                     Attribute;
    typedef MemoryMap<ref_t, bool, false>        MethodMap;
    typedef MemoryMap<ident_t, int, true>        FieldMap;
 //   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
-//   typedef MemoryMap<int, ref_t>                FieldTypeMap;
+   typedef MemoryMap<int, FieldInfo>            FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
 
    ClassHeader    header;
@@ -488,8 +488,8 @@ struct ClassInfo
    MethodMap      methods;
    FieldMap       fields;
 //   StaticFieldMap statics;
-//
-//   FieldTypeMap   fieldTypes;
+
+   FieldTypeMap   fieldTypes;
    MethodInfoMap  methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
@@ -499,7 +499,7 @@ struct ClassInfo
       if (!headerAndSizeOnly) {
          methods.write(writer);
          fields.write(writer);
-//         fieldTypes.write(writer);
+         fieldTypes.write(writer);
          methodHints.write(writer);
 //         statics.write(writer);
       }
@@ -512,14 +512,14 @@ struct ClassInfo
       if (!headerOnly) {
          methods.read(reader);
          fields.read(reader);
-//         fieldTypes.read(reader);
+         fieldTypes.read(reader);
          methodHints.read(reader);
 //         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), /*methods(0), */methodHints(0)//, statics(StaticInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)) //, statics(StaticInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -586,14 +586,6 @@ struct DebugLineInfo
       this->addresses.symbol.nameRef = 0;
       this->addresses.symbol.flags = 0;
    }
-};
-
-// --- _CompilerLogic ---
-
-class _CompilerLogic
-{
-public:
-   virtual bool isCompatible(ref_t targetRef, ref_t sourceRef) = 0;
 };
 
 // --- Exception base class ---

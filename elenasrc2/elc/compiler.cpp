@@ -17,15 +17,15 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+
+}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -767,13 +767,17 @@ void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target
 
       target.fields.add(copy.fields);
 
-      //// import field types
-      //ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-      //while (!type_it.Eof()) {
-      //   target.fieldTypes.add(type_it.key(), importSubject(exporter, *type_it, module));
+      // import field types
+      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
+      while (!type_it.Eof()) {
+         ClassInfo::FieldInfo info = *type_it;
+         info.value1 = importReference(exporter, info.value1, module);
+         info.value2 = importSubject(exporter, info.value2, module);
 
-      //   type_it++;
-      //}
+         target.fieldTypes.add(type_it.key(), info);
+
+         type_it++;
+      }
 
       // import method attributes
       ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
@@ -1287,11 +1291,10 @@ ObjectInfo Compiler::ClassScope :: mapObject(SNode identifier)
 //      else return ObjectInfo(okParam, (size_t)-1);
 //   }
 //   else {
-      int reference = info.fields.get(terminal);
-      if (reference != -1) {
+      int offset = info.fields.get(terminal);
+      if (offset != -1) {
+         ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
 //         if (test(info.header.flags, elStructureRole)) {
-//            int offset = reference;
-//            ref_t type = info.fieldTypes.get(offset);
 //            if (type == 0) {
 //               // if it is a primitive field
 //               switch (info.header.flags & elDebugMask) {
@@ -1306,7 +1309,7 @@ ObjectInfo Compiler::ClassScope :: mapObject(SNode identifier)
 //            return ObjectInfo(okFieldAddress, offset, 0, type);
 //         }
          // otherwise it is a normal field
-         /*else */return ObjectInfo(okField, reference/*, 0, info.fieldTypes.get(reference)*/);
+         /*else */return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
       }
       else {
 //         ClassInfo::StaticInfo staticInfo = info.statics.get(identifier);
@@ -1381,7 +1384,7 @@ ObjectInfo Compiler::MethodScope :: mapObject(SNode identifier)
 //               return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
 //            }
 //         }
-         return ObjectInfo(okParam, -1 - local, param.class_ref/*, 0, param.subj_ref*/);
+         return ObjectInfo(okParam, -1 - local, param.class_ref, param.subj_ref);
       }
       else {
          ObjectInfo retVal = Scope::mapObject(identifier);
@@ -1425,7 +1428,7 @@ Compiler::CodeScope :: CodeScope(SymbolScope* parent)
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
-   : Scope(parent)//, locals(Parameter(0))
+   : Scope(parent), locals(Parameter(0))
 {
 //   this->writer = writer;
    this->level = 0;
@@ -1456,7 +1459,7 @@ ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
 //      else if (local.size != 0) {
 //         return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
 //      }
-      /*else */return ObjectInfo(okLocal, local.offset/*, local.class_ref, local.subj_ref*/);
+      /*else */return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
    }
    else return Scope::mapObject(identifier);
 }
@@ -1864,14 +1867,17 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //         return -1; // NOTE : -1 means primitve int32
 //      case okMessageConstant:
 //         return scope.moduleScope->messageReference;
+      case okField:
+      case okLocal:
+      case okParam:
+         if (object.extraparam > 0) {
+            return object.extraparam;
+         }
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
          }
-         else if ((object.kind == okLocal || object.kind == okParam/* || object.kind == okOuter*/) && object.extraparam > 0) {
-            return object.extraparam;
-         }
-         else return /*object.type != 0 ? scope.moduleScope->subjectHints.get(object.type) : */0;
+         else return (object.type != 0) ? scope.moduleScope->attributeHints.get(object.type) : 0;
    }
 }
 
@@ -2340,47 +2346,63 @@ void Compiler :: compileClassAttributes(SNode node, ClassScope& scope)
 //      compileFieldHints(hints, writer, scope);
 //   }
 //}
-//
-//void Compiler :: compileFieldHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
-//{
+
+void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope)
+{
 //   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   while (hints == nsHint) {
-//      TerminalInfo terminal = hints.Terminal();
-//      if (terminal == tsInteger) {
-//         int value = StringHelper::strToInt(terminal);
-//         // negative value defines the target type
-//         if (value < 0) {
-//            if (value <= -32) {
-//               writer.appendNode((LexicalType)(-value | lxAttrMask));
-//            }
-//            else writer.appendNode(lxTarget, value);
-//         }
-//         // positive value defines the target size
-//         else writer.appendNode(lxSize, value);
-//      }
-//      else {
-//         ref_t hintRef = mapHint(hints, *moduleScope, 2000);
-//         // HOTFIX : to support template classes
-//         if (hintRef == 0)
-//            hintRef = mapHint(hints, *moduleScope, 0);
-//
-//         if (hintRef != 0) {
-//            if (scope.moduleScope->subjectHints.exist(hintRef)) {
-//               writer.appendNode(lxType, hintRef);
-//            }
-//            else if (hintRef != 0) {
-//               if (!declareAttribute(hints, scope, writer, hintRef))
-//                  scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
-//            }
-//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
-//      }
-//
-//      hints = hints.nextNode();
-//   }
-//}
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         //      if (terminal == tsInteger) {
+         //         int value = StringHelper::strToInt(terminal);
+         //         // negative value defines the target type
+         //         if (value < 0) {
+         //            if (value <= -32) {
+         //               writer.appendNode((LexicalType)(-value | lxAttrMask));
+         //            }
+         //            else writer.appendNode(lxTarget, value);
+         //         }
+         //         // positive value defines the target size
+         //         else writer.appendNode(lxSize, value);
+         //      }
+         //      else {
+         //         ref_t hintRef = mapHint(hints, *moduleScope, 2000);
+         //         // HOTFIX : to support template classes
+         //         if (hintRef == 0)
+         //            hintRef = mapHint(hints, *moduleScope, 0);
+         //
+         //         if (hintRef != 0) {
+         //            if (scope.moduleScope->subjectHints.exist(hintRef)) {
+         //               writer.appendNode(lxType, hintRef);
+         //            }
+         //            else if (hintRef != 0) {
+         //               if (!declareAttribute(hints, scope, writer, hintRef))
+         //                  scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, terminal);
+         //            }
+         //            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+         //         }
+         //         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
+         //      }
+         //else {
+         ref_t attribute = mapAttribute(current, 0, *scope.moduleScope);
+         if (attribute) {
+            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
+            if (classRef == INVALID_REF) {
+               //      _Memory* body = scope.moduleScope->loadAttributeInfo(attribute);
+
+               //      SNode templNode = node.appendNode(lxTemplate);
+               //      SyntaxTree::loadNode(templNode, body);
+            }
+            else node.appendNode(lxType, attribute);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
+         //}
+      }
+
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope)
 {
@@ -3506,18 +3528,27 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    return retVal;
 }
 
+bool Compiler :: convertObject(SNode node, CodeScope& scope, ref_t targetRef, ref_t sourceRef)
+{
+   if (!_logic->isCompatible(targetRef, sourceRef)) {
+      return false;
+   }
+   else return true;
+}
+
 ObjectInfo Compiler :: typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object)
 {
    ref_t targetRef = scope.moduleScope->attributeHints.get(subjectRef);
    if (targetRef != 0) {
       ref_t sourceRef = resolveObjectReference(scope, object);
 
-      if (!_logic->isCompatible(targetRef, sourceRef)) {
+      if (!convertObject(node, scope, targetRef, sourceRef)) {
          scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, node);
 
          // if not compatible - send a typecast message
          object = compileMessage(node, scope, object, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
       }
+      else object = ObjectInfo(okObject, targetRef, 0, subjectRef);
    }
 
    return object;
@@ -3635,7 +3666,15 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
          subject = scope.moduleScope->module->mapSubject(name.findChild(lxTerminal).identifier(), false);
 
       ref_t messageRef = encodeMessage(subject, SET_MESSAGE_ID, 1);
+
+      // compile target
+      // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
       ObjectInfo target = compileMessageParameters(exprNode, scope);
+
+      // compile the parameter
+      SNode sourceNode = exprNode.nextNode(lxObjectMask);
+      ObjectInfo source = compileExpression(sourceNode, scope, 0);
+      typecastObject(sourceNode, scope, subject, source);
 
 //      ref_t extensionRef = mapExtension(scope, messageRef, object);
 //      if (extensionRef != 0) {
@@ -3650,12 +3689,12 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      }
 //      else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
 
-      return compileMessage(exprNode, scope, target, messageRef, 0);
+      return compileMessage(node, scope, target, messageRef, HINT_NODEBUGINFO);
    }
    else {
-      SNode target = node.firstChild(lxObjectMask);
+      SNode targetNode = node.firstChild(lxObjectMask);
 
-      ObjectInfo currentObject = compileObject(target, scope, mode);
+      ObjectInfo target = compileObject(targetNode, scope, mode);
 
       node = lxAssigning;
 //      ref_t classReference = 0;
@@ -3673,7 +3712,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      else if (object.kind == okFieldAddress) {
 //         size = scope.moduleScope->defineSubjectSize(object.type);
 //      }
-      /*else */if (currentObject.kind == okLocal || currentObject.kind == okField/* || object.kind == okOuterField || object.kind == okStaticField*/) {
+      /*else */if (target.kind == okLocal || target.kind == okField/* || object.kind == okOuterField || object.kind == okStaticField*/) {
 //
       }
 //      else if (object.kind == okParam || object.kind == okOuter) {
@@ -3704,14 +3743,26 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      }
       else scope.raiseError(errInvalidOperation, node);
 
-      currentObject = compileAssigningExpression(node, target.nextNode(lxObjectMask), scope, currentObject, assignMode);
+      SNode sourceNode = targetNode.nextNode(lxObjectMask);
+      ObjectInfo source = compileAssigningExpression(node, sourceNode, scope, target, assignMode);
+
+      if (target.type != 0) {
+         typecastObject(sourceNode, scope, target.type, source);
+      }
+      else {
+         ref_t targetRef = resolveObjectReference(scope, target);
+         ref_t sourceRef = resolveObjectReference(scope, source);
+         if (targetRef != 0 && !convertObject(sourceNode, scope, targetRef, sourceRef)) {
+            scope.raiseError(errInvalidOperation, node);
+         }
+      }
 
 //      if (size >= 0) {
 //         scope.writer->insert(assignType, size);
 //         scope.writer->closeNode();
 //      }
 //
-      return currentObject;
+      return target;
    }   
 }
 
@@ -4800,20 +4851,22 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    bool first = true;
 
    SNode verb = node.findChild(lxIdentifier, lxPrivate);
-//   if (node != nsDefaultGeneric && node != nsImplicitConstructor) {
-	   verb_id = _verbs.get(verb.findChild(lxTerminal).identifier());
-//
-//	   // if it is a generic verb, make sure no parameters are provided
-//	   if (verb_id == DISPATCH_MESSAGE_ID) {
-//		   scope.raiseError(errInvalidOperation, verb);
-//	   }
+   if (verb != lxNone) {
+      //   if (node != nsDefaultGeneric && node != nsImplicitConstructor) {
+      verb_id = _verbs.get(verb.findChild(lxTerminal).identifier());
+      //
+      //	   // if it is a generic verb, make sure no parameters are provided
+      //	   if (verb_id == DISPATCH_MESSAGE_ID) {
+      //		   scope.raiseError(errInvalidOperation, verb);
+      //	   }
       /*else */if (verb_id == 0) {
          sign_id = scope.mapSubject(verb, signature);
-//         if (scope.sealed && verb == tsPrivate) {
-//            verb_id = PRIVATE_MESSAGE_ID;
-//         }            
+         //         if (scope.sealed && verb == tsPrivate) {
+         //            verb_id = PRIVATE_MESSAGE_ID;
+         //         }            
       }
-//   }
+      //   }
+   }
 
    SNode arg = node.findChild(lxMethodParameter, lxMessage);
    if (verb_id == 0) {
@@ -4906,7 +4959,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       sign_id = scope.moduleScope->module->mapSubject(signature, false);
    }
 
-   scope.message = encodeMessage(sign_id, verb_id, paramCount);
+   if (scope.message == 0)
+      scope.message = encodeMessage(sign_id, verb_id, paramCount);
 }
 
 void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodScope& scope/*, bool withGenericMethods*/)
@@ -5435,6 +5489,13 @@ void Compiler :: compileVMT(SNode member, ClassScope& scope)
 //
 //            break;
 //         }
+         case lxTemplate:
+         {
+            TemplateScope templateScope(&scope);
+            compileVMT(member.firstChild(), templateScope);
+
+            break;
+         }
       }
 //      writer.removeBookmark();
 
@@ -5457,13 +5518,8 @@ void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
    SNode member = node.firstChild();
 
    while (member != nsNone) {
-      if (member==lxClassField) {
-//         writer.newNode(lxClassField);
-//
-//         appendTerminalInfo(&writer, member.Terminal());
-//         compileFieldHints(hints, writer, scope);
-//
-//         writer.closeNode();
+      if (member == lxClassField) {
+         compileFieldAttributes(member, scope);
       }
       member = member.nextNode();
    }
@@ -5625,7 +5681,7 @@ void Compiler :: declareVMT(SNode member, ClassScope& scope)
          MethodScope methodScope(&scope);
 
          compileMethodAttributes(member, methodScope);
-//
+
 //         DNode firstChild = member.firstChild();
 //         if (firstChild == nsDispatchHandler) {
          if (dispatchMethod) {
@@ -5653,6 +5709,7 @@ void Compiler :: declareVMT(SNode member, ClassScope& scope)
 //         if (member == nsDefaultGeneric)
 //            writer.appendNode(lxClassFlag, elWithGenerics);
       }
+
       member = member.nextNode();
    }
 }
@@ -5885,8 +5942,8 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/
 {
    int offset = 0;
    ident_t terminal = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
-//
-//   ref_t typeHint = SyntaxTree::findChild(current, lxType).argument;
+
+   ref_t typeAttr = current.findChild(lxType).argument;
 
    // a role cannot have fields
    if (test(scope.info.header.flags, elStateless))
@@ -6016,8 +6073,8 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/
          offset = scope.info.fields.Count();
          scope.info.fields.add(terminal, offset);
 
-//         if (typeHint != 0)
-//            scope.info.fieldTypes.add(offset, typeHint);
+         if (typeAttr != 0)
+            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(0, typeAttr));
 //      }
 //   }
 //
@@ -6111,7 +6168,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 //   }
 }
 
-void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root/*, bool closed*/)
+void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool hideDuplicates/*, bool closed*/)
 {
    SNode current = root.firstChild();
    while (current != lxNone) {
@@ -6128,7 +6185,6 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root/*, boo
 //      //}
       /*else */if (current == lxClassMethod) {
          ref_t message = current.argument;
-         generateMethodAttributes(scope, current, message);
 
 //         int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
 //         bool privat = (methodHints & tpMask) == tpPrivate;
@@ -6140,23 +6196,33 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root/*, boo
 //         }            
 
          // check if there is no duplicate method
-         if (scope.info.methods.exist(message, true))
-            scope.raiseError(errDuplicatedMethod, current);
+         if (scope.info.methods.exist(message, true)) {
+            if (hideDuplicates) {
+               current = lxIdle;
+            }
+            else scope.raiseError(errDuplicatedMethod, current);
+         }
+         else {
+            generateMethodAttributes(scope, current, message);
 
-         bool included = scope.include(message);
-//         bool sealedMethod = (methodHints & tpMask) == tpSealed;
-//         // if the class is closed, no new methods can be declared
-//         if (included && closed)
-//            scope.raiseError(errClosedParent, current);
-//
-//         // if the method is sealed, it cannot be overridden
-//         if (!included && sealedMethod)
-//            scope.raiseError(errClosedMethod, current);
-//
-//         // save extensions if required ; private method should be ignored
-//         if (test(scope.info.header.flags, elExtension) && !privat) {
-//            scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
-//         }
+            bool included = scope.include(message);
+            //         bool sealedMethod = (methodHints & tpMask) == tpSealed;
+            //         // if the class is closed, no new methods can be declared
+            //         if (included && closed)
+            //            scope.raiseError(errClosedParent, current);
+            //
+            //         // if the method is sealed, it cannot be overridden
+            //         if (!included && sealedMethod)
+            //            scope.raiseError(errClosedMethod, current);
+            //
+            //         // save extensions if required ; private method should be ignored
+            //         if (test(scope.info.header.flags, elExtension) && !privat) {
+            //            scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
+            //         }
+         }
+      }
+      else if (current == lxTemplate) {
+         generateMethodDeclarations(scope, current, true);
       }
       current = current.nextNode();
    }
@@ -6215,7 +6281,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, bool 
 //      }
 //   }
    // generate methods
-   generateMethodDeclarations(scope, node/*, closed*/);
+   generateMethodDeclarations(scope, node, false/*, closed*/);
 
 //   // verify if the class may be a wrapper
 //   if (isWrappable(scope.info.header.flags) && scope.info.fields.Count() == 1 &&
@@ -6459,13 +6525,14 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    compileClassAttributes(node, scope);
    compileFieldDeclarations(node, scope);
+
    declareVMT(node.firstChild(), scope/*, false*/);
+
+   _logic->injectVirtualMethods(node, *scope.moduleScope, *this);
 
 //   // declare imported methods
 //   if (!importTemplateDeclarations(scope, writer))
 //      scope.raiseError(errInvalidHint, node.FirstTerminal());
-//
-//   writer.closeNode();
 
    generateClassDeclaration(node, scope/*, test(flagCopy, elClosed)*/);
 
@@ -6713,19 +6780,6 @@ void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 //   importTemplateTree(scope, writer, root, templateInfo, extModule);
 //}
 
-void Compiler :: compileVirtualTypecastMethod(SNode node, MethodScope& scope, LexicalType target, int argument)
-{
-   SNode methodNode = node.appendNode(lxClassMethod, scope.message);
-
-   // new stack frame
-   SNode codeNode = methodNode.appendNode(lxNewFrame);
-   SNode retExpr = codeNode.appendNode(lxReturning);
-   retExpr.appendNode(target, argument);
-
-   methodNode.appendNode(lxParamCount, getParamCount(scope.message) + scope.rootToFree);
-   methodNode.appendNode(lxReserved, scope.reserved);
-}
-
 //void Compiler :: compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument)
 //{
 //   int paramCount = getParamCount(scope.message);
@@ -6776,28 +6830,6 @@ void Compiler :: compileVirtualTypecastMethod(SNode node, MethodScope& scope, Le
 //   }
 //}
 
-void Compiler :: compileVirtualMethods(SNode node, ClassScope& scope)
-{
-   ModuleScope* moduleScope = scope.moduleScope;
-
-   // auto generate get&type message if required
-   ClassMap::Iterator c_it = moduleScope->typifiedClasses.getIt(scope.reference);
-   while (!c_it.Eof()) {
-      if (c_it.key() == scope.reference) {
-         MethodScope methodScope(&scope);
-         methodScope.message = encodeMessage(*c_it, GET_MESSAGE_ID, 0);
-
-         // skip if there is an explicit method
-         if (!scope.info.methods.exist(methodScope.message, true)) {
-            compileVirtualTypecastMethod(node, methodScope, lxThisLocal, 1);
-
-            scope.include(methodScope.message);
-         }
-      }
-      c_it++;
-   }
-}
-
 //void Compiler :: importTemplateImplementations(ClassScope& scope, SyntaxWriter& writer)
 //{
 //   MemoryReader reader(&scope.imported);
@@ -6824,7 +6856,6 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
 //   compileFieldDeclarations(node, writer, scope);
 
    compileVMT(node.firstChild(), scope);
-   compileVirtualMethods(node, scope);
 
 //   // import templates
 //   importTemplateImplementations(scope, writer);
@@ -8492,7 +8523,7 @@ void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope/*, DNode hint
 
    ident_t value = retrieve(scope.defaultNs.start(), name, NULL);
    if (value == NULL) {
-      scope.defaultNs.add(name);
+      scope.defaultNs.add(module->Name());
 
       scope.loadModuleInfo(module);
    }
@@ -8916,4 +8947,10 @@ bool Compiler :: run(_ProjectManager& project, bool withDebugInfo)
    validateUnresolved(unresolveds, project);
 
    return !project.HasWarnings();
+}
+
+void Compiler :: injectVirtualReturningMethod(SNode node, ident_t variable)
+{
+   SNode expr = node.appendNode(lxReturning).appendNode(lxExpression);
+   expr.appendNode(lxIdentifier).appendNode(lxTerminal, variable);
 }

@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xrev
+                 * $self type := o. : fine tune the debugging sequence
                  * templates : importing
                  * templates : compiling
                  * get rid of ftemplate / mtemplate, ....

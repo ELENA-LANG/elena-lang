@@ -62,7 +62,7 @@ void SyntaxWriter::insert(int bookmark, LexicalType type, ident_t argument)
    _bodyWriter.insertDWord(position, 0);
    _bodyWriter.insertDWord(position, type);
 
-   _stringWriter.writeLiteral(argument, getlength(argument) + 1);   
+   _stringWriter.writeLiteral(argument, length + 1);   
 
    Stack<size_t>::Iterator it = _bookmarks.start();
    while (!it.Eof()) {

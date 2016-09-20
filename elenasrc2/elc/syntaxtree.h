@@ -27,6 +27,7 @@ enum LexicalType
 
    // scopes
    lxRoot            = 0x00001,
+   lxIdle            = 0x00002,
    lxClass           = 0x0000E,
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
@@ -786,10 +787,6 @@ public:
       _strings.load(&reader, reader.getDWord());
    }
 };
-
-//SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
-//SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2);
-//SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
