@@ -3,14 +3,16 @@ In development:
 ------                              
 
               xrev
-                 * $self type := o. : fine tune the debugging sequence
+                 * step over : fine tune the debugging sequence
                  * templates : importing
                  * templates : compiling
                  * get rid of ftemplate / mtemplate, ....
+                 * optimiize n:=n+1
+                 * implement +=, ...
+                 * support private sealed methods
 
                  * support abstract attribute
                  * support implicit constructors
-                 * support a x := 2. syntax
                  * check sealed / limited class attributes
                  * compliation should be based on set of rules
                  * compile package info

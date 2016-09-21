@@ -466,7 +466,7 @@ enum MethodAttribute
    maSubjectMask        = 0x100,
 
    maNone               = 0x000,
-//   maHint               = 0x001,
+   maHint               = 0x001,
    maType               = 0x102,
 //   maEmbeddableGet      = 0x103,
 ////   maEmbeddedInit   = 0x104,

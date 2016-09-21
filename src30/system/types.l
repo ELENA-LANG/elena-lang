@@ -25,7 +25,7 @@
 /// class attributes
 #template(0120h) sealed  {}
 //#template(0004h) dynamic {}
-//#template(0020h) limited {}
+#template(0020h) limited {}
 //#template(0200h) group   {}
 //#template(0800h) const   {}
 //#template(0008h) struct  {}

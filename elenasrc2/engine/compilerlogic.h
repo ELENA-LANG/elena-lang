@@ -17,7 +17,12 @@ namespace _ELENA_
 
 class CompilerLogic : public _CompilerLogic
 {
+   int checkMethod(ClassInfo& info, ref_t message, ref_t& outputType);
+   int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
+
 public:
+   virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
+
    virtual bool isCompatible(ref_t targetRef, ref_t sourceRef);
 
    virtual void injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler);

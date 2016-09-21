@@ -904,31 +904,31 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
 //
 //   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
 //}
-//
-//void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
-//{
-//   // validate
-//   // xcallrm r, m
-//
-//   if(withValidattion)
-//      tape.write(bcValidate);
-//
-//   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
-//
-//   tape.write(bcFreeStack, 1 + getParamCount(message));
-//}
-//
-//void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xindexrm r, m
-//   // acallvd
-//
-//   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
-//   tape.write(bcACallVD);
-//
-//   tape.write(bcFreeStack, 1 + getParamCount(message));
-//}
-//
+
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   if(withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xindexrm r, m
+   // acallvd
+
+   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
+   tape.write(bcACallVD);
+
+   tape.write(bcFreeStack, 1 + getParamCount(message));
+}
+
 //void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
 //{
 //   // bsredirect
@@ -3756,18 +3756,18 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
-   //SNode target = SyntaxTree::findChild(callNode, lxCallTarget);
-   //if (callNode == lxDirectCalling) {
-   //   callResolvedMethod(tape, target.argument, callNode.argument);
-   //}
-   //else if (callNode == lxSDirctCalling) {
-   //   callVMTResolvedMethod(tape, target.argument, callNode.argument);
-   //}
-   //else {
+   SNode target = callNode.findChild(callNode, lxCallTarget);
+   if (callNode == lxDirectCalling) {
+      callResolvedMethod(tape, target.argument, callNode.argument);
+   }
+   else if (callNode == lxSDirctCalling) {
+      callVMTResolvedMethod(tape, target.argument, callNode.argument);
+   }
+   else {
       // acallvi offs
       tape.write(bcACallVI, 0);
       tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
-   //}
+   }
 
    if (bpNode != lxNone)
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -4432,8 +4432,8 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
          break;
 //      case lxTypecasting:
       case lxCalling:
-//      case lxDirectCalling:
-//      case lxSDirctCalling:
+      case lxDirectCalling:
+      case lxSDirctCalling:
          generateCallExpression(tape, node);
          break;
 //      case lxTrying:

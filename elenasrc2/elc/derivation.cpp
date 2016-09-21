@@ -180,6 +180,12 @@ void DerivationWriter :: copyVariable(SNode node)
    SNode local = node.firstChild();
 
    _writer.newNode(lxVariable);
+
+   if (_hints != lxNone) {
+      copyHints(_hints);
+      _hints = lxNone;
+   }
+
    unpackNode(local);
    _writer.closeNode();
 

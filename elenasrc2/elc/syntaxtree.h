@@ -63,6 +63,8 @@ enum LexicalType
    lxThisLocal       = 0x0811C,
 
    lxCalling         = 0x0C007,   // sending a message, arg - message
+   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
+   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
    lxExpression      = 0x0C012,
    lxMethodParameter = 0x0C017,
    lxNewFrame        = 0x04024, // if argument -1 - than with presaved message
@@ -95,6 +97,7 @@ enum LexicalType
    lxAssign          = 0x2000F,
    lxLevel           = 0x20010,
    lxType            = 0x20011, // arg - subject
+   lxCallTarget      = 0x20012, // arg - reference
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -136,8 +139,6 @@ enum LexicalType
 //   lxUnboxing        = 0x00304,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
-//   lxDirectCalling   = 0x10308,   // calling a method, arg - message
-//   lxSDirctCalling   = 0x10309,   // calling a virtual method, arg - message
 //   lxResending       = 0x1030A,   // resending a message, optional arg - message
 //   lxTrying          = 0x0030C,   // try-catch expression
 //   lxAlt             = 0x0030D,   // alt-catch expression
@@ -189,7 +190,6 @@ enum LexicalType
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //   lxBinarySelf      = 0x00435, // debug info only
 //
-//   lxCallTarget      = 0x20442, // arg - reference
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,
 //   lxTempLocal       = 0x00446,

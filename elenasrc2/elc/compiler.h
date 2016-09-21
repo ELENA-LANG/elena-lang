@@ -68,22 +68,6 @@ public:
       irObsolete
    };
 
-//   enum MethodHint
-//   {
-//      tpMask       = 0x0F,
-//
-//      tpUnknown    = 0x00,
-//      tpSealed     = 0x01,
-//      tpClosed     = 0x02,
-//      tpNormal     = 0x03,
-//      tpDispatcher = 0x04,
-//      tpPrivate    = 0x05,
-//      tpStackSafe  = 0x10,
-//      tpEmbeddable = 0x20,
-//      tpGeneric    = 0x40,
-//      tpAction     = 0x80,
-//   };
-
    struct Unresolved
    {
       ident_t    fileName;
@@ -383,7 +367,7 @@ private:
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-      ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+      virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
       {
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
@@ -713,10 +697,10 @@ private:
       {
          locals.add(local, Parameter(level/*, type*/));
       }
-//      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, type, class_ref, size));
-//      }
+      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref/*, int size*/)
+      {
+         locals.add(local, Parameter(level, type, class_ref/*, size*/));
+      }
 
       void freeSpace()
       {
@@ -968,7 +952,7 @@ private:
 //   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 //
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
-//   void compileLocalHints(DNode hints, CodeScope& scope, ref_t& type, ref_t& classRef, int& size);
+   void compileLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, ref_t& type, ref_t& classRef, int& size*/);
    void compileFieldAttributes(SNode hints, ClassScope& scope);
    void compileMethodAttributes(SNode hints, MethodScope& scope);
    void declareVMT(SNode member, ClassScope& scope);
@@ -1085,8 +1069,8 @@ private:
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
-   void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates/*, bool closed*/);
-   void generateClassDeclaration(SNode node, ClassScope& scope/*, bool closed*/);
+   void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates, bool closed);
+   void generateClassDeclaration(SNode node, ClassScope& scope, bool closed);
 //   void generateInlineClassDeclaration(ClassScope& scope, bool closed);
 
    void generateClassImplementation(SNode node, ClassScope& scope);

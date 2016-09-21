@@ -12,10 +12,30 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
+// virtual objects
+#define V_INT32 (size_t)-11
+
 namespace _ELENA_
 {
 
 typedef Map<ref_t, ref_t> ClassMap;
+
+enum MethodHint
+{
+   tpMask       = 0x0F,
+
+   tpUnknown    = 0x00,
+      tpSealed     = 0x01,
+      tpClosed     = 0x02,
+      tpNormal     = 0x03,
+//      tpDispatcher = 0x04,
+//      tpPrivate    = 0x05,
+//      tpStackSafe  = 0x10,
+//      tpEmbeddable = 0x20,
+//      tpGeneric    = 0x40,
+//      tpAction     = 0x80,
+};
+
 
 // --- _CompileScope ---
 
@@ -23,6 +43,8 @@ struct _CompilerScope
 {
    // list of typified classes which may need get&type message
    ClassMap typifiedClasses;
+
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 };
 
 // --- _Compiler ---
@@ -38,6 +60,9 @@ public:
 class _CompilerLogic
 {
 public:
+   // retrieve the call type
+   virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
+
    // check if the classes is compatible
    virtual bool isCompatible(ref_t targetRef, ref_t sourceRef) = 0;
 
