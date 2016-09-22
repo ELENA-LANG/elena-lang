@@ -46,7 +46,7 @@ struct ModuleInfo
 };
 
 // --- Hint constants ---
-//#define HINT_MASK             0xFFFFF000
+#define HINT_MASK             0xFFFFF000
 
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
@@ -928,24 +928,6 @@ _Memory* Compiler::ModuleScope :: loadAttributeInfo(ident_t attribute/*, _Module
 ////   return false;
 ////}
 //
-//int Compiler::ModuleScope :: defineStructSizeEx(ref_t classReference, bool& variable, bool embeddableOnly)
-//{
-//   ClassInfo classInfo;
-//   if(loadClassInfo(classInfo, module->resolveReference(classReference), true) == 0)
-//      return 0;
-//
-//   variable = !test(classInfo.header.flags, elReadOnlyRole);
-//
-//   if (!embeddableOnly && test(classInfo.header.flags, elStructureRole)) {
-//      return classInfo.size;
-//   }
-//   else if (isEmbeddable(classInfo)) {
-//      return classInfo.size;
-//   }
-//
-//   return 0;
-//}
-//
 //int Compiler::ModuleScope :: defineSubjectSizeEx(ref_t type_ref, bool& variable, bool embeddableOnly)
 //{
 //   if (type_ref == 0)
@@ -1421,10 +1403,10 @@ ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
 //      else if (isTemplateRef(local.class_ref)) {
 //         return ObjectInfo(okTemplateLocal, local.offset, local.class_ref, local.subj_ref);
 //      }
-//      else if (local.size != 0) {
-//         return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
-//      }
-      /*else */return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
+      /*else */if (local.size != 0) {
+         return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
+      }
+      else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
    }
    else return Scope::mapObject(identifier);
 }
@@ -1618,12 +1600,12 @@ ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
 Compiler :: Compiler(StreamReader* syntax, _CompilerLogic* logic)
    : _parser(syntax), _verbs(0)
 {
-//   _optFlag = 0;
+   _optFlag = 0;
 
    this->_logic = logic;
 
    ByteCodeCompiler::loadVerbs(_verbs);
-//   ByteCodeCompiler::loadOperators(_operators);
+   ByteCodeCompiler::loadOperators(_operators);
 }
 
 void Compiler :: insertMessage(SNode node, ModuleScope& scope, ref_t messageRef)
@@ -1695,54 +1677,54 @@ void Compiler :: insertMessage(SNode node, ModuleScope& scope, ref_t messageRef)
 //      }
 //   }
 //}
-//
-//void Compiler :: loadRules(StreamReader* optimization)
-//{
-//   _rules.load(optimization);
-//}
-//
-//bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
-//{
-//   return CommandTape::optimizeIdleBreakpoints(tape);
-//}
-//
-//bool Compiler :: optimizeJumps(CommandTape& tape)
-//{
-//   return CommandTape::optimizeJumps(tape);
-//}
-//
-//bool Compiler :: applyRules(CommandTape& tape)
-//{
-//   if (!_rules.loaded)
-//      return false;
-//
-//   if (_rules.apply(tape)) {
-//      while (_rules.apply(tape));
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//void Compiler :: optimizeTape(CommandTape& tape)
-//{
-//   // HOTFIX : remove all breakpoints which follows jumps
-//   while (optimizeIdleBreakpoints(tape));
-//
-//   // optimize unused and idle jumps
-//   while (optimizeJumps(tape));
-//
-//   // optimize the code
-//   bool modified = false;
-//   while (applyRules(tape)) {
-//      modified = true;
-//   }
-//
-//   if (modified) {
-//      optimizeTape(tape);
-//   }
-//}
-//
+
+void Compiler :: loadRules(StreamReader* optimization)
+{
+   _rules.load(optimization);
+}
+
+bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
+{
+   return CommandTape::optimizeIdleBreakpoints(tape);
+}
+
+bool Compiler :: optimizeJumps(CommandTape& tape)
+{
+   return CommandTape::optimizeJumps(tape);
+}
+
+bool Compiler :: applyRules(CommandTape& tape)
+{
+   if (!_rules.loaded)
+      return false;
+
+   if (_rules.apply(tape)) {
+      while (_rules.apply(tape));
+
+      return true;
+   }
+   else return false;
+}
+
+void Compiler :: optimizeTape(CommandTape& tape)
+{
+   // HOTFIX : remove all breakpoints which follows jumps
+   while (optimizeIdleBreakpoints(tape));
+
+   // optimize unused and idle jumps
+   while (optimizeJumps(tape));
+
+   // optimize the code
+   bool modified = false;
+   while (applyRules(tape)) {
+      modified = true;
+   }
+
+   if (modified) {
+      optimizeTape(tape);
+   }
+}
+
 //bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node)
 //{
 //   ref_t nodeType = SyntaxTree::findChild(node, lxType).argument;   
@@ -1803,10 +1785,10 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //            return object.extraparam;
 //         }
 //         else return object.param;
-//      case okLocalAddress:
-//         return object.extraparam;
-//      case okIntConstant:
-//         return scope.moduleScope->intReference;
+      case okLocalAddress:
+         return object.extraparam;
+      case okIntConstant:
+         return V_INT32;
 //      case okLongConstant:
 //         return scope.moduleScope->longReference;
 //      case okRealConstant:
@@ -2165,13 +2147,23 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //   }
 //}
 
-ref_t Compiler :: mapAttribute(SNode attribute, int paramCounter, ModuleScope& scope)
+ref_t Compiler :: mapAttribute(SNode attribute, int paramCounter, ModuleScope& scope, int& attrValue)
 {
    ref_t attrRef = 0;
 
-   SNode terminal = attribute.findChild(lxPrivate, lxIdentifier);
+   SNode terminal = attribute.findChild(lxPrivate, lxIdentifier, lxInteger, lxHexInteger);
 
-   if (paramCounter > 0) {
+   if (terminal == lxInteger) {
+      ident_t value = terminal.findChild(lxTerminal).identifier();
+
+      attrValue = value.toInt();
+   }
+   else if (terminal == lxHexInteger) {
+      ident_t value = terminal.findChild(lxTerminal).identifier();
+
+      attrValue = value.toLong(16);
+   }
+   else if (paramCounter > 0) {
       IdentifierString attrName(terminal.findChild(lxTerminal).identifier());      
       attrName.append('#');
       attrName.appendInt(paramCounter);
@@ -2229,27 +2221,18 @@ void Compiler :: compileClassAttributes(SNode node, ClassScope& scope)
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         SNode hint = current.findChild(lxInteger, lxHexInteger);
-         if (hint == lxInteger) {
-            ident_t attrId = hint.findChild(lxTerminal).identifier();
-
-            current.set(lxClassFlag, attrId.toInt());
+         int attrValue = 0;
+         ref_t attrRef = mapAttribute(current, 0, *scope.moduleScope, attrValue);
+         if (attrValue != 0) {
+            current.set(lxClassFlag, attrValue);
          }
-         else if (hint == lxHexInteger) {
-            ident_t attrId = hint.findChild(lxTerminal).identifier();
+         else if (attrRef != 0) {
+            _Memory* body = scope.moduleScope->loadAttributeInfo(attrRef);
 
-            current.set(lxClassFlag, attrId.toLong(16));
+            SNode templNode = node.appendNode(lxTemplate);
+            SyntaxTree::loadNode(templNode, body);
          }
-         else {
-            ref_t attribute = mapAttribute(current, 0, *scope.moduleScope);
-            if (attribute) {
-               _Memory* body = scope.moduleScope->loadAttributeInfo(attribute);
-
-               SNode templNode = node.appendNode(lxTemplate);
-               SyntaxTree::loadNode(templNode, body);
-            }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
-         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
       }
       else if (current == lxTemplate) {
          compileClassAttributes(current, scope);
@@ -2350,7 +2333,8 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope)
          //         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
          //      }
          //else {
-         ref_t attribute = mapAttribute(current, 0, *scope.moduleScope);
+         int attrValue;
+         ref_t attribute = mapAttribute(current, 0, *scope.moduleScope, attrValue);
          if (attribute) {
             ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
             if (classRef == INVALID_REF) {
@@ -2388,7 +2372,8 @@ void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope)
          //   current.set(lxClassFlag, attrId.toLong(16));
          //}
          //else {
-            ref_t attribute = mapAttribute(current, 0, *scope.moduleScope);
+            int attrValue;
+            ref_t attribute = mapAttribute(current, 0, *scope.moduleScope, attrValue);
             if (attribute) {
                ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
                if (classRef == INVALID_REF) {
@@ -2456,33 +2441,32 @@ void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope)
 //   }
 //}
 
-void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable/*, ref_t& type, ref_t& classRef, int& size*/)
+void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
 {
    SNode current = node.firstChild(lxAttribute);
    while (current != lxNone) {
       if (current == lxAttribute) {
-         //      if (terminal == tsInteger) {
-         //         int value = StringHelper::strToInt(terminal);
-         //         // negative value defines the target type
-         //         if (value < 0) {
-         //            classRef = value;
-         //         }
-         //         // positive value defines the target size
-         //         else size = value;
-         //      }
-         ref_t attribute = mapAttribute(current, 0, *scope.moduleScope);
-         if (attribute) {
-            variable.extraparam = scope.moduleScope->attributeHints.get(attribute);
-            if (variable.extraparam == INVALID_REF) {
-               variable.extraparam = 0;
+         int attrValue = 0;
+         ref_t attrRef = mapAttribute(current, 0, *scope.moduleScope, attrValue);
+         if (attrValue != 0) {
+            // negative value defines the target virtual class
+            if (attrValue < 0) {
+               variable.extraparam = attrValue;
+            }
+            // positive value defines the target size
+            else size = attrValue;
 
+         }
+         else if (attrRef != 0) {
+            variable.extraparam = scope.moduleScope->attributeHints.get(attrRef);
+            if (variable.extraparam == INVALID_REF) {
                //      _Memory* body = scope.moduleScope->loadAttributeInfo(attribute);
 
                //      SNode templNode = node.appendNode(lxTemplate);
                //      SyntaxTree::loadNode(templNode, body);
             }
             else if (variable.type == 0) {
-               variable.type = attribute;
+               variable.type = attrRef;
             }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -2636,48 +2620,23 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
    ident_t identifier = terminal.findChild(lxTerminal).identifier();
 
    if (!scope.locals.exist(identifier)) {
-//      ref_t type = 0;
-//      ref_t classRef = 0;
-//      int size = 0;
-
+      int size = 0;
       ObjectInfo variable(okLocal);
-      compileLocalAttributes(node, scope, variable/*, type, classRef, size*/);
+      compileLocalAttributes(node, scope, variable, size);
 
-//      ClassInfo localInfo;
+      ClassInfo localInfo;
 //      bool bytearray = false;
-//      if (isTemplateRef(classRef)) {
-//         variable.kind = okTemplateLocal;
-//      }
-//      else if (isPrimitiveRef(classRef)) {
-//         if (classRef == -1) {
-//            localInfo.header.flags = elDebugDWORD;
-//         }
-//         else if (classRef == -2) {
-//            localInfo.header.flags = elDebugQWORD;
-//         }
-//         else if (classRef == -4) {
-//            localInfo.header.flags = elDebugReal64;
-//         }
-//         else if (classRef == -3) {
-//            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
-//            size = size * localInfo.size;
-//            bytearray = true;
-//         }
-//      }
-//      else if (classRef != 0) {
-//         scope.moduleScope->loadClassInfo(localInfo, classRef, true);
-//
-//         if (isEmbeddable(localInfo))
-//            size = localInfo.size;
-//      }      
-//
-//      if (size > 0) {
-//         if (!allocateStructure(scope, size, localInfo.header.flags, bytearray, variable))
-//            scope.raiseError(errInvalidOperation, node.Terminal());
-//
-//         // make the reservation permanent
-//         scope.saved = scope.reserved;
-//
+      _logic->defineClassInfo(localInfo, variable.extraparam);
+      //         if (isEmbeddable(localInfo))
+      //            size = localInfo.size;
+
+      if (size > 0) {
+         if (!allocateStructure(scope, size, /*bytearray,*/ variable))
+            scope.raiseError(errInvalidOperation, terminal);
+
+         // make the reservation permanent
+         scope.saved = scope.reserved;
+
 //         if (bytearray) {
 //            switch (localInfo.header.flags & elDebugMask)
 //            {
@@ -2720,14 +2679,12 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 //            }
 //         }
 //         else {
-//            switch (localInfo.header.flags & elDebugMask)
-//            {
-//               case elDebugDWORD:
-//                  scope.writer->newNode(lxIntVariable);
+            switch (localInfo.header.flags & elDebugMask)
+            {
+               case elDebugDWORD:
+                  node = lxIntVariable;
 //                  scope.writer->appendNode(lxTerminal, terminal.value);
-//                  scope.writer->appendNode(lxLevel, variable.param);
-//                  scope.writer->closeNode();
-//                  break;
+                  break;
 //               case elDebugQWORD:
 //                  scope.writer->newNode(lxLongVariable);
 //                  scope.writer->appendNode(lxTerminal, terminal.value);
@@ -2740,11 +2697,9 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 //                  scope.writer->appendNode(lxLevel, variable.param);
 //                  scope.writer->closeNode();
 //                  break;
-//               default:
-//                  scope.writer->newNode(lxBinaryVariable);
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
-//                  scope.writer->appendNode(lxLevel, variable.param);
-//
+               default:
+                  node = lxBinaryVariable;                  
+
 //                  if (type != 0) {
 //                     ref_t classRef = scope.moduleScope->subjectHints.get(type);
 //                  
@@ -2752,41 +2707,20 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 //                  }
 //
 //                  scope.writer->closeNode();
-//                  break;
-//            }
+                  break;
+            }
 //         }
-//      }
-//      else {
-         int level = scope.newLocal();
+      }
+      else variable.param = scope.newLocal();
 
-         node.appendNode(lxLevel, level);
+      node.appendNode(lxLevel, variable.param);
 
-//         scope.writer->newNode(lxVariable);
-//         scope.writer->appendNode(lxTerminal, terminal.value);
-//         scope.writer->appendNode(lxLevel, level);
-//         scope.writer->closeNode();
-
-         variable.param = level;
-
-//         size = 0; // to indicate assigning by ref
-//      }
-//
-//      DNode assigning = node.firstChild();
-//      if (assigning == nsAssigning) {
-//         scope.writer->newNode(lxAssigning, size);
-//         writeTerminal(terminal, scope, variable);
-//
-//         compileAssigningExpression(node, assigning, scope, variable);
-//
-//         scope.writer->closeNode();
-//      }
-
-      scope.mapLocal(identifier, variable.param, variable.type, variable.extraparam/*, size*/);
+      scope.mapLocal(identifier, variable.param, variable.type, variable.extraparam, size);
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
 
-void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object)
+void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
       case okUnknown:
@@ -2813,13 +2747,10 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //      case okCharConstant:
 //         scope.writer->newNode(lxConstantChar, object.param);
 //         break;
-//      case okIntConstant:
-//         terminal.set(lxConstantInt, object.param);
-//
-////         scope.writer->appendNode(lxValue, 
-////            StringHelper::strToULong(scope.moduleScope->module->resolveConstant(object.param), 16));
-//
-//         break;
+      case okIntConstant:
+         terminal.set(lxConstantInt, object.param);
+         terminal.appendNode(lxIntValue, object.extraparam);
+         break;
 //      case okLongConstant:
 //         scope.writer->newNode(lxConstantLong, object.param);
 //         break;
@@ -2862,10 +2793,13 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //         scope.writer->appendNode(lxField, object.param);
 //         scope.writer->appendNode(lxResultField, object.extraparam);
 //         break;
-//      case okLocalAddress:
-//         scope.writer->newNode(lxBoxing);
-//         scope.writer->appendNode(lxLocalAddress, object.param);
-//         break;
+      case okLocalAddress:
+         if (!test(mode, HINT_NOBOXING)) {
+            terminal.injectNode(lxLocalAddress, object.param);
+            terminal = lxBoxing;
+         }
+         else terminal.set(lxLocalAddress, object.param);
+         break;
 //      case okFieldAddress:
 //         scope.writer->newNode(lxBoxing);
 //         scope.writer->appendNode(lxFieldAddress, object.param);
@@ -2920,7 +2854,7 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //   scope.writer->closeNode();
 }
 
-ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
+ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mode)
 {
 //   TerminalInfo terminal = node.Terminal();
    ident_t token = terminal.findChild(lxTerminal).identifier();
@@ -2935,18 +2869,18 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
 //   }
-//   else if (terminal == tsInteger) {
-//      String<char, 20> s;
-//
-//      long integer = token.toInt();
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // convert back to string as a decimal integer
-//      s.appendHex(integer);
-//
-//      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s));
-//   }
+   /*else */if (terminal == lxInteger) {
+      String<char, 20> s;
+
+      long integer = token.toInt();
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // convert back to string as a decimal integer
+      s.appendHex(integer);
+
+      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
+   }
 //   else if (terminal == tsLong) {
 //      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
 //      s.append(terminal.value, getlength(terminal.value) - 1);
@@ -2957,19 +2891,18 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //
 //      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
 //   }
-//   else if (terminal == tsHexInteger) {
-//      String<ident_c, 20> s(terminal.value, getlength(terminal.value) - 1);
-//
-//      long integer = s.toULong(16);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // convert back to string as a decimal integer
-//      s.clear();
-//      s.appendHex(integer);
-//
-//      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+   else if (terminal == tsHexInteger) {
+      String<char, 20> s;
+
+      long integer = token.toLong(16);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // convert back to string as a decimal integer
+      s.appendHex(integer);
+
+      object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
+   }
 //   else if (terminal == tsReal) {
 //      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
 //      double number = StringHelper::strToDouble(s);
@@ -2983,10 +2916,10 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope)
 //
 //      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
 //   }
-   /*else */if (!emptystr(token))
+   else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
-   setTerminal(terminal, scope, object);
+   setTerminal(terminal, scope, object, mode);
 
    return object;
 }
@@ -3034,7 +2967,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //         result = compileMessageReference(member, scope);
 //         break;
       default:
-         result = compileTerminal(objectNode, scope);
+         result = compileTerminal(objectNode, scope, mode);
    }
 
    return result;
@@ -3342,11 +3275,19 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 //
 //   return ObjectInfo(okObject);
 //}
-//
-//ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
-//{
-//   ObjectInfo retVal(okObject);
-//
+
+ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id)
+{
+   ObjectInfo retVal(okObject);
+
+   SNode loperandNode = node.firstChild(lxObjectMask);
+   SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+
+   ObjectInfo loperand = compileObject(loperandNode, scope, 0);
+   ObjectInfo roperand = compileObject(roperandNode, scope, 0);
+   
+   retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+
 //   // HOTFIX : recognize SET_REFER_MESSAGE_ID
 //   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
 //      operator_id = SET_REFER_MESSAGE_ID;
@@ -3405,22 +3346,23 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 //
 //   if (dblOperator)
 //      node = node.nextNode();
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   TerminalInfo operator_name = node.Terminal();
-//   int operator_id = _operators.get(operator_name);
-//
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope/*, ObjectInfo object, int mode*/)
+{
+   SNode operatorNode = node.findChild(lxOperator);
+   SNode operatorName = operatorNode.findChild(lxTerminal);
+   int operator_id = _operators.get(operatorName.identifier());
+
 //   // if it is branching operators
 //   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
 //      return compileBranchingOperator(node, scope, object, mode, operator_id);
 //   }
-//
-//   return compileOperator(node, scope, object, mode, operator_id);
-//}
+
+   return compileOperator(node, scope, /*object, mode, */operator_id);
+}
 
 ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
 {
@@ -3487,7 +3429,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    }
    if (!test(mode, HINT_NODEBUGINFO)) {
       // set a breakpoint
-      setDebugStep(node.findChild(lxMessage), dsStep);
+      setDebugStep(node.findChild(lxMessage, lxOperator), dsStep);
    }
 
 //   appendObjectInfo(scope, retVal);
@@ -3678,25 +3620,28 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
    else {
       SNode targetNode = node.firstChild(lxObjectMask);
 
-      ObjectInfo target = compileObject(targetNode, scope, mode);
+      ObjectInfo target = compileObject(targetNode, scope, mode | HINT_NOBOXING);
 
       node = lxAssigning;
-//      ref_t classReference = 0;
-//      int size = 0;
-//      if (object.kind == okLocalAddress) {
-//         classReference = object.extraparam;
-//
+      ref_t targetRef = resolveObjectReference(scope, target);
+      if (target.kind == okLocalAddress) {
+         size_t size = _logic->defineStructSize(targetRef);
+         if (size != 0) {
+            node.setArgument(size);
+         }
+         else scope.raiseError(errInvalidOperation, node);
+
 //         if (isPrimitiveRef(classReference)) {
 //            if (classReference == -1 || classReference == -2) {
 //               size = scope.moduleScope->defineSubjectSize(object.type);
 //            }
 //         }
 //         else size = scope.moduleScope->defineStructSize(classReference);
-//      }
+      }
 //      else if (object.kind == okFieldAddress) {
 //         size = scope.moduleScope->defineSubjectSize(object.type);
 //      }
-      /*else */if (target.kind == okLocal || target.kind == okField/* || object.kind == okOuterField || object.kind == okStaticField*/) {
+      else if (target.kind == okLocal || target.kind == okField/* || object.kind == okOuterField || object.kind == okStaticField*/) {
 //
       }
 //      else if (object.kind == okParam || object.kind == okOuter) {
@@ -3734,18 +3679,12 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
          typecastObject(sourceNode, scope, target.type, source);
       }
       else {
-         ref_t targetRef = resolveObjectReference(scope, target);
          ref_t sourceRef = resolveObjectReference(scope, source);
          if (targetRef != 0 && !convertObject(sourceNode, scope, targetRef, sourceRef)) {
             scope.raiseError(errInvalidOperation, node);
          }
       }
 
-//      if (size >= 0) {
-//         scope.writer->insert(assignType, size);
-//         scope.writer->closeNode();
-//      }
-//
       return target;
    }   
 }
@@ -4204,8 +4143,11 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
    if (node.existChild(lxAssign)) {
       objectInfo = compileAssigning(node, scope, mode);
    }
-   else if (node.findChild(lxMessage) == lxMessage) {
+   else if (node.existChild(lxMessage)) {
       objectInfo = compileMessage(node, scope);
+   }
+   else if (node.existChild(lxOperator)) {
+      objectInfo = compileOperator(node, scope);
    }
    else objectInfo = compileObject(node.firstChild(lxObjectMask), scope, mode);
 
@@ -4270,7 +4212,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SNode node, SNode assigning, C
       case okLocal:
       case okField:
 //      case okOuterField:
-//      case okLocalAddress:
+      case okLocalAddress:
 //      case okFieldAddress:
 //      case okParamField:
 //      case okOuter:
@@ -4739,48 +4681,48 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //
 //   return ObjectInfo(okObject);
 //}
-//
-//int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
-//{
+
+int Compiler :: allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved)
+{
 //   if (bytearray) {
 //      // plus space for size
 //      allocatedSize = ((allocatedSize + 3) >> 2) + 2;
 //   }
-//   else allocatedSize = (allocatedSize + 3) >> 2;
-//
-//   int retVal = reserved;
-//   reserved += allocatedSize;
-//
-//   // the offset should include frame header offset
-//   retVal = -2 - retVal;
-//
+   /*else */allocatedSize = (allocatedSize + 3) >> 2;
+
+   int retVal = reserved;
+   reserved += allocatedSize;
+
+   // the offset should include frame header offset
+   retVal = -2 - retVal;
+
 //   // reserve place for byte array header if required
 //   if (bytearray)
 //      retVal -= 2;
-//
-//   return retVal;
-//}
-//
-//bool Compiler :: allocateStructure(CodeScope& scope, int size, int flags, bool bytearray, ObjectInfo& exprOperand)
-//{
-//   if (size <= 0)
-//      return false;
-//
-//   int offset = allocateStructure(bytearray, size, scope.reserved);
-//
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // if it is not enough place to allocate
-//   if (methodScope->reserved < scope.reserved) {
-//      methodScope->reserved += size;
-//   }
-//
-//   exprOperand.kind = okLocalAddress;
-//   exprOperand.param = offset;
-//
-//   return true;
-//}
-//
+
+   return retVal;
+}
+
+bool Compiler :: allocateStructure(CodeScope& scope, int size, /*bool bytearray, */ObjectInfo& exprOperand)
+{
+   if (size <= 0)
+      return false;
+
+   int offset = allocateStructure(/*bytearray, */size, scope.reserved);
+
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+   // if it is not enough place to allocate
+   if (methodScope->reserved < scope.reserved) {
+      methodScope->reserved += size;
+   }
+
+   exprOperand.kind = okLocalAddress;
+   exprOperand.param = offset;
+
+   return true;
+}
+
 //ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
 //{
 //   IdentifierString signature;
@@ -6546,12 +6488,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
-//   optimizeClassTree(scope);
+   optimizeClassTree(node, scope);
 
    _writer.generateClass(scope.tape, node);
 
-//   // optimize
-//   optimizeTape(scope.tape);
+   // optimize
+   optimizeTape(scope.tape);
 
    // create byte code sections
    scope.save();
@@ -7766,9 +7708,9 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //      }
 //   }
 //}
-//
-//void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, int warningLevel)
-//{
+
+void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warningLevel*/)
+{
 //   int mode = HINT_NOUNBOXING | HINT_ASSIGNING;
 //   if (node.argument != 0)
 //      mode |= HINT_NOBOXING;
@@ -7800,21 +7742,21 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //      }
 //      current = current.nextNode();
 //   }
-//
-//   if (node.argument != 0) {
-//      SNode intValue = findSubNode(node, lxConstantInt);
-//      if (intValue != lxNone) {
-//         node = lxIntOp;
-//         node.setArgument(SET_MESSAGE_ID);
-//      }
+
+   if (node.argument != 0) {
+      SNode intValue = node.findSubNode(lxConstantInt);
+      if (intValue != lxNone) {
+         // direct operation with numeric constants
+         node.set(lxIntOp, SET_MESSAGE_ID);
+      }
 //      else {
 //         SNode directCall = findSubNode(node, lxDirectCalling, lxSDirctCalling);
 //         if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
 //            optimizeEmbeddableCall(scope, node, directCall);
 //         }
 //      }
-//   }
-//
+   }
+
 //   // assignment operation
 //   SNode assignNode = findSubNode(node, lxAssigning);
 //   if (assignNode != lxNone) {
@@ -7833,8 +7775,8 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //         }
 //      }
 //   }
-//}
-//
+}
+
 //bool Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
 //{
 //   bool variable = false;
@@ -8282,13 +8224,13 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //
 //   optimizeSyntaxExpression(scope, current, warningLevel, mode);
 //}
-//
-//void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node current, int warningMask, int mode)
-//{
-//   switch (current.type) {
-//      case lxAssigning:
-//         optimizeAssigning(scope, current, warningMask);
-//         break;
+
+void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int warningMask, */int mode)
+{
+   switch (current.type) {
+      case lxAssigning:
+         optimizeAssigning(scope, current/*, warningMask*/);
+         break;
 //      case lxTypecasting:
 //         optimizeTypecast(scope, current, warningMask, mode);
 //         break;
@@ -8337,46 +8279,46 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //      case lxArgUnboxing:
 //         optimizeArgUnboxing(scope, current, warningMask);
 //         break;
-//      default:
-//         if (test(current.type, lxExpressionMask)) {
-//            optimizeSyntaxExpression(scope, current, warningMask);
-//         }
-//         break;
-//   }
-//}
-//
-//void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SNode node, int warningMask, int mode)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxWarningMask) {
-//         warningMask = current.argument;
-//      }
-//      else optimizeSyntaxNode(scope, current, warningMask, mode);
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//void Compiler :: optimizeClassTree(ClassScope& scope)
-//{
+      default:
+         if (test(current.type, lxCodeScopeMask)) {
+            optimizeSyntaxExpression(scope, current/*, warningMask*/);
+         }
+         break;
+   }
+}
+
+void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SNode node, /*int warningMask, */int mode)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      /*if (current == lxWarningMask) {
+         warningMask = current.argument;
+      }
+      else */optimizeSyntaxNode(scope, current, /*warningMask, */mode);
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: optimizeClassTree(SNode node, ClassScope& scope)
+{
 //   int warningMask = scope.moduleScope->warningMask;
-//   SNode current = scope.syntaxTree.readRoot().firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         optimizeSyntaxExpression(*scope.moduleScope, current, warningMask);
-//
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         optimizeSyntaxExpression(*scope.moduleScope, current/*, warningMask*/);
+
 //         if (test(_optFlag, 1)) {
 //            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
 //               defineEmbeddableAttributes(scope, current);
 //            }
 //         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void Compiler :: optimizeSymbolTree(SourceScope& scope)
 //{
 //   int warningMask = 0;

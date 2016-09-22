@@ -54,7 +54,7 @@ enum Symbol
    nsMessageParameter           = 0x0101C,
    nsCodeEnd                    = 0x0101D,
    nsVariable                   = 0x0101E,
-   //nsL4Operation                = 0x0101F,
+   nsL4Operation                = 0x0101F,
    //nsDispatchExpression         = 0x01020,
    nsAssigning                  = 0x01021,
    nsStatic                     = 0x01022,

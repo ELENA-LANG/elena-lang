@@ -54,6 +54,7 @@ enum LexicalType
    lxImporting       = 0x08101,
    lxField           = 0x08105, // arg - offset
    lxSymbolReference = 0x18107,
+   lxLocalAddress    = 0x08108, // arg - offset
    lxLocal           = 0x0810A, // arg - offset
    lxConstantInt     = 0x1810F, // arg - reference
    lxConstantClass   = 0x18112, // arg - reference
@@ -62,6 +63,7 @@ enum LexicalType
    lxResult          = 0x08119, // arg -offset
    lxThisLocal       = 0x0811C,
 
+   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
@@ -73,10 +75,14 @@ enum LexicalType
    lxReturning       = 0x0C027,
    lxDispatching     = 0x04036, // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,  // an assigning expression, arg - size
+   lxIntOp           = 0x0C038, // arg - operation id
 
    lxBaseParent      = 0x10023,
+   lxOperator        = 0x10025,
+   lxIntVariable     = 0x10028,
    lxForward         = 0x1002E,
    lxVariable        = 0x10037,
+   lxBinaryVariable  = 0x10038,
 
    // attributes
    lxAttribute       = 0x20000,
@@ -98,6 +104,8 @@ enum LexicalType
    lxLevel           = 0x20010,
    lxType            = 0x20011, // arg - subject
    lxCallTarget      = 0x20012, // arg - reference
+   lxClassName       = 0x20013, // arg - identifier
+   lxIntValue        = 0x20014, // arg - integer value
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -117,7 +125,6 @@ enum LexicalType
 //   lxConstantSymbol = 0x24104, // arg - reference
 //   lxStaticField = 0x20106, // arg - reference
 //   lxFieldAddress = 0x00107, // arg - offset
-//   lxLocalAddress = 0x04108, // arg - offset
 //   lxBlockLocalAddr = 0x04109, // arg - offset
 //   lxBlockLocal = 0x0410B, // arg - offset
 //   lxConstantString = 0x8410C, // arg - reference
@@ -134,7 +141,6 @@ enum LexicalType
 //   lxCurrentField = 0x0411D, // arg -offset
 //   lxConstantList = 0x2411E, // arg - reference
 //
-//   lxBoxing          = 0x00302,   // boxing of the argument, arg - size
 //   lxCondBoxing      = 0x00303,   // conditional boxing, arg - size
 //   lxUnboxing        = 0x00304,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
@@ -169,7 +175,6 @@ enum LexicalType
 //   lxOp              = 0x0032A, // generic operation, arg - operation id 
 //   lxBoolOp          = 0x0032B, // arg - operation id
 //   lxNilOp           = 0x0032C, // arg - operation id
-//   lxIntOp           = 0x0132D, // arg - operation id
 //   lxLongOp          = 0x0132E, // arg - operation id
 //   lxRealOp          = 0x0132F, // arg - operation id
 //   lxIntArrOp        = 0x01330, // arg - operation id
@@ -178,13 +183,11 @@ enum LexicalType
 //   lxArrOp           = 0x01333, // arg - operation id
 //   lxBinArrOp        = 0x01334, // arg - operation id
 //
-//   lxIntVariable     = 0x00428,
 //   lxLongVariable    = 0x00429,
 //   lxReal64Variable  = 0x0042A,
 //   lxBytesVariable   = 0x0042B,
 //   lxShortsVariable  = 0x0042C,
 //   lxIntsVariable    = 0x0042D,
-//   lxBinaryVariable  = 0x0042E,
 //   lxParamsVariable  = 0x0042F,
 //   lxReleasing       = 0x00432,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
@@ -208,8 +211,6 @@ enum LexicalType
 //   lxWarningMask     = 0x00809,
 //
 //   lxTerminal        = 0x02005,
-//   lxClassName       = 0x02007, // arg - reference
-//   lxValue           = 0x02008,
 //   lxSourcePath      = 0x0200A,
 //
 //   //lxClassArray      = 0x04003,
@@ -455,6 +456,21 @@ public:
          else return child;
       }
 
+      Node findSubNode(LexicalType type)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            child = child.nextNode();
+         }
+
+         return child;
+      }
+
 //      Node lastChild() const
 //      {
 //         Node current = firstChild();
@@ -558,6 +574,23 @@ public:
             if (current == type2)
                return current;
             else if (current == type3)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
                return current;
 
             current = current.nextNode();

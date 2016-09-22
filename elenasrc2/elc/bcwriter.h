@@ -137,9 +137,9 @@ class ByteCodeWriter
 //   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -158,27 +158,27 @@ class ByteCodeWriter
    void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-//   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
+   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
    void newDynamicObject(CommandTape& tape);
 
-//   void popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//
-//   void copyBase(CommandTape& tape, int size);
-//   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void popObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+
+   void copyBase(CommandTape& tape, int size);
+   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
-//
-//   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
 //   void unboxArgList(CommandTape& tape);
-//
-//   void releaseObject(CommandTape& tape, int count = 1);
+
+   void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
-//
+
 //   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
@@ -222,25 +222,25 @@ class ByteCodeWriter
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
 //   void closeFrame(CommandTape& tape);
-//
-//   void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
-//
-//   void assignInt(CommandTape& tape, LexicalType target, int offset);
-//   void assignLong(CommandTape& tape, LexicalType target, int offset);
-//   void assignShort(CommandTape& tape, LexicalType target, int offset);
-//   void assignByte(CommandTape& tape, LexicalType target, int offset);
-//   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
+
+   void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
+
+   void assignInt(CommandTape& tape, LexicalType target, int offset);
+   void assignLong(CommandTape& tape, LexicalType target, int offset);
+   void assignShort(CommandTape& tape, LexicalType target, int offset);
+   void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
 //   void saveInt(CommandTape& tape, LexicalType target, int argument);
 //   void saveReal(CommandTape& tape, LexicalType target, int argument);
 //   void copyInt(CommandTape& tape, int offset);
 //   void copyShort(CommandTape& tape, int offset);
-//   void copyStructure(CommandTape& tape, int offset, int size);
+   void copyStructure(CommandTape& tape, int offset, int size);
 //   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
-//   void saveIntConstant(CommandTape& tape, int value);
+   void saveIntConstant(CommandTape& tape, int value);
 //   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
-//   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
@@ -261,11 +261,11 @@ class ByteCodeWriter
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node);
 
-//   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
-//
+   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
+
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 //
@@ -287,8 +287,8 @@ class ByteCodeWriter
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
@@ -329,7 +329,7 @@ public:
 };
 
 bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
-//void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
 
 } // _ELENA_

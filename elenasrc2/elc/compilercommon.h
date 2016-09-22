@@ -60,6 +60,10 @@ public:
 class _CompilerLogic
 {
 public:
+   // retrieve the class info / size
+   virtual void defineClassInfo(ClassInfo& info, ref_t reference) = 0;
+   virtual size_t defineStructSize(ref_t reference) = 0;
+
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
 

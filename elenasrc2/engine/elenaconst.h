@@ -308,9 +308,9 @@ namespace _ELENA_
 //   const int elSymbol              = 0x00100000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
 //   const int elPointer             = 0x00800010;
-//
-//   const int elDebugMask           = 0x000F0000;
-//   const int elDebugDWORD          = 0x00010000;
+
+   const int elDebugMask           = 0x000F0000;
+   const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
 //   const int elDebugLiteral        = 0x00030000;
 //   const int elDebugIntegers       = 0x00040000;

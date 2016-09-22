@@ -92,6 +92,9 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsMessageOperation:
          copyMessage(node);
          break;
+      case nsL4Operation:
+         copyMessage(node, true);
+         break;
       case nsObject:
          copyObject(node);
          break;
@@ -142,7 +145,7 @@ void DerivationWriter :: copyObject(SNode node)
    unpackChildren(node);
 }
 
-void DerivationWriter :: copyMessage(SNode node)
+void DerivationWriter :: copyMessage(SNode node, bool operationMode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -160,13 +163,20 @@ void DerivationWriter :: copyMessage(SNode node)
             _writer.closeNode();
             break;
          case nsMessageParameter:
+         case nsObject:
+            _writer.newBookmark();
             _writer.newNode(lxExpression);
             unpackChildren(current);
             _writer.closeNode();
+            _writer.removeBookmark();
             break;
-         //default:
-         //   unpackNode(current);
-         //   break;
+         default:
+            if (operationMode && current.existChild(lxTerminal)) {
+               _writer.newNode(lxOperator);
+               copyChildren(current);
+               _writer.closeNode();
+            }            
+            break;
       }
       current = current.nextNode();
    }
@@ -189,14 +199,16 @@ void DerivationWriter :: copyVariable(SNode node)
    unpackNode(local);
    _writer.closeNode();
 
-   _writer.newNode(lxExpression);
-   _writer.appendNode(lxAssign);
-   unpackNode(local);
-
    SNode current = node.findChild((LexicalType)nsAssigning);
-   unpackChildren(current);
+   if (current != lxNone) {
+      _writer.newNode(lxExpression);
+      _writer.appendNode(lxAssign);
+      unpackNode(local);
 
-   _writer.closeNode();
+      unpackChildren(current);
+
+      _writer.closeNode();
+   }
 }
 
 void DerivationWriter :: copyAssigning(SNode node)

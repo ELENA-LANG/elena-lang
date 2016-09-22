@@ -79,3 +79,51 @@ void CompilerLogic :: injectVirtualMethods(SNode node, _CompilerScope& scope, _C
       c_it++;
    }
 }
+
+void CompilerLogic :: defineClassInfo(ClassInfo& info, ref_t reference)
+{
+//      if (isTemplateRef(classRef)) {
+//         variable.kind = okTemplateLocal;
+//      }
+   switch (reference)
+   {
+      case V_INT32:
+         info.header.flags = elDebugDWORD | elStructureRole;
+         info.size = 4;
+         break;
+      default:
+         if (reference != 0) {
+         //         scope.moduleScope->loadClassInfo(localInfo, classRef, true);
+         }      
+         break;
+   }
+//      else if (isPrimitiveRef(classRef)) {
+//         else if (classRef == -2) {
+//            localInfo.header.flags = elDebugQWORD;
+//         }
+//         else if (classRef == -4) {
+//            localInfo.header.flags = elDebugReal64;
+//         }
+//         else if (classRef == -3) {
+//            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
+//            size = size * localInfo.size;
+//            bytearray = true;
+//         }
+//      }
+}
+
+size_t CompilerLogic :: defineStructSize(ref_t reference)
+{
+   ClassInfo classInfo;
+   defineClassInfo(classInfo, reference);
+   //   variable = !test(classInfo.header.flags, elReadOnlyRole);
+   //
+   if (/*!embeddableOnly && */test(classInfo.header.flags, elStructureRole)) {
+      return classInfo.size;
+   }
+   //   else if (isEmbeddable(classInfo)) {
+   //      return classInfo.size;
+   //   }
+   //
+   return 0;
+}

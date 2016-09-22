@@ -21,6 +21,9 @@ class CompilerLogic : public _CompilerLogic
    int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
 
 public:
+   virtual void defineClassInfo(ClassInfo& info, ref_t reference); 
+   virtual size_t defineStructSize(ref_t reference);
+
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
 
    virtual bool isCompatible(ref_t targetRef, ref_t sourceRef);

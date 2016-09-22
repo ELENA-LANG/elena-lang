@@ -55,6 +55,13 @@ public:
          this->class_ref = class_ref;
          this->size = 0;
       }
+      Parameter(int offset, ref_t subj_ref, ref_t class_ref, int size)
+      {
+         this->offset = offset;
+         this->subj_ref = subj_ref;
+         this->class_ref = class_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -101,7 +108,7 @@ public:
 //      okLiteralConstant,              // param - reference 
 //      okWideLiteralConstant,          // param - reference 
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference 
+      okIntConstant,                  // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference 
 //      okRealConstant,                 // param - reference 
 //      okMessageConstant,              // param - reference 
@@ -121,7 +128,7 @@ public:
       okThisParam,                    // param - parameter offset
 //      okNil,
 //      okSuper,
-//      okLocalAddress,                 // param - local offset, class reference
+      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
@@ -697,9 +704,9 @@ private:
       {
          locals.add(local, Parameter(level/*, type*/));
       }
-      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref/*, int size*/)
+      void mapLocal(ident_t local, int level, ref_t type, size_t class_ref, int size)
       {
-         locals.add(local, Parameter(level, type, class_ref/*, size*/));
+         locals.add(local, Parameter(level, type, class_ref, size));
       }
 
       void freeSpace()
@@ -880,18 +887,18 @@ private:
    Parser         _parser;
 
    MessageMap     _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
-//
-//   int            _optFlag;
-//
-//   // optimization rules
-//   TransformTape _rules;
-//
-//   // optmimization routines
-//   bool applyRules(CommandTape& tape);
-//   bool optimizeIdleBreakpoints(CommandTape& tape);
-//   bool optimizeJumps(CommandTape& tape);
-//   void optimizeTape(CommandTape& tape);
+   MessageMap     _operators;                        // list of operators
+
+   int            _optFlag;
+
+   // optimization rules
+   TransformTape _rules;
+
+   // optmimization routines
+   bool applyRules(CommandTape& tape);
+   bool optimizeIdleBreakpoints(CommandTape& tape);
+   bool optimizeJumps(CommandTape& tape);
+   void optimizeTape(CommandTape& tape);
    
    void insertDebugStep(SNode& node, int stepType)
    {
@@ -910,7 +917,7 @@ private:
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
-   ref_t mapAttribute(SNode attribute, int paramCounter, ModuleScope& scope);
+   ref_t mapAttribute(SNode attribute, int paramCounter, ModuleScope& scope, int& attrValue);
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -952,7 +959,7 @@ private:
 //   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 //
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
-   void compileLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, ref_t& type, ref_t& classRef, int& size*/);
+   void compileLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void compileFieldAttributes(SNode hints, ClassScope& scope);
    void compileMethodAttributes(SNode hints, MethodScope& scope);
    void declareVMT(SNode member, ClassScope& scope);
@@ -982,16 +989,16 @@ private:
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 //
 //   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
-   void setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object);
+   void setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
 
-   ObjectInfo compileTerminal(SNode node, CodeScope& scope);
+   ObjectInfo compileTerminal(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SNode objectNode, CodeScope& scope, int mode);
 
 //   int mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target);
 //   int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
-//
-//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
-//   ObjectInfo compileOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+
+   ObjectInfo compileOperator(SNode node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id);
+   ObjectInfo compileOperator(SNode node, CodeScope& scope/*, ObjectInfo object, int mode*/);
 //   ObjectInfo compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SNode node, CodeScope& scope);   // returns an info of the first operand
@@ -1016,11 +1023,11 @@ private:
 //   void compileLock(DNode node, CodeScope& scope);
 //
 //   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
-//
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+
+   int allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved);
 //   int allocateStructure(ModuleScope& scope, SyntaxTree::Node node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, int flags, bool bytearray, ObjectInfo& exprOperand);
-//
+   bool allocateStructure(CodeScope& scope, int size, /*bool bytearray, */ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
 //
@@ -1099,8 +1106,8 @@ private:
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
    ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
    bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ref_t sourceRef);
-//
-//   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node/*, int warningLevel*/);
 //   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable);
 //   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
 //   {
@@ -1123,9 +1130,9 @@ private:
 //   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //   void optimizeArgUnboxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 //   void optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
-//   void optimizeSyntaxNode(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//   void optimizeSyntaxExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
-//   void optimizeClassTree(ClassScope& scope);
+   void optimizeSyntaxNode(ModuleScope& scope, SNode node, /*int warningLevel, */int mode);
+   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, /*int warningLevel, */int mode = 0);
+   void optimizeClassTree(SNode node, ClassScope& scope);
 //   void optimizeSymbolTree(SourceScope& scope);
 //
 //   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
@@ -1135,11 +1142,11 @@ private:
 //   void createPackageInfo(_Module* module, Project& project);
 
 public:
-//   void loadRules(StreamReader* optimization);
-//   void turnOnOptimiation(int level)
-//   {
-//      _optFlag |= level;
-//   }
+   void loadRules(StreamReader* optimization);
+   void turnOnOptimiation(int level)
+   {
+      _optFlag |= level;
+   }
 
    void compileModule(SNode node, ModuleScope& scope);
    void compileModule(ident_t source, ModuleScope& scope);

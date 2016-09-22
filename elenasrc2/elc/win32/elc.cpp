@@ -252,12 +252,12 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
          return config.getSetting(PROJECT_CATEGORY, ELC_CLASSSYMBOLLOAD);
       case _ELENA_::opThreadMax:
          return config.getSetting(SYSTEM_CATEGORY, ELC_SYSTEM_THREADMAX);
-//      case _ELENA_::opL0:
-//         return config.getSetting(COMPILER_CATEGORY, ELC_L0);
-//      case _ELENA_::opL1:
-//         return config.getSetting(COMPILER_CATEGORY, ELC_L1);
-//   //   case _ELENA_::opL2:
-//   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
+      case _ELENA_::opL0:
+         return config.getSetting(COMPILER_CATEGORY, ELC_L0);
+      case _ELENA_::opL1:
+         return config.getSetting(COMPILER_CATEGORY, ELC_L1);
+   //   case _ELENA_::opL2:
+   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
 //      case _ELENA_::opTemplate:
 //         return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
 //      case _ELENA_::opManifestName:
@@ -356,13 +356,13 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
          else if (valueName.compare(ELC_PRM_PROJECTPATH, _ELENA_::getlength(ELC_PRM_PROJECTPATH))) {
             _settings.add(_ELENA_::opProjectPath, valueName.clone(_ELENA_::getlength(ELC_PRM_PROJECTPATH)));
          }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_OPTOFF)) {
-//            _settings.add(_ELENA_::opL0, 0);
-//            _settings.add(_ELENA_::opL1, 0);
-//         }
-//         else if (_ELENA_::StringHelper::compare(valueName, ELC_PRM_OPT1OFF)) {
-//            _settings.add(_ELENA_::opL1, 0);
-//         }
+         else if (valueName.compare(ELC_PRM_OPTOFF)) {
+            _settings.add(_ELENA_::opL0, 0);
+            _settings.add(_ELENA_::opL1, 0);
+         }
+         else if (valueName.compare(ELC_PRM_OPT1OFF)) {
+            _settings.add(_ELENA_::opL1, 0);
+         }
          else raiseError(ELC_ERR_INVALID_OPTION, valueName);
          break;
       case ELC_PRM_WARNING:
@@ -417,23 +417,21 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
    return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
-//void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
-//{
-//   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
-//      _ELENA_::Path rulesPath;
-//      _ELENA_::Path::loadPath(rulesPath, project.StrSetting(_ELENA_::opAppPath));
-//      _ELENA_::Path::combinePath(rulesPath, RULES_FILE);
-//
-//      _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
-//      if (!rulesFile.isOpened()) {
-//         project.raiseWarning(errInvalidFile, RULES_FILE);
-//      }
-//      else compiler.loadRules(&rulesFile);
-//   }
-//   if (project.IntSetting(_ELENA_::opL1, -1) != 0) {
-//      compiler.turnOnOptimiation(1);
-//   }
-//}
+void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
+{
+   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
+      _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
+
+      _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
+      if (!rulesFile.isOpened()) {
+         project.raiseWarning(errInvalidFile, RULES_FILE);
+      }
+      else compiler.loadRules(&rulesFile);
+   }
+   if (project.IntSetting(_ELENA_::opL1, -1) != 0) {
+      compiler.turnOnOptimiation(1);
+   }
+}
 
 // --- Main function ---
 
@@ -512,7 +510,7 @@ int main()
       bool result = false;
       _ELENA_::CompilerLogic elenaLogic;
       _ELENA_::Compiler compiler(&syntaxFile, &elenaLogic);
-//      setCompilerOptions(project, compiler);
+      setCompilerOptions(project, compiler);
 
       result = compiler.run(project, project.BoolSetting(_ELENA_::opDebugMode));
 

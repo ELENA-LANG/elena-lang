@@ -14,13 +14,13 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x002E
+#define ELC_REVISION_NUMBER             0x002F
 
 // --- ELC default file names ---
 #ifdef _WIN32
 
 #define SYNTAX_FILE                 "syntax.dat"
-//#define RULES_FILE                  "rules.dat"
+#define RULES_FILE                  "rules.dat"
 
 #else
 
@@ -47,11 +47,11 @@
 #define ELC_PRM_TABSIZE             "xtab"
 #define ELC_PRM_PROJECTPATH         "xpath"
 #define ELC_PRM_CODEPAGE            "xcp"
-//#define ELC_PRM_OPTOFF              "xo-"
-//#define ELC_PRM_OPT1OFF             "xo1-"
+#define ELC_PRM_OPTOFF              "xo-"
+#define ELC_PRM_OPT1OFF             "xo1-"
 
 // --- ELC config categories ---
-//#define COMPILER_CATEGORY           "compiler"
+#define COMPILER_CATEGORY           "compiler"
 #define SOURCE_CATEGORY             "files"
 #define FORWARD_CATEGORY            "forwards"
 #define LINKER_CATEGORY             "linker"
@@ -85,8 +85,8 @@
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "ygsize"
-//#define ELC_L0                      "l0"                // optimization: byte code optimization
-//#define ELC_L1                      "l1"                // optimization: source code optimization
+#define ELC_L0                      "l0"                // optimization: byte code optimization
+#define ELC_L1                      "l1"                // optimization: source code optimization
 
 //#define ELC_MANIFEST_NAME           "name"
 //#define ELC_MANIFEST_VERSION        "version"

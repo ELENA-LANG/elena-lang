@@ -218,8 +218,8 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadIntOption(config, opSizeOfHeapCommit);
    loadAlignedIntOption(config, opImageBase, 0x400000);
 
-   //// load compiler engine options
-   //loadIntOption(config, opL0);
+   // load compiler engine options
+   loadIntOption(config, opL0);
 
    // load primitive aliases
    loadPrimitiveCategory(config, configPath);
