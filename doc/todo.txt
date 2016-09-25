@@ -3,6 +3,9 @@ In development:
 ------                              
 
               xrev
+                 * make sure not embeddable object is not stack allocated
+                 * check primitive comparision operation
+                 * optimize unbox : root expression / assigning
                  * support lazy expressions
                  * step over : fine tune the debugging sequence
                  * templates : importing

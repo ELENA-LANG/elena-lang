@@ -486,16 +486,18 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 
 ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
 {
-//   if (identifier==tsReference) {
-//      return mapReferenceInfo(identifier, false);
-//   }
-//   else if (identifier==tsPrivate) {
-//      if (StringHelper::compare(identifier.value, NIL_VAR)) {
-//         return ObjectInfo(okNil);
-//      }
-//      else return defineObjectInfo(mapTerminal(identifier, true), true);
-//   }
-   /*else */if (identifier==lxIdentifier) {
+   ident_t terminal = identifier.findChild(lxTerminal).identifier();
+
+   if (identifier==lxReference) {
+      return mapReferenceInfo(terminal, false);
+   }
+   else if (identifier==lxPrivate) {
+      if (terminal.compare(NIL_VAR)) {
+         return ObjectInfo(okNil);
+      }
+      else return defineObjectInfo(mapTerminal(identifier, true), true);
+   }
+   else if (identifier==lxIdentifier) {
       return defineObjectInfo(mapTerminal(identifier, true), true);
    }
    else return ObjectInfo();
@@ -734,8 +736,8 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
    return reference;
 }
 
-//ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
-//{
+ObjectInfo Compiler::ModuleScope :: mapReferenceInfo(ident_t reference, bool existing)
+{
 //   if (StringHelper::compare(reference, EXTERNAL_MODULE, strlen(EXTERNAL_MODULE))) {
 //      char ch = reference[strlen(EXTERNAL_MODULE)];
 //      if (ch == '\'' || ch == 0)
@@ -745,11 +747,11 @@ ref_t Compiler::ModuleScope :: mapReference(ident_t referenceName, bool existing
 //   else if (StringHelper::compare(reference, INTERNAL_MASK, INTERNAL_MASK_LEN)) {
 //      return ObjectInfo(okInternal, module->mapReference(reference));
 //   }
-//
-//   ref_t referenceID = mapReference(reference, existing);
-//
-//   return defineObjectInfo(referenceID);
-//}
+
+   ref_t referenceID = mapReference(reference, existing);
+
+   return defineObjectInfo(referenceID);
+}
 
 void Compiler::ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
 {
@@ -1517,27 +1519,27 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
    }
 }
 
-//bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
-//{
-//   if (object.kind == okOuter) {
-//      Map<ident_t, Outer>::Iterator it = outers.start();
-//      while (!it.Eof()) {
-//         if ((*it).reference == object.param) {
-//            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
-//               (*it).preserved = true;
-//
-//               return true;
-//            }
-//            break;
-//         }
-//
-//         it++;
-//      }
-//   }
-//
-//   return false;
-//}
-//
+bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
+{
+   if (object.kind == okOuter) {
+      Map<ident_t, Outer>::Iterator it = outers.start();
+      while (!it.Eof()) {
+         if ((*it).reference == object.param) {
+            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
+               (*it).preserved = true;
+
+               return true;
+            }
+            break;
+         }
+
+         it++;
+      }
+   }
+
+   return false;
+}
+
 //// --- Compiler::TemplateScope ---
 //
 //Compiler::TemplateScope :: TemplateScope(ModuleScope* parent, ref_t reference)
@@ -2616,7 +2618,7 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 //   scope.writer->closeNode();
 //}
 
-void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
+void Compiler :: compileVariable(SNode node, CodeScope& scope)
 {
    SNode terminal = node.findChild(lxIdentifier, lxPrivate);
    ident_t identifier = terminal.findChild(lxTerminal).identifier();
@@ -2628,9 +2630,9 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope/*, DNode hints*/)
 
       ClassInfo localInfo;
 //      bool bytearray = false;
-      _logic->defineClassInfo(localInfo, variable.extraparam);
-      //         if (isEmbeddable(localInfo))
-      //            size = localInfo.size;
+      _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
+      if (_logic->isEmbeddable(localInfo))
+         size = _logic->defineStructSize(localInfo);
 
       if (size > 0) {
          if (!allocateStructure(scope, size, /*bytearray,*/ variable))
@@ -2798,7 +2800,7 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okLocalAddress:
          if (!test(mode, HINT_NOBOXING)) {
             terminal.injectNode(lxLocalAddress, object.param);
-            terminal.set(lxBoxing, _logic->defineStructSize(object.extraparam));
+            terminal.set(lxBoxing, _logic->defineStructSize(*scope.moduleScope, object.extraparam));
             terminal.appendNode(lxTarget, object.extraparam);
          }
          else terminal.set(lxLocalAddress, object.param);
@@ -2807,9 +2809,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //         scope.writer->newNode(lxBoxing);
 //         scope.writer->appendNode(lxFieldAddress, object.param);
 //         break;
-//      case okNil:
-//         scope.writer->newNode(lxNil, object.param);
-//         break;
+      case okNil:
+         terminal.set(lxNil, object.param);
+         break;
 //      case okVerbConstant:
 //         scope.writer->newNode(lxVerbConstant, object.param);
 //         break;
@@ -3655,7 +3657,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
       node = lxAssigning;
       ref_t targetRef = resolveObjectReference(scope, target);
       if (target.kind == okLocalAddress) {
-         size_t size = _logic->defineStructSize(targetRef);
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
          if (size != 0) {
             node.setArgument(size);
          }
@@ -3674,24 +3676,21 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
       else if (target.kind == okLocal || target.kind == okField || target.kind == okOuterField/* || object.kind == okStaticField*/) {
 //
       }
-//      else if (object.kind == okParam || object.kind == okOuter) {
-//         // Compiler magic : allowing to assign byref / variable parameter
-//         classReference = scope.moduleScope->subjectHints.get(object.type);
-//         ClassInfo info;
-//         scope.moduleScope->loadClassInfo(info, classReference);
-//         if (test(info.header.flags, elWrapper)) {
-//            size = info.size;
-//            currentObject.kind = (object.kind == okParam) ? okParamField : okOuterField;
-//         }
-//         // Compiler magic : allowing to assign outer local variables
-//         else if (object.kind == okOuter) {
-//            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-//
-//            if (!closure->markAsPresaved(object))
-//               scope.raiseError(errInvalidOperation, node.Terminal());
-//         }
-//         else scope.raiseError(errInvalidOperation, node.Terminal());
-//      }
+      else if (target.kind == okParam || target.kind == okOuter) {
+         // Compiler magic : allowing to assign byref / variable parameter
+         if (_logic->isVariable(*scope.moduleScope, targetRef)) {
+            node.setArgument(_logic->defineStructSize(*scope.moduleScope, targetRef));
+            target.kind = (target.kind == okParam) ? okParamField : okOuterField;
+         }
+         // Compiler magic : allowing to assign outer local variables
+         else if (target.kind == okOuter) {
+            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+
+            if (!closure->markAsPresaved(target))
+               scope.raiseError(errInvalidOperation, node);
+         }
+         else scope.raiseError(errInvalidOperation, node);
+      }
 //      else if (object.kind == okTemplateTarget) {
 //         // if it is a template field
 //         // treates it like a normal field
@@ -4011,7 +4010,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineC
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
-         SNode member = node.appendNode(/*(*outer_it).preserved ? lxOuterMember : */lxMember, (*outer_it).reference);
+         SNode member = node.appendNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
          setTerminal(member.appendNode(lxIdle), ownerScope, info, 0);
 
          outer_it++;
@@ -4249,7 +4248,7 @@ ObjectInfo Compiler :: compileAssigningExpression(SNode node, SNode assigning, C
       case okOuterField:
       case okLocalAddress:
 //      case okFieldAddress:
-//      case okParamField:
+      case okParamField:
       case okOuter:
 //      case okStaticField:
          break;
@@ -7160,7 +7159,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 {
    ObjectInfo retVal;
 
-   size_t size = _logic->defineStructSize(targetRef);
+   size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
    if (size != 0) {
       allocateStructure(scope, size, retVal);
       retVal.extraparam = targetRef;

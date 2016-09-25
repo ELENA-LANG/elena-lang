@@ -58,6 +58,7 @@ enum LexicalType
    lxField           = 0x08105, // arg - offset
    lxSymbolReference = 0x18107,
    lxLocalAddress    = 0x08108, // arg - offset
+   lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0810A, // arg - offset
    lxConstantInt     = 0x1810F, // arg - reference
    lxConstantClass   = 0x18112, // arg - reference
@@ -68,6 +69,8 @@ enum LexicalType
    lxThisLocal       = 0x0811C,
 
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
+   lxLocalUnboxing   = 0x0C003,   // arg - size
+   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
@@ -91,6 +94,7 @@ enum LexicalType
    lxVariable        = 0x10037,
    lxBinaryVariable  = 0x10038,
    lxMember          = 0x10039,  // a collection member, arg - offset
+   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
 
    // attributes
    lxAttribute       = 0x20000,
@@ -114,6 +118,7 @@ enum LexicalType
    lxCallTarget      = 0x20012, // arg - reference
    lxClassName       = 0x20013, // arg - identifier
    lxIntValue        = 0x20014, // arg - integer value
+   lxTempLocal       = 0x20015,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -129,7 +134,6 @@ enum LexicalType
 //   lxStruct = 0x00102, // arg - count
 //   lxSymbol = 0x20103, // arg - reference
 //   lxStaticField = 0x20106, // arg - reference
-//   lxFieldAddress = 0x00107, // arg - offset
 //   lxBlockLocalAddr = 0x04109, // arg - offset
 //   lxBlockLocal = 0x0410B, // arg - offset
 //   lxConstantString = 0x8410C, // arg - reference
@@ -146,7 +150,6 @@ enum LexicalType
 //   lxConstantList = 0x2411E, // arg - reference
 //
 //   lxCondBoxing      = 0x00303,   // conditional boxing, arg - size
-//   lxUnboxing        = 0x00304,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
 //   lxResending       = 0x1030A,   // resending a message, optional arg - message
@@ -163,11 +166,9 @@ enum LexicalType
 //   lxExtArgument     = 0x00318,
 //   lxExtInteranlRef  = 0x00319,
 //   lxInternalCall    = 0x2031A,  // calling an internal function, arg - reference
-//   lxOuterMember     = 0x0031C,  // a collection member, arg - offset
 //   lxArgUnboxing     = 0x0031E,
 //   lxElse            = 0x20320,  // optional arg - reference
 //   lxOption          = 0x00321,
-//   lxLocalUnboxing   = 0x00323, // arg - size
 //   lxExternFrame     = 0x00327,
 //   lxNewOp           = 0x20328,
 //   lxBody            = 0x00329,
@@ -195,7 +196,6 @@ enum LexicalType
 //
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,
-//   lxTempLocal       = 0x00446,
 //   lxOverridden      = 0x00447,
 //   lxIfValue         = 0x20448, // arg - reference
 //   lxElseValue       = 0x20449, // arg - reference

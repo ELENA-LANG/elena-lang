@@ -50,8 +50,9 @@ class CompilerLogic : public _CompilerLogic
    OperatorList operators;
 
 public:
-   virtual void defineClassInfo(ClassInfo& info, ref_t reference); 
-   virtual size_t defineStructSize(ref_t reference);
+   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference);
+   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference);
+   virtual size_t defineStructSize(ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
    virtual int resolveOperationType(int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
@@ -62,6 +63,9 @@ public:
    {
       return (int)reference < 0;
    }
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
+   virtual bool isVariable(ClassInfo& info);
+   virtual bool isEmbeddable(ClassInfo& info);
 
    virtual void injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler);
 

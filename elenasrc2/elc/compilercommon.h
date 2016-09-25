@@ -61,8 +61,9 @@ class _CompilerLogic
 {
 public:
    // retrieve the class info / size
-   virtual void defineClassInfo(ClassInfo& info, ref_t reference) = 0;
-   virtual size_t defineStructSize(ref_t reference) = 0;
+   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference) = 0;
+   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference) = 0;
+   virtual size_t defineStructSize(ClassInfo& info) = 0;
 
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
@@ -75,6 +76,12 @@ public:
 
    // check if the classes is compatible
    virtual bool isCompatible(ref_t targetRef, ref_t sourceRef) = 0;
+
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
+
+   virtual bool isVariable(ClassInfo& info) = 0;
+   virtual bool isEmbeddable(ClassInfo& info) = 0;
+
    virtual bool isPrimitiveRef(ref_t reference) = 0;
 
    // auto generate virtual methods

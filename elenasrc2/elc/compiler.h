@@ -123,10 +123,10 @@ public:
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam - class reference
-//      okParamField,
+      okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset
-//      okNil,
+      okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
@@ -344,8 +344,8 @@ private:
       ref_t mapReference(ident_t reference, bool existing = false);
       ref_t mapAttribute(ident_t reference, bool existing);
 
-//      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
-//
+      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
+
 //      void defineConstantSymbol(ref_t reference, ref_t classReference)
 //      {
 //         constantHints.add(reference, classReference);
@@ -795,7 +795,7 @@ private:
 
       Outer mapSelf();
 
-      //bool markAsPresaved(ObjectInfo object);
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {

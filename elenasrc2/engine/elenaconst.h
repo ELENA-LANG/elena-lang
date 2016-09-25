@@ -290,9 +290,9 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-//   const int elEmbeddable          = 0x00000010;
+   const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
-//   const int elWrapper             = 0x00000040;
+   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
@@ -449,8 +449,8 @@ namespace _ELENA_
 //   #define OWNER_VAR               "$owner"           // the current method self
    #define SUPER_VAR               "$super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message
-//   #define NIL_VAR                 "$nil"             // the nil symbol
-//
+   #define NIL_VAR                 "$nil"             // the nil symbol
+
 //   #define TARGET_PSEUDO_VAR       "target"
 
   // --- ELENA special sections ---

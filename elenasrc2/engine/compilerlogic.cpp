@@ -98,6 +98,24 @@ bool CompilerLogic :: isCompatible(ref_t targetRef, ref_t sourceRef)
    return targetRef == sourceRef;
 }
 
+bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, classReference);
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper);
+}
+
+bool CompilerLogic :: isEmbeddable(ClassInfo& info)
+{
+   return test(info.header.flags, elStructureRole | elEmbeddable);
+}
+
 void CompilerLogic :: injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler)
 {
    SNode templateNode = node.appendNode(lxTemplate);
@@ -114,7 +132,7 @@ void CompilerLogic :: injectVirtualMethods(SNode node, _CompilerScope& scope, _C
    }
 }
 
-void CompilerLogic :: defineClassInfo(ClassInfo& info, ref_t reference)
+void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference)
 {
 //      if (isTemplateRef(classRef)) {
 //         variable.kind = okTemplateLocal;
@@ -127,7 +145,7 @@ void CompilerLogic :: defineClassInfo(ClassInfo& info, ref_t reference)
          break;
       default:
          if (reference != 0) {
-         //         scope.moduleScope->loadClassInfo(localInfo, classRef, true);
+            scope.loadClassInfo(info, reference, true);
          }      
          break;
    }
@@ -146,14 +164,20 @@ void CompilerLogic :: defineClassInfo(ClassInfo& info, ref_t reference)
 //      }
 }
 
-size_t CompilerLogic :: defineStructSize(ref_t reference)
+size_t CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference)
 {
    ClassInfo classInfo;
-   defineClassInfo(classInfo, reference);
+   defineClassInfo(scope, classInfo, reference);
+
+   return defineStructSize(classInfo);
+}
+
+size_t CompilerLogic :: defineStructSize(ClassInfo& info)
+{
    //   variable = !test(classInfo.header.flags, elReadOnlyRole);
    //
-   if (/*!embeddableOnly && */test(classInfo.header.flags, elStructureRole)) {
-      return classInfo.size;
+   if (/*!embeddableOnly && */test(info.header.flags, elStructureRole)) {
+      return info.size;
    }
    //   else if (isEmbeddable(classInfo)) {
    //      return classInfo.size;
