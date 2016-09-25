@@ -93,6 +93,7 @@ void DerivationWriter :: unpackNode(SNode node)
          copyMessage(node);
          break;
       case nsL4Operation:
+      case nsL7Operation:
          copyMessage(node, true);
          break;
       case nsObject:
@@ -169,6 +170,11 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
             unpackChildren(current);
             _writer.closeNode();
             _writer.removeBookmark();
+            break;
+         case nsSubCode:
+            _writer.newNode(lxExpression);
+            unpackNode(current);
+            _writer.closeNode();
             break;
          default:
             if (operationMode && current.existChild(lxTerminal)) {

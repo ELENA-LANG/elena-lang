@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xrev
+                 * support lazy expressions
                  * step over : fine tune the debugging sequence
                  * templates : importing
                  * templates : compiling
@@ -17,6 +18,11 @@ In development:
                  * compliation should be based on set of rules
                  * compile package info
                  * test optimized / direct operations
+                 * check : #var(-11,4)n := 0.#var(-11,4)d := n + 12. - there should be no double assigning
+                 * debugging the following statements:
+                     #var(-11,4)n := 0.        
+                     #var(-11,4)d := n + 12.
+
                  * DerivationWriter : try to get rid of big switch statement
 
               ydev

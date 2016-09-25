@@ -16,11 +16,12 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxParameter       = 0x10000,
-   lxObjectMask      = 0x08000,
    lxCodeScopeMask   = 0x04000,
+   lxObjectMask      = 0x08000,
    lxExprMask        = 0x0C000,
+   lxParameter       = 0x10000,
    lxReferenceMask   = 0x40000,
+   lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
    lxNone            = 0x00000,
@@ -52,6 +53,7 @@ enum LexicalType
    lxWide            = 0x1800D,
 
    lxImporting       = 0x08101,
+   lxConstantSymbol  = 0x08104, // arg - reference
    lxField           = 0x08105, // arg - offset
    lxSymbolReference = 0x18107,
    lxLocalAddress    = 0x08108, // arg - offset
@@ -61,21 +63,25 @@ enum LexicalType
    lxNil             = 0x08117,
    lxCurrent         = 0x08118, // arg -offset
    lxResult          = 0x08119, // arg -offset
+   lxResultField = 0x0811A, // arg -offset
    lxThisLocal       = 0x0811C,
 
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
+   lxBranching       = 0x0C00F,   // branch expression
    lxExpression      = 0x0C012,
    lxMethodParameter = 0x0C017,
-   lxNewFrame        = 0x04024, // if argument -1 - than with presaved message
-   lxCreatingClass   = 0x0C025, // arg - count
-   lxCreatingStruct  = 0x0C026, // arg - size
+   lxIf              = 0x0C01F,   // optional arg - reference
+   lxFieldExpression = 0x0C022,
+   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
+   lxCreatingClass   = 0x0C025,   // arg - count
+   lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
-   lxDispatching     = 0x04036, // dispatching a message, optional arg - message
-   lxAssigning       = 0x0C037,  // an assigning expression, arg - size
-   lxIntOp           = 0x0C038, // arg - operation id
+   lxDispatching     = 0x04036,   // dispatching a message, optional arg - message
+   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
+   lxIntOp           = 0x8C038,   // arg - operation id
 
    lxBaseParent      = 0x10023,
    lxOperator        = 0x10025,
@@ -110,7 +116,6 @@ enum LexicalType
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
 //   lxAttrMask        = 0x00800,
-//   lxPrimitiveOpMask = 0x01000,
 //   lxMessageMask     = 0x10000,
 //   lxReferenceMask   = 0x20000,
 //   lxSubjectMask     = 0x40000,
@@ -122,7 +127,6 @@ enum LexicalType
 //   lxNested = 0x00101, // arg - count
 //   lxStruct = 0x00102, // arg - count
 //   lxSymbol = 0x20103, // arg - reference
-//   lxConstantSymbol = 0x24104, // arg - reference
 //   lxStaticField = 0x20106, // arg - reference
 //   lxFieldAddress = 0x00107, // arg - offset
 //   lxBlockLocalAddr = 0x04109, // arg - offset
@@ -136,7 +140,6 @@ enum LexicalType
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
 //   lxVerbConstant = 0x24116, // arg - reference
-//   lxResultField = 0x0411A, // arg -offset
 //   lxCurrentMessage = 0x0411B,
 //   lxCurrentField = 0x0411D, // arg -offset
 //   lxConstantList = 0x2411E, // arg - reference
@@ -149,7 +152,6 @@ enum LexicalType
 //   lxTrying          = 0x0030C,   // try-catch expression
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
-//   lxBranching       = 0x0030F,   // branch expression
 //   lxSwitching       = 0x00310,
 //   lxLooping         = 0x00311,
 //   lxThrowing        = 0x00313,
@@ -163,10 +165,8 @@ enum LexicalType
 //   lxMember          = 0x0031B,  // a collection member, arg - offset
 //   lxOuterMember     = 0x0031C,  // a collection member, arg - offset
 //   lxArgUnboxing     = 0x0031E,
-//   lxIf              = 0x2031F,  // optional arg - reference
 //   lxElse            = 0x20320,  // optional arg - reference
 //   lxOption          = 0x00321,
-//   lxFieldExpression = 0x00322,
 //   lxLocalUnboxing   = 0x00323, // arg - size
 //   lxExternFrame     = 0x00327,
 //   lxNewOp           = 0x20328,
@@ -497,15 +497,15 @@ public:
          return node;
       }
 
-      //      Node prevNode() const
+//      Node prevNode() const
 //      {
 //         return tree->readPreviousNode(position);
 //      }
-//
-//      Node parentNode() const
-//      {
-//         return tree->readParentNode(position);
-//      }
+
+      Node parentNode() const
+      {
+         return tree->readParentNode(position);
+      }
 
       Node insertNode(LexicalType type, int argument = 0)
       {
@@ -772,7 +772,7 @@ public:
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
 //   Node readPreviousNode(size_t position);
-//   Node readParentNode(size_t position);
+   Node readParentNode(size_t position);
 
    size_t seekNodeEnd(size_t position);
 

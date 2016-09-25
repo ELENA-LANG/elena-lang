@@ -17,15 +17,15 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+
+}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -57,7 +57,7 @@ struct ModuleInfo
 #define HINT_NODEBUGINFO      0x00020000
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
-//#define HINT_CLOSURE          0x00008000
+#define HINT_CLOSURE          0x00008000
 //#define HINT_ASSIGNING        0x00004000
 //#define HINT_CONSTRUCTOR_EPXR 0x00002000
 //#define HINT_VIRTUAL_FIELD    0x00001000
@@ -94,12 +94,12 @@ typedef ClassInfo::Attribute Attribute;
 //{
 //   return (node == nsExpression && node.nextNode()==nsExpression);
 //}
-//
-//inline bool isReturnExpression(DNode expr)
-//{
-//   return ((expr == nsExpression || expr == nsRootExpression) && expr.nextNode() == nsNone);
-//}
-//
+
+inline bool isReturnExpression(SNode expr)
+{
+   return (expr == lxExpression && expr.nextNode() == lxNone);
+}
+
 //inline bool isSingleStatement(DNode expr)
 //{
 //   return (expr == nsExpression) && (expr.firstChild().nextNode() == nsNone);
@@ -162,20 +162,20 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
 //   }
 //   else return 0;
 //}
-//
-//inline void findUninqueName(_Module* module, ReferenceNs& name)
-//{
-//   size_t pos = getlength(name);
-//   int   index = 0;
-//   ref_t ref = 0;
-//   do {
-//      name[pos] = 0;
-//      name.appendHex(index++);
-//
-//      ref = module->mapReference(name, true);
-//   } while (ref != 0);
-//}
-//
+
+inline void findUninqueName(_Module* module, ReferenceNs& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name, true);
+   } while (ref != 0);
+}
+
 //inline void findUninqueSubject(_Module* module, ReferenceNs& name)
 //{
 //   size_t pos = getlength(name);
@@ -623,16 +623,16 @@ ref_t Compiler::ModuleScope :: mapTerminal(SNode terminal, bool existing)
    else return mapReference(identifier, existing);
 }
 
-//ref_t Compiler::ModuleScope :: mapNestedExpression()
-//{
-//   // otherwise auto generate the name
-//   ReferenceNs name(module->Name(), INLINE_POSTFIX);
-//
-//   findUninqueName(module, name);
-//
-//   return module->mapReference(name);
-//}
-//
+ref_t Compiler::ModuleScope :: mapNestedExpression()
+{
+   // otherwise auto generate the name
+   ReferenceNs name(module->Name(), INLINE_POSTFIX);
+
+   findUninqueName(module, name);
+
+   return module->mapReference(name);
+}
+
 //ref_t Compiler::ModuleScope :: mapNestedTemplate()
 //{
 //   // otherwise auto generate the name
@@ -994,9 +994,17 @@ void Compiler::ModuleScope :: raiseError(const char* message, SNode node)
 
 void Compiler::ModuleScope :: raiseWarning(int level, const char* message, SNode node)
 {
+   node = node.firstChild();
    SNode terminal = node;
-   while (terminal != lxNone && terminal.findChild(lxTerminal) == nsNone) {
-      terminal = terminal.firstChild(lxObjectMask);
+   while (node != lxNone) {
+      while (terminal != lxNone && terminal.findChild(lxTerminal) == nsNone) {
+         terminal = terminal.firstChild(lxObjectMask);
+      }
+      if (terminal == lxNone) {
+         node = node.nextNode();
+         terminal = node;
+      }
+      else break;
    }
 
    int col = terminal.findChild(lxCol).argument;
@@ -1017,23 +1025,23 @@ void Compiler::ModuleScope :: raiseError(const char* message, int row, int col, 
    project->raiseError(message, sourcePath, row, col, terminal);
 }
 
-//void Compiler::ModuleScope :: loadActions(_Module* extModule)
-//{
-//   if (extModule) {
-//      ReferenceNs sectionName(extModule->Name(), ACTION_SECTION);
-//   
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t mssg_ref = importMessage(extModule, metaReader.getDWord(), module);
-//            ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
-//   
-//            actionHints.add(mssg_ref, class_ref);
-//         }
-//      }
-//   }
-//}
+void Compiler::ModuleScope :: loadActions(_Module* extModule)
+{
+   if (extModule) {
+      ReferenceNs sectionName(extModule->Name(), ACTION_SECTION);
+   
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t mssg_ref = importMessage(extModule, metaReader.getDWord(), module);
+            ref_t class_ref = importReference(extModule, metaReader.getDWord(), module);
+   
+            actionHints.add(mssg_ref, class_ref);
+         }
+      }
+   }
+}
 
 void Compiler::ModuleScope :: loadAttributes(_Module* extModule)
 {
@@ -1202,9 +1210,9 @@ Compiler::SymbolScope :: SymbolScope(ModuleScope* parent, ref_t reference)
 //   syntaxTree.writeString(parent->sourcePath);
 }
 
-ObjectInfo Compiler::SymbolScope :: mapObject(SNode identifier)
+ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 {
-   return Scope::mapObject(identifier);
+   return Scope::mapTerminal(identifier);
 }
 
 // --- Compiler::ClassScope ---
@@ -1224,20 +1232,18 @@ Compiler::ClassScope :: ClassScope(ModuleScope* parent, ref_t reference)
 //   syntaxTree.writeString(parent->sourcePath);
 }
 
-ObjectInfo Compiler::ClassScope :: mapObject(SNode identifier)
+ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
 {
-   ident_t terminal = identifier.findChild(lxTerminal).identifier();
-
-//   if (StringHelper::compare(identifier, SUPER_VAR)) {
-//      return ObjectInfo(okSuper, info.header.parentRef);
-//   }
+   if (terminal.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, info.header.parentRef);
+   }
 //   else if (StringHelper::compare(identifier, SELF_VAR)) {
 //      if (extensionMode != 0 && extensionMode != -1) {
 //         return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
 //      }
 //      else return ObjectInfo(okParam, (size_t)-1);
 //   }
-//   else {
+   else {
       int offset = info.fields.get(terminal);
       if (offset != -1) {
          ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
@@ -1263,9 +1269,9 @@ ObjectInfo Compiler::ClassScope :: mapObject(SNode identifier)
 //         if (staticInfo.value1 != 0) {
 //            return ObjectInfo(okStaticField, staticInfo.value1, 0, staticInfo.value2);
 //         }
-         /*else */return Scope::mapObject(identifier);
+         /*else */return Scope::mapTerminal(terminal);
       }
-//   }
+   }
 }
 
 void Compiler::ClassScope :: compileClassAttribute(SNode hint)
@@ -1304,10 +1310,8 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->tape = &parent->tape;
 }
 
-ObjectInfo Compiler::MethodScope :: mapObject(SNode identifier)
+ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
-   ident_t terminal = identifier.findChild(lxTerminal).identifier();
-
    if (terminal.compare(THIS_VAR)) {
 //      if (stackSafe && test(getClassFlags(), elStructureRole)) {
 //         return ObjectInfo(okThisParam, 1, -1);
@@ -1333,8 +1337,10 @@ ObjectInfo Compiler::MethodScope :: mapObject(SNode identifier)
 //         }
          return ObjectInfo(okParam, -1 - local, param.class_ref, param.subj_ref);
       }
-      else {
-         ObjectInfo retVal = Scope::mapObject(identifier);
+      else return Scope::mapTerminal(terminal);
+      
+//      {
+//         ObjectInfo retVal = 
 //         if (stackSafe && retVal.kind == okParam && retVal.param == -1 && retVal.type != 0) {
 //            if (isEmbeddable(moduleScope->getClassFlags(moduleScope->subjectHints.get(retVal.type)))) {
 //               return ObjectInfo(okParam, retVal.param, -1, retVal.type);
@@ -1342,26 +1348,26 @@ ObjectInfo Compiler::MethodScope :: mapObject(SNode identifier)
 //            else return retVal;
 //         }
 
-         return retVal;
-      }
+//         return retVal;
+//      }
 //   }
 }
 
-//// --- Compiler::ActionScope ---
-//
-//Compiler::ActionScope :: ActionScope(ClassScope* parent)
-//   : MethodScope(parent)
-//{
-//}
-//
-//ObjectInfo Compiler::ActionScope :: mapObject(TerminalInfo identifier)
-//{
-//   // HOTFIX : self / $self : closure should refer to the owner ones
-//   if (StringHelper::compare(identifier, THIS_VAR)) {
-//      return parent->mapObject(identifier);
-//   }
-//   else return MethodScope::mapObject(identifier);
-//}
+// --- Compiler::ActionScope ---
+
+Compiler::ActionScope :: ActionScope(ClassScope* parent)
+   : MethodScope(parent)
+{
+}
+
+ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
+{
+   // HOTFIX : self / $self : closure should refer to the owner ones
+   if (identifier.compare(THIS_VAR)) {
+      return parent->mapTerminal(identifier);
+   }
+   else return MethodScope::mapTerminal(identifier);
+}
 
 // --- Compiler::CodeScope ---
 
@@ -1393,9 +1399,9 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 //   //this->rootBookmark = -1;
 //}
 
-ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
+ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
-   Parameter local = locals.get(identifier.findChild(lxTerminal).identifier());
+   Parameter local = locals.get(identifier);
    if (local.offset) {
 //      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
 //         return ObjectInfo(okSubject, local.offset);
@@ -1408,113 +1414,109 @@ ObjectInfo Compiler::CodeScope :: mapObject(SNode identifier)
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
    }
-   else return Scope::mapObject(identifier);
+   else return Scope::mapTerminal(identifier);
 }
 
-//// --- Compiler::InlineClassScope ---
-//
-//Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
-//   : ClassScope(owner->moduleScope, reference), outers(Outer())
-//{
-//   this->parent = owner;
-//   info.header.flags |= elNestedClass;
-//   templateMode = false;
-//   templateRef = 0;
-//}
-//
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-//{
-//   String<ident_c, 10> thisVar(THIS_VAR);
-//
-//   Outer owner = outers.get(thisVar);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.reference = info.fields.Count();
-//
-//      TerminalInfo identifier;
-//      identifier.symbol = tsPrivate;
-//      identifier.value = THIS_VAR;
-//
-//      owner.outerObject = parent->mapObject(identifier);
-//      if (owner.outerObject.extraparam == 0)
-//         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
-//
-//      // Compiler magic : if the owner is a template - switch to template closure mode
-//      if (isTemplateRef(owner.outerObject.extraparam)) {
-//         templateMode = true;
-//      }
-//
-//      outers.add(thisVar, owner);
-//      mapKey(info.fields, thisVar, owner.reference);
-//   }
-//   return owner;
-//}
-//
-//ObjectInfo Compiler::InlineClassScope :: mapObject(TerminalInfo identifier)
-//{
-//   if (StringHelper::compare(identifier, THIS_VAR) || StringHelper::compare(identifier, OWNER_VAR)) {
-//      Outer owner = mapSelf();
-//
-//      // map as an outer field (reference to outer object and outer object field index)
-//      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam);
-//   }
-//   else {
-//      Outer outer = outers.get(identifier);
-//
-//      // if object already mapped
-//      if (outer.reference != -1) {
-//         if (outer.outerObject.kind == okSuper) {
-//            return ObjectInfo(okSuper, outer.reference);
-//         }
-//         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
-//      }
-//      else {
-//         outer.outerObject = parent->mapObject(identifier);
-//         // handle outer fields in a special way: save only self
-//         if (outer.outerObject.kind == okField) {
-//            Outer owner = mapSelf();
-//
-//            // save the outer field type if provided
-//            if (outer.outerObject.extraparam != 0) {
-//               outerFieldTypes.add(outer.outerObject.param, outer.outerObject.extraparam, true);
-//            }
-//
-//            // map as an outer field (reference to outer object and outer object field index)
-//            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
-//         }
-//         // map if the object is outer one
-//         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal || outer.outerObject.kind == okField
-//            || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
-//            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
-//         {
-//            outer.reference = info.fields.Count();
-//
-//            outers.add(identifier, outer);
-//            mapKey(info.fields, identifier.value, outer.reference);
-//
-//            switch (outer.outerObject.kind) {
-//               case okOuterField:
-//               case okParam:
-//               case okThisParam:
-//                  return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
-//               default:
-//                  return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
-//            }
-//         }
-//         // map if the object is outer one
-//         else if (outer.outerObject.kind == okUnknown) {
-//            // check if there is inherited fields
-//            outer.reference = info.fields.get(identifier);
-//            if (outer.reference != -1) {
-//               return ObjectInfo(okField, outer.reference);
-//            }
-//            else return outer.outerObject;
-//         }
-//         else return outer.outerObject;
-//      }
-//   }
-//}
-//
+// --- Compiler::InlineClassScope ---
+
+Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference)
+   : ClassScope(owner->moduleScope, reference), outers(Outer()), outerFieldTypes(ClassInfo::FieldInfo(0, 0))
+{
+   this->parent = owner;
+   info.header.flags |= elNestedClass;
+   //templateMode = false;
+   //templateRef = 0;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   //String<char, 10> thisVar(THIS_VAR);
+
+   Outer owner = outers.get(THIS_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.reference = info.fields.Count();
+
+      owner.outerObject = parent->mapTerminal(THIS_VAR);
+      if (owner.outerObject.extraparam == 0)
+         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId();
+
+      //// Compiler magic : if the owner is a template - switch to template closure mode
+      //if (isTemplateRef(owner.outerObject.extraparam)) {
+      //   templateMode = true;
+      //}
+
+      outers.add(THIS_VAR, owner);
+      mapKey(info.fields, THIS_VAR, owner.reference);
+   }
+   return owner;
+}
+
+ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
+{
+   if (identifier.compare(THIS_VAR)/* || identifier.compare(OWNER_VAR)*/) {
+      Outer owner = mapSelf();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam);
+   }
+   else {
+      Outer outer = outers.get(identifier);
+
+      // if object already mapped
+      if (outer.reference != -1) {
+         if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, outer.reference);
+         }
+         else return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+      }
+      else {
+         outer.outerObject = parent->mapTerminal(identifier);
+         // handle outer fields in a special way: save only self
+         if (outer.outerObject.kind == okField) {
+            Outer owner = mapSelf();
+
+            // save the outer field type if provided
+            if (outer.outerObject.extraparam != 0) {
+               outerFieldTypes.add(outer.outerObject.param, ClassInfo::FieldInfo(outer.outerObject.extraparam, outer.outerObject.type), true);
+            }
+
+            // map as an outer field (reference to outer object and outer object field index)
+            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+         }
+         // map if the object is outer one
+         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal || outer.outerObject.kind == okField
+            || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
+            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
+         {
+            outer.reference = info.fields.Count();
+
+            outers.add(identifier, outer);
+            mapKey(info.fields, identifier, outer.reference);
+
+            switch (outer.outerObject.kind) {
+               case okOuterField:
+               case okParam:
+               case okThisParam:
+                  return ObjectInfo(okOuter, outer.reference, 0, outer.outerObject.type);
+               default:
+                  return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam, outer.outerObject.type);
+            }
+         }
+         // map if the object is outer one
+         else if (outer.outerObject.kind == okUnknown) {
+            // check if there is inherited fields
+            outer.reference = info.fields.get(identifier);
+            if (outer.reference != -1) {
+               return ObjectInfo(okField, outer.reference);
+            }
+            else return outer.outerObject;
+         }
+         else return outer.outerObject;
+      }
+   }
+}
+
 //bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
 //{
 //   if (object.kind == okOuter) {
@@ -1780,11 +1782,11 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //      case okConstantRole:
 //         // if external role is provided
 //         return object.param;
-//      case okConstantSymbol:
-//         if (object.extraparam != 0) {
-//            return object.extraparam;
-//         }
-//         else return object.param;
+      case okConstantSymbol:
+         if (object.extraparam != 0) {
+            return object.extraparam;
+         }
+         else return object.param;
       case okLocalAddress:
          return object.extraparam;
       case okIntConstant:
@@ -1804,8 +1806,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //      case okSubject:
 //      case okSignatureConstant:
 //         return scope.moduleScope->signatureReference;
-//      case okSuper:
-//         return object.param;
+      case okSuper:
+         return object.param;
 //      case okTemplateLocal:
 //         return object.extraparam;
 //      case okParams:
@@ -2735,9 +2737,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
          terminal = lxConstantClass;
          terminal.setArgument(object.param);
          break;
-//      case okConstantSymbol:
-//         scope.writer->newNode(lxConstantSymbol, object.param);
-//         break;
+      case okConstantSymbol:
+         terminal.set(lxConstantSymbol, object.param);
+         break;
 //      case okLiteralConstant:
 //         scope.writer->newNode(lxConstantString, object.param);
 //         break;
@@ -2778,25 +2780,26 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //         }
          /*else */terminal.set(lxThisLocal, object.param);
          break;
-//      case okSuper:
-//         scope.writer->newNode(lxLocal, 1);
-//         break;
+      case okSuper:
+         terminal.set(lxLocal, 1);
+         break;
       case okField:
-//      case okOuter:
+      case okOuter:
          terminal.set(lxField, object.param);
          break;
 //      case okStaticField:
 //         scope.writer->newNode(lxStaticField, object.param);
 //         break;
-//      case okOuterField:
-//         scope.writer->newNode(lxFieldExpression);
-//         scope.writer->appendNode(lxField, object.param);
-//         scope.writer->appendNode(lxResultField, object.extraparam);
-//         break;
+      case okOuterField:
+         terminal.set(lxFieldExpression, 0);
+         terminal.appendNode(lxField, object.param);
+         terminal.appendNode(lxResultField, object.extraparam);
+         break;
       case okLocalAddress:
          if (!test(mode, HINT_NOBOXING)) {
             terminal.injectNode(lxLocalAddress, object.param);
-            terminal = lxBoxing;
+            terminal.set(lxBoxing, _logic->defineStructSize(object.extraparam));
+            terminal.appendNode(lxTarget, object.extraparam);
          }
          else terminal.set(lxLocalAddress, object.param);
          break;
@@ -2928,7 +2931,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 {
    ObjectInfo result;
 
-//   DNode member = objectNode.firstChild();
+   //SNode member = objectNode.firstChild();
    switch (objectNode.type)
    {
 //      case nsNestedClass:
@@ -2937,11 +2940,11 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //            result = compileClosure(objectNode, scope, 0);
 //            break;
 //         }
-//      case nsSubCode:
+      case lxCode:
 //      case nsSubjectArg:
 //      case nsMethodParameter:
-//         result = compileClosure(member, scope, 0);
-//         break;
+         result = compileClosure(objectNode, scope, 0);
+         break;
 //      case nsInlineClosure:
 //         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
 //         break;
@@ -3242,9 +3245,31 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 //
 //   return extRef;
 //}
-//
-//ObjectInfo Compiler :: compileBranchingOperator(DNode& node, CodeScope& scope, ObjectInfo object, int mode, int operator_id)
-//{
+
+ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id)
+{
+   ObjectInfo retVal(okObject);
+
+   SNode loperandNode = node.firstChild(lxObjectMask);
+   ObjectInfo loperand = compileObject(loperandNode, scope, 0);
+
+   ref_t trueReference = 0;
+   if (_logic->resolveBranchOperation(operator_id, trueReference)) {
+      node = lxBranching;
+
+      //      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
+      //
+      //      compileBranching(node, scope);
+      //
+      //      scope.writer->closeNode();
+   }
+   else {
+      SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+      compileObject(roperandNode, scope, 0);
+
+      retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+   }
+
 //   scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
 //   appendTerminalInfo(scope.writer, node.FirstTerminal());
 //   scope.writer->closeNode();
@@ -3263,30 +3288,36 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 //      scope.writer->closeNode();
 //   }
 //   else {
-//      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
-//
-//      compileBranching(node, scope);
-//
-//      scope.writer->closeNode();
 //   }
 //
 //   scope.writer->insert(lxBranching);
 //   scope.writer->closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id)
 {
    ObjectInfo retVal(okObject);
 
    SNode loperandNode = node.firstChild(lxObjectMask);
-   SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-
    ObjectInfo loperand = compileObject(loperandNode, scope, 0);
+
+   SNode roperandNode = loperandNode.nextNode(lxObjectMask);   
    ObjectInfo roperand = compileObject(roperandNode, scope, 0);
-   
-   retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+
+   ref_t resultClassRef = 0;
+   int operationType = _logic->resolveOperationType(operator_id,
+      resolveObjectReference(scope, loperand),
+      resolveObjectReference(scope, roperand), resultClassRef);
+
+   if (operationType != 0) {
+      // if it is a primitive operation
+      node.injectNode((LexicalType)operationType, operator_id);
+
+      retVal = assignResult(scope, node, resultClassRef/*, 0*/);
+   }
+   else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
 
 //   // HOTFIX : recognize SET_REFER_MESSAGE_ID
 //   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
@@ -3356,12 +3387,11 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope/*, ObjectInf
    SNode operatorName = operatorNode.findChild(lxTerminal);
    int operator_id = _operators.get(operatorName.identifier());
 
-//   // if it is branching operators
-//   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-//      return compileBranchingOperator(node, scope, object, mode, operator_id);
-//   }
-
-   return compileOperator(node, scope, /*object, mode, */operator_id);
+   // if it is branching operators
+   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
+      return compileBranchingOperator(node, scope, /*object, mode, */operator_id);
+   }
+   else return compileOperator(node, scope, /*object, mode, */operator_id);
 }
 
 ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
@@ -3389,10 +3419,10 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 //   else if (classReference == scope.moduleScope->messageReference) {
 //      dispatchCall = test(mode, HINT_EXTENSION_MODE);
 //   }
-//   else if (target.kind == okSuper) {
-//      // parent methods are always sealed
-//      callType = tpSealed;
-//   }
+   /*else */if (target.kind == okSuper) {
+      // parent methods are always sealed
+      callType = tpSealed;
+   }
 //   //else if (target.kind == okTemplateTarget) {
 //   //   templateCall = true;
 //   //}
@@ -3641,7 +3671,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      else if (object.kind == okFieldAddress) {
 //         size = scope.moduleScope->defineSubjectSize(object.type);
 //      }
-      else if (target.kind == okLocal || target.kind == okField/* || object.kind == okOuterField || object.kind == okStaticField*/) {
+      else if (target.kind == okLocal || target.kind == okField || target.kind == okOuterField/* || object.kind == okStaticField*/) {
 //
       }
 //      else if (object.kind == okParam || object.kind == okOuter) {
@@ -3798,7 +3828,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //   }
 //
 //   // if it is a generic role
-//   if (role.kind != okConstantRole) {
+//   if (role.kind != okConstantRole)
 //      scope.writer->newNode(lxOverridden);
 //      role = compileExpression(roleNode, scope, 0, 0);
 //      scope.writer->closeNode();
@@ -3818,59 +3848,64 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //
 //   return retVal;
 //}
-//
-//bool Compiler :: declareActionScope(DNode& node, ClassScope& scope, DNode argNode, SyntaxWriter& writer, ActionScope& methodScope, int mode, bool alreadyDeclared)
-//{
-//   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
-//
-//   methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
-//
+
+bool Compiler :: declareActionScope(SNode& node, ClassScope& scope/*, DNode argNode, SyntaxWriter& writer*/, ActionScope& methodScope, int mode, bool alreadyDeclared)
+{
+   //bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
+
+   methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
+
 //   if (argNode != nsNone) {
 //      // define message parameter
 //      methodScope.message = declareInlineArgumentList(argNode, methodScope);
 //
 //      node = node.select(nsSubCode);
 //   }
-//
-//   if (!alreadyDeclared) {
-//      ref_t parentRef = scope.info.header.parentRef;
-//      if (lazyExpression) {
-//         parentRef = scope.moduleScope->getBaseLazyExpressionClass();
-//      }
-//      else {
-//         ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
-//         if (actionRef)
-//            parentRef = actionRef;
-//      }
-//
-//      compileParentDeclaration(DNode(), scope, parentRef);
-//   }
-//
-//   // HOT FIX : mark action as stack safe if the hint was declared in the parent class
-//   methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
-//
-//   return lazyExpression;
-//}
-//
-//void Compiler :: compileAction(DNode node, ClassScope& scope, DNode argNode, int mode, bool alreadyDeclared)
-//{
-//   SyntaxWriter writer(scope.syntaxTree);
-//   writer.newNode(lxRoot, scope.reference);
-//
-//   ActionScope methodScope(&scope);
-//   bool lazyExpression = declareActionScope(node, scope, argNode, writer, methodScope, mode, alreadyDeclared);
-//
-//   writer.newNode(lxClassMethod, methodScope.message);
-//   writer.appendNode(lxSourcePath); // the source path is first string
-//
+
+   if (!alreadyDeclared) {
+      ref_t parentRef = scope.info.header.parentRef;
+      /*if (lazyExpression) {
+         parentRef = scope.moduleScope->getBaseLazyExpressionClass();
+      }
+      else {*/
+         ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
+         if (actionRef)
+            parentRef = actionRef;
+      //}
+
+      compileParentDeclaration(SNode(), scope, parentRef);
+   }
+
+   //// HOT FIX : mark action as stack safe if the hint was declared in the parent class
+   //methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
+
+   return /*lazyExpression*/false;
+}
+
+void Compiler :: compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, int mode, bool alreadyDeclared)
+{
+   ActionScope methodScope(&scope);
+   bool lazyExpression = declareActionScope(node, scope/*, argNode, writer*/, methodScope, mode, alreadyDeclared);
+
+   SyntaxTree syntaxTree;
+   SyntaxWriter writer(syntaxTree);
+   writer.newNode(lxClass, scope.reference);   
+   writer.newNode(lxClassMethod, methodScope.message);
+   //writer.appendNode(lxSourcePath); // the source path is first string
+
+   writer.newNode(lxCode);
+   SyntaxTree::copyNode(writer, node);
+   writer.closeNode();
+
+   writer.closeNode();
+   writer.closeNode();  // closing method
+
 //   // if it is single expression
 //   if (!lazyExpression) {
-//      compileActionMethod(node, writer, methodScope);
+      compileActionMethod(syntaxTree.readRoot().findChild(lxClassMethod), methodScope);
 //   }
 //   else compileLazyExpressionMethod(node.firstChild(), writer, methodScope);
-//
-//   writer.closeNode();  // closing method
-//
+
 //   //HOTFIX : recognize if it is nested template action
 //   //!!should be refactored
 //   if (scope.getScope(Scope::slOwnerClass) != &scope && ((InlineClassScope*)&scope)->templateMode) {
@@ -3886,8 +3921,6 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //         outer_it++;
 //      }
 //
-//      writer.closeNode();
-//
 //      inlineScope->templateRef = scope.moduleScope->mapNestedTemplate();
 //
 //      _Memory* section = scope.moduleScope->module->mapSection(inlineScope->templateRef | mskSyntaxTreeRef, false);
@@ -3895,15 +3928,13 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      scope.syntaxTree.save(section);
 //   }
 //   else {
-//      writer.closeNode();
-//
-//      if (!alreadyDeclared)
-//         generateInlineClassDeclaration(scope, test(scope.info.header.flags, elClosed));
-//
-//      generateClassImplementation(scope);
+      if (!alreadyDeclared)
+         generateInlineClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
+
+      generateClassImplementation(syntaxTree.readRoot(), scope);
 //   }
-//}
-//
+}
+
 //void Compiler :: compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope)
 //{
 //   SyntaxWriter writer(scope.syntaxTree);
@@ -3945,16 +3976,15 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      generateClassImplementation(scope);
 //   }
 //}
-//
-//ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
-//{
+
+ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
+{
 //   if (test(scope.info.header.flags, elStateless)) {
-//      ownerScope.writer->newNode(lxConstantSymbol, scope.reference);
-//      ownerScope.writer->appendNode(lxTarget, scope.reference);
-//      ownerScope.writer->closeNode();
-//
-//      // if it is a stateless class
-//      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
+      node.set(lxConstantSymbol, scope.reference);
+      //ownerScope.writer->appendNode(lxTarget, scope.reference);
+
+      // if it is a stateless class
+      return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
 //   }
 //   else {
 //      // dynamic binary symbol
@@ -3996,17 +4026,17 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //
 //      return ObjectInfo(okObject, scope.reference);
 //   }
-//}
-//
-//ObjectInfo Compiler :: compileClosure(DNode node, CodeScope& ownerScope, int mode)
-//{
-//   InlineClassScope scope(&ownerScope, ownerScope.moduleScope->mapNestedExpression());
-//
-//   // if it is a lazy expression / multi-statement closure without parameters
-//   if (node == nsSubCode || node == nsInlineClosure) {
-//      compileAction(node, scope, DNode(), mode);
-//   }
-//   // if it is a closure / labda function with a parameter
+}
+
+ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mode)
+{
+   InlineClassScope scope(&ownerScope, ownerScope.moduleScope->mapNestedExpression());
+
+   // if it is a lazy expression / multi-statement closure without parameters
+   if (node == lxCode/* || node == nsInlineClosure*/) {
+      compileAction(node, scope, /*SNode(), */mode);
+   }
+//   // if it is a closure / lambda function with a parameter
 //   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
 //      compileAction(node.firstChild(), scope, node, mode);
 //   }
@@ -4021,10 +4051,10 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //   }
 //   // if it is normal nested class
 //   else compileNestedVMT(node, DNode(), scope);
-//
-//   return compileClosure(node, ownerScope, scope, mode);
-//}
-//
+
+   return compileClosure(node, ownerScope, scope, mode);
+}
+
 //ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
 //{
 //   return compileCollection(objectNode, scope, mode, scope.moduleScope->arrayReference);
@@ -4140,16 +4170,24 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope/*, ref_t t
 
    ObjectInfo objectInfo;
 
-   if (node.existChild(lxAssign)) {
-      objectInfo = compileAssigning(node, scope, mode);
+   SNode child = node.findChild(lxAssign, lxMessage, lxOperator, lxCode);
+   switch (child.type) {
+      case lxAssign:
+         objectInfo = compileAssigning(node, scope, mode);
+         break;
+      case lxMessage:
+         objectInfo = compileMessage(node, scope);
+         break;
+      case lxOperator:
+         objectInfo = compileOperator(node, scope);
+         break;
+      case lxCode:
+         objectInfo = compileObject(child, scope, mode);
+         break;
+      default:
+         objectInfo = compileObject(node.firstChild(lxObjectMask), scope, mode);
+         break;
    }
-   else if (node.existChild(lxMessage)) {
-      objectInfo = compileMessage(node, scope);
-   }
-   else if (node.existChild(lxOperator)) {
-      objectInfo = compileOperator(node, scope);
-   }
-   else objectInfo = compileObject(node.firstChild(lxObjectMask), scope, mode);
 
 //   if (/*node != nsObject*/node == lxExpression) {
 //      SNode member = node.firstChild(lxObjectMask);
@@ -4211,11 +4249,11 @@ ObjectInfo Compiler :: compileAssigningExpression(SNode node, SNode assigning, C
    {
       case okLocal:
       case okField:
-//      case okOuterField:
+      case okOuterField:
       case okLocalAddress:
 //      case okFieldAddress:
 //      case okParamField:
-//      case okOuter:
+      case okOuter:
 //      case okStaticField:
          break;
 //      case okTemplateLocal:
@@ -4682,7 +4720,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //   return ObjectInfo(okObject);
 //}
 
-int Compiler :: allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved)
+int Compiler :: allocateStructure(/*bool bytearray, */size_t& allocatedSize, int& reserved)
 {
 //   if (bytearray) {
 //      // plus space for size
@@ -4703,7 +4741,7 @@ int Compiler :: allocateStructure(/*bool bytearray, */int& allocatedSize, int& r
    return retVal;
 }
 
-bool Compiler :: allocateStructure(CodeScope& scope, int size, /*bool bytearray, */ObjectInfo& exprOperand)
+bool Compiler :: allocateStructure(CodeScope& scope, size_t size, /*bool bytearray, */ObjectInfo& exprOperand)
 {
    if (size <= 0)
       return false;
@@ -4928,17 +4966,25 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //   writer.closeNode();
 }
 
-//void Compiler :: compileActionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
-//{
-//   CodeScope codeScope(&scope, &writer);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   writer.newNode(lxNewFrame);
-//   codeScope.level++;
-//
-//   declareParameterDebugInfo(scope, writer, false, true);
-//
+void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
+{
+   CodeScope codeScope(&scope/*, &writer*/);
+
+   declareParameterDebugInfo(node, scope, false, true);
+
+   SNode body = node.findChild(lxCode, lxReturning);
+   if (body == lxReturning) {
+      // HOTFIX : if it is an returning expression, inject returning node
+      SNode expr = body.findChild(lxExpression);
+      expr = lxReturning;
+   }
+
+   // new stack frame
+   // stack already contains previous $self value
+   codeScope.level++;
+
+   body = lxNewFrame;
+
 //   if (isReturnExpression(node.firstChild())) {
 //      compileRetExpression(node.firstChild(), codeScope, HINT_ROOT);
 //   }
@@ -4946,13 +4992,12 @@ void Compiler :: compileDispatcher(SNode node, /*SyntaxWriter& writer, */MethodS
 //      // !! this check should be removed, as it is no longer used
 //      compileCode(node.firstChild(), codeScope);
 //   }
-//   else compileCode(node, codeScope);
-//
-//   writer.closeNode();
-//   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
-//   writer.appendNode(lxReserved, scope.reserved);
-//}
-//
+   /*else */compileCode(node, codeScope);
+
+   node.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   node.appendNode(lxReserved, scope.reserved);
+}
+
 //void Compiler :: compileLazyExpressionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
 //{
 //   CodeScope codeScope(&scope, &writer);
@@ -6234,20 +6279,13 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 //      declareVirtualMethods(scope);
 }
 
-//void Compiler :: generateInlineClassDeclaration(ClassScope& scope, bool closed)
-//{
-//   generateClassDeclaration(scope, closed);
-//
-//   // stateless inline class
-//   if (scope.info.fields.Count() == 0 && !test(scope.info.header.flags, elStructureRole)) {
-//      scope.info.header.flags |= elStateless;
-//
-//      // stateless inline class is its own class class
-//      scope.info.header.classRef = scope.reference;
-//   }
-//   else scope.info.header.flags &= ~elStateless;
-//}
-//
+void Compiler :: generateInlineClassDeclaration(SNode node, ClassScope& scope, bool closed)
+{
+   generateClassDeclaration(node, scope, closed);
+
+   _logic->tweakInlineClassFlags(scope.reference, scope.info);
+}
+
 ////bool Compiler :: validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod)
 ////{
 ////   SNode current = node.firstChild();
@@ -7121,30 +7159,21 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
       scope.moduleScope->sourcePathRef);
 }
 
-//bool Compiler :: boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode, bool& variable)
-//{
-//   LexicalType opType = node.type;
-//
-//   int size = 0;
-//   if (isPrimitiveRef(targetRef)) {
-//      variable = false;
-//      if (targetRef == -1) {
-//         size = 4;
-//      }
-//   }
-//   else size = scope.defineStructSizeEx(targetRef, variable);
-//
-//   if (size != 0) {
-//      int offset = allocateStructure(scope, node, size);
-//
-//      // allocate place for the operation result
-//      node.injectNode(opType, node.argument);
-//
-//      node = lxAssigning;
-//      node.setArgument(size);
-//
-//      node.insertNode(lxLocalAddress, offset);
-//
+ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int warningLevel, int mode, bool& variable*/)
+{
+   ObjectInfo retVal;
+
+   size_t size = _logic->defineStructSize(targetRef);
+   if (size != 0) {
+      allocateStructure(scope, size, retVal);
+      retVal.extraparam = targetRef;
+
+      SNode assignNode = node.injectNode(lxAssigning, size);
+      assignNode.insertNode(lxLocalAddress, retVal.param);
+
+      node.set(lxBoxing, size);
+      node.appendNode(lxTarget, targetRef);
+
 //      if (!test(mode, HINT_NOBOXING)) {
 //         node.injectNode(node.type, node.argument);
 //
@@ -7160,12 +7189,12 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //      else node.appendNode(lxTarget, targetRef);
 //
 //      node = SyntaxTree::findChild(node, opType);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+
+      return retVal;
+   }
+   else return retVal;
+}
+
 //void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, int warningMask, int mode)
 //{
 //   SNode parentNode = node.parentNode();
@@ -7410,9 +7439,9 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //   }
 //   else optimizeSyntaxExpression(scope, node, warningLevel);
 //}
-//
-//bool Compiler :: optimizeOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
-//{   
+
+/*bool*/void Compiler :: optimizeOp(ModuleScope& scope, SNode node, /*int warningLevel, */int mode)
+{
 //   ref_t destType = 0;
 //   SNode parent = node.parentNode();
 //   while (parent != lxNewFrame) {
@@ -7465,9 +7494,12 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //   }
 //   else {
 //      bool boxing = false;
-//      SNode larg, rarg;
-//      assignOpArguments(node, larg, rarg);
-//
+      SNode larg, rarg;
+      assignOpArguments(node, larg, rarg);
+
+      optimizeSyntaxNode(scope, larg, /*warningLevel, */HINT_NOBOXING);
+      optimizeSyntaxNode(scope, rarg, /*warningLevel, */HINT_NOBOXING);
+
 //      if (larg == lxOp) {
 //         optimizeOp(scope, larg, /*warningLevel*/0, 0);
 //         //HOTFIX : arguments should be reread because larg can be modified
@@ -7662,8 +7694,8 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 //         return true;
 //      }
 //   }
-//}
-//
+}
+
 //void Compiler :: optimizeNewOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
 //{
 //   optimizeSyntaxExpression(scope, node, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
@@ -7711,10 +7743,10 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 
 void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warningLevel*/)
 {
-//   int mode = HINT_NOUNBOXING | HINT_ASSIGNING;
-//   if (node.argument != 0)
-//      mode |= HINT_NOBOXING;
-//
+   int mode = /*HINT_NOUNBOXING | HINT_ASSIGNING*/0;
+   if (node.argument != 0)
+      mode |= HINT_NOBOXING;
+
 //   bool targetNode = true;
 //   SNode current = node.firstChild();
 //   while (current != lxNone) {
@@ -7749,29 +7781,31 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
          // direct operation with numeric constants
          node.set(lxIntOp, SET_MESSAGE_ID);
       }
-//      else {
+      else {
+         optimizeSyntaxExpression(scope, node, mode);
 //         SNode directCall = findSubNode(node, lxDirectCalling, lxSDirctCalling);
 //         if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
 //            optimizeEmbeddableCall(scope, node, directCall);
 //         }
-//      }
+      }
    }
+   else optimizeSyntaxExpression(scope, node, mode);
 
 //   // assignment operation
-//   SNode assignNode = findSubNode(node, lxAssigning);
+//   SNode assignNode = node.findSubNode(lxAssigning);
 //   if (assignNode != lxNone) {
-//      SNode operationNode = SyntaxTree::findChild(assignNode, lxIntOp, lxRealOp);
+//      SNode operationNode = assignNode.findChild(lxIntOp/*, lxRealOp*/);
 //      if (operationNode != lxNone) {
-//         SNode larg = findSubNodeMask(operationNode, lxObjectMask);
-//         SNode target = SyntaxTree::findMatchedChild(node, lxObjectMask);
+//         SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+//         SNode target = node.firstChild(lxObjectMask);
 //         if (larg.type == target.type && larg.argument == target.argument) {
 //            // remove an extra assignment
-//            larg = findSubNodeMask(assignNode, lxObjectMask);
+//            larg = assignNode.findSubNodeMask(lxObjectMask);
 //
-//            larg = target.type;
-//            larg.setArgument(target.argument);
-//            node = lxExpression;
-//            target = lxIdle;
+////            larg = target.type;
+////            larg.setArgument(target.argument);
+////            node = lxExpression;
+////            target = lxIdle;
 //         }
 //      }
 //   }
@@ -7826,20 +7860,20 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //
 //   optimizeSyntaxExpression(scope, node, warningLevel);
 //}
-//
-//void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, int warningLevel, int mode)
-//{
-//   bool boxing = true;
+
+void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLevel, */int mode)
+{
+   bool boxing = true;
 //   bool variable = false;
-//
-//   SNode exprNode = SyntaxTree::findMatchedChild(node, lxObjectMask);
+
+   SNode exprNode = node.firstChild(lxObjectMask);
 //   if (exprNode == lxNewOp) {
 //      boxing = false;
 //   }
 //   else {
-//      // if no boxing hint provided
-//      // then boxing should be skipped
-//      if (test(mode, HINT_NOBOXING)) {
+      // if no boxing hint provided
+      // then boxing should be skipped
+      if (test(mode, HINT_NOBOXING)) {
 //         if (exprNode == lxFieldAddress && exprNode.argument > 0 && !test(mode, HINT_ASSIGNING)) {
 //            ref_t target = SyntaxTree::findChild(node, lxTarget).argument;
 //            if (!target)
@@ -7851,26 +7885,34 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //
 //            return;
 //         }
-//         boxing = false;
-//      }
+         boxing = false;
+      }
 //      else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
 //         node = lxBoxing;
 //      }
 //   }
-//
-//   if (boxing) {
+
+   if (boxing) {
+      SNode target = node.findChild(lxTarget);
+      // HOTFIX : replace virtual object with generic class
+      if (_logic->isPrimitiveRef(target.argument))
+         target.setArgument(scope.superReference);
+
 //      variable = defineTargetSize(scope, node);
 //      if (variable)
 //         node = lxUnboxing;
-//   }
-//   // ignore boxing operation if allowed
-//   else node = lxExpression;
-//
-//   optimizeSyntaxExpression(scope, node, warningLevel, HINT_NOBOXING);
-//
-//   raiseWarning(scope, node, wrnBoxingCheck, WARNING_LEVEL_3, warningLevel, boxing);
-//}
-//
+   }
+   // ignore boxing operation if allowed
+   else node = lxExpression;
+
+   optimizeSyntaxExpression(scope, node, /*warningLevel, */HINT_NOBOXING);
+
+   //test2(node);
+
+   if (boxing/* && test(warningMask, warningLevel)*/)
+      scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, node.firstChild(lxObjectMask));
+}
+
 //bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
 //{
 //   if (sourceClassRef == -1 && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
@@ -8161,19 +8203,19 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //
 //   raiseWarning(scope, node, wrnTypeMismatch, WARNING_LEVEL_2, warningMask, typecasted);
 //}
-//
-//int Compiler :: allocateStructure(ModuleScope& scope, SNode node, int& size)
+
+//int Compiler :: allocateStructure(/*ModuleScope& scope, */SNode node, size_t& size)
 //{
 //   // finding method's reserved attribute
 //   SNode methodNode = node.parentNode();
 //   while (methodNode != lxClassMethod)
 //      methodNode = methodNode.parentNode();
 //
-//   SNode reserveNode = SyntaxTree::findChild(methodNode, lxReserved);
+//   SNode reserveNode = methodNode.findChild(lxReserved);
 //   int reserved = reserveNode.argument;
 //
 //   // allocating space
-//   int offset = allocateStructure(false, size, reserved);
+//   int offset = allocateStructure(/*false, */size, reserved);
 //
 //   // HOT FIX : size should be in bytes
 //   size *= 4;
@@ -8182,7 +8224,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //
 //   return offset;
 //}
-//
+
 //void Compiler :: optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node current, int warningLevel, int mode)
 //{
 //   if (current == lxNested) {
@@ -8242,23 +8284,23 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
 //      case lxInternalCall:
 //         optimizeInternalCall(scope, current, warningMask, mode);
 //         break;
-//      case lxExpression:
+      case lxExpression:
 //      case lxOverridden:
 //      case lxVariable:
-//         // HOT FIX : to pass the optimization mode into sub expression
-//         optimizeSyntaxExpression(scope, current, warningMask, mode);
-//         break;
+         // HOT FIX : to pass the optimization mode into sub expression
+         optimizeSyntaxExpression(scope, current, /*warningMask, */mode);
+         break;
 //      case lxReturning:
 //         optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING | HINT_NOCONDBOXING);
 //         break;
-//      case lxBoxing:
+      case lxBoxing:
 //      case lxCondBoxing:
 //      case lxArgBoxing:
-//         optimizeBoxing(scope, current, warningMask, mode);
-//         break;
-//      case lxOp:
-//         optimizeOp(scope, current, warningMask, mode);
-//         break;
+         optimizeBoxing(scope, current, /*warningMask, */mode);
+         break;
+      case lxIntOp:
+         optimizeOp(scope, current, /*warningMask, */mode);
+         break;
 //      case lxBoolOp:
 //         optimizeBoolOp(scope, current, warningMask, mode);
 //         break;

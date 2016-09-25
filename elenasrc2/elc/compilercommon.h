@@ -67,11 +67,21 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
 
+   // retrieve the operation type
+   virtual int resolveOperationType(int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(int operatorId, ref_t& reference) = 0;
+
    // check if the classes is compatible
    virtual bool isCompatible(ref_t targetRef, ref_t sourceRef) = 0;
+   virtual bool isPrimitiveRef(ref_t reference) = 0;
 
    // auto generate virtual methods
    virtual void injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler) = 0;
+
+   // auto generate class flags
+   virtual void tweakInlineClassFlags(ref_t classRef, ClassInfo& info) = 0;
 };
    
 }  // _ELENA_

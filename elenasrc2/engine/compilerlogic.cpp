@@ -16,6 +16,14 @@ typedef ClassInfo::Attribute Attribute;
 
 // --- CompilerLogic ---
 
+CompilerLogic :: CompilerLogic()
+{
+   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+}
+
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
 {
    bool methodFound = info.methods.exist(message);
@@ -57,6 +65,32 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t classReference
    int callType = methodHint & tpMask;
 
    return callType;
+}
+
+int CompilerLogic :: resolveOperationType(int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if (loperand == 0 || roperand == 0)
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId && isCompatible(info.loperand, loperand) && isCompatible(info.roperand, roperand)) {
+         result = info.result;
+
+         return info.operationType;
+      }
+
+      it++;
+   }
+
+   return 0;
+}
+
+bool CompilerLogic :: resolveBranchOperation(int operatorId, ref_t& reference)
+{
+   return false;
 }
 
 bool CompilerLogic :: isCompatible(ref_t targetRef, ref_t sourceRef)
@@ -126,4 +160,16 @@ size_t CompilerLogic :: defineStructSize(ref_t reference)
    //   }
    //
    return 0;
+}
+
+void CompilerLogic :: tweakInlineClassFlags(ref_t classRef, ClassInfo& info)
+{
+   // stateless inline class
+   if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
+      info.header.flags |= elStateless;
+
+      // stateless inline class is its own class class
+      info.header.classRef = classRef;
+   }
+   else info.header.flags &= ~elStateless;
 }

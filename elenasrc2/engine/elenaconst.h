@@ -287,7 +287,7 @@ namespace _ELENA_
 
   // --- ELENA VMT flags ---
    const int elStandartVMT         = 0x00000001;
-//   const int elNestedClass         = 0x00000002;
+   const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
 //   const int elEmbeddable          = 0x00000010;
@@ -447,7 +447,7 @@ namespace _ELENA_
    #define SELF_VAR                "self"             // the main object self
    #define THIS_VAR                "$self"            // the current class instance
 //   #define OWNER_VAR               "$owner"           // the current method self
-//   #define SUPER_VAR               "$super"           // the predecessor class
+   #define SUPER_VAR               "$super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message
 //   #define NIL_VAR                 "$nil"             // the nil symbol
 //
@@ -456,12 +456,12 @@ namespace _ELENA_
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
 //   #define EXTENSION_SECTION        "#extensions"
-//   #define ACTION_SECTION           "#actions"
+   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
 //   #define PACKAGE_SECTION          "#package"
 
   // --- ELENA class prefixes / postfixes ---
-//   #define INLINE_POSTFIX           "#inline"
+   #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
 //   #define EMBEDDED_PREFIX          "#embedded"
