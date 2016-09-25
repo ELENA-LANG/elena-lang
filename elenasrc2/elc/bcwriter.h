@@ -289,7 +289,7 @@ class ByteCodeWriter
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node);

@@ -3979,14 +3979,14 @@ void Compiler :: compileAction(SNode node, ClassScope& scope/*, SNode argNode*/,
 
 ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
 {
-//   if (test(scope.info.header.flags, elStateless)) {
+   if (test(scope.info.header.flags, elStateless)) {
       node.set(lxConstantSymbol, scope.reference);
       //ownerScope.writer->appendNode(lxTarget, scope.reference);
 
       // if it is a stateless class
       return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
-//   }
-//   else {
+   }
+   else {
 //      // dynamic binary symbol
 //      if (test(scope.info.header.flags, elStructureRole)) {
 //         ownerScope.writer->newNode(lxStruct, scope.info.size);
@@ -4001,31 +4001,26 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineC
 //         ownerScope.writer->appendNode(lxNestedTemplateParent, scope.info.header.parentRef);
 //      }
 //      else {
-//         // dynamic normal symbol
-//         ownerScope.writer->newNode(lxNested, scope.info.fields.Count());
-//         ownerScope.writer->appendNode(lxTarget, scope.reference);
+         // dynamic normal symbol
+         node.set(lxNested, scope.info.fields.Count());
+         node.appendNode(lxTarget, scope.reference);
 //      }
-//
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      //int toFree = 0;
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
-//         ownerScope.writer->newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
-//         ownerScope.writer->newBookmark();
-//
-//         writeTerminal(TerminalInfo(), ownerScope, info);
-//
-//         ownerScope.writer->removeBookmark();
-//         ownerScope.writer->closeNode();
-//
-//         outer_it++;
-//      }
-//
+
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      //int toFree = 0;
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         SNode member = node.appendNode(/*(*outer_it).preserved ? lxOuterMember : */lxMember, (*outer_it).reference);
+         setTerminal(member.appendNode(lxIdle), ownerScope, info, 0);
+
+         outer_it++;
+      }
+
 //      ownerScope.writer->closeNode();
-//
-//      return ObjectInfo(okObject, scope.reference);
-//   }
+
+      return ObjectInfo(okObject, scope.reference);
+   }
 }
 
 ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mode)
@@ -4035,6 +4030,8 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
    // if it is a lazy expression / multi-statement closure without parameters
    if (node == lxCode/* || node == nsInlineClosure*/) {
       compileAction(node, scope, /*SNode(), */mode);
+
+      node = node.parentNode();
    }
 //   // if it is a closure / lambda function with a parameter
 //   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
@@ -4461,7 +4458,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    ObjectInfo retVal;
 
    bool needVirtualEnd = true;
-   SNode statement = node.firstChild();
+   SNode current = node.firstChild();
 
 //   //// make a root bookmark for temporal variable allocating
 //   //scope.rootBookmark = scope.writer->newBookmark();
@@ -4470,15 +4467,15 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //   while (statement == nsSubjectArg || statement == nsMethodParameter)
 //      statement= statement.nextNode();
 
-   while (statement != lxNone) {
+   while (current != lxNone) {
 //      DNode hints = skipHints(statement);
 
       //_writer.declareStatement(*scope.tape);
 
-      switch(statement) {
+      switch(current) {
          case lxExpression:
-            insertDebugStep(statement, dsStep);
-            compileExpression(statement, scope, /*0, */HINT_ROOT);
+            insertDebugStep(current, dsStep);
+            compileExpression(current, scope, /*0, */HINT_ROOT);
             break;
 //         case nsThrow:
 //            compileThrow(statement, scope, 0);
@@ -4500,14 +4497,14 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
          case lxReturning:
          {
             needVirtualEnd = false;
-            insertDebugStep(statement, dsStep);
-            retVal = compileRetExpression(statement, scope, HINT_ROOT);
+            insertDebugStep(current, dsStep);
+            retVal = compileRetExpression(current, scope, HINT_ROOT);
 
             break;
          }
          case lxVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            compileVariable(statement, scope/*, hints*/);
+            compileVariable(current, scope/*, hints*/);
             break;
 //         case nsExtern:
 //            scope.writer->newNode(lxExternFrame);
@@ -4516,13 +4513,13 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //            break;
          case lxEOF:
             needVirtualEnd = false;
-            setDebugStep(statement, dsEOP);
+            setDebugStep(current, dsEOP);
             break;
       }
 
       scope.freeSpace();
 
-      statement = statement.nextNode();
+      current = current.nextNode();
    }
 
    if (needVirtualEnd) {
@@ -4992,7 +4989,7 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 //      // !! this check should be removed, as it is no longer used
 //      compileCode(node.firstChild(), codeScope);
 //   }
-   /*else */compileCode(node, codeScope);
+   /*else */compileCode(body, codeScope);
 
    node.appendNode(lxParamCount, scope.parameters.Count() + 1);
    node.appendNode(lxReserved, scope.reserved);

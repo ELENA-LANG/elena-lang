@@ -53,6 +53,7 @@ enum LexicalType
    lxWide            = 0x1800D,
 
    lxImporting       = 0x08101,
+   lxNested          = 0x08102, // arg - count
    lxConstantSymbol  = 0x08104, // arg - reference
    lxField           = 0x08105, // arg - offset
    lxSymbolReference = 0x18107,
@@ -89,6 +90,7 @@ enum LexicalType
    lxForward         = 0x1002E,
    lxVariable        = 0x10037,
    lxBinaryVariable  = 0x10038,
+   lxMember          = 0x10039,  // a collection member, arg - offset
 
    // attributes
    lxAttribute       = 0x20000,
@@ -124,7 +126,6 @@ enum LexicalType
 //   lxInvalid         = 0x00001,
 //   lxIdle            = 0x00003,
 //
-//   lxNested = 0x00101, // arg - count
 //   lxStruct = 0x00102, // arg - count
 //   lxSymbol = 0x20103, // arg - reference
 //   lxStaticField = 0x20106, // arg - reference
@@ -162,7 +163,6 @@ enum LexicalType
 //   lxExtArgument     = 0x00318,
 //   lxExtInteranlRef  = 0x00319,
 //   lxInternalCall    = 0x2031A,  // calling an internal function, arg - reference
-//   lxMember          = 0x0031B,  // a collection member, arg - offset
 //   lxOuterMember     = 0x0031C,  // a collection member, arg - offset
 //   lxArgUnboxing     = 0x0031E,
 //   lxElse            = 0x20320,  // optional arg - reference
@@ -471,16 +471,16 @@ public:
          return child;
       }
 
-//      Node lastChild() const
-//      {
-//         Node current = firstChild();
-//         if (current != lxNone) {
-//            while (current.nextNode() != lxNone) {
-//               current = current.nextNode();
-//            }
-//         }
-//         return current;
-//      }
+      Node lastChild() const
+      {
+         Node current = firstChild();
+         if (current != lxNone) {
+            while (current.nextNode() != lxNone) {
+               current = current.nextNode();
+            }
+         }
+         return current;
+      }
 
       Node nextNode() const
       {
@@ -497,10 +497,10 @@ public:
          return node;
       }
 
-//      Node prevNode() const
-//      {
-//         return tree->readPreviousNode(position);
-//      }
+      Node prevNode() const
+      {
+         return tree->readPreviousNode(position);
+      }
 
       Node parentNode() const
       {
@@ -771,7 +771,7 @@ public:
    Node readRoot();
    Node readFirstNode(size_t position);
    Node readNextNode(size_t position);
-//   Node readPreviousNode(size_t position);
+   Node readPreviousNode(size_t position);
    Node readParentNode(size_t position);
 
    size_t seekNodeEnd(size_t position);

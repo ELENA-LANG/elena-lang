@@ -59,7 +59,7 @@ public:
    //virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
    //virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
    //virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
-   //virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
+   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
    //virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
@@ -71,14 +71,14 @@ public:
    virtual int allocateTLSVariable(_JITLoader* loader) = 0;
    virtual void allocateThreadTable(_JITLoader* loader, int length) = 0;
 
-   //virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength) = 0;
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
    virtual int findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
    virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
-   //virtual size_t findFlags(void* refVMT) = 0;
+   virtual size_t findFlags(void* refVMT) = 0;
    virtual size_t findLength(void* refVMT) = 0;
 
    virtual void addVMTEntry(_ReferenceHelper& helper, ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
@@ -108,16 +108,16 @@ public:
 //   virtual void compileLiteral(MemoryWriter* writer, const char* value);
 //   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
 //   virtual void compileChar32(MemoryWriter* writer, const char* value);
-//   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
+   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
 //   virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
 
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
-//   // return VMT field position
-//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
-//
-//   virtual size_t findFlags(void* refVMT);
+   // return VMT field position
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+
+   virtual size_t findFlags(void* refVMT);
    virtual size_t findLength(void* refVMT);
    virtual int findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
    virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);

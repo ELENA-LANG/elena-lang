@@ -263,37 +263,37 @@ size_t SyntaxTree :: seekNodeEnd(size_t position)
    return endPosition;
 }
 
-//SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
-//{
-//   MemoryReader reader(&_body);
-//
-//   position -= 16;
-//
-//   int level = 0;
-//   while (position > 7) {
-//      reader.seek(position);
-//
-//      int type = reader.getDWord();
-//      reader.getDWord();
-//
-//      if (type != -1) {
-//         if (level == 0)
-//            break;
-//
-//         level++;
-//         if (level == 0) {
-//            reader.seek(position);
-//
-//            return read(reader);
-//         }
-//      }
-//      else level--;
-//
-//      position -= 8;
-//   }
-//
-//   return Node();
-//}
+SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
+{
+   MemoryReader reader(&_body);
+
+   position -= 24;
+
+   int level = 0;
+   while (position > 11) {
+      reader.seek(position);
+
+      int type = reader.getDWord();
+      reader.getDWord();
+
+      if (type != -1) {
+         if (level == 0)
+            break;
+
+         level++;
+         if (level == 0) {
+            reader.seek(position);
+
+            return read(reader);
+         }
+      }
+      else level--;
+
+      position -= 12;
+   }
+
+   return Node();
+}
 
 SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
 {

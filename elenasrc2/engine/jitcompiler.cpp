@@ -138,22 +138,22 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
 //   // object body
 //   writer->writeDWord(ch);
 //}
-//
-//void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
-//{
-//   size_t length = binary->Length();
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800000 | length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(4, 0);
-//}
-//
+
+void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
+}
+
 //void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 //{
 //   size_t length = binary->Length();
@@ -168,11 +168,11 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
 //   writer->write(binary->get(0), length);
 //   writer->align(4, 0);
 //}
-//
-//size_t JITCompiler32 :: findFlags(void* refVMT)
-//{
-//   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
-//}
+
+size_t JITCompiler32 :: findFlags(void* refVMT)
+{
+   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
+}
 
 size_t JITCompiler32 :: findLength(void* refVMT)
 {
@@ -210,14 +210,14 @@ int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
    return (i < count) ? i : 0;
 }
 
-//int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
-//{
-//   writer.writeBytes(0, objectOffset);
-//
-//   alignCode(&writer, VA_ALIGNMENT, false);
-//
-//   return writer.Position() - 4;
-//}
+int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
+{
+   writer.writeBytes(0, objectOffset);
+
+   alignCode(&writer, VA_ALIGNMENT, false);
+
+   return writer.Position() - 4;
+}
 
 void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
 {

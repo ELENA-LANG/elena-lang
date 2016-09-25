@@ -4334,44 +4334,44 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
    endThenBlock(tape);
 }
 
-//void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = SyntaxTree::findChild(node, lxTarget);
-//
-//   // presave all the members which could create new objects
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember || current.type == lxOuterMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            generateExpression(tape, current);
-//            pushObject(tape, lxResult);
-//         }
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   newObject(tape, node.argument, target.argument);
-//
-//   loadBase(tape, lxResult);
-//
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember || current.type == lxOuterMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            popObject(tape, lxResult);
-//         }
-//         else generateExpression(tape, current);
-//
-//         saveBase(tape, true, lxResult, current.argument);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   assignBaseTo(tape, lxResult);
-//}
-//
+void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = node.findChild(lxTarget);
+
+   // presave all the members which could create new objects
+   SNode current = node.lastChild();
+   while (current != lxNone) {
+      if (current.type == lxMember/* || current.type == lxOuterMember*/) {
+         if (!isSimpleObjectExpression(current)) {
+            generateExpression(tape, current);
+            pushObject(tape, lxResult);
+         }
+      }
+
+      current = current.prevNode();
+   }
+
+   newObject(tape, node.argument, target.argument);
+
+   loadBase(tape, lxResult);
+
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (current.type == lxMember/* || current.type == lxOuterMember*/) {
+         if (!isSimpleObjectExpression(current)) {
+            popObject(tape, lxResult);
+         }
+         else generateExpression(tape, current);
+
+         saveBase(tape, true, lxResult, current.argument);
+      }
+
+      current = current.nextNode();
+   }
+
+   assignBaseTo(tape, lxResult);
+}
+
 //void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = SyntaxTree::findChild(node, lxTarget);
@@ -4480,9 +4480,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxStruct:
 //         generateStructExpression(tape, node);
 //         break;
-//      case lxNested:
-//         generateNestedExpression(tape, node);
-//         break;
+      case lxNested:
+         generateNestedExpression(tape, node);
+         break;
 //      case lxBoolOp:
 //         generateBoolOperation(tape, node);
 //         break;
