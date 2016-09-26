@@ -69,13 +69,13 @@ public:
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
 
    // retrieve the operation type
-   virtual int resolveOperationType(int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 
    // retrieve the branching operation type
    virtual bool resolveBranchOperation(int operatorId, ref_t& reference) = 0;
 
    // check if the classes is compatible
-   virtual bool isCompatible(ref_t targetRef, ref_t sourceRef) = 0;
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
@@ -89,6 +89,12 @@ public:
 
    // auto generate class flags
    virtual void tweakInlineClassFlags(ref_t classRef, ClassInfo& info) = 0;
+
+   // attribute validations
+   virtual bool validateClassAttribute(int& attrValue) = 0;
+   virtual bool validateMethodAttribute(int& attrValue) = 0;
+   virtual bool validateFieldAttribute(int& attrValue) = 0;
+   virtual bool validateLocalAttribute(int& attrValue) = 0;
 };
    
 }  // _ELENA_

@@ -67,7 +67,7 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t classReference
    return callType;
 }
 
-int CompilerLogic :: resolveOperationType(int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 {
    if (loperand == 0 || roperand == 0)
       return 0;
@@ -76,7 +76,7 @@ int CompilerLogic :: resolveOperationType(int operatorId, ref_t loperand, ref_t 
    while (!it.Eof()) {
       OperatorInfo info = *it;
 
-      if (info.operatorId == operatorId && isCompatible(info.loperand, loperand) && isCompatible(info.roperand, roperand)) {
+      if (info.operatorId == operatorId && isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
          result = info.result;
 
          return info.operationType;
@@ -93,9 +93,19 @@ bool CompilerLogic :: resolveBranchOperation(int operatorId, ref_t& reference)
    return false;
 }
 
-bool CompilerLogic :: isCompatible(ref_t targetRef, ref_t sourceRef)
+bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   return targetRef == sourceRef;
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         defineClassInfo(scope, info, sourceRef);
+
+         sourceRef = info.header.parentRef;
+      }
+      else return true;
+   }
+
+   return false;
 }
 
 bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
@@ -196,4 +206,28 @@ void CompilerLogic :: tweakInlineClassFlags(ref_t classRef, ClassInfo& info)
       info.header.classRef = classRef;
    }
    else info.header.flags &= ~elStateless;
+
+   // nested class is sealed if it has no parent
+   if (!test(info.header.flags, elClosed))
+      info.header.flags |= elSealed;
+}
+
+bool CompilerLogic :: validateClassAttribute(int& attrValue)
+{
+   return attrValue > 0;
+}
+
+bool CompilerLogic :: validateMethodAttribute(int& attrValue)
+{
+   return false;
+}
+
+bool CompilerLogic :: validateFieldAttribute(int& attrValue)
+{
+   return false;
+}
+
+bool CompilerLogic :: validateLocalAttribute(int& attrValue)
+{
+   return false;
 }

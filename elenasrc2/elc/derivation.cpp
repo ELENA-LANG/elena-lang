@@ -27,6 +27,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsTemplate:
       case nsField:
       case nsSubject:
+      case nsNestedClass:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {
             copyHints(_hints);

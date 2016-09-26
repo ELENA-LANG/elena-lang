@@ -55,10 +55,10 @@ public:
    virtual size_t defineStructSize(ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
-   virtual int resolveOperationType(int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
    virtual bool resolveBranchOperation(int operatorId, ref_t& reference);
 
-   virtual bool isCompatible(ref_t targetRef, ref_t sourceRef);
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
    virtual bool isPrimitiveRef(ref_t reference)
    {
       return (int)reference < 0;
@@ -70,6 +70,11 @@ public:
    virtual void injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler);
 
    virtual void tweakInlineClassFlags(ref_t classRef, ClassInfo& info);
+
+   virtual bool validateClassAttribute(int& attrValue);
+   virtual bool validateMethodAttribute(int& attrValue);
+   virtual bool validateFieldAttribute(int& attrValue);
+   virtual bool validateLocalAttribute(int& attrValue);
 
    CompilerLogic();
 };

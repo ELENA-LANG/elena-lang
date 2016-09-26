@@ -13,6 +13,7 @@ In development:
                  * get rid of ftemplate / mtemplate, ....
                  * optimiize n:=n+1
                  * implement +=, ...
+                 * sealed methods
                  * support private sealed methods
 
                  * support abstract attribute

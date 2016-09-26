@@ -34,6 +34,7 @@ enum LexicalType
    lxSymbol          = 0x00011,
    lxClassField      = 0x00013,
    lxClassMethod     = 0x00016,
+   lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
@@ -470,6 +471,42 @@ public:
 
          return child;
       }
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+            else if (child == type3)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
+      }
 
       Node lastChild() const
       {
@@ -484,7 +521,10 @@ public:
 
       Node nextNode() const
       {
-         return tree->readNextNode(position);
+         if (tree != NULL) {
+            return tree->readNextNode(position);
+         }
+         else return Node();
       }
 
       Node nextNode(LexicalType mask) const
@@ -591,6 +631,25 @@ public:
             else if (current == type3)
                return current;
             else if (current == type4)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
                return current;
 
             current = current.nextNode();

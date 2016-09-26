@@ -954,7 +954,7 @@ private:
 //   void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
 //                                 TemplateInfo& info, RoleMap* attributes);
 //   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes = NULL);
-//   void copyTemplateInfo(TemplateInfo& info, SyntaxTree::Writer& writer);
+   void copyTemplate(SNode node, ModuleScope& scope, ref_t attrRef);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
@@ -963,7 +963,7 @@ private:
 //
 //   void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
 //   bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope);
-   void compileClassAttributes(SNode node, ClassScope& scope);
+   void compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode);
 //   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
 //
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
@@ -991,7 +991,7 @@ private:
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(SNode node, CodeScope& scope/*, DNode hints*/);
 
-   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SNode node, SNode body, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
@@ -1050,10 +1050,10 @@ private:
 //   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
    bool declareActionScope(SNode& node, ClassScope& scope/*, DNode argNode, SyntaxWriter& writer*/, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
-//   void declareSingletonClass(DNode member, DNode parentNode, ClassScope& scope, DNode hints);
-//   void compileSingletonClass(DNode member, ClassScope& scope, DNode hints);
-//
-//   void declareSingletonAction(ClassScope& scope, DNode objNode, DNode expression, DNode hints);
+   void declareSingletonClass(SNode member, SNode parentNode, ClassScope& scope);
+   void compileSingletonClass(SNode member, ClassScope& scope);
+
+   void declareSingletonAction(ClassScope& scope, SNode objNode/*, DNode expression, DNode hints*/);
 
    void compileActionMethod(SNode member, /*SyntaxWriter& writer, */MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
@@ -1070,7 +1070,7 @@ private:
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
    void compileAction(SNode node, ClassScope& scope, /*SNode argNode, */int mode, bool alreadyDeclared = false);
-//   void compileNestedVMT(DNode node, DNode parent, InlineClassScope& scope);
+   void compileNestedVMT(SNode node, SNode parent, InlineClassScope& scope);
 
    void compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope);
 
