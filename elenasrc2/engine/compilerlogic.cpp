@@ -88,9 +88,50 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
-bool CompilerLogic :: resolveBranchOperation(int operatorId, ref_t& reference)
+bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference)
 {
-   return false;
+   if (loperand != scope.branchingInfo.reference) {
+      ClassInfo info;
+      scope.loadClassInfo(info, loperand, true);
+
+      if ((info.header.flags & elDebugMask) == elEnumList) {
+         ref_t listRef = loperand;
+         _Module* extModule = scope.loadReferenceModule(listRef);
+         _Memory* listSection = extModule ? extModule->mapSection(listRef | mskConstArray, true) : NULL;         
+         if (listSection) {
+            MemoryReader reader(listSection);
+            
+            ref_t trueRef = 0, falseRef = 0;
+            while (!reader.Eof()) {
+               ref_t memberRef = reader.getDWord();
+
+               ClassInfo memberInfo;
+               scope.loadClassInfo(memberInfo, memberRef & ~mskAnyRef, true);
+
+               int attribute = memberInfo.methodHints.get(Attribute(encodeMessage(0, operatorId, 1), maHint));
+               if (attribute == (tpIfBranch | tpSealed)) {
+                  trueRef = memberRef;
+               }
+               else if (attribute == (tpIfNotBranch | tpSealed)) {
+                  falseRef = memberRef;
+               }
+            }
+
+            if (trueRef && falseRef) {
+               scope.branchingInfo.reference = loperand;
+               scope.branchingInfo.trueRef = trueRef;
+               scope.branchingInfo.falseRef = falseRef;
+            }
+         }         
+      }
+   }
+
+   if (loperand == scope.branchingInfo.reference) {
+      reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+      return true;
+   }
+   else return false;
 }
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
@@ -126,7 +167,12 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
    return test(info.header.flags, elStructureRole | elEmbeddable);
 }
 
-void CompilerLogic :: injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler)
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
+void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
 {
    SNode templateNode = node.appendNode(lxTemplate);
 
@@ -139,6 +185,11 @@ void CompilerLogic :: injectVirtualMethods(SNode node, _CompilerScope& scope, _C
          compiler.injectVirtualReturningMethod(methodNode, THIS_VAR);
       }
       c_it++;
+   }
+
+   // generate enumeration list
+   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
+      compiler.generateEnumListMember(scope, info.header.parentRef, node.argument);
    }
 }
 
@@ -196,20 +247,21 @@ size_t CompilerLogic :: defineStructSize(ClassInfo& info)
    return 0;
 }
 
-void CompilerLogic :: tweakInlineClassFlags(ref_t classRef, ClassInfo& info)
+void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info)
 {
-   // stateless inline class
-   if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
-      info.header.flags |= elStateless;
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
+      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
+         info.header.flags |= elStateless;
 
-      // stateless inline class is its own class class
-      info.header.classRef = classRef;
-   }
-   else info.header.flags &= ~elStateless;
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
+      }
+      else info.header.flags &= ~elStateless;
 
-   // nested class is sealed if it has no parent
-   if (!test(info.header.flags, elClosed))
+      // nested class is sealed
       info.header.flags |= elSealed;
+   }
 }
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
@@ -219,12 +271,27 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 
 bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 {
-   return false;
+   if (attrValue == (int)V_IFBRANCH) {
+      attrValue = tpIfBranch;
+
+      return true;
+   }
+   else if (attrValue == (int)V_IFNOTBRANCH) {
+      attrValue = tpIfNotBranch;
+
+      return true;
+   }
+   else return false;
 }
 
 bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 {
-   return false;
+   if (attrValue == (int)V_STATIC) {
+      attrValue = lxStaticAttr;
+
+      return true;
+   }
+   else return false;
 }
 
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)

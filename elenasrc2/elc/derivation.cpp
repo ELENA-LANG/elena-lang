@@ -257,17 +257,20 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 
          if (_level == 1) {
             SNode root = _buffer.readRoot();
-            if (_hints != lxNone) {
+
+            // hints should be injected into the buffer
+            if ((LexicalType)root.type == nsHint) {
+               if (_hints == lxNone)
+                  _hints = root;
+
                // skipping hints
                while ((LexicalType)root.type == nsHint)
                   root = root.nextNode();
             }
-            // hints should be injected into the buffer
-            if ((LexicalType)root.type != nsHint) {
+            if (root.type != lxNone) {
                unpackNode(root);
                _buffer.clear();
             }
-            else _hints = root;
          }
             
       }

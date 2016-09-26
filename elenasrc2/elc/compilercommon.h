@@ -13,7 +13,11 @@
 #include "syntaxtree.h"
 
 // virtual objects
-#define V_INT32 (size_t)-11
+#define V_STATIC      (size_t)-02
+#define V_INT32       (size_t)-11
+
+#define V_IFBRANCH    (size_t)-4097
+#define V_IFNOTBRANCH (size_t)-4098
 
 namespace _ELENA_
 {
@@ -22,18 +26,20 @@ typedef Map<ref_t, ref_t> ClassMap;
 
 enum MethodHint
 {
-   tpMask       = 0x0F,
+   tpMask        = 0x0F,
 
-   tpUnknown    = 0x00,
-      tpSealed     = 0x01,
-      tpClosed     = 0x02,
-      tpNormal     = 0x03,
+   tpUnknown     = 0x00,
+   tpSealed      = 0x01,
+   tpClosed      = 0x02,
+   tpNormal      = 0x03,
 //      tpDispatcher = 0x04,
 //      tpPrivate    = 0x05,
 //      tpStackSafe  = 0x10,
 //      tpEmbeddable = 0x20,
 //      tpGeneric    = 0x40,
-//      tpAction     = 0x80,
+   tpAction      = 0x80,
+   tpIfBranch    = 0x100,
+   tpIfNotBranch = 0x200,
 };
 
 
@@ -41,10 +47,34 @@ enum MethodHint
 
 struct _CompilerScope
 {
+   struct BranchingInfo
+   {
+      ref_t reference;
+      ref_t trueRef;
+      ref_t falseRef;
+
+      BranchingInfo()
+      {
+         reference = 0;
+         trueRef = falseRef = 0;
+      }
+   };
+
+   _Module* module;
+
    // list of typified classes which may need get&type message
    ClassMap typifiedClasses;
 
+   // cached bool values
+   BranchingInfo branchingInfo;
+
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
+
+   _CompilerScope()
+   {
+      module = NULL;
+   }
 };
 
 // --- _Compiler ---
@@ -53,6 +83,8 @@ class _Compiler
 {
 public:
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable) = 0;
+
+   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 };
 
 // --- _CompilerLogic ---
@@ -72,7 +104,7 @@ public:
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 
    // retrieve the branching operation type
-   virtual bool resolveBranchOperation(int operatorId, ref_t& reference) = 0;
+   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
@@ -82,19 +114,24 @@ public:
    virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
 
+   // class is considered to be a role if it cannot be initiated
+   virtual bool isRole(ClassInfo& info) = 0;          
+
    virtual bool isPrimitiveRef(ref_t reference) = 0;
 
-   // auto generate virtual methods
-   virtual void injectVirtualMethods(SNode node, _CompilerScope& scope, _Compiler& compiler) = 0;
+   // auto generate virtual methods / fields
+   virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
 
    // auto generate class flags
-   virtual void tweakInlineClassFlags(ref_t classRef, ClassInfo& info) = 0;
+   virtual void tweakClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
+
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 };
    
 }  // _ELENA_

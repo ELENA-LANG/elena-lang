@@ -57,6 +57,7 @@ enum LexicalType
    lxNested          = 0x08102, // arg - count
    lxConstantSymbol  = 0x08104, // arg - reference
    lxField           = 0x08105, // arg - offset
+   lxStaticField     = 0x08106, // arg - reference
    lxSymbolReference = 0x18107,
    lxLocalAddress    = 0x08108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
@@ -120,6 +121,8 @@ enum LexicalType
    lxClassName       = 0x20013, // arg - identifier
    lxIntValue        = 0x20014, // arg - integer value
    lxTempLocal       = 0x20015,
+   lxStaticAttr      = 0x20102,
+   lxClassMethodAttr = 0x20103,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -134,7 +137,6 @@ enum LexicalType
 //
 //   lxStruct = 0x00102, // arg - count
 //   lxSymbol = 0x20103, // arg - reference
-//   lxStaticField = 0x20106, // arg - reference
 //   lxBlockLocalAddr = 0x04109, // arg - offset
 //   lxBlockLocal = 0x0410B, // arg - offset
 //   lxConstantString = 0x8410C, // arg - reference
@@ -204,7 +206,6 @@ enum LexicalType
 //   lxSize            = 0x0044C,
 //   lxSubject         = 0x4044F,
 //
-//   lxStaticAttr      = 0x00820,
 //   lxConstAttr       = 0x00821,
 //   lxPreloadedAttr   = 0x00822,
 //   lxClassMethodAttr = 0x00807,

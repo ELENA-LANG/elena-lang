@@ -479,7 +479,7 @@ struct ClassInfo
    typedef Pair<ref_t, int>                     Attribute;
    typedef MemoryMap<ref_t, bool, false>        MethodMap;
    typedef MemoryMap<ident_t, int, true>        FieldMap;
-//   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
+   typedef MemoryMap<ident_t, FieldInfo, true>  StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>            FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
 
@@ -487,7 +487,7 @@ struct ClassInfo
    size_t         size;           // Object size
    MethodMap      methods;
    FieldMap       fields;
-//   StaticFieldMap statics;
+   StaticFieldMap statics;
 
    FieldTypeMap   fieldTypes;
    MethodInfoMap  methodHints;
@@ -501,7 +501,7 @@ struct ClassInfo
          fields.write(writer);
          fieldTypes.write(writer);
          methodHints.write(writer);
-//         statics.write(writer);
+         statics.write(writer);
       }
    }
 
@@ -514,12 +514,12 @@ struct ClassInfo
          fields.read(reader);
          fieldTypes.read(reader);
          methodHints.read(reader);
-//         statics.read(reader);
+         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)) //, statics(StaticInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;

@@ -3,6 +3,12 @@ In development:
 ------                              
 
               xrev
+                 * enumlist(#265)  : enum list class cannot create an instance of base class, but it should be possible to declare
+                   constructors which will return one of its values, enum list cannot be directly inherited, only using symbols
+ 
+                 * branching operator : check if the class is enum list, find its member with sealed true-if method
+                 * constructor returning constant values,...
+
                  * make sure not embeddable object is not stack allocated
                  * check primitive comparision operation
                  * optimize unbox : root expression / assigning

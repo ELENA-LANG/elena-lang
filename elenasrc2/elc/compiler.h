@@ -117,7 +117,7 @@ public:
 //      okVerbConstant,                 // param - reference 
 //      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
-//      okStaticField,                  // param - reference
+      okStaticField,                  // param - reference
 //      okFieldAddress,                 // param - field offset
       okOuter,                        // param - field offset
       okOuterField,                   // param - field offset, extraparam - outer field offset
@@ -286,7 +286,6 @@ private:
    struct ModuleScope : _CompilerScope
    {
       _ProjectManager* project;
-      _Module*       module;
       _Module*       debugModule;
 
       ident_t        sourcePath;
@@ -373,6 +372,8 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
+      virtual _Module* loadReferenceModule(ref_t& reference);
+
       ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
       virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
       {
@@ -429,7 +430,6 @@ private:
 //         return getClassFlags(subjectHints.get(subject));
 //      }
 //
-//      bool checkIfCompatible(ref_t typeRef, ref_t classRef);
 //      ref_t defineType(ref_t classRef);
 
       void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
@@ -968,8 +968,8 @@ private:
 //
 //   void compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope);
    void compileLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void compileFieldAttributes(SNode hints, ClassScope& scope);
-   void compileMethodAttributes(SNode hints, MethodScope& scope);
+   void compileFieldAttributes(SNode hints, ClassScope& scope, SNode rootNode);
+   void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SNode member, ClassScope& scope);
 
 //   bool importTemplateDeclarations(ClassScope& scope, SyntaxWriter& writer);
@@ -1079,14 +1079,13 @@ private:
 //   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
 
    void generateClassField(ClassScope& scope, SyntaxTree::Node node/*, bool singleField*/);
-//   void generateClassStaticField(ClassScope& scope, SNode current);   
+   void generateClassStaticField(ClassScope& scope, SNode current);   
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates, bool closed);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool closed);
-   void generateInlineClassDeclaration(SNode node, ClassScope& scope, bool closed);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
@@ -1163,6 +1162,7 @@ public:
 
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
+   virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
 
    Compiler(StreamReader* syntax, _CompilerLogic* logic);
 };

@@ -8,7 +8,7 @@
 //#ftemplate(-8,4) signature {}
 //#ftemplate(-9,4) message {}
 //#ftemplate(-10,8) extension_message {}
-//#ftemplate(-32)  static {}
+#template(-2)  static {}
 //#ftemplate(-33)  const {}
 //#ftemplate(-34)  preloaded {}
 //
@@ -30,6 +30,7 @@
 //#template(0800h) const   {}
 //#template(0008h) struct  {}
 //#template(1000h) nonstructural {}
+#template(100020h,0080h) enumlist {}
 //
 //#template(0120h,4980h)         extension {}
 //#template(0120h,4980h,subject) extension : subject {}

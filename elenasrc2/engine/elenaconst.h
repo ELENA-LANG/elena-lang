@@ -301,7 +301,7 @@ namespace _ELENA_
 //   const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
-//   const int elRole                = 0x00004080;
+   const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
 //   const int elExtMessage          = 0x00208000;
@@ -309,7 +309,7 @@ namespace _ELENA_
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
 //   const int elPointer             = 0x00800010;
 
-   const int elDebugMask           = 0x000F0000;
+   const int elDebugMask           = 0x001F0000;
    const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
 //   const int elDebugLiteral        = 0x00030000;
@@ -325,6 +325,7 @@ namespace _ELENA_
 //   const int elDebugReals          = 0x000D0000;
 //   const int elDebugMessage        = 0x000E0000;
 //   const int elDebugDPTR           = 0x000F0000;
+   const int elEnumList            = 0x00100000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -466,7 +467,7 @@ namespace _ELENA_
 //   #define GENERIC_PREFIX           "#generic"
 //   #define EMBEDDED_PREFIX          "#embedded"
 //   #define TARGET_POSTFIX           "##"
-//   #define STATICFIELD_POSTFIX      "#static"
+   #define STATICFIELD_POSTFIX      "#static"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"
