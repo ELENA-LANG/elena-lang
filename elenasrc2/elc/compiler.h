@@ -691,9 +691,6 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-//      SyntaxWriter* writer;
-////      int           rootBookmark;   // !! should be removed??
-
       // scope local variables
       LocalMap     locals;
       int          level;
@@ -763,7 +760,7 @@ private:
 
       CodeScope(SymbolScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
    };
 
    // - InlineClassScope -
@@ -1023,8 +1020,8 @@ private:
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
-//   ObjectInfo compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
+   ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
 //   void compileLoop(DNode node, CodeScope& scope);
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);

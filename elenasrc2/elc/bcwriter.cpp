@@ -4317,7 +4317,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
          jumpIfNotEqual(tape, current.argument);
 
          //declareBlock(tape);
-         generateCodeBlock(tape, current);
+         generateCodeBlock(tape, current.firstChild());
       }
 //      else if (current == lxElse) {
 //         declareElseBlock(tape);
@@ -4550,9 +4550,9 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
       else if (current == lxBreakpoint) {
          generateObjectExpression(tape, current);
       }
-//      else if (current == lxReleasing) {
-//         releaseObject(tape, current.argument);
-//      }
+      else if (current == lxReleasing) {
+         releaseObject(tape, current.argument);
+      }
 
       current = current.nextNode();
    }      
@@ -4661,9 +4661,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                level, current.findChild(lxClassName).identifier());
             break;
          }
-//         case lxReleasing:
-//            releaseObject(tape, current.argument);
-//            break;
+         case lxReleasing:
+            releaseObject(tape, current.argument);
+            break;
 //         case lxBinarySelf:
 //            declareSelfStructInfo(tape, THIS_VAR, current.argument, SyntaxTree::findChild(current, lxClassName).identifier());
 //            break;

@@ -103,12 +103,11 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, int operator
             
             ref_t trueRef = 0, falseRef = 0;
             while (!reader.Eof()) {
-               ref_t memberRef = reader.getDWord();
+               ref_t memberRef = reader.getDWord() & ~mskAnyRef;
 
                ClassInfo memberInfo;
-               scope.loadClassInfo(memberInfo, memberRef & ~mskAnyRef, true);
-
-               int attribute = memberInfo.methodHints.get(Attribute(encodeMessage(0, operatorId, 1), maHint));
+               scope.loadClassInfo(memberInfo, memberRef);
+               int attribute = checkMethod(memberInfo, encodeMessage(0, operatorId, 1));
                if (attribute == (tpIfBranch | tpSealed)) {
                   trueRef = memberRef;
                }

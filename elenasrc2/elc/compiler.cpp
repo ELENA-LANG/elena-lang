@@ -16,7 +16,7 @@
 using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
-
+//
 //void test2(SNode node)
 //{
 //   SNode current = node.firstChild();
@@ -24,7 +24,6 @@ using namespace _ELENA_;
 //      test2(current);
 //      current = current.nextNode();
 //   }
-//
 //}
 
 // --- ModuleInfo ---
@@ -704,13 +703,13 @@ ObjectInfo Compiler::ModuleScope :: defineObjectInfo(ref_t reference, bool check
       // check if the object can be treated like a constant object
       ref_t r = loadClassInfo(info, module->resolveReference(reference), true);
       if (r) {
-   //      // if it is a stateless symbol
-   //      if (test(info.header.flags, elStateless)) {
-   //         return ObjectInfo(okConstantSymbol, reference, reference);
-   //      }
+         // if it is a stateless symbol
+         if (test(info.header.flags, elStateless)) {
+            return ObjectInfo(okConstantSymbol, reference, reference);
+         }
          // if it is a normal class
          // then the symbol is reference to the class class
-         /*else */if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
+         else if (test(info.header.flags, elStandartVMT) && info.header.classRef != 0) {
             return ObjectInfo(okConstantClass, reference, info.header.classRef);
          }
       }
@@ -1382,30 +1381,24 @@ ObjectInfo Compiler::ActionScope :: mapTerminal(ident_t identifier)
 Compiler::CodeScope :: CodeScope(SymbolScope* parent)
    : Scope(parent), locals(Parameter(0))
 {
-//   this->writer = writer;
    this->level = 0;
    this->saved = this->reserved = 0;
-//   //this->rootBookmark = -1;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
    : Scope(parent), locals(Parameter(0))
 {
-//   this->writer = writer;
    this->level = 0;
    this->saved = this->reserved = 0;
-//   //this->rootBookmark = -1;
 }
 
-//Compiler::CodeScope :: CodeScope(CodeScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
-//   this->writer = parent->writer;
-//   this->level = parent->level;
-//   this->saved = parent->saved;
-//   this->reserved = parent->reserved;
-//   //this->rootBookmark = -1;
-//}
+Compiler::CodeScope :: CodeScope(CodeScope* parent)
+   : Scope(parent), locals(Parameter(0))
+{
+   this->level = parent->level;
+   this->saved = parent->saved;
+   this->reserved = parent->reserved;
+}
 
 ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
@@ -3287,15 +3280,14 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /
    SNode loperandNode = node.firstChild(lxObjectMask);
    ObjectInfo loperand = compileObject(loperandNode, scope, 0);
 
-   ref_t trueReference = 0;
-   if (_logic->resolveBranchOperation(*scope.moduleScope, operator_id, resolveObjectReference(scope, loperand), trueReference)) {
+   ref_t ifReference = 0;
+   if (_logic->resolveBranchOperation(*scope.moduleScope, operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       node = lxBranching;
+      
+      SNode thenBody = loperandNode.nextNode(lxObjectMask);
+      thenBody.set(lxIf, ifReference);
 
-      //      scope.writer->newNode(lxIf, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->trueReference : scope.moduleScope->falseReference);
-      //
-      //      compileBranching(node, scope);
-      //
-      //      scope.writer->closeNode();
+      compileBranching(thenBody, scope);
    }
    else {
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
@@ -4366,26 +4358,26 @@ ObjectInfo Compiler :: compileAssigningExpression(SNode node, SNode assigning, C
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileBranching(DNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
-//{
-//   CodeScope subScope(&scope);
-//
-//   DNode thenCode = thenNode.firstChild();
-//
-//   DNode expr = thenCode.firstChild();
-//   if (expr == nsCodeEnd || expr.nextNode() != nsNone) {
-//      compileCode(thenCode, subScope);
-//
-//      if (subScope.level > scope.level) {
-//         scope.writer->appendNode(lxReleasing, subScope.level - scope.level);
-//      }
-//   }
-//   // if it is inline action
-//   else compileRetExpression(expr, scope, 0);
-//
-//   return ObjectInfo(okObject);
-//}
-//
+ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
+{
+   CodeScope subScope(&scope);
+
+   SNode thenCode = thenNode.firstChild();
+
+   SNode expr = thenCode.firstChild();
+   if (expr == lxEOF || expr.nextNode() != lxNone) {
+      compileCode(thenCode, subScope);
+
+      if (subScope.level > scope.level) {
+         thenCode.appendNode(lxReleasing, subScope.level - scope.level);
+      }
+   }
+   // if it is inline action
+   else compileRetExpression(expr, scope, 0);
+
+   return ObjectInfo(okObject);
+}
+
 //void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
 //{
 //   scope.writer->newNode(lxThrowing);

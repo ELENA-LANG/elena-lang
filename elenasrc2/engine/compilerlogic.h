@@ -45,6 +45,11 @@ class CompilerLogic : public _CompilerLogic
    typedef List<OperatorInfo> OperatorList;
 
    int checkMethod(ClassInfo& info, ref_t message, ref_t& outputType);
+   int checkMethod(ClassInfo& info, ref_t message)
+   {
+      ref_t dummy;
+      return checkMethod(info, message, dummy);
+   }
    int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
 
    OperatorList operators;
