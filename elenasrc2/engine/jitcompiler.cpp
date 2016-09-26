@@ -29,20 +29,20 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
    compileProcedure(helper, reader, codeWriter);
 }
 
-//// --- JITCompiler32 ---
-//
-//void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800004);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeDWord(integer);
-//}
-//
+// --- JITCompiler32 ---
+
+void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800004);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(integer);
+}
+
 //void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
 //{
 //   writer->seek(writer->Position() - 8);

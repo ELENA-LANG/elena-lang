@@ -3281,7 +3281,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /
    ObjectInfo loperand = compileObject(loperandNode, scope, 0);
 
    ref_t ifReference = 0;
-   if (_logic->resolveBranchOperation(*scope.moduleScope, operator_id, resolveObjectReference(scope, loperand), ifReference)) {
+   if (_logic->resolveBranchOperation(*scope.moduleScope, *this, operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       node = lxBranching;
       
       SNode thenBody = loperandNode.nextNode(lxObjectMask);
@@ -5269,9 +5269,11 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       expr = lxReturning;
    }
    // if no redirect statement - call virtual constructor implicitly
-   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(NEWOBJECT_MESSAGE_ID)) {
+   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
       node.insertNode(lxCalling, -1);
 
+      // HOTFIX : body node should be found once again
+      bodyNode = node.findChild(lxCode);
       bodyNode.appendNode(lxLocal, 1);
    }
    // if it is a dynamic object implicit constructor call is not possible
@@ -8498,24 +8500,21 @@ void Compiler :: optimizeClassTree(SNode node, ClassScope& scope)
 //   }
 //}
 
-void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope/*, DNode hints*/)
+void Compiler :: compileIncludeModule(SNode ns, ModuleScope& scope)
 {
-   //if (hints != nsNone)
-   //   scope.raiseWarning(1, wrnUnknownHint, hints.Terminal());
-
    ident_t name = ns.findChild(lxIdentifier).findChild(lxTerminal).identifier();
 
    // check if the module exists
    _Module* module = scope.project->loadModule(name, true);
-   if (!module)
-      scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
+   if (module) {
+      ident_t value = retrieve(scope.defaultNs.start(), name, NULL);
+      if (value == NULL) {
+         scope.defaultNs.add(module->Name());
 
-   ident_t value = retrieve(scope.defaultNs.start(), name, NULL);
-   if (value == NULL) {
-      scope.defaultNs.add(module->Name());
-
-      scope.loadModuleInfo(module);
+         scope.loadModuleInfo(module);
+      }
    }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
 }
 
 void Compiler :: declareSubject(SNode member, ModuleScope& scope)
@@ -8538,7 +8537,7 @@ void Compiler :: declareSubject(SNode member, ModuleScope& scope)
 //
    SNode classNode = member.findChild(lxForward);
    if (classNode != lxNone) {
-      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier);
+      SNode terminal = classNode.findChild(lxPrivate, lxIdentifier, lxReference);
 
 //      DNode option = body.firstChild();
 //      if (option != nsNone) {
@@ -8560,7 +8559,7 @@ void Compiler :: declareSubject(SNode member, ModuleScope& scope)
 //      else {
          classRef = scope.mapTerminal(terminal);
          if (classRef == 0)
-            scope.raiseError(errUnknownSubject, terminal);
+            scope.raiseError(errUnknownClass, terminal);
 //      }
    }
 
@@ -8949,4 +8948,11 @@ void Compiler :: generateEnumListMember(_CompilerScope& scope, ref_t enumRef, re
    MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskConstArray, false));
 
    metaWriter.writeDWord(memberRef | mskConstantRef);
+}
+
+ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)
+{
+   ref_t memberRef = reader.getDWord() & ~mskAnyRef;
+
+   return importReference(extModule, memberRef, scope.module);
 }

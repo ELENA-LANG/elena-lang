@@ -1,7 +1,6 @@
 //        ELENA Language 2.0
 //      inline system library
 
-
 procedure __object.dispatch[1]
 
   bsredirect  
@@ -11,8 +10,8 @@ procedure __object.dispatch[1]
   esavesi 2
   bcopys  -2
   pushb
-  pushr class : system'Object // system'MethodNotFoundException
-//  pushr const : %new&mssg$[1]
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
   throw
 
 end

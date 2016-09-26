@@ -504,7 +504,7 @@ namespace _ELENA_
 //   #define CHAR_FORWARD             "'$char"
 //   #define TRUE_FORWARD             "'$true"
 //   #define FALSE_FORWARD            "'$false"
-//   #define MESSAGE_FORWARD          "'$message"
+   #define MESSAGE_FORWARD          "'$message"
 //   #define EXT_MESSAGE_FORWARD      "'$ext_message"
 //   #define SIGNATURE_FORWARD        "'$signature"
 //   #define VERB_FORWARD             "'$verb"

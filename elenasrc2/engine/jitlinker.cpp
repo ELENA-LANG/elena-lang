@@ -668,66 +668,66 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //
 //   return (void*)vaddress;
 //}
-//
-////void* JITLinker :: resolveDump(const wchar16_t*  reference, int size, int mask)
-////{
-////   // get target image & resolve virtual address
-////   MemoryWriter writer(_loader->getTargetSection(mask));
-////
-////   size_t vaddress = _virtualMode ? (writer.Position() | mask) : (size_t)writer.Address();
-////
-////   _compiler->allocateArray(writer, size);
-////
-////   _loader->mapReference(reference, (void*)vaddress, mask);
-////
-////   return (void*)vaddress;
-////}
-//
-//ref_t JITLinker :: parseMessage(ident_t reference)
+
+//void* JITLinker :: resolveDump(const wchar16_t*  reference, int size, int mask)
 //{
-//   // message constant: nverb&signature
+//   // get target image & resolve virtual address
+//   MemoryWriter writer(_loader->getTargetSection(mask));
 //
-//   int verbId = 0;
-//   int signatureId = 0;
+//   size_t vaddress = _virtualMode ? (writer.Position() | mask) : (size_t)writer.Address();
 //
-//   // read the param counter
-//   int count = reference[0] - '0';
-//   
-//   // skip the param counter
-//   reference++;
+//   _compiler->allocateArray(writer, size);
 //
-//   int index = StringHelper::find(reference, '&');
-//   //HOTFIX: for generic GET message we have to ignore ampresand
-//   if (reference[index + 1] == 0)
-//      index = -1;
+//   _loader->mapReference(reference, (void*)vaddress, mask);
 //
-//   if (index != -1) {
-//      //HOTFIX: for GET message we have &&, so the second ampersand should be used
-//      if (reference[index + 1] == 0 || reference[index + 1]=='&')
-//         index++;
-//      
-//      IdentifierString verb(reference, index);
-//      ident_t signature = reference + index + 1;
-//
-//      // if it is a predefined verb
-//      if (verb[0] == '#') {
-//         verbId = verb[1] - 0x20;
-//      }
-//
-//      // resolve signature
-//      signatureId = (int)_loader->resolveReference(signature, 0);
-//   }
-//   else {
-//      // if it is a predefined verb
-//      if (reference[0] == '#') {
-//         verbId = reference[1] - 0x20;
-//      }
-//      else signatureId = (int)_loader->resolveReference(reference, 0);
-//   }
-//
-//   return MESSAGE_MASK | encodeMessage(signatureId, verbId, count);
+//   return (void*)vaddress;
 //}
-//
+
+ref_t JITLinker :: parseMessage(ident_t reference)
+{
+   // message constant: nverb&signature
+
+   int verbId = 0;
+   int signatureId = 0;
+
+   // read the param counter
+   int count = reference[0] - '0';
+   
+   // skip the param counter
+   reference+=1;
+
+   int index = reference.find('&');
+   //HOTFIX: for generic GET message we have to ignore ampresand
+   if (reference[index + 1] == 0)
+      index = -1;
+
+   if (index != -1) {
+      //HOTFIX: for GET message we have &&, so the second ampersand should be used
+      if (reference[index + 1] == 0 || reference[index + 1]=='&')
+         index++;
+      
+      IdentifierString verb(reference, index);
+      ident_t signature = reference + index + 1;
+
+      // if it is a predefined verb
+      if (verb[0] == '#') {
+         verbId = verb[1] - 0x20;
+      }
+
+      // resolve signature
+      signatureId = (int)_loader->resolveReference(signature, 0);
+   }
+   else {
+      // if it is a predefined verb
+      if (reference[0] == '#') {
+         verbId = reference[1] - 0x20;
+      }
+      else signatureId = (int)_loader->resolveReference(reference, 0);
+   }
+
+   return MESSAGE_MASK | encodeMessage(signatureId, verbId, count);
+}
+
 //void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
 //{
 //   int dotPos = StringHelper::find(reference, '.');
@@ -762,30 +762,30 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //
 //   return vaddress;
 //}
-//
-//void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   void* vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(reference, vaddress, mskMessage);
-//
-//   _compiler->compileInt32(&writer, parseMessage(reference));
-//
-//   // get constant VMT reference
-//   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//
-//   return vaddress;
-//}
+
+void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   void* vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(reference, vaddress, mskMessage);
+
+   _compiler->compileInt32(&writer, parseMessage(reference));
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
 
 //void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
 //{
@@ -979,9 +979,9 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskStatSymbolRef:
 //            vaddress = resolveStaticVariable(reference, mskStatRef);
 //            break;
-//         case mskMessage:
-//            vaddress = resolveMessage(reference, _loader->getMessageClass());
-//            break;
+         case mskMessage:
+            vaddress = resolveMessage(reference, _loader->getMessageClass());
+            break;
 //         case mskSignature:
 //            vaddress = resolveMessage(reference, _loader->getSignatureClass());
 //            break;

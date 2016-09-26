@@ -14,3 +14,6 @@ author=Alex Rakov
 [files]
 types.l
 object.l
+control.l
+dynamic.l
+exceptions.l

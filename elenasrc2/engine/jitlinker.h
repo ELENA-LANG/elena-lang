@@ -140,7 +140,7 @@ class JITLinker : _JITLoaderListener
    void* resolveConstant(ident_t reference, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveDump(const wchar16_t*  reference, int size, int mask);
-//   void* resolveMessage(ident_t reference, ident_t vmt);
+   void* resolveMessage(ident_t reference, ident_t vmt);
 //   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
 //   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
@@ -165,7 +165,7 @@ public:
    void* calculateVAddress(MemoryWriter* writer, int mask, int alignment);
    void* calculateVAddress(MemoryWriter* writer, int mask);
 
-//   ref_t parseMessage(ident_t reference);
+   ref_t parseMessage(ident_t reference);
 
    virtual void onModuleLoad(_Module* module);
 

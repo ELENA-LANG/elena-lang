@@ -88,7 +88,7 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
-bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference)
+bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
 {
    if (loperand != scope.branchingInfo.reference) {
       ClassInfo info;
@@ -103,7 +103,7 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, int operator
             
             ref_t trueRef = 0, falseRef = 0;
             while (!reader.Eof()) {
-               ref_t memberRef = reader.getDWord() & ~mskAnyRef;
+               ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
 
                ClassInfo memberInfo;
                scope.loadClassInfo(memberInfo, memberRef);

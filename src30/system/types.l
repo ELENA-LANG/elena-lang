@@ -41,10 +41,10 @@
 //#template(0008h,800010h) reference {}
 //
 ///// Provides classes that describe the basic functionality
-//
-//// === basic logical types ===
-//#subject bool       = system'BaseBoolValue.
-//
+
+// === basic logical types ===
+#subject bool       = system'BaseBoolValue.
+
 //// === basic primitive types ===
 //
 //#subject keyvalue   = system'KeyValue.

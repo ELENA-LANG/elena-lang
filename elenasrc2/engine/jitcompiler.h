@@ -51,7 +51,7 @@ public:
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 
-   //virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
+   virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
    //virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
    //virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset) = 0;
    //virtual void compileInt64(MemoryWriter* writer, int low, int high) = 0;
@@ -100,7 +100,7 @@ public:
 class JITCompiler32 : public _JITCompiler
 {
 public:
-//   virtual void compileInt32(MemoryWriter* writer, int integer);
+   virtual void compileInt32(MemoryWriter* writer, int integer);
 //   virtual void compileInt64(MemoryWriter* writer, long long integer);
 //   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
 //   virtual void compileInt64(MemoryWriter* writer, int low, int high);
