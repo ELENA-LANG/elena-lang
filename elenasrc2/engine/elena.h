@@ -646,10 +646,11 @@ inline size_t mapReferenceKey(ident_t key)
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
-typedef List<_Module*> ModuleList;
+typedef List<_Module*>         ModuleList;
 
 // --- Reference mapping types ---
 typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
+typedef Map<ref_t, ref_t>                                    SubjectMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;

@@ -45,15 +45,15 @@
 // === basic logical types ===
 #subject bool       = system'BaseBoolValue.
 
-//// === basic primitive types ===
-//
+// === basic primitive types ===
+
 //#subject keyvalue   = system'KeyValue.
 //
 //#subject ref        = system'Variable.
 //
 //#subject byte       = system'ByteNumber.
 //#subject short      = system'ShortNumber.
-//#subject int        = system'IntNumber.
+#subject int        = system'IntNumber.
 //#subject long       = system'LongNumber.
 //#subject real       = system'RealNumber.
 //#subject char       = system'CharValue.

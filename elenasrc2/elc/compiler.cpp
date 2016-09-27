@@ -3319,7 +3319,7 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInf
 
    if (operationType != 0) {
       // if it is a primitive operation
-      node.injectNode((LexicalType)operationType, operator_id);
+      _logic->injectOperation(node, *scope.moduleScope, *this, operator_id, operationType, resultClassRef);
 
       retVal = assignResult(scope, node, resultClassRef/*, 0*/);
    }
@@ -3713,7 +3713,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
       }
       else {
          ref_t sourceRef = resolveObjectReference(scope, source);
-         if (targetRef != 0 && !convertObject(sourceNode, scope, targetRef, sourceRef)) {
+         if (!convertObject(sourceNode, scope, targetRef, sourceRef)) {
             scope.raiseError(errInvalidOperation, node);
          }
       }
@@ -7169,7 +7169,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope/*, D
 
 ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int warningLevel, int mode, bool& variable*/)
 {
-   ObjectInfo retVal;
+   ObjectInfo retVal(okObject, targetRef);
 
    size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
    if (size != 0) {

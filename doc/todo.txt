@@ -3,10 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * enumlist(#265)  : enum list class cannot create an instance of base class, but it should be possible to declare
-                   constructors which will return one of its values, enum list cannot be directly inherited, only using symbols
- 
-                 * branching operator : check if the class is enum list, find its member with sealed true-if method
                  * constructor returning constant values,...
 
                  * make sure not embeddable object is not stack allocated
@@ -28,6 +24,7 @@ In development:
                  * uncomment code in ecv
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : #var(-11,4)n := 1.#var(-11,4)m := 2.n := n + m * 2.
+                 * optimize : branching with numeric comparison
 
                  * support abstract attribute
                  * support implicit constructors

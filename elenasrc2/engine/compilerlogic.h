@@ -74,6 +74,7 @@ public:
    virtual bool isRole(ClassInfo& info);
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
+   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);
 
    virtual void tweakClassFlags(ref_t classRef, ClassInfo& info);
 

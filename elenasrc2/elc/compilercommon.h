@@ -67,7 +67,8 @@ struct _CompilerScope
    ref_t superReference;
 
    // list of typified classes which may need get&type message
-   ClassMap typifiedClasses;
+   ClassMap    typifiedClasses;
+   SubjectMap  attributeHints;
 
    // cached bool values
    BranchingInfo branchingInfo;
@@ -128,6 +129,7 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(ref_t classRef, ClassInfo& info) = 0;

@@ -147,6 +147,9 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
+   if (!targetRef)
+      return true;
+
    while (sourceRef != 0) {
       if (targetRef != sourceRef) {
          ClassInfo info;
@@ -201,6 +204,28 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
    // generate enumeration list
    if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
       compiler.generateEnumListMember(scope, info.header.parentRef, node.argument);
+   }
+}
+
+void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
+{
+   SNode operationNode = node.injectNode((LexicalType)operationType, operator_id);
+
+   if (reference == V_FLAG) {      
+      if (!scope.branchingInfo.reference) {
+         // HOTFIX : resolve boolean symbols; it is assumed the super class implements equal operation 
+         //          and returns the boolean value
+         bool found = false;
+         ref_t type = 0;
+         checkMethod(scope, scope.superReference, encodeMessage(0, EQUAL_MESSAGE_ID, 1), found, type);
+
+         ref_t dummy;
+         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.attributeHints.get(type), dummy);
+      }
+
+      reference = scope.branchingInfo.reference;
+      operationNode.appendNode(lxIfValue, scope.branchingInfo.trueRef);
+      operationNode.appendNode(lxElseValue, scope.branchingInfo.falseRef);
    }
 }
 

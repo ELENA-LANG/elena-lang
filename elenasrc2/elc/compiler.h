@@ -194,7 +194,6 @@ public:
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
    typedef Map<ident_t, Parameter, false> LocalMap;
-   typedef Map<ref_t, ref_t>              SubjectMap;   
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -304,7 +303,6 @@ private:
 
       // type hints
       MessageMap        attributes;
-      SubjectMap        attributeHints;
 
       // action hints
       SubjectMap        actionHints;

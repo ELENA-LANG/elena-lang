@@ -2956,12 +2956,12 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
-//
+
+void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
+}
+
 //void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
 //{
 //   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
@@ -3458,6 +3458,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    int operation = node.argument;
    bool assignMode = false;
    bool selectMode = false;
+   bool invertSelectMode = false;
    //bool invertMode = false;
    bool immOp = false;
    int  level = 0;
@@ -3477,9 +3478,12 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          break;
 //      case LESS_MESSAGE_ID:
 //         invertMode = true;
-//      case EQUAL_MESSAGE_ID:
-//         selectMode = true;
-//         break;
+      case NOTEQUAL_MESSAGE_ID:
+         invertSelectMode = true;
+         break;
+      case EQUAL_MESSAGE_ID:
+         selectMode = true;
+         break;
 //      case GREATER_MESSAGE_ID:
 //         selectMode = true;
 //         operation = LESS_MESSAGE_ID;
@@ -3584,13 +3588,18 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //   else if (node == lxRealOp) {
 //      doRealOperation(tape, operation);
 //   }
-//
-//   if (selectMode) {
-//      selectByIndex(tape,
-//         SyntaxTree::findChild(node, lxElseValue).argument,
-//         SyntaxTree::findChild(node, lxIfValue).argument);
-//   }
-   /*else */assignBaseTo(tape, lxResult);
+
+   if (selectMode) {
+      selectByIndex(tape,
+         node.findChild(lxElseValue).argument,
+         node.findChild(lxIfValue).argument);
+   }
+   else if (invertSelectMode) {
+      selectByIndex(tape,
+         node.findChild(lxIfValue).argument,
+         node.findChild(lxElseValue).argument);
+   }
+   else assignBaseTo(tape, lxResult);
 
    if (larg == lxLocalUnboxing) {
       SNode assignNode = larg.findChild(lxAssigning);

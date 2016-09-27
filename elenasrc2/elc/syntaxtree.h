@@ -123,6 +123,9 @@ enum LexicalType
    lxClassName       = 0x20013, // arg - identifier
    lxIntValue        = 0x20014, // arg - integer value
    lxTempLocal       = 0x20015,
+   lxIfValue         = 0x20016, // arg - reference
+   lxElseValue       = 0x20017, // arg - reference
+
    lxStaticAttr      = 0x20102,
    lxClassMethodAttr = 0x20103,
 
@@ -201,8 +204,6 @@ enum LexicalType
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,
 //   lxOverridden      = 0x00447,
-//   lxIfValue         = 0x20448, // arg - reference
-//   lxElseValue       = 0x20449, // arg - reference
 //   lxEmbeddable      = 0x0044B,
 //   lxSize            = 0x0044C,
 //   lxSubject         = 0x4044F,
