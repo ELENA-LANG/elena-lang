@@ -62,6 +62,9 @@ struct _CompilerScope
 
    _Module* module;
 
+   // cached references
+   ref_t superReference;
+
    // list of typified classes which may need get&type message
    ClassMap typifiedClasses;
 
@@ -74,6 +77,7 @@ struct _CompilerScope
    _CompilerScope()
    {
       module = NULL;
+      superReference = 0;
    }
 };
 

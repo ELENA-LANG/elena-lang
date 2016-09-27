@@ -36,6 +36,7 @@ enum LexicalType
    lxClassMethod     = 0x00016,
    lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
+   lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxSubject         = 0x00047,

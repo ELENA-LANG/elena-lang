@@ -503,12 +503,9 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   }
    /*else */packageReference = 0;
 
-//   // cache the frequently used subjects
-//   boolType = mapSubject(project->resolveForward(BOOLTYPE_FORWARD), false);
-
    defaultNs.add(module->Name());
 
-//   loadModuleInfo(module);
+   loadModuleInfo(module);
 }
 
 //ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
@@ -2373,39 +2370,22 @@ void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope, SNode r
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         //SNode hint = current.findChild(lxInteger, lxHexInteger);
-         //if (hint == lxInteger) {
-         //   ident_t attrId = hint.findChild(lxTerminal).identifier();
-
-         //   current.set(lxClassFlag, attrId.toInt());
-         //}
-         //else if (hint == lxHexInteger) {
-         //   ident_t attrId = hint.findChild(lxTerminal).identifier();
-
-         //   current.set(lxClassFlag, attrId.toLong(16));
-         //}
-         //else {
-            int attrValue;
-            ref_t attribute = mapAttribute(current, 0, *scope.moduleScope, attrValue);
-            if (attrValue != 0) {
-               if (_logic->validateMethodAttribute(attrValue)) {
-                  rootNode.appendNode(lxClassMethodAttr, attrValue);
-               }
-               else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         int attrValue = 0;
+         ref_t attribute = mapAttribute(current, 0, *scope.moduleScope, attrValue);
+         if (attrValue != 0) {
+            if (_logic->validateMethodAttribute(attrValue)) {
+               rootNode.appendNode(lxClassMethodAttr, attrValue);
             }
-            else if (attribute) {
-               ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
-               if (classRef == INVALID_REF) {
-                  copyTemplate(node, *scope.moduleScope, attribute);
-                  //      _Memory* body = scope.moduleScope->loadAttributeInfo(attribute);
-
-                  //      SNode templNode = node.appendNode(lxTemplate);
-                  //      SyntaxTree::loadNode(templNode, body);
-               }
-               else node.appendNode(lxType, attribute);
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         else if (attribute) {
+            ref_t classRef = scope.moduleScope->attributeHints.get(attribute);
+            if (classRef == INVALID_REF) {
+               copyTemplate(node, *scope.moduleScope, attribute);
             }
-            else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, rootNode);
-         //}
+            else node.appendNode(lxType, attribute);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, rootNode);
 
             //      TerminalInfo terminal = hints.Terminal();
          //      //HOTFIX : if it is a virtual subject
@@ -5034,10 +5014,15 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 //   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
 //   writer.appendNode(lxReserved, scope.reserved);
 //}
-//
-//void Compiler :: compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(node, *scope.moduleScope, node.findChild(lxReference).findChild(lxTerminal).identifier(), scope.getMessageID());
+   }
+   else {
+   }
+      //   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 //
 //   // try to implement light-weight resend operation
 //   ObjectInfo target;
@@ -5068,8 +5053,8 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 //   }
 //
 //   scope.writer->appendNode(lxParamCount, getParamCount(methodScope->message) + 1);
-//}
-//
+}
+
 //void Compiler :: compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 //{
 //   ModuleScope* moduleScope = scope.moduleScope;
@@ -5181,21 +5166,22 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //   writer.appendNode(lxSourcePath);  // the source path is first string
 //
 //   DNode resendBody = node.select(nsResendExpression);
-//   DNode dispatchBody = node.select(nsDispatchExpression);
-//
-//   // check if it is a resend
+
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode);
+   //   // check if it is a resend
 //   if (resendBody != nsNone) {
 //      compileResendExpression(resendBody.firstChild(), codeScope, tape);
 //   }
-//   // check if it is a dispatch
-//   else if (dispatchBody != nsNone) {
-//      if (isImportRedirect(dispatchBody.firstChild())) {
+   // check if it is a dispatch
+   /*else */if (body == lxDispatchCode) {
+      compileDispatchExpression(body, codeScope);
+
+      if (isImportRedirect(body.firstChild())) {
 //         importCode(node, *scope.moduleScope, writer, dispatchBody.firstChild().Terminal(), scope.message);
-//      }
+      }
 //      else compileDispatchExpression(dispatchBody.firstChild(), codeScope, tape);
-//   }
-//   else {
-      SNode body = node.findChild(lxCode, lxReturning);
+   }
+   else {
       if (body == lxReturning) {
          // HOTFIX : if it is an returning expression, inject returning node
          SNode expr = body.findChild(lxExpression);
@@ -5217,26 +5203,22 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 
       ObjectInfo retVal = compileCode(body, codeScope);
 
-//         // if the method returns itself
-//         if(retVal.kind == okUnknown) {
-//            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//            ref_t typeHint = scope.getReturningType();
-//
-//            if (typeHint != 0) {
-//               writer.newNode(lxTypecasting, encodeMessage(typeHint, GET_MESSAGE_ID, 0));
-//               writer.appendNode(lxLocal, 1);
-//               appendTerminalInfo(&writer, goToSymbol(body.firstChild(), nsCodeEnd).Terminal());
-//               writer.closeNode();
-//            }
-//            else writer.appendNode(lxLocal, 1);
-//         }
+      // if the method returns itself
+      if(retVal.kind == okUnknown) {
+         // adding the code loading $self
+         SNode exprNode = body.appendNode(lxExpression);
+         exprNode.appendNode(lxLocal, 1);
+
+         ref_t typeAttr = scope.getReturningType();
+         if (typeAttr != 0) {
+            typecastObject(exprNode, codeScope, typeAttr, ObjectInfo(okThisParam));
+         }
+      }
 
       node.appendNode(lxParamCount, paramCount + scope.rootToFree);
-//   }
+   }
 
    node.appendNode(lxReserved, scope.reserved);
-
-//   writer.closeNode();
 }
 
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)

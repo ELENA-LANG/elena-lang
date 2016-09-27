@@ -28,6 +28,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsField:
       case nsSubject:
       case nsNestedClass:
+      case nsDispatchExpression:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {
             copyHints(_hints);
@@ -94,6 +95,7 @@ void DerivationWriter :: unpackNode(SNode node)
          copyMessage(node);
          break;
       case nsL4Operation:
+      case nsL6Operation:
       case nsL7Operation:
          copyMessage(node, true);
          break;

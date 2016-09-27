@@ -309,26 +309,7 @@ private:
       // action hints
       SubjectMap        actionHints;
 
-      // cached references
-      ref_t superReference;
-//      ref_t intReference;
-//      ref_t longReference;
-//      ref_t realReference;
-//      ref_t literalReference;
-//      ref_t wideReference;
-//      ref_t charReference;
-//      ref_t trueReference;
-//      ref_t falseReference;
-//      ref_t paramsReference;
-//      ref_t signatureReference;
-//      ref_t messageReference;
-//      ref_t verbReference;
-//      ref_t arrayReference;
-
       ref_t packageReference;
-
-//      // cached subjects / hints
-//      ref_t boolType;
 
       // warning mapiing
       bool warnOnUnresolved;
@@ -655,13 +636,13 @@ private:
          else return parent->getScope(level);
       }
 
-//      ref_t getReturningType() const
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
-//      }
-//
+      ref_t getReturningType(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
+      }
+
 //      ref_t getClassFlags(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -1039,7 +1020,7 @@ private:
 //   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
 //   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
-//   void compileDispatchExpression(DNode node, CodeScope& scope, CommandTape* tape);
+   void compileDispatchExpression(SNode node, CodeScope& scope);
 
    ObjectInfo compileCode(SNode node, CodeScope& scope);
 

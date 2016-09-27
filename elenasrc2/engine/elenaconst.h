@@ -511,8 +511,6 @@ namespace _ELENA_
 //   #define ARRAY_FORWARD            "'$array"
 //   #define PARAMS_FORWARD           "'$params"
 ////   #define SUBJ_FORWARD             "'$sign"
-//
-//   #define BOOLTYPE_FORWARD         "'$bool"
 
    #define STARTUP_CLASS            "'startUp"
 

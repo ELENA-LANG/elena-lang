@@ -61,6 +61,9 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
 
 int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t messageRef, bool& classFound, ref_t& outputType)
 {
+   if (classReference == 0)
+      classReference = scope.superReference;
+
    int methodHint = classReference != 0 ? checkMethod(scope, classReference, messageRef, classFound, outputType) : 0;
    int callType = methodHint & tpMask;
 
@@ -90,6 +93,9 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
 
 bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
 {
+   if (!loperand)
+      return false;
+
    if (loperand != scope.branchingInfo.reference) {
       ClassInfo info;
       scope.loadClassInfo(info, loperand, true);

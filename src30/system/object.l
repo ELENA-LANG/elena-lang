@@ -17,10 +17,10 @@
     /// Creates the object
     #constructor new []
 
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
-//    #method(bool) equal : anObject => system'core_routines'__object.
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    ///
+    /// By default compares the object references.
+    #method(bool) equal : anObject => system'core_routines'__object.
                         
     /// Implements a message dispatching in VMT
     #method => system'core_routines'__object.

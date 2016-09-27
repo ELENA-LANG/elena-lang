@@ -989,7 +989,7 @@ void _ELENA_::compileALoadR(int, x86JITScope& scope)
 void _ELENA_ :: compileBLoadR(int, x86JITScope& scope)
 {
    // mov edi, [r]
-   scope.code->writeByte(0x3D8B);
+   scope.code->writeWord(0x3D8B);
    scope.writeReference(*scope.code, scope.argument, 0);
 }
 

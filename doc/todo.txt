@@ -21,6 +21,10 @@ In development:
                  * implement +=, ...
                  * sealed methods
                  * support private sealed methods
+                 * message $self does not belong to the object points to the target instead of message
+                 * invalid attribute warning refers always to the first attribute
+                 * invalid warning in the following code : #method(bool) equal : anObject []
+                 * type attribute cannot be overriden for the method
 
                  * support abstract attribute
                  * support implicit constructors
