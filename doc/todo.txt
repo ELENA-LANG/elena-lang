@@ -25,6 +25,9 @@ In development:
                  * invalid attribute warning refers always to the first attribute
                  * invalid warning in the following code : #method(bool) equal : anObject []
                  * type attribute cannot be overriden for the method
+                 * uncomment code in ecv
+                 * optimization : (a != b) ? [ ] => (a == b) ! [ ]
+                 * optimize : #var(-11,4)n := 1.#var(-11,4)m := 2.n := n + m * 2.
 
                  * support abstract attribute
                  * support implicit constructors

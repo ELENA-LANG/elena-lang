@@ -14,6 +14,7 @@
 
 // virtual objects
 #define V_STATIC      (size_t)-02
+#define V_FLAG        (size_t)-03
 #define V_INT32       (size_t)-11
 
 #define V_IFBRANCH    (size_t)-4097

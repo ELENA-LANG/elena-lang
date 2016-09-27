@@ -216,26 +216,26 @@ public:
    IdentifierString()
    {
    }
-      IdentifierString(ident_t value)
-         : String(value)
-      {
-      }
-      IdentifierString(ident_t value, size_t length)
-         : String(value, length)
-      {
-      }
-      IdentifierString(ident_t value1, ident_t value2)
-         : String(value1, value2)
-      {
-      }
-      IdentifierString(ident_t value1, ident_t value2, ident_t value3)
-         : String(value1, value2, value3)
-      {
-      }
-      IdentifierString(ident_t value1, ident_t value2, ident_t value3, ident_t value4)
-         : String(value1, value2, value3, value4)
-      {
-      }
+   IdentifierString(ident_t value)
+      : String(value)
+   {
+   }
+   IdentifierString(ident_t value, size_t length)
+      : String(value, length)
+   {
+   }
+   IdentifierString(ident_t value1, ident_t value2)
+      : String(value1, value2)
+   {
+   }
+   IdentifierString(ident_t value1, ident_t value2, ident_t value3)
+      : String(value1, value2, value3)
+   {
+   }
+   IdentifierString(ident_t value1, ident_t value2, ident_t value3, ident_t value4)
+      : String(value1, value2, value3, value4)
+   {
+   }
    //   IdentifierString(const wide_c* value, size_t sourLength)
    //   {
    //      size_t length = IDENTIFIER_LEN;

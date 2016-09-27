@@ -1,34 +1,5 @@
 // --- true ---
 
-#class(enumlist/*,dispatchable:bool*/) BaseBoolValue
-{
-    #method if : aTrueAction = $nil.
-
-//    #method then : aTrueAction &else:aFalseAction = $nil.
-//
-//    #method else : aTrueAction = $nil.
-//    
-//    #method iif:aTrueValue:aFalseValue = $nil.
-//
-//    #method(bool) or : anExpr = $nil.
-//
-//    #method(bool) and : anExpr = $nil.
-//
-//    #method(bool) xor : aBool = $nil.
-//
-//    #method equal : anExpr = $nil.
-//
-//    #method(bool) equal &bool:aBool = $nil.
-//
-//    #method(bool) not = $nil.
-//
-//    #method literal = $nil.
-//
-//    #method wide = $nil.
-//
-//    #method clone = $nil.
-}
-
 /// A true value symbol
 #symbol true = BaseBoolValue
 {
@@ -37,10 +8,10 @@
 
 //    /// Executes then-action
 //    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    #method else : aTrueAction = $nil.
-//
+
+    /// Always returns nil.
+    #method(-4098) ifnot : aTrueAction = $nil.
+
 //    #method iif:aTrueValue:aFalseValue = aTrueValue.
 //    
 //    /// Executes logical OR operation
@@ -64,10 +35,10 @@
 //
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method(bool) equal &bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    #method(bool) not = false.
-//
+
+    /// Always returns false.
+    #method inverted = false.
+
 //    /// Returns literal representation.
 //    #method literal = "true".
 //
@@ -88,10 +59,10 @@
     
 //    /// Executes else-action
 //    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    #method else : aFalseAction = aFalseAction eval.
-//
+
+    /// Executes the action
+    #method(-4097) ifnot : aFalseAction = aFalseAction eval.
+
 //    #method iif:aTrueValue:aFalseValue = aFalseValue.
 //
 //    /// Executes logical OR operation
@@ -125,10 +96,10 @@
 //        
 //        ^ true.
 //    ]
-//
-//    /// Always returns true
-//    #method not = true.
-//
+
+    /// Always returns true
+    #method inverted = true.
+
 //    /// Returns literal representation
 //    #method literal = "false".
 //    

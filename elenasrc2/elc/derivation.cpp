@@ -94,6 +94,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsMessageOperation:
          copyMessage(node);
          break;
+      case nsL3Operation:
       case nsL4Operation:
       case nsL6Operation:
       case nsL7Operation:
@@ -179,11 +180,19 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
             unpackNode(current);
             _writer.closeNode();
             break;
+         case nsL3Operation:
+         case nsL4Operation:
+         case nsL6Operation:
+         case nsL7Operation:
+            copyMessage(current, true);
+            _writer.removeBookmark();
+            break;
          default:
             if (operationMode && current.existChild(lxTerminal)) {
                _writer.newNode(lxOperator);
                copyChildren(current);
                _writer.closeNode();
+               _writer.newBookmark();
             }            
             break;
       }

@@ -30,7 +30,7 @@ public:
       return *this;
    }
 
-   int findLast(path_c ch)
+   int findLast(path_c ch, int defValue = -1)
    {
       int index = getlength(_path) - 1;
       while (index > 0) {
@@ -40,7 +40,7 @@ public:
          index--;
       }
 
-      return -1;
+      return defValue;
    }
 
    int find(path_c ch)
@@ -81,6 +81,150 @@ public:
 
 class Path
 {
+   //   static bool comparePaths(path_t s1, path_t s2, size_t length);
+   //
+   //   static void loadPath(Path& dest, ident_t sour)
+   //   {
+   //      size_t length = LOCAL_PATH_LENGTH;
+   //      StringHelper::copy(dest, sour, getlength(sour), length);
+   //      dest[length] = 0;
+   //   }
+   //
+   //   static void loadPath(Path& dest, ident_t sour, size_t sour_length)
+   //   {
+   //      size_t length = LOCAL_PATH_LENGTH;
+   //      StringHelper::copy(dest, sour, sour_length, length);
+   //      dest[length] = 0;
+   //   }
+   //
+   //   static void combinePath(Path& dest, ident_t sour)
+   //   {
+   //      Path subPath;
+   //      loadPath(subPath, sour);
+   //
+   //      dest.combine(subPath);
+   //   }
+   //
+   //   static void combinePath(Path& dest, ident_t sour, size_t length)
+   //   {
+   //      Path subPath;
+   //      loadPath(subPath, sour, length);
+   //
+   //      dest.combine(subPath, length);
+   //   }
+   //
+   //   static void appendPath(Path& dest, ident_t sour)
+   //   {
+   //      Path subPath;
+   //      loadPath(subPath, sour);
+   //
+   //      dest.append(subPath);
+   //   }
+   //
+   //   static void savePath(path_t sour, ident_c* dest, size_t length)
+   //   {
+   //      StringHelper::copy(dest, sour, getlength(sour), length);
+   //      dest[length] = 0;
+   //   }
+   //
+   //   static bool checkExtension(path_t path, path_t extension)
+   //   {
+   //      int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+   //
+   //      int pos = StringHelper::findLast(path + namepos, '.');
+   //      if (pos != -1) {
+   //         return StringHelper::compare(path + namepos + pos + 1, extension);
+   //      }
+   //      else return emptystr(extension);
+   //   }
+   //
+   //#ifdef _WIN32
+   //   static bool checkExtension(const char* path, const char* extension)
+   //   {
+   //      int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+   //
+   //      int pos = StringHelper::findLast(path + namepos, '.');
+   //      if (pos != -1) {
+   //         return StringHelper::compare(path + namepos + pos + 1, extension);
+   //      }
+   //      else return emptystr(extension);
+   //   }
+   //
+   //   void changeExtension(const char* s)
+   //   {
+   //      Path ext;
+   //      Path::loadPath(ext, s);
+   //
+   //      changeExtension(ext);
+   //   }
+   //
+   //   static void combinePath(Path& dest, path_t sour)
+   //   {
+   //      Path subPath(sour);
+   //
+   //      dest.combine(subPath);
+   //   }
+   //
+   //#endif
+   //
+   //   static bool checkExtension(path_t path)
+   //   {
+   //      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+   //      int dotpos = StringHelper::findLast(path + index, '.', -1   );
+   //
+   //      return dotpos != -1;
+   //   }
+   //
+   //   void combine(path_t path, size_t length)
+   //   {
+   //      if (length > 0) {
+   //         if (isRelative(path, length)) {
+   //            size_t strLength = getlength(_string);
+   //
+   //            if(strLength > 0 && _string[strLength - 1] != PATH_SEPARATOR)
+   //               append(PATH_SEPARATOR);
+   //
+   //            append(path, length);
+   //         }
+   //         else copy(path, length);
+   //      }
+   //   }
+   //   void combine(path_t path)
+   //   {
+   //      combine(path, getlength(path));
+   //   }
+   //
+   //   void changeExtension(path_t extension)
+   //   {
+   //      path_t path = _string;
+   //      int namepos = findLast(PATH_SEPARATOR) + 1;
+   //      int index = StringHelper::findLast(path + namepos, '.');
+   //      if (index >= 0) {
+   //         _string[(size_t)index + namepos] = 0;
+   //      }
+   //      append('.');
+   //      append(extension);
+   //   }
+   //
+   //   Path()
+   //   {
+   //   }
+   //   Path(path_t filePath)
+   //   {
+   //      size_t length = LOCAL_PATH_LENGTH;
+   //      StringHelper::copy(_string, filePath, getlength(filePath), length);
+   //
+   //      _string[length] = 0;
+   //   }
+   //   Path(path_t filePath, size_t pathLength)
+   //   {
+   //      size_t length = LOCAL_PATH_LENGTH;
+   //      StringHelper::copy(_string, filePath, pathLength, length);
+   //
+   //      _string[length] = 0;
+   //   }
+
+
    String<path_c, LOCAL_PATH_LENGTH>  _path;
 
 public:
@@ -232,194 +376,56 @@ public:
    }
 };
 
+// --- FileNameTemplate ---
 
-////class Path : public String<path_c, LOCAL_PATH_LENGTH>
-////{
-////public:
-////   static bool comparePaths(path_t s1, path_t s2, size_t length);
-////
-////   static void loadPath(Path& dest, ident_t sour)
-////   {
-////      size_t length = LOCAL_PATH_LENGTH;
-////      StringHelper::copy(dest, sour, getlength(sour), length);
-////      dest[length] = 0;
-////   }
-////
-////   static void loadPath(Path& dest, ident_t sour, size_t sour_length)
-////   {
-////      size_t length = LOCAL_PATH_LENGTH;
-////      StringHelper::copy(dest, sour, sour_length, length);
-////      dest[length] = 0;
-////   }
-////
-////   static void combinePath(Path& dest, ident_t sour)
-////   {
-////      Path subPath;
-////      loadPath(subPath, sour);
-////
-////      dest.combine(subPath);
-////   }
-////
-////   static void combinePath(Path& dest, ident_t sour, size_t length)
-////   {
-////      Path subPath;
-////      loadPath(subPath, sour, length);
-////
-////      dest.combine(subPath, length);
-////   }
-////
-////   static void appendPath(Path& dest, ident_t sour)
-////   {
-////      Path subPath;
-////      loadPath(subPath, sour);
-////
-////      dest.append(subPath);
-////   }
-////
-////   static void savePath(path_t sour, ident_c* dest, size_t length)
-////   {
-////      StringHelper::copy(dest, sour, getlength(sour), length);
-////      dest[length] = 0;
-////   }
-////
-////   static bool checkExtension(path_t path, path_t extension)
-////   {
-////      int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-////
-////      int pos = StringHelper::findLast(path + namepos, '.');
-////      if (pos != -1) {
-////         return StringHelper::compare(path + namepos + pos + 1, extension);
-////      }
-////      else return emptystr(extension);
-////   }
-////
-////#ifdef _WIN32
-////   static bool checkExtension(const char* path, const char* extension)
-////   {
-////      int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-////
-////      int pos = StringHelper::findLast(path + namepos, '.');
-////      if (pos != -1) {
-////         return StringHelper::compare(path + namepos + pos + 1, extension);
-////      }
-////      else return emptystr(extension);
-////   }
-////
-////   void changeExtension(const char* s)
-////   {
-////      Path ext;
-////      Path::loadPath(ext, s);
-////
-////      changeExtension(ext);
-////   }
-////
-////   static void combinePath(Path& dest, path_t sour)
-////   {
-////      Path subPath(sour);
-////
-////      dest.combine(subPath);
-////   }
-////
-////#endif
-////
-////   static bool checkExtension(path_t path)
-////   {
-////      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-////      int dotpos = StringHelper::findLast(path + index, '.', -1   );
-////
-////      return dotpos != -1;
-////   }
-////
-////   void combine(path_t path, size_t length)
-////   {
-////      if (length > 0) {
-////         if (isRelative(path, length)) {
-////            size_t strLength = getlength(_string);
-////
-////            if(strLength > 0 && _string[strLength - 1] != PATH_SEPARATOR)
-////               append(PATH_SEPARATOR);
-////
-////            append(path, length);
-////         }
-////         else copy(path, length);
-////      }
-////   }
-////   void combine(path_t path)
-////   {
-////      combine(path, getlength(path));
-////   }
-////
-////   void changeExtension(path_t extension)
-////   {
-////      path_t path = _string;
-////      int namepos = findLast(PATH_SEPARATOR) + 1;
-////      int index = StringHelper::findLast(path + namepos, '.');
-////      if (index >= 0) {
-////         _string[(size_t)index + namepos] = 0;
-////      }
-////      append('.');
-////      append(extension);
-////   }
-////
-////   Path()
-////   {
-////   }
-////   Path(path_t filePath)
-////   {
-////      size_t length = LOCAL_PATH_LENGTH;
-////      StringHelper::copy(_string, filePath, getlength(filePath), length);
-////
-////      _string[length] = 0;
-////   }
-////   Path(path_t filePath, size_t pathLength)
-////   {
-////      size_t length = LOCAL_PATH_LENGTH;
-////      StringHelper::copy(_string, filePath, pathLength, length);
-////
-////      _string[length] = 0;
-////   }
-////};
-////
-////// --- FileNameTemplate ---
-////
-////class FileName : public String<path_c, LOCAL_PATH_LENGTH>
-////{
-////public:
-////   static void load(FileName& dest, const char* path)
-////   {
-////      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-////      int dotpos = StringHelper::findLast(path, '.', getlength(path));
-////
-////      size_t length = LOCAL_PATH_LENGTH;
-////      StringHelper::copy(dest, path + index, dotpos - index, length);
-////      dest[length] = 0;
-////   }
-////
-////   void copyName(path_t path)
-////   {
-////      int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-////      int dotpos = StringHelper::findLast(path, '.', getlength(path));
-////
-////      copy(path + index, dotpos - index);
-////      _string[dotpos - index] = 0;
-////   }
-////
-////   void copyExtension(path_t path)
-////   {
-////      int dotpos = StringHelper::findLast(path, '.', getlength(path));
-////
-////      copy(path + dotpos + 1);
-////   }
-////
-////   FileName(path_t path)
-////   {
-////      copyName(path);
-////   }
-////
-////   FileName()
-////   {
-////   }
-////};
+class FileName
+{
+   String<path_c, LOCAL_PATH_LENGTH>  _path;
+
+public:
+   operator const path_c*() const { return path_t(_path); }
+
+   //static void load(FileName& dest, const char* path)
+   //{
+   //   int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
+   //   int dotpos = StringHelper::findLast(path, '.', getlength(path));
+
+   //   size_t length = LOCAL_PATH_LENGTH;
+   //   StringHelper::copy(dest, path + index, dotpos - index, length);
+   //   dest[length] = 0;
+   //}
+
+   void copyName(path_t path)
+   {
+      int index = path.findLast(PATH_SEPARATOR) + 1;
+      int dotpos = path.findLast('.', getlength(path));
+
+      _path.copy(path + index, dotpos - index);
+   }
+
+   //void copyExtension(path_t path)
+   //{
+   //   int dotpos = StringHelper::findLast(path, '.', getlength(path));
+
+   //   copy(path + dotpos + 1);
+   //}
+
+   //FileName(path_t path)
+   //{
+   //   copyName(path);
+   //}
+
+   FileName(ident_t pathStr)
+   {
+      Path path(pathStr);
+
+      copyName(path);
+   }
+
+   FileName()
+   {
+   }
+};
 
 // --- File class ---
 

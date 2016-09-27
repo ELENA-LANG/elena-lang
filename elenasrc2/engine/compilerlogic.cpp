@@ -22,6 +22,8 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -54,6 +56,10 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
    found = scope.loadClassInfo(info, reference) != 0;
 
    if (found) {
+      // only sealed / closed classes should be considered as found
+      if (!test(info.header.flags, elClosed))
+         found = false;
+
       return checkMethod(info, message, outputType);
    }
    else return tpUnknown;
@@ -113,7 +119,7 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
 
                ClassInfo memberInfo;
                scope.loadClassInfo(memberInfo, memberRef);
-               int attribute = checkMethod(memberInfo, encodeMessage(0, operatorId, 1));
+               int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
                if (attribute == (tpIfBranch | tpSealed)) {
                   trueRef = memberRef;
                }
@@ -301,5 +307,8 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 {
-   return false;
+   if (attrValue == (int)V_INT32) {
+      return true;
+   }
+   else return false;
 }

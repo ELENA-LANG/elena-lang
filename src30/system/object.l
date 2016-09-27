@@ -21,9 +21,44 @@
     ///
     /// By default compares the object references.
     #method(bool) equal : anObject => system'core_routines'__object.
+    
+    #method(bool)notequal : anObject = $self equal:anObject inverted.
                         
     /// Implements a message dispatching in VMT
     #method => system'core_routines'__object.
+}
+
+/// A common boolean value
+
+#class(enumlist/*,dispatchable:bool*/) BaseBoolValue
+{
+    #method if : aTrueAction = $nil.
+
+    #method ifnot : aTrueAction = $nil.
+
+//    #method then : aTrueAction &else:aFalseAction = $nil.
+//    
+//    #method iif:aTrueValue:aFalseValue = $nil.
+//
+//    #method(bool) or : anExpr = $nil.
+//
+//    #method(bool) and : anExpr = $nil.
+//
+//    #method(bool) xor : aBool = $nil.
+//
+//    #method equal : anExpr = $nil.
+//
+//    #method(bool) equal &bool:aBool = $nil.
+
+    #method(bool) not = $self inverted.
+
+    #method(bool) inverted = $nil.
+
+//    #method literal = $nil.
+//
+//    #method wide = $nil.
+//
+//    #method clone = $nil.
 }
 
 //// --- nil constant ---

@@ -16,7 +16,7 @@
 using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
-//
+
 //void test2(SNode node)
 //{
 //   SNode current = node.firstChild();
@@ -2453,13 +2453,13 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          int attrValue = 0;
          ref_t attrRef = mapAttribute(current, 0, *scope.moduleScope, attrValue);
          if (attrValue != 0) {
-            if (_logic->validateLocalAttribute(attrValue)) {
+            // positive value defines the target size
+            if (attrValue > 0) {
+               size = attrValue;
+            }
+            else if (_logic->validateLocalAttribute(attrValue)) {
                // negative value defines the target virtual class
-               if (attrValue < 0) {
-                  variable.extraparam = attrValue;
-               }
-               // positive value defines the target size
-               else size = attrValue;
+               variable.extraparam = attrValue;
             }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -3456,7 +3456,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    else {
       node.set(lxCalling, messageRef);
 
-      // if the class found and the message is not supported - warn the programmer and raise an exception
+      // if the sealed/ closed class found and the message is not supported - warn the programmer and raise an exception
       if (classFound && callType == tpUnknown) {
          //scope.writer->appendNode(lxCallTarget, classReference);
 
@@ -4461,6 +4461,8 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 
    bool needVirtualEnd = true;
    SNode current = node.firstChild();
+
+   //test2(node);
 
 //   //// make a root bookmark for temporal variable allocating
 //   //scope.rootBookmark = scope.writer->newBookmark();

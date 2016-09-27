@@ -363,6 +363,7 @@ namespace _ELENA_
    #define EVAL_MESSAGE             "eval"
    #define EVALUATE_MESSAGE         "evaluate"
    #define EQUAL_MESSAGE            "equal"
+   #define NOTEQUAL_MESSAGE         "notequal"
    #define LESS_MESSAGE             "less"
    #define AND_MESSAGE              "and"
    #define OR_MESSAGE               "or"
