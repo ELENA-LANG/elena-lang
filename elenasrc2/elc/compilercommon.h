@@ -89,6 +89,7 @@ class _Compiler
 {
 public:
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable) = 0;
+   virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
 
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
@@ -130,9 +131,11 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
+   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(ref_t classRef, ClassInfo& info) = 0;
+   virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;

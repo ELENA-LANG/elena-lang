@@ -4381,13 +4381,13 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
    assignBaseTo(tape, lxResult);
 }
 
-//void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SNode target = SyntaxTree::findChild(node, lxTarget);
-//
-//   newStructure(tape, node.argument, target.argument);
-//}
-//
+void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
+{
+   SNode target = node.findChild(lxTarget);
+
+   newStructure(tape, node.argument, target.argument);
+}
+
 //void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = SyntaxTree::findChild(node, lxTarget);
@@ -4486,9 +4486,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxLocking:
 //         generateLocking(tape, node);
 //         break;
-//      case lxStruct:
-//         generateStructExpression(tape, node);
-//         break;
+      case lxStruct:
+         generateStructExpression(tape, node);
+         break;
       case lxNested:
          generateNestedExpression(tape, node);
          break;

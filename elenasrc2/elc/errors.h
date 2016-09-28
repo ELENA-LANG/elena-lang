@@ -52,7 +52,7 @@ namespace _ELENA_
 //   #define errDuplicatedSubject     "%s(%d:%d): error 134: Subject '%s' already exists\n"
 //   #define errUnmappedArgument      "%s(%d:%d): error 135: Argument '%s' is not mapped\n"
    #define errInvalidLink           "%s(%d:%d): error 136: The link '%s' cannot be resolved\n"
-//   #define errInvalidInlineClass    "%s(%d:%d): error 137: Inline structure cannot have external dependencies\n"
+   #define errInvalidInlineClass    "%s(%d:%d): error 137: Inline structure cannot have external dependencies\n"
 //   #define errUnknownExtRole        "%s(%d:%d): error 138: Unknown external role '%s' mapping\n"
    #define errInvalidParent         "%s(%d:%d): error 139: Invalid parent class %s\n"
 ////   #define errInvalidSync           "%s(%d:%d): error 140: The method %s cannot have a sync hint\n"

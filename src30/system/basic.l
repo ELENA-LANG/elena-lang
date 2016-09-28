@@ -673,10 +673,10 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class/*(embeddable,sealed,dispatchable:int)*/ IntNumber :: IntBaseNumber
+#class(/*embeddable*/struct,sealed/*,dispatchable:int*/) IntNumber :: IntBaseNumber
 {
-//    #field(int32)theValue.    
-//    
+    #field(4,-11)theValue.
+    
 //    #constructor(stacksafe)&byte:n
 //    [
 //        theValue := n.

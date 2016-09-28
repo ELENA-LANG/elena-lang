@@ -298,7 +298,7 @@ namespace _ELENA_
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
-//   const int elReadOnlyRole        = 0x00000800;
+   const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
@@ -497,7 +497,7 @@ namespace _ELENA_
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
-//   #define INT_FORWARD              "'$int"
+   #define INT_FORWARD              "'$int"
 //   #define LONG_FORWARD             "'$long"
 //   #define REAL_FORWARD             "'$real"
 //   #define STR_FORWARD              "'$literal"

@@ -19,7 +19,7 @@ enum LexicalType
    lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
    lxExprMask        = 0x0C000,
-   lxParameter       = 0x10000,
+   lxTerminalMask    = 0x10000,
    lxReferenceMask   = 0x40000,
    lxPrimitiveOpMask = 0x80000,
 
@@ -56,15 +56,16 @@ enum LexicalType
 
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count
+   lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x08104, // arg - reference
    lxField           = 0x08105, // arg - offset
    lxStaticField     = 0x08106, // arg - reference
-   lxSymbolReference = 0x18107,
+   lxSymbolReference = 0x08107,
    lxLocalAddress    = 0x08108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0810A, // arg - offset
    lxConstantInt     = 0x1810F, // arg - reference
-   lxConstantClass   = 0x18112, // arg - reference
+   lxConstantClass   = 0x08112, // arg - reference
    lxNil             = 0x08117,
    lxCurrent         = 0x08118, // arg -offset
    lxResult          = 0x08119, // arg -offset
@@ -112,7 +113,7 @@ enum LexicalType
    lxReserved        = 0x20008,
    lxParamCount      = 0x20009,
    lxClassFlag       = 0x2000A, // class fields
-   lxTarget          = 0x6000B, // arg - reference
+   lxTarget          = 0x2000B, // arg - reference
    lxMessageVariable = 0x2000C, // debug info only
    lxSelfVariable    = 0x2000D, // debug info only
    lxMessage         = 0x2000E, // arg - message
@@ -125,9 +126,11 @@ enum LexicalType
    lxTempLocal       = 0x20015,
    lxIfValue         = 0x20016, // arg - reference
    lxElseValue       = 0x20017, // arg - reference
+   lxSize            = 0x20018,
 
    lxStaticAttr      = 0x20102,
    lxClassMethodAttr = 0x20103,
+   lxDWordAttr       = 0x20104,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -140,7 +143,6 @@ enum LexicalType
 //   lxInvalid         = 0x00001,
 //   lxIdle            = 0x00003,
 //
-//   lxStruct = 0x00102, // arg - count
 //   lxSymbol = 0x20103, // arg - reference
 //   lxBlockLocalAddr = 0x04109, // arg - offset
 //   lxBlockLocal = 0x0410B, // arg - offset
@@ -205,7 +207,6 @@ enum LexicalType
 //   lxStacksafe       = 0x00445,
 //   lxOverridden      = 0x00447,
 //   lxEmbeddable      = 0x0044B,
-//   lxSize            = 0x0044C,
 //   lxSubject         = 0x4044F,
 //
 //   lxConstAttr       = 0x00821,
@@ -712,21 +713,21 @@ public:
    static void saveNode(Node node, _Memory* dump);
    static void loadNode(Node node, _Memory* dump);
 
-//   static int countChild(Node node, LexicalType type)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+   static int countChild(Node node, LexicalType type)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static int countChild(Node node, LexicalType type1, LexicalType type2)
 //   {
 //      int counter = 0;

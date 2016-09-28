@@ -75,8 +75,10 @@ public:
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);
+   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef);
 
    virtual void tweakClassFlags(ref_t classRef, ClassInfo& info);
+   virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue);

@@ -155,6 +155,13 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
          ClassInfo info;
          defineClassInfo(scope, info, sourceRef);
 
+         //// if it is a wrapper
+         //if (test(info.header.flags, elWrapper)) {
+         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+         //   if (isCompatible(scope, targetRef, inner.value1))
+         //      return true;
+         //}
+
          sourceRef = info.header.parentRef;
       }
       else return true;
@@ -229,6 +236,24 @@ void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compil
    }
 }
 
+bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, targetRef);   
+
+   // if the target class is wrapper around the source
+   if (test(info.header.flags, elWrapper)) {      
+      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+      if (isCompatible(scope, inner.value1, sourceRef)) {         
+         compiler.injectBoxing(node, lxBoxing, test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
 void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference)
 {
 //      if (isTemplateRef(classRef)) {
@@ -237,6 +262,7 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    switch (reference)
    {
       case V_INT32:
+         info.header.parentRef = 0;
          info.header.flags = elDebugDWORD | elStructureRole;
          info.size = 4;
          break;
@@ -327,6 +353,11 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 
       return true;
    }
+   else if (attrValue == (int)V_INT32) {
+      attrValue = lxDWordAttr;
+
+      return true;
+   }
    else return false;
 }
 
@@ -336,4 +367,39 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
       return true;
    }
    else return false;
+}
+
+bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info)
+{
+   // if it is a primitive field
+   if (info.fields.Count() == 1) {
+      switch (attr) {
+         case lxDWordAttr:
+            info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
+            return true;
+            //            case -2:
+            //               scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
+            //               break;
+            //            case -4:
+            //               scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
+            //               break;
+            //            case -7:
+            //               scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
+            //               break;
+            //            case -8:
+            //               scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
+            //               break;
+            //            case -9:
+            //               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
+            //               break;
+            //            case -10:
+            //               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
+            //               break;
+         default:
+            break;
+      }
+   }
+
+   return false;
 }

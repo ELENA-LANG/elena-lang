@@ -1138,6 +1138,7 @@ public:
 
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
+   virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 

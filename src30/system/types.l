@@ -28,7 +28,7 @@
 #template(0020h) limited {}
 //#template(0200h) group   {}
 //#template(0800h) const   {}
-//#template(0008h) struct  {}
+#template(0008h) struct  {}
 //#template(1000h) nonstructural {}
 #template(100020h,0080h) enumlist {}
 //

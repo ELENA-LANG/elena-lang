@@ -765,8 +765,8 @@ void listFlags(int flags)
    //if (test(flags, elWithGenerics))
    //   printLine("@flag ", "elWithGenerics");
 
-   //if (test(flags, elReadOnlyRole))
-   //   printLine("@flag ", "elReadOnlyRole");
+   if (test(flags, elReadOnlyRole))
+      printLine("@flag ", "elReadOnlyRole");
 
    if (test(flags, elNonStructureRole))
       printLine("@flag ", "elNonStructureRole");

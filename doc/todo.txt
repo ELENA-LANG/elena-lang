@@ -5,10 +5,11 @@ In development:
               xrev
                  * constructor returning constant values,...
 
-                 * make sure not embeddable object is not stack allocated
+                 * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation
                  * optimize unbox : root expression / assigning
                  * support lazy expressions
+                 * support unboxing
                  * step over : fine tune the debugging sequence
                  * templates : importing
                  * templates : compiling
@@ -25,6 +26,10 @@ In development:
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : #var(-11,4)n := 1.#var(-11,4)m := 2.n := n + m * 2.
                  * optimize : branching with numeric comparison
+                 * test int => vint, vint =>, ref => obj, obj => ref
+                 * make sure ref may be used as obj, vint may be used as int (generating virtual dispatcher only if it was not declared)
+                 * passing vint as int probably should be possible only for embeddable classes
+                 * no unboxing for assigning operation
 
                  * support abstract attribute
                  * support implicit constructors

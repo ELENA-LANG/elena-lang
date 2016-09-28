@@ -549,7 +549,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
 void* JITLinker :: resolveConstant(ident_t reference, int mask)
 {
    bool constantValue = true;
-//   ident_t value = NULL;
+   ident_t value = NULL;
    ident_t vmtReference = reference;
 //   if (mask == mskLiteralRef) {
 //      value = reference;
@@ -563,10 +563,10 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //      value = reference;
 //      vmtReference = _loader->getCharacterClass();
 //   }
-//   else if (mask == mskInt32Ref) {
-//      value = reference;
-//      vmtReference = _loader->getIntegerClass();
-//   }
+   /*else */if (mask == mskInt32Ref) {
+      value = reference;
+      vmtReference = _loader->getIntegerClass();
+   }
 //   else if (mask == mskInt64Ref) {
 //      value = reference;
 //      vmtReference = _loader->getLongClass();
@@ -575,7 +575,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //      value = reference;
 //      vmtReference = _loader->getRealClass();
 //   }
-   /*else */constantValue = false;
+   else constantValue = false;
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmtReference, mskVMTRef, true);
@@ -608,9 +608,9 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //   else if (mask == mskCharRef) {
 //      _compiler->compileChar32(&writer, value);
 //   }
-//   else if (mask == mskInt32Ref) {
-//      _compiler->compileInt32(&writer, StringHelper::strToULong(value, 16));
-//   }
+   /*else */if (mask == mskInt32Ref) {
+      _compiler->compileInt32(&writer, value.toULong(16));
+   }
 //   else if (mask == mskInt64Ref) {
 //      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
 //      _compiler->compileInt64(&writer, StringHelper::strToLongLong(value + 1, 10));
@@ -626,7 +626,7 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
 //      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
 //      constantValue = true;
 //   }
-   /*else */if (vmtVAddress == LOADER_NOTLOADED) {
+   else if (vmtVAddress == LOADER_NOTLOADED) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
       _compiler->compileBinary(&writer, sectionInfo.section);
@@ -968,7 +968,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskLiteralRef:
 //         case mskWideLiteralRef:
 //         case mskCharRef:
-//         case mskInt32Ref:
+         case mskInt32Ref:
 //         case mskRealRef:
 //         case mskInt64Ref:
             vaddress = resolveConstant(reference, mask);

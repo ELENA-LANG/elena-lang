@@ -531,85 +531,85 @@ long strToLong(const char* s, int radix)
    return strtol(s, NULL, radix);
 }
 
-//long StringHelper::strToULong(const char* s, int radix)
+long strToULong(const char* s, int radix)
+{
+   return strtoul(s, NULL, radix);
+}
+
+//long long StringHelper::strToLongLong(const char* s, int radix)
 //{
-//   return strtoul(s, NULL, radix);
+//   long long number = 0;
+//
+//   char dump[10];
+//   int length = getlength(s);
+//   while (length > 9) {
+//      memcpy(dump, (char*)s, 9);
+//      dump[9] = 0;
+//
+//      long long temp = strToLong(dump, radix);
+//      for (int i = 0; i < (length - 9); i++) {
+//         temp *= radix;
+//      }
+//      number += temp;
+//
+//      length -= 9;
+//      s += 9;
+//   }
+//   memcpy(dump, s, length);
+//   dump[length] = 0;
+//   long long temp = strToLong(dump, radix);
+//   number += temp;
+//
+//   return number;
 //}
 //
-////long long StringHelper::strToLongLong(const char* s, int radix)
-////{
-////   long long number = 0;
-////
-////   char dump[10];
-////   int length = getlength(s);
-////   while (length > 9) {
-////      memcpy(dump, (char*)s, 9);
-////      dump[9] = 0;
-////
-////      long long temp = strToLong(dump, radix);
-////      for (int i = 0; i < (length - 9); i++) {
-////         temp *= radix;
-////      }
-////      number += temp;
-////
-////      length -= 9;
-////      s += 9;
-////   }
-////   memcpy(dump, s, length);
-////   dump[length] = 0;
-////   long long temp = strToLong(dump, radix);
-////   number += temp;
-////
-////   return number;
-////}
-////
-////char* StringHelper::ulongToStr(unsigned long n, char* s, int radix)
-////{
-////   int  rem = 0;
-////   int  pos = 0;
-////   int start = 0;
-////
-////   do
-////   {
-////      rem = n % radix;
-////      n /= radix;
-////      switch (rem) {
-////      case 10:
-////         s[pos++] = 'a';
-////         break;
-////      case 11:
-////         s[pos++] = 'b';
-////         break;
-////      case 12:
-////         s[pos++] = 'c';
-////         break;
-////      case 13:
-////         s[pos++] = 'd';
-////         break;
-////      case 14:
-////         s[pos++] = 'e';
-////         break;
-////      case 15:
-////         s[pos++] = 'f';
-////         break;
-////      default:
-////         if (rem < 10) {
-////            s[pos++] = (char)(rem + 0x30);
-////         }
-////      }
-////   } while (n != 0);
-////
-////   s[pos] = 0;
-////   pos--;
-////   while (start < pos) {
-////      char tmp = s[start];
-////      s[start++] = s[pos];
-////      s[pos--] = tmp;
-////   }
-////
-////   return s;
-////}
-////
+//char* StringHelper::ulongToStr(unsigned long n, char* s, int radix)
+//{
+//   int  rem = 0;
+//   int  pos = 0;
+//   int start = 0;
+//
+//   do
+//   {
+//      rem = n % radix;
+//      n /= radix;
+//      switch (rem) {
+//      case 10:
+//         s[pos++] = 'a';
+//         break;
+//      case 11:
+//         s[pos++] = 'b';
+//         break;
+//      case 12:
+//         s[pos++] = 'c';
+//         break;
+//      case 13:
+//         s[pos++] = 'd';
+//         break;
+//      case 14:
+//         s[pos++] = 'e';
+//         break;
+//      case 15:
+//         s[pos++] = 'f';
+//         break;
+//      default:
+//         if (rem < 10) {
+//            s[pos++] = (char)(rem + 0x30);
+//         }
+//      }
+//   } while (n != 0);
+//
+//   s[pos] = 0;
+//   pos--;
+//   while (start < pos) {
+//      char tmp = s[start];
+//      s[start++] = s[pos];
+//      s[pos--] = tmp;
+//   }
+//
+//   return s;
+//}
+//
 ////char* StringHelper :: doubleToStr(double value, int digit, char* s)
 ////{
 ////   gcvt(value, digit, s);
@@ -1284,6 +1284,12 @@ long ident_t :: toLong(int radix, int index)
 {
    return strToLong(_string + index, radix);
 }
+
+long ident_t :: toULong(int radix, int index)
+{
+   return strToULong(_string + index, radix);
+}
+
 int ident_t :: find(char c, int defValue)
 {
    return __find(_string, c, defValue);

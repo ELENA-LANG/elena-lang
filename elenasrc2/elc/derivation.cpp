@@ -72,7 +72,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case tsReal:
       case tsLong:
       case tsWide:
-         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxParameter | lxObjectMask));
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask));
          copyChildren(node);
          _writer.closeNode();
          break;

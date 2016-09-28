@@ -49,6 +49,7 @@ public:
 
    long toLong(int radix);
    long toLong(int radix, int index);
+   long toULong(int radix, int index = 0);
 
    char* clone();
    char* clone(int index);
