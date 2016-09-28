@@ -102,7 +102,7 @@ class _CompilerLogic
 {
 public:
    // retrieve the class info / size
-   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference) = 0;
+   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference) = 0;
    virtual size_t defineStructSize(ClassInfo& info) = 0;
 

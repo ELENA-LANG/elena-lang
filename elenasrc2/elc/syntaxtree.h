@@ -463,17 +463,17 @@ public:
 
       Node findSubNode(LexicalType type)
       {
-         Node child = firstChild();
-         while (child != lxNone && child.type != type) {
-            if (child == lxExpression) {
-               Node subNode = child.findSubNode(type);
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
                if (subNode != lxNone)
                   return subNode;
             }
-            child = child.nextNode();
+            current = current.nextNode();
          }
 
-         return child;
+         return current;
       }
       Node findSubNode(LexicalType type1, LexicalType type2)
       {

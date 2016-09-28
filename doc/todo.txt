@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xrev
+                 * dispatchable template
                  * constructor returning constant values,...
 
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
@@ -25,11 +26,13 @@ In development:
                  * uncomment code in ecv
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : #var(-11,4)n := 1.#var(-11,4)m := 2.n := n + m * 2.
+                 * optimize : #var(int)n := 1. n := n + 3.
                  * optimize : branching with numeric comparison
                  * test int => vint, vint =>, ref => obj, obj => ref
                  * make sure ref may be used as obj, vint may be used as int (generating virtual dispatcher only if it was not declared)
                  * passing vint as int probably should be possible only for embeddable classes
                  * no unboxing for assigning operation
+                 * optimize : boxing of constant
 
                  * support abstract attribute
                  * support implicit constructors

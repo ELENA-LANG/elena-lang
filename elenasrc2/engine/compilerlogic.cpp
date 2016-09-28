@@ -88,6 +88,11 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
       if (info.operatorId == operatorId && isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
          result = info.result;
 
+         //// HOTFIX : if one of the operands is not primitive use it as a output result
+         //if (isPrimitiveRef(result)) {
+
+         //}
+
          return info.operationType;
       }
 
@@ -155,12 +160,12 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
          ClassInfo info;
          defineClassInfo(scope, info, sourceRef);
 
-         //// if it is a wrapper
-         //if (test(info.header.flags, elWrapper)) {
-         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-         //   if (isCompatible(scope, targetRef, inner.value1))
-         //      return true;
-         //}
+         // if it is a structure wrapper
+         if (test(info.header.flags, elStructureWrapper)) {
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1))
+               return true;
+         }
 
          sourceRef = info.header.parentRef;
       }
@@ -254,7 +259,7 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    return false;
 }
 
-void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference)
+void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
 //      if (isTemplateRef(classRef)) {
 //         variable.kind = okTemplateLocal;
@@ -268,7 +273,7 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          break;
       default:
          if (reference != 0) {
-            scope.loadClassInfo(info, reference, true);
+            scope.loadClassInfo(info, reference, headerOnly);
          }      
          break;
    }

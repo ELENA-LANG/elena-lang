@@ -109,6 +109,11 @@ inline bool isSingleStatement(SNode expr)
 //   return (expr == nsObject) && (expr.firstChild().nextNode() == nsNone);
 //}
 
+inline bool isPrimitiveRef(ref_t reference)
+{
+   return (int)reference < 0;
+}
+
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    ref_t verbId = 0;
@@ -144,7 +149,10 @@ inline ref_t importSubject(_Module* exporter, ref_t exportRef, _Module* importer
 
 inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
 {
-   if (exportRef) {
+   if (isPrimitiveRef(exportRef)) {
+      return exportRef;
+   }
+   else if (exportRef) {
       ident_t reference = exporter->resolveReference(exportRef);
 
       return importer->mapReference(reference);
@@ -351,12 +359,7 @@ inline bool isImportRedirect(SNode node)
 //   }
 //   else return false;
 //}
-//
-//inline bool isPrimitiveRef(ref_t reference)
-//{
-//   return (int)reference < 0;
-//}
-//
+
 //inline bool isTemplateRef(ref_t reference)
 //{
 //   return reference == -6;
@@ -7734,21 +7737,21 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //      current = current.nextNode();
 //   }
 
+   optimizeSyntaxExpression(scope, node, mode);
+
    if (node.argument != 0) {
       SNode intValue = node.findSubNode(lxConstantInt);
       if (intValue != lxNone) {
          // direct operation with numeric constants
          node.set(lxIntOp, SET_MESSAGE_ID);
       }
-      else {
-         optimizeSyntaxExpression(scope, node, mode);
+//      else {
 //         SNode directCall = findSubNode(node, lxDirectCalling, lxSDirctCalling);
 //         if (directCall != lxNone && SyntaxTree::existChild(directCall, lxEmbeddable)) {
 //            optimizeEmbeddableCall(scope, node, directCall);
 //         }
-      }
+//      }
    }
-   else optimizeSyntaxExpression(scope, node, mode);
 
 //   // assignment operation
 //   SNode assignNode = node.findSubNode(lxAssigning);

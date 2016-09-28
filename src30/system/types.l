@@ -37,9 +37,9 @@
 //
 ///// Class data attributes
 //#template(30000h,8h,4h)  string {}
-//#template(0008h,0010h)   embeddable {}
+#template(0008h,0010h)   embeddable {}
 //#template(0008h,800010h) reference {}
-//
+
 ///// Provides classes that describe the basic functionality
 
 // === basic logical types ===

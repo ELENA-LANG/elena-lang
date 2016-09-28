@@ -293,7 +293,7 @@ namespace _ELENA_
    const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
    const int elWrapper             = 0x00000040;
-//   const int elStructureWrapper    = 0x00000048;
+   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;

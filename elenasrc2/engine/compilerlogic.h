@@ -55,7 +55,7 @@ class CompilerLogic : public _CompilerLogic
    OperatorList operators;
 
 public:
-   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference);
+   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
    virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference);
    virtual size_t defineStructSize(ClassInfo& info);
 
