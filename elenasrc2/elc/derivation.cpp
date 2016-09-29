@@ -29,11 +29,18 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsSubject:
       case nsNestedClass:
       case nsDispatchExpression:
+      case nsMessageReference:
+      case nsExtension:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {
             copyHints(_hints);
             _hints = lxNone;
          }            
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
+      case nsHintValue:
+         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          unpackChildren(node);
          _writer.closeNode();
          break;

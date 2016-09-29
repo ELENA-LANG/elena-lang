@@ -225,14 +225,9 @@ void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compil
 
    if (reference == V_FLAG) {      
       if (!scope.branchingInfo.reference) {
-         // HOTFIX : resolve boolean symbols; it is assumed the super class implements equal operation 
-         //          and returns the boolean value
-         bool found = false;
-         ref_t type = 0;
-         checkMethod(scope, scope.superReference, encodeMessage(0, EQUAL_MESSAGE_ID, 1), found, type);
-
+         // HOTFIX : resolve boolean symbols
          ref_t dummy;
-         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.attributeHints.get(type), dummy);
+         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
       }
 
       reference = scope.branchingInfo.reference;
@@ -269,6 +264,17 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
       case V_INT32:
          info.header.parentRef = 0;
          info.header.flags = elDebugDWORD | elStructureRole;
+         info.size = 4;
+         break;
+      case V_SIGNATURE:
+      case V_VERB:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugSubject | elStructureRole;
+         info.size = 4;
+         break;
+      case V_MESSAGE:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugMessage | elStructureRole;
          info.size = 4;
          break;
       default:
@@ -363,6 +369,21 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 
       return true;
    }
+   else if (attrValue == (int)V_SIGNATURE) {
+      attrValue = lxSignatureAttr;
+
+      return true;
+   }
+   else if (attrValue == (int)V_MESSAGE) {
+      attrValue = lxMessageAttr;
+
+      return true;
+   }
+   else if (attrValue == (int)V_VERB) {
+      attrValue = lxVerbAttr;
+
+      return true;
+   }
    else return false;
 }
 
@@ -382,6 +403,18 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
          case lxDWordAttr:
             info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
+            return true;
+         case lxSignatureAttr:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
+            return true;
+         case lxVerbAttr:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
+            return true;
+         case lxMessageAttr:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return true;
             //            case -2:
             //               scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
@@ -407,4 +440,25 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
    }
 
    return false;
+}
+
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
+
+ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
+{
+   switch (reference) {
+      case V_INT32:
+         return firstNonZero(scope.intReference, scope.superReference);
+      case V_SIGNATURE:
+         return firstNonZero(scope.intReference, scope.signatureReference);
+      case V_MESSAGE:
+         return firstNonZero(scope.intReference, scope.messageReference);
+      case V_VERB:
+         return firstNonZero(scope.intReference, scope.verbReference);
+      default:
+         return scope.superReference;
+   }
 }

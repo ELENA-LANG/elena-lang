@@ -33,12 +33,15 @@ enum LexicalType
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
    lxClassField      = 0x00013,
+   lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
    lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
    lxDispatchCode    = 0x00020,
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
+   lxExtension       = 0x0002B,
+   lxMessageReference= 0x00033,
    lxSubject         = 0x00047,
 
    // parameters
@@ -66,6 +69,7 @@ enum LexicalType
    lxLocal           = 0x0810A, // arg - offset
    lxConstantInt     = 0x1810F, // arg - reference
    lxConstantClass   = 0x08112, // arg - reference
+   lxVerbConstant    = 0x08116, // arg - reference
    lxNil             = 0x08117,
    lxCurrent         = 0x08118, // arg -offset
    lxResult          = 0x08119, // arg -offset
@@ -91,6 +95,7 @@ enum LexicalType
    lxDispatching     = 0x04036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
+   lxOverridden      = 0x0C047,
 
    lxBaseParent      = 0x10023,
    lxOperator        = 0x10025,
@@ -127,10 +132,14 @@ enum LexicalType
    lxIfValue         = 0x20016, // arg - reference
    lxElseValue       = 0x20017, // arg - reference
    lxSize            = 0x20018,
+   lxTemplateParam   = 0x20019,
 
    lxStaticAttr      = 0x20102,
    lxClassMethodAttr = 0x20103,
    lxDWordAttr       = 0x20104,
+   lxSignatureAttr   = 0x20105,
+   lxMessageAttr     = 0x20106,
+   lxVerbAttr        = 0x20107,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -154,7 +163,6 @@ enum LexicalType
 //   lxMessageConstant = 0x24113, // arg - rererence
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
-//   lxVerbConstant = 0x24116, // arg - reference
 //   lxCurrentMessage = 0x0411B,
 //   lxCurrentField = 0x0411D, // arg -offset
 //   lxConstantList = 0x2411E, // arg - reference
@@ -205,7 +213,6 @@ enum LexicalType
 //
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,
-//   lxOverridden      = 0x00447,
 //   lxEmbeddable      = 0x0044B,
 //   lxSubject         = 0x4044F,
 //
@@ -654,6 +661,50 @@ public:
             else if (current == type4)
                return current;
             else if (current == type5)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
                return current;
 
             current = current.nextNode();

@@ -157,7 +157,7 @@ public:
    virtual ident_t getMessageClass() = 0;
 //   virtual ident_t getExtMessageClass() = 0;
 //   virtual ident_t getSignatureClass() = 0;
-//   virtual ident_t getVerbClass() = 0;
+   virtual ident_t getVerbClass() = 0;
 //   virtual ident_t getNamespace() = 0;
 
    virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;

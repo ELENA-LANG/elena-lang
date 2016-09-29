@@ -321,9 +321,9 @@ namespace _ELENA_
 //   const int elDebugPTR            = 0x00090000;
 //   const int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
-//   const int elDebugSubject        = 0x000C0000;
+   const int elDebugSubject        = 0x000C0000;
 //   const int elDebugReals          = 0x000D0000;
-//   const int elDebugMessage        = 0x000E0000;
+   const int elDebugMessage        = 0x000E0000;
 //   const int elDebugDPTR           = 0x000F0000;
    const int elEnumList            = 0x00100000;
 
@@ -507,11 +507,12 @@ namespace _ELENA_
 //   #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
 //   #define EXT_MESSAGE_FORWARD      "'$ext_message"
-//   #define SIGNATURE_FORWARD        "'$signature"
-//   #define VERB_FORWARD             "'$verb"
+   #define SIGNATURE_FORWARD        "'$signature"
+   #define VERB_FORWARD             "'$verb"
 //   #define ARRAY_FORWARD            "'$array"
 //   #define PARAMS_FORWARD           "'$params"
-////   #define SUBJ_FORWARD             "'$sign"
+//   #define SUBJ_FORWARD             "'$sign"
+   #define BOOL_FORWARD             "'$bool"
 
    #define STARTUP_CLASS            "'startUp"
 

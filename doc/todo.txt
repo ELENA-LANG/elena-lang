@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xrev
+                 * dynamic mutation / mixing - test why the parameter is not correctly released
                  * dispatchable template
                  * constructor returning constant values,...
 
@@ -33,6 +34,7 @@ In development:
                  * passing vint as int probably should be possible only for embeddable classes
                  * no unboxing for assigning operation
                  * optimize : boxing of constant
+                 * test template in template (with parameters)
 
                  * support abstract attribute
                  * support implicit constructors

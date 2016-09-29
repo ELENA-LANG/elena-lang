@@ -1,6 +1,8 @@
 //        ELENA Language 2.0
 //      inline system library
 
+define EVAL_MESSAGE_ID      085000000h
+
 procedure __object.dispatch[1]
 
   bsredirect  
@@ -30,3 +32,90 @@ labTrue:
   
 end
 
+procedure __verb.dispatch[1]
+
+  bloadsi 1
+  ifb labDefault
+  
+  setverb 0
+  nload
+  or
+  ecopyd
+  aloadsi 1
+  ajumpvi 0
+  
+labDefault:
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+  
+end
+
+procedure __message.dispatch[1]
+
+  bloadsi 1
+  ifb labDefault
+
+  nload
+  eswap
+  setverb EVAL_MESSAGE_ID
+  setsubj 0
+  else labEnd
+  nload
+  ecopyd
+  aloadsi 1
+  ajumpvi 0
+
+labEnd:
+  open    4
+  reserve 1
+  dsavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+
+labDefault:
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+  
+end
+
+procedure __signature.dispatch[1]
+
+  bloadsi 1
+  ifb labDefault
+
+  setsubj 0
+  nload
+  or
+  aloadsi 1
+  ecopyd
+  ajumpvi 0
+  
+labDefault:
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new&mssg$[1]
+  throw
+  
+end

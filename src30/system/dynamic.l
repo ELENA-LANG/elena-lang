@@ -14,29 +14,29 @@
 //    /// Redirects incoming messages to the symbol
 //    #method => system'core_routines'__symbol.
 //}
-//
-//// --- Verb ---
-//
-///// A dynamic verb extender
-//#class(sealed,embeddable) Verb
-//{
-//    #field(signature)theValue.
-//    
+
+// --- Verb ---
+
+/// A dynamic verb extender
+#class(sealed,embeddable) Verb
+{
+    #field(-20,4)theValue.
+
 //    /// Loads a dynamic verb
 //    #constructor(stacksafe,w3) new &verb:aVerb
 //        = aVerb.
-//
-//    /// Dispatches incoming messages and redirects to the target
-//    #method => system'core_routines'__verb.
-//}
+
+    /// Dispatches incoming messages and redirects to the target
+    #method => system'core_routines'__verb.
+}
 
 // --- Message ---
 
 /// A message constant
-#class/*(sealed,embeddable)*/ Message
+#class(sealed,embeddable) Message
 {
-//    #field(message)theValue.
-//    
+    #field(-19,4)theValue.
+    
 //    /// Loads a message
 //    #constructor(stacksafe,w3) new &mssg:message
 //        = message.
@@ -51,9 +51,9 @@
 //        
 //        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
 //    ]
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    #method => system'core_routines'__message.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    #method => system'core_routines'__message.
 }
 
 //// --- ExtensionMessage ---
@@ -76,15 +76,14 @@
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    #method => system'core_routines'__extmessage.
 //}
-//
-//
-//// --- Signature ---
-//
-///// A dynamic signature extender
-//#class(sealed,embeddable) Signature
-//{
-//    #field(signature)theValue.
-//    
+
+// --- Signature ---
+
+/// A dynamic signature extender
+#class(sealed,embeddable) Signature
+{
+    #field(-18,4)theValue.
+    
 //    /// Creates a dynamic signature
 //    #constructor(stacksafe) new &mssg:message
 //    [
@@ -116,11 +115,11 @@
 //        
 //        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
 //    ]
-//        
-//    /// Qualifies incoming messages and redirects to the target
-//    #method => system'core_routines'__signature.
-//}
-//
+        
+    /// Qualifies incoming messages and redirects to the target
+    #method => system'core_routines'__signature.
+}
+
 //// --- MessageArray ---
 //
 //#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray

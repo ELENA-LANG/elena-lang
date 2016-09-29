@@ -114,7 +114,7 @@ public:
 //      okMessageConstant,              // param - reference 
 //      okExtMessageConstant,           // param - reference 
 //      okSignatureConstant,            // param - reference 
-//      okVerbConstant,                 // param - reference 
+      okVerbConstant,                 // param - reference 
 //      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
@@ -131,8 +131,8 @@ public:
       okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
-//      okConstantRole,                 // param - role reference
-//   
+      okConstantRole,                 // param - role reference
+
 //      okTemplateTarget,
 //      okTemplateLocal,
 //   //   okTemplateTarget,
@@ -799,8 +799,9 @@ private:
 //
 //      ref_t       templateRef;
 //      Type        type;
-//      ForwardMap  parameters;
-//
+      ForwardMap  parameters;
+      SubjectMap  subjects;
+
 //      // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
 //      // proper reference is 0 in this case
 //      TemplateScope(ModuleScope* parent, ref_t reference);
@@ -808,28 +809,27 @@ private:
 //      virtual ObjectInfo mapObject(TerminalInfo identifier);
 //
 //      virtual bool validateTemplate(ref_t reference);
-//
-//      virtual ref_t mapSubject(TerminalInfo terminal, IdentifierString& output)
-//      {
-//         ref_t parameter = parameters.get(terminal);
-//         if (parameter != 0) {
-//            int offset = output.Length();
-//
-//            output.append(TARGET_POSTFIX);
-//            output.appendInt((int)parameter);            
-//
-//            return moduleScope->module->mapSubject(output + offset, false);
-//         }
-//         else return moduleScope->mapSubject(terminal, output);
-//      }
-//
+
+      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
+      {
+         ident_t name = terminal.findChild(lxTerminal).identifier();
+         ref_t parameter = parameters.get(name);
+         if (parameter != 0) {
+            ref_t subjRef = subjects.get(parameter);
+            output.append(moduleScope->module->resolveSubject(subjRef));
+
+            return subjRef;
+         }
+         else return Scope::mapSubject(terminal, output);
+      }
+
 //      virtual bool isVirtualSubject(TerminalInfo terminal)
 //      {
 //         return parameters.exist(terminal);
 //      }
-//
-//      virtual ref_t mapSubject(TerminalInfo terminal, bool implicitOnly = true)
-//      {
+
+      virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
+      {
 //         ref_t parameter = parameters.get(terminal);
 //         if (parameter != 0) {
 //            IdentifierString output;
@@ -838,8 +838,8 @@ private:
 //
 //            return moduleScope->module->mapSubject(output, false);
 //         }
-//         else return Scope::mapSubject(terminal, implicitOnly);
-//      }
+         /*else */return Scope::mapSubject(terminal, implicitOnly);
+      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -848,6 +848,8 @@ private:
          }
          else return parent->getScope(level);
       }
+
+      void loadParameters(SNode node);
 
 //      void save()
 //      {
@@ -901,7 +903,7 @@ private:
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
-   ref_t mapAttribute(SNode attribute, int paramCounter, ModuleScope& scope, int& attrValue);
+   ref_t mapAttribute(SNode attribute, ModuleScope& scope, int& attrValue);
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -930,7 +932,7 @@ private:
 //   void copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
 //                                 TemplateInfo& info, RoleMap* attributes);
 //   bool copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes = NULL);
-   void copyTemplate(SNode node, ModuleScope& scope, ref_t attrRef);
+   void copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
@@ -971,8 +973,8 @@ private:
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
-//
-//   ObjectInfo compileMessageReference(DNode objectNode, CodeScope& scope);
+
+   ObjectInfo compileMessageReference(SNode objectNode, CodeScope& scope, int mode);
    void setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
 
    ObjectInfo compileTerminal(SNode node, CodeScope& scope, int mode);
@@ -989,12 +991,12 @@ private:
 
    ObjectInfo compileMessage(SNode node, CodeScope& scope);
    ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(DNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role/*, int mode*/);
-//
+   ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role/*, int mode*/);
+
 //   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
-//   ObjectInfo compileExtension(DNode& node, CodeScope& scope, ObjectInfo object, int mode);
+   ObjectInfo compileExtension(SNode node, CodeScope& scope, int mode = 0);
    ObjectInfo compileExpression(SNode node, CodeScope& scope/*, ref_t targetType*/, int mode);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);

@@ -16,6 +16,9 @@
 #define V_STATIC      (size_t)-02
 #define V_FLAG        (size_t)-03
 #define V_INT32       (size_t)-11
+#define V_SIGNATURE   (size_t)-18
+#define V_MESSAGE     (size_t)-19
+#define V_VERB        (size_t)-20
 
 #define V_IFBRANCH    (size_t)-4097
 #define V_IFNOTBRANCH (size_t)-4098
@@ -43,7 +46,6 @@ enum MethodHint
    tpIfNotBranch = 0x200,
 };
 
-
 // --- _CompileScope ---
 
 struct _CompilerScope
@@ -65,6 +67,11 @@ struct _CompilerScope
 
    // cached references
    ref_t superReference;
+   ref_t intReference;
+   ref_t signatureReference;
+   ref_t messageReference;
+   ref_t verbReference;
+   ref_t boolReference;
 
    // list of typified classes which may need get&type message
    ClassMap    typifiedClasses;
@@ -79,7 +86,8 @@ struct _CompilerScope
    _CompilerScope()
    {
       module = NULL;
-      superReference = 0;
+      intReference = boolReference = superReference = 0;
+      signatureReference = verbReference = messageReference = 0;
    }
 };
 
@@ -114,6 +122,8 @@ public:
 
    // retrieve the branching operation type
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
+   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;

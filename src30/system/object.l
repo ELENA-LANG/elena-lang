@@ -1,18 +1,18 @@
-//// === basic templates ===
-//
-//#template dispatchable : template_subj
-//{
-//    /// Dispatches the verb to the target with a specified subject
-//    #method cast : verb &to:target = target::verb eval &template_subj:$self.
-//
-//    /// Dispatches the verb to the target with a specified subject providing a parameter
-//    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
-//}
+// === basic templates ===
+
+#template dispatchable : template_subj
+{
+    /// Dispatches the verb to the target with a specified subject
+    #method cast : verb &to:target = target::verb eval &template_subj:$self.
+
+    /// Dispatches the verb to the target with a specified subject providing a parameter
+    #method cast : aVerb &to:aTarget &with:aParam = aTarget::aVerb eval:aParam &template_subj:$self.
+}
 
 // --- super object ---
 
 /// A common ancestor
-#class/*(dispatchable:object)*/ Object
+#class(dispatchable:object) Object
 {
     /// Creates the object
     #constructor new []
