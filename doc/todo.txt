@@ -3,12 +3,13 @@ In development:
 ------                              
 
               xrev
-                 * dynamic mutation / mixing - test why the parameter is not correctly released
-                 * dispatchable template
+                 * implementing param boxing
+                 * stacksafe
                  * constructor returning constant values,...
 
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation
+                 * invalid warning in template
                  * optimize unbox : root expression / assigning
                  * support lazy expressions
                  * support unboxing
@@ -35,6 +36,8 @@ In development:
                  * no unboxing for assigning operation
                  * optimize : boxing of constant
                  * test template in template (with parameters)
+                 * multy parameter dispatching
+                 * returning from closure (to simulate normal branching)
 
                  * support abstract attribute
                  * support implicit constructors

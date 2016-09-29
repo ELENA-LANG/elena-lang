@@ -641,12 +641,12 @@ private:
          return scope->info.methodHints.get(ClassInfo::Attribute(message, maType));
       }
 
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
 //      ref_t getClassRef(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -729,13 +729,13 @@ private:
 //
 //         return scope ? scope->info.fieldTypes.get(offset) : 0;
 //      }
-//
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
 
       CodeScope(SymbolScope* parent);
       CodeScope(MethodScope* parent);

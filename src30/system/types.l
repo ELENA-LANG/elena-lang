@@ -14,7 +14,7 @@
 //
 ///// Method attributes
 //#mtemplate(40h) generic {}
-//#mtemplate(10h) stacksafe {}
+#template(-8192) stacksafe {}
 //#mtemplate(20h) embeddable {}
 //#mtemplate(80h) action {}
 //#mtemplate(01h) sealed {}

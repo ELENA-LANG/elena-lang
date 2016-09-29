@@ -95,7 +95,7 @@ enum LexicalType
    lxDispatching     = 0x04036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
-   lxOverridden      = 0x0C047,
+   lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,
    lxOperator        = 0x10025,

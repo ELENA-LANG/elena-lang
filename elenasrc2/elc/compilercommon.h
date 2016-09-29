@@ -23,6 +23,8 @@
 #define V_IFBRANCH    (size_t)-4097
 #define V_IFNOTBRANCH (size_t)-4098
 
+#define V_STATCKSAFE  (size_t)-8192
+
 namespace _ELENA_
 {
 
@@ -38,7 +40,7 @@ enum MethodHint
    tpNormal      = 0x03,
 //      tpDispatcher = 0x04,
 //      tpPrivate    = 0x05,
-//      tpStackSafe  = 0x10,
+   tpStackSafe   = 0x10,
 //      tpEmbeddable = 0x20,
 //      tpGeneric    = 0x40,
    tpAction      = 0x80,

@@ -1247,12 +1247,12 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
    if (terminal.compare(SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
-//   else if (StringHelper::compare(identifier, SELF_VAR)) {
-//      if (extensionMode != 0 && extensionMode != -1) {
-//         return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
-//      }
-//      else return ObjectInfo(okParam, (size_t)-1);
-//   }
+   else if (terminal.compare(SELF_VAR)) {
+      /*if (extensionMode != 0 && extensionMode != -1) {
+         return ObjectInfo(okParam, (size_t)-1, 0, extensionMode);
+      }
+      else */return ObjectInfo(okParam, (size_t)-1);
+   }
    else {
       int offset = info.fields.get(terminal);
       if (offset != -1) {
@@ -1328,10 +1328,10 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 //      }
       /*else */return ObjectInfo(okThisParam, 1);
    }
-//   else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
-//      return ObjectInfo(okParam, (size_t)-1);
-//   }
-//   else {
+   /*else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
+      return ObjectInfo(okParam, (size_t)-1);
+   }*/
+   else {
       Parameter param = parameters.get(terminal);
 
       int local = param.offset;
@@ -1348,9 +1348,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
          return ObjectInfo(okParam, -1 - local, param.class_ref, param.subj_ref);
       }
       else return Scope::mapTerminal(terminal);
-      
-//      {
-//         ObjectInfo retVal = 
+
 //         if (stackSafe && retVal.kind == okParam && retVal.param == -1 && retVal.type != 0) {
 //            if (isEmbeddable(moduleScope->getClassFlags(moduleScope->subjectHints.get(retVal.type)))) {
 //               return ObjectInfo(okParam, retVal.param, -1, retVal.type);
@@ -1360,7 +1358,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 
 //         return retVal;
 //      }
-//   }
+   }
 }
 
 // --- Compiler::ActionScope ---
@@ -2965,7 +2963,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //            }
 //            else result = compileCollection(member, scope, mode);
 //         }
-         /*else */result = compileExpression(objectNode, scope, HINT_NOBOXING);
+         /*else */result = compileExpression(objectNode, scope, 0);
          break;
       case lxMessageReference:
          result = compileMessageReference(member, scope, mode);
@@ -3463,13 +3461,11 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 
 //   appendObjectInfo(scope, retVal);
 //   appendTerminalInfo(scope.writer, node.FirstTerminal());
-//
-//   // define the message target if required
-//   if (target.kind == okConstantRole) {
-//      scope.writer->newNode(lxOverridden);
-//      writeTerminal(TerminalInfo(), scope, target);
-//      scope.writer->closeNode();
-//   }
+
+   // define the message target if required
+   if (target.kind == okConstantRole) {
+      setTerminal(node.appendNode(lxOverridden).appendNode(lxExpression), scope, target, 0);
+   }
 
    // the result of construction call is its instance
    if (target.kind == okConstantClass) {
@@ -3522,12 +3518,11 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
    //
    SNode arg = node.firstChild();
    // compile the message target and generic argument list
-   while (test(arg.type, lxObjectMask)) {
+   while (arg != lxMessage && arg != lxNone) {
       if (target.kind == okUnknown) {
          target = compileObject(arg, scope, paramMode);
       }
-      // HOTFIX : skip the extension
-      else if (arg.type != lxOverridden)
+      else if (test(arg.type, lxObjectMask))
          compileObject(arg, scope, paramMode);
 
       //paramCount++;
@@ -3791,39 +3786,40 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 
 ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
 {
-//   ModuleScope* moduleScope = scope.moduleScope;
+   ModuleScope* moduleScope = scope.moduleScope;
    ObjectInfo   role;
 
    SNode roleNode = node.findChild(lxExtension);
    // check if the extension can be used as a static role (it is constant)
-//   if (roleNode.firstChild() == nsNone) {
-//      int flags = 0;
+   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
+   if (roleTerminal != lxNone) {
+      int flags = 0;
 
       role = scope.mapObject(roleNode.firstChild(lxTerminalMask));
       if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-//         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
-//
-//         // if the symbol is used inside itself
-//         if (classRef == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
-//
-//            flags = roleClass.header.flags;
-//            //HOTFIX : typecast the extension target if required
-//            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-//               scope.writer->insert(lxTypecasting, encodeMessage(roleClass.fieldTypes.get(-1), GET_MESSAGE_ID, 0));
-//               scope.writer->closeNode();
-//            }
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
+         // if the symbol is used inside itself
+         if (classRef == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
+
+            flags = roleClass.header.flags;
+            ////HOTFIX : typecast the extension target if required
+            //if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+            //   scope.writer->insert(lxTypecasting, encodeMessage(roleClass.fieldTypes.get(-1), GET_MESSAGE_ID, 0));
+            //   scope.writer->closeNode();
+            //}
+         }
+      }
+      // if the symbol VMT can be used as an external role
+      if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
    }
 
    // if it is a generic role
@@ -5388,8 +5384,6 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, Class
 void Compiler :: compileVMT(SNode current, ClassScope& scope)
 {
    while (current != nsNone) {
-//      writer.newBookmark();
-
       switch(current) {
          case lxClassMethod:
          {
@@ -5462,11 +5456,8 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
             templateScope.loadParameters(current);
 
             compileVMT(current.firstChild(), templateScope);
-
-            break;
          }
       }
-//      writer.removeBookmark();
 
       current = current.nextNode();
    }
@@ -5691,8 +5682,6 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
          templateScope.loadParameters(current);
 
          declareVMT(current.firstChild(), templateScope);
-
-         break;
       }
 
       current = current.nextNode();

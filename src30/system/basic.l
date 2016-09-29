@@ -673,7 +673,7 @@
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-#class(embeddable,sealed/*,dispatchable:int*/) IntNumber :: IntBaseNumber
+#class(embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
 {
     #field(4,-11)theValue.
     

@@ -354,6 +354,11 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 
       return true;
    }
+   else if (attrValue == (int)V_STATCKSAFE) {
+      attrValue = tpStackSafe;
+
+      return true;
+   }
    else return false;
 }
 
