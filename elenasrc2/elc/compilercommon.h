@@ -13,8 +13,8 @@
 #include "syntaxtree.h"
 
 // virtual objects
-#define V_STATIC      (size_t)-02
 #define V_FLAG        (size_t)-03
+
 #define V_INT32       (size_t)-11
 #define V_SIGNATURE   (size_t)-18
 #define V_MESSAGE     (size_t)-19
@@ -24,6 +24,12 @@
 #define V_IFNOTBRANCH (size_t)-4098
 
 #define V_STATCKSAFE  (size_t)-8192
+#define V_EMBEDDABLE  (size_t)-8193
+#define V_STATIC      (size_t)-8194
+#define V_SEALED      (size_t)-8195
+#define V_LIMITED     (size_t)-8196
+#define V_STRUCT      (size_t)-8197
+#define V_ENUMLIST    (size_t)-8198
 
 namespace _ELENA_
 {
@@ -41,7 +47,7 @@ enum MethodHint
 //      tpDispatcher = 0x04,
 //      tpPrivate    = 0x05,
    tpStackSafe   = 0x10,
-//      tpEmbeddable = 0x20,
+   tpEmbeddable = 0x20,
 //      tpGeneric    = 0x40,
    tpAction      = 0x80,
    tpIfBranch    = 0x100,

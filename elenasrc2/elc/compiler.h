@@ -798,10 +798,11 @@ private:
 //         ttMethod
 //      };
 //
-//      ref_t       templateRef;
+      ref_t       templateRef;
 //      Type        type;
       ForwardMap  parameters;
       SubjectMap  subjects;
+      bool        classMode;
 
 //      // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
 //      // proper reference is 0 in this case
@@ -831,15 +832,13 @@ private:
 
       virtual ref_t mapSubject(SNode terminal, bool implicitOnly = true)
       {
-//         ref_t parameter = parameters.get(terminal);
-//         if (parameter != 0) {
-//            IdentifierString output;
-//            output.copy(TARGET_POSTFIX);
-//            output.appendInt((int)parameter);
-//
-//            return moduleScope->module->mapSubject(output, false);
-//         }
-         /*else */return Scope::mapSubject(terminal, implicitOnly);
+         ident_t identifier = terminal.findChild(lxTerminal).identifier();
+
+         ref_t parameter = parameters.get(identifier);
+         if (parameter != 0) {
+            return subjects.get(parameter);
+         }
+         else return Scope::mapSubject(terminal, implicitOnly);
       }
 
       virtual Scope* getScope(ScopeLevel level)
@@ -847,10 +846,15 @@ private:
          if (level == slTemplate) {
             return this;
          }
+         else if (level == slClass && classMode) {
+            return this;
+         }
          else return parent->getScope(level);
       }
 
       void loadParameters(SNode node);
+
+      void generateClassName();
 
 //      void save()
 //      {
@@ -863,8 +867,17 @@ private:
       TemplateScope(ClassScope* parent)
          : ClassScope(parent->moduleScope, parent->reference)
       {
+         this->templateRef = 0;
          this->parent = parent;
          this->info.header.flags = 0;
+         this->classMode = false;
+      }
+      TemplateScope(Scope* parent, ref_t attrRef)
+         : ClassScope(parent->moduleScope, 0)
+      {
+         this->parent = parent;
+         this->templateRef = attrRef;
+         this->classMode = false;
       }
    };
 
@@ -904,7 +917,7 @@ private:
 //
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
-   ref_t mapAttribute(SNode attribute, ModuleScope& scope, int& attrValue);
+   ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -926,7 +939,6 @@ private:
 //
 //   bool declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef, RoleMap* attributes = NULL);
 //   bool declareMethodAttribute(DNode hint, MethodScope& scope, SyntaxWriter& writer, ref_t hintRef);
-//   void declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters);
 //   void updateMethodTemplateInfo(MethodScope& scope, size_t rollbackPosition);
 //
 //   void importTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& info);
@@ -1054,8 +1066,8 @@ private:
    void compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope);
 
 //   void declareVirtualMethods(ClassScope& scope);
-//
-//   ref_t generateTemplate(ModuleScope& scope, TemplateInfo& templateInfo, ref_t reference);
+
+   ref_t generateTemplate(SNode attribute, TemplateScope& scope);
 
    void generateClassField(ClassScope& scope, SyntaxTree::Node node/*, bool singleField*/);
    void generateClassStaticField(ClassScope& scope, SNode current);   

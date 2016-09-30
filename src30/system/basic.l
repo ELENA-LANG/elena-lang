@@ -1,8 +1,8 @@
-//
-//#template varof : template_subj
-//{
-//    #field(template_subj)$value.
-//    
+
+#template varof : template_subj
+{
+    #field(template_subj)$value.
+
 //    #method set : val
 //    [
 //        $value := val template_subj.
@@ -22,10 +22,10 @@
 //    
 //    #method(w3) equal : anObject
 //        => $value.
-//        
-//    #method(embeddable,w3) => $value.
-//}
-//
+
+    #method(embeddable/*,w3*/) => $value.
+}
+
 //#template nvarof : template_subj
 //{
 //    #field(template_subj)$value.
@@ -174,13 +174,13 @@
 //        <= shift &int:(anOrder int).
 }
 
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//#class(embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
-//{
-//    #field(int8)theValue.
-//
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+#class(embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
+{
+    #field(1,-11)theValue.
+
 //    #constructor(stacksafe) &int:n
 //    [
 //        theValue := n.
@@ -416,15 +416,15 @@
 //        
 //        ^ aCode.
 //    ]        
-//}
-//
-//// --- ShortNumber ---
-//
-///// A signed 16 bit integer
-//#class(embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
-//{
-//    #field(int16)theValue.    
-//    
+}
+
+// --- ShortNumber ---
+
+/// A signed 16 bit integer
+#class(embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
+{
+    #field(4,-11)theValue.    
+    
 //    #constructor(stacksafe)&int:n
 //    [
 //        theValue := n.
@@ -668,7 +668,7 @@
 //        
 //        ^ aCode.
 //    ]        
-//}
+}
 
 // --- IntNumber ---
 

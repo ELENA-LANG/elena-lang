@@ -1,43 +1,26 @@
-///// Field attributes
-//#ftemplate(-1,1) int8 {}
-//#ftemplate(-1,2) int16 {}
-//#ftemplate(-1,4) int32 {}
-//#ftemplate(-2,8) int64 {}
-//#ftemplate(-4,8) float64 {}
-//#ftemplate(-7,4) symbol {}
-//#ftemplate(-8,4) signature {}
-//#ftemplate(-9,4) message {}
-//#ftemplate(-10,8) extension_message {}
-#template(-2)  static {}
+/// Attributes
+#template(-8194) static {}
 //#ftemplate(-33)  const {}
 //#ftemplate(-34)  preloaded {}
-//
-///// Method attributes
 //#mtemplate(40h) generic {}
 #template(-8192) stacksafe {}
 //#mtemplate(20h) embeddable {}
 //#mtemplate(80h) action {}
 //#mtemplate(01h) sealed {}
-//
 //#mtemplate(-2) w2 {}
 //#mtemplate(-3) w3 {}
-
-/// class attributes
-#template(0120h) sealed  {}
+#template(-8195) sealed  {}
 //#template(0004h) dynamic {}
-#template(0020h) limited {}
+#template(-8196) limited {}
 //#template(0200h) group   {}
 //#template(0800h) const   {}
-#template(0008h) struct  {}
+#template(-8197) struct  {}
 //#template(1000h) nonstructural {}
-#template(100020h,0080h) enumlist {}
-//
+#template(-8198) enumlist {}
 //#template(0120h,4980h)         extension {}
 //#template(0120h,4980h,subject) extension : subject {}
-//
-///// Class data attributes
 //#template(30000h,8h,4h)  string {}
-#template(0008h,0010h)   embeddable {}
+#template(-8193) embeddable {}
 //#template(0008h,800010h) reference {}
 
 ///// Provides classes that describe the basic functionality
@@ -50,9 +33,9 @@
 //#subject keyvalue   = system'KeyValue.
 //
 //#subject ref        = system'Variable.
-//
-//#subject byte       = system'ByteNumber.
-//#subject short      = system'ShortNumber.
+
+#subject byte       = system'ByteNumber.
+#subject short      = system'ShortNumber.
 #subject int        = system'IntNumber.
 //#subject long       = system'LongNumber.
 //#subject real       = system'RealNumber.

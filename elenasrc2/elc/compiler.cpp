@@ -385,11 +385,6 @@ inline bool isImportRedirect(SNode node)
 //   return false;
 //}
 //
-//inline bool isWrappable(int flags)
-//{
-//   return !test(flags, elWrapper) && test(flags, elSealed);
-//}
-//
 //inline bool isDWORD(int flags)
 //{
 //   return (isEmbeddable(flags) && (flags & elDebugMask) == elDebugDWORD);
@@ -1576,9 +1571,37 @@ void Compiler::TemplateScope :: loadParameters(SNode node)
       else if (current == lxTemplateParam) {
          subjects.add(subjects.Count() + 1, current.argument);
       }
+      else if (current == lxAttributeValue) {
+         SNode terminalNode = current.firstChild(lxObjectMask);
+         ref_t subject = mapSubject(terminalNode);
+         if (subject == 0)
+            subject = moduleScope->module->mapSubject(terminalNode.findChild(lxTerminal).identifier(), false);
+
+         subjects.add(subjects.Count() + 1, subject);
+      }
 
       current = current.nextNode();
    }
+}
+
+void Compiler::TemplateScope :: generateClassName()
+{
+   ReferenceNs name;
+   name.copy(moduleScope->module->resolveSubject(templateRef));
+
+   SubjectMap::Iterator it = subjects.start();
+   while (!it.Eof()) {
+      name.append('@');
+      name.append(moduleScope->module->resolveSubject(*it));
+
+      it++;
+   }
+
+   reference = moduleScope->resolveIdentifier(name);
+   if (!reference)
+      reference = moduleScope->mapNestedExpression();
+
+   classMode = true;
 }
 
 //ObjectInfo Compiler::TemplateScope :: mapObject(TerminalInfo identifier)
@@ -2103,26 +2126,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //   }
 //   else return false;
 //}
-//
-//void Compiler :: declareTemplateParameters(DNode hint, ModuleScope& scope, RoleMap& parameters)
-//{
-//   DNode paramNode = hint.firstChild();
-//   while (paramNode != nsNone) {
-//      if (paramNode == nsHintValue) {
-//         TerminalInfo param = paramNode.Terminal();
-//         if (param == tsIdentifier) {
-//            ref_t subject = scope.mapSubject(param, false);
-//            if (subject == 0)
-//               subject = scope.module->mapSubject(param, false);
-//
-//            parameters.add(parameters.Count() + 1, subject);
-//         }
-//         else scope.raiseError(errInvalidHintValue, param);
-//      }
-//      paramNode = paramNode.nextNode();
-//   }
-//}
-//
+
 //bool Compiler :: copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes)
 //{
 //   _Module* extModule = NULL;
@@ -2169,7 +2173,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //   }
 //}
 
-ref_t Compiler :: mapAttribute(SNode attribute, ModuleScope& scope, int& attrValue)
+ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
 {
    int paramCounter =SyntaxTree::countChild(attribute, lxAttributeValue);
 
@@ -2192,16 +2196,16 @@ ref_t Compiler :: mapAttribute(SNode attribute, ModuleScope& scope, int& attrVal
       attrName.append('#');
       attrName.appendInt(paramCounter);
 
-      attrRef = scope.resolveAttributeRef(attrName, false);
+      attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
    }
    else {
-      attrRef = scope.mapAttribute(terminal);
+      attrRef = scope.mapSubject(terminal);
       if (attrRef == 0) {
          IdentifierString attrName(terminal.findChild(lxTerminal).identifier());
          attrName.append('#');
          attrName.appendInt(paramCounter);
 
-         attrRef = scope.resolveAttributeRef(attrName, false);
+         attrRef = scope.moduleScope->resolveAttributeRef(attrName, false);
       }
    }
 
@@ -2246,7 +2250,7 @@ void Compiler :: compileClassAttributes(SNode node, ClassScope& scope, SNode roo
    while (current != lxNone) {
       if (current == lxAttribute) {
          int attrValue = 0;
-         ref_t attrRef = mapAttribute(current, *scope.moduleScope, attrValue);
+         ref_t attrRef = mapAttribute(current, scope, attrValue);
          if (attrValue != 0) {
             if (_logic->validateClassAttribute(attrValue)) {
                current.set(lxClassFlag, attrValue);
@@ -2327,7 +2331,7 @@ void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode roo
    while (current != lxNone) {
       if (current == lxAttribute) {
          int attrValue = 0;
-         ref_t attribute = mapAttribute(current, *scope.moduleScope, attrValue);
+         ref_t attribute = mapAttribute(current, scope, attrValue);
          if (attrValue != 0) {
             if (attrValue > 0) {
                // positive value defines the target size
@@ -2363,7 +2367,7 @@ void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope, SNode r
    while (current != lxNone) {
       if (current == lxAttribute) {
          int attrValue = 0;
-         ref_t attribute = mapAttribute(current, *scope.moduleScope, attrValue);
+         ref_t attribute = mapAttribute(current, scope, attrValue);
          if (attrValue != 0) {
             if (_logic->validateMethodAttribute(attrValue)) {
                rootNode.appendNode(lxClassMethodAttr, attrValue);
@@ -2443,7 +2447,7 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    while (current != lxNone) {
       if (current == lxAttribute) {
          int attrValue = 0;
-         ref_t attrRef = mapAttribute(current, *scope.moduleScope, attrValue);
+         ref_t attrRef = mapAttribute(current, scope, attrValue);
          if (attrValue != 0) {
             // positive value defines the target size
             if (attrValue > 0) {
@@ -2458,10 +2462,28 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          else if (attrRef != 0) {
             variable.extraparam = scope.moduleScope->attributeHints.get(attrRef);
             if (variable.extraparam == INVALID_REF) {
-               //      _Memory* body = scope.moduleScope->loadAttributeInfo(attribute);
+               TemplateScope templateScope(&scope, attrRef);
+               templateScope.loadParameters(current);
 
-               //      SNode templNode = node.appendNode(lxTemplate);
-               //      SyntaxTree::loadNode(templNode, body);
+               templateScope.generateClassName();
+
+               //               if (type != 0)
+               //                  scope.raiseError(errInvalidHint, terminal);
+               //               TemplateInfo templateInfo;
+               //               templateInfo.templateRef = hintRef;
+               //               templateInfo.sourceCol = terminal.Col();
+               //               templateInfo.sourceRow = terminal.Row();
+               //
+               //               //HOTFIX: validate if the subjects are virtual
+               //               if (scope.isVirtualSubject(hints.firstChild().Terminal())) {
+               //                  classRef = -6;
+               //                  type = scope.moduleScope->module->mapSubject(name, false);
+               //               }
+               //               else {
+               variable.extraparam = generateTemplate(current, templateScope);
+               //                  if (classRef == 0)
+               //                     scope.raiseError(errInvalidHint, terminal);
+               //               }
             }
             else if (variable.type == 0) {
                variable.type = attrRef;
@@ -2494,35 +2516,7 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 //               else scope.raiseError(errInvalidHint, terminal);
 //            }
 //            else {
-//               if (type != 0)
-//                  scope.raiseError(errInvalidHint, terminal);
-//
-//               TemplateInfo templateInfo;
-//               templateInfo.templateRef = hintRef;
-//               templateInfo.sourceCol = terminal.Col();
-//               templateInfo.sourceRow = terminal.Row();
-//
-//               declareTemplateParameters(hints, *scope.moduleScope, templateInfo.parameters);
-//
-//               ReferenceNs name(scope.moduleScope->module->resolveSubject(hintRef));
-//               RoleMap::Iterator it = templateInfo.parameters.start();
-//               while (!it.Eof()) {
-//                  name.append('@');
-//                  name.append(scope.moduleScope->module->resolveSubject(*it));
-//
-//                  it++;
-//               }
-//
-//               //HOTFIX: validate if the subjects are virtual
-//               if (scope.isVirtualSubject(hints.firstChild().Terminal())) {
-//                  classRef = -6;
-//                  type = scope.moduleScope->module->mapSubject(name, false);
-//               }
-//               else {
-//                  classRef = generateTemplate(*scope.moduleScope, templateInfo, scope.moduleScope->resolveIdentifier(name));
-//                  if (classRef == 0)
-//                     scope.raiseError(errInvalidHint, terminal);
-//               }
+
 //            }
 //         }
 //         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
@@ -5700,58 +5694,45 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
    }
 }
 
-//ref_t Compiler :: generateTemplate(ModuleScope& moduleScope, TemplateInfo& templateInfo, ref_t reference)
-//{
-//   int initialParamCount = templateInfo.parameters.Count();
-//
-//   if (!reference) {
-//      reference = moduleScope.mapNestedExpression();
-//   }
-//
-//   ClassInfo info;
-//   if (moduleScope.loadClassInfo(info, reference, true)) {
-//      return reference;
-//   }
-//
-//   ClassScope scope(&moduleScope, reference);
-//
-//   SyntaxWriter writer(scope.syntaxTree);
-//   writer.newNode(lxRoot, scope.reference);
-//
+ref_t Compiler :: generateTemplate(SNode attribute, TemplateScope& scope)
+{
+   if (scope.moduleScope->loadClassInfo(scope.info, scope.reference, true)) {
+      return scope.reference;
+   }   
+
+   SyntaxTree syntaxTree;
+   SyntaxWriter writer(syntaxTree);
+   writer.newNode(lxRoot, scope.reference);
+
 //   if (templateInfo.templateParent != 0) {
 //      compileParentDeclaration(DNode(), scope, templateInfo.templateParent);
 //   }
-//   else compileParentDeclaration(DNode(), scope);
-//
-//   writer.appendNode(lxClassFlag, elSealed);
-//
-//   importTemplateDeclaration(scope, writer, templateInfo);
-//   importTemplateDeclarations(scope, writer);
-//
-//   writer.closeNode();
-//
-//   generateClassDeclaration(scope, false);
-//   scope.save();
-//
-//   // HOTFIX : generate syntax once again to properly import the template code
-//   writer.clear();
-//   writer.newNode(lxRoot, scope.reference);
-//
-//   // HOT FIX : declare external parameters once again, 
-//   // intitial parameters must be preserved
-//   while (templateInfo.parameters.Count() > initialParamCount)
-//      templateInfo.parameters.exclude(templateInfo.parameters.Count());
-//
-//   importTemplateImplementation(scope, writer, templateInfo);
-//   importTemplateImplementations(scope, writer);                 // HOTFIX : import templates declared in templates
-//   compileVirtualMethods(writer, scope);
-//
-//   writer.closeNode();
-//
-//   generateClassImplementation(scope);
-//
-//   return scope.reference;
-//}
+   /*else */compileParentDeclaration(SNode(), scope);
+
+   writer.appendNode(lxClassFlag, elSealed);
+   writer.closeNode();
+
+   _Memory* body = scope.moduleScope->loadAttributeInfo(scope.templateRef);
+
+   // import the template
+   SyntaxTree::loadNode(syntaxTree.readRoot(), body);
+   scope.loadParameters(syntaxTree.readRoot());
+
+   // declare the template class
+   compileClassAttributes(syntaxTree.readRoot(), scope, syntaxTree.readRoot());
+   compileFieldDeclarations(syntaxTree.readRoot(), scope);
+
+   declareVMT(syntaxTree.readRoot().firstChild(), scope);
+
+   generateClassDeclaration(syntaxTree.readRoot(), scope, false);
+   scope.save();
+
+   // implement the template class
+   compileVMT(syntaxTree.readRoot().firstChild(), scope);
+   generateClassImplementation(syntaxTree.readRoot(), scope);
+
+   return scope.reference;
+}
 
 void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
@@ -5958,7 +5939,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/
    }
 
    SNode attr = current.findChild(lxDWordAttr);
-      if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
+   if (test(scope.info.header.flags, elWrapper) && scope.info.fields.Count() > 0) {
       // wrapper may have only one field
       scope.raiseError(errIllegalField, current);
    }
@@ -6032,7 +6013,8 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current/
       }
       // if it is a normal field
       else {
-         if (size != 0)
+         // primitive / virtual classes cannot be declared
+         if (size != 0 && _logic->isPrimitiveRef(classRef))
             scope.raiseError(errIllegalField, current);
 
          scope.info.header.flags |= elNonStructureRole;
@@ -6255,25 +6237,6 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    // generate methods
    generateMethodDeclarations(scope, node, false, closed);
 
-//   // verify if the class may be a wrapper
-//   if (isWrappable(scope.info.header.flags) && scope.info.fields.Count() == 1 &&
-//      test(scope.info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
-//   {
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(*scope.info.fieldTypes.start());
-//         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
-//
-//         if (isEmbeddable(fieldFlags)) {
-//            // wrapper around embeddable object should be marked as embeddable wrapper
-//            scope.info.header.flags |= elEmbeddableWrapper;
-//
-//            if ((scope.info.header.flags & elDebugMask) == 0)
-//               scope.info.header.flags |= fieldFlags & elDebugMask;
-//         }
-//      }
-//      else scope.info.header.flags |= elWrapper;
-//   }
-//
 //   // declare virtual methods
 //   if (!closed)
 //      declareVirtualMethods(scope);

@@ -14,6 +14,11 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
+inline bool isWrappable(int flags)
+{
+   return !test(flags, elWrapper) && test(flags, elSealed);
+}
+
 // --- CompilerLogic ---
 
 CompilerLogic :: CompilerLogic()
@@ -185,7 +190,7 @@ bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
 
 bool CompilerLogic :: isVariable(ClassInfo& info)
 {
-   return test(info.header.flags, elWrapper);
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
 }
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
@@ -338,61 +343,94 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info)
       // nested class is sealed
       info.header.flags |= elSealed;
    }
+
+   // verify if the class may be a wrapper
+   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
+      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
+   {
+      if (test(info.header.flags, elStructureRole)) {
+   //         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(*scope.info.fieldTypes.start());
+   //         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
+   //
+   //         if (isEmbeddable(fieldFlags)) {
+   //            // wrapper around embeddable object should be marked as embeddable wrapper
+   //            scope.info.header.flags |= elEmbeddableWrapper;
+   //
+   //            if ((scope.info.header.flags & elDebugMask) == 0)
+   //               scope.info.header.flags |= fieldFlags & elDebugMask;
+   //         }
+      }
+      else info.header.flags |= elWrapper;
+   }
 }
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
-   return attrValue > 0;
+   switch ((size_t)attrValue)
+   {
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
+      case V_LIMITED:
+         attrValue = elClosed;
+         return true;
+      case V_STRUCT:
+         attrValue = elStructureRole;
+         return true;
+      case V_ENUMLIST:
+         attrValue = elStateless | elEnumList | elClosed;
+         return true;
+      case V_EMBEDDABLE:
+         attrValue = elStructureRole | elEmbeddable;
+         return true;
+      default:
+         return false;
+   }
 }
 
 bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 {
-   if (attrValue == (int)V_IFBRANCH) {
-      attrValue = tpIfBranch;
-
-      return true;
+   switch ((size_t)attrValue)
+   {
+      case V_IFBRANCH:
+         attrValue = tpIfBranch;
+         return true;
+      case V_IFNOTBRANCH:
+         attrValue = tpIfNotBranch;
+         return true;
+      case V_STATCKSAFE:
+         attrValue = tpStackSafe;
+         return true;
+      case V_EMBEDDABLE:
+         attrValue = tpEmbeddable;
+         return true;
+      default:
+         return false;
    }
-   else if (attrValue == (int)V_IFNOTBRANCH) {
-      attrValue = tpIfNotBranch;
-
-      return true;
-   }
-   else if (attrValue == (int)V_STATCKSAFE) {
-      attrValue = tpStackSafe;
-
-      return true;
-   }
-   else return false;
 }
 
 bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 {
-   if (attrValue == (int)V_STATIC) {
-      attrValue = lxStaticAttr;
-
-      return true;
+   switch ((size_t)attrValue)
+   {
+      case V_STATIC:
+         attrValue = lxStaticAttr;
+         return true;
+      case V_INT32:
+         attrValue = lxDWordAttr;
+         return true;
+      case V_SIGNATURE:
+         attrValue = lxSignatureAttr;
+         return true;
+      case V_MESSAGE:
+         attrValue = lxMessageAttr;
+         return true;
+      case V_VERB:
+         attrValue = lxVerbAttr;
+         return true;
+      default:
+         return false;
    }
-   else if (attrValue == (int)V_INT32) {
-      attrValue = lxDWordAttr;
-
-      return true;
-   }
-   else if (attrValue == (int)V_SIGNATURE) {
-      attrValue = lxSignatureAttr;
-
-      return true;
-   }
-   else if (attrValue == (int)V_MESSAGE) {
-      attrValue = lxMessageAttr;
-
-      return true;
-   }
-   else if (attrValue == (int)V_VERB) {
-      attrValue = lxVerbAttr;
-
-      return true;
-   }
-   else return false;
 }
 
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
