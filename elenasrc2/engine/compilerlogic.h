@@ -49,15 +49,16 @@ class CompilerLogic : public _CompilerLogic
    {
       ref_t dummy;
       return checkMethod(info, message, dummy);
-   }
-   int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
+   }   
 
    OperatorList operators;
 
 public:
+   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
+
    virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference);
-   virtual size_t defineStructSize(ClassInfo& info);
+   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly);
+   virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
@@ -73,6 +74,7 @@ public:
    virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);
    virtual bool isRole(ClassInfo& info);
+   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);

@@ -198,6 +198,11 @@ bool CompilerLogic :: isRole(ClassInfo& info)
    return test(info.header.flags, elRole);
 }
 
+bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
+}
+
 void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
 {
    SNode templateNode = node.appendNode(lxTemplate);
@@ -298,25 +303,23 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //      }
 }
 
-size_t CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference)
+size_t CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly)
 {
    ClassInfo classInfo;
    defineClassInfo(scope, classInfo, reference);
 
-   return defineStructSize(classInfo);
+   return defineStructSize(classInfo, embeddableOnly);
 }
 
-size_t CompilerLogic :: defineStructSize(ClassInfo& info)
+size_t CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
 {
    //   variable = !test(classInfo.header.flags, elReadOnlyRole);
-   //
-   if (/*!embeddableOnly && */test(info.header.flags, elStructureRole)) {
-      return info.size;
+   
+   if (test(info.header.flags, elStructureRole)) {
+      if (!embeddableOnly || isEmbeddable(info))
+         return info.size;
    }
-   //   else if (isEmbeddable(classInfo)) {
-   //      return classInfo.size;
-   //   }
-   //
+
    return 0;
 }
 

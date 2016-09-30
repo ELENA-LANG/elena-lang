@@ -122,7 +122,7 @@ public:
       okOuter,                        // param - field offset
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
-      okParam,                        // param - parameter offset, extraparam - class reference
+      okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
       okParamField,
 //      okSubject,                      // param - parameter offset
       okThisParam,                    // param - parameter offset
@@ -622,7 +622,8 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
 //      bool         withOpenArg;
-//      bool         stackSafe;
+      bool         stackSafe;
+      bool         classEmbeddable;
 //      bool         generic;
 //      bool         sealed;
 
@@ -1102,7 +1103,7 @@ private:
 //   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-//   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node/*, int warningLevel*/);
 //   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
    /*bool*/void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, /*int warningLevel, */int mode);
 //   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);

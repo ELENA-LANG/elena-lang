@@ -4065,7 +4065,7 @@ void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
    /*else */if (node.argument == 0) {
       newVariable(tape, target.argument, lxResult);
    }
-   else boxObject(tape, node.argument, target.argument, true/*node != lxCondBoxing*/);
+   else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
 
    SNode temp = node.findChild(lxTempLocal);
    if (temp != lxNone) {
@@ -4466,7 +4466,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //         generateInternalCall(tape, node);
 //         break;
       case lxBoxing:
-//      case lxCondBoxing:
+      case lxCondBoxing:
 //      case lxArgBoxing:
       case lxUnboxing:
          generateBoxingExpression(tape, node);

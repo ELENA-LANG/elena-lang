@@ -76,6 +76,7 @@ enum LexicalType
    lxResultField = 0x0811A, // arg -offset
    lxThisLocal       = 0x0811C,
 
+   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
    lxLocalUnboxing   = 0x0C003,   // arg - size
    lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
@@ -167,7 +168,6 @@ enum LexicalType
 //   lxCurrentField = 0x0411D, // arg -offset
 //   lxConstantList = 0x2411E, // arg - reference
 //
-//   lxCondBoxing      = 0x00303,   // conditional boxing, arg - size
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
 //   lxResending       = 0x1030A,   // resending a message, optional arg - message

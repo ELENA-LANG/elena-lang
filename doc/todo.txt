@@ -3,9 +3,9 @@ In development:
 ------                              
 
               xrev
-                 * implementing param boxing
-                 * stacksafe
                  * constructor returning constant values,...
+                 * check if self is embeddable
+                 * no need to check conditional boxing for returning expression
 
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation
@@ -21,6 +21,7 @@ In development:
                  * implement +=, ...
                  * sealed methods
                  * support private sealed methods
+                 * method attributes cannot be overridden
                  * message $self does not belong to the object points to the target instead of message
                  * invalid attribute warning refers always to the first attribute
                  * invalid warning in the following code : #method(bool) equal : anObject []
@@ -52,6 +53,9 @@ In development:
 
                  * DerivationWriter : try to get rid of big switch statement
 
+              xdev
+                * linux migration
+
               ydev
                  * upndown : playing a round
 
@@ -81,6 +85,9 @@ In development:
 
               ydev
                  * upndown : implementing, play with chaotic computer player
+
+              xdev
+                * x64 platform
 
 ------                                 
 Pipeline:

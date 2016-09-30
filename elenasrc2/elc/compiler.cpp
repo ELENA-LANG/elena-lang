@@ -436,6 +436,9 @@ inline bool isImportRedirect(SNode node)
 
 SNode findTerminalInfo(SNode node)
 {
+   if (node.findChild(lxTerminal))
+      return node;
+
    if (!test(node, lxTerminalMask))
       node = node.firstChild();
 
@@ -1312,7 +1315,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
 //   this->withOpenArg = false;
-//   this->stackSafe = false;
+   this->stackSafe = this->classEmbeddable = false;
 //   this->generic = false;
 //   this->sealed = false;
 //
@@ -1323,10 +1326,10 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 {
    if (terminal.compare(THIS_VAR)) {
-//      if (stackSafe && test(getClassFlags(), elStructureRole)) {
-//         return ObjectInfo(okThisParam, 1, -1);
-//      }
-      /*else */return ObjectInfo(okThisParam, 1);
+      if (stackSafe && classEmbeddable) {
+         return ObjectInfo(okThisParam, 1, -1);
+      }
+      else return ObjectInfo(okThisParam, 1);
    }
    /*else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
       return ObjectInfo(okParam, (size_t)-1);
@@ -1339,13 +1342,10 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 //         if (withOpenArg && moduleScope->subjectHints.exist(param.subj_ref, moduleScope->paramsReference)) {
 //            return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
 //         }
-//         else if (stackSafe && param.subj_ref != 0) {
-//            // HOTFIX : only embeddable parameter / embeddable wrapper should be boxed in stacksafe method
-//            if (isEmbeddable(moduleScope->getClassFlags(moduleScope->subjectHints.get(param.subj_ref)))) {
-//               return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
-//            }
-//         }
-         return ObjectInfo(okParam, -1 - local, param.class_ref, param.subj_ref);
+         /*else */if (stackSafe && param.subj_ref != 0 && param.size != 0) {
+            return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
+         }
+         return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
       }
       else return Scope::mapTerminal(terminal);
 
@@ -1838,10 +1838,10 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //         return scope.moduleScope->messageReference;
       case okField:
       case okLocal:
-      case okParam:
-         if (object.extraparam > 0) {
+         if (object.extraparam != 0) {
             return object.extraparam;
          }
+      case okParam:
       default:
          if (object.kind == okObject && object.param != 0) {
             return object.param;
@@ -2763,18 +2763,22 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //         break;
       case okLocal:
       case okParam:
-//         if (object.extraparam == -1) {
-//            scope.writer->newNode(lxCondBoxing);
-//            scope.writer->appendNode(lxLocal, object.param);
-//         }
-         /*else */terminal.set(lxLocal, object.param);
+         if (object.extraparam == -1) {
+            ref_t targetRef = resolveObjectReference(scope, object);
+            terminal.set(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
+            terminal.appendNode(lxLocal, object.param);
+            terminal.appendNode(lxTarget, targetRef);
+         }
+         else terminal.set(lxLocal, object.param);
          break;
       case okThisParam:
-//         if (object.extraparam == -1) {
-//            scope.writer->newNode(lxCondBoxing);
-//            scope.writer->appendNode(lxThisLocal, object.param);
-//         }
-         /*else */terminal.set(lxThisLocal, object.param);
+         if (object.extraparam == -1) {
+            ref_t targetRef = resolveObjectReference(scope, object);
+            terminal.set(lxCondBoxing, _logic->defineStructSize(*scope.moduleScope, targetRef));
+            terminal.appendNode(lxThisLocal, object.param);
+            terminal.appendNode(lxTarget, targetRef);
+         }
+         else terminal.set(lxThisLocal, object.param);
          break;
       case okSuper:
          terminal.set(lxLocal, 1);
@@ -3434,8 +3438,6 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    /*else */if (callType == tpClosed || callType == tpSealed) {
       node.set(callType == tpClosed ? lxSDirctCalling : lxDirectCalling, messageRef);
 
-      node.appendNode(lxCallTarget, classReference);
-
 //      if (test(methodHint, tpStackSafe))
 //         scope.writer->appendNode(lxStacksafe);
 //      if (test(methodHint, tpEmbeddable))
@@ -3448,12 +3450,13 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
       node.set(lxCalling, messageRef);
 
       // if the sealed/ closed class found and the message is not supported - warn the programmer and raise an exception
-      if (classFound && callType == tpUnknown) {
-         //scope.writer->appendNode(lxCallTarget, classReference);
-
+      if (classFound && callType == tpUnknown)
          scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
-      }
    }
+
+   if (classReference)
+      node.appendNode(lxCallTarget, classReference);
+
    if (!test(mode, HINT_NODEBUGINFO)) {
       // set a breakpoint
       setDebugStep(node.findChild(lxMessage, lxOperator), dsStep);
@@ -3867,8 +3870,9 @@ bool Compiler :: declareActionScope(SNode& node, ClassScope& scope/*, DNode argN
       compileParentDeclaration(SNode(), scope, parentRef);
    }
 
-   //// HOT FIX : mark action as stack safe if the hint was declared in the parent class
-   //methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);   
+   // HOT FIX : mark action as stack safe if the hint was declared in the parent class
+   methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
+   methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
 
    return /*lazyExpression*/false;
 }
@@ -4897,7 +4901,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
 
-            scope.parameters.add(name, Parameter(index, scope.moduleScope->attributeHints.get(subj_ref)));
+            int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, 
+               scope.moduleScope->attributeHints.get(subj_ref), true) : 0;
+
+            scope.parameters.add(name, Parameter(index, subj_ref, 0, size));
 
             arg = arg.nextNode();
 //         }
@@ -5396,7 +5403,8 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //               if (test(scope.info.header.flags, elRole))
 //                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
                
-//               methodScope.stackSafe = test(scope.info.methodHints.get(Attribute(methodScope.message, maHint)), tpStackSafe);
+               methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
+               methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
 //
 //               compileMethodHints(hints, writer, methodScope);
 
@@ -5412,7 +5420,9 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //                  updateMethodTemplateInfo(methodScope, bm);
 //
 //               int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-//               methodScope.stackSafe = test(hint, tpStackSafe);
+               methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
+               methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+
 //               methodScope.generic = test(hint, tpGeneric);
 
                declareParameterDebugInfo(current, methodScope, true, /*test(codeScope.getClassFlags(), elRole)*/false);
@@ -5445,7 +5455,9 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //
 //            int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
 //            methodScope.stackSafe = test(hint, tpStackSafe);
-//
+         //methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
+         //methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+         //
 //            compileMethod(member, writer, methodScope);
 //
 //            break;
@@ -5610,7 +5622,7 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
             member.setArgument(methodScope.message);
 
             //int hint = classClassScope.info.methodHints.get(Attribute(methodScope.message, maHint));
-            //methodScope.stackSafe = test(hint, tpStackSafe);         
+            methodScope.stackSafe = _logic->isMethodStacksafe(classClassScope.info, methodScope.message);
 
             declareParameterDebugInfo(member, methodScope, true, false);
 
@@ -7259,14 +7271,14 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 //
 //   optimizeSyntaxExpression(scope, node, warningMask, mode);
 //}
-//
-//void Compiler :: optimizeCall(ModuleScope& scope, SNode node, int warningMask)
-//{
-//   int mode = 0;
-//
+
+void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*/)
+{
+   int mode = 0;
+
 //   bool stackSafe = false;
 //   bool methodNotFound = false;
-//   SNode target = SyntaxTree::findChild(node, lxCallTarget);
+   SNode target = node.findChild(lxCallTarget);
 //   // HOT FIX : if call target not defined
 //   if (target == lxNone) {
 //      SNode callee = SyntaxTree::findMatchedChild(node, lxObjectMask);
@@ -7282,8 +7294,15 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 //         }
 //      }
 //   }
-//
-//   if (target.argument != 0) {
+
+   if (target.argument != 0) {
+      bool dummy1 = false;
+      ref_t dummy2 = 0;
+      int hint = _logic->checkMethod(scope, target.argument, node.argument, dummy1, dummy2);
+
+      if (test(hint, tpStackSafe))
+         mode |= HINT_NOBOXING;
+
 //      ClassInfo info;
 //      if (scope.loadClassInfo(info, target.argument)) {
 //         ref_t resultType;
@@ -7329,13 +7348,10 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 //               break;
 //         }
 //      }
-//   }
-//
-//   if (stackSafe)
-//      mode |= HINT_NOBOXING;
-//
-//   optimizeSyntaxExpression(scope, node, warningMask, mode);
-//
+   }
+
+   optimizeSyntaxExpression(scope, node, /*warningMask, */mode);
+
 //   if (methodNotFound && test(warningMask, WARNING_LEVEL_1)) {
 //      SNode row = SyntaxTree::findChild(node, lxRow);
 //      SNode col = SyntaxTree::findChild(node, lxCol);
@@ -7344,8 +7360,8 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 //         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, row.argument, col.argument, terminal.identifier());
 //      }
 //   }
-//}
-//
+}
+
 //int Compiler :: mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target)
 //{
 //   target = SyntaxTree::findChild(arg, lxTarget).argument;
@@ -7910,7 +7926,7 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLev
    //test2(node);
 
    if (boxing/* && test(warningMask, warningLevel)*/)
-      scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, node.firstChild(lxObjectMask));
+      scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, node);
 }
 
 //bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
@@ -8294,7 +8310,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
 //         optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING | HINT_NOCONDBOXING);
 //         break;
       case lxBoxing:
-//      case lxCondBoxing:
+      case lxCondBoxing:
 //      case lxArgBoxing:
          optimizeBoxing(scope, current, /*warningMask, */mode);
          break;
@@ -8304,13 +8320,13 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
 //      case lxBoolOp:
 //         optimizeBoolOp(scope, current, warningMask, mode);
 //         break;
-//      case lxDirectCalling:
-//      case lxSDirctCalling:
 //         optimizeDirectCall(scope, current, warningMask);
 //         break;
-//      case lxCalling:
-//         optimizeCall(scope, current, warningMask);
-//         break;
+      case lxDirectCalling:
+      case lxSDirctCalling:
+      case lxCalling:
+         optimizeCall(scope, current/*, warningMask*/);
+         break;
 //      case lxNewOp:
 //         optimizeNewOp(scope, current, warningMask, 0);
 //         break;

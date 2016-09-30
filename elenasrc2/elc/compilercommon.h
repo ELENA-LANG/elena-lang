@@ -111,10 +111,12 @@ public:
 class _CompilerLogic
 {
 public:
+   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType) = 0;
+
    // retrieve the class info / size
    virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference) = 0;
-   virtual size_t defineStructSize(ClassInfo& info) = 0;
+   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly = false) = 0;
+   virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
@@ -134,6 +136,7 @@ public:
 
    virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
+   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
