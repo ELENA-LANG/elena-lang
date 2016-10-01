@@ -155,7 +155,7 @@ public:
    virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef) = 0;
 
    // auto generate class flags
-   virtual void tweakClassFlags(ref_t classRef, ClassInfo& info) = 0;
+   virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;
    virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info) = 0;
 
    // attribute validations

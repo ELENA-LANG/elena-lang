@@ -306,7 +306,7 @@ namespace _ELENA_
    const int elMessage             = 0x00008000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elSymbol              = 0x00100000;
-//   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
+   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
 //   const int elPointer             = 0x00800010;
 
    const int elDebugMask           = 0x001F0000;

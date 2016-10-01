@@ -3,6 +3,7 @@ In development:
 ------                              
 
               xrev
+                 * support implicit constructors
                  * constructor returning constant values,...
                  * check if self is embeddable
                  * no need to check conditional boxing for returning expression
@@ -39,9 +40,13 @@ In development:
                  * test template in template (with parameters)
                  * multy parameter dispatching
                  * returning from closure (to simulate normal branching)
+                 * for wrapper classes generate virutal set method
+                 * test dispatching to the field / symbol
+                 * test dispatching to the expression
+                 * overriding dispatching
+                 * test vint : dispatch opertions 
 
                  * support abstract attribute
-                 * support implicit constructors
                  * check sealed / limited class attributes
                  * compliation should be based on set of rules
                  * compile package info

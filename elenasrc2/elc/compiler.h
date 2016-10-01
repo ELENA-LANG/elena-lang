@@ -118,7 +118,7 @@ public:
 //      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
-//      okFieldAddress,                 // param - field offset
+      okFieldAddress,                 // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset
       okOuterField,                   // param - field offset, extraparam - outer field offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
@@ -854,7 +854,7 @@ private:
 
       void loadParameters(SNode node);
 
-      void generateClassName();
+      void generateClassName(bool newName = false);
 
 //      void save()
 //      {
@@ -876,6 +876,13 @@ private:
          : ClassScope(parent->moduleScope, 0)
       {
          this->parent = parent;
+         this->templateRef = attrRef;
+         this->classMode = false;
+      }
+      TemplateScope(ModuleScope* moduleScope, ref_t attrRef)
+         : ClassScope(moduleScope, 0)
+      {
+         this->parent = NULL;
          this->templateRef = attrRef;
          this->classMode = false;
       }
@@ -918,6 +925,7 @@ private:
 //   void appendObjectInfo(CodeScope& scope, ObjectInfo object);
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
    ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
+   ref_t mapAttribute(SNode attribute, ModuleScope& scope);
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -1069,7 +1077,7 @@ private:
 
    ref_t generateTemplate(SNode attribute, TemplateScope& scope);
 
-   void generateClassField(ClassScope& scope, SyntaxTree::Node node/*, bool singleField*/);
+   void generateClassField(ClassScope& scope, SyntaxTree::Node node, bool singleField);
    void generateClassStaticField(ClassScope& scope, SNode current);   
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
@@ -1090,7 +1098,7 @@ private:
 //   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope/*, DNode hints*/);
    void declareSubject(SNode member, ModuleScope& scope);
-//   void compileSubject(DNode& member, ModuleScope& scope, DNode hints);
+   void compileSubject(SNode member, ModuleScope& scope);
 
    void compileDeclarations(SNode member, ModuleScope& scope);
    void compileImplementations(SNode member, ModuleScope& scope);

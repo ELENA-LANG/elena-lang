@@ -166,7 +166,7 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
          defineClassInfo(scope, info, sourceRef);
 
          // if it is a structure wrapper
-         if (test(info.header.flags, elStructureWrapper)) {
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
             ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
             if (isCompatible(scope, targetRef, inner.value1))
                return true;
@@ -254,7 +254,14 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    // if the target class is wrapper around the source
    if (test(info.header.flags, elWrapper)) {      
       ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-      if (isCompatible(scope, inner.value1, sourceRef)) {         
+
+      bool compatible = false;
+      if (test(info.header.flags, elStructureWrapper) && isPrimitiveRef(sourceRef)) {
+         compatible = isCompatible(scope, sourceRef, inner.value1);
+      }
+      else compatible = isCompatible(scope, inner.value1, sourceRef);
+
+      if (compatible) {
          compiler.injectBoxing(node, lxBoxing, test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
          return true;
@@ -328,7 +335,7 @@ size_t CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
    return 0;
 }
 
-void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info)
+void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info)
 {
    if (test(info.header.flags, elNestedClass)) {
       // stateless inline class
@@ -349,16 +356,17 @@ void CompilerLogic :: tweakClassFlags(ref_t classRef, ClassInfo& info)
       test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
    {
       if (test(info.header.flags, elStructureRole)) {
-   //         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(*scope.info.fieldTypes.start());
-   //         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef);
-   //
-   //         if (isEmbeddable(fieldFlags)) {
-   //            // wrapper around embeddable object should be marked as embeddable wrapper
-   //            scope.info.header.flags |= elEmbeddableWrapper;
-   //
-   //            if ((scope.info.header.flags & elDebugMask) == 0)
-   //               scope.info.header.flags |= fieldFlags & elDebugMask;
-   //         }
+         ClassInfo::FieldInfo field = *info.fieldTypes.start();
+
+         ClassInfo fieldInfo;
+         defineClassInfo(scope, fieldInfo, field.value1, true);
+         if (isEmbeddable(fieldInfo)) {
+            // wrapper around embeddable object should be marked as embeddable wrapper
+            info.header.flags |= elEmbeddableWrapper;
+
+            if ((info.header.flags & elDebugMask) == 0)
+               info.header.flags |= fieldInfo.header.flags & elDebugMask;
+         }
       }
       else info.header.flags |= elWrapper;
    }

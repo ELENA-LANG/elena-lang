@@ -179,15 +179,15 @@ class ByteCodeWriter
    void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
 
-//   void setSubject(CommandTape& tape, ref_t subject);
+   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 
-//   void doGenericHandler(CommandTape& tape);
-//   void resend(CommandTape& tape);
-//   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void doGenericHandler(CommandTape& tape);
+   void resend(CommandTape& tape);
+   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 //   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 //
@@ -221,7 +221,7 @@ class ByteCodeWriter
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//   void closeFrame(CommandTape& tape);
+   void closeFrame(CommandTape& tape);
 
    void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
 
@@ -268,9 +268,9 @@ class ByteCodeWriter
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
+
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);

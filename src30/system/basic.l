@@ -26,10 +26,10 @@
     #method(embeddable/*,w3*/) => $value.
 }
 
-//#template nvarof : template_subj
-//{
-//    #field(template_subj)$value.
-//    
+#template nvarof : template_subj
+{
+    #field(template_subj)$value.
+    
 //    #method set : val
 //    [
 //        $value := val template_subj.
@@ -91,15 +91,15 @@
 //    
 //    #method(w3) equal : anObject
 //        => $value.
-//        
-//    #method(embeddable,w3) => $value.
-//}
-//
-//// === Numeric Variables ===
-//
+        
+    #method(embeddable/*,w3*/) => $value.
+}
+
+// === Numeric Variables ===
+
 //#subject vbyte  = nvarof:byte.
 //#subject vshort = nvarof:short.
-//#subject vint   = nvarof:int.
+#subject vint   = nvarof:int.
 //#subject vlong  = nvarof:long.
 //#subject vreal  = nvarof:real.
 //#subject vchar  = varof:char.

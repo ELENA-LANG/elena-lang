@@ -73,7 +73,8 @@ enum LexicalType
    lxNil             = 0x08117,
    lxCurrent         = 0x08118, // arg -offset
    lxResult          = 0x08119, // arg -offset
-   lxResultField = 0x0811A, // arg -offset
+   lxResultField     = 0x0811A, // arg -offset
+   lxCurrentMessage  = 0x0811B,
    lxThisLocal       = 0x0811C,
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
@@ -83,6 +84,7 @@ enum LexicalType
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
+   lxResending       = 0x0C00A,   // resending a message, optional arg - message
    lxBranching       = 0x0C00F,   // branch expression
    lxExpression      = 0x0C012,
    lxMethodParameter = 0x0C017,
@@ -93,7 +95,7 @@ enum LexicalType
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
    lxReleasing       = 0x0C032,
-   lxDispatching     = 0x04036,   // dispatching a message, optional arg - message
+   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
    lxOverridden      = 0x04047,
@@ -164,13 +166,11 @@ enum LexicalType
 //   lxMessageConstant = 0x24113, // arg - rererence
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
-//   lxCurrentMessage = 0x0411B,
 //   lxCurrentField = 0x0411D, // arg -offset
 //   lxConstantList = 0x2411E, // arg - reference
 //
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
-//   lxResending       = 0x1030A,   // resending a message, optional arg - message
 //   lxTrying          = 0x0030C,   // try-catch expression
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
