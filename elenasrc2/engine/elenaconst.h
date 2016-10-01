@@ -288,7 +288,7 @@ namespace _ELENA_
   // --- ELENA VMT flags ---
    const int elStandartVMT         = 0x00000001;
    const int elNestedClass         = 0x00000002;
-//   const int elDynamicRole         = 0x00000004;
+   const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
    const int elEmbeddable          = 0x00000010;
    const int elClosed              = 0x00000020;
@@ -313,7 +313,7 @@ namespace _ELENA_
    const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
 //   const int elDebugLiteral        = 0x00030000;
-//   const int elDebugIntegers       = 0x00040000;
+   const int elDebugIntegers       = 0x00040000;
 //   const int elDebugArray          = 0x00050000;
 //   const int elDebugQWORD          = 0x00060000;
 //   const int elDebugBytes          = 0x00070000;

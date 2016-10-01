@@ -3,10 +3,16 @@ In development:
 ------                              
 
               xrev
+                 * support array of int
+
                  * support implicit constructors
                  * constructor returning constant values,...
                  * check if self is embeddable
                  * no need to check conditional boxing for returning expression
+                 * support array of byte
+                 * support array of short
+                 * support array of typed objects
+                 * support array of objects
 
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation

@@ -144,7 +144,7 @@ class ByteCodeWriter
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
@@ -169,7 +169,7 @@ class ByteCodeWriter
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
@@ -244,7 +244,7 @@ class ByteCodeWriter
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
@@ -266,7 +266,7 @@ class ByteCodeWriter
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
@@ -330,7 +330,7 @@ public:
 
 bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
-//void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
 
 } // _ELENA_
 

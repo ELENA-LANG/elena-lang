@@ -239,12 +239,12 @@ void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName,
 //{
 //   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 //}
-//
-//void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
+
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
 //void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
 //{
 //   tape.write(bdParamsLocal, (ref_t)localName, level);
@@ -1758,16 +1758,16 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //      tape.write(bcPopI, 2);
 //   }
 //}
-//
-//void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
-//{
-//   if (target == lxResult) {
-//      tape.write(bcNLoad);
-//   }
-//   else if (target == lxConstantInt) {
-//      tape.write(bcDCopy, sourceArgument);
-//   }
-//}
+
+void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
+{
+   if (target == lxResult) {
+      tape.write(bcNLoad);
+   }
+   else if (target == lxConstantInt) {
+      tape.write(bcDCopy, sourceArgument);
+   }
+}
 
 void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
 {
@@ -2582,36 +2582,36 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // nread
-//         // dcopye
-//         // nsave
-//         tape.write(bcNRead);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nloade
-//         // nwrite
-//         tape.write(bcNLoadE);
-//         tape.write(bcNWrite);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // nlen
-//         // nsave
-//         tape.write(bcNLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // nread
+         // dcopye
+         // nsave
+         tape.write(bcNRead);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // nloade
+         // nwrite
+         tape.write(bcNLoadE);
+         tape.write(bcNWrite);
+         break;
+      // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // nlen
+         // nsave
+         tape.write(bcNLen);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -3295,24 +3295,24 @@ void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg)
    }
 }
 
-//void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (larg == lxNone) {
-//            larg = current;
-//         }
-//         else if (rarg == lxNone) {
-//            rarg = current;
-//         }
-//         else rarg2 = current;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (larg == lxNone) {
+            larg = current;
+         }
+         else if (rarg == lxNone) {
+            rarg = current;
+         }
+         else rarg2 = current;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   generateExpression(tape, node);
@@ -3335,123 +3335,123 @@ void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //      callMethod(tape, 1, -1);
 //   }
 //}
-//
-//void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool lenMode = node.argument == READ_MESSAGE_ID;
-//   bool setMode = node.argument == SET_REFER_MESSAGE_ID;
-//   bool assignMode = node != lxArrOp;
-//
-//   SNode larg, rarg, rarg2;
-//   assignOpArguments(node, larg, rarg, rarg2);   
-//
-//   if (rarg == lxExpression)
-//      rarg = findSubNodeMask(rarg, lxObjectMask);
-//
-//   bool largSimple = isSimpleObject(larg);
-//   bool rargSimple = isSimpleObject(rarg);
-//   bool rarg2Simple = isSimpleObject(rarg2);
-//   bool immIndex = rarg == lxConstantInt;
-//
-//   if (setMode) {
-//      generateObjectExpression(tape, larg);
-//      loadBase(tape, lxResult);
-//
-//      if (!rargSimple || !rarg2Simple) {
-//         tape.write(bcPushB);
-//      }
-//
-//      if (!rarg2Simple) {
-//         generateObjectExpression(tape, rarg2);
-//         pushObject(tape, lxResult);
-//      }
-//
-//      if (immIndex) {
-//         int index = SyntaxTree::findChild(rarg, lxValue).argument;
-//
-//         loadIndex(tape, rarg.type, index);
-//      }
-//      else {
-//         generateObjectExpression(tape, rarg);
-//         loadIndex(tape, lxResult);
-//      }
-//
-//      if (!rarg2Simple) {
-//         popObject(tape, lxResult);
-//      }
-//      else generateObjectExpression(tape, rarg2);
-//
-//      if (!rargSimple || !rarg2Simple) {
-//         tape.write(bcPopB);
-//      }
-//   }
-//   else if (lenMode) {
-//      generateObjectExpression(tape, rarg);
-//      loadBase(tape, lxResult);
-//
-//      generateObjectExpression(tape, larg);
-//   }
-//   else {
-//      if (assignMode && (!largSimple || !rargSimple)) {
-//         tape.write(bcPushB);
-//      }
-//
-//      if (!largSimple) {
-//         generateObjectExpression(tape, larg);
-//         pushObject(tape, lxResult);
-//      }
-//
-//      if (immIndex) {
-//         int index = SyntaxTree::findChild(rarg, lxValue).argument;
-//
-//         loadIndex(tape, rarg.type, index);
-//      }
-//      else {
-//         generateObjectExpression(tape, rarg);
-//         loadIndex(tape, lxResult);
-//      }
-//
-//      if (!largSimple) {
-//         popObject(tape, lxResult);
-//      }
-//      else generateObjectExpression(tape, larg);
-//
-//      if (assignMode && (!largSimple || !rargSimple)) {
-//         tape.write(bcPopB);
-//      }
-//   }
-//
-//   switch (node.type)
-//   {
-//      case lxIntArrOp:
-//         doIntArrayOperation(tape, node.argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxByteArrOp:
-//         doByteArrayOperation(tape, node.argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxShortArrOp:
-//         doShortArrayOperation(tape, node.argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxBinArrOp:
-//         doBinaryArrayOperation(tape, node.argument, SyntaxTree::findChild(node, lxSize).argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxArrOp:
-//         doArrayOperation(tape, node.argument);
-//         break;
-//   }   
-//}
+
+void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool lenMode = node.argument == READ_MESSAGE_ID;
+   bool setMode = node.argument == SET_REFER_MESSAGE_ID;
+   bool assignMode = /*node != lxArrOp*/true;
+
+   SNode larg, rarg, rarg2;
+   assignOpArguments(node, larg, rarg, rarg2);   
+
+   if (rarg == lxExpression)
+      rarg = rarg.findSubNodeMask(lxObjectMask);
+
+   bool largSimple = isSimpleObject(larg);
+   bool rargSimple = isSimpleObject(rarg);
+   bool rarg2Simple = isSimpleObject(rarg2);
+   bool immIndex = rarg == lxConstantInt;
+
+   if (setMode) {
+      generateObjectExpression(tape, larg);
+      loadBase(tape, lxResult);
+
+      if (!rargSimple || !rarg2Simple) {
+         tape.write(bcPushB);
+      }
+
+      if (!rarg2Simple) {
+         generateObjectExpression(tape, rarg2);
+         pushObject(tape, lxResult);
+      }
+
+      if (immIndex) {
+         int index = rarg.findChild(lxConstantInt).argument;
+
+         loadIndex(tape, rarg.type, index);
+      }
+      else {
+         generateObjectExpression(tape, rarg);
+         loadIndex(tape, lxResult);
+      }
+
+      if (!rarg2Simple) {
+         popObject(tape, lxResult);
+      }
+      else generateObjectExpression(tape, rarg2);
+
+      if (!rargSimple || !rarg2Simple) {
+         tape.write(bcPopB);
+      }
+   }
+   else if (lenMode) {
+      generateObjectExpression(tape, rarg);
+      loadBase(tape, lxResult);
+
+      generateObjectExpression(tape, larg);
+   }
+   else {
+      if (assignMode && (!largSimple || !rargSimple)) {
+         tape.write(bcPushB);
+      }
+
+      if (!largSimple) {
+         generateObjectExpression(tape, larg);
+         pushObject(tape, lxResult);
+      }
+
+      if (immIndex) {
+         int index = rarg.findChild(lxConstantInt).argument;
+
+         loadIndex(tape, rarg.type, index);
+      }
+      else {
+         generateObjectExpression(tape, rarg);
+         loadIndex(tape, lxResult);
+      }
+
+      if (!largSimple) {
+         popObject(tape, lxResult);
+      }
+      else generateObjectExpression(tape, larg);
+
+      if (assignMode && (!largSimple || !rargSimple)) {
+         tape.write(bcPopB);
+      }
+   }
+
+   switch (node.type)
+   {
+      case lxIntArrOp:
+         doIntArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_MESSAGE_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      //case lxByteArrOp:
+      //   doByteArrayOperation(tape, node.argument);
+
+      //   if (node.argument == REFER_MESSAGE_ID)
+      //      assignBaseTo(tape, lxResult);
+      //   break;
+      //case lxShortArrOp:
+      //   doShortArrayOperation(tape, node.argument);
+
+      //   if (node.argument == REFER_MESSAGE_ID)
+      //      assignBaseTo(tape, lxResult);
+      //   break;
+      //case lxBinArrOp:
+      //   doBinaryArrayOperation(tape, node.argument, SyntaxTree::findChild(node, lxSize).argument);
+
+      //   if (node.argument == REFER_MESSAGE_ID)
+      //      assignBaseTo(tape, lxResult);
+      //   break;
+      //case lxArrOp:
+      //   doArrayOperation(tape, node.argument);
+      //   break;
+   }   
+}
 
 void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -4503,13 +4503,13 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxRealOp:
          generateOperation(tape, node);
          break;
-//      case lxIntArrOp:
+      case lxIntArrOp:
 //      case lxByteArrOp:
 //      case lxShortArrOp:
 //      case lxArrOp:
 //      case lxBinArrOp:
-//         generateArrOperation(tape, node);
-//         break;
+         generateArrOperation(tape, node);
+         break;
 //      case lxNewOp:
 //         generateNewOperation(tape, node);
 //         break;
@@ -4647,16 +4647,17 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //               level, false);
 //            break;
 //         }
-//         case lxIntsVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalIntArrayInfo(tape,
-//               SyntaxTree::findChild(current, lxTerminal).identifier(),
-//               level, false);
-//            break;
-//         }
+         case lxIntsVariable:
+         {
+            int level = current.findChild(lxLevel).argument;
+
+            generateBinary(tape, current, level);
+
+            declareLocalIntArrayInfo(tape,
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               level, false);
+            break;
+         }
          case lxBinaryVariable:
          {
             int level = current.findChild(lxLevel).argument;

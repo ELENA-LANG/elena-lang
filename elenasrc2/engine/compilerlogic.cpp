@@ -29,6 +29,8 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, V_INT32));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -93,14 +95,30 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
       if (info.operatorId == operatorId && isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
          result = info.result;
 
-         //// HOTFIX : if one of the operands is not primitive use it as a output result
-         //if (isPrimitiveRef(result)) {
+         return info.operationType;
+      }
+      it++;
+   }
 
-         //}
+   return 0;
+}
+
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
+{
+   if (loperand == 0 || roperand == 0 || roperand2 == 0)
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId && isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
+         && isCompatible(scope, info.roperand2, roperand2)) 
+      {
+         result = info.result;
 
          return info.operationType;
       }
-
       it++;
    }
 
@@ -180,6 +198,11 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    return false;
 }
 
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elEmbeddable | elStructureRole);
+}
+
 bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
 {
    ClassInfo info;
@@ -195,7 +218,7 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
-   return test(info.header.flags, elStructureRole | elEmbeddable);
+   return test(info.header.flags, elStructureRole | elEmbeddable) && !test(info.header.flags, elDynamicRole);
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)
@@ -280,19 +303,24 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    {
       case V_INT32:
          info.header.parentRef = 0;
-         info.header.flags = elDebugDWORD | elStructureRole;
+         info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_SIGNATURE:
       case V_VERB:
          info.header.parentRef = 0;
-         info.header.flags = elDebugSubject | elStructureRole;
+         info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_MESSAGE:
          info.header.parentRef = 0;
-         info.header.flags = elDebugMessage | elStructureRole;
+         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
          info.size = 4;
+         break;
+      case V_INT32ARRAY:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
+         info.size = -4;
          break;
       default:
          if (reference != 0) {
@@ -515,4 +543,20 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
       default:
          return scope.superReference;
    }
+}
+
+ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, elementRef, true);
+
+   if (test(info.header.flags, elStructureWrapper)) {
+      if (isCompatible(scope, V_INT32, elementRef)) {
+         if (info.size == 4) {
+            return V_INT32ARRAY;
+         }
+      }
+   }
+
+   return 0;
 }

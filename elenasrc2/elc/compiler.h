@@ -1031,9 +1031,9 @@ private:
 //
 //   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
-   int allocateStructure(/*bool bytearray, */size_t& allocatedSize, int& reserved);
+   int allocateStructure(bool bytearray, size_t& allocatedSize, int& reserved);
    int allocateStructure(/*ModuleScope& scope, */SNode node, size_t& size);
-   bool allocateStructure(CodeScope& scope, size_t size, /*bool bytearray, */ObjectInfo& exprOperand);
+   bool allocateStructure(CodeScope& scope, size_t size, bool bytearray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
 //   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);

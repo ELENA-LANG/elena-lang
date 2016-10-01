@@ -101,6 +101,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsMessageOperation:
          copyMessage(node);
          break;
+      case nsL0Operation:
       case nsL3Operation:
       case nsL4Operation:
       case nsL6Operation:
@@ -187,6 +188,7 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
             unpackNode(current);
             _writer.closeNode();
             break;
+         case nsL0Operation:
          case nsL3Operation:
          case nsL4Operation:
          case nsL6Operation:

@@ -94,6 +94,7 @@ enum LexicalType
    lxCreatingClass   = 0x0C025,   // arg - count
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
+   lxIntArrOp        = 0x8C030,   // arg - operation id
    lxReleasing       = 0x0C032,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
@@ -108,6 +109,7 @@ enum LexicalType
    lxBinaryVariable  = 0x10038,
    lxMember          = 0x10039,  // a collection member, arg - offset
    lxOuterMember     = 0x1003A,  // a collection member, arg - offset
+   lxIntsVariable    = 0x1003B,
 
    // attributes
    lxAttribute       = 0x20000,
@@ -196,7 +198,6 @@ enum LexicalType
 //   lxNilOp           = 0x0032C, // arg - operation id
 //   lxLongOp          = 0x0132E, // arg - operation id
 //   lxRealOp          = 0x0132F, // arg - operation id
-//   lxIntArrOp        = 0x01330, // arg - operation id
 //   lxByteArrOp       = 0x01331, // arg - operation id
 //   lxShortArrOp      = 0x01332, // arg - operation id
 //   lxArrOp           = 0x01333, // arg - operation id
@@ -206,7 +207,6 @@ enum LexicalType
 //   lxReal64Variable  = 0x0042A,
 //   lxBytesVariable   = 0x0042B,
 //   lxShortsVariable  = 0x0042C,
-//   lxIntsVariable    = 0x0042D,
 //   lxParamsVariable  = 0x0042F,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //   lxBinarySelf      = 0x00435, // debug info only

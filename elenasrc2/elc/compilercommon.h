@@ -20,6 +20,8 @@
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
 
+#define V_INT32ARRAY  (size_t)-31
+
 #define V_IFBRANCH    (size_t)-4097
 #define V_IFNOTBRANCH (size_t)-4098
 
@@ -124,11 +126,14 @@ public:
    virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly = false) = 0;
    virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 
+   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
+
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
 
    // retrieve the operation type
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 
    // retrieve the branching operation type
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
@@ -140,6 +145,7 @@ public:
 
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
+   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
    virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;

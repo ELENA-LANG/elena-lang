@@ -23,13 +23,14 @@ class CompilerLogic : public _CompilerLogic
 
       ref_t       loperand;
       ref_t       roperand;
+      ref_t       roperand2;
       LexicalType operationType;
       ref_t       result;
 
       OperatorInfo()
       {
          operatorId = 0;
-         loperand = roperand = result = 0;
+         loperand = roperand = result = roperand2 = 0;
          operationType = lxNone;
       }
       OperatorInfo(int operatorId, ref_t loperand, ref_t roperand, LexicalType type, ref_t result)
@@ -37,6 +38,16 @@ class CompilerLogic : public _CompilerLogic
          this->operatorId = operatorId;
          this->loperand = loperand;
          this->roperand = roperand;
+         this->operationType = type;
+         this->result = result;
+         this->roperand2 = 0;
+      }
+      OperatorInfo(int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, LexicalType type, ref_t result)
+      {
+         this->operatorId = operatorId;
+         this->loperand = loperand;
+         this->roperand = roperand;
+         this->roperand2 = roperand2;
          this->operationType = type;
          this->result = result;
       }
@@ -62,7 +73,9 @@ public:
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
+   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
@@ -70,6 +83,7 @@ public:
    {
       return (int)reference < 0;
    }
+   virtual bool isEmbeddableArray(ClassInfo& info);
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
    virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);

@@ -2182,6 +2182,16 @@ ref_t Compiler::mapAttribute(SNode attribute, ModuleScope& scope)
 ref_t Compiler :: mapAttribute(SNode attribute, Scope& scope, int& attrValue)
 {
    int paramCounter =SyntaxTree::countChild(attribute, lxAttributeValue);
+   SNode value = attribute.findChild(lxAttributeValue).firstChild(lxTerminalMask);
+   if (value == lxInteger) {
+      //HOTFIX : only one dimensional arrays are supported currently
+      if (paramCounter == 1) {
+         attrValue = value.findChild(lxTerminal).identifier().toInt();
+
+         paramCounter = 0;
+      }
+      else return 0;
+   }
 
    ref_t attrRef = 0;
 
@@ -2454,7 +2464,13 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
       if (current == lxAttribute) {
          int attrValue = 0;
          ref_t attrRef = mapAttribute(current, scope, attrValue);
-         if (attrValue != 0) {
+         if (attrRef != 0 && attrValue != 0) {
+            // if it is a primitive array declaration
+            size = attrValue;
+            variable.type = attrRef;
+            variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(attrRef));
+         }
+         else if (attrValue != 0) {
             // positive value defines the target size
             if (attrValue > 0) {
                size = attrValue;
@@ -2623,24 +2639,45 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
       compileLocalAttributes(node, scope, variable, size);
 
       ClassInfo localInfo;
-//      bool bytearray = false;
+      bool bytearray = false;
       _logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam);
-      if (_logic->isEmbeddable(localInfo))
+      if (_logic->isEmbeddableArray(localInfo)) {
+         bytearray = true;
+         size = size * (-localInfo.size);
+      }
+      else if (_logic->isEmbeddable(localInfo))
          size = _logic->defineStructSize(localInfo);
 
       if (size > 0) {
-         if (!allocateStructure(scope, size, /*bytearray,*/ variable))
+         if (!allocateStructure(scope, size, bytearray, variable))
             scope.raiseError(errInvalidOperation, terminal);
 
          // make the reservation permanent
          scope.saved = scope.reserved;
 
-//         if (bytearray) {
-//            switch (localInfo.header.flags & elDebugMask)
-//            {
+         switch (localInfo.header.flags & elDebugMask)
+         {
+            case elDebugDWORD:
+               node = lxIntVariable;
+//                  scope.writer->appendNode(lxTerminal, terminal.value);
+               break;
+            case elDebugIntegers:
+               node.set(lxIntsVariable, size);
+               break;
+//               case elDebugQWORD:
+//                  scope.writer->newNode(lxLongVariable);
+//                  scope.writer->appendNode(lxTerminal, terminal.value);
+//                  scope.writer->appendNode(lxLevel, variable.param);
+//                  scope.writer->closeNode();
+//                  break;
+//               case elDebugReal64:
+//                  scope.writer->newNode(lxReal64Variable);
+//                  scope.writer->appendNode(lxTerminal, terminal.value);
+//                  scope.writer->appendNode(lxLevel, variable.param);
+//                  scope.writer->closeNode();
+//                  break;
 //               case elDebugDWORD:
 //                  if (localInfo.size == 4) {
-//                     scope.writer->newNode(lxIntsVariable, size);
 //                     scope.writer->appendNode(lxTerminal, terminal.value);
 //                     scope.writer->appendNode(lxLevel, variable.param);
 //                     scope.writer->closeNode();
@@ -2674,29 +2711,8 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
 //   //               
 //   //               scope.writer->closeNode();
 //   //               break;
-//            }
-//         }
-//         else {
-            switch (localInfo.header.flags & elDebugMask)
-            {
-               case elDebugDWORD:
-                  node = lxIntVariable;
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
-                  break;
-//               case elDebugQWORD:
-//                  scope.writer->newNode(lxLongVariable);
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
-//                  scope.writer->appendNode(lxLevel, variable.param);
-//                  scope.writer->closeNode();
-//                  break;
-//               case elDebugReal64:
-//                  scope.writer->newNode(lxReal64Variable);
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
-//                  scope.writer->appendNode(lxLevel, variable.param);
-//                  scope.writer->closeNode();
-//                  break;
-               default:
-                  node = lxBinaryVariable;                  
+            default:
+               node = lxBinaryVariable;                  
 
 //                  if (type != 0) {
 //                     ref_t classRef = scope.moduleScope->subjectHints.get(type);
@@ -2705,9 +2721,8 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
 //                  }
 //
 //                  scope.writer->closeNode();
-                  break;
-            }
-//         }
+               break;
+         }
       }
       else variable.param = scope.newLocal();
 
@@ -3306,6 +3321,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /
 ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id)
 {
    ObjectInfo retVal(okObject);
+   int paramCount = 1;
 
    SNode loperandNode = node.firstChild(lxObjectMask);
    ObjectInfo loperand = compileObject(loperandNode, scope, 0);
@@ -3313,8 +3329,24 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInf
    SNode roperandNode = loperandNode.nextNode(lxObjectMask);   
    ObjectInfo roperand = compileObject(roperandNode, scope, 0);
 
+   // HOTFIX : recognize SET_REFER_MESSAGE_ID
+   ObjectInfo roperand2;
+   if (operator_id == REFER_MESSAGE_ID && roperandNode.nextNode() == lxAssign) {
+      paramCount++;
+      operator_id = SET_REFER_MESSAGE_ID;
+
+      roperand2 = compileExpression(roperandNode.nextNode(lxObjectMask), scope, 0);
+   }
+      
    ref_t resultClassRef = 0;
-   int operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id,
+   int operationType = 0;
+   if (roperand2.kind != okUnknown) {
+      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id,
+         resolveObjectReference(scope, loperand),
+         resolveObjectReference(scope, roperand),
+         resolveObjectReference(scope, roperand2), resultClassRef);
+   }
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id,
       resolveObjectReference(scope, loperand),
       resolveObjectReference(scope, roperand), resultClassRef);
 
@@ -3324,19 +3356,11 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInf
 
       retVal = assignResult(scope, node, resultClassRef/*, 0*/);
    }
-   else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+   else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, paramCount), 0);
 
-//   // HOTFIX : recognize SET_REFER_MESSAGE_ID
-//   if (operator_id == REFER_MESSAGE_ID && node.nextNode() == nsAssigning)
-//      operator_id = SET_REFER_MESSAGE_ID;
-//
-//   bool dblOperator = IsDoubleOperator(operator_id);
-//   bool notOperator = IsInvertedOperator(operator_id);
-//
-//   ObjectInfo operand = compileExpression(node, scope, 0, 0);
-//   if (dblOperator)
-//      compileExpression(node.nextNode().firstChild(), scope, 0, 0);
-//
+   //   bool dblOperator = IsDoubleOperator(operator_id);
+   //   bool notOperator = IsInvertedOperator(operator_id);
+
 //   recordDebugStep(scope, node.Terminal(), dsStep);
 //
 //   if (IsCompOperator(operator_id)) {
@@ -4723,13 +4747,13 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //   return ObjectInfo(okObject);
 //}
 
-int Compiler :: allocateStructure(/*bool bytearray, */size_t& allocatedSize, int& reserved)
+int Compiler :: allocateStructure(bool bytearray, size_t& allocatedSize, int& reserved)
 {
-//   if (bytearray) {
-//      // plus space for size
-//      allocatedSize = ((allocatedSize + 3) >> 2) + 2;
-//   }
-   /*else */allocatedSize = (allocatedSize + 3) >> 2;
+   if (bytearray) {
+      // plus space for size
+      allocatedSize = ((allocatedSize + 3) >> 2) + 2;
+   }
+   else allocatedSize = (allocatedSize + 3) >> 2;
 
    int retVal = reserved;
    reserved += allocatedSize;
@@ -4737,19 +4761,19 @@ int Compiler :: allocateStructure(/*bool bytearray, */size_t& allocatedSize, int
    // the offset should include frame header offset
    retVal = -2 - retVal;
 
-//   // reserve place for byte array header if required
-//   if (bytearray)
-//      retVal -= 2;
+   // reserve place for byte array header if required
+   if (bytearray)
+      retVal -= 2;
 
    return retVal;
 }
 
-bool Compiler :: allocateStructure(CodeScope& scope, size_t size, /*bool bytearray, */ObjectInfo& exprOperand)
+bool Compiler :: allocateStructure(CodeScope& scope, size_t size, bool bytearray, ObjectInfo& exprOperand)
 {
    if (size <= 0)
       return false;
 
-   int offset = allocateStructure(/*bytearray, */size, scope.reserved);
+   int offset = allocateStructure(bytearray, size, scope.reserved);
 
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
@@ -7144,7 +7168,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 
    size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
    if (size != 0) {
-      allocateStructure(scope, size, retVal);
+      allocateStructure(scope, size, false, retVal);
       retVal.extraparam = targetRef;
 
       SNode assignNode = node.injectNode(lxAssigning, size);
