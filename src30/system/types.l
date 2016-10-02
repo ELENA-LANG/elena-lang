@@ -10,7 +10,7 @@
 //#mtemplate(-2) w2 {}
 //#mtemplate(-3) w3 {}
 #template(-8195) sealed  {}
-//#template(0004h) dynamic {}
+#template(-8199) dynamic {}
 #template(-8196) limited {}
 //#template(0200h) group   {}
 //#template(0800h) const   {}
@@ -19,7 +19,7 @@
 #template(-8198) enumlist {}
 //#template(0120h,4980h)         extension {}
 //#template(0120h,4980h,subject) extension : subject {}
-//#template(30000h,8h,4h)  string {}
+#template(-8200) string {}
 #template(-8193) embeddable {}
 //#template(0008h,800010h) reference {}
 

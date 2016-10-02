@@ -119,3 +119,25 @@ labDefault:
   throw
   
 end
+
+procedure __literal.eval&readLength&vint$[2]
+
+  aloadsi 1
+  blen
+  dec
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure __wide.eval&readLength&vint$[2]
+
+  aloadsi 1
+  wlen
+  dec
+  bloadsi 2
+  nsave
+  quitn 2
+
+end

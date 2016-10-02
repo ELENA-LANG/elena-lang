@@ -777,10 +777,10 @@
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-#class(sealed,dispatchable:literal/*,string*/) LiteralValue :: BaseValue
+#class(sealed,dispatchable:literal,dynamic,string) LiteralValue :: BaseValue
 {
-//    #field(byte)$target.
-//    
+    #field(byte)$target.
+    
 //    /// Creates the empty literal
 //    #constructor min
 //        = emptyLiteralValue.
@@ -963,11 +963,11 @@
 //    /// Returns the substring
 //    #method(literal,stacksafe) Substring &int:anIndex &int:aLength
 //        => system'core_routines'__literal.
-//
-//    /// Reads the literal length into an output parameter
-//    #method(outnprop:length,stacksafe) readLength &vint:aLength
-//        => system'core_routines'__literal.
-//
+
+    /// Reads the literal length into an output parameter
+    #method(/*outnprop:length,*/stacksafe) readLength &vint:aLength
+        => system'core_routines'__literal.
+
 //    /// Saves the literal into a UTF-32 character array
 //    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
 //        => system'core_routines'__literal.
@@ -997,10 +997,10 @@
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-#class(sealed,dispatchable:wide/*,string*/) WideLiteralValue :: BaseValue
+#class(sealed,dispatchable:wide,dynamic,string) WideLiteralValue :: BaseValue
 {
-//    #field(short)$target.
-//
+    #field(short)$target.
+
 //    /// Creates the empty literal
 //    #constructor min
 //        = emptyWideLiteralValue.
@@ -1175,11 +1175,11 @@
 //
 //    #method(wide) Substring : aLength &at:anIndex
 //        <= Substring &int:(anIndex int) &int:(aLength int).
-//
-//    /// Reads the literal length into an output parameter
-//    #method(outnprop:length,stacksafe) readLength &vint:aLength
-//        => system'core_routines'__wide.
-//
+
+    /// Reads the literal length into an output parameter
+    #method(/*outnprop:length,*/stacksafe) readLength &vint:aLength
+        => system'core_routines'__wide.
+
 //    /// Saves the literal into a UTF-32 character array
 //    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
 //        => system'core_routines'__wide.

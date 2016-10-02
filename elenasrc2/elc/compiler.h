@@ -105,8 +105,8 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-//      okLiteralConstant,              // param - reference 
-//      okWideLiteralConstant,          // param - reference 
+      okLiteralConstant,              // param - reference 
+      okWideLiteralConstant,          // param - reference 
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference 
@@ -1060,7 +1060,7 @@ private:
 
    void compileMethod(SNode node, MethodScope& scope);
    void compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope);
+   void compileDynamicDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef = 0);
 //   void compileEmbeddableConstructor(DNode node, SyntaxWriter& writer, MethodScope& scope, ClassScope& classClassScope);
 

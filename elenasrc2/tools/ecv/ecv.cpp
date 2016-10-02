@@ -20,12 +20,13 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   1
+#define REVISION_VERSION   3
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
 #define REAL_CLASS               "system'RealNumber" 
-#define WSTR_CLASS               "system'LiteralValue" 
+#define STR_CLASS               "system'LiteralValue" 
+#define WSTR_CLASS               "system'WideLiteralValue" 
 
 using namespace _ELENA_;
 
@@ -34,7 +35,8 @@ MessageMap         _verbs;
 ident_t _integer = INT_CLASS;
 ident_t _long = LONG_CLASS;
 ident_t _real = REAL_CLASS;
-ident_t _literal = WSTR_CLASS;
+ident_t _literal = STR_CLASS;
+ident_t _wide = WSTR_CLASS;
 
 TextFileWriter* _writer;
 
@@ -326,6 +328,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    }
    else if (mask == mskLiteralRef) {
       referenceName = _literal;
+      literalConstant = true;
+   }
+   else if (mask == mskWideLiteralRef) {
+      referenceName = _wide;
       literalConstant = true;
    }
    else if (mask == mskRealRef) {
@@ -739,8 +745,8 @@ void listFlags(int flags)
    if (test(flags, elNestedClass))
       printLine("@flag ", "elNestedClass");
 
-   //if (test(flags, elDynamicRole))
-   //   printLine("@flag ", "elDynamicRole");
+   if (test(flags, elDynamicRole))
+      printLine("@flag ", "elDynamicRole");
 
    if (test(flags, elStructureRole))
       printLine("@flag ", "elStructureRole");
@@ -796,12 +802,12 @@ void listFlags(int flags)
       //case elDebugReal64:
       //   printLine("@flag ", "elDebugReal64");
       //   break;
-      //case elDebugLiteral:
-      //   printLine("@flag ", "elDebugLiteral");
-      //   break;
-      //case elDebugIntegers:
-      //   printLine("@flag ", "elDebugIntegers");
-      //   break;
+      case elDebugLiteral:
+         printLine("@flag ", "elDebugLiteral");
+         break;
+      case elDebugIntegers:
+         printLine("@flag ", "elDebugIntegers");
+         break;
       //case elDebugArray:
       //   printLine("@flag ", "elDebugArray");
       //   break;
@@ -817,21 +823,21 @@ void listFlags(int flags)
       //case elDebugPTR:
       //   printLine("@flag ", "elDebugPTR");
       //   break;
-      //case elDebugWideLiteral:
-      //   printLine("@flag ", "elDebugWideLiteral");
-      //   break;
+      case elDebugWideLiteral:
+         printLine("@flag ", "elDebugWideLiteral");
+         break;
       //case elDebugReference:
       //   printLine("@flag ", "elDebugReference");
       //   break;
-      //case elDebugSubject:
-      //   printLine("@flag ", "elDebugSubject");
-      //   break;
+      case elDebugSubject:
+         printLine("@flag ", "elDebugSubject");
+         break;
       //case elDebugReals:
       //   printLine("@flag ", "elDebugReals");
       //   break;
-      //case elDebugMessage:
-      //   printLine("@flag ", "elDebugMessage");
-      //   break;
+      case elDebugMessage:
+         printLine("@flag ", "elDebugMessage");
+         break;
       //case elDebugDPTR:
       //   printLine("@flag ", "elDebugDPTR");
       //   break;

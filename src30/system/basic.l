@@ -423,7 +423,7 @@
 /// A signed 16 bit integer
 #class(embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
 {
-    #field(4,-11)theValue.    
+    #field(2,-11)theValue.    
     
 //    #constructor(stacksafe)&int:n
 //    [

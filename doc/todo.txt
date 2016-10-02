@@ -42,6 +42,9 @@ In development:
                  * make sure ref may be used as obj, vint may be used as int (generating virtual dispatcher only if it was not declared)
                  * passing vint as int probably should be possible only for embeddable classes
                  * no unboxing for assigning operation
+                 * no unboxing for returning operation
+                 * no unboxing for sub expression
+                 * no cond boxing for returning expr?
                  * optimize : boxing of constant
                  * test template in template (with parameters)
                  * multy parameter dispatching
@@ -61,8 +64,10 @@ In development:
                  * debugging the following statements:
                      #var(-11,4)n := 0.        
                      #var(-11,4)d := n + 12.
+                 * debugger watch : wide literal
 
                  * DerivationWriter : try to get rid of big switch statement
+                 * ecv : use >out for ourput redirect
 
               xdev
                 * linux migration

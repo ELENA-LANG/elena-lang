@@ -102,6 +102,8 @@ public:
    virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
 
+   virtual bool validateClassFlag(ClassInfo& info, int flag);
+
    virtual bool isDefaultConstructorEnabled(ClassInfo& info)
    {
       return (info.header.flags & elDebugMask) != elEnumList;

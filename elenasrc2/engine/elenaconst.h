@@ -312,14 +312,14 @@ namespace _ELENA_
    const int elDebugMask           = 0x001F0000;
    const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
-//   const int elDebugLiteral        = 0x00030000;
+   const int elDebugLiteral        = 0x00030000;
    const int elDebugIntegers       = 0x00040000;
 //   const int elDebugArray          = 0x00050000;
 //   const int elDebugQWORD          = 0x00060000;
 //   const int elDebugBytes          = 0x00070000;
 //   const int elDebugShorts         = 0x00080000;
 //   const int elDebugPTR            = 0x00090000;
-//   const int elDebugWideLiteral    = 0x000A0000;
+   const int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
 //   const int elDebugReals          = 0x000D0000;
@@ -500,8 +500,8 @@ namespace _ELENA_
    #define INT_FORWARD              "'$int"
 //   #define LONG_FORWARD             "'$long"
 //   #define REAL_FORWARD             "'$real"
-//   #define STR_FORWARD              "'$literal"
-//   #define WIDESTR_FORWARD          "'$wideliteral"
+   #define STR_FORWARD              "'$literal"
+   #define WIDESTR_FORWARD          "'$wideliteral"
 //   #define CHAR_FORWARD             "'$char"
 //   #define TRUE_FORWARD             "'$true"
 //   #define FALSE_FORWARD            "'$false"

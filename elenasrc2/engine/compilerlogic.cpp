@@ -30,7 +30,7 @@ CompilerLogic :: CompilerLogic()
 
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
-   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -275,7 +275,7 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    defineClassInfo(scope, info, targetRef);   
 
    // if the target class is wrapper around the source
-   if (test(info.header.flags, elWrapper)) {      
+   if (test(info.header.flags, elWrapper)) {
       ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
 
       bool compatible = false;
@@ -285,7 +285,9 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
       else compatible = isCompatible(scope, inner.value1, sourceRef);
 
       if (compatible) {
-         compiler.injectBoxing(node, lxBoxing, test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+         compiler.injectBoxing(node, 
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 
+            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
          return true;
       }
@@ -398,6 +400,17 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       }
       else info.header.flags |= elWrapper;
    }
+
+   // adjust literal wrapper
+   if ((info.header.flags & elDebugMask) == elDebugLiteral) {
+      info.header.flags &= ~elDebugMask;
+      if (info.size == -2) {
+         info.header.flags |= elDebugWideLiteral;
+      }
+      else if (info.size == -1) {
+         info.header.flags |= elDebugLiteral;
+      }
+   }
 }
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
@@ -418,6 +431,12 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          return true;
       case V_EMBEDDABLE:
          attrValue = elStructureRole | elEmbeddable;
+         return true;
+      case V_DYNAMIC:
+         attrValue = elDynamicRole;
+         return true;
+      case V_STRING:
+         attrValue = elDebugLiteral;
          return true;
       default:
          return false;
@@ -559,4 +578,12 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
    }
 
    return 0;
+}
+
+bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
+{
+   if (test(flag, elDynamicRole) && info.fields.Count() != 0)
+      return false;
+
+   return true;
 }

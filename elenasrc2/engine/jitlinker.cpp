@@ -551,19 +551,19 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    bool constantValue = true;
    ident_t value = NULL;
    ident_t vmtReference = reference;
-//   if (mask == mskLiteralRef) {
-//      value = reference;
-//      vmtReference = _loader->getLiteralClass();
-//   }
-//   else if (mask == mskWideLiteralRef) {
-//      value = reference;
-//      vmtReference = _loader->getWideLiteralClass();
-//   }
+   if (mask == mskLiteralRef) {
+      value = reference;
+      vmtReference = _loader->getLiteralClass();
+   }
+   else if (mask == mskWideLiteralRef) {
+      value = reference;
+      vmtReference = _loader->getWideLiteralClass();
+   }
 //   else if (mask == mskCharRef) {
 //      value = reference;
 //      vmtReference = _loader->getCharacterClass();
 //   }
-   /*else */if (mask == mskInt32Ref) {
+   else if (mask == mskInt32Ref) {
       value = reference;
       vmtReference = _loader->getIntegerClass();
    }
@@ -597,18 +597,18 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    _loader->mapReference(reference, vaddress, mask);
 
    size_t position = writer.Position();
-//   if (mask == mskLiteralRef) {
-//      _compiler->compileLiteral(&writer, value);
-//   }
-//   else if (mask == mskWideLiteralRef) {
-//      WideString wideValue(value);
-//
-//      _compiler->compileWideLiteral(&writer, wideValue);
-//   }
+   if (mask == mskLiteralRef) {
+      _compiler->compileLiteral(&writer, value);
+   }
+   else if (mask == mskWideLiteralRef) {
+      WideString wideValue(value);
+
+      _compiler->compileWideLiteral(&writer, wideValue);
+   }
 //   else if (mask == mskCharRef) {
 //      _compiler->compileChar32(&writer, value);
 //   }
-   /*else */if (mask == mskInt32Ref) {
+   else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, value.toULong(16));
    }
 //   else if (mask == mskInt64Ref) {
@@ -965,8 +965,8 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
             vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
             break;
          case mskConstantRef:
-//         case mskLiteralRef:
-//         case mskWideLiteralRef:
+         case mskLiteralRef:
+         case mskWideLiteralRef:
 //         case mskCharRef:
          case mskInt32Ref:
 //         case mskRealRef:

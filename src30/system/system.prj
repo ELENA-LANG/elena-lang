@@ -19,3 +19,5 @@ control.l
 memory.l
 dynamic.l
 exceptions.l
+console.l
+io\win32_console.l

@@ -49,7 +49,7 @@ struct ModuleInfo
 
 #define HINT_ROOT             0x80000000
 #define HINT_NOBOXING         0x40000000
-//#define HINT_NOUNBOXING       0x20000000
+#define HINT_NOUNBOXING       0x20000000
 //#define HINT_EXTERNALOP       0x10000000
 //#define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
@@ -489,8 +489,8 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    intReference = mapReference(project->resolveForward(INT_FORWARD));
 //   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
-//   literalReference = mapReference(project->resolveForward(STR_FORWARD));
-//   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
+   literalReference = mapReference(project->resolveForward(STR_FORWARD));
+   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
@@ -1835,10 +1835,10 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //         return scope.moduleScope->longReference;
 //      case okRealConstant:
 //         return scope.moduleScope->realReference;
-//      case okLiteralConstant:
-//         return scope.moduleScope->literalReference;
-//      case okWideLiteralConstant:
-//         return scope.moduleScope->wideReference;
+      case okLiteralConstant:
+         return scope.moduleScope->literalReference;
+      case okWideLiteralConstant:
+         return scope.moduleScope->wideReference;
 //      case okCharConstant:
 //         return scope.moduleScope->charReference;
       case okThisParam:
@@ -2751,12 +2751,12 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okConstantSymbol:
          terminal.set(lxConstantSymbol, object.param);
          break;
-//      case okLiteralConstant:
-//         scope.writer->newNode(lxConstantString, object.param);
-//         break;
-//      case okWideLiteralConstant:
-//         scope.writer->newNode(lxConstantWideStr, object.param);
-//         break;
+      case okLiteralConstant:
+         terminal.set(lxConstantString, object.param);
+         break;
+      case okWideLiteralConstant:
+         terminal.set(lxConstantWideStr, object.param);
+         break;
 //      case okCharConstant:
 //         scope.writer->newNode(lxConstantChar, object.param);
 //         break;
@@ -2880,20 +2880,19 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 
 ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mode)
 {
-//   TerminalInfo terminal = node.Terminal();
    ident_t token = terminal.findChild(lxTerminal).identifier();
 
    ObjectInfo object;
-//   if (terminal==tsLiteral) {
-//      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
-//   }
-//   else if (terminal == tsWide) {
-//      object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(terminal));
-//   }
+   if (terminal==lxLiteral) {
+      object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token));
+   }
+   else if (terminal == lxWide) {
+      object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token));
+   }
 //   else if (terminal==tsCharacter) {
 //      object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(terminal));
 //   }
-   /*else */if (terminal == lxInteger) {
+   else if (terminal == lxInteger) {
       String<char, 20> s;
 
       long integer = token.toInt();
@@ -4488,11 +4487,6 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    bool needVirtualEnd = true;
    SNode current = node.firstChild();
 
-   //test2(node);
-
-//   //// make a root bookmark for temporal variable allocating
-//   //scope.rootBookmark = scope.writer->newBookmark();
-//
 //   // skip subject argument
 //   while (statement == nsSubjectArg || statement == nsMethodParameter)
 //      statement= statement.nextNode();
@@ -5255,7 +5249,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 //   writer.appendNode(lxSourcePath);  // the source path is first string
 
    bool withFrame = false;
-//   int classFlags = codeScope.getClassFlags();
+   int classFlags = codeScope.getClassFlags();
 
    SNode bodyNode = node.findChild(lxCode, lxReturning);
 //   DNode resendBody = node.select(nsResendExpression);
@@ -5274,7 +5268,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       expr = lxReturning;
    }
    // if no redirect statement - call virtual constructor implicitly
-   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
+   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(encodeVerb(NEWOBJECT_MESSAGE_ID))) {
       node.insertNode(lxCalling, -1);
 
       // HOTFIX : body node should be found once again
@@ -5376,39 +5370,30 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, Class
    //writer.appendNode(lxSourcePath);  // the source path is first string
 
    if (test(classScope->info.header.flags, elStructureRole)) {
-   //   if (!test(classScope->info.header.flags, elDynamicRole)) {
+      if (!test(classScope->info.header.flags, elDynamicRole)) {
          node.appendNode(lxCreatingStruct, classScope->info.size).appendNode(lxTarget, classScope->reference);
-   //      writer.closeNode();
-   //   }
+      }
    }
-   else /*if (!test(classScope->info.header.flags, elDynamicRole))*/ {
+   else if (!test(classScope->info.header.flags, elDynamicRole)) {
       node.appendNode(lxCreatingClass, classScope->info.fields.Count()).appendNode(lxTarget, classScope->reference);
    }
 }
 
-//void Compiler :: compileDynamicDefaultConstructor(MethodScope& scope, SyntaxWriter& writer, ClassScope& classClassScope)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
+void Compiler :: compileDynamicDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
 //   // HOTFIX: constructor is declared in class class but should be executed if the class scope
 //   scope.tape = &classClassScope.tape;
 //
 //   writer.newNode(lxClassMethod, scope.message);
 //   writer.appendNode(lxSourcePath);  // the source path is first string
-//
-//   if (test(classScope->info.header.flags, elStructureRole)) {
-//      writer.newNode(lxCreatingStruct, classScope->info.size);
-//      writer.appendNode(lxTarget, classScope->reference);
-//      writer.closeNode();
-//   }
-//   else {
-//      writer.newNode(lxCreatingClass, -1);
-//      writer.appendNode(lxTarget, classScope->reference);
-//      writer.closeNode();
-//   }
-//
-//   writer.closeNode();
-//}
+
+   if (test(classScope->info.header.flags, elStructureRole)) {
+      node.appendNode(lxCreatingStruct, classScope->info.size).appendNode(lxTarget, classScope->reference);
+   }
+   else node.appendNode(lxCreatingClass, -1).appendNode(lxTarget, classScope->reference);
+}
 
 void Compiler :: compileVMT(SNode current, ClassScope& scope)
 {
@@ -5631,10 +5616,10 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
          MethodScope methodScope(&classScope);
    
          if (member.argument == encodeVerb(NEWOBJECT_MESSAGE_ID)) {
-            /*if (test(classScope.info.header.flags, elDynamicRole)) {
-            compileDynamicDefaultConstructor(methodScope, classClassScope);
+            if (test(classScope.info.header.flags, elDynamicRole)) {
+               compileDynamicDefaultConstructor(member, methodScope, classClassScope);
             }
-            else */compileDefaultConstructor(member, methodScope, classClassScope);
+            else compileDefaultConstructor(member, methodScope, classClassScope);
          }
          else {
             //writer.newBookmark();
@@ -5769,7 +5754,12 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
       if (current == lxTemplate) {
          generateClassFlags(scope, current);
       }
-      else scope.compileClassAttribute(current);
+      else if (current == lxClassFlag) {
+         if (_logic->validateClassFlag(scope.info, current.argument)) {
+            scope.compileClassAttribute(current);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
 
       current = current.nextNode();
    }
@@ -5973,7 +5963,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
    // if it is a primitive data wrapper
    else if (attr != lxNone) {
-      if (classRef != 0 || testany(scope.info.header.flags, elNonStructureRole/* | elDynamicRole*/))
+      if (classRef != 0 || testany(scope.info.header.flags, elNonStructureRole | elDynamicRole))
          scope.raiseError(errIllegalField, current);
 
       if (test(scope.info.header.flags, elStructureRole)) {
@@ -5985,28 +5975,19 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       if (!_logic->tweakPrimitiveClassFlags(attr.type, scope.info))
          scope.raiseError(errIllegalField, current);
    }
-//   // a class with a dynamic length structure must have no fields
-//   else if (test(scope.info.header.flags, elDynamicRole)) {
-//      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
-//         // compiler magic : turn a field declaration into an array or string one 
-//         if (size != 0) {
-//            if ((scope.info.header.flags & elDebugMask) == elDebugLiteral) {
-//               scope.info.header.flags &= ~elDebugMask;
-//               if (size == 2) {
-//                  scope.info.header.flags |= elDebugWideLiteral;
-//               }
-//               else if (size == 1) {
-//                  scope.info.header.flags |= elDebugLiteral;
-//               }
-//            }
-//            scope.info.header.flags |= elStructureRole;
-//            scope.info.size = -size;
-//         }
-//
-//         scope.info.fieldTypes.add(-1, typeHint);
-//      }
-//      else scope.raiseError(errIllegalField, current);
-//   }
+   // a class with a dynamic length structure must have no fields
+   else if (test(scope.info.header.flags, elDynamicRole)) {
+      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
+         // compiler magic : turn a field declaration into an array or string one 
+         if (size != 0) {
+            scope.info.header.flags |= elStructureRole;
+            scope.info.size = -size;
+         }
+
+         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, typeAttr));
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
    else {
       if (scope.info.fields.exist(terminal))
          scope.raiseError(errDuplicatedField, current);
@@ -7501,11 +7482,13 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*
 //   }
 //   else {
 //      bool boxing = false;
-      SNode larg, rarg;
-      assignOpArguments(node, larg, rarg);
+      SNode larg, rarg, rarg2;
+      assignOpArguments(node, larg, rarg, rarg2);
 
       optimizeSyntaxNode(scope, larg, /*warningLevel, */HINT_NOBOXING);
       optimizeSyntaxNode(scope, rarg, /*warningLevel, */HINT_NOBOXING);
+      if (rarg2 != lxNone)
+         optimizeSyntaxNode(scope, rarg2, /*warningLevel, */HINT_NOBOXING);
 
 //      if (larg == lxOp) {
 //         optimizeOp(scope, larg, /*warningLevel*/0, 0);
@@ -7894,10 +7877,12 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLev
 //         }
          boxing = false;
       }
-//      else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
-//         node = lxBoxing;
-//      }
-//   }
+      else if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
+         node = lxBoxing;
+      }
+      //      else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
+      //node = lxBoxing;
+      //   }
 
    if (boxing) {
       SNode target = node.findChild(lxTarget);
@@ -8297,15 +8282,17 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
          // HOT FIX : to pass the optimization mode into sub expression
          optimizeSyntaxExpression(scope, current, /*warningMask, */mode);
          break;
-//      case lxReturning:
-//         optimizeSyntaxExpression(scope, current, warningMask, HINT_NOUNBOXING | HINT_NOCONDBOXING);
-//         break;
+      case lxReturning:
+         optimizeSyntaxExpression(scope, current, /*warningMask, */HINT_NOUNBOXING/* | HINT_NOCONDBOXING*/);
+         break;
       case lxBoxing:
       case lxCondBoxing:
+      case lxUnboxing:
 //      case lxArgBoxing:
          optimizeBoxing(scope, current, /*warningMask, */mode);
          break;
       case lxIntOp:
+      case lxIntArrOp:
          optimizeOp(scope, current, /*warningMask, */mode);
          break;
 //      case lxBoolOp:

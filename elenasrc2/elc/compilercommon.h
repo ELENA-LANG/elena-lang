@@ -32,6 +32,8 @@
 #define V_LIMITED     (size_t)-8196
 #define V_STRUCT      (size_t)-8197
 #define V_ENUMLIST    (size_t)-8198
+#define V_DYNAMIC     (size_t)-8199
+#define V_STRING      (size_t)-8200
 
 namespace _ELENA_
 {
@@ -82,6 +84,8 @@ struct _CompilerScope
    ref_t messageReference;
    ref_t verbReference;
    ref_t boolReference;
+   ref_t literalReference;
+   ref_t wideReference;
 
    // list of typified classes which may need get&type message
    ClassMap    typifiedClasses;
@@ -98,6 +102,7 @@ struct _CompilerScope
       module = NULL;
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
+      literalReference = wideReference = 0;
    }
 };
 
@@ -163,6 +168,8 @@ public:
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;
    virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info) = 0;
+
+   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
