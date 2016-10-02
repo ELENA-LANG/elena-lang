@@ -24,6 +24,7 @@ enum LexicalType
    lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
+   lxInvalid         = -2,
    lxNone            = 0x00000,
 
    // scopes
@@ -140,6 +141,7 @@ enum LexicalType
    lxElseValue       = 0x20017, // arg - reference
    lxSize            = 0x20018,
    lxTemplateParam   = 0x20019,
+   lxEmbeddable      = 0x2001A,
 
    lxStaticAttr      = 0x20102,
    lxClassMethodAttr = 0x20103,
@@ -156,7 +158,6 @@ enum LexicalType
 //   lxSubjectMask     = 0x40000,
 //   lxConstantMask    = 0x80000,
 
-//   lxInvalid         = 0x00001,
 //   lxIdle            = 0x00003,
 //
 //   lxSymbol = 0x20103, // arg - reference
@@ -213,7 +214,6 @@ enum LexicalType
 //
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,
-//   lxEmbeddable      = 0x0044B,
 //   lxSubject         = 0x4044F,
 //
 //   lxConstAttr       = 0x00821,
@@ -367,7 +367,7 @@ public:
 //      }
    };
 
-//   struct NodePattern;
+   struct NodePattern;
 
    // --- Node ---
    class Node
@@ -589,10 +589,10 @@ public:
          return tree->insertNode(start_position, end_position, type, argument);
       }
 
-//      Node findPattern(NodePattern pattern)
-//      {
-//         return tree->findPattern(*this, 1, pattern);
-//      }
+      Node findPattern(NodePattern pattern)
+      {
+         return tree->findPattern(*this, 1, pattern);
+      }
 
       Node findChild(LexicalType type)
       {
@@ -717,6 +717,10 @@ public:
       {
          return findChild(type) == type;
       }
+      bool existChild(LexicalType type1, LexicalType type2)
+      {
+         return findChild(type1, type2) != lxNone;
+      }
 
       Node()
       {
@@ -728,32 +732,32 @@ public:
       }
    };
 
-//   struct NodePattern
-//   {
-//      LexicalType type;
-//      LexicalType alt_type1;
-//
-//      bool match(Node node)
-//      {
-//         return node.type == type || node.type == alt_type1;
-//      }
-//
-//      NodePattern()
-//      {
-//         type = lxNone;
-//         alt_type1 = lxInvalid;
-//      }
-//      NodePattern(LexicalType type)
-//      {
-//         this->type = type;
-//         this->alt_type1 = lxInvalid;
-//      }
-//      NodePattern(LexicalType type1, LexicalType type2)
-//      {
-//         this->type = type1;
-//         this->alt_type1 = type2;
-//      }
-//   };
+   struct NodePattern
+   {
+      LexicalType type;
+      LexicalType alt_type1;
+
+      bool match(Node node)
+      {
+         return node.type == type || node.type == alt_type1;
+      }
+
+      NodePattern()
+      {
+         type = lxNone;
+         alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type)
+      {
+         this->type = type;
+         this->alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type1, LexicalType type2)
+      {
+         this->type = type1;
+         this->alt_type1 = type2;
+      }
+   };
 
 private:
    Node read(StreamReader& reader);
@@ -778,6 +782,9 @@ public:
 
       return counter;
    }
+
+   static Node findPattern(Node node, int counter, ...);
+   static bool matchPattern(Node node, int mask, int counter, ...);
 
 //   static int countChild(Node node, LexicalType type1, LexicalType type2)
 //   {
@@ -894,9 +901,6 @@ public:
    Node insertNode(size_t position, LexicalType type, ident_t argument);
    Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 
-//   bool matchPattern(Node node, int mask, int counter, ...);
-//   Node findPattern(Node node, int counter, ...);
-//
 //   ref_t writeString(ident_t string)
 //   {
 //      MemoryWriter writer(&_strings);
@@ -937,7 +941,7 @@ public:
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
-//typedef SyntaxTree::NodePattern  SNodePattern;
+typedef SyntaxTree::NodePattern  SNodePattern;
 
 } // _ELENA_
 

@@ -68,6 +68,7 @@ In development:
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
+                 * test embeddable idle
 
               xdev
                 * linux migration

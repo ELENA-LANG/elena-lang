@@ -587,3 +587,103 @@ bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
 
    return true;
 }
+
+bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t returningType, ref_t& subject)
+{
+   if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), true) > 0) {
+      root = root.findChild(lxNewFrame);
+
+      if (SyntaxTree::matchPattern(root, lxObjectMask, 2,
+         SNodePattern(lxExpression),
+         SNodePattern(lxReturning)))
+      {
+         SNode message = SyntaxTree::findPattern(root, 2,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling));
+
+         // if it is eval&subject2:var[1] message
+         if (getParamCount(message.argument) != 1)
+            return false;
+
+         // check if it is operation with $self
+         SNode target = SyntaxTree::findPattern(root, 3,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxThisLocal));
+
+         //// if the target was optimized
+         //if (target == lxExpression) {
+         //   target = SyntaxTree::findChild(target, lxLocal);
+         //}
+
+         if (target == lxNone || target.argument != 1)
+            return false;
+
+         // check if the argument is returned
+         SNode arg = SyntaxTree::findPattern(root, 4,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxExpression),
+            SNodePattern(lxLocalAddress));
+
+         if (arg == lxNone) {
+            arg = SyntaxTree::findPattern(root, 5,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxExpression),
+               SNodePattern(lxLocalAddress));
+         }
+
+         SNode ret = SyntaxTree::findPattern(root, 4,
+            SNodePattern(lxReturning),
+            SNodePattern(lxExpression),
+            SNodePattern(lxBoxing),
+            SNodePattern(lxLocalAddress));
+
+         if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
+            subject = getSignature(message.argument);
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode)
+{
+   SNode object = SyntaxTree::findPattern(methodNode, 4,
+      SNodePattern(lxNewFrame),
+      SNodePattern(lxReturning),
+      SNodePattern(lxExpression),
+      SNodePattern(lxLocal));
+
+   if (object == lxNone) {
+      object = SyntaxTree::findPattern(methodNode, 3,
+         SNodePattern(lxNewFrame),
+         SNodePattern(lxReturning),
+         SNodePattern(lxLocal));
+   }
+
+   return (object == lxLocal && object.argument == -1);
+}
+
+bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node)
+{
+   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
+   SNode callTarget = callNode.findChild(lxCallTarget);
+
+   ClassInfo info;
+   defineClassInfo(scope, info, callTarget.argument);
+
+   ref_t subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddableGet));
+   // if it is possible to replace get&subject operation with eval&subject2:local
+   if (subject != 0) {
+      compiler.injectEmbeddableGet(node, callNode, subject);
+
+      return true;
+   }
+   else return false;
+}

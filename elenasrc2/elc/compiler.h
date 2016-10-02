@@ -1143,11 +1143,9 @@ private:
    void optimizeSyntaxExpression(ModuleScope& scope, SNode node, /*int warningLevel, */int mode = 0);
    void optimizeClassTree(SNode node, ClassScope& scope);
 //   void optimizeSymbolTree(SourceScope& scope);
-//
-//   bool recognizeEmbeddableGet(ModuleScope& scope, SyntaxTree& tree, SyntaxTree::Node node, ref_t returningType, ref_t& subject);
-//   bool recognizeEmbeddableIdle(SyntaxTree& tree, SyntaxTree::Node node);
-//   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
-//
+
+   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+
 //   void createPackageInfo(_Module* module, Project& project);
 
 public:
@@ -1165,6 +1163,7 @@ public:
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
    virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 

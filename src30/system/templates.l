@@ -12,20 +12,20 @@
 //{
 //    #method prop_name = target.
 //}
-//
-//// --- outnprop ---
-//
-//#mtemplate outnprop : template_subj
-//{
-//   #method(stacksafe,int,embeddable,w3) template_subj
-//   [
-//        #var(int)val.
-//        $self target &vint:val.
-//        
-//        ^ val.
-//   ]
-//}
-//
+
+// --- outnprop ---
+
+#template outnprop : template_subj
+{
+   #method(stacksafe,int,embeddable,w3) template_subj
+   [
+        #var(int)val.
+        $self target &vint:val.
+        
+        ^ val.
+   ]
+}
+
 //// --- innprop ---
 //
 //#mtemplate innprop : template_subj

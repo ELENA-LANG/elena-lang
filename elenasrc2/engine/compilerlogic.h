@@ -109,6 +109,11 @@ public:
       return (info.header.flags & elDebugMask) != elEnumList;
    }
 
+   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject);
+   virtual bool recognizeEmbeddableIdle(SNode node);
+
+   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
+
    CompilerLogic();
 };
 

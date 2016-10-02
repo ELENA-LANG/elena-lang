@@ -468,9 +468,9 @@ enum MethodAttribute
    maNone               = 0x000,
    maHint               = 0x001,
    maType               = 0x102,
-//   maEmbeddableGet      = 0x103,
-////   maEmbeddedInit   = 0x104,
-//   maEmbeddableIdle     = 0x005,
+   maEmbeddableGet      = 0x103,
+//   maEmbeddedInit   = 0x104,
+   maEmbeddableIdle     = 0x005,
 };
 
 struct ClassInfo
