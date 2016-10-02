@@ -926,6 +926,7 @@ private:
    void insertMessage(SNode node, ModuleScope& scope, ref_t messageRef);
    ref_t mapAttribute(SNode attribute, Scope& scope, int& attrValue);
    ref_t mapAttribute(SNode attribute, ModuleScope& scope);
+   void initialize(Scope& scope, MethodScope& methodScope);
 
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
@@ -970,6 +971,7 @@ private:
    void compileFieldAttributes(SNode hints, ClassScope& scope, SNode rootNode);
    void compileMethodAttributes(SNode hints, MethodScope& scope, SNode rootNode);
    void declareVMT(SNode member, ClassScope& scope);
+   void declareTemplateMethods(SNode node, ClassScope& scope);
 
 //   bool importTemplateDeclarations(ClassScope& scope, SyntaxWriter& writer);
 //   bool importTemplateDeclaration(ClassScope& scope, SyntaxWriter& writer, TemplateInfo& templateInfo);
@@ -1071,7 +1073,8 @@ private:
    void compileAction(SNode node, ClassScope& scope, /*SNode argNode, */int mode, bool alreadyDeclared = false);
    void compileNestedVMT(SNode node, SNode parent, InlineClassScope& scope);
 
-   void compileVMT(SNode member, /*SyntaxWriter& writer, */ClassScope& scope);
+   void compileVMT(SNode member, ClassScope& scope);
+   void compileTemplateMethods(SNode node, ClassScope& scope);
 
 //   void declareVirtualMethods(ClassScope& scope);
 

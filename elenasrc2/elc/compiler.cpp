@@ -1891,7 +1891,7 @@ void Compiler :: declareParameterDebugInfo(SNode node, MethodScope& scope, bool 
    insertMessage(node, *moduleScope, scope.message);
 
    SNode current = node.firstChild();
-   // declare method parameter debug info
+   // f method parameter debug info
    while (current != lxNone) {
       if (current == lxMethodParameter) {
          current = lxVariable;
@@ -3900,8 +3900,7 @@ bool Compiler :: declareActionScope(SNode& node, ClassScope& scope/*, DNode argN
    }
 
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
-   methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
-   methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+   initialize(scope, methodScope);
 
    return /*lazyExpression*/false;
 }
@@ -5395,6 +5394,36 @@ void Compiler :: compileDynamicDefaultConstructor(SNode node, MethodScope& scope
    else node.appendNode(lxCreatingClass, -1).appendNode(lxTarget, classScope->reference);
 }
 
+void Compiler :: initialize(Scope& scope, MethodScope& methodScope)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+   methodScope.stackSafe = _logic->isMethodStacksafe(classScope->info, methodScope.message);
+   methodScope.classEmbeddable = _logic->isEmbeddable(classScope->info);
+}
+
+void Compiler :: compileTemplateMethods(SNode node, ClassScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplate && current.existChild(lxClassMethod)) {
+         TemplateScope templateScope(&scope);
+         templateScope.loadParameters(current);
+
+         if (node == lxClassMethod) {
+            ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(node.argument));
+            IdentifierString customVerb(signature, signature.find('&', getlength(signature)));
+
+            templateScope.parameters.add(TARGET_PSEUDO_VAR, templateScope.parameters.Count() + 1);
+            templateScope.subjects.add(templateScope.parameters.Count(), scope.moduleScope->module->mapSubject(customVerb, false));
+         }
+
+         compileVMT(current.firstChild(), templateScope);
+      }
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: compileVMT(SNode current, ClassScope& scope)
 {
    while (current != nsNone) {
@@ -5410,8 +5439,7 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //               if (test(scope.info.header.flags, elRole))
 //                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
                
-               methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
-               methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+               initialize(scope, methodScope);
 //
 //               compileMethodHints(hints, writer, methodScope);
 
@@ -5427,14 +5455,15 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //                  updateMethodTemplateInfo(methodScope, bm);
 //
 //               int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
-               methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
-               methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+               initialize(scope, methodScope);
 
 //               methodScope.generic = test(hint, tpGeneric);
 
                declareParameterDebugInfo(current, methodScope, true, /*test(codeScope.getClassFlags(), elRole)*/false);
                compileMethod(current, methodScope);
             }
+
+            compileTemplateMethods(current, scope);
             break;
          }
 //         case nsDefaultGeneric:
@@ -5462,9 +5491,8 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //
 //            int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
 //            methodScope.stackSafe = test(hint, tpStackSafe);
-         //methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
-         //methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
-         //
+               // 
+         //initialize(scope, methodScope);
 //            compileMethod(member, writer, methodScope);
 //
 //            break;
@@ -5657,6 +5685,20 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
 //   }
 //}
 
+void Compiler :: declareTemplateMethods(SNode node, ClassScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplate && current.existChild(lxClassMethod)) {
+         TemplateScope templateScope(&scope);
+         templateScope.loadParameters(current);
+
+         declareVMT(current.firstChild(), templateScope);
+      }
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: declareVMT(SNode current, ClassScope& scope)
 {
    while (current != lxNone) {
@@ -5687,14 +5729,11 @@ void Compiler :: declareVMT(SNode current, ClassScope& scope)
 
          current.setArgument(methodScope.message);
 
-//         writer.insert(lxClassMethod, methodScope.message);
-//         appendTerminalInfo(&writer, member.Terminal());
-//         writer.removeBookmark();
-//         writer.closeNode();
-//
 //         // mark as having generic methods
 //         if (member == nsDefaultGeneric)
 //            writer.appendNode(lxClassFlag, elWithGenerics);
+
+         declareTemplateMethods(current, scope);
       }
       else if (current == lxTemplate) {
          TemplateScope templateScope(&scope);
@@ -6177,6 +6216,9 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
             //         if (test(scope.info.header.flags, elExtension) && !privat) {
             //            scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
             //         }
+
+            // HOTFIX : generate nested template methods
+            generateMethodDeclarations(scope, current, true, closed);
          }
       }
       else if (current == lxTemplate) {
@@ -8344,11 +8386,18 @@ void Compiler :: optimizeClassTree(SNode node, ClassScope& scope)
       if (current == lxClassMethod) {
          optimizeSyntaxExpression(*scope.moduleScope, current/*, warningMask*/);
 
+         // HOTFIX : analize nested template methods
+         optimizeClassTree(current, scope);
+
 //         if (test(_optFlag, 1)) {
 //            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
 //               defineEmbeddableAttributes(scope, current);
 //            }
 //         }
+      }
+      else if (current == lxTemplate) {
+         // HOTFIX : analize nested template methods
+         optimizeClassTree(current, scope);
       }
 
       current = current.nextNode();

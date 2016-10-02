@@ -3765,7 +3765,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
-   SNode target = callNode.findChild(callNode, lxCallTarget);
+   SNode target = callNode.findChild(lxCallTarget);
    if (callNode == lxDirectCalling) {
       callResolvedMethod(tape, target.argument, callNode.argument);
    }
@@ -3870,7 +3870,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 
-   if (!directMode && (paramCount > 1/* || unboxMode*/)) {
+   if (!directMode && (paramCount > 1 || unboxMode)) {
       declareArgumentList(tape, paramCount);
    }
    // if message has no arguments - direct mode is allowed
@@ -4868,6 +4868,9 @@ void ByteCodeWriter :: generateTemplateMethods(CommandTape& tape, SNode root)
       if (current == lxClassMethod) {
          generateMethod(tape, current);
       }
+      else if (current == lxTemplate) {
+         generateTemplateMethods(tape, current);
+      }
 
       current = current.nextNode();
    }
@@ -4880,6 +4883,9 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root)
    while (current != lxNone) {
       if (current == lxClassMethod) {
          generateMethod(tape, current);
+
+         // HOTFIX : generate nested template methods
+         generateTemplateMethods(tape, current);
       }
       else if (current == lxTemplate) {
          generateTemplateMethods(tape, current);
