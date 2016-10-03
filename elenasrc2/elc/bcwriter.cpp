@@ -4341,7 +4341,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
          declareElseBlock(tape);
 
          //declareBlock(tape);
-         generateCodeBlock(tape, current);
+         generateCodeBlock(tape, current.findSubNode(lxCode));
       }
       else if (test(current.type, lxObjectMask))
          generateObjectExpression(tape, current);

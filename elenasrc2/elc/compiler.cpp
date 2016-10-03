@@ -3273,7 +3273,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /
    ref_t ifReference = 0;
    if (_logic->resolveBranchOperation(*scope.moduleScope, *this, operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       node = lxBranching;
-      
+
       SNode thenBody = loperandNode.nextNode(lxObjectMask);
       thenBody.set(lxIf, ifReference);
       compileBranching(thenBody, scope);
@@ -3281,7 +3281,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /
       SNode elseBody = thenBody.nextNode(lxObjectMask);
       if (elseBody != lxNone) {
          elseBody.set(lxElse, 0);
-         compileBranching(thenBody, scope);
+         compileBranching(elseBody, scope);
       }
    }
    else {
