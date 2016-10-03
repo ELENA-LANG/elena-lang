@@ -23,6 +23,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsStatic:
       case nsMethod:
       case nsConstructor:
+      case nsImplicitConstructor:
       case nsSubCode:
       case nsTemplate:
       case nsField:

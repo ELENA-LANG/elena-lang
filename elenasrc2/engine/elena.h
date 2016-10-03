@@ -89,6 +89,8 @@ public:
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
 
    virtual ident_t resolveForward(ident_t forward) = 0;
+
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 // --- SectionInfo ---

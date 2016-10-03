@@ -173,9 +173,23 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
    else return false;
 }
 
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (sourceRef)
+   {
+      case V_PTR32:
+         return targetRef == V_INT32;
+      default:
+         return false;
+   }
+}
+
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
    if (!targetRef)
+      return true;
+
+   if (isPrimitiveCompatible(targetRef, sourceRef))
       return true;
 
    while (sourceRef != 0) {
@@ -269,7 +283,7 @@ void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compil
    }
 }
 
-bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef)
+bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType)
 {
    ClassInfo info;
    defineClassInfo(scope, info, targetRef);   
@@ -293,6 +307,19 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
       }
    }
 
+   // check if there are implicit constructors
+   if (test(info.header.flags, elSealed) && sourceType != 0) {
+      int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
+      if (info.methods.exist(implicitMessage)) {
+         if (test(info.header.flags, elStructureRole)) {
+            compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+         }
+         else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
+
+         return true;
+      }
+   }
+
    return false;
 }
 
@@ -306,6 +333,11 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
       case V_INT32:
          info.header.parentRef = 0;
          info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
+         info.size = 4;
+         break;
+      case V_PTR32:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_SIGNATURE:
@@ -438,6 +470,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_STRING:
          attrValue = elDebugLiteral;
          return true;
+      case V_CONST:
+         attrValue = elReadOnlyRole;
+         return true;
       default:
          return false;
    }
@@ -474,6 +509,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_INT32:
          attrValue = lxDWordAttr;
          return true;
+      case V_PTR32:
+         attrValue = lxPtrAttr;
+         return true;
       case V_SIGNATURE:
          attrValue = lxSignatureAttr;
          return true;
@@ -505,18 +543,22 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
             return true;
+         case lxPtrAttr:
+            info.header.flags |= (elDebugPTR | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
+            return info.size == 4;
          case lxSignatureAttr:
             info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
-            return true;
+            return info.size == 4;
          case lxVerbAttr:
             info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
-            return true;
+            return info.size == 4;
          case lxMessageAttr:
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-            return true;
+            return info.size == 4;
             //            case -2:
             //               scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
             //               break;
@@ -554,14 +596,25 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
       case V_INT32:
          return firstNonZero(scope.intReference, scope.superReference);
       case V_SIGNATURE:
-         return firstNonZero(scope.intReference, scope.signatureReference);
+         return firstNonZero(scope.signatureReference, scope.superReference);
       case V_MESSAGE:
-         return firstNonZero(scope.intReference, scope.messageReference);
+         return firstNonZero(scope.messageReference, scope.superReference);
       case V_VERB:
-         return firstNonZero(scope.intReference, scope.verbReference);
+         return firstNonZero(scope.verbReference, scope.superReference);
       default:
          return scope.superReference;
    }
+}
+
+ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info)
+{
+   if (test(info.header.flags, elStructureWrapper)) {
+      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
+      if (isPrimitiveRef(field.value1))
+         return field.value1;
+   }
+
+   return 0;
 }
 
 ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)

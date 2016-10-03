@@ -21,4 +21,5 @@ memory.l
 dynamic.l
 exceptions.l
 console.l
+win32_pointers.l
 io\win32_console.l

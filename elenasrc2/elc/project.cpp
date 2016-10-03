@@ -339,13 +339,13 @@ _Module* Project :: resolveCore(ref_t reference, bool silentMode)
    else return module;
 }
 
-//ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
-//{
-//   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
-//   if (!emptystr(dll)) {
-//      stdCall = true;
-//
-//      return dll;
-//   }
-//   else return _settings.get(opExternals, alias, DEFAULT_STR);
-//}
+ident_t Project::resolveExternalAlias(ident_t alias, bool& stdCall)
+{
+   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
+   if (!emptystr(dll)) {
+      stdCall = true;
+
+      return dll;
+   }
+   else return _settings.get(opExternals, alias, DEFAULT_STR);
+}

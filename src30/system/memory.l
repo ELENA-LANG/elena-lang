@@ -965,7 +965,7 @@
 //        => system'core_routines'__literal.
 
     /// Reads the literal length into an output parameter
-    #method(/*outnprop:length,*/stacksafe) readLength &vint:aLength
+    #method(outnprop:length,stacksafe) readLength &vint:aLength
         => system'core_routines'__literal.
 
 //    /// Saves the literal into a UTF-32 character array
@@ -1177,7 +1177,7 @@
 //        <= Substring &int:(anIndex int) &int:(aLength int).
 
     /// Reads the literal length into an output parameter
-    #method(/*outnprop:length,*/stacksafe) readLength &vint:aLength
+    #method(outnprop:length,stacksafe) readLength &vint:aLength
         => system'core_routines'__wide.
 
 //    /// Saves the literal into a UTF-32 character array

@@ -44,6 +44,7 @@ enum LexicalType
    lxExtension       = 0x0002B,
    lxMessageReference= 0x00033,
    lxSubject         = 0x00047,
+   lxImplicitConstructor = 0x0004B,
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket
@@ -68,6 +69,7 @@ enum LexicalType
    lxLocalAddress    = 0x08108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0810A, // arg - offset
+   lxBlockLocal      = 0x0810B, // arg - offset
    lxConstantString  = 0x0810C, // arg - reference
    lxConstantWideStr = 0x0810D, // arg - reference
    lxConstantInt     = 0x1810F, // arg - reference
@@ -90,8 +92,13 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
    lxBranching       = 0x0C00F,   // branch expression
    lxExpression      = 0x0C012,
+   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
+   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
+   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
+   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference
+   lxElse            = 0x0C020,   // optional arg - reference
    lxFieldExpression = 0x0C022,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
@@ -142,13 +149,17 @@ enum LexicalType
    lxSize            = 0x20018,
    lxTemplateParam   = 0x20019,
    lxEmbeddable      = 0x2001A,
+   lxIntExtArgument  = 0x2001B,
+   lxExtArgument     = 0x2001C,
 
+   lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,
    lxClassMethodAttr = 0x20103,
    lxDWordAttr       = 0x20104,
    lxSignatureAttr   = 0x20105,
    lxMessageAttr     = 0x20106,
    lxVerbAttr        = 0x20107,
+   lxPtrAttr         = 0x20108,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -162,7 +173,6 @@ enum LexicalType
 //
 //   lxSymbol = 0x20103, // arg - reference
 //   lxBlockLocalAddr = 0x04109, // arg - offset
-//   lxBlockLocal = 0x0410B, // arg - offset
 //   lxConstantChar = 0x8410E, // arg - reference
 //   lxConstantLong = 0x84110, // arg - reference
 //   lxConstantReal = 0x84111, // arg - reference
@@ -180,15 +190,8 @@ enum LexicalType
 //   lxSwitching       = 0x00310,
 //   lxLooping         = 0x00311,
 //   lxThrowing        = 0x00313,
-//   lxStdExternalCall = 0x20314,  // calling an external function, arg - reference
-//   lxExternalCall    = 0x20315,  // calling an external function, arg - reference
-//   lxCoreAPICall     = 0x20316,  // calling an external function, arg - reference
-//   lxIntExtArgument  = 0x00317,
-//   lxExtArgument     = 0x00318,
 //   lxExtInteranlRef  = 0x00319,
-//   lxInternalCall    = 0x2031A,  // calling an internal function, arg - reference
 //   lxArgUnboxing     = 0x0031E,
-//   lxElse            = 0x20320,  // optional arg - reference
 //   lxOption          = 0x00321,
 //   lxExternFrame     = 0x00327,
 //   lxNewOp           = 0x20328,
@@ -938,6 +941,11 @@ public:
       _strings.load(&reader, reader.getDWord());
    }
 };
+
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;

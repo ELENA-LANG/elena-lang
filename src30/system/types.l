@@ -13,7 +13,7 @@
 #template(-8199) dynamic {}
 #template(-8196) limited {}
 //#template(0200h) group   {}
-//#template(0800h) const   {}
+#template(-8201) const   {}
 #template(-8197) struct  {}
 //#template(1000h) nonstructural {}
 #template(-8198) enumlist {}
@@ -21,7 +21,6 @@
 //#template(0120h,4980h,subject) extension : subject {}
 #template(-8200) string {}
 #template(-8193) embeddable {}
-//#template(0008h,800010h) reference {}
 
 ///// Provides classes that describe the basic functionality
 
@@ -92,9 +91,9 @@
 //#subject nfunc      = system'IndexFunction1.
 //#subject nnfunc     = system'IndexFunction2.
 //#subject n3func     = system'IndexFunction3.
-//
-//// === system handles ===
-//#subject handle     = system'Handle.
+
+// === system handles ===
+#subject handle     = system'Handle.
 //#subject rt_ptr     = system'RTPointer.
 //#subject dirty_ptr  = system'UnsafePointer.
 //

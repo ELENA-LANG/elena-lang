@@ -3,9 +3,11 @@ In development:
 ------                              
 
               xrev
+                 * support implicit constructors
+                 * support private sealed methods
+
                  * support array of int
 
-                 * support implicit constructors
                  * constructor returning constant values,...
                  * check if self is embeddable
                  * no need to check conditional boxing for returning expression
@@ -19,7 +21,6 @@ In development:
                  * invalid warning in template
                  * optimize unbox : root expression / assigning
                  * support lazy expressions
-                 * support unboxing
                  * step over : fine tune the debugging sequence
                  * templates : importing
                  * templates : compiling
@@ -30,7 +31,6 @@ In development:
                  * support private sealed methods
                  * method attributes cannot be overridden
                  * message $self does not belong to the object points to the target instead of message
-                 * invalid attribute warning refers always to the first attribute
                  * invalid warning in the following code : #method(bool) equal : anObject []
                  * type attribute cannot be overriden for the method
                  * uncomment code in ecv
@@ -54,6 +54,7 @@ In development:
                  * test dispatching to the expression
                  * overriding dispatching
                  * test vint : dispatch opertions 
+                 * test with generic if / if-else operator
 
                  * support abstract attribute
                  * check sealed / limited class attributes

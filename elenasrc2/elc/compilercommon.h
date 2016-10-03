@@ -16,6 +16,7 @@
 #define V_FLAG        (size_t)-03
 
 #define V_INT32       (size_t)-11
+#define V_PTR32       (size_t)-12
 #define V_SIGNATURE   (size_t)-18
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
@@ -34,6 +35,7 @@
 #define V_ENUMLIST    (size_t)-8198
 #define V_DYNAMIC     (size_t)-8199
 #define V_STRING      (size_t)-8200
+#define V_CONST       (size_t)-8201
 
 namespace _ELENA_
 {
@@ -113,6 +115,7 @@ class _Compiler
 public:
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable) = 0;
    virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
+   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
 
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 
@@ -146,6 +149,7 @@ public:
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
@@ -165,7 +169,7 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
-   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef) = 0;
+   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;

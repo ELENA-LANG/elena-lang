@@ -136,9 +136,9 @@ public:
 //      okTemplateTarget,
 //      okTemplateLocal,
 //   //   okTemplateTarget,
-//
-//      okExternal,
-//      okInternal,
+
+      okExternal,
+      okInternal,
    };
    
    struct ObjectInfo
@@ -1012,7 +1012,7 @@ private:
 
    ObjectInfo compileMessageParameters(SNode node, CodeScope& scope);   // returns an info of the first operand
 
-   ObjectInfo compileMessage(SNode node, CodeScope& scope);
+   ObjectInfo compileMessage(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role/*, int mode*/);
 
@@ -1030,16 +1030,16 @@ private:
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
-//
-//   void compileExternalArguments(DNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
+
+   void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(bool bytearray, size_t& allocatedSize, int& reserved);
    int allocateStructure(/*ModuleScope& scope, */SNode node, size_t& size);
    bool allocateStructure(CodeScope& scope, size_t size, bool bytearray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(DNode node, CodeScope& scope, ident_t dllName, int mode);
-//   ObjectInfo compileInternalCall(DNode node, CodeScope& scope, ObjectInfo info);
-//
+   ObjectInfo compileExternalCall(SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
+
 //   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
 //   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
@@ -1114,7 +1114,7 @@ private:
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
    ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
-   bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ref_t sourceRef);
+   bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 
    void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node/*, int warningLevel*/);
    ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int warningLevel, int mode, bool& variable*/);
@@ -1123,8 +1123,8 @@ private:
 //      bool dummy;
 //      return boxPrimitive(scope, node, targetRef, warningLevel, mode, dummy);
 //   }
-//   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, /*int warningLevel, */int mode);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, /*int warningLevel, */int mode);
 //   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
    void optimizeCall(ModuleScope& scope, SyntaxTree::Node node/*, int warningLevel*/);
 //   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
@@ -1163,6 +1163,7 @@ public:
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
    virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);

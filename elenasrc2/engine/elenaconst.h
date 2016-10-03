@@ -318,7 +318,7 @@ namespace _ELENA_
 //   const int elDebugQWORD          = 0x00060000;
 //   const int elDebugBytes          = 0x00070000;
 //   const int elDebugShorts         = 0x00080000;
-//   const int elDebugPTR            = 0x00090000;
+   const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
@@ -476,12 +476,12 @@ namespace _ELENA_
 
    #define STANDARD_MODULE_LEN      6
    #define INTERNAL_MASK_LEN        12
-//   #define COREAPI_MASK_LEN         5 
-//
-//   #define CORE_MODULE              "coreapi"
+   #define COREAPI_MASK_LEN         5 
+
+   #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
-//   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
-//   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
+   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
+   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
                                                                      // will be treated like internal core api one
    #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 

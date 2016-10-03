@@ -6,8 +6,8 @@
     /// Executes the action
     #method(-4097) if : aTrueAction = aTrueAction eval.
 
-//    /// Executes then-action
-//    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
+    /// Executes then-action
+    #method if : aTrueAction : aFalseAction = aTrueAction eval.
 
     /// Always returns nil.
     #method(-4098) ifnot : aTrueAction = $nil.
@@ -57,8 +57,8 @@
     /// Always returns nil
     #method(-4098) if : anAction = $nil.
     
-//    /// Executes else-action
-//    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
+    /// Executes else-action
+    #method if : aTrueAction : aFalseAction = aFalseAction eval.
 
     /// Executes the action
     #method(-4097) ifnot : aFalseAction = aFalseAction eval.

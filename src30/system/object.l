@@ -34,10 +34,10 @@
 {
     #method if : aTrueAction = $nil.
 
+    #method if : aTrueAction : aFalseAction = $nil.
+
     #method ifnot : aTrueAction = $nil.
 
-//    #method then : aTrueAction &else:aFalseAction = $nil.
-//    
 //    #method iif:aTrueValue:aFalseValue = $nil.
 //
 //    #method(bool) or : anExpr = $nil.

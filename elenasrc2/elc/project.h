@@ -140,7 +140,7 @@ public:
       return _loader.resolvePrimitive(alias);
    }
 
-//   ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
 ////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);

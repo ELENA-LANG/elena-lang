@@ -17,7 +17,7 @@
 
 #template outnprop : template_subj
 {
-   #method(stacksafe,int,embeddable,w3) template_subj
+   #method(stacksafe,int,embeddable/*,w3*/) template_subj
    [
         #var(int)val.
         $self target &vint:val.

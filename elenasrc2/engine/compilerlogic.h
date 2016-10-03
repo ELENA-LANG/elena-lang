@@ -71,6 +71,8 @@ public:
    virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly);
    virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly);
 
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
+
    virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
@@ -92,7 +94,7 @@ public:
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);
-   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef);
+   virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType);
 
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info);
    virtual bool tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info);
