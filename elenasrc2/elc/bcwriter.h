@@ -191,7 +191,7 @@ class ByteCodeWriter
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
    void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 
-//   void jumpIfEqual(CommandTape& tape, ref_t ref);
+   void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
 
 //   void throwCurrent(CommandTape& tape);

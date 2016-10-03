@@ -2885,6 +2885,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 
 ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mode)
 {
+   //if (!test(mode, HINT_NODEBUGINFO))
+   //   insertDebugStep(terminal, dsStep);
+
    ident_t token = terminal.findChild(lxTerminal).identifier();
 
    ObjectInfo object;
@@ -3542,12 +3545,12 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
    SNode arg = node.firstChild();
    // compile the message target and generic argument list
    while (arg != lxMessage && arg != lxNone) {
-      if (target.kind == okUnknown) {
-         target = compileObject(arg, scope, paramMode);
+      if (test(arg.type, lxObjectMask)) {
+         if (target.kind == okUnknown) {
+            target = compileObject(arg, scope, paramMode);
+         }
+         else compileObject(arg, scope, paramMode);
       }
-      else if (test(arg.type, lxObjectMask))
-         compileObject(arg, scope, paramMode);
-
       //paramCount++;
 
       arg = arg.nextNode();
@@ -3628,7 +3631,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int mode)
       //      }
       //   }
 
-      return compileMessage(node, scope, target, messageRef, 0);
+      return compileMessage(node, scope, target, messageRef, mode);
    }
 }
 

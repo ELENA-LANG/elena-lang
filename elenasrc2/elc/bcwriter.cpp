@@ -954,11 +954,11 @@ void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int 
    tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
 }
 
-//void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
-//{
-//   // ifr then-end, r
-//   tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
-//}
+void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
+{
+   // ifr then-end, r
+   tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
+}
 
 void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd)
 {
@@ -3068,7 +3068,7 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
    }
 
    if (terminal != lxNone) {
-      declareBreakpoint(tape, 
+      declareBreakpoint(tape,
          terminal.findChild(lxRow).argument,
          terminal.findChild(lxCol).argument - 1,
          terminal.findChild(lxLength).argument, node.argument);
@@ -3276,8 +3276,6 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
 
 void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
 {
-   //translateBreakpoint(tape, SyntaxTree::findChild(node, lxBreakpoint));
-
    pushObject(tape, node.type, node.argument);
 }
 
@@ -4102,6 +4100,8 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             target = child;
          }
          else if (child == lxExpression) {
+            //translateBreakpoint(tape, child);
+
             source = child.findSubNodeMask(lxObjectMask);
          }
          else source = child;
@@ -4536,19 +4536,19 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
          jumpIfNotEqual(tape, node.argument);
          generateCodeBlock(tape, node);
          break;
-//      case lxElse:
-//         if (node.argument != 0)
-//            jumpIfEqual(tape, node.argument);
-//
-//         generateCodeBlock(tape, node);
-//         break;
+      case lxElse:
+         if (node.argument != 0)
+            jumpIfEqual(tape, node.argument);
+
+         generateCodeBlock(tape, node);
+         break;
       case lxCreatingClass:
       case lxCreatingStruct:
          generateCreating(tape, node);
          break;
-      case lxBreakpoint:
-         translateBreakpoint(tape, node);
-         break;
+      //case lxBreakpoint:
+      //   translateBreakpoint(tape, node);
+      //   break;
       default:
          loadObject(tape, node);
          break;
@@ -4565,9 +4565,9 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
 //      else if (current == lxVariable) {
 //         generateObjectExpression(tape, current);
 //      }
-      else if (current == lxBreakpoint) {
-         generateObjectExpression(tape, current);
-      }
+      //else if (current == lxBreakpoint) {
+      //   translateBreakpoint(tape, current);
+      //}
       else if (current == lxReleasing) {
          releaseObject(tape, current.argument);
       }
@@ -4590,12 +4590,16 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
       switch (type)
       {
          case lxExpression:
+            translateBreakpoint(tape, current.findChild(lxBreakpoint));
+
             declareBlock(tape);
             generateExpression(tape, current);
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
             break;
          case lxAssigning:
          case lxReturning:
+            translateBreakpoint(tape, current.findChild(lxBreakpoint));
+
             declareBlock(tape);
             generateObjectExpression(tape, current);
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -4686,6 +4690,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxBinarySelf:
 //            declareSelfStructInfo(tape, THIS_VAR, current.argument, SyntaxTree::findChild(current, lxClassName).identifier());
 //            break;
+         case lxBreakpoint:
+            translateBreakpoint(tape, current);
+            break;
          default:
             generateObjectExpression(tape, current);
             break;
