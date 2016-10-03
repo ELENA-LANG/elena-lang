@@ -55,6 +55,7 @@ In development:
                  * overriding dispatching
                  * test vint : dispatch opertions 
                  * test with generic if / if-else operator
+                 * test constant list
 
                  * support abstract attribute
                  * check sealed / limited class attributes
@@ -70,6 +71,9 @@ In development:
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
                  * test embeddable idle
+                 * $ConsoleHandleFactory.newWriter - idle jump
+                 * $ConsoleHandleFactory : handle is stack allocated, so the code should be modified to avoid extra object creating
+                 * uncomment $FileWriter
 
               xdev
                 * linux migration

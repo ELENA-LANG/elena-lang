@@ -114,7 +114,7 @@ class _Compiler
 {
 public:
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable) = 0;
-   virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
+   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef) = 0;
    virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef) = 0;
 
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -182,6 +182,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
+   virtual bool validateSymbolAttribute(int& attrValue) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 

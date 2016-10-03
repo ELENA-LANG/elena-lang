@@ -115,7 +115,7 @@ public:
 //      okExtMessageConstant,           // param - reference 
 //      okSignatureConstant,            // param - reference 
       okVerbConstant,                 // param - reference 
-//      okArrayConst,
+      okArrayConst,
       okField,                        // param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okFieldAddress,                 // param - field offset, extraparam - class reference
@@ -294,9 +294,9 @@ private:
       List<ident_t> defaultNs;
       ForwardMap    forwards;       // forward declarations
 
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
-//
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
+
 //      // extensions
 //      SubjectMap        extensionHints; 
 //      ExtensionMap      extensions;
@@ -324,10 +324,10 @@ private:
 
       ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       void raiseError(const char* message, int row, int col, ident_t terminal);
       void raiseWarning(int level, const char* message, int row, int col, ident_t terminal);
@@ -358,7 +358,7 @@ private:
       {
          return loadClassInfo(info, module->resolveReference(reference), headerOnly);
       }
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
       _Memory* loadAttributeInfo(ref_t reference/*, _Module* &argModule*/)
       {
@@ -595,9 +595,9 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
 //      bool  preloaded;
-//      ref_t typeRef;      
+      ref_t typeRef;      
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -960,8 +960,12 @@ private:
    void compileParentDeclaration(SNode node, ClassScope& scope);
    void compileFieldDeclarations(SNode member, ClassScope& scope); 
 //   void compileTemplateFieldDeclaration(DNode& node, SyntaxWriter& writer, TemplateScope& scope);
-//
-//   void compileSymbolHints(DNode hints, SymbolScope& scope, bool silentMode);
+
+   void compileSymbolAttributes(SNode node, SymbolScope& scope, SNode rootNode);
+   void compileSymbolAttributes(SNode node, SymbolScope& scope)
+   {
+      compileSymbolAttributes(node, scope, node);
+   }
 //   bool compileClassHint(DNode hint, SyntaxWriter& writer, ClassScope& scope);
    void compileClassAttributes(SNode node, ClassScope& scope, SNode rootNode);
 //   void compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope);
@@ -1098,7 +1102,7 @@ private:
    void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope/*, DNode hints*/);
    void compileSymbolImplementation(SNode node, SymbolScope& scope/*, DNode hints, bool isStatic*/);
-//   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
+   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal);
    void compileIncludeModule(SNode node, ModuleScope& scope/*, DNode hints*/);
    void declareSubject(SNode member, ModuleScope& scope);
    void compileSubject(SNode member, ModuleScope& scope);
@@ -1142,7 +1146,7 @@ private:
    void optimizeSyntaxNode(ModuleScope& scope, SNode node, /*int warningLevel, */int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SNode node, /*int warningLevel, */int mode = 0);
    void optimizeClassTree(SNode node, ClassScope& scope);
-//   void optimizeSymbolTree(SourceScope& scope);
+   void optimizeSymbolTree(SNode node, SourceScope& scope);
 
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
@@ -1162,7 +1166,7 @@ public:
 
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
-   virtual void injectBoxing(SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
    virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);

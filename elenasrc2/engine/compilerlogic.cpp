@@ -299,7 +299,7 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
       else compatible = isCompatible(scope, inner.value1, sourceRef);
 
       if (compatible) {
-         compiler.injectBoxing(node, 
+         compiler.injectBoxing(scope, node, 
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 
             test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
@@ -529,6 +529,16 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 {
    if (attrValue == (int)V_INT32) {
+      return true;
+   }
+   else return false;
+}
+
+bool CompilerLogic :: validateSymbolAttribute(int& attrValue)
+{
+   if (attrValue == (int)V_CONST) {
+      attrValue = lxConstAttr;
+
       return true;
    }
    else return false;

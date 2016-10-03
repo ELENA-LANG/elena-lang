@@ -2,9 +2,9 @@
 //#import system'text.
 //
 //#subject console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
-//
-//#symbol(int,const)FILE_TYPE_CHAR = 2.
-//
+
+#symbol(int,const)FILE_TYPE_CHAR = 2.
+
 //#class(embeddable,sealed)CONSOLE_SCREEN_BUFFER_INFO
 //{
 //    #field(win_coord)dwSize.    
@@ -57,42 +57,42 @@
     [
         #var(handle)handle := $ConsoleHandleFactory new &attributes:0FFFFFFF5h.
         #var(int)dwMode := system'external'KERNEL32 GetFileType &int:handle.
-//        (dwMode == FILE_TYPE_CHAR)
-//            ? [ ^ $ConsoleWriter new &handle:handle. ]
-//            ! [ ^ $FileWriter new &handle:handle. ].
+        (dwMode == FILE_TYPE_CHAR)
+            ? [ ^ $ConsoleWriter new &handle:handle. ]
+            ! [ ^ $FileWriter new &handle:handle. ].
     ]
 }.
 
-//// --- ConsoleWriter ---
-//
-//#class(sealed,struct) $ConsoleWriter
-//{
-//    #field(handle) theHandle.
-//
-//    #constructor(stacksafe) new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
+// --- ConsoleWriter ---
+
+#class(sealed,struct) $ConsoleWriter
+{
+    #field(handle) theHandle.
+
+    #constructor(stacksafe) new &handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
 //    #method write &literal:aLiteral
 //    [
 //        $self write &wide:(aLiteral wide).
 //    ]
-//
-//    #method write &wide : s
-//    [
-//        #var(int)len := s length.
-//
-//        system'external'KERNEL32 WriteConsoleW
-//            &int  :  theHandle
-//            &wide :  s
-//            &int  :  len
-//            &int  :  0                       // !! temporally we do not use it
-//            &int  :  0.             
-//
-//        // !!check the result of the operation
-//    ]
-//    
+
+    #method write &wide : s
+    [
+        #var(int)len := s length.
+
+        system'external'KERNEL32 WriteConsoleW
+            &int  :  theHandle
+            &wide :  s
+            &int  :  len
+            &int  :  0                       // !! temporally we do not use it
+            &int  :  0.             
+
+        // !!check the result of the operation
+    ]
+    
 //    #method clear
 //    [
 //        #var(console_screen_buffer_info)aBuffer.
@@ -120,19 +120,19 @@
 //        system'external'KERNEL32 CloseHandle
 //            &int:theHandle.
 //    ]
-//}
-//
-//// --- $FileWriter ---
-//
-//#class(sealed,embeddable) $FileWriter
-//{
-//    #field(handle) theHandle.
-//
-//    #constructor(stacksafe) new &handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
+}
+
+// --- $FileWriter ---
+
+#class(sealed,embeddable) $FileWriter
+{
+    #field(handle) theHandle.
+
+    #constructor(stacksafe) new &handle:aHandle
+    [
+        theHandle := aHandle.
+    ]
+
 //    #method(stacksafe) write &bytearray:buffer &int:length
 //    [
 //        #var(int)written := 0.
@@ -203,8 +203,8 @@
 //        system'external'KERNEL32 CloseHandle
 //            &int:theHandle.
 //    ]
-//}
-//
+}
+
 //// --- ConsoleReader ---
 //
 //#class(sealed,embeddable) $ConsoleReader

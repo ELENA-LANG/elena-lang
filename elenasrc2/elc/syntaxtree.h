@@ -81,6 +81,7 @@ enum LexicalType
    lxResultField     = 0x0811A, // arg -offset
    lxCurrentMessage  = 0x0811B,
    lxThisLocal       = 0x0811C,
+   lxConstantList    = 0x0811E, // arg - reference
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
@@ -151,6 +152,7 @@ enum LexicalType
    lxEmbeddable      = 0x2001A,
    lxIntExtArgument  = 0x2001B,
    lxExtArgument     = 0x2001C,
+   lxConstAttr       = 0x2001D,
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,
@@ -180,7 +182,6 @@ enum LexicalType
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
 //   lxCurrentField = 0x0411D, // arg -offset
-//   lxConstantList = 0x2411E, // arg - reference
 //
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
