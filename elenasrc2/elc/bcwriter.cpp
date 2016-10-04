@@ -3720,6 +3720,13 @@ int ByteCodeWriter:: saveExternalParameters(CommandTape& tape, SyntaxTree::Node 
 
 void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
 {
+   SNode bpNode = node.findChild(lxMessage).findChild(lxBreakpoint);
+   if (bpNode != lxNone) {
+      translateBreakpoint(tape, bpNode);
+
+      declareBlock(tape);
+   }
+
    bool stdCall = (node == lxStdExternalCall);
    bool apiCall = (node == lxCoreAPICall);
 
@@ -3747,6 +3754,9 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
 
       endExternalBlock(tape);
    }
+
+   if (bpNode != lxNone)
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 }
 
 ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
@@ -4100,7 +4110,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             target = child;
          }
          else if (child == lxExpression) {
-            //translateBreakpoint(tape, child);
+            translateBreakpoint(tape, child.findChild(lxBreakpoint));
 
             source = child.findSubNodeMask(lxObjectMask);
          }
@@ -4598,6 +4608,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxAssigning:
          case lxReturning:
+         case lxBranching:
             translateBreakpoint(tape, current.findChild(lxBreakpoint));
 
             declareBlock(tape);

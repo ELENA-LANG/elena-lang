@@ -4677,6 +4677,8 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, CodeScope& scope, int mod
    // HOTFIX : comment out dll reference
    targetNode = lxIdle;
 
+   insertDebugStep(node.findChild(lxMessage), dsAtomicStep);
+
    ident_t dllAlias = targetNode.findChild(lxTerminal).identifier();
    ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).findChild(lxTerminal).identifier();
 
