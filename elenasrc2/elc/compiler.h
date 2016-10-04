@@ -1022,15 +1022,16 @@ private:
 
 //   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
+   //ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
    ObjectInfo compileExtension(SNode node, CodeScope& scope, int mode = 0);
-   ObjectInfo compileExpression(SNode node, CodeScope& scope/*, ref_t targetType*/, int mode);
+   ObjectInfo compileExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
 
    ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
-//   void compileLoop(DNode node, CodeScope& scope);
+   void compileTrying(SNode node, CodeScope& scope);
+   //   void compileLoop(DNode node, CodeScope& scope);
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
@@ -1052,13 +1053,13 @@ private:
    ObjectInfo compileCode(SNode node, CodeScope& scope);
 
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(DNode node, MethodScope& scope);
-   bool declareActionScope(SNode& node, ClassScope& scope/*, DNode argNode, SyntaxWriter& writer*/, ActionScope& methodScope, int mode, bool alreadyDeclared);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+   bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
    void declareSingletonClass(SNode member, SNode parentNode, ClassScope& scope);
    void compileSingletonClass(SNode member, ClassScope& scope);
 
-   void declareSingletonAction(ClassScope& scope, SNode objNode/*, DNode expression, DNode hints*/);
+   void declareSingletonAction(ClassScope& scope, SNode objNode, SNode expression);
 
    void compileActionMethod(SNode member, /*SyntaxWriter& writer, */MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
@@ -1074,7 +1075,7 @@ private:
    void compileSymbolCode(ClassScope& scope);
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
-   void compileAction(SNode node, ClassScope& scope, /*SNode argNode, */int mode, bool alreadyDeclared = false);
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared = false);
    void compileNestedVMT(SNode node, SNode parent, InlineClassScope& scope);
 
    void compileVMT(SNode member, ClassScope& scope);

@@ -29,6 +29,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsField:
       case nsSubject:
       case nsNestedClass:
+      case nsInlineExpression:
       case nsDispatchExpression:
       case nsMessageReference:
       case nsExtension:
@@ -99,15 +100,18 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsAssigning:
          copyAssigning(node);
          break;
+      case nsCatchMessageOperation:
+         _writer.closeNode();
+         _writer.newNode(lxExpression);
       case nsMessageOperation:
-         copyMessage(node);
+         copyMessage(node, symbol == nsCatchMessageOperation);
          break;
       case nsL0Operation:
       case nsL3Operation:
       case nsL4Operation:
       case nsL6Operation:
       case nsL7Operation:
-         copyMessage(node, true);
+         copyMessage(node, false, true);
          break;
       case nsObject:
          copyObject(node);
@@ -159,7 +163,7 @@ void DerivationWriter :: copyObject(SNode node)
    unpackChildren(node);
 }
 
-void DerivationWriter :: copyMessage(SNode node, bool operationMode)
+void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationMode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -199,7 +203,7 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
          case nsL4Operation:
          case nsL6Operation:
          case nsL7Operation:
-            copyMessage(current, true);
+            copyMessage(current, false, true);
             _writer.removeBookmark();
             break;
          default:
@@ -214,8 +218,15 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
       current = current.nextNode();
    }
 
-   _writer.insert(lxExpression);
-   _writer.closeNode();
+   if (catchMode) {
+      _writer.insert(lxTrying);
+      _writer.closeNode();
+   }
+   else {
+      _writer.insert(lxExpression);
+      _writer.closeNode();
+   }
+
 }
 
 void DerivationWriter :: copyVariable(SNode node)

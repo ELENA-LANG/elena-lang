@@ -4227,32 +4227,32 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //   popObject(tape, lxResult);
 //   freeLock(tape);
 //}
-//
-//void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExpressionMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareCatch(tape);
-//
-//            // ...
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endCatch(tape);
-//}
-//
+
+void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareCatch(tape);
+
+            // ...
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endCatch(tape);
+}
+
 //void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   bool first = true;
@@ -4464,9 +4464,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxSDirctCalling:
          generateCallExpression(tape, node);
          break;
-//      case lxTrying:
-//         generateTrying(tape, node);
-//         break;
+      case lxTrying:
+         generateTrying(tape, node);
+         break;
 //      case lxAlt:
 //         generateAlt(tape, node);
 //         break;
@@ -4609,6 +4609,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxAssigning:
          case lxReturning:
          case lxBranching:
+         case lxTrying:
             translateBreakpoint(tape, current.findChild(lxBreakpoint));
 
             declareBlock(tape);

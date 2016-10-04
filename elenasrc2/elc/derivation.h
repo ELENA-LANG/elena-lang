@@ -127,7 +127,7 @@ class DerivationWriter : public _DerivationWriter
 
    void copyExpression(SNode node);
    void copyObject(SNode node);
-   void copyMessage(SNode node, bool operationMode = false);
+   void copyMessage(SNode node, bool catchMode, bool operationMode = false);
    void copyVariable(SNode node);
    void copyAssigning(SNode node);
    void copyHints(SNode node);

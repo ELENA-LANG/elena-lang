@@ -53,6 +53,7 @@ struct ModuleInfo
 //#define HINT_EXTERNALOP       0x10000000
 //#define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
+#define HINT_TRY_MODE         0x02000000
 #define HINT_NODEBUGINFO      0x00020000
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
@@ -2959,7 +2960,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 {
    ObjectInfo result;
 
-   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference);
+   SNode member = objectNode.findChild(lxCode, lxNestedClass, lxMessageReference, lxInlineExpression);
    if (member == lxNone)
       member = objectNode;
 
@@ -2979,9 +2980,9 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //      case nsInlineClosure:
 //         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
 //         break;
-//      case nsInlineExpression:
-//         result = compileClosure(objectNode, scope, HINT_ACTION);
-//         break;
+      case lxInlineExpression:
+         result = compileClosure(objectNode, member, scope, /*HINT_ACTION*/0);
+         break;
       case lxExpression:
 //         if (isCollection(member)) {
 //            TerminalInfo parentInfo = objectNode.Terminal();
@@ -2995,7 +2996,12 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 //            }
 //            else result = compileCollection(member, scope, mode);
 //         }
-         /*else */result = compileExpression(objectNode, scope, 0);
+         /*else */if (test(mode, HINT_TRY_MODE)) {
+            result = compileExpression(objectNode, scope, 0);
+
+            objectNode = lxTrying;
+         }
+         else result = compileExpression(objectNode, scope, 0);
          break;
       case lxMessageReference:
          result = compileMessageReference(member, scope, mode);
@@ -3871,18 +3877,18 @@ ObjectInfo Compiler :: compileExtensionMessage(SNode node, CodeScope& scope, Obj
    return compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
 
-bool Compiler :: declareActionScope(SNode& node, ClassScope& scope/*, DNode argNode, SyntaxWriter& writer*/, ActionScope& methodScope, int mode, bool alreadyDeclared)
+bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared)
 {
    //bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
 
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
-//   if (argNode != nsNone) {
-//      // define message parameter
-//      methodScope.message = declareInlineArgumentList(argNode, methodScope);
-//
-//      node = node.select(nsSubCode);
-//   }
+   if (argNode != lxNone) {
+      // define message parameter
+      methodScope.message = declareInlineArgumentList(argNode, methodScope);
+
+      //node = node.select(nsSubCode);
+   }
 
    if (!alreadyDeclared) {
       ref_t parentRef = scope.info.header.parentRef;
@@ -3904,10 +3910,10 @@ bool Compiler :: declareActionScope(SNode& node, ClassScope& scope/*, DNode argN
    return /*lazyExpression*/false;
 }
 
-void Compiler :: compileAction(SNode node, ClassScope& scope/*, SNode argNode*/, int mode, bool alreadyDeclared)
+void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared)
 {
    ActionScope methodScope(&scope);
-   bool lazyExpression = declareActionScope(node, scope/*, argNode, writer*/, methodScope, mode, alreadyDeclared);
+   bool lazyExpression = declareActionScope(node, scope, argNode, methodScope, mode, alreadyDeclared);
 
    SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
@@ -4051,9 +4057,12 @@ ObjectInfo Compiler :: compileClosure(SNode node, SNode body, CodeScope& ownerSc
 
    // if it is a lazy expression / multi-statement closure without parameters
    if (body == lxCode/* || node == nsInlineClosure*/) {
-      compileAction(body, scope, /*SNode(), */mode);
+      compileAction(body, scope, SNode(), mode);
    }
-//   // if it is a closure / lambda function with a parameter
+   // if it is a closure / lambda function with a parameter
+   else if (body == lxInlineExpression) {
+      compileAction(body, scope, node.firstChild(lxTerminalMask), 0);
+   }
 //   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
 //      compileAction(node.firstChild(), scope, node, mode);
 //   }
@@ -4181,14 +4190,31 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, int mo
 //   return retVal;
 //}
 
+void Compiler :: compileTrying(SNode node, CodeScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         compileExpression(current, scope, 0);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
 {
 //   scope.writer->newBookmark();
 
    ObjectInfo objectInfo;
+   if (node == lxTrying) {
+      compileTrying(node, scope);
 
-   SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxCode, lxNestedClass, lxMessageReference);
-   switch (child.type) {
+      objectInfo = ObjectInfo(okObject);
+   }
+   else {
+      SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxCode, lxNestedClass, lxMessageReference, lxInlineExpression);
+      switch (child.type) {
       case lxAssign:
          objectInfo = compileAssigning(node, scope, mode);
          break;
@@ -4204,12 +4230,15 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
       case lxCode:
       case lxNestedClass:
       case lxMessageReference:
+      case lxInlineExpression:
          objectInfo = compileObject(node, scope, mode);
          break;
       default:
          objectInfo = compileObject(node.firstChild(lxObjectMask), scope, mode);
          break;
+      }
    }
+
 
 //   if (/*node != nsObject*/node == lxExpression) {
 //      SNode member = node.firstChild(lxObjectMask);
@@ -4496,10 +4525,11 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 
       switch(current) {
          case lxExpression:
+         case lxTrying:
             insertDebugStep(current, dsStep);
             compileExpression(current, scope, HINT_ROOT);
             break;
-//         case nsThrow:
+            //         case nsThrow:
 //            compileThrow(statement, scope, 0);
 //            break;
 //         case nsLoop:
@@ -4791,51 +4821,53 @@ bool Compiler :: allocateStructure(CodeScope& scope, size_t size, bool bytearray
    return true;
 }
 
-//ref_t Compiler :: declareInlineArgumentList(DNode arg, MethodScope& scope)
-//{
-//   IdentifierString signature;
-//
-//   ref_t sign_id = 0;
-//
-//   // if method has generic (unnamed) argument list
-//   while (arg == nsMethodParameter || arg == nsObject) {
-//      TerminalInfo paramName = arg.Terminal();
-//      int index = 1 + scope.parameters.Count();
-//      scope.parameters.add(paramName, Parameter(index));
-//
-//      arg = arg.nextNode();
-//   }
-//   bool first = true;
-//   while (arg == nsSubjectArg) {
-//      TerminalInfo subject = arg.Terminal();
-//
-//      if (!first) {
-//         signature.append('&');
-//      }
-//      else first = false;
-//
-//      ref_t subj_ref = scope.moduleScope->mapSubject(subject, signature);
-//
-//      // declare method parameter
-//      arg = arg.nextNode();
-//
-//      if (arg == nsMethodParameter) {
-//         // !! check duplicates
-//         if (scope.parameters.exist(arg.Terminal()))
-//            scope.raiseError(errDuplicatedLocal, arg.Terminal());
-//
-//         int index = 1 + scope.parameters.Count();
-//         scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
-//
-//         arg = arg.nextNode();
-//      }
-//   }
-//
-//   if (!emptystr(signature))
-//      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-//
-//   return encodeMessage(sign_id, EVAL_MESSAGE_ID, scope.parameters.Count());
-//}
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
+{
+   IdentifierString signature;
+
+   ref_t sign_id = 0;
+
+   // if method has generic (unnamed) argument list
+   while (/*arg == lxMethodParameter || */arg == lxIdentifier || arg == lxPrivate) {
+      ident_t terminal = arg.findChild(lxTerminal).identifier();
+      int index = 1 + scope.parameters.Count();
+      scope.parameters.add(terminal, Parameter(index));
+
+      arg = arg.nextNode();
+   }
+   bool first = true;
+   while (arg == lxMessage) {
+      SNode subject = arg.findChild(lxIdentifier, lxPrivate);
+
+      if (!first) {
+         signature.append('&');
+      }
+      else first = false;
+
+      ref_t subj_ref = scope.mapSubject(subject, signature);
+
+      // declare method parameter
+      arg = arg.nextNode();
+
+      if (arg == nsMethodParameter) {
+         ident_t name = arg.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
+
+         // !! check duplicates
+         if (scope.parameters.exist(name))
+            scope.raiseError(errDuplicatedLocal, arg);
+
+         int index = 1 + scope.parameters.Count();
+         scope.parameters.add(name, Parameter(index, subj_ref));
+
+         arg = arg.nextNode();
+      }
+   }
+
+   if (!emptystr(signature))
+      sign_id = scope.moduleScope->module->mapSubject(signature, false);
+
+   return encodeMessage(sign_id, EVAL_MESSAGE_ID, scope.parameters.Count());
+}
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 {
@@ -6886,7 +6918,7 @@ void Compiler :: declareSingletonClass(SNode node, SNode parentNode, ClassScope&
    scope.save();
 }
 
-void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode/*, DNode expression, DNode hints*/)
+void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode, SNode expression)
 {
 //   if (hints != nsNone)
 //      classScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
@@ -6897,7 +6929,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode/*,
 
    if (objNode != nsNone) {
       ActionScope methodScope(&classScope);
-      declareActionScope(objNode, classScope, /*expression, writer, */methodScope, 0, false);
+      declareActionScope(objNode, classScope, expression, methodScope, 0, false);
       writer.newNode(lxClassMethod, methodScope.message);
 
       writer.closeNode();
@@ -6959,16 +6991,16 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
          ClassScope classScope(scope.moduleScope, scope.reference);
          classScope.info.header.flags |= elNestedClass;
 
-         declareSingletonAction(classScope, objNode/*, DNode()*/);
+         declareSingletonAction(classScope, objNode, SNode());
          singleton = true;
       }
-//      else if (objNode == nsInlineExpression) {
-//         ClassScope classScope(scope.moduleScope, scope.reference);
-      // classScope.info.header.flags |= elNestedClass;
-//
-//         declareSingletonAction(classScope, objNode, expression.firstChild(), hints);
-//         singleton = true;
-//      }
+      else if (objNode == lxInlineExpression) {
+         ClassScope classScope(scope.moduleScope, scope.reference);
+         classScope.info.header.flags |= elNestedClass;
+
+         declareSingletonAction(classScope, objNode, expression);
+         singleton = true;
+      }
 //      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
 //         ClassScope classScope(scope.moduleScope, scope.reference);
       // classScope.info.header.flags |= elNestedClass;
@@ -7118,7 +7150,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(classNode, classScope, /*DNode(), */0, true);
+         compileAction(classNode, classScope, SNode(), 0, true);
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }

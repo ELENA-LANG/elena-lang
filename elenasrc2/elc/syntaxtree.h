@@ -42,6 +42,7 @@ enum LexicalType
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxExtension       = 0x0002B,
+   lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
    lxSubject         = 0x00047,
    lxImplicitConstructor = 0x0004B,
@@ -91,6 +92,7 @@ enum LexicalType
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
+   lxTrying          = 0x0C00C,   // try-catch expression
    lxBranching       = 0x0C00F,   // branch expression
    lxExpression      = 0x0C012,
    lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
@@ -185,7 +187,6 @@ enum LexicalType
 //
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxTypecasting     = 0x10306,   // typecasting, arg - message
-//   lxTrying          = 0x0030C,   // try-catch expression
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
 //   lxSwitching       = 0x00310,
@@ -709,6 +710,58 @@ public:
             else if (current == type6)
                return current;
             else if (current == type7)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+            else if (current == type8)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8, LexicalType type9)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+            else if (current == type8)
+               return current;
+            else if (current == type9)
                return current;
 
             current = current.nextNode();
