@@ -905,6 +905,39 @@ private:
       }
    };
 
+   struct WarningScope
+   {
+      ident_t terminal;
+
+      int warningMask;
+      int col;
+      int row;
+
+      void raise(ModuleScope& scope, int level, ident_t message, SNode node)
+      {
+         if (test(warningMask, level)) {
+            if (col != 0) {
+               scope.raiseWarning(level, message, row, col, terminal);
+            }
+            else if(node != lxNone)
+               scope.raiseWarning(level, message, node);
+         }            
+      }
+
+      WarningScope(int mask)
+      {
+         warningMask = mask;
+         col = row = 0;
+         terminal = NULL;
+      }
+      WarningScope()
+      {
+         warningMask = 0;
+         col = row = 0;
+         terminal = NULL;
+      }
+   };
+
    _CompilerLogic*  _logic;
 
    ByteCodeWriter _writer;
@@ -1106,7 +1139,7 @@ private:
    void generateClassStaticField(ClassScope& scope, SNode current);   
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
-   void generateClassFields(ClassScope& scope, SyntaxTree::Node root);
+   void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
    void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates, bool closed);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool closed);
@@ -1136,35 +1169,31 @@ private:
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
    ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
+   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int mode, bool& variable*/);
+
    bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 
-   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node/*, int warningLevel*/);
-   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int warningLevel, int mode, bool& variable*/);
-//   bool boxPrimitive(ModuleScope& scope, SyntaxTree::Node& node, ref_t targetRef, int warningLevel, int mode)
-//   {
-//      bool dummy;
-//      return boxPrimitive(scope, node, targetRef, warningLevel, mode, dummy);
-//   }
-   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, /*int warningLevel, */int mode);
-   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, /*int warningLevel, */int mode);
+   void optimizeAssigning(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
+   void optimizeExtCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope, int mode);
+   void optimizeInternalCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope, int mode);
 //   void optimizeDirectCall(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node/*, int warningLevel*/);
+   void optimizeCall(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope);
 //   void optimizeEmbeddableCall(ModuleScope& scope, SyntaxTree::Node& assignNode, SyntaxTree::Node& callNode);
-   /*bool*/void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, /*int warningLevel, */int mode);
+   /*bool*/void optimizeOp(ModuleScope& scope, SyntaxTree::Node node, WarningScope& warningScope, int mode);
 //   void optimizeNewOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //   void optimizeBoolOp(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //
 //   // NOTE : return true if the target is required unboxing
 //   bool defineTargetSize(ModuleScope& scope, SNode& node);
 
-   void optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLevel, */int mode);
+   void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 //   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //   void optimizeArgUnboxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
 //   void optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
-   void optimizeSyntaxNode(ModuleScope& scope, SNode node, /*int warningLevel, */int mode);
-   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, /*int warningLevel, */int mode = 0);
-   void optimizeClassTree(SNode node, ClassScope& scope);
-   void optimizeSymbolTree(SNode node, SourceScope& scope);
+   void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
+   void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
+   void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
+   void optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask);
 
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 

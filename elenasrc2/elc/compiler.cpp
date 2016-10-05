@@ -2394,6 +2394,9 @@ void Compiler :: compileMethodAttributes(SNode node, MethodScope& scope, SNode r
             if (_logic->validateMethodAttribute(attrValue)) {
                rootNode.appendNode(lxClassMethodAttr, attrValue);
             }
+            else if (_logic->validateWarningAttribute(attrValue)) {
+               rootNode.appendNode(lxWarningMask, attrValue);
+            }
             else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
          else if (attribute) {
@@ -2665,10 +2668,15 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
          {
             case elDebugDWORD:
                node = lxIntVariable;
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
                break;
             case elDebugIntegers:
                node.set(lxIntsVariable, size);
+               break;
+            case elDebugShorts:
+               node.set(lxShortsVariable, size);
+               break;
+            case elDebugBytes:
+               node.set(lxBytesVariable, size);
                break;
 //               case elDebugQWORD:
 //                  scope.writer->newNode(lxLongVariable);
@@ -2684,18 +2692,6 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
 //                  break;
 //               case elDebugDWORD:
 //                  if (localInfo.size == 4) {
-//                     scope.writer->appendNode(lxTerminal, terminal.value);
-//                     scope.writer->appendNode(lxLevel, variable.param);
-//                     scope.writer->closeNode();
-//                  }
-//                  else if (localInfo.size == 2) {
-//                     scope.writer->newNode(lxShortsVariable, size);
-//                     scope.writer->appendNode(lxTerminal, terminal.value);
-//                     scope.writer->appendNode(lxLevel, variable.param);
-//                     scope.writer->closeNode();
-//                  }
-//                  else if (localInfo.size == 1) {
-//                     scope.writer->newNode(lxBytesVariable, size);
 //                     scope.writer->appendNode(lxTerminal, terminal.value);
 //                     scope.writer->appendNode(lxLevel, variable.param);
 //                     scope.writer->closeNode();
@@ -3480,7 +3476,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 
       // if the sealed/ closed class found and the message is not supported - warn the programmer and raise an exception
       if (classFound && callType == tpUnknown)
-         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
+         node.appendNode(lxNotFoundAttr);         
    }
 
    if (classReference)
@@ -3527,7 +3523,7 @@ ObjectInfo Compiler :: typecastObject(SNode node, CodeScope& scope, ref_t subjec
    ref_t targetRef = scope.moduleScope->attributeHints.get(subjectRef);
    if (targetRef != 0) {
       if (!convertObject(node, scope, targetRef, object)) {
-         scope.raiseWarning(WARNING_LEVEL_2, wrnTypeMismatch, node);
+         node.appendNode(lxTypecastAttr);         
 
          // if not compatible - send a typecast message
          object = compileMessage(node, scope, object, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
@@ -5263,10 +5259,15 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
       if(retVal.kind == okUnknown) {
          // adding the code loading $self
          SNode exprNode = body.appendNode(lxExpression);
-         exprNode.appendNode(lxLocal, 1);
+         SNode localNode = exprNode.appendNode(lxLocal, 1);
 
          ref_t typeAttr = scope.getReturningType();
          if (typeAttr != 0) {
+            // HOTFIX : copy EOP coordinates
+            SNode eop = body.lastChild().prevNode();
+            if (eop != lxNone)
+               SyntaxTree::copyNode(eop, localNode);
+
             typecastObject(exprNode, codeScope, typeAttr, ObjectInfo(okThisParam));
          }
       }
@@ -5565,13 +5566,19 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 
 void Compiler :: compileFieldDeclarations(SNode node, ClassScope& scope)
 {
-   SNode member = node.firstChild();
+   SNode current = node.firstChild();
 
-   while (member != nsNone) {
-      if (member == lxClassField) {
-         compileFieldAttributes(member, scope, member);
+   while (current != nsNone) {
+      if (current == lxClassField) {
+         compileFieldAttributes(current, scope, current);
       }
-      member = member.nextNode();
+      else if (current == lxTemplate) {
+         TemplateScope templateScope(&scope);
+         templateScope.loadParameters(current);
+
+         compileFieldDeclarations(current, templateScope);
+      }
+      current = current.nextNode();
    }
 }
 
@@ -6149,10 +6156,25 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
    scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), typeHint));
 }
 
-void Compiler :: generateClassFields(ClassScope& scope, SNode root)
+inline int countFields(SNode node)
 {
-   bool singleField = SyntaxTree::countChild(root, lxClassField) == 1;
+   int counter = 0;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         counter++;
+      }
+      else if (current == lxTemplate)
+         counter += countFields(current);
 
+      current = current.nextNode();
+   }
+
+   return counter;
+}
+
+void Compiler :: generateClassFields(ClassScope& scope, SNode root, bool singleField)
+{
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxClassField/* || current == lxTemplateField*/) {
@@ -6161,6 +6183,9 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root)
             generateClassStaticField(scope, current);
          }
          else generateClassField(scope, current, singleField);
+      }
+      else if (current == lxTemplate) {
+         generateClassFields(scope, current, singleField);
       }
 
       current = current.nextNode();
@@ -6283,7 +6308,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    generateClassFlags(scope, node);
 
    // generate fields
-   generateClassFields(scope, node);
+   generateClassFields(scope, node, countFields(node) == 1);
 
 //   // define the data type for the array
 //   if (test(scope.info.header.flags, elDynamicRole) && (scope.info.header.flags & elDebugMask) == 0) {
@@ -6589,7 +6614,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
-   optimizeClassTree(node, scope);
+   WarningScope warningScope(scope.moduleScope->warningMask);
+
+   optimizeClassTree(node, scope, warningScope);
 
    _writer.generateClass(scope.tape, node);
 
@@ -7197,7 +7224,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
       }
    }
 
-   optimizeSymbolTree(node, scope);
+   optimizeSymbolTree(node, scope, scope.moduleScope->warningMask);
 
    // create constant if required
    if (scope.constant) {
@@ -7259,7 +7286,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
    else return retVal;
 }
 
-void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, /*int warningMask, */int mode)
+void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
    //SNode parentNode = node.parentNode();
    //while (parentNode == lxExpression)
@@ -7274,10 +7301,10 @@ void Compiler :: optimizeExtCall(ModuleScope& scope, SNode node, /*int warningMa
    //   boxPrimitive(scope, node, -1, warningMask, mode);
    //}
 
-   optimizeSyntaxExpression(scope, node, /*warningMask, */ HINT_NOBOXING /* | HINT_EXTERNALOP*/);
+   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING /* | HINT_EXTERNALOP*/);
 }
 
-void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, /*int warningMask, */int mode)
+void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
    //SNode parentNode = node.parentNode();
    //while (parentNode == lxExpression)
@@ -7287,7 +7314,7 @@ void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, /*int warn
    //   boxPrimitive(scope, node, -1, warningMask, mode);
    //}
 
-   optimizeSyntaxExpression(scope, node, /*warningMask, */HINT_NOBOXING);
+   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING);
 }
 
 //void Compiler :: optimizeDirectCall(ModuleScope& scope, SNode node, int warningMask)
@@ -7318,7 +7345,7 @@ void Compiler :: optimizeInternalCall(ModuleScope& scope, SNode node, /*int warn
 //   optimizeSyntaxExpression(scope, node, warningMask, mode);
 //}
 
-void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*/)
+void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
    int mode = 0;
 
@@ -7399,7 +7426,14 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*
 //      }
    }
 
-   optimizeSyntaxExpression(scope, node, /*warningMask, */mode);
+   optimizeSyntaxExpression(scope, node, warningScope, mode);
+
+   if (node.existChild(lxTypecastAttr)) {
+      warningScope.raise(scope, WARNING_LEVEL_2, wrnTypeMismatch, node.firstChild(lxObjectMask));
+   }
+   if (node.existChild(lxNotFoundAttr)) {
+      warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
+   }
 
 //   if (methodNotFound && test(warningMask, WARNING_LEVEL_1)) {
 //      SNode row = SyntaxTree::findChild(node, lxRow);
@@ -7505,7 +7539,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*
 //   else optimizeSyntaxExpression(scope, node, warningLevel);
 //}
 
-/*bool*/void Compiler :: optimizeOp(ModuleScope& scope, SNode node, /*int warningLevel, */int mode)
+/*bool*/void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
 //   ref_t destType = 0;
 //   SNode parent = node.parentNode();
@@ -7562,10 +7596,10 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*
       SNode larg, rarg, rarg2;
       assignOpArguments(node, larg, rarg, rarg2);
 
-      optimizeSyntaxNode(scope, larg, /*warningLevel, */HINT_NOBOXING);
-      optimizeSyntaxNode(scope, rarg, /*warningLevel, */HINT_NOBOXING);
+      optimizeSyntaxNode(scope, larg, warningScope, HINT_NOBOXING);
+      optimizeSyntaxNode(scope, rarg, warningScope, HINT_NOBOXING);
       if (rarg2 != lxNone)
-         optimizeSyntaxNode(scope, rarg2, /*warningLevel, */HINT_NOBOXING);
+         optimizeSyntaxNode(scope, rarg2, warningScope, HINT_NOBOXING);
 
 //      if (larg == lxOp) {
 //         optimizeOp(scope, larg, /*warningLevel*/0, 0);
@@ -7808,7 +7842,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node/*, int warningMask*
 //   }
 //}
 
-void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warningLevel*/)
+void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
    int mode = /*HINT_NOUNBOXING | HINT_ASSIGNING*/0;
    if (node.argument != 0)
@@ -7842,7 +7876,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //      current = current.nextNode();
 //   }
 
-   optimizeSyntaxExpression(scope, node, mode);
+   optimizeSyntaxExpression(scope, node, warningScope, mode);
 
    if (node.argument != 0) {
       SNode intValue = node.findSubNode(lxConstantInt);
@@ -7928,7 +7962,7 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node/*, int warning
 //   optimizeSyntaxExpression(scope, node, warningLevel);
 //}
 
-void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLevel, */int mode)
+void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
    bool boxing = true;
 //   bool variable = false;
@@ -7974,12 +8008,10 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLev
    // ignore boxing operation if allowed
    else node = lxExpression;
 
-   optimizeSyntaxExpression(scope, node, /*warningLevel, */HINT_NOBOXING);
+   optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING);
 
-   //test2(node);
-
-   if (boxing/* && test(warningMask, warningLevel)*/)
-      scope.raiseWarning(WARNING_LEVEL_3, wrnBoxingCheck, node);
+   if (boxing)
+      warningScope.raise(scope, WARNING_LEVEL_3, wrnBoxingCheck, node);
 }
 
 //bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
@@ -8323,11 +8355,11 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, /*int warningLev
 //   optimizeSyntaxExpression(scope, current, warningLevel, mode);
 //}
 
-void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int warningMask, */int mode)
+void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningScope& warningScope, int mode)
 {
    switch (current.type) {
       case lxAssigning:
-         optimizeAssigning(scope, current/*, warningMask*/);
+         optimizeAssigning(scope, current, warningScope);
          break;
 //      case lxTypecasting:
 //         optimizeTypecast(scope, current, warningMask, mode);
@@ -8335,29 +8367,29 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
       case lxStdExternalCall:
       case lxExternalCall:
       case lxCoreAPICall:
-         optimizeExtCall(scope, current, /*warningMask, */mode);
+         optimizeExtCall(scope, current, warningScope, mode);
          break;
       case lxInternalCall:
-         optimizeInternalCall(scope, current, /*warningMask, */mode);
+         optimizeInternalCall(scope, current, warningScope, mode);
          break;
       case lxExpression:
       case lxOverridden:
 //      case lxVariable:
          // HOT FIX : to pass the optimization mode into sub expression
-         optimizeSyntaxExpression(scope, current, /*warningMask, */mode);
+         optimizeSyntaxExpression(scope, current, warningScope, mode);
          break;
       case lxReturning:
-         optimizeSyntaxExpression(scope, current, /*warningMask, */HINT_NOUNBOXING/* | HINT_NOCONDBOXING*/);
+         optimizeSyntaxExpression(scope, current, warningScope, HINT_NOUNBOXING/* | HINT_NOCONDBOXING*/);
          break;
       case lxBoxing:
       case lxCondBoxing:
       case lxUnboxing:
 //      case lxArgBoxing:
-         optimizeBoxing(scope, current, /*warningMask, */mode);
+         optimizeBoxing(scope, current, warningScope, mode);
          break;
       case lxIntOp:
       case lxIntArrOp:
-         optimizeOp(scope, current, /*warningMask, */mode);
+         optimizeOp(scope, current, warningScope, mode);
          break;
 //      case lxBoolOp:
 //         optimizeBoolOp(scope, current, warningMask, mode);
@@ -8367,7 +8399,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
       case lxDirectCalling:
       case lxSDirctCalling:
       case lxCalling:
-         optimizeCall(scope, current/*, warningMask*/);
+         optimizeCall(scope, current, warningScope);
          break;
 //      case lxNewOp:
 //         optimizeNewOp(scope, current, warningMask, 0);
@@ -8381,35 +8413,35 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, /*int war
 //         break;
       default:
          if (test(current.type, lxCodeScopeMask)) {
-            optimizeSyntaxExpression(scope, current/*, warningMask*/);
+            optimizeSyntaxExpression(scope, current, warningScope);
          }
          break;
    }
 }
 
-void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SNode node, /*int warningMask, */int mode)
+void Compiler :: optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      /*if (current == lxWarningMask) {
-         warningMask = current.argument;
-      }
-      else */optimizeSyntaxNode(scope, current, /*warningMask, */mode);
+      optimizeSyntaxNode(scope, current, warningScope, mode);
 
       current = current.nextNode();
    }
 }
 
-void Compiler :: optimizeClassTree(SNode node, ClassScope& scope)
+void Compiler :: optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope)
 {
-//   int warningMask = scope.moduleScope->warningMask;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         optimizeSyntaxExpression(*scope.moduleScope, current/*, warningMask*/);
+         SNode mask = current.findChild(lxWarningMask);
+         if (mask != lxNone)
+            warningScope.warningMask = mask.argument;
+
+         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
 
          // HOTFIX : analize nested template methods
-         optimizeClassTree(current, scope);
+         optimizeClassTree(current, scope, warningScope);
 
          if (test(_optFlag, 1)) {
             if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
@@ -8418,24 +8450,30 @@ void Compiler :: optimizeClassTree(SNode node, ClassScope& scope)
          }
       }
       else if (current == lxTemplate) {
+         WarningScope templateWarningScope;
+         templateWarningScope.warningMask = warningScope.warningMask;
+         templateWarningScope.col = current.findChild(lxCol).argument;
+         templateWarningScope.row = current.findChild(lxRow).argument;
+
          // HOTFIX : analize nested template methods
-         optimizeClassTree(current, scope);
+         optimizeClassTree(current, scope, templateWarningScope);
       }
 
       current = current.nextNode();
    }
 }
 
-void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope)
+void Compiler :: optimizeSymbolTree(SNode node, SourceScope& scope, int warningMask)
 {
-   //int warningMask = 0;
+   WarningScope warningScope(warningMask);
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       /*if (current == lxWarningMask) {
          warningMask = current.argument;
       }
       else */if (test(current.type, lxExprMask)) {
-         optimizeSyntaxExpression(*scope.moduleScope, current/*, warningMask*/);
+         optimizeSyntaxExpression(*scope.moduleScope, current, warningScope);
       }
 
       current = current.nextNode();
@@ -8607,7 +8645,7 @@ void Compiler :: compileDeclarations(SNode member, ModuleScope& scope)
             SyntaxTree::saveNode(member, scope.module->mapSection(templateRef | mskSyntaxTreeRef, false));
 
             scope.saveAttribute(templateRef, INVALID_REF, false);
-//
+
 //            TemplateScope classScope(&scope, templateRef);
 //            classScope.type = TemplateScope::ttClass;
 //            if (member == nsFieldTemplate) {

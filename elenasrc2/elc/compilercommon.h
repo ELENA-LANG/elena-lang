@@ -22,9 +22,14 @@
 #define V_VERB        (size_t)-20
 
 #define V_INT32ARRAY  (size_t)-31
+#define V_INT16ARRAY  (size_t)-38
+#define V_INT8ARRAY   (size_t)-39
 
 #define V_IFBRANCH    (size_t)-4097
 #define V_IFNOTBRANCH (size_t)-4098
+#define V_WARNING1    (size_t)-4099
+#define V_WARNING2    (size_t)-4100
+#define V_WARNING3    (size_t)-4101
 
 #define V_STATCKSAFE  (size_t)-8192
 #define V_EMBEDDABLE  (size_t)-8193
@@ -185,6 +190,7 @@ public:
    virtual bool validateFieldAttribute(int& attrValue) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int& attrValue) = 0;
+   virtual bool validateWarningAttribute(int& attrValue) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 

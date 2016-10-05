@@ -109,6 +109,8 @@ enum LexicalType
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
    lxIntArrOp        = 0x8C030,   // arg - operation id
+   lxByteArrOp       = 0x8C031, // arg - operation id
+   lxShortArrOp      = 0x8C032, // arg - operation id
    lxReleasing       = 0x0C032,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
@@ -124,6 +126,8 @@ enum LexicalType
    lxMember          = 0x10039,  // a collection member, arg - offset
    lxOuterMember     = 0x1003A,  // a collection member, arg - offset
    lxIntsVariable    = 0x1003B,
+   lxBytesVariable   = 0x1003C,
+   lxShortsVariable  = 0x1003D,
 
    // attributes
    lxAttribute       = 0x20000,
@@ -156,6 +160,9 @@ enum LexicalType
    lxIntExtArgument  = 0x2001B,
    lxExtArgument     = 0x2001C,
    lxConstAttr       = 0x2001D,
+   lxWarningMask     = 0x2001E,
+   lxTypecastAttr    = 0x2001F,
+   lxNotFoundAttr    = 0x20020,
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,
@@ -187,7 +194,6 @@ enum LexicalType
 //   lxCurrentField = 0x0411D, // arg -offset
 //
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
-//   lxTypecasting     = 0x10306,   // typecasting, arg - message
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
 //   lxSwitching       = 0x00310,
@@ -205,15 +211,11 @@ enum LexicalType
 //   lxNilOp           = 0x0032C, // arg - operation id
 //   lxLongOp          = 0x0132E, // arg - operation id
 //   lxRealOp          = 0x0132F, // arg - operation id
-//   lxByteArrOp       = 0x01331, // arg - operation id
-//   lxShortArrOp      = 0x01332, // arg - operation id
 //   lxArrOp           = 0x01333, // arg - operation id
 //   lxBinArrOp        = 0x01334, // arg - operation id
 //
 //   lxLongVariable    = 0x00429,
 //   lxReal64Variable  = 0x0042A,
-//   lxBytesVariable   = 0x0042B,
-//   lxShortsVariable  = 0x0042C,
 //   lxParamsVariable  = 0x0042F,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //   lxBinarySelf      = 0x00435, // debug info only
@@ -226,7 +228,6 @@ enum LexicalType
 //   lxPreloadedAttr   = 0x00822,
 //   lxClassMethodAttr = 0x00807,
 //   //lxClassMethodOpt  = 0x04008,
-//   lxWarningMask     = 0x00809,
 //
 //   lxTerminal        = 0x02005,
 //   lxSourcePath      = 0x0200A,

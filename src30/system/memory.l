@@ -1,9 +1,9 @@
-//// --- arrayof ---
-//
-//#template(dynamic) arrayof : template_subj
-//{
-//    #field(template_subj)$target.
-//
+// --- arrayof ---
+
+#template(dynamic) arrayof : template_subj
+{
+    #field(template_subj)$target.
+
 //    #method(w3) enumerator 
 //    [
 //        #var(vint)index := -1.
@@ -69,15 +69,15 @@
 //    /// Returns the item at the specified index
 //    #method(w2) setAt : index : value
 //        <= %setAt &int:(index int) &template_subj:value.
-//}
-//
-//// === basic memory classes ===
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//#class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
-//{
+}
+
+// === basic memory classes ===
+
+// --- ByteArray ---
+
+/// A byte array
+#class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
+{
 //    /// Creates the byte array with the specified length
 //    #constructor(stacksafe) new &int:len
 //        = byte:len.
@@ -213,8 +213,8 @@
 //
 //    /// Creates the object copy
 //    #method clone = ByteArray new &bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array
@@ -813,10 +813,10 @@
 //    [
 //        system'core_routines'__literal copy &literal:$self &int:anIndex &int:aSize &bytearray:anArray.
 //    ]
-//    
-//    /// Converts to UTF-16 literal
-//    #method wide = wideConvertor convert &literal:$self.
-//
+    
+    /// Converts to UTF-16 literal
+    #method wide = wideConvertor convert &literal:$self.
+
 //    /// Compares the values
 //    #method(bool) equal &literal : aLiteral
 //        => system'core_routines'__literal.
@@ -1033,10 +1033,10 @@
 //    [
 //        system'core_routines'__wide copy &wide:$self &int:anIndex &int:aSize &shortarray:anArray.
 //    ]
-//
-//    /// Converts to UTF-8 literal
-//    #method literal = literalConvertor convert &wide:$self.
-//
+
+    /// Converts to UTF-8 literal
+    #method literal = literalConvertor convert &wide:$self.
+
 //    /// Compares the values
 //    #method(bool) equal &wide : aLiteral
 //        => system'core_routines'__wide.
@@ -1420,15 +1420,14 @@
 //    #method(stacksafe,outnprop:length) readLength &vint:aLength
 //        => system'core_routines'__args.
 //}
-//
-//// === Convertors ===
-//
-//
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//#symbol literalConvertor =
-//{
+
+// === Convertors ===
+
+// --- literalConvertor ---
+
+/// A literal convertor
+#symbol literalConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    #method(stacksafe) convert &char:aValue &bytearray:buffer &vint:length
 //        => system'core_routines'__literalconvertor.
@@ -1576,25 +1575,25 @@
 //        
 //        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
 //    ]
-//
-//    /// Converts UTF-16 literal to UTF-8 one
-//    #method(stacksafe) convert &wide:aLiteral &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    #method(literal,stacksafe) convert &wide:aLiteral
-//    [
+
+    /// Converts UTF-16 literal to UTF-8 one
+    #method(stacksafe) convert &wide:aLiteral &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    #method(literal,stacksafe) convert &wide:aLiteral
+    [
 //        #var(int)i := 0.
-//        #var(int)m := 0.
+        #var(int)m := 0.
 //        #var(int)page := 0.
-//        #var(int)l := aLiteral length.
-//        #var(byte:256)buffer.
-//        (l < 128)?
-//        [
-//            $self convert &wide:aLiteral &bytearray:buffer &vint:m.
-//            
+        #var(int)l := aLiteral length.
+        #var(byte:256)buffer.
+        (l < 128)?
+        [
+            $self convert &wide:aLiteral &bytearray:buffer &vint:m.
+            
 //            ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
-//        ].
-//        
+        ].
+
 //        #var(literal)retVal := emptyLiteralValue.
 //        #loop (l > 0)?
 //        [
@@ -1613,22 +1612,22 @@
 //        ].
 //        
 //        ^ retVal.
-//    ]
-//
-//    /// Returns the literal presentation of the parameter
-//    #method(literal,stacksafe) convert : anObject
-//        = anObject literal.
-//
+    ]
+
+    /// Returns the literal presentation of the parameter
+    #method(literal,stacksafe) convert : anObject
+        = anObject literal.
+
 //    /// Returns a parameter                
 //    #method(literal,stacksafe) convert &literal:aLiteral
 //        = aLiteral.
-//}.
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//#symbol wideConvertor =
-//{
+}.
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+#symbol wideConvertor =
+{
 //    /// Converts the parameter to the literal value
 //    #method(stacksafe) convert &char:aValue &shortarray:buffer &vint:length
 //        => system'core_routines'__wideconvertor.
@@ -1781,10 +1780,10 @@
 //    /// Converts UTF-8 literal to UTF-16e
 //    #method(stacksafe) convert &literal:aLiteral &shortarray:buffer &vint:length
 //        => system'core_routines'__wideconvertor.
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    #method(wide,stacksafe) convert &literal:aLiteral
-//    [
+
+    /// Converts UTF-8 literal to UTF-16e
+    #method(wide,stacksafe) convert &literal:aLiteral
+    [
 //        #var(int)i := 0.
 //        #var(int)m := 0.
 //        #var(int)page := 0.
@@ -1815,17 +1814,17 @@
 //        ].
 //        
 //        ^ retVal.
-//    ]        
-//                        
-//    /// Returns the literal presentation of the parameter
-//    #method(wide,stacksafe) convert : anObject
-//        = anObject wide.
-//        
+    ]        
+
+    /// Returns the literal presentation of the parameter
+    #method(wide,stacksafe) convert : anObject
+        = anObject wide.
+        
 //    /// Returns a parameter
 //    #method(wide,stacksafe) convert &wide:aLiteral
 //        = aLiteral.
-//}.
-//
+}.
+
 //// === Enumerators / Indexers
 //
 //// --- LiteralEnumerator ---

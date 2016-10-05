@@ -105,6 +105,7 @@ public:
    virtual bool validateFieldAttribute(int& attrValue);
    virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int& attrValue);
+   virtual bool validateWarningAttribute(int& attrValue);
 
    virtual bool validateClassFlag(ClassInfo& info, int flag);
 

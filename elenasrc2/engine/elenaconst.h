@@ -316,8 +316,8 @@ namespace _ELENA_
    const int elDebugIntegers       = 0x00040000;
 //   const int elDebugArray          = 0x00050000;
 //   const int elDebugQWORD          = 0x00060000;
-//   const int elDebugBytes          = 0x00070000;
-//   const int elDebugShorts         = 0x00080000;
+   const int elDebugBytes          = 0x00070000;
+   const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
@@ -343,6 +343,7 @@ namespace _ELENA_
    const int WARNING_LEVEL_2 = 2;
    const int WARNING_LEVEL_3 = 4;
 
+   const int WARNING_MASK_0 = 0;
    const int WARNING_MASK_1 = 1;
    const int WARNING_MASK_2 = 3;
    const int WARNING_MASK_3 = 7;

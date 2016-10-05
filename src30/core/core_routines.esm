@@ -141,3 +141,29 @@ procedure __wide.eval&readLength&vint$[2]
   quitn 2
 
 end
+
+procedure __literalconvertor.convert&int$&bytearray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor.convert&wide$&bytearray$&vint$[4]
+
+  aloadsi 2
+  bloadsi 3
+  callextr api : wstrtostr
+  bloadsi 4
+  nwritei 0
+  quitn 4
+  
+end

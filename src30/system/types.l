@@ -7,8 +7,9 @@
 //#mtemplate(20h) embeddable {}
 //#mtemplate(80h) action {}
 //#mtemplate(01h) sealed {}
-//#mtemplate(-2) w2 {}
-//#mtemplate(-3) w3 {}
+#template(-4099) w1 {}
+#template(-4100) w2 {}
+#template(-4101) w3 {}
 #template(-8195) sealed  {}
 #template(-8199) dynamic {}
 #template(-8196) limited {}
@@ -49,9 +50,9 @@
 //
 //#subject subject    = system'Signature.
 //#subject symbol_ref = system'Symbol.
-//
-//// === basic dynamic types ===
-//#subject bytearray  = system'ByteArray.
+
+// === basic dynamic types ===
+#subject bytearray  = system'ByteArray.
 //#subject shortarray = system'ShortArray.
 //#subject intarray   = system'IntArray.
 //#subject intmatrix  = system'IntMatrix.

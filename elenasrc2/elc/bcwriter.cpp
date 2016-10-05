@@ -229,16 +229,16 @@ void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName,
 //{
 //   tape.write(bdRealLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
 //}
-//
-//void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdByteArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdShortArrayLocal, (ref_t)localName, level, includeFrame ? bpFrame : bpNone);
-//}
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
 
 void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
@@ -2612,35 +2612,35 @@ void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
    }
 }
 
-//void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // breadb
-//         // dcopye
-//         // nsave
-//         tape.write(bcBReadB);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nloade
-//         // bwriteb
-//         tape.write(bcNLoadE);
-//         tape.write(bcBWriteB);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // blen
-//         // nsave
-//         tape.write(bcBLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // breadb
+         // dcopye
+         // nsave
+         tape.write(bcBReadB);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // nloade
+         // bwriteb
+         tape.write(bcNLoadE);
+         tape.write(bcBWriteB);
+         break;
+      // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // blen
+         // nsave
+         tape.write(bcBLen);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize)
 //{
 //   switch (operator_id) {
@@ -2927,35 +2927,35 @@ void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // wread
-//         // dcopye
-//         // nsave
-//         tape.write(bcWRead);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nloade
-//         // wwrite
-//         tape.write(bcNLoadE);
-//         tape.write(bcWWrite);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // wlen
-//         // nsave
-//         tape.write(bcWLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
+
+void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // wread
+         // dcopye
+         // nsave
+         tape.write(bcWRead);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // nloade
+         // wwrite
+         tape.write(bcNLoadE);
+         tape.write(bcWWrite);
+         break;
+      // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // wlen
+         // nsave
+         tape.write(bcWLen);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 {
@@ -3054,24 +3054,26 @@ inline ref_t defineConstantMask(LexicalType type)
 
 void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
 {
-   // try to find the terminal symbol
-   SNode terminal = node;
-   while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
-      terminal = terminal.firstChild(lxObjectMask);
-   }
-
-   if (terminal == lxNone) {
-      terminal = node.findNext(lxObjectMask);
+   if (node != lxNone) {
+      // try to find the terminal symbol
+      SNode terminal = node;
       while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
          terminal = terminal.firstChild(lxObjectMask);
       }
-   }
 
-   if (terminal != lxNone) {
-      declareBreakpoint(tape,
-         terminal.findChild(lxRow).argument,
-         terminal.findChild(lxCol).argument - 1,
-         terminal.findChild(lxLength).argument, node.argument);
+      if (terminal == lxNone) {
+         terminal = node.findNext(lxObjectMask);
+         while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
+            terminal = terminal.firstChild(lxObjectMask);
+         }
+      }
+
+      if (terminal != lxNone) {
+         declareBreakpoint(tape,
+            terminal.findChild(lxRow).argument,
+            terminal.findChild(lxCol).argument - 1,
+            terminal.findChild(lxLength).argument, node.argument);
+      }
    }
 }
 
@@ -3428,18 +3430,18 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          if (node.argument == REFER_MESSAGE_ID)
             assignBaseTo(tape, lxResult);
          break;
-      //case lxByteArrOp:
-      //   doByteArrayOperation(tape, node.argument);
+      case lxByteArrOp:
+         doByteArrayOperation(tape, node.argument);
 
-      //   if (node.argument == REFER_MESSAGE_ID)
-      //      assignBaseTo(tape, lxResult);
-      //   break;
-      //case lxShortArrOp:
-      //   doShortArrayOperation(tape, node.argument);
+         if (node.argument == REFER_MESSAGE_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      case lxShortArrOp:
+         doShortArrayOperation(tape, node.argument);
 
-      //   if (node.argument == REFER_MESSAGE_ID)
-      //      assignBaseTo(tape, lxResult);
-      //   break;
+         if (node.argument == REFER_MESSAGE_ID)
+            assignBaseTo(tape, lxResult);
+         break;
       //case lxBinArrOp:
       //   doBinaryArrayOperation(tape, node.argument, SyntaxTree::findChild(node, lxSize).argument);
 
@@ -3458,7 +3460,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    bool assignMode = false;
    bool selectMode = false;
    bool invertSelectMode = false;
-   //bool invertMode = false;
+   bool invertMode = false;
    bool immOp = false;
    int  level = 0;
 
@@ -3475,8 +3477,8 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //      case XOR_MESSAGE_ID:
          assignMode = true;
          break;
-//      case LESS_MESSAGE_ID:
-//         invertMode = true;
+      case LESS_MESSAGE_ID:
+         invertMode = true;
       case NOTEQUAL_MESSAGE_ID:
          invertSelectMode = true;
          break;
@@ -3494,10 +3496,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 
    SNode larg;
    SNode rarg;
-//   if (invertMode) {
-//      assignOpArguments(node, rarg, larg);
-//   }
-   /*else */assignOpArguments(node, larg, rarg);
+   if (invertMode) {
+      assignOpArguments(node, rarg, larg);
+   }
+   else assignOpArguments(node, larg, rarg);
 
    if (larg == lxExpression)
       larg = larg.findSubNodeMask(lxObjectMask);
@@ -4523,8 +4525,8 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
          generateOperation(tape, node);
          break;
       case lxIntArrOp:
-//      case lxByteArrOp:
-//      case lxShortArrOp:
+      case lxByteArrOp:
+      case lxShortArrOp:
 //      case lxArrOp:
 //      case lxBinArrOp:
          generateArrOperation(tape, node);
@@ -4575,9 +4577,6 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
 //      else if (current == lxVariable) {
 //         generateObjectExpression(tape, current);
 //      }
-      //else if (current == lxBreakpoint) {
-      //   translateBreakpoint(tape, current);
-      //}
       else if (current == lxReleasing) {
          releaseObject(tape, current.argument);
       }
@@ -4619,9 +4618,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;
-//         case lxBreakpoint:
-//            translateBreakpoint(tape, current);
-//            break;
          case lxVariable:
             declareVariable(tape, current.argument);
 
@@ -4652,26 +4648,26 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //               SyntaxTree::findChild(current, lxTerminal).identifier(),
 //               SyntaxTree::findChild(current, lxLevel).argument);
 //            break;
-//         case lxBytesVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalByteArrayInfo(tape,
-//               SyntaxTree::findChild(current, lxTerminal).identifier(),
-//               level, false);
-//            break;
-//         }
-//         case lxShortsVariable:
-//         {
-//            int level = SyntaxTree::findChild(current, lxLevel).argument;
-//
-//            generateBinary(tape, current, level);
-//            declareLocalShortArrayInfo(tape,
-//               SyntaxTree::findChild(current, lxTerminal).identifier(),
-//               level, false);
-//            break;
-//         }
+         case lxBytesVariable:
+         {
+            int level = current.findChild(lxLevel).argument;
+
+            generateBinary(tape, current, level);
+            declareLocalByteArrayInfo(tape,
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               level, false);
+            break;
+         }
+         case lxShortsVariable:
+         {
+            int level = current.findChild(lxLevel).argument;
+
+            generateBinary(tape, current, level);
+            declareLocalShortArrayInfo(tape,
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+               level, false);
+            break;
+         }
          case lxIntsVariable:
          {
             int level = current.findChild(lxLevel).argument;
@@ -4705,6 +4701,12 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBreakpoint:
             translateBreakpoint(tape, current);
             break;
+         //case lxEOF:
+         //   if (current.existChild(lxBreakpoint))
+         //      translateBreakpoint(tape, current/*.findSubNode(lxBreakpoint)*/);
+
+         //   generateExpression(tape, current);
+         //   break;
          default:
             generateObjectExpression(tape, current);
             break;

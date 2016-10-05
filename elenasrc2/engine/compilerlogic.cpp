@@ -29,8 +29,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -361,6 +364,16 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
          info.size = -4;
          break;
+      case V_INT16ARRAY:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
+         info.size = -2;
+         break;
+      case V_INT8ARRAY:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
+         info.size = -1;
+         break;
       default:
          if (reference != 0) {
             scope.loadClassInfo(info, reference, headerOnly);
@@ -552,6 +565,24 @@ bool CompilerLogic :: validateSymbolAttribute(int& attrValue)
    else return false;
 }
 
+bool CompilerLogic :: validateWarningAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
+      case V_WARNING1:
+         attrValue = WARNING_MASK_0;
+         return true;
+      case V_WARNING2:
+         attrValue = WARNING_MASK_1;
+         return true;
+      case V_WARNING3:
+         attrValue = WARNING_MASK_2;
+         return true;
+      default:
+         return false;
+   }
+}
+
 bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info)
 {
    // if it is a primitive field
@@ -642,8 +673,16 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 
    if (test(info.header.flags, elStructureWrapper)) {
       if (isCompatible(scope, V_INT32, elementRef)) {
-         if (info.size == 4) {
-            return V_INT32ARRAY;
+         switch (info.size)
+         {
+            case 4:
+               return V_INT32ARRAY;
+            case 2:
+               return V_INT16ARRAY;
+            case 1:
+               return V_INT8ARRAY;
+            default:
+               break;
          }
       }
    }

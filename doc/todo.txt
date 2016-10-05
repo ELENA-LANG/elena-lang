@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * support generic methods
-
                  * support closures with a generic parameter
                  * support closures with several generic parameters
                  * support closures with several parameters
@@ -23,10 +21,8 @@ In development:
 
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation
-                 * invalid warning in template
                  * optimize unbox : root expression / assigning
                  * support lazy expressions
-                 * step over : fine tune the debugging sequence
                  * templates : importing
                  * templates : compiling
                  * get rid of ftemplate / mtemplate, ....

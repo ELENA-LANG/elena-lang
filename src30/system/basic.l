@@ -92,7 +92,7 @@
 //    #method(w3) equal : anObject
 //        => $value.
         
-    #method(embeddable/*,w3*/) => $value.
+    #method(embeddable,w3) => $value.
 }
 
 // === Numeric Variables ===
