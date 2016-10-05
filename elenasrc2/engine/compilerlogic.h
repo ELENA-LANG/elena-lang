@@ -91,6 +91,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info);
    virtual bool isRole(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);

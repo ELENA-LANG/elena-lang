@@ -132,13 +132,13 @@ class JITLinker : _JITLoaderListener
 
    ref_t resolveMessage(_Module* module, ref_t reference);
 
-//   void* resolveNativeVariable(ident_t  reference, int mask);
+   void* resolveNativeVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo);
    void* createBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo, References& references);
    void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(ident_t reference, int mask);
-//   void* resolveStaticVariable(ident_t reference, int mask);
+   void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(ident_t reference, ident_t vmt);
 //   void* resolveExtensionMessage(ident_t reference, ident_t vmt);

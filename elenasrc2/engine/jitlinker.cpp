@@ -366,20 +366,20 @@ void* JITLinker :: resolveNativeSection(ident_t reference, int mask, SectionInfo
    return vaddress;
 }
 
-//void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskDataRef);
-//   MemoryWriter writer(image);
-//
-//   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
-//
-//   _compiler->allocateVariable(writer);
-//
-//   _loader->mapReference(reference, vaddress, mask);
-//
-//   return vaddress;
-//}
+void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskDataRef);
+   MemoryWriter writer(image);
+
+   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
+
+   _compiler->allocateVariable(writer);
+
+   _loader->mapReference(reference, vaddress, mask);
+
+   return vaddress;
+}
 
 void* JITLinker :: resolveBytecodeSection(ident_t reference, int mask, SectionInfo sectionInfo)
 {
@@ -653,21 +653,21 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    return vaddress;
 }
 
-//void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
-//{
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(_loader->getTargetSection(mask));
-//
-//   size_t vaddress = (_virtualMode ? writer.Position() | mask : (size_t)writer.Address());
-//
-//   _compiler->allocateVariable(writer);
-//
-//   _statLength++;
-//
-//   _loader->mapReference(reference, (void*)vaddress, mask);
-//
-//   return (void*)vaddress;
-//}
+void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
+{
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection(mask));
+
+   size_t vaddress = (_virtualMode ? writer.Position() | mask : (size_t)writer.Address());
+
+   _compiler->allocateVariable(writer);
+
+   _statLength++;
+
+   _loader->mapReference(reference, (void*)vaddress, mask);
+
+   return (void*)vaddress;
+}
 
 //void* JITLinker :: resolveDump(const wchar16_t*  reference, int size, int mask)
 //{
@@ -976,9 +976,9 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskConstArray:
 //            vaddress = resolveConstant(reference, mask);
 //            break;
-//         case mskStatSymbolRef:
-//            vaddress = resolveStaticVariable(reference, mskStatRef);
-//            break;
+         case mskStatSymbolRef:
+            vaddress = resolveStaticVariable(reference, mskStatRef);
+            break;
          case mskMessage:
             vaddress = resolveMessage(reference, _loader->getMessageClass());
             break;
@@ -991,10 +991,10 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskExtMessage:
 //            vaddress = resolveExtensionMessage(reference, _loader->getExtMessageClass());
 //            break;
-//         case mskNativeVariable:
-//         case mskLockVariable:
-//            vaddress = resolveNativeVariable(reference, mask);
-//            break;
+         case mskNativeVariable:
+         case mskLockVariable:
+            vaddress = resolveNativeVariable(reference, mask);
+            break;
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)

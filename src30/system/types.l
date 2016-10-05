@@ -2,7 +2,7 @@
 #template(-8194) static {}
 //#ftemplate(-33)  const {}
 //#ftemplate(-34)  preloaded {}
-//#mtemplate(40h) generic {}
+#template(-8202) generic {}
 #template(-8192) stacksafe {}
 //#mtemplate(20h) embeddable {}
 //#mtemplate(80h) action {}

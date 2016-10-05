@@ -36,6 +36,7 @@
 #define V_DYNAMIC     (size_t)-8199
 #define V_STRING      (size_t)-8200
 #define V_CONST       (size_t)-8201
+#define V_GENERIC     (size_t)-8202
 
 namespace _ELENA_
 {
@@ -54,7 +55,7 @@ enum MethodHint
 //      tpPrivate    = 0x05,
    tpStackSafe   = 0x10,
    tpEmbeddable = 0x20,
-//      tpGeneric    = 0x40,
+   tpGeneric    = 0x40,
    tpAction      = 0x80,
    tpIfBranch    = 0x100,
    tpIfNotBranch = 0x200,
@@ -160,6 +161,7 @@ public:
    virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          

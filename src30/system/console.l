@@ -1,22 +1,20 @@
-//// ==== ver 3.5.1 ===
-//
-//// --- Console ---
-//
-///// A console
-//#class $Console
-//{
-//    #field theWriter.
+// --- Console ---
+
+/// A console
+#class $Console
+{
+    #field theWriter.
 //    #field theReader.
 //    #field(literal)theNewLineConstant.
-//
-//    /// Creates a console
-//    #constructor new &reader:aReader &writer:aWriter
-//    [
-//        theWriter := aWriter.
+
+    /// Creates a console
+    #constructor new /*&reader:aReader */&writer:aWriter
+    [
+        theWriter := aWriter.
 //        theReader := aReader.
 //        theNewLineConstant := 'newLine literal.
-//    ]
-//
+    ]
+
 //    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
 //    #method writeLine : anObject
 //    [
@@ -24,13 +22,13 @@
 //        
 //        theWriter write &literal:theNewLineConstant.
 //    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    #method write : anObject
-//    [
-//        anObject cast:%write &to:$self.
-//    ]
-//
+
+    /// Writes the specified literal value to the standard output stream.
+    #method write : anObject
+    [
+        anObject cast:%write &to:$self.
+    ]
+
 //    /// Writes the object literal presentation to the standard output stream.
 //    #method(generic) write : anObject
 //    [
@@ -38,15 +36,23 @@
 //        
 //        theWriter refresh.
 //    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    #method write &literal:aLiteral
-//    [
-//        theWriter write &literal:aLiteral.
-//        
-//        theWriter refresh.
-//    ]
-//
+
+    /// Writes the specified literal value to the standard output stream.
+    #method write &literal:aLiteral
+    [
+        theWriter write &literal:aLiteral.
+        
+        theWriter refresh.
+    ]
+
+    /// Writes the specified literal value to the standard output stream.
+    #method write &wide:aLiteral
+    [
+        theWriter write &wide:aLiteral.
+        
+        theWriter refresh.
+    ]
+
 //    /// the current line terminator to the standard output stream.
 //    #method writeLine
 //    [
@@ -76,7 +82,7 @@
 //    /// Reads the next key code from the input stream
 //    #method readKey
 //        = theReader int.
-//}
-//
-///// A standard console
-//#static console = $Console new &reader:system'io'stdConsoleReader &writer:system'io'stdConsoleWriter.
+}
+
+/// A standard console
+#static console = $Console new /*&reader:system'io'stdConsoleReader */&writer:system'io'stdConsoleWriter.

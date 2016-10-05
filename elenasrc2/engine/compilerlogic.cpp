@@ -245,6 +245,11 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 }
 
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
+}
+
 void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler)
 {
    SNode templateNode = node.appendNode(lxTemplate);
@@ -493,6 +498,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
+         return true;
+      case V_GENERIC:
+         attrValue = tpGeneric;
          return true;
       default:
          return false;

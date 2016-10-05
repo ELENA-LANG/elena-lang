@@ -22,4 +22,5 @@ dynamic.l
 exceptions.l
 console.l
 win32_pointers.l
+win32_app.l
 io\win32_console.l

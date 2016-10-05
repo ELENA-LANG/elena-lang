@@ -193,7 +193,7 @@ public:
    };
 
    typedef Map<ident_t, ref_t, false>     ForwardMap;
-   typedef Map<ident_t, Parameter, false> LocalMap;
+   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
 //   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
@@ -516,6 +516,14 @@ private:
          else return moduleScope->mapAttribute(terminal, implicitOnly);
       }
 
+      virtual int getSourcePathRef()
+      {
+         if (parent) {
+            return parent->getSourcePathRef();
+         }
+         else return 0;
+      }
+
       Scope(ModuleScope* moduleScope)
       {
          this->parent = NULL;
@@ -624,7 +632,7 @@ private:
 //      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
-//      bool         generic;
+      bool         generic;
 //      bool         sealed;
 
       virtual Scope* getScope(ScopeLevel level)
@@ -803,6 +811,7 @@ private:
       ForwardMap  parameters;
       SubjectMap  subjects;
       bool        classMode;
+      int         sourceRef;
 
 //      // NOTE : reference is defined in subject namespace, so templateRef should be initialized and used
 //      // proper reference is 0 in this case
@@ -852,6 +861,11 @@ private:
          else return parent->getScope(level);
       }
 
+      virtual int getSourcePathRef()
+      {
+         return sourceRef;
+      }
+
       void loadParameters(SNode node);
 
       void generateClassName(bool newName = false);
@@ -871,6 +885,7 @@ private:
          this->parent = parent;
          this->info.header.flags = 0;
          this->classMode = false;
+         this->sourceRef = -1;
       }
       TemplateScope(Scope* parent, ref_t attrRef)
          : ClassScope(parent->moduleScope, 0)
@@ -878,6 +893,7 @@ private:
          this->parent = parent;
          this->templateRef = attrRef;
          this->classMode = false;
+         this->sourceRef = -1;
       }
       TemplateScope(ModuleScope* moduleScope, ref_t attrRef)
          : ClassScope(moduleScope, 0)
@@ -885,6 +901,7 @@ private:
          this->parent = NULL;
          this->templateRef = attrRef;
          this->classMode = false;
+         this->sourceRef = -1;
       }
    };
 
@@ -1063,7 +1080,7 @@ private:
 
    void compileActionMethod(SNode member, /*SyntaxWriter& writer, */MethodScope& scope);
 //   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
-   void compileDispatcher(SNode node, MethodScope& scope/*, bool withGenericMethods = false*/);
+   void compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods = false);
 
    void compileMethod(SNode node, MethodScope& scope);
    void compileDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);

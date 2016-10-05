@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   3
+#define REVISION_VERSION   4
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -768,8 +768,8 @@ void listFlags(int flags)
    //if (test(flags, elGroup))
    //   printLine("@flag ", "elGroup");
 
-   //if (test(flags, elWithGenerics))
-   //   printLine("@flag ", "elWithGenerics");
+   if (test(flags, elWithGenerics))
+      printLine("@flag ", "elWithGenerics");
 
    if (test(flags, elReadOnlyRole))
       printLine("@flag ", "elReadOnlyRole");

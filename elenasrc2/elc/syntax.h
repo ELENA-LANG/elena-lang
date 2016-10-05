@@ -90,7 +90,7 @@ enum Symbol
    nsL6Operation                = 0x01041,
    //nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
-   //nsDefaultGeneric             = 0x01046,
+   nsDefaultGeneric             = 0x01046,
    nsSubject                    = 0x01047,
    //nsInlineClosure              = 0x01048,
    //nsMethodTemplate             = 0x01049,

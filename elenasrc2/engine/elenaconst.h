@@ -297,7 +297,7 @@ namespace _ELENA_
    const int elStateless           = 0x00000080;
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
-//   const int elWithGenerics        = 0x00000400;
+   const int elWithGenerics        = 0x00000400;
    const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
@@ -450,7 +450,7 @@ namespace _ELENA_
    #define THIS_VAR                "$self"            // the current class instance
 //   #define OWNER_VAR               "$owner"           // the current method self
    #define SUPER_VAR               "$super"           // the predecessor class
-//   #define SUBJECT_VAR             "$subject"         // the current message
+   #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
 
    #define TARGET_PSEUDO_VAR       "target"
@@ -465,7 +465,7 @@ namespace _ELENA_
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
-//   #define GENERIC_PREFIX           "#generic"
+   #define GENERIC_PREFIX           "#generic"
 //   #define EMBEDDED_PREFIX          "#embedded"
 //   #define TARGET_POSTFIX           "##"
    #define STATICFIELD_POSTFIX      "#static"

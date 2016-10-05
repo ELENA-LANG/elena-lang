@@ -44,6 +44,7 @@ enum LexicalType
    lxExtension       = 0x0002B,
    lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
+   lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
    lxImplicitConstructor = 0x0004B,
 

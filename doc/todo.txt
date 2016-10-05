@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xrev
+                 * support generic methods
+
                  * support closures with a generic parameter
                  * support closures with several generic parameters
                  * support closures with several parameters
