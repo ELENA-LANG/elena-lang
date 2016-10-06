@@ -57,6 +57,7 @@ In development:
                  * test vint : dispatch opertions 
                  * test with generic if / if-else operator
                  * test constant list
+                 * test unboxing primitive array
 
                  * support abstract attribute
                  * check sealed / limited class attributes

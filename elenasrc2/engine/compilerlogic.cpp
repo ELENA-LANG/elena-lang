@@ -19,6 +19,32 @@ inline bool isWrappable(int flags)
    return !test(flags, elWrapper) && test(flags, elSealed);
 }
 
+inline bool isPrimitiveArrayRef(ref_t classRef)
+{
+   switch (classRef)
+   {
+   case V_INT32ARRAY:
+   case V_INT16ARRAY:
+   case V_INT8ARRAY:
+      return true;
+   default:
+      return false;
+   }
+}
+
+inline ref_t definePrimitiveArrayItem(ref_t classRef)
+{
+   switch (classRef)
+   {
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+         return V_INT32;
+      default:
+         return 0;
+   }
+}
+
 // --- CompilerLogic ---
 
 CompilerLogic :: CompilerLogic()
@@ -187,6 +213,17 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
    }
 }
 
+inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (sourceRef)
+   {
+   case V_PTR32:
+      return targetRef == V_INT32;
+   default:
+      return false;
+   }
+}
+
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
    if (!targetRef)
@@ -310,6 +347,19 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
          compiler.injectBoxing(scope, node, 
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 
             test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+
+         return true;
+      }
+   }
+
+   // HOT FIX : trying to typecast primitive structure array
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
+      ClassInfo sourceInfo;
+      defineClassInfo(scope, sourceInfo, sourceRef, true);
+
+      if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
+         compiler.injectBoxing(scope, node,
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
 
          return true;
       }

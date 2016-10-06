@@ -8065,33 +8065,6 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
 //      ClassInfo targetInfo;
 //      scope.loadClassInfo(targetInfo, targetClassRef, false);
 //
-//      // HOT FIX : trying to typecast primitive structure array
-//      if (sourceClassRef == -3) {
-//         if (test(targetInfo.header.flags, elStructureRole | elDynamicRole) && targetInfo.fieldTypes.get(-1) == sourceType) {
-//            // if boxing is not required (stack safe) and can be passed directly
-//            if (test(mode, HINT_NOBOXING)) {
-//               node = lxExpression;
-//               typecastMode |= HINT_NOBOXING;
-//            }
-//            else if (object == lxNewOp) {
-//               object.setArgument(targetClassRef);
-//               object.appendNode(lxSize, targetInfo.size);
-//            }
-//            else {
-//               // if unboxing is not required
-//               if (test(mode, HINT_NOUNBOXING)) {
-//                  node = lxBoxing;
-//               }
-//               else node = lxUnboxing;
-//
-//               node.setArgument(targetInfo.size);
-//
-//               node.appendNode(lxTarget, targetClassRef);
-//            }
-//
-//            typecasted = false;
-//         }
-//      }
 //      // HOT FIX : trying to typecast primitive object array
 //      else if (sourceClassRef == -5) {
 //         if (test(targetInfo.header.flags, elDynamicRole) && targetInfo.fieldTypes.get(-1) == sourceType) {
@@ -8407,7 +8380,10 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
 //      case lxNested:
 //      case lxMember:
 //         optimizeNestedExpression(scope, current, warningMask);
-//         break;
+//         break; 
+      case lxCode:
+         optimizeSyntaxExpression(scope, current, warningScope);
+         break;
 //      case lxArgUnboxing:
 //         optimizeArgUnboxing(scope, current, warningMask);
 //         break;
