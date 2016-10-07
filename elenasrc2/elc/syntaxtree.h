@@ -108,14 +108,16 @@ enum LexicalType
    lxCreatingClass   = 0x0C025,   // arg - count
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
+   lxNewOp           = 0x0C028,
    lxIntArrOp        = 0x8C030,   // arg - operation id
-   lxByteArrOp       = 0x8C031, // arg - operation id
-   lxShortArrOp      = 0x8C032, // arg - operation id
-   lxReleasing       = 0x0C032,
+   lxResendExpression= 0x0C031,
+   lxByteArrOp       = 0x8C032, // arg - operation id
+   lxShortArrOp      = 0x8C033, // arg - operation id
+   lxReleasing       = 0x0C034,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
-   lxOverridden      = 0x04047,
+      lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,
    lxOperator        = 0x10025,
@@ -203,7 +205,6 @@ enum LexicalType
 //   lxArgUnboxing     = 0x0031E,
 //   lxOption          = 0x00321,
 //   lxExternFrame     = 0x00327,
-//   lxNewOp           = 0x20328,
 //   lxBody            = 0x00329,
 //
 //   lxOp              = 0x0032A, // generic operation, arg - operation id 

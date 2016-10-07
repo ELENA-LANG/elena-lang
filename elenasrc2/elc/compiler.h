@@ -471,17 +471,17 @@ private:
       {
          ObjectInfo object = mapTerminal(terminal.findChild(lxTerminal).identifier());
          if (object.kind == okUnknown) {
-            if (parent) {
-               return parent->mapObject(terminal);
-            }
-            else return moduleScope->mapObject(terminal);
+            return moduleScope->mapObject(terminal);
          }
          else return object;
       }
 
       virtual ObjectInfo mapTerminal(ident_t identifier)
       {
-         return ObjectInfo();
+         if (parent) {
+            return parent->mapTerminal(identifier);
+         }
+         else return ObjectInfo();
       }
 
       virtual Scope* getScope(ScopeLevel level)
@@ -978,6 +978,14 @@ private:
    ref_t mapAttribute(SNode attribute, ModuleScope& scope);
    void initialize(Scope& scope, MethodScope& methodScope);
 
+   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
+   {
+      bool dummy1 = false;
+      ref_t dummy2 = 0;
+
+      return _logic->checkMethod(scope, reference, message, dummy1, dummy2);
+   }
+
 //   bool checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node);
 //   bool checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -1070,7 +1078,7 @@ private:
    ObjectInfo compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role/*, int mode*/);
 
-//   ObjectInfo compileNewOperator(DNode node, CodeScope& scope, int mode);
+   ObjectInfo compileNewOperator(SNode node, CodeScope& scope/*, int mode*/);
    ObjectInfo compileAssigning(SNode node, CodeScope& scope, int mode);
    //ObjectInfo compileOperations(SNode node, CodeScope& scope, ObjectInfo target, int mode);   
    ObjectInfo compileExtension(SNode node, CodeScope& scope, int mode = 0);
@@ -1088,14 +1096,14 @@ private:
 
    void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
-   int allocateStructure(bool bytearray, size_t& allocatedSize, int& reserved);
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(/*ModuleScope& scope, */SNode node, size_t& size);
-   bool allocateStructure(CodeScope& scope, size_t size, bool bytearray, ObjectInfo& exprOperand);
+   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
    ObjectInfo compileExternalCall(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
-//   void compileConstructorResendExpression(DNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
 //   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
    void compileDispatchExpression(SNode node, CodeScope& scope);

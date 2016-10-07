@@ -784,11 +784,11 @@
 //    /// Creates the empty literal
 //    #constructor min
 //        = emptyLiteralValue.
-//        
-//    /// Creates the literal string with specified length        
-//    #constructor(stacksafe) new &int:size
-//        = byte:(size + 1).
-//
+        
+    /// Creates the literal string with specified length        
+    #constructor(stacksafe) new &int:size
+        = byte:(size + 1).
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    #constructor(stacksafe) new &int:aSize &literal:aLiteral
 //        <= (new &int:aSize)
@@ -807,12 +807,12 @@
 //    /// Creates the copy of a subarray        
 //    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
 //        => system'core_routines'__literal.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__literal copy &literal:$self &int:anIndex &int:aSize &bytearray:anArray.
-//    ]
+
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
+        <= (new &int:aSize)
+    [
+        system'core_routines'__literal copy &literal:$self &int:anIndex &int:aSize &bytearray:anArray.
+    ]
     
     /// Converts to UTF-16 literal
     #method wide = wideConvertor convert &literal:$self.
@@ -1591,7 +1591,7 @@
         [
             $self convert &wide:aLiteral &bytearray:buffer &vint:m.
             
-//            ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
+            ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
         ].
 
 //        #var(literal)retVal := emptyLiteralValue.

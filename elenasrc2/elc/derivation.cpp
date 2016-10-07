@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 // --- DerivationWriter ---
 
-void DerivationWriter :: unpackNode(SNode node)
+void DerivationWriter :: unpackNode(SNode& node)
 {
    Symbol symbol = (Symbol)node.type;
    switch (symbol) {
@@ -95,6 +95,15 @@ void DerivationWriter :: unpackNode(SNode node)
          copyExpression(node);
          _writer.removeBookmark();
          break;
+      case nsResendExpression:
+         _writer.newNode(lxResendExpression);
+         _writer.newBookmark();
+         unpackChildren(node);
+         _writer.removeBookmark();
+         node = node.nextNode();
+         unpackNode(node);
+         _writer.closeNode();
+         break;
       case nsVariable:
          copyVariable(node);
          break;
@@ -112,6 +121,7 @@ void DerivationWriter :: unpackNode(SNode node)
       case nsL4Operation:
       case nsL6Operation:
       case nsL7Operation:
+      case nsNewOperator:
          copyMessage(node, false, true);
          break;
       case nsObject:
@@ -183,6 +193,7 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
             break;
          case nsMessageParameter:
          case nsObject:
+         case nsExpression:
             _writer.newBookmark();
             _writer.newNode(lxExpression);
             unpackChildren(current);
@@ -204,13 +215,20 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
          case nsL4Operation:
          case nsL6Operation:
          case nsL7Operation:
+         case nsNewOperator:
             copyMessage(current, false, true);
             _writer.removeBookmark();
             break;
          default:
             if (operationMode && current.existChild(lxTerminal)) {
-               _writer.newNode(lxOperator);
-               copyChildren(current);
+               if ((Symbol)node.type != nsNewOperator) {
+                  _writer.newNode(lxOperator);
+
+                  copyChildren(current);
+               }
+               //HOTFIX : mark new operator
+               else _writer.newNode(lxOperator, -1);
+
                _writer.closeNode();
                _writer.newBookmark();
             }            

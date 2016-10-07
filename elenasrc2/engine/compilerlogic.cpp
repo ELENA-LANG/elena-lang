@@ -23,12 +23,12 @@ inline bool isPrimitiveArrayRef(ref_t classRef)
 {
    switch (classRef)
    {
-   case V_INT32ARRAY:
-   case V_INT16ARRAY:
-   case V_INT8ARRAY:
-      return true;
-   default:
-      return false;
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+         return true;
+      default:
+         return false;
    }
 }
 
@@ -200,6 +200,21 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
       return true;
    }
    else return false;
+}
+
+int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if (isCompatible(scope, V_INT32, roperand)) {
+      result = definePrimitiveArray(scope, loperand);
+      
+      if (result == 0) {
+         result = V_ARRAY;
+      }
+
+      return lxNewOp;
+   }
+
+   return 0;
 }
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
@@ -379,6 +394,15 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    }
 
    return false;
+}
+
+void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, /*_Compiler& compiler, int operatorId, */int operation, ref_t targetRef)
+{
+   SNode operationNode = node.injectNode((LexicalType)operation, targetRef);
+
+   int size = defineStructSize(scope, targetRef, false);
+   if (size != 0)
+      operationNode.appendNode(lxSize, size);
 }
 
 void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)

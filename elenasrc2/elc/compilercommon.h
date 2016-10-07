@@ -21,6 +21,7 @@
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
 
+#define V_ARRAY       (size_t)-30
 #define V_INT32ARRAY  (size_t)-31
 #define V_INT16ARRAY  (size_t)-38
 #define V_INT8ARRAY   (size_t)-39
@@ -150,6 +151,7 @@ public:
    // retrieve the operation type
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
+   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 
    // retrieve the branching operation type
    virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
@@ -177,6 +179,7 @@ public:
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
    virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
+   virtual void injectNewOperation(SNode node, _CompilerScope& scope, /*_Compiler& compiler, int operatorId, */int operation, ref_t targetRef) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;

@@ -3314,28 +3314,28 @@ void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rar
    }
 }
 
-//void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   generateExpression(tape, node);
-//   loadIndex(tape, lxResult);
-//
-//   if (node.argument != 0) {
-//      int size = SyntaxTree::findChild(node, lxSize).argument;
-//
-//      loadObject(tape, lxConstantClass, node.argument);
-//      if (size < 0) {
-//         newDynamicStructure(tape, -size);
-//      }
-//      else if (size == 0) {
-//         newDynamicObject(tape);
-//      }
-//   }
-//   else {      
-//      loadObject(tape, lxThisLocal, 1);
-//      // HOTFIX: -1 indicates the stack is not consumed by the constructor
-//      callMethod(tape, 1, -1);
-//   }
-//}
+void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   generateExpression(tape, node);
+   loadIndex(tape, lxResult);
+
+   if (node.argument != 0) {
+      int size = node.findChild(lxSize).argument;
+
+      loadObject(tape, lxConstantClass, node.argument);
+      if (size < 0) {
+         newDynamicStructure(tape, -size);
+      }
+      else if (size == 0) {
+         newDynamicObject(tape);
+      }
+   }
+   else {      
+      loadObject(tape, lxThisLocal, 1);
+      // HOTFIX: -1 indicates the stack is not consumed by the constructor
+      callMethod(tape, 1, -1);
+   }
+}
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -4531,9 +4531,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //      case lxBinArrOp:
          generateArrOperation(tape, node);
          break;
-//      case lxNewOp:
-//         generateNewOperation(tape, node);
-//         break;
+      case lxNewOp:
+         generateNewOperation(tape, node);
+         break;
       case lxResending:
          generateResendingExpression(tape, node);
          break;
@@ -4561,6 +4561,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       //case lxBreakpoint:
       //   translateBreakpoint(tape, node);
       //   break;
+      case lxCode:
+         generateCodeBlock(tape, node);
+         break;
       default:
          loadObject(tape, node);
          break;
@@ -4701,12 +4704,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBreakpoint:
             translateBreakpoint(tape, current);
             break;
-         //case lxEOF:
-         //   if (current.existChild(lxBreakpoint))
-         //      translateBreakpoint(tape, current/*.findSubNode(lxBreakpoint)*/);
-
-         //   generateExpression(tape, current);
-         //   break;
          default:
             generateObjectExpression(tape, current);
             break;

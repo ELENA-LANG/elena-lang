@@ -76,6 +76,8 @@ In development:
                  * $ConsoleHandleFactory.newWriter - idle jump
                  * $ConsoleHandleFactory : handle is stack allocated, so the code should be modified to avoid extra object creating
                  * uncomment $FileWriter
+                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
+                 * optimize : LiteralValue#class.eval&system$new...
 
               xdev
                 * linux migration

@@ -121,7 +121,7 @@ class DerivationWriter : public _DerivationWriter
 
    int          _level; // tree node level ; starting from level=1 the content is buffered and unpacked on the level=0
 
-   void unpackNode(SNode node);
+   void unpackNode(SNode& node);
    void unpackChildren(SNode node);
    void copyChildren(SNode node);
 
