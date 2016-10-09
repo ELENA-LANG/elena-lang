@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -4395,15 +4395,6 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, Obje
    CodeScope subScope(&scope);
 
    SNode thenCode = thenNode.findSubNode(lxCode);
-
-   test2(thenCode);
-
-   // HOTFIX : move extra expression node up
-   if (!thenCode.existChild(lxEOF) && thenCode.findSubNode(lxEOF)) {
-      thenCode = lxExpression;
-      thenCode = thenCode.findChild(lxExpression);
-      thenCode = lxCode;
-   }
 
    SNode expr = thenCode.firstChild(lxObjectMask);
    if (expr == lxEOF || expr.nextNode() != lxNone) {

@@ -148,6 +148,66 @@ procedure __literal.eval&copy&literal$&int$&int$&bytearray$[4]
 
 end
 
+procedure __literal.eval&Substring&int$&int$[3]
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  inc
+
+  // ; create a new string  
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  
+  aloadsi 2
+  nload
+
+  aloadsi 1
+  callextr api : subcopy
+  
+  acopyb
+  blen
+  ecopy 0
+  dec
+  bwriteb
+
+  quitn 3
+
+end
+
+procedure __literal.add&literal$[2]
+
+  blen
+  dec
+  ecopyd
+  bcopya
+  aloadsi 2
+  blen
+  add
+  acopyr class : system'LiteralValue
+  bcreate
+  bswap
+  blen
+  dec
+  ecopyd
+  dcopy 0
+  callextr api : insert
+  ecopyd
+  aloadsi 2
+  blen
+  eswap
+  callextr api : insert
+  acopyb
+
+  quitn 2
+
+end                                                
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -156,6 +216,84 @@ procedure __wide.eval&readLength&vint$[2]
   bloadsi 2
   nsave
   quitn 2
+
+end
+
+procedure __wide.eval&Substring&int$&int$[3]
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  inc
+
+  // ; create a new string  
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  
+  aloadsi 2
+  nload
+
+  aloadsi 1
+  callextr api : wsubcopy
+
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  shiftn -1
+  bwritew
+
+  quitn 3
+
+end
+
+procedure __wide.add&wide$[2]
+
+  wlen
+  dec
+  ecopyd
+  bcopya
+  aloadsi 2
+  wlen
+  add
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bswap
+  wlen
+  dec
+  ecopyd
+  dcopy 0
+  callextr api : winsert
+  ecopyd
+  aloadsi 2
+  wlen
+  eswap
+  callextr api : winsert
+  acopyb
+
+  quitn 2
+
+end                                                
+
+procedure __wide.eval&copy&wide$&int$&int$&shortarray$[4]
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : wsubcopy
+  
+  acopyb
+  quitn 4
 
 end
 
@@ -183,4 +321,16 @@ procedure __literalconvertor.convert&wide$&bytearray$&vint$[4]
   nwritei 0
   quitn 4
   
+end
+
+procedure __wideconvertor.convert&literal$&shortarray$&vint$[4]
+
+  aloadsi 2
+  bloadsi 3
+  callextr api : strtowstr
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
 end

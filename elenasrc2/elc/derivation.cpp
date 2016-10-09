@@ -238,6 +238,9 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
       current = current.nextNode();
    }
 
+   if(operationMode)
+      _writer.removeBookmark();
+
    if (catchMode) {
       _writer.insert(lxTrying);
       _writer.closeNode();

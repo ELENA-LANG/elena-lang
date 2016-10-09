@@ -215,11 +215,11 @@
 //    #method clone = ByteArray new &bytearray:$self.
 }
 
-//// --- ShortArray ---
-//
-///// A short integer array
-//#class(sealed,arrayof:short,dispatchable:shortarray) ShortArray
-//{
+// --- ShortArray ---
+
+/// A short integer array
+#class(sealed,arrayof:short,dispatchable:shortarray) ShortArray
+{
 //    /// Creates the short array with the specified length
 //    #constructor(stacksafe) new &int:aLength
 //        = short:aLength.
@@ -283,8 +283,8 @@
 //
 //    /// Creates the object copy
 //    #method clone = ShortArray new &shortarray:$self.
-//}
-//
+}
+
 //// --- IntArray ---
 //
 ///// An array of integers
@@ -840,11 +840,11 @@
 //    /// Compares the values
 //    #method(bool) less &char : aChar
 //        <= %less &literal:(aChar literal).
-//
-//    /// Concatinates the values
-//    #method(literal) add &literal : aLiteral
-//        => system'core_routines'__literal.
-//
+
+    /// Concatinates the values
+    #method(literal) add &literal : aLiteral
+        => system'core_routines'__literal.
+
 //    #method add : anObject = anObject cast:%add &to:$self.
 //
 //    /// Returns the character at the specified index
@@ -959,10 +959,10 @@
 //    /// Returns the substring
 //    #method Substring : aLength &at:anIndex
 //        = $self Substring &int:(anIndex int) &int:(aLength int).
-//
-//    /// Returns the substring
-//    #method(literal,stacksafe) Substring &int:anIndex &int:aLength
-//        => system'core_routines'__literal.
+
+    /// Returns the substring
+    #method(literal,stacksafe) Substring &int:anIndex &int:aLength
+        => system'core_routines'__literal.
 
     /// Reads the literal length into an output parameter
     #method(outnprop:length,stacksafe) readLength &vint:aLength
@@ -988,11 +988,11 @@
 //    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
 //        => system'core_routines'__literal.
 }
-//
-//// --- emptyWideLiteralValue ---
-//
-///// An empty wide literal value
-//#symbol(const,wide) emptyWideLiteralValue = ""w.
+
+// --- emptyWideLiteralValue ---
+
+/// An empty wide literal value
+#symbol(const,wide) emptyWideLiteralValue = ""w.
 
 // --- WideLiteralValue ---
 
@@ -1004,11 +1004,11 @@
 //    /// Creates the empty literal
 //    #constructor min
 //        = emptyWideLiteralValue.
-//        
-//    /// Creates the literal string with specified length
-//    #constructor(stacksafe) new &int:size
-//        = short:(size + 1).
-//
+        
+    /// Creates the literal string with specified length
+    #constructor(stacksafe) new &int:size
+        = short:(size + 1).
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    #constructor(stacksafe) new &int:aSize &wide:aLiteral
 //        <= (new &int:aSize)
@@ -1027,12 +1027,12 @@
 //    /// Creates the copy of a subarray
 //    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
 //        => system'core_routines'__wide.
-//
-//    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__wide copy &wide:$self &int:anIndex &int:aSize &shortarray:anArray.
-//    ]
+
+    #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
+        <= (new &int:aSize)
+    [
+        system'core_routines'__wide copy &wide:$self &int:anIndex &int:aSize &shortarray:anArray.
+    ]
 
     /// Converts to UTF-8 literal
     #method literal = literalConvertor convert &wide:$self.
@@ -1067,11 +1067,11 @@
 //        
 //        ^ CharValue new &char:aChar.
 //    ]
-//
-//    /// Concatinates the values
-//    #method(wide,stacksafe) add &wide : aLiteral
-//        => system'core_routines'__wide.
-//
+
+    /// Concatinates the values
+    #method(wide,stacksafe) add &wide : aLiteral
+        => system'core_routines'__wide.
+
 //    /// Concatinates the values
 //    #method(wide,stacksafe) add &char:aChar
 //        = $self add &wide:(wideConvertor convert &char:aChar).
@@ -1168,11 +1168,11 @@
 //    /// Deletes the substring from the object and returns the new one            
 //    #method(wide,stacksafe) delete &int:anIndex &int:aLength
 //        => system'core_routines'__wide.
-//
-//    /// Returns the substring
-//    #method(wide,stacksafe) Substring &int:anIndex &int:aLength
-//        => system'core_routines'__wide.
-//
+
+    /// Returns the substring
+    #method(wide,stacksafe) Substring &int:anIndex &int:aLength
+        => system'core_routines'__wide.
+
 //    #method(wide) Substring : aLength &at:anIndex
 //        <= Substring &int:(anIndex int) &int:(aLength int).
 
@@ -1595,21 +1595,21 @@
         ].
 
         #var(literal)retVal := emptyLiteralValue.
-//        #loop (l > 0)?
-//        [
-//            page := l.
-//            (page > 127)?
-//            [
-//                page := 127.
-//            ].
-//            
-//            $self convert &wide:(aLiteral Substring &int:i &int:page) &bytearray:buffer &vint:m.
-//            
-//            retVal := retVal add &literal:(LiteralValue $new &int:0 &int:m &bytearray:buffer).
-//            
-//            i += page.
-//            l -= page.
-//        ].
+        #loop (l > 0)?
+        [
+            page := l.
+            (page > 127)?
+            [
+                page := 127.
+            ].
+            
+            $self convert &wide:(aLiteral Substring &int:i &int:page) &bytearray:buffer &vint:m.
+            
+            retVal := retVal add &literal:(LiteralValue $new &int:0 &int:m &bytearray:buffer).
+            
+            i += page.
+            l -= page.
+        ].
         
         ^ retVal.
     ]
@@ -1776,44 +1776,44 @@
 //        
 //        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
 //    ]
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    #method(stacksafe) convert &literal:aLiteral &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
+
+    /// Converts UTF-8 literal to UTF-16e
+    #method(stacksafe) convert &literal:aLiteral &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
 
     /// Converts UTF-8 literal to UTF-16e
     #method(wide,stacksafe) convert &literal:aLiteral
     [
-//        #var(int)i := 0.
-//        #var(int)m := 0.
-//        #var(int)page := 0.
-//        #var(int)l := aLiteral length.
-//        #var(short:256)buffer.
-//        (l < 256)?
-//        [
-//            $self convert &literal:aLiteral &shortarray:buffer &vint:m.
-//            
-//            ^ WideLiteralValue $new &int:0 &int:m &shortarray:buffer.
-//        ].
-//        
-//        #var(wide)retVal := emptyWideLiteralValue.
-//        #loop (l > 0)?
-//        [
-//            page := l.
-//            (page > 256)?
-//            [
-//                page := 256.
-//            ].
-//            
-//            $self convert &literal:(aLiteral Substring &int:i &int:page) &shortarray:buffer &vint:m.
-//            
-//            retVal := retVal add &wide:(WideLiteralValue $new &int:0 &int:m &shortarray:buffer).
-//            
-//            i += page.
-//            l -= page.
-//        ].
-//        
-//        ^ retVal.
+        #var(int)i := 0.
+        #var(int)m := 0.
+        #var(int)page := 0.
+        #var(int)l := aLiteral length.
+        #var(short:256)buffer.
+        (l < 256)?
+        [
+            $self convert &literal:aLiteral &shortarray:buffer &vint:m.
+            
+            ^ WideLiteralValue $new &int:0 &int:m &shortarray:buffer.
+        ].
+        
+        #var(wide)retVal := emptyWideLiteralValue.
+        #loop (l > 0)?
+        [
+            page := l.
+            (page > 256)?
+            [
+                page := 256.
+            ].
+            
+            $self convert &literal:(aLiteral Substring &int:i &int:page) &shortarray:buffer &vint:m.
+            
+            retVal := retVal add &wide:(WideLiteralValue $new &int:0 &int:m &shortarray:buffer).
+            
+            i += page.
+            l -= page.
+        ].
+        
+        ^ retVal.
     ]        
 
     /// Returns the literal presentation of the parameter
