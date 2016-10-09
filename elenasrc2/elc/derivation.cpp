@@ -34,6 +34,7 @@ void DerivationWriter :: unpackNode(SNode& node)
       case nsMessageReference:
       case nsExtension:
       case nsDefaultGeneric:
+      case nsLoop:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {
             copyHints(_hints);

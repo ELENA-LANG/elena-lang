@@ -42,6 +42,7 @@ enum LexicalType
    lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxExtension       = 0x0002B,
+   lxLoop            = 0x00030,
    lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
    lxDefaultGeneric  = 0x00046,
@@ -95,6 +96,7 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
    lxTrying          = 0x0C00C,   // try-catch expression
    lxBranching       = 0x0C00F,   // branch expression
+   lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
    lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
@@ -117,7 +119,7 @@ enum LexicalType
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
-      lxOverridden      = 0x04047,
+   lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,
    lxOperator        = 0x10025,
@@ -199,7 +201,6 @@ enum LexicalType
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
 //   lxSwitching       = 0x00310,
-//   lxLooping         = 0x00311,
 //   lxThrowing        = 0x00313,
 //   lxExtInteranlRef  = 0x00319,
 //   lxArgUnboxing     = 0x0031E,

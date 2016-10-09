@@ -1068,9 +1068,9 @@ private:
 //   int mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target);
 //   int mapOpArg(Compiler::ModuleScope& scope, SNode arg);
 
-   ObjectInfo compileOperator(SNode node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id);
-   ObjectInfo compileOperator(SNode node, CodeScope& scope/*, ObjectInfo object, int mode*/);
-   ObjectInfo compileBranchingOperator(SNode& node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id);
+   ObjectInfo compileOperator(SNode node, CodeScope& scope, int mode, int operator_id);
+   ObjectInfo compileOperator(SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileBranchingOperator(SNode& node, CodeScope& scope, int mode, int operator_id);
 
    ObjectInfo compileMessageParameters(SNode node, CodeScope& scope);   // returns an info of the first operand
 
@@ -1089,7 +1089,7 @@ private:
    ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
    void compileTrying(SNode node, CodeScope& scope);
-   //   void compileLoop(DNode node, CodeScope& scope);
+   void compileLoop(SNode node, CodeScope& scope);
 //   void compileThrow(DNode node, CodeScope& scope, int mode);
 ////   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);

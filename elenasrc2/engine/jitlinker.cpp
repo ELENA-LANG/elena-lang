@@ -945,10 +945,10 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskClassRef:
             vaddress = resolveBytecodeSection(reference, mask, _loader->getSectionInfo(reference, mask, silentMode));
             break;
-//         case mskInternalRef:
-//         case mskInternalRelRef:
-//            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
-//            break;
+         case mskInternalRef:
+         case mskInternalRelRef:
+            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
+            break;
          case mskSymbolRelRef:
 //         case mskClassRelRef:
             vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, mask & ~mskRelCodeRef, silentMode));

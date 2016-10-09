@@ -21,7 +21,7 @@
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
 
-#define V_ARRAY       (size_t)-30
+#define V_OBJARRAY    (size_t)-30
 #define V_INT32ARRAY  (size_t)-31
 #define V_INT16ARRAY  (size_t)-38
 #define V_INT8ARRAY   (size_t)-39

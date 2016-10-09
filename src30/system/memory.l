@@ -768,11 +768,11 @@
 //    /// Creates the object copy
 //    #method clone = CharArray new &chararray:$self.
 //}
-//        
-//// --- emptyliteralvalue ---
-//
-///// An empty literal value
-//#symbol(const,literal) emptyLiteralValue = "".
+        
+// --- emptyliteralvalue ---
+
+/// An empty literal value
+#symbol(const,literal) emptyLiteralValue = "".
 
 // --- LiteralValue ---
 
@@ -1582,9 +1582,9 @@
 
     #method(literal,stacksafe) convert &wide:aLiteral
     [
-//        #var(int)i := 0.
+        #var(int)i := 0.
         #var(int)m := 0.
-//        #var(int)page := 0.
+        #var(int)page := 0.
         #var(int)l := aLiteral length.
         #var(byte:256)buffer.
         (l < 128)?
@@ -1594,7 +1594,7 @@
             ^ LiteralValue $new &int:0 &int:m &bytearray:buffer.
         ].
 
-//        #var(literal)retVal := emptyLiteralValue.
+        #var(literal)retVal := emptyLiteralValue.
 //        #loop (l > 0)?
 //        [
 //            page := l.
@@ -1610,8 +1610,8 @@
 //            i += page.
 //            l -= page.
 //        ].
-//        
-//        ^ retVal.
+        
+        ^ retVal.
     ]
 
     /// Returns the literal presentation of the parameter

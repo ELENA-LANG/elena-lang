@@ -54,8 +54,15 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
+   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
+
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
@@ -208,7 +215,7 @@ int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t lopera
       result = definePrimitiveArray(scope, loperand);
       
       if (result == 0) {
-         result = V_ARRAY;
+         result = V_OBJARRAY;
       }
 
       return lxNewOp;
@@ -328,6 +335,17 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
 
 void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
 {
+   bool inverting = false;
+   switch (operator_id)
+   {
+      case NOTEQUAL_MESSAGE_ID:
+         operator_id = EQUAL_MESSAGE_ID;
+         inverting = true;
+         break;
+      default:
+         break;
+   }
+
    SNode operationNode = node.injectNode((LexicalType)operationType, operator_id);
 
    if (reference == V_FLAG) {      
@@ -338,8 +356,14 @@ void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compil
       }
 
       reference = scope.branchingInfo.reference;
-      operationNode.appendNode(lxIfValue, scope.branchingInfo.trueRef);
-      operationNode.appendNode(lxElseValue, scope.branchingInfo.falseRef);
+      if (inverting) {
+         operationNode.appendNode(lxIfValue, scope.branchingInfo.falseRef);
+         operationNode.appendNode(lxElseValue, scope.branchingInfo.trueRef);
+      }
+      else {
+         operationNode.appendNode(lxIfValue, scope.branchingInfo.trueRef);
+         operationNode.appendNode(lxElseValue, scope.branchingInfo.falseRef);
+      }
    }
 }
 

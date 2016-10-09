@@ -131,6 +131,23 @@ procedure __literal.eval&readLength&vint$[2]
 
 end
 
+procedure __literal.eval&copy&literal$&int$&int$&bytearray$[4]
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : subcopy
+  
+  acopyb
+  quitn 4
+
+end
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1

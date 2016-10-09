@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -54,6 +54,7 @@ struct ModuleInfo
 //#define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
 #define HINT_TRY_MODE         0x02000000
+#define HINT_LOOP             0x01000000
 #define HINT_NODEBUGINFO      0x00020000
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
@@ -3278,28 +3279,43 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 //   return extRef;
 //}
 
-ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id)
+ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, int mode, int operator_id)
 {
    ObjectInfo retVal(okObject);
 
    SNode loperandNode = node.firstChild(lxObjectMask);
    ObjectInfo loperand = compileObject(loperandNode, scope, 0);
 
+   // HOTFIX : in loop expression, else node is used to be similar with branching code
+   // because of optimization rules
+   ref_t original_id = operator_id;
+   if (test(mode, HINT_LOOP)) {
+      operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
+   }
+
    ref_t ifReference = 0;
    if (_logic->resolveBranchOperation(*scope.moduleScope, *this, operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       node = lxBranching;
 
       SNode thenBody = loperandNode.nextNode(lxObjectMask);
-      thenBody.set(lxIf, ifReference);
-      compileBranching(thenBody, scope);
+      if (test(mode, HINT_LOOP)) {
+         thenBody.set(lxElse, ifReference);
+         compileBranching(thenBody, scope);
+      }
+      else {
+         thenBody.set(lxIf, ifReference);
+         compileBranching(thenBody, scope);
 
-      SNode elseBody = thenBody.nextNode(lxObjectMask);
-      if (elseBody != lxNone) {
-         elseBody.set(lxElse, 0);
-         compileBranching(elseBody, scope);
+         SNode elseBody = thenBody.nextNode(lxObjectMask);
+         if (elseBody != lxNone) {
+            elseBody.set(lxElse, 0);
+            compileBranching(elseBody, scope);
+         }
       }
    }
    else {
+      operator_id = original_id;
+
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
       compileObject(roperandNode, scope, 0);
 
@@ -3315,7 +3331,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, /
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInfo object, int mode, */int operator_id)
+ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, int operator_id)
 {
    ObjectInfo retVal(okObject);
    int paramCount = 1;
@@ -3409,7 +3425,7 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, /*ObjectInf
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope/*, ObjectInfo object, int mode*/)
+ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode)
 {
    SNode operatorNode = node.findChild(lxOperator);
    SNode operatorName = operatorNode.findChild(lxTerminal);
@@ -3421,9 +3437,9 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope/*, ObjectInf
    }
    // if it is branching operators
    else if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-      return compileBranchingOperator(node, scope, /*object, mode, */operator_id);
+      return compileBranchingOperator(node, scope, mode, operator_id);
    }
-   else return compileOperator(node, scope, /*object, mode, */operator_id);
+   else return compileOperator(node, scope, mode, operator_id);
 }
 
 ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
@@ -4209,7 +4225,7 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
             objectInfo = compileExtension(node, scope);
             break;
          case lxOperator:
-            objectInfo = compileOperator(node, scope);
+            objectInfo = compileOperator(node, scope, mode);
             break;
          case lxCode:
          case lxNestedClass:
@@ -4380,7 +4396,16 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, Obje
 
    SNode thenCode = thenNode.findSubNode(lxCode);
 
-   SNode expr = thenCode.firstChild();
+   test2(thenCode);
+
+   // HOTFIX : move extra expression node up
+   if (!thenCode.existChild(lxEOF) && thenCode.findSubNode(lxEOF)) {
+      thenCode = lxExpression;
+      thenCode = thenCode.findChild(lxExpression);
+      thenCode = lxCode;
+   }
+
+   SNode expr = thenCode.firstChild(lxObjectMask);
    if (expr == lxEOF || expr.nextNode() != lxNone) {
       compileCode(thenCode, subScope);
 
@@ -4402,11 +4427,22 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, Obje
 //
 //   scope.writer->closeNode();
 //}
-//
-//void Compiler :: compileLoop(DNode node, CodeScope& scope)
-//{
-//   DNode expr = node.firstChild().firstChild();
-//
+
+void Compiler :: compileLoop(SNode node, CodeScope& scope)
+{
+   node = lxExpression;
+
+   // find inner expression
+   SNode expr = node;
+   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
+      expr = expr.findChild(lxExpression);
+   }
+
+   compileExpression(expr, scope, HINT_LOOP);
+
+   // mark the inner expression as a loop
+   expr.set(lxLooping, 0);
+
 //   // if it is while-do loop
 //   if (expr.nextNode() == nsL7Operation) {
 //      scope.writer->newNode(lxLooping);
@@ -4417,8 +4453,6 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, Obje
 //
 //      int operator_id = _operators.get(loopNode.Terminal());
 //
-//      // HOTFIX : lxElse is used to be similar with branching code
-//      // because of optimization rules
 //      scope.writer->newNode(lxElse, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->falseReference : scope.moduleScope->trueReference);
 //      compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
 //      scope.writer->closeNode();
@@ -4433,40 +4467,40 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, Obje
 //
 //      scope.writer->closeNode();
 //   }
-//}
-//
-////void Compiler :: compileTry(DNode node, CodeScope& scope)
-////{
-//////   scope.writer->newNode(lxTrying);
-//////
-//////   // implement try expression
-//////   compileExpression(node.firstChild(), scope, 0, 0);
-//////
-////////   // implement finally block
-////////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
-////////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-////////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
-//////
-//////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
-//////   if (catchNode != nsNone) {
-//////      scope.writer->newBookmark();
-//////
-//////      scope.writer->appendNode(lxResult);
-//////
-//////      // implement catch message
-//////      compileMessage(catchNode, scope, ObjectInfo(okObject));
-//////
-//////      scope.writer->removeBookmark();
-//////   }
-////////   // or throw the exception further
-////////   else _writer.throwCurrent(*scope.tape);
-//////
-//////   scope.writer->closeNode();
-//////
+}
+
+//void Compiler :: compileTry(DNode node, CodeScope& scope)
+//{
+////   scope.writer->newNode(lxTrying);
+////
+////   // implement try expression
+////   compileExpression(node.firstChild(), scope, 0, 0);
+////
 //////   // implement finally block
+//////   _writer.pushObject(*scope.tape, ObjectInfo(okAccumulator));
 //////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
-////}
-//
+//////   _writer.popObject(*scope.tape, ObjectInfo(okAccumulator));
+////
+////   DNode catchNode = goToSymbol(node.firstChild(), nsCatchMessageOperation);
+////   if (catchNode != nsNone) {
+////      scope.writer->newBookmark();
+////
+////      scope.writer->appendNode(lxResult);
+////
+////      // implement catch message
+////      compileMessage(catchNode, scope, ObjectInfo(okObject));
+////
+////      scope.writer->removeBookmark();
+////   }
+//////   // or throw the exception further
+//////   else _writer.throwCurrent(*scope.tape);
+////
+////   scope.writer->closeNode();
+////
+////   // implement finally block
+////   compileCode(goToSymbol(node.firstChild(), nsSubCode), scope);
+//}
+
 //void Compiler :: compileLock(DNode node, CodeScope& scope)
 //{
 //   scope.writer->newNode(lxLocking);
@@ -4503,25 +4537,19 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //      statement= statement.nextNode();
 
    while (current != lxNone) {
-//      DNode hints = skipHints(statement);
-
-      //_writer.declareStatement(*scope.tape);
-
       switch(current) {
          case lxExpression:
          case lxTrying:
-            insertDebugStep(current, dsStep);
             compileExpression(current, scope, HINT_ROOT);
+            insertDebugStep(current, dsStep);
             break;
-            //         case nsThrow:
+//         case nsThrow:
 //            compileThrow(statement, scope, 0);
 //            break;
-//         case nsLoop:
-//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-//            //scope.writer->newNode(lxExpression);
-//            compileLoop(statement, scope);
-//            //scope.writer->closeNode();
-//            break;
+         case lxLoop:
+            insertDebugStep(current, dsStep);
+            compileLoop(current, scope);
+            break;
 ////         case nsTry:
 ////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 ////            compileTry(statement, scope);
@@ -7044,7 +7072,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
       dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
 
       scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
-   }
+   }*/
    else if (retVal.kind == okLiteralConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
@@ -7069,7 +7097,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->wideReference);
    }
-   else if (retVal.kind == okCharConstant) {
+   /*else if (retVal.kind == okCharConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
