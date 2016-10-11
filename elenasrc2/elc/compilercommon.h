@@ -14,6 +14,7 @@
 
 // virtual objects
 #define V_FLAG        (size_t)-03
+#define V_NIL         (size_t)-04
 
 #define V_INT32       (size_t)-11
 #define V_PTR32       (size_t)-12

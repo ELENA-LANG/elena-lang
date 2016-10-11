@@ -13,23 +13,23 @@
     #method(-4098) ifnot : aTrueAction = $nil.
 
 //    #method iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    #method(bool) or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    #method(bool) and : anExpr = anExpr bool.
-//
-//    /// Executes logical XOR operation
-//    #method(bool,w2) xor : aBool
-//    [
-//        aBool ? [ ^ false. ].
-//        
-//        ^ $self.
-//    ]
-//
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    #method or : anExpr = $self.
+
+    /// Executes logical AND operation
+    #method and : anExpr = anExpr bool.
+
+    /// Executes logical XOR operation
+    #method xor : aBool
+    [
+        aBool ? [ ^ false. ].
+        
+        ^ $self.
+    ]
+
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    #method equal : anExpr = anExpr bool.
 //
@@ -64,23 +64,23 @@
     #method(-4097) ifnot : aFalseAction = aFalseAction eval.
 
 //    #method iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    #method(bool) or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    #method(bool) and : anExpr = $self.
-//
-//    /// Executes logical XOR operation
-//    #method(bool,w2) xor : anExpr 
-//    [
-//        anExpr ? [ ^ true. ].
-//        
-//        ^ $self.
-//    ]
-//
+
+    /// Executes logical OR operation
+    #method or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    #method and : anExpr = $self.
+
+    /// Executes logical XOR operation
+    #method xor : anExpr 
+    [
+        anExpr ? [ ^ true. ].
+        
+        ^ $self.
+    ]
+
 //    /// Determines whether the specified object is equal to the current object boolean value
 //    #method(w2) equal : anExpr
 //    [
@@ -565,16 +565,16 @@
 //        ^ $nil.        
 //    ]
 //}
-//
-//// --- base lazy expression ---
-//
-//#class(limited)BaseLazyExpression
-//{
-//    #method eval []
-//    
-//    #method => system'core_routines'__lazyexpression.
-//}
-//
+
+// --- base lazy expression ---
+
+#class(limited)BaseLazyExpression
+{
+    #method eval []
+    
+    #method => system'core_routines'__lazyexpression.
+}
+
 //// --- IndexFunction ---
 //
 ///// A base index function

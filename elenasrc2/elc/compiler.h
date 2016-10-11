@@ -401,8 +401,8 @@ private:
 
       void validateReference(SNode terminal, ref_t reference);
 
-//      ref_t getBaseLazyExpressionClass();
-//
+      ref_t getBaseLazyExpressionClass();
+
 //      int getClassFlags(ref_t reference);
 //      int getTypeFlags(ref_t subject)
 //      {
@@ -1119,8 +1119,8 @@ private:
 
    void declareSingletonAction(ClassScope& scope, SNode objNode, SNode expression);
 
-   void compileActionMethod(SNode member, /*SyntaxWriter& writer, */MethodScope& scope);
-//   void compileLazyExpressionMethod(DNode member, SyntaxWriter& writer, MethodScope& scope);
+   void compileActionMethod(SNode member, MethodScope& scope);
+   void compileLazyExpressionMethod(SNode member, MethodScope& scope);
    void compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods = false);
 
    void compileMethod(SNode node, MethodScope& scope);

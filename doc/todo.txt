@@ -3,9 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * generic extension
-                 * typified extension
-
                  * implement repeat until loop
                  * support closures with a generic parameter
                  * support closures with several generic parameters
@@ -26,7 +23,6 @@ In development:
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation
                  * optimize unbox : root expression / assigning
-                 * support lazy expressions
                  * templates : importing
                  * templates : compiling
                  * get rid of ftemplate / mtemplate, ....

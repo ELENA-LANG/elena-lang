@@ -134,6 +134,21 @@ labDefault:
   
 end
 
+procedure __lazyexpression.dispatch[1]
+
+  pushe
+  pusha
+  copym EVAL_MESSAGE_ID
+
+  xindexrm system'BaseLazyExpression %eval[0]
+  acallvd
+
+  pope
+  asavesi 1
+  ajumpvi 0
+
+end
+
 procedure __literal.eval&readLength&vint$[2]
 
   aloadsi 1

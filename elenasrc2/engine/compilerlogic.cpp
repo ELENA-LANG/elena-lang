@@ -274,6 +274,9 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    if (!targetRef)
       return true;
 
+   if (sourceRef == V_NIL)
+      return true;
+
    if (isPrimitiveCompatible(targetRef, sourceRef))
       return true;
 

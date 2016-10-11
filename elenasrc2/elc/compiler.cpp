@@ -509,10 +509,10 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    loadModuleInfo(module);
 }
 
-//ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
-//{
-//   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
-//}
+ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
+{
+   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
+}
 
 ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
 {
@@ -1849,6 +1849,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return V_INT32;
 //      case okMessageConstant:
 //         return scope.moduleScope->messageReference;
+      case okNil:
+         return V_NIL;
       case okField:
       case okLocal:
       case okFieldAddress:
@@ -2972,7 +2974,7 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
       case lxCode:
 //      case nsSubjectArg:
 //      case nsMethodParameter:
-         result = compileClosure(objectNode, member, scope, 0);
+         result = compileClosure(objectNode, member, scope, mode);
          break;
 //      case nsInlineClosure:
 //         result = compileClosure(member.firstChild(), scope, HINT_CLOSURE);
@@ -3317,11 +3319,11 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
       operator_id = original_id;
 
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-      compileObject(roperandNode, scope, 0);
+      compileObject(roperandNode, scope, HINT_CLOSURE);
 
       SNode roperand2Node = roperandNode.nextNode(lxObjectMask);
       if (roperand2Node != lxNone) {
-         compileObject(roperand2Node, scope, 0);
+         compileObject(roperand2Node, scope, HINT_CLOSURE);
 
          retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 2), 0);
       }
@@ -3893,7 +3895,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SNode node, CodeScope& scope, Obj
 
 bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared)
 {
-   //bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
+   bool lazyExpression = !test(mode, HINT_CLOSURE) && isReturnExpression(node.firstChild());
 
    methodScope.message = encodeVerb(EVAL_MESSAGE_ID);
 
@@ -3906,14 +3908,14 @@ bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNod
 
    if (!alreadyDeclared) {
       ref_t parentRef = scope.info.header.parentRef;
-      /*if (lazyExpression) {
+      if (lazyExpression) {
          parentRef = scope.moduleScope->getBaseLazyExpressionClass();
       }
-      else {*/
+      else {
          ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
          if (actionRef)
             parentRef = actionRef;
-      //}
+      }
 
       compileParentDeclaration(SNode(), scope, parentRef);
    }
@@ -3921,7 +3923,7 @@ bool Compiler :: declareActionScope(SNode& node, ClassScope& scope, SNode argNod
    // HOT FIX : mark action as stack safe if the hint was declared in the parent class
    initialize(scope, methodScope);
 
-   return /*lazyExpression*/false;
+   return lazyExpression;
 }
 
 void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared)
@@ -3942,11 +3944,11 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    writer.closeNode();
    writer.closeNode();  // closing method
 
-//   // if it is single expression
-//   if (!lazyExpression) {
+   // if it is single expression
+   if (!lazyExpression) {
       compileActionMethod(syntaxTree.readRoot().findChild(lxClassMethod), methodScope);
-//   }
-//   else compileLazyExpressionMethod(node.firstChild(), writer, methodScope);
+   }
+   else compileLazyExpressionMethod(syntaxTree.readRoot().findChild(lxClassMethod), methodScope);
 
 //   //HOTFIX : recognize if it is nested template action
 //   //!!should be refactored
@@ -5057,23 +5059,25 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
    node.appendNode(lxReserved, scope.reserved);
 }
 
-//void Compiler :: compileLazyExpressionMethod(DNode node, SyntaxWriter& writer, MethodScope& scope)
-//{
-//   CodeScope codeScope(&scope, &writer);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   writer.newNode(lxNewFrame);
-//   codeScope.level++;
-//
-//   declareParameterDebugInfo(scope, writer, false, false);
-//
-//   compileRetExpression(node, codeScope, 0);
-//
-//   writer.closeNode();
-//   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
-//   writer.appendNode(lxReserved, scope.reserved);
-//}
+void Compiler :: compileLazyExpressionMethod(SNode node, MethodScope& scope)
+{
+   CodeScope codeScope(&scope);
+
+   declareParameterDebugInfo(node, scope, false, false);
+
+   SNode body = node.findChild(lxCode);
+
+   // new stack frame
+   // stack already contains previous $self value
+   codeScope.level++;
+
+   body = lxNewFrame;
+
+   compileRetExpression(body.findChild(lxExpression), codeScope, 0);
+
+   node.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   node.appendNode(lxReserved, scope.reserved);
+}
 
 void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 {

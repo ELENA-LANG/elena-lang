@@ -39,13 +39,13 @@
     #method ifnot : aTrueAction = $nil.
 
 //    #method iif:aTrueValue:aFalseValue = $nil.
-//
-//    #method(bool) or : anExpr = $nil.
-//
-//    #method(bool) and : anExpr = $nil.
-//
-//    #method(bool) xor : aBool = $nil.
-//
+
+    #method(bool) or : anExpr = $nil.
+
+    #method(bool) and : anExpr = $nil.
+
+    #method(bool) xor : aBool = $nil.
+
 //    #method equal : anExpr = $nil.
 //
 //    #method(bool) equal &bool:aBool = $nil.

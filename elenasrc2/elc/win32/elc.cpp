@@ -458,8 +458,6 @@ const char* showPlatform(int platform)
    else return ELC_UNKNOWN;
 }
 
-int xptr;
-
 int main()
 {
    int argc;

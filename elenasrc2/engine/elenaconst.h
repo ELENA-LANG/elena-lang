@@ -497,7 +497,7 @@ namespace _ELENA_
 
    // predefined system forwards
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
-//   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
+   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
    #define INT_FORWARD              "'$int"
 //   #define LONG_FORWARD             "'$long"
 //   #define REAL_FORWARD             "'$real"
