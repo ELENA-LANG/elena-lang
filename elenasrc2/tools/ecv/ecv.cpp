@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   4
+#define REVISION_VERSION   5
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -582,6 +582,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcCopyM:
       case bcSetVerb:
+      case bcSetSubj:
          command.append(opcode);
          command.append(' ');
          printMessage(command, module, argument);

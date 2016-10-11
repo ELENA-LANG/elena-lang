@@ -90,6 +90,13 @@ public:
    virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
    virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);
+   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference);
+
+      return isEmbeddable(info);
+   }
    virtual bool isRole(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);

@@ -59,6 +59,8 @@ In development:
                  * test with generic if / if-else operator
                  * test constant list
                  * test unboxing primitive array
+                 * test dispatching method
+                 * test dispatching method with generic methods
 
                  * support abstract attribute
                  * check sealed / limited class attributes

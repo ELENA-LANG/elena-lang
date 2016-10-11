@@ -201,13 +201,13 @@ void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, i
    }      
 }
 
-//void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStructSelf, (ref_t)localName, level);
-//      tape.write(bdLocalInfo, (ref_t)className);
-//   }
-//}
+void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStructSelf, writeString(localName), level);
+      tape.write(bdLocalInfo, writeString(className));
+   }
+}
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
@@ -3477,12 +3477,16 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //      case XOR_MESSAGE_ID:
          assignMode = true;
          break;
-      case LESS_MESSAGE_ID:
-         invertMode = true;
+      //case LESS_MESSAGE_ID:
+      //   invertMode = true;
+      case EQUAL_MESSAGE_ID:
+         selectMode = true;
+         break;
       case NOTEQUAL_MESSAGE_ID:
          invertSelectMode = true;
          break;
-      case EQUAL_MESSAGE_ID:
+      case LESS_MESSAGE_ID:
+         invertMode = true;
          selectMode = true;
          break;
       case GREATER_MESSAGE_ID:
@@ -4699,9 +4703,10 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxReleasing:
             releaseObject(tape, current.argument);
             break;
-//         case lxBinarySelf:
-//            declareSelfStructInfo(tape, THIS_VAR, current.argument, SyntaxTree::findChild(current, lxClassName).identifier());
-//            break;
+         case lxBinarySelf:
+            declareSelfStructInfo(tape, THIS_VAR, current.argument, 
+               current.findChild(lxClassName).identifier());
+            break;
          case lxBreakpoint:
             translateBreakpoint(tape, current);
             break;

@@ -23,4 +23,5 @@ exceptions.l
 console.l
 win32_pointers.l
 win32_app.l
+text\win32_common.l
 io\win32_console.l

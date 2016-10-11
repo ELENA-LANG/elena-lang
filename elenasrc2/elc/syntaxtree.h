@@ -167,6 +167,7 @@ enum LexicalType
    lxWarningMask     = 0x2001E,
    lxTypecastAttr    = 0x2001F,
    lxNotFoundAttr    = 0x20020,
+   lxBinarySelf      = 0x20021, // debug info only
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,
@@ -220,7 +221,6 @@ enum LexicalType
 //   lxReal64Variable  = 0x0042A,
 //   lxParamsVariable  = 0x0042F,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
-//   lxBinarySelf      = 0x00435, // debug info only
 //
 //   //lxSubject         = 0x40804, // arg - subject
 //   lxStacksafe       = 0x00445,

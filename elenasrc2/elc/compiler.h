@@ -656,12 +656,12 @@ private:
 
          return scope ? scope->info.header.flags : 0;
       }
-//      ref_t getClassRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -1136,7 +1136,7 @@ private:
    void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared = false);
    void compileNestedVMT(SNode node, SNode parent, InlineClassScope& scope);
 
-   void compileVMT(SNode member, ClassScope& scope);
+   void compileVMT(SNode node, ClassScope& scope);
    void compileTemplateMethods(SNode node, ClassScope& scope);
 
 //   void declareVirtualMethods(ClassScope& scope);
@@ -1148,7 +1148,7 @@ private:
 
    void generateClassFlags(ClassScope& scope, SyntaxTree::Node root);
    void generateClassFields(ClassScope& scope, SyntaxTree::Node root, bool singleField);
-   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message);
+   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t& message);
    void generateMethodDeclarations(ClassScope& scope, SNode node, bool hideDuplicates, bool closed);
    void generateClassDeclaration(SNode node, ClassScope& scope, bool closed);
 

@@ -1872,12 +1872,11 @@ void Compiler :: declareParameterDebugInfo(SNode node, MethodScope& scope, bool 
 
    // declare built-in variables
    if (withThis) {
-      /*if (scope.stackSafe && isEmbeddable(scope.getClassFlags())) {
-      writer.newNode(lxBinarySelf, 1);
-      writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(scope.getClassRef()));
-      writer.closeNode();
+      if (scope.stackSafe && scope.classEmbeddable) {
+         SNode debugNode = node.insertNode(lxBinarySelf, 1);
+         debugNode.appendNode(lxClassName, scope.moduleScope->module->resolveReference(scope.getClassRef()));
       }
-      else*/ node.insertNode(lxSelfVariable, 1);
+      else node.insertNode(lxSelfVariable, 1);
    }
 
    if (withSelf)
@@ -1900,47 +1899,47 @@ void Compiler :: declareParameterDebugInfo(SNode node, MethodScope& scope, bool 
 //         writer.appendNode(lxLevel, -1 - (*it).offset);
 //         writer.closeNode();
 //      }
-//      else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->intReference)) {
-//         writer.newNode(lxIntVariable);
+         /*else */if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->intReference)) {
+            current = lxIntVariable;
+//         writer.newNode(current = lxVariable;);
 //         writer.appendNode(lxTerminal, it.key());
-//         writer.appendNode(lxLevel, -1 - (*it).offset);
 //         writer.appendNode(lxFrameAttr);
 //         writer.closeNode();
-//      }
-//      else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->longReference)) {
+      }
+//         else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->longReference)) {
 //         writer.newNode(lxLongVariable);
 //         writer.appendNode(lxTerminal, it.key());
 //         writer.appendNode(lxLevel, -1 - (*it).offset);
 //         writer.appendNode(lxFrameAttr);
 //         writer.closeNode();
-//      }
-//      else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->realReference)) {
+//         }
+//         else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->realReference)) {
 //         writer.newNode(lxReal64Variable);
 //         writer.appendNode(lxTerminal, it.key());
 //         writer.appendNode(lxLevel, -1 - (*it).offset);
 //         writer.appendNode(lxFrameAttr);
 //         writer.closeNode();
-//      }
-//      else if (scope.stackSafe && (*it).subj_ref != 0) {
-//         ref_t classRef = scope.moduleScope->subjectHints.get((*it).subj_ref);
-//         if (classRef != 0 && isEmbeddable(scope.moduleScope->getClassFlags(classRef))) {
-//            writer.newNode(lxBinaryVariable);
-//            writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
 //         }
+         else if (scope.stackSafe && param.subj_ref != 0) {
+            ref_t classRef = scope.moduleScope->attributeHints.get(param.subj_ref);
+            if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+               current = lxBinaryVariable;
+               current.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+            }
 //         else writer.newNode(lxVariable, -1);
 //         
 //         writer.appendNode(lxTerminal, it.key());
 //         writer.appendNode(lxLevel, -1 - (*it).offset);
 //         writer.appendNode(lxFrameAttr);
 //         writer.closeNode();
-//      }
-      //else {
+         }
+//         else {
       //   writer.newNode(lxVariable, -1);
       //   writer.appendNode(lxTerminal, it.key());
-         current.appendNode(lxLevel, -1 - param.offset);
       //   writer.appendNode(lxFrameAttr);
       //   writer.closeNode();
-      //}
+//         }
+         current.appendNode(lxLevel, -1 - param.offset);
       }
 
       current = current.nextNode();
@@ -2856,9 +2855,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //         scope.writer->newNode(lxArgBoxing);
 //         scope.writer->appendNode(lxBlockLocalAddr, object.param);
 //         break;
-//      case okObject:
-//         scope.writer->newNode(lxResult);
-//         break;
+      case okObject:
+         terminal.set(lxResult, 0);
+         break;
       case okConstantRole:
          terminal.set(lxConstantSymbol, object.param);
          break;
@@ -2945,6 +2944,9 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
 //
 //      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
 //   }
+   else if (terminal == lxResult) {
+      object = ObjectInfo(okObject);
+   }
    else if (!emptystr(token))
       object = scope.mapObject(terminal);
 
@@ -3987,12 +3989,10 @@ void Compiler :: compileNestedVMT(SNode node, SNode parent, InlineClassScope& sc
    SyntaxTree::copyNode(writer, node);
    writer.closeNode();
 
-   SNode member = syntaxTree.readRoot().firstChild();
-
-   declareVMT(member, scope);
+   declareVMT(syntaxTree.readRoot().firstChild(), scope);
    generateClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
 
-   compileVMT(member, scope);
+   compileVMT(syntaxTree.readRoot(), scope);
    generateClassImplementation(syntaxTree.readRoot(), scope);
 
 //   if (scope.templateMode) {
@@ -4780,6 +4780,10 @@ ObjectInfo Compiler :: compileInternalCall(SNode node, CodeScope& scope, ref_t m
 
    node.set(lxInternalCall, moduleScope->module->mapReference(virtualReference));
 
+   SNode targetNode = node.firstChild(lxTerminalMask);
+   // HOTFIX : comment out dll reference
+   targetNode = lxIdle;
+
    return ObjectInfo(okObject);
 }
 
@@ -4979,20 +4983,22 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
    }
 
-   if (scope.generic) {
-      if (!emptystr(signature))
-         scope.raiseError(errInvalidHint, verb);
+   // do not set message on the second pass
+   if (scope.message == 0) {
+      if (scope.generic) {
+         if (!emptystr(signature))
+            scope.raiseError(errInvalidHint, verb);
 
-      signature.copy(GENERIC_PREFIX);
-   }
+         signature.copy(GENERIC_PREFIX);
+      }
 
-   // if signature is presented
-   if (!emptystr(signature)) {
-      sign_id = scope.moduleScope->module->mapSubject(signature, false);
-   }
+      // if signature is presented
+      if (!emptystr(signature)) {
+         sign_id = scope.moduleScope->module->mapSubject(signature, false);
+      }
 
-   if (scope.message == 0)
       scope.message = encodeMessage(sign_id, verb_id, paramCount);
+   }
 }
 
 void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods)
@@ -5008,7 +5014,7 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
    }
    else {
       // if it is generic handler with redirect statement / redirect statement
-      if (node != lxNone) {
+      if (node.firstChild(lxObjectMask) != lxNone) {
          if (withGenericMethods) {
             node.insertNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
          }
@@ -5016,14 +5022,12 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
       }
       // if it is generic handler only
       else if (withGenericMethods) {
-         SNode exprNode = node.appendNode(lxResending);
+         SNode exprNode = node.appendNode(lxDispatching).appendNode(lxResending);
 
          exprNode.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
          exprNode.appendNode(lxTarget, scope.moduleScope->superReference).appendNode(lxMessage, encodeVerb(DISPATCH_MESSAGE_ID));
       }
    }
-
-//   writer.closeNode();
 }
 
 void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
@@ -5156,6 +5160,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
          node = lxNewFrame;
          scope.level++;
       }
+
+      expr.insertNode(lxResult);
 
       if (withFrame) {
          compileExtensionMessage(expr, scope, ObjectInfo(okConstantClass, 0, classRef));
@@ -5458,14 +5464,16 @@ void Compiler :: compileTemplateMethods(SNode node, ClassScope& scope)
             templateScope.subjects.add(templateScope.parameters.Count(), scope.moduleScope->module->mapSubject(customVerb, false));
          }
 
-         compileVMT(current.firstChild(), templateScope);
+         compileVMT(current, templateScope);
       }
       current = current.nextNode();
    }
 }
 
-void Compiler :: compileVMT(SNode current, ClassScope& scope)
+void Compiler :: compileVMT(SNode node, ClassScope& scope)
 {
+   SNode current = node.firstChild();
+
    while (current != nsNone) {
       switch(current) {
          case lxClassMethod:
@@ -5493,8 +5501,7 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
 //               //HOTFIX : update target message for the method templates
 //               if (bm != scope.imported.Length())
 //                  updateMethodTemplateInfo(methodScope, bm);
-//
-//               int hint = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+
                initialize(scope, methodScope);
 
                declareParameterDebugInfo(current, methodScope, true, /*test(codeScope.getClassFlags(), elRole)*/false);
@@ -5544,7 +5551,7 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
             if (sourceNode != lxNone)
                templateScope.sourceRef = _writer.writeString(sourceNode.identifier());
 
-            compileVMT(current.firstChild(), templateScope);
+            compileVMT(current, templateScope);
          }
       }
 
@@ -5556,7 +5563,9 @@ void Compiler :: compileVMT(SNode current, ClassScope& scope)
       MethodScope methodScope(&scope);
       methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
 
-      compileDispatcher(SNode(), methodScope, true);
+      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+
+      compileDispatcher(methodNode, methodScope, true);
    }
 }
 
@@ -5831,7 +5840,7 @@ ref_t Compiler :: generateTemplate(SNode attribute, TemplateScope& scope)
    scope.save();
 
    // implement the template class
-   compileVMT(syntaxTree.readRoot().firstChild(), scope);
+   compileVMT(syntaxTree.readRoot(), scope);
    generateClassImplementation(syntaxTree.readRoot(), scope);
 
    return scope.reference;
@@ -6187,7 +6196,7 @@ void Compiler :: generateClassFields(ClassScope& scope, SNode root, bool singleF
    }
 }
 
-void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message)
+void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t& message)
 {
    ref_t outputType = scope.info.methodHints.get(Attribute(message, maType));
    bool hintChanged = false;
@@ -6199,6 +6208,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       if (current == lxClassMethodAttr) {
 //         if ((current.argument & tpMask) == 0 || methodType == 0)
          hint |= current.argument;
+
+         //HOTFIX : overwrite the message for the generic one
+         if (hint == tpGeneric) {
+            message = overwriteSubject(message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
+         }
 //
 //         if (current.argument == tpAction)
 //            scope.moduleScope->saveAction(message, scope.reference);
@@ -6252,13 +6266,16 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
       /*else */if (current == lxClassMethod) {
          ref_t message = current.argument;
 
+         generateMethodAttributes(scope, current, message);
+
          int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
 //         bool privat = (methodHints & tpMask) == tpPrivate;
-//
-         if (_logic->isMethodGeneric(scope.info, message)) {
-            message = overwriteSubject(message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
 
+         if (_logic->isMethodGeneric(scope.info, message)) {
             scope.info.header.flags |= elWithGenerics;
+
+            // HOTFIX : override the generic method attribute
+            current.setArgument(message);
          }            
 
          // check if there is no duplicate method
@@ -6269,8 +6286,6 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
             else scope.raiseError(errDuplicatedMethod, current);
          }
          else {
-            generateMethodAttributes(scope, current, message);
-
             bool included = scope.include(message);
             bool sealedMethod = (methodHints & tpMask) == tpSealed;
             // if the class is closed, no new methods can be declared
@@ -6576,11 +6591,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    compileClassAttributes(node, scope, node);
    compileFieldDeclarations(node, scope);
 
-   declareVMT(node.firstChild(), scope/*, false*/);
-
-//   // declare imported methods
-//   if (!importTemplateDeclarations(scope, writer))
-//      scope.raiseError(errInvalidHint, node.FirstTerminal());
+   declareVMT(node.firstChild(), scope);
 
    generateClassDeclaration(node, scope, test(flagCopy, elClosed));
 
@@ -6871,14 +6882,8 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
 //      if (scope.extensionMode == 0)
 //         scope.extensionMode = -1;
 //   }
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   // HOTFIX : reread all attributes
-//   compileClassHints(hints, writer, scope);
-//   compileFieldDeclarations(node, writer, scope);
 
-   compileVMT(node.firstChild(), scope);
+   compileVMT(node, scope);
 
 //   // import templates
 //   importTemplateImplementations(scope, writer);
@@ -6955,9 +6960,8 @@ void Compiler :: compileSingletonClass(SNode node, ClassScope& scope)
    //// import templates
    //importTemplateImplementations(scope, writer);
 
-   SNode members = syntaxTree.readRoot().firstChild();
-   declareVMT(members, scope);
-   compileVMT(members, scope);
+   declareVMT(syntaxTree.readRoot().firstChild(), scope);
+   compileVMT(syntaxTree.readRoot(), scope);
 
    generateClassImplementation(syntaxTree.readRoot(), scope);
 }

@@ -74,10 +74,10 @@
         theHandle := aHandle.
     ]
 
-//    #method write &literal:aLiteral
-//    [
-//        $self write &wide:(aLiteral wide).
-//    ]
+    #method write &literal:aLiteral
+    [
+        $self write &wide:(aLiteral wide).
+    ]
 
     #method write &wide : s
     [
