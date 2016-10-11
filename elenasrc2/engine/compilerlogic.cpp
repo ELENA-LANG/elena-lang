@@ -227,9 +227,9 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
 
          return true;
       }
+      else return false;
    }
-
-   return false;
+   else return true;
 }
 
 int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
@@ -552,6 +552,10 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
       info.header.flags |= elSealed;
    }
 
+   if (test(info.header.flags, elExtension)) {
+      info.header.flags |= elSealed;
+   }
+
    // verify if the class may be a wrapper
    if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
       test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
@@ -612,6 +616,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_CONST:
          attrValue = elReadOnlyRole;
          return true;
+      case V_EXTENSION:
+         attrValue = elExtension;
+         return true;
       default:
          return false;
    }
@@ -635,6 +642,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_GENERIC:
          attrValue = tpGeneric;
+         return true;
+      case V_SEALED:
+         attrValue = tpSealed;
          return true;
       default:
          return false;

@@ -68,10 +68,10 @@ enum ProjectSetting
    opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
 
-//   // compiler manfifest
-//   opManifestName          = 0x0070,
-//   opManifestVersion       = 0x0071,
-//   opManifestAuthor        = 0x0072
+   // compiler manfifest
+   opManifestName          = 0x0070,
+   opManifestVersion       = 0x0071,
+   opManifestAuthor        = 0x0072
 };
 
 // --- Project ---
@@ -183,6 +183,21 @@ public:
    virtual int getTabSize() { return 4; }
 
    virtual int getWarningMask() const { return _warningMasks; }
+
+   virtual ident_t getManinfestName()
+   {
+      return StrSetting(opManifestName);
+   }
+
+   virtual ident_t getManinfestVersion()
+   {
+      return StrSetting(opManifestVersion);
+   }
+
+   virtual ident_t getManinfestAuthor()
+   {
+      return StrSetting(opManifestAuthor);
+   }
 
    bool indicateWarning()
    {

@@ -19,6 +19,7 @@ templates.l
 control.l
 memory.l
 dynamic.l
+extensions.l
 exceptions.l
 console.l
 win32_pointers.l

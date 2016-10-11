@@ -69,6 +69,10 @@ public:
    virtual bool WarnOnUnresolved() const = 0;
    virtual bool WarnOnWeakUnresolved() const = 0;
 
+   virtual ident_t getManinfestName() = 0;
+   virtual ident_t getManinfestVersion() = 0;
+   virtual ident_t getManinfestAuthor() = 0;
+
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
    //   virtual void raiseError(const char* msg) = 0;

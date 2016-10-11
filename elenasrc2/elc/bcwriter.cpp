@@ -4617,7 +4617,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBranching:
          case lxTrying:
          case lxIntOp:
-            translateBreakpoint(tape, current.findChild(lxBreakpoint));
+            translateBreakpoint(tape, current.findSubNode(lxBreakpoint));
 
             declareBlock(tape);
             generateObjectExpression(tape, current);
@@ -4961,33 +4961,33 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStat
    else endSymbol(tape);
 }
 
-//void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
-//{
-//   SNode target = SyntaxTree::findChild(node, lxTarget);
-//   MemoryWriter writer(module->mapSection(reference | mskRDataRef, false));
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      SNode object = findSubNodeMask(current, lxObjectMask);
-//      switch (object.type) {
-//         case lxConstantChar:
-//         case lxConstantClass:
-//         case lxConstantInt:
-//         case lxConstantLong:
-//         case lxConstantList:
-//         case lxConstantReal:
-//         case lxConstantString:
-//         case lxConstantWideStr:
-//         case lxConstantSymbol:
-//            writer.writeRef(object.argument | defineConstantMask(object.type), 0);
-//            break;
-//         case lxNil:
-//            writer.writeDWord(0);
-//            break;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   // add vmt reference
-//   if (target != lxNone)
-//      writer.Memory()->addReference(target.argument | mskVMTRef, -4);
-//}
+void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
+{
+   SNode target = node.findChild(lxTarget);
+   MemoryWriter writer(module->mapSection(reference | mskRDataRef, false));
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode object = current.findSubNodeMask(lxObjectMask);
+      switch (object.type) {
+         //case lxConstantChar:
+         case lxConstantClass:
+         case lxConstantInt:
+         //case lxConstantLong:
+         case lxConstantList:
+         //case lxConstantReal:
+         case lxConstantString:
+         case lxConstantWideStr:
+         case lxConstantSymbol:
+            writer.writeRef(object.argument | defineConstantMask(object.type), 0);
+            break;
+         case lxNil:
+            writer.writeDWord(0);
+            break;
+      }
+      current = current.nextNode();
+   }
+
+   // add vmt reference
+   if (target != lxNone)
+      writer.Memory()->addReference(target.argument | mskVMTRef, -4);
+}

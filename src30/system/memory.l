@@ -1600,7 +1600,7 @@
             page := l.
             (page > 127)?
             [
-                page := 127.
+               page := 127.
             ].
             
             $self convert &wide:(aLiteral Substring &int:i &int:page) &bytearray:buffer &vint:m.

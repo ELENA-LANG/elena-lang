@@ -196,8 +196,8 @@ public:
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
-//   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-//
+   typedef Map<ref_t, SubjectMap*>        ExtensionMap;
+
 //   struct TemplateInfo
 //   {
 //      ref_t   templateRef;
@@ -297,9 +297,9 @@ private:
       // symbol hints
       Map<ref_t, ref_t> constantHints;
 
-//      // extensions
-//      SubjectMap        extensionHints; 
-//      ExtensionMap      extensions;
+      // extensions
+      SubjectMap        extensionHints; 
+      ExtensionMap      extensions;
 
       // type hints
       MessageMap        attributes;
@@ -391,12 +391,12 @@ private:
 //      }
 
       void loadAttributes(_Module* module);
-//      void loadExtensions(TerminalInfo terminal, _Module* module);
+      void loadExtensions(_Module* module);
       void loadActions(_Module* module);
 
       void saveAttribute(ref_t attrRef, ref_t classReference, bool internalType);
 //      void saveTemplate(ref_t template_ref);
-//      bool saveExtension(ref_t message, ref_t type, ref_t role);
+      bool saveExtension(ref_t message, ref_t type, ref_t role);
 //      void saveAction(ref_t message, ref_t reference);
 
       void validateReference(SNode terminal, ref_t reference);
@@ -416,7 +416,7 @@ private:
       void loadModuleInfo(_Module* extModule)
       {
          loadAttributes(extModule);
-         //loadExtensions(TerminalInfo(), extModule);
+         loadExtensions(extModule);
          loadActions(extModule);
       }
 
@@ -552,7 +552,7 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
-//      ref_t       extensionMode;
+      ref_t       extensionMode;
 
       virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -991,7 +991,7 @@ private:
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 
 //   ref_t mapNestedExpression(CodeScope& scope);
-//   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
+   ref_t mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo target);
 
    void importCode(SNode node, ModuleScope& scope, ident_t reference, ref_t message);
 
@@ -1205,7 +1205,7 @@ private:
 
    void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 
-//   void createPackageInfo(_Module* module, Project& project);
+   void createPackageInfo(_Module* module, _ProjectManager& project);
 
 public:
    void loadRules(StreamReader* optimization);

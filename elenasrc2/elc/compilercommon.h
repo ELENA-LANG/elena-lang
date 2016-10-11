@@ -43,6 +43,7 @@
 #define V_STRING      (size_t)-8200
 #define V_CONST       (size_t)-8201
 #define V_GENERIC     (size_t)-8202
+#define V_EXTENSION   (size_t)-8203
 
 namespace _ELENA_
 {
@@ -58,10 +59,10 @@ enum MethodHint
    tpClosed      = 0x02,
    tpNormal      = 0x03,
 //      tpDispatcher = 0x04,
-//      tpPrivate    = 0x05,
+   tpPrivate     = 0x05,
    tpStackSafe   = 0x10,
-   tpEmbeddable = 0x20,
-   tpGeneric    = 0x40,
+   tpEmbeddable  = 0x20,
+   tpGeneric     = 0x40,
    tpAction      = 0x80,
    tpIfBranch    = 0x100,
    tpIfNotBranch = 0x200,

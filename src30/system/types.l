@@ -1,12 +1,9 @@
 /// Attributes
 #template(-8194) static {}
-//#ftemplate(-33)  const {}
 //#ftemplate(-34)  preloaded {}
 #template(-8202) generic {}
 #template(-8192) stacksafe {}
-//#mtemplate(20h) embeddable {}
 //#mtemplate(80h) action {}
-//#mtemplate(01h) sealed {}
 #template(-4099) w1 {}
 #template(-4100) w2 {}
 #template(-4101) w3 {}
@@ -18,10 +15,10 @@
 #template(-8197) struct  {}
 //#template(1000h) nonstructural {}
 #template(-8198) enumlist {}
-//#template(0120h,4980h)         extension {}
-//#template(0120h,4980h,subject) extension : subject {}
 #template(-8200) string {}
 #template(-8193) embeddable {}
+#template(-8203) extension {}
+#template(-8203,subject) extension : subject {}
 
 ///// Provides classes that describe the basic functionality
 

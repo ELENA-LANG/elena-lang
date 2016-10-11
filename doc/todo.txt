@@ -3,6 +3,9 @@ In development:
 ------                              
 
               xrev
+                 * generic extension
+                 * typified extension
+
                  * implement repeat until loop
                  * support closures with a generic parameter
                  * support closures with several generic parameters
@@ -81,6 +84,7 @@ In development:
                  * uncomment $FileWriter
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * optimize : LiteralValue#class.eval&system$new...
+                 * warn on duplicate extensions
 
               xdev
                 * linux migration

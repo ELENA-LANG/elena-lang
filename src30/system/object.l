@@ -30,7 +30,7 @@
 
 /// A common boolean value
 
-#class(enumlist/*,dispatchable:bool*/) BaseBoolValue
+#class(enumlist,dispatchable:bool) BaseBoolValue
 {
     #method if : aTrueAction = $nil.
 

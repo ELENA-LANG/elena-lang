@@ -302,7 +302,7 @@ namespace _ELENA_
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
-//   const int elExtension           = 0x00004980;
+   const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elSymbol              = 0x00100000;
@@ -458,10 +458,10 @@ namespace _ELENA_
 
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
-//   #define EXTENSION_SECTION        "#extensions"
+   #define EXTENSION_SECTION        "#extensions"
    #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
-//   #define PACKAGE_SECTION          "#package"
+   #define PACKAGE_SECTION          "#package"
 
   // --- ELENA class prefixes / postfixes ---
    #define INLINE_POSTFIX           "#inline"

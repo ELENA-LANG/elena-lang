@@ -260,12 +260,12 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
    //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
 //      case _ELENA_::opTemplate:
 //         return config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
-//      case _ELENA_::opManifestName:
-//         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_NAME);
-//      case _ELENA_::opManifestVersion:
-//         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_VERSION);
-//      case _ELENA_::opManifestAuthor:
-//         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_AUTHOR);
+      case _ELENA_::opManifestName:
+         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_NAME);
+      case _ELENA_::opManifestVersion:
+         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_VERSION);
+      case _ELENA_::opManifestAuthor:
+         return config.getSetting(MANIFEST_CATEGORY, ELC_MANIFEST_AUTHOR);
       default:
          return NULL;
    }
