@@ -64,6 +64,8 @@ class CompilerLogic : public _CompilerLogic
 
    OperatorList operators;
 
+   bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
+
 public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
 

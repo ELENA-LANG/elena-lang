@@ -202,9 +202,9 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
             _writer.removeBookmark();
             break;
          case nsElseOperation:
-            _writer.closeNode();
             _writer.newNode(lxExpression);
             unpackChildren(current);
+            _writer.closeNode();
             break;
          case nsSubCode:
             _writer.newNode(lxExpression);

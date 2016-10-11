@@ -7182,7 +7182,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
    // compile symbol into byte codes
 
-   CodeScope codeScope(&scope/*, &writer*/);
+   CodeScope codeScope(&scope);
    if (retVal.kind == okUnknown) {
       scope.constant = node.existChild(lxConstAttr);
       scope.typeRef = node.findChild(lxType).argument;
@@ -7194,6 +7194,11 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
       if (scope.typeRef != 0) {
          typecastObject(expression, codeScope, scope.typeRef, retVal);
       }
+   }
+   else {
+      SNode terminal = node.firstChild(lxTerminalMask);
+
+      setTerminal(terminal, codeScope, retVal, 0);
    }
 
    optimizeSymbolTree(node, scope, scope.moduleScope->warningMask);
@@ -7214,8 +7219,8 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
    _writer.generateSymbol(scope.tape, node, isStatic);
 
-//   // optimize
-//   optimizeTape(scope.tape);
+   // optimize
+   optimizeTape(scope.tape);
 
    // create byte code sections
    _writer.save(scope.tape, scope.moduleScope->module, scope.moduleScope->debugModule, 

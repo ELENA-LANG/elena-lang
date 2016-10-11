@@ -161,52 +161,75 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
+bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+{
+   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
+      return true;
+
+   ClassInfo info;
+   scope.loadClassInfo(info, reference, true);
+
+   if ((info.header.flags & elDebugMask) == elEnumList) {
+      _Module* extModule = NULL;
+      _Memory* listSection = NULL;
+
+      while (true) {
+         extModule = scope.loadReferenceModule(reference);
+         listSection = extModule ? extModule->mapSection(reference | mskConstArray, true) : NULL;
+
+         if (listSection == NULL && info.header.parentRef != 0) {
+            reference = info.header.parentRef;
+
+            scope.loadClassInfo(info, reference, true);
+         }
+         else break;
+      }
+
+      if (listSection) {
+         MemoryReader reader(listSection);
+
+         ref_t trueRef = 0, falseRef = 0;
+         while (!reader.Eof()) {
+            ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
+
+            ClassInfo memberInfo;
+            scope.loadClassInfo(memberInfo, memberRef);
+            int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
+            if (attribute == (tpIfBranch | tpSealed)) {
+               trueRef = memberRef;
+            }
+            else if (attribute == (tpIfNotBranch | tpSealed)) {
+               falseRef = memberRef;
+            }
+         }
+
+         if (trueRef && falseRef) {
+            scope.branchingInfo.reference = reference;
+            scope.branchingInfo.trueRef = trueRef;
+            scope.branchingInfo.falseRef = falseRef;
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
 bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
 {
    if (!loperand)
       return false;
 
    if (loperand != scope.branchingInfo.reference) {
-      ClassInfo info;
-      scope.loadClassInfo(info, loperand, true);
+      if (loadBranchingInfo(scope, compiler, loperand)) {
+         reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
 
-      if ((info.header.flags & elDebugMask) == elEnumList) {
-         ref_t listRef = loperand;
-         _Module* extModule = scope.loadReferenceModule(listRef);
-         _Memory* listSection = extModule ? extModule->mapSection(listRef | mskConstArray, true) : NULL;         
-         if (listSection) {
-            MemoryReader reader(listSection);
-            
-            ref_t trueRef = 0, falseRef = 0;
-            while (!reader.Eof()) {
-               ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
-
-               ClassInfo memberInfo;
-               scope.loadClassInfo(memberInfo, memberRef);
-               int attribute = checkMethod(memberInfo, encodeMessage(0, IF_MESSAGE_ID, 1));
-               if (attribute == (tpIfBranch | tpSealed)) {
-                  trueRef = memberRef;
-               }
-               else if (attribute == (tpIfNotBranch | tpSealed)) {
-                  falseRef = memberRef;
-               }
-            }
-
-            if (trueRef && falseRef) {
-               scope.branchingInfo.reference = loperand;
-               scope.branchingInfo.trueRef = trueRef;
-               scope.branchingInfo.falseRef = falseRef;
-            }
-         }         
+         return true;
       }
    }
 
-   if (loperand == scope.branchingInfo.reference) {
-      reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-
-      return true;
-   }
-   else return false;
+   return false;
 }
 
 int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
