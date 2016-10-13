@@ -78,7 +78,7 @@ inline bool isConstant(ObjectInfo object)
       case Compiler::okWideLiteralConstant:
       //case Compiler::okCharConstant:
       case Compiler::okIntConstant:
-      //case Compiler::okLongConstant:
+      case Compiler::okLongConstant:
       //case Compiler::okRealConstant:
       //case Compiler::okMessageConstant:
       //case Compiler::okExtMessageConstant:
@@ -336,26 +336,6 @@ inline bool isImportRedirect(SNode node)
 //{
 //   return operator_id == SET_REFER_MESSAGE_ID;
 //}
-//
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   if (operator_id == NOTEQUAL_MESSAGE_ID) {
-//      operator_id = EQUAL_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTLESS_MESSAGE_ID) {
-//      operator_id = LESS_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else if (operator_id == NOTGREATER_MESSAGE_ID) {
-//      operator_id = GREATER_MESSAGE_ID;
-//
-//      return true;
-//   }
-//   else return false;
-//}
 
 //inline bool isTemplateRef(ref_t reference)
 //{
@@ -478,7 +458,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    // cache the frequently used references
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
-//   longReference = mapReference(project->resolveForward(LONG_FORWARD));
+   longReference = mapReference(project->resolveForward(LONG_FORWARD));
 //   realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(STR_FORWARD));
    wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
@@ -1818,8 +1798,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return object.extraparam;
       case okIntConstant:
          return V_INT32;
-//      case okLongConstant:
-//         return scope.moduleScope->longReference;
+      case okLongConstant:
+         return V_INT64;
 //      case okRealConstant:
 //         return scope.moduleScope->realReference;
       case okLiteralConstant:
@@ -2760,9 +2740,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
          terminal.set(lxConstantInt, object.param);
          terminal.appendNode(lxIntValue, object.extraparam);
          break;
-//      case okLongConstant:
-//         scope.writer->newNode(lxConstantLong, object.param);
-//         break;
+      case okLongConstant:
+         terminal.set(lxConstantLong, object.param);
+         break;
 //      case okRealConstant:
 //         scope.writer->newNode(lxConstantReal, object.param);
 //         break;
@@ -2903,16 +2883,16 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
    }
-//   else if (terminal == tsLong) {
-//      String<ident_c, 30> s("_"); // special mark to tell apart from integer constant
-//      s.append(terminal.value, getlength(terminal.value) - 1);
-//
-//      long long integer = StringHelper::strToLongLong(s + 1, 10);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+   else if (terminal == lxLong) {
+      String<char, 30> s("_"); // special mark to tell apart from integer constant
+      s.append(token, getlength(token) - 1);
+
+      long long integer = token.toULongLong(10, 1);
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s));
+   }
    else if (terminal == lxHexInteger) {
       String<char, 20> s;
 
@@ -7046,11 +7026,11 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       scope.moduleScope->defineConstantSymbol(scope.reference, V_INT32);
    }
-   /*else if (retVal.kind == okLongConstant) {
+   else if (retVal.kind == okLongConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      long value = StringHelper::strToLongLong(module->resolveConstant(retVal.param) + 1, 10);
+      long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
 
       dataWriter.write(&value, 8);
 
@@ -7058,7 +7038,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
    }
-   else if (retVal.kind == okRealConstant) {
+   /*else if (retVal.kind == okRealConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
@@ -7105,7 +7085,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
       dataWriter.Memory()->addReference(scope.moduleScope->charReference | mskVMTRef, (ref_t)-4);
 
       scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->charReference);
-   }
+   }*/
    else if (retVal.kind == okObject) {
       SNode root = node.findSubNodeMask(lxObjectMask);
 
@@ -7122,7 +7102,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
          return true;
       }
       else return false;
-   }*/
+   }
    else return false;
 
    return true;
@@ -8350,6 +8330,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
          optimizeBoxing(scope, current, warningScope, mode);
          break;
       case lxIntOp:
+      case lxLongOp:
       case lxIntArrOp:
       case lxNewOp:
          optimizeOp(scope, current, warningScope, mode);

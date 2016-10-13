@@ -315,7 +315,7 @@ namespace _ELENA_
    const int elDebugLiteral        = 0x00030000;
    const int elDebugIntegers       = 0x00040000;
 //   const int elDebugArray          = 0x00050000;
-//   const int elDebugQWORD          = 0x00060000;
+   const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
    const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
@@ -499,7 +499,7 @@ namespace _ELENA_
    #define SUPER_FORWARD            "'$super"                        // the common class predecessor
    #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
    #define INT_FORWARD              "'$int"
-//   #define LONG_FORWARD             "'$long"
+   #define LONG_FORWARD             "'$long"
 //   #define REAL_FORWARD             "'$real"
    #define STR_FORWARD              "'$literal"
    #define WIDESTR_FORWARD          "'$wideliteral"

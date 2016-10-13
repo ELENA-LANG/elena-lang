@@ -297,22 +297,22 @@
 #symbol IntegerTest =
 [
     console write:"(2 + 3 * 4) is " writeLine:(2 + 3 * 4).
-//    console write:"(2 == 3) is " writeLine:(2 == 3).
-//    console write:"(2 == 2) is " writeLine:(2 == 2).
-//    console write:"(2 < 3) is " writeLine:(2 < 3).
-//    console write:"(2 > 3) is " writeLine:(2 > 3).
-//    console write:"(2 <= 3) is " writeLine:(2 <= 3).
-//    console write:"(2 >= 2) is " writeLine:(2 >= 2).
-//    console write:"(2 >= 3) is " writeLine:(2 >= 3).
-//
-//    #var(vint) n := 1.
-//    n += 2.
-//    n -= 2.
-//    n *= 2.
-//    n /= 2.
-//    
-//    (n == 1) ?
-//        [ console writeLine:"Integer operators are working". ].
+    console write:"(2 == 3) is " writeLine:(2 == 3).
+    console write:"(2 == 2) is " writeLine:(2 == 2).
+    console write:"(2 < 3) is " writeLine:(2 < 3).
+    console write:"(2 > 3) is " writeLine:(2 > 3).
+    console write:"(2 <= 3) is " writeLine:(2 <= 3).
+    console write:"(2 >= 2) is " writeLine:(2 >= 2).
+    console write:"(2 >= 3) is " writeLine:(2 >= 3).
+
+    #var(vint) n := 1.
+    n += 2.
+    n -= 2.
+    n *= 2.
+    n /= 2.
+    
+    (n == 1) ?
+        [ console writeLine:"Integer operators are working". ].
 ].
 
 //// --- LongArithmeticTest ---

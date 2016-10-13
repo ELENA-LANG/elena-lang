@@ -109,7 +109,7 @@ public:
       okWideLiteralConstant,          // param - reference 
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
-//      okLongConstant,                 // param - reference 
+      okLongConstant,                 // param - reference 
 //      okRealConstant,                 // param - reference 
 //      okMessageConstant,              // param - reference 
 //      okExtMessageConstant,           // param - reference 

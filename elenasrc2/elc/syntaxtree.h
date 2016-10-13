@@ -76,6 +76,7 @@ enum LexicalType
    lxConstantString  = 0x0810C, // arg - reference
    lxConstantWideStr = 0x0810D, // arg - reference
    lxConstantInt     = 0x1810F, // arg - reference
+   lxConstantLong    = 0x18110, // arg - reference
    lxConstantClass   = 0x08112, // arg - reference
    lxVerbConstant    = 0x08116, // arg - reference
    lxNil             = 0x08117,
@@ -119,6 +120,7 @@ enum LexicalType
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
    lxIntOp           = 0x8C038,   // arg - operation id
+   lxLongOp          = 0x8C039, // arg - operation id
    lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,
@@ -177,6 +179,7 @@ enum LexicalType
    lxMessageAttr     = 0x20106,
    lxVerbAttr        = 0x20107,
    lxPtrAttr         = 0x20108,
+   lxQWordAttr       = 0x20109,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,
@@ -191,7 +194,6 @@ enum LexicalType
 //   lxSymbol = 0x20103, // arg - reference
 //   lxBlockLocalAddr = 0x04109, // arg - offset
 //   lxConstantChar = 0x8410E, // arg - reference
-//   lxConstantLong = 0x84110, // arg - reference
 //   lxConstantReal = 0x84111, // arg - reference
 //   lxMessageConstant = 0x24113, // arg - rererence
 //   lxExtMessageConstant = 0x24114, // arg -reference
@@ -212,7 +214,6 @@ enum LexicalType
 //   lxOp              = 0x0032A, // generic operation, arg - operation id 
 //   lxBoolOp          = 0x0032B, // arg - operation id
 //   lxNilOp           = 0x0032C, // arg - operation id
-//   lxLongOp          = 0x0132E, // arg - operation id
 //   lxRealOp          = 0x0132F, // arg - operation id
 //   lxArrOp           = 0x01333, // arg - operation id
 //   lxBinArrOp        = 0x01334, // arg - operation id

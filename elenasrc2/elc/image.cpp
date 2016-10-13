@@ -32,7 +32,7 @@ ExecutableImage::ExecutableImage(Project* project, _JITCompiler* compiler, _Help
    _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
 //   _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
-//   _long = project->resolveForward(LONG_FORWARD);
+   _long = project->resolveForward(LONG_FORWARD);
 //   _real = project->resolveForward(REAL_FORWARD);
    _message = project->resolveForward(MESSAGE_FORWARD);
 //   _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
@@ -186,11 +186,11 @@ ident_t ExecutableImage::getIntegerClass()
    return _int;
 }
 
-//ident_t ExecutableImage::getLongClass()
-//{
-//   return _long;
-//}
-//
+ident_t ExecutableImage::getLongClass()
+{
+   return _long;
+}
+
 //ident_t ExecutableImage::getRealClass()
 //{
 //   return _real;

@@ -18,6 +18,7 @@
 
 #define V_INT32       (size_t)-11
 #define V_PTR32       (size_t)-12
+#define V_INT64       (size_t)-13
 #define V_SIGNATURE   (size_t)-18
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
@@ -91,6 +92,7 @@ struct _CompilerScope
    // cached references
    ref_t superReference;
    ref_t intReference;
+   ref_t longReference;
    ref_t signatureReference;
    ref_t messageReference;
    ref_t verbReference;
@@ -113,7 +115,7 @@ struct _CompilerScope
       module = NULL;
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
-      literalReference = wideReference = 0;
+      longReference = literalReference = wideReference = 0;
    }
 };
 

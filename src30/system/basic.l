@@ -95,12 +95,124 @@
     #method(embeddable,w3) => $value.
 }
 
+// === Boolean values ===
+
+// --- true ---
+
+/// A true value symbol
+#symbol true = BaseBoolValue
+{
+    /// Executes the action
+    #method(-4097) if : aTrueAction = aTrueAction eval.
+
+    /// Executes then-action
+    #method if : aTrueAction : aFalseAction = aTrueAction eval.
+
+    /// Always returns nil.
+    #method(-4098) ifnot : aTrueAction = $nil.
+
+//    #method iif:aTrueValue:aFalseValue = aTrueValue.
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    #method or : anExpr = $self.
+
+    /// Executes logical AND operation
+    #method and : anExpr = anExpr bool.
+
+    /// Executes logical XOR operation
+    #method xor : aBool
+    [
+        aBool ? [ ^ false. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal : anExpr = anExpr bool.
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal &bool:aBool = aBool.
+
+    /// Always returns false.
+    #method inverted = false.
+
+    /// Returns literal representation.
+    #method literal = "true".
+
+    /// Returns literal representation.
+    #method wide = "true"w.
+
+    /// Returns itself.
+    #method clone = $self.
+}.
+
+// --- false ---
+
+/// A false value symbol
+#symbol false = BaseBoolValue
+{
+    /// Always returns nil
+    #method(-4098) if : anAction = $nil.
+    
+    /// Executes else-action
+    #method if : aTrueAction : aFalseAction = aFalseAction eval.
+
+    /// Executes the action
+    #method(-4097) ifnot : aFalseAction = aFalseAction eval.
+
+//    #method iif:aTrueValue:aFalseValue = aFalseValue.
+
+    /// Executes logical OR operation
+    #method or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    #method and : anExpr = $self.
+
+    /// Executes logical XOR operation
+    #method xor : anExpr 
+    [
+        anExpr ? [ ^ true. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal : anExpr
+    [
+        anExpr bool ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal &bool:anExpr
+    [
+        ^ anExpr not.
+    ]
+
+    /// Always returns true
+    #method inverted = true.
+
+    /// Returns literal representation
+    #method literal = "false".
+    
+    /// Returns literal representation
+    #method wide = "false"w.
+
+    /// Returns itself
+    #method clone = $self.
+}.
+
 // === Numeric Variables ===
 
-//#subject vbyte  = nvarof:byte.
-//#subject vshort = nvarof:short.
+#subject vbyte  = nvarof:byte.
+#subject vshort = nvarof:short.
 #subject vint   = nvarof:int.
-//#subject vlong  = nvarof:long.
+#subject vlong  = nvarof:long.
 //#subject vreal  = nvarof:real.
 //#subject vchar  = varof:char.
 
@@ -111,14 +223,14 @@
 // A base value
 #class BaseValue
 {
-//    /// Compares the values
-//    #method equal : anObject = anObject cast:%equal &to:$self bool.
-//
-//    /// Compares the values
-//    #method(bool) less : anObject = anObject cast:%less &to:$self bool.
-//
-//    /// Compares the values
-//    #method(bool) greater : anObject = anObject less:$self bool.
+    /// Compares the values
+    #method equal : anObject = anObject cast:%equal &to:$self bool.
+
+    /// Compares the values
+    #method(bool) less : anObject = anObject cast:%less &to:$self bool.
+
+    /// Compares the values
+    #method(bool) greater : anObject = anObject less:$self bool.
 }
 
 // --- BaseNumber ---
@@ -126,18 +238,18 @@
 /// A base numeric value
 #class BaseNumber :: BaseValue
 {
-//    /// Adds the value
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Subtracts the value
-//    #method subtract : anObject = anObject cast:%subtract &to:$self.
-//
-//    /// Multiply by the value
-//    #method multiply : anObject = anObject cast:%multiply &to:$self.
-//
-//    /// Divides into the value
-//    #method divide : anObject = anObject cast:%divide &to:$self.
-//    
+    /// Adds the value
+    #method add : anObject = anObject cast:%add &to:$self.
+
+    /// Subtracts the value
+    #method subtract : anObject = anObject cast:%subtract &to:$self.
+
+    /// Multiply by the value
+    #method multiply : anObject = anObject cast:%multiply &to:$self.
+
+    /// Divides into the value
+    #method divide : anObject = anObject cast:%divide &to:$self.
+    
 //    #method negative
 //        = 0 - self.
 }
@@ -217,10 +329,10 @@
 //
 //    /// Returns the value as a real number
 //    #method real = RealNumber new &byte:$self.
-//
-//    #method(bool,stacksafe) equal &byte:anOperand
-//        = theValue == anOperand.
-//
+
+    #method(bool,stacksafe) equal &byte:anOperand
+        = theValue == anOperand.
+
 //    #method(bool,stacksafe) equal &short:anOperand
 //        = ShortNumber new &byte:$self equal &short:anOperand.
 //
@@ -253,23 +365,23 @@
 //    /// Compares the value
 //    #method(bool,stacksafe) less &real:anOperand
 //        = RealNumber new &byte:$self less &real:anOperand.
-//
-//    /// Returns the sum
-//    #method(byte,stacksafe,w3) add &byte:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    #method(byte,stacksafe,w3) subtract &byte:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    #method(byte,stacksafe,w3) multiply &byte:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(byte,stacksafe,w3) divide &byte:anOperand
-//        = theValue / anOperand.
-//
+
+    /// Returns the sum
+    #method(byte,stacksafe,w3) add &byte:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(byte,stacksafe,w3) subtract &byte:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(byte,stacksafe,w3) multiply &byte:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(byte,stacksafe,w3) divide &byte:anOperand
+        = theValue / anOperand.
+
 //    /// Returns the sum
 //    #method(short,stacksafe) add &short:anOperand
 //        = ShortNumber new &byte:$self add &short:anOperand.
@@ -465,15 +577,15 @@
 //    
 //    /// Returns the value as a real number
 //    #method real = RealNumber new &short:$self.
-//
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &short:anOperand 
-//        = theValue == anOperand.
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) less &short:anOperand
-//        = theValue < anOperand.
-//        
+
+    /// Compares the value
+    #method(bool,stacksafe) equal &short:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &short:anOperand
+        = theValue < anOperand.
+        
 //    /// Compares the value
 //    #method(bool,stacksafe) equal &int:anOperand 
 //        = IntNumber new &short:$self equal &int:anOperand.
@@ -505,23 +617,23 @@
 //    /// Compares the value
 //    #method(bool,stacksafe) less &real:anOperand
 //        = RealNumber new &short:$self less &real:anOperand.
-//
-//    /// Returns the sum
-//    #method(short,stacksafe,w3) add &short:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    #method(short,stacksafe,w3) subtract &short:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    #method(short,stacksafe,w3) multiply &short:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(short,stacksafe,w3) divide &short:anOperand
-//        = theValue / anOperand.
-//
+
+    /// Returns the sum
+    #method(short,stacksafe,w3) add &short:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(short,stacksafe,w3) subtract &short:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(short,stacksafe,w3) multiply &short:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(short,stacksafe,w3) divide &short:anOperand
+        = theValue / anOperand.
+
 //    /// Returns the sum
 //    #method(stacksafe) add &byte:anOperand
 //        = $self add &short:(ShortNumber new &byte:anOperand).
@@ -726,31 +838,31 @@
 //
 //    /// Returns the real number
 //    #method real = RealNumber new &int:$self.
-//    
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &int:anOperand 
-//        = theValue == anOperand.
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) less &int:anOperand
-//        = theValue < anOperand.
-//        
-//    /// Returns the sum
-//    #method(int,stacksafe,w3) add &int:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    #method(int,stacksafe,w3) subtract &int:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    #method(int,stacksafe,w3) multiply &int:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(int,stacksafe,w3) divide &int:anOperand
-//        = theValue / anOperand.
-//
+    
+    /// Compares the value
+    #method(bool,stacksafe) equal &int:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &int:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    #method(int,stacksafe,w3) add &int:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(int,stacksafe,w3) subtract &int:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(int,stacksafe,w3) multiply &int:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(int,stacksafe,w3) divide &int:anOperand
+        = theValue / anOperand.
+
 //    /// Returns the result of bitwise AND operation
 //    #method(int,stacksafe,w3) and &int:anOperand
 //        = theValue && anOperand.
@@ -935,13 +1047,13 @@
 //        = 0 - theValue.
 }
 
-//// --- LongNumber ---
-//
-///// A signed 64 bit integer value
-//#class(embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
-//{
-//    #field(int64)theValue.
-//    
+// --- LongNumber ---
+
+/// A signed 64 bit integer value
+#class(embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
+{
+    #field(8,-13)theValue.
+    
 //    /// Returns the minimal value
 //    #constructor min
 //        = -9223372036854775808l.
@@ -985,31 +1097,31 @@
 //
 //    /// Returns a real value
 //    #method real = RealNumber new &long:$self.
-//    
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &long:anOperand 
-//        = theValue == anOperand.
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) less &long:anOperand
-//        = theValue < anOperand.
-//        
-//    /// Returns the sum
-//    #method(long,stacksafe,w3) add &long:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    #method(long,stacksafe,w3) subtract &long:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    #method(long,stacksafe,w3) multiply &long:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(long,stacksafe,w3) divide &long:anOperand
-//        = theValue / anOperand.
-//
+    
+    /// Compares the value
+    #method(bool,stacksafe) equal &long:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &long:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    #method(long,stacksafe,w3) add &long:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(long,stacksafe,w3) subtract &long:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(long,stacksafe,w3) multiply &long:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(long,stacksafe,w3) divide &long:anOperand
+        = theValue / anOperand.
+
 //    /// Returns the result of bitwise AND operation
 //    #method(long,stacksafe,w3) and &long:anOperand
 //        = theValue && anOperand.
@@ -1192,8 +1304,8 @@
 //    /// Negates the value
 //    #method(stacksafe/*,suppress:w3*/) negative
 //        = 0l - theValue.
-//}
-//
+}
+
 //// --- realNumber ---
 //
 ///// A 64bit float numeric value

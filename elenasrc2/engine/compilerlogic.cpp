@@ -45,10 +45,32 @@ inline ref_t definePrimitiveArrayItem(ref_t classRef)
    }
 }
 
+inline bool IsInvertedOperator(int& operator_id)
+{
+   switch (operator_id)
+   {
+      case NOTEQUAL_MESSAGE_ID:
+         operator_id = EQUAL_MESSAGE_ID;
+
+         return true;
+      case NOTLESS_MESSAGE_ID:
+         operator_id = LESS_MESSAGE_ID;
+
+         return true;
+      case NOTGREATER_MESSAGE_ID:
+         operator_id = GREATER_MESSAGE_ID;
+
+         return true;
+      default:
+         return false;
+   }
+}
+
 // --- CompilerLogic ---
 
 CompilerLogic :: CompilerLogic()
 {
+   // int32 primitive operations
    operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
@@ -62,10 +84,35 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
+   // int64 primitive operations
+   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
+
+   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
+
+   // array of int32 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
+
+   // array of int16 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
+
+   // array of int8 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
 }
 
@@ -361,16 +408,7 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
 
 void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
 {
-   bool inverting = false;
-   switch (operator_id)
-   {
-      case NOTEQUAL_MESSAGE_ID:
-         operator_id = EQUAL_MESSAGE_ID;
-         inverting = true;
-         break;
-      default:
-         break;
-   }
+   bool inverting = IsInvertedOperator(operator_id);
 
    SNode operationNode = node.injectNode((LexicalType)operationType, operator_id);
 
@@ -457,15 +495,17 @@ void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, /*_C
 
 void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
-//      if (isTemplateRef(classRef)) {
-//         variable.kind = okTemplateLocal;
-//      }
    switch (reference)
    {
       case V_INT32:
          info.header.parentRef = 0;
          info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
          info.size = 4;
+         break;
+      case V_INT64:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
+         info.size = 8;
          break;
       case V_PTR32:
          info.header.parentRef = 0;
@@ -505,9 +545,6 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          break;
    }
 //      else if (isPrimitiveRef(classRef)) {
-//         else if (classRef == -2) {
-//            localInfo.header.flags = elDebugQWORD;
-//         }
 //         else if (classRef == -4) {
 //            localInfo.header.flags = elDebugReal64;
 //         }
@@ -664,6 +701,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_INT32:
          attrValue = lxDWordAttr;
          return true;
+      case V_INT64:
+         attrValue = lxQWordAttr;
+         return true;
       case V_PTR32:
          attrValue = lxPtrAttr;
          return true;
@@ -726,6 +766,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
             return true;
+         case lxQWordAttr:
+            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
+            return true;
          case lxPtrAttr:
             info.header.flags |= (elDebugPTR | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
@@ -778,6 +822,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
    switch (reference) {
       case V_INT32:
          return firstNonZero(scope.intReference, scope.superReference);
+      case V_INT64:
+         return firstNonZero(scope.longReference, scope.superReference);
       case V_SIGNATURE:
          return firstNonZero(scope.signatureReference, scope.superReference);
       case V_MESSAGE:

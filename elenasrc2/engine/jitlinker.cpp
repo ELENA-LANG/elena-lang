@@ -567,10 +567,10 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       value = reference;
       vmtReference = _loader->getIntegerClass();
    }
-//   else if (mask == mskInt64Ref) {
-//      value = reference;
-//      vmtReference = _loader->getLongClass();
-//   }
+   else if (mask == mskInt64Ref) {
+      value = reference;
+      vmtReference = _loader->getLongClass();
+   }
 //   else if (mask == mskRealRef) {
 //      value = reference;
 //      vmtReference = _loader->getRealClass();
@@ -611,21 +611,21 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
    else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, value.toULong(16));
    }
-//   else if (mask == mskInt64Ref) {
-//      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
-//      _compiler->compileInt64(&writer, StringHelper::strToLongLong(value + 1, 10));
-//   }
+   else if (mask == mskInt64Ref) {
+      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
+      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
+   }
 //   else if (mask == mskRealRef) {
 //      _compiler->compileReal64(&writer, StringHelper::strToDouble(value));
 //   }
-//   else if (mask == mskConstArray) {
-//      // resolve constant value
-//      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
-//      _compiler->compileCollection(&writer, sectionInfo.section);
-//
-//      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
-//      constantValue = true;
-//   }
+   else if (mask == mskConstArray) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
+      _compiler->compileCollection(&writer, sectionInfo.section);
+
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      constantValue = true;
+   }
    else if (vmtVAddress == LOADER_NOTLOADED) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
@@ -970,7 +970,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
 //         case mskCharRef:
          case mskInt32Ref:
 //         case mskRealRef:
-//         case mskInt64Ref:
+         case mskInt64Ref:
             vaddress = resolveConstant(reference, mask);
             break;
 //         case mskConstArray:

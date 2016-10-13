@@ -61,6 +61,8 @@ In development:
                  * test dispatching method
                  * test dispatching method with generic methods
 
+                 * signature : make possible to create a combined signature from several subjects (constructor overloading)
+
                  * support abstract attribute
                  * check sealed / limited class attributes
                  * compliation should be based on set of rules

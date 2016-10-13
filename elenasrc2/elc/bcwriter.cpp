@@ -2468,63 +2468,63 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
    }
 }
 
-//void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      // Note read / write operator is used for bitwise operations
-//      case WRITE_MESSAGE_ID:
-//         // nload
-//         // not
-//         // inc
-//         // lshift
-//         tape.write(bcNLoad);
-//         tape.write(bcNot);
-//         tape.write(bcInc);
-//         tape.write(bcLShift);
-//         break;
-//      // Note read / write operator is used for bitwise operations
-//      case READ_MESSAGE_ID:
-//         // nload
-//         // lshift
-//         tape.write(bcNLoad);
-//         tape.write(bcLShift);
-//         break;
-//      case ADD_MESSAGE_ID:
-//      case APPEND_MESSAGE_ID:
-//         tape.write(bcLAdd);
-//         break;
-//      case SUB_MESSAGE_ID:
-//      case REDUCE_MESSAGE_ID:
-//         tape.write(bcLSub);
-//         break;
-//      case MUL_MESSAGE_ID:
-//      case INCREASE_MESSAGE_ID:
-//         tape.write(bcLMul);
-//         break;
-//      case DIV_MESSAGE_ID:
-//      case SEPARATE_MESSAGE_ID:
-//         tape.write(bcLDiv);
-//         break;
-//      case AND_MESSAGE_ID:
-//         tape.write(bcLAnd);
-//         break;
-//      case OR_MESSAGE_ID:
-//         tape.write(bcLOr);
-//         break;
-//      case XOR_MESSAGE_ID:
-//         tape.write(bcLXor);
-//         break;
-//      case EQUAL_MESSAGE_ID:
-//         tape.write(bcLEqual);
-//         break;
-//      case LESS_MESSAGE_ID:
-//         tape.write(bcLLess);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      // Note read / write operator is used for bitwise operations
+      case WRITE_MESSAGE_ID:
+         // nload
+         // not
+         // inc
+         // lshift
+         tape.write(bcNLoad);
+         tape.write(bcNot);
+         tape.write(bcInc);
+         tape.write(bcLShift);
+         break;
+      // Note read / write operator is used for bitwise operations
+      case READ_MESSAGE_ID:
+         // nload
+         // lshift
+         tape.write(bcNLoad);
+         tape.write(bcLShift);
+         break;
+      case ADD_MESSAGE_ID:
+      case APPEND_MESSAGE_ID:
+         tape.write(bcLAdd);
+         break;
+      case SUB_MESSAGE_ID:
+      case REDUCE_MESSAGE_ID:
+         tape.write(bcLSub);
+         break;
+      case MUL_MESSAGE_ID:
+      case INCREASE_MESSAGE_ID:
+         tape.write(bcLMul);
+         break;
+      case DIV_MESSAGE_ID:
+      case SEPARATE_MESSAGE_ID:
+         tape.write(bcLDiv);
+         break;
+      case AND_MESSAGE_ID:
+         tape.write(bcLAnd);
+         break;
+      case OR_MESSAGE_ID:
+         tape.write(bcLOr);
+         break;
+      case XOR_MESSAGE_ID:
+         tape.write(bcLXor);
+         break;
+      case EQUAL_MESSAGE_ID:
+         tape.write(bcLEqual);
+         break;
+      case LESS_MESSAGE_ID:
+         tape.write(bcLLess);
+         break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -3033,8 +3033,8 @@ inline ref_t defineConstantMask(LexicalType type)
 //         return mskCharRef;
       case lxConstantInt:
          return mskInt32Ref;
-//      case lxConstantLong:
-//         return mskInt64Ref;
+      case lxConstantLong:
+         return mskInt64Ref;
 //      case lxConstantReal:
 //         return mskRealRef;
 //      case lxMessageConstant:
@@ -3091,7 +3091,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantSymbol:
 //      case lxConstantChar:
       case lxConstantInt:
-//      case lxConstantLong:
+      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
@@ -3170,7 +3170,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantSymbol:
 //      case lxConstantChar:
       case lxConstantInt:
-//      case lxConstantLong:
+      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
@@ -3566,9 +3566,9 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          if (node.type == lxIntOp && !rargConst) {
             copyBase(tape, 4);
          }
-         //else if (node.type == lxLongOp || node == lxRealOp) {
-         //   copyBase(tape, 8);
-         //}
+         else if (node.type == lxLongOp/* || node == lxRealOp*/) {
+            copyBase(tape, 8);
+         }
       }
       else loadBase(tape, lxResult);
    }
@@ -3587,9 +3587,9 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       }
       else doIntOperation(tape, operation);
    }
-//   else if (node == lxLongOp) {
-//      doLongOperation(tape, operation);
-//   }
+   else if (node == lxLongOp) {
+      doLongOperation(tape, operation);
+   }
 //   else if (node == lxRealOp) {
 //      doRealOperation(tape, operation);
 //   }
@@ -4524,7 +4524,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
 //         generateNilOperation(tape, node);
 //         break;
       case lxIntOp:
-//      case lxLongOp:
+      case lxLongOp:
 //      case lxRealOp:
          generateOperation(tape, node);
          break;
@@ -4972,7 +4972,7 @@ void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t r
          //case lxConstantChar:
          case lxConstantClass:
          case lxConstantInt:
-         //case lxConstantLong:
+         case lxConstantLong:
          case lxConstantList:
          //case lxConstantReal:
          case lxConstantString:
