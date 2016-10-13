@@ -609,27 +609,27 @@ long long strToLongLong(const char* s, int radix)
 //
 //   return s;
 //}
+
+//char* StringHelper :: doubleToStr(double value, int digit, char* s)
+//{
+//   gcvt(value, digit, s);
 //
-////char* StringHelper :: doubleToStr(double value, int digit, char* s)
-////{
-////   gcvt(value, digit, s);
-////
-////   return s;
-////}
-////
-////double StringHelper :: strToDouble(const char* s)
-////{
-////   return atof(s);
-////}
-////
-////void StringHelper :: trim(char* s, char ch)
-////{
-////   size_t length = getlength(s);
-////   while (length > 0 && s[length - 1] == ch) {
-////      s[length - 1] = 0;
-////      length = getlength(s);
-////   }
-////}
+//   return s;
+//}
+
+double strToDouble(const char* s)
+{
+   return atof(s);
+}
+
+//void StringHelper :: trim(char* s, char ch)
+//{
+//   size_t length = getlength(s);
+//   while (length > 0 && s[length - 1] == ch) {
+//      s[length - 1] = 0;
+//      length = getlength(s);
+//   }
+//}
 
 #ifdef _WIN32
 
@@ -1293,6 +1293,11 @@ long ident_t :: toULong(int radix, int index)
 long long ident_t :: toULongLong(int radix, int index)
 {
    return strToLongLong(_string + index, radix);
+}
+
+double ident_t :: toDouble(int index)
+{
+   return strToDouble(_string + index);
 }
 
 int ident_t :: find(char c, int defValue)

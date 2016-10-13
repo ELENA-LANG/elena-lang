@@ -368,6 +368,66 @@ procedure __literalconvertor.convert&int$&int$&bytearray$&vint$[5]
 
 end
 
+procedure __literalconvertor.convert&short$&bytearray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor.convert&byte$&bytearray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor.convert&long$&bytearray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : longtostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+
+end
+
+procedure __literalconvertor.convert&real$&bytearray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 24
+  
+  callextr api : realtostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+end
+
 procedure __wideconvertor.convert&literal$&shortarray$&vint$[4]
 
   aloadsi 2
@@ -403,6 +463,66 @@ procedure __wideconvertor.convert&int$&shortarray$&vint$[4]
   dcopy 10
   
   callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor.convert&short$&shortarray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+  
+end
+
+procedure __wideconvertor.convert&byte$&shortarray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+  
+end
+
+procedure __wideconvertor.convert&long$&shortarray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : longtowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor.convert&real$&shortarray$&vint$[4]
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 24
+  
+  callextr api : realtowstr
 
   bloadsi 4
   nwritei 0

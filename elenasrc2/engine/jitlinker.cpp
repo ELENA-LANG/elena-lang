@@ -571,10 +571,10 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       value = reference;
       vmtReference = _loader->getLongClass();
    }
-//   else if (mask == mskRealRef) {
-//      value = reference;
-//      vmtReference = _loader->getRealClass();
-//   }
+   else if (mask == mskRealRef) {
+      value = reference;
+      vmtReference = _loader->getRealClass();
+   }
    else constantValue = false;
 
    // get constant VMT reference
@@ -615,9 +615,9 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
       _compiler->compileInt64(&writer, value.toULongLong(10, 1));
    }
-//   else if (mask == mskRealRef) {
-//      _compiler->compileReal64(&writer, StringHelper::strToDouble(value));
-//   }
+   else if (mask == mskRealRef) {
+      _compiler->compileReal64(&writer, value.toDouble());
+   }
    else if (mask == mskConstArray) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
@@ -969,7 +969,7 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskWideLiteralRef:
 //         case mskCharRef:
          case mskInt32Ref:
-//         case mskRealRef:
+         case mskRealRef:
          case mskInt64Ref:
             vaddress = resolveConstant(reference, mask);
             break;

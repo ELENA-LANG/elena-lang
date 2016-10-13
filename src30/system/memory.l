@@ -1456,51 +1456,51 @@
         ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
     ]
 
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &short:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &short:aNumber
-//    [
-//        #var(byte:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &short:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &byte:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &byte:aNumber
-//    [
-//        #var(byte:4)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &byte:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &long:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &long:aNumber
-//    [
-//        #var(byte:64)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &long:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
-//
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &short:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
+    /// Converts the parameter to the literal value
+    #method(literal,stacksafe) convert &short:aNumber
+    [
+        #var(byte:12)buffer.
+        #var(int)length := 0.
+        
+        $self convert &short:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &byte:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
+    /// Converts the parameter to the literal value
+    #method(literal,stacksafe) convert &byte:aNumber
+    [
+        #var(byte:4)buffer.
+        #var(int)length := 0.
+        
+        $self convert &byte:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &long:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(literal,stacksafe) convert &long:aNumber
+    [
+        #var(byte:64)buffer.
+        #var(int)length := 0.
+        
+        $self convert &long:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    #method(stacksafe) convert &int:aNumber &int:aRadix &bytearray:buffer &vint:length
 //        => system'core_routines'__literalconvertor.
@@ -1560,21 +1560,21 @@
 //        
 //        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
 //    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &real:aNumber &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(literal,stacksafe) convert &real:aNumber
-//    [
-//        #var(byte:32)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &real:aNumber &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &real:aNumber &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(literal,stacksafe) convert &real:aNumber
+    [
+        #var(byte:32)buffer.
+        #var(int)length := 0.
+        
+        $self convert &real:aNumber &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
 
     /// Converts UTF-16 literal to UTF-8 one
     #method(stacksafe) convert &wide:aLiteral &bytearray:buffer &vint:length
@@ -1657,51 +1657,51 @@
         ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
     ]
 
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &short:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &short:aNumber
-//    [
-//        #var(short:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &short:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &byte:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &byte:aNumber
-//    [
-//        #var(short:12)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &byte:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &long:aNumber &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &long:aNumber
-//    [
-//        #var(short:64)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &long:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
-//
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &short:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(wide,stacksafe) convert &short:aNumber
+    [
+        #var(short:12)buffer.
+        #var(int)length := 0.
+        
+        $self convert &short:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &byte:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(wide,stacksafe) convert &byte:aNumber
+    [
+        #var(short:12)buffer.
+        #var(int)length := 0.
+        
+        $self convert &byte:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &long:aNumber &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(wide,stacksafe) convert &long:aNumber
+    [
+        #var(short:64)buffer.
+        #var(int)length := 0.
+        
+        $self convert &long:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    #method(stacksafe) convert &int:aNumber &int:aRadix &shortarray:buffer &vint:length
 //        => system'core_routines'__wideconvertor.
@@ -1761,21 +1761,21 @@
 //        
 //        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
 //    ]
-//
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &real:aNumber&shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    #method(wide,stacksafe) convert &real:aNumber
-//    [
-//        #var(short:32)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &real:aNumber &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]
+
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &real:aNumber&shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+
+    /// Converts the parameter to the literal value
+    #method(wide,stacksafe) convert &real:aNumber
+    [
+        #var(short:32)buffer.
+        #var(int)length := 0.
+        
+        $self convert &real:aNumber &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]
 
     /// Converts UTF-8 literal to UTF-16e
     #method(stacksafe) convert &literal:aLiteral &shortarray:buffer &vint:length

@@ -106,6 +106,24 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_FLAG));
 
+   // real64 primitive operations
+   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+
+   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+   operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, 0));
+
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+
    // array of int32 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
 
@@ -309,10 +327,10 @@ inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (sourceRef)
    {
-   case V_PTR32:
-      return targetRef == V_INT32;
-   default:
-      return false;
+      case V_PTR32:
+         return targetRef == V_INT32;
+      default:
+         return false;
    }
 }
 
@@ -507,6 +525,11 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
          info.size = 8;
          break;
+      case V_REAL64:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugReal64 | elStructureRole | elEmbeddable;
+         info.size = 8;
+         break;
       case V_PTR32:
          info.header.parentRef = 0;
          info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
@@ -545,9 +568,6 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          break;
    }
 //      else if (isPrimitiveRef(classRef)) {
-//         else if (classRef == -4) {
-//            localInfo.header.flags = elDebugReal64;
-//         }
 //         else if (classRef == -3) {
 //            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
 //            size = size * localInfo.size;
@@ -704,6 +724,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_INT64:
          attrValue = lxQWordAttr;
          return true;
+      case V_REAL64:
+         attrValue = lxRealAttr;
+         return true;
       case V_PTR32:
          attrValue = lxPtrAttr;
          return true;
@@ -770,6 +793,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
             return true;
+         case lxRealAttr:
+            info.header.flags |= (elDebugReal64 | elReadOnlyRole | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
+            return true;
          case lxPtrAttr:
             info.header.flags |= (elDebugPTR | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
@@ -824,6 +851,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.intReference, scope.superReference);
       case V_INT64:
          return firstNonZero(scope.longReference, scope.superReference);
+      case V_REAL64:
+         return firstNonZero(scope.realReference, scope.superReference);
       case V_SIGNATURE:
          return firstNonZero(scope.signatureReference, scope.superReference);
       case V_MESSAGE:

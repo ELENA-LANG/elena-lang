@@ -79,7 +79,7 @@ inline bool isConstant(ObjectInfo object)
       //case Compiler::okCharConstant:
       case Compiler::okIntConstant:
       case Compiler::okLongConstant:
-      //case Compiler::okRealConstant:
+      case Compiler::okRealConstant:
       //case Compiler::okMessageConstant:
       //case Compiler::okExtMessageConstant:
       //case Compiler::okSignatureConstant:
@@ -459,7 +459,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    superReference = mapReference(project->resolveForward(SUPER_FORWARD));
    intReference = mapReference(project->resolveForward(INT_FORWARD));
    longReference = mapReference(project->resolveForward(LONG_FORWARD));
-//   realReference = mapReference(project->resolveForward(REAL_FORWARD));
+   realReference = mapReference(project->resolveForward(REAL_FORWARD));
    literalReference = mapReference(project->resolveForward(STR_FORWARD));
    wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
@@ -1800,8 +1800,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return V_INT32;
       case okLongConstant:
          return V_INT64;
-//      case okRealConstant:
-//         return scope.moduleScope->realReference;
+      case okRealConstant:
+         return V_REAL64;
       case okLiteralConstant:
          return scope.moduleScope->literalReference;
       case okWideLiteralConstant:
@@ -1879,21 +1879,23 @@ void Compiler :: declareParameterDebugInfo(SNode node, MethodScope& scope, bool 
 //         writer.appendNode(lxTerminal, it.key());
 //         writer.appendNode(lxFrameAttr);
 //         writer.closeNode();
-      }
-//         else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->longReference)) {
-//         writer.newNode(lxLongVariable);
-//         writer.appendNode(lxTerminal, it.key());
-//         writer.appendNode(lxLevel, -1 - (*it).offset);
-//         writer.appendNode(lxFrameAttr);
-//         writer.closeNode();
-//         }
-//         else if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->realReference)) {
-//         writer.newNode(lxReal64Variable);
-//         writer.appendNode(lxTerminal, it.key());
-//         writer.appendNode(lxLevel, -1 - (*it).offset);
-//         writer.appendNode(lxFrameAttr);
-//         writer.closeNode();
-//         }
+         }
+         else if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->longReference)) {
+            current = lxLongVariable;
+   //         writer.newNode(lxLongVariable);
+   //         writer.appendNode(lxTerminal, it.key());
+   //         writer.appendNode(lxLevel, -1 - (*it).offset);
+   //         writer.appendNode(lxFrameAttr);
+   //         writer.closeNode();
+         }
+         else if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->realReference)) {
+            current = lxReal64Variable;
+   //         writer.newNode(lxReal64Variable);
+   //         writer.appendNode(lxTerminal, it.key());
+   //         writer.appendNode(lxLevel, -1 - (*it).offset);
+   //         writer.appendNode(lxFrameAttr);
+   //         writer.closeNode();
+         }
          else if (scope.stackSafe && param.subj_ref != 0) {
             ref_t classRef = scope.moduleScope->attributeHints.get(param.subj_ref);
             if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
@@ -2643,6 +2645,12 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
             case elDebugDWORD:
                node = lxIntVariable;
                break;
+            case elDebugQWORD:
+               node = lxLongVariable;
+               break;
+            case elDebugReal64:
+               node = lxReal64Variable;
+               break;
             case elDebugIntegers:
                node.set(lxIntsVariable, size);
                break;
@@ -2652,27 +2660,6 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
             case elDebugBytes:
                node.set(lxBytesVariable, size);
                break;
-//               case elDebugQWORD:
-//                  scope.writer->newNode(lxLongVariable);
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
-//                  scope.writer->appendNode(lxLevel, variable.param);
-//                  scope.writer->closeNode();
-//                  break;
-//               case elDebugReal64:
-//                  scope.writer->newNode(lxReal64Variable);
-//                  scope.writer->appendNode(lxTerminal, terminal.value);
-//                  scope.writer->appendNode(lxLevel, variable.param);
-//                  scope.writer->closeNode();
-//                  break;
-//               case elDebugDWORD:
-//                  if (localInfo.size == 4) {
-//                     scope.writer->appendNode(lxTerminal, terminal.value);
-//                     scope.writer->appendNode(lxLevel, variable.param);
-//                     scope.writer->closeNode();
-//                  }
-//                  break;
-//   //            case elDebugQWORD:
-//   //               break;
 //   //            default:
 //   //               // HOTFIX : size should be provide only for dynamic variables
 //   //               scope.writer->newNode(lxBinaryVariable, size);
@@ -2743,9 +2730,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okLongConstant:
          terminal.set(lxConstantLong, object.param);
          break;
-//      case okRealConstant:
-//         scope.writer->newNode(lxConstantReal, object.param);
-//         break;
+      case okRealConstant:
+         terminal.set(lxConstantReal, object.param);
+         break;
       case okArrayConst:
          terminal.set(lxConstantList, object.param);
          break;
@@ -2905,19 +2892,19 @@ ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mod
 
       object = ObjectInfo(okIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
    }
-//   else if (terminal == tsReal) {
-//      String<ident_c, 30> s(terminal.value, getlength(terminal.value) - 1);
-//      double number = StringHelper::strToDouble(s);
-//      if (errno == ERANGE)
-//         scope.raiseError(errInvalidIntNumber, terminal);
-//
-//      // HOT FIX : to support 0r constant
-//      if (s.Length() == 1) {
-//         s.append(".0");
-//      }
-//
-//      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant(s));
-//   }
+   else if (terminal == lxReal) {
+      String<char, 30> s(token, getlength(token) - 1);
+      double number = token.toDouble();
+      if (errno == ERANGE)
+         scope.raiseError(errInvalidIntNumber, terminal);
+
+      // HOT FIX : to support 0r constant
+      if (s.Length() == 1) {
+         s.append(".0");
+      }
+
+      object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s));
+   }
    else if (terminal == lxResult) {
       object = ObjectInfo(okObject);
    }
@@ -7038,18 +7025,18 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->longReference);
    }
-   /*else if (retVal.kind == okRealConstant) {
+   else if (retVal.kind == okRealConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-      double value = StringHelper::strToDouble(module->resolveConstant(retVal.param));
+      double value = module->resolveConstant(retVal.param).toDouble();
 
       dataWriter.write(&value, 8);
 
       dataWriter.Memory()->addReference(scope.moduleScope->realReference | mskVMTRef, (ref_t)-4);
 
       scope.moduleScope->defineConstantSymbol(scope.reference, scope.moduleScope->realReference);
-   }*/
+   }
    else if (retVal.kind == okLiteralConstant) {
       _Module* module = scope.moduleScope->module;
       MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
@@ -8331,6 +8318,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
          break;
       case lxIntOp:
       case lxLongOp:
+      case lxRealOp:
       case lxIntArrOp:
       case lxNewOp:
          optimizeOp(scope, current, warningScope, mode);

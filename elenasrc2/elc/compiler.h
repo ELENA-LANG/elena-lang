@@ -110,7 +110,7 @@ public:
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
       okLongConstant,                 // param - reference 
-//      okRealConstant,                 // param - reference 
+      okRealConstant,                 // param - reference 
 //      okMessageConstant,              // param - reference 
 //      okExtMessageConstant,           // param - reference 
 //      okSignatureConstant,            // param - reference 

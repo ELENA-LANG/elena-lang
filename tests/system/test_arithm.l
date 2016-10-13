@@ -315,48 +315,48 @@
         [ console writeLine:"Integer operators are working". ].
 ].
 
-//// --- LongArithmeticTest ---
-//
-//#symbol LongTest =
-//[    
-//    #var l := 100000000000000l / 5000000000000l.
-//    
-//    console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
-//    console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
-//    console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).
-//    console write:"(12345679 != 12345678) is " writeLine:(12345678l != 12345679l).
-//    console write:"(12345678l < 3) is " writeLine:(12345678l < 3l).
-//    console write:"(12345678l > 12345679l) is " writeLine:(12345678l > 12345679l).
-//    console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
-//    console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
-//    
-//    #var(vlong) n := 0l.
-//    n += 3l.
-//    n -= 2l.
-//    n *= 2l.
-//    n /= 2l.
-//    
-//    (n == 1l) ?
-//        [ console writeLine:"Long Integer operators are working". ].
-//].
-//
-//// --- RealArithmeticTest ---
-//
-//#symbol RealTest =
-//[
-//    console write:"(2 + 3 * 4) is " writeLine:(2.0r + 3.0r * 4.0r).
-//    console write:"(10/3) is " writeLine:(10.0r / 3.0r).
-//    
-//    #var(vreal) n := 1.0r.
-//    n += 2.0r.
-//    n -= 2.0r.
-//    n *= 2.0r.
-//    n /= 2.0r.
-//    
-//    (n == 1.0r) ?
-//        [ console writeLine:"Real operators are working". ].
-//].
-//
+// --- LongArithmeticTest ---
+
+#symbol LongTest =
+[    
+    #var l := 100000000000000l / 5000000000000l.
+    
+    console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
+    console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
+    console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).
+    console write:"(12345679 != 12345678) is " writeLine:(12345678l != 12345679l).
+    console write:"(12345678l < 3) is " writeLine:(12345678l < 3l).
+    console write:"(12345678l > 12345679l) is " writeLine:(12345678l > 12345679l).
+    console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
+    console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
+    
+    #var(vlong) n := 0l.
+    n += 3l.
+    n -= 2l.
+    n *= 2l.
+    n /= 2l.
+    
+    (n == 1l) ?
+        [ console writeLine:"Long Integer operators are working". ].
+].
+
+// --- RealArithmeticTest ---
+
+#symbol RealTest =
+[
+    console write:"(2 + 3 * 4) is " writeLine:(2.0r + 3.0r * 4.0r).
+    console write:"(10/3) is " writeLine:(10.0r / 3.0r).
+    
+    #var(vreal) n := 1.0r.
+    n += 2.0r.
+    n -= 2.0r.
+    n *= 2.0r.
+    n /= 2.0r.
+    
+    (n == 1.0r) ?
+        [ console writeLine:"Real operators are working". ].
+].
+
 //// --- Action Test ---
 //
 //#symbol ActionTest =

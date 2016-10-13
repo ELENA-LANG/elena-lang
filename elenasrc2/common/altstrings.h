@@ -52,6 +52,8 @@ public:
    long toULong(int radix, int index = 0);
    long long toULongLong(int radix, int index = 0);
 
+   double toDouble(int index = 0);
+
    char* clone();
    char* clone(int index);
 

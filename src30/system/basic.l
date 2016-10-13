@@ -213,7 +213,7 @@
 #subject vshort = nvarof:short.
 #subject vint   = nvarof:int.
 #subject vlong  = nvarof:long.
-//#subject vreal  = nvarof:real.
+#subject vreal  = nvarof:real.
 //#subject vchar  = varof:char.
 
 // === basic data classes ===
@@ -507,13 +507,13 @@
 //    /// Bitwise inversion
 //    #method(byte,stacksafe) inverted
 //        => system'core_routines'__byte.  
-//        
-//    /// Returns the literal presentation
-//    #method(w2) literal = system'literalConvertor convert &byte:$self.
-//
-//    /// Returns the literal presentation
-//    #method(w2) wide = system'wideConvertor convert &byte:$self.
-//
+        
+    /// Returns the literal presentation
+    #method(w2) literal = system'literalConvertor convert &byte:$self.
+
+    /// Returns the literal presentation
+    #method(w2) wide = system'wideConvertor convert &byte:$self.
+
 //    /// Clones the value
 //    #method clone = ByteNumber new &byte:$self.
 //
@@ -759,13 +759,13 @@
 //    /// Bitwise inversion
 //    #method(short,stacksafe) inverted
 //        => system'core_routines'__short.  
-//
-//    /// Returns the literal presentation
-//    #method(w2) literal = system'literalConvertor convert &short:$self.
-//
-//    /// Returns the literal presentation
-//    #method(w2) wide = system'wideConvertor convert &short:$self.
-//
+
+    /// Returns the literal presentation
+    #method(w2) literal = system'literalConvertor convert &short:$self.
+
+    /// Returns the literal presentation
+    #method(w2) wide = system'wideConvertor convert &short:$self.
+
 //    /// Clones the value
 //    #method clone = ShortNumber new &short:$self.    
 //
@@ -1265,13 +1265,13 @@
 //    /// Returns the result of bitwise XOR operation
 //    #method(stacksafe) xor &byte:anOperand
 //        = $self xor &long:(LongNumber new &byte:anOperand).
-//
-//    /// Returns the literal presentation
-//    #method(w2) literal = system'literalConvertor convert &long:$self.
-//
-//    /// Returns the literal presentation
-//    #method(w2) wide = system'wideConvertor convert &long:$self.
-//
+
+    /// Returns the literal presentation
+    #method(w2) literal = system'literalConvertor convert &long:$self.
+
+    /// Returns the literal presentation
+    #method(w2) wide = system'wideConvertor convert &long:$self.
+
 //    /// Clones the value
 //    #method clone = LongNumber new &long:$self.
 //    
@@ -1306,13 +1306,13 @@
 //        = 0l - theValue.
 }
 
-//// --- realNumber ---
-//
-///// A 64bit float numeric value
-//#class(embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
-//{
-//    #field(float64)theValue.
-//
+// --- realNumber ---
+
+/// A 64bit float numeric value
+#class(embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
+{
+    #field(8,-14)theValue.
+
 //    #constructor(stacksafe)&int:n
 //    [
 //        realConvertor convert &int:n &vreal:$self.
@@ -1353,31 +1353,31 @@
 //    /// Creates the object with specified value
 //    #constructor new : anObject
 //        <= new &real:(anObject real).
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) equal &real:anOperand 
-//        = theValue == anOperand.
-//        
-//    /// Compares the value
-//    #method(bool,stacksafe) less &real:anOperand
-//        = theValue < anOperand.
-//        
-//    /// Returns the sum
-//    #method(real,stacksafe,w3) add &real:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    #method(real,stacksafe,w3) subtract &real:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    #method(real,stacksafe,w3) multiply &real:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    #method(real,stacksafe,w3) divide &real:anOperand
-//        = theValue / anOperand.
-//        
+        
+    /// Compares the value
+    #method(bool,stacksafe) equal &real:anOperand 
+        = theValue == anOperand.
+        
+    /// Compares the value
+    #method(bool,stacksafe) less &real:anOperand
+        = theValue < anOperand.
+        
+    /// Returns the sum
+    #method(real,stacksafe,w3) add &real:anOperand
+        = theValue + anOperand.
+
+    /// Returns the sum
+    #method(real,stacksafe,w3) subtract &real:anOperand
+        = theValue - anOperand.
+
+    /// Returns the product
+    #method(real,stacksafe,w3) multiply &real:anOperand
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    #method(real,stacksafe,w3) divide &real:anOperand
+        = theValue / anOperand.
+        
 //    /// Compares the numeric values
 //    #method(bool,stacksafe) equal &int:anOperand
 //        = $self equal &real:(RealNumber new &int:anOperand).
@@ -1481,13 +1481,13 @@
 //    /// Returns the result of the division
 //    #method(stacksafe) divide &long:anOperand
 //        = $self divide &real:(RealNumber new &long:anOperand).
-//
-//    /// Returns the literal presentation
-//    #method(w2) literal = system'literalConvertor convert &real:$self.
-//    
-//    /// Returns the literal presentation
-//    #method(w2) wide = system'wideConvertor convert &real:$self.
-//
+
+    /// Returns the literal presentation
+    #method(w2) literal = system'literalConvertor convert &real:$self.
+    
+    /// Returns the literal presentation
+    #method(w2) wide = system'wideConvertor convert &real:$self.
+
 //    /// Clones the value    
 //    #method clone = RealNumber new &real:$self.
 //    
@@ -1506,8 +1506,8 @@
 //    /// Negates the value
 //    #method(stacksafe/*,suppress:w3*/) negative
 //        = 0.0r - theValue.
-//}
-//
+}
+
 //// --- CharValue ---
 //
 ///// An UTF-32 character symbol
