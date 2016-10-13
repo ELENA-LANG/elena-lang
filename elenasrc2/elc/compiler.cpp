@@ -431,22 +431,16 @@ SNode findTerminalInfo(SNode node)
    if (node.findChild(lxTerminal))
       return node;
 
-   if (!test(node, lxTerminalMask))
-      node = node.firstChild();
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      SNode terminalNode = findTerminalInfo(current);
+      if (terminalNode != lxNone)
+         return terminalNode;
 
-   SNode terminal = node;
-   while (node != lxNone) {
-      while (terminal != lxNone && terminal.findChild(lxTerminal) == nsNone) {
-         terminal = terminal.firstChild(lxObjectMask);
-      }
-      if (terminal == lxNone) {
-         node = node.nextNode();
-         terminal = node;
-      }
-      else break;
+      current = current.nextNode(lxObjectMask);
    }
 
-   return terminal;
+   return current;
 }
 
 //struct CoordinateInfo
@@ -4155,7 +4149,7 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, int mo
 
    if (typecasting) {
       SNode exprNode = node.firstChild(lxExprMask);
-      if (exprNode == lxNone) {
+      if (exprNode != lxExpression) {
          // HOTFIX : inject an expression node if required
          exprNode = node.injectNode(lxExpression);
       }                  
@@ -8378,7 +8372,8 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
 //         optimizeNestedExpression(scope, current, warningMask);
 //         break; 
       case lxCode:
-         optimizeSyntaxExpression(scope, current, warningScope);
+      case lxNewFrame:
+         optimizeSyntaxExpression(scope, current, warningScope, HINT_NOBOXING);
          break;
 //      case lxArgUnboxing:
 //         optimizeArgUnboxing(scope, current, warningMask);

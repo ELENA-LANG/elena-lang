@@ -30,23 +30,23 @@
         ^ $self.
     ]
 
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method equal : anExpr = anExpr bool.
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    #method(bool) equal &bool:aBool = aBool.
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal : anExpr = anExpr bool.
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal &bool:aBool = aBool.
 
     /// Always returns false.
     #method inverted = false.
 
-//    /// Returns literal representation.
-//    #method literal = "true".
-//
-//    /// Returns literal representation.
-//    #method wide = "true"w.
-//
-//    /// Returns itself.
-//    #method clone = $self.
+    /// Returns literal representation.
+    #method literal = "true".
+
+    /// Returns literal representation.
+    #method wide = "true"w.
+
+    /// Returns itself.
+    #method clone = $self.
 }.
 
 // --- false ---
@@ -81,33 +81,31 @@
         ^ $self.
     ]
 
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method(w2) equal : anExpr
-//    [
-//        anExpr ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    #method(bool) equal &bool:anExpr
-//    [
-//        anExpr ? [ ^ $self. ].
-//        
-//        ^ true.
-//    ]
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal : anExpr
+    [
+        anExpr bool ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal &bool:anExpr
+    [
+        ^ anExpr not.
+    ]
 
     /// Always returns true
     #method inverted = true.
 
-//    /// Returns literal representation
-//    #method literal = "false".
-//    
-//    /// Returns literal representation
-//    #method wide = "false"w.
-//
-//    /// Returns itself
-//    #method clone = $self.
+    /// Returns literal representation
+    #method literal = "false".
+    
+    /// Returns literal representation
+    #method wide = "false"w.
+
+    /// Returns itself
+    #method clone = $self.
 }.
 
 //// === Basic prototypes ===

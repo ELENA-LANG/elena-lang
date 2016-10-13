@@ -46,19 +46,17 @@
 
     #method(bool) xor : aBool = $nil.
 
-//    #method equal : anExpr = $nil.
-//
-//    #method(bool) equal &bool:aBool = $nil.
+    #method(bool) equal &bool:aBool = $nil.
 
     #method(bool) not = $self inverted.
 
     #method(bool) inverted = $nil.
 
-//    #method literal = $nil.
-//
-//    #method wide = $nil.
-//
-//    #method clone = $nil.
+    #method literal = $nil.
+
+    #method wide = $nil.
+
+    #method clone = $nil.
 }
 
 //// --- nil constant ---

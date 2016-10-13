@@ -894,13 +894,13 @@
 //    /// Returns the result of bitwise XOR operation
 //    #method(stacksafe) xor &long:anOperand
 //        = LongNumber new &int:$self xor &long:anOperand.
-//
-//    /// Returns the literal presentation
-//    #method(w2) literal = system'literalConvertor convert &int:$self.
-//
-//    /// Returns the literal presentation
-//    #method(w2) wide = system'wideConvertor convert &int:$self.
-//
+
+    /// Returns the literal presentation
+    #method(w2) literal = system'literalConvertor convert &int:$self.
+
+    /// Returns the literal presentation
+    #method(w2) wide = system'wideConvertor convert &int:$self.
+
 //    /// Clones the value
 //    #method clone = IntNumber new &int:$self.
 //

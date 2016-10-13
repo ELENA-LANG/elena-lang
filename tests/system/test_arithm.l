@@ -259,20 +259,20 @@
         ! [ console writeLine:"!! ObjectTest failed" ].
 ].
 
-//// --- BooleanTest ---
-//
-//#symbol BooleanTest =
-//[
-//    #var b1 := true.
-//    #var b2 := false.
-//    
-//    console write:"(true == true) is " writeLine:(b1 == b1).
-//    console write:"(true == false) is " writeLine:(b1 == b2).
-//    console write:"(false == true) is " writeLine:(b2 == b1).
-//    console write:"(false == false) is " writeLine:(b2 == b2).
-//    console write:"(false != false) is " writeLine:(b2 != b2).
-//    console write:"(false != true) is " writeLine:(b2 != b1).
-//].
+// --- BooleanTest ---
+
+#symbol BooleanTest =
+[
+    #var b1 := true.
+    #var b2 := false.
+    
+    console write:"(true == true) is " writeLine:(b1 == b1).
+    console write:"(true == false) is " writeLine:(b1 == b2).
+    console write:"(false == true) is " writeLine:(b2 == b1).
+    console write:"(false == false) is " writeLine:(b2 == b2).
+    console write:"(false != false) is " writeLine:(b2 != b2).
+    console write:"(false != true) is " writeLine:(b2 != b1).
+].
 
 // --- ControlTest ---
 
@@ -292,11 +292,11 @@
     ].
 ].
 
-//// --- IntArithmeticTest ---
-//
-//#symbol IntegerTest =
-//[
-//    console write:"(2 + 3 * 4) is " writeLine:(2 + 3 * 4).
+// --- IntArithmeticTest ---
+
+#symbol IntegerTest =
+[
+    console write:"(2 + 3 * 4) is " writeLine:(2 + 3 * 4).
 //    console write:"(2 == 3) is " writeLine:(2 == 3).
 //    console write:"(2 == 2) is " writeLine:(2 == 2).
 //    console write:"(2 < 3) is " writeLine:(2 < 3).
@@ -313,8 +313,8 @@
 //    
 //    (n == 1) ?
 //        [ console writeLine:"Integer operators are working". ].
-//].
-//
+].
+
 //// --- LongArithmeticTest ---
 //
 //#symbol LongTest =

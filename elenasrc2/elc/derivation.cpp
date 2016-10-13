@@ -218,7 +218,6 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
          case nsL7Operation:
          case nsNewOperator:
             copyMessage(current, false, true);
-            _writer.removeBookmark();
             break;
          default:
             if (operationMode && current.existChild(lxTerminal)) {
