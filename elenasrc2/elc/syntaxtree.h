@@ -75,6 +75,7 @@ enum LexicalType
    lxBlockLocal      = 0x0810B, // arg - offset
    lxConstantString  = 0x0810C, // arg - reference
    lxConstantWideStr = 0x0810D, // arg - reference
+   lxConstantChar    = 0x0810E, // arg - reference
    lxConstantInt     = 0x1810F, // arg - reference
    lxConstantLong    = 0x18110, // arg - reference
    lxConstantReal    = 0x18111, // arg - reference
@@ -198,7 +199,6 @@ enum LexicalType
 //
 //   lxSymbol = 0x20103, // arg - reference
 //   lxBlockLocalAddr = 0x04109, // arg - offset
-//   lxConstantChar = 0x8410E, // arg - reference
 //   lxMessageConstant = 0x24113, // arg - rererence
 //   lxExtMessageConstant = 0x24114, // arg -reference
 //   lxSignatureConstant = 0x24115, // arg - reference
@@ -551,12 +551,12 @@ public:
 
       Node nextNode(LexicalType mask) const
       {
-         Node node = nextNode();
+         Node current = nextNode();
 
-         while (node != lxNone && !test(node.type, mask))
-            node = node.nextNode();
+         while (current != lxNone && !test(current.type, mask))
+            current = current.nextNode();
 
-         return node;
+         return current;
       }
 
       Node prevNode() const

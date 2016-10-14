@@ -237,6 +237,76 @@ procedure __literal.add&literal$[2]
 
 end                                                
 
+procedure __literal.equal&literal$[2]
+
+  bloadsi 2
+  callextr api : sequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __literal.less&literal$[2]
+
+  bloadsi 2
+  callextr api : sless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __literal.read&int$&vbyte$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  breadb
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __literal.read&int$&vchar$[3]
+
+  blen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  acopyb  
+  callextr api : strtochar
+  ifr labErr 0
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -324,6 +394,77 @@ procedure __wide.eval&copy&wide$&int$&int$&shortarray$[4]
   acopyb
   quitn 4
 
+end
+
+procedure __wide.equal&wide$[2]
+
+  bloadsi 2
+  callextr api : wequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __wide.less&wide$[2]
+
+  bloadsi 2
+  callextr api : wless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __wide.read&int$&vchar$[3]
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  acopyb  
+  callextr api : wstrtochar
+  ifr labErr 0
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __wide.read&int$&vshort$[3]
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  eaddn -1
+  notless labErr
+  lessn   labErr 0
+
+  acopyb
+  shiftn -1
+  breadw
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
 end
 
 procedure __literalconvertor.convert&int$&bytearray$&vint$[4]

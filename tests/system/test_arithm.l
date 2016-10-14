@@ -3,7 +3,7 @@
 //#import system'collections.
 //#import system'dynamic.
 //#import system'calendar.
-//#import extensions.
+#import extensions.
 //#import extensions'dynamic.
 //
 //// --- OpenArgTest ---
@@ -397,22 +397,22 @@
 //    #var r2 := "123.456789" toReal.
 //    #var r3 := "-123.456789" toReal.
 //].
-//
-//// --- LiteralTest ---
-//
-//#symbol LiteralTest =
-//[
-//    #var b1 := "abc" == "abc".
-//    #var b2 := "ab" == "abc".
-//    #var b3 := "ba" > "ab".
-//    #var b4 := "ab" < "abc".
-//
-//    #var l := "abc" + "de".
-//    #var ll := l length.
-//    #var c := l@2.
-//
-//    #var a := l toArray.
-//
+
+// --- LiteralTest ---
+
+#symbol LiteralTest =
+[
+    #var b1 := "abc" == "abc".
+    #var b2 := "ab" == "abc".
+    #var b3 := "ba" > "ab".
+    #var b4 := "ab" < "abc".
+
+    #var l := "abc" + "de".
+    #var ll := l length.
+    #var c := l@2.
+
+    #var a := l toArray.
+
 //    "abc" run &each: (:ch)[ console write:ch ].
 //
 //    console writeLine.
@@ -436,8 +436,8 @@
 //
 //    "abc" getAt:4 |
 //        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
-//].
-//
+].
+
 //// --- ArrayTest ---
 //
 //#symbol ArrayTest =

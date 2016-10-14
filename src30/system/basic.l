@@ -23,7 +23,7 @@
 //    #method(w3) equal : anObject
 //        => $value.
 
-    #method(embeddable/*,w3*/) => $value.
+    #method(embeddable,w3) => $value.
 }
 
 #template nvarof : template_subj
@@ -214,7 +214,7 @@
 #subject vint   = nvarof:int.
 #subject vlong  = nvarof:long.
 #subject vreal  = nvarof:real.
-//#subject vchar  = varof:char.
+#subject vchar  = varof:char.
 
 // === basic data classes ===
 
@@ -1508,21 +1508,21 @@
 //        = 0.0r - theValue.
 }
 
-//// --- CharValue ---
-//
-///// An UTF-32 character symbol
-//#class(reference,sealed,dispatchable:char,const) CharValue :: BaseValue
-//{
-//    #field(int)theValue.
-//    
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        <= new &char:#0.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe,w3) new &char:value
-//        = value.
-//
+// --- CharValue ---
+
+/// An UTF-32 character symbol
+#class(embeddable,sealed,dispatchable:char,const) CharValue :: BaseValue
+{
+    #field(int)theValue.
+
+    /// Creates the object with a default value (0)
+    #constructor new
+        <= new &char:#0.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe,w3) new &char:value
+        = value.
+
 //    /// Creates the object with specified value
 //    #constructor new : anOperand
 //        <= new &char:(anOperand cast:%convert &to:charConvertor char).
@@ -1530,18 +1530,18 @@
 //    /// Creates the object with specified numeric value
 //    #constructor(stacksafe) new &int:anOperand
 //        <= new &char:(charConvertor convert &int:anOperand).
-//
-//    /// Returns the minimal possible character value (0)
-//    #constructor min
-//        = #0.
-//
-//    /// Returns the maximal possible character value (010FFFFh)
-//    #constructor max
-//        = #010FFFFh.
-//
-//    #method(stacksafe,bool) equal &int:val
-//        = theValue == val.
-//
+
+    /// Returns the minimal possible character value (0)
+    #constructor min
+        = #0.
+
+    /// Returns the maximal possible character value (010FFFFh)
+    #constructor max
+        = #010FFFFh.
+
+    #method(stacksafe,bool) equal &int:val
+        = theValue == val.
+
 //    /// Clones the value
 //    #method clone = CharValue new &char:$self.
 //
@@ -1604,8 +1604,8 @@
 //        
 //        ^ aCode.
 //    ]
-//}
-//
+}
+
 //// === Basic Factory symbols ==
 //
 //#class BaseExtender

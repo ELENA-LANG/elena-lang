@@ -47,6 +47,7 @@
 #define V_CONST       (size_t)-8201
 #define V_GENERIC     (size_t)-8202
 #define V_EXTENSION   (size_t)-8203
+#define V_NOSTRUCT    (size_t)-8204
 
 namespace _ELENA_
 {
@@ -101,6 +102,7 @@ struct _CompilerScope
    ref_t boolReference;
    ref_t literalReference;
    ref_t wideReference;
+   ref_t charReference;
 
    // list of typified classes which may need get&type message
    ClassMap    typifiedClasses;
@@ -118,7 +120,7 @@ struct _CompilerScope
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
-      realReference = 0;
+      charReference = realReference = 0;
    }
 };
 

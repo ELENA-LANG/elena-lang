@@ -19,7 +19,7 @@ inline bool isWrappable(int flags)
    return !test(flags, elWrapper) && test(flags, elSealed);
 }
 
-inline bool isPrimitiveArrayRef(ref_t classRef)
+inline bool isPrimitiveStructArrayRef(ref_t classRef)
 {
    switch (classRef)
    {
@@ -30,6 +30,11 @@ inline bool isPrimitiveArrayRef(ref_t classRef)
       default:
          return false;
    }
+}
+
+inline bool isPrimitiveArrayRef(ref_t classRef)
+{
+   return classRef == V_OBJARRAY;
 }
 
 inline ref_t definePrimitiveArrayItem(ref_t classRef)
@@ -474,13 +479,26 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    }
 
    // HOT FIX : trying to typecast primitive structure array
-   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
+   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
       ClassInfo sourceInfo;
       defineClassInfo(scope, sourceInfo, sourceRef, true);
 
       if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
          compiler.injectBoxing(scope, node,
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+
+         return true;
+      }
+   }
+
+   // HOTFIX : trying to typecast primitive array
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
+      ClassInfo sourceInfo;
+      defineClassInfo(scope, sourceInfo, sourceRef, true);
+
+      if (isCompatible(scope, sourceType, info.fieldTypes.get(-1).value1)) {
+         compiler.injectBoxing(scope, node,
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef);
 
          return true;
       }
@@ -561,10 +579,20 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
          info.size = -1;
          break;
+      case V_OBJARRAY:
+         info.header.parentRef = 0;
+         info.header.flags = elDebugArray | elDynamicRole;
+         info.size = 0;
+         break;
       default:
          if (reference != 0) {
             scope.loadClassInfo(info, reference, headerOnly);
-         }      
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            info.size = 0;
+         }
          break;
    }
 //      else if (isPrimitiveRef(classRef)) {
@@ -646,6 +674,15 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
          info.header.flags |= elDebugLiteral;
       }
    }
+
+   // adjust array
+   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole | elNonStructureRole)) {
+      info.header.flags |= elNonStructureRole;
+
+      if ((info.header.flags & elDebugMask) == 0) {
+         info.header.flags |= elDebugArray;
+      }
+   }
 }
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
@@ -678,6 +715,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          return true;
       case V_EXTENSION:
          attrValue = elExtension;
+         return true;
+      case V_NOSTRUCT:
+         attrValue = elNonStructureRole;
          return true;
       default:
          return false;

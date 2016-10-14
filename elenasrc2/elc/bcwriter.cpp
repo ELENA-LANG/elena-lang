@@ -3029,8 +3029,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskLiteralRef;
       case lxConstantWideStr:
          return mskWideLiteralRef;
-//      case lxConstantChar:
-//         return mskCharRef;
+      case lxConstantChar:
+         return mskCharRef;
       case lxConstantInt:
          return mskInt32Ref;
       case lxConstantLong:
@@ -3089,7 +3089,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantWideStr:
       case lxConstantClass:
       case lxConstantSymbol:
-//      case lxConstantChar:
+      case lxConstantChar:
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantReal:
@@ -3168,7 +3168,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantWideStr:
       case lxConstantClass:
       case lxConstantSymbol:
-//      case lxConstantChar:
+      case lxConstantChar:
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantReal:
@@ -4696,7 +4696,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                generateBinary(tape, current, level);
 
             declareStructInfo(tape,
-               current.findChild(lxTerminal).identifier(),
+               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
                level, current.findChild(lxClassName).identifier());
             break;
          }
@@ -4977,7 +4977,7 @@ void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t r
    while (current != lxNone) {
       SNode object = current.findSubNodeMask(lxObjectMask);
       switch (object.type) {
-         //case lxConstantChar:
+         case lxConstantChar:
          case lxConstantClass:
          case lxConstantInt:
          case lxConstantLong:

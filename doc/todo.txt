@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xrev
+                 * test ch := 5.
+
                  * implement repeat until loop
                  * support closures with a generic parameter
                  * support closures with several generic parameters
@@ -60,6 +62,7 @@ In development:
                  * test unboxing primitive array
                  * test dispatching method
                  * test dispatching method with generic methods
+                 * optimize comparision operation with char
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 

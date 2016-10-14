@@ -198,6 +198,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadPathOption(config, opTarget, configPath);
    loadOption(config, opOutputPath);
    loadBoolOption(config, opWarnOnUnresolved);
+   loadBoolOption(config, opWarnOnWeakUnresolved);
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
    loadBoolOption(config, opDebugSubjectInfo);

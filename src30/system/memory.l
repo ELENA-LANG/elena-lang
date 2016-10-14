@@ -10,7 +10,7 @@
 //        #var(int)length := 0.
 //        $target >> length.
 //        
-//        ^ Enumerator
+//        ^ Enumerator--
 //          {
 //              get = $owner getAt &int:index.
 //              
@@ -817,14 +817,14 @@
     /// Converts to UTF-16 literal
     #method wide = wideConvertor convert &literal:$self.
 
-//    /// Compares the values
-//    #method(bool) equal &literal : aLiteral
-//        => system'core_routines'__literal.
-//
-//    /// Compares the values
-//    #method(bool) less &literal : aLiteral
-//        => system'core_routines'__literal.
-//
+    /// Compares the values
+    #method(bool) equal &literal : aLiteral
+        => system'core_routines'__literal.
+
+    /// Compares the values
+    #method(bool) less &literal : aLiteral
+        => system'core_routines'__literal.
+
 //    /// Compares the values
 //    #method(bool) equal &wide : aLiteral
 //        = $self wide equal &wide:aLiteral.
@@ -845,33 +845,33 @@
     #method(literal) add &literal : aLiteral
         => system'core_routines'__literal.
 
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    /// Returns the character at the specified index
-//    #method(char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
-//    
+    #method add : anObject = anObject cast:%add &to:$self.
+
+    /// Returns the character at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+
+    /// Returns the character at the specified index
+    #method(char,stacksafe) getAt &int:anIndex
+    [
+        #var(char)aChar.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
+    
 //    /// Concatinates the values
 //    #method(literal) add &char:aChar
 //        = $self add &literal:(aChar literal).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'__literal.
-//
-//    // Reads the byte at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vbyte:anInt
-//        => system'core_routines'__literal.
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'core_routines'__literal.
+
+    // Reads the byte at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
+        => system'core_routines'__literal.
+
 //    /// Saves the index of the first occurence of the specified substring into an output parameter.
 //    ///
 //    /// If the substring is not found. returns -1
@@ -1037,14 +1037,14 @@
     /// Converts to UTF-8 literal
     #method literal = literalConvertor convert &wide:$self.
 
-//    /// Compares the values
-//    #method(bool) equal &wide : aLiteral
-//        => system'core_routines'__wide.
-//
-//    /// Compares the values
-//    #method(bool) less &wide : aLiteral
-//        => system'core_routines'__wide.
-//
+    /// Compares the values
+    #method(bool) equal &wide : aLiteral
+        => system'core_routines'__wide.
+
+    /// Compares the values
+    #method(bool) less &wide : aLiteral
+        => system'core_routines'__wide.
+
 //    /// Compares the values
 //    #method(bool) equal &char : aChar
 //        <= %equal &wide:(aChar wide).
@@ -1052,9 +1052,9 @@
 //    /// Compares the values
 //    #method(bool) less &char : aChar
 //        <= %less &wide:(aChar wide).
-//
-//    #method add : anObject = anObject cast:%add &to:$self.
-//
+
+    #method add : anObject = anObject cast:%add &to:$self.
+
 //    /// Returns the character at the specified index
 //    #method getAt : aParam
 //        <= %getAt &int:(aParam int).
@@ -1079,15 +1079,15 @@
 //    /// Concatinates the values
 //    #method(wide) add &literal:aLiteral
 //        = $self add &wide:(aLiteral wide).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'__wide.
-//
-//    // Reads the short integer at the specified index and saves into an output parameter
-//    #method(stacksafe) read &int:anIndex &vshort:aValue
-//        => system'core_routines'__wide.
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'core_routines'__wide.
+
+    // Reads the short integer at the specified index and saves into an output parameter
+    #method(stacksafe) read &int:anIndex &vshort:aValue
+        => system'core_routines'__wide.
+
 //    /// Saves the index of the first occurence of the specified substring into an output parameter.
 //    ///
 //    /// If the substring is not found. returns -1
@@ -1308,30 +1308,30 @@
 //    #method equal : anObject
 //        = anObject equal:$self bool.
 //}
-//
-//// --- Array ---
-//
-///// An array
-//#class(sealed,arrayof:object,dispatchable:array) Array
-//{
-//    /// Creates an empty array
-//    #constructor min
-//        = object:0.
-//    
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    ///
-//    /// Obsolete
-//    #constructor new &length:aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        = object:aLength.
-//
+
+// --- Array ---
+
+/// An array
+#class(sealed,arrayof:object,dispatchable:array) Array
+{
+    /// Creates an empty array
+    #constructor min
+        = object:0.
+    
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    ///
+    /// Obsolete
+    #constructor new &length:aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        = object:aLength.
+
 //    /// Creates a copy of the provided array
 //    #constructor new &array:anArray
 //        <= %new &int:0 &int:(anArray length int) &array:anArray.
@@ -1401,8 +1401,8 @@
 //    /// Clones the array
 //    #method(array) clone 
 //        = Array new &array:$self.
-//}
-//
+}
+
 //// --- OpenArgs ---
 //
 //#class(sealed,dynamic)OpenArgs

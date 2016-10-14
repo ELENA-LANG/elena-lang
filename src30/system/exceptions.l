@@ -1,13 +1,13 @@
-//// --- CallStack ---
-//
-///// A call stack
-//#class(sealed,nonstructural) CallStack
-//{
+// --- CallStack ---
+
+/// A call stack
+#class(sealed,nonstructural) CallStack
+{
 //    #field(intarray) theStack.
-//    
-//    /// Creates a current call stack
-//    #constructor new
-//    [
+    
+    /// Creates a current call stack
+    #constructor new
+    [
 //        #var(int:64)aStack.
 //        #var(int)aLength.
 //        
@@ -16,8 +16,8 @@
 //            &int:64.
 //            
 //        theStack := IntArray new &int:0 &int:aLength &intarray:aStack.
-//    ]
-//    
+    ]
+    
 //    /// Generates the call stack literal representation
 //    #method literal
 //    [
@@ -45,15 +45,15 @@
 //        
 //        ^ aCallStackText.
 //    ]
-//}
-//
-//// --- exceptionof ---
-//
-//#template exceptionof : subject
-//{
-//    #field(literal) theMessage.
-//    #field theCallStack.
-//    
+}
+
+// --- exceptionof ---
+
+#template exceptionof : subject
+{
+    #field(literal) theMessage.
+    #field theCallStack.
+    
 //    /// Returns the message and the call stack
 //    #method literal
 //    [
@@ -93,8 +93,8 @@
 //    [
 //        aCatchBlock subject eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
 //    ]    
-//}
-//
+}
+
 //// --- Exception ---
 //
 ///// A basic exception
@@ -154,26 +154,26 @@
 //        theCallStack := CallStack new.
 //    ]
 //}
-//
-//// --- OutOfRangeException ---
-//
-//#class(exceptionof:OutOfRangeError) OutOfRangeException
-//{
-//    #constructor new &literal:message
-//    [
-//        theMessage := message.
-//        theCallStack := CallStack new.
-//    ]
-//    
-//    /// Creates the exception
-//    #constructor new
-//        <= new &literal:"An index is out of range".
-//
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= new &literal:(aMessage literal).
-//}
-//
+
+// --- OutOfRangeException ---
+
+#class(exceptionof:OutOfRangeError) OutOfRangeException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"An index is out of range".
+
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
+}
+
 //// --- IndexOutOfRangeException ---
 //
 //#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
@@ -192,30 +192,30 @@
 //    #constructor new:aMessage
 //        <= new &literal:(aMessage literal).
 //}
-//
-//// --- InvalidArgumentException ---
-//
-//#class(exceptionof:InvalidArgumentError) InvalidArgumentException
-//{
-//    #constructor new &literal:message
-//    [
-//        theMessage := message.
-//        theCallStack := CallStack new.
-//    ]
-//    
-//    /// Creates the exception
-//    #constructor new
-//        <= new &literal:"Invalid argument".
-//        
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= new &literal:(aMessage literal).
-//        
-//    /// obsolete
-//    #constructor new &message:aMessage
-//        <= new &literal:(aMessage literal).
-//}
-//
+
+// --- InvalidArgumentException ---
+
+#class(exceptionof:InvalidArgumentError) InvalidArgumentException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Invalid argument".
+        
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
+        
+    /// obsolete
+    #constructor new &message:aMessage
+        <= new &literal:(aMessage literal).
+}
+
 //// --- InvalidOperationException ---
 //
 //#class(exceptionof:InvalidOperationError) InvalidOperationException
@@ -241,20 +241,20 @@
 
 // --- MethodNotFound ---
 
-#class/*(exceptionof:MethodNotFoundError)*/ MethodNotFoundException
+#class(exceptionof:MethodNotFoundError) MethodNotFoundException
 {
-//    #constructor new &literal:message
-//    [
-//        theMessage := message.
-//        theCallStack := CallStack new.
-//    ]
-//    
-//    /// Creates the exception
-//    #constructor new
-//        <= new &literal:"Method not found".
-//
-//    #constructor(stacksafe) new &mssg:missingMessage
-//        <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Method not found".
+
+    #constructor(stacksafe) new &mssg:missingMessage
+        <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
 //// --- MethodNotSupported ---

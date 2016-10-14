@@ -107,7 +107,7 @@ public:
       okConstantClass,                // param - reference, extraparam - class reference
       okLiteralConstant,              // param - reference 
       okWideLiteralConstant,          // param - reference 
-//      okCharConstant,                 // param - reference
+      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
       okLongConstant,                 // param - reference 
       okRealConstant,                 // param - reference 
@@ -197,88 +197,6 @@ public:
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
    typedef Map<ref_t, SubjectMap*>        ExtensionMap;
-
-//   struct TemplateInfo
-//   {
-//      ref_t   templateRef;
-//      ref_t   templateParent;
-//      ref_t   targetType;
-//      int     targetOffset;
-//      ref_t   messageSubject;
-//      ref_t   targetMessage;
-//      ref_t   ownerRef;
-//
-//      int     sourceCol, sourceRow;
-//
-//      RoleMap parameters;
-//
-//      void save(MemoryWriter& writer)
-//      {
-//         writer.writeDWord(templateRef);
-//         writer.writeDWord(templateParent);
-//         writer.writeDWord(targetType);
-//         writer.writeDWord(targetOffset);
-//         writer.writeDWord(messageSubject);
-//         writer.writeDWord(targetMessage);
-//         writer.writeDWord(ownerRef);
-//         writer.writeDWord(sourceCol);
-//         writer.writeDWord(sourceRow);
-//
-//         parameters.write(&writer);
-//      }
-//
-//      void load(MemoryReader& reader)
-//      {
-//         templateRef = reader.getDWord();
-//         templateParent = reader.getDWord();
-//         targetType = reader.getDWord();
-//         targetOffset = reader.getDWord();
-//         messageSubject = reader.getDWord();
-//         targetMessage = reader.getDWord();
-//         ownerRef = reader.getDWord();
-//         sourceCol = reader.getDWord();
-//         sourceRow = reader.getDWord();
-//
-//         parameters.read(&reader);
-//      }
-//
-//      TemplateInfo()
-//      {
-//         targetType = 0;
-//         templateRef = 0;
-//         templateParent = 0;
-//         targetOffset = -1;
-//         messageSubject = 0;
-//         ownerRef = 0;
-//         targetMessage = 0;
-//
-//         sourceCol = sourceRow = 0;
-//      }
-//
-//      TemplateInfo(ref_t templateRef, ref_t targetType)
-//      {
-//         this->templateRef = templateRef;
-//         this->templateParent = 0;
-//         this->targetType = targetType;
-//         this->targetOffset = -1;
-//         this->messageSubject = 0;
-//         this->ownerRef = 0;
-//
-//         this->sourceCol = this->sourceRow = 0;
-//      }
-//
-//      TemplateInfo(ref_t templateRef, ref_t targetType, int targetOffset)
-//      {
-//         this->templateRef = templateRef;
-//         this->templateParent = 0;
-//         this->targetType = targetType;
-//         this->targetOffset = targetOffset;
-//         this->messageSubject = 0;
-//         this->ownerRef = 0;
-//
-//         this->sourceCol = this->sourceRow = 0;
-//      }
-//   };
 
 private:
    // - ModuleScope -
@@ -1105,7 +1023,7 @@ private:
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
-//   void compileResendExpression(DNode node, CodeScope& scope, CommandTape* tape);
+   void compileResendExpression(SNode node, CodeScope& scope);
    void compileDispatchExpression(SNode node, CodeScope& scope);
 
    ObjectInfo compileCode(SNode node, CodeScope& scope);

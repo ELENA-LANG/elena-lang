@@ -529,6 +529,7 @@ void __copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLengt
 void __copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 void __copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
 void __copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
+void __copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 void __append(char* dest, const char* sour, size_t length);
 void __append(wide_c* dest, const wide_c* sour, size_t length);
 

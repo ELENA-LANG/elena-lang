@@ -34,7 +34,7 @@ private:
 
    ident_t _literal;
    ident_t _wideLiteral;
-//   ident_t _character;
+   ident_t _character;
    ident_t _int;
    ident_t _long;
    ident_t _real;
@@ -71,7 +71,7 @@ public:
 
    virtual ident_t getLiteralClass();
    virtual ident_t getWideLiteralClass();
-//   virtual ident_t getCharacterClass();
+   virtual ident_t getCharacterClass();
    virtual ident_t getIntegerClass();
    virtual ident_t getRealClass();
    virtual ident_t getLongClass();

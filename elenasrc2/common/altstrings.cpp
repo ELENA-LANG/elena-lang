@@ -1439,6 +1439,11 @@ void _ELENA_::__copy(char* dest, const unic_c* sour, size_t sourLength, size_t& 
    copy(dest, sour, sourLength, destLength);
 }
 
+void _ELENA_::__copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
+{
+   copy(dest, sour, sourLength, destLength);
+}
+
 void _ELENA_::__append(char* dest, const char* sour, size_t length)
 {
    append(dest, sour, length);

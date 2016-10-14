@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   6
+#define REVISION_VERSION   7
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -800,9 +800,9 @@ void listFlags(int flags)
       case elDebugDWORD:
          printLine("@flag ", "elDebugDWORD");
          break;
-      //case elDebugReal64:
-      //   printLine("@flag ", "elDebugReal64");
-      //   break;
+      case elDebugReal64:
+         printLine("@flag ", "elDebugReal64");
+         break;
       case elDebugLiteral:
          printLine("@flag ", "elDebugLiteral");
          break;

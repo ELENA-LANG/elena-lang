@@ -242,7 +242,9 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
          return config.getSetting(PROJECT_CATEGORY, ELC_OUTPUT_PATH);
       case _ELENA_::opWarnOnUnresolved:
          return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_UNRESOLVED);
-   //   case _ELENA_::opWarnOnSignature:
+      case _ELENA_::opWarnOnWeakUnresolved:
+         return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_WEAKUNRESOLVED);
+         //   case _ELENA_::opWarnOnSignature:
    //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
       case _ELENA_::opDebugMode:
          return config.getSetting(PROJECT_CATEGORY, ELC_DEBUGINFO);

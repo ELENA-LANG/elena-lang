@@ -12,7 +12,7 @@
     IntegerTest eval.
     LongTest eval.
     RealTest eval.
-//    LiteralTest eval.
+    LiteralTest eval.
 //    MultiDispatchTest eval.
 //    MultySelectTest  eval.
 //    EnumTest eval.    

@@ -156,7 +156,7 @@ public:
 
    virtual ident_t getLiteralClass() = 0;
    virtual ident_t getWideLiteralClass() = 0;
-//   virtual ident_t getCharacterClass() = 0;
+   virtual ident_t getCharacterClass() = 0;
    virtual ident_t getIntegerClass() = 0;
    virtual ident_t getRealClass() = 0;
    virtual ident_t getLongClass() = 0;

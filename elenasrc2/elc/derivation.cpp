@@ -179,14 +179,8 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      switch ((Symbol)current.type) {
-         case tsIdentifier:
-         case tsPrivate:
-         case tsReference:
-            _writer.newNode(lxMessage);
-            unpackNode(current);
-            _writer.closeNode();
-            break;
+      Symbol symbol = (Symbol)current.type;
+      switch (symbol) {
          case nsSubjectArg:
             _writer.newNode(lxMessage);
             unpackChildren(current);
@@ -219,17 +213,30 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
          case nsNewOperator:
             copyMessage(current, false, true);
             break;
+         case tsIdentifier:
+         case tsPrivate:
+         case tsReference:
+            if (!operationMode) {
+               _writer.newNode(lxMessage);
+               unpackNode(current);
+               _writer.closeNode();
+               break;
+            }
          default:
             if (operationMode && current.existChild(lxTerminal)) {
-               if ((Symbol)node.type != nsNewOperator) {
-                  _writer.newNode(lxOperator);
-
-                  copyChildren(current);
+               if ((Symbol)node.type == nsNewOperator) {
+                  //HOTFIX : mark new operator
+                  _writer.appendNode(lxOperator, -1);
+                  if (symbol == tsInteger || symbol == tsIdentifier) {
+                     unpackNode(current);
+                  }
                }
-               //HOTFIX : mark new operator
-               else _writer.newNode(lxOperator, -1);
-
-               _writer.closeNode();
+               else {
+                  _writer.newNode(lxOperator);
+                  copyChildren(current);
+                  _writer.closeNode();
+               }
+               
                _writer.newBookmark();
             }            
             break;

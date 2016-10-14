@@ -13,14 +13,14 @@
 //#template(0200h) group   {}
 #template(-8201) const   {}
 #template(-8197) struct  {}
-//#template(1000h) nonstructural {}
+#template(-8204) nonstructural {}
 #template(-8198) enumlist {}
 #template(-8200) string {}
 #template(-8193) embeddable {}
 #template(-8203) extension {}
 #template(-8203,subject) extension : subject {}
 
-///// Provides classes that describe the basic functionality
+/// Provides classes that describe the basic functionality
 
 // === basic logical types ===
 #subject bool       = system'BaseBoolValue.
@@ -36,7 +36,7 @@
 #subject int        = system'IntNumber.
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
-//#subject char       = system'CharValue.
+#subject char       = system'CharValue.
 //#subject mssg       = system'Message.
 //#subject ext_mssg   = system'ExtensionMessage.
 //
@@ -56,7 +56,7 @@
 //#subject realarray  = system'RealArray.
 //#subject realmatrix = system'RealMatrix.
 //#subject chararray  = system'CharArray.
-//#subject array      = system'Array.
+#subject array      = system'Array.
 //#subject args       = system'OpenArgs.
 //#subject mssgarray  = system'MessageArray.
 //#subject bitarray   = system'BitArray.

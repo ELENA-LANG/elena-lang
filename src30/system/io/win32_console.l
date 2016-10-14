@@ -46,7 +46,7 @@
 
 #symbol $ConsoleHandleFactory =
 {
-    #method(handle) new &attributes:anAttributes
+    #method(handle,w3) new &attributes:anAttributes
     [ 
         #var(handle) aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
         

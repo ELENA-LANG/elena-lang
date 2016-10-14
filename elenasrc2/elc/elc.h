@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0056
+#define ELC_REVISION_NUMBER             0x0057
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -83,6 +83,7 @@
 #define ELC_PROJECT_TEMPLATE        "template"
 #define ELC_PLATFORMTYPE            "platform"
 #define ELC_WARNON_UNRESOLVED       "warn:unresolved"
+#define ELC_WARNON_WEAKUNRESOLVED   "warn:weakunresolved"
 //#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "ygsize"
 #define ELC_L0                      "l0"                // optimization: byte code optimization
