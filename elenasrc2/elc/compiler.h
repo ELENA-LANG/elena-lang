@@ -192,7 +192,7 @@ public:
       }
    };
 
-   typedef Map<ident_t, ref_t, false>     ForwardMap;
+   typedef Map<ident_t, ref_t>            ForwardMap;
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
 //   typedef MemoryMap<int, ref_t>          RoleMap;
    typedef List<Unresolved>               Unresolveds;
@@ -1002,7 +1002,7 @@ private:
    ObjectInfo compileExtension(SNode node, CodeScope& scope, int mode = 0);
    ObjectInfo compileExpression(SNode node, CodeScope& scope, int mode);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode = 0);
+   ObjectInfo compileAssigningExpression(SNode assigning, CodeScope& scope, int mode = 0);
 
    ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 

@@ -671,3 +671,25 @@ procedure __wideconvertor.convert&real$&shortarray$&vint$[4]
   quitn 4
 
 end
+
+procedure __char.eval&readLength&vint$[2]
+
+  bloadsi 2
+  nload
+  // ; < 80 - 1
+  ecopy 1
+  lessn labEnd 80h
+  eaddn 1
+  // ; <= 800 - 2
+  lessn labEnd 800h 
+  eaddn 1
+  lessn labEnd 10000h 
+  // ; <= 10000 - 3
+  eaddn 1
+  // ; - 4
+labEnd:
+  dcopye
+  nsave  
+  quitn 2
+
+end

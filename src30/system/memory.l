@@ -1055,18 +1055,18 @@
 
     #method add : anObject = anObject cast:%add &to:$self.
 
-//    /// Returns the character at the specified index
-//    #method getAt : aParam
-//        <= %getAt &int:(aParam int).
-//
-//    /// Returns the character at the specified index
-//    #method(char,stacksafe) getAt &int:anIndex
-//    [
-//        #var(char)aChar.
-//        $self read &int:anIndex &vchar:aChar.
-//        
-//        ^ CharValue new &char:aChar.
-//    ]
+    /// Returns the character at the specified index
+    #method getAt : aParam
+        <= %getAt &int:(aParam int).
+
+    /// Returns the character at the specified index
+    #method(char,stacksafe) getAt &int:anIndex
+    [
+        #var(char)aChar.
+        $self read &int:anIndex &vchar:aChar.
+        
+        ^ CharValue new &char:aChar.
+    ]
 
     /// Concatinates the values
     #method(wide,stacksafe) add &wide : aLiteral

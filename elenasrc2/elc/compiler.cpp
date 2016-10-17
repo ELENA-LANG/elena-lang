@@ -3669,13 +3669,6 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
             node.setArgument(size);
          }
          else scope.raiseError(errInvalidOperation, node);
-
-//         if (isPrimitiveRef(classReference)) {
-//            if (classReference == -1 || classReference == -2) {
-//               size = scope.moduleScope->defineSubjectSize(object.type);
-//            }
-//         }
-//         else size = scope.moduleScope->defineStructSize(classReference);
       }
       else if (target.kind == okFieldAddress) {
          size_t size = _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->attributeHints.get(target.type));
@@ -3685,7 +3678,6 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
          else scope.raiseError(errInvalidOperation, node);
       }
       else if (target.kind == okLocal || target.kind == okField || target.kind == okOuterField || target.kind == okStaticField) {
-//
       }
       else if (target.kind == okParam || target.kind == okOuter) {
          // Compiler magic : allowing to assign byref / variable parameter
@@ -3702,18 +3694,10 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-//      else if (object.kind == okTemplateTarget) {
-//         // if it is a template field
-//         // treates it like a normal field
-//         currentObject.kind = okField;
-//         // HOTFIX : provide virtual typecasting for template field
-//         if (currentObject.type == 0)
-//            assignMode |= HINT_VIRTUAL_FIELD;
-//      }
       else scope.raiseError(errInvalidOperation, node);
 
       SNode sourceNode = targetNode.nextNode(lxObjectMask);
-      ObjectInfo source = compileAssigningExpression(node, sourceNode, scope, target, assignMode);
+      ObjectInfo source = compileAssigningExpression(sourceNode, scope, assignMode);
 
       if (target.type != 0) {
          typecastObject(sourceNode, scope, target.type, source);
@@ -4233,32 +4217,8 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
    return objectInfo;
 }
 
-ObjectInfo Compiler :: compileAssigningExpression(SNode node, SNode assigning, CodeScope& scope, ObjectInfo target, int mode)
+ObjectInfo Compiler :: compileAssigningExpression(SNode assigning, CodeScope& scope, int mode)
 {
-//   ref_t targetType = target.type;
-   switch (target.kind)
-   {
-      case okLocal:
-      case okField:
-      case okOuterField:
-      case okLocalAddress:
-      case okFieldAddress:
-      case okParamField:
-      case okOuter:
-      case okStaticField:
-         break;
-//      case okTemplateLocal:
-//         mode |= HINT_VIRTUAL_FIELD; // HOTFIX : typecast it like a virtual field
-//         break;
-      case okUnknown:
-         scope.raiseError(errUnknownObject, node);
-      default:
-         scope.raiseError(errInvalidOperation, node);
-         break;
-   }
-
-//   scope.writer->newBookmark();
-
    insertDebugStep(assigning, dsStep);
 
    ObjectInfo objectInfo = compileExpression(assigning, scope/*, 0*/, 0);

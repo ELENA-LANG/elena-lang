@@ -1550,11 +1550,11 @@
 //
 //    /// Returns the wide literal value
 //    #method(w2) wide = system'wideConvertor convert &char:$self.
-//    
-//    /// Reads the number of bytes to represent the symbol
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__char.
-//        
+    
+    /// Reads the number of bytes to represent the symbol
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__char.
+        
 //    /// Reads the number of bytes to represent the symbol
 //    #method(stacksafe) readWideLength &vint:aRetVal
 //    [

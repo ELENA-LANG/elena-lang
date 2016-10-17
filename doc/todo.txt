@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * test : a int + b int.
-
                  * support closures with several generic parameters
                  * support closures with several parameters
                  * support closures with a parameter
