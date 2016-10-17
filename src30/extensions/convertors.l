@@ -1,6 +1,6 @@
 #import system.
 #import system'collections.
-//#import system'routines.
+#import system'routines.
 //#import system'calendar.
 //#import system'text.
 
@@ -46,7 +46,7 @@
     [
         #var(array_list)aRetVal := ArrayList new.
 
-        //aList run &each:anItem [ aRetVal append:anItem ].
+        aList run &each:anItem [ aRetVal append:anItem ].
 
         ^ aRetVal array.
     ]

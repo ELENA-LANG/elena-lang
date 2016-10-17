@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xrev
+                 * test : a int + b int.
+
                  * support closures with several generic parameters
                  * support closures with several parameters
                  * support closures with a parameter
@@ -82,9 +84,9 @@ In development:
                  * optimize : LiteralValue#class.eval&system$new...
                  * warn on duplicate extensions
                  * test listof:datatype / listof:type
-                 * test : a int + b int.
                  * test try catch statement
                  * implement repeat until loop
+                 * test : a int + b::op int.
 
               xdev
                 * linux migration

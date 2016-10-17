@@ -746,6 +746,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_SEALED:
          attrValue = tpSealed;
          return true;
+      case V_ACTION:
+         attrValue = tpAction;
+         return true;
       default:
          return false;
    }

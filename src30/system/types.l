@@ -3,7 +3,7 @@
 //#ftemplate(-34)  preloaded {}
 #template(-8202) generic {}
 #template(-8192) stacksafe {}
-//#mtemplate(80h) action {}
+#template(-8205) action {}
 #template(-4099) w1 {}
 #template(-4100) w2 {}
 #template(-4101) w3 {}
@@ -69,12 +69,12 @@
 
 //// === function types ===
 //#subject func       = system'BaseFunction.
-//
-///// An anonymous function with a generic parameter.
-/////
-///// An instance of system'BaseFunction1
-//#subject func1      = system'BaseFunction1.
-//
+
+/// An anonymous function with a generic parameter.
+///
+/// An instance of system'BaseFunction1
+#subject func1      = system'BaseFunction1.
+
 //#subject func2      = system'BaseFunction2.
 //#subject func3      = system'BaseFunction3.
 //#subject func4      = system'BaseFunction4.
@@ -94,7 +94,7 @@
 #subject handle     = system'Handle.
 //#subject rt_ptr     = system'RTPointer.
 //#subject dirty_ptr  = system'UnsafePointer.
-//
-//// --- Enumerators / Indexers ---
-//#subject enumerator = system'Enumerator.
+
+// --- Enumerators / Indexers ---
+#subject enumerator = system'Enumerator.
 //#subject iterator   = system'Iterator.

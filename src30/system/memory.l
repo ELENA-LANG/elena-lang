@@ -974,10 +974,10 @@
 //
 //    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
 //        => system'core_routines'__literal.
-//
-//    /// Returns the string enumerator
-//    #method enumerator = LiteralEnumerator new &literal:$self.
-//
+
+    /// Returns the string enumerator
+    #method enumerator = LiteralEnumerator new &literal:$self.
+
 //    /// Returns the string iterator
 //    #method iterator = LiteralIterator new &literal:$self.
 //    
@@ -1186,10 +1186,10 @@
 //
 //    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
 //        => system'core_routines'__wide.
-//
-//    /// Returns the object enumerator
-//    #method enumerator = WideLiteralEnumerator new &wide:$self.
-//    
+
+    /// Returns the object enumerator
+    #method enumerator = WideLiteralEnumerator new &wide:$self.
+    
 //    /// Returns the object iterator
 //    #method iterator = WideLiteralIterator new &wide:$self.
 //    
@@ -1825,64 +1825,64 @@
 //        = aLiteral.
 }.
 
-//// === Enumerators / Indexers
-//
-//// --- LiteralEnumerator ---
-//
-///// A literal enumerator
-//#class LiteralEnumerator :: Enumerator
-//{
-//    #field(literal) theLiteral.
-//    #field(vint)    theIndex.
-//    #field(vint)    theDiff.
-//    #field(char)    theChar.
-//    
-//    /// Creates an enumerator
-//    #constructor new : anObject
-//        <= new &literal:(anObject literal).
-//    
-//    /// Creates an enumerator
-//    #constructor(w3) new &literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := #0.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:(-1).
-//        theDiff set &int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theLiteral length.
-//        
-//        theIndex += theDiff.
-//        
-//        (theIndex < aLength)
-//            ? [
-//                theChar := theLiteral getAt &int:theIndex.                
-//                
-//                theChar readLength &vint:theDiff.
-//                
-//                ^ true.
-//            ].
-//
-//        theDiff set &int:0.
-//        theChar := #0.
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns the current character
-//    #method get = theChar.
-//}
-//
+// === Enumerators / Indexers
+
+// --- LiteralEnumerator ---
+
+/// A literal enumerator
+#class LiteralEnumerator :: Enumerator
+{
+    #field(literal) theLiteral.
+    #field(vint)    theIndex.
+    #field(vint)    theDiff.
+    #field(char)    theChar.
+    
+    /// Creates an enumerator
+    #constructor new : anObject
+        <= new &literal:(anObject literal).
+    
+    /// Creates an enumerator
+    #constructor(w3) new &literal:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := #0.
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex set &int:(-1).
+        theDiff set &int:1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        #var(int)aLength := theLiteral length.
+        
+        theIndex += theDiff.
+        
+        (theIndex < aLength)
+            ? [
+                theChar := theLiteral getAt &int:theIndex.                
+                
+                theChar readLength &vint:theDiff.
+                
+                ^ true.
+            ].
+
+        theDiff set &int:0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    /// Returns the current character
+    #method get = theChar.
+}
+
 //// --- LiteralIterator ---
 //
 ///// A literal value iterator
@@ -1941,65 +1941,65 @@
 //    #method readLength &vint:anOutput
 //        => theLiteral.
 //}
-//
-//// --- WideLiteralEnumerator ---
-//
-///// A literal enumerator
-//#class WideLiteralEnumerator :: Enumerator
-//{
-//    #field(wide) theLiteral.
-//    #field(vint) theIndex.
-//    #field(vint) theDiff.
-//    #field(char) theChar.
-//    
-//    /// Creates an enumerator
-//    #constructor new : anObject
-//        <= new &wide:(anObject wide).
-//    
-//    /// Creates an enumerator
-//    #constructor(w3) new &wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := #0.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//        theDiff set &int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theLiteral length.
-//
-//        theIndex += theDiff.
-//        
-//        (theIndex < aLength)
-//            ? [
-//                theChar := theLiteral getAt &int:theIndex.
-//                
-//                theChar readLength &vint:theDiff.
-//                theDiff += 1.
-//                theDiff /= 2.
-//                
-//                ^ true.
-//            ].
-//
-//        theDiff set &int:0.
-//        theChar := #0.
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns the current character
-//    #method get = theChar.
-//}
-//
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+#class WideLiteralEnumerator :: Enumerator
+{
+    #field(wide) theLiteral.
+    #field(vint) theIndex.
+    #field(vint) theDiff.
+    #field(char) theChar.
+    
+    /// Creates an enumerator
+    #constructor new : anObject
+        <= new &wide:(anObject wide).
+    
+    /// Creates an enumerator
+    #constructor(w3) new &wide:aLiteral
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := #0.
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex set &int:-1.
+        theDiff set &int:1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        #var(int)aLength := theLiteral length.
+
+        theIndex += theDiff.
+        
+        (theIndex < aLength)
+            ? [
+                theChar := theLiteral getAt &int:theIndex.
+                
+                theChar readLength &vint:theDiff.
+                theDiff += 1.
+                theDiff /= 2.
+                
+                ^ true.
+            ].
+
+        theDiff set &int:0.
+        theChar := #0.
+
+        ^ false.
+    ]
+    
+    /// Returns the current character
+    #method get = theChar.
+}
+
 //// --- WideLiteralIterator ---
 //
 ///// A wide literal enumerator

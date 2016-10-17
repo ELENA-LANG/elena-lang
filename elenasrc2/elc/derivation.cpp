@@ -248,7 +248,8 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
          case nsL6Operation:
          case nsL7Operation:
          case nsNewOperator:
-            copyMessage(current, true);
+         case nsMessageOperation:
+            copyMessage(current, (symbol != nsMessageOperation));
             _writer.insert(lxExpression);
             _writer.closeNode();
             break;

@@ -1154,17 +1154,17 @@ bool Compiler::ModuleScope :: saveExtension(ref_t message, ref_t type, ref_t rol
    else return false;
 }
 
-//void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
-//{
-//   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
-//   
-//   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
-//   
-//   metaWriter.writeDWord(mssg_ref);
-//   metaWriter.writeDWord(reference);
-//
-//   actionHints.add(mssg_ref, reference);
-//}
+void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
+{
+   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
+   
+   MemoryWriter metaWriter(module->mapSection(mapReference(sectionName, false) | mskMetaRDataRef, false));
+   
+   metaWriter.writeDWord(mssg_ref);
+   metaWriter.writeDWord(reference);
+
+   actionHints.add(mssg_ref, reference);
+}
 
 // --- Compiler::SourceScope ---
 
@@ -6148,14 +6148,14 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t& 
          else {
             hint |= current.argument;
 
+            if (current.argument == tpAction)
+               scope.moduleScope->saveAction(message, scope.reference);
+
             //HOTFIX : overwrite the message for the generic one
             if (hint == tpGeneric) {
                message = overwriteSubject(message, scope.moduleScope->module->mapSubject(GENERIC_PREFIX, false));
             }
          }
-
-//         if (current.argument == tpAction)
-//            scope.moduleScope->saveAction(message, scope.reference);
 
          hintChanged = true;
       }
@@ -7355,7 +7355,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
       warningScope.raise(scope, WARNING_LEVEL_2, wrnTypeMismatch, node.firstChild(lxObjectMask));
    }
    if (node.existChild(lxNotFoundAttr)) {
-      warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
+      warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxBreakpoint));
    }
 
 //   if (methodNotFound && test(warningMask, WARNING_LEVEL_1)) {

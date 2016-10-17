@@ -315,7 +315,7 @@ private:
       void saveAttribute(ref_t attrRef, ref_t classReference, bool internalType);
 //      void saveTemplate(ref_t template_ref);
       bool saveExtension(ref_t message, ref_t type, ref_t role);
-//      void saveAction(ref_t message, ref_t reference);
+      void saveAction(ref_t message, ref_t reference);
 
       void validateReference(SNode terminal, ref_t reference);
 

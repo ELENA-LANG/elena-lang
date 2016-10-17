@@ -1,23 +1,23 @@
-//// === Basic prototypes ===
-//
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//#class(limited,dispatchable:enumerator) Enumerator
-//{
-//    /// Returns the current object
-//    #method get = $nil.
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method(bool) next = $nil.
-//    
-//    /// Resets the enumerator
-//    #method reset []
-//    
-//    /// returns the enumerator owner
-//    #method enumerable = $nil.
-//}
-//
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+/// An enumerator prototype
+#class(limited,dispatchable:enumerator) Enumerator
+{
+    /// Returns the current object
+    #method get = $nil.
+    
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method(bool) next = $nil.
+    
+    /// Resets the enumerator
+    #method reset []
+    
+    /// returns the enumerator owner
+    #method enumerable = $nil.
+}
+
 //// --- Iterator ---
 //
 ///// An iterator prototype
@@ -111,22 +111,22 @@
 //        ].
 //    ]
 //}
-//
-///// A base function
-//#class(limited,dispatchable:func1)BaseFunction1
-//{
-//    /// Executes the function
-//    #method(action) eval : aParam []
-//
-//    /// Executes the function for every enumeration item
-//    #method run &enumerator:anEnumerator
-//    [
-//        #loop (anEnumerator next) ?
-//        [
-//            $self eval:(anEnumerator get).
-//        ].        
-//    ]
-//    
+
+/// A base function
+#class(limited,dispatchable:func1)BaseFunction1
+{
+    /// Executes the function
+    #method(action) eval : aParam []
+
+    /// Executes the function for every enumeration item
+    #method run &enumerator:anEnumerator
+    [
+        #loop (anEnumerator next) ?
+        [
+            $self eval:(anEnumerator get).
+        ].        
+    ]
+    
 //    /// Executes the function for every enumeration item until it returns true
 //    #method(sealed,w2) retrieve &enumerator:anEnumerator
 //    [
@@ -141,8 +141,8 @@
 //        
 //        ^ $nil.        
 //    ]
-//}
-//
+}
+
 ///// A base two variable function
 //#class(limited,dispatchable:func2)BaseFunction2
 //{

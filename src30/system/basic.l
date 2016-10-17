@@ -3,25 +3,25 @@
 {
     #field(template_subj)$value.
 
-//    #method set : val
-//    [
-//        $value := val template_subj.
-//    ]
-//    
-//    #method(stacksafe) set &template_subj:val
-//    [
-//        $value := val.
-//    ]
-//
-//    #method(w3) get = $value.
-//    
-//    #method(w3) cast : verb &to:target => $value.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
-//    
-//    #method(w3) equal : anObject
-//        => $value.
+    #method set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    #method(stacksafe) set &template_subj:val
+    [
+        $value := val.
+    ]
+
+    #method(w3) get = $value.
+    
+    #method(w3) cast : verb &to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
+    
+    #method(w3) equal : anObject
+        => $value.
 
     #method(embeddable,w3) => $value.
 }
@@ -30,67 +30,67 @@
 {
     #field(template_subj)$value.
     
-//    #method set : val
-//    [
-//        $value := val template_subj.
-//    ]
-//    
-//    #method(stacksafe) set &template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    #method append : val
-//    [
-//        $value := $value + val template_subj.
-//    ]
-//    
-//    #method reduce : val
-//    [
-//        $value := $value - val template_subj.
-//    ]
-//
-//    #method multiplyBy : val
-//    [
-//        $value := $value * val template_subj.
-//    ]
-//    
-//    /// Divides into the value
-//    #method divideInto : val
-//    [
-//        $value := $value / val template_subj.
-//    ]
-//    
-//    #method(stacksafe) append &template_subj:val
-//    [
-//        $value := $value + val.
-//    ]
-//    
-//    #method(stacksafe) reduce &template_subj:val
-//    [
-//        $value := $value - val.
-//    ]
-//
-//    #method(stacksafe) multiplyBy &template_subj:val
-//    [
-//        $value := $value * val.
-//    ]
-//    
-//    /// Divides into the value
-//    #method(stacksafe) divideInto &template_subj:val
-//    [
-//        $value := $value / val.
-//    ]
-//
-//    #method(w3) get = $value.
-//    
-//    #method(w3) cast : verb &to:target => $value.
-//
-//    /// Dispatches the verb to the target object with generic subject
-//    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
-//    
-//    #method(w3) equal : anObject
-//        => $value.
+    #method set : val
+    [
+        $value := val template_subj.
+    ]
+    
+    #method(stacksafe) set &template_subj:val
+    [
+        $value := val.
+    ]
+    
+    #method append : val
+    [
+        $value := $value + val template_subj.
+    ]
+    
+    #method reduce : val
+    [
+        $value := $value - val template_subj.
+    ]
+
+    #method multiplyBy : val
+    [
+        $value := $value * val template_subj.
+    ]
+    
+    /// Divides into the value
+    #method divideInto : val
+    [
+        $value := $value / val template_subj.
+    ]
+    
+    #method(stacksafe) append &template_subj:val
+    [
+        $value := $value + val.
+    ]
+    
+    #method(stacksafe) reduce &template_subj:val
+    [
+        $value := $value - val.
+    ]
+
+    #method(stacksafe) multiplyBy &template_subj:val
+    [
+        $value := $value * val.
+    ]
+    
+    /// Divides into the value
+    #method(stacksafe) divideInto &template_subj:val
+    [
+        $value := $value / val.
+    ]
+
+    #method(w3) get = $value.
+    
+    #method(w3) cast : verb &to:target => $value.
+
+    /// Dispatches the verb to the target object with generic subject
+    #method(w3) cast : aVerb &to:aTarget &with:aParam => $value.
+    
+    #method(w3) equal : anObject
+        => $value.
         
     #method(embeddable,w3) => $value.
 }
