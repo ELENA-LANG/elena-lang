@@ -3,7 +3,7 @@
 //#import system'collections.
 //#import system'dynamic.
 //#import system'calendar.
-#import extensions.
+//#import extensions.
 //#import extensions'dynamic.
 //
 //// --- OpenArgTest ---
@@ -411,7 +411,7 @@
     #var ll := l length.
     #var c := l@2.
 
-    #var a := l toArray.
+    //#var a := l toArray.
 
 //    "abc" run &each: (:ch)[ console write:ch ].
 //

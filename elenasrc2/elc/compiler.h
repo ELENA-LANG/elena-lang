@@ -972,7 +972,7 @@ private:
 //   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
    void compileVariable(SNode node, CodeScope& scope/*, DNode hints*/);
 
-   ObjectInfo compileClosure(SNode node, SNode body, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
 //   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
@@ -1032,7 +1032,7 @@ private:
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
-   void declareSingletonClass(SNode member, SNode parentNode, ClassScope& scope);
+   void declareSingletonClass(SNode node, ClassScope& scope);
    void compileSingletonClass(SNode member, ClassScope& scope);
 
    void declareSingletonAction(ClassScope& scope, SNode objNode, SNode expression);
@@ -1052,7 +1052,7 @@ private:
 //   void compileVirtualDispatchMethod(SyntaxWriter& writer, MethodScope& scope, LexicalType target, int argument = 0);
 
    void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode, bool alreadyDeclared = false);
-   void compileNestedVMT(SNode node, SNode parent, InlineClassScope& scope);
+   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SNode node, ClassScope& scope);
    void compileTemplateMethods(SNode node, ClassScope& scope);

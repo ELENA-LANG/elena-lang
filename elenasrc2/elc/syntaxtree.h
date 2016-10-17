@@ -269,6 +269,11 @@ public:
       Stack<size_t> _bookmarks;
 
    public:
+      bool hasBookmarks() const
+      {
+         return _bookmarks.Count() != 0;
+      }
+
       int setBookmark(size_t position)
       {
          _bookmarks.push(position);
@@ -301,6 +306,8 @@ public:
 //         _writer.seek(position);
 //         _bookmarks.clear();
 //      }
+
+      void set(int bookmark, LexicalType type);
 
       void insert(int bookmark, LexicalType type, ref_t argument);
       void insert(int bookmark, LexicalType type, ident_t argument);
@@ -600,6 +607,11 @@ public:
          return tree->insertNode(start_position, end_position, type, argument);
       }
 
+      void refresh()
+      {
+         tree->refresh(*this);
+      }
+
       Node findPattern(NodePattern pattern)
       {
          return tree->findPattern(*this, 1, pattern);
@@ -824,6 +836,7 @@ public:
 
 private:
    Node read(StreamReader& reader);
+   void refresh(Node& node);
 
 public:
    static void copyNode(Writer& writer, Node node);

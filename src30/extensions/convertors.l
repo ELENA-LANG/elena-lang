@@ -1,5 +1,5 @@
 #import system.
-//#import system'collections.
+#import system'collections.
 //#import system'routines.
 //#import system'calendar.
 //#import system'text.
@@ -44,11 +44,11 @@
 {
     convert &enumerable:aList
     [
-//        #var(array_list)aRetVal := ArrayList new.
-//        
-//        aList run &each:anItem [ aRetVal append:anItem ].
-//
-//        ^ aRetVal array.
+        #var(array_list)aRetVal := ArrayList new.
+
+        //aList run &each:anItem [ aRetVal append:anItem ].
+
+        ^ aRetVal array.
     ]
 }.
 

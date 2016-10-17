@@ -35,6 +35,17 @@ using namespace _ELENA_;
 //
 // --- SyntaxWriter ---
 
+void SyntaxWriter :: set(int bookmark, LexicalType type)
+{
+   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+
+   size_t old = _bodyWriter.Position();
+
+   _bodyWriter.seek(position);
+   _bodyWriter.writeDWord(type);
+   _bodyWriter.seek(old);   
+}
+
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {
    size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
@@ -190,6 +201,15 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_posi
 
    MemoryReader reader(&_body, start_position);
    return read(reader);
+}
+
+void SyntaxTree :: refresh(SyntaxTree::Node& node)
+{
+   MemoryReader reader(&_body, node.position - 12);
+
+   node.type = (LexicalType)reader.getDWord();
+   node.argument = reader.getDWord();
+   node.strArgument = reader.getDWord();
 }
 
 SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)

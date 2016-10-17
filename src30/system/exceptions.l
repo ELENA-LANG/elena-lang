@@ -243,18 +243,18 @@
 
 #class(exceptionof:MethodNotFoundError) MethodNotFoundException
 {
-    #constructor new &literal:message
-    [
-        theMessage := message.
-        theCallStack := CallStack new.
-    ]
-    
-    /// Creates the exception
-    #constructor new
-        <= new &literal:"Method not found".
-
-    #constructor(stacksafe) new &mssg:missingMessage
-        <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
+//    #constructor new &literal:message
+//    [
+//        theMessage := message.
+//        theCallStack := CallStack new.
+//    ]
+//    
+//    /// Creates the exception
+//    #constructor new
+//        <= new &literal:"Method not found".
+//
+//    #constructor(stacksafe) new &mssg:missingMessage
+//        <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
 //// --- MethodNotSupported ---

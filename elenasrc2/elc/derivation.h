@@ -121,13 +121,13 @@ class DerivationWriter : public _DerivationWriter
 
    int          _level; // tree node level ; starting from level=1 the content is buffered and unpacked on the level=0
 
-   void unpackNode(SNode& node);
-   void unpackChildren(SNode node);
+   void unpackNode(SNode& node, int mode);
+   void unpackChildren(SNode node, int mode = 0);
    void copyChildren(SNode node);
 
-   void copyExpression(SNode node);
-   void copyObject(SNode node);
-   void copyMessage(SNode node, bool catchMode, bool operationMode = false);
+   void copyExpression(SNode node, bool explicitOne = true);
+   void copyObject(SNode node, int mode);
+   void copyMessage(SNode node, bool operationMode = false);
    void copyVariable(SNode node);
    void copyAssigning(SNode node);
    void copyHints(SNode node);

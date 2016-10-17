@@ -3,10 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * test ch := 5.
-
-                 * implement repeat until loop
-                 * support closures with a generic parameter
                  * support closures with several generic parameters
                  * support closures with several parameters
                  * support closures with a parameter
@@ -14,7 +10,6 @@ In development:
 
                  * support array of int
 
-                 * constructor returning constant values,...
                  * check if self is embeddable
                  * no need to check conditional boxing for returning expression
                  * support array of byte
@@ -86,6 +81,10 @@ In development:
                  * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
                  * optimize : LiteralValue#class.eval&system$new...
                  * warn on duplicate extensions
+                 * test listof:datatype / listof:type
+                 * test : a int + b int.
+                 * test try catch statement
+                 * implement repeat until loop
 
               xdev
                 * linux migration

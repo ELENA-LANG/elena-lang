@@ -2,7 +2,7 @@
 
 //#subject list_item  = system'collections'ListItem.
 //#subject list       = system'collections'List.
-//#subject array_list = system'collections'ArrayList.
+#subject array_list = system'collections'ArrayList.
 //#subject dictionary = system'collections'Dictionary.
 //
 //// --- listof ---

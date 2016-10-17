@@ -781,9 +781,9 @@
 {
     #field(byte)$target.
     
-//    /// Creates the empty literal
-//    #constructor min
-//        = emptyLiteralValue.
+    /// Creates the empty literal
+    #constructor min
+        = emptyLiteralValue.
         
     /// Creates the literal string with specified length        
     #constructor(stacksafe) new &int:size
@@ -1001,9 +1001,9 @@
 {
     #field(short)$target.
 
-//    /// Creates the empty literal
-//    #constructor min
-//        = emptyWideLiteralValue.
+    /// Creates the empty literal
+    #constructor min
+        = emptyWideLiteralValue.
         
     /// Creates the literal string with specified length
     #constructor(stacksafe) new &int:size

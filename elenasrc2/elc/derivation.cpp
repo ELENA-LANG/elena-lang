@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 // --- DerivationWriter ---
 
-void DerivationWriter :: unpackNode(SNode& node)
+void DerivationWriter :: unpackNode(SNode& node, int mode)
 {
    Symbol symbol = (Symbol)node.type;
    switch (symbol) {
@@ -24,16 +24,12 @@ void DerivationWriter :: unpackNode(SNode& node)
       case nsMethod:
       case nsConstructor:
       case nsImplicitConstructor:
-      case nsSubCode:
       case nsTemplate:
       case nsField:
       case nsSubject:
-      case nsNestedClass:
-      case nsInlineExpression:
-      case nsDispatchExpression:
-      case nsMessageReference:
-      case nsExtension:
       case nsDefaultGeneric:
+      case nsDispatchExpression:
+      case nsExtension:
       case nsLoop:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
          if (_hints != lxNone) {
@@ -41,6 +37,40 @@ void DerivationWriter :: unpackNode(SNode& node)
             _hints = lxNone;
          }            
          unpackChildren(node);
+         _writer.closeNode();
+         break;
+      case nsSubCode:
+         _writer.newNode(lxCode);
+         unpackChildren(node);
+         _writer.closeNode();
+         if (mode == 1) {
+            _writer.insert(lxExpression);
+            _writer.closeNode();
+         }
+         break;
+      case nsInlineExpression:
+         unpackChildren(node);
+         _writer.insert(lxInlineExpression);         
+         _writer.closeNode();
+         if (mode == 1) {
+            _writer.insert(lxExpression);
+            _writer.closeNode();
+         }
+         break;
+      case nsNestedClass:
+         unpackChildren(node);
+         _writer.insert(lxNestedClass);
+         _writer.closeNode();
+         if (mode == 1) {
+            _writer.insert(lxExpression);
+            _writer.closeNode();
+         }
+         break;
+      case nsMessageReference:
+         _writer.newNode(lxExpression);
+         _writer.newNode(lxMessageReference);
+         unpackChildren(node);
+         _writer.closeNode();
          _writer.closeNode();
          break;
       case nsHintValue:
@@ -92,18 +122,19 @@ void DerivationWriter :: unpackNode(SNode& node)
       case nsExpression:
       case nsDispatchHandler:
       case nsRetStatement:
-         _writer.newBookmark();
          copyExpression(node);
-         _writer.removeBookmark();
          break;
       case nsResendExpression:
-         _writer.newNode(lxResendExpression);
          _writer.newBookmark();
          unpackChildren(node);
-         _writer.removeBookmark();
+
          node = node.nextNode();
-         unpackNode(node);
+         unpackNode(node, 0);
+
+         _writer.insert(lxResendExpression);
          _writer.closeNode();
+
+         _writer.removeBookmark();
          break;
       case nsVariable:
          copyVariable(node);
@@ -112,10 +143,16 @@ void DerivationWriter :: unpackNode(SNode& node)
          copyAssigning(node);
          break;
       case nsCatchMessageOperation:
-         _writer.closeNode();
-         _writer.newNode(lxExpression);
+         _writer.newBookmark();
       case nsMessageOperation:
-         copyMessage(node, symbol == nsCatchMessageOperation);
+         copyMessage(node);
+         _writer.insert(lxExpression);
+         _writer.closeNode();
+         if (symbol == nsCatchMessageOperation) {
+            _writer.removeBookmark();            
+            _writer.insert(lxTrying);
+            _writer.closeNode();
+         }
          break;
       case nsL0Operation:
       case nsL3Operation:
@@ -123,10 +160,12 @@ void DerivationWriter :: unpackNode(SNode& node)
       case nsL6Operation:
       case nsL7Operation:
       case nsNewOperator:
-         copyMessage(node, false, true);
+         copyMessage(node, true);
+         _writer.insert(lxExpression);
+         _writer.closeNode();
          break;
       case nsObject:
-         copyObject(node);
+         copyObject(node, mode);
          break;
       case nsCodeEnd:
          _writer.newNode(lxEOF);
@@ -143,11 +182,11 @@ void DerivationWriter :: unpackNode(SNode& node)
    }
 }
 
-void DerivationWriter :: unpackChildren(SNode node)
+void DerivationWriter :: unpackChildren(SNode node, int mode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      unpackNode(current);
+      unpackNode(current, mode);
 
       current = current.nextNode();
    }
@@ -158,24 +197,26 @@ void DerivationWriter :: copyChildren(SNode node)
    SyntaxTree::copyNode(_writer, node);
 }
 
-void DerivationWriter :: copyExpression(SNode node)
+void DerivationWriter :: copyExpression(SNode node, bool explicitOne)
 {
-   _writer.newNode((LexicalType)(node.type & ~mskAnySymbolMask | lxExprMask));
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      unpackNode(current);
+   _writer.newBookmark();
 
-      current = current.nextNode();
+   unpackChildren(node, 1);
+
+   if (explicitOne) {
+      _writer.insert((LexicalType)(node.type & ~mskAnySymbolMask | lxExprMask));
+      _writer.closeNode();
    }
-   _writer.closeNode();
+
+   _writer.removeBookmark();
 }
 
-void DerivationWriter :: copyObject(SNode node)
+void DerivationWriter :: copyObject(SNode node, int mode)
 {
-   unpackChildren(node);
+   unpackChildren(node, mode);
 }
 
-void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationMode)
+void DerivationWriter :: copyMessage(SNode node, bool operationMode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -190,9 +231,7 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
          case nsObject:
          case nsExpression:
             _writer.newBookmark();
-            _writer.newNode(lxExpression);
-            unpackChildren(current);
-            _writer.closeNode();
+            unpackChildren(current, 1);
             _writer.removeBookmark();
             break;
          case nsElseOperation:
@@ -201,9 +240,7 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
             _writer.closeNode();
             break;
          case nsSubCode:
-            _writer.newNode(lxExpression);
-            unpackNode(current);
-            _writer.closeNode();
+            unpackNode(current, 1);
             break;
          case nsL0Operation:
          case nsL3Operation:
@@ -211,14 +248,16 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
          case nsL6Operation:
          case nsL7Operation:
          case nsNewOperator:
-            copyMessage(current, false, true);
+            copyMessage(current, true);
+            _writer.insert(lxExpression);
+            _writer.closeNode();
             break;
          case tsIdentifier:
          case tsPrivate:
          case tsReference:
             if (!operationMode) {
                _writer.newNode(lxMessage);
-               unpackNode(current);
+               unpackNode(current, 0);
                _writer.closeNode();
                break;
             }
@@ -228,7 +267,7 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
                   //HOTFIX : mark new operator
                   _writer.appendNode(lxOperator, -1);
                   if (symbol == tsInteger || symbol == tsIdentifier) {
-                     unpackNode(current);
+                     unpackNode(current, 0);
                   }
                }
                else {
@@ -236,26 +275,17 @@ void DerivationWriter :: copyMessage(SNode node, bool catchMode, bool operationM
                   copyChildren(current);
                   _writer.closeNode();
                }
-               
-               _writer.newBookmark();
-            }            
+
+               _writer.newBookmark();               
+            }
             break;
       }
       current = current.nextNode();
    }
 
-   if(operationMode)
+   if (operationMode) {
       _writer.removeBookmark();
-
-   if (catchMode) {
-      _writer.insert(lxTrying);
-      _writer.closeNode();
    }
-   else {
-      _writer.insert(lxExpression);
-      _writer.closeNode();
-   }
-
 }
 
 void DerivationWriter :: copyVariable(SNode node)
@@ -269,14 +299,14 @@ void DerivationWriter :: copyVariable(SNode node)
       _hints = lxNone;
    }
 
-   unpackNode(local);
+   unpackNode(local, 0);
    _writer.closeNode();
 
    SNode current = node.findChild((LexicalType)nsAssigning);
    if (current != lxNone) {
       _writer.newNode(lxExpression);
       _writer.appendNode(lxAssign);
-      unpackNode(local);
+      unpackNode(local, 1);
 
       unpackChildren(current);
 
@@ -334,7 +364,7 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
                   root = root.nextNode();
             }
             if (root.type != lxNone) {
-               unpackNode(root);
+               unpackNode(root, 0);
                _buffer.clear();
             }
          }

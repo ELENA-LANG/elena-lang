@@ -329,7 +329,7 @@
 //    [
 //        #var(int)aRetVal.
 //        $self read &vint:aRetVal.
-//        
+//        *
 //        ^ IntNumber new &int:aRetVal.
 //    ]
 //            
