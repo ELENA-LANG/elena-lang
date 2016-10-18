@@ -298,14 +298,14 @@ bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& c
       return false;
 
    if (loperand != scope.branchingInfo.reference) {
-      if (loadBranchingInfo(scope, compiler, loperand)) {
-         reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-
-         return true;
-      }
-      else return false;
+      if (!loadBranchingInfo(scope, compiler, loperand))
+         return false;
    }
-   else return true;
+
+   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+
 }
 
 int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)

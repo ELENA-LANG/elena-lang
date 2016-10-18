@@ -787,3 +787,20 @@ labErr:
   throw
 
 end
+
+procedure __array.eval&copy&array$&int$&int$&array$[4]
+
+  aloadsi 1
+  bcopya
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : nsubcopy
+  
+  acopyb
+  quitn 4
+  
+end
