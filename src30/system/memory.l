@@ -872,60 +872,60 @@
     #method(stacksafe) read &int:anIndex &vbyte:anInt
         => system'core_routines'__literal.
 
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
-//        => system'core_routines'__literal.
-//
-//    /// Saves the index of the first occurence of the specified symbol into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-//        => system'core_routines'__literal.
-//
-//    /// Returns the index of the first occurence of the specified object.
-//    /// 
-//    /// If the object is not found. returns -1
-//    #method indexOf : aSearchObject &at:anIndex
-//        = aSearchObject cast:%eval &to:
-//            {
-//               eval:target &literal:aLiteral
-//                  = target indexOf &literal:aLiteral &at:anIndex.
-//    
-//               eval:target &wide:aLiteral
-//                  = target indexOf &literal:(aLiteral literal) &at:anIndex.
-//    
-//               eval:target &char:aChar
-//                  = target indexOf &char:aChar &at:anIndex.
-//            } &with:$self.
-//
-//    /// obsolete            
-//    #method indexOf:anIndex:aSearchObject
-//        <= indexOf:aSearchObject &at:anIndex.
-//
-//    /// Returns the index of the first occurence of the specified symbol.
-//    /// 
-//    /// If the substring is not found. returns -1
-//    #method indexOf &char:aChar &at:anIndex
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method indexOf &literal:aLiteral &at:anIndex
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &literal:aLiteral &vint:aRetVal
+        => system'core_routines'__literal.
+
+    /// Saves the index of the first occurence of the specified symbol into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'core_routines'__literal.
+
+    /// Returns the index of the first occurence of the specified object.
+    /// 
+    /// If the object is not found. returns -1
+    #method indexOf : aSearchObject &at:anIndex
+        = aSearchObject cast:%eval &to:
+            {
+               eval:target &literal:aLiteral
+                  = target indexOf &literal:aLiteral &at:anIndex.
+    
+               eval:target &wide:aLiteral
+                  = target indexOf &literal:(aLiteral literal) &at:anIndex.
+    
+               eval:target &char:aChar
+                  = target indexOf &char:aChar &at:anIndex.
+            } &with:$self.
+
+    /// obsolete            
+    #method indexOf:anIndex:aSearchObject
+        <= indexOf:aSearchObject &at:anIndex.
+
+    /// Returns the index of the first occurence of the specified symbol.
+    /// 
+    /// If the substring is not found. returns -1
+    #method indexOf &char:aChar &at:anIndex
+    [
+        #var(int)aRetVal.
+        $self indexOf &int:(anIndex int) &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    #method indexOf &literal:aLiteral &at:anIndex
+    [
+        #var(int)aRetVal.
+        $self indexOf &int:(anIndex int) &literal:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
 //    /// Inserts the substring into and returns the new one
 //    #method(literal,stacksafe) insert &int:anIndex &literal:aLiteral
 //        => system'core_routines'__literal.
@@ -1088,53 +1088,53 @@
     #method(stacksafe) read &int:anIndex &vshort:aValue
         => system'core_routines'__wide.
 
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
-//        => system'core_routines'__wide.
-//
-//    /// Saves the index of the first occurence of the specified character into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
-//        => system'core_routines'__wide.
-//
-//    /// Returns the index of the first occurence of the specified character.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &char:aChar
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
-//    [
-//        #var(int)aRetVal.
-//        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified object.
-//    ///
-//    /// If the substring is not found. returns -1
-//    #method indexOf : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
-//                
-//                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
-//                
-//                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
-//            } &with:$self.
-//
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral &vint:aRetVal
+        => system'core_routines'__wide.
+
+    /// Saves the index of the first occurence of the specified character into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar &vint:aRetVal
+        => system'core_routines'__wide.
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &char:aChar
+    [
+        #var(int)aRetVal.
+        $self indexOf &int:anIndex &char:aChar &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    #method(stacksafe) indexOf &int:anIndex &wide:aLiteral
+    [
+        #var(int)aRetVal.
+        $self indexOf &int:anIndex &wide:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns the index of the first occurence of the specified object.
+    ///
+    /// If the substring is not found. returns -1
+    #method indexOf : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+                eval:target &literal:aLiteral = target indexOf &int:(anIndex int) &wide:(aLiteral wide).
+                
+                eval:target &wide:aLiteral = target indexOf &int:(anIndex int) &wide:aLiteral.
+                
+                eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
 //    /// Inserts the substring into and returns the new one
 //    #method(wide,stacksafe) insert &int:anIndex &wide:aLiteral
 //        => system'core_routines'__wide.

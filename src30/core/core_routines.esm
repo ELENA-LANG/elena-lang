@@ -307,6 +307,44 @@ labErr:
 
 end
 
+procedure __literal.indexOf&int$&literal$&vint$[4]
+
+  bcopya
+  aloadsi 2                 // ; load index
+  nload
+  aloadsi 3                 // ; load searching str
+  callextr api : sseek
+  acopyb
+  bloadsi 4                 // ; load target
+  nsave                    // ; save index
+  quitn 4
+
+end
+
+procedure __literal.indexOf&int$&char$&vint$[4]
+
+  pusha
+  aloadsi 4
+  pushn 0
+  pushn 0
+  bcopys 0
+  pushn 0
+  callextr api : chartostr
+  pushe
+
+  aloadsi 7                 // ; load index
+  nload
+  acopys 2
+  bloadsi 4
+  callextr api : sseek
+  bloadsi 9                // ; load target
+  nsave                    // ; save index
+  popi 4
+  popa
+  quitn 4
+
+end
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -464,6 +502,43 @@ labErr:
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw
+  
+end
+
+procedure __wide.indexOf&int$&wide$&vint$[4]
+
+  bcopya
+  aloadsi 2                 // ; load index
+  nload
+  aloadsi 3                 // ; load searching str
+  callextr api : wseek
+  acopyb
+  bloadsi 4                 // ; load target
+  nsave                    // ; save index
+  quitn 4
+
+end
+
+procedure __wide.indexOf&int$&char$&vint$[4]
+
+  pusha
+  aloadsi 4
+  pushn 0
+  bcopys 0
+  pushn 0
+  callextr api : chartowstr
+  pushe
+
+  aloadsi 7                 // ; load index
+  nload
+  acopys 2
+  bloadsi 4
+  callextr api : wseek
+  bloadsi 9                // ; load target
+  nsave                    // ; save index
+  popi 4
+  popa
+  quitn 4
   
 end
 

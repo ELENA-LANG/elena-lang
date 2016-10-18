@@ -3,17 +3,17 @@ In development:
 ------                              
 
               xrev
+                 * int constant to byte
+
                  * optimization : #var(int)n := o array length.
                  * support arrayof:int
                  * support arrayof:struct
 
-                 * support closures with several generic parameters
                  * support closures with several parameters
                  * support closures with a parameter
                  * support private sealed methods
 
                  * check if self is embeddable
-                 * no need to check conditional boxing for returning expression
                  * support array of byte
                  * support array of short
                  * support array of typed objects

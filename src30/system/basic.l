@@ -297,7 +297,7 @@
 //    [
 //        theValue := n.
 //    ]
-//            
+            
 //    /// Returns the minimal value (0)
 //    #constructor min
 //        = 0.
@@ -305,11 +305,11 @@
 //    /// Returns the maxial value (255)
 //    #constructor max
 //        = 255.
-//    
-//    /// Creates the object with a specified value
-//    #constructor(stacksafe,w3) new &byte:value
-//        = value.
-//
+    
+    /// Creates the object with a specified value
+    #constructor(stacksafe,w3) new &byte:value
+        = value.
+
 //    /// Creates the object with a specified value
 //    #constructor new : aValue
 //        <= new &byte:(aValue byte).
@@ -553,11 +553,11 @@
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &byte:value
 //        = shortConvertor convert &byte:value.
-//        
-//    /// Creates the object with specified value
-//    #constructor(stacksafe,w3) new &short:value
-//        = value.
-//
+        
+    /// Creates the object with specified value
+    #constructor(stacksafe,w3) new &short:value
+        = value.
+
 //    /// Creates the object with a default value (0)
 //    #constructor new
 //        = 0.
@@ -806,11 +806,11 @@
 //    /// Creates the object with the maximal value
 //    #constructor max
 //        = 2147483647.
-//    
-//    /// Creates the object with specified value
-//    #constructor(stacksafe,w3) new &int:value
-//        = value.
-//
+    
+    /// Creates the object with specified value
+    #constructor(stacksafe,w3) new &int:value
+        = value.
+
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &short:value
 //        = intConvertor convert &short:value.

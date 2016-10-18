@@ -51,7 +51,7 @@ struct ModuleInfo
 #define HINT_NOBOXING         0x40000000
 #define HINT_NOUNBOXING       0x20000000
 //#define HINT_EXTERNALOP       0x10000000
-//#define HINT_NOCONDBOXING     0x08000000
+#define HINT_NOCONDBOXING     0x08000000
 #define HINT_EXTENSION_MODE   0x04000000
 //#define HINT_TRY_MODE         0x02000000
 #define HINT_LOOP             0x01000000
@@ -3927,35 +3927,13 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    writer.closeNode();
 
    declareVMT(syntaxTree.readRoot().firstChild(), scope);
-   generateClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
+   generateMethodDeclarations(scope, syntaxTree.readRoot(), false, test(scope.info.header.flags, elClosed));
 
    compileVMT(syntaxTree.readRoot(), scope);
-   generateClassImplementation(syntaxTree.readRoot(), scope);
 
-//   if (scope.templateMode) {
-//      // import fields
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      while (!outer_it.Eof()) {
-//         writer.newNode(lxTemplateField, (*outer_it).reference);
-//         writer.appendNode(lxTerminal, outer_it.key());
-//         writer.closeNode();
-//
-//         outer_it++;
-//      }
-//
-//      writer.closeNode();
-//
-//      scope.templateRef = scope.moduleScope->mapNestedTemplate();
-//
-//      _Memory* section = scope.moduleScope->module->mapSection(scope.templateRef | mskSyntaxTreeRef, false);
-//
-//      scope.syntaxTree.save(section);
-//   }
-//   else {
-//      writer.closeNode();
-//
-      
-//   }
+   _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info);
+
+   generateClassImplementation(syntaxTree.readRoot(), scope);
 }
 
 ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode)
@@ -4017,7 +3995,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
    }
    // if it is a closure / lambda function with a parameter
    else if (node == lxInlineExpression) {
-      compileAction(node.findChild(lxCode), scope, node.firstChild(lxTerminalMask), mode);
+      compileAction(node.findChild(lxCode), scope, node.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), mode);
    }
 //   else if (node == nsObject && testany(mode, HINT_ACTION | HINT_CLOSURE)) {
 //      compileAction(node.firstChild(), scope, node, mode);
@@ -4743,8 +4721,13 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
    ref_t sign_id = 0;
 
    // if method has generic (unnamed) argument list
-   while (/*arg == lxMethodParameter || */arg == lxIdentifier || arg == lxPrivate) {
-      ident_t terminal = arg.findChild(lxTerminal).identifier();
+   while (arg == lxMethodParameter || arg == lxIdentifier || arg == lxPrivate) {
+      SNode terminalNode = arg;
+      if (terminalNode == lxMethodParameter) {
+         terminalNode = terminalNode.findChild(lxIdentifier, lxPrivate);
+      }
+
+      ident_t terminal = terminalNode.findChild(lxTerminal).identifier();
       int index = 1 + scope.parameters.Count();
       scope.parameters.add(terminal, Parameter(index));
 
@@ -7862,8 +7845,9 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
       else if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
          node = lxBoxing;
       }
-      //      else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
-      //node = lxBoxing;
+      else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
+         node = lxBoxing;
+      }
    }
 
    if (boxing) {      
@@ -8220,7 +8204,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
          optimizeSyntaxExpression(scope, current, warningScope, mode);
          break;
       case lxReturning:
-         optimizeSyntaxExpression(scope, current, warningScope, HINT_NOUNBOXING/* | HINT_NOCONDBOXING*/);
+         optimizeSyntaxExpression(scope, current, warningScope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
          break;
       case lxBoxing:
       case lxCondBoxing:

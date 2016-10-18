@@ -1,9 +1,9 @@
 #import system.
-//#import system'routines.
+#import system'routines.
 //#import system'collections.
 //#import system'dynamic.
 //#import system'calendar.
-//#import extensions.
+#import extensions.
 //#import extensions'dynamic.
 //
 //// --- OpenArgTest ---
@@ -411,15 +411,15 @@
     #var ll := l length.
     #var c := l@2.
 
-    //#var a := l toArray.
+    #var a := l toArray.
 
-//    "abc" run &each: (:ch)[ console write:ch ].
-//
-//    console writeLine.
-//
-//    #var n := "abcd" indexOf:"bc" &at:0.
-//    #var n2 := "abcd" indexOf:"bac" &at:0.
-//
+    "abc" run &each: (:ch)[ console write:ch ].
+
+    console writeLine.
+
+    #var n := "abcd" indexOf:"bc" &at:0.
+    #var n2 := "abcd" indexOf:"bac" &at:0.
+
 //    #var s := "acd" insert:"b" &at:1.
 //    #var ls := s length.
 //
