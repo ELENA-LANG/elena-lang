@@ -95,13 +95,21 @@ public:
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
    {
       ClassInfo info;
-      defineClassInfo(scope, info, reference);
+      defineClassInfo(scope, info, reference, true);
 
       return isEmbeddable(info);
    }
    virtual bool isRole(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
+   virtual bool isReadonly(ClassInfo& info);
+   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isReadonly(info);
+   }
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
    virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference);
@@ -129,6 +137,8 @@ public:
    virtual bool recognizeEmbeddableIdle(SNode node);
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
+
+   virtual bool optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef);
 
    CompilerLogic();
 };

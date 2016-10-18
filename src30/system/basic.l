@@ -1544,12 +1544,12 @@
 
 //    /// Clones the value
 //    #method clone = CharValue new &char:$self.
-//
-//    /// Returns the literal value
-//    #method(w2) literal = system'literalConvertor convert &char:$self.
-//
-//    /// Returns the wide literal value
-//    #method(w2) wide = system'wideConvertor convert &char:$self.
+
+    /// Returns the literal value
+    #method(w2) literal = system'literalConvertor convert &char:$self.
+
+    /// Returns the wide literal value
+    #method(w2) wide = system'wideConvertor convert &char:$self.
     
     /// Reads the number of bytes to represent the symbol
     #method(stacksafe) readLength &vint:aLength

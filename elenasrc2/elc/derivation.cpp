@@ -157,6 +157,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
       case nsL0Operation:
       case nsL3Operation:
       case nsL4Operation:
+      case nsL5Operation:
       case nsL6Operation:
       case nsL7Operation:
       case nsNewOperator:
@@ -245,6 +246,7 @@ void DerivationWriter :: copyMessage(SNode node, bool operationMode)
          case nsL0Operation:
          case nsL3Operation:
          case nsL4Operation:
+         case nsL5Operation:
          case nsL6Operation:
          case nsL7Operation:
          case nsNewOperator:

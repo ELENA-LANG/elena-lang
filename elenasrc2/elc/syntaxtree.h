@@ -16,6 +16,7 @@ namespace _ELENA_
 
 enum LexicalType
 {
+   lxSimpleMask      = 0x02000,
    lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
    lxExprMask        = 0x0C000,
@@ -65,29 +66,29 @@ enum LexicalType
    lxImporting       = 0x08101,
    lxNested          = 0x08102, // arg - count
    lxStruct          = 0x08103, // arg - count
-   lxConstantSymbol  = 0x08104, // arg - reference
+   lxConstantSymbol  = 0x0A104, // arg - reference
    lxField           = 0x08105, // arg - offset
    lxStaticField     = 0x08106, // arg - reference
    lxSymbolReference = 0x08107,
-   lxLocalAddress    = 0x08108, // arg - offset
+   lxLocalAddress    = 0x0A108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
-   lxLocal           = 0x0810A, // arg - offset
-   lxBlockLocal      = 0x0810B, // arg - offset
-   lxConstantString  = 0x0810C, // arg - reference
-   lxConstantWideStr = 0x0810D, // arg - reference
-   lxConstantChar    = 0x0810E, // arg - reference
-   lxConstantInt     = 0x1810F, // arg - reference
-   lxConstantLong    = 0x18110, // arg - reference
-   lxConstantReal    = 0x18111, // arg - reference
-   lxConstantClass   = 0x08112, // arg - reference
-   lxVerbConstant    = 0x08116, // arg - reference
-   lxNil             = 0x08117,
-   lxCurrent         = 0x08118, // arg -offset
-   lxResult          = 0x08119, // arg -offset
-   lxResultField     = 0x0811A, // arg -offset
-   lxCurrentMessage  = 0x0811B,
-   lxThisLocal       = 0x0811C,
-   lxConstantList    = 0x0811E, // arg - reference
+   lxLocal           = 0x0A10A, // arg - offset
+   lxBlockLocal      = 0x0A10B, // arg - offset
+   lxConstantString  = 0x0A10C, // arg - reference
+   lxConstantWideStr = 0x0A10D, // arg - reference
+   lxConstantChar    = 0x0A10E, // arg - reference
+   lxConstantInt     = 0x1A10F, // arg - reference
+   lxConstantLong    = 0x1A110, // arg - reference
+   lxConstantReal    = 0x1A111, // arg - reference
+   lxConstantClass   = 0x0A112, // arg - reference
+   lxVerbConstant    = 0x0A116, // arg - reference
+   lxNil             = 0x0A117,
+   lxCurrent         = 0x0A118, // arg -offset
+   lxResult          = 0x0A119, // arg -offset
+   lxResultField     = 0x0A11A, // arg -offset
+   lxCurrentMessage  = 0x0A11B,
+   lxThisLocal       = 0x0A11C,
+   lxConstantList    = 0x08A11E, // arg - reference
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
@@ -114,6 +115,7 @@ enum LexicalType
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
    lxNewOp           = 0x0C028,
+   lxArrOp           = 0x8C029, // arg - operation id
    lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031,
    lxByteArrOp       = 0x8C032, // arg - operation id
@@ -218,7 +220,6 @@ enum LexicalType
 //   lxOp              = 0x0032A, // generic operation, arg - operation id 
 //   lxBoolOp          = 0x0032B, // arg - operation id
 //   lxNilOp           = 0x0032C, // arg - operation id
-//   lxArrOp           = 0x01333, // arg - operation id
 //   lxBinArrOp        = 0x01334, // arg - operation id
 //
 //   lxParamsVariable  = 0x0042F,

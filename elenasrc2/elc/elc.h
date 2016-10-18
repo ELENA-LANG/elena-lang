@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x005A
+#define ELC_REVISION_NUMBER             0x005B
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -25,7 +25,7 @@
 #else
 
 #define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
-//#define RULES_FILE                  "/usr/share/elena/rules.dat"
+#define RULES_FILE                  "/usr/share/elena/rules.dat"
 
 #endif
 

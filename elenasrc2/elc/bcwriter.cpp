@@ -24,7 +24,7 @@ bool isSimpleObject(SNode node, bool ignoreFields = false)
       else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
          // ignore fields if required
       }
-      else if (test(node.type, lxCodeScopeMask))
+      else if (!test(node.type, lxSimpleMask))
          return false;
    }
 
@@ -2558,30 +2558,30 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
    }
 }
 
-//void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // bcopya
-//         // get
-//         tape.write(bcBCopyA);
-//         tape.write(bcGet);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // set
-//         tape.write(bcSet);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // len
-//         // nsave
-//         tape.write(bcLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
+void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_MESSAGE_ID:
+         // bcopya
+         // get
+         tape.write(bcBCopyA);
+         tape.write(bcGet);
+         break;
+      case SET_REFER_MESSAGE_ID:
+         // set
+         tape.write(bcSet);
+         break;
+      // NOTE : read operator is used to define the array length
+      case READ_MESSAGE_ID:
+         // len
+         // nsave
+         tape.write(bcLen);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
 {
@@ -3341,7 +3341,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 {
    bool lenMode = node.argument == READ_MESSAGE_ID;
    bool setMode = node.argument == SET_REFER_MESSAGE_ID;
-   bool assignMode = /*node != lxArrOp*/true;
+   bool assignMode = node != lxArrOp;
 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);   
@@ -3448,9 +3448,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       //   if (node.argument == REFER_MESSAGE_ID)
       //      assignBaseTo(tape, lxResult);
       //   break;
-      //case lxArrOp:
-      //   doArrayOperation(tape, node.argument);
-      //   break;
+      case lxArrOp:
+         doArrayOperation(tape, node.argument);
+         break;
    }   
 }
 
@@ -4531,7 +4531,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxIntArrOp:
       case lxByteArrOp:
       case lxShortArrOp:
-//      case lxArrOp:
+      case lxArrOp:
 //      case lxBinArrOp:
          generateArrOperation(tape, node);
          break;
@@ -4908,6 +4908,13 @@ void ByteCodeWriter :: generateTemplateMethods(CommandTape& tape, SNode root)
    while (current != lxNone) {
       if (current == lxClassMethod) {
          generateMethod(tape, current);
+
+         // HOTFIX : compile nested template methods
+         generateTemplateMethods(tape, current);
+      }
+      else if (current == lxIdle) {
+         // HOTFIX : analize nested template methods
+         generateTemplateMethods(tape, current);
       }
       else if (current == lxTemplate) {
          generateTemplateMethods(tape, current);

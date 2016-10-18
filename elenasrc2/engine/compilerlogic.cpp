@@ -131,12 +131,18 @@ CompilerLogic :: CompilerLogic()
 
    // array of int32 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
 
    // array of int16 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
 
    // array of int8 primitive operations
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
+
+   // array of object primitive operations
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -306,12 +312,8 @@ int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t lopera
 {
    if (isCompatible(scope, V_INT32, roperand)) {
       result = definePrimitiveArray(scope, loperand);
-      
-      if (result == 0) {
-         result = V_OBJARRAY;
-      }
-
-      return lxNewOp;
+      if (result != 0)
+         return lxNewOp;
    }
 
    return 0;
@@ -454,6 +456,11 @@ void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compil
    }
 }
 
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
+
 bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType)
 {
    ClassInfo info;
@@ -471,7 +478,7 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
 
       if (compatible) {
          compiler.injectBoxing(scope, node, 
-            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 
+            isReadonly(info) ? lxBoxing : lxUnboxing,
             test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
          return true;
@@ -510,6 +517,9 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
       if (info.methods.exist(implicitMessage)) {
          if (test(info.header.flags, elStructureRole)) {
             compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef);
+         }
+         else if (test(info.header.flags, elDynamicRole)) {
+            return false;
          }
          else compiler.injectConverting(node, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef);
 
@@ -856,12 +866,6 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 4;
-            //            case -2:
-            //               scope.info.header.flags |= (elDebugQWORD | elReadOnlyRole);
-            //               break;
-            //            case -4:
-            //               scope.info.header.flags |= (elDebugReal64 | elReadOnlyRole);
-            //               break;
             //            case -7:
             //               scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
             //               break;
@@ -938,6 +942,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
          }
       }
    }
+   else return V_OBJARRAY;
 
    return 0;
 }
@@ -1048,4 +1053,21 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
       return true;
    }
    else return false;
+}
+
+bool CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef)
+{
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);
+
+   bool variable = !isReadonly(scope, targetRef);
+
+   if (exprNode == lxFieldAddress && exprNode.argument > 0/* && !test(mode, HINT_ASSIGNING)*/) {
+      compiler.injectLocalBoxing(exprNode, node.argument);
+
+      node = variable ? lxLocalUnboxing : lxExpression;
+      
+      return true;
+   }
+
+   return false;
 }

@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -1217,12 +1217,15 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t terminal)
    }
    else {
       int offset = info.fields.get(terminal);
-      if (offset != -1) {
+      if (offset >= 0) {
          ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
          if (test(info.header.flags, elStructureRole)) {
             return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
          }
          return ObjectInfo(okField, offset, fieldInfo.value1, fieldInfo.value2);
+      }
+      else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
+         return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value2);
       }
       else {
          ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
@@ -1456,7 +1459,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
          else if (outer.outerObject.kind == okUnknown) {
             // check if there is inherited fields
             outer.reference = info.fields.get(identifier);
-            if (outer.reference != -1) {
+            if (outer.reference >= 0) {
                return ObjectInfo(okField, outer.reference);
             }
             else return outer.outerObject;
@@ -1806,7 +1809,10 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
       case okCharConstant:
          return scope.moduleScope->charReference;
       case okThisParam:
-         return scope.getClassRefId(false);
+         if (object.extraparam == -2) {
+            return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));
+         }
+         else return scope.getClassRefId(false);
 //      case okSubject:
 //      case okSignatureConstant:
 //         return scope.moduleScope->signatureReference;
@@ -3961,6 +3967,9 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineC
       // if it is a stateless class
       return ObjectInfo(okConstantSymbol, scope.reference, scope.reference/*, scope.moduleScope->defineType(scope.reference)*/);
    }
+   else if (test(scope.info.header.flags, elDynamicRole)) {
+      scope.raiseError(errInvalidInlineClass, node);
+   }
    else {
       // dynamic binary symbol
       if (test(scope.info.header.flags, elStructureRole)) {
@@ -5352,7 +5361,7 @@ void Compiler :: compileTemplateMethods(SNode node, ClassScope& scope)
          templateScope.loadParameters(current);
          templateScope.sourceRef = _writer.writeString(current.findChild(lxSourcePath).identifier());
 
-         if (node == lxClassMethod) {
+         if (node == lxClassMethod || node == lxIdle) {
             ident_t signature = scope.moduleScope->module->resolveSubject(getSignature(node.argument));
             IdentifierString customVerb(signature, signature.find('&', getlength(signature)));
 
@@ -5407,6 +5416,9 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
             compileTemplateMethods(current, scope);
             break;
          }
+         case lxIdle:
+            compileTemplateMethods(current, scope);
+            break;
          //case lxDefaultGeneric:
          //{
          //   MethodScope methodScope(&scope);
@@ -5931,13 +5943,6 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    if (test(scope.info.header.flags, elStateless))
       scope.raiseError(errIllegalField, current);
 
-//   ref_t target = SyntaxTree::findChild(current, lxTarget).argument;
-//
-//   //SNode templateNode = SyntaxTree::findChild(current, lxTemplate);
-//   //// HOTFIX : read field attributes
-//   //if (templateNode.argument != 0)
-//   //   readFieldTermplateHints(*scope.moduleScope, templateNode.argument, target, sizeHint);
-//
    int size = (typeAttr != 0) ? _logic->defineStructSize(*moduleScope, classRef) : 0;
    if (sizeHint != 0) {
 //      if (size < 0) {
@@ -5978,6 +5983,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          }
 
          scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, typeAttr));
+         scope.info.fields.add(terminal, -2);
       }
       else scope.raiseError(errIllegalField, current);
    }
@@ -6028,11 +6034,6 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
             scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, typeAttr));
       }
    }
-
-//   //// handle field template   
-//   //if (templateNode.argument != 0) {
-//   //   declareFieldTemplateInfo(templateNode, scope, templateNode.argument, offset);
-//   //}
 }
 
 void Compiler :: generateClassStaticField(ClassScope& scope, SNode current)
@@ -6148,18 +6149,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
 {
    SNode current = root.firstChild();
    while (current != lxNone) {
-//      if (current == lxTemplateMethod) {
-//         if (!scope.info.methods.exist(current.argument, true)) {
-//            generateMethodHints(scope, current, current.argument);
-//
-//            if (!scope.info.methods.exist(current.argument))
-//               scope.info.methods.add(current.argument, false);
-//         }
-//      }
-//      //else if (current == lxTargetMethod) {
-//      //   generateMethodHints(scope, current, current.argument);
-//      //}
-      /*else */if (current == lxClassMethod) {
+      if (current == lxClassMethod) {
          ref_t message = current.argument;
 
          generateMethodAttributes(scope, current, message);
@@ -6203,10 +6193,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
             if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
                scope.moduleScope->saveExtension(message, scope.extensionMode, scope.reference);
             }
-
-            // HOTFIX : generate nested template methods
-            generateMethodDeclarations(scope, current, true, closed);
          }
+
+         // HOTFIX : generate nested template methods
+         generateMethodDeclarations(scope, current, true, closed);
       }
       else if (current == lxTemplate) {
          generateMethodDeclarations(scope, current, true, closed);
@@ -7864,17 +7854,9 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
       // if no boxing hint provided
       // then boxing should be skipped
       if (test(mode, HINT_NOBOXING)) {
-//         if (exprNode == lxFieldAddress && exprNode.argument > 0 && !test(mode, HINT_ASSIGNING)) {
-//            ref_t target = SyntaxTree::findChild(node, lxTarget).argument;
-//            if (!target)
-//               throw InternalError("Boxing can not be performed");
-//
-//            boxPrimitive(scope, exprNode, target, warningLevel, mode, variable);
-//
-//            node = variable ? lxLocalUnboxing : lxExpression;
-//
-//            return;
-//         }
+         if (_logic->optimizeEmbeddableBoxing(scope, *this, node, target.argument))
+            return;
+
          boxing = false;
       }
       else if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
@@ -8151,26 +8133,26 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
 //   raiseWarning(scope, node, wrnTypeMismatch, WARNING_LEVEL_2, warningMask, typecasted);
 //}
 
-//int Compiler :: allocateStructure(/*ModuleScope& scope, */SNode node, size_t& size)
-//{
-//   // finding method's reserved attribute
-//   SNode methodNode = node.parentNode();
-//   while (methodNode != lxClassMethod)
-//      methodNode = methodNode.parentNode();
-//
-//   SNode reserveNode = methodNode.findChild(lxReserved);
-//   int reserved = reserveNode.argument;
-//
-//   // allocating space
-//   int offset = allocateStructure(/*false, */size, reserved);
-//
-//   // HOT FIX : size should be in bytes
-//   size *= 4;
-//
-//   reserveNode.setArgument(reserved);
-//
-//   return offset;
-//}
+int Compiler :: allocateStructure(SNode node, int& size)
+{
+   // finding method's reserved attribute
+   SNode methodNode = node.parentNode();
+   while (methodNode != lxClassMethod)
+      methodNode = methodNode.parentNode();
+
+   SNode reserveNode = methodNode.findChild(lxReserved);
+   int reserved = reserveNode.argument;
+
+   // allocating space
+   int offset = allocateStructure(false, size, reserved);
+
+   // HOT FIX : size should be in bytes
+   size *= 4;
+
+   reserveNode.setArgument(reserved);
+
+   return offset;
+}
 
 //void Compiler :: optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node current, int warningLevel, int mode)
 //{
@@ -8250,6 +8232,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxLongOp:
       case lxRealOp:
       case lxIntArrOp:
+      case lxShortArrOp:
+      case lxByteArrOp:
+      case lxArrOp:
       case lxNewOp:
          optimizeOp(scope, current, warningScope, mode);
          break;
@@ -8311,6 +8296,10 @@ void Compiler :: optimizeClassTree(SNode node, ClassScope& scope, WarningScope& 
                defineEmbeddableAttributes(scope, current);
             }
          }
+      }
+      else if (current == lxIdle) {         
+         // HOTFIX : analize nested template methods
+         optimizeClassTree(current, scope, warningScope);
       }
       else if (current == lxTemplate) {
          WarningScope templateWarningScope;
@@ -8867,4 +8856,16 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
       assignTarget = lxIdle;
       callNode.setArgument(encodeMessage(subject, EVAL_MESSAGE_ID, 1));
    }
+}
+
+void Compiler :: injectLocalBoxing(SNode node, int size)
+{
+   int offset = allocateStructure(node, size);
+
+   // allocate place for the local copy
+   node.injectNode(node.type, node.argument);
+
+   node.set(lxAssigning, size);
+
+   node.insertNode(lxLocalAddress, offset);
 }

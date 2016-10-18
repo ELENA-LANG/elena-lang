@@ -26,15 +26,15 @@
 //              ]
 //          }.
 //    ]
-//        
-//    #method(outnprop:length,stacksafe)readLength &vint:retVal
-//    [
-//        #var(int)len.
-//        $target >> len.
-//        
-//        retVal := len.
-//    ]
-//
+        
+    #method(outnprop:length,stacksafe)readLength &vint:retVal
+    [
+        #var(int)len.
+        $target >> len.
+        
+        retVal := len.
+    ]
+
 //    #method(w3,stacksafe,template_subj) getAt &int:n
 //    [
 //        (n < 0)
@@ -1332,17 +1332,17 @@
     #constructor(stacksafe) new &int:aLength
         = object:aLength.
 
-//    /// Creates a copy of the provided array
-//    #constructor new &array:anArray
-//        <= %new &int:0 &int:(anArray length int) &array:anArray.
-//    
-//    /// Creates a copy of the provided sub array
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
-//        <= (new &int:aLength)
-//    [
-//        system'core_routines'__array copy &array:$self &int:anIndex &int:aLength &array:anArray.
-//    ]
-//        
+    /// Creates a copy of the provided array
+    #constructor new &array:anArray
+        <= %new &int:0 &int:(anArray length int) &array:anArray.
+    
+    /// Creates a copy of the provided sub array
+    #constructor(stacksafe) new &int:anIndex &int:aLength &array:anArray
+        <= (new &int:aLength)
+    [
+        system'core_routines'__array copy &array:$self &int:anIndex &int:aLength &array:anArray.
+    ]
+        
 //    #constructor new &object:singleItem
 //        <= (new &int:1)
 //    [
@@ -1379,19 +1379,19 @@
 //            
 //        ^ aRetVal.
 //    ]
-//
-//    /// Reads the array length into an output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__array.
-//
-//    /// Sets the specified array member
-//    #method(stacksafe) setAt &int:anIndex &object:anObject
-//        => system'core_routines'__array.
-//
-//    /// Returns the specified array member
-//    #method(stacksafe) getAt &int:anIndex
-//        => system'core_routines'__array.
-//        
+
+    /// Reads the array length into an output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__array.
+
+    /// Sets the specified array member
+    #method(stacksafe) setAt &int:anIndex &object:anObject
+        => system'core_routines'__array.
+
+    /// Returns the specified array member
+    #method(stacksafe) getAt &int:anIndex
+        => system'core_routines'__array.
+        
 //    /// Returns the array enumerator
 //    #method enumerator = ArrayEnumerator new &array:$self.
 //
@@ -1428,19 +1428,19 @@
 /// A literal convertor
 #symbol literalConvertor =
 {
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &char:aValue &bytearray:buffer &vint:length
-//        => system'core_routines'__literalconvertor.
-//    
-//    #method(literal,stacksafe)convert &char:aValue
-//    [
-//        #var(byte:4)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &char:aValue &bytearray:buffer &vint:length.
-//        
-//        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
-//    ]
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &char:aValue &bytearray:buffer &vint:length
+        => system'core_routines'__literalconvertor.
+    
+    #method(literal,stacksafe)convert &char:aValue
+    [
+        #var(byte:4)buffer.
+        #var(int)length := 0.
+        
+        $self convert &char:aValue &bytearray:buffer &vint:length.
+        
+        ^ LiteralValue $new &int:0 &int:length &bytearray:buffer.
+    ]
     
     #method(stacksafe) convert &int:aNumber &bytearray:buffer &vint:length
         => system'core_routines'__literalconvertor.
@@ -1628,19 +1628,19 @@
 /// A wide literal convertor
 #symbol wideConvertor =
 {
-//    /// Converts the parameter to the literal value
-//    #method(stacksafe) convert &char:aValue &shortarray:buffer &vint:length
-//        => system'core_routines'__wideconvertor.
-//    
-//    #method(wide,stacksafe)convert &char:aValue
-//    [
-//        #var(short:2)buffer.
-//        #var(int)length := 0.
-//        
-//        $self convert &char:aValue &shortarray:buffer &vint:length.
-//        
-//        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
-//    ]    
+    /// Converts the parameter to the literal value
+    #method(stacksafe) convert &char:aValue &shortarray:buffer &vint:length
+        => system'core_routines'__wideconvertor.
+    
+    #method(wide,stacksafe)convert &char:aValue
+    [
+        #var(short:2)buffer.
+        #var(int)length := 0.
+        
+        $self convert &char:aValue &shortarray:buffer &vint:length.
+        
+        ^ WideLiteralValue $new &int:0 &int:length &shortarray:buffer.
+    ]    
     
     /// Converts the parameter to the literal value
     #method(stacksafe) convert &int:aNumber &shortarray:buffer &vint:length
@@ -1851,10 +1851,10 @@
     ]
 
     /// Resets the enumerator
-    #method reset
+    #method(w3) reset
     [
-        theIndex set &int:(-1).
-        theDiff set &int:1.
+        theIndex := -1.
+        theDiff := 1.
     ]
 
     /// Goes to the next enumeration member and returns true if it is not the last member
@@ -1873,7 +1873,7 @@
                 ^ true.
             ].
 
-        theDiff set &int:0.
+        theDiff := 0.
         theChar := #0.
 
         ^ false.

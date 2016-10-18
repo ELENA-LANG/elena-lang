@@ -527,26 +527,26 @@
 //        
 //        theArray setAt &int:anIndex &object:anObject.
 //    ]
-//    
-//    #method $expand
-//    [
-//        (theCapacity <= theLength)?
-//        [
-//            theCapacity += 32.
-//            
-//            #var(array)aNewArray := Array new &int:theCapacity.
-//            #var(int) i := 0.
-//            #loop (i < theLength)?
-//            [
-//                aNewArray setAt &int:i &object:(theArray getAt &int:i).
-//                
-//                i := i + 1.
-//            ].
-//            
-//            theArray := aNewArray.
-//        ].
-//    ]
-//    
+    
+    #method $expand
+    [
+        (theCapacity <= theLength)?
+        [
+            theCapacity += 32.
+            
+            #var(array)aNewArray := Array new &int:theCapacity.
+            #var(int) i := 0.
+            #loop (i < theLength)?
+            [
+                aNewArray setAt &int:i &object:(theArray getAt &int:i).
+                
+                i := i + 1.
+            ].
+            
+            theArray := aNewArray.
+        ].
+    ]
+    
 //    #method append &array:subarray
 //    [
 //        ($nil != subarray) ?
@@ -560,20 +560,20 @@
 //            ].
 //        ].        
 //    ]
-//        
-//    /// Appends a new object to the end of the list
-//    #method append &object:anObject
-//    [
-//        $self $expand.
-//        
-//        theArray setAt &int:theLength &object:anObject.
-//        
-//        theLength += 1.
-//    ]
-//    
-//    #method append : object
-//        <= append &object:object.
-//    
+        
+    /// Appends a new object to the end of the list
+    #method append &object:anObject
+    [
+        $self $expand.
+        
+        theArray setAt &int:theLength &object:anObject.
+        
+        theLength += 1.
+    ]
+    
+    #method append : object
+        <= append &object:object.
+    
 //    /// Inserts a new object to the specified position
 //    #method insert &int:anIndex &object:anObject
 //    [
@@ -663,10 +663,10 @@
 //    /// Returns a list copy
 //    #method(array_list) clone
 //        = ArrayList $new &array:theArray &int:theLength.
-//        
-//    #method array
-//        = Array new &int:0 &int:theLength &array:theArray.
-//        
+        
+    #method array
+        = Array new &int:0 &int:theLength &array:theArray.
+        
 //    #method get
 //        <= array.        
 }

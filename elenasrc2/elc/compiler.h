@@ -125,7 +125,7 @@ public:
       okParam,                        // param - parameter offset, extraparam = -1 (is stack safe) / 0
       okParamField,
 //      okSubject,                      // param - parameter offset
-      okThisParam,                    // param - parameter offset
+      okThisParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
@@ -1015,7 +1015,7 @@ private:
    void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-   int allocateStructure(/*ModuleScope& scope, */SNode node, size_t& size);
+   int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
    ObjectInfo compileExternalCall(SNode node, CodeScope& scope, int mode);
@@ -1140,6 +1140,7 @@ public:
    // _Compiler interface implementation
    virtual void injectVirtualReturningMethod(SNode node, ident_t variable);
    virtual void injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef);
+   virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SNode node, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);

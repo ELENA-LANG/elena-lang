@@ -136,6 +136,8 @@ public:
 
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 
+   virtual void injectLocalBoxing(SNode node, int size) = 0;
+
    virtual void generateEnumListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 
    virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
@@ -209,6 +211,7 @@ public:
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
    // optimization
+   virtual bool optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef) = 0;
    virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableIdle(SNode node) = 0;
 

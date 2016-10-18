@@ -3,12 +3,14 @@ In development:
 ------                              
 
               xrev
+                 * optimization : #var(int)n := o array length.
+                 * support arrayof:int
+                 * support arrayof:struct
+
                  * support closures with several generic parameters
                  * support closures with several parameters
                  * support closures with a parameter
                  * support private sealed methods
-
-                 * support array of int
 
                  * check if self is embeddable
                  * no need to check conditional boxing for returning expression
@@ -84,6 +86,7 @@ In development:
                  * test listof:datatype / listof:type
                  * test try catch statement
                  * implement repeat until loop
+                 * operation with struct field : assigning
                  * test : a int + b::op int.
 
               xdev
