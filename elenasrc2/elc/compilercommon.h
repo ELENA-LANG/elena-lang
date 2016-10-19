@@ -151,7 +151,7 @@ public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType) = 0;
 
    // retrieve the class info / size
-   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly = false) = 0;
    virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 

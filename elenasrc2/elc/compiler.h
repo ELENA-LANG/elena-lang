@@ -968,9 +968,9 @@ private:
 //      bool dummy = false;
 //      return mapMessage(node, scope, count, dummy);
 //   }
-//
-//   void compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue);
-   void compileVariable(SNode node, CodeScope& scope/*, DNode hints*/);
+
+   void compileSwitch(SNode node, CodeScope& scope);
+   void compileVariable(SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);

@@ -103,6 +103,7 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
    lxTrying          = 0x0C00C,   // try-catch expression
    lxBranching       = 0x0C00F,   // branch expression
+   lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
    lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
@@ -112,6 +113,7 @@ enum LexicalType
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference
+   lxOption          = 0x0C021,
    lxFieldExpression = 0x0C022,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
@@ -209,11 +211,9 @@ enum LexicalType
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
-//   lxSwitching       = 0x00310,
 //   lxThrowing        = 0x00313,
 //   lxExtInteranlRef  = 0x00319,
 //   lxArgUnboxing     = 0x0031E,
-//   lxOption          = 0x00321,
 //   lxExternFrame     = 0x00327,
 //   lxBody            = 0x00329,
 //

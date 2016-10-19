@@ -3,6 +3,9 @@ In development:
 ------                              
 
               xrev
+                 * switch statement with comparision
+                 * switch statement with expression
+
                  * int constant to byte
 
                  * optimization : #var(int)n := o array length.

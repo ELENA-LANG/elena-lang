@@ -130,6 +130,7 @@ class DerivationWriter : public _DerivationWriter
    void copyMessage(SNode node, bool operationMode = false);
    void copyVariable(SNode node);
    void copyAssigning(SNode node);
+   void copySwitching(SNode node);
    void copyHints(SNode node);
 
 public:

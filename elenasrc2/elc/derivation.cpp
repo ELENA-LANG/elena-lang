@@ -154,6 +154,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
             _writer.closeNode();
          }
          break;
+      case nsSwitching:
+         copySwitching(node);
+         _writer.insert(lxSwitching);
+         _writer.closeNode();
+         break;
       case nsL0Operation:
       case nsL3Operation:
       case nsL4Operation:
@@ -215,6 +220,33 @@ void DerivationWriter :: copyExpression(SNode node, bool explicitOne)
 void DerivationWriter :: copyObject(SNode node, int mode)
 {
    unpackChildren(node, mode);
+}
+
+void DerivationWriter :: copySwitching(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      Symbol symbol = (Symbol)current.type;
+      switch (symbol) {
+         case nsSwitchOption:
+            _writer.newBookmark();
+            unpackChildren(current);
+            _writer.insert(lxOption);
+            _writer.closeNode();
+            _writer.removeBookmark();
+            break;
+         case nsLastSwitchOption:
+            _writer.newBookmark();
+            unpackChildren(current);
+            _writer.insert(lxElse);
+            _writer.closeNode();
+            _writer.removeBookmark();
+            break;
+         default:
+            break;
+      }
+      current = current.nextNode();
+   }
 }
 
 void DerivationWriter :: copyMessage(SNode node, bool operationMode)

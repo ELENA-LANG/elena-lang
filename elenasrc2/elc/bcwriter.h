@@ -130,8 +130,8 @@ class ByteCodeWriter
    void declareThenBlock(CommandTape& tape, bool withStackControl = true);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
-//   void declareSwitchBlock(CommandTape& tape);
-//   void declareSwitchOption(CommandTape& tape);
+   void declareSwitchBlock(CommandTape& tape);
+   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
@@ -219,8 +219,8 @@ class ByteCodeWriter
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
-//   void endSwitchOption(CommandTape& tape);
-//   void endSwitchBlock(CommandTape& tape);
+   void endSwitchOption(CommandTape& tape);
+   void endSwitchBlock(CommandTape& tape);
    void closeFrame(CommandTape& tape);
 
    void assignBaseTo(CommandTape& tape, LexicalType target, int offset = 0);
@@ -282,7 +282,7 @@ class ByteCodeWriter
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
+   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);

@@ -55,6 +55,7 @@ struct ModuleInfo
 #define HINT_EXTENSION_MODE   0x04000000
 //#define HINT_TRY_MODE         0x02000000
 #define HINT_LOOP             0x01000000
+#define HINT_SWITCH           0x00800000
 #define HINT_NODEBUGINFO      0x00020000
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
@@ -2536,65 +2537,59 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
    }
 }
 
-//void Compiler :: compileSwitch(DNode node, CodeScope& scope, ObjectInfo switchValue)
-//{
-//   if (switchValue.kind == okObject) {
-//      scope.writer->insert(lxVariable);
-//      scope.writer->insert(lxSwitching);
-//      scope.writer->closeNode();
-//
-//      switchValue.kind = okBlockLocal;
-//      switchValue.param = 1;
-//   }
-//   else scope.writer->insert(lxSwitching);
-//
-//   DNode option = node.firstChild();
-//   while (option == nsSwitchOption || option == nsBiggerSwitchOption || option == nsLessSwitchOption)  {
-//      scope.writer->newNode(lxOption);
-//      recordDebugStep(scope, option.firstChild().FirstTerminal(), dsStep);
-//
-//      //      _writer.declareSwitchOption(*scope.tape);
-//
-//      int operator_id = EQUAL_MESSAGE_ID;
+void Compiler :: compileSwitch(SNode node, CodeScope& scope)
+{
+   SNode targetNode = node.firstChild(lxObjectMask);
+
+   bool immMode = true;
+   if (targetNode == lxExpression) {
+      immMode = false;
+
+      //      scope.writer->insert(lxVariable);
+      //      scope.writer->insert(lxSwitching);
+      //      scope.writer->closeNode();
+      //
+      //      switchValue.kind = okBlockLocal;
+      //      switchValue.param = 1;
+   }
+
+   SNode option = node.findChild(lxOption, lxElse);
+   while (option == lxOption) {
+      insertDebugStep(option, dsStep);
+
+      int operator_id = EQUAL_MESSAGE_ID;
 //      if (option == nsBiggerSwitchOption) {
 //         operator_id = GREATER_MESSAGE_ID;
 //      }
 //      else if (option == nsLessSwitchOption) {
 //         operator_id = LESS_MESSAGE_ID;
 //      }
-//
-//      scope.writer->newBookmark();
-//
-//      writeTerminal(TerminalInfo(), scope, switchValue);
-//
-//      DNode operand = option.firstChild();
-//      ObjectInfo result = compileOperator(operand, scope, switchValue, 0, operator_id);
-//      scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-//      appendTerminalInfo(scope.writer, node.FirstTerminal());
-//      scope.writer->closeNode();
-//
-//      scope.writer->removeBookmark();
-//
-//      scope.writer->newNode(lxElse, scope.moduleScope->falseReference);
-//
-//      CodeScope subScope(&scope);
-//      DNode thenCode = option.firstChild().nextNode();
-//
-//      //_writer.declareBlock(*scope.tape);
-//
-//      DNode statement = thenCode.firstChild();
-//      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
-//         compileCode(thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(statement, scope, 0);
-//
-//      scope.writer->closeNode();
-//
-//      scope.writer->closeNode();
-//
-//      option = option.nextNode();
-//   }
+      
+      SNode expr = option.injectNode(lxExpression);
+      
+      // find option value
+      SNode valueNode = expr.firstChild(lxObjectMask);
+
+      // inject operation
+      valueNode.injectNode(valueNode.type);
+      valueNode = lxExpression;
+
+      // inject target
+      if (immMode) {
+         SyntaxTree::copyNode(targetNode, valueNode.appendNode(targetNode.type));
+      }
+      valueNode.appendNode(lxOperator, operator_id);
+
+      // inject code expression
+      SNode codeExpr = expr.findChild(lxCode);
+      codeExpr.injectNode(lxCode);
+      codeExpr = lxExpression;
+
+      compileBranchingOperator(expr, scope, HINT_SWITCH, IF_MESSAGE_ID);
+
+      option = option.nextNode();
+   }
+
 //   if (option == nsLastSwitchOption) {
 //      scope.writer->newNode(lxElse);
 //
@@ -2614,7 +2609,7 @@ void Compiler :: compileLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 //   }
 //
 //   scope.writer->closeNode();
-//}
+}
 
 void Compiler :: compileVariable(SNode node, CodeScope& scope)
 {
@@ -3244,6 +3239,9 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
    ref_t ifReference = 0;
    if (_logic->resolveBranchOperation(*scope.moduleScope, *this, operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       node = lxBranching;
+      // HOTFIX : mark it as switch branching if required
+      if (test(mode, HINT_SWITCH))
+         node.setArgument(-1);
 
       SNode thenBody = loperandNode.nextNode(lxObjectMask);
       if (test(mode, HINT_LOOP)) {
@@ -3377,7 +3375,7 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode)
 {
    SNode operatorNode = node.findChild(lxOperator);
    SNode operatorName = operatorNode.findChild(lxTerminal);
-   int operator_id = operatorNode.argument == -1 ? -1 : _operators.get(operatorName.identifier());
+   int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorName.identifier());
 
    // if it is a new operator
    if (operator_id == -1) {
@@ -4126,7 +4124,7 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
 //   scope.writer->newBookmark();
 
    ObjectInfo objectInfo;
-   SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxTrying);
+   SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxTrying, lxSwitching);
    switch (child.type) {
       case lxAssign:
          objectInfo = compileAssigning(node, scope, mode);
@@ -4136,6 +4134,11 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
          break;
       case lxTrying:
          compileTrying(child, scope);
+
+         objectInfo = ObjectInfo(okObject);
+         break;
+      case lxSwitching:
+         compileSwitch(child, scope);
 
          objectInfo = ObjectInfo(okObject);
          break;
@@ -4433,10 +4436,10 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
             insertDebugStep(current, dsStep);
             compileLoop(current, scope);
             break;
-////         case nsTry:
-////            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-////            compileTry(statement, scope);
-////            break;
+//         case nsTry:
+//            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
+//            compileTry(statement, scope);
+//            break;
 //         case nsLock:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
 //            compileLock(statement, scope);

@@ -637,13 +637,37 @@ MESSAGE_PARAMETER ->
 	OBJECT
 
 OPTION ->
-	OBJECT OPTION_BODY
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
 	
 BIGGER_OPTION ->
-	OBJECT OPTION_BODY
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
 	
 SMALLER_OPTION ->                                                                     
-	OBJECT OPTION_BODY
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
 
 OPTION_BODY ->
 	? CODE_BLOCK

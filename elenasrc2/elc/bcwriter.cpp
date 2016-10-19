@@ -330,28 +330,28 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
    tape.write(bcResetStack);
 }
 
-//void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
-//{
-//   tape.write(blDeclare, bsBranch);  // mark branch-level
-//   tape.newLabel();                  // declare end label
-//}
-//
-//void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare next option
-//}
-//
-//void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
-//{
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//}
-//
-//void ByteCodeWriter :: endSwitchBlock(CommandTape& tape)
-//{
-//   tape.setLabel();
-//   tape.write(bcSCopyF, bsBranch);
-//}
+void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
+{
+   tape.write(blDeclare, bsBranch);  // mark branch-level
+   tape.newLabel();                  // declare end label
+}
+
+void ByteCodeWriter :: declareSwitchOption(CommandTape& tape)
+{
+   tape.newLabel();                  // declare next option
+}
+
+void ByteCodeWriter :: endSwitchOption(CommandTape& tape)
+{
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: endSwitchBlock(CommandTape& tape)
+{
+   tape.setLabel();
+   tape.write(bcSCopyF, bsBranch);
+}
 
 void ByteCodeWriter :: declareTry(CommandTape& tape)
 {
@@ -4312,35 +4312,40 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
    else endLoop(tape);
 }
 
-//void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   declareSwitchBlock(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxVariable) {
-//         generateObjectExpression(tape, current);
-//      }
-//      else if (current == lxOption) {
-//         declareSwitchOption(tape);
-//
-//         generateExpression(tape, current);
-//
-//         endSwitchOption(tape);
-//      }
-//      else if (current == lxElse) {
-//         generateObjectExpression(tape, current);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   endSwitchBlock(tape);
-//}
+void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node)
+{
+   declareSwitchBlock(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxVariable) {
+         generateObjectExpression(tape, current);
+      }
+      else if (current == lxOption) {
+         declareSwitchOption(tape);
+
+         generateExpression(tape, current);
+
+         endSwitchOption(tape);
+      }
+      else if (current == lxElse) {
+         generateObjectExpression(tape, current);
+      }
+
+      current = current.nextNode();
+   }
+
+   endSwitchBlock(tape);
+}
 
 void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node)
 {
-   if (node.existChild(lxElse)) {
+   bool switchBranching = node.argument == -1;
+
+   if (switchBranching) {
+      // labels already declared in the case of switch
+   }
+   else if (node.existChild(lxElse)) {
       declareThenElseBlock(tape);
    }
    else declareThenBlock(tape);
@@ -4365,7 +4370,8 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
       current = current.nextNode();
    }
 
-   endThenBlock(tape);
+   if(!switchBranching)
+      endThenBlock(tape);
 }
 
 void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
@@ -4502,9 +4508,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxBranching:
          generateBranching(tape, node);
          break;
-//      case lxSwitching:
-//         generateSwitching(tape, node);
-//         break;
+      case lxSwitching:
+         generateSwitching(tape, node);
+         break;
       case lxLooping:
          generateLooping(tape, node);
          break;

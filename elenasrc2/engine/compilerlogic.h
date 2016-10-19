@@ -69,7 +69,7 @@ class CompilerLogic : public _CompilerLogic
 public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
 
-   virtual void defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
+   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
    virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly);
    virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly);
 

@@ -172,7 +172,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputTy
 int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType)
 {
    ClassInfo info;
-   found = scope.loadClassInfo(info, reference) != 0;
+   found = defineClassInfo(scope, info, reference);
 
    if (found) {
       // only sealed / closed classes should be considered as found
@@ -539,64 +539,69 @@ void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, /*_C
       operationNode.appendNode(lxSize, size);
 }
 
-void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
+   if (isPrimitiveRef(reference) && !headerOnly) {
+      scope.loadClassInfo(info, scope.superReference);
+   }
+
    switch (reference)
    {
       case V_INT32:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugDWORD | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_INT64:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugQWORD | elStructureRole | elEmbeddable;
          info.size = 8;
          break;
       case V_REAL64:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugReal64 | elStructureRole | elEmbeddable;
          info.size = 8;
          break;
       case V_PTR32:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugPTR | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_SIGNATURE:
       case V_VERB:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugSubject | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_MESSAGE:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
       case V_INT32ARRAY:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
          info.size = -4;
          break;
       case V_INT16ARRAY:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elEmbeddable;
          info.size = -2;
          break;
       case V_INT8ARRAY:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elEmbeddable;
          info.size = -1;
          break;
       case V_OBJARRAY:
-         info.header.parentRef = 0;
+         info.header.parentRef = scope.superReference;
          info.header.flags = elDebugArray | elDynamicRole;
          info.size = 0;
          break;
       default:
          if (reference != 0) {
-            scope.loadClassInfo(info, reference, headerOnly);
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
          }
          else {
             info.header.parentRef = 0;
@@ -605,6 +610,7 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          }
          break;
    }
+
 //      else if (isPrimitiveRef(classRef)) {
 //         else if (classRef == -3) {
 //            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
@@ -612,6 +618,8 @@ void CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //            bytearray = true;
 //         }
 //      }
+
+   return true;
 }
 
 size_t CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly)
