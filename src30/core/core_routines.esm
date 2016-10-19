@@ -345,6 +345,89 @@ procedure __literal.indexOf&int$&char$&vint$[4]
 
 end
 
+procedure __literal.insert&int$&literal$[3]
+
+  // ; calculate length
+  blen
+  dec
+  ecopyd
+  
+  aloadsi 3
+  blen
+  add
+
+  acopyr class : system'LiteralValue
+  bcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : insert
+
+  // ; insert
+  aloadsi 3
+  ecopyd
+  blen
+  dec
+  eswap
+  callextr api : insert
+  
+  // ; copy right side 
+  ecopyd
+  aloadsi 2
+  nload  
+  eswap
+  aloadsi 1
+  callextr api : sadd
+
+  acopyb
+  quitn 3
+  
+end
+
+procedure __literal.delete&int$&int$[3]
+
+  bcopya
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  ecopyd
+
+  acopyb
+  blen
+  sub
+
+  acopyr class : system'LiteralValue
+  bcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : insert
+
+  // ; copy right side 
+  ecopyd          
+  aloadsi 3
+  nload
+  add
+  eswap
+  aloadsi 1
+  callextr api : sadd
+
+  acopyb
+  quitn 3
+  
+end
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -539,6 +622,89 @@ procedure __wide.indexOf&int$&char$&vint$[4]
   popi 4
   popa
   quitn 4
+  
+end
+
+procedure __wide.insert&int$&wide$[3]
+
+  // ; calculate length
+  wlen
+  dec
+  ecopyd
+  
+  aloadsi 3
+  wlen
+  add
+
+  acopyr class : system'WideLiteralValue
+  wcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : winsert
+
+  // ; insert
+  aloadsi 3
+  ecopyd
+  wlen
+  dec
+  eswap
+  callextr api : winsert
+  
+  // ; copy right side 
+  ecopyd
+  aloadsi 2
+  nload  
+  eswap
+  aloadsi 1
+  callextr api : wadd
+
+  acopyb
+  quitn 3
+  
+end
+
+procedure __wide.delete&int$&int$[3]
+
+  bcopya
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  ecopyd
+
+  acopyb
+  wlen
+  sub
+
+  acopyr class : system'WideLiteralValue
+  wcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : winsert                  
+
+  // ; copy right side 
+  ecopyd          
+  aloadsi 3
+  nload
+  add
+  eswap
+  aloadsi 1
+  callextr api : wadd
+
+  acopyb
+  quitn 3
   
 end
 

@@ -80,9 +80,9 @@ inline bool isConstant(ObjectInfo object)
       case Compiler::okIntConstant:
       case Compiler::okLongConstant:
       case Compiler::okRealConstant:
-      //case Compiler::okMessageConstant:
-      //case Compiler::okExtMessageConstant:
-      //case Compiler::okSignatureConstant:
+      case Compiler::okMessageConstant:
+      case Compiler::okExtMessageConstant:
+      case Compiler::okSignatureConstant:
       case Compiler::okVerbConstant:
       case Compiler::okArrayConst:
          return true;
@@ -1814,8 +1814,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          }
          else return scope.getClassRefId(false);
 //      case okSubject:
-//      case okSignatureConstant:
-//         return scope.moduleScope->signatureReference;
+      case okSignatureConstant:
+         return V_SIGNATURE;
       case okSuper:
          return object.param;
 //      case okTemplateLocal:
@@ -1824,8 +1824,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 //         return scope.moduleScope->paramsReference;
       case okExternal:
          return V_INT32;
-//      case okMessageConstant:
-//         return scope.moduleScope->messageReference;
+      case okMessageConstant:
+         return V_MESSAGE;
       case okNil:
          return V_NIL;
       case okField:
@@ -2785,15 +2785,15 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okVerbConstant:
          terminal.set(lxVerbConstant, object.param);
          break;
-//      case okMessageConstant:
-//         scope.writer->newNode(lxMessageConstant, object.param);
-//         break;
-//      case okExtMessageConstant:
-//         scope.writer->newNode(lxExtMessageConstant, object.param);
-//         break;
-//      case okSignatureConstant:
-//         scope.writer->newNode(lxSignatureConstant, object.param);
-//         break;
+      case okMessageConstant:
+         terminal.set(lxMessageConstant, object.param);
+         break;
+      case okExtMessageConstant:
+         terminal.set(lxExtMessageConstant, object.param);
+         break;
+      case okSignatureConstant:
+         terminal.set(lxSignatureConstant, object.param);
+         break;
 //      case okSubject:
 //         scope.writer->newNode(lxLocalAddress, object.param);
 //         break;
@@ -2960,12 +2960,12 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
 
 ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int mode)
 {
-   SNode terminal = node.findChild(lxPrivate, lxIdentifier);
+   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
    IdentifierString signature;
    ref_t verb_id = 0;
    int paramCount = -1;
-//   ref_t extensionRef = 0;
-   if (terminal == lxIdentifier) {
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier || terminal == lxPrivate) {
       ident_t name = terminal.findChild(lxTerminal).identifier();
       verb_id = _verbs.get(name);
       if (verb_id == 0) {
@@ -2973,68 +2973,68 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
       }
    }
    else {
-//      ident_t message = terminal.value;
-//
-//      int subject = 0;
-//      int param = 0;
-//      for (int i = 0; i < getlength(message); i++) {
-//         if (message[i] == '&' && subject == 0) {
-//            signature.copy(message, i);
-//            verb_id = _verbs.get(signature);
-//            if (verb_id != 0) {
-//               subject = i + 1;
-//            }
-//         }
-//         else if (message[i] == '.' && extensionRef == 0) {
-//            signature.copy(message + subject, i - subject);
-//            subject = i + 1;
-//
-//            extensionRef = scope.moduleScope->resolveIdentifier(signature);
-//            if (extensionRef == 0)
-//               scope.raiseError(errInvalidSubject, terminal);
-//         }
-//         else if (message[i] == '[') {
-//            if (message[i+1] == ']') {
-//               //HOT FIX : support open argument list
-//               paramCount = OPEN_ARG_COUNT;
-//            }
-//            else if (message[getlength(message) - 1] == ']') {
-//               signature.copy(message + i + 1, getlength(message) - i - 2);
-//               paramCount = StringHelper::strToInt(signature);
-//               if (paramCount > 12)
-//                  scope.raiseError(errInvalidSubject, terminal);
-//            }
-//            else scope.raiseError(errInvalidSubject, terminal);
-//
-//            param = i;
-//         }
-//         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-//         }
-//         else if (message[i] == ']' && i == (getlength(message) - 1)) {
-//         }
-//         else scope.raiseError(errInvalidSubject, terminal);
-//      }
-//
-//      if (param != 0) {
-//         signature.copy(message + subject, param - subject);
-//      }
-//      else signature.copy(message + subject);
-//
-//      if (subject == 0 && paramCount != -1) {
-//         verb_id = _verbs.get(signature);
-//         if (verb_id != 0) {
-//            signature.clear();
-//         }
-//      }
-//
-//      if (paramCount == OPEN_ARG_COUNT) {
-//         // HOT FIX : support open argument list
-//         ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
-//         if (!emptystr(signature))
-//            signature.append('&');
-//
-//         signature.append(scope.moduleScope->module->resolveSubject(openArgType));
-//      }
+      ident_t message = terminal.findChild(lxTerminal).identifier();
+
+      int subject = 0;
+      int param = 0;
+      for (int i = 0; i < getlength(message); i++) {
+         if (message[i] == '&' && subject == 0) {
+            signature.copy(message, i);
+            verb_id = _verbs.get(signature);
+            if (verb_id != 0) {
+               subject = i + 1;
+            }
+         }
+         else if (message[i] == '.' && extensionRef == 0) {
+            signature.copy(message + subject, i - subject);
+            subject = i + 1;
+
+            extensionRef = scope.moduleScope->resolveIdentifier(signature);
+            if (extensionRef == 0)
+               scope.raiseError(errInvalidSubject, terminal);
+         }
+         else if (message[i] == '[') {
+            if (message[i+1] == ']') {
+               //HOT FIX : support open argument list
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[getlength(message) - 1] == ']') {
+               signature.copy(message + i + 1, getlength(message) - i - 2);
+               paramCount = signature.ident().toInt();
+               if (paramCount > 12)
+                  scope.raiseError(errInvalidSubject, terminal);
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
+         }
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else if (message[i] == ']' && i == (getlength(message) - 1)) {
+         }
+         else scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
+      }
+      else signature.copy(message + subject);
+
+      if (subject == 0 && paramCount != -1) {
+         verb_id = _verbs.get(signature);
+         if (verb_id != 0) {
+            signature.clear();
+         }
+      }
+
+      //if (paramCount == OPEN_ARG_COUNT) {
+      //   // HOT FIX : support open argument list
+      //   ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
+      //   if (!emptystr(signature))
+      //      signature.append('&');
+
+      //   signature.append(scope.moduleScope->module->resolveSubject(openArgType));
+      //}
    }
 
    if (verb_id == 0 && paramCount != -1) {
@@ -3046,14 +3046,14 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
 
    ObjectInfo retVal;
    IdentifierString message;
-//   if (extensionRef != 0) {
-//      if (verb_id == 0) {
-//         scope.raiseError(errInvalidSubject, terminal);
-//      }
-//
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//   }
+   if (extensionRef != 0) {
+      if (verb_id == 0) {
+         scope.raiseError(errInvalidSubject, terminal);
+      }
+
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
 
    if (paramCount == -1) {
       message.append('0');
@@ -3071,15 +3071,15 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
    }
    
    if (verb_id != 0) {
-      /*if (extensionRef != 0) {
+      if (extensionRef != 0) {
          retVal.kind = okExtMessageConstant;
       }
-      else */if (paramCount == -1 && emptystr(signature)) {
+      else if (paramCount == -1 && emptystr(signature)) {
          retVal.kind = okVerbConstant;
       }
-      //else retVal.kind = okMessageConstant;
+      else retVal.kind = okMessageConstant;
    }
-   //else retVal.kind = okSignatureConstant;
+   else retVal.kind = okSignatureConstant;
 
    retVal.param = scope.moduleScope->module->mapReference(message);
 
@@ -4105,9 +4105,15 @@ ObjectInfo Compiler :: compileNewOperator(SNode node, CodeScope& scope/*, int mo
 
 void Compiler :: compileTrying(SNode node, CodeScope& scope)
 {
+   bool catchNode = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxExprMask)) {
+         if (catchNode) {
+            current.insertNode(lxResult);
+         }
+         else catchNode = true;
+
          compileExpression(current, scope, 0);
       }
 

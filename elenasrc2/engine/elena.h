@@ -162,7 +162,7 @@ public:
    virtual ident_t getLongClass() = 0;
    virtual ident_t getMessageClass() = 0;
 //   virtual ident_t getExtMessageClass() = 0;
-//   virtual ident_t getSignatureClass() = 0;
+   virtual ident_t getSignatureClass() = 0;
    virtual ident_t getVerbClass() = 0;
 //   virtual ident_t getNamespace() = 0;
 

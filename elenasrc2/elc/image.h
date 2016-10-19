@@ -40,7 +40,7 @@ private:
    ident_t _real;
    ident_t _message;
 //   ident_t _ext_message;
-//   ident_t _signature;
+   ident_t _signature;
    ident_t _verb;
 
 public:
@@ -77,7 +77,7 @@ public:
    virtual ident_t getLongClass();
    virtual ident_t getMessageClass();
 //   virtual ident_t getExtMessageClass();
-//   virtual ident_t getSignatureClass();
+   virtual ident_t getSignatureClass();
    virtual ident_t getVerbClass();
    virtual ident_t getNamespace();
 

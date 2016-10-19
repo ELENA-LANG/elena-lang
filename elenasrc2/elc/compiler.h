@@ -111,9 +111,9 @@ public:
       okIntConstant,                  // param - reference, extraparam - imm argument
       okLongConstant,                 // param - reference 
       okRealConstant,                 // param - reference 
-//      okMessageConstant,              // param - reference 
-//      okExtMessageConstant,           // param - reference 
-//      okSignatureConstant,            // param - reference 
+      okMessageConstant,              // param - reference 
+      okExtMessageConstant,           // param - reference 
+      okSignatureConstant,            // param - reference 
       okVerbConstant,                 // param - reference 
       okArrayConst,
       okField,                        // param - field offset, extraparam - class reference

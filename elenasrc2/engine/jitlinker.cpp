@@ -982,9 +982,9 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskMessage:
             vaddress = resolveMessage(reference, _loader->getMessageClass());
             break;
-//         case mskSignature:
-//            vaddress = resolveMessage(reference, _loader->getSignatureClass());
-//            break;
+         case mskSignature:
+            vaddress = resolveMessage(reference, _loader->getSignatureClass());
+            break;
          case mskVerb:
             vaddress = resolveMessage(reference, _loader->getVerbClass());
             break;

@@ -855,7 +855,7 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
             return info.size == 4;
          case lxSignatureAttr:
-            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper);
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
             return info.size == 4;
          case lxVerbAttr:
@@ -863,17 +863,11 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_VERB, 0));
             return info.size == 4;
          case lxMessageAttr:
-            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper);
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 4;
             //            case -7:
             //               scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
-            //               break;
-            //            case -8:
-            //               scope.info.header.flags |= (elDebugSubject | elReadOnlyRole | elSignature);
-            //               break;
-            //            case -9:
-            //               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elMessage);
             //               break;
             //            case -10:
             //               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);

@@ -81,6 +81,9 @@ enum LexicalType
    lxConstantLong    = 0x1A110, // arg - reference
    lxConstantReal    = 0x1A111, // arg - reference
    lxConstantClass   = 0x0A112, // arg - reference
+   lxMessageConstant = 0x0A113, // arg - rererence
+   lxExtMessageConstant = 0x0A114, // arg -reference
+   lxSignatureConstant  = 0x0A115, // arg - reference
    lxVerbConstant    = 0x0A116, // arg - reference
    lxNil             = 0x0A117,
    lxCurrent         = 0x0A118, // arg -offset
@@ -201,9 +204,6 @@ enum LexicalType
 //
 //   lxSymbol = 0x20103, // arg - reference
 //   lxBlockLocalAddr = 0x04109, // arg - offset
-//   lxMessageConstant = 0x24113, // arg - rererence
-//   lxExtMessageConstant = 0x24114, // arg -reference
-//   lxSignatureConstant = 0x24115, // arg - reference
 //   lxCurrentField = 0x0411D, // arg -offset
 //
 //   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size

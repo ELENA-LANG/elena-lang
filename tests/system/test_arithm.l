@@ -55,24 +55,24 @@
 //
 //    OpenArgTester test &args:1:"a":3.
 //].
-//
-//// --- MultiDispatchTest ---
-//
-//#symbol DispatchTester =
-//{
-//    eval &x:anX &y:anY
-//    [
-//        ^ anX + anY.
-//    ]
-//}.
-//
-//#symbol MultiDispatchTest =
-//[
-//    #var msg := %"x&y".
-//    
-//    DispatchTester::msg eval:1:2.
-//].
-//
+
+// --- MultiDispatchTest ---
+
+#symbol DispatchTester =
+{
+    eval &x:anX &y:anY
+    [
+        ^ anX + anY.
+    ]
+}.
+
+#symbol MultiDispatchTest =
+[
+    #var msg := %"x&y".
+    
+    DispatchTester::msg eval:1:2.
+].
+
 //// --- MultySelectTest ---
 //
 //#symbol MultySelectTest =
@@ -420,22 +420,22 @@
     #var n := "abcd" indexOf:"bc" &at:0.
     #var n2 := "abcd" indexOf:"bac" &at:0.
 
-//    #var s := "acd" insert:"b" &at:1.
-//    #var ls := s length.
-//
-//    #var s2 := "abbcd" delete:1 &at:1.
-//    #var ls2 := s2 length.
-//    
-//    #var s3 := "abcd" Substring:2 &at:1.
-//    #var ls3 := s3 length.
-//   
-//    "abc" getAt:2.
-//    
-//    "abc" getAt:(-1) |
-//        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
-//
-//    "abc" getAt:4 |
-//        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
+    #var s := "acd" insert:"b" &at:1.
+    #var ls := s length.
+
+    #var s2 := "abbcd" delete:1 &at:1.
+    #var ls2 := s2 length.
+    
+    #var s3 := "abcd" Substring:2 &at:1.
+    #var ls3 := s3 length.
+   
+    "abc" getAt:2.
+    
+    "abc" getAt:(-1) |
+        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
+
+    "abc" getAt:4 |
+        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
 //// --- ArrayTest ---

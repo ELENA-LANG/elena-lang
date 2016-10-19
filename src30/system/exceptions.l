@@ -67,32 +67,32 @@
 //    
 //    /// Returns the message
 //    #method message = theMessage.
-//    
-//    /// Executes the exception handler
-//    #method if &subject:handler
-//    [
-//        handler eval:$self.
-//    ]
-//
-//    /// Executes the generic exception handler
-//    #method if &Error:aHandler
-//    [
-//        aHandler eval:$self.
-//    ]
-//
-//    /// default handler
-//    #method(generic) if : aHandler
-//    [
-//        #throw $self.
-//    ]
-//        
-//    /// Executes the exception handler for the current exception if available.
-//    ///
-//    /// Otherwise goes to the next exception handler
-//    #method on : aCatchBlock
-//    [
-//        aCatchBlock subject eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
-//    ]    
+    
+    /// Executes the exception handler
+    #method if &subject:handler
+    [
+        handler eval:$self.
+    ]
+
+    /// Executes the generic exception handler
+    #method if &Error:aHandler
+    [
+        aHandler eval:$self.
+    ]
+
+    /// default handler
+    #method(generic) if : aHandler
+    [
+        #throw $self.
+    ]
+        
+    /// Executes the exception handler for the current exception if available.
+    ///
+    /// Otherwise goes to the next exception handler
+    #method on : aCatchBlock
+    [
+        aCatchBlock subject eval:$self | if &MethodNotFoundError: e [ #throw $self. ].
+    ]    
 }
 
 //// --- Exception ---

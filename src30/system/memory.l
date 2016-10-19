@@ -926,39 +926,39 @@
         ^ IntNumber new &int:aRetVal.
     ]
 
-//    /// Inserts the substring into and returns the new one
-//    #method(literal,stacksafe) insert &int:anIndex &literal:aLiteral
-//        => system'core_routines'__literal.
-//
-//    /// Inserts a character into and returns the new one
-//    #method(literal,stacksafe) insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &literal:(literalConvertor convert &char:aChar).
-//
-//    /// Inserts an object into and returns the new one
-//    #method insert : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//               eval:target &literal:aLiteral
-//                  = target insert &int:(anIndex int) &literal:aLiteral.
-//    
-//               eval:target &wide:aLiteral
-//                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
-//    
-//               eval:target &char:aChar
-//                  = target insert &int:(anIndex int) &char:aChar.
-//            } &with:$self.
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method delete:aLength &at:anIndex
-//        = $self delete &int:(anIndex int) &int:(aLength int).
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method(literal,stacksafe) delete &int:anIndex &int:aLength
-//        => system'core_routines'__literal.
-//
-//    /// Returns the substring
-//    #method Substring : aLength &at:anIndex
-//        = $self Substring &int:(anIndex int) &int:(aLength int).
+    /// Inserts the substring into and returns the new one
+    #method(literal,stacksafe) insert &int:anIndex &literal:aLiteral
+        => system'core_routines'__literal.
+
+    /// Inserts a character into and returns the new one
+    #method(literal,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &literal:(literalConvertor convert &char:aChar).
+
+    /// Inserts an object into and returns the new one
+    #method insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &literal:aLiteral.
+    
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &literal:(aLiteral literal).
+    
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Deletes the substring from the object and returns the new one
+    #method delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+
+    /// Deletes the substring from the object and returns the new one
+    #method(literal,stacksafe) delete &int:anIndex &int:aLength
+        => system'core_routines'__literal.
+
+    /// Returns the substring
+    #method Substring : aLength &at:anIndex
+        = $self Substring &int:(anIndex int) &int:(aLength int).
 
     /// Returns the substring
     #method(literal,stacksafe) Substring &int:anIndex &int:aLength
@@ -1135,46 +1135,46 @@
                 eval:target &char:aChar = target indexOf &int:(anIndex int) &char:aChar.
             } &with:$self.
 
-//    /// Inserts the substring into and returns the new one
-//    #method(wide,stacksafe) insert &int:anIndex &wide:aLiteral
-//        => system'core_routines'__wide.
-//
-//    /// Inserts the substring into and returns the new one
-//    #method(wide,stacksafe) insert &int:anIndex &literal:aLiteral
-//        = $self insert &int:anIndex &wide:(aLiteral wide).
-//
-//    /// Inserts a character into and returns the new one
-//    #method(wide,stacksafe) insert &int:anIndex &char:aChar
-//        = $self insert &int:anIndex &wide:(wideConvertor convert &char:aChar).
-//
-//    /// Inserts an object into and returns the new one
-//    #method insert : anObject &at:anIndex
-//        = anObject cast:%eval &to:
-//            {
-//               eval:target &wide:aLiteral
-//                  = target insert &int:(anIndex int) &wide:aLiteral.
-//    
-//               eval:target &literal:aLiteral
-//                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
-//    
-//               eval:target &char:aChar
-//                  = target insert &int:(anIndex int) &char:aChar.
-//            } &with:$self.
-//
-//    /// Deletes the substring from the object and returns the new one
-//    #method delete:aLength &at:anIndex
-//        = $self delete &int:(anIndex int) &int:(aLength int).
-//            
-//    /// Deletes the substring from the object and returns the new one            
-//    #method(wide,stacksafe) delete &int:anIndex &int:aLength
-//        => system'core_routines'__wide.
+    /// Inserts the substring into and returns the new one
+    #method(wide,stacksafe) insert &int:anIndex &wide:aLiteral
+        => system'core_routines'__wide.
+
+    /// Inserts the substring into and returns the new one
+    #method(wide,stacksafe) insert &int:anIndex &literal:aLiteral
+        = $self insert &int:anIndex &wide:(aLiteral wide).
+
+    /// Inserts a character into and returns the new one
+    #method(wide,stacksafe) insert &int:anIndex &char:aChar
+        = $self insert &int:anIndex &wide:(wideConvertor convert &char:aChar).
+
+    /// Inserts an object into and returns the new one
+    #method insert : anObject &at:anIndex
+        = anObject cast:%eval &to:
+            {
+               eval:target &wide:aLiteral
+                  = target insert &int:(anIndex int) &wide:aLiteral.
+    
+               eval:target &literal:aLiteral
+                  = target insert &int:(anIndex int) &wide:(aLiteral wide).
+    
+               eval:target &char:aChar
+                  = target insert &int:(anIndex int) &char:aChar.
+            } &with:$self.
+
+    /// Deletes the substring from the object and returns the new one
+    #method delete:aLength &at:anIndex
+        = $self delete &int:(anIndex int) &int:(aLength int).
+            
+    /// Deletes the substring from the object and returns the new one            
+    #method(wide,stacksafe) delete &int:anIndex &int:aLength
+        => system'core_routines'__wide.
 
     /// Returns the substring
     #method(wide,stacksafe) Substring &int:anIndex &int:aLength
         => system'core_routines'__wide.
 
-//    #method(wide) Substring : aLength &at:anIndex
-//        <= Substring &int:(anIndex int) &int:(aLength int).
+    #method(wide) Substring : aLength &at:anIndex
+        <= Substring &int:(anIndex int) &int:(aLength int).
 
     /// Reads the literal length into an output parameter
     #method(outnprop:length,stacksafe) readLength &vint:aLength
