@@ -42,10 +42,21 @@ public:
 
       return defValue;
    }
+   int findLast(int index, path_c ch, int defValue)
+   {
+      while (index > 0) {
+         if (_path[index] == ch)
+            return index;
+
+         index--;
+      }
+
+      return defValue;
+   }
 
    int find(path_c ch)
    {
-      for (int i = 0; i < getlength(_path); i++) {
+      for (size_t i = 0; i < getlength(_path); i++) {
          if (_path[i] == ch)
             return i;
       }
@@ -127,17 +138,6 @@ class Path
    //      dest[length] = 0;
    //   }
    //
-   //   static bool checkExtension(path_t path, path_t extension)
-   //   {
-   //      int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-   //
-   //      int pos = StringHelper::findLast(path + namepos, '.');
-   //      if (pos != -1) {
-   //         return StringHelper::compare(path + namepos + pos + 1, extension);
-   //      }
-   //      else return emptystr(extension);
-   //   }
-   //
    //#ifdef _WIN32
    //   static bool checkExtension(const char* path, const char* extension)
    //   {
@@ -148,14 +148,6 @@ class Path
    //         return StringHelper::compare(path + namepos + pos + 1, extension);
    //      }
    //      else return emptystr(extension);
-   //   }
-   //
-   //   void changeExtension(const char* s)
-   //   {
-   //      Path ext;
-   //      Path::loadPath(ext, s);
-   //
-   //      changeExtension(ext);
    //   }
    //
    //   static void combinePath(Path& dest, path_t sour)
@@ -192,18 +184,6 @@ class Path
    //   void combine(path_t path)
    //   {
    //      combine(path, getlength(path));
-   //   }
-   //
-   //   void changeExtension(path_t extension)
-   //   {
-   //      path_t path = _string;
-   //      int namepos = findLast(PATH_SEPARATOR) + 1;
-   //      int index = StringHelper::findLast(path + namepos, '.');
-   //      if (index >= 0) {
-   //         _string[(size_t)index + namepos] = 0;
-   //      }
-   //      append('.');
-   //      append(extension);
    //   }
    //
    //   Path()
@@ -277,6 +257,18 @@ public:
       combine(path, getlength(path));
    }
 
+   void changeExtension(path_t extension)
+   {
+      path_t path = _path;
+      int namepos = path.findLast(PATH_SEPARATOR) + 1;
+      int index = path.findLast(namepos, '.', -1);
+      if (index >= 0) {
+         _path[(size_t)index + namepos] = 0;
+      }
+      _path.append('.');
+      _path.append(extension);
+   }
+   
 #ifdef _WIN32
    operator const path_c*() const { return _path; }
 
@@ -313,6 +305,13 @@ public:
       copySubPath(temp);
    }
 
+   void changeExtension(const char* s)
+   {
+      Path ext(s);
+   
+      changeExtension(ext);
+   }
+   
 #endif
 
    void copy(path_t path)

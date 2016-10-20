@@ -5085,18 +5085,13 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
    else scope.raiseError(errUnknownMessage, node);
 }
 
-//void Compiler :: compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope)
-//{
-//   if (node.firstChild() == nsNone) {
-//      ObjectInfo info = scope.mapObject(node.Terminal());
-//      // if it is an internal routine
-//      if (info.kind == okInternal) {
-//         importCode(node, *scope.moduleScope, writer, node.Terminal(), scope.getMessageID());
-//      }
-//      else scope.raiseError(errInvalidOperation, node.Terminal());
-//   }
-//   else scope.raiseError(errInvalidOperation, node.Terminal());
-//}
+void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(node, *scope.moduleScope, node.findChild(lxReference).findChild(lxTerminal).identifier(), scope.getMessageID());
+   }
+   else scope.raiseError(errInvalidOperation, node);
+}
 
 void Compiler :: compileResendExpression(SNode node, CodeScope& scope)
 {
@@ -5204,14 +5199,12 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    bool withFrame = false;
    int classFlags = codeScope.getClassFlags();
 
-   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning);
-//   DNode dispatchBody = node.select(nsDispatchExpression);
-//   if (dispatchBody != nsNone) {
-//      compileConstructorDispatchExpression(dispatchBody.firstChild(), writer, codeScope);
-//      writer.closeNode();
-//      return;
-//   }
-   /*else */if (bodyNode == lxResendExpression) {
+   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
+   if (bodyNode == lxDispatchCode) {
+      compileConstructorDispatchExpression(bodyNode, codeScope);
+      return;
+   }
+   else if (bodyNode == lxResendExpression) {
       compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame);
 
       bodyNode = bodyNode.findChild(lxCode);
@@ -5247,36 +5240,11 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       if (retExpr) {
          SNode expr = bodyNode.findChild(lxReturning);
 //         recordDebugStep(codeScope, bodyNode.firstChild().FirstTerminal(), dsStep);
-//
+
          ObjectInfo retVal = compileRetExpression(expr, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
 
          if(!convertObject(expr, codeScope, codeScope.getClassRefId(), retVal))
             scope.raiseError(errIllegalConstructor, node);
-
-//         if (resolveObjectReference(codeScope, retVal) != ) {
-//            if (test(classFlags, elWrapper)) {
-//               writer.insert(lxTypecasting, codeScope.getFieldType(0));
-//               writer.closeNode();
-//
-//               writer.insert(lxBoxing);
-//               writer.appendNode(lxTarget, codeScope.getClassRefId());
-//               writer.closeNode();
-//            }
-//            else if (test(classFlags, elDynamicRole) && (retVal.param == -3 ||retVal.param == -5)) {
-//               writer.insert(lxBoxing);
-//               writer.appendNode(lxTarget, codeScope.getClassRefId());
-//               writer.closeNode();
-//            }
-//            // HOTFIX : support numeric value for numeric classes
-//            else if (test(classFlags, elStructureRole | elDebugDWORD) && retVal.kind == okIntConstant) {
-//               writer.insert(lxBoxing);
-//               writer.appendNode(lxTarget, codeScope.getClassRefId());
-//               writer.closeNode();
-//            }
-//            else scope.raiseError(errIllegalConstructor, node.FirstTerminal());
-//         }
-//         writer.removeBookmark();
-//         writer.closeNode();
       }
       else {
          compileCode(bodyNode, codeScope);
@@ -5285,18 +5253,18 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          bodyNode.appendNode(lxLocal, 1);
       }
    }
-//   //// if the constructor has a body
-//   ///*else */if (body != nsNone) {
-//   //// if the constructor should call embeddable method
-//   //else if (embeddedMethodRef != 0) {
-//   //   writer.newNode(lxResending, embeddedMethodRef);
-//   //   writer.appendNode(lxTarget, classClassScope.reference);
-//   //   writer.newNode(lxAssigning);
-//   //   writer.appendNode(lxCurrent, 1);
-//   //   writer.appendNode(lxResult);
-//   //   writer.closeNode();
-//   //   writer.closeNode();
-//   //}
+   //// if the constructor has a body
+   ///*else */if (body != nsNone) {
+   //// if the constructor should call embeddable method
+   //else if (embeddedMethodRef != 0) {
+   //   writer.newNode(lxResending, embeddedMethodRef);
+   //   writer.appendNode(lxTarget, classClassScope.reference);
+   //   writer.newNode(lxAssigning);
+   //   writer.appendNode(lxCurrent, 1);
+   //   writer.appendNode(lxResult);
+   //   writer.closeNode();
+   //   writer.closeNode();
+   //}
 
    node.appendNode(lxParamCount, getParamCount(scope.message) + 1);
    node.appendNode(lxReserved, scope.reserved);

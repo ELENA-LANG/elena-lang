@@ -428,6 +428,102 @@ procedure __literal.delete&int$&int$[3]
   
 end
 
+procedure __literal.save&int$&chararray$&vint$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+  callextr api : strtochararray
+  bloadsi 5
+  dcopye
+  nsave
+  popa
+
+  quitn 4
+
+end
+
+procedure __literal.eval&system$save&int$&bytearray$&int$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  breadb
+  inc
+  dswapsi 0
+  bwriteb
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
+end
+
+procedure __literal.new&int$&int$&chararray$[4]
+
+  aloadsi 3
+  nload
+  ifn labEmpty 0
+    
+  aloadsi 4
+  ecopyd
+  callextr api : slen_ch
+            
+  acopyr class : system'LiteralValue
+  inc
+  bcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+
+  callextr api : s_copychars
+  
+  acopyb
+  blen
+  ecopy 0
+  dec
+  bwriteb
+  quitn 4
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'LiteralValue
+  bcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 4
+
+end
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -706,6 +802,103 @@ procedure __wide.delete&int$&int$[3]
   acopyb
   quitn 3
   
+end
+
+procedure __wide.save&int$&chararray$&vint$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+  callextr api : wstrtochararray
+  bloadsi 5
+  dcopye
+  nsave
+  popa
+  
+  quitn 4
+
+end
+
+procedure __wide.eval&system$save&int$&shortarray$&int$[4]
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  wread
+  inc
+  dswapsi 0
+  wwrite
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
+end
+
+procedure __wide.new&int$&int$&chararray$[4]
+  
+  aloadsi 3
+  nload
+  ifn labEmpty 0
+    
+  aloadsi 4
+  ecopyd
+  callextr api : wslen_ch
+
+  acopyr class : system'WideLiteralValue
+  inc
+  wcreate
+  bcopya
+  
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+
+  callextr api : ws_copychars
+  
+  acopyb
+  wlen
+  ecopy 0
+  dec
+  shiftn -1
+  bwritew
+  quitn 4
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'WideLiteralValue
+  wcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 4  
+
 end
 
 procedure __literalconvertor.convert&int$&bytearray$&vint$[4]
@@ -1042,6 +1235,143 @@ procedure __array.eval&copy&array$&int$&int$&array$[4]
   callextr api : nsubcopy
   
   acopyb
+  quitn 4
+  
+end
+
+procedure __intarray.eval&readLength&vint$[2]
+
+  aloadsi 1
+  nlen
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure __chararray.read&int$&int$&chararray$[4]
+
+  bcopya
+  nlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  aloadsi 3
+  nload
+  acopyb
+
+  bloadsi 4
+  callextr api : nsubcopy
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.write&int$&int$&chararray$[4]
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  nlen
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : ninsert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.write&int$&char$[3]
+
+  nlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  ecopyd
+  aloadsi 3
+  nload
+  eswap  
+  nwrite
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.read&int$&vchar$[3]
+
+  bcopya
+  nlen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  nread
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __chararray.eval&move&int$&int$&int$[4]
+
+  pusha 
+
+  // ; insert
+  aloadsi 4
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi  0
+  aloadsi 5
+  pushai 0
+
+  callextr api : nmove
+
+  pop  
+  popa
   quitn 4
   
 end

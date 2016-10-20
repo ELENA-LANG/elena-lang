@@ -36,93 +36,93 @@
 //        <= setLength &int:(aLength int).
 //
 //    #method chararray = theBuffer.
-//
-//    #method literal
-//        = LiteralValue new &int:0 &int:theLength &chararray:theBuffer.
-//
-//    #method wide
-//        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
-//
-//    #method write : aLine
-//    [
-//        aLine cast:%write &to:$self.
-//    ]
-//
-//    #method writeLine : aLine
-//    [
-//        $self write:aLine write:'newLine.
-//    ]
-//
-//    #method append : aLine
-//    [
-//        $self write:aLine.
-//    ]
-//                                    
-//    #method(stacksafe) reserve &int:aLength
-//    [
-//        #var(int)aNewLength := aLength.
-//        
-//        aNewLength := aNewLength + theLength.
-//        
-//        #var(int)aBufferLength := theBuffer length.
-//        
-//        (aNewLength >= aBufferLength) ?
-//        [
-//            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
-//            aNewLength /= $TextPageSize.
-//            aNewLength += 1.
-//            aNewLength *= $TextPageSize.            
-//            
-//            #var(chararray) aNewBuffer := CharArray new &int:aNewLength.
-//            
-//            aNewBuffer write &int:0 &int:aBufferLength &chararray:theBuffer.
-//            
-//            theBuffer := aNewBuffer.
-//        ].
-//    ]
-//
-//    #method write &literal:aLiteral
-//    [
-//        #var(int)aLength := aLiteral length.
-//        
-//        (0 == aLength) !
-//        [
-//            $self reserve &int:aLength.
-//            
-//            aLiteral save &int:theLength &chararray:theBuffer &vint:aLength.
-//            
-//            theLength += aLength.
-//        ].
-//    ]
-//
-//    #method write &wide:aLiteral
-//    [
-//        #var(int)aLength := aLiteral length.
-//        
-//        (0 == aLength) !
-//        [
-//            $self reserve &int:aLength.
-//            
-//            aLiteral save &int:theLength &chararray:theBuffer &vint:aLength.
-//            
-//            theLength += aLength.
-//        ].
-//    ]
-//
-//    #method(stacksafe) write &char:aChar
-//    [
-//        $self reserve &int:1.
-//        
-//        theBuffer write &int:theLength &char:aChar.
-//        
-//        theLength += 1.
-//    ]
-//
-//    #method(generic) write : anObject
-//    [
-//        $self write &literal:(anObject literal).
-//    ]
-//
+
+    #method literal
+        = LiteralValue new &int:0 &int:theLength &chararray:theBuffer.
+
+    #method wide
+        = WideLiteralValue new &int:0 &int:theLength &chararray:theBuffer.
+
+    #method write : aLine
+    [
+        aLine cast:%write &to:$self.
+    ]
+
+    #method writeLine : aLine
+    [
+        $self write:aLine write:'newLine.
+    ]
+
+    #method append : aLine
+    [
+        $self write:aLine.
+    ]
+                                    
+    #method(stacksafe) reserve &int:aLength
+    [
+        #var(int)aNewLength := aLength.
+        
+        aNewLength := aNewLength + theLength.
+        
+        #var(int)aBufferLength := theBuffer length.
+        
+        (aNewLength >= aBufferLength) ?
+        [
+            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
+            aNewLength /= $TextPageSize.
+            aNewLength += 1.
+            aNewLength *= $TextPageSize.            
+            
+            #var(chararray) aNewBuffer := CharArray new &int:aNewLength.
+            
+            aNewBuffer write &int:0 &int:aBufferLength &chararray:theBuffer.
+            
+            theBuffer := aNewBuffer.
+        ].
+    ]
+
+    #method write &literal:aLiteral
+    [
+        #var(int)aLength := aLiteral length.
+        
+        (0 == aLength) !
+        [
+            $self reserve &int:aLength.
+            
+            aLiteral save &int:theLength &chararray:theBuffer &vint:aLength.
+            
+            theLength += aLength.
+        ].
+    ]
+
+    #method write &wide:aLiteral
+    [
+        #var(int)aLength := aLiteral length.
+        
+        (0 == aLength) !
+        [
+            $self reserve &int:aLength.
+            
+            aLiteral save &int:theLength &chararray:theBuffer &vint:aLength.
+            
+            theLength += aLength.
+        ].
+    ]
+
+    #method(stacksafe) write &char:aChar
+    [
+        $self reserve &int:1.
+        
+        theBuffer write &int:theLength &char:aChar.
+        
+        theLength += 1.
+    ]
+
+    #method(generic) write : anObject
+    [
+        $self write &literal:(anObject literal).
+    ]
+
 //    #method(stacksafe) write &chararray:anArray &int:aLength
 //    [
 //        (0 == aLength) !

@@ -1022,7 +1022,7 @@ private:
    ObjectInfo compileInternalCall(SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(DNode node, SyntaxWriter& writer, CodeScope& scope);
+   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
    void compileResendExpression(SNode node, CodeScope& scope);
    void compileDispatchExpression(SNode node, CodeScope& scope);
 

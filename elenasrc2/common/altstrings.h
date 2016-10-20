@@ -195,13 +195,13 @@ public:
       return *(_string + index);
    }
 
-////   void replaceAll(T oldCh, T newCh, int index)
-////   {
-////      for (size_t i = index ; i < getlength(_string) ; i++) {
-////         if (_string[i] == oldCh)
-////            _string[i] = newCh;
-////      }
-////   }
+//   void replaceAll(T oldCh, T newCh, int index)
+//   {
+//      for (size_t i = index ; i < getlength(_string) ; i++) {
+//         if (_string[i] == oldCh)
+//            _string[i] = newCh;
+//      }
+//   }
 
    void copy(const T* s, size_t length)
    {
@@ -218,10 +218,10 @@ public:
       }
    }
 
-////   void insert(const T* s, size_t index)
-////   {
-////      StringHelper::insert(_string, index, s);
-////   }
+//   void insert(const T* s, size_t index)
+//   {
+//      StringHelper::insert(_string, index, s);
+//   }
 
    void append(const T* s, size_t length)
    {
@@ -263,30 +263,30 @@ public:
       __upper(_string + pos);
    }
 
-////   void appendDouble(double n)
-////   {
-////      int pos = getlength(_string);
-////
-////      StringHelper::doubleToStr(n, 8, _string + pos);
-////      if (_string[getlength(_string) - 1]=='.')
-////         append("0");
-////   }
-////
-////   void appendHex64(long long n)
-////   {
-////      int pos = getlength(_string);
-////
-////      StringHelper::longlongToStr(n, _string + pos, 16);
-////      StringHelper::upper(_string + pos);
-////   }
-////
-////   void appendInt64(long long n)
-////   {
-////      int pos = getlength(_string);
-////
-////      StringHelper::longlongToStr(n, _string + pos, 10);
-////      StringHelper::upper(_string + pos);
-////   }
+//   void appendDouble(double n)
+//   {
+//      int pos = getlength(_string);
+//
+//      StringHelper::doubleToStr(n, 8, _string + pos);
+//      if (_string[getlength(_string) - 1]=='.')
+//         append("0");
+//   }
+//
+//   void appendHex64(long long n)
+//   {
+//      int pos = getlength(_string);
+//
+//      StringHelper::longlongToStr(n, _string + pos, 16);
+//      StringHelper::upper(_string + pos);
+//   }
+//
+//   void appendInt64(long long n)
+//   {
+//      int pos = getlength(_string);
+//
+//      StringHelper::longlongToStr(n, _string + pos, 10);
+//      StringHelper::upper(_string + pos);
+//   }
 
    void lower()
    {

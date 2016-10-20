@@ -735,6 +735,13 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, ref_t classRef, Cla
          info.header.flags |= elDebugArray;
       }
    }
+
+   // adjust binary array
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if ((info.header.flags & elDebugMask) == 0) {
+         info.header.flags |= elDebugBytes;
+      }
+   }
 }
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)

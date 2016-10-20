@@ -719,11 +719,11 @@
 //    /// Creates the short array copy
 //    #constructor new &chararray:anArray
 //        <= new &int:0 &int:(anArray length) &chararray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__intarray.
-//
+    
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__intarray.
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
 //    [
@@ -745,26 +745,26 @@
 //            i := i + 1.
 //        ].
 //    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
-//        => system'core_routines'__chararray.
-//
-//    /// Copies the array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
-//        => system'core_routines'__chararray.
-//
-//    /// Writes a character value at the specified position
-//    #method(stacksafe) write &int:anIndex &char:aValue
-//        => system'core_routines'__chararray.
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vchar:anInt
-//        => system'core_routines'__chararray.
-//
-//    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
-//        => system'core_routines'__chararray.
-//
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
+        => system'core_routines'__chararray.
+
+    /// Copies the array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &chararray:anArray
+        => system'core_routines'__chararray.
+
+    /// Writes a character value at the specified position
+    #method(stacksafe) write &int:anIndex &char:aValue
+        => system'core_routines'__chararray.
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vchar:anInt
+        => system'core_routines'__chararray.
+
+    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
+        => system'core_routines'__chararray.
+
 //    /// Creates the object copy
 //    #method clone = CharArray new &chararray:$self.
 }
@@ -803,10 +803,10 @@
 //    /// Creates the literal string copy              
 //    #constructor new &literal:aLiteral
 //        <= new &int:(aLiteral length) &literal:aLiteral.
-//        
-//    /// Creates the copy of a subarray        
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'core_routines'__literal.
+        
+    /// Creates the copy of a subarray        
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+        => system'core_routines'__literal.
 
     #constructor(stacksafe) $new &int:anIndex &int:aSize &bytearray:anArray
         <= (new &int:aSize)
@@ -968,12 +968,12 @@
     #method(outnprop:length,stacksafe) readLength &vint:aLength
         => system'core_routines'__literal.
 
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
-//        => system'core_routines'__literal.
-//
-//    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
-//        => system'core_routines'__literal.
+    /// Saves the literal into a UTF-32 character array
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aRetVal
+        => system'core_routines'__literal.
+
+    #method(stacksafe) $save &int:anIndex &bytearray:anArray &int:aRetVal
+        => system'core_routines'__literal.
 
     /// Returns the string enumerator
     #method enumerator = LiteralEnumerator new &literal:$self.
@@ -1015,18 +1015,18 @@
 //    [
 //        system'core_routines'__wide copy &wide:$self &wide:aLiteral.
 //    ]
-//
+
 //    /// Creates the literal string with specified length fills with spciefied character value
 //    #constructor(stacksafe) new &int:aSize &char:aChar
 //        => system'core_routines'__wide.
-//
+
 //    /// Creates the literal string copy
 //    #constructor new &wide:aLiteral
 //        <= %new &int:(aLiteral length) &wide:aLiteral.
-//        
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
-//        => system'core_routines'__wide.
+        
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
+        => system'core_routines'__wide.
 
     #constructor(stacksafe) $new &int:anIndex &int:aSize &shortarray:anArray
         <= (new &int:aSize)
@@ -1180,12 +1180,12 @@
     #method(outnprop:length,stacksafe) readLength &vint:aLength
         => system'core_routines'__wide.
 
-//    /// Saves the literal into a UTF-32 character array
-//    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
-//        => system'core_routines'__wide.
-//
-//    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
-//        => system'core_routines'__wide.
+    /// Saves the literal into a UTF-32 character array
+    #method(stacksafe) save &int:anIndex &chararray:anArray &vint:aLength
+        => system'core_routines'__wide.
+
+    #method(stacksafe) $save &int:anIndex &shortarray:anArray &int:aRetVal
+        => system'core_routines'__wide.
 
     /// Returns the object enumerator
     #method enumerator = WideLiteralEnumerator new &wide:$self.

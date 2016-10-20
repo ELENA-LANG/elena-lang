@@ -91,6 +91,7 @@ In development:
                  * implement repeat until loop
                  * operation with struct field : assigning
                  * test : a int + b::op int.
+                 * test sg
 
               xdev
                 * linux migration
