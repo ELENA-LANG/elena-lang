@@ -497,13 +497,13 @@
         j += 1.
     ].
     
-//    control do:
-//    [
-//        console writeLine:j.
-//        
-//        j -= 1.
-//    ]
-//    &until:[j == 0].
+    control do:
+    [
+        console writeLine:j.
+        
+        j -= 1.
+    ]
+    &until:[j == 0].
 ].
 
 //// --- ExceptionTest ---

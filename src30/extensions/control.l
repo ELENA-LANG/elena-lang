@@ -95,11 +95,11 @@
 //    
 //    eval:object &for:action
 //        = action eval:object.
-//    
-//    do:anAction = anAction eval.
-//    
-//    do:anAction &until:anExpr
-//        = anAction run &until:anExpr.
+    
+    do:anAction = anAction eval.
+    
+    do:anAction &until:anExpr
+        = anAction run &until:anExpr.
 
     while:anExpr
         = $self while:anExpr &do:[].

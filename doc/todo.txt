@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xrev
-                 * default generic exception handler
+                 * vint : dispatch command is missing, redirect directly to the content
 
                  * switch statement with comparision
                  * switch statement with expression
@@ -94,6 +94,7 @@ In development:
                  * operation with struct field : assigning
                  * test : a int + b::op int.
                  * test sg
+                 * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
 
               xdev
                 * linux migration

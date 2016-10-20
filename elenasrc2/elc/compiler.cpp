@@ -4929,10 +4929,12 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
    else {
       // if it is generic handler with redirect statement / redirect statement
       if (node.firstChild(lxObjectMask) != lxNone) {
+         node.injectNode(lxExpression);
+
          if (withGenericMethods) {
             node.insertNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapSubject(GENERIC_PREFIX, false), 0, 0));
          }
-         compileDispatchExpression(node, codeScope);
+         compileDispatchExpression(node.findChild(lxExpression), codeScope);
       }
       // if it is generic handler only
       else if (withGenericMethods) {
@@ -5370,19 +5372,12 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope)
 //                  scope.raiseError(errInvalidRoleDeclr, member.Terminal());
                
                initialize(scope, methodScope);
-//
-//               compileMethodHints(hints, writer, methodScope);
 
                compileDispatcher(current.firstChild(lxCodeScopeMask), methodScope, test(scope.info.header.flags, elWithGenerics));
             }
             // if it is a normal method
             else {
-//               size_t bm = scope.imported.Length();
-//               compileMethodHints(hints, writer, methodScope);
                declareArgumentList(current, methodScope);
-//               //HOTFIX : update target message for the method templates
-//               if (bm != scope.imported.Length())
-//                  updateMethodTemplateInfo(methodScope, bm);
 
                initialize(scope, methodScope);
 
@@ -8217,8 +8212,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
 //         optimizeNestedExpression(scope, current, warningMask);
 //         break; 
       case lxCode:
-      case lxNewFrame:
-         optimizeSyntaxExpression(scope, current, warningScope, HINT_NOBOXING);
+         optimizeSyntaxExpression(scope, current, warningScope/*, HINT_NOBOXING*/);
          break;
 //      case lxArgUnboxing:
 //         optimizeArgUnboxing(scope, current, warningMask);
