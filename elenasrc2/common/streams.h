@@ -61,8 +61,8 @@ public:
 
    virtual bool read(void* s, size_t length) = 0;
 
-//   virtual const char* getLiteral(const char* def) = 0;
-//   virtual const wide_c* getLiteral(const wide_c* def) = 0;
+   virtual const char* getLiteral(const char* def) = 0;
+   virtual const wide_c* getLiteral(const wide_c* def) = 0;
 
    int getDWord()
    {
@@ -573,34 +573,34 @@ public:
 //
 //      return (wasread > 0);
 //   }
-//
-////   virtual bool read2(void* s, size_t length, size_t& wasread)
-////   {
-////      return read(s, length << 1, wasread);
-////   }
-////
-////   virtual bool read4(void* s, size_t length, size_t& wasread)
-////   {
-////      return read(s, length << 4, wasread);
-////   }
-//
-//   virtual const char* getLiteral(const char*)
+
+//   virtual bool read2(void* s, size_t length, size_t& wasread)
 //   {
-//      const char* s = (const char*)_memory->get(_position);
-//
-//      _position += (getlength(s) + 1);
-//
-//      return s;
+//      return read(s, length << 1, wasread);
 //   }
 //
-//   virtual const wide_c* getLiteral(const wide_c*)
+//   virtual bool read4(void* s, size_t length, size_t& wasread)
 //   {
-//      const wide_c* s = (const wide_c*)_memory->get(_position);
-//
-//      _position += ((getlength(s) + 1) << 1);
-//
-//      return s;
+//      return read(s, length << 4, wasread);
 //   }
+
+   virtual const char* getLiteral(const char*)
+   {
+      const char* s = (const char*)_memory->get(_position);
+
+      _position += (getlength(s) + 1);
+
+      return s;
+   }
+
+   virtual const wide_c* getLiteral(const wide_c*)
+   {
+      const wide_c* s = (const wide_c*)_memory->get(_position);
+
+      _position += ((getlength(s) + 1) << 1);
+
+      return s;
+   }
 
    MemoryReader(_Memory* memory)
    {

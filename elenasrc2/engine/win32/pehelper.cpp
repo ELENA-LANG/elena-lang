@@ -51,7 +51,7 @@ bool PEHelper :: seekSection(StreamReader& reader, char* name, size_t& address)
       IMAGE_SECTION_HEADER header;
 
       reader.read(&header, sizeof(IMAGE_SECTION_HEADER));
-      if (StringHelper::compare((char*)header.Name, name))
+      if (ident_t((char*)header.Name).compare(name))
       {
          address = header.VirtualAddress + 0x400000;
 

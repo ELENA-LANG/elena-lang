@@ -695,20 +695,20 @@
 //        ]
 //    }.
 //}
-//
-//// --- CharArray ---
-//
-///// An array of unicode characters (UTF-32)
-//#class(sealed,arrayof:char,dispatchable:chararray) CharArray
-//{
-//    /// Creates the new array with a specified length
-//    #constructor(stacksafe) new &int : len
-//        = char:len.
-//
-//    /// Creates the new array with a specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
+
+// --- CharArray ---
+
+/// An array of unicode characters (UTF-32)
+#class(sealed,arrayof:char,dispatchable:chararray) CharArray
+{
+    /// Creates the new array with a specified length
+    #constructor(stacksafe) new &int : len
+        = char:len.
+
+    /// Creates the new array with a specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
 //    /// Creates the copy of a subarray
 //    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
 //        <= (new &int:aLength)
@@ -767,7 +767,7 @@
 //
 //    /// Creates the object copy
 //    #method clone = CharArray new &chararray:$self.
-//}
+}
         
 // --- emptyliteralvalue ---
 

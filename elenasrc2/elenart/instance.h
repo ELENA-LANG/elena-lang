@@ -94,11 +94,11 @@ private:
 public:
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   int loadAddressInfo(size_t retPoint, ident_c* lineInfo, size_t length);
+   int loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
 
-   int loadClassName(size_t classAddress, ident_c* buffer, size_t length);
-   int loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length);
-   int loadMessageName(size_t subjectRef, ident_c* buffer, size_t length);
+   int loadClassName(size_t classAddress, char* buffer, size_t length);
+   int loadSubjectName(size_t subjectRef, char* buffer, size_t length);
+   int loadMessageName(size_t subjectRef, char* buffer, size_t length);
 
    void* loadSymbol(ident_t name);
    void* loadSubject(ident_t name);

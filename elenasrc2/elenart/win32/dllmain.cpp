@@ -39,8 +39,7 @@ void init(HMODULE hModule)
    PEHelper::seekSection(MemoryReader(&section), ".debug", ptr);
    debugSection = (void*)ptr;
 
-   Path configPath;
-   Path::loadPath(configPath, CONFIG_PATH);
+   Path configPath(CONFIG_PATH);
    instance->init(debugSection, configPath);
 }
 
@@ -49,12 +48,12 @@ EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t
    return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
 {
    return instance->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* object, ident_c* buffer, int length)
+EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
 {
    return instance->loadClassName((size_t)object, buffer, length);
 }
@@ -76,24 +75,24 @@ EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
    return NULL;
 }
 
-EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
 {
    return instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
 {
-   return instance->loadSubject((ident_t)subjectName);
+   return instance->loadSubject((const char*)subjectName);
 }
 
-EXTERN_DLL_EXPORT int LoadMessageName(void* subject, ident_c* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadMessageName(void* subject, char* lineInfo, int length)
 {
    return instance->loadMessageName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
 {
-   return instance->loadSymbol((ident_t)referenceName);
+   return instance->loadSymbol((const char*)referenceName);
 }
 
 // --- dllmain ---

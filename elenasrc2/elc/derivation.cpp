@@ -426,12 +426,12 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
          if (getlength(terminal.value) < 0x100) {
             QuoteTemplate<IdentifierString> quote(terminal.value);
       
-            tempWriter.appendNode(lxTerminal, quote);
+            tempWriter.appendNode(lxTerminal, quote.ident());
          }
          else {
             QuoteTemplate<DynamicString<char> > quote(terminal.value);
       
-            tempWriter.appendNode(lxTerminal, quote);
+            tempWriter.appendNode(lxTerminal, quote.ident());
          }
       }
       else tempWriter.appendNode(lxTerminal, terminal.value);

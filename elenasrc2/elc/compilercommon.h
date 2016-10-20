@@ -26,6 +26,7 @@
 
 #define V_OBJARRAY    (size_t)-30
 #define V_INT32ARRAY  (size_t)-31
+#define V_BINARYARRAY (size_t)-35
 #define V_INT16ARRAY  (size_t)-38
 #define V_INT8ARRAY   (size_t)-39
 
@@ -152,8 +153,8 @@ public:
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-   virtual size_t defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly = false) = 0;
-   virtual size_t defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type = 0, bool embeddableOnly = false) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool embeddableOnly = false) = 0;
 
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
@@ -190,9 +191,9 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
-   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference) = 0;
+   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, int size) = 0;
    virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
-   virtual void injectNewOperation(SNode node, _CompilerScope& scope, /*_Compiler& compiler, int operatorId, */int operation, ref_t targetRef) = 0;
+   virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, ref_t classRef, ClassInfo& info) = 0;

@@ -495,9 +495,9 @@ public:
 //   {
 //      return _file.readLiteral(s, length, wasread);
 //   }
-//
-//   virtual const char* getLiteral(const char* def) { return def; }
-//   virtual const wide_c* getLiteral(const wide_c* def) { return def; }
+
+   virtual const char* getLiteral(const char* def) { return def; }
+   virtual const wide_c* getLiteral(const wide_c* def) { return def; }
 
    FileReader(path_t path, int encoding, bool withBOM);
    FileReader(path_t path, path_t mode, int encoding, bool withBOM);

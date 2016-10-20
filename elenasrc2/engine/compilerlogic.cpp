@@ -26,6 +26,7 @@ inline bool isPrimitiveStructArrayRef(ref_t classRef)
       case V_INT32ARRAY:
       case V_INT16ARRAY:
       case V_INT8ARRAY:
+      case V_BINARYARRAY:
          return true;
       default:
          return false;
@@ -143,6 +144,9 @@ CompilerLogic :: CompilerLogic()
 
    // array of object primitive operations
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+
+   // array of structures primitive operations
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -431,11 +435,15 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
    }
 }
 
-void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference)
+void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, int size)
 {
    bool inverting = IsInvertedOperator(operator_id);
 
    SNode operationNode = node.injectNode((LexicalType)operationType, operator_id);
+   if (size != 0) {
+      // HOTFIX : inject an item size for the binary array operations
+      operationNode.appendNode(lxSize, size);
+   }
 
    if (reference == V_FLAG) {      
       if (!scope.branchingInfo.reference) {
@@ -487,14 +495,27 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
 
    // HOT FIX : trying to typecast primitive structure array
    if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
-      ClassInfo sourceInfo;
-      defineClassInfo(scope, sourceInfo, sourceRef, true);
+      ClassInfo sourceInfo;      
+      if (sourceRef == V_BINARYARRAY && sourceType != 0) {
+         // HOTFIX : for binary array of structures - sourceType  contains the element size
+         ref_t elementRef = scope.attributeHints.get(sourceType);
 
-      if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
-         compiler.injectBoxing(scope, node,
-            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+         defineClassInfo(scope, sourceInfo, elementRef, true);
+         if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
+            compiler.injectBoxing(scope, node,
+               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
 
-         return true;
+            return true;
+         }
+      }
+      else {
+         defineClassInfo(scope, sourceInfo, sourceRef, true);
+         if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
+            compiler.injectBoxing(scope, node,
+               test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
+
+            return true;
+         }
       }
    }
 
@@ -530,11 +551,11 @@ bool CompilerLogic :: injectImplicitConversion(SNode node, _CompilerScope& scope
    return false;
 }
 
-void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, /*_Compiler& compiler, int operatorId, */int operation, ref_t targetRef)
+void CompilerLogic :: injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef)
 {
    SNode operationNode = node.injectNode((LexicalType)operation, targetRef);
 
-   int size = defineStructSize(scope, targetRef, false);
+   int size = defineStructSize(scope, targetRef, elementType, false);
    if (size != 0)
       operationNode.appendNode(lxSize, size);
 }
@@ -598,6 +619,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugArray | elDynamicRole;
          info.size = 0;
          break;
+      case V_BINARYARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDynamicRole | elStructureRole;
+         info.size = -1;
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly))
@@ -622,15 +648,23 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
    return true;
 }
 
-size_t CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, bool embeddableOnly)
+int CompilerLogic :: defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementType, bool embeddableOnly)
 {
-   ClassInfo classInfo;
-   defineClassInfo(scope, classInfo, reference);
+   if (reference == V_BINARYARRAY && elementType != 0) {
+      // HOTFIX : binary array of structures
+      ref_t elementRef = scope.attributeHints.get(elementType);
 
-   return defineStructSize(classInfo, embeddableOnly);
+      return -defineStructSize(scope, elementRef, 0, false);
+   }
+   else {
+      ClassInfo classInfo;
+      defineClassInfo(scope, classInfo, reference);
+
+      return defineStructSize(classInfo, embeddableOnly);
+   }
 }
 
-size_t CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool embeddableOnly)
 {
    //   variable = !test(classInfo.header.flags, elReadOnlyRole);
    
@@ -929,10 +963,9 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
    ClassInfo info;
    defineClassInfo(scope, info, elementRef, true);
 
-   if (test(info.header.flags, elStructureWrapper)) {
+   if (isEmbeddable(info)) {
       if (isCompatible(scope, V_INT32, elementRef)) {
-         switch (info.size)
-         {
+         switch (info.size) {
             case 4:
                return V_INT32ARRAY;
             case 2:
@@ -943,6 +976,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
                break;
          }
       }
+      return V_BINARYARRAY;
    }
    else return V_OBJARRAY;
 
@@ -959,7 +993,7 @@ bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
 
 bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t returningType, ref_t& subject)
 {
-   if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), true) > 0) {
+   if (returningType != 0 && defineStructSize(scope, scope.attributeHints.get(returningType), 0, true) > 0) {
       root = root.findChild(lxNewFrame);
 
       if (SyntaxTree::matchPattern(root, lxObjectMask, 2,

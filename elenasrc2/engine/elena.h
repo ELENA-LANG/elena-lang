@@ -390,7 +390,7 @@ template<class S> class QuoteTemplate
 public:
    size_t Length() { return _string.Length(); }
 
-   operator ident_t() const { return _string; }
+   ident_t ident() { return (const char*)_string; }
 
    QuoteTemplate(ident_t string)
    {
@@ -490,7 +490,7 @@ struct ClassInfo
    typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
 
    ClassHeader    header;
-   size_t         size;           // Object size
+   int            size;           // Object size
    MethodMap      methods;
    FieldMap       fields;
    StaticFieldMap statics;

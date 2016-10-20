@@ -64,7 +64,7 @@ size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, si
    return index + 1;
 }
 
-size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, ident_c* buffer, size_t maxLength)
+size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char* buffer, size_t maxLength)
 {
    ident_t symbol;
 
@@ -83,7 +83,7 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, iden
          if (vmtAddress == classVAddress) {
             size_t len = getlength(symbol);
             if (len < maxLength) {
-               StringHelper::copy(buffer, symbol, len, len);
+               __copy(buffer, symbol, len, len);
 
                return len;
             }
@@ -113,7 +113,7 @@ void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
       if (symbol[0] == '#') {
          int address = reader.getDWord();
 
-         if (StringHelper::compare(name, symbol + 1)) {
+         if (name.compare(symbol + 1)) {
             return (void*)address;
          }
       }
@@ -160,7 +160,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
       _Module* module = NULL;
       // if symbol
       if (symbol[0]=='#') {
-         symbol++;
+         symbol+=1;
 
          isClass = false;
       }
@@ -212,7 +212,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
    return found;
 }
 
-void copy(ident_c* buffer, ident_t word, int& copied, size_t maxLength)
+void copy(char* buffer, ident_t word, int& copied, size_t maxLength)
 {
    size_t length = getlength(word);
 
@@ -220,23 +220,23 @@ void copy(ident_c* buffer, ident_t word, int& copied, size_t maxLength)
       length = maxLength - copied;
 
    if (length > 0)
-      StringHelper::copy(buffer + copied, word, length, length);
+      __copy(buffer + copied, word, length, length);
 
    copied += length;
 }
 
-void copy(ident_c* buffer, int value, int& copied)
+void copy(char* buffer, int value, int& copied)
 {
-   ident_c tmp[10];
-   StringHelper::intToStr(value, tmp, 10);
+   String<char, 10> tmp;
+   tmp.appendInt(value);
 
    size_t length = getlength(tmp);
-   StringHelper::copy(buffer + copied, tmp, length, length);
+   __copy(buffer + copied, tmp, length, length);
 
    copied += length;
 }
 
-size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, ident_c* buffer, size_t maxLength)
+size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, char* buffer, size_t maxLength)
 {
    ident_t symbol = NULL;
    ident_t method = NULL;
@@ -266,7 +266,7 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Lib
    else return 0;
 }
 
-size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, ident_c* buffer, size_t maxLength)
+size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, char* buffer, size_t maxLength)
 {
    ReferenceMap subjects(0);
    subjects.read(&reader);
@@ -275,7 +275,7 @@ size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, ide
    if (!emptystr(name)) {
       size_t len = getlength(name);
       if (len < maxLength) {
-         StringHelper::copy(buffer, name, len, len);
+         __copy(buffer, name, len, len);
 
          return len;
       }

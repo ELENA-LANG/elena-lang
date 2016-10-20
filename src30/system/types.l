@@ -37,15 +37,15 @@
 #subject long       = system'LongNumber.
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
-//#subject mssg       = system'Message.
+#subject mssg       = system'Message.
 //#subject ext_mssg   = system'ExtensionMessage.
-//
-///// A verb symbol
-/////
-///// An instance of system'Verb class. 
-//#subject verb       = system'Verb.
-//
-//#subject subject    = system'Signature.
+
+/// A verb symbol
+///
+/// An instance of system'Verb class. 
+#subject verb       = system'Verb.
+
+#subject subject    = system'Signature.
 //#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
@@ -55,7 +55,7 @@
 //#subject intmatrix  = system'IntMatrix.
 //#subject realarray  = system'RealArray.
 //#subject realmatrix = system'RealMatrix.
-//#subject chararray  = system'CharArray.
+#subject chararray  = system'CharArray.
 #subject array      = system'Array.
 //#subject args       = system'OpenArgs.
 //#subject mssgarray  = system'MessageArray.

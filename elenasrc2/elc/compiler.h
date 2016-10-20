@@ -1095,7 +1095,7 @@ private:
 //
 //   int tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode);
    ObjectInfo typecastObject(SNode node, CodeScope& scope, ref_t subjectRef, ObjectInfo object);
-   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int mode, bool& variable*/);
+   ObjectInfo assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType = 0);
 
    bool convertObject(SNode node, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 

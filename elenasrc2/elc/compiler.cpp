@@ -3297,23 +3297,28 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
       roperand2 = compileExpression(roperandNode.nextNode(lxObjectMask), scope, 0);
    }
       
+   ref_t loperandRef = resolveObjectReference(scope, loperand);
    ref_t resultClassRef = 0;
    int operationType = 0;
    if (roperand2.kind != okUnknown) {
-      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id,
-         resolveObjectReference(scope, loperand),
+      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef,
          resolveObjectReference(scope, roperand),
          resolveObjectReference(scope, roperand2), resultClassRef);
    }
-   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id,
-      resolveObjectReference(scope, loperand),
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef,
       resolveObjectReference(scope, roperand), resultClassRef);
 
    if (operationType != 0) {
-      // if it is a primitive operation
-      _logic->injectOperation(node, *scope.moduleScope, *this, operator_id, operationType, resultClassRef);
+      int size = 0;
+      if (loperandRef == V_BINARYARRAY) {
+         // HOTFIX : define an item size for the binary array operations
+         size = -_logic->defineStructSize(*scope.moduleScope, loperandRef, loperand.type);
+      }
 
-      retVal = assignResult(scope, node, resultClassRef/*, 0*/);
+      // if it is a primitive operation
+      _logic->injectOperation(node, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, size);
+
+      retVal = assignResult(scope, node, resultClassRef);
    }
    else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, paramCount), 0);
 
@@ -3945,6 +3950,9 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, InlineC
    }
    else if (test(scope.info.header.flags, elDynamicRole)) {
       scope.raiseError(errInvalidInlineClass, node);
+
+      // idle return
+      return ObjectInfo();
    }
    else {
       // dynamic binary symbol
@@ -4092,9 +4100,9 @@ ObjectInfo Compiler :: compileNewOperator(SNode node, CodeScope& scope/*, int mo
 
    if (operationType != 0) {
    //   // if it is a primitive operation
-      _logic->injectNewOperation(node, *scope.moduleScope, operationType, targetRef);
+      _logic->injectNewOperation(node, *scope.moduleScope, operationType, retVal.type, targetRef);
 
-      retVal = assignResult(scope, node, targetRef/*, 0*/);
+      retVal = assignResult(scope, node, targetRef, retVal.type);
    }
    else scope.raiseError(errInvalidOperation, node);
 
@@ -4871,7 +4879,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
                scope.raiseError(errTooManyParameters, verb);
 
             int size = subj_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, 
-               scope.moduleScope->attributeHints.get(subj_ref), true) : 0;
+               scope.moduleScope->attributeHints.get(subj_ref), 0, true) : 0;
 
             scope.parameters.add(name, Parameter(index, subj_ref, 0, size));
 
@@ -7108,11 +7116,12 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
       scope.moduleScope->sourcePathRef);
 }
 
-ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetRef/*, int warningLevel, int mode, bool& variable*/)
+// NOTE : targetType is used for binary arrays
+ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetRef, ref_t targetType)
 {
-   ObjectInfo retVal(okObject, targetRef);
+   ObjectInfo retVal(okObject, targetRef, 0, targetType);
 
-   size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
+   size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, targetType);
    if (size != 0) {
       if (allocateStructure(scope, size, false, retVal)) {
          retVal.extraparam = targetRef;
@@ -7129,22 +7138,6 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
          node.set(lxBoxing, size);
          node.appendNode(lxTarget, targetRef);
       }
-
-//      if (!test(mode, HINT_NOBOXING)) {
-//         node.injectNode(node.type, node.argument);
-//
-//         node = lxBoxing;
-//         node.setArgument(size);
-//
-//         node.appendNode(lxTarget, targetRef);
-//
-//         optimizeBoxing(scope, node, warningLevel, 0);
-//
-//         node = SyntaxTree::findChild(node, lxAssigning);
-//      }
-//      else node.appendNode(lxTarget, targetRef);
-//
-//      node = SyntaxTree::findChild(node, opType);
 
       return retVal;
    }
@@ -8228,6 +8221,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxShortArrOp:
       case lxByteArrOp:
       case lxArrOp:
+      case lxBinArrOp:
       case lxNewOp:
          optimizeOp(scope, current, warningScope, mode);
          break;
