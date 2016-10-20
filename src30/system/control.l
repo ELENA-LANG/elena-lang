@@ -78,39 +78,39 @@
 //        anOutput := 0. 
 //    ]
 //}
-//
-//// --- base functions ---
-//
-///// A base action
-//#class(limited,dispatchable:func)BaseFunction
-//{
-//    /// Executes the action
-//    #method(action) eval []
-//    
-//    /// Executes the action while the condition is true
-//    #method(sealed,w2) run &if:aBool
-//    [
-//        #loop aBool ?
-//        [
-//            $self eval.
-//        ].
-//    ]
-//
-//    /// Executes the action while the condition is false
-//    ///
-//    /// Executes at least once
-//    #method(sealed) run &until:aBool
-//    [
-//        #var(bool)flag := false.
-//        
-//        #loop flag !
-//        [
-//            $self eval.
-//            
-//            flag := aBool bool.
-//        ].
-//    ]
-//}
+
+// --- base functions ---
+
+/// A base action
+#class(limited,dispatchable:func)BaseFunction
+{
+    /// Executes the action
+    #method(action) eval []
+    
+    /// Executes the action while the condition is true
+    #method(sealed,w2) run &if:aBool
+    [
+        #loop aBool ?
+        [
+            $self eval.
+        ].
+    ]
+
+    /// Executes the action while the condition is false
+    ///
+    /// Executes at least once
+    #method(sealed) run &until:aBool
+    [
+        #var(bool)flag := false.
+        
+        #loop flag !
+        [
+            $self eval.
+            
+            flag := aBool bool.
+        ].
+    ]
+}
 
 /// A base function
 #class(limited,dispatchable:func1)BaseFunction1

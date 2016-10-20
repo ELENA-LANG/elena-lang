@@ -3224,6 +3224,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
 
 ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, int mode, int operator_id)
 {
+   bool loopMode = test(mode, HINT_LOOP);
    ObjectInfo retVal(okObject);
 
    SNode loperandNode = node.firstChild(lxObjectMask);
@@ -3232,7 +3233,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
    // HOTFIX : in loop expression, else node is used to be similar with branching code
    // because of optimization rules
    ref_t original_id = operator_id;
-   if (test(mode, HINT_LOOP)) {
+   if (loopMode) {
       operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
    }
 
@@ -3244,7 +3245,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
          node.setArgument(-1);
 
       SNode thenBody = loperandNode.nextNode(lxObjectMask);
-      if (test(mode, HINT_LOOP)) {
+      if (loopMode) {
          thenBody.set(lxElse, ifReference);
          compileBranching(thenBody, scope);
       }
@@ -3269,9 +3270,17 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode& node, CodeScope& scope, i
       if (roperand2Node != lxNone) {
          compileObject(roperand2Node, scope, HINT_CLOSURE);
 
+         if (loopMode)
+            node = node.injectNode(node);
+
          retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 2), 0);
       }
-      else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+      else {
+         if (loopMode)
+            node = node.injectNode(node);
+
+         retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, 1), 0);
+      }
    }
 
    return retVal;

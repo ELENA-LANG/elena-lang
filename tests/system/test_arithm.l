@@ -474,29 +474,29 @@
 //    
 //    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
 //].
-//
-//// --- LoopTest ---
-//
-//#symbol LoopTest =
-//[
-//    #var i := 5.
-//            
-//    console writeLine:"Loop running...".
-//    #loop (i > 0) ?
-//    [
-//        console writeLine:i.
-//        
-//        i := i - 1.
-//    ].
-//  
-//    #var(vint)j := 0.
-//    control while: [j < 5] &do:
-//    [
-//        console writeLine:j.
-//        
-//        j += 1.
-//    ].
-//    
+
+// --- LoopTest ---
+
+#symbol LoopTest =
+[
+    #var i := 5.
+            
+    console writeLine:"Loop running...".
+    #loop (i > 0) ?
+    [
+        console writeLine:i.
+        
+        i := i - 1.
+    ].
+  
+    #var(vint)j := 0.
+    control while: [j < 5] &do:
+    [
+        console writeLine:j.
+        
+        j += 1.
+    ].
+    
 //    control do:
 //    [
 //        console writeLine:j.
@@ -504,8 +504,8 @@
 //        j -= 1.
 //    ]
 //    &until:[j == 0].
-//].
-//
+].
+
 //// --- ExceptionTest ---
 //
 //#symbol ExceptionTest =

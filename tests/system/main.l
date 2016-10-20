@@ -17,7 +17,7 @@
     MultySelectTest  eval.
     EnumTest eval.    
     TextBufferTest eval.
-//    LoopTest eval.
+    LoopTest eval.
 //    ActionTest eval.
 //    RoleTest eval.
 //    ConvertorTest eval.

@@ -957,7 +957,10 @@ void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef)
 {
    // ifr then-end, r
-   tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
+   if (comparingRef == 0) {
+      tape.write(bcIfR, baCurrentLabel, 0);
+   }
+   else tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
 }
 
 void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd)
@@ -3859,38 +3862,43 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    // analizing a sub tree
    SNode current = node.firstChild();
    while (current != lxNone) {
+      SNode member = current;
+      if (current == lxExpression) {
+         member = current.firstChild(lxObjectMask);
+      }
+
       /*if (current == lxArgUnboxing) {
          argUnboxMode = true;
          generateExpression(tape, current);
          unboxArgList(tape);
       }
-      else */if (test(current.type, lxObjectMask)) {
-         if (current.type == lxLocalUnboxing)
+      else */if (test(member.type, lxObjectMask)) {
+         if (member.type == lxLocalUnboxing)
             unboxMode = true;
 
          paramCount++;
       }
     
       // presave the boxed arguments if required
-      if (current == lxUnboxing) {
-         generateObjectExpression(tape, current);
+      if (member == lxUnboxing) {
+         generateObjectExpression(tape, member);
          pushObject(tape, lxResult);
          presavedCount++;
          unboxMode = true;
       }
       // presave the nested object if outer operation is required
-      else if (current == lxNested && current.existChild(lxOuterMember)) {
-         generateObjectExpression(tape, current);
+      else if (member == lxNested && member.existChild(lxOuterMember)) {
+         generateObjectExpression(tape, member);
          pushObject(tape, lxResult);
          presavedCount++;
          unboxMode = true;
          directMode = false;
       }
 
-      if (current == lxExpression && !isSimpleObjectExpression(current, true)) {
+      if (member == lxExpression && !isSimpleObjectExpression(member, true)) {
          // ignore nested expression
       }
-      else if (test(current.type, lxCodeScopeMask) || current == lxResult) 
+      else if (test(member.type, lxCodeScopeMask) || member == lxResult)
          directMode = false;
    
       current = current.nextNode();
@@ -3907,6 +3915,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    for (int i = 0; i < counter; i++) {
       // get parameters in reverse order if required
       current = getChild(node, directMode ? counter - i - 1 : i);
+      if (current == lxExpression) {
+         current = current.firstChild(lxObjectMask);
+      }
 
       /*if (current == lxArgUnboxing) {
          // argument list is already unboxed
@@ -3959,6 +3970,10 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
    while (index < counter) {
       // get parameters in reverse order if required
       SNode current = getChild(node, counter - index - 1);
+
+      if (current == lxExpression)
+         current = current.firstChild(lxObjectMask);
+
       if (current == lxUnboxing) {
          SNode target = current.firstChild(lxObjectMask);
          SNode tempLocal = current.findChild(lxTempLocal);
@@ -4292,11 +4307,14 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
    //declareBlock(tape);
 
    SNode current = node.firstChild();
+   bool repeatMode = true;
    while (current != lxNone) {
       if (current == lxElse) {
          jumpIfEqual(tape, current.argument);
          
          generateCodeBlock(tape, current.findSubNode(lxCode));
+
+         repeatMode = false;
       }
       else if (test(current.type, lxObjectMask)) {
          declareBlock(tape);
@@ -4306,6 +4324,9 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
          
       current = current.nextNode();
    }
+
+   if (repeatMode)
+      jumpIfEqual(tape, 0);
 
    //declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 

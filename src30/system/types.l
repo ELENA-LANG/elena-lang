@@ -67,8 +67,8 @@
 
 #subject wide       = system'WideLiteralValue.
 
-//// === function types ===
-//#subject func       = system'BaseFunction.
+// === function types ===
+#subject func       = system'BaseFunction.
 
 /// An anonymous function with a generic parameter.
 ///

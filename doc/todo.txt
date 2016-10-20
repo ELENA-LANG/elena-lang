@@ -3,6 +3,8 @@ In development:
 ------                              
 
               xrev
+                 * default generic exception handler
+
                  * switch statement with comparision
                  * switch statement with expression
 
@@ -76,6 +78,7 @@ In development:
                      #var(-11,4)n := 0.        
                      #var(-11,4)d := n + 12.
                  * debugger watch : wide literal
+                 * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
@@ -88,7 +91,6 @@ In development:
                  * warn on duplicate extensions
                  * test listof:datatype / listof:type
                  * test try catch statement
-                 * implement repeat until loop
                  * operation with struct field : assigning
                  * test : a int + b::op int.
                  * test sg
