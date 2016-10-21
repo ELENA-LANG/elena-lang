@@ -18,7 +18,7 @@
     EnumTest eval.    
     TextBufferTest eval.
     LoopTest eval.
-//    ActionTest eval.
+    ActionTest eval.
 //    RoleTest eval.
 //    ConvertorTest eval.
 //    ArrayTest eval.

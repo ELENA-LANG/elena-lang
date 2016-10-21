@@ -94,6 +94,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
+   // subject primitive operations
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+
    // int64 primitive operations
    operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
    operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));

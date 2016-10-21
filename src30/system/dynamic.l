@@ -22,9 +22,9 @@
 {
     #field(-20,4)theValue.
 
-//    /// Loads a dynamic verb
-//    #constructor(stacksafe,w3) new &verb:aVerb
-//        = aVerb.
+    /// Loads a dynamic verb
+    #constructor(stacksafe,w3) new &verb:aVerb
+        = aVerb.
 
     /// Dispatches incoming messages and redirects to the target
     #method => system'core_routines'__verb.
@@ -37,20 +37,20 @@
 {
     #field(-19,4)theValue.
     
-//    /// Loads a message
-//    #constructor(stacksafe,w3) new &mssg:message
-//        = message.
-//
-//    #method(stacksafe) subject
-//        => system'core_routines'__message.
-//
-//    #method(stacksafe)literal
-//    [
-//        #var(byte:256)aBuffer.        
-//        #var(int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
-//        
-//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-//    ]
+    /// Loads a message
+    #constructor(stacksafe,w3) new &mssg:message
+        = message.
+
+    #method(stacksafe) subject
+        => system'core_routines'__message.
+
+    #method(stacksafe)literal
+    [
+        #var(byte:256)aBuffer.        
+        #var(int)aLength := system'external LoadMessageName &mssg:$self &bytearray:aBuffer &int:255.
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     #method => system'core_routines'__message.
@@ -84,37 +84,37 @@
 {
     #field(-18,4)theValue.
     
-//    /// Creates a dynamic signature
-//    #constructor(stacksafe) new &mssg:message
-//    [
-//        system'core_routines'__signature load &subject:$self &mssg:message.
-//    ]
-//        
-//    /// Creates a dynamic signature
-//    #constructor(stacksafe,w3) new &subject:subject
-//        = subject.
-//
-//    /// Creates a dynamic signature
-//    #constructor new &literal:aSubjectName
-//    [
-//        system'core_routines'__signature load &subject:$self &literal:aSubjectName.
-//    ]
-//
-//    /// Creates a dynamic signature
-//    #constructor new &wide:aSubjectName
-//        <= new &literal:(aSubjectName literal).
-//
-//    /// Compares the values
-//    #method(stacksafe,bool) equal &subject : subject
-//        = theValue == subject.
-//
-//    #method(stacksafe)literal
-//    [
-//        #var(byte:256)aBuffer.        
-//        #var(int)aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
-//        
-//        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-//    ]
+    /// Creates a dynamic signature
+    #constructor(stacksafe) new &mssg:message
+    [
+        system'core_routines'__signature load &subject:$self &mssg:message.
+    ]
+        
+    /// Creates a dynamic signature
+    #constructor(stacksafe,w3) new &subject:subject
+        = subject.
+
+    /// Creates a dynamic signature
+    #constructor new &literal:aSubjectName
+    [
+        system'core_routines'__signature load &subject:$self &literal:aSubjectName.
+    ]
+
+    /// Creates a dynamic signature
+    #constructor new &wide:aSubjectName
+        <= new &literal:(aSubjectName literal).
+
+    /// Compares the values
+    #method(stacksafe,bool) equal &subject : subject
+        = theValue == subject.
+
+    #method(stacksafe)literal
+    [
+        #var(byte:256)aBuffer.        
+        #var(int)aLength := system'external LoadSubjectName &subject:$self &bytearray:aBuffer &int:255.
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]
         
     /// Qualifies incoming messages and redirects to the target
     #method => system'core_routines'__signature.

@@ -192,19 +192,19 @@
     console writeLine:".".
 ].
 
-//#symbol actionTester =
-//{
-//    testGeneric : anAction
-//    [
-//        anAction eval:"Action Test":" passed".
-//    ]
-//    
-//    testAction : anAction
-//    [
-//        anAction eval &line1:"Action Test" &line2:" passed".
-//    ]
-//}.
-//
+#symbol actionTester =
+{
+    testGeneric : anAction
+    [
+        anAction eval:"Action Test":" passed".
+    ]
+    
+    testAction : anAction
+    [
+        anAction eval &line1:"Action Test" &line2:" passed".
+    ]
+}.
+
 //#class MyException :: Exception
 //{
 //    #constructor new : aMessage
@@ -357,17 +357,17 @@
         [ console writeLine:"Real operators are working". ].
 ].
 
-//// --- Action Test ---
-//
-//#symbol ActionTest =
-//[
-//    console write:"Generic ".
-//    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
-//    
-//    console write:"Normal ".
-//    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
-//].
-//
+// --- Action Test ---
+
+#symbol ActionTest =
+[
+    console write:"Generic ".
+    actionTester testGeneric: (:x:y) [ console write:x writeLine:y. ].
+    
+    console write:"Normal ".
+    actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
+].
+
 //// --- Role Tests ---
 //
 //#symbol Role =

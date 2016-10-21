@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xrev
-                 * vint : dispatch command is missing, redirect directly to the content
+                 * support closures with several parameters / subjects
 
                  * switch statement with comparision
                  * switch statement with expression
@@ -14,8 +14,6 @@ In development:
                  * support arrayof:int
                  * support arrayof:struct
 
-                 * support closures with several parameters
-                 * support closures with a parameter
                  * support private sealed methods
 
                  * check if self is embeddable
@@ -95,6 +93,7 @@ In development:
                  * test : a int + b::op int.
                  * test sg
                  * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
+                 * ide : call stack is corrupted
 
               xdev
                 * linux migration

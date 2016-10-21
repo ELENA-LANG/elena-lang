@@ -3,6 +3,8 @@
 
 define EVAL_MESSAGE_ID      085000000h
 
+define INV_PARAM_MASK       0FFFFFFF0h
+
 procedure __object.dispatch[1]
 
   bsredirect  
@@ -109,6 +111,24 @@ labDefault:
   
 end
 
+procedure __message.get&subject$[1]
+
+  pusha
+  newn   class : system'Signature 4
+  bcopya
+  popa
+  nload
+  andn INV_PARAM_MASK
+  ecopyd
+  setverb 0
+  dcopye
+  nsave
+  acopyb
+
+  quitn 1
+
+end
+
 procedure __signature.dispatch[1]
 
   bloadsi 1
@@ -132,6 +152,44 @@ labDefault:
   pushr const : %new&mssg$[1]
   throw
   
+end
+
+procedure __signature.load&subject$&literal$[2]
+
+  aloadsi 2
+  pusha
+  callextr extern : LoadSubject
+  pop
+  ifn labErr 0
+  bloadsi 1
+  nsave
+  acopyb
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+  quitn 2
+
+end
+
+procedure __signature.load&subject$&mssg$[2]
+
+  bloadsi 1
+  aloadsi 2
+  nload
+  andn INV_PARAM_MASK
+  ecopyd
+  setverb 0
+  dcopye
+  nsave
+  acopyb
+  quitn 2
+
 end
 
 procedure __lazyexpression.dispatch[1]

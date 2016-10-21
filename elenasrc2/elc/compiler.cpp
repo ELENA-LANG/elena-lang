@@ -3537,6 +3537,9 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
                target = ObjectInfo(okObject);
             }
             else target = compileExpression(arg, scope, paramMode);
+
+            // HOTFIX : skip the prime message
+            arg = arg.nextNode();
          }
          else compileExpression(arg, scope, paramMode);
       }
@@ -3886,6 +3889,32 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    writer.newNode(lxClassMethod, methodScope.message);
    writer.appendNode(lxSourcePath, scope.getSourcePathRef()); // the source path
 
+   // injecting message parameter info
+   // if method has generic (unnamed) argument list
+   while (argNode == lxMethodParameter || argNode == lxIdentifier || argNode == lxPrivate) {
+      writer.newNode(lxMethodParameter);
+      SyntaxTree::copyNode(writer, argNode);
+      writer.closeNode();
+
+      argNode = argNode.nextNode();
+   }
+   while (argNode == lxMessage) {
+      writer.newNode(lxMessage);
+      SyntaxTree::copyNode(writer, argNode);
+      writer.closeNode();
+
+      argNode = argNode.nextNode();
+
+      if (argNode == lxMethodParameter) {
+         writer.newNode(lxMethodParameter);
+         SyntaxTree::copyNode(writer, argNode);
+         writer.closeNode();
+
+         argNode = argNode.nextNode();
+      }
+   }
+
+   // injecting action body
    writer.newNode(lxCode);
    SyntaxTree::copyNode(writer, node);
    writer.closeNode();
@@ -4627,8 +4656,8 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, CodeScope& scope, int mod
    ident_t dllAlias = targetNode.findChild(lxTerminal).identifier();
    ident_t functionName = node.findChild(lxMessage).firstChild(lxTerminalMask).findChild(lxTerminal).identifier();
 
-   ident_t dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-   if (emptystr(dllName)) {
+   ident_t dllName = NULL;
+   if (dllAlias.compare(EXTERNAL_MODULE)) {
       // if run time dll is used
       dllName = RTDLL_FORWARD;
 
@@ -4773,7 +4802,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
       // declare method parameter
       arg = arg.nextNode();
 
-      if (arg == nsMethodParameter) {
+      if (arg == lxMethodParameter) {
          ident_t name = arg.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
 
          // !! check duplicates
