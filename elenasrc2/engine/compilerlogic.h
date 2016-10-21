@@ -70,7 +70,7 @@ public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, bool& found, ref_t& outputType);
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type, bool embeddableOnly);
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t type, bool embeddableOnly = false);
    virtual int defineStructSize(ClassInfo& info, bool embeddableOnly);
 
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
@@ -112,7 +112,7 @@ public:
    }
 
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler);
-   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, int size);
+   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type);
    virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType);
    virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef);
 

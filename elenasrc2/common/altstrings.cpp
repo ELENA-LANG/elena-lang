@@ -430,14 +430,14 @@ char* _ELENA_ :: __reallocate(char* s, size_t size)
    return (char*)realloc(s, size);
 }
 
-//int find(const char* s, const char* subs, int defValue)
-//{
-//   const char* p = strstr(s, subs);
-//   if (p==NULL) {
-//      return defValue;
-//   }
-//   else return p - s;
-//}
+int find(const char* s, const char* subs, int defValue)
+{
+   const char* p = strstr(s, subs);
+   if (p==NULL) {
+      return defValue;
+   }
+   else return p - s;
+}
 
 int __find(const char* s, char c, int defValue)
 {
@@ -1298,6 +1298,11 @@ long long ident_t :: toULongLong(int radix, int index)
 double ident_t :: toDouble(int index)
 {
    return strToDouble(_string + index);
+}
+
+int ident_t :: find(const char* s, int defValue)
+{
+   return ::find(_string, s, defValue);
 }
 
 int ident_t :: find(char c, int defValue)

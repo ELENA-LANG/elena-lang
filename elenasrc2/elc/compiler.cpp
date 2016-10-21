@@ -92,10 +92,10 @@ inline bool isConstant(ObjectInfo object)
    }
 }
 
-//inline bool isCollection(DNode node)
-//{
-//   return (node == nsExpression && node.nextNode()==nsExpression);
-//}
+inline bool isCollection(SNode node)
+{
+   return (node == lxExpression && node.nextNode() == lxExpression);
+}
 
 inline bool isReturnExpression(SNode expr)
 {
@@ -470,7 +470,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
 //   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
 //   trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
 //   falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
-//   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
+   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
    boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 
    // HOTFIX : package section should be created if at least literal class is declated
@@ -2924,24 +2924,15 @@ ObjectInfo Compiler :: compileObject(SNode objectNode, CodeScope& scope, int mod
          result = compileClosure(member, scope, HINT_CLOSURE);
          break;
       case lxExpression:
-//         if (isCollection(member)) {
-//            TerminalInfo parentInfo = objectNode.Terminal();
-//            // if the parent class is defined
-//            if (parentInfo == tsIdentifier || parentInfo == tsReference || parentInfo == tsPrivate) {
-//               ref_t vmtReference = scope.moduleScope->mapTerminal(parentInfo, true);
-//               if (vmtReference == 0)
-//                  scope.raiseError(errUnknownObject, parentInfo);
-//
-//               result = compileCollection(member, scope, mode, vmtReference);
-//            }
-//            else result = compileCollection(member, scope, mode);
-//         }
+         if (isCollection(member)) {
+            result = compileCollection(objectNode, scope, mode);
+         }
          /*else if (test(mode, HINT_TRY_MODE)) {
             result = compileExpression(member, scope, 0);
 
             objectNode = lxTrying;
-         }
-         else*/ result = compileExpression(member, scope, 0);
+         }*/
+         else result = compileExpression(member, scope, 0);
          break;
       case lxMessageReference:
          result = compileMessageReference(member, scope, mode);
@@ -3318,14 +3309,8 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
       resolveObjectReference(scope, roperand), resultClassRef);
 
    if (operationType != 0) {
-      int size = 0;
-      if (loperandRef == V_BINARYARRAY) {
-         // HOTFIX : define an item size for the binary array operations
-         size = -_logic->defineStructSize(*scope.moduleScope, loperandRef, loperand.type);
-      }
-
       // if it is a primitive operation
-      _logic->injectOperation(node, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, size);
+      _logic->injectOperation(node, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.type);
 
       retVal = assignResult(scope, node, resultClassRef);
    }
@@ -4054,38 +4039,46 @@ ObjectInfo Compiler :: compileClosure(SNode node, CodeScope& ownerScope, int mod
    return compileClosure(node, ownerScope, scope, mode);
 }
 
-//ObjectInfo Compiler :: compileCollection(DNode objectNode, CodeScope& scope, int mode)
-//{
-//   return compileCollection(objectNode, scope, mode, scope.moduleScope->arrayReference);
-//}
-//
-//ObjectInfo Compiler :: compileCollection(DNode node, CodeScope& scope, int mode, ref_t vmtReference)
-//{
-//   int counter = 0;
-//
-//   scope.writer->newBookmark();
-//
-//   // all collection memebers should be created before the collection itself
-//   while (node != nsNone) {
-//      scope.writer->newNode(lxMember, counter);
-//
-//      ObjectInfo current = compileExpression(node, scope, 0, 0);
-//
-//      scope.writer->closeNode();
-//
-//      node = node.nextNode();
-//      counter++;
-//   }
-//
-//   scope.writer->insert(lxNested, counter);
-//
-//   scope.writer->appendNode(lxTarget, vmtReference);
-//   scope.writer->closeNode();
-//
-//   scope.writer->removeBookmark();
-//
-//   return ObjectInfo(okObject);
-//}
+ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, int mode)
+{
+   ref_t parentRef = scope.moduleScope->arrayReference;
+   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
+   if (parentNode != lxNone) {
+      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
+      if (parentRef == 0)
+         scope.raiseError(errUnknownObject, node);
+   }
+
+   return compileCollection(node, scope, mode, parentRef);
+}
+
+ObjectInfo Compiler :: compileCollection(SNode node, CodeScope& scope, int mode, ref_t vmtReference)
+{
+   if (vmtReference == 0)
+      vmtReference = scope.moduleScope->superReference;
+
+   int counter = 0;
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   while (current != lxNone) {
+      compileExpression(current, scope, 0);
+      current.refresh();
+
+      if (current != lxExpression) {
+         current.injectNode(current.type, current.argument);
+      }
+      current.set(lxMember, counter);
+
+      current = current.nextNode();
+      counter++;
+   }
+
+   node.set(lxNested, counter);
+   node.appendNode(lxTarget, vmtReference);
+
+   return ObjectInfo(okObject, vmtReference);
+}
 
 ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, int mode)
 {
@@ -4167,8 +4160,6 @@ void Compiler :: compileTrying(SNode node, CodeScope& scope)
 
 ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
 {
-//   scope.writer->newBookmark();
-
    ObjectInfo objectInfo;
    SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxTrying, lxSwitching);
    switch (child.type) {
@@ -4196,65 +4187,17 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
          break;
       default:
          child = node.firstChild(lxObjectMask);
-         if (child == lxExpression && child.nextNode(lxObjectMask) == lxNone) {
+         SNode nextChild = child.nextNode(lxObjectMask);
+
+         if (child == lxExpression && nextChild == lxNone) {
             // if it is a nested expression
             objectInfo = compileExpression(child, scope, mode);
          }
-         else if (test(child.type, lxTerminalMask)) {
+         else if (test(child.type, lxTerminalMask) && nextChild == lxNone) {
             objectInfo = compileObject(child, scope, mode);
          }
          else objectInfo = compileObject(node, scope, mode);
    }
-
-//   if (/*node != nsObject*/node == lxExpression) {
-//      SNode member = node.firstChild(lxObjectMask);
-//
-//      SNode operation = member.nextNode();
-////      if (operation == nsNewOperator) {
-////         
-////      }
-//      /*else */if (operation != nsNone) {
-////         if (member == nsObject) {
-//            objectInfo = compileObject(member, scope, mode);
-////         }
-////         if (findSymbol(member, nsAssigning)) {
-////            
-////         }
-////         else if (findSymbol(member, nsAltMessageOperation)) {
-////            scope.writer->insert(lxVariable);
-////            scope.writer->closeNode();
-////
-////            scope.writer->newNode(lxAlt);
-////            scope.writer->newBookmark();
-////            scope.writer->appendNode(lxResult);
-////            objectInfo = compileOperations(member, scope, objectInfo, mode);
-////            scope.writer->removeBookmark();
-////            scope.writer->closeNode();
-////
-////            scope.writer->appendNode(lxReleasing, 1);
-////         }
-//         /*else */objectInfo = compileOperations(member, scope, objectInfo, mode);
-//      }
-//      else objectInfo = compileObject(member, scope, mode);
-//   }
-//   else objectInfo = compileObject(node, scope, mode);
-
-//   // if it is try-catch statement
-//   if (findSymbol(node.firstChild(), nsCatchMessageOperation)) {
-//      scope.writer->insert(lxTrying);
-//      scope.writer->closeNode();
-//   }
-//
-//   if (targetType != 0) {
-//      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-//
-//      appendTerminalInfo(scope.writer, node.FirstTerminal());
-//      scope.writer->appendNode(lxType, targetType);
-//
-//      scope.writer->closeNode();
-//   }
-//
-//   scope.writer->removeBookmark();
 
    return objectInfo;
 }
@@ -5293,19 +5236,6 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          bodyNode.appendNode(lxLocal, 1);
       }
    }
-   //// if the constructor has a body
-   ///*else */if (body != nsNone) {
-   //// if the constructor should call embeddable method
-   //else if (embeddedMethodRef != 0) {
-   //   writer.newNode(lxResending, embeddedMethodRef);
-   //   writer.appendNode(lxTarget, classClassScope.reference);
-   //   writer.newNode(lxAssigning);
-   //   writer.appendNode(lxCurrent, 1);
-   //   writer.appendNode(lxResult);
-   //   writer.closeNode();
-   //   writer.closeNode();
-   //}
-
    node.appendNode(lxParamCount, getParamCount(scope.message) + 1);
    node.appendNode(lxReserved, scope.reserved);
 }
@@ -8141,8 +8071,8 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-//void Compiler :: optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node current, int warningLevel, int mode)
-//{
+void Compiler :: optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
+{
 //   if (current == lxNested) {
 //      // check if the nested collection can be treated like constant one
 //      bool constant = true;
@@ -8179,9 +8109,9 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //         _writer.generateConstantList(current, scope.module, reference);
 //      }
 //   }
-//
-//   optimizeSyntaxExpression(scope, current, warningLevel, mode);
-//}
+
+   optimizeSyntaxExpression(scope, node, warningScope);
+}
 
 void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningScope& warningScope, int mode)
 {
@@ -8236,10 +8166,10 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxCalling:
          optimizeCall(scope, current, warningScope);
          break;
-//      case lxNested:
-//      case lxMember:
-//         optimizeNestedExpression(scope, current, warningMask);
-//         break; 
+      case lxNested:
+      case lxMember:
+         optimizeNestedExpression(scope, current, warningScope, mode);
+         break; 
       case lxCode:
          optimizeSyntaxExpression(scope, current, warningScope/*, HINT_NOBOXING*/);
          break;
@@ -8794,14 +8724,28 @@ ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, 
    return importReference(extModule, memberRef, scope.module);
 }
 
+bool checkConstantCompatibility(_CompilerScope& scope, LexicalType type, ref_t targetClassRef)
+{
+   switch (type) {
+      case lxConstantInt:
+         return targetClassRef == scope.intReference;
+      case lxConstantLong:
+         return targetClassRef == scope.longReference;
+      case lxConstantReal:
+         return targetClassRef == scope.realReference;
+      default:
+         return false;
+   }
+}
+
 void Compiler :: injectBoxing(_CompilerScope& scope, SNode node, LexicalType boxingType, int argument, ref_t targetClassRef)
 {
    //HOTFIX : reload node
    node.refresh();
 
    SNode objectNode = node.firstChild(lxObjectMask);   
-   if (isSingleStatement(node) && objectNode == lxConstantInt && targetClassRef == scope.intReference) {
-      //HOTFIX : do not box int constant
+   if (isSingleStatement(node) && checkConstantCompatibility(scope, objectNode, targetClassRef)) {
+      //HOTFIX : do not box compatible numeric constants
    }
    else {
       if (node == lxExpression) {

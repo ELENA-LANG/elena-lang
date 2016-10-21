@@ -29,22 +29,19 @@ int main(int argc, char* argv[])
    bool esmMode = _ELENA_::Path::checkExtension(argv[1], "esm");
 
    if (argc==3) {
-      _ELENA_::FileName name;
-      _ELENA_::FileName::load(name, argv[1]);
+      _ELENA_::FileName name(argv[1]);
 
-      _ELENA_::Path::loadPath(target, argv[2]);
-		target.combine(name);
+      target.copy(argv[2]);
+		target.combine(name.path());
    }
-   else _ELENA_::Path::loadPath(target, argv[1]);
+   else target.copy(argv[1]);
 
    if (esmMode) {
 		target.changeExtension("nl");
    }
    else target.changeExtension("bin");
 
-   _ELENA_::Path source;
-   _ELENA_::Path::loadPath(source, argv[1]);
-
+   _ELENA_::Path source(argv[1]);
    _ELENA_::TextFileReader reader(source, _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
       printf("Cannot open the file");

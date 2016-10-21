@@ -31,7 +31,7 @@ struct AssemblerException
 struct TokenInfo
 {
    SourceReader* reader;
-   ident_c       value[50];
+   char          value[50];
    LineInfo      terminal;
 
    bool Eof() const { return terminal.state == dfaEOF; }
@@ -45,12 +45,12 @@ struct TokenInfo
 	bool getInteger(int& integer, Map<ident_t, size_t>& constants)
 	{
       if (terminal.state==dfaInteger) {
-         integer = StringHelper::strToInt(value);
+         integer = ident_t(value).toInt();
          return true;
       }
 		else if (terminal.state==dfaHexInteger) {
 			value[getlength(value)-1] = 0;
-         integer = StringHelper::strToULong(value, 16);
+         integer = ident_t(value).toULong(16);
 			return true;
       }
       else if (terminal.state==dfaIdentifier && constants.exist(value)) {
@@ -111,8 +111,12 @@ struct TokenInfo
 
    bool check(ident_t word)
 	{
-      return StringHelper::compare(value, word);
+      return word.compare(value);
 	}
+   bool check(ident_t word, size_t length)
+   {
+      return word.compare(value, length);
+   }
 
    TokenInfo(SourceReader* reader)
    {

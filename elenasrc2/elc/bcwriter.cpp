@@ -2648,7 +2648,15 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
 {
    switch (operator_id) {
       case REFER_MESSAGE_ID:
-         if (itemSize == 8) {
+         if (itemSize == 4) {
+            // nread
+            // dcopye
+            // nsave
+            tape.write(bcNRead);
+            tape.write(bcDCopyE);
+            tape.write(bcNSave);
+         }
+         else if (itemSize == 8) {
             // shiftn -3
             // bread
             // nwritei 0
@@ -2726,10 +2734,11 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             // lessn itemSize labNext
             // popi 2
 
+            tape.newLabel();
             tape.write(bcMulN, itemSize);
             tape.write(bcPushD);
             tape.write(bcPushN, 0);
-            tape.setLabel();
+            tape.setLabel(true);
             tape.write(bcDLoadSI, 1);
             tape.write(bcBRead);
             tape.write(bcAddN, 4);
@@ -2760,10 +2769,11 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             // lessn itemSize labNext
             // popi 2
 
+            tape.newLabel();
             tape.write(bcMulN, itemSize);
             tape.write(bcPushD);
             tape.write(bcPushN, 0);
-            tape.setLabel();
+            tape.setLabel(true);
             tape.write(bcDLoadSI, 1);
             tape.write(bcBReadB);
             tape.write(bcAddN, 1);
@@ -2778,7 +2788,14 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
          }
          break;
       case SET_REFER_MESSAGE_ID:
-         if (itemSize == 8) {
+         if (itemSize == 4) {
+            // nloade
+            // nwrite
+            tape.write(bcNLoadE);
+            tape.write(bcNWrite);
+            break;
+         }
+         else if (itemSize == 8) {
             // shiftn -3
             // nreadi 0
             // bwrite
@@ -2857,11 +2874,12 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             // lessn itemSize labNext
             // popi 2
 
+            tape.newLabel();
             tape.write(bcMulN, itemSize);
             tape.write(bcPushN, 0);
             tape.write(bcPushD);
             tape.write(bcDLoadSI, 1);
-            tape.setLabel();
+            tape.setLabel(true);
             tape.write(bcBRead);
             tape.write(bcAddN, 4);
             tape.write(bcDSaveSI, 1);
@@ -2893,11 +2911,12 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
             // lessn itemSize labNext
             // popi 2
 
+            tape.newLabel();
             tape.write(bcMulN, itemSize);
             tape.write(bcPushN, 0);
             tape.write(bcPushD);
             tape.write(bcDLoadSI, 1);
-            tape.setLabel();
+            tape.setLabel(true);
             tape.write(bcBReadB);
             tape.write(bcAddN, 1);
             tape.write(bcDSaveSI, 1);

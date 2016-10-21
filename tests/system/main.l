@@ -19,9 +19,9 @@
     TextBufferTest eval.
     LoopTest eval.
     ActionTest eval.
-//    RoleTest eval.
-//    ConvertorTest eval.
-//    ArrayTest eval.
+    RoleTest eval.
+    ConvertorTest eval.
+    ArrayTest eval.
 //    OpenArgTest eval.
 //    MethodNotFoundTest eval.
 //    ExceptionTest eval.

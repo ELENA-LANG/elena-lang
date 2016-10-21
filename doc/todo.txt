@@ -3,7 +3,10 @@ In development:
 ------                              
 
               xrev
-                 * support closures with several parameters / subjects
+                 * optimize : xchararray.getat&int$[1]
+
+                 * box primitive operation if it is used in calling
+                 * typecast primitive array operation results
 
                  * switch statement with comparision
                  * switch statement with expression
@@ -63,6 +66,7 @@ In development:
                  * test dispatching method
                  * test dispatching method with generic methods
                  * optimize comparision operation with char
+                 * test array of char / array of enumerator ...
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
@@ -77,6 +81,7 @@ In development:
                      #var(-11,4)d := n + 12.
                  * debugger watch : wide literal
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
+                 * optimize array of constants
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect

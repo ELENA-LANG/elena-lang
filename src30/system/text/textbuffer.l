@@ -21,20 +21,20 @@
 //    [
 //        theLength set &int:0.
 //    ]
-//
-//    #method(stacksafe,outnprop:length) readLength &vint:aRetVal
-//    [
-//        aRetVal set &int:theLength.
-//    ]
-//
-//    #method(stacksafe) setLength &int:aLength
-//    [
-//        theLength set &int:aLength.
-//    ]
-//
-//    #method set &length:aLength
-//        <= setLength &int:(aLength int).
-//
+
+    #method(stacksafe,outnprop:length) readLength &vint:aRetVal
+    [
+        aRetVal set &int:theLength.
+    ]
+
+    #method(stacksafe) setLength &int:aLength
+    [
+        theLength set &int:aLength.
+    ]
+
+    #method set &length:aLength
+        <= setLength &int:(aLength int).
+
 //    #method chararray = theBuffer.
 
     #method literal

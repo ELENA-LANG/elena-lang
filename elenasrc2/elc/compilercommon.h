@@ -16,6 +16,7 @@
 #define V_FLAG        (size_t)-03
 #define V_NIL         (size_t)-04
 
+#define V_BINARY      (size_t)-10
 #define V_INT32       (size_t)-11
 #define V_PTR32       (size_t)-12
 #define V_INT64       (size_t)-13
@@ -23,6 +24,8 @@
 #define V_SIGNATURE   (size_t)-18
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
+
+#define V_OBJECT      (size_t)-21
 
 #define V_OBJARRAY    (size_t)-30
 #define V_INT32ARRAY  (size_t)-31
@@ -105,6 +108,7 @@ struct _CompilerScope
    ref_t literalReference;
    ref_t wideReference;
    ref_t charReference;
+   ref_t arrayReference;
 
    // list of typified classes which may need get&type message
    ClassMap    typifiedClasses;
@@ -122,7 +126,7 @@ struct _CompilerScope
       intReference = boolReference = superReference = 0;
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
-      charReference = realReference = 0;
+      arrayReference = charReference = realReference = 0;
    }
 };
 
@@ -191,7 +195,7 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(SNode node, _CompilerScope& scope, ClassInfo& info, _Compiler& compiler) = 0;
-   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, int size) = 0;
+   virtual void injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t type) = 0;
    virtual bool injectImplicitConversion(SNode node, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t sourceType) = 0;
    virtual void injectNewOperation(SNode node, _CompilerScope& scope, int operation, ref_t elementType, ref_t targetRef) = 0;
 

@@ -135,21 +135,28 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
 
    // array of int32 primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
 
    // array of int16 primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
 
    // array of int8 primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
 
    // array of object primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 
    // array of structures primitive operations
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
+   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
 }
 
@@ -439,8 +446,19 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
    }
 }
 
-void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, int size)
+void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t type)
 {
+   int size = 0;
+   if (reference == V_BINARY || operationType == lxBinArrOp) {
+      // HOTFIX : define an item size for the binary array operations
+      size = -defineStructSize(scope, V_BINARYARRAY, type);
+
+      reference = scope.attributeHints.get(type);
+   }
+   else if (reference == V_OBJECT && type != 0) {
+      reference = scope.attributeHints.get(type);
+   }
+
    bool inverting = IsInvertedOperator(operator_id);
 
    SNode operationNode = node.injectNode((LexicalType)operationType, operator_id);

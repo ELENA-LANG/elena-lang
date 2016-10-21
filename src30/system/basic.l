@@ -798,14 +798,14 @@
 //    [
 //        theValue := n.
 //    ]
-//    
-//    /// Creates the object with the minimal value
-//    #constructor min
-//        = -2147483648.
-//
-//    /// Creates the object with the maximal value
-//    #constructor max
-//        = 2147483647.
+    
+    /// Creates the object with the minimal value
+    #constructor min
+        = -2147483648.
+
+    /// Creates the object with the maximal value
+    #constructor max
+        = 2147483647.
     
     /// Creates the object with specified value
     #constructor(stacksafe,w3) new &int:value
@@ -1054,49 +1054,49 @@
 {
     #field(8,-13)theValue.
     
-//    /// Returns the minimal value
-//    #constructor min
-//        = -9223372036854775808l.
-//
-//    /// Returns the maximal value
-//    #constructor max
-//        = 9223372036854775807l.
-//
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        <= new &long:0l.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe,w3) new &long:value
-//        = value.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &int:value
-//        = longConvertor convert &int:value.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &short:value 
-//        = longConvertor convert &short:value.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &byte:value 
-//        = longConvertor convert &byte:value.
-//
-//    /// Creates the object with specified value
-//    #constructor new : anObject
-//        <= new &long:(anObject long).
-//
-//    /// Returns an integer value
-//    #method int = intConvertor convert &long:$self.
-//
-//    /// Returns the value as a short integer    
-//    #method short = shortConvertor convert &long:$self.
-//    
-//    /// Returns the byte value
-//    #method byte = byteConvertor convert &long:$self.
-//
-//    /// Returns a real value
-//    #method real = RealNumber new &long:$self.
+    /// Returns the minimal value
+    #constructor min
+        = -9223372036854775808l.
+
+    /// Returns the maximal value
+    #constructor max
+        = 9223372036854775807l.
+
+    /// Creates the object with a default value (0)
+    #constructor new
+        <= new &long:0l.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe,w3) new &long:value
+        = value.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &int:value
+        = longConvertor convert &int:value.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &short:value 
+        = longConvertor convert &short:value.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &byte:value 
+        = longConvertor convert &byte:value.
+
+    /// Creates the object with specified value
+    #constructor new : anObject
+        <= new &long:(anObject long).
+
+    /// Returns an integer value
+    #method int = intConvertor convert &long:$self.
+
+    /// Returns the value as a short integer    
+    #method short = shortConvertor convert &long:$self.
+    
+    /// Returns the byte value
+    #method byte = byteConvertor convert &long:$self.
+
+    /// Returns a real value
+    #method real = RealNumber new &long:$self.
     
     /// Compares the value
     #method(bool,stacksafe) equal &long:anOperand 
@@ -1317,42 +1317,42 @@
 //    [
 //        realConvertor convert &int:n &vreal:$self.
 //    ]
-//            
-//    /// Returns the minimal value
-//    #constructor min
-//        = -1.7976931348623157e+308r.
-//    
-//    /// Returns the maximal value
-//    #constructor max
-//        = 1.7976931348623157e+308r.
-//
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        <= new &real:0.0r.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe,w3) new &real:value
-//        = value.
-//  
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &int:value 
-//        = realConvertor convert &int:value.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &short:value 
-//        = realConvertor convert &short:value.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &byte:value 
-//        = realConvertor convert &byte:value.
-//
-//    /// Creates the object with specified value
-//    #constructor(stacksafe) new &long:value
-//        = realConvertor convert &long:value.
-//        
-//    /// Creates the object with specified value
-//    #constructor new : anObject
-//        <= new &real:(anObject real).
+            
+    /// Returns the minimal value
+    #constructor min
+        = -1.7976931348623157e+308r.
+    
+    /// Returns the maximal value
+    #constructor max
+        = 1.7976931348623157e+308r.
+
+    /// Creates the object with a default value (0)
+    #constructor new
+        <= new &real:0.0r.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe,w3) new &real:value
+        = value.
+  
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &int:value 
+        = realConvertor convert &int:value.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &short:value 
+        = realConvertor convert &short:value.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &byte:value 
+        = realConvertor convert &byte:value.
+
+    /// Creates the object with specified value
+    #constructor(stacksafe) new &long:value
+        = realConvertor convert &long:value.
+        
+    /// Creates the object with specified value
+    #constructor new : anObject
+        <= new &real:(anObject real).
         
     /// Compares the value
     #method(bool,stacksafe) equal &real:anOperand 
@@ -1555,36 +1555,36 @@
     #method(stacksafe) readLength &vint:aLength
         => system'core_routines'__char.
         
-//    /// Reads the number of bytes to represent the symbol
-//    #method(stacksafe) readWideLength &vint:aRetVal
-//    [
-//        #var(int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        aLength := aLength + 1.
-//        aLength := aLength / 2.
-//
-//        aRetVal := aLength.
-//    ]
-//        
-//    /// Retuns the number of bytes to represent the symbol        
-//    #method(stacksafe,int,embeddable,w3) length
-//    [
-//        #var(int)aLength.
-//        $self readLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//    
-//    /// Retuns the number of short integers to represent the symbol
-//    #method(stacksafe,int,embeddable,w3) wideLength
-//    [
-//        #var(int)aLength.
-//        $self readWideLength &vint:aLength.
-//        
-//        ^ aLength.
-//    ]
-//
+    /// Reads the number of bytes to represent the symbol
+    #method(stacksafe) readWideLength &vint:aRetVal
+    [
+        #var(int)aLength.
+        $self readLength &vint:aLength.
+        
+        aLength := aLength + 1.
+        aLength := aLength / 2.
+
+        aRetVal := aLength.
+    ]
+        
+    /// Retuns the number of bytes to represent the symbol        
+    #method(stacksafe,int,embeddable,w3) length
+    [
+        #var(int)aLength.
+        $self readLength &vint:aLength.
+        
+        ^ aLength.
+    ]
+    
+    /// Retuns the number of short integers to represent the symbol
+    #method(stacksafe,int,embeddable,w3) wideLength
+    [
+        #var(int)aLength.
+        $self readWideLength &vint:aLength.
+        
+        ^ aLength.
+    ]
+
 //    /// Compares values
 //    #method(bool,stacksafe) equal &char:anOperand 
 //        = theValue == anOperand.
@@ -1719,654 +1719,653 @@
 //#class(dispatchable:dto) DTO
 //{
 //}
-//
-//// === Basic Convertors ===
-//
-//// --- convertor helpers ---
-//
-///// A byte convertor
-//#symbol byteConvertor =
-//{
-//    /// Converts a character into a byte value and saves the result into an output parameter
-//    #method(stacksafe) convert &char:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a short integer into a byte value and saves the result into an output parameter
-//    #method(byte,stacksafe) convert &short:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts an integer into a byte value and saves the result into an output parameter
-//    #method(byte,stacksafe) convert &int:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//
-//    /// Converts a long integer into a byte value and saves the result into an output parameter
-//    #method(stacksafe) convert &long:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a real number into a byte value and saves the result into an output parameter
-//    #method(stacksafe) convert &real:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a literal value into a byte value and saves the result into an output parameter
-//    #method(stacksafe) convert &literal:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//
-//    /// Converts a wide literal value into a byte value and saves the result into an output parameter
-//    #method(stacksafe) convert &wide:aValue &vbyte:aRetVal
-//        => system'core_routines'__byteconvertor.
-//        
-//    /// Returns the parameter        
-//    #method(byte,stacksafe) convert &byte:anInt
-//        = ByteNumber new &byte:(anInt).
-//        
-//    /// Converts a character into a byte value
-//    #method(byte,stacksafe) convert &char:aValue
-//    [
-//        #var(byte)aRetVal.
-//        $self convert &char:aValue &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//        
-//    /// Converts a short integer into a byte value
-//    #method(byte,stacksafe) convert &short:aValue
-//    [
-//        #var(byte)aRetVal.
-//        $self convert &short:aValue &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//        
-//    /// Converts an integer into a byte value
-//    #method(byte,stacksafe) convert &int:aValue
-//    [
-//        #var(byte)aRetVal.
-//        $self convert &int:aValue &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//
-//    /// Converts a long integer into a byte value
-//    #method(byte,stacksafe) convert &long:aValue
-//    [
-//        #var(byte)aRetVal.
-//        $self convert &long:aValue &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//
-//    /// Converts a real number into a byte value
-//    #method(byte,stacksafe) convert &real:aValue
-//    [
-//        #var(byte)aRetVal.
-//        $self convert &real:aValue &vbyte:aRetVal.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//                
-//    /// Converts a literal value into a byte value
-//    #method(byte,stacksafe) convert &literal:aLiteral
-//    [
-//        #var(byte)aValue.
-//        $self convert &literal:aLiteral &vbyte:aValue.
-//        
-//        ^ ByteNumber new &byte:aValue.
-//    ]
-//                
-//    /// Converts a wide literal value into a byte value
-//    #method(byte,stacksafe) convert &wide:aLiteral
-//    [
-//        #var(byte)aValue. 
-//        $self convert &wide:aLiteral &vbyte:aValue.
-//        
-//        ^ ByteNumber new &byte:aValue.
-//    ]
-//        
-//    #method(byte) convert : anObject
-//        = anObject cast:%convert &to:$self byte.
-//}.
-//
-///// A 16bit integer convertor
-//#symbol shortConvertor =
-//{
-//    /// Converts a character into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &char:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a byte value into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &byte:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts an integer into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &int:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a long integer into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &long:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a real number into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &real:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//
-//    /// Converts a literal string into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &literal:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a wide literal string into a short integer value and saves the result into an output parameter
-//    #method(stacksafe) convert &wide:aValue &vshort:aRetVal
-//        => system'core_routines'__shortconvertor.
-//        
-//    /// Returns a short integer value        
-//    #method(short,stacksafe) convert &short:anInt
-//        = ShortNumber new &short:anInt.
-//        
-//    /// Converts a byte value into a short integer value
-//    #method(short,stacksafe) convert &byte:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &byte:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//
-//    /// Converts an integer into a short integer value
-//    #method(short,stacksafe) convert &int:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &int:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//
-//    /// Converts a long integer into a short integer value
-//    #method(short,stacksafe) convert &long:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &long:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//        
-//    /// Converts a real number into a short integer value
-//    #method(short,stacksafe) convert &real:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &real:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//        
-//    /// Converts a character into a short integer value
-//    #method(short,stacksafe) convert &char:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &char:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//        
-//    /// Converts a literal string into a short integer value
-//    #method(short,stacksafe) convert &literal:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &literal:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//        
-//    /// Converts a wide literal string into a short integer value
-//    #method(short,stacksafe) convert &wide:aValue
-//    [
-//        #var(short)aRetVal.
-//        $self convert &wide:aValue &vshort:aRetVal.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//        
-//    #method(short) convert : anObject
-//        = anObject cast:%convert &to:$self short.
-//}.
-//
-///// An Unicode character convertor
-//#symbol charConvertor =
-//{
-//    /// Converts a byte value into a character and saves the result into an output parameter
-//    #method(stacksafe) convert &byte:aValue &vchar:aRetVal
-//        => system'core_routines'__charconvertor.
-//
-//    /// Converts a short integer into a character and saves the result into an output parameter
-//    #method(stacksafe) convert &short:aValue &vchar:aRetVal
-//        => system'core_routines'__charconvertor.
-//
-//    /// Converts an integer into a character and saves the result into an output parameter
-//    #method(stacksafe) convert &int:aValue &vchar:aRetVal
-//        => system'core_routines'__charconvertor.
-//        
-//    /// Returns a parameter        
-//    #method(char,stacksafe)convert &char:aChar
-//        = CharValue new &char:aChar.
-//  
-//    #method(stacksafe) $convert &int:anIndex &literal:aLiteral &vchar:char
-//        => system'core_routines'__charconvertor.
-//  
-//    #method(stacksafe) $convert &int:anIndex &bytearray:aLiteral &vchar:char
-//        => system'core_routines'__charconvertor.
-//  
-//    #method(stacksafe) $convert &int:anIndex &wide:aLiteral &vchar:char
-//        => system'core_routines'__charconvertor.
-//
-//    #method(stacksafe) $convert &int:anIndex &shortarray:aLiteral &vchar:char
-//        => system'core_routines'__charconvertor.
-//
-//    #method(stacksafe) $save &char:aChar &int:anIndex &shortarray:aCharArray &vint:aLength
-//        => system'core_routines'__charconvertor.
-//    
-//    #method(stacksafe) $save &char:aChar &int:anIndex &bytearray:aCharArray &vint:aLength
-//        => system'core_routines'__charconvertor.
-//
-//    /// Converts a literal string into a character                
-//    #method(char,stacksafe) convert &literal:aValue
-//    [
-//        #var(char)aRetVal.
-//        $self $convert &int:0 &literal:aValue &vchar:aRetVal.
-//        
-//        #var(int)l1.
-//        #var(int)l2 := aValue length int.
-//        aRetVal readLength &vint:l1.
-//        
-//        (l1 != l2)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]        
-//        
-//    /// Converts a wide literal string into a character                
-//    #method(char,stacksafe) convert &wide:aValue
-//    [
-//        #var(char)aRetVal.
-//        $self $convert &int:0 &wide:aValue &vchar:aRetVal.
-//
-//        #var(int)l1.
-//        #var(int)l2 := aValue length int.
-//        aRetVal readWideLength &vint:l1.
-//                
-//        (l1 != l2)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]        
-//        
-//    /// Converts a byte value into a character
-//    #method(char,stacksafe) convert &byte:aValue
-//    [
-//        #var(char)aRetVal.
-//        $self convert &byte:aValue &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]        
-//        
-//    /// Converts a short integer into a character
-//    #method(char,stacksafe) convert &short:aValue
-//    [
-//        #var(char)aRetVal.
-//        $self convert &short:aValue &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]        
-//        
-//    /// Converts an integer into a character
-//    #method(char,stacksafe) convert &int:aValue
-//    [
-//        #var(char)aRetVal.
-//        $self convert &int:aValue &vchar:aRetVal.
-//        
-//        ^ CharValue new &char:aRetVal.
-//    ]
-//        
-//    #method(char) convert : anObject
-//        = anObject cast:%convert &to:$self char.
-//}.
-//
-///// An integer convertor
-//#symbol intConvertor =
-//{
-//    /// Converts a literal string into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:aValue &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a literal string into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:value &int:base &vint:retVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a wide literal string into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:aValue &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a wide literal string into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:value &int:base &vint:retVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a character value into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &char:aValue &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a short integer value into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &short:aValue &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a byte value into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &byte:aValue &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a long integer into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &long:aValue &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//        
-//    /// Converts a real number into an integer and saves the result into an output parameter
-//    #method(stacksafe)convert &real:aReal &vint:aRetVal
-//        => system'core_routines'__intconvertor.
-//
-//    /// Converts a literal string into an integer
-//    #method(int,stacksafe) convert &literal:aLiteral
-//    [
-//        #var(int)aRetVal.
-//        $self convert &literal:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//        
-//    /// Converts a literal string into an integer
-//    #method(int,stacksafe) convert &literal:literal &base:base
-//    [
-//        #var(int)retVal.
-//        $self convert &literal:literal &int:(base int) &vint:retVal.
-//        
-//        ^ IntNumber new &int:retVal.
-//    ]
-//        
-//    /// Converts a wide literal string into an integer
-//    #method(int,stacksafe) convert &wide:aLiteral
-//    [
-//        #var(int)aRetVal.
-//        $self convert &wide:aLiteral &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Converts a wide literal string into an integer
-//    #method(int,stacksafe) convert &wide:literal &base:base
-//    [
-//        #var(int)retVal.
-//        $self convert &wide:literal &int:(base int) &vint:retVal.
-//        
-//        ^ IntNumber new &int:retVal.
-//    ]
-//        
-//    /// Converts a character value into an integer
-//    #method(int,stacksafe) convert &char:aValue
-//    [
-//        #var(int)aRetVal.
-//        $self convert &char:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//        
-//    /// Converts a byte value into an integer
-//    #method(int,stacksafe) convert &byte:aValue
-//    [
-//        #var(int)aRetVal.
-//        $self convert &byte:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//        
-//    /// Converts a short integer value into an integer
-//    #method(int,stacksafe) convert &short:aValue
-//    [
-//        #var(int)aRetVal.
-//        $self convert &short:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//        
-//    /// Converts a long integer value into an integer and saves the result into an output parameter
-//    #method(int,stacksafe) convert &long:aValue
-//    [
-//        #var(int)aRetVal.
-//        $self convert &long:aValue &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Converts a long integer into an integer
-//    #method(int,stacksafe) convert &real:aReal
-//    [
-//        #var(int)aRetVal.
-//        $self convert &real:aReal &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    /// Returns a parameter                                    
-//    #method(int,stacksafe) convert &int:anInt
-//        = IntNumber new &int:anInt.
-//        
-//    #method(int) convert : anObject
-//        = anObject cast:%convert &to:$self int.
-//}.
-//
-///// A long integer convertor
-//#symbol longConvertor =
-//{
-//    /// Converts a literal string into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:aValue &vlong:aRetVal
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a literal string into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:value &int:base &vlong:retVal
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:aValue &vlong:aRetVal
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:value &int:base &vlong:retVal
-//        => system'core_routines'__longconvertor.
-//
-//    #method(stacksafe)convert &int:aValue &vlong:aRetVal
-//        => system'core_routines'__longconvertor.
-//
-//    #method(stacksafe)convert &short:aValue &vlong:aRetVal
-//        => system'core_routines'__longconvertor.
-//
-//    #method(stacksafe)convert &byte:aValue &vlong:aRetVal
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a real number into a long integer and saves the result into an output parameter
-//    #method(stacksafe)convert &real:aValue &vlong:aRetVal
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts an integer value into a long integer
-//    #method(long,stacksafe)convert &int:aValue
-//    [
-//        #var(long)n.
-//        $self convert &int:aValue &vlong:n.
-//        
-//        ^ LongNumber new &long:n.
-//    ]
-//
-//    /// Converts an integer value into a long integer
-//    #method(long,stacksafe)convert &byte:aValue
-//    [
-//        #var(long)n.
-//        $self convert &byte:aValue &vlong:n.
-//        
-//        ^ LongNumber new &long:n.
-//    ]
-//
-//    /// Converts an integer value into a long integer
-//    #method(long,stacksafe)convert &short:aValue
-//    [
-//        #var(long)n.
-//        $self convert &short:aValue &vlong:n.
-//        
-//        ^ LongNumber new &long:n.
-//    ]
-//
-//    /// Converts a real number into a long integer
-//    #method(stacksafe)convert &real:aValue
-//    [
-//        #var(long)aRetVal.
-//        $self convert &real:aValue &vlong:aRetVal.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//
-//    /// Converts a character into a long integer
-//    #method(stacksafe)convert &char:aValue
-//    [
-//        #var(int)aRetVal.
-//        intConvertor convert &char:aValue &vint:aRetVal.
-//        
-//        ^ LongNumber new &int:aRetVal.
-//    ]
-//
-//    /// Converts a literal string into a long integer
-//    #method(long,stacksafe) convert &literal:aLiteral
-//    [
-//        #var(long)aRetVal.
-//        $self convert &literal:aLiteral &vlong:aRetVal.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//
-//    /// Converts a literal string into a long integer
-//    #method(long,stacksafe) convert &literal:literal &base:base
-//    [
-//        #var(long)retVal.
-//        $self convert &literal:literal &int:(base int) &vlong:retVal.
-//        
-//        ^ LongNumber new &long:retVal.
-//    ]
-//
-//    /// Converts a wide literal string into a long integer
-//    #method(long,stacksafe) convert &wide:aLiteral
-//    [
-//        #var(long)aRetVal.
-//        $self convert &wide:aLiteral &vlong:aRetVal.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//
-//    /// Converts a wide literal string into a long integer
-//    #method(long,stacksafe) convert &wide:literal &base:base
-//    [
-//        #var(long)retVal.
-//        $self convert &wide:literal &int:(base int) &vlong:retVal.
-//        
-//        ^ LongNumber new &long:retVal.
-//    ]
-//    
-//    /// Returns a parameter
-//    #method(long,stacksafe) convert &long:aLong
-//        = LongNumber new &long:aLong.
-//        
-//    #method(long) convert : anObject
-//        = anObject cast:%convert &to:$self long.
-//}.
-//
-///// A real number convertor
-//#symbol realConvertor =
-//{
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &int:aValue &vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &long:aValue &vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &byte:aValue &vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &short:aValue &vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts a literal string into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &literal:aValue &vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts a wide literal string into a real number and saves the result into an output parameter
-//    #method(stacksafe)convert &wide:aValue &vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//        
-//    /// Converts a literal string into a real number
-//    #method(real,stacksafe)convert &literal:aLiteral
-//    [
-//        #var(real)aRetVal.
-//        $self convert &literal:aLiteral &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//        
-//    /// Converts a wide literal string into a real number
-//    #method(real,stacksafe)convert &wide:aLiteral
-//    [
-//        #var(real)aRetVal.
-//        $self convert &wide:aLiteral &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    /// Returns a parameter
-//    #method(real,stacksafe)convert &real:aReal
-//        = RealNumber new &real:aReal.
-//        
-//    /// Converts an integer into a real number
-//    #method(real,stacksafe)convert &int:anInt
-//    [
-//        #var(real)aRetVal.
-//        $self convert &int:anInt &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    /// Converts a long integer into a real number
-//    #method(real,stacksafe)convert &long:aLong
-//    [
-//        #var(real)aRetVal.
-//        $self convert &long:aLong &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    /// Converts a byte into a real number
-//    #method(real,stacksafe)convert &byte:aValue
-//    [
-//        #var(real)aRetVal.
-//        $self convert &byte:aValue &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    /// Converts a short integer into a real number
-//    #method(real,stacksafe)convert &short:aValue
-//    [
-//        #var(real)aRetVal.
-//        $self convert &short:aValue &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//        
-//    #method(real) convert : anObject
-//        = anObject cast:%convert &to:$self real.
-//}.
-//
-//
+
+// === Basic Convertors ===
+
+// --- convertor helpers ---
+
+/// A byte convertor
+#symbol byteConvertor =
+{
+    /// Converts a character into a byte value and saves the result into an output parameter
+    #method(stacksafe) convert &char:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts a short integer into a byte value and saves the result into an output parameter
+    #method(byte,stacksafe) convert &short:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts an integer into a byte value and saves the result into an output parameter
+    #method(byte,stacksafe) convert &int:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+
+    /// Converts a long integer into a byte value and saves the result into an output parameter
+    #method(stacksafe) convert &long:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts a real number into a byte value and saves the result into an output parameter
+    #method(stacksafe) convert &real:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Converts a literal value into a byte value and saves the result into an output parameter
+    #method(stacksafe) convert &literal:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+
+    /// Converts a wide literal value into a byte value and saves the result into an output parameter
+    #method(stacksafe) convert &wide:aValue &vbyte:aRetVal
+        => system'core_routines'__byteconvertor.
+        
+    /// Returns the parameter        
+    #method(byte,stacksafe) convert &byte:anInt
+        = ByteNumber new &byte:(anInt).
+        
+    /// Converts a character into a byte value
+    #method(byte,stacksafe) convert &char:aValue
+    [
+        #var(byte)aRetVal.
+        $self convert &char:aValue &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+        
+    /// Converts a short integer into a byte value
+    #method(byte,stacksafe) convert &short:aValue
+    [
+        #var(byte)aRetVal.
+        $self convert &short:aValue &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+        
+    /// Converts an integer into a byte value
+    #method(byte,stacksafe) convert &int:aValue
+    [
+        #var(byte)aRetVal.
+        $self convert &int:aValue &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+
+    /// Converts a long integer into a byte value
+    #method(byte,stacksafe) convert &long:aValue
+    [
+        #var(byte)aRetVal.
+        $self convert &long:aValue &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+
+    /// Converts a real number into a byte value
+    #method(byte,stacksafe) convert &real:aValue
+    [
+        #var(byte)aRetVal.
+        $self convert &real:aValue &vbyte:aRetVal.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+                
+    /// Converts a literal value into a byte value
+    #method(byte,stacksafe) convert &literal:aLiteral
+    [
+        #var(byte)aValue.
+        $self convert &literal:aLiteral &vbyte:aValue.
+        
+        ^ ByteNumber new &byte:aValue.
+    ]
+                
+    /// Converts a wide literal value into a byte value
+    #method(byte,stacksafe) convert &wide:aLiteral
+    [
+        #var(byte)aValue. 
+        $self convert &wide:aLiteral &vbyte:aValue.
+        
+        ^ ByteNumber new &byte:aValue.
+    ]
+        
+    #method(byte) convert : anObject
+        = anObject cast:%convert &to:$self byte.
+}.
+
+/// A 16bit integer convertor
+#symbol shortConvertor =
+{
+    /// Converts a character into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &char:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a byte value into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &byte:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts an integer into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &int:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a long integer into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &long:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a real number into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &real:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+
+    /// Converts a literal string into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &literal:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Converts a wide literal string into a short integer value and saves the result into an output parameter
+    #method(stacksafe) convert &wide:aValue &vshort:aRetVal
+        => system'core_routines'__shortconvertor.
+        
+    /// Returns a short integer value        
+    #method(short,stacksafe) convert &short:anInt
+        = ShortNumber new &short:anInt.
+        
+    /// Converts a byte value into a short integer value
+    #method(short,stacksafe) convert &byte:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &byte:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+
+    /// Converts an integer into a short integer value
+    #method(short,stacksafe) convert &int:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &int:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+
+    /// Converts a long integer into a short integer value
+    #method(short,stacksafe) convert &long:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &long:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+        
+    /// Converts a real number into a short integer value
+    #method(short,stacksafe) convert &real:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &real:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+        
+    /// Converts a character into a short integer value
+    #method(short,stacksafe) convert &char:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &char:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+        
+    /// Converts a literal string into a short integer value
+    #method(short,stacksafe) convert &literal:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &literal:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+        
+    /// Converts a wide literal string into a short integer value
+    #method(short,stacksafe) convert &wide:aValue
+    [
+        #var(short)aRetVal.
+        $self convert &wide:aValue &vshort:aRetVal.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+        
+    #method(short) convert : anObject
+        = anObject cast:%convert &to:$self short.
+}.
+
+/// An Unicode character convertor
+#symbol charConvertor =
+{
+    /// Converts a byte value into a character and saves the result into an output parameter
+    #method(stacksafe) convert &byte:aValue &vchar:aRetVal
+        => system'core_routines'__charconvertor.
+
+    /// Converts a short integer into a character and saves the result into an output parameter
+    #method(stacksafe) convert &short:aValue &vchar:aRetVal
+        => system'core_routines'__charconvertor.
+
+    /// Converts an integer into a character and saves the result into an output parameter
+    #method(stacksafe) convert &int:aValue &vchar:aRetVal
+        => system'core_routines'__charconvertor.
+        
+    /// Returns a parameter        
+    #method(char,stacksafe)convert &char:aChar
+        = CharValue new &char:aChar.
+  
+    #method(stacksafe) $convert &int:anIndex &literal:aLiteral &vchar:char
+        => system'core_routines'__charconvertor.
+  
+    #method(stacksafe) $convert &int:anIndex &bytearray:aLiteral &vchar:char
+        => system'core_routines'__charconvertor.
+  
+    #method(stacksafe) $convert &int:anIndex &wide:aLiteral &vchar:char
+        => system'core_routines'__charconvertor.
+
+    #method(stacksafe) $convert &int:anIndex &shortarray:aLiteral &vchar:char
+        => system'core_routines'__charconvertor.
+
+    #method(stacksafe) $save &char:aChar &int:anIndex &shortarray:aCharArray &vint:aLength
+        => system'core_routines'__charconvertor.
+    
+    #method(stacksafe) $save &char:aChar &int:anIndex &bytearray:aCharArray &vint:aLength
+        => system'core_routines'__charconvertor.
+
+    /// Converts a literal string into a character                
+    #method(char,stacksafe) convert &literal:aValue
+    [
+        #var(char)aRetVal.
+        $self $convert &int:0 &literal:aValue &vchar:aRetVal.
+        
+        #var(int)l1.
+        #var(int)l2 := aValue length int.
+        aRetVal readLength &vint:l1.
+        
+        (l1 != l2)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+        
+    /// Converts a wide literal string into a character                
+    #method(char,stacksafe) convert &wide:aValue
+    [
+        #var(char)aRetVal.
+        $self $convert &int:0 &wide:aValue &vchar:aRetVal.
+
+        #var(int)l1.
+        #var(int)l2 := aValue length int.
+        aRetVal readWideLength &vint:l1.
+                
+        (l1 != l2)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+        
+    /// Converts a byte value into a character
+    #method(char,stacksafe) convert &byte:aValue
+    [
+        #var(char)aRetVal.
+        $self convert &byte:aValue &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+        
+    /// Converts a short integer into a character
+    #method(char,stacksafe) convert &short:aValue
+    [
+        #var(char)aRetVal.
+        $self convert &short:aValue &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]        
+        
+    /// Converts an integer into a character
+    #method(char,stacksafe) convert &int:aValue
+    [
+        #var(char)aRetVal.
+        $self convert &int:aValue &vchar:aRetVal.
+        
+        ^ CharValue new &char:aRetVal.
+    ]
+        
+    #method(char) convert : anObject
+        = anObject cast:%convert &to:$self char.
+}.
+
+/// An integer convertor
+#symbol intConvertor =
+{
+    /// Converts a literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:aValue &vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:value &int:base &vint:retVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a wide literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:aValue &vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a wide literal string into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:value &int:base &vint:retVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a character value into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &char:aValue &vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a short integer value into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &short:aValue &vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a byte value into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &byte:aValue &vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a long integer into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &long:aValue &vint:aRetVal
+        => system'core_routines'__intconvertor.
+        
+    /// Converts a real number into an integer and saves the result into an output parameter
+    #method(stacksafe)convert &real:aReal &vint:aRetVal
+        => system'core_routines'__intconvertor.
+
+    /// Converts a literal string into an integer
+    #method(int,stacksafe) convert &literal:aLiteral
+    [
+        #var(int)aRetVal.
+        $self convert &literal:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
+    /// Converts a literal string into an integer
+    #method(int,stacksafe) convert &literal:literal &base:base
+    [
+        #var(int)retVal.
+        $self convert &literal:literal &int:(base int) &vint:retVal.
+        
+        ^ IntNumber new &int:retVal.
+    ]
+        
+    /// Converts a wide literal string into an integer
+    #method(int,stacksafe) convert &wide:aLiteral
+    [
+        #var(int)aRetVal.
+        $self convert &wide:aLiteral &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Converts a wide literal string into an integer
+    #method(int,stacksafe) convert &wide:literal &base:base
+    [
+        #var(int)retVal.
+        $self convert &wide:literal &int:(base int) &vint:retVal.
+        
+        ^ IntNumber new &int:retVal.
+    ]
+        
+    /// Converts a character value into an integer
+    #method(int,stacksafe) convert &char:aValue
+    [
+        #var(int)aRetVal.
+        $self convert &char:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
+    /// Converts a byte value into an integer
+    #method(int,stacksafe) convert &byte:aValue
+    [
+        #var(int)aRetVal.
+        $self convert &byte:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
+    /// Converts a short integer value into an integer
+    #method(int,stacksafe) convert &short:aValue
+    [
+        #var(int)aRetVal.
+        $self convert &short:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+        
+    /// Converts a long integer value into an integer and saves the result into an output parameter
+    #method(int,stacksafe) convert &long:aValue
+    [
+        #var(int)aRetVal.
+        $self convert &long:aValue &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Converts a long integer into an integer
+    #method(int,stacksafe) convert &real:aReal
+    [
+        #var(int)aRetVal.
+        $self convert &real:aReal &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    /// Returns a parameter                                    
+    #method(int,stacksafe) convert &int:anInt
+        = IntNumber new &int:anInt.
+        
+    #method(int) convert : anObject
+        = anObject cast:%convert &to:$self int.
+}.
+
+/// A long integer convertor
+#symbol longConvertor =
+{
+    /// Converts a literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:aValue &vlong:aRetVal
+        => system'core_routines'__longconvertor.
+
+    /// Converts a literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &literal:value &int:base &vlong:retVal
+        => system'core_routines'__longconvertor.
+
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:aValue &vlong:aRetVal
+        => system'core_routines'__longconvertor.
+
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &wide:value &int:base &vlong:retVal
+        => system'core_routines'__longconvertor.
+
+    #method(stacksafe)convert &int:aValue &vlong:aRetVal
+        => system'core_routines'__longconvertor.
+
+    #method(stacksafe)convert &short:aValue &vlong:aRetVal
+        => system'core_routines'__longconvertor.
+
+    #method(stacksafe)convert &byte:aValue &vlong:aRetVal
+        => system'core_routines'__longconvertor.
+
+    /// Converts a real number into a long integer and saves the result into an output parameter
+    #method(stacksafe)convert &real:aValue &vlong:aRetVal
+        => system'core_routines'__longconvertor.
+
+    /// Converts an integer value into a long integer
+    #method(long,stacksafe)convert &int:aValue
+    [
+        #var(long)n.
+        $self convert &int:aValue &vlong:n.
+        
+        ^ LongNumber new &long:n.
+    ]
+
+    /// Converts an integer value into a long integer
+    #method(long,stacksafe)convert &byte:aValue
+    [
+        #var(long)n.
+        $self convert &byte:aValue &vlong:n.
+        
+        ^ LongNumber new &long:n.
+    ]
+
+    /// Converts an integer value into a long integer
+    #method(long,stacksafe)convert &short:aValue
+    [
+        #var(long)n.
+        $self convert &short:aValue &vlong:n.
+        
+        ^ LongNumber new &long:n.
+    ]
+
+    /// Converts a real number into a long integer
+    #method(stacksafe)convert &real:aValue
+    [
+        #var(long)aRetVal.
+        $self convert &real:aValue &vlong:aRetVal.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    /// Converts a character into a long integer
+    #method(stacksafe)convert &char:aValue
+    [
+        #var(int)aRetVal.
+        intConvertor convert &char:aValue &vint:aRetVal.
+        
+        ^ LongNumber new &int:aRetVal.
+    ]
+
+    /// Converts a literal string into a long integer
+    #method(long,stacksafe) convert &literal:aLiteral
+    [
+        #var(long)aRetVal.
+        $self convert &literal:aLiteral &vlong:aRetVal.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    /// Converts a literal string into a long integer
+    #method(long,stacksafe) convert &literal:literal &base:base
+    [
+        #var(long)retVal.
+        $self convert &literal:literal &int:(base int) &vlong:retVal.
+        
+        ^ LongNumber new &long:retVal.
+    ]
+
+    /// Converts a wide literal string into a long integer
+    #method(long,stacksafe) convert &wide:aLiteral
+    [
+        #var(long)aRetVal.
+        $self convert &wide:aLiteral &vlong:aRetVal.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    /// Converts a wide literal string into a long integer
+    #method(long,stacksafe) convert &wide:literal &base:base
+    [
+        #var(long)retVal.
+        $self convert &wide:literal &int:(base int) &vlong:retVal.
+        
+        ^ LongNumber new &long:retVal.
+    ]
+    
+    /// Returns a parameter
+    #method(long,stacksafe) convert &long:aLong
+        = LongNumber new &long:aLong.
+        
+    #method(long) convert : anObject
+        = anObject cast:%convert &to:$self long.
+}.
+
+/// A real number convertor
+#symbol realConvertor =
+{
+    /// Converts an integer into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &int:aValue &vreal:aRetVal
+        => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &long:aValue &vreal:aRetVal
+        => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &byte:aValue &vreal:aRetVal
+        => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &short:aValue &vreal:aRetVal
+        => system'core_routines'__realconvertor.
+
+    /// Converts a literal string into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &literal:aValue &vreal:aRetVal
+        => system'core_routines'__realconvertor.
+
+    /// Converts a wide literal string into a real number and saves the result into an output parameter
+    #method(stacksafe)convert &wide:aValue &vreal:aRetVal
+        => system'core_routines'__realconvertor.
+        
+    /// Converts a literal string into a real number
+    #method(real,stacksafe)convert &literal:aLiteral
+    [
+        #var(real)aRetVal.
+        $self convert &literal:aLiteral &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+        
+    /// Converts a wide literal string into a real number
+    #method(real,stacksafe)convert &wide:aLiteral
+    [
+        #var(real)aRetVal.
+        $self convert &wide:aLiteral &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    /// Returns a parameter
+    #method(real,stacksafe)convert &real:aReal
+        = RealNumber new &real:aReal.
+        
+    /// Converts an integer into a real number
+    #method(real,stacksafe)convert &int:anInt
+    [
+        #var(real)aRetVal.
+        $self convert &int:anInt &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    /// Converts a long integer into a real number
+    #method(real,stacksafe)convert &long:aLong
+    [
+        #var(real)aRetVal.
+        $self convert &long:aLong &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    /// Converts a byte into a real number
+    #method(real,stacksafe)convert &byte:aValue
+    [
+        #var(real)aRetVal.
+        $self convert &byte:aValue &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    /// Converts a short integer into a real number
+    #method(real,stacksafe)convert &short:aValue
+    [
+        #var(real)aRetVal.
+        $self convert &short:aValue &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+        
+    #method(real) convert : anObject
+        = anObject cast:%convert &to:$self real.
+}.
+
 //// --- realOpController ---
 //
 //#symbol realOpController =

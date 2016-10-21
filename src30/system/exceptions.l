@@ -143,17 +143,17 @@
 //    /// Returns the message
 //    #method message = theMessage.
 //}
-//
-//// --- FormatException ---
-//
-//#class(exceptionof:FormatError) FormatException
-//{
-//    #constructor new
-//    [
-//        theMessage := "A number is not in the correct format".
-//        theCallStack := CallStack new.
-//    ]
-//}
+
+// --- FormatException ---
+
+#class(exceptionof:FormatError) FormatException
+{
+    #constructor new
+    [
+        theMessage := "A number is not in the correct format".
+        theCallStack := CallStack new.
+    ]
+}
 
 // --- OutOfRangeException ---
 

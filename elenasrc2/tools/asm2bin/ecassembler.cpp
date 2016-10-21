@@ -30,7 +30,7 @@ void ECodesAssembler :: fixJump(ident_t label, MemoryWriter& writer, LabelInfo& 
 
    Map<ident_t, int>::Iterator it = info.fwdJumps.start();
    while (!it.Eof()) {
-      if (StringHelper::compare(it.key(), label)) {
+      if (label.compare(it.key())) {
          (*code)[*it] = writer.Position() - *it - 4;
       }
       it++;
@@ -143,26 +143,26 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    if (token.terminal.state == dfaFullIdentifier) {
       return binary->mapReference(token.value) | mskSymbolRelRef;
    }
-   else if (StringHelper::compare(word, "0")) {
+   else if (word.compare("0")) {
       return 0;
    }
-   else if (StringHelper::compare(word, "const")) {
+   else if (word.compare("const")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 
-      if (StringHelper::compare(word, "%")) {
+      if (word.compare("%")) {
          token.read();
 
          return compileRMessageArg(token, binary);
       }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
-   else if (StringHelper::compare(word, "class")) {
+   else if (word.compare("class")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
       return binary->mapReference(token.value) | mskVMTRef;
    }
-   else if (StringHelper::compare(word, "intern")) {
+   else if (word.compare("intern")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 
@@ -214,7 +214,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       }
       else token.raiseErr("Invalid number (%d)\n");
    }
-   else if (StringHelper::compare(word, "subject")) {
+   else if (word.compare("subject")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 
@@ -271,10 +271,10 @@ void ECodesAssembler :: compileCreateCommand(ByteCode code, TokenInfo& token, Me
 void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
    ident_t word = token.read();
-   if (StringHelper::compare(word, "extern")) {
+   if (word.compare("extern")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
-      if (StringHelper::compare(token.value, "'dlls'", 6)) {
+      if (token.check("'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
 	      token.read(".", "dot expected (%d)\n");
@@ -299,7 +299,7 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
          return;
       }
    }
-   else if (StringHelper::compare(word, "api")) {
+   else if (word.compare("api")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 

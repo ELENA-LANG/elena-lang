@@ -39,6 +39,7 @@ public:
       return copyTo(dest, getlength(_string), destLength);
    }
 
+   int find(const char* s, int defValue = -1);
    int find(char c, int defValue = -1);
    int findLast(char c, int defValue = -1);
 

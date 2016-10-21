@@ -974,8 +974,8 @@ private:
 
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SNode node, CodeScope& ownerScope, InlineClassScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode);
-//   ObjectInfo compileCollection(DNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
+   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileCollection(SNode objectNode, CodeScope& scope, int mode, ref_t vmtReference);
 
    ObjectInfo compileMessageReference(SNode objectNode, CodeScope& scope, int mode);
    void setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
@@ -1115,7 +1115,7 @@ private:
    void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 //   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
 //   void optimizeArgUnboxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
-//   void optimizeNestedExpression(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode = 0);
+   void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
    void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);
    void optimizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);

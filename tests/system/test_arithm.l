@@ -368,35 +368,35 @@
     actionTester testAction: (&line1:aLine1 &line2:aLine2) [ console write:aLine1 writeLine:aLine2. ].
 ].
 
-//// --- Role Tests ---
-//
-//#symbol Role =
-//{
-//    literal = "Role overriding works!".
-//}.
-//
-//#symbol RoleTest =
-//[
-//    console writeLine:("Role overriding doesn't work!!"::Role literal).
-//].
-//
-//// --- ConvertorTest ---
-//
-//#symbol ConvertorTest =
-//[
-//    #var n := "23" toInt.
-//    #var sn := n literal.
-//    (sn == "23")
-//        ! [ console writeLine:"Int conversion does not work" ].
-//    
-//    #var l := "1234567890123456" toLong.
-//    #var nn := "-123" toInt.
-//    #var ll := "-1234567890123456" toLong.
-//
-//    #var r := "23" toReal.
-//    #var r2 := "123.456789" toReal.
-//    #var r3 := "-123.456789" toReal.
-//].
+// --- Role Tests ---
+
+#symbol Role =
+{
+    literal = "Role overriding works!".
+}.
+
+#symbol RoleTest =
+[
+    console writeLine:("Role overriding doesn't work!!"::Role literal).
+].
+
+// --- ConvertorTest ---
+
+#symbol ConvertorTest =
+[
+    #var n := "23" toInt.
+    #var sn := n literal.
+    (sn == "23")
+        ! [ console writeLine:"Int conversion does not work" ].
+    
+    #var l := "1234567890123456" toLong.
+    #var nn := "-123" toInt.
+    #var ll := "-1234567890123456" toLong.
+
+    #var r := "23" toReal.
+    #var r2 := "123.456789" toReal.
+    #var r3 := "-123.456789" toReal.
+].
 
 // --- LiteralTest ---
 
@@ -438,34 +438,34 @@
         if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
-//// --- ArrayTest ---
-//
-//#symbol ArrayTest =
-//[
-//    #var a1 := Array(1,2,3).
-//    #var n := a1 @ 1.
-//
-//    #var(array) a4 := Array new:3.
-//    a4 setAt:0:2.
-//    a4 setAt:1:1.
-//    a4 setAt:2:3.
-//    
-//    #var a2 := Array new:5 set &every: (&index:x) [ IntNumber new:x ].    
-//    #var n2 := a2 @ 1.
-//    a2 setAt:1:-1.
-//    #var n3 := a2 @ 1.
-//    
-//    a2 setAt:0:2.
-//        
-//    a4 sort: (:aFormer:aNext)[ aFormer < aNext ].
-//
-//    a4 getAt:(-1) |
-//        if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
-//
-//    a4 getAt:3 |
-//        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
-//].
-//
+// --- ArrayTest ---
+
+#symbol ArrayTest =
+[
+    #var a1 := Array(1,2,3).
+    #var n := a1 @ 1.
+
+    #var(array) a4 := Array new:3.
+    a4 setAt:0:2.
+    a4 setAt:1:1.
+    a4 setAt:2:3.
+    
+    #var a2 := Array new:5 set &every: (&index:x) [ IntNumber new:x ].    
+    #var n2 := a2 @ 1.
+    a2 setAt:1:-1.
+    #var n3 := a2 @ 1.
+    
+    a2 setAt:0:2.
+        
+    a4 sort: (:aFormer:aNext)[ aFormer < aNext ].
+
+    a4 getAt:(-1) |
+        if &OutOfRangeError: e [ console writeLine:"Negative index is not allowed" ].
+
+    a4 getAt:3 |
+        if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
+].
+
 //// --- MethodNotFoundTest ---
 //
 //#symbol MethodNotFoundTest =

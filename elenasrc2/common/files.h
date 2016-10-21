@@ -139,17 +139,6 @@ class Path
    //   }
    //
    //#ifdef _WIN32
-   //   static bool checkExtension(const char* path, const char* extension)
-   //   {
-   //      int namepos = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
-   //
-   //      int pos = StringHelper::findLast(path + namepos, '.');
-   //      if (pos != -1) {
-   //         return StringHelper::compare(path + namepos + pos + 1, extension);
-   //      }
-   //      else return emptystr(extension);
-   //   }
-   //
    //   static void combinePath(Path& dest, path_t sour)
    //   {
    //      Path subPath(sour);
@@ -270,6 +259,20 @@ public:
    }
    
 #ifdef _WIN32
+   static bool checkExtension(const char* path, const char* extension)
+   {
+      ident_t s = path;
+      int len = getlength(s);
+
+      int namepos = s.findLast(PATH_SEPARATOR) + 1;
+
+      int pos = s.findSubStr(namepos, '.', len - namepos, -1);
+      if (pos != -1) {
+         return ident_t(path + namepos + pos + 1).compare(extension);
+      }
+      else return emptystr(extension);
+   }
+
    operator const path_c*() const { return _path; }
 
    void copy(const char* path)
@@ -384,6 +387,8 @@ class FileName
 public:
    operator const path_c*() const { return path_t(_path); }
 
+   path_t path() { return path_t(_path); }
+
    //static void load(FileName& dest, const char* path)
    //{
    //   int index = StringHelper::findLast(path, PATH_SEPARATOR) + 1;
@@ -409,10 +414,10 @@ public:
    //   copy(path + dotpos + 1);
    //}
 
-   //FileName(path_t path)
-   //{
-   //   copyName(path);
-   //}
+   FileName(path_t path)
+   {
+      copyName(path);
+   }
 
    FileName(ident_t pathStr)
    {
