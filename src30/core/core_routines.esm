@@ -2458,3 +2458,20 @@ labErr:
   throw
 
 end
+
+procedure __args.eval&readLength&vint$[2]
+
+  aloadsi 1
+  bcopya
+  dcopy 0
+labSearch:
+  get
+  inc
+  elser labSearch 0
+  dec
+  ecopyd
+  bloadsi 2
+  nsave
+  quitn 2
+
+end

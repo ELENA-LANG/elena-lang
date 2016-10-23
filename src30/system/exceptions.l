@@ -257,25 +257,25 @@
         <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
-//// --- MethodNotSupported ---
-//
-//#class(exceptionof:NotSupportedError) NotSupportedException
-//{
-//    #constructor new &literal:message
-//    [
-//        theMessage := message.
-//        theCallStack := CallStack new.
-//    ]
-//    
-//    /// Creates the exception
-//    #constructor new
-//        <= new &literal:"Operation is not supported".
-//        
-//    /// Creates the exception
-//    #constructor new :aMessage
-//        <= new &literal:(aMessage literal).
-//}
-//
+// --- MethodNotSupported ---
+
+#class(exceptionof:NotSupportedError) NotSupportedException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Operation is not supported".
+        
+    /// Creates the exception
+    #constructor new :aMessage
+        <= new &literal:(aMessage literal).
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 

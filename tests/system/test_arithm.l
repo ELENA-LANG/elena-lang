@@ -5,56 +5,34 @@
 //#import system'calendar.
 #import extensions.
 //#import extensions'dynamic.
-//
-//// --- OpenArgTest ---
-//
-//#symbol OpenArgTester =
-//{
-////    #method testUnboxing : anArg1 : anArg2 : anArg3
-////    [
-////        #var b := anArg1.
-////    ]
-//
-//    test : anIndex &args:aParams
-//        = aParams @ (anIndex int).
-//
-//    testParamsCopy &args: aParams
-//    [        
-//        #var n := aParams @ 0.
-//
-//        $self testBoxing:aParams.
-//                        
-//        #var n2 := $self test:0 &args:aParams.
-//                        
-//        ^ n.
-//    ]
-//            
-//    test &args : aParams
-//    [
-//        #var n := $self testParamsCopy &args:aParams.
-//        
-//        #var aLength := aParams length.
-//        
-//        #var aSecond := aParams@1.
-//        
-//        $self testBoxing:aParams.
-////        $self testUnboxing::aParams.
-//    ]
-//    
-//    testBoxing : anArray
-//    [
-//        #var b := anArray.
-//    ]    
-//}.
-//
-//#symbol OpenArgTest =
-//[
-//    OpenArgTester testParamsCopy &args:1:"a":3.
-//
-//    #var aRetVal := OpenArgTester test:1 &args:1:"a":3.
-//
-//    OpenArgTester test &args:1:"a":3.
-//].
+
+// --- OpenArgTest ---
+
+#symbol OpenArgTester =
+{
+    test : anIndex &args:aParams
+        = aParams @ (anIndex int).
+
+    testParamsCopy &args : aParams
+    [
+        #var aLength := aParams length.
+        
+        #var aSecond := aParams@1.
+        #var aFirst := $self test:0 &args:aParams.
+        
+        $self testBoxing:aParams.
+    ]
+    
+    testBoxing : anArray
+    [
+        #var b := anArray.
+    ]    
+}.
+
+#symbol OpenArgTest =
+[
+    OpenArgTester testParamsCopy &args:(1,"a",3).
+].
 
 // --- MultiDispatchTest ---
 

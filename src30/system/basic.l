@@ -818,15 +818,15 @@
 //    /// Creates the object with specified value
 //    #constructor(stacksafe) new &byte:value
 //        = intConvertor convert &byte:value.
-//
-//    /// Creates the object with a default value (0)
-//    #constructor new
-//        <= new &int:0.
-//
-//    /// Creates the object with specified value
-//    #constructor new : anObject
-//        <= new &int:(anObject int).
-//
+
+    /// Creates the object with a default value (0)
+    #constructor new
+        <= new &int:0.
+
+    /// Creates the object with specified value
+    #constructor new : anObject
+        <= new &int:(anObject int).
+
 //    /// Returns the value as a short integer    
 //    #method(stacksafe) short = shortConvertor convert &int:$self.
 //

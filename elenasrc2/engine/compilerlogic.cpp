@@ -158,6 +158,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
    operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
    operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
+
+   // array of arg list
+   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_ARGARRAY, V_INT32, lxArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ref_t& outputType)
@@ -199,12 +203,12 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
    else return tpUnknown;
 }
 
-int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t messageRef, bool& classFound, ref_t& outputType)
+int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, bool& classFound, ref_t& outputType)
 {
-   if (classReference == 0)
-      classReference = scope.superReference;
+   if (classReference == V_ARGARRAY)
+      classReference = scope.paramsReference;
 
-   int methodHint = classReference != 0 ? checkMethod(scope, classReference, messageRef, classFound, outputType) : 0;
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, classFound, outputType);
    int callType = methodHint & tpMask;
 
    return callType;
@@ -449,10 +453,12 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
 void CompilerLogic :: injectOperation(SNode node, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t type)
 {
    int size = 0;
-   if (reference == V_BINARY || operationType == lxBinArrOp) {
+   if (operationType == lxBinArrOp) {
       // HOTFIX : define an item size for the binary array operations
       size = -defineStructSize(scope, V_BINARYARRAY, type);
+   }
 
+   if (reference == V_BINARY && type != 0) {
       reference = scope.attributeHints.get(type);
    }
    else if (reference == V_OBJECT && type != 0) {

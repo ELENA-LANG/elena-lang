@@ -145,7 +145,7 @@ class ByteCodeWriter
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -173,11 +173,11 @@ class ByteCodeWriter
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-//   void boxArgList(CommandTape& tape, ref_t vmtReference);
-//   void unboxArgList(CommandTape& tape);
+   void boxArgList(CommandTape& tape, ref_t vmtReference);
+   void unboxArgList(CommandTape& tape);
 
    void releaseObject(CommandTape& tape, int count = 1);
-//   void releaseArgList(CommandTape& tape);
+   void releaseArgList(CommandTape& tape);
 
    void setSubject(CommandTape& tape, ref_t subject);
 
@@ -194,7 +194,7 @@ class ByteCodeWriter
    void jumpIfEqual(CommandTape& tape, ref_t ref);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool jumpToEnd = false);
 
-//   void throwCurrent(CommandTape& tape);
+   void throwCurrent(CommandTape& tape);
 
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
@@ -285,7 +285,7 @@ class ByteCodeWriter
    void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
    void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node);

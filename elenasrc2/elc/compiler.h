@@ -129,7 +129,7 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
-//      okParams,                       // param - local offset
+      okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 
@@ -547,7 +547,7 @@ private:
       LocalMap     parameters;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      bool         withOpenArg;
+      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
@@ -1008,8 +1008,8 @@ private:
 
    void compileTrying(SNode node, CodeScope& scope);
    void compileLoop(SNode node, CodeScope& scope);
-//   void compileThrow(DNode node, CodeScope& scope, int mode);
-////   void compileTry(DNode node, CodeScope& scope);
+   void compileThrow(SNode node, CodeScope& scope, int mode);
+//   void compileTry(DNode node, CodeScope& scope);
 //   void compileLock(DNode node, CodeScope& scope);
 
    void compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/);
@@ -1114,7 +1114,7 @@ private:
 
    void optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
 //   void optimizeTypecast(ModuleScope& scope, SyntaxTree::Node node, int warningLevel, int mode);
-//   void optimizeArgUnboxing(ModuleScope& scope, SyntaxTree::Node node, int warningLevel);
+   void optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope);
    void optimizeNestedExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
    void optimizeSyntaxNode(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode);
    void optimizeSyntaxExpression(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode = 0);

@@ -187,10 +187,10 @@
 //    ]
 }
 
-//// --- indexableOp ---
-//
-//#class(extension)indexableOp
-//{
+// --- indexableOp ---
+
+#class(extension)indexableOp
+{
 //    #method exchange : anIndex1 : anIndex2
 //        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
 //        
@@ -253,58 +253,58 @@
 //        
 //        ^ aCopy.
 //    ]
-//    
-//    #method set &every:anIndexFunc
-//        = self::indexableOp set &nfunc:(anIndexFunc nfunc).
-//        
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(iterator)aIndexer := self iterator.
-//
-//        #loop (aIndexer available) ?
-//        [
-//            #var(int)anIndex.
-//            aIndexer readIndex &vint:anIndex.
-//            
-//            aIndexer set:(anIndexFunc eval &int:anIndex).
-//            
-//            aIndexer append &index:1.
-//        ].
-//        
-//        ^ self.
-//    ]    
-//
-//    #method sort : aCompareFunc
-//        = self::indexableOp sort &func2:(aCompareFunc func2).
-//    
-//    #method(w2) sort &func2:aCompareFunc
-//    [
-//        #var(iterator) aFormer := self iterator.
-//        #var(iterator) aLater := self iterator.
-//
-//        #loop (aFormer available) ?
-//        [
-//            #var(int)i := aFormer index.
-//            
-//            aLater writeIndex &int:(i + 1).
-//            
-//            #loop (aLater available) ?
-//            [
-//                (aCompareFunc eval:(aFormer get):(aLater get))
-//                    ! [
-//                        #var aTmp := aFormer get.
-//                        aFormer set:(aLater get).
-//                        aLater set:aTmp.
-//                    ].
-//                    
-//                aLater append &index:1.
-//            ].
-//            aFormer append &index:1.
-//        ].
-//        
-//        ^ self.
-//    ]
-//    
+    
+    #method set &every:anIndexFunc
+        = self::indexableOp set &nfunc:(anIndexFunc nfunc).
+        
+    #method set &nfunc:anIndexFunc
+    [
+        #var(iterator)aIndexer := self iterator.
+
+        #loop (aIndexer available) ?
+        [
+            #var(int)anIndex.
+            aIndexer readIndex &vint:anIndex.
+            
+            aIndexer set:(anIndexFunc eval &int:anIndex).
+            
+            aIndexer append &index:1.
+        ].
+        
+        ^ self.
+    ]    
+
+    #method sort : aCompareFunc
+        = self::indexableOp sort &func2:(aCompareFunc func2).
+    
+    #method(w2) sort &func2:aCompareFunc
+    [
+        #var(iterator) aFormer := self iterator.
+        #var(iterator) aLater := self iterator.
+
+        #loop (aFormer available) ?
+        [
+            #var(int)i := aFormer index.
+            
+            aLater writeIndex &int:(i + 1).
+            
+            #loop (aLater available) ?
+            [
+                (aCompareFunc eval:(aFormer get):(aLater get))
+                    ! [
+                        #var aTmp := aFormer get.
+                        aFormer set:(aLater get).
+                        aLater set:aTmp.
+                    ].
+                    
+                aLater append &index:1.
+            ].
+            aFormer append &index:1.
+        ].
+        
+        ^ self.
+    ]
+    
 //    #method ascendant
 //        = (self clone)::indexableOp sort:ifOrdered.
 //
@@ -370,8 +370,8 @@
 //        
 //        ^ self.
 //    ]    
-//}
-//
+}
+
 //// --- stringListOp ---
 //
 //#symbol stringListOpDispatcher =

@@ -29,6 +29,7 @@
 
 #define V_OBJARRAY    (size_t)-30
 #define V_INT32ARRAY  (size_t)-31
+#define V_ARGARRAY    (size_t)-32
 #define V_BINARYARRAY (size_t)-35
 #define V_INT16ARRAY  (size_t)-38
 #define V_INT8ARRAY   (size_t)-39
@@ -109,6 +110,7 @@ struct _CompilerScope
    ref_t wideReference;
    ref_t charReference;
    ref_t arrayReference;
+   ref_t paramsReference;
 
    // list of typified classes which may need get&type message
    ClassMap    typifiedClasses;
@@ -127,6 +129,7 @@ struct _CompilerScope
       signatureReference = verbReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
+      paramsReference = 0;
    }
 };
 
@@ -163,7 +166,7 @@ public:
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
-   virtual int resolveCallType(_CompilerScope& scope, ref_t classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
+   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, bool& classFound, ref_t& outputType) = 0;
 
    // retrieve the operation type
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;

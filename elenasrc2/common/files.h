@@ -44,11 +44,12 @@ public:
    }
    int findLast(int index, path_c ch, int defValue)
    {
-      while (index > 0) {
-         if (_path[index] == ch)
-            return index;
+      int i = getlength(_path);
+      while (i >= index) {
+         if (_path[i] == ch)
+            return i;
 
-         index--;
+         i--;
       }
 
       return defValue;
@@ -252,7 +253,7 @@ public:
       int namepos = path.findLast(PATH_SEPARATOR) + 1;
       int index = path.findLast(namepos, '.', -1);
       if (index >= 0) {
-         _path[(size_t)index + namepos] = 0;
+         _path[index] = 0;
       }
       _path.append('.');
       _path.append(extension);

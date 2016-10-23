@@ -467,7 +467,7 @@ Compiler::ModuleScope :: ModuleScope(_ProjectManager* project, ident_t sourcePat
    signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
    messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
    verbReference = mapReference(project->resolveForward(VERB_FORWARD));
-//   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
+   paramsReference = mapReference(project->resolveForward(PARAMS_FORWARD));
 //   trueReference = mapReference(project->resolveForward(TRUE_FORWARD));
 //   falseReference = mapReference(project->resolveForward(FALSE_FORWARD));
    arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
@@ -1265,7 +1265,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->message = 0;
    this->reserved = 0;
    this->rootToFree = 1;
-//   this->withOpenArg = false;
+   this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
    this->generic = false;
 //   this->sealed = false;
@@ -1290,10 +1290,10 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
 
       int local = param.offset;
       if (local >= 0) {
-//         if (withOpenArg && moduleScope->subjectHints.exist(param.subj_ref, moduleScope->paramsReference)) {
-//            return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
-//         }
-         /*else */if (stackSafe && param.subj_ref != 0 && param.size != 0) {
+         if (withOpenArg && moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+            return ObjectInfo(okParams, -1 - local, 0, param.subj_ref);
+         }
+         else if (stackSafe && param.subj_ref != 0 && param.size != 0) {
             return ObjectInfo(okParam, -1 - local, -1, param.subj_ref);
          }
          return ObjectInfo(okParam, -1 - local, 0, param.subj_ref);
@@ -1407,7 +1407,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
 {
-   if (identifier.compare(THIS_VAR)/* || identifier.compare(OWNER_VAR)*/) {
+   if (identifier.compare(THIS_VAR) || identifier.compare(OWNER_VAR)) {
       Outer owner = mapSelf();
 
       // map as an outer field (reference to outer object and outer object field index)
@@ -1821,8 +1821,8 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return object.param;
 //      case okTemplateLocal:
 //         return object.extraparam;
-//      case okParams:
-//         return scope.moduleScope->paramsReference;
+      case okParams:
+         return V_ARGARRAY;
       case okExternal:
          return V_INT32;
       case okMessageConstant:
@@ -1871,34 +1871,20 @@ void Compiler :: declareParameterDebugInfo(SNode node, MethodScope& scope, bool 
          ident_t name = current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier();
          Parameter param = scope.parameters.get(name);
 
-//      if (scope.moduleScope->subjectHints.exist((*it).subj_ref, moduleScope->paramsReference)) {
-//         writer.newNode(lxParamsVariable);
+         if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->paramsReference)) {
+            current = lxParamsVariable;
 //         writer.appendNode(lxTerminal, it.key());
 //         writer.appendNode(lxLevel, -1 - (*it).offset);
 //         writer.closeNode();
-//      }
-         /*else */if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->intReference)) {
+         }
+         else if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->intReference)) {
             current = lxIntVariable;
-//         writer.newNode(current = lxVariable;);
-//         writer.appendNode(lxTerminal, it.key());
-//         writer.appendNode(lxFrameAttr);
-//         writer.closeNode();
          }
          else if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->longReference)) {
             current = lxLongVariable;
-   //         writer.newNode(lxLongVariable);
-   //         writer.appendNode(lxTerminal, it.key());
-   //         writer.appendNode(lxLevel, -1 - (*it).offset);
-   //         writer.appendNode(lxFrameAttr);
-   //         writer.closeNode();
          }
          else if (scope.moduleScope->attributeHints.exist(param.subj_ref, moduleScope->realReference)) {
             current = lxReal64Variable;
-   //         writer.newNode(lxReal64Variable);
-   //         writer.appendNode(lxTerminal, it.key());
-   //         writer.appendNode(lxLevel, -1 - (*it).offset);
-   //         writer.appendNode(lxFrameAttr);
-   //         writer.closeNode();
          }
          else if (scope.stackSafe && param.subj_ref != 0) {
             ref_t classRef = scope.moduleScope->attributeHints.get(param.subj_ref);
@@ -1906,12 +1892,6 @@ void Compiler :: declareParameterDebugInfo(SNode node, MethodScope& scope, bool 
                current = lxBinaryVariable;
                current.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
             }
-//         else writer.newNode(lxVariable, -1);
-//         
-//         writer.appendNode(lxTerminal, it.key());
-//         writer.appendNode(lxLevel, -1 - (*it).offset);
-//         writer.appendNode(lxFrameAttr);
-//         writer.closeNode();
          }
 //         else {
       //   writer.newNode(lxVariable, -1);
@@ -2795,10 +2775,11 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
 //      case okBlockLocal:
 //         scope.writer->newNode(lxBlockLocal, object.param);
 //         break;
-//      case okParams:
-//         scope.writer->newNode(lxArgBoxing);
-//         scope.writer->appendNode(lxBlockLocalAddr, object.param);
-//         break;
+      case okParams:
+         terminal.set(lxArgBoxing, 0);
+         terminal.appendNode(lxBlockLocalAddr, object.param);
+         terminal.appendNode(lxTarget, scope.moduleScope->paramsReference);
+         break;
       case okObject:
          terminal.set(lxResult, 0);
          break;
@@ -3082,33 +3063,27 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    IdentifierString signature;
    SNode arg = node.findChild(lxMessage);
 
-   //// check if it is a short-cut eval message
-   //if (node == lxMethodParameter) {
-   //   verb_id = EVAL_MESSAGE_ID;
-   //}
-   //else {
-      SNode name = arg.findChild(lxPrivate, lxIdentifier);
+   SNode name = arg.findChild(lxPrivate, lxIdentifier);
 
-      verb_id = _verbs.get(name.findChild(lxTerminal).identifier());
-      if (verb_id == 0) {
-         ref_t id = scope.mapSubject(name, signature);
+   verb_id = _verbs.get(name.findChild(lxTerminal).identifier());
+   if (verb_id == 0) {
+      ref_t id = scope.mapSubject(name, signature);
    
-         // if followed by argument list - it is EVAL verb
-         if (arg.nextNode() != lxNone) {
-//            // HOT FIX : strong types cannot be used as a custom verb with a parameter
-//            if (scope.moduleScope->subjectHints.exist(id))
-//               scope.raiseError(errStrongTypeNotAllowed, verb);
+      // if followed by argument list - it is EVAL verb
+      if (arg.nextNode() != lxNone) {
+         // HOT FIX : strong types cannot be used as a custom verb with a parameter
+         if (scope.moduleScope->attributeHints.exist(id))
+            scope.raiseError(errStrongTypeNotAllowed, arg);
 
-            verb_id = EVAL_MESSAGE_ID;
+         verb_id = EVAL_MESSAGE_ID;
 
-            first = false;
-         }
-         // otherwise it is GET message
-         else verb_id = GET_MESSAGE_ID;
+         first = false;
       }
+      // otherwise it is GET message
+      else verb_id = GET_MESSAGE_ID;
+   }
 
-      arg = arg.nextNode();
-//   }
+   arg = arg.nextNode();
 
    paramCount = 0;
    // if message has generic argument list
@@ -3126,32 +3101,33 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
       }
       else first = false;
 
-      arg.setArgument(scope.mapSubject(subject, signature));
+      ref_t subjRef = scope.mapSubject(subject, signature);
+      arg.setArgument(subjRef);
    
       arg = arg.nextNode();
 
       // skip an argument
       if (test(arg.type, lxObjectMask)) {
-   //         // if it is an open argument list
-   //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-   //            paramCount += OPEN_ARG_COUNT;
-   //            if (paramCount > 0x0F)
-   //               scope.raiseError(errNotApplicable, subject);
-   //
+         // if it is an open argument list
+         if (arg.nextNode() == lxNone && scope.moduleScope->attributeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0x0F)
+               scope.raiseError(errNotApplicable, subject);
+
    //            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
    //            // HOTFIX : set flag if the argument list has to be unboxed
    //            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
    //               argsUnboxing = true;
    //            }
-   //         }
-   //         else {
-         paramCount++;
+         }
+         else {
+            paramCount++;
    
-         if (paramCount >= OPEN_ARG_COUNT)
-            scope.raiseError(errTooManyParameters, node);
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, node);
    
-         arg = arg.nextNode();
-   //         }
+            arg = arg.nextNode();
+         }
       }
    }
 
@@ -3282,19 +3258,27 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
    ObjectInfo retVal(okObject);
    int paramCount = 1;
 
-   SNode loperandNode = node.firstChild(lxObjectMask);
-   ObjectInfo loperand = compileExpression(loperandNode, scope, 0);
-
-   SNode roperandNode = loperandNode.nextNode(lxObjectMask);   
-   ObjectInfo roperand = compileExpression(roperandNode, scope, 0);
-
-   // HOTFIX : recognize SET_REFER_MESSAGE_ID
+   ObjectInfo loperand;
+   ObjectInfo roperand;
    ObjectInfo roperand2;
-   if (operator_id == REFER_MESSAGE_ID && roperandNode.nextNode() == lxAssign) {
-      paramCount++;
-      operator_id = SET_REFER_MESSAGE_ID;
+   if (operator_id == SET_REFER_MESSAGE_ID) {
+      SNode exprNode = node.firstChild(lxObjectMask);
 
-      roperand2 = compileExpression(roperandNode.nextNode(lxObjectMask), scope, 0);
+      SNode loperandNode = exprNode.firstChild(lxObjectMask);
+      loperand = compileExpression(loperandNode, scope, 0);
+
+      SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+      roperand = compileExpression(roperandNode, scope, 0);
+      roperand2 = compileExpression(exprNode.nextNode(lxObjectMask), scope, 0);
+
+      paramCount++;
+   }
+   else {
+      SNode loperandNode = node.firstChild(lxObjectMask);
+      loperand = compileExpression(loperandNode, scope, 0);
+
+      SNode roperandNode = loperandNode.nextNode(lxObjectMask);
+      roperand = compileExpression(roperandNode, scope, 0);
    }
       
    ref_t loperandRef = resolveObjectReference(scope, loperand);
@@ -3314,7 +3298,7 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
 
       retVal = assignResult(scope, node, resultClassRef);
    }
-   else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, paramCount), 0);
+   else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, paramCount), HINT_NODEBUGINFO);
 
    //   bool dblOperator = IsDoubleOperator(operator_id);
    //   bool notOperator = IsInvertedOperator(operator_id);
@@ -3416,9 +3400,6 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
       // parent methods are always sealed
       callType = tpSealed;
    }
-//   //else if (target.kind == okTemplateTarget) {
-//   //   templateCall = true;
-//   //}
 
 //   if (dispatchCall) {
 //      scope.writer->insert(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
@@ -3451,9 +3432,6 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
       // set a breakpoint
       setDebugStep(node.findChild(lxMessage, lxOperator), dsStep);
    }
-
-//   appendObjectInfo(scope, retVal);
-//   appendTerminalInfo(scope.writer, node.FirstTerminal());
 
    // define the message target if required
    if (target.kind == okConstantRole) {
@@ -3504,11 +3482,11 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
    ObjectInfo target;
 
    int paramMode = 0;
-   //   //// HOTFIX : if open argument list has to be unboxed
-   //   //// alternative boxing routine should be used (using a temporal variable)
-   //   //if (argsUnboxing)
-   //   //   paramMode |= HINT_ALTBOXING;
-   //
+   //// HOTFIX : if open argument list has to be unboxed
+   //// alternative boxing routine should be used (using a temporal variable)
+   //if (argsUnboxing)
+   //   paramMode |= HINT_ALTBOXING;
+   
    SNode arg = node.firstChild();
    // compile the message target and generic argument list
    while (arg != lxMessage && arg != lxNone) {
@@ -3528,7 +3506,6 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
          }
          else compileExpression(arg, scope, paramMode);
       }
-      //paramCount++;
 
       arg = arg.nextNode();
    }
@@ -3541,35 +3518,45 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
 
       // compile an argument
       if (test(arg.type, lxObjectMask)) {
-         //         // if it is an open argument list
-         //         if (arg.nextNode() != nsSubjectArg && scope.moduleScope->subjectHints.exist(subjRef, scope.moduleScope->paramsReference)) {
-         //            // check if argument list should be unboxed
-         //            DNode param = arg.firstChild();
-         //
-         //            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
-         //            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
-         //               scope.writer->newNode(lxArgUnboxing);
-         //               writeTerminal(arg.firstChild().Terminal(), scope, argListParam);
-         //               scope.writer->closeNode();
-         //            }
-         //            else {
-         //               while (arg != nsNone) {
-         //                  compileExpression(arg.firstChild(), scope, 0, paramMode);
-         //
-         //                  arg = arg.nextNode();
-         //               }
-         //
-         //               // terminator
-         //               writeTerminal(TerminalInfo(), scope, ObjectInfo(okNil));
-         //            }
-         //         }
-         //         else {
-         ObjectInfo param = compileExpression(arg, scope, paramMode);
-         if (subjectRef != 0)
-            typecastObject(arg, scope, subjectRef, param);
+         // if it is an open argument list
+         if (arg.nextNode() != lxMessage && scope.moduleScope->attributeHints.exist(subjectRef, scope.moduleScope->paramsReference)) {
+            if (arg == lxExpression) {
+               SNode argListNode = arg.firstChild();
+               while (argListNode != lxNone) {
+                  compileExpression(argListNode, scope, paramMode);
+               
+                  argListNode = argListNode.nextNode();
+               }
+               
+               // terminator
+               arg.appendNode(lxNil);
 
-         arg = arg.nextNode();
-         //         }
+               // HOTFIX : copy the argument list into the call expression
+               SyntaxTree::copyNode(arg, node);
+               arg = lxIdle;
+            }
+            else {
+               ObjectInfo argListParam = compileExpression(arg, scope, paramMode);
+               if (argListParam.kind == okParams) {
+                  arg.refresh();
+
+                  // unbox param list
+                  arg.injectNode(arg.type, arg.argument);
+                  arg.set(lxArgUnboxing, 0);
+               }
+               else {
+                  // treat it like an argument list with one parameter
+                  node.appendNode(lxNil);
+               }
+            }
+         }
+         else {
+            ObjectInfo param = compileExpression(arg, scope, paramMode);
+            if (subjectRef != 0)
+               typecastObject(arg, scope, subjectRef, param);
+
+            arg = arg.nextNode();
+         }
       }
    }
 
@@ -3618,13 +3605,9 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
    SNode operation = node.findChild(lxMessage, lxExpression, lxAssign);
    if (operation == lxExpression) {
       exprNode = operation;
-      operation = exprNode.findChild(lxMessage);
+      operation = exprNode.findChild(lxMessage, lxOperator);
    }
 
-//   // if it setat operator
-//   if (member == nsL0Operation) {
-//      return compileOperations(node, scope, object, mode);
-//   }
    // if it is shorthand property settings
    if (operation == lxMessage) {
       //if (operation.nextNode() != lxAssign)
@@ -3661,6 +3644,10 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
 //      else compileExpression(member.nextNode().firstChild(), scope, 0, 0);
 
       return compileMessage(node, scope, target, messageRef, HINT_NODEBUGINFO);
+   }
+   // if it setat operator
+   else if (operation == lxOperator) {
+      compileOperator(node, scope, mode, SET_REFER_MESSAGE_ID);
    }
    else {
       SNode targetNode = node.firstChild(lxObjectMask);
@@ -4295,14 +4282,10 @@ ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, Obje
    return ObjectInfo(okObject);
 }
 
-//void Compiler :: compileThrow(DNode node, CodeScope& scope, int mode)
-//{
-//   scope.writer->newNode(lxThrowing);
-//
-//   ObjectInfo object = compileExpression(node.firstChild(), scope, 0, mode);
-//
-//   scope.writer->closeNode();
-//}
+void Compiler :: compileThrow(SNode node, CodeScope& scope, int mode)
+{
+   ObjectInfo object = compileExpression(node.firstChild(), scope, mode);
+}
 
 void Compiler :: compileLoop(SNode node, CodeScope& scope)
 {
@@ -4418,9 +4401,9 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
             compileExpression(current, scope, HINT_ROOT);
             insertDebugStep(current, dsStep);
             break;
-//         case nsThrow:
-//            compileThrow(statement, scope, 0);
-//            break;
+         case lxThrowing:
+            compileThrow(current, scope, 0);
+            break;
          case lxLoop:
             insertDebugStep(current, dsStep);
             compileLoop(current, scope);
@@ -4841,20 +4824,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          int index = 1 + scope.parameters.Count();
 
-//         // if it is an open argument type
-//         if (scope.moduleScope->subjectHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
-//            scope.parameters.add(arg.Terminal(), Parameter(index, subj_ref));
-//
-//            // the generic arguments should be free by the method exit
-//            scope.rootToFree += paramCount;
-//            scope.withOpenArg = true;
-//
-//            // to indicate open argument list
-//            paramCount += OPEN_ARG_COUNT;
-//            if (paramCount > 0xF)
-//               scope.raiseError(errNotApplicable, arg.Terminal());
-//         }
-//         else {
+         // if it is an open argument type
+         if (scope.moduleScope->attributeHints.exist(subj_ref, scope.moduleScope->paramsReference)) {
+            scope.parameters.add(name, Parameter(index, subj_ref));
+
+            // the generic arguments should be free by the method exit
+            scope.rootToFree += paramCount;
+            scope.withOpenArg = true;
+
+            // to indicate open argument list
+            paramCount += OPEN_ARG_COUNT;
+            if (paramCount > 0xF)
+               scope.raiseError(errNotApplicable, arg);
+         }
+         else {
             paramCount++;
             if (paramCount >= OPEN_ARG_COUNT)
                scope.raiseError(errTooManyParameters, verb);
@@ -4865,7 +4848,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             scope.parameters.add(name, Parameter(index, subj_ref, 0, size));
 
             arg = arg.nextNode();
-//         }
+         }
       }
    }
 
@@ -7220,7 +7203,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
    if (node.existChild(lxTypecastAttr)) {
       warningScope.raise(scope, WARNING_LEVEL_2, wrnTypeMismatch, node.firstChild(lxObjectMask));
    }
-   if (node.existChild(lxNotFoundAttr)) {
+   else if (node.existChild(lxNotFoundAttr)) {
       warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxBreakpoint));
    }
 
@@ -7741,15 +7724,15 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
 //
 //   return variable;
 //}
-//
-//void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, int warningLevel)
-//{
-//   SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//   if (object == lxArgBoxing)
-//      object = lxExpression;
-//
-//   optimizeSyntaxExpression(scope, node, warningLevel);
-//}
+
+void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope)
+{
+   SNode object = node.firstChild(lxObjectMask);
+   if (object == lxArgBoxing)
+      object = lxExpression;
+
+   optimizeSyntaxExpression(scope, node, warningScope);
+}
 
 void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
@@ -8142,7 +8125,7 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxBoxing:
       case lxCondBoxing:
       case lxUnboxing:
-//      case lxArgBoxing:
+      case lxArgBoxing:
          optimizeBoxing(scope, current, warningScope, mode);
          break;
       case lxIntOp:
@@ -8173,9 +8156,9 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
       case lxCode:
          optimizeSyntaxExpression(scope, current, warningScope/*, HINT_NOBOXING*/);
          break;
-//      case lxArgUnboxing:
-//         optimizeArgUnboxing(scope, current, warningMask);
-//         break;
+      case lxArgUnboxing:
+         optimizeArgUnboxing(scope, current, warningScope);
+         break;
       default:
          if (test(current.type, lxCodeScopeMask)) {
             optimizeSyntaxExpression(scope, current, warningScope);

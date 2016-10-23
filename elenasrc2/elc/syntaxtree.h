@@ -91,12 +91,15 @@ enum LexicalType
    lxResultField     = 0x0A11A, // arg -offset
    lxCurrentMessage  = 0x0A11B,
    lxThisLocal       = 0x0A11C,
-   lxConstantList    = 0x08A11E, // arg - reference
+   lxConstantList    = 0x0A11E, // arg - reference
+   lxBlockLocalAddr  = 0x0A11F, // arg - offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
    lxLocalUnboxing   = 0x0C003,   // arg - size
    lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
+   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
+   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
@@ -106,6 +109,7 @@ enum LexicalType
    lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
+   lxThrowing        = 0x0C013,
    lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
@@ -147,6 +151,7 @@ enum LexicalType
    lxIntsVariable    = 0x1003B,
    lxBytesVariable   = 0x1003C,
    lxShortsVariable  = 0x1003D,
+   lxParamsVariable  = 0x1003E,
 
    // attributes
    lxAttribute       = 0x20000,
@@ -206,15 +211,11 @@ enum LexicalType
 //   lxIdle            = 0x00003,
 //
 //   lxSymbol = 0x20103, // arg - reference
-//   lxBlockLocalAddr = 0x04109, // arg - offset
 //   lxCurrentField = 0x0411D, // arg -offset
 //
-//   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
 //   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
-//   lxThrowing        = 0x00313,
 //   lxExtInteranlRef  = 0x00319,
-//   lxArgUnboxing     = 0x0031E,
 //   lxExternFrame     = 0x00327,
 //   lxBody            = 0x00329,
 //
@@ -222,7 +223,6 @@ enum LexicalType
 //   lxBoolOp          = 0x0032B, // arg - operation id
 //   lxNilOp           = 0x0032C, // arg - operation id
 //
-//   lxParamsVariable  = 0x0042F,
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //
 //   //lxSubject         = 0x40804, // arg - subject

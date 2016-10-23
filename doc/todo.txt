@@ -3,9 +3,8 @@ In development:
 ------                              
 
               xrev
-                 * optimize : xchararray.getat&int$[1]
+                 * support open arg list
 
-                 * box primitive operation if it is used in calling
                  * typecast primitive array operation results
 
                  * switch statement with comparision
@@ -24,6 +23,8 @@ In development:
                  * support array of short
                  * support array of typed objects
                  * support array of objects
+
+                 * test operations with primitive arrays
 
                  * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
                  * check primitive comparision operation
@@ -99,6 +100,9 @@ In development:
                  * test sg
                  * wrong warning : vint literal ; do not raise a warning if the object has custom dispatcher
                  * ide : call stack is corrupted
+                 * bytearray.getAt&int$[1] - two jumps in row, the second one is idle, jump after the throw - idle as well
+                 * optimize sort method : use typified lamda expression
+                 * review ArgArray operations : should it be optimized
 
               xdev
                 * linux migration

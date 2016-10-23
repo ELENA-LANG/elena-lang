@@ -22,7 +22,7 @@
     RoleTest eval.
     ConvertorTest eval.
     ArrayTest eval.
-//    OpenArgTest eval.
+    OpenArgTest eval.
 //    MethodNotFoundTest eval.
 //    ExceptionTest eval.
 //    DateTest eval.

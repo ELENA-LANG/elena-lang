@@ -173,6 +173,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
       case nsObject:
          copyObject(node, mode);
          break;
+      case nsThrow:
+         _writer.newNode(lxThrowing);
+         unpackChildren(node);
+         _writer.closeNode();
+         break;
       case nsCodeEnd:
          _writer.newNode(lxEOF);
          copyChildren(node.firstChild());
@@ -219,7 +224,21 @@ void DerivationWriter :: copyExpression(SNode node, bool explicitOne)
 
 void DerivationWriter :: copyObject(SNode node, int mode)
 {
-   unpackChildren(node, mode);
+   int exprCounter = 0;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == nsExpression)
+         exprCounter++;
+
+      unpackNode(current, mode);
+
+      current = current.nextNode();
+   }
+
+   if (mode == 1 && exprCounter > 1) {
+      _writer.insert(lxExpression);
+      _writer.closeNode();
+   }
 }
 
 void DerivationWriter :: copySwitching(SNode node)

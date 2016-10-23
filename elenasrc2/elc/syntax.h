@@ -75,7 +75,7 @@ enum Symbol
    nsResendExpression           = 0x01031,
    nsInlineExpression           = 0x01032,
    nsMessageReference           = 0x01033,
-   //nsThrow                      = 0x01034,
+   nsThrow                      = 0x01034,
    nsImport                     = 0x01035,
    nsDispatchHandler            = 0x01036,
    //nsLock                       = 0x01037,

@@ -387,6 +387,7 @@ namespace _ELENA_
    #define WRITE_MESSAGE            "write"
    #define RAISE_MESSAGE            "raise"
    #define IF_MESSAGE               "if"
+   #define IFNOT_MESSAGE            "ifnot"
    #define FIND_MESSAGE             "find"
    #define SEEK_MESSAGE             "seek"
    #define REWIND_MESSAGE           "rewind"
@@ -449,7 +450,7 @@ namespace _ELENA_
 //   #define METHOD_SELF_VAR         "this"             // the current method self
    #define SELF_VAR                "self"             // the main object self
    #define THIS_VAR                "$self"            // the current class instance
-//   #define OWNER_VAR               "$owner"           // the current method self
+   #define OWNER_VAR               "$owner"           // the current method self
    #define SUPER_VAR               "$super"           // the predecessor class
    #define SUBJECT_VAR             "$subject"         // the current message
    #define NIL_VAR                 "$nil"             // the nil symbol
@@ -511,7 +512,7 @@ namespace _ELENA_
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
    #define ARRAY_FORWARD            "'$array"
-//   #define PARAMS_FORWARD           "'$params"
+   #define PARAMS_FORWARD           "'$params"
 //   #define SUBJ_FORWARD             "'$sign"
    #define BOOL_FORWARD             "'$bool"
 
