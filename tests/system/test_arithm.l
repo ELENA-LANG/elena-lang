@@ -1,8 +1,8 @@
 #import system.
 #import system'routines.
 //#import system'collections.
-//#import system'dynamic.
-//#import system'calendar.
+//#import system'dynaFmic.
+#import system'calendar.
 #import extensions.
 //#import extensions'dynamic.
 
@@ -183,49 +183,49 @@
     ]
 }.
 
-//#class MyException :: Exception
-//{
-//    #constructor new : aMessage
-//        <= %new &literal:(aMessage literal) &subject:%MyError.
-//}
-//
-//#class(exceptionof:MyError2) MyException2
-//{
-//    #constructor new : aMessage
-//    [
-//        theMessage := aMessage literal.
-//        theCallStack := CallStack new.
-//    ]
-//}
-//
-//#symbol ExecTester =
-//{
-//    do : anAction [ anAction eval. ]
-//
-//    do:x &with:y
-//    [
-//    ]
-//            
-//    run : anAction
-//    [
-//        anAction eval &x:"Eval Works!!".
-//    ]
-//    
-//    break
-//    [
-//        #throw MyException new:"OnError handler works".
-//    ]
-//    
-//    break2
-//    [
-//        #throw MyException2 new:"OnError2 handler works".
-//    ]
-//    
-//    break3
-//    [
-//        #throw MyException2 new:"Nested OnError2 handler works".
-//    ]
-//}.
+#class MyException :: Exception
+{
+    #constructor new : aMessage
+        <= %new &literal:(aMessage literal) &subject:%MyError.
+}
+
+#class(exceptionof:MyError2) MyException2
+{
+    #constructor new : aMessage
+    [
+        theMessage := aMessage literal.
+        theCallStack := CallStack new.
+    ]
+}
+
+#symbol ExecTester =
+{
+    do : anAction [ anAction eval. ]
+
+    do:x &with:y
+    [
+    ]
+            
+    run : anAction
+    [
+        anAction eval &x:"Eval Works!!".
+    ]
+    
+    break
+    [
+        #throw MyException new:"OnError handler works".
+    ]
+    
+    break2
+    [
+        #throw MyException2 new:"OnError2 handler works".
+    ]
+    
+    break3
+    [
+        #throw MyException2 new:"Nested OnError2 handler works".
+    ]
+}.
 
 #symbol ObjectTest =
 [
@@ -444,14 +444,14 @@
         if &OutOfRangeError: e [ console writeLine:"Index bigger than length is not allowed" ].
 ].
 
-//// --- MethodNotFoundTest ---
-//
-//#symbol MethodNotFoundTest =
-//[
-//    #var n := 2.
-//    
-//    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
-//].
+// --- MethodNotFoundTest ---
+
+#symbol MethodNotFoundTest =
+[
+    #var n := 2.
+    
+    n test | if &MethodNotFoundError: e [ console write:(e message) writeLine:" works". ].
+].
 
 // --- LoopTest ---
 
@@ -484,29 +484,29 @@
     &until:[j == 0].
 ].
 
-//// --- ExceptionTest ---
-//
-//#symbol ExceptionTest =
-//[
-//    ExecTester break | if &Error: e [ console writeLine:"Throw works!". ].
-//    
-//    ExecTester break | if &Error: e [ console writeLine:(e literal). ].
-//    
-//    ExecTester break2 
-//    | on:
-//    {
-//        MyError = e [ console writeLine:"!!Wrong handler". ].
-//        
-//        MyError2 = e [ console writeLine:(e literal). ].
-//    }.
-//    
-//    control do:
-//    [
-//        ExecTester break3 | if &MyError: e [ console writeLine:"!!Wrong handler". ].
-//    ]
-//    | if &MyError2: e [ console writeLine:(e literal). ].
-//    
-//].
+// --- ExceptionTest ---
+
+#symbol ExceptionTest =
+[
+    ExecTester break | if &Error: e [ console writeLine:"Throw works!". ].
+    
+    ExecTester break | if &Error: e [ console writeLine:(e literal). ].
+    
+    ExecTester break2 
+    | on:
+    {
+        MyError = e [ console writeLine:"!!Wrong handler". ].
+        
+        MyError2 = e [ console writeLine:(e literal). ].
+    }.
+    
+    control do:
+    [
+        ExecTester break3 | if &MyError: e [ console writeLine:"!!Wrong handler". ].
+    ]
+    | if &MyError2: e [ console writeLine:(e literal). ].
+    
+].
 
 // --- TextBufferTest ---
 
@@ -518,41 +518,41 @@
     #var anOutput := aBuffer literal.
 ].
 
-//// --- DateTest ---
+// --- DateTest ---
+
+#symbol DateTest =
+[
+    #var aDate := now.
+    
+    #var aYear := aDate year.
+    #var aMonth := aDate month.
+    #var aDay := aDate day.
+    #var anHour := aDate hour.
+    #var aMinute := aDate minute.
+    #var aSecond := aDate second.
+    
+    #var aRetVal := aDate literal.
+].
+
+//// --- GetPropertyTest ---
 //
-//#symbol DateTest =
+//#symbol GetPropertyAgent =
+//{
+//    eval : aGetProperty
+//    [
+//        #var n := aGetProperty property.
+//        
+//        2 == aGetProperty property
+//            ? [ console writeLine:"GetProperty works!". ]
+//            ! [ console writeLine:"!! GetProperty does not work !!". ]
+//    ]
+//}.
+//
+//#symbol GetPropertyTest =
 //[
-//    #var aDate := now.
-//    
-//    #var aYear := aDate year.
-//    #var aMonth := aDate month.
-//    #var aDay := aDate day.
-//    #var anHour := aDate hour.
-//    #var aMinute := aDate minute.
-//    #var aSecond := aDate second.
-//    
-//    #var aRetVal := aDate literal.
+//    GetPropertyAgent eval:%property[2].
 //].
-//
-////// --- GetPropertyTest ---
-////
-////#symbol GetPropertyAgent =
-////{
-////    eval : aGetProperty
-////    [
-////        #var n := aGetProperty property.
-////        
-////        2 == aGetProperty property
-////            ? [ console writeLine:"GetProperty works!". ]
-////            ! [ console writeLine:"!! GetProperty does not work !!". ]
-////    ]
-////}.
-////
-////#symbol GetPropertyTest =
-////[
-////    GetPropertyAgent eval:%property[2].
-////].
-//
+
 //#symbol StructTest =
 //[
 //    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 

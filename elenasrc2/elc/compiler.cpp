@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -60,7 +60,7 @@ struct ModuleInfo
 //#define HINT_ACTION           0x00020000
 //#define HINT_ALTBOXING        0x00010000
 #define HINT_CLOSURE          0x00008000
-//#define HINT_ASSIGNING        0x00004000
+#define HINT_ASSIGNING        0x00004000
 //#define HINT_CONSTRUCTOR_EPXR 0x00002000
 //#define HINT_VIRTUAL_FIELD    0x00001000
 
@@ -3381,8 +3381,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
    bool classFound = false;
-//   bool dispatchCall = false;
-//   //bool templateCall = false;
+   bool dispatchCall = false;
    int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, classFound, retVal.type);
 
    if (target.kind == okThisParam && callType == tpPrivate) {
@@ -3390,33 +3389,28 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
 
       callType = tpSealed;
    }
-//   else if (classReference == scope.moduleScope->signatureReference) {
-//      dispatchCall = test(mode, HINT_EXTENSION_MODE);
-//   }
-//   else if (classReference == scope.moduleScope->messageReference) {
-//      dispatchCall = test(mode, HINT_EXTENSION_MODE);
-//   }
+   else if (classReference == scope.moduleScope->signatureReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
+   else if (classReference == scope.moduleScope->messageReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
    else if (target.kind == okSuper) {
       // parent methods are always sealed
       callType = tpSealed;
    }
 
-//   if (dispatchCall) {
-//      scope.writer->insert(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
-//
-//      scope.writer->appendNode(lxMessage, messageRef);
-//      scope.writer->appendNode(lxCallTarget, classReference);
-//      scope.writer->appendNode(lxStacksafe);
-//   }
-   /*else */if (callType == tpClosed || callType == tpSealed) {
+   if (dispatchCall) {
+      node.set(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
+
+      //node.appendNode(lxStacksafe);
+   }
+   else if (callType == tpClosed || callType == tpSealed) {
       node.set(callType == tpClosed ? lxSDirctCalling : lxDirectCalling, messageRef);
 
 //      if (test(methodHint, tpStackSafe))
 //         scope.writer->appendNode(lxStacksafe);
    }
-//   //else if (templateCall) {
-//   //   scope.writer->insert(lxTemplateCalling, messageRef);
-//   //}
    else {
       node.set(lxCalling, messageRef);
 
@@ -3664,7 +3658,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
          else scope.raiseError(errInvalidOperation, node);
       }
       else if (target.kind == okFieldAddress) {
-         size_t size = _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->attributeHints.get(target.type));
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef);
          if (size != 0) {
             node.setArgument(size);
          }
@@ -6820,7 +6814,7 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
    if (!singleton && (typeNode.argument != 0 || constNode != lxNone)) {
       SymbolExpressionInfo info;
       info.expressionTypeRef = typeNode.argument;
-      info.constant = true;
+      info.constant = constNode != lxNone;
 
       // save class meta data
       MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
@@ -7311,7 +7305,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 //   else optimizeSyntaxExpression(scope, node, warningLevel);
 //}
 
-/*bool*/void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
+void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
 //   ref_t destType = 0;
 //   SNode parent = node.parentNode();
@@ -7366,26 +7360,16 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 //   else {
 //      bool boxing = false;
       SNode larg, rarg, rarg2;
-      assignOpArguments(node, larg, rarg, rarg2);
-
+      larg = node.firstChild(lxObjectMask);
       optimizeSyntaxNode(scope, larg, warningScope, HINT_NOBOXING);
+
+      rarg = larg.nextNode(lxObjectMask);
       optimizeSyntaxNode(scope, rarg, warningScope, HINT_NOBOXING);
+
+      rarg2 = rarg.nextNode(lxObjectMask);
       if (rarg2 != lxNone)
          optimizeSyntaxNode(scope, rarg2, warningScope, HINT_NOBOXING);
 
-//      if (larg == lxOp) {
-//         optimizeOp(scope, larg, /*warningLevel*/0, 0);
-//         //HOTFIX : arguments should be reread because larg can be modified
-//         larg = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//         rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
-//      }
-//      if (rarg == lxOp) {
-//         optimizeOp(scope, rarg, /*warningLevel*/0, 0);
-//
-//         //HOTFIX : argument should be reread because rarg can be modified
-//         rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
-//      }
-//
 //      ref_t target = 0;
 //      int lflags = mapOpArg(scope, larg, target);
 //      int rflags = mapOpArg(scope, rarg);
@@ -7616,7 +7600,7 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 
 void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
-   int mode = /*HINT_NOUNBOXING | HINT_ASSIGNING*/0;
+   int mode = HINT_NOUNBOXING | HINT_ASSIGNING;
    if (node.argument != 0)
       mode |= HINT_NOBOXING;
 
@@ -7738,83 +7722,38 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
 {
    SNode target = node.findChild(lxTarget);
 
-   bool boxing = true;
-//   bool variable = false;
-
    optimizeSyntaxExpression(scope, node, warningScope, HINT_NOBOXING);
 
    SNode exprNode = node.findSubNodeMask(lxObjectMask);
    if (exprNode == lxNewOp) {
       exprNode.setArgument(target.argument);
 
-      boxing = false;
+      node = lxExpression;
    }
    else {
+      bool boxing = !test(mode, HINT_NOBOXING);
       // if no boxing hint provided
       // then boxing should be skipped
-      if (test(mode, HINT_NOBOXING)) {
-         if (_logic->optimizeEmbeddableBoxing(scope, *this, node, target.argument))
-            return;
+      if (!boxing) {
+         _logic->optimizeEmbeddableBoxing(scope, *this, node, target.argument, test(mode, HINT_ASSIGNING));
+      }
+      else {
+         if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
+            node = lxBoxing;
+         }
+         else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
+            node = lxBoxing;
+         }
 
-         boxing = false;
-      }
-      else if (node == lxUnboxing && test(mode, HINT_NOUNBOXING)) {
-         node = lxBoxing;
-      }
-      else if (test(mode, HINT_NOCONDBOXING) && node == lxCondBoxing) {
-         node = lxBoxing;
+         // HOTFIX : replace virtual class with generic one
+         if (_logic->isPrimitiveRef(target.argument))
+            target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
+
+         warningScope.raise(scope, WARNING_LEVEL_3, wrnBoxingCheck, node);
       }
    }
-
-   if (boxing) {      
-      // HOTFIX : replace virtual class with generic one
-      if (_logic->isPrimitiveRef(target.argument))
-         target.setArgument(_logic->resolvePrimitiveReference(scope, target.argument));
-
-//      variable = defineTargetSize(scope, node);
-//      if (variable)
-//         node = lxUnboxing;
-   }
-   // ignore boxing operation if allowed
-   else node = lxExpression;
-
-   if (boxing)
-      warningScope.raise(scope, WARNING_LEVEL_3, wrnBoxingCheck, node);
 }
 
-//bool Compiler :: checkIfImplicitBoxable(ModuleScope& scope, ref_t sourceClassRef, ClassInfo& targetInfo)
-//{
-//   if (sourceClassRef == -1 && (targetInfo.header.flags & elDebugMask) == elDebugDWORD) {
-//      return true;
-//   }
-//   else if (sourceClassRef == -2 && (targetInfo.header.flags & elDebugMask) == elDebugQWORD) {
-//      return true;
-//   }
-//   else if (sourceClassRef == -4 && (targetInfo.header.flags & elDebugMask) == elDebugReal64) {
-//      return true;
-//   }
-//   else if (sourceClassRef != 0 && scope.subjectHints.exist(targetInfo.fieldTypes.get(0), sourceClassRef)) {
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//void Compiler :: raiseWarning(ModuleScope& scope, SNode node, ident_t message, int warningLevel, int warningMask, bool triggered)
-//{
-//   if (test(warningMask, warningLevel) && triggered) {
-//      while (node != lxNewFrame) {
-//         SNode row = SyntaxTree::findChild(node, lxRow);
-//         SNode col = SyntaxTree::findChild(node, lxCol);
-//         SNode terminal = SyntaxTree::findChild(node, lxTerminal);
-//         if (col != lxNone && row != lxNone) {
-//            scope.raiseWarning(warningLevel, message, row.argument, col.argument, terminal.identifier());
-//            break;
-//         }
-//         else node = node.parentNode();
-//      }
-//   }
-//}
-//
 //int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode)
 //{
 //   int typecastMode = 0;
@@ -8726,19 +8665,20 @@ void Compiler :: injectBoxing(_CompilerScope& scope, SNode node, LexicalType box
    //HOTFIX : reload node
    node.refresh();
 
-   SNode objectNode = node.firstChild(lxObjectMask);   
-   if (isSingleStatement(node) && checkConstantCompatibility(scope, objectNode, targetClassRef)) {
+   SNode objectNode = node.firstChild(lxObjectMask);
+   bool single = isSingleStatement(node);
+   if (single && checkConstantCompatibility(scope, objectNode, targetClassRef)) {
       //HOTFIX : do not box compatible numeric constants
    }
    else {
+      // inject boxing node if required
       if (node == lxExpression) {
          node.set(boxingType, argument);
 
          node.appendNode(lxTarget, targetClassRef);
       }
-      else if (node == lxBoxing) {
+      else if (node == lxBoxing && node.argument == argument) {
          node.set(boxingType, argument);
-
          node.findChild(lxTarget).setArgument(targetClassRef);
       }
       else {
@@ -8774,7 +8714,9 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
 
 void Compiler :: injectLocalBoxing(SNode node, int size)
 {
-   int offset = allocateStructure(node, size);
+   //HOTFIX : using size variable copy to prevent aligning
+   int dummy = size;
+   int offset = allocateStructure(node, dummy);
 
    // allocate place for the local copy
    node.injectNode(node.type, node.argument);
@@ -8782,4 +8724,6 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
    node.set(lxAssigning, size);
 
    node.insertNode(lxLocalAddress, offset);
+
+   test2(node);
 }

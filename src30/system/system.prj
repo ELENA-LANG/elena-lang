@@ -26,6 +26,9 @@ win32_pointers.l
 win32_app.l
 collections\list.l
 routines\enumerables.l
+calendar\types.l
+calendar\win32_datetime.l
+calendar\dates.l
 text\win32_common.l
 text\textbuffer.l
 io\win32_console.l

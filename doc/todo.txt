@@ -10,6 +10,8 @@ In development:
                  * switch statement with comparision
                  * switch statement with expression
 
+                 * fix invalid call stack info
+
                  * int constant to byte
 
                  * optimization : #var(int)n := o array length.
@@ -41,6 +43,8 @@ In development:
                  * invalid warning in the following code : #method(bool) equal : anObject []
                  * type attribute cannot be overriden for the method
                  * uncomment code in ecv
+                 * optimize : assinging of assinging
+                 * simplify vshort operations (e.g. divideInto)
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
                  * optimize : #var(-11,4)n := 1.#var(-11,4)m := 2.n := n + m * 2.
                  * optimize : #var(int)n := 1. n := n + 3.

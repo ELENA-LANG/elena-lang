@@ -57,8 +57,6 @@ __define L0_OPERATION           4163
 __define DEFAULT                4166
 __define TYPE                   4167
 __define INLINE_CLOSURE         4168
-__define METHOD_TEMPLATE        4169
-__define FIELD_TEMPLATE         4170
 __define IMPLICIT_CONSTRUCTOR   4171
 
 __define eof            	12291
@@ -98,8 +96,6 @@ INCLUDE_DECLARATION ->
 
 TEMPLATE_DECLARATION ->
 	#template HINTS TEMPLATE
-	| #ftemplate HINTS FIELD_TEMPLATE
-	| #mtemplate HINTS METHOD_TEMPLATE
 	
 CLASS_DECLARATION ->
 	#class HINTS CLASS

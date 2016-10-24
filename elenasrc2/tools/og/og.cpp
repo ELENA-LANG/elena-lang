@@ -14,7 +14,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 1
+#define BUILD_VERSION 2
 
 typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
 typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;
@@ -51,7 +51,7 @@ void printLine(const wchar_t* msg, ...)
 }
 #endif
 
-ByteCodePattern decodeCommand(TextSourceReader& source, ident_c* token, LineInfo& info)
+ByteCodePattern decodeCommand(TextSourceReader& source, char* token, LineInfo& info)
 {
    ByteCodePattern pattern;
 
@@ -62,43 +62,43 @@ ByteCodePattern decodeCommand(TextSourceReader& source, ident_c* token, LineInfo
 
    info = source.read(token, IDENTIFIER_LEN);
    // pattern arguments
-   if (StringHelper::compare(info.line, "+")) {
+   if (info.line.compare("+")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braAdd;
-      pattern.argument = StringHelper::strToInt(token);
+      pattern.argument = ident_t(token).toInt();
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (StringHelper::compare(info.line, "-")) {
+   else if (info.line.compare("-")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braAdd;
-      pattern.argument = -StringHelper::strToInt(token);
+      pattern.argument = -ident_t(token).toInt();
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (StringHelper::compare(info.line, "=")) {
+   else if (info.line.compare("=")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       if (pattern.code > MAX_DOUBLE_ECODE && ByteCodeCompiler::IsJump(pattern.code)) {
          pattern.argumentType = braAditionalValue;
       }
       else pattern.argumentType = braValue;
-      pattern.argument = StringHelper::strToInt(token);
+      pattern.argument = ident_t(token).toInt();
 
       info = source.read(token, IDENTIFIER_LEN);
    }
-   else if (StringHelper::compare(info.line, ":=")) {
+   else if (info.line.compare(":=")) {
       info = source.read(token, IDENTIFIER_LEN);
 
       pattern.argumentType = braMatch;
-      pattern.argument = StringHelper::strToInt(token);
+      pattern.argument = ident_t(token).toInt();
 
       info = source.read(token, IDENTIFIER_LEN);
    }
    // TransformTape will set match the argument if the argument equals to the previous one
-   else if (StringHelper::compare(info.line, "~")) {
+   else if (info.line.compare("~")) {
       if (pattern.code > MAX_DOUBLE_ECODE && ByteCodeCompiler::IsJump(pattern.code)) {
          pattern.argumentType = braAdditionalSame;
       }
@@ -108,7 +108,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, ident_c* token, LineInfo
       info = source.read(token, IDENTIFIER_LEN);
    }
    // TransformTape will set match the argument if the argument does not equal to the previous one
-   else if (StringHelper::compare(info.line, "!")) {
+   else if (info.line.compare("!")) {
       if (pattern.code > MAX_DOUBLE_ECODE && ByteCodeCompiler::IsJump(pattern.code)) {
          pattern.argumentType = braAdditionalSame;
       }
@@ -162,9 +162,9 @@ size_t addOpcode(MemoryByteTrie& trie, size_t parentPosition, ByteCodePattern pa
    return position;
 }
 
-size_t readTransform(size_t position, TextSourceReader& source, ident_c* token, LineInfo& info, MemoryByteTrie& trie)
+size_t readTransform(size_t position, TextSourceReader& source, char* token, LineInfo& info, MemoryByteTrie& trie)
 {
-   if (!StringHelper::compare(token, ";")) {
+   if (!ident_t(token).compare(";")) {
       ByteCodePattern pattern = decodeCommand(source, token, info);
 
       // should be saved in reverse order, to simplify transform algorithm
@@ -175,14 +175,14 @@ size_t readTransform(size_t position, TextSourceReader& source, ident_c* token, 
    else return position;
 }
 
-void appendOpCodeString(TextSourceReader& source, ident_c* token, LineInfo& info, MemoryByteTrie& trie)
+void appendOpCodeString(TextSourceReader& source, char* token, LineInfo& info, MemoryByteTrie& trie)
 {
    // save opcode pattern
    ByteCodePattern pattern = decodeCommand(source, token, info);
 
    size_t position = addOpcode(trie, 0, pattern);
 
-   while (!StringHelper::compare(token, "=>")) {
+   while (!ident_t(token).compare("=>")) {
       position = addOpcode(trie, position, decodeCommand(source, token, info));
    }
 
@@ -246,13 +246,12 @@ int main(int argc, char* argv[])
       return 0;
    }
 
-   Path path;
-   Path::loadPath(path, argv[1]);
+   Path path(argv[1]);
 
    TextFileReader   sourceFile(path, feUTF8, false);
    TextSourceReader source(4, &sourceFile);
    LineInfo         info(0, 0, 0);
-   ident_c          token[IDENTIFIER_LEN + 1];
+   char             token[IDENTIFIER_LEN + 1];
 
    ByteCodePattern defValue;
    MemoryByteTrie  trie(defValue);

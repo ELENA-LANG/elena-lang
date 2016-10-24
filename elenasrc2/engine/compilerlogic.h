@@ -138,7 +138,7 @@ public:
 
    virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
 
-   virtual bool optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef);
+   virtual void optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode);
 
    CompilerLogic();
 };

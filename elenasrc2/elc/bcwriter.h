@@ -329,8 +329,6 @@ public:
 };
 
 bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
-void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
-void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
 
 } // _ELENA_
 

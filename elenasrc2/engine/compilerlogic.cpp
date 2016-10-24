@@ -1126,19 +1126,22 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
    else return false;
 }
 
-bool CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef)
+void CompilerLogic :: optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode)
 {
-   SNode exprNode = node.findSubNodeMask(lxObjectMask);
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+   if (exprNode == lxFieldAddress && exprNode.argument > 0 && !assingingMode) {
+      bool variable = !isReadonly(scope, targetRef);
 
-   bool variable = !isReadonly(scope, targetRef);
-
-   if (exprNode == lxFieldAddress && exprNode.argument > 0/* && !test(mode, HINT_ASSIGNING)*/) {
       compiler.injectLocalBoxing(exprNode, node.argument);
 
       node = variable ? lxLocalUnboxing : lxExpression;
-      
-      return true;
    }
+   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+      bool variable = !isReadonly(scope, targetRef);
 
-   return false;
+      compiler.injectLocalBoxing(exprNode, node.argument);
+
+      node = (variable && !assingingMode) ? lxLocalUnboxing : lxExpression;
+   }
+   else node = lxExpression;
 }

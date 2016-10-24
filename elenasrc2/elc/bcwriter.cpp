@@ -3306,7 +3306,7 @@ void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
    pushObject(tape, node.type, node.argument);
 }
 
-void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg)
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -3321,7 +3321,7 @@ void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg)
    }
 }
 
-void _ELENA_::assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {

@@ -284,34 +284,34 @@
 //    #method clone = ShortArray new &shortarray:$self.
 }
 
-//// --- IntArray ---
-//
-///// An array of integers
-//#class(sealed,arrayof:int,dispatchable:intarray) IntArray
-//{
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe) new &int : aLength
-//        = int:aLength.
-//
-//    /// Creates the array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &intarray:anArray
-//        <= (new &int:aLength)
-//    [
-//        anArray read &int:anIndex &int:aLength &intarray:$self.
-//    ]
-//
-//    /// Creates the short array copy
-//    #constructor new &intarray:anArray
-//        <= new &int:0 &int:(anArray length) &intarray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__intarray.
-//
+// --- IntArray ---
+
+/// An array of integers
+#class(sealed,arrayof:int,dispatchable:intarray) IntArray
+{
+    /// Creates the array with the specified length
+    #constructor(stacksafe) new &int : aLength
+        = int:aLength.
+
+    /// Creates the array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &intarray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &intarray:$self.
+    ]
+
+    /// Creates the short array copy
+    #constructor new &intarray:anArray
+        <= new &int:0 &int:(anArray length) &intarray:anArray.
+    
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__intarray.
+
 //    /// Fills the sub array with a specified value
 //    #method(stacksafe) fill &int:anIndex &int:aLength &int:aValue
 //    [
@@ -333,27 +333,27 @@
 //            i += 1.
 //        ].
 //    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
-//        => system'core_routines'__intarray.
-//
-//    /// Copies the short array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &intarray:anArray
-//        => system'core_routines'__intarray.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aValue
-//        => system'core_routines'__intarray.
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vint:anInt
-//        => system'core_routines'__intarray.
-//
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
+        => system'core_routines'__intarray.
+
+    /// Copies the short array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &intarray:anArray
+        => system'core_routines'__intarray.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:anIndex &int:aValue
+        => system'core_routines'__intarray.
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vint:anInt
+        => system'core_routines'__intarray.
+
 //    /// Creates the object copy
 //    #method clone = IntArray new &intarray:$self.
-//}
-//
+}
+
 //// --- BitArray ---
 //
 //#class(sealed,dispatchable:bitarray) BitArray

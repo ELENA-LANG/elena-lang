@@ -219,7 +219,7 @@ public:
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
    // optimization
-   virtual bool optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef) = 0;
+   virtual void optimizeEmbeddableBoxing(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t targetRef, bool assingingMode) = 0;
    virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t returningType, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableIdle(SNode node) = 0;
 

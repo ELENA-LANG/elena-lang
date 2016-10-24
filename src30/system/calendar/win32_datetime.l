@@ -9,17 +9,17 @@
 
 // --- SystemTime ---
 
-#symbol $factory =
+#symbol $systemTimeFactory =
 {
-    #method(__time) utcNow
+    #method(stacksafe) readUtcNow &__vtime:retVal
     [
         #var(__time)aTime.        
         system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
         
-        ^ SystemTime new &__time:aTime.
+        retVal := aTime.
     ]
     
-    #method(__time) now
+    #method(stacksafe) readNow &__vtime:retVal
     [
         #var(__time)aTime.
         #var(__time)aLocalTime.
@@ -27,28 +27,22 @@
         system'external'KERNEL32 GetSystemTimeAsFileTime &__time:aTime.
 
         system'external'KERNEL32 FileTimeToLocalFileTime &__time:aTime &__time:aLocalTime.
-
-        ^ SystemTime new &__time:aLocalTime.
+        
+        retVal := aLocalTime.
     ]
 }.
 
-#class(sealed,reference,const) SystemTime :: BaseValue
+#class(sealed,embeddable,const) SystemTime :: BaseValue
 {
-    #field(long)theValue.
-    
+    #field(8,-13)theValue.
+
+    #constructor(stacksafe) &long:value
+    [
+        theValue := value.
+    ]
+            
     #constructor(stacksafe,w3) new &__time:value
         = value.
-
-    #constructor(stacksafe) $new &long:aValue
-    [
-        theValue := aValue.
-    ]
-
-    #constructor now
-        = $factory now.
-
-    #constructor utcNow
-        = $factory utcNow.
 
     #method(bool,stacksafe) equal &__time:anOperand
         = theValue == anOperand.
@@ -63,16 +57,16 @@
 
     #method(__time,stacksafe) subtract &__time:anOperand
     [
-        #var(long)val := anOperand long.
+        #var(__time)result := theValue - anOperand.
         
-        ^ SystemTime $new &long:(theValue - val).
+        ^ SystemTime new &__time:result.
     ]
 
     #method(__time,stacksafe) add &__time:anOperand
     [
-        #var(long)val := anOperand long.
+        #var(__time)result := theValue + anOperand.
         
-        ^ SystemTime $new &long:(theValue + val).
+        ^ SystemTime new &__time:result.
     ]
 }
 
@@ -92,6 +86,11 @@
     #constructor new
     [
         system'core_routines'__timest empty &__time_st:$self.
+    ]
+
+    #constructor(stacksafe) &__time:aTime
+    [
+        $self write &__time:aTime.
     ]
 
     #constructor(stacksafe) new &__time:aTime
@@ -209,11 +208,6 @@
         system'external'KERNEL32 SystemTimeToFileTime &__time_st:$self &__time:aRetVal.
     ]    
     
-    #method(stacksafe) writeSpan &__time:aTime
-    [
-        $self write &__time:aTime.
-    ] 
-
     #method(stacksafe) write &__time:aFileTime
     [
         system'external'KERNEL32 FileTimeToSystemTime &__time:aFileTime &__time_st:$self.
