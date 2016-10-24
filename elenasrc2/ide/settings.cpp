@@ -26,14 +26,14 @@ using namespace _ELENA_;
 inline void loadSetting(const char* value, bool& setting)
 {
    if (value) {
-      setting = _ELENA_::StringHelper::compare(value, "-1");
+      setting = _ELENA_::ident_t(value).compare("-1");
    }
 }
 
 inline void loadSetting(const char* value, size_t& setting, size_t minValue, size_t maxValue, size_t defaultValue)
 {
    if (value) {
-      setting = _ELENA_::StringHelper::strToInt(value);
+      setting = _ELENA_::ident_t(value).toInt();
       if (setting < minValue || setting > maxValue)
          setting = defaultValue;
    }
@@ -42,7 +42,7 @@ inline void loadSetting(const char* value, size_t& setting, size_t minValue, siz
 inline void loadSetting(const char* value, int& setting)
 {
    if (value) {
-      setting = _ELENA_::StringHelper::strToInt(value);
+      setting = _ELENA_::ident_t(value).toInt();
    }
 }
 
@@ -50,7 +50,7 @@ inline void loadSection(ConfigCategoryIterator it, PathMapping& list)
 {
    Path value;
    while (!it.Eof()) {
-      Path::loadPath(value, (const char*)(*it));
+      value.copy((ident_t)(*it));
 
       list.erase(it.key());
       list.add(it.key(), value.clone(), true);
@@ -123,13 +123,13 @@ void Paths :: makeRelativePath(Path& path, path_t rootPath)
 
 void Settings :: init(Model* model, path_t packagePath, path_t libraryPath)
 {
-   model->packageRoots.add("default", StringHelper::clone(packagePath));
-   model->libraryRoots.add("default", StringHelper::clone(libraryPath));
+   model->packageRoots.add("default", packagePath.clone());
+   model->libraryRoots.add("default", libraryPath.clone());
 }
 
 void Settings :: load(Model* model, _ELENA_::IniConfigFile& config)
 {
-   Path::loadPath(model->defaultProject, config.getSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING));
+   model->defaultProject.copy(config.getSetting(SETTINGS_SECTION, DEFAULT_PROJECT_SETTING));
 
    loadSetting(config.getSetting(SETTINGS_SECTION, TAB_USING_SETTING), model->tabCharUsing);
    loadSetting(config.getSetting(SETTINGS_SECTION, MAXIMIZED_SETTING), model->appMaximized);
@@ -190,7 +190,7 @@ void Settings :: save(Model* model, _ELENA_::IniConfigFile& config)
    saveSection(config, LIBPATH_SECTION, model->libraryRoots);
 }
 
-void Settings :: onNewProjectTemplate(Model* model, _ProjectManager* project)
+void Settings :: onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* project)
 {
    const char* projectTemplate = project->getTemplate();
 
@@ -214,12 +214,12 @@ void Settings :: onNewProjectTemplate(Model* model, _ProjectManager* project)
 void Settings :: addSearchHistory(Model* model, text_t line)
 {
    if (retrieve(model->searchHistory.start(), (text_c*)line, (text_c*)NULL) == NULL)
-      model->searchHistory.add(StringHelper::clone(line));
+      model->searchHistory.add(text_str(line).clone());
 }
 
 void Settings :: addReplaceHistory(Model* model, text_t line)
 {
    if (retrieve(model->replaceHistory.start(), line, (text_c*)NULL) == NULL)
-      model->replaceHistory.add(StringHelper::clone(line));
+      model->replaceHistory.add(text_str(line).clone());
 }
 

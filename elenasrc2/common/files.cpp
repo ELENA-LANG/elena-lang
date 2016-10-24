@@ -29,6 +29,30 @@ using namespace _ELENA_;
 
 // --- Path ---
 
+bool Path::comparePaths(path_t s1, path_t s2, size_t length)
+{
+   for (size_t i = 0; i < length; i++) {
+      path_c ch1 = __lower(s1[i]);
+      path_c ch2 = __lower(s2[i]);
+
+      if (ch1 != ch2)
+         return false;
+   }
+   return true;
+}
+
+bool Path :: checkExtension(path_t path, path_t extension)
+{
+   int namepos = path.findLast(PATH_SEPARATOR) + 1;
+
+   int pos = path.findLast(namepos, '.');
+   if (pos != -1) {
+      return wide_t(path + pos + 1).compare(extension);
+   }
+   else return emptystr(extension);
+}
+
+
 #ifdef _WIN32
 
 inline int checkDir(const wchar_t* name, int mode)
@@ -69,18 +93,6 @@ bool Path :: create(path_t root, path_t path)
    }
    else return false;
 }
-
-//bool Path :: comparePaths(path_t s1, path_t s2, size_t length)
-//{
-//   for (size_t i = 0; i < length; i++) {
-//      wchar_t ch1 = StringHelper::lower(s1[i]);
-//      wchar_t ch2 = StringHelper::lower(s2[i]);
-//
-//      if (ch1 != ch2)
-//         return false;
-//   }
-//   return true;
-//}
 
 // --- File ---
 

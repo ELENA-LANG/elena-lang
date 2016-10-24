@@ -538,7 +538,7 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
       int x = clientRect.topLeft.x + marginWidth;
       int y = clientRect.topLeft.y - lineHeight + 1;
       int width = 0;
-      wchar_t lineNumber[6];
+      _ELENA_::String<wchar_t, 6> lineNumber;
 
       Style style = defaultStyle;
       wchar_t buffer[0x100];
@@ -559,7 +559,7 @@ void TextView :: paint(Canvas& canvas, _GUI_::Rectangle clientRect)
             y += lineHeight;
 
             if (_lineNumbersVisible) {
-               _ELENA_::StringHelper::intToStr(reader.row + 1, lineNumber, 10);
+               lineNumber.copyInt(reader.row + 1);
                canvas.drawTextClipped(
                      Rectangle(x - marginWidth, y, marginWidth, lineHeight + 1),
                      x - marginStyle.avgCharWidth * _ELENA_::getlength(lineNumber) - 4,

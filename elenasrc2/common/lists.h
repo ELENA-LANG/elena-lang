@@ -136,35 +136,35 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key > key);
    }
 
-//   bool operator ==(const wide_c* key) const
-//   {
-//      return StringHelper::compare(this->key, key);
-//   }
-//
-//   bool operator !=(const wide_c* key) const
-//   {
-//      return !StringHelper::compare(this->key, key);
-//   }
-//
-//   bool operator <=(const wide_c* key) const
-//   {
-//      return !StringHelper::greater(this->key, key);
-//   }
-//
-//   bool operator <(const wide_c* key) const
-//   {
-//      return StringHelper::greater(key, this->key);
-//   }
-//
-//   bool operator >=(const wide_c* key) const
-//   {
-//      return StringHelper::greater(this->key, key) || compstr(this->key, key);
-//   }
-//
-//   bool operator >(const wide_c* key) const
-//   {
-//      return StringHelper::greater(this->key, key);
-//   }
+   bool operator ==(const wchar_t* key) const
+   {
+      return wide_t(key).compare(this->key);
+   }
+
+   bool operator !=(const wchar_t* key) const
+   {
+      return !StringHelper::compare(this->key, key);
+   }
+
+   bool operator <=(const wchar_t* key) const
+   {
+      return !(this->key).greater(key);
+   }
+
+   bool operator <(const wchar_t* key) const
+   {
+      return (key).greater(this->key);
+   }
+
+   bool operator >=(const wchar_t* key) const
+   {
+      return (this->key).greater(key) || (this->key).compstr(key);
+   }
+
+   bool operator >(const wchar_t* key) const
+   {
+      return (this->key).greater(key);
+   }
 
    bool operator ==(ident_t key) const
    {
@@ -196,29 +196,29 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key).greater(key);
    }
 
-////   void rename(const wchar16_t* key)
-////   {
-////      if (KeyStored) {
-////         freeKey(this->key);
-////
-////         this->key = StringHelper::clone(key);
-////      }
-////      else this->key = key;
-////   }
-////
-////   void rename(const char* key)
-////   {
-////      if (KeyStored) {
-////         freeKey(this->key);
-////
-////         this->key = StringHelper::clone(key);
-////      }
-////      else this->key = key;
-////   }
+//   void rename(const wchar16_t* key)
+//   {
+//      if (KeyStored) {
+//         freeKey(this->key);
+//
+//         this->key = StringHelper::clone(key);
+//      }
+//      else this->key = key;
+//   }
+//
+//   void rename(const char* key)
+//   {
+//      if (KeyStored) {
+//         freeKey(this->key);
+//
+//         this->key = StringHelper::clone(key);
+//      }
+//      else this->key = key;
+//   }
 
    void freeKey(int key) { key = 0; }
    void freeKey(size_t key) { key = 0; }
-//   void freeKey(const wide_c* key) { freestr((wide_c*)key); }
+   void freeKey(const wchar_t* key) { freestr((wchar_t*)key); }
    void freeKey(ident_t key) { const char* ptr = key; freestr((char*)ptr); }
 
    _MapItem(int key, T item, _MapItem* next)
@@ -233,16 +233,16 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       this->item = item;
       this->next = next;
    }
-//   _MapItem(const wide_c* key, T item, _MapItem* next)
-//   {
-//      if (KeyStored) {
-//         this->key = StringHelper::clone(key);
-//      }
-//      else this->key = key;
-//
-//      this->item = item;
-//      this->next = next;
-//   }
+   _MapItem(const wchar_t* key, T item, _MapItem* next)
+   {
+      if (KeyStored) {
+         this->key = wide_t(key).clone();
+      }
+      else this->key = key;
+
+      this->item = item;
+      this->next = next;
+   }
    _MapItem(ident_t key, T item, _MapItem* next)
    {
       if (KeyStored) {
@@ -979,16 +979,16 @@ public:
       return _list.end();
    }
 
-//   void set(Iterator& it, T item)
-//   {
-//      _list.set(it, item);
-//   }
-//
-//
-//   void insert(T item)
-//   {
-//      _list.addToTop(item);
-//   }
+   void set(Iterator& it, T item)
+   {
+      _list.set(it, item);
+   }
+
+
+   void insert(T item)
+   {
+      _list.addToTop(item);
+   }
 
    void insertBefore(Iterator& it, T item)
    {
@@ -1011,15 +1011,15 @@ public:
       _list.addToTale(item);
    }
 
-//   void cut(T item)
-//   {
-//      _list.cut(item);
-//   }
-//
-//   void cut(Iterator it)
-//   {
-//      _list.cut(it);
-//   }
+   void cut(T item)
+   {
+      _list.cut(item);
+   }
+
+   void cut(Iterator it)
+   {
+      _list.cut(it);
+   }
 
    Iterator get(int index)
    {
@@ -3524,7 +3524,7 @@ template<class Iterator> const char* retrieve(Iterator it, const char* value, co
 template<class Iterator> const wide_c* retrieve(Iterator it, const wide_c* value, const wide_c* defaultValue)
 {
    while (!it.Eof()) {
-      if ((*it).compare(value))
+      if (wide_t(*it).compare(value))
          return *it;
 
       it++;

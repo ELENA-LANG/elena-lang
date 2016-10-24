@@ -60,82 +60,82 @@ bool IniConfigFile :: load(path_t path, int encoding)
    return true;
 }
 
-//bool IniConfigFile :: save(path_t path, int encoding)
-//{
-//   TextFileWriter  writer(path, encoding, true);
-//
-//   if (!writer.isOpened())
-//      return false;
-//
-//   // goes through the section keys
-//   _Iterator<ConfigSettings::VItem, _MapItem<const char*, ConfigSettings::VItem>, const char*> it = _settings.start();
-//   while (!it.Eof()) {
-//      ConfigCategoryIterator cat_it = _settings.getIt(it.key());
-//      if (!cat_it.Eof()) {
-//         writer.writeLiteral("[");
-//         writer.writeLiteral(it.key());
-//         writer.writeLiteralNewLine("]");
-//
-//         while (!cat_it.Eof()) {
-//            writer.writeLiteral(cat_it.key());
-//            const char* value = *cat_it;
-//            if (!emptystr(value)) {
-//               writer.writeLiteral("=");
-//               writer.writeLiteralNewLine(value);
-//            }
-//            else writer.writeNewLine();
-//
-//            cat_it++;
-//         }
-//         writer.writeNewLine();
-//      }
-//      it++;
-//   }
-//   return true;
-//}
-//
-//void IniConfigFile :: setSetting(const char* category, const char* key, const char* value)
-//{
-//   _settings.add(category, key, ((ident_t)value).clone());
-//}
-//
-//void IniConfigFile :: setSetting(const char* category, const char* key, int value)
-//{
-//   String<char, 15> string;
-//   string.appendInt(value);
-//
-//   _settings.add(category, key, ((ident_t)string).clone());
-//}
-//
-//void IniConfigFile :: setSetting(const char* category, const char* key, size_t value)
-//{
-//   String<char, 15> string;
-//   string.appendInt(value);
-//
-//   _settings.add(category, key, ((ident_t)string).clone());
-//}
-//
-//void IniConfigFile :: setSetting(const char* category, const char* key, bool value)
-//{
-//   _settings.add(category, key, value ? "-1" : "0");
-//}
+bool IniConfigFile :: save(path_t path, int encoding)
+{
+   TextFileWriter  writer(path, encoding, true);
+
+   if (!writer.isOpened())
+      return false;
+
+   // goes through the section keys
+   _Iterator<ConfigSettings::VItem, _MapItem<ident_t, ConfigSettings::VItem>, ident_t> it = _settings.start();
+   while (!it.Eof()) {
+      ConfigCategoryIterator cat_it = _settings.getIt(it.key());
+      if (!cat_it.Eof()) {
+         writer.writeLiteral("[");
+         writer.writeLiteral(it.key());
+         writer.writeLiteralNewLine("]");
+
+         while (!cat_it.Eof()) {
+            writer.writeLiteral(cat_it.key());
+            ident_t value = *cat_it;
+            if (!emptystr(value)) {
+               writer.writeLiteral("=");
+               writer.writeLiteralNewLine(value);
+            }
+            else writer.writeNewLine();
+
+            cat_it++;
+         }
+         writer.writeNewLine();
+      }
+      it++;
+   }
+   return true;
+}
+
+void IniConfigFile :: setSetting(const char* category, const char* key, const char* value)
+{
+   _settings.add(category, key, ((ident_t)value).clone());
+}
+
+void IniConfigFile :: setSetting(const char* category, const char* key, int value)
+{
+   String<char, 15> string;
+   string.appendInt(value);
+
+   _settings.add(category, key, ((ident_t)string).clone());
+}
+
+void IniConfigFile :: setSetting(const char* category, const char* key, size_t value)
+{
+   String<char, 15> string;
+   string.appendInt(value);
+
+   _settings.add(category, key, ((ident_t)string).clone());
+}
+
+void IniConfigFile :: setSetting(const char* category, const char* key, bool value)
+{
+   _settings.add(category, key, value ? "-1" : "0");
+}
 
 ident_t IniConfigFile :: getSetting(ident_t category, ident_t key, ident_t defaultValue)
 {
    return _settings.get(category, key, defaultValue);
 }
 
-//void IniConfigFile :: clear(const char* category, const char* key)
-//{
-//	_settings.clear(category, key);
-//}
-//
-//void IniConfigFile :: clear(const char* category)
-//{
-//   _settings.clear(category);
-//}
-//
-//void IniConfigFile :: clear()
-//{
-//    _settings.clear();
-//}
+void IniConfigFile :: clear(const char* category, const char* key)
+{
+	_settings.clear(category, key);
+}
+
+void IniConfigFile :: clear(const char* category)
+{
+   _settings.clear(category);
+}
+
+void IniConfigFile :: clear()
+{
+    _settings.clear();
+}

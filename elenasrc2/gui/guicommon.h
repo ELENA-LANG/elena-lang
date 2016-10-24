@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Common Header File
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef guicommonH
@@ -14,12 +14,16 @@
 typedef const wchar_t* text_t;
 typedef wchar_t        text_c;
 
+typedef _ELENA_::wide_t text_str;
+
 #define _T(x) L ## x
 
 #elif _LINUX32
 
 typedef const char* text_t;
 typedef char        text_c;
+
+typedef ident_t     text_str;
 
 #define _T(x) x
 
@@ -152,7 +156,7 @@ public:
    TextString(_ELENA_::ident_t message)
    {
       size_t length = 0x100;
-      _ELENA_::StringHelper::copy(_string, message, _ELENA_::getlength(message), length);
+      _ELENA_::__copy(_string, message, _ELENA_::getlength(message), length);
       _string[length] = 0;
    }
 };

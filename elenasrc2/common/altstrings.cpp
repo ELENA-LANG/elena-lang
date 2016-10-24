@@ -419,11 +419,11 @@ char* _ELENA_::__allocate(size_t size, const char* value)
 //   }
 //   memcpy(s + pos, subs, len);
 //}
-//
-//void StringHelper :: move(char* s1, const char* s2, size_t length)
-//{
-//   memmove(s1, s2, length);
-//}
+
+void _ELENA_ :: __move(char* s1, const char* s2, size_t length)
+{
+   memmove(s1, s2, length);
+}
 
 char* _ELENA_ :: __reallocate(char* s, size_t size)
 {
@@ -501,15 +501,15 @@ char* _ELENA_::__lower(char* s)
    return _strlwr(s);
 }
 
-//char StringHelper :: lower(char ch)
-//{
-//   char s[2];
-//   s[0] = ch;
-//   s[1] = 0;
-//
-//   _strlwr(s);
-//   return s[0];
-//}
+char _ELENA_ :: __lower(char ch)
+{
+   char s[2];
+   s[0] = ch;
+   s[1] = 0;
+
+   _strlwr(s);
+   return s[0];
+}
 
 char* _ELENA_::__upper(char* s)
 {
@@ -648,10 +648,10 @@ wchar_t* _ELENA_ :: __reallocate(wchar_t* s, size_t size)
    return (wchar_t*)realloc(s, size << 1);
 }
 
-//void StringHelper::move(wchar_t* s1, const wchar_t* s2, size_t length)
-//{
-//   memmove(s1, s2, length << 1);
-//}
+void _ELENA_:: __move(wchar_t* s1, const wchar_t* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
 
 void append(wchar_t* dest, const wchar_t* sour, size_t length)
 {
@@ -705,15 +705,15 @@ wchar_t* _ELENA_::__lower(wchar_t* s)
    return _wcslwr(s);
 }
 
-//wchar_t StringHelper :: lower(wchar_t ch)
-//{
-//   wchar_t s[2];
-//   s[0] = ch;
-//   s[1] = 0;
-//
-//   _wcslwr(s);
-//   return s[0];
-//}
+wchar_t _ELENA_ :: __lower(wchar_t ch)
+{
+   wchar_t s[2];
+   s[0] = ch;
+   s[1] = 0;
+
+   _wcslwr(s);
+   return s[0];
+}
 
 wchar_t* _ELENA_ :: __upper(wchar_t* s)
 {
@@ -808,10 +808,10 @@ unsigned short* _ELENA_ :: __reallocate(unsigned short* s, size_t size)
    return (unsigned short*)realloc(s, size << 1);
 }
 
-//void StringHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
-//{
-//   memmove(s1, s2, length << 1);
-//}
+void _ELENA_ :: __move(unsigned short* s1, const unsigned short* s2, size_t length)
+{
+   memmove(s1, s2, length << 1);
+}
 
 void append(unsigned short* dest, const unsigned short* sour, size_t length)
 {
@@ -902,10 +902,10 @@ unsigned short* _ELENA_::__lower(unsigned short* s)
    return s;
 }
 
-//unsigned short StringHelper :: lower(unsigned short c)
-//{
-//   return tolower(c); // !! temporal: currently only ascii symbols are handled
-//}
+unsigned short _ELENA_ :: __lower(unsigned short c)
+{
+   return tolower(c); // !! temporal: currently only ascii symbols are handled
+}
 
 unsigned short* _ELENA_::__upper(unsigned short* s)
 {
@@ -1419,34 +1419,34 @@ bool wide_t::compare(const wide_c* s, size_t length) const
 
 // --- String conversion routines ---
 
-void _ELENA_::__copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
+bool _ELENA_::__copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
-   copy(dest, sour, sourLength, destLength);
+   return copy(dest, sour, sourLength, destLength);
 }
 
-void _ELENA_::__copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
+bool _ELENA_::__copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
 {
-   copy(dest, sour, sourLength, destLength);
+   return copy(dest, sour, sourLength, destLength);
 }
 
-void _ELENA_::__copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength)
+bool _ELENA_::__copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
-   copy(dest, sour, sourLength, destLength);
+   return copy(dest, sour, sourLength, destLength);
 }
 
-void _ELENA_::__copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
+bool _ELENA_::__copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
 {
-   copy(dest, sour, sourLength, destLength);
+   return copy(dest, sour, sourLength, destLength);
 }
 
-void _ELENA_::__copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
+bool _ELENA_::__copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
 {
-   copy(dest, sour, sourLength, destLength);
+   return copy(dest, sour, sourLength, destLength);
 }
 
-void _ELENA_::__copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
+bool _ELENA_::__copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
-   copy(dest, sour, sourLength, destLength);
+   return copy(dest, sour, sourLength, destLength);
 }
 
 void _ELENA_::__append(char* dest, const char* sour, size_t length)
@@ -1457,4 +1457,14 @@ void _ELENA_::__append(char* dest, const char* sour, size_t length)
 void _ELENA_::__append(wide_c* dest, const wide_c* sour, size_t length)
 {
    append(dest, sour, length);
+}
+
+char* _ELENA_::__clone(const char* s)
+{
+   return emptystr(s) ? NULL : _strdup(s);
+}
+
+wchar_t* _ELENA_::__clone(const wchar_t* s)
+{
+   return _wcsdup(s);
 }

@@ -120,184 +120,184 @@ public:
    }
 };
 
-// --- ProjectForwardsDialog ---
-
-class ProjectForwardsDialog : public Dialog
-{
-   _ProjectManager* _project;
-
-   bool  _changed;
-   int   _current;
-
-   bool validateItem(wchar_t* &text);
-
-   void addItem();
-   void getItem();
-   void editItem();
-   void deleteItem();
-
-   virtual int _getDialogID() const { return IDD_FORWARDS; }
-
-   virtual void onCreate();
-   virtual void onOK();
-
-   virtual void doCommand(int id, int command);
-
-public:   
-   ProjectForwardsDialog(Control* owner, _ProjectManager* project)
-      : Dialog(owner) 
-   { 
-      _changed = false; 
-	   _current = -1;
-
-      _project = project;
-   }
-};
-
-// --- WindowsDialog ---
-
-class WindowsDialog : public Dialog
-{
-protected:
-   virtual void onClose() = 0;
-   virtual void onListChange();
-
-   virtual int _getDialogID() const { return IDD_WINDOWS; }
-
-   virtual void doCommand(int id, int command);
-
-   void addWindow(const wchar_t* docName)
-   {
-      addListItem(IDC_WINDOWS_LIST, docName);
-   }
-
-   void selectWindow(int index)
-   {
-      setListSelected(IDC_WINDOWS_LIST, index, true);
-   }
-
-   int getSelectedWindow()
-   {
-      return getListIndex(IDC_WINDOWS_LIST);
-   }
-   int* getSelectedWindows(int& count)
-   {
-      count = getListSelCount(IDC_WINDOWS_LIST);
-      int* selected = (int*)malloc(sizeof(INT) * count);
-      getListSelected(IDC_WINDOWS_LIST, count, selected);
-
-      return selected;
-   }
-
-public:
-   WindowsDialog(Control* owner);
-};
-
-// --- GoToLineDialog ---
-
-class GoToLineDialog : public Dialog
-{
-   int _number;
-
-   virtual int _getDialogID() const { return IDD_GOTOLINE; }
-
-   virtual void onCreate();
-   virtual void onOK();
-
-public:
-   int getLineNumber() const { return _number; }
-
-   GoToLineDialog(Control* owner, int number)
-      : Dialog(owner) 
-   {
-      _number = number;
-   }
-};
-
-// --- EditorSettings ---
-
-class EditorSettings : public Dialog
-{
-   Model* _model;
-
-   virtual int _getDialogID() const { return IDD_EDITOR_SETTINGS; }
-
-   virtual void doCommand(int id, int command);
-   virtual void onCreate();
-   virtual void onOK();
-   virtual void onEditorHighlightSyntaxChanged();
-
-public:
-   EditorSettings(Control* owner, Model* model)
-      : Dialog(owner)
-   {
-      _model = model;
-   }
-};
-
-// --- DebuggerSettings ---
-
-class DebuggerSettings : public Dialog
-{
-   Model* _model;
-
-   virtual int _getDialogID() const { return IDD_DEBUGGER_SETTINGS; }
-
-   virtual void onCreate();
-   virtual void onOK();
-
-public:
-   DebuggerSettings(Control* owner, Model* model)
-      : Dialog(owner)
-   {
-      _model = model;
-   }
-};
-
-// --- FindDialog ---
-
-class FindDialog : public Dialog
-{
-   bool           _replaceMode;
-   SearchOption*  _option;
-
-   SearchHistory* _searchHistory;
-   SearchHistory* _replaceHistory;
-   
-   void copyHistory(int id, SearchHistory* history);
-
-   virtual int _getDialogID() const { return _replaceMode ? IDD_EDITOR_REPLACE : IDD_EDITOR_FIND; }
-
-   virtual void onCreate();
-   virtual void onOK();
-
-public:
-   FindDialog(Control* owner, bool replaceMode, SearchOption* option, SearchHistory* searchHistory, SearchHistory* replaceHistory)
-      : Dialog(owner) 
-   {
-      _replaceMode = replaceMode;
-      _option = option;
-
-      _searchHistory = searchHistory;
-      _replaceHistory = replaceHistory;
-   }
-};
-
-// --- AboutDialog ---
-
-class AboutDialog : public Dialog
-{
-   virtual int _getDialogID() const { return IDD_ABOUT; }
-
-   virtual void onCreate();
-   virtual void onOK() {}
-
-public:
-   AboutDialog(Control* owner)
-      : Dialog(owner) 
-   { 
-   }
-};
+//// --- ProjectForwardsDialog ---
+//
+//class ProjectForwardsDialog : public Dialog
+//{
+//   _ProjectManager* _project;
+//
+//   bool  _changed;
+//   int   _current;
+//
+//   bool validateItem(wchar_t* &text);
+//
+//   void addItem();
+//   void getItem();
+//   void editItem();
+//   void deleteItem();
+//
+//   virtual int _getDialogID() const { return IDD_FORWARDS; }
+//
+//   virtual void onCreate();
+//   virtual void onOK();
+//
+//   virtual void doCommand(int id, int command);
+//
+//public:   
+//   ProjectForwardsDialog(Control* owner, _ProjectManager* project)
+//      : Dialog(owner) 
+//   { 
+//      _changed = false; 
+//	   _current = -1;
+//
+//      _project = project;
+//   }
+//};
+//
+//// --- WindowsDialog ---
+//
+//class WindowsDialog : public Dialog
+//{
+//protected:
+//   virtual void onClose() = 0;
+//   virtual void onListChange();
+//
+//   virtual int _getDialogID() const { return IDD_WINDOWS; }
+//
+//   virtual void doCommand(int id, int command);
+//
+//   void addWindow(const wchar_t* docName)
+//   {
+//      addListItem(IDC_WINDOWS_LIST, docName);
+//   }
+//
+//   void selectWindow(int index)
+//   {
+//      setListSelected(IDC_WINDOWS_LIST, index, true);
+//   }
+//
+//   int getSelectedWindow()
+//   {
+//      return getListIndex(IDC_WINDOWS_LIST);
+//   }
+//   int* getSelectedWindows(int& count)
+//   {
+//      count = getListSelCount(IDC_WINDOWS_LIST);
+//      int* selected = (int*)malloc(sizeof(INT) * count);
+//      getListSelected(IDC_WINDOWS_LIST, count, selected);
+//
+//      return selected;
+//   }
+//
+//public:
+//   WindowsDialog(Control* owner);
+//};
+//
+//// --- GoToLineDialog ---
+//
+//class GoToLineDialog : public Dialog
+//{
+//   int _number;
+//
+//   virtual int _getDialogID() const { return IDD_GOTOLINE; }
+//
+//   virtual void onCreate();
+//   virtual void onOK();
+//
+//public:
+//   int getLineNumber() const { return _number; }
+//
+//   GoToLineDialog(Control* owner, int number)
+//      : Dialog(owner) 
+//   {
+//      _number = number;
+//   }
+//};
+//
+//// --- EditorSettings ---
+//
+//class EditorSettings : public Dialog
+//{
+//   Model* _model;
+//
+//   virtual int _getDialogID() const { return IDD_EDITOR_SETTINGS; }
+//
+//   virtual void doCommand(int id, int command);
+//   virtual void onCreate();
+//   virtual void onOK();
+//   virtual void onEditorHighlightSyntaxChanged();
+//
+//public:
+//   EditorSettings(Control* owner, Model* model)
+//      : Dialog(owner)
+//   {
+//      _model = model;
+//   }
+//};
+//
+//// --- DebuggerSettings ---
+//
+//class DebuggerSettings : public Dialog
+//{
+//   Model* _model;
+//
+//   virtual int _getDialogID() const { return IDD_DEBUGGER_SETTINGS; }
+//
+//   virtual void onCreate();
+//   virtual void onOK();
+//
+//public:
+//   DebuggerSettings(Control* owner, Model* model)
+//      : Dialog(owner)
+//   {
+//      _model = model;
+//   }
+//};
+//
+//// --- FindDialog ---
+//
+//class FindDialog : public Dialog
+//{
+//   bool           _replaceMode;
+//   SearchOption*  _option;
+//
+//   SearchHistory* _searchHistory;
+//   SearchHistory* _replaceHistory;
+//   
+//   void copyHistory(int id, SearchHistory* history);
+//
+//   virtual int _getDialogID() const { return _replaceMode ? IDD_EDITOR_REPLACE : IDD_EDITOR_FIND; }
+//
+//   virtual void onCreate();
+//   virtual void onOK();
+//
+//public:
+//   FindDialog(Control* owner, bool replaceMode, SearchOption* option, SearchHistory* searchHistory, SearchHistory* replaceHistory)
+//      : Dialog(owner) 
+//   {
+//      _replaceMode = replaceMode;
+//      _option = option;
+//
+//      _searchHistory = searchHistory;
+//      _replaceHistory = replaceHistory;
+//   }
+//};
+//
+//// --- AboutDialog ---
+//
+//class AboutDialog : public Dialog
+//{
+//   virtual int _getDialogID() const { return IDD_ABOUT; }
+//
+//   virtual void onCreate();
+//   virtual void onOK() {}
+//
+//public:
+//   AboutDialog(Control* owner)
+//      : Dialog(owner) 
+//   { 
+//   }
+//};
 
 } // _GUI_
 

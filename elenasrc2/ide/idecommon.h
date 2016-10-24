@@ -85,45 +85,45 @@ enum FrameState
 };
 
 // --- Model ---
-typedef _ELENA_::String<text_c, 255> SearchText;
+//typedef _ELENA_::String<text_c, 255> SearchText;
 typedef _ELENA_::List<Document*> Documents;
 typedef _ELENA_::Map<_ELENA_::path_t, int> DocMapping;
 typedef _ELENA_::Map<const char*, _ELENA_::path_c*> PathMapping;
 typedef _ELENA_::List<text_c*> SearchHistory;
 
-struct SearchOption
-{
-   SearchText text;
-   SearchText newText;
-   bool       matchCase;
-   bool       wholeWord;
-
-   SearchOption()
-   {
-      matchCase = wholeWord = false;
-   }
-};
+//struct SearchOption
+//{
+//   SearchText text;
+//   SearchText newText;
+//   bool       matchCase;
+//   bool       wholeWord;
+//
+//   SearchOption()
+//   {
+//      matchCase = wholeWord = false;
+//   }
+//};
 
 // --- MessageBookmark ---
 
 struct MessageBookmark
 {
-   _ELENA_::ident_c* module;
+   char*             module;
    _ELENA_::path_c*  file;
    size_t            col, row;
 
-   MessageBookmark(_ELENA_::path_t file, text_t col, text_t row)
+   MessageBookmark(_ELENA_::path_t file, text_str col, text_str row)
    {
       this->module = NULL;
-      this->file = _ELENA_::StringHelper::clone(file);
-      this->col = _ELENA_::StringHelper::strToInt(col);
-      this->row = _ELENA_::StringHelper::strToInt(row);
+      this->file = file.clone();
+      this->col = col.toInt();
+      this->row = row.toInt();
    }
 
    MessageBookmark(_ELENA_::ident_t module, _ELENA_::path_t file, size_t col, size_t row)
    {
-      this->module = _ELENA_::StringHelper::clone(module);
-      this->file = _ELENA_::StringHelper::clone(file);
+      this->module = module.clone();
+      this->file = file.clone();
       this->col = col;
       this->row = row;
    }
@@ -163,16 +163,16 @@ struct PathScope
 class _DebugListener
 {
 public:
-   virtual void onStop(bool failed) = 0;
-
-   virtual void onStart() = 0;
-   //virtual void onLoadModule(const wchar16_t* name, const wchar16_t* path) = 0;
-   //virtual void onLoadTape(const wchar16_t* name, int tapePtr) = 0;
-   virtual void onStep(_ELENA_::ident_t ns, _ELENA_::ident_t source, int row, int disp, int length) = 0;
-   virtual void onCheckPoint(text_t message) = 0;
-   virtual void onNotification(text_t message, size_t address, int code) = 0;
-
-   virtual void onDebuggerHook() = 0;
+//   virtual void onStop(bool failed) = 0;
+//
+//   virtual void onStart() = 0;
+//   //virtual void onLoadModule(const wchar16_t* name, const wchar16_t* path) = 0;
+//   //virtual void onLoadTape(const wchar16_t* name, int tapePtr) = 0;
+//   virtual void onStep(_ELENA_::ident_t ns, _ELENA_::ident_t source, int row, int disp, int length) = 0;
+//   virtual void onCheckPoint(text_t message) = 0;
+//   virtual void onNotification(text_t message, size_t address, int code) = 0;
+//
+//   virtual void onDebuggerHook() = 0;
 };
 
 // --- _LibraryManager ---
@@ -206,9 +206,9 @@ public:
    virtual void setTemplate(const char* target) = 0;
    virtual void setDebugMode(int mode) = 0;
 
-   virtual _ELENA_::ConfigCategoryIterator Forwards() = 0;
-   virtual void clearForwards() = 0;
-   virtual void addForward(const char* name, const char* reference) = 0;
+//   virtual _ELENA_::ConfigCategoryIterator Forwards() = 0;
+//   virtual void clearForwards() = 0;
+//   virtual void addForward(const char* name, const char* reference) = 0;
 };
 
 class Model
@@ -218,7 +218,7 @@ public:
    ProjectScope project;
 
    _ELENA_::Path                   defaultProject;
-   _ELENA_::List<_ELENA_::path_c*> defaultFiles;
+//   _ELENA_::List<_ELENA_::path_c*> defaultFiles;
 
    SearchHistory  searchHistory;
    SearchHistory  replaceHistory;
@@ -241,7 +241,7 @@ public:
    bool callStack;
    bool messages;
    bool projectView;
-   bool vmConsole;
+//   bool vmConsole;
 
    // policy
    bool lastProjectRemember;
@@ -258,7 +258,7 @@ public:
    bool   lineNumberVisible;
    bool   highlightSyntax;
    bool   highlightBrackets;
-   bool   hexNumberMode;
+//   bool   hexNumberMode;
    size_t scheme;
    size_t font_size;
 
@@ -289,27 +289,27 @@ public:
       return doc ? doc->status.modifiedMode : false;
    }
 
-   bool isAnyDocumentModified()
-   {
-      Documents::Iterator it = documents.start();
-      while (!it.Eof()) {
-         if ((*it)->status.modifiedMode)
-            return true;
-
-         it++;
-      }
-      return false;
-   }
-
-   void setReadOnlyMode(bool mode)
-   {
-      Documents::Iterator it = documents.start();
-      while (!it.Eof()) {
-         (*it)->status.readOnly = mode;
-
-         it++;
-      }
-   }
+//   bool isAnyDocumentModified()
+//   {
+//      Documents::Iterator it = documents.start();
+//      while (!it.Eof()) {
+//         if ((*it)->status.modifiedMode)
+//            return true;
+//
+//         it++;
+//      }
+//      return false;
+//   }
+//
+//   void setReadOnlyMode(bool mode)
+//   {
+//      Documents::Iterator it = documents.start();
+//      while (!it.Eof()) {
+//         (*it)->status.readOnly = mode;
+//
+//         it++;
+//      }
+//   }
 
    bool isDocumentUnnamed(int index)
    {
@@ -374,7 +374,7 @@ public:
    }
 
    Model()
-      : documents(NULL, _ELENA_::freeobj), mappings(-1), defaultFiles((_ELENA_::path_c*)NULL, _ELENA_::freestr),
+      : documents(NULL, _ELENA_::freeobj), mappings(-1), //defaultFiles((_ELENA_::path_c*)NULL, _ELENA_::freestr),
          packageRoots((_ELENA_::path_c*)NULL, _ELENA_::freestr), libraryRoots((_ELENA_::path_c*)NULL, _ELENA_::freestr),
          searchHistory((text_c*)NULL, _ELENA_::freestr), replaceHistory((text_c*)NULL, _ELENA_::freestr)
    {
@@ -408,10 +408,10 @@ public:
       messages = true;
       tabWithAboveScore = true;
       autoRecompile = true;
-      //debugTape = false;
-      hexNumberMode = true;
-      //testMode = false;
-      vmConsole = false;
+//      //debugTape = false;
+//      hexNumberMode = true;
+//      //testMode = false;
+//      vmConsole = false;
    }
 };
 
@@ -422,14 +422,14 @@ public:
    virtual void onDocIncluded() = 0;
    virtual void onCursorChange() = 0;
    virtual void onFrameChange() = 0;
-   virtual bool onClose() = 0;
-   virtual void onCompilationEnd(text_t message, bool successful) = 0;
-   virtual void onAutoCompilationEnd() = 0;
-   virtual void onDebuggerStart() = 0;
-   virtual void onDebuggerStep(text_t ns, text_t source, HighlightInfo info) = 0;
-   virtual void onDebuggerCheckPoint(text_t message) = 0;
-   virtual void onDebuggerStop(bool broken) = 0;
-   virtual void doDebugInspect() = 0;
+//   virtual bool onClose() = 0;
+//   virtual void onCompilationEnd(text_t message, bool successful) = 0;
+//   virtual void onAutoCompilationEnd() = 0;
+//   virtual void onDebuggerStart() = 0;
+//   virtual void onDebuggerStep(text_t ns, text_t source, HighlightInfo info) = 0;
+//   virtual void onDebuggerCheckPoint(text_t message) = 0;
+//   virtual void onDebuggerStop(bool broken) = 0;
+//   virtual void doDebugInspect() = 0;
 
    virtual void doCreateProject() = 0;
    virtual void doCreateFile() = 0;
@@ -444,10 +444,10 @@ public:
    virtual bool doCloseFile(int index) = 0;
    virtual void doCloseAll(bool closeProject) = 0;
    virtual void doCloseAllButActive() = 0;
-   virtual void doSwitchTab(bool forward) = 0;
-   virtual void doSelectWindow() = 0;
-   virtual void doSelectWindow(int index) = 0;
-   virtual void doSelectWindow(text_t path) = 0;
+//   virtual void doSwitchTab(bool forward) = 0;
+//   virtual void doSelectWindow() = 0;
+//   virtual void doSelectWindow(int index) = 0;
+//   virtual void doSelectWindow(text_t path) = 0;
 
    virtual void doUndo() = 0;
    virtual void doRedo() = 0;
@@ -466,48 +466,48 @@ public:
    virtual void doLowerCase() = 0;
    virtual void doSwap() = 0;
 
-   virtual void doFind() = 0;
-   virtual void doFindNext() = 0;
-   virtual void doReplace() = 0;
-   virtual void doGoToLine() = 0;
-
-   virtual void doInclude() = 0;
-   virtual void doExclude() = 0;
-
-   virtual void doSetEditorSettings() = 0;
+//   virtual void doFind() = 0;
+//   virtual void doFindNext() = 0;
+//   virtual void doReplace() = 0;
+//   virtual void doGoToLine() = 0;
+//
+//   virtual void doInclude() = 0;
+//   virtual void doExclude() = 0;
+//
+//   virtual void doSetEditorSettings() = 0;
    virtual void doSetProjectSettings() = 0;
-   virtual void doSetDebuggerSettings() = 0;
-   virtual void doSetProjectForwards() = 0;
-   virtual void doShowAbout() = 0;
+//   virtual void doSetDebuggerSettings() = 0;
+//   virtual void doSetProjectForwards() = 0;
+//   virtual void doShowAbout() = 0;
 
    virtual void doExit() = 0;
 
-   virtual void cleanUpProject() = 0;
-   virtual void doCompileProject() = 0;
-   virtual void doStepOver() = 0;
-   virtual void doStepInto() = 0;
-   virtual void doDebugStop() = 0;
-   virtual void doDebugRunTo() = 0;
-
-   virtual void doShowCompilerOutput(bool checked, bool forced = false) = 0;
-   virtual void doShowVMConsole(bool checked, bool forced = false) = 0;
-   virtual void doShowProjectView(bool checked, bool forced = false) = 0;
-   virtual void doShowMessages(bool checked, bool forced = false) = 0;
-   virtual void doShowDebugWatch(bool visible) = 0;
-   virtual void doShowCallStack(bool checked, bool forced = false) = 0;
-   virtual void doBrowseWatch(void* node) = 0;
-   virtual void doBrowseWatch() = 0;
-   virtual void doDebugSwitchHexMode() = 0;
-   virtual void doGotoSource() = 0;
+//   virtual void cleanUpProject() = 0;
+//   virtual void doCompileProject() = 0;
+//   virtual void doStepOver() = 0;
+//   virtual void doStepInto() = 0;
+//   virtual void doDebugStop() = 0;
+//   virtual void doDebugRunTo() = 0;
+//
+//   virtual void doShowCompilerOutput(bool checked, bool forced = false) = 0;
+//   virtual void doShowVMConsole(bool checked, bool forced = false) = 0;
+//   virtual void doShowProjectView(bool checked, bool forced = false) = 0;
+//   virtual void doShowMessages(bool checked, bool forced = false) = 0;
+//   virtual void doShowDebugWatch(bool visible) = 0;
+//   virtual void doShowCallStack(bool checked, bool forced = false) = 0;
+//   virtual void doBrowseWatch(void* node) = 0;
+//   virtual void doBrowseWatch() = 0;
+//   virtual void doDebugSwitchHexMode() = 0;
+//   virtual void doGotoSource() = 0;
 
    virtual void highlightMessage(MessageBookmark* bookmark, int bandStyle) = 0;
-   virtual void selectProjectFile(int index) = 0;
+//   virtual void selectProjectFile(int index) = 0;
    virtual void refreshDebuggerInfo() = 0;
 
-   virtual void doDebugRun() = 0;
-   virtual void onDebuggerVMHook() = 0;
-
-   virtual void toggleBreakpoint() = 0;
+//   virtual void doDebugRun() = 0;
+//   virtual void onDebuggerVMHook() = 0;
+//
+//   virtual void toggleBreakpoint() = 0;
    virtual void clearBreakpoints() = 0;
 };
 
@@ -523,22 +523,22 @@ public:
    virtual void start(bool maximized) = 0;
    virtual void exit() = 0;
    virtual void refresh(bool onlyFrame = true) = 0;
-   virtual void reloadSettings() = 0;
+//   virtual void reloadSettings() = 0;
 
    virtual bool configProject(_ProjectManager* project) = 0;
-   virtual bool configEditor(Model* model) = 0;
-   virtual bool configDebugger(Model* model) = 0;
-   virtual bool configurateForwards(_ProjectManager* project) = 0;
-   virtual bool about(Model* model) = 0;
+//   virtual bool configEditor(Model* model) = 0;
+//   virtual bool configDebugger(Model* model) = 0;
+//   virtual bool configurateForwards(_ProjectManager* project) = 0;
+//   virtual bool about(Model* model) = 0;
 
    virtual bool saveProject(Model* model, _ELENA_::Path& path) = 0;
    virtual bool selectProject(Model* model, _ELENA_::Path& path) = 0;
    virtual bool saveFile(Model* model, _ELENA_::Path& newPath) = 0;
    virtual bool selectFiles(Model* model, _ELENA_::List<text_c*>& selected) = 0;
-   virtual bool find(Model* model, SearchOption* option, SearchHistory* searchHistory) = 0;
-   virtual bool replace(Model* model, SearchOption* option, SearchHistory* searchHistory, SearchHistory* replaceHistory) = 0;
-   virtual bool gotoLine(int& row) = 0;
-   virtual bool selectWindow(Model* model, _Controller* controller) = 0;
+//   virtual bool find(Model* model, SearchOption* option, SearchHistory* searchHistory) = 0;
+//   virtual bool replace(Model* model, SearchOption* option, SearchHistory* searchHistory, SearchHistory* replaceHistory) = 0;
+//   virtual bool gotoLine(int& row) = 0;
+//   virtual bool selectWindow(Model* model, _Controller* controller) = 0;
 
    virtual bool copyToClipboard(Document* doc) = 0;
    virtual void pasteFromClipboard(Document* doc) = 0;
@@ -563,7 +563,7 @@ public:
    virtual void hideFrame() = 0;
 
    virtual void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable) = 0;
-   virtual void checkMenuItemById(int id, bool doEnable) = 0;
+//   virtual void checkMenuItemById(int id, bool doEnable) = 0;
 
    virtual void markDocumentTitle(int docIndex, bool changed) = 0;
 
@@ -572,33 +572,33 @@ public:
    virtual void addToRecentFileList(text_t path) = 0;
    virtual void addToRecentProjectList(text_t path) = 0;
 
-   virtual void removeFile(_ELENA_::path_t name) = 0;
-
-   virtual void openOutput() = 0;
-   virtual void closeOutput() = 0;
-   virtual void switchToOutput() = 0;
-
-   virtual void openVMConsole() = 0;
-   virtual void closeVMConsole() = 0;
-
-   virtual void openMessageList() = 0;
-   virtual void clearMessageList() = 0;
-   virtual void closeMessageList() = 0;
-
-   virtual void openDebugWatch() = 0;
-   virtual void closeDebugWatch() = 0;
-
-   virtual void openProjectView() = 0;
-   virtual void closeProjectView() = 0;
-
-   virtual void openCallList() = 0;
-   virtual void closeCallList() = 0;
-
-   virtual bool compileProject(_ProjectManager* project, int postponedAction) = 0;
-   virtual void resetDebugWindows() = 0;
-   virtual void refreshDebugWindows(_ELENA_::_DebugController* debugController) = 0;
-   virtual void browseWatch(_ELENA_::_DebugController* debugController, void* node) = 0;
-   virtual void browseWatch(_ELENA_::_DebugController* debugController) = 0;
+//   virtual void removeFile(_ELENA_::path_t name) = 0;
+//
+//   virtual void openOutput() = 0;
+//   virtual void closeOutput() = 0;
+//   virtual void switchToOutput() = 0;
+//
+//   virtual void openVMConsole() = 0;
+//   virtual void closeVMConsole() = 0;
+//
+//   virtual void openMessageList() = 0;
+//   virtual void clearMessageList() = 0;
+//   virtual void closeMessageList() = 0;
+//
+//   virtual void openDebugWatch() = 0;
+//   virtual void closeDebugWatch() = 0;
+//
+//   virtual void openProjectView() = 0;
+//   virtual void closeProjectView() = 0;
+//
+//   virtual void openCallList() = 0;
+//   virtual void closeCallList() = 0;
+//
+//   virtual bool compileProject(_ProjectManager* project, int postponedAction) = 0;
+//   virtual void resetDebugWindows() = 0;
+//   virtual void refreshDebugWindows(_ELENA_::_DebugController* debugController) = 0;
+//   virtual void browseWatch(_ELENA_::_DebugController* debugController, void* node) = 0;
+//   virtual void browseWatch(_ELENA_::_DebugController* debugController) = 0;
 
    virtual void reloadProjectView(_ProjectManager* project) = 0;
 

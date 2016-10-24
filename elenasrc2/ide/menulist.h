@@ -27,8 +27,8 @@ protected:
 
    _ELENA_::List<text_c*> _list;
 
-   int getIndex(text_t item);
-   bool erase(text_t item);
+   int getIndex(text_str item);
+   bool erase(text_str item);
    void eraseLast();
 
 public:
@@ -38,7 +38,7 @@ public:
    }
 
    text_t get(int id);
-   void add(text_t item);
+   void add(text_str item);
 
    void refresh();
 

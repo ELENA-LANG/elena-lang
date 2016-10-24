@@ -318,85 +318,85 @@ public:
 
 // --- LiteralWriter ---
 
-//template<class CHAR> class LiteralWriter : public TextWriter
-//{
-//   CHAR*   _text;
-//   size_t  _offset;
-//   size_t  _size;
-//
-//public:
-//   size_t Position() const { return _offset; }
-//
-//   void reset()
+template<class CHAR> class LiteralWriter : public TextWriter
+{
+   CHAR*   _text;
+   size_t  _offset;
+   size_t  _size;
+
+public:
+   size_t Position() const { return _offset; }
+
+   void reset()
+   {
+      _offset = 0;
+   }
+
+   virtual bool writeNewLine()
+   {
+      return false; // !!
+   }
+
+   virtual bool write(const wide_c* s, size_t length)
+   {
+      size_t lenToWrite = _size - _offset;
+
+      if (__copy(_text + _offset, s, length, lenToWrite)) {
+         _offset += lenToWrite;
+
+         return true;
+      }
+      else return false;
+   }
+
+   virtual bool write(const char* s, size_t length)
+   {
+      size_t lenToWrite = _size - _offset;
+
+      if (__copy(_text + _offset, s, length, lenToWrite)) {
+         _offset += lenToWrite;
+
+         return true;
+      }
+      else return false;
+   }
+
+   bool isOpened() { return _text != NULL; }
+
+//   bool writeByte(unsigned char ch)
 //   {
-//      _offset = 0;
+//      return false;
 //   }
 //
-//   virtual bool writeNewLine()
+//   virtual bool write(const void* s, size_t length)
 //   {
-//      return false; // !!
-//   }
+//      size_t size = length >> 1;
+//      if (_offset + size <= _size) {
+//         void* p = _text + _offset;
+//         memcpy(p, s, length);
 //
-//   virtual bool write(const wide_c* s, size_t length)
-//   {
-//      size_t lenToWrite = _size - _offset;
-//
-//      if (StringHelper::copy(_text + _offset, s, length, lenToWrite)) {
-//         _offset += lenToWrite;
+//         _offset += size;
 //
 //         return true;
 //      }
 //      else return false;
 //   }
-//
-//   virtual bool write(const char* s, size_t length)
-//   {
-//      size_t lenToWrite = _size - _offset;
-//
-//      if (StringHelper::copy(_text + _offset, s, length, lenToWrite)) {
-//         _offset += lenToWrite;
-//
-//         return true;
-//      }
-//      else return false;
-//   }
-//
-//   bool isOpened() { return _text != NULL; }
-//
-////   bool writeByte(unsigned char ch)
-////   {
-////      return false;
-////   }
-////
-////   virtual bool write(const void* s, size_t length)
-////   {
-////      size_t size = length >> 1;
-////      if (_offset + size <= _size) {
-////         void* p = _text + _offset;
-////         memcpy(p, s, length);
-////
-////         _offset += size;
-////
-////         return true;
-////      }
-////      else return false;
-////   }
-//
-//   LiteralWriter(CHAR* text, int size)
-//   {
-//      _text = text;
-//      _offset = 0;
-//      _size = size;
-//   }
-//   LiteralWriter(CHAR* text, int size, int offset)
-//   {
-//      _text = text;
-//      _offset = offset;
-//      _size = size;
-//   }
-//
-//   virtual ~LiteralWriter() {}
-//};
+
+   LiteralWriter(CHAR* text, int size)
+   {
+      _text = text;
+      _offset = 0;
+      _size = size;
+   }
+   LiteralWriter(CHAR* text, int size, int offset)
+   {
+      _text = text;
+      _offset = offset;
+      _size = size;
+   }
+
+   virtual ~LiteralWriter() {}
+};
 
 // --- LiteralTextReader ---
 

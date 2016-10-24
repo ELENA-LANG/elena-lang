@@ -20,6 +20,8 @@ private:
 public:
    operator const char*() const { return _string; }
 
+   const char* c_str() const { return _string; }
+
    ident_t& operator +=(int offset)
    {
       _string += offset;
@@ -169,7 +171,7 @@ protected:
       s[pos] = 0;
       pos--;
       while (start < pos) {
-         char tmp = s[start];
+         T tmp = s[start];
          s[start++] = s[pos];
          s[pos--] = tmp;
       }
@@ -525,12 +527,14 @@ public:
 
 // --- HOTFIX : internal conversion routines ---
 
-void __copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
-void __copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
-void __copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
-void __copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
-void __copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
-void __copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+bool __copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
+bool __copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+bool __copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+bool __copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+bool __copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
+bool __copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+void __move(char* s1, const char* s2, size_t length);
+void __move(wchar_t* s1, const wchar_t* s2, size_t length);
 void __append(char* dest, const char* sour, size_t length);
 void __append(wide_c* dest, const wide_c* sour, size_t length);
 
@@ -541,8 +545,13 @@ wchar_t* __reallocate(wchar_t* s, size_t size);
 
 char* __lower(char* s);
 wchar_t* __lower(wide_c* s);
+char __lower(char s);
+wchar_t __lower(wide_c s);
 char* __upper(char* s);
 wchar_t* __upper(wide_c* s);
+
+char* __clone(const char* s);
+wchar_t* __clone(const wchar_t* s);
 
 inline void copystr(char* d, const char* s)
 {

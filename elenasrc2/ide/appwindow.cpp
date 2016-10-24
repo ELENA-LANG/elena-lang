@@ -187,54 +187,54 @@ size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& 
       else return LexicalStyler::proceed(position, li);
    }
 }
-////
-////bool IDE :: loadTemporalModule(const tchar_t* name, int param)
-////{
-//////!!temporal
-////#ifdef _WIN32
-////   if (!_debugController->isStarted())
-////      return false;
-////
-////   int index = _mainFrame->getDocumentIndex(name);
-////
-////   // if the temporal module is not yet opened - create it
-////   if (index == -1) {
-////      doCreateTempFile(name);
-////
-////      index = _mainFrame->getDocumentIndex(name);
-////   }
-////   Document* doc = _mainFrame->getDocument(index);
-////
-////   // clear all
-////   doc->moveFirst(false);
-////   doc->moveLast(true);
-////   doc->eraseChar(false);
-////
-////   // insert temporal content
-////   const tchar_t* source = _debugController->getTemporalSource(param);
-////   doc->insertLine(source, _ELENA_::getlength(source));
-////
-////   doc->status.modifiedMode = false;
-////#endif
-////   return true;
-////}
 
-////void IDE :: doCreateTempFile(const tchar_t* name)
-////{
-////   _GUI_::Text* text = new _GUI_::Text();
-////   text->create();
-////
-////   Document* doc = _mainFrame->openDocument(name, text,
-////      new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
-////
-////   doc->status.readOnly = true;
-////   doc->setHighlightMode(false);
-////
-////   _windowList.add(name);
-////
-////   onFileOpen();
-////   onChange();
-////}
+//bool IDE :: loadTemporalModule(const tchar_t* name, int param)
+//{
+////!!temporal
+//#ifdef _WIN32
+//   if (!_debugController->isStarted())
+//      return false;
+//
+//   int index = _mainFrame->getDocumentIndex(name);
+//
+//   // if the temporal module is not yet opened - create it
+//   if (index == -1) {
+//      doCreateTempFile(name);
+//
+//      index = _mainFrame->getDocumentIndex(name);
+//   }
+//   Document* doc = _mainFrame->getDocument(index);
+//
+//   // clear all
+//   doc->moveFirst(false);
+//   doc->moveLast(true);
+//   doc->eraseChar(false);
+//
+//   // insert temporal content
+//   const tchar_t* source = _debugController->getTemporalSource(param);
+//   doc->insertLine(source, _ELENA_::getlength(source));
+//
+//   doc->status.modifiedMode = false;
+//#endif
+//   return true;
+//}
+
+//void IDE :: doCreateTempFile(const tchar_t* name)
+//{
+//   _GUI_::Text* text = new _GUI_::Text();
+//   text->create();
+//
+//   Document* doc = _mainFrame->openDocument(name, text,
+//      new IDELexicalStyler(this, text, STYLE_DEFAULT, lexLookahead, lexStart, makeStep, defineStyle), Settings::defaultEncoding);
+//
+//   doc->status.readOnly = true;
+//   doc->setHighlightMode(false);
+//
+//   _windowList.add(name);
+//
+//   onFileOpen();
+//   onChange();
+//}
 
 // --- IDEController ---
 
@@ -243,26 +243,26 @@ void IDEController::start(_View* view, _DebugListener* listener, Model* model)
    _view = view;
    _model = model;
    _project.assign(model);
-   _debugController.assignListener(listener);
-   _debugController.assignSourceManager(&_project);
+//   _debugController.assignListener(listener);
+//   _debugController.assignSourceManager(&_project);
 
    onIDEInit();
 
    view->start(model->appMaximized);
 
-   Text::TabSize = model->tabSize;
-
-   // open default project
-   if (!model->defaultProject.isEmpty())
-      openProject(model->defaultProject);
-
-   // open default files
-   _ELENA_::List<_ELENA_::path_c*>::Iterator it = model->defaultFiles.start();
-   while (!it.Eof()) {
-      openFile(*it);
-
-      it++;
-   }
+//   Text::TabSize = model->tabSize;
+//
+//   // open default project
+//   if (!model->defaultProject.isEmpty())
+//      openProject(model->defaultProject);
+//
+//   // open default files
+//   _ELENA_::List<_ELENA_::path_c*>::Iterator it = model->defaultFiles.start();
+//   while (!it.Eof()) {
+//      openFile(*it);
+//
+//      it++;
+//   }
 
    onChange();
 }
@@ -287,7 +287,7 @@ bool IDEController :: openProject(_ELENA_::path_t path)
       _ELENA_::Path sourcePath;
       _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
       while (!it.Eof()) {
-         _ELENA_::Path::loadPath(sourcePath, it.key());
+         sourcePath.copy(it.key());
          Paths::resolveRelativePath(sourcePath, _model->project.path);
 
          if (!openFile(sourcePath))
@@ -301,23 +301,23 @@ bool IDEController :: openProject(_ELENA_::path_t path)
    return true;
 }
 
-void IDEController :: selectProjectFile(int index)
-{
-   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
-   while (index > 0) {
-      index--;
-      it++;
-   }
-
-   _ELENA_::Path sourcePath;
-   _ELENA_::Path::loadPath(sourcePath, it.key());
-   Paths::resolveRelativePath(sourcePath, _model->project.path);
-
-   if (!openFile(sourcePath)) {
-      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
-   }
-   else onChange();
-}
+//void IDEController :: selectProjectFile(int index)
+//{
+//   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
+//   while (index > 0) {
+//      index--;
+//      it++;
+//   }
+//
+//   _ELENA_::Path sourcePath;
+//   _ELENA_::Path::loadPath(sourcePath, it.key());
+//   Paths::resolveRelativePath(sourcePath, _model->project.path);
+//
+//   if (!openFile(sourcePath)) {
+//      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
+//   }
+//   else onChange();
+//}
 
 bool IDEController :: openFile(_ELENA_::path_t path)
 {
@@ -347,11 +347,11 @@ bool IDEController :: openFile(_ELENA_::path_t path)
       if (len > 50)
          len = 50;
 
-      _ELENA_::StringHelper::copy(caption, module, len, len);
+      _ELENA_::__copy(caption, module, len, len);
       caption[len] = 0;
 
       caption.append(':');
-      caption.append(path + _ELENA_::StringHelper::findLast(path, PATH_SEPARATOR) + 1);
+      caption.append(path + path.findLast(PATH_SEPARATOR) + 1);
       //caption.append(modulePath);
 
       int index = _view->newDocument(caption, doc);
@@ -448,45 +448,45 @@ void IDEController :: clearBreakpoints()
 {
    _breakpoints.clear();
 
-   if (_debugController.isStarted())
-      _debugController.clearBreakpoints();
+   //if (_debugController.isStarted())
+   //   _debugController.clearBreakpoints();
 
    removeAllDocumentMarker(STYLE_BREAKPOINT);
 }
 
-void IDEController :: cleanUpProject()
-{
-   // clean exe file
-   if (!_ELENA_::emptystr(_project.getTarget()))
-   {
-      _ELENA_::Path targetFile(_model->project.path);
-      _ELENA_::Path::combinePath(targetFile, _project.getTarget());
-
-      _view->removeFile(targetFile);
-   }
-   // clean module files
-   _ELENA_::Path rootPath(_model->project.path);
-   _ELENA_::Path::combinePath(rootPath, _project.getOutputPath());
-   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath);
-      _ELENA_::Path::combinePath(source, it.key());
-
-      _ELENA_::Path module;
-      module.copySubPath(source);
-
-      _ELENA_::ReferenceNs name(_project.getPackage());
-      name.pathToName(module);          // get a full name
-
-      // remove module
-      module.copy(rootPath);
-      module.nameToPath(name, _T("nl"));
-      _view->removeFile(module);
-
-      // remove debug info module
-      module.changeExtension(_T("dnl"));
-      _view->removeFile(module);
-   }
-}
+//void IDEController :: cleanUpProject()
+//{
+//   // clean exe file
+//   if (!_ELENA_::emptystr(_project.getTarget()))
+//   {
+//      _ELENA_::Path targetFile(_model->project.path);
+//      _ELENA_::Path::combinePath(targetFile, _project.getTarget());
+//
+//      _view->removeFile(targetFile);
+//   }
+//   // clean module files
+//   _ELENA_::Path rootPath(_model->project.path);
+//   _ELENA_::Path::combinePath(rootPath, _project.getOutputPath());
+//   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+//      _ELENA_::Path source(rootPath);
+//      _ELENA_::Path::combinePath(source, it.key());
+//
+//      _ELENA_::Path module;
+//      module.copySubPath(source);
+//
+//      _ELENA_::ReferenceNs name(_project.getPackage());
+//      name.pathToName(module);          // get a full name
+//
+//      // remove module
+//      module.copy(rootPath);
+//      module.nameToPath(name, _T("nl"));
+//      _view->removeFile(module);
+//
+//      // remove debug info module
+//      module.changeExtension(_T("dnl"));
+//      _view->removeFile(module);
+//   }
+//}
 
 void IDEController :: renameFileAs(int index, _ELENA_::path_t newPath, _ELENA_::path_t oldPath, bool included)
 {
@@ -518,13 +518,13 @@ void IDEController :: markDocumentAsIncluded(int index)
    }
 }
 
-void IDEController :: markDocumentAsExcluded(int index)
-{
-   Document* doc = _model->getDocument(index);
-   if (doc) {
-      doc->status.included = false;
-   }
-}
+//void IDEController :: markDocumentAsExcluded(int index)
+//{
+//   Document* doc = _model->getDocument(index);
+//   if (doc) {
+//      doc->status.included = false;
+//   }
+//}
 
 void IDEController :: addDocumentMarker(int index, HighlightInfo info, int bandStyle, int style)
 {
@@ -538,17 +538,19 @@ void IDEController :: addDocumentMarker(int index, HighlightInfo info, int bandS
 void IDEController :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
 {
    if (bookmark) {
+      _ELENA_::ident_t module = bookmark->module;
+
       //_ELENA_::ReferenceNs name;
       //Project::retrieveName(bookmark->file, name);
 
       _ELENA_::Path docPath;
-      if (bookmark->module == NULL || _ELENA_::StringHelper::compare(bookmark->module, _project.getPackage())) {
+      if (bookmark->module == NULL || module.compare(_project.getPackage())) {
          docPath.copy(_model->project.path);
          docPath.combine(bookmark->file);
       }
       else {
          docPath.copy(_model->paths.packageRoot);
-         _ELENA_::Path::combinePath(docPath, bookmark->module, _ELENA_::StringHelper::find(bookmark->module, '\'', _ELENA_::getlength(bookmark->module)));
+         docPath.combine(module, module.find('\'', _ELENA_::getlength(bookmark->module)));
          docPath.combine(bookmark->file);
 
          openFile(docPath);
@@ -574,51 +576,51 @@ void IDEController :: doSetProjectSettings()
    Settings::onNewProjectTemplate(_model, &_project);
 }
 
-void IDEController :: doSetEditorSettings()
-{
-   if (_view->configEditor(_model))
-   {
-      Text::TabSize = _model->tabSize;
-
-      _view->reloadSettings();
-   }
-}
-
-void IDEController :: doSetDebuggerSettings()
-{
-   if (_view->configDebugger(_model)) {
-      Settings::onNewProjectTemplate(_model, &_project);
-   }
-}
-
-void IDEController :: doSetProjectForwards()
-{
-   _view->configurateForwards(&_project);
-}
-
-bool IDEController :: findText(SearchOption& option)
-{
-   if (_model->currentDoc) {
-      if (_model->currentDoc->findLine(option.text, option.matchCase, option.wholeWord)) {
-         _view->refresh();
-
-         return true;
-      }
-   }
-   return false;
-}
-
-bool IDEController :: replaceText(SearchOption& option)
-{
-   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
-      _model->currentDoc->insertLine(option.newText, _ELENA_::getlength(option.newText));
-
-      _view->refresh();
-
-      return true;
-   }
-   else return false;
-}
+//void IDEController :: doSetEditorSettings()
+//{
+//   if (_view->configEditor(_model))
+//   {
+//      Text::TabSize = _model->tabSize;
+//
+//      _view->reloadSettings();
+//   }
+//}
+//
+//void IDEController :: doSetDebuggerSettings()
+//{
+//   if (_view->configDebugger(_model)) {
+//      Settings::onNewProjectTemplate(_model, &_project);
+//   }
+//}
+//
+//void IDEController :: doSetProjectForwards()
+//{
+//   _view->configurateForwards(&_project);
+//}
+//
+//bool IDEController :: findText(SearchOption& option)
+//{
+//   if (_model->currentDoc) {
+//      if (_model->currentDoc->findLine(option.text, option.matchCase, option.wholeWord)) {
+//         _view->refresh();
+//
+//         return true;
+//      }
+//   }
+//   return false;
+//}
+//
+//bool IDEController :: replaceText(SearchOption& option)
+//{
+//   if (_model->currentDoc && !_model->currentDoc->status.readOnly) {
+//      _model->currentDoc->insertLine(option.newText, _ELENA_::getlength(option.newText));
+//
+//      _view->refresh();
+//
+//      return true;
+//   }
+//   else return false;
+//}
 
 void IDEController::doCreateFile()
 {
@@ -638,7 +640,7 @@ void IDEController::doCreateFile()
 
    int index = _view->newDocument(name, doc);
 
-   _model->mappings.add(name, index);
+   _model->mappings.add(_ELENA_::path_t(name), index);
    _model->documents.add(doc);
 
    _view->addToWindowList(name);
@@ -718,7 +720,7 @@ void IDEController :: doHighlightBrackets(Document* doc)
 
    text_c current_ch = text->getChar(caret);
 
-   int pos = _ELENA_::StringHelper::find(OPENING_BRACKET, current_ch, -1);
+   int pos = text_str(OPENING_BRACKET).find(current_ch, -1);
    if (pos != -1) {
       //Point frame = doc->getFrame();
       //Point size = doc->getSize();
@@ -737,9 +739,10 @@ void IDEController :: doHighlightBrackets(Document* doc)
 
       return;
    }
-   pos = _ELENA_::StringHelper::find(CLOSING_BRACKET, current_ch, -1);
+   text_str closing(CLOSING_BRACKET);
+   pos = closing.find(current_ch, -1);
 
-   if (_ELENA_::StringHelper::find(CLOSING_BRACKET, current_ch, -1) != -1) {
+   if (closing.find(current_ch, -1) != -1) {
       _model->state |= uiBracketBold;
 
       int openBracketPos = -1;
@@ -794,38 +797,38 @@ bool IDEController :: doCloseProject()
    return true;
 }
 
-void IDEController :: doInclude()
-{
-   if (_model->isProjectUnnamed()) {
-      if (!doSaveProject(false))
-         return;
-   }
-
-   int index = _view->getCurrentDocumentIndex();
-   if (index != -1) {
-      markDocumentAsIncluded(index);
-
-      _ELENA_::path_t path = _model->getDocumentPath(index);
-      _project.includeSource(path);
-
-      _view->reloadProjectView(&_project);
-   }
-   onDocIncluded();
-}
-
-void IDEController :: doExclude()
-{
-   int index = _view->getCurrentDocumentIndex();
-   if (index != -1) {
-      markDocumentAsExcluded(index);
-
-      _ELENA_::path_t path = _model->getDocumentPath(index);
-      _project.excludeSource(path);
-
-      _view->reloadProjectView(&_project);
-   }
-   onDocIncluded();
-}
+//void IDEController :: doInclude()
+//{
+//   if (_model->isProjectUnnamed()) {
+//      if (!doSaveProject(false))
+//         return;
+//   }
+//
+//   int index = _view->getCurrentDocumentIndex();
+//   if (index != -1) {
+//      markDocumentAsIncluded(index);
+//
+//      _ELENA_::path_t path = _model->getDocumentPath(index);
+//      _project.includeSource(path);
+//
+//      _view->reloadProjectView(&_project);
+//   }
+//   onDocIncluded();
+//}
+//
+//void IDEController :: doExclude()
+//{
+//   int index = _view->getCurrentDocumentIndex();
+//   if (index != -1) {
+//      markDocumentAsExcluded(index);
+//
+//      _ELENA_::path_t path = _model->getDocumentPath(index);
+//      _project.excludeSource(path);
+//
+//      _view->reloadProjectView(&_project);
+//   }
+//   onDocIncluded();
+//}
 
 bool IDEController :: doSaveProject(bool saveAsMode)
 {
@@ -838,7 +841,7 @@ bool IDEController :: doSaveProject(bool saveAsMode)
       }
 	   else return false;
    }
-   _project.save(_model->project.extension);
+   _project.save(_model->project.extension.str());
 
    onChange();
 
@@ -1164,229 +1167,229 @@ void IDEController :: doSwap()
    }
 }
 
-void IDEController :: doFind()
-{
-   if (_view->find(_model, &_searchOption, &_model->searchHistory)) {
-      Settings::addSearchHistory(_model, _searchOption.text);
-
-      if (findText(_searchOption)) {
-         _view->enableMenuItemById(IDM_SEARCH_FINDNEXT, true, false);
-      }
-      else _view->error(NOT_FOUND_TEXT);
-   }
-}
-
-void IDEController :: doFindNext()
-{
-   if (!findText(_searchOption)) {
-      _view->error(NOT_FOUND_TEXT);
-   }
-}
-
-void IDEController :: doReplace()
-{
-   if (_view->replace(_model, &_searchOption, &_model->searchHistory, &_model->replaceHistory)) {
-      Settings::addSearchHistory(_model, _searchOption.text);
-      Settings::addReplaceHistory(_model, _searchOption.newText);
-
-      bool found = false;
-      while (findText(_searchOption)) {
-         found = true;
-
-         _View::Answer result = _view->question(REPLACE_TEXT);
-         if (result == _View::Cancel) {
-            break;
-         }
-         else if (result == _View::Yes) {
-            if(!replaceText(_searchOption))
-               break;
-         }
-      }
-      if (!found)
-         _view->error(NOT_FOUND_TEXT);
-   }
-}
-
-void IDEController :: doGoToLine()
-{
-   Document* doc = _model->currentDoc;
-   if (doc) {
-      Point caret = doc->getCaret();
-
-      int row = caret.y + 1;
-      if (_view->gotoLine(row)) {
-         caret.y = row - 1;
-
-         doc->setCaret(caret, false);
-         _view->refresh();
-      }
-   }
-}
-
-void IDEController :: doSwitchTab(bool forward)
-{
-   int index = _view->getCurrentDocumentIndex();
-   if (forward) {
-      index += 1;
-      if (index == _model->mappings.Count())
-         index = 0;
-   }
-   else {
-      if (index == 0) {
-         index = _model->mappings.Count() - 1;
-      }
-      else index--;
-   }
-   _view->selectDocument(index);
-}
-
-void IDEController :: doSelectWindow()
-{
-   if (_view->selectWindow(_model, this)) {
-      onChange();
-   }
-}
-
-void IDEController :: doSelectWindow(int index)
-{
-   _view->selectDocument(index);
-}
-
-void IDEController :: doSelectWindow(text_t path)
-{
-   _view->selectDocument(_model->getDocumentIndex(path));
-}
-
-void IDEController :: doShowAbout()
-{
-   _view->about(_model);
-}
-
-bool IDEController :: doCompileProject(int postponedAction)
-{
-   onCompilationStart();
-
-   // exit if the operation was canceled
-   if(!doSaveAll(false)) {
-      onCompilationEnd(ERROR_CANCELED, false);
-
-      return false;
-   }
-
-   if (postponedAction) {
-      _model->state |= uiAutoRecompile;
-   }
-   if (!_view->compileProject(&_project, postponedAction)) {
-      onCompilationEnd(ERROR_COULD_NOT_START, false);
-
-      return false;
-   }
-
-   return true;
-}
-
-void IDEController :: doShowProjectView(bool checked, bool forced)
-{
-   if (_model->projectView != checked || forced) {
-      _model->projectView = checked;
-
-      _view->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _model->projectView);
-
-      if (checked) {
-         _view->openProjectView();
-      }
-      else _view->closeProjectView();
-
-      _view->refresh(false);
-   }
-}
-
-void IDEController :: doShowCompilerOutput(bool checked, bool forced)
-{
-   if (_model->compilerOutput != checked || forced) {
-      _model->compilerOutput = checked;
-
-      _view->checkMenuItemById(IDM_VIEW_OUTPUT, _model->compilerOutput);
-
-      if (checked) {
-         _view->openOutput();
-      }
-      else _view->closeOutput();
-
-      _view->refresh(false);
-   }
-}
-
-void IDEController :: doShowVMConsole(bool checked, bool forced)
-{
-   if (_model->vmConsole != checked || forced) {
-      _model->vmConsole = checked;
-
-      _view->checkMenuItemById(IDM_VIEW_VMCONSOLE, _model->vmConsole);
-
-      if (checked) {
-         _view->openVMConsole();
-      }
-      else _view->closeVMConsole();
-
-      _view->refresh(false);
-   }
-}
-
-void IDEController :: doShowCallStack(bool checked, bool forced)
-{
-   if (_model->callStack != checked || forced) {
-      _model->callStack = checked;
-
-      _view->checkMenuItemById(IDM_VIEW_CALLSTACK, _model->callStack);
-
-      if (checked) {
-         _view->openCallList();
-
-         if (_debugController.isStarted())
-            _view->refreshDebugWindows(&_debugController);
-      }
-      else _view->closeCallList();
-
-      _view->refresh(false);
-   }
-}
-
-void IDEController :: doShowMessages(bool checked, bool forced)
-{
-   if (_model->messages != checked || forced) {
-      _model->messages = checked;
-
-      _view->checkMenuItemById(IDM_VIEW_MESSAGES, _model->messages);
-
-      if (checked) {
-         _view->openMessageList();
-      }
-      else _view->closeMessageList();
-
-      _view->refresh(false);
-   }
-}
-
-void IDEController :: doShowDebugWatch(bool visible)
-{
-   _view->checkMenuItemById(IDM_VIEW_WATCH, visible);
-
-   if (visible) {
-      _view->openDebugWatch();
-   }
-   else _view->closeDebugWatch();
-
-   _view->refresh(false);
-}
+//void IDEController :: doFind()
+//{
+//   if (_view->find(_model, &_searchOption, &_model->searchHistory)) {
+//      Settings::addSearchHistory(_model, _searchOption.text);
+//
+//      if (findText(_searchOption)) {
+//         _view->enableMenuItemById(IDM_SEARCH_FINDNEXT, true, false);
+//      }
+//      else _view->error(NOT_FOUND_TEXT);
+//   }
+//}
+//
+//void IDEController :: doFindNext()
+//{
+//   if (!findText(_searchOption)) {
+//      _view->error(NOT_FOUND_TEXT);
+//   }
+//}
+//
+//void IDEController :: doReplace()
+//{
+//   if (_view->replace(_model, &_searchOption, &_model->searchHistory, &_model->replaceHistory)) {
+//      Settings::addSearchHistory(_model, _searchOption.text);
+//      Settings::addReplaceHistory(_model, _searchOption.newText);
+//
+//      bool found = false;
+//      while (findText(_searchOption)) {
+//         found = true;
+//
+//         _View::Answer result = _view->question(REPLACE_TEXT);
+//         if (result == _View::Cancel) {
+//            break;
+//         }
+//         else if (result == _View::Yes) {
+//            if(!replaceText(_searchOption))
+//               break;
+//         }
+//      }
+//      if (!found)
+//         _view->error(NOT_FOUND_TEXT);
+//   }
+//}
+//
+//void IDEController :: doGoToLine()
+//{
+//   Document* doc = _model->currentDoc;
+//   if (doc) {
+//      Point caret = doc->getCaret();
+//
+//      int row = caret.y + 1;
+//      if (_view->gotoLine(row)) {
+//         caret.y = row - 1;
+//
+//         doc->setCaret(caret, false);
+//         _view->refresh();
+//      }
+//   }
+//}
+//
+//void IDEController :: doSwitchTab(bool forward)
+//{
+//   int index = _view->getCurrentDocumentIndex();
+//   if (forward) {
+//      index += 1;
+//      if (index == _model->mappings.Count())
+//         index = 0;
+//   }
+//   else {
+//      if (index == 0) {
+//         index = _model->mappings.Count() - 1;
+//      }
+//      else index--;
+//   }
+//   _view->selectDocument(index);
+//}
+//
+//void IDEController :: doSelectWindow()
+//{
+//   if (_view->selectWindow(_model, this)) {
+//      onChange();
+//   }
+//}
+//
+//void IDEController :: doSelectWindow(int index)
+//{
+//   _view->selectDocument(index);
+//}
+//
+//void IDEController :: doSelectWindow(text_t path)
+//{
+//   _view->selectDocument(_model->getDocumentIndex(path));
+//}
+//
+//void IDEController :: doShowAbout()
+//{
+//   _view->about(_model);
+//}
+//
+//bool IDEController :: doCompileProject(int postponedAction)
+//{
+//   onCompilationStart();
+//
+//   // exit if the operation was canceled
+//   if(!doSaveAll(false)) {
+//      onCompilationEnd(ERROR_CANCELED, false);
+//
+//      return false;
+//   }
+//
+//   if (postponedAction) {
+//      _model->state |= uiAutoRecompile;
+//   }
+//   if (!_view->compileProject(&_project, postponedAction)) {
+//      onCompilationEnd(ERROR_COULD_NOT_START, false);
+//
+//      return false;
+//   }
+//
+//   return true;
+//}
+//
+//void IDEController :: doShowProjectView(bool checked, bool forced)
+//{
+//   if (_model->projectView != checked || forced) {
+//      _model->projectView = checked;
+//
+//      _view->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _model->projectView);
+//
+//      if (checked) {
+//         _view->openProjectView();
+//      }
+//      else _view->closeProjectView();
+//
+//      _view->refresh(false);
+//   }
+//}
+//
+//void IDEController :: doShowCompilerOutput(bool checked, bool forced)
+//{
+//   if (_model->compilerOutput != checked || forced) {
+//      _model->compilerOutput = checked;
+//
+//      _view->checkMenuItemById(IDM_VIEW_OUTPUT, _model->compilerOutput);
+//
+//      if (checked) {
+//         _view->openOutput();
+//      }
+//      else _view->closeOutput();
+//
+//      _view->refresh(false);
+//   }
+//}
+//
+//void IDEController :: doShowVMConsole(bool checked, bool forced)
+//{
+//   if (_model->vmConsole != checked || forced) {
+//      _model->vmConsole = checked;
+//
+//      _view->checkMenuItemById(IDM_VIEW_VMCONSOLE, _model->vmConsole);
+//
+//      if (checked) {
+//         _view->openVMConsole();
+//      }
+//      else _view->closeVMConsole();
+//
+//      _view->refresh(false);
+//   }
+//}
+//
+//void IDEController :: doShowCallStack(bool checked, bool forced)
+//{
+//   if (_model->callStack != checked || forced) {
+//      _model->callStack = checked;
+//
+//      _view->checkMenuItemById(IDM_VIEW_CALLSTACK, _model->callStack);
+//
+//      if (checked) {
+//         _view->openCallList();
+//
+//         if (_debugController.isStarted())
+//            _view->refreshDebugWindows(&_debugController);
+//      }
+//      else _view->closeCallList();
+//
+//      _view->refresh(false);
+//   }
+//}
+//
+//void IDEController :: doShowMessages(bool checked, bool forced)
+//{
+//   if (_model->messages != checked || forced) {
+//      _model->messages = checked;
+//
+//      _view->checkMenuItemById(IDM_VIEW_MESSAGES, _model->messages);
+//
+//      if (checked) {
+//         _view->openMessageList();
+//      }
+//      else _view->closeMessageList();
+//
+//      _view->refresh(false);
+//   }
+//}
+//
+//void IDEController :: doShowDebugWatch(bool visible)
+//{
+//   _view->checkMenuItemById(IDM_VIEW_WATCH, visible);
+//
+//   if (visible) {
+//      _view->openDebugWatch();
+//   }
+//   else _view->closeDebugWatch();
+//
+//   _view->refresh(false);
+//}
 
 void IDEController :: onIDEInit()
 {
-   doShowProjectView(_model->projectView, true);
-   doShowCallStack(_model->callStack, true);
-   doShowCompilerOutput(_model->compilerOutput, true);
-   doShowVMConsole(_model->vmConsole, true);
-   doShowMessages(_model->messages, true);
+//   doShowProjectView(_model->projectView, true);
+//   doShowCallStack(_model->callStack, true);
+//   doShowCompilerOutput(_model->compilerOutput, true);
+//   doShowVMConsole(_model->vmConsole, true);
+//   doShowMessages(_model->messages, true);
 
    _view->showStatus(0, EDITOR_READY);
 
@@ -1394,7 +1397,7 @@ void IDEController :: onIDEInit()
 //   if (Settings::debugTape)
 //      _debugController->allowTapeDebug();
 
-   doShowDebugWatch(false);
+//   doShowDebugWatch(false);
 }
 
 void IDEController :: onUIChange()
@@ -1649,177 +1652,177 @@ void IDEController :: onProjectClose()
 //   ((Output*)_output)->clear();
 }
 
-bool IDEController :: onClose()
-{
-   if (_model->vmConsole)
-      _view->closeVMConsole();
-
-   bool result = closeAll();
-
-   onChange();
-
-   return result;
-}
-
-void IDEController :: onCompilationStart()
-{
-   _view->switchToOutput();
-
-//  !! _debugger.clear();
-   _view->clearMessageList();
-
-   _model->state &= ~uiHighlight;
-   removeAllDocumentMarker(STYLE_TRACE_LINE);
-
-   _model->state |= uiIDEBusy;
-
-   onUIChange();
-
-   _view->showStatus(0, PROJECT_COMPILING);
-}
-
-void IDEController :: onCompilationEnd(text_t message, bool successful)
-{
-   if (!successful) {
-      _model->state &= ~(uiIDEBusy | uiAutoRecompile);
-   }
-   else _model->state &= ~uiIDEBusy;
-
-   onUIChange();
-
-   _view->showStatus(0, message);
-}
-
-bool IDEController :: onDebugAction(int action, bool stepMode)
-{
-   if (_ELENA_::test(_model->state, uiIDEBusy))
-      return false;
-
-   removeAllDocumentMarker(STYLE_TRACE_LINE);
-   _view->showStatus(0, NULL);
-
-   if (!_debugController.isStarted()) {
-      bool recompile = _model->autoRecompile && !_ELENA_::test(_model->state, uiAutoRecompile);
-      if (!isOutaged(recompile)) {
-         if (recompile) {
-            if(!doCompileProject(action))
-               return false;
-         }
-         return false;
-      }
-      if (!startDebugger(stepMode))
-         return false;
-   }
-   return true;
-}
-
-void IDEController :: onDebuggerStart()
-{
-   _model->state |= uiDebugging;
-
-   _view->openDebugWatch();
-   _view->checkMenuItemById(IDM_VIEW_WATCH, true);
-
-   _model->setReadOnlyMode(true);
-
-   onChange();
-}
-
-bool IDEController :: startDebugger(bool stepMode)
-{
-   const char* target = _project.getTarget();
-   const char* arguments = _project.getArguments();
-
-   if (!_ELENA_::emptystr(target)) {
-      _ELENA_::Path exePath(_model->project.path);
-      _ELENA_::Path::combinePath(exePath, target);
-
-      // provide the whole command line including the executable path and name
-      _ELENA_::Path commandLine(exePath);
-      commandLine.append(_T(" "));
-      _ELENA_::Path::appendPath(commandLine, arguments);
-
-      bool mode = _project.getDebugMode() != 0;
-      if (mode) {
-         if (!_debugController.start(exePath, commandLine, mode, _breakpoints)) {
-            _view->error(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
-
-            return false;
-         }
-         else return true;
-      }
-      else if(stepMode) {
-         _view->error(ERROR_DEBUG_FILE_NOT_FOUND_SETTING);
-
-         return false;
-      }
-      else {
-         if (!_debugController.start(exePath, commandLine, false, _breakpoints)) {
-            _view->error(ERROR_RUN_NEED_RECOMPILE);
-
-            return false;
-         }
-         else return true;
-      }
-   }
-   else {
-      _view->error(ERROR_RUN_NEED_TARGET);
-
-      return false;
-   }
-}
-
-bool IDEController :: isOutaged(bool noWarning)
-{
-   if (_model->isAnyDocumentModified()) {
-      if (!noWarning)
-         _view->error(ERROR_RUN_OUT_OF_DATE);
-
-      return false;
-   }
-
-   _ELENA_::Path rootPath(_model->project.path);
-   _ELENA_::Path::combinePath(rootPath, _project.getOutputPath());
-   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath);
-      _ELENA_::Path::combinePath(source, it.key());
-
-      _ELENA_::Path module;
-      _ELENA_::Path::loadSubPath(module, it.key());
-
-      _ELENA_::ReferenceNs name(_project.getPackage());
-      name.pathToName(module);          // get a full name
-
-      module.copy(rootPath);
-      module.nameToPath(name, _T("nl"));
-
-      DateTime sourceDT = DateTime::getFileTime(source);
-      DateTime moduleDT = DateTime::getFileTime(module);
-
-      if (sourceDT > moduleDT) {
-         if (!noWarning)
-            _view->error(ERROR_RUN_OUT_OF_DATE);
-
-         return false;
-      }
-   }
-
-   return true;
-}
-
-void IDEController :: runToCursor()
-{
-   Document* doc = _model->currentDoc;
-   if (doc) {
-      _ELENA_::Path path(_model->getDocumentPath(_view->getCurrentDocumentIndex()));
-      Point caret = doc->getCaret();
-
-      _ELENA_::ReferenceNs module;
-      _project.retrieveName(path, module);
-
-      _debugController.runToCursor(module, path, 0, caret.y);
-   }
-}
+//bool IDEController :: onClose()
+//{
+//   if (_model->vmConsole)
+//      _view->closeVMConsole();
+//
+//   bool result = closeAll();
+//
+//   onChange();
+//
+//   return result;
+//}
+//
+//void IDEController :: onCompilationStart()
+//{
+//   _view->switchToOutput();
+//
+////  !! _debugger.clear();
+//   _view->clearMessageList();
+//
+//   _model->state &= ~uiHighlight;
+//   removeAllDocumentMarker(STYLE_TRACE_LINE);
+//
+//   _model->state |= uiIDEBusy;
+//
+//   onUIChange();
+//
+//   _view->showStatus(0, PROJECT_COMPILING);
+//}
+//
+//void IDEController :: onCompilationEnd(text_t message, bool successful)
+//{
+//   if (!successful) {
+//      _model->state &= ~(uiIDEBusy | uiAutoRecompile);
+//   }
+//   else _model->state &= ~uiIDEBusy;
+//
+//   onUIChange();
+//
+//   _view->showStatus(0, message);
+//}
+//
+//bool IDEController :: onDebugAction(int action, bool stepMode)
+//{
+//   if (_ELENA_::test(_model->state, uiIDEBusy))
+//      return false;
+//
+//   removeAllDocumentMarker(STYLE_TRACE_LINE);
+//   _view->showStatus(0, NULL);
+//
+//   if (!_debugController.isStarted()) {
+//      bool recompile = _model->autoRecompile && !_ELENA_::test(_model->state, uiAutoRecompile);
+//      if (!isOutaged(recompile)) {
+//         if (recompile) {
+//            if(!doCompileProject(action))
+//               return false;
+//         }
+//         return false;
+//      }
+//      if (!startDebugger(stepMode))
+//         return false;
+//   }
+//   return true;
+//}
+//
+//void IDEController :: onDebuggerStart()
+//{
+//   _model->state |= uiDebugging;
+//
+//   _view->openDebugWatch();
+//   _view->checkMenuItemById(IDM_VIEW_WATCH, true);
+//
+//   _model->setReadOnlyMode(true);
+//
+//   onChange();
+//}
+//
+//bool IDEController :: startDebugger(bool stepMode)
+//{
+//   const char* target = _project.getTarget();
+//   const char* arguments = _project.getArguments();
+//
+//   if (!_ELENA_::emptystr(target)) {
+//      _ELENA_::Path exePath(_model->project.path);
+//      _ELENA_::Path::combinePath(exePath, target);
+//
+//      // provide the whole command line including the executable path and name
+//      _ELENA_::Path commandLine(exePath);
+//      commandLine.append(_T(" "));
+//      _ELENA_::Path::appendPath(commandLine, arguments);
+//
+//      bool mode = _project.getDebugMode() != 0;
+//      if (mode) {
+//         if (!_debugController.start(exePath, commandLine, mode, _breakpoints)) {
+//            _view->error(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
+//
+//            return false;
+//         }
+//         else return true;
+//      }
+//      else if(stepMode) {
+//         _view->error(ERROR_DEBUG_FILE_NOT_FOUND_SETTING);
+//
+//         return false;
+//      }
+//      else {
+//         if (!_debugController.start(exePath, commandLine, false, _breakpoints)) {
+//            _view->error(ERROR_RUN_NEED_RECOMPILE);
+//
+//            return false;
+//         }
+//         else return true;
+//      }
+//   }
+//   else {
+//      _view->error(ERROR_RUN_NEED_TARGET);
+//
+//      return false;
+//   }
+//}
+//
+//bool IDEController :: isOutaged(bool noWarning)
+//{
+//   if (_model->isAnyDocumentModified()) {
+//      if (!noWarning)
+//         _view->error(ERROR_RUN_OUT_OF_DATE);
+//
+//      return false;
+//   }
+//
+//   _ELENA_::Path rootPath(_model->project.path);
+//   _ELENA_::Path::combinePath(rootPath, _project.getOutputPath());
+//   for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+//      _ELENA_::Path source(rootPath);
+//      _ELENA_::Path::combinePath(source, it.key());
+//
+//      _ELENA_::Path module;
+//      _ELENA_::Path::loadSubPath(module, it.key());
+//
+//      _ELENA_::ReferenceNs name(_project.getPackage());
+//      name.pathToName(module);          // get a full name
+//
+//      module.copy(rootPath);
+//      module.nameToPath(name, _T("nl"));
+//
+//      DateTime sourceDT = DateTime::getFileTime(source);
+//      DateTime moduleDT = DateTime::getFileTime(module);
+//
+//      if (sourceDT > moduleDT) {
+//         if (!noWarning)
+//            _view->error(ERROR_RUN_OUT_OF_DATE);
+//
+//         return false;
+//      }
+//   }
+//
+//   return true;
+//}
+//
+//void IDEController :: runToCursor()
+//{
+//   Document* doc = _model->currentDoc;
+//   if (doc) {
+//      _ELENA_::Path path(_model->getDocumentPath(_view->getCurrentDocumentIndex()));
+//      Point caret = doc->getCaret();
+//
+//      _ELENA_::ReferenceNs module;
+//      _project.retrieveName(path, module);
+//
+//      _debugController.runToCursor(module, path, 0, caret.y);
+//   }
+//}
 
 // --- SourceManager ---
 
@@ -1828,15 +1831,15 @@ void IDEController::ProjectManager :: retrievePath(_ELENA_::ident_t name, _ELENA
    _ELENA_::ident_t  package = getPackage();
 
       // if it is the root package
-   if (_ELENA_::StringHelper::compare(name, package)) {
+   if (package.compare(name)) {
       path.copy(_model->project.path);
-      _ELENA_::Path::combinePath(path, getOutputPath());
+      path.combine(getOutputPath());
       path.nameToPath(name, extension);
    }
    // if the class belongs to the project package
-   else if (_ELENA_::StringHelper::compare(name, package, _ELENA_::getlength(package)) && (name[_ELENA_::getlength(package)] == '\'')) {
+   else if (name.compare(package, _ELENA_::getlength(package)) && (name[_ELENA_::getlength(package)] == '\'')) {
       path.copy(_model->project.path);
-      _ELENA_::Path::combinePath(path, getOutputPath());
+      path.combine(getOutputPath());
 
       path.nameToPath(name, extension);
    }
@@ -1848,122 +1851,121 @@ void IDEController::ProjectManager :: retrievePath(_ELENA_::ident_t name, _ELENA
    }
 }
 
-void IDEController :: onDebuggerStop(bool broken)
-{
-   _model->state &= ~uiDebugging;
-
-   _view->closeDebugWatch();
-   _view->checkMenuItemById(IDM_VIEW_WATCH, false);
-
-   _view->showStatus(0, broken ? PROGRAM_BROKEN : PROGRAM_STOPPED);
-
-   removeAllDocumentMarker(STYLE_TRACE_LINE);
-   _model->setReadOnlyMode(false);
-
-   _debugController.release();
-
-   //// close temporal document
-   //// !! probably more generic solution should be used
-   //int tempDocIndex = _mainFrame->getDocumentIndex(_ELENA_::ConstantIdentifier(TAPE_SYMBOL));
-   //if (tempDocIndex >= 0)
-   //   _mainFrame->closeDocument(tempDocIndex);
-
-   onChange();
-}
-
-void IDEController :: onDebuggerStep(text_t ns, text_t source, HighlightInfo info)
-{
-   if (!loadModule(ns, source)) {
-      _view->error(ERROR_MOUDLE_NOT_FOUND);
-
-      return;
-   }
-
-   addDocumentMarker(-1, info, STYLE_TRACE_LINE, STYLE_TRACE);
-
-   _view->refreshDebugWindows(&_debugController);
-}
-
-void IDEController :: onDebuggerCheckPoint(text_t message)
-{
-   _view->showStatus(0, message);
-}
-
-bool IDEController :: loadModule(text_t ns, text_t source)
-{
-   if (!_debugController.isStarted())
-      return false;
-
-   // HOTFIX : if it is template code
-   int pos = _ELENA_::StringHelper::findLast(source, '\'');
-   if (pos >= 0) {
-      text_c templateNs[IDENTIFIER_LEN];
-      size_t dummy = pos;
-      _ELENA_::StringHelper::copy(templateNs, source, (size_t)pos, dummy);
-      templateNs[pos] = 0;
-
-      return loadModule(templateNs, source + pos + 1);
-   }
-   else if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
-      _ELENA_::Path path(_model->project.path);
-      path.combine(source);
-
-      openFile(path);
-   }
-   else {
-      _ELENA_::Path path(_model->paths.packageRoot);
-      path.combine(ns, _ELENA_::StringHelper::find(ns, '\'', _ELENA_::getlength(ns)));
-      path.combine(source);
-
-      openFile(path);
-   }
-
-   return true;
-}
-
-bool IDEController :: toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, size_t row, Document* doc)
-{
-   _ELENA_::List<_ELENA_::Breakpoint>::Iterator it = _breakpoints.start();
-   while (!it.Eof()) {
-      if (doc == (*it).param && row==(*it).row) {
-         if (_debugController.isStarted()) {
-            _debugController.toggleBreakpoint(*it, false);
-         }
-         _breakpoints.cut(it);
-         return false;
-      }
-      it++;
-   }
-   _ELENA_::Breakpoint breakpoint(module, path, row, doc);
-   _breakpoints.add(breakpoint);
-
-   if (_debugController.isStarted()) {
-      _debugController.toggleBreakpoint(breakpoint, true);
-   }
-
-   return true;
-}
-
-void IDEController :: toggleBreakpoint()
-{
-   int index = _view->getCurrentDocumentIndex();
-   Document* doc = _model->getDocument(index);
-   if (doc) {
-      _ELENA_::Path path(_model->getDocumentPath(index));
-
-      Point caret = doc->getCaret();
-
-      _ELENA_::ReferenceNs module;
-      _project.retrieveName(path, module);
-
-      toggleBreakpoint(module, _ELENA_::IdentifierString(path), caret.y, doc);
-
-      // forcee full repaint
-      doc->status.frameChanged = true;
-      _view->refresh();
-   }
-}
-
+//void IDEController :: onDebuggerStop(bool broken)
+//{
+//   _model->state &= ~uiDebugging;
+//
+//   _view->closeDebugWatch();
+//   _view->checkMenuItemById(IDM_VIEW_WATCH, false);
+//
+//   _view->showStatus(0, broken ? PROGRAM_BROKEN : PROGRAM_STOPPED);
+//
+//   removeAllDocumentMarker(STYLE_TRACE_LINE);
+//   _model->setReadOnlyMode(false);
+//
+//   _debugController.release();
+//
+//   //// close temporal document
+//   //// !! probably more generic solution should be used
+//   //int tempDocIndex = _mainFrame->getDocumentIndex(_ELENA_::ConstantIdentifier(TAPE_SYMBOL));
+//   //if (tempDocIndex >= 0)
+//   //   _mainFrame->closeDocument(tempDocIndex);
+//
+//   onChange();
+//}
+//
+//void IDEController :: onDebuggerStep(text_t ns, text_t source, HighlightInfo info)
+//{
+//   if (!loadModule(ns, source)) {
+//      _view->error(ERROR_MOUDLE_NOT_FOUND);
+//
+//      return;
+//   }
+//
+//   addDocumentMarker(-1, info, STYLE_TRACE_LINE, STYLE_TRACE);
+//
+//   _view->refreshDebugWindows(&_debugController);
+//}
+//
+//void IDEController :: onDebuggerCheckPoint(text_t message)
+//{
+//   _view->showStatus(0, message);
+//}
+//
+//bool IDEController :: loadModule(text_t ns, text_t source)
+//{
+//   if (!_debugController.isStarted())
+//      return false;
+//
+//   // HOTFIX : if it is template code
+//   int pos = _ELENA_::StringHelper::findLast(source, '\'');
+//   if (pos >= 0) {
+//      text_c templateNs[IDENTIFIER_LEN];
+//      size_t dummy = pos;
+//      _ELENA_::StringHelper::copy(templateNs, source, (size_t)pos, dummy);
+//      templateNs[pos] = 0;
+//
+//      return loadModule(templateNs, source + pos + 1);
+//   }
+//   else if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
+//      _ELENA_::Path path(_model->project.path);
+//      path.combine(source);
+//
+//      openFile(path);
+//   }
+//   else {
+//      _ELENA_::Path path(_model->paths.packageRoot);
+//      path.combine(ns, _ELENA_::StringHelper::find(ns, '\'', _ELENA_::getlength(ns)));
+//      path.combine(source);
+//
+//      openFile(path);
+//   }
+//
+//   return true;
+//}
+//
+//bool IDEController :: toggleBreakpoint(_ELENA_::ident_t module, _ELENA_::ident_t path, size_t row, Document* doc)
+//{
+//   _ELENA_::List<_ELENA_::Breakpoint>::Iterator it = _breakpoints.start();
+//   while (!it.Eof()) {
+//      if (doc == (*it).param && row==(*it).row) {
+//         if (_debugController.isStarted()) {
+//            _debugController.toggleBreakpoint(*it, false);
+//         }
+//         _breakpoints.cut(it);
+//         return false;
+//      }
+//      it++;
+//   }
+//   _ELENA_::Breakpoint breakpoint(module, path, row, doc);
+//   _breakpoints.add(breakpoint);
+//
+//   if (_debugController.isStarted()) {
+//      _debugController.toggleBreakpoint(breakpoint, true);
+//   }
+//
+//   return true;
+//}
+//
+//void IDEController :: toggleBreakpoint()
+//{
+//   int index = _view->getCurrentDocumentIndex();
+//   Document* doc = _model->getDocument(index);
+//   if (doc) {
+//      _ELENA_::Path path(_model->getDocumentPath(index));
+//
+//      Point caret = doc->getCaret();
+//
+//      _ELENA_::ReferenceNs module;
+//      _project.retrieveName(path, module);
+//
+//      toggleBreakpoint(module, _ELENA_::IdentifierString(path), caret.y, doc);
+//
+//      // forcee full repaint
+//      doc->status.frameChanged = true;
+//      _view->refresh();
+//   }
+//}
 
 // --- Projects ---
 
@@ -1999,11 +2001,11 @@ const char* IDEController::ProjectManager::getArguments()
 
 int IDEController::ProjectManager::getDebugMode()
 {
-   const char* mode = _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
-   if (_ELENA_::StringHelper::compare(mode, "-1")) {
+   _ELENA_::ident_t mode = _model->project.config.getSetting(IDE_PROJECT_SECTION, IDE_DEBUGINFO_SETTING);
+   if (mode.compare("-1")) {
       return -1;
    }
-   else if (_ELENA_::StringHelper::compare(mode, "-2")) {
+   else if (mode.compare("-2")) {
       return -2;
    }
    else return 0;
@@ -2011,9 +2013,9 @@ int IDEController::ProjectManager::getDebugMode()
 
 bool IDEController::ProjectManager::getBoolSetting(const char* name)
 {
-   const char* value = _model->project.config.getSetting(IDE_PROJECT_SECTION, name);
+   _ELENA_::ident_t value = _model->project.config.getSetting(IDE_PROJECT_SECTION, name);
 
-   return _ELENA_::StringHelper::compare(value, "-1");
+   return value.compare("-1");
 }
 
 void IDEController::ProjectManager::setSectionOption(const char* option, const char* value)
@@ -2122,7 +2124,7 @@ void IDEController::ProjectManager::reset()
 void IDEController::ProjectManager::save(_ELENA_::path_t extension)
 {
    _ELENA_::Path cfgPath(_model->project.path);
-   cfgPath.combine(_model->project.name);
+   cfgPath.combine(_model->project.name.str());
    cfgPath.appendExtension(extension);
 
    _model->project.config.save(cfgPath, _ELENA_::feUTF8);
@@ -2150,7 +2152,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
    fullPath.copySubPath(path);
    Paths::resolveRelativePath(fullPath, root);
 
-   if (!_ELENA_::emptystr(root) && _ELENA_::StringHelper::compare(fullPath, root, rootLength)) {
+   if (!_ELENA_::emptystr(root) && fullPath.compare(root, rootLength)) {
       name.copy(getPackage());
       if (_ELENA_::getlength(fullPath) > rootLength)
          name.pathToName(fullPath + rootLength + 1);
@@ -2165,7 +2167,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
          name.pathToName(fullPath + rootLength + 1);
 
          // skip the root path + root namespace
-         int rootNs = _ELENA_::StringHelper::find(path + rootLength + 1, PATH_SEPARATOR) + rootLength + 1;
+         int rootNs = path.str().find(rootLength + 1, PATH_SEPARATOR);
 
          path.copy(path + rootNs + 1);
       }
@@ -2185,9 +2187,9 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
 
    _ELENA_::ConfigCategoryIterator it = SourceFiles();
    while (!it.Eof()) {
-      _ELENA_::Path::loadPath(current, it.key());
+      current.copy(it.key());
 
-      if (_ELENA_::StringHelper::compare(relPath, current)) {
+      if (relPath.compare(current, _ELENA_::getlength(current))) {
          return true;
       }
       it++;
@@ -2215,16 +2217,16 @@ void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
    _model->project.changed = true;
 }
 
-void IDEController::ProjectManager::clearForwards()
-{
-   _model->project.config.clear(IDE_FORWARDS_SECTION);
-
-   _model->project.changed = true;
-}
-
-void IDEController::ProjectManager::addForward(const char* name, const char* reference)
-{
-   _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
-
-   _model->project.changed = true;
-}
+//void IDEController::ProjectManager::clearForwards()
+//{
+//   _model->project.config.clear(IDE_FORWARDS_SECTION);
+//
+//   _model->project.changed = true;
+//}
+//
+//void IDEController::ProjectManager::addForward(const char* name, const char* reference)
+//{
+//   _model->project.config.setSetting(IDE_FORWARDS_SECTION, name, reference);
+//
+//   _model->project.changed = true;
+//}
