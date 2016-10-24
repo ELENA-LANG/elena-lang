@@ -202,7 +202,7 @@ class ByteCodeWriter
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
    void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
    void freeVirtualStack(CommandTape& tape, int count);
 
@@ -264,7 +264,7 @@ class ByteCodeWriter
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);

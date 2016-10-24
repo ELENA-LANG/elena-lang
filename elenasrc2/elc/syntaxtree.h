@@ -126,6 +126,7 @@ enum LexicalType
    lxNewOp           = 0x0C028,
    lxArrOp           = 0x8C029, // arg - operation id
    lxBinArrOp        = 0x8C02A, // arg - operation id
+   lxNilOp           = 0x8C02C, // arg - operation id
    lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031,
    lxByteArrOp       = 0x8C032, // arg - operation id
@@ -221,7 +222,6 @@ enum LexicalType
 //
 //   lxOp              = 0x0032A, // generic operation, arg - operation id 
 //   lxBoolOp          = 0x0032B, // arg - operation id
-//   lxNilOp           = 0x0032C, // arg - operation id
 //
 //   lxTemplateTarget  = 0x00434, // template target pseudo variable
 //

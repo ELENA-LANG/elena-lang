@@ -76,6 +76,10 @@ inline bool IsInvertedOperator(int& operator_id)
 
 CompilerLogic :: CompilerLogic()
 {
+   // nil
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
+
    // int32 primitive operations
    operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
@@ -216,18 +220,28 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
 int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 {
-   if (loperand == 0 || roperand == 0)
+   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
       return 0;
 
    OperatorList::Iterator it = operators.start();
    while (!it.Eof()) {
       OperatorInfo info = *it;
 
-      if (info.operatorId == operatorId && isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
-         result = info.result;
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            if (loperand == V_NIL) {
+               result = info.result;
 
-         return info.operationType;
+               return info.operationType;
+            }
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
+            result = info.result;
+
+            return info.operationType;
+         }
       }
+
       it++;
    }
 
@@ -243,12 +257,18 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    while (!it.Eof()) {
       OperatorInfo info = *it;
 
-      if (info.operatorId == operatorId && isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
-         && isCompatible(scope, info.roperand2, roperand2)) 
-      {
-         result = info.result;
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            // skip operation with NIL
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
+            && isCompatible(scope, info.roperand2, roperand2)) 
+         {
+            result = info.result;
 
-         return info.operationType;
+            return info.operationType;
+         }
+
       }
       it++;
    }

@@ -26,7 +26,7 @@
     MethodNotFoundTest eval.
     ExceptionTest eval.
     DateTest eval.
-//    ListTest eval.
+    ListTest eval.
 //    DictionaryTest eval.
 //    BoxingTest eval.
 //    OuterFieldTest eval.
