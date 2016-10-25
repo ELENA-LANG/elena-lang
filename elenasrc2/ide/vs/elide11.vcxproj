@@ -134,6 +134,7 @@
     <ClCompile Include="..\winapi32\wineditframe.cpp" />
     <ClCompile Include="..\winapi32\windialogs.cpp" />
     <ClCompile Include="..\winapi32\winoutput.cpp" />
+    <ClCompile Include="..\winapi32\debugger.cpp" />
     <ClCompile Include="..\appwindow.cpp" />
     <ClCompile Include="..\sourcedoc.cpp" />
     <ClCompile Include="..\menulist.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="..\historylist.cpp" />
     <ClCompile Include="..\settings.cpp" />
     <ClCompile Include="..\browser.cpp" />
+    <ClCompile Include="..\debugcontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\altstrings.h" />
@@ -171,6 +173,7 @@
     <ClInclude Include="..\winapi32\wineditframe.h" />
     <ClInclude Include="..\winapi32\windialogs.h" />
     <ClInclude Include="..\winapi32\winoutput.h" />
+    <ClInclude Include="..\winapi32\debugger.h" />
     <ClInclude Include="..\idecommon.h" />
     <ClInclude Include="..\appwindow.h" />
     <ClInclude Include="..\sourcedoc.h" />
@@ -180,6 +183,7 @@
     <ClInclude Include="..\historylist.h" />
     <ClInclude Include="..\settings.h" />
     <ClInclude Include="..\browser.h" />
+    <ClInclude Include="..\debugcontroller.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\winapi32\ide.rc" />

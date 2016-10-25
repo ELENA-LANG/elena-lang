@@ -329,6 +329,11 @@ public:
    {
    }
 
+   Path(path_t rootPath, size_t length)
+      : _path(rootPath, length)
+   {
+   }
+
    Path(path_t rootPath, ident_t subPath)
       : _path(rootPath)
    {

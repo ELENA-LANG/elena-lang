@@ -479,7 +479,7 @@ int findSubStr(const char* s, char c, size_t length, int defValue)
 
 void append(char* dest, const char* sour, int length)
 {
-   strncat(dest, sour, length);
+   
 }
 
 bool compare(const char* s1, const char* s2)
@@ -1443,12 +1443,12 @@ bool wide_t::compare(const wide_c* s, size_t length) const
 
 void StrHelper :: append(char* dest, const char* sour, size_t length)
 {
-   append(dest, sour, length);
+   ::append(dest, sour, length);
 }
 
 void StrHelper :: append(wide_c* dest, const wide_c* sour, size_t length)
 {
-   append(dest, sour, length);
+   ::append(dest, sour, length);
 }
 
 void StrHelper :: insert(char* s, int pos, const char* subs)

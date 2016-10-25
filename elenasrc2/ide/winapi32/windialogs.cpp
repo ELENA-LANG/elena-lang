@@ -391,369 +391,369 @@ void ProjectSettingsDialog :: onOK()
    _project->setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
 }
 
-////// --- ProjectForwardsDialog ---
-//
-//bool ProjectForwardsDialog :: validateItem(wchar_t* &text)
-//{
-//   // trim space
-//   while (text[0]==' ') text++;
-//   while (_ELENA_::getlength(text) > 0 && text[_ELENA_::getlength(text) - 1]==' ') text[_ELENA_::getlength(text) - 1] = 0;
-//
-//   if (_ELENA_::emptystr(text))
-//      return false;
-//   else if (_ELENA_::StringHelper::find(text, '=')==-1) {
-//      MsgBox::show(_owner->getHandle(), _T("The forward should have the following structure: <forward name>=<full class name>\n(e.g. 'integer=std'basic'integer)"), MB_ICONERROR);
-//	  return false;
-//   }
-//   else return true;
-//}
-//
-//void ProjectForwardsDialog :: addItem()
-//{
-//   wchar_t item[IDENTIFIER_LEN * 2 + 1];
-//
-//   getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
-//
-//   wchar_t* s = item;
-//   if (validateItem(s)) {
-//      addListItem(IDC_FORWARDS_LIST, s);
-//	  _changed = true;
-//   }
-//   setText(IDC_FORWARDS_EDIT, NULL);
-//   _current = -1;
-//   _changed = true;
-//}
-//
-//void ProjectForwardsDialog :: getItem()
-//{
-//   _current = getListIndex(IDC_FORWARDS_LIST);
-//
-//   wchar_t item[IDENTIFIER_LEN * 2 + 1];
-//
-//   getListItem(IDC_FORWARDS_LIST, _current, (wchar_t**)(&item));
-//   setText(IDC_FORWARDS_EDIT, item);
-//}
-//
-//void ProjectForwardsDialog :: editItem()
-//{
-//   if (_current != -1) {
-//      wchar_t item[IDENTIFIER_LEN * 2 + 1];
-//
-//      getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
-//
-//      wchar_t* s = item;
-//      if (validateItem(s)) {
-//         removeListItem(IDC_FORWARDS_LIST, _current);
-//         insertListItem(IDC_FORWARDS_LIST, _current, s);
-//	     _changed = true;
-//      }
-//      setText(IDC_FORWARDS_EDIT, NULL);
-//      _current = -1;
-//	  _changed = true;
-//   }
-//}
-//
-//void ProjectForwardsDialog :: deleteItem()
-//{
-//   int index = _current = getListIndex(IDC_FORWARDS_LIST);
-//
-//   removeListItem(IDC_FORWARDS_LIST, index);
-//   setText(IDC_FORWARDS_EDIT, NULL);
-//
-//   _current = -1;
-//   _changed = true;
-//}
-//
-//
-//void ProjectForwardsDialog :: onCreate()
-//{
-//   _ELENA_::ConfigCategoryIterator forwards = _project->Forwards();
-//   _ELENA_::IdentifierString item;
-//   while (!forwards.Eof()) {
-//      item.copy(forwards.key());
-//      item.append('=');
-//      item.append((const char*)*forwards);
-//
-//      addListItem(IDC_FORWARDS_LIST, TextString(item));
-//
-//      forwards++;
-//   }
-//}
-//
-//void ProjectForwardsDialog :: onOK()
-//{
-//   if (_changed) {
-//      _project->clearForwards();
-//
-//      int count = getListCount(IDC_FORWARDS_LIST);
-//      text_c item[IDENTIFIER_LEN * 2 + 1];      
-//      for (int i = 0 ; i < count ; i++) {
-//         getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
-//
-//         _ELENA_::IdentifierString line(item);
-//
-//         int pos = _ELENA_::StringHelper::find(line, '=');
-//
-//         _ELENA_::IdentifierString name(line, pos);
-//
-//         _project->addForward(name, line + pos + 1);
-//      }
-//   }
-//}
-//
-//void ProjectForwardsDialog :: doCommand(int id, int command)
-//{
-//   switch (id) {
-//      case IDC_FORWARDS_ADD:
-//         addItem();
-//         break;
-//      case IDC_FORWARDS_REPLACE:
-//         editItem();
-//         break;
-//      case IDC_FORWARDS_DELETE:
-//         deleteItem();
-//         break;
-//      case IDC_FORWARDS_LIST:
-//         if (command==LBN_DBLCLK) {
-//            getItem();
-//         }
-//         break;
-//	  case IDC_FORWARDS_SAVE:
-//	     onOK();
-//         ::EndDialog(_handle, -1);
-//	     break;
-//	  case IDOK:
-//	     break;
-//	  default:
-//	     Dialog::doCommand(id, command);
-//   }
-//}
-//
-//// --- WindowsDialog ---
-//
-//WindowsDialog :: WindowsDialog(Control* owner)
-//   : Dialog(owner)
-//{
-//}
-//
-//void WindowsDialog :: doCommand(int id, int command)
-//{
-//   switch (id) {
-//      case IDC_WINDOWS_LIST:
-//         if (command==LBN_SELCHANGE) {
-//            onListChange();
-//         }
-//         break;
-//      case IDC_WINDOWS_CLOSE:
-//         onClose();
-//         ::EndDialog(_handle, -2);
-//         break;
-//      default:
-//         Dialog::doCommand(id, command);
-//   }
-//}
-//
-//void WindowsDialog :: onListChange()
-//{
-//    enable(IDOK, (getListSelCount(IDC_WINDOWS_LIST) == 1));
-//}
-//
-//// --- EditorSettings ---
-//
-//inline int encodingToIndex(int encoding)
-//{
-//   switch (encoding) {
-//      case _ELENA_::feAnsi:
-//         return 0;
-//      case 1250:
-//         return 1;
-//      case 1251:
-//         return 2;
-//      case 1252:
-//         return 3;
-//      case _ELENA_::feUTF16:
-//         return 5;
-//      case _ELENA_::feUTF8:
-//         return 6;
-//      default:
-//         return 4;
-//   }
-//}
-//
-//inline int indexToEncoding(int encoding)
-//{
-//   switch (encoding) {
-//      case 0:
-//         return _ELENA_::feAnsi;
-//      case 1:
-//         return 1250;
-//      case 2:
-//         return 1251;
-//      case 3:
-//         return 1252;
-//      case 5:
-//         return _ELENA_::feUTF16;
-//      case 6:
-//         return _ELENA_::feUTF8;
-//      default:
-//         return CP_OEMCP;
-//   }
-//}
-//
-//void EditorSettings :: onCreate()
-//{
-//   addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Default"));
-//   addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Classic"));
-//
-//   // populate font size combo box
-//   _ELENA_::String<wchar_t, 4> size;
-//   for(int i = 8 ; i < 25 ; i++) {
-//      size.appendInt(i);
-//      addComboBoxItem(IDC_EDITOR_FONTSIZE, size);
-//      size.clear();
-//   }   
-//
-//   setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->scheme);
-//   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->font_size - 8);
-//
-//   setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumberVisible);
-//   setCheckState(IDC_EDITOR_USETAB, _model->tabCharUsing);
-//   setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
-//
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("ASCII"));
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1250"));
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1251"));
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1252"));
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("OEM"));
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-16"));
-//   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-8"));
-//
-//   setComboBoxIndex(IDC_EDITOR_ENCODING, encodingToIndex(_model->defaultEncoding));
-//
-//   if (!_model->highlightSyntax)
-//      enable(IDC_EDITOR_COLORSCHEME, false);
-//
-//   size.appendInt(_model->tabSize);
-//   setText(IDC_EDITOR_TABSIZE, size);
-//
-//   setCheckState(IDC_EDITOR_REMEMBERPATH, _model->lastPathRemember);
-//   setCheckState(IDC_EDITOR_REMEMBERPROJECT, _model->lastProjectRemember);
-//}
-//
-//void EditorSettings :: doCommand(int id, int msg)
-//{
-//   if (id==IDC_EDITOR_HIGHLIGHSYNTAXFLAG) {
-//      onEditorHighlightSyntaxChanged();
-//   }
-//   else Dialog::doCommand(id, msg);
-//}
-//
-//void EditorSettings :: onEditorHighlightSyntaxChanged()
-//{
-//   enable(IDC_EDITOR_COLORSCHEME, getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG));
-//}
-//
-//void EditorSettings :: onOK()
-//{
-//   _model->scheme = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
-//   _model->font_size = 8 + getComboBoxIndex(IDC_EDITOR_FONTSIZE);
-//   _model->lineNumberVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
-//   _model->tabCharUsing = getCheckState(IDC_EDITOR_USETAB);
-//   _model->highlightSyntax = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
-//   _model->defaultEncoding = indexToEncoding(getComboBoxIndex(IDC_EDITOR_ENCODING));
-//   _model->lastPathRemember = getCheckState(IDC_EDITOR_REMEMBERPATH);
-//   _model->lastProjectRemember = getCheckState(IDC_EDITOR_REMEMBERPROJECT);
-//
-//   wchar_t size[12];
-//   getText(IDC_EDITOR_TABSIZE, (wchar_t**)(&size), 11);
-//   _model->tabSize = _ELENA_::StringHelper::strToInt(size);
-//   if (_model->tabSize <= 0 && _model->tabSize > 20) {
-//      _model->tabSize = 4;
-//   }
-//}
-//
-//// --- DebuggerSettings ---
-//
-//void DebuggerSettings :: onCreate()
-//{
-//   setText(IDC_DEBUGGER_SRCPATH, _model->paths.packageRoot);
-//   setText(IDC_DEBUGGER_LIBPATH, _model->paths.libraryRoot);
-//}
-//
-//void DebuggerSettings :: onOK()
-//{
-//   wchar_t path[MAX_PATH + 1];   
-//
-//   getText(IDC_DEBUGGER_SRCPATH, (wchar_t**)(&path), MAX_PATH);
-//   Settings::addPackagePath(_model, "default", path);
-//
-//   getText(IDC_DEBUGGER_LIBPATH, (wchar_t**)(&path), MAX_PATH);
-//   Settings::addLibraryPath(_model, "default", path);
-//}
-//
-//// --- GoToLineDialog ---
-//
-//void GoToLineDialog :: onCreate()
-//{
-//   setIntText(IDC_GOTOLINE_LINENUMBER, _number);
-//}
-//
-//void GoToLineDialog :: onOK()
-//{
-//   _number = getIntText(IDC_GOTOLINE_LINENUMBER);
-//}
-//
-//// --- FindDialog ---
-//
-//void FindDialog :: copyHistory(int id, SearchHistory* history)
-//{
-//   SearchHistory::Iterator it = history->start();
-//   while (!it.Eof()) {
-//      addComboBoxItem(id, *it);
-//
-//      it++;
-//   }
-//}
-//
-//void FindDialog :: onCreate()
-//{
-//   setText(IDC_FIND_TEXT, _option->text);
-//   if (_replaceMode) {
-//      setText(IDC_REPLACE_TEXT, _option->newText);
-//   }
-//   setCheckState(IDC_FIND_CASE, _option->matchCase);
-//   setCheckState(IDC_FIND_WHOLE, _option->wholeWord);
-//
-//   if (_searchHistory) {
-//      copyHistory(IDC_FIND_TEXT, _searchHistory);
-//   }
-//
-//   if (_replaceHistory) {
-//      copyHistory(IDC_REPLACE_TEXT, _replaceHistory);
-//   }
-//}
-//
-//void FindDialog :: onOK()
-//{
-//   wchar_t s[200];
-//
-//   getText(IDC_FIND_TEXT, (wchar_t**)(&s), 200);
-//   _option->text.copy(s);
-//
-//   if (_replaceMode) {
-//      s[0] = 0;
-//      getText(IDC_REPLACE_TEXT, (wchar_t**)(&s), 200);
-//      _option->newText.copy(s);
-//   }
-//   _option->matchCase = getCheckState(IDC_FIND_CASE);
-//   _option->wholeWord = getCheckState(IDC_FIND_WHOLE);
-//}
-//
-//// --- AboutDialog ---
-//
-//void AboutDialog :: onCreate()
-//{
-//   setText(IDC_ABOUT_LICENCE_TEXT, APACHE_LICENSE2);
-//   setText(IDC_ABOUT_HOME, ELENA_HOMEPAGE);
-//   setText(IDC_ABOUT_BLOG, ELENA_BLOG);
-//}
+// --- ProjectForwardsDialog ---
+
+bool ProjectForwardsDialog :: validateItem(wchar_t* &text)
+{
+   // trim space
+   while (text[0]==' ') text++;
+   while (_ELENA_::getlength(text) > 0 && text[_ELENA_::getlength(text) - 1]==' ') text[_ELENA_::getlength(text) - 1] = 0;
+
+   if (_ELENA_::emptystr(text))
+      return false;
+   else if (text_str(text).find('=')==-1) {
+      MsgBox::show(_owner->getHandle(), _T("The forward should have the following structure: <forward name>=<full class name>\n(e.g. 'integer=std'basic'integer)"), MB_ICONERROR);
+	  return false;
+   }
+   else return true;
+}
+
+void ProjectForwardsDialog :: addItem()
+{
+   wchar_t item[IDENTIFIER_LEN * 2 + 1];
+
+   getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
+
+   wchar_t* s = item;
+   if (validateItem(s)) {
+      addListItem(IDC_FORWARDS_LIST, s);
+	  _changed = true;
+   }
+   setText(IDC_FORWARDS_EDIT, NULL);
+   _current = -1;
+   _changed = true;
+}
+
+void ProjectForwardsDialog :: getItem()
+{
+   _current = getListIndex(IDC_FORWARDS_LIST);
+
+   wchar_t item[IDENTIFIER_LEN * 2 + 1];
+
+   getListItem(IDC_FORWARDS_LIST, _current, (wchar_t**)(&item));
+   setText(IDC_FORWARDS_EDIT, item);
+}
+
+void ProjectForwardsDialog :: editItem()
+{
+   if (_current != -1) {
+      wchar_t item[IDENTIFIER_LEN * 2 + 1];
+
+      getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
+
+      wchar_t* s = item;
+      if (validateItem(s)) {
+         removeListItem(IDC_FORWARDS_LIST, _current);
+         insertListItem(IDC_FORWARDS_LIST, _current, s);
+	     _changed = true;
+      }
+      setText(IDC_FORWARDS_EDIT, NULL);
+      _current = -1;
+	  _changed = true;
+   }
+}
+
+void ProjectForwardsDialog :: deleteItem()
+{
+   int index = _current = getListIndex(IDC_FORWARDS_LIST);
+
+   removeListItem(IDC_FORWARDS_LIST, index);
+   setText(IDC_FORWARDS_EDIT, NULL);
+
+   _current = -1;
+   _changed = true;
+}
+
+
+void ProjectForwardsDialog :: onCreate()
+{
+   _ELENA_::ConfigCategoryIterator forwards = _project->Forwards();
+   _ELENA_::IdentifierString item;
+   while (!forwards.Eof()) {
+      item.copy(forwards.key());
+      item.append('=');
+      item.append((_ELENA_::ident_t)*forwards);
+
+      addListItem(IDC_FORWARDS_LIST, TextString(item));
+
+      forwards++;
+   }
+}
+
+void ProjectForwardsDialog :: onOK()
+{
+   if (_changed) {
+      _project->clearForwards();
+
+      int count = getListCount(IDC_FORWARDS_LIST);
+      text_c item[IDENTIFIER_LEN * 2 + 1];      
+      for (int i = 0 ; i < count ; i++) {
+         getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
+
+         _ELENA_::IdentifierString line(item);
+
+         int pos = line.ident().find('=');
+
+         _ELENA_::IdentifierString name(line, pos);
+
+         _project->addForward(name, line + pos + 1);
+      }
+   }
+}
+
+void ProjectForwardsDialog :: doCommand(int id, int command)
+{
+   switch (id) {
+      case IDC_FORWARDS_ADD:
+         addItem();
+         break;
+      case IDC_FORWARDS_REPLACE:
+         editItem();
+         break;
+      case IDC_FORWARDS_DELETE:
+         deleteItem();
+         break;
+      case IDC_FORWARDS_LIST:
+         if (command==LBN_DBLCLK) {
+            getItem();
+         }
+         break;
+	  case IDC_FORWARDS_SAVE:
+	     onOK();
+         ::EndDialog(_handle, -1);
+	     break;
+	  case IDOK:
+	     break;
+	  default:
+	     Dialog::doCommand(id, command);
+   }
+}
+
+// --- WindowsDialog ---
+
+WindowsDialog :: WindowsDialog(Control* owner)
+   : Dialog(owner)
+{
+}
+
+void WindowsDialog :: doCommand(int id, int command)
+{
+   switch (id) {
+      case IDC_WINDOWS_LIST:
+         if (command==LBN_SELCHANGE) {
+            onListChange();
+         }
+         break;
+      case IDC_WINDOWS_CLOSE:
+         onClose();
+         ::EndDialog(_handle, -2);
+         break;
+      default:
+         Dialog::doCommand(id, command);
+   }
+}
+
+void WindowsDialog :: onListChange()
+{
+    enable(IDOK, (getListSelCount(IDC_WINDOWS_LIST) == 1));
+}
+
+// --- EditorSettings ---
+
+inline int encodingToIndex(int encoding)
+{
+   switch (encoding) {
+      case _ELENA_::feAnsi:
+         return 0;
+      case 1250:
+         return 1;
+      case 1251:
+         return 2;
+      case 1252:
+         return 3;
+      case _ELENA_::feUTF16:
+         return 5;
+      case _ELENA_::feUTF8:
+         return 6;
+      default:
+         return 4;
+   }
+}
+
+inline int indexToEncoding(int encoding)
+{
+   switch (encoding) {
+      case 0:
+         return _ELENA_::feAnsi;
+      case 1:
+         return 1250;
+      case 2:
+         return 1251;
+      case 3:
+         return 1252;
+      case 5:
+         return _ELENA_::feUTF16;
+      case 6:
+         return _ELENA_::feUTF8;
+      default:
+         return CP_OEMCP;
+   }
+}
+
+void EditorSettings :: onCreate()
+{
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Default"));
+   addComboBoxItem(IDC_EDITOR_COLORSCHEME, TEXT("Classic"));
+
+   // populate font size combo box
+   _ELENA_::String<wchar_t, 4> size;
+   for(int i = 8 ; i < 25 ; i++) {
+      size.appendInt(i);
+      addComboBoxItem(IDC_EDITOR_FONTSIZE, size);
+      size.clear();
+   }   
+
+   setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->scheme);
+   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->font_size - 8);
+
+   setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumberVisible);
+   setCheckState(IDC_EDITOR_USETAB, _model->tabCharUsing);
+   setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
+
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("ASCII"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1250"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1251"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("Win 1252"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("OEM"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-16"));
+   addComboBoxItem(IDC_EDITOR_ENCODING, TEXT("UTF-8"));
+
+   setComboBoxIndex(IDC_EDITOR_ENCODING, encodingToIndex(_model->defaultEncoding));
+
+   if (!_model->highlightSyntax)
+      enable(IDC_EDITOR_COLORSCHEME, false);
+
+   size.appendInt(_model->tabSize);
+   setText(IDC_EDITOR_TABSIZE, size);
+
+   setCheckState(IDC_EDITOR_REMEMBERPATH, _model->lastPathRemember);
+   setCheckState(IDC_EDITOR_REMEMBERPROJECT, _model->lastProjectRemember);
+}
+
+void EditorSettings :: doCommand(int id, int msg)
+{
+   if (id==IDC_EDITOR_HIGHLIGHSYNTAXFLAG) {
+      onEditorHighlightSyntaxChanged();
+   }
+   else Dialog::doCommand(id, msg);
+}
+
+void EditorSettings :: onEditorHighlightSyntaxChanged()
+{
+   enable(IDC_EDITOR_COLORSCHEME, getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG));
+}
+
+void EditorSettings :: onOK()
+{
+   _model->scheme = getComboBoxIndex(IDC_EDITOR_COLORSCHEME);
+   _model->font_size = 8 + getComboBoxIndex(IDC_EDITOR_FONTSIZE);
+   _model->lineNumberVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
+   _model->tabCharUsing = getCheckState(IDC_EDITOR_USETAB);
+   _model->highlightSyntax = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
+   _model->defaultEncoding = indexToEncoding(getComboBoxIndex(IDC_EDITOR_ENCODING));
+   _model->lastPathRemember = getCheckState(IDC_EDITOR_REMEMBERPATH);
+   _model->lastProjectRemember = getCheckState(IDC_EDITOR_REMEMBERPROJECT);
+
+   wchar_t size[12];
+   getText(IDC_EDITOR_TABSIZE, (wchar_t**)(&size), 11);
+   _model->tabSize = text_str(size).toInt();
+   if (_model->tabSize <= 0 && _model->tabSize > 20) {
+      _model->tabSize = 4;
+   }
+}
+
+// --- DebuggerSettings ---
+
+void DebuggerSettings :: onCreate()
+{
+   setText(IDC_DEBUGGER_SRCPATH, _model->paths.packageRoot);
+   setText(IDC_DEBUGGER_LIBPATH, _model->paths.libraryRoot);
+}
+
+void DebuggerSettings :: onOK()
+{
+   wchar_t path[MAX_PATH + 1];   
+
+   getText(IDC_DEBUGGER_SRCPATH, (wchar_t**)(&path), MAX_PATH);
+   Settings::addPackagePath(_model, "default", path);
+
+   getText(IDC_DEBUGGER_LIBPATH, (wchar_t**)(&path), MAX_PATH);
+   Settings::addLibraryPath(_model, "default", path);
+}
+
+// --- GoToLineDialog ---
+
+void GoToLineDialog :: onCreate()
+{
+   setIntText(IDC_GOTOLINE_LINENUMBER, _number);
+}
+
+void GoToLineDialog :: onOK()
+{
+   _number = getIntText(IDC_GOTOLINE_LINENUMBER);
+}
+
+// --- FindDialog ---
+
+void FindDialog :: copyHistory(int id, SearchHistory* history)
+{
+   SearchHistory::Iterator it = history->start();
+   while (!it.Eof()) {
+      addComboBoxItem(id, *it);
+
+      it++;
+   }
+}
+
+void FindDialog :: onCreate()
+{
+   setText(IDC_FIND_TEXT, _option->text);
+   if (_replaceMode) {
+      setText(IDC_REPLACE_TEXT, _option->newText);
+   }
+   setCheckState(IDC_FIND_CASE, _option->matchCase);
+   setCheckState(IDC_FIND_WHOLE, _option->wholeWord);
+
+   if (_searchHistory) {
+      copyHistory(IDC_FIND_TEXT, _searchHistory);
+   }
+
+   if (_replaceHistory) {
+      copyHistory(IDC_REPLACE_TEXT, _replaceHistory);
+   }
+}
+
+void FindDialog :: onOK()
+{
+   wchar_t s[200];
+
+   getText(IDC_FIND_TEXT, (wchar_t**)(&s), 200);
+   _option->text.copy(s);
+
+   if (_replaceMode) {
+      s[0] = 0;
+      getText(IDC_REPLACE_TEXT, (wchar_t**)(&s), 200);
+      _option->newText.copy(s);
+   }
+   _option->matchCase = getCheckState(IDC_FIND_CASE);
+   _option->wholeWord = getCheckState(IDC_FIND_WHOLE);
+}
+
+// --- AboutDialog ---
+
+void AboutDialog :: onCreate()
+{
+   setText(IDC_ABOUT_LICENCE_TEXT, APACHE_LICENSE2);
+   setText(IDC_ABOUT_HOME, ELENA_HOMEPAGE);
+   setText(IDC_ABOUT_BLOG, ELENA_BLOG);
+}

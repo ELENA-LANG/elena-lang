@@ -114,12 +114,12 @@ public:
       message.copyTo(_string, length);
       _string[length] = 0;
    }
-//   WideString(ident_t message, size_t length)
-//   {
-//      size_t wideLength = 0x100;
-//      StringHelper::copy(_string, message, length, wideLength);
-//      _string[wideLength] = 0;
-//   }
+   WideString(ident_t message, size_t length)
+   {
+      size_t wideLength = 0x100;
+      Convertor::copy(_string, message, length, wideLength);
+      _string[wideLength] = 0;
+   }
 };
 
 } // _ELENA_

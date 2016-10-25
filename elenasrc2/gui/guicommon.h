@@ -153,6 +153,8 @@ struct HighlightInfo
 class TextString : public _ELENA_::String <text_c, 0x100>
 {
 public:
+   text_str str() { return text_str(_string); }
+
    TextString(_ELENA_::ident_t message)
    {
       size_t length = 0x100;

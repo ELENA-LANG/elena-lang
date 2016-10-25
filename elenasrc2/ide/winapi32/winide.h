@@ -96,7 +96,7 @@ protected:
    void refreshControl(int index);
 
    virtual void onActivate();
-//   virtual bool onClose();
+   virtual bool onClose();
 
    virtual void _onNotify(NMHDR* notification);
    virtual void _onMenuCommand(int id);
@@ -107,18 +107,18 @@ protected:
    void onDoubleClick(NMHDR* notification);
    void onIndexChange(NMHDR* notification);
    void onRClick(NMHDR* notification);
-//   void onDebuggerStep(LineInfoNMHDR* notification);
-//   void onDebuggerStop(bool failed);
+   void onDebuggerStep(LineInfoNMHDR* notification);
+   void onDebuggerStop(bool failed);
 
    void _onToolTip(NMTTDISPINFO* toolTip);
    void _onTabTip(NMTTDISPINFO* toolTip);
    void _onChildKeyDown(NMHDR* notification);   
-//   void onTVItemExpanded(NMTREEVIEW* notification);
+   void onTVItemExpanded(NMTREEVIEW* notification);
 
    bool isTabToolTip(HWND handle);
 
-//   void openHelp();
-//   void displayErrors();
+   void openHelp();
+   void displayErrors();
 
    bool checkControlHandle(int index, HWND wnd);
    bool isControlVisible(int index);
@@ -192,8 +192,16 @@ public:
    virtual _View::Answer question(text_t message, text_t param);
    virtual void error(text_t message);
    virtual void error(text_t message, text_t param);
+   virtual bool find(Model* model, SearchOption* option, SearchHistory* searchHistory);
+   virtual bool replace(Model* model, SearchOption* option, SearchHistory* searchHistory, SearchHistory* replaceHistory);
+   virtual bool gotoLine(int& row);
+   virtual bool selectWindow(Model* model, _Controller* controller);
 
    virtual bool configProject(_ProjectManager* project);
+   virtual bool configEditor(Model* model);
+   virtual bool configDebugger(Model* model);
+   virtual bool configurateForwards(_ProjectManager* project);
+   virtual bool about(Model* model);
 
    virtual void addToWindowList(const wchar_t* path);
    virtual void removeFromWindowList(const wchar_t* path);
@@ -201,64 +209,96 @@ public:
    virtual void addToRecentFileList(const wchar_t* path);
    virtual void addToRecentProjectList(const wchar_t* path);
 
-//   void reloadSettings();
-//
-//   void loadHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
-//   {
-//      _recentFiles.load(file, recentFileSection);
-//      _recentFiles.refresh();
-//
-//      _recentProjects.load(file, recentProjectSection);
-//      _recentProjects.refresh();
-//   }
-//
-//   void saveHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
-//   {
-//      _recentFiles.save(file, recentFileSection);
-//
-//      _recentProjects.save(file, recentProjectSection);
-//   }
+   virtual void reloadSettings();
+
+   virtual void removeFile(_ELENA_::path_t name);
+
+   void loadHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
+   {
+      _recentFiles.load(file, recentFileSection);
+      _recentFiles.refresh();
+
+      _recentProjects.load(file, recentProjectSection);
+      _recentProjects.refresh();
+   }
+
+   void saveHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
+   {
+      _recentFiles.save(file, recentFileSection);
+
+      _recentProjects.save(file, recentProjectSection);
+   }
 
    virtual bool copyToClipboard(Document* document);
    virtual void pasteFromClipboard(Document* document);
 
-//   void openTab(const wchar_t* caption, int ctrl);
-//   void switchToTab(int ctrl);
-//   void closeTab(int ctrl);
-//
-//   void openOutput();
-//   void switchToOutput();
-//   void closeOutput();
-//
-//   void openVMConsole();
+   void openTab(const wchar_t* caption, int ctrl);
+   void switchToTab(int ctrl);
+   void closeTab(int ctrl);
+
+   virtual void openOutput();
+   virtual void switchToOutput();
+   virtual void closeOutput();
+
+   virtual void openVMConsole();
 //   void switchToVMConsole();
-//   void closeVMConsole();
-//
-//   void openMessageList();
-//   void clearMessageList();
-//   void closeMessageList();
-//
-//   void openDebugWatch();
-//   void closeDebugWatch();
-//
-//   void openCallList();
-//   void closeCallList();
+   virtual void closeVMConsole();
+
+   virtual void openMessageList();
+   virtual void clearMessageList();
+   virtual void closeMessageList();
+
+   virtual void openDebugWatch();
+   virtual void closeDebugWatch();
+
+   virtual void openCallList();
+   virtual void closeCallList();
 
    virtual void openProjectView();
    virtual void closeProjectView();
 
-//   bool compileProject(_ProjectManager* manager, int postponedAction);
-//
-//   void _notify(int code);
-//   void _notify(int code, const wchar_t* message, int param = 0);
-//   void _notify(int code, const wchar_t* message, const wchar_t* param);
-//   void _notify(int code, const wchar_t* message, int param1, int param2);
-//   void _notify(int code, const wchar_t* ns, const wchar_t* source, HighlightInfo info);
-//
+   bool compileProject(_ProjectManager* manager, int postponedAction);
+
+   virtual void onNotification(const wchar_t* message, size_t address, int code)
+   {
+      _notify(IDM_DEBUGGER_EXCEPTION, message, address, code);
+   }
+   
+   virtual void onStep(_ELENA_::ident_t ns, _ELENA_::ident_t source, int row, int disp, int length)
+   {
+      _notify(IDE_DEBUGGER_STEP, TextString(ns), TextString(source), HighlightInfo(row, disp, length));
+   }
+   
+   virtual void onDebuggerHook()
+   {
+      _notify(IDE_DEBUGGER_HOOK);
+   }   
+   
+   virtual void onStart()
+   {
+      _notify(IDE_DEBUGGER_START);
+   }
+
+   virtual void onStop(bool failed)
+   {
+      _notify(failed ? IDE_DEBUGGER_BREAK : IDE_DEBUGGER_STOP);
+   }
+
+   void onCheckPoint(const wchar_t* message)
+   {
+      _notify(IDE_DEBUGGER_CHECKPOINT, message);
+   }
+
+   void _notify(int code);
+   void _notify(int code, const wchar_t* message, int param = 0);
+   void _notify(int code, const wchar_t* message, const wchar_t* param);
+   void _notify(int code, const wchar_t* message, int param1, int param2);
+   void _notify(int code, const wchar_t* ns, const wchar_t* source, HighlightInfo info);
+
 //   void resetDebugWindows();
-//   void refreshDebugWindows(_ELENA_::_DebugController* debugController);
-//   void browseWatch(_ELENA_::_DebugController* debugController, void* watchNode);
-//   void browseWatch(_ELENA_::_DebugController* debugController);
+   virtual void refreshDebugWindows(_ELENA_::_DebugController* debugController);
+   virtual void browseWatch(_ELENA_::_DebugController* debugController, void* watchNode);
+   virtual void browseWatch(_ELENA_::_DebugController* debugController);
 
    virtual void reloadProjectView(_ProjectManager* project);
 
