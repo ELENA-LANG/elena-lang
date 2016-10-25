@@ -105,6 +105,7 @@ enum LexicalType
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
    lxResending       = 0x0C00A,   // resending a message, optional arg - message
    lxTrying          = 0x0C00C,   // try-catch expression
+   lxAlt             = 0x0C00D,   // alt-catch expression
    lxBranching       = 0x0C00F,   // branch expression
    lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
@@ -114,6 +115,7 @@ enum LexicalType
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
+   lxAltExpression   = 0x0C018,
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIf              = 0x0C01F,   // optional arg - reference
    lxElse            = 0x0C020,   // optional arg - reference
@@ -214,7 +216,6 @@ enum LexicalType
 //   lxSymbol = 0x20103, // arg - reference
 //   lxCurrentField = 0x0411D, // arg -offset
 //
-//   lxAlt             = 0x0030D,   // alt-catch expression
 //   lxLocking         = 0x0030E,   // lock expression
 //   lxExtInteranlRef  = 0x00319,
 //   lxExternFrame     = 0x00327,

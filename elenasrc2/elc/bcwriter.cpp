@@ -402,20 +402,20 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
 
 void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved)
 {
@@ -992,13 +992,13 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    tape.write(bcFreeStack, 3);
 }
 
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//}
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+   tape.write(bcFreeStack, 3);
+}
 
 void ByteCodeWriter :: endThenBlock(CommandTape& tape, bool withStackControl)
 {
@@ -4296,28 +4296,28 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
    endCatch(tape);
 }
 
-//void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExpressionMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareAlt(tape);
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endAlt(tape);
-//}
+void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareAlt(tape);
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endAlt(tape);
+}
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -4511,6 +4511,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxExpression:
       case lxLocalUnboxing:
       case lxFieldExpression:
+      case lxAltExpression:
          generateExpression(tape, node);
          break;
 //      case lxTypecasting:
@@ -4522,9 +4523,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxTrying:
          generateTrying(tape, node);
          break;
-//      case lxAlt:
-//         generateAlt(tape, node);
-//         break;
+      case lxAlt:
+         generateAlt(tape, node);
+         break;
       case lxReturning:
          generateReturnExpression(tape, node);
          break;
@@ -4593,10 +4594,10 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node)
       case lxDispatching:
          generateDispatching(tape, node);
          break;
-//      case lxVariable:
-//         generateExpression(tape, node);
-//         pushObject(tape, lxResult);
-//         break;
+      case lxVariable:
+         generateExpression(tape, node);
+         pushObject(tape, lxResult);
+         break;
       case lxIf:
          jumpIfNotEqual(tape, node.argument);
          generateCodeBlock(tape, node);
@@ -4627,14 +4628,14 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxObjectMask)) {
+      if (current == lxReleasing) {
+         releaseObject(tape, current.argument);
+      }
+      if (current == lxVariable) {
          generateObjectExpression(tape, current);
       }
-//      else if (current == lxVariable) {
-//         generateObjectExpression(tape, current);
-//      }
-      else if (current == lxReleasing) {
-         releaseObject(tape, current.argument);
+      else if (test(current.type, lxObjectMask)) {
+         generateObjectExpression(tape, current);
       }
 
       current = current.nextNode();

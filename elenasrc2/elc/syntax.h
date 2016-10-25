@@ -67,7 +67,7 @@ enum Symbol
    //nsTry                        = 0x01029,
    nsElseOperation              = 0x0102A,
    nsExtension                  = 0x0102B,
-   //nsAltMessageOperation        = 0x0102C,
+   nsAltMessageOperation        = 0x0102C,
    //nsInclude                    = 0x0102D,
    nsForward                    = 0x0102E,
    nsCatchMessageOperation      = 0x0102F,

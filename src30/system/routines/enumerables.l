@@ -125,10 +125,10 @@
 //
 //    #method seek:param &eachPair:function
 //      = function retrieve:param &enumerator:(self enumerator).
-//
-//    #method safeSeek : aValue
-//        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
-//
+
+    #method safeSeek : aValue
+        = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
+
 //    #method ifExists : aValue
 //        = $nil != self::enumerableOp safeSeek:aValue.
 //        

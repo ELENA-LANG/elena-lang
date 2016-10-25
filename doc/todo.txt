@@ -3,7 +3,7 @@ In development:
 ------                              
 
               xrev
-                 * support open arg list
+                 * alt message : ignore exception, the operation target should be saved
 
                  * typecast primitive array operation results
 

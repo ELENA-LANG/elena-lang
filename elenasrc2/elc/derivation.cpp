@@ -143,6 +143,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          copyAssigning(node);
          break;
       case nsCatchMessageOperation:
+      case nsAltMessageOperation:
          _writer.newBookmark();
       case nsMessageOperation:
          copyMessage(node);
@@ -151,6 +152,11 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          if (symbol == nsCatchMessageOperation) {
             _writer.removeBookmark();            
             _writer.insert(lxTrying);
+            _writer.closeNode();
+         }
+         else if (symbol == nsAltMessageOperation) {
+            _writer.removeBookmark();
+            _writer.insert(lxAlt);
             _writer.closeNode();
          }
          break;

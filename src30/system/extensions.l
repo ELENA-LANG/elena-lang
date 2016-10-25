@@ -15,9 +15,9 @@
     #method(bool) equal &reference:anObject
         => system'core_routines'__object.
         
-//    /// Returns the parameter        
-//    #method back : anObject = anObject.
-//
+    /// Returns the parameter        
+    #method back : anObject = anObject.
+
 //    #method evalSelf &func1:aFunction
 //        = aFunction eval:self.
 //

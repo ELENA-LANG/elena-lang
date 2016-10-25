@@ -1007,6 +1007,7 @@ private:
    ObjectInfo compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
    void compileTrying(SNode node, CodeScope& scope);
+   void compileAltOperation(SNode node, CodeScope& scope);
    void compileLoop(SNode node, CodeScope& scope);
    void compileThrow(SNode node, CodeScope& scope, int mode);
 //   void compileTry(DNode node, CodeScope& scope);

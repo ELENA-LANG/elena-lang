@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -4139,10 +4139,42 @@ void Compiler :: compileTrying(SNode node, CodeScope& scope)
    }
 }
 
+void Compiler :: compileAltOperation(SNode node, CodeScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         compileExpression(current, scope, 0);
+      }
+
+      current = current.nextNode();
+   }
+
+   // inject a nested expression
+   node = lxAltExpression;
+   SNode altNode = node.injectNode(lxAlt);
+
+   // extract the expression target
+   SNode firstExpr = altNode.firstChild(lxObjectMask);
+   SNode targetNode = firstExpr.firstChild(lxObjectMask);
+
+   LexicalType targetType = targetNode.type;
+   int targetArg = targetNode.argument;
+
+   targetNode.set(lxCurrent, 0);
+
+   SNode secondExpr = firstExpr.nextNode(lxObjectMask);
+   secondExpr.insertNode(lxCurrent, 0);
+
+   SyntaxTree::copyNode(targetNode, node.insertNode(lxVariable).insertNode(targetType, targetArg));
+
+   node.appendNode(lxReleasing, 1);
+}
+
 ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo objectInfo;
-   SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxTrying, lxSwitching);
+   SNode child = node.findChild(lxAssign, lxExtension, lxMessage, lxOperator, lxTrying, lxAlt, lxSwitching);
    switch (child.type) {
       case lxAssign:
          objectInfo = compileAssigning(node, scope, mode);
@@ -4152,6 +4184,11 @@ ObjectInfo Compiler :: compileExpression(SNode node, CodeScope& scope, int mode)
          break;
       case lxTrying:
          compileTrying(child, scope);
+
+         objectInfo = ObjectInfo(okObject);
+         break;
+      case lxAlt:
+         compileAltOperation(child, scope);
 
          objectInfo = ObjectInfo(okObject);
          break;
@@ -8725,6 +8762,4 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
    node.set(lxAssigning, size);
 
    node.insertNode(lxLocalAddress, offset);
-
-   test2(node);
 }
