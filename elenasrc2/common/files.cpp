@@ -32,8 +32,8 @@ using namespace _ELENA_;
 bool Path::comparePaths(path_t s1, path_t s2, size_t length)
 {
    for (size_t i = 0; i < length; i++) {
-      path_c ch1 = __lower(s1[i]);
-      path_c ch2 = __lower(s2[i]);
+      path_c ch1 = StrHelper::lower(s1[i]);
+      path_c ch2 = StrHelper::lower(s2[i]);
 
       if (ch1 != ch2)
          return false;

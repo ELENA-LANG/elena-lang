@@ -341,7 +341,7 @@ public:
    {
       size_t lenToWrite = _size - _offset;
 
-      if (__copy(_text + _offset, s, length, lenToWrite)) {
+      if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
 
          return true;
@@ -353,7 +353,7 @@ public:
    {
       size_t lenToWrite = _size - _offset;
 
-      if (__copy(_text + _offset, s, length, lenToWrite)) {
+      if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
 
          return true;

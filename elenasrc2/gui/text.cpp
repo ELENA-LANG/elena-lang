@@ -686,7 +686,7 @@ void Text :: copyTo(TextBookmark bookmark, text_c* buffer, int length)
       if (copied > (size_t)length) {
          copied = length;
       }
-      _ELENA_::__copy(buffer, (*bookmark._page).text + bookmark._offset, copied, copied);
+      _ELENA_::Convertor::copy(buffer, (*bookmark._page).text + bookmark._offset, copied, copied);
 
       if (!copied)
          break;
@@ -747,7 +747,7 @@ void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRo
             (*page).used = offset;
 
             Page newPage(size);
-            _ELENA_::__copy(newPage.text, (*page).text + offset, size, size);
+            _ELENA_::Convertor::copy(newPage.text, (*page).text + offset, size, size);
 
             _pages.insertAfter(page, newPage);
 
@@ -759,7 +759,7 @@ void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRo
             if (size > length)
                size = length;
          }
-         else _ELENA_::__move((*page).text + offset + size, (*page).text + offset, (*page).used - offset);
+         else _ELENA_::StrHelper::move((*page).text + offset + size, (*page).text + offset, (*page).used - offset);
       }
       else if (size==0) {
          if (!bookmark.goToNextPage(true)) {
@@ -771,7 +771,7 @@ void Text :: insert(TextBookmark bookmark, text_t s, size_t length, bool checkRo
          offset = bookmark._offset;
          continue;
       }
-      _ELENA_::__copy((*page).text + offset, s, size, size);
+      _ELENA_::Convertor::copy((*page).text + offset, s, size, size);
 
       (*page).used += size;
       if (checkRowCount) {
@@ -810,7 +810,7 @@ void Text :: erase(TextBookmark bookmark, size_t length, bool checkRowCount)
 
          if (offset + size < (*page).used) {
             size_t l = (*page).used - offset;
-            _ELENA_::__copy((*page).text + offset, (*page).text + offset + size, l, l);
+            _ELENA_::Convertor::copy((*page).text + offset, (*page).text + offset + size, l, l);
          }
          (*page).used -= size;
          length -= size;
@@ -925,7 +925,7 @@ inline bool check(text_c ch1, text_c ch2, bool matchCase)
    if (matchCase) {
       return (ch1==ch2);
    }
-   else return (_ELENA_::__lower(ch1)==_ELENA_::__lower(ch2));
+   else return (_ELENA_::StrHelper::lower(ch1)==_ELENA_::StrHelper::lower(ch2));
 }
 
 bool Text :: compare(TextBookmark bookmark, text_t line, int len, bool matchCase, text_t terminators)

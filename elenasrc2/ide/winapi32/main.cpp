@@ -87,11 +87,6 @@ using namespace _GUI_;
 //      return appWindow.newDocument(name, doc);
 //   }
 //
-//   virtual void checkMenuItemById(int id, bool doEnable)
-//   {
-//      appWindow.getMenu()->checkItemById(id, doEnable);
-//   }
-//
 //   virtual bool configEditor(Model* model)
 //   {
 //      EditorSettings dlg(&appWindow, model);
@@ -223,16 +218,6 @@ using namespace _GUI_;
 //   virtual void clearMessageList()
 //   {
 //      appWindow.clearMessageList();
-//   }
-//
-//   virtual void openProjectView()
-//   {
-//      appWindow.openProjectView();
-//   }
-//
-//   virtual void closeProjectView()
-//   {
-//      appWindow.closeProjectView();
 //   }
 //
 //   virtual bool compileProject(_ProjectManager* project, int postponedAction)

@@ -8599,7 +8599,7 @@ bool Compiler :: run(_ProjectManager& project, bool withDebugInfo)
          size_t destLength = 6;
 
          String<char, 6> symbol;
-         __copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
+         Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
 
          project.raiseError(errInvalidChar, it.key(), e.row, e.column, (const char*)symbol);
       }

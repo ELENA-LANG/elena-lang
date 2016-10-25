@@ -11,12 +11,12 @@
 #include "winapi32\winsdi.h"
 #include "winapi32\winmenu.h"
 #include "winapi32\wintoolbar.h"
-//#include "winapi32\wintreeview.h"
+#include "winapi32\wintreeview.h"
 #include "..\ide.h"
 #include "..\windowlist.h"
 #include "..\historylist.h"
-//#include "..\browser.h"
-//
+#include "..\browser.h"
+
 ////#include "debugger.h"
 
 #define TABCHANGED_NOTIFY  1
@@ -29,46 +29,46 @@ namespace _GUI_
 
 class IDEWindow : public SDIWindow, public _View, public _DebugListener
 {
-//   class ContextBrowser : public _Browser
-//   {
-//      DebugWatch*  _watch;
-//      ContextMenu  _menu;
-//      Control*     _treeView;
-//      Model*       _model;
-//
-//   public:
-//      virtual bool isHexNumberMode();
-//
-//      void reset();
-//      void refresh(_ELENA_::_DebugController* controller);
-//
-//      virtual bool isExpanded(void* node);
-//      virtual void expand(void* node);
-//      virtual void clear(void* node);
-//      virtual void erase(void* node);
-//
-//      virtual void getCaption(void* node, _ELENA_::ident_c* caption, size_t length);
-//      virtual void setCaption(void* node, _ELENA_::ident_t caption);
-//
-//      virtual void setParam(void* node, size_t param);
-//      virtual size_t getParam(void* node);
-//
-//      virtual void* getCurrent();
-//
-//      virtual void* newNode(void* parent, _ELENA_::ident_t caption, int param);
-//      virtual void* findNodeStartingWith(void* node, _ELENA_::ident_t caption);
-//
-//      void assign(Control* treeView);
-//
-//      TreeViewItem hitTest(short x, short y);
-//      void showContextMenu(HWND owner, short x, short y, Model* model);
-//
-//      void browse(_ELENA_::_DebugController* controller);
-//      void browse(_ELENA_::_DebugController* controller, void* current);
-//
-//      ContextBrowser(Model* model);
-//      ~ContextBrowser() { _ELENA_::freeobj(_watch); }
-//   };
+   class ContextBrowser : public _Browser
+   {
+      DebugWatch*  _watch;
+      ContextMenu  _menu;
+      Control*     _treeView;
+      Model*       _model;
+
+   public:
+      virtual bool isHexNumberMode();
+
+      void reset();
+      void refresh(_ELENA_::_DebugController* controller);
+
+      virtual bool isExpanded(void* node);
+      virtual void expand(void* node);
+      virtual void clear(void* node);
+      virtual void erase(void* node);
+
+      virtual void getCaption(void* node, char* caption, size_t length);
+      virtual void setCaption(void* node, _ELENA_::ident_t caption);
+
+      virtual void setParam(void* node, size_t param);
+      virtual size_t getParam(void* node);
+
+      virtual void* getCurrent();
+
+      virtual void* newNode(void* parent, _ELENA_::ident_t caption, int param);
+      virtual void* findNodeStartingWith(void* node, _ELENA_::ident_t caption);
+
+      void assign(Control* treeView);
+
+      TreeViewItem hitTest(short x, short y);
+      void showContextMenu(HWND owner, short x, short y, Model* model);
+
+      void browse(_ELENA_::_DebugController* controller);
+      void browse(_ELENA_::_DebugController* controller, void* current);
+
+      ContextBrowser(Model* model);
+      ~ContextBrowser() { _ELENA_::freeobj(_watch); }
+   };
 
    _Controller* _controller;
    Model*       _model;
@@ -76,7 +76,7 @@ class IDEWindow : public SDIWindow, public _View, public _DebugListener
 
 protected:
    Clipboard      _clipboard;
-//   ContextBrowser _contextBrowser;
+   ContextBrowser _contextBrowser;
 
    size_t         _controlCount;
    _BaseControl** _controls;
@@ -92,8 +92,8 @@ protected:
    void setBottom(int index);
 
    void showControls(int from, int till);
-//   void hideControl(int index);
-//   void refreshControl(int index);
+   void hideControl(int index);
+   void refreshControl(int index);
 
    virtual void onActivate();
 //   virtual bool onClose();
@@ -139,6 +139,11 @@ public:
       getMenu()->enableItemById(id, doEnable);
       if (toolBarItemAvailable)
          getToolBar()->enableItemById(id, doEnable);
+   }
+
+   virtual void checkMenuItemById(int id, bool doEnable)
+   {
+      getMenu()->checkItemById(id, doEnable);
    }
 
    virtual void exit()
@@ -238,10 +243,10 @@ public:
 //
 //   void openCallList();
 //   void closeCallList();
-//
-//   void openProjectView();
-//   void closeProjectView();
-//
+
+   virtual void openProjectView();
+   virtual void closeProjectView();
+
 //   bool compileProject(_ProjectManager* manager, int postponedAction);
 //
 //   void _notify(int code);

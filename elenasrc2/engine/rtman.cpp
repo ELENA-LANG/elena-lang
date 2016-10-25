@@ -81,9 +81,9 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char
       if (symbol[0] != '#') {
          int vmtAddress = reader.getDWord();
          if (vmtAddress == classVAddress) {
-            size_t len = getlength(symbol);
-            if (len < maxLength) {
-               __copy(buffer, symbol, len, len);
+            size_t len = maxLength;
+            if (len > getlength(symbol)) {
+               symbol.copyTo(buffer, len);
 
                return len;
             }
@@ -220,7 +220,7 @@ void copy(char* buffer, ident_t word, int& copied, size_t maxLength)
       length = maxLength - copied;
 
    if (length > 0)
-      __copy(buffer + copied, word, length, length);
+      Convertor::copy(buffer + copied, word, length, length);
 
    copied += length;
 }
@@ -231,7 +231,7 @@ void copy(char* buffer, int value, int& copied)
    tmp.appendInt(value);
 
    size_t length = getlength(tmp);
-   __copy(buffer + copied, tmp, length, length);
+   Convertor::copy(buffer + copied, tmp, length, length);
 
    copied += length;
 }
@@ -275,7 +275,7 @@ size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, cha
    if (!emptystr(name)) {
       size_t len = getlength(name);
       if (len < maxLength) {
-         __copy(buffer, name, len, len);
+         Convertor::copy(buffer, name, len, len);
 
          return len;
       }

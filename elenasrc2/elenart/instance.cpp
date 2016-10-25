@@ -143,8 +143,8 @@ int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
       decodeMessage(subjectRef, subject, verb, count);
 
       ident_t verbName = retrieveKey(_verbs.start(), verb, DEFAULT_STR);
-      size_t used = getlength(verbName);
-      __copy(buffer, verbName, used, used);
+      size_t used = length;
+      verbName.copyTo(buffer, used);
       
       if (subject > 0) {
          buffer[used++] = '&';
@@ -157,7 +157,7 @@ int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
          temp.appendInt(count);
 
          buffer[used++] = '[';
-         __copy(buffer + used, temp, getlength(temp), dummy);
+         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
          used = getlength(buffer);
          buffer[used++] = ']';
       }

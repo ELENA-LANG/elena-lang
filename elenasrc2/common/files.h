@@ -32,7 +32,7 @@ public:
 
    path_c* clone()
    {
-      return __clone(_path);
+      return StrFactory::clone(_path);
    }
 
    int findLast(path_c ch, int defValue = -1)
@@ -82,13 +82,29 @@ public:
 
    void copyTo(char* buffer, size_t& length) const
    {
-      __copy(buffer, _path, getlength(_path), length);
+      Convertor::copy(buffer, _path, getlength(_path), length);
    }
 
    void copyTo(char* buffer, size_t length, size_t& destLength) const
    {
-      __copy(buffer, _path, length, destLength);
+      Convertor::copy(buffer, _path, length, destLength);
    }
+
+#ifdef _WIN32
+
+   bool compare(const wchar_t* s, int length)
+   {
+      return wide_t(_path).compare(s, length);
+   }
+
+#else 
+
+   bool compare(const char* s, int length)
+   {
+      return ident_t(_path).compare(s, length);
+   }
+
+#endif
 
    path_t()
    {
@@ -205,7 +221,7 @@ public:
       size_t len = LOCAL_PATH_LENGTH;
 
       wchar_t temp[LOCAL_PATH_LENGTH];
-      __copy(temp, path, getlength(path), len);
+      Convertor::copy(temp, path, getlength(path), len);
       temp[len] = 0;
 
       _path.copy(temp);
@@ -248,23 +264,11 @@ public:
       changeExtension(ext);
    }
 
-   bool compare(const wchar_t* s, int length)
-   {
-      return wide_t(_path).compare(s, length);
-   }
-
-#else 
-
-   bool compare(const char* s, int length)
-   {
-      return ident_t(_path).compare(s, length);
-   }
-
 #endif
 
    path_c* clone()
    {
-      return __clone(_path);
+      return StrFactory::clone(_path);
    }
 
    void copy(path_t path)

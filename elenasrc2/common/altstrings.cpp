@@ -118,7 +118,7 @@ static bool isLegalUTF8(const unsigned char* source, int length)
    return true;
 }
 
-bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
+bool Convertor :: copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
    if(sourLength <= destLength) {
       memcpy(dest, sour, sourLength);
@@ -129,7 +129,7 @@ bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
    else return false;
 }
 
-bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
+bool Convertor :: copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
 {
    if (sourLength <= destLength) {
       memcpy(dest, sour, sourLength << 1);
@@ -140,7 +140,7 @@ bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLengt
    else return false;
 }
 
-bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength)
+bool Convertor :: copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
    bool result = true;
 
@@ -210,7 +210,7 @@ bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength)
    return result;
 }
 
-bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
+bool Convertor :: copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
 {
    bool result = true;
 
@@ -289,7 +289,7 @@ bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
    return result;
 }
 
-bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
+bool Convertor :: copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
 {
    bool result = true;
 
@@ -338,7 +338,7 @@ bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
    return result;
 }
 
-bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
+bool Convertor :: copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
 {
    bool result = true;
 
@@ -399,7 +399,17 @@ bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
    return result;
 }
 
-char* _ELENA_::__allocate(size_t size, const char* value)
+char* StrFactory :: clone(const char* s)
+{
+   return emptystr(s) ? NULL : _strdup(s);
+}
+
+wchar_t* StrFactory :: clone(const wchar_t* s)
+{
+   return _wcsdup(s);
+}
+
+char* StrFactory :: allocate(size_t size, const char* value)
 {
    char*s = (char*)malloc(size);
 
@@ -420,12 +430,12 @@ char* _ELENA_::__allocate(size_t size, const char* value)
 //   memcpy(s + pos, subs, len);
 //}
 
-void _ELENA_ :: __move(char* s1, const char* s2, size_t length)
+void StrHelper :: move(char* s1, const char* s2, size_t length)
 {
    memmove(s1, s2, length);
 }
 
-char* _ELENA_ :: __reallocate(char* s, size_t size)
+char* StrFactory :: reallocate(char* s, size_t size)
 {
    return (char*)realloc(s, size);
 }
@@ -496,12 +506,12 @@ bool greater(const char* s1, const char* s2)
    else return (s1 == s2);
 }
 
-char* _ELENA_::__lower(char* s)
+char* StrHelper :: lower(char* s)
 {
    return _strlwr(s);
 }
 
-char _ELENA_ :: __lower(char ch)
+char StrHelper :: lower(char ch)
 {
    char s[2];
    s[0] = ch;
@@ -511,7 +521,7 @@ char _ELENA_ :: __lower(char ch)
    return s[0];
 }
 
-char* _ELENA_::__upper(char* s)
+char* StrHelper :: upper(char* s)
 {
    return _strupr(s);
 }
@@ -610,12 +620,24 @@ long long strToLongLong(const char* s, int radix)
 //   return s;
 //}
 
-//char* StringHelper :: doubleToStr(double value, int digit, char* s)
-//{
-//   gcvt(value, digit, s);
-//
-//   return s;
-//}
+char* Convertor :: doubleToStr(double value, int digit, char* s)
+{
+   gcvt(value, digit, s);
+
+   return s;
+}
+
+wchar_t* Convertor :: doubleToStr(double value, int digit, wchar_t* s)
+{
+   char tmp[25];
+   gcvt(value, digit, tmp);
+
+   for (size_t i = 0; i <= getlength(tmp); i++) {
+      s[i] = tmp[i];
+   }
+
+   return s;
+}
 
 double strToDouble(const char* s)
 {
@@ -633,7 +655,7 @@ double strToDouble(const char* s)
 
 #ifdef _WIN32
 
-wchar_t* _ELENA_::__allocate(size_t size, const wchar_t* value)
+wchar_t* StrFactory :: allocate(size_t size, const wchar_t* value)
 {
    wchar_t* s = (wchar_t*)malloc(size << 1);
 
@@ -643,12 +665,12 @@ wchar_t* _ELENA_::__allocate(size_t size, const wchar_t* value)
    return s;
 }
 
-wchar_t* _ELENA_ :: __reallocate(wchar_t* s, size_t size)
+wchar_t* StrFactory :: reallocate(wchar_t* s, size_t size)
 {
    return (wchar_t*)realloc(s, size << 1);
 }
 
-void _ELENA_:: __move(wchar_t* s1, const wchar_t* s2, size_t length)
+void StrHelper :: move(wchar_t* s1, const wchar_t* s2, size_t length)
 {
    memmove(s1, s2, length << 1);
 }
@@ -700,12 +722,12 @@ int __findLast(const wchar_t* s, wchar_t c, int defValue)
    else return p - s;
 }
 
-wchar_t* _ELENA_::__lower(wchar_t* s)
+wchar_t* StrHelper :: lower(wchar_t* s)
 {
    return _wcslwr(s);
 }
 
-wchar_t _ELENA_ :: __lower(wchar_t ch)
+wchar_t StrHelper :: lower(wchar_t ch)
 {
    wchar_t s[2];
    s[0] = ch;
@@ -715,7 +737,7 @@ wchar_t _ELENA_ :: __lower(wchar_t ch)
    return s[0];
 }
 
-wchar_t* _ELENA_ :: __upper(wchar_t* s)
+wchar_t* StrHelper :: upper(wchar_t* s)
 {
    return _wcsupr(s);
 }
@@ -761,26 +783,26 @@ long strToLong(const wchar_t* s, int radix)
 //
 //   return number;
 //}
+
+//double StringHelper :: strToDouble(const wchar_t* s)
+//{
+//   return wcstod(s, NULL);
+//}
 //
-////double StringHelper :: strToDouble(const wchar_t* s)
-////{
-////   return wcstod(s, NULL);
-////}
-////
-////wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
-////{
-////   return _itow(n, s, radix);
-////}
-////
-////wchar_t* StringHelper::ulongToStr(unsigned long n, wchar_t* s, int radix)
-////{
-////   return _ultow(n, s, radix);
-////}
-////
-////char* StringHelper :: longlongToStr(long long n, char* s, int radix)
-////{
-////   return _i64toa(n, s, radix);
-////}
+//wchar_t* StringHelper :: intToStr(int n, wchar_t* s, int radix)
+//{
+//   return _itow(n, s, radix);
+//}
+
+//wchar_t* ulongToStr(unsigned long n, wchar_t* s, int radix)
+//{
+//   return _ultow(n, s, radix);
+//}
+
+char* Convertor :: longlongToStr(long long n, char* s, int radix)
+{
+   return _i64toa(n, s, radix);
+}
 
 int findSubStr(const wchar_t* s, wchar_t c, size_t length, int defValue)
 {
@@ -794,7 +816,7 @@ int findSubStr(const wchar_t* s, wchar_t c, size_t length, int defValue)
 
 #else
 
-unsigned short* _ELENA_::__allocate(size_t size, const unsigned short* value)
+unsigned short* StrFactory :: allocate(size_t size, const unsigned short* value)
 {
    unsigned short* s = (unsigned short*)malloc(size << 1);
    if (value)
@@ -803,12 +825,12 @@ unsigned short* _ELENA_::__allocate(size_t size, const unsigned short* value)
    return s;
 }
 
-unsigned short* _ELENA_ :: __reallocate(unsigned short* s, size_t size)
+unsigned short* StrFactory :: reallocate(unsigned short* s, size_t size)
 {
    return (unsigned short*)realloc(s, size << 1);
 }
 
-void _ELENA_ :: __move(unsigned short* s1, const unsigned short* s2, size_t length)
+void StrHelper :: move(unsigned short* s1, const unsigned short* s2, size_t length)
 {
    memmove(s1, s2, length << 1);
 }
@@ -993,124 +1015,124 @@ long strToLong(const unsigned short* s, int radix)
    return n;
 }
 
-////long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
-////{
-////   long long number = 0;
-////
-////   unsigned short dump[10];
-////   size_t length = getlength(s);
-////   while (length > 9) {
-////      size_t len = 9;
-////      copy(dump, (unsigned short*)s, len, len);
-////      dump[len] = 0;
-////
-////      long long temp = strToLong(dump, radix);
-////      for (size_t i = 0 ; i < (length - 9) ; i++) {
-////         temp *= radix;
-////      }
-////      number += temp;
-////
-////      length -= 9;
-////      s += 9;
-////   }
-////   copy(dump, s, length, length);
-////   dump[length] = 0;
-////   long long temp = strToLong(dump, radix);
-////   number += temp;
-////
-////   return number;
-////}
-////
-////double StringHelper :: strToDouble(const unsigned short* s)
-////{
-////   // !! temporal solution
-////   char tmp[31];
-////   size_t len = getlength(s);
-////   copy(tmp, s, len, len);
-////   tmp[len] = 0;
-////
-////   return atof(tmp);
-////}
-////
-////unsigned short* StringHelper :: intToStr(int n, unsigned short* s, int radix)
-////{
-////   int  rem = 0;
-////   int  pos = 0;
-////   do
-////   {
-////      rem = n % radix;
-////      n /= radix;
-////      switch(rem) {
-////         case 10:
-////            s[pos++] = 'a';
-////            break;
-////         case 11:
-////            s[pos++] = 'b';
-////            break;
-////         case 12:
-////            s[pos++] = 'c';
-////            break;
-////         case 13:
-////            s[pos++] = 'd';
-////            break;
-////         case 14:
-////            s[pos++] = 'e';
-////            break;
-////         case 15:
-////            s[pos++] = 'f';
-////            break;
-////         default:
-////            if (rem < 10) {
-////               s[pos++] = (rem + 0x30);
-////            }
-////      }
-////   }
-////   while( n != 0 );
-////
-////   s[pos] = 0;
-////
-////   return s;
-////}
-////
-////char* StringHelper :: longlongToStr(long long n, char* s, int radix)
-////{
-////   int  rem = 0;
-////   int  pos = 0;
-////   do
-////   {
-////      rem = n % radix;
-////      n /= radix;
-////      switch(rem) {
-////         case 10:
-////            s[pos++] = 'a';
-////            break;
-////         case 11:
-////            s[pos++] = 'b';
-////            break;
-////         case 12:
-////            s[pos++] = 'c';
-////            break;
-////         case 13:
-////            s[pos++] = 'd';
-////            break;
-////         case 14:
-////            s[pos++] = 'e';
-////            break;
-////         case 15:
-////            s[pos++] = 'f';
-////            break;
-////         default:
-////            if (rem < 10) {
-////               s[pos++] = (rem + 0x30);
-////            }
-////      }
-////   }
-////   while( n != 0 );
-////
-////   s[pos] = 0;
-////
-////   return s;
-////}
+//long long StringHelper :: strToLongLong(const unsigned short* s, int radix)
+//{
+//   long long number = 0;
+//
+//   unsigned short dump[10];
+//   size_t length = getlength(s);
+//   while (length > 9) {
+//      size_t len = 9;
+//      copy(dump, (unsigned short*)s, len, len);
+//      dump[len] = 0;
+//
+//      long long temp = strToLong(dump, radix);
+//      for (size_t i = 0 ; i < (length - 9) ; i++) {
+//         temp *= radix;
+//      }
+//      number += temp;
+//
+//      length -= 9;
+//      s += 9;
+//   }
+//   copy(dump, s, length, length);
+//   dump[length] = 0;
+//   long long temp = strToLong(dump, radix);
+//   number += temp;
+//
+//   return number;
+//}
+//
+//double StringHelper :: strToDouble(const unsigned short* s)
+//{
+//   // !! temporal solution
+//   char tmp[31];
+//   size_t len = getlength(s);
+//   copy(tmp, s, len, len);
+//   tmp[len] = 0;
+//
+//   return atof(tmp);
+//}
+//
+//unsigned short* StringHelper :: intToStr(int n, unsigned short* s, int radix)
+//{
+//   int  rem = 0;
+//   int  pos = 0;
+//   do
+//   {
+//      rem = n % radix;
+//      n /= radix;
+//      switch(rem) {
+//         case 10:
+//            s[pos++] = 'a';
+//            break;
+//         case 11:
+//            s[pos++] = 'b';
+//            break;
+//         case 12:
+//            s[pos++] = 'c';
+//            break;
+//         case 13:
+//            s[pos++] = 'd';
+//            break;
+//         case 14:
+//            s[pos++] = 'e';
+//            break;
+//         case 15:
+//            s[pos++] = 'f';
+//            break;
+//         default:
+//            if (rem < 10) {
+//               s[pos++] = (rem + 0x30);
+//            }
+//      }
+//   }
+//   while( n != 0 );
+//
+//   s[pos] = 0;
+//
+//   return s;
+//}
+
+char* Convertor :: longlongToStr(long long n, char* s, int radix)
+{
+   int  rem = 0;
+   int  pos = 0;
+   do
+   {
+      rem = n % radix;
+      n /= radix;
+      switch(rem) {
+         case 10:
+            s[pos++] = 'a';
+            break;
+         case 11:
+            s[pos++] = 'b';
+            break;
+         case 12:
+            s[pos++] = 'c';
+            break;
+         case 13:
+            s[pos++] = 'd';
+            break;
+         case 14:
+            s[pos++] = 'e';
+            break;
+         case 15:
+            s[pos++] = 'f';
+            break;
+         default:
+            if (rem < 10) {
+               s[pos++] = (rem + 0x30);
+            }
+      }
+   }
+   while( n != 0 );
+
+   s[pos] = 0;
+
+   return s;
+}
 
 int findSubStr(const unsigned short* s, unsigned short c, size_t length, int defValue)
 {
@@ -1124,145 +1146,145 @@ int findSubStr(const unsigned short* s, unsigned short c, size_t length, int def
 
 #endif
 
-//////int StringHelper :: find(const wchar_t* s, const wchar_t* subs, int defValue)
-//////{
-//////   const wchar_t* p = wcsstr(s, subs);
-//////   if (p==NULL) {
-//////      return defValue;
-//////   }
-//////   else return p - s;
-//////}
-//////
-////////void StringHelper :: trim(wchar_t* s, wchar_t ch)
-////////{
-////////   size_t length = getlength(s);
-////////   while (length > 0 && s[length - 1] == ch) {
-////////      s[length - 1] = 0;
-////////      length = getlength(s);
-////////   }
-////////}
-//////
-//////#else
-//////
-//////char* StringHelper :: allocateText(size_t size)
-//////{
-//////   return allocate(size);
-//////}
-//////
-//////void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, size_t length)
-//////{
-//////   memcpy(dest, sour, length << 1);
-//////}
+//int StringHelper :: find(const wchar_t* s, const wchar_t* subs, int defValue)
+//{
+//   const wchar_t* p = wcsstr(s, subs);
+//   if (p==NULL) {
+//      return defValue;
+//   }
+//   else return p - s;
+//}
+
+//void StringHelper :: trim(wchar_t* s, wchar_t ch)
+//{
+//   size_t length = getlength(s);
+//   while (length > 0 && s[length - 1] == ch) {
+//      s[length - 1] = 0;
+//      length = getlength(s);
+//   }
+//}
+
+//#else
 //
-//////int StringHelper :: find(const unsigned short* s, const unsigned short* subs, int defValue)
-//////{
-//////   int l = getlength(s);
-//////   int ls = getlength(subs);
-//////
-//////   for(int i = 0 ; i < l - ls ; i++) {
-//////      if (s[i]==subs[0]) {
-//////         bool match = true;
-//////         for(int j = 1 ; j < ls ; j++) {
-//////            if (s[i+j] != subs[j]) {
-//////               match = false;
-//////               break;
-//////            }
-//////         }
-//////         if (match)
-//////            return i;
-//////      }
-//////   }
-//////
-//////   return defValue;
-//////}
-//////
-////////unsigned short* StringHelper :: w_clone(const char* s)
-////////{
-////////   size_t length = strlen(s) + 1;
-////////   unsigned short* dup = allocate((unsigned short*)NULL, length);
-////////   copy(dup, s, length);
-////////
-////////   return dup;
-////////}
-////////
-////////char* StringHelper :: clone(const unsigned short* s)
-////////{
-////////   size_t length = getlength(s) + 1;
-////////   char* dup = allocate((char*)NULL, length);
-////////   copy(dup, s, length);
-////////
-////////   return dup;
-////////}
-//////
-////////void StringHelper :: trim(unsigned short* s, unsigned short ch)
-////////{
-////////   size_t length = getlength(s);
-////////   while (length > 0 && s[length - 1] == ch) {
-////////      s[length - 1] = 0;
-////////      length = getlength(s);
-////////   }
-////////}
-//////
-//////unsigned short* StringHelper :: doubleToStr(double value, int digit, unsigned short* s)
-//////{
-//////   //!! temporal
-//////   char temp[20];
-//////
-//////   sprintf(temp, "%lf", value);
-//////   int len = strlen(temp);
-//////   for (int i = 0 ; i <= len ; i++) {
-//////      s[0] = temp[0];
-//////   }
-//////
-//////   return s;
-//////}
-//////
-//////#endif
-//////
-//////void StringHelper :: copy(char* dest, const char* sour, int length)
-//////{
-//////   strncpy(dest, sour, length);
-//////}
-//////
-////////void StringHelper :: move(char* s1, const char* s2, size_t length)
-////////{
-////////   memmove(s1, s2, length);
-////////}
-////////
-////////#ifdef _WIN32
-////////
-////////#else
-////////
-////////char* StringHelper :: lower(char* s)
-////////{
-////////   while (*s) {
-////////      *s = tolower((unsigned char) *s);
-////////      s++;
-////////   }
-////////   return s;
-////////}
-////////
-////////char* StringHelper :: upper(char* s)
-////////{
-////////   while (*s) {
-////////      *s = toupper((unsigned char) *s);
-////////      s++;
-////////   }
-////////   return s;
-////////}
-////////
-////////#endif
+//char* StringHelper :: allocateText(size_t size)
+//{
+//   return allocate(size);
+//}
+//
+//void StringHelper :: copy(unsigned short* dest, const unsigned short* sour, size_t length)
+//{
+//   memcpy(dest, sour, length << 1);
+//}
+//
+//int StringHelper :: find(const unsigned short* s, const unsigned short* subs, int defValue)
+//{
+//   int l = getlength(s);
+//   int ls = getlength(subs);
+//
+//   for(int i = 0 ; i < l - ls ; i++) {
+//      if (s[i]==subs[0]) {
+//         bool match = true;
+//         for(int j = 1 ; j < ls ; j++) {
+//            if (s[i+j] != subs[j]) {
+//               match = false;
+//               break;
+//            }
+//         }
+//         if (match)
+//            return i;
+//      }
+//   }
+//
+//   return defValue;
+//}
+
+//unsigned short* StringHelper :: w_clone(const char* s)
+//{
+//   size_t length = strlen(s) + 1;
+//   unsigned short* dup = allocate((unsigned short*)NULL, length);
+//   copy(dup, s, length);
+//
+//   return dup;
+//}
+//
+//char* StringHelper :: clone(const unsigned short* s)
+//{
+//   size_t length = getlength(s) + 1;
+//   char* dup = allocate((char*)NULL, length);
+//   copy(dup, s, length);
+//
+//   return dup;
+//}
+
+//void StringHelper :: trim(unsigned short* s, unsigned short ch)
+//{
+//   size_t length = getlength(s);
+//   while (length > 0 && s[length - 1] == ch) {
+//      s[length - 1] = 0;
+//      length = getlength(s);
+//   }
+//}
+
+//unsigned short* StringHelper :: doubleToStr(double value, int digit, unsigned short* s)
+//{
+//   //!! temporal
+//   char temp[20];
+//
+//   sprintf(temp, "%lf", value);
+//   int len = strlen(temp);
+//   for (int i = 0 ; i <= len ; i++) {
+//      s[0] = temp[0];
+//   }
+//
+//   return s;
+//}
+//
+//#endif
+//
+//void StringHelper :: copy(char* dest, const char* sour, int length)
+//{
+//   strncpy(dest, sour, length);
+//}
+
+//void StringHelper :: move(char* s1, const char* s2, size_t length)
+//{
+//   memmove(s1, s2, length);
+//}
+//
+//#ifdef _WIN32
+//
+//#else
+//
+//char* StringHelper :: lower(char* s)
+//{
+//   while (*s) {
+//      *s = tolower((unsigned char) *s);
+//      s++;
+//   }
+//   return s;
+//}
+//
+//char* StringHelper :: upper(char* s)
+//{
+//   while (*s) {
+//      *s = toupper((unsigned char) *s);
+//      s++;
+//   }
+//   return s;
+//}
+//
+//#endif
 
 // --- ident_t ---
 
 bool ident_t :: copyTo(char* dest, size_t length, size_t& destLength)
 {
-   return copy(dest, _string, length, destLength);
+   return Convertor::copy(dest, _string, length, destLength);
 }
 
 bool ident_t :: copyTo(wide_c* dest, size_t length, size_t& destLength)
 {
-   return copy(dest, _string, length, destLength);
+   return Convertor::copy(dest, _string, length, destLength);
 }
 
 int ident_t :: toInt()
@@ -1349,12 +1371,12 @@ bool ident_t::compare(const char* s, size_t length) const
 
 bool wide_t :: copyTo(char* dest, size_t length, size_t& destLength)
 {
-   return copy(dest, _string, length, destLength);
+   return Convertor::copy(dest, _string, length, destLength);
 }
 
 bool wide_t :: copyTo(wide_c* dest, size_t length, size_t& destLength)
 {
-   return copy(dest, _string, length, destLength);
+   return Convertor::copy(dest, _string, length, destLength);
 }
 
 int wide_t :: toInt()
@@ -1419,52 +1441,23 @@ bool wide_t::compare(const wide_c* s, size_t length) const
 
 // --- String conversion routines ---
 
-bool _ELENA_::__copy(char* dest, const char* sour, size_t sourLength, size_t& destLength)
-{
-   return copy(dest, sour, sourLength, destLength);
-}
-
-bool _ELENA_::__copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
-{
-   return copy(dest, sour, sourLength, destLength);
-}
-
-bool _ELENA_::__copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength)
-{
-   return copy(dest, sour, sourLength, destLength);
-}
-
-bool _ELENA_::__copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength)
-{
-   return copy(dest, sour, sourLength, destLength);
-}
-
-bool _ELENA_::__copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength)
-{
-   return copy(dest, sour, sourLength, destLength);
-}
-
-bool _ELENA_::__copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength)
-{
-   return copy(dest, sour, sourLength, destLength);
-}
-
-void _ELENA_::__append(char* dest, const char* sour, size_t length)
+void StrHelper :: append(char* dest, const char* sour, size_t length)
 {
    append(dest, sour, length);
 }
 
-void _ELENA_::__append(wide_c* dest, const wide_c* sour, size_t length)
+void StrHelper :: append(wide_c* dest, const wide_c* sour, size_t length)
 {
    append(dest, sour, length);
 }
 
-char* _ELENA_::__clone(const char* s)
+void StrHelper :: insert(char* s, int pos, const char* subs)
 {
-   return emptystr(s) ? NULL : _strdup(s);
-}
+   size_t len = getlength(subs);
 
-wchar_t* _ELENA_::__clone(const wchar_t* s)
-{
-   return _wcsdup(s);
+   //s[getlength(s) + len + 1] = 0;
+   for (int i = getlength(s); i >= pos; i--) {
+      s[i + len] = s[i];
+   }
+   memcpy(s + pos, subs, len);
 }

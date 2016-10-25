@@ -301,23 +301,22 @@ bool IDEController :: openProject(_ELENA_::path_t path)
    return true;
 }
 
-//void IDEController :: selectProjectFile(int index)
-//{
-//   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
-//   while (index > 0) {
-//      index--;
-//      it++;
-//   }
-//
-//   _ELENA_::Path sourcePath;
-//   _ELENA_::Path::loadPath(sourcePath, it.key());
-//   Paths::resolveRelativePath(sourcePath, _model->project.path);
-//
-//   if (!openFile(sourcePath)) {
-//      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
-//   }
-//   else onChange();
-//}
+void IDEController :: selectProjectFile(int index)
+{
+   _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
+   while (index > 0) {
+      index--;
+      it++;
+   }
+
+   _ELENA_::Path sourcePath(it.key());
+   Paths::resolveRelativePath(sourcePath, _model->project.path);
+
+   if (!openFile(sourcePath)) {
+      _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
+   }
+   else onChange();
+}
 
 bool IDEController :: openFile(_ELENA_::path_t path)
 {
@@ -347,7 +346,7 @@ bool IDEController :: openFile(_ELENA_::path_t path)
       if (len > 50)
          len = 50;
 
-      _ELENA_::__copy(caption, module, len, len);
+      _ELENA_::Convertor::copy(caption, module, len, len);
       caption[len] = 0;
 
       caption.append(':');
@@ -1287,23 +1286,23 @@ void IDEController :: doSwap()
 //
 //   return true;
 //}
-//
-//void IDEController :: doShowProjectView(bool checked, bool forced)
-//{
-//   if (_model->projectView != checked || forced) {
-//      _model->projectView = checked;
-//
-//      _view->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _model->projectView);
-//
-//      if (checked) {
-//         _view->openProjectView();
-//      }
-//      else _view->closeProjectView();
-//
-//      _view->refresh(false);
-//   }
-//}
-//
+
+void IDEController :: doShowProjectView(bool checked, bool forced)
+{
+   if (_model->projectView != checked || forced) {
+      _model->projectView = checked;
+
+      _view->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _model->projectView);
+
+      if (checked) {
+         _view->openProjectView();
+      }
+      else _view->closeProjectView();
+
+      _view->refresh(false);
+   }
+}
+
 //void IDEController :: doShowCompilerOutput(bool checked, bool forced)
 //{
 //   if (_model->compilerOutput != checked || forced) {
@@ -2152,7 +2151,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
    fullPath.copySubPath(path);
    Paths::resolveRelativePath(fullPath, root);
 
-   if (!_ELENA_::emptystr(root) && fullPath.compare(root, rootLength)) {
+   if (!_ELENA_::emptystr(root) && fullPath.str().compare(root, rootLength)) {
       name.copy(getPackage());
       if (_ELENA_::getlength(fullPath) > rootLength)
          name.pathToName(fullPath + rootLength + 1);
@@ -2189,7 +2188,7 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
    while (!it.Eof()) {
       current.copy(it.key());
 
-      if (relPath.compare(current, _ELENA_::getlength(current))) {
+      if (relPath.str().compare(current, _ELENA_::getlength(current))) {
          return true;
       }
       it++;

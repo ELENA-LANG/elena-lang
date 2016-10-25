@@ -42,7 +42,7 @@ protected:
       info.line = token;
 
       size_t len = info.length;
-      _ELENA_:: __copy(token, _line + info.position, len, len);
+      _ELENA_::Convertor::copy(token, _line + info.position, len, len);
       token[len] = 0;
    }
 

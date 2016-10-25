@@ -92,7 +92,7 @@ class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LIN
       info.length = _position - info.position;
       info.line = token;
 
-      __copy(token, _line + info.position, info.length, length);
+      Convertor::copy(token, _line + info.position, info.length, length);
       token[info.length] = 0;
    }
 

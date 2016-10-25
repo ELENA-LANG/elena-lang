@@ -259,7 +259,7 @@ class IDEController : public _Controller
 //
 //   virtual void doShowCompilerOutput(bool checked, bool forced = false);
 //   virtual void doShowVMConsole(bool checked, bool forced = false);
-//   virtual void doShowProjectView(bool checked, bool forced = false);
+   virtual void doShowProjectView(bool checked, bool forced = false);
 //   virtual void doShowMessages(bool checked, bool forced = false);
 //   virtual void doShowCallStack(bool visible, bool forced = false);
 //   virtual void doShowDebugWatch(bool visible);
@@ -372,9 +372,9 @@ class IDEController : public _Controller
 //      _debugController.showCurrentModule();
 //      _view->showFrame();
 //   }
-//
-//   virtual void selectProjectFile(int index);
-//
+
+   virtual void selectProjectFile(int index);
+
 //   bool loadModule(text_t ns, text_t source);
 
 public:

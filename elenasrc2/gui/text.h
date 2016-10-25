@@ -64,7 +64,7 @@ struct Page
    {
       rows = page.rows;
       used = page.used;
-      _ELENA_::__copy(text, page.text, used, used);
+      _ELENA_::Convertor::copy(text, page.text, used, used);
    }
 };
 

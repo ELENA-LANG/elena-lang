@@ -156,7 +156,7 @@ public:
    TextString(_ELENA_::ident_t message)
    {
       size_t length = 0x100;
-      _ELENA_::__copy(_string, message, _ELENA_::getlength(message), length);
+      message.copyTo(_string, length);
       _string[length] = 0;
    }
 };

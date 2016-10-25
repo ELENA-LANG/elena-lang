@@ -258,7 +258,7 @@ public:
    bool   lineNumberVisible;
    bool   highlightSyntax;
    bool   highlightBrackets;
-//   bool   hexNumberMode;
+   bool   hexNumberMode;
    size_t scheme;
    size_t font_size;
 
@@ -409,7 +409,7 @@ public:
       tabWithAboveScore = true;
       autoRecompile = true;
 //      //debugTape = false;
-//      hexNumberMode = true;
+      hexNumberMode = true;
 //      //testMode = false;
 //      vmConsole = false;
    }
@@ -491,7 +491,7 @@ public:
 //
 //   virtual void doShowCompilerOutput(bool checked, bool forced = false) = 0;
 //   virtual void doShowVMConsole(bool checked, bool forced = false) = 0;
-//   virtual void doShowProjectView(bool checked, bool forced = false) = 0;
+   virtual void doShowProjectView(bool checked, bool forced = false) = 0;
 //   virtual void doShowMessages(bool checked, bool forced = false) = 0;
 //   virtual void doShowDebugWatch(bool visible) = 0;
 //   virtual void doShowCallStack(bool checked, bool forced = false) = 0;
@@ -501,7 +501,7 @@ public:
 //   virtual void doGotoSource() = 0;
 
    virtual void highlightMessage(MessageBookmark* bookmark, int bandStyle) = 0;
-//   virtual void selectProjectFile(int index) = 0;
+   virtual void selectProjectFile(int index) = 0;
    virtual void refreshDebuggerInfo() = 0;
 
 //   virtual void doDebugRun() = 0;
@@ -563,7 +563,7 @@ public:
    virtual void hideFrame() = 0;
 
    virtual void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable) = 0;
-//   virtual void checkMenuItemById(int id, bool doEnable) = 0;
+   virtual void checkMenuItemById(int id, bool doEnable) = 0;
 
    virtual void markDocumentTitle(int docIndex, bool changed) = 0;
 
@@ -587,10 +587,10 @@ public:
 //
 //   virtual void openDebugWatch() = 0;
 //   virtual void closeDebugWatch() = 0;
-//
-//   virtual void openProjectView() = 0;
-//   virtual void closeProjectView() = 0;
-//
+
+   virtual void openProjectView() = 0;
+   virtual void closeProjectView() = 0;
+
 //   virtual void openCallList() = 0;
 //   virtual void closeCallList() = 0;
 //

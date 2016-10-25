@@ -161,7 +161,7 @@ public:
       _tabSize = tabSize;
       _source = source;
       _row = 0;
-      _line = __allocate(maxLength + 1, DEFAULT_STR);
+      _line = StrFactory::allocate(maxLength + 1, DEFAULT_STR);
 
       _dfa = dfa;
 

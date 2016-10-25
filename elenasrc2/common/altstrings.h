@@ -12,6 +12,51 @@
 namespace _ELENA_
 {
 
+class Convertor
+{
+public:
+   static bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
+   static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+   static bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+
+   static char* doubleToStr(double value, int digit, char* s);
+   static wide_c* doubleToStr(double value, int digit, wide_c* s);
+
+   static char* longlongToStr(long long n, char* s, int radix);
+};
+
+class StrFactory
+{
+public:
+   static char* allocate(size_t size, const char* value);
+   static char* reallocate(char* s, size_t size);
+   static wchar_t* allocate(size_t size, const wchar_t* value);
+   static wchar_t* reallocate(wchar_t* s, size_t size);
+
+   static char* clone(const char* s);
+   static wchar_t* clone(const wchar_t* s);
+};
+
+class StrHelper
+{
+public:
+   static void move(char* s1, const char* s2, size_t length);
+   static void move(wchar_t* s1, const wchar_t* s2, size_t length);
+   static void append(char* dest, const char* sour, size_t length);
+   static void append(wide_c* dest, const wide_c* sour, size_t length);
+   static void insert(char* s, int pos, const char* subs);
+
+   static char* lower(char* s);
+   static wchar_t* lower(wide_c* s);
+   static char lower(char s);
+   static wchar_t lower(wide_c s);
+   static char* upper(char* s);
+   static wchar_t* upper(wide_c* s);
+};
+
 class ident_t
 {
 private:
@@ -208,7 +253,7 @@ public:
 
    void copy(const T* s, size_t length)
    {
-      __copy(_string, s, length, length);
+      Convertor::copy(_string, s, length, length);
       _string[length] = 0;
    }
    void copy(const T* s)
@@ -221,16 +266,16 @@ public:
       }
    }
 
-//   void insert(const T* s, size_t index)
-//   {
-//      StringHelper::insert(_string, index, s);
-//   }
+   void insert(const T* s, size_t index)
+   {
+      StrHelper::insert(_string, index, s);
+   }
 
    void append(const T* s, size_t length)
    {
       size_t newLength = getlength(_string) + length;
       if (newLength < size) {
-         __append(_string, s, length);
+         StrHelper::append(_string, s, length);
          _string[newLength] = 0;
       }
    }
@@ -263,43 +308,43 @@ public:
 
       intToStr(n, _string + pos, 16);
 
-      __upper(_string + pos);
+      StrHelper::upper(_string + pos);
    }
 
-//   void appendDouble(double n)
-//   {
-//      int pos = getlength(_string);
-//
-//      StringHelper::doubleToStr(n, 8, _string + pos);
-//      if (_string[getlength(_string) - 1]=='.')
-//         append("0");
-//   }
-//
-//   void appendHex64(long long n)
-//   {
-//      int pos = getlength(_string);
-//
-//      StringHelper::longlongToStr(n, _string + pos, 16);
-//      StringHelper::upper(_string + pos);
-//   }
-//
-//   void appendInt64(long long n)
-//   {
-//      int pos = getlength(_string);
-//
-//      StringHelper::longlongToStr(n, _string + pos, 10);
-//      StringHelper::upper(_string + pos);
-//   }
+   void appendDouble(double n)
+   {
+      int pos = getlength(_string);
+
+      Convertor::doubleToStr(n, 8, _string + pos);
+      if (_string[getlength(_string) - 1]=='.')
+         append("0");
+   }
+
+   void appendHex64(long long n)
+   {
+      int pos = getlength(_string);
+
+      Convertor::longlongToStr(n, _string + pos, 16);
+      StrHelper::upper(_string + pos);
+   }
+
+   void appendInt64(long long n)
+   {
+      int pos = getlength(_string);
+
+      Convertor::longlongToStr(n, _string + pos, 10);
+      StrHelper::upper(_string + pos);
+   }
 
    void lower()
    {
-      __lower(_string);
+      StrHelper::lower(_string);
    }
 
-//   void upper()
-//   {
-//      StringHelper::upper(_string);
-//   }
+   void upper()
+   {
+      StrHelper::upper(_string);
+   }
 
    void trim(T ch)
    {
@@ -376,14 +421,14 @@ protected:
    {
       if (_size == 0) {
          _size = align(size, pageSize);
-         _string = __allocate(_size, (const T*)NULL);
+         _string = StrFactory::allocate(_size, (const T*)NULL);
          _string[0] = 0;
       }
       else {
          int length = getlength(_string);
 
          _size = align(size, pageSize);
-         _string = __reallocate(_string, _size);
+         _string = StrFactory::reallocate(_string, _size);
 
          _string[length] = 0;
       }
@@ -449,7 +494,7 @@ public:
       if (newLength > _size)
          create(_string, newLength);
 
-      __append(_string, s, length);
+      StrHelper::append(_string, s, length);
       _string[newLength] = 0;
    }
    void append(const T* s)
@@ -526,32 +571,6 @@ public:
 };
 
 // --- HOTFIX : internal conversion routines ---
-
-bool __copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
-bool __copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
-bool __copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
-bool __copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
-bool __copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
-bool __copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
-void __move(char* s1, const char* s2, size_t length);
-void __move(wchar_t* s1, const wchar_t* s2, size_t length);
-void __append(char* dest, const char* sour, size_t length);
-void __append(wide_c* dest, const wide_c* sour, size_t length);
-
-char* __allocate(size_t size, const char* value);
-char* __reallocate(char* s, size_t size);
-wchar_t* __allocate(size_t size, const wchar_t* value);
-wchar_t* __reallocate(wchar_t* s, size_t size);
-
-char* __lower(char* s);
-wchar_t* __lower(wide_c* s);
-char __lower(char s);
-wchar_t __lower(wide_c s);
-char* __upper(char* s);
-wchar_t* __upper(wide_c* s);
-
-char* __clone(const char* s);
-wchar_t* __clone(const wchar_t* s);
 
 inline void copystr(char* d, const char* s)
 {

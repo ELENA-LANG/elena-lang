@@ -74,7 +74,7 @@ void Font :: create(HDC handler)
    lf.lfCharSet = (BYTE)(_characterSet);
 
    size_t length = LF_FACESIZE;
-   _ELENA_:: __copy(lf.lfFaceName, _fontName, _ELENA_::getlength(_fontName), length);
+   _ELENA_::Convertor::copy(lf.lfFaceName, _fontName, _ELENA_::getlength(_fontName), length);
    lf.lfFaceName[length] = 0;
 
    _fontID = ::CreateFontIndirect(&lf);

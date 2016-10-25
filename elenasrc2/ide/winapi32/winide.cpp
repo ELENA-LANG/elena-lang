@@ -28,9 +28,9 @@ using namespace _GUI_;
 #define CTRL_MESSAGELIST   8
 #define CTRL_CALLLIST      9
 #define CTRL_BSPLITTER     10
-//#define CTRL_HSPLITTER     11
-//#define CTRL_CONTEXTBOWSER 12
-//#define CTRL_PROJECTVIEW   13
+#define CTRL_HSPLITTER     11
+#define CTRL_CONTEXTBOWSER 12
+#define CTRL_PROJECTVIEW   13
 //#define CTRL_VMCONSOLE     14
 
 int AppToolBarButtonNumber = 19;
@@ -193,12 +193,12 @@ public:
    }
 };
 
-//MenuInfo browserContextMenuInfo[3] = {
-//	   {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
-//	   {0, NULL},
-//	   {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
-//};
-//
+MenuInfo browserContextMenuInfo[3] = {
+	   {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
+	   {0, NULL},
+	   {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
+};
+
 //// --- setForegroundWindow() ---
 //inline void setForegroundWindow(HWND hwnd)
 //{
@@ -215,154 +215,154 @@ public:
 //   // Set the timeout back
 //   ::SystemParametersInfo (0x2001, 0, (LPVOID)dwTimeoutMS, 0);   //HWND hCurrWnd;
 //}
-//
-//// --- ContextBrowser ---
-//
-//MainWindow::ContextBrowser :: ContextBrowser(Model* model)
-//{
-//   _model = model;
-//   _treeView = NULL;   
-//}
-//
-//void MainWindow::ContextBrowser :: assign(Control* treeView)
-//{
-//   _treeView = treeView;
-//   _menu.create(3, browserContextMenuInfo);
-//
-//   _watch = new DebugWatch(this);
-//}
-//
-//bool MainWindow::ContextBrowser::isHexNumberMode()
-//{
-//   return _model->hexNumberMode;
-//}
-//
-//TreeViewItem MainWindow::ContextBrowser :: hitTest(short x, short y)
-//{
-//   TVHITTESTINFO hit;
-//
-//   hit.pt.x = x;
-//   hit.pt.y = y;
-//
-//   ::ScreenToClient(_treeView->getHandle(), &hit.pt);
-//
-//   HTREEITEM i = TreeView_HitTest(_treeView->getHandle(), &hit);
-//
-//   return i;
-//}
-//
-//void MainWindow::ContextBrowser :: showContextMenu(HWND owner, short x, short y, Model* model)
-//{
-//   Point p(x, y);
-//
-//   _menu.checkItemById(IDM_DEBUG_SWITCHHEXVIEW, model->hexNumberMode);
-//   _menu.show(owner, p);
-//}
-//
-//bool MainWindow::ContextBrowser :: isExpanded(void* node)
-//{
-//   return ((TreeView*)_treeView)->isExpanded((TreeViewItem)node);
-//}
-//
-//void MainWindow::ContextBrowser::expand(void* node)
-//{
-//   ((TreeView*)_treeView)->expand((TreeViewItem)node);
-//}
-//
-//void MainWindow::ContextBrowser :: clear(void* node)
-//{
-//   ((TreeView*)_treeView)->clear((TreeViewItem)node);
-//}
-//
-//void MainWindow::ContextBrowser :: erase(void* node)
-//{
-//   ((TreeView*)_treeView)->erase((TreeViewItem)node);
-//}
-//
-//void* MainWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, int param)
-//{
-//   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param, true);
-//}
-//
-//void MainWindow::ContextBrowser :: reset()
-//{
-//   _watch->reset();
-//}
-//
-//void MainWindow::ContextBrowser :: refresh(_ELENA_::_DebugController* controller)
-//{
-//   _watch->refresh(controller);
-//}
-//
-//void MainWindow::ContextBrowser :: getCaption(void* node, _ELENA_::ident_c* caption, size_t length)
-//{
-//   _ELENA_::WideString s;
-//   ((TreeView*)_treeView)->getCaption((TreeViewItem)node, s, 0x100);
-//
-//   _ELENA_::StringHelper::copy(caption, s, _ELENA_::getlength(s), length);
-//   caption[length] = 0;
-//}
-//
-//void MainWindow::ContextBrowser :: setCaption(void* node, _ELENA_::ident_t caption)
-//{
-//   ((TreeView*)_treeView)->setCaption((TreeViewItem)node, _ELENA_::WideString(caption));
-//}
-//
-//void MainWindow::ContextBrowser::setParam(void* node, size_t param)
-//{
-//   ((TreeView*)_treeView)->setParam((TreeViewItem)node, param);
-//}
-//
-//size_t MainWindow::ContextBrowser::getParam(void* node)
-//{
-//   return ((TreeView*)_treeView)->getParam((TreeViewItem)node);
-//}
-//
-//void* MainWindow::ContextBrowser::getCurrent()
-//{
-//   return ((TreeView*)_treeView)->getCurrent();
-//}
-//
-//void* MainWindow::ContextBrowser :: findNodeStartingWith(void* node, _ELENA_::ident_t name)
-//{
-//   _ELENA_::WideString caption(name);
-//
-//   text_c itemName[CAPTION_LEN];
-//   size_t nameLen = _ELENA_::getlength(name);
-//
-//   TreeView* browser = (TreeView*)_treeView;
-//
-//   TreeViewItem item = browser->getChild((TreeViewItem)node);
-//   while (item != NULL) {
-//   //   size_t itemAddress = _browser->getParam(item);
-//      browser->getCaption(item, itemName, CAPTION_LEN);
-//
-//      if ((_ELENA_::getlength(itemName) > nameLen + 1) && _ELENA_::StringHelper::compare(itemName, caption, nameLen)
-//         && itemName[nameLen] == ' ')
-//      {
-//         return item;
-//      }
-//      item = browser->getNext(item);
-//   }
-//
-//   return NULL;
-//}
-//
-//void MainWindow::ContextBrowser :: browse(_ELENA_::_DebugController* controller)
-//{
-//   browse(controller, getCurrent());
-//   expand(getCurrent());
-//}
-//
-//void MainWindow::ContextBrowser::browse(_ELENA_::_DebugController* controller, void* current)
-//{
-//   if (current) {
-//      size_t address = getParam(current);
-//      DebuggerWatch subWatch(this, current, address, 0);
-//
-//      subWatch.refresh(controller);
-//   }
-//}
+
+// --- ContextBrowser ---
+
+IDEWindow::ContextBrowser :: ContextBrowser(Model* model)
+{
+   _model = model;
+   _treeView = NULL;   
+}
+
+void IDEWindow::ContextBrowser :: assign(Control* treeView)
+{
+   _treeView = treeView;
+   _menu.create(3, browserContextMenuInfo);
+
+   _watch = new DebugWatch(this);
+}
+
+bool IDEWindow::ContextBrowser::isHexNumberMode()
+{
+   return _model->hexNumberMode;
+}
+
+TreeViewItem IDEWindow::ContextBrowser :: hitTest(short x, short y)
+{
+   TVHITTESTINFO hit;
+
+   hit.pt.x = x;
+   hit.pt.y = y;
+
+   ::ScreenToClient(_treeView->getHandle(), &hit.pt);
+
+   HTREEITEM i = TreeView_HitTest(_treeView->getHandle(), &hit);
+
+   return i;
+}
+
+void IDEWindow::ContextBrowser :: showContextMenu(HWND owner, short x, short y, Model* model)
+{
+   Point p(x, y);
+
+   _menu.checkItemById(IDM_DEBUG_SWITCHHEXVIEW, model->hexNumberMode);
+   _menu.show(owner, p);
+}
+
+bool IDEWindow::ContextBrowser :: isExpanded(void* node)
+{
+   return ((TreeView*)_treeView)->isExpanded((TreeViewItem)node);
+}
+
+void IDEWindow::ContextBrowser::expand(void* node)
+{
+   ((TreeView*)_treeView)->expand((TreeViewItem)node);
+}
+
+void IDEWindow::ContextBrowser :: clear(void* node)
+{
+   ((TreeView*)_treeView)->clear((TreeViewItem)node);
+}
+
+void IDEWindow::ContextBrowser :: erase(void* node)
+{
+   ((TreeView*)_treeView)->erase((TreeViewItem)node);
+}
+
+void* IDEWindow::ContextBrowser :: newNode(void* parent, _ELENA_::ident_t caption, int param)
+{
+   return (void*)((TreeView*)_treeView)->insertTo((TreeViewItem)parent, _ELENA_::WideString(caption), param, true);
+}
+
+void IDEWindow::ContextBrowser :: reset()
+{
+   _watch->reset();
+}
+
+void IDEWindow::ContextBrowser :: refresh(_ELENA_::_DebugController* controller)
+{
+   _watch->refresh(controller);
+}
+
+void IDEWindow::ContextBrowser :: getCaption(void* node, char* caption, size_t length)
+{
+   _ELENA_::WideString s;
+   ((TreeView*)_treeView)->getCaption((TreeViewItem)node, s, 0x100);
+
+   _ELENA_::Convertor::copy(caption, s, _ELENA_::getlength(s), length);
+   caption[length] = 0;
+}
+
+void IDEWindow::ContextBrowser :: setCaption(void* node, _ELENA_::ident_t caption)
+{
+   ((TreeView*)_treeView)->setCaption((TreeViewItem)node, _ELENA_::WideString(caption));
+}
+
+void IDEWindow::ContextBrowser::setParam(void* node, size_t param)
+{
+   ((TreeView*)_treeView)->setParam((TreeViewItem)node, param);
+}
+
+size_t IDEWindow::ContextBrowser::getParam(void* node)
+{
+   return ((TreeView*)_treeView)->getParam((TreeViewItem)node);
+}
+
+void* IDEWindow::ContextBrowser::getCurrent()
+{
+   return ((TreeView*)_treeView)->getCurrent();
+}
+
+void* IDEWindow::ContextBrowser :: findNodeStartingWith(void* node, _ELENA_::ident_t name)
+{
+   _ELENA_::WideString caption(name);
+
+   text_c itemName[CAPTION_LEN];
+   size_t nameLen = _ELENA_::getlength(name);
+
+   TreeView* browser = (TreeView*)_treeView;
+
+   TreeViewItem item = browser->getChild((TreeViewItem)node);
+   while (item != NULL) {
+   //   size_t itemAddress = _browser->getParam(item);
+      browser->getCaption(item, itemName, CAPTION_LEN);
+
+      if ((_ELENA_::getlength(itemName) > nameLen + 1) && text_str(itemName).compare(caption, nameLen)
+         && itemName[nameLen] == ' ')
+      {
+         return item;
+      }
+      item = browser->getNext(item);
+   }
+
+   return NULL;
+}
+
+void IDEWindow::ContextBrowser :: browse(_ELENA_::_DebugController* controller)
+{
+   browse(controller, getCurrent());
+   expand(getCurrent());
+}
+
+void IDEWindow::ContextBrowser::browse(_ELENA_::_DebugController* controller, void* current)
+{
+   if (current) {
+      size_t address = getParam(current);
+      DebuggerWatch subWatch(this, current, address, 0);
+
+      subWatch.refresh(controller);
+   }
+}
 
 // --- IDEWindow ---
 
@@ -660,9 +660,9 @@ void IDEWindow :: _onMenuCommand(int optionID)
       case IDM_EDIT_SWAP:
          _controller->doSwap();
          break;
-      //case IDM_VIEW_PROJECTVIEW:
-      //   _controller->doShowProjectView(!_model->projectView);
-      //   break;
+      case IDM_VIEW_PROJECTVIEW:
+         _controller->doShowProjectView(!_model->projectView);
+         break;
 //      case IDM_VIEW_OUTPUT:
 //         _controller->doShowCompilerOutput(!_model->compilerOutput);
 //         break;
@@ -830,13 +830,13 @@ void IDEWindow :: onContextMenu(ContextMenuNMHDR* notification)
 
 void IDEWindow :: _onChildKeyDown(NMHDR* notification)
 {
-   //if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
-   //   switch (((LPNMLVKEYDOWN)notification)->wVKey) {
-   //      case 73:
-   //         _onMenuCommand(IDM_DEBUG_INSPECT); // !! check if ctrl was pressed too
-   //         break;
-   //   }
-   //}
+   if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
+      switch (((LPNMLVKEYDOWN)notification)->wVKey) {
+         case 73:
+            _onMenuCommand(IDM_DEBUG_INSPECT); // !! check if ctrl was pressed too
+            break;
+      }
+   }
 }
 
 void IDEWindow :: _onDrawItem(DRAWITEMSTRUCT* item)
@@ -883,27 +883,27 @@ void IDEWindow :: onDoubleClick(NMHDR* notification)
 
 void IDEWindow :: onIndexChange(NMHDR* notification)
 {
-   //if (checkControlHandle(CTRL_PROJECTVIEW, notification->hwndFrom)) {
-   //   TreeView* tree = (TreeView*)_controls[CTRL_PROJECTVIEW];
+   if (checkControlHandle(CTRL_PROJECTVIEW, notification->hwndFrom)) {
+      TreeView* tree = (TreeView*)_controls[CTRL_PROJECTVIEW];
 
-   //   int index = tree->getParam(tree->getCurrent());
-   //   if (index != -1) {
-   //      _controller->selectProjectFile(index);
-   //   }
-   //}
+      int index = tree->getParam(tree->getCurrent());
+      if (index != -1) {
+         _controller->selectProjectFile(index);
+      }
+   }
 }
 
 void IDEWindow :: onRClick(NMHDR* notification)
 {
-   //if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
-   //   DWORD dwpos = ::GetMessagePos();
+   if (checkControlHandle(CTRL_CONTEXTBOWSER, notification->hwndFrom)) {
+      DWORD dwpos = ::GetMessagePos();
 
-   //   HTREEITEM item = _contextBrowser.hitTest(LOWORD(dwpos), HIWORD(dwpos));
-   //   if (item) {
-   //      ((TreeView*)_controls[CTRL_CONTEXTBOWSER])->select(item);
-   //   }
-   //   _contextBrowser.showContextMenu(_handle, LOWORD(dwpos), HIWORD(dwpos), _model);
-   //}
+      HTREEITEM item = _contextBrowser.hitTest(LOWORD(dwpos), HIWORD(dwpos));
+      if (item) {
+         ((TreeView*)_controls[CTRL_CONTEXTBOWSER])->select(item);
+      }
+      _contextBrowser.showContextMenu(_handle, LOWORD(dwpos), HIWORD(dwpos), _model);
+   }
 }
 
 //bool MainWindow :: onClose()
@@ -1023,13 +1023,13 @@ int IDEWindow :: newDocument(text_t name, Document* doc)
 }
 
 IDEWindow :: IDEWindow(HINSTANCE instance, const wchar_t* caption, _Controller* controller, Model* model)
-   : SDIWindow(instance, caption), _windowList(10, IDM_WINDOW_WINDOWS), _recentFiles(10, IDM_FILE_FILES), _recentProjects(10, IDM_FILE_PROJECTS)//, _contextBrowser(model)
+   : SDIWindow(instance, caption), _windowList(10, IDM_WINDOW_WINDOWS), _recentFiles(10, IDM_FILE_FILES), _recentProjects(10, IDM_FILE_PROJECTS), _contextBrowser(model)
 {
    _controller = controller;
    _model = model;
    _tabTTHandle = NULL;
 
-   _controlCount = /*15*/11;
+   _controlCount = /*15*/14;
    _controls = (_BaseControl**)malloc(_controlCount << 2);
 
    _controls[0] = NULL;
@@ -1053,13 +1053,13 @@ IDEWindow :: IDEWindow(HINSTANCE instance, const wchar_t* caption, _Controller* 
    _controls[CTRL_MESSAGELIST] = new MessageLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_CALLLIST] = new CallStackLog((Control*)_controls[CTRL_TABBAR]);
    _controls[CTRL_BSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_TABBAR], false, IDM_LAYOUT_CHANGED);
-//   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR], true, false);
-//   _controls[CTRL_PROJECTVIEW] = new TreeView(this, false, true);
-//   _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_PROJECTVIEW], true, IDM_LAYOUT_CHANGED);
+   _controls[CTRL_CONTEXTBOWSER] = new TreeView((Control*)_controls[CTRL_TABBAR], true, false);
+   _controls[CTRL_PROJECTVIEW] = new TreeView(this, false, true);
+   _controls[CTRL_HSPLITTER] = new Splitter(this, (Control*)_controls[CTRL_PROJECTVIEW], true, IDM_LAYOUT_CHANGED);
 
    ((Control*)_controls[CTRL_TABBAR])->_setHeight(120);
    ((Control*)_controls[CTRL_BSPLITTER])->_setConstraint(60, 100);
-//   ((Control*)_controls[CTRL_PROJECTVIEW])->_setWidth(200);
+   ((Control*)_controls[CTRL_PROJECTVIEW])->_setWidth(200);
 
    _statusBar = (StatusBar*)_controls[CTRL_STATUSBAR];
 
@@ -1067,9 +1067,9 @@ IDEWindow :: IDEWindow(HINSTANCE instance, const wchar_t* caption, _Controller* 
    TextView* textView = new TextView(frame, 5, 28, 400, 400);
    frame->populate(textView);
    textView->setReceptor(this);
-//   _contextBrowser.assign((Control*)_controls[CTRL_CONTEXTBOWSER]);
+   _contextBrowser.assign((Control*)_controls[CTRL_CONTEXTBOWSER]);
 
-//   setLeft(CTRL_HSPLITTER);
+   setLeft(CTRL_HSPLITTER);
    setTop(CTRL_TOOLBAR);
    setClient(CTRL_EDITFRAME);
    setBottom(CTRL_BSPLITTER);
@@ -1078,7 +1078,7 @@ IDEWindow :: IDEWindow(HINSTANCE instance, const wchar_t* caption, _Controller* 
 
    showControls(CTRL_STATUSBAR, CTRL_EDITFRAME);
 
-//   showControls(CTRL_PROJECTVIEW, CTRL_PROJECTVIEW);
+   showControls(CTRL_PROJECTVIEW, CTRL_PROJECTVIEW);
 }
 
 IDEWindow :: ~IDEWindow()
@@ -1121,15 +1121,15 @@ void IDEWindow :: showControls(int from, int till)
    }
 }
 
-//void MainWindow :: hideControl(int index)
-//{
-//   ((Control*)_controls[index])->hide();
-//}
-//
-//void MainWindow :: refreshControl(int index)
-//{
-//   ((Control*)_controls[index])->refresh();
-//}
+void IDEWindow :: hideControl(int index)
+{
+   ((Control*)_controls[index])->hide();
+}
+
+void IDEWindow :: refreshControl(int index)
+{
+   ((Control*)_controls[index])->refresh();
+}
 
 Menu* IDEWindow :: getMenu()
 {
@@ -1316,17 +1316,17 @@ void IDEWindow :: addToRecentProjectList(const wchar_t* path)
 //{
 //   closeTab(CTRL_CALLLIST);
 //}
-//
-//void MainWindow :: openProjectView()
-//{
-//   showControls(CTRL_PROJECTVIEW, CTRL_PROJECTVIEW);
-//}
-//
-//void MainWindow :: closeProjectView()
-//{
-//   hideControl(CTRL_PROJECTVIEW);
-//}
-//
+
+void IDEWindow :: openProjectView()
+{
+   showControls(CTRL_PROJECTVIEW, CTRL_PROJECTVIEW);
+}
+
+void IDEWindow :: closeProjectView()
+{
+   hideControl(CTRL_PROJECTVIEW);
+}
+
 //bool MainWindow :: compileProject(_ProjectManager* project, int postponedAction)
 //{
 //   _ELENA_::Path path(_model->project.path);

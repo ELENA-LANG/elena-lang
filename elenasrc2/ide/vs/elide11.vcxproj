@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -126,6 +126,7 @@
     <ClCompile Include="..\..\gui\winapi32\winlistview.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winsplitter.cpp" />
     <ClCompile Include="..\..\gui\winapi32\winredirect.cpp" />
+    <ClCompile Include="..\..\gui\winapi32\wintreeview.cpp" />
     <ClCompile Include="..\..\gui\text.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />
     <ClCompile Include="..\winapi32\winide.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="..\windowlist.cpp" />
     <ClCompile Include="..\historylist.cpp" />
     <ClCompile Include="..\settings.cpp" />
+    <ClCompile Include="..\browser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\altstrings.h" />
@@ -161,6 +163,7 @@
     <ClInclude Include="..\..\gui\winapi32\winlistview.h" />
     <ClInclude Include="..\..\gui\winapi32\winsplitter.h" />
     <ClInclude Include="..\..\gui\winapi32\winredirect.h" />
+    <ClInclude Include="..\..\gui\winapi32\wintreeview.h" />
     <ClInclude Include="..\..\gui\text.h" />
     <ClInclude Include="..\..\gui\document.h" />
     <ClInclude Include="..\winapi32\winideconst.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="..\windowlist.h" />
     <ClInclude Include="..\historylist.h" />
     <ClInclude Include="..\settings.h" />
+    <ClInclude Include="..\browser.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\winapi32\ide.rc" />

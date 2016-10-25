@@ -428,7 +428,7 @@ public:
 
                   String<char, 5> temp;
                   size_t temp_len = 4;
-                  __copy(temp, &ch, 1, temp_len);
+                  Convertor::copy(temp, &ch, 1, temp_len);
                   _string.append(temp, temp_len);
 
                   if(string[i] == '"') {

@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
       _ELENA_::FileName name(argv[1]);
 
       target.copy(argv[2]);
-		target.combine(name.path());
+		target.combine(name.str());
    }
    else target.copy(argv[1]);
 
