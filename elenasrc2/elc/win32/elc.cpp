@@ -118,7 +118,7 @@ public:
 _ELC_::Project :: Project()
 {
    getAppPath(appPath);
-   _settings.add(_ELENA_::opAppPath, _ELENA_::IdentifierString::clonePath(appPath));
+   _settings.add(_ELENA_::opAppPath, _ELENA_::IdentifierString::clonePath(appPath.c_str()));
    _settings.add(_ELENA_::opNamespace, ((_ELENA_::ident_t)"unnamed").clone());
 
    _tabSize = 4;
@@ -280,7 +280,7 @@ void _ELC_::Project :: addSource(_ELENA_::path_t path)
 
    _settings.add(_ELENA_::opSources, 
       _ELENA_::IdentifierString(path), 
-      _ELENA_::IdentifierString::clonePath(fullPath));
+      _ELENA_::IdentifierString::clonePath(fullPath.c_str()));
 }
 
 void _ELC_::Project :: cleanUp()
@@ -292,15 +292,15 @@ void _ELC_::Project :: cleanUp()
       path.copySubPath(it.key());
 
       _ELENA_::ReferenceNs name(StrSetting(_ELENA_::opNamespace));
-      name.pathToName(path);          // get a full name
+      name.pathToName(path.c_str());          // get a full name
 
       // remove module
-      path.copy(rootPath);
+      path.copy(rootPath.c_str());
       _loader.nameToPath(name, path, "nl");
       _wremove(path);
 
       // remove debug module
-      path.copy(rootPath);
+      path.copy(rootPath.c_str());
       _loader.nameToPath(name, path, "dnl");
       _wremove(path);
    }
@@ -320,7 +320,7 @@ void _ELC_ :: Project::loadConfig(_ELENA_::path_t path, bool root, bool requiere
 
    // load template list
    if (root)
-      loadCategory(config, _ELENA_::opTemplates, configPath);
+      loadCategory(config, _ELENA_::opTemplates, configPath.c_str());
 
    // load template
    _ELENA_::ident_t projectTemplate = config.getSetting(PROJECT_CATEGORY, ELC_PROJECT_TEMPLATE);
@@ -329,12 +329,12 @@ void _ELC_ :: Project::loadConfig(_ELENA_::path_t path, bool root, bool requiere
       if (!_ELENA_::emptystr(templateFile)) {
          _ELENA_::Path templatePath(templateFile);
 
-         loadConfig(templatePath, false, false);
+         loadConfig(templatePath.c_str(), false, false);
       }
       else raiseErrorIf(requiered, ELC_ERR_INVALID_TEMPLATE, projectTemplate);
    }
 
-   loadConfig(config, configPath);
+   loadConfig(config, configPath.c_str());
 }
 
 void _ELC_::Project :: setOption(_ELENA_::path_t value)
@@ -405,7 +405,7 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
 
          _ELENA_::Path projectPath;
          projectPath.copySubPath(value + 1);
-         _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clonePath(projectPath));
+         _settings.add(_ELENA_::opProjectPath, _ELENA_::IdentifierString::clonePath(projectPath.c_str()));
 
          break;
       }
@@ -424,7 +424,7 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
    if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
       _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
 
-      _ELENA_::FileReader rulesFile(rulesPath, _ELENA_::feRaw, false);
+      _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
       if (!rulesFile.isOpened()) {
          project.raiseWarning(errInvalidFile, RULES_FILE);
       }
@@ -478,9 +478,9 @@ int main()
       }
 
       // Initializing..
-      _ELENA_::Path configPath(project.appPath, DEFAULT_CONFIG);
+      _ELENA_::Path configPath(project.appPath.c_str(), DEFAULT_CONFIG);
 
-      project.loadConfig(configPath, true, false);
+      project.loadConfig(configPath.c_str(), true, false);
 
       // Initializing..
       for (int i = 1 ; i < argc ; i++) {
@@ -504,7 +504,7 @@ int main()
       print(ELC_COMPILING);
 
       _ELENA_::Path syntaxPath(project.StrSetting(_ELENA_::opAppPath), SYNTAX_FILE);
-      _ELENA_::FileReader syntaxFile(syntaxPath, _ELENA_::feRaw, false);
+      _ELENA_::FileReader syntaxFile(syntaxPath.c_str(), _ELENA_::feRaw, false);
       if (!syntaxFile.isOpened())
          project.raiseErrorIf(true, errInvalidFile, SYNTAX_FILE);
 

@@ -8536,7 +8536,7 @@ void Compiler :: compileModule(ident_t source, ModuleScope& scope)
    Path path(source);
 
    // parse
-   TextFileReader sourceFile(path, scope.project->getDefaultEncoding(), true);
+   TextFileReader sourceFile(path.c_str(), scope.project->getDefaultEncoding(), true);
    if (!sourceFile.isOpened())
       scope.project->raiseError(errInvalidFile, source);
    
@@ -8562,7 +8562,7 @@ bool Compiler :: run(_ProjectManager& project, bool withDebugInfo)
          // build module namespace
          modulePath.copySubPath(it.key());
          name.truncate(rootLength);
-         name.pathToName(modulePath);
+         name.pathToName(modulePath.c_str());
 
          // create or update module
          ModuleInfo info = modules.get(name);

@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   7
+#define REVISION_VERSION   8
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1069,7 +1069,7 @@ void runSession(_Module* module)
             case 'o':
             {
                Path path(line + 2);
-               setOutputMode(path);
+               setOutputMode(path.c_str());
                break;
             }
             default:
@@ -1131,7 +1131,7 @@ int main(int argc, char* argv[])
    //   Path::loadPath(rootPath, config.getSetting(PROJECT_SECTION, ROOTPATH_OPTION, DEFAULT_STR));
    //}
 
-   LibraryManager loader(rootPath, NULL);
+   LibraryManager loader(rootPath.c_str(), NULL);
    LoadResult result = lrNotFound;
    _Module* module = NULL;
 
@@ -1144,7 +1144,7 @@ int main(int argc, char* argv[])
       FileName fileName(moduleName);
 
       IdentifierString name(fileName);
-      loader.setNamespace(name, path);
+      loader.setNamespace(name, path.c_str());
       module = loader.loadModule(name, result, false);
    }
    else module = loader.loadModule(moduleName, result, false);

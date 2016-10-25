@@ -479,7 +479,7 @@ int findSubStr(const char* s, char c, size_t length, int defValue)
 
 void append(char* dest, const char* sour, int length)
 {
-   
+   strncat(dest, sour, length);
 }
 
 bool compare(const char* s1, const char* s2)

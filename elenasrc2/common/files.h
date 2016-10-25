@@ -131,9 +131,10 @@ public:
 
    static bool checkExtension(path_t path, path_t extension);
 
-   operator path_t() const { return path_t(_path); }
+   operator const path_c*() const { return _path; }
 
    path_t str() const { return path_t(_path); }
+   const path_c* c_str() const { return _path; }
 
    static bool isRelative(path_t path, size_t length);
    
@@ -214,8 +215,6 @@ public:
       else return emptystr(extension);
    }
 
-   operator const path_c*() const { return _path; }
-
    void copy(const char* path)
    {
       size_t len = LOCAL_PATH_LENGTH;
@@ -261,7 +260,7 @@ public:
    {
       Path ext(s);
    
-      changeExtension(ext);
+      changeExtension(ext.c_str());
    }
 
 #endif
@@ -403,7 +402,7 @@ public:
    {
       Path path(pathStr);
 
-      copyName(path);
+      copyName(path.c_str());
    }
 
    FileName()

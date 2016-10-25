@@ -42,22 +42,22 @@ int main(int argc, char* argv[])
    else target.changeExtension("bin");
 
    _ELENA_::Path source(argv[1]);
-   _ELENA_::TextFileReader reader(source, _ELENA_::feUTF8, true);
+   _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
       printf("Cannot open the file");
       return -1;
    }
 
-   _ELENA_::Path::create(NULL, target);
+   _ELENA_::Path::create(NULL, target.c_str());
 
    try {
       if (esmMode) {
 	      _ELENA_::ECodesAssembler	assembler;
-		   assembler.compile(&reader, target);
+		   assembler.compile(&reader, target.c_str());
       }
       else {
 	      _ELENA_::x86Assembler	assembler;
-		   assembler.compile(&reader, target);
+		   assembler.compile(&reader, target.c_str());
       }
 
       printf("Successfully compiled\n");

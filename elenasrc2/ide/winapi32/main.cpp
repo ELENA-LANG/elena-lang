@@ -74,7 +74,7 @@ void loadCommandLine(Model* model, char* cmdLine, _ELENA_::Path& configPath)
 
          // check if a custom config file should be loaded
          if (text_str(parameter).compare(CMD_CONFIG_PATH, _ELENA_::getlength(CMD_CONFIG_PATH))) {
-            configPath.copy(model->paths.appPath);
+            configPath.copy(model->paths.appPath.c_str());
             configPath.combine(parameter + _ELENA_::getlength(CMD_CONFIG_PATH));
          }
          else setOption(model, parameter);         
@@ -146,7 +146,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
    IDEWindow     view(hInstance, _T("IDE"), &ide, &model);
 
    // init IDE settings
-   loadSettings(configPath, &model, &view);
+   loadSettings(configPath.c_str(), &model, &view);
 
    // start IDE
    ide.start(&view, &view, &model);
@@ -162,7 +162,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
          ::DispatchMessage(&msg);
       }
    }
-   saveSettings(configPath, &model, &view);
+   saveSettings(configPath.c_str(), &model, &view);
    Font::releaseFontCache();
 
    return 0;

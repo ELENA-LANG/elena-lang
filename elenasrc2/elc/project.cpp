@@ -109,7 +109,7 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path
    if (value) {
       Path path(rootPath, value);
 
-      _settings.add(setting, IdentifierString::clonePath(path));
+      _settings.add(setting, IdentifierString::clonePath(path.c_str()));
       return true;
    }
    else return false;
@@ -133,7 +133,7 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t
       if (!emptystr(path)) {
          Path filePath(path, value);
 
-         _settings.add(setting, key, IdentifierString::clonePath(filePath));
+         _settings.add(setting, key, IdentifierString::clonePath(filePath.c_str()));
       }
       else _settings.add(setting, key, value.clone());
 
@@ -169,9 +169,9 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
       else filePath.combine(value);
 
       if (it.key().compare(CORE_ALIAS)) {
-         _loader.addCorePath(filePath);
+         _loader.addCorePath(filePath.c_str());
       }
-      else _loader.addPrimitivePath(it.key(), filePath);
+      else _loader.addPrimitivePath(it.key(), filePath.c_str());
 
       it++;
    }
@@ -184,7 +184,7 @@ void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
       // add path if provided
       Path filePath(path, it.key());
 
-      _sources.add(it.key(), IdentifierString::clonePath(filePath));
+      _sources.add(it.key(), IdentifierString::clonePath(filePath.c_str()));
 
       it++;
    }
@@ -289,9 +289,9 @@ void Project :: saveModule(_Module* module, ident_t extension)
 
    Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 
-   Path::create(outputPath, path);
+   Path::create(outputPath.c_str(), path.c_str());
 
-   FileWriter writer(path, feRaw, false);
+   FileWriter writer(path.c_str(), feRaw, false);
    if(!module->save(writer))
       raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
 }

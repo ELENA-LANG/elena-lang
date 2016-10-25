@@ -29,7 +29,7 @@ void init(HMODULE hModule)
    Path rootPath;
    loadDLLPath(hModule, rootPath);
 
-   instance = new Instance(rootPath);
+   instance = new Instance(rootPath.c_str());
 
    void* debugSection = NULL;
    Instance::ImageSection section;
@@ -40,7 +40,7 @@ void init(HMODULE hModule)
    debugSection = (void*)ptr;
 
    Path configPath(CONFIG_PATH);
-   instance->init(debugSection, configPath);
+   instance->init(debugSection, configPath.c_str());
 }
 
 EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)

@@ -99,7 +99,7 @@ void Paths :: init(Model* model, path_t appPath, const path_t defaultPath)
 void Paths::setLibraryRoot(Model* model, path_t libraryPath)
 {
    model->paths.libraryRoot.copy(libraryPath);
-   resolveRelativePath(model->paths.libraryRoot, model->paths.appPath);
+   resolveRelativePath(model->paths.libraryRoot, model->paths.appPath.c_str());
    model->paths.libraryRoot.lower();
 }
 
@@ -107,9 +107,9 @@ void Paths :: resolveRelativePath(Path& path, path_t rootPath)
 {
    if (isPathRelative(path)) {
       Path fullPath(rootPath);
-      fullPath.combine(path);
+      fullPath.combine(path.c_str());
 
-      path.copy(fullPath);
+      path.copy(fullPath.c_str());
    }
    canonicalize(path);
 }
@@ -200,7 +200,7 @@ void Settings :: onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* proj
       path = model->packageRoots.get("default");
 
    model->paths.packageRoot.copy(path);
-   Paths::resolveRelativePath(model->paths.packageRoot, model->paths.appPath);
+   Paths::resolveRelativePath(model->paths.packageRoot, model->paths.appPath.c_str());
 
    // reload library root
    path = model->libraryRoots.get(projectTemplate);
@@ -208,7 +208,7 @@ void Settings :: onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* proj
       path = model->libraryRoots.get("default");
 
    model->paths.libraryRoot.copy(path);
-   Paths::resolveRelativePath(model->paths.libraryRoot, model->paths.appPath);
+   Paths::resolveRelativePath(model->paths.libraryRoot, model->paths.appPath.c_str());
 }
 
 void Settings :: addSearchHistory(Model* model, text_t line)

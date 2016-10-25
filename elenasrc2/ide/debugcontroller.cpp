@@ -397,7 +397,7 @@ void DebugController :: onInitBreakpoint()
          _events.setEvent(DEBUG_RESUME);
       }
       else if (_postponed.gotoMode) {
-         runToCursor(_postponed.source, _postponed.path, _postponed.col, _postponed.row);
+         runToCursor(_postponed.source, _postponed.path.c_str(), _postponed.col, _postponed.row);
       }
       else run();
    }
@@ -572,7 +572,7 @@ _Module* DebugController :: loadDebugModule(ident_t reference)
    if (module == NULL) {
       module = new Module();
 
-      _ELENA_::FileReader reader(path, _ELENA_::feRaw, false);
+      _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
       _ELENA_::LoadResult result = module->load(reader);
       if (result != _ELENA_::lrSuccessful) {
          delete module;

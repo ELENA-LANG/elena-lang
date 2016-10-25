@@ -14,7 +14,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 3
+#define BUILD_VERSION 4
 
 typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
 typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;
@@ -248,7 +248,7 @@ int main(int argc, char* argv[])
 
    Path path(argv[1]);
 
-   TextFileReader   sourceFile(path, feUTF8, false);
+   TextFileReader   sourceFile(path.c_str(), feUTF8, false);
    TextSourceReader source(4, &sourceFile);
    LineInfo         info(0, 0, 0);
    char             token[IDENTIFIER_LEN + 1];
@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
       Path outputFile(path);
       outputFile.changeExtension("dat");
 
-      FileWriter file(outputFile, feRaw, false);
+      FileWriter file(outputFile.c_str(), feRaw, false);
       trie.save(&file);
 
       printLine("\nSuccessfully created\n");

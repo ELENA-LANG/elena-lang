@@ -254,7 +254,7 @@ void IDEController::start(_View* view, _DebugListener* listener, Model* model)
 
    // open default project
    if (!model->defaultProject.isEmpty())
-      openProject(model->defaultProject);
+      openProject(model->defaultProject.c_str());
 
    // open default files
    _ELENA_::List<_ELENA_::path_c*>::Iterator it = model->defaultFiles.start();
@@ -288,9 +288,9 @@ bool IDEController :: openProject(_ELENA_::path_t path)
       _ELENA_::ConfigCategoryIterator it = _project.SourceFiles();
       while (!it.Eof()) {
          sourcePath.copy(it.key());
-         Paths::resolveRelativePath(sourcePath, _model->project.path);
+         Paths::resolveRelativePath(sourcePath, _model->project.path.c_str());
 
-         if (!openFile(sourcePath))
+         if (!openFile(sourcePath.c_str()))
             _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
 
          it++;
@@ -310,9 +310,9 @@ void IDEController :: selectProjectFile(int index)
    }
 
    _ELENA_::Path sourcePath(it.key());
-   Paths::resolveRelativePath(sourcePath, _model->project.path);
+   Paths::resolveRelativePath(sourcePath, _model->project.path.c_str());
 
-   if (!openFile(sourcePath)) {
+   if (!openFile(sourcePath.c_str())) {
       _view->error(ERROR_CANNOT_OPEN_FILE, TextString(it.key()));
    }
    else onChange();
@@ -458,29 +458,29 @@ void IDEController :: cleanUpProject()
    // clean exe file
    if (!_ELENA_::emptystr(_project.getTarget()))
    {
-      _ELENA_::Path targetFile(_model->project.path, _project.getTarget());
+      _ELENA_::Path targetFile(_model->project.path.c_str(), _project.getTarget());
 
-      _view->removeFile(targetFile);
+      _view->removeFile(targetFile.c_str());
    }
    // clean module files
-   _ELENA_::Path rootPath(_model->project.path, _project.getOutputPath());
+   _ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
    for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath, it.key());
+      _ELENA_::Path source(rootPath.c_str(), it.key());
 
       _ELENA_::Path module;
-      module.copySubPath(source);
+      module.copySubPath(source.c_str());
 
       _ELENA_::ReferenceNs name(_project.getPackage());
-      name.pathToName(module);          // get a full name
+      name.pathToName(module.c_str());          // get a full name
 
       // remove module
-      module.copy(rootPath);
+      module.copy(rootPath.c_str());
       module.nameToPath(name, _T("nl"));
-      _view->removeFile(module);
+      _view->removeFile(module.c_str());
 
       // remove debug info module
       module.changeExtension(_T("dnl"));
-      _view->removeFile(module);
+      _view->removeFile(module.c_str());
    }
 }
 
@@ -541,22 +541,22 @@ void IDEController :: highlightMessage(MessageBookmark* bookmark, int bandStyle)
 
       _ELENA_::Path docPath;
       if (bookmark->module == NULL || module.compare(_project.getPackage())) {
-         docPath.copy(_model->project.path);
+         docPath.copy(_model->project.path.c_str());
          docPath.combine(bookmark->file);
       }
       else {
-         docPath.copy(_model->paths.packageRoot);
+         docPath.copy(_model->paths.packageRoot.c_str());
          docPath.combine(module, module.find('\'', _ELENA_::getlength(bookmark->module)));
          docPath.combine(bookmark->file);
 
-         openFile(docPath);
+         openFile(docPath.c_str());
       }
 
       HighlightInfo hi(bookmark->col - 1, bookmark->row - 1, 0, 0);
 
       removeAllDocumentMarker(bandStyle);
 
-      if(openFile(docPath)) {
+      if(openFile(docPath.c_str())) {
          addDocumentMarker(-1, hi, bandStyle, bandStyle);
          onChange();
 
@@ -831,7 +831,7 @@ bool IDEController :: doSaveProject(bool saveAsMode)
    if (saveAsMode || _model->project.name.isEmpty()) {
       _ELENA_::Path path;
       if (_view->saveProject(_model, path)) {
-         _project.rename(path);
+         _project.rename(path.c_str());
 
          setCaption(_model->project.name);
       }
@@ -876,19 +876,19 @@ bool IDEController :: doSave(int docIndex, bool saveAsMode)
    if (unnamed || saveAsMode) {
       _ELENA_::Path newPath;
       if (_view->saveFile(_model, newPath)) {
-         renameFileAs(docIndex, newPath, oldPath, included);
+         renameFileAs(docIndex, newPath.c_str(), oldPath.c_str(), included);
       }
       else return false;
 
       if(unnamed && !included) {
          if (_view->confirm(QUESTION_INCLUDE_FILE1, newPath, QUESTION_INCLUDE_FILE2)) {
             markDocumentAsIncluded(docIndex);
-            _project.includeSource(newPath);
+            _project.includeSource(newPath.c_str());
          }
       }
-      saveDocument(newPath, docIndex);
+      saveDocument(newPath.c_str(), docIndex);
    }
-   else saveDocument(oldPath, docIndex);
+   else saveDocument(oldPath.c_str(), docIndex);
 
    if (modified)
       _view->markDocumentTitle(docIndex, false);
@@ -954,7 +954,7 @@ void IDEController :: doOpenProject()
 {
    _ELENA_::Path path;
    if (_view->selectProject(_model, path)) {
-      if (openProject(path))
+      if (openProject(path.c_str()))
          _view->addToRecentProjectList(path);
 
       onChange();
@@ -1730,7 +1730,7 @@ bool IDEController :: startDebugger(bool stepMode)
    const char* arguments = _project.getArguments();
 
    if (!_ELENA_::emptystr(target)) {
-      _ELENA_::Path exePath(_model->project.path, target);
+      _ELENA_::Path exePath(_model->project.path.c_str(), target);
 
       // provide the whole command line including the executable path and name
       _ELENA_::Path commandLine(exePath);
@@ -1739,7 +1739,7 @@ bool IDEController :: startDebugger(bool stepMode)
 
       bool mode = _project.getDebugMode() != 0;
       if (mode) {
-         if (!_debugController.start(exePath, commandLine, mode, _breakpoints)) {
+         if (!_debugController.start(exePath.c_str(), commandLine.c_str(), mode, _breakpoints)) {
             _view->error(ERROR_DEBUG_FILE_NOT_FOUND_COMPILE);
 
             return false;
@@ -1752,7 +1752,7 @@ bool IDEController :: startDebugger(bool stepMode)
          return false;
       }
       else {
-         if (!_debugController.start(exePath, commandLine, false, _breakpoints)) {
+         if (!_debugController.start(exePath.c_str(), commandLine.c_str(), false, _breakpoints)) {
             _view->error(ERROR_RUN_NEED_RECOMPILE);
 
             return false;
@@ -1776,17 +1776,17 @@ bool IDEController :: isOutaged(bool noWarning)
       return false;
    }
 
-   _ELENA_::Path rootPath(_model->project.path, _project.getOutputPath());
+   _ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
    for (_ELENA_::ConfigCategoryIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath, it.key());
+      _ELENA_::Path source(rootPath.c_str(), it.key());
 
       _ELENA_::Path module;
       module.copySubPath(it.key());
 
       _ELENA_::ReferenceNs name(_project.getPackage());
-      name.pathToName(module);          // get a full name
+      name.pathToName(module.c_str());          // get a full name
 
-      module.copy(rootPath);
+      module.copy(rootPath.c_str());
       module.nameToPath(name, _T("nl"));
 
       DateTime sourceDT = DateTime::getFileTime(source);
@@ -1813,7 +1813,7 @@ void IDEController :: runToCursor()
       _ELENA_::ReferenceNs module;
       _project.retrieveName(path, module);
 
-      _debugController.runToCursor(module, path, 0, caret.y);
+      _debugController.runToCursor(module, path.c_str(), 0, caret.y);
    }
 }
 
@@ -1825,20 +1825,20 @@ void IDEController::ProjectManager :: retrievePath(_ELENA_::ident_t name, _ELENA
 
       // if it is the root package
    if (package.compare(name)) {
-      path.copy(_model->project.path);
+      path.copy(_model->project.path.c_str());
       path.combine(getOutputPath());
       path.nameToPath(name, extension);
    }
    // if the class belongs to the project package
    else if (name.compare(package, _ELENA_::getlength(package)) && (name[_ELENA_::getlength(package)] == '\'')) {
-      path.copy(_model->project.path);
+      path.copy(_model->project.path.c_str());
       path.combine(getOutputPath());
 
       path.nameToPath(name, extension);
    }
    else {
       // if file doesn't exist use package root
-      path.copy(_model->paths.libraryRoot);
+      path.copy(_model->paths.libraryRoot.c_str());
 
       path.nameToPath(name, extension);
    }
@@ -1904,14 +1904,14 @@ bool IDEController :: loadModule(text_t ns, text_t source)
       _ELENA_::Path path(_model->project.path);
       path.combine(source);
 
-      openFile(path);
+      openFile(path.c_str());
    }
    else {
       _ELENA_::Path path(_model->paths.packageRoot);
       path.combine(ns, text_str(ns).find('\'', _ELENA_::getlength(ns)));
       path.combine(source);
 
-      openFile(path);
+      openFile(path.c_str());
    }
 
    return true;
@@ -2076,7 +2076,7 @@ void IDEController::ProjectManager::refresh()
       templatePath = _model->packageRoots.get("default");
 
    _model->paths.packageRoot.copy(templatePath);
-   Paths::resolveRelativePath(_model->paths.packageRoot, _model->paths.appPath);
+   Paths::resolveRelativePath(_model->paths.packageRoot, _model->paths.appPath.c_str());
 
    // reload library root
    templatePath = _model->libraryRoots.get(projectTemplate);
@@ -2084,7 +2084,7 @@ void IDEController::ProjectManager::refresh()
       templatePath = _model->libraryRoots.get("default");
 
    _model->paths.libraryRoot.copy(templatePath);
-   Paths::resolveRelativePath(_model->paths.libraryRoot, _model->paths.appPath);
+   Paths::resolveRelativePath(_model->paths.libraryRoot, _model->paths.appPath.c_str());
 }
 
 bool IDEController::ProjectManager::open(_ELENA_::path_t path)
@@ -2120,7 +2120,7 @@ void IDEController::ProjectManager::save(_ELENA_::path_t extension)
    cfgPath.combine(_model->project.name.str());
    cfgPath.appendExtension(extension);
 
-   _model->project.config.save(cfgPath, _ELENA_::feUTF8);
+   _model->project.config.save(cfgPath.c_str(), _ELENA_::feUTF8);
 
    _model->project.changed = false;
 }
@@ -2131,7 +2131,7 @@ void IDEController::ProjectManager::rename(_ELENA_::path_t path)
    _model->project.path.copySubPath(path);
    _model->project.extension.copyExtension(path);
 
-   Paths::resolveRelativePath(_model->project.path, _model->paths.defaultPath);
+   Paths::resolveRelativePath(_model->project.path, _model->paths.defaultPath.c_str());
 
    _model->project.changed = true;
 }
@@ -2142,7 +2142,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
    size_t rootLength = _ELENA_::getlength(root);
 
    _ELENA_::Path fullPath;
-   fullPath.copySubPath(path);
+   fullPath.copySubPath(path.c_str());
    Paths::resolveRelativePath(fullPath, root);
 
    if (!_ELENA_::emptystr(root) && fullPath.str().compare(root, rootLength)) {
@@ -2153,10 +2153,10 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
       path.copy(path + rootLength + 1);
    }
    else {
-      root = _model->paths.packageRoot;
+      root = _model->paths.packageRoot.str();
       rootLength = _ELENA_::getlength(root);
 
-      if (!_ELENA_::emptystr(root) && _ELENA_::Path::comparePaths(fullPath, root, rootLength)) {
+      if (!_ELENA_::emptystr(root) && _ELENA_::Path::comparePaths(fullPath.c_str(), root, rootLength)) {
          name.pathToName(fullPath + rootLength + 1);
 
          // skip the root path + root namespace
@@ -2165,7 +2165,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
          path.copy(path + rootNs + 1);
       }
       else {
-         _ELENA_::FileName fileName(fullPath);
+         _ELENA_::FileName fileName(fullPath.c_str());
 
          name.copy(_ELENA_::IdentifierString(fileName));
       }
@@ -2176,7 +2176,7 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
 {
    _ELENA_::Path current;
    _ELENA_::Path relPath(path);
-   Paths::makeRelativePath(relPath, _model->project.path);
+   Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
    _ELENA_::ConfigCategoryIterator it = SourceFiles();
    while (!it.Eof()) {
@@ -2193,9 +2193,9 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
 void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
 {
    _ELENA_::Path relPath(path);
-   Paths::makeRelativePath(relPath, _model->project.path);
+   Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath), (const char*)NULL);
+   _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
 
    _model->project.changed = true;
 }
@@ -2203,7 +2203,7 @@ void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
 void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
 {
    _ELENA_::Path relPath(path);
-   Paths::makeRelativePath(relPath, _model->project.path);
+   Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
    _model->project.config.clear(IDE_FILES_SECTION, _ELENA_::IdentifierString(relPath));
 

@@ -74,7 +74,7 @@ public:
          // if the module belongs to the current project
          if (NamespaceName::isIncluded(it.key(), moduleName)) {
             path.copy(*it);
-            path.nameToPath(moduleName, ext);
+            path.nameToPath(moduleName, ext.c_str());
 
             return;
          }
@@ -82,8 +82,8 @@ public:
       }
 
       // otherwise it is the global library module
-      path.copy(_rootPath);
-      path.nameToPath(moduleName, ext);
+      path.copy(_rootPath.c_str());
+      path.nameToPath(moduleName, ext.c_str());
    }
 
    void addPrimitivePath(ident_t alias, path_t path)

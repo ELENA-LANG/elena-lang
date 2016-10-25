@@ -310,7 +310,7 @@ void ProjectSettingsDialog :: loadTemplateList()
    configPath.combine(_T("elc.cfg"));
 
    _ELENA_::IniConfigFile config;
-   if (!config.load(configPath, _ELENA_::feAnsi))
+   if (!config.load(configPath.c_str(), _ELENA_::feAnsi))
       return;
 
    _ELENA_::ident_t curTemplate = _project->getTemplate();

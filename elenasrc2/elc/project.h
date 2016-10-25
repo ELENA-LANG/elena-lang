@@ -151,13 +151,13 @@ public:
       if (!emptystr(StrSetting(opLibPath))) {
          Path libPath(StrSetting(opLibPath));
 
-         _loader.setRootPath(libPath);
+         _loader.setRootPath(libPath.c_str());
       }
          
       // if package is set we need to set the loader package as well
       Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 
-      _loader.setNamespace(StrSetting(opNamespace), outputPath);
+      _loader.setNamespace(StrSetting(opNamespace), outputPath.c_str());
 
       // add references to the additional libraries
       for (ForwardIterator it = _settings.getIt(opReferences); !it.Eof(); it++) {

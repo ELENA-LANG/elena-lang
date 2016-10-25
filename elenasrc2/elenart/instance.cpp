@@ -47,14 +47,14 @@ bool Instance :: loadConfig(path_t configFile)
    configPath.combine(configFile);
 
    IniConfigFile config;
-   if (!config.load(configPath, feUTF8)) {
+   if (!config.load(configPath.c_str(), feUTF8)) {
       return false;
    }
 
-   Path path(_rootPath, config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
+   Path path(_rootPath.c_str(), config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
 
    if (!emptystr(path)) {
-      _loader.setRootPath(path);
+      _loader.setRootPath(path.c_str());
    }
 
    return true;

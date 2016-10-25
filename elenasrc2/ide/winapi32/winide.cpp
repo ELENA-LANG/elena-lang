@@ -142,7 +142,7 @@ class CallStackLog : public ListView
          rowStr.copyInt(row);
          _log->setItemText(rowStr, index, 2);
 
-         MessageBookmark* bookmark = new MessageBookmark(moduleName, path, col, row);
+         MessageBookmark* bookmark = new MessageBookmark(moduleName, path.c_str(), col, row);
          _log->_bookmarks.add(index, bookmark);
       }
 
@@ -1385,7 +1385,7 @@ bool IDEWindow :: compileProject(_ProjectManager* project, int postponedAction)
    _ELENA_::Path appPath(_model->paths.appPath);
    appPath.combine(_T("elc.exe"));
 
-   _ELENA_::Path curDir(path, path.str().findLast('\\'));
+   _ELENA_::Path curDir(path.c_str(), path.str().findLast('\\'));
 
    _ELENA_::Path cmdLine(_T("elc.exe"));
 

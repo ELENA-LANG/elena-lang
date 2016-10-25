@@ -85,7 +85,7 @@ bool Path :: create(path_t root, path_t path)
 
    if (checkDir(dirPath, 0)!=0) {
       if (!emptystr(dirPath) && !((wide_t)dirPath).compare(root)) {
-         create(root, dirPath);
+         create(root, dirPath.c_str());
       }
       createDir(dirPath);
 

@@ -62,7 +62,7 @@ _Module* LibraryManager :: loadModule(ident_t package, LoadResult& result, bool 
       Path path;
       nameToPath(package, path, "nl");
 
-      FileReader  reader(path, feRaw, false);
+      FileReader  reader(path.c_str(), feRaw, false);
       if (!readOnly) {
          module = new Module();
          result = ((Module*)module)->load(reader);
@@ -90,7 +90,7 @@ _Module* LibraryManager :: loadDebugModule(ident_t package, LoadResult& result)
       Path path;
       nameToPath(package, path, "dnl");
 
-      FileReader  reader(path, feRaw, false);
+      FileReader  reader(path.c_str(), feRaw, false);
       module = new ROModule(reader, result);
 
       if (result != lrSuccessful) {
@@ -117,7 +117,7 @@ _Module* LibraryManager :: loadNative(ident_t package, LoadResult& result)
       }
 
       Path filePath(path);
-      FileReader reader(filePath, feRaw, false);
+      FileReader reader(filePath.c_str(), feRaw, false);
 
       binary = new ROModule(reader, result);
       if (result != lrSuccessful) {
@@ -139,7 +139,7 @@ bool LibraryManager :: loadCore(LoadResult& result)
       if (emptystr(it.key())) {
          Path path(*it);
 
-         FileReader reader(path, feRaw, false);
+         FileReader reader(path.c_str(), feRaw, false);
 
          _Module* binary = new ROModule(reader, result);
          if(result != lrSuccessful) {

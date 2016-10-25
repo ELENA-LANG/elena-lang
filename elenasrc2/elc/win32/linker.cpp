@@ -246,7 +246,7 @@ int Linker :: countSections(Image* image)
 void Linker :: writeDOSStub(Project* project, FileWriter* file)
 {
    Path stubPath(project->StrSetting(opAppPath), "winstub.ex_");   
-   FileReader stub(stubPath, L"rb", feRaw, false);
+   FileReader stub(stubPath.c_str(), L"rb", feRaw, false);
 
    if (stub.isOpened()) {
       file->read(&stub, stub.Length());
@@ -509,7 +509,7 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
    if (emptystr(path))
       throw InternalError(errEmptyTarget);
 
-   if (!createExecutable(info, path, tls_directory))
+   if (!createExecutable(info, path.c_str(), tls_directory))
       project.raiseError(errCannotCreate, project.StrSetting(opTarget));
 }
 
