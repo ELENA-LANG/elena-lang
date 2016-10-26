@@ -774,6 +774,17 @@ labEnd:
   
 end
 
+procedure __literal.eval&copy&literal$&literal$[2]
+
+  aloadsi 2
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 2
+
+end
+
 procedure __wide.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -1229,6 +1240,23 @@ labEnd:
   acopyb
   quitn 3
   
+end
+
+procedure __wide.eval&copy&wide$&wide$[2]
+
+  bcopya
+  aloadsi 2
+  nload
+  inc
+  acopyb
+  acallvi 1
+
+  bcopya
+  aloadsi 3
+  copy
+  acopyb
+  quitn 2
+
 end
 
 procedure __literalconvertor.convert&int$&bytearray$&vint$[4]

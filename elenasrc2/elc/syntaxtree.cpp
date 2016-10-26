@@ -193,6 +193,13 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    }
 }
 
+void SyntaxTree :: copyNodeSafe(Node source, Node destination)
+{
+   MemoryDump dump;
+   saveNode(source, &dump);
+   loadNode(destination, &dump);
+}
+
 SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
 {
    SyntaxWriter writer(*this);

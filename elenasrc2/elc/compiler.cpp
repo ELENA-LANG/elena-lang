@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -3266,12 +3266,18 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
    if (operator_id == SET_REFER_MESSAGE_ID) {
       SNode exprNode = node.firstChild(lxObjectMask);
 
+      // HOTFIX : inject the third parameter to the first two ones
+      SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression));
+      exprNode.nextNode(lxObjectMask) = lxIdle;
+
       SNode loperandNode = exprNode.firstChild(lxObjectMask);
       loperand = compileExpression(loperandNode, scope, 0);
 
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
       roperand = compileExpression(roperandNode, scope, 0);
-      roperand2 = compileExpression(exprNode.nextNode(lxObjectMask), scope, 0);
+      roperand2 = compileExpression(roperandNode.nextNode(lxObjectMask), scope, 0);
+
+      node = exprNode;
 
       paramCount++;
    }
@@ -3301,57 +3307,6 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
       retVal = assignResult(scope, node, resultClassRef);
    }
    else retVal = compileMessage(node, scope, loperand, encodeMessage(0, operator_id, paramCount), HINT_NODEBUGINFO);
-
-   //   bool dblOperator = IsDoubleOperator(operator_id);
-   //   bool notOperator = IsInvertedOperator(operator_id);
-
-//   recordDebugStep(scope, node.Terminal(), dsStep);
-//
-//   if (IsCompOperator(operator_id)) {
-//      if (notOperator) {
-//         scope.writer->appendNode(lxIfValue, scope.moduleScope->falseReference);
-//         scope.writer->appendNode(lxElseValue, scope.moduleScope->trueReference);
-//      }
-//      else {
-//         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
-//         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
-//      }
-//   }
-//
-//   if (object.kind == okNil && operator_id == EQUAL_MESSAGE_ID) {
-//      scope.writer->insert(lxNilOp, operator_id);
-//      // HOT FIX : the result of comparision with $nil is always bool
-//      scope.writer->appendNode(lxType, scope.moduleScope->boolType);
-//   }
-//   // HOTFIX : primitive operations can be implemented only in the method
-//   // because the symbol implementations do not open a new stack frame
-//   else if (scope.getScope(Scope::slMethod) == NULL && !IsCompOperator(operator_id)) {
-//      scope.writer->insert(lxCalling, encodeMessage(0, operator_id, dblOperator ? 2 : 1));
-//   }
-//   else  scope.writer->insert(lxOp, operator_id);
-//
-//   appendObjectInfo(scope, retVal);
-//   appendTerminalInfo(scope.writer, node.FirstTerminal());
-//
-//   scope.writer->closeNode();
-//
-//   if (IsCompOperator(operator_id) && object.kind != okNil) {
-//      if (notOperator) {
-//         scope.writer->insert(lxTypecasting, encodeMessage(scope.moduleScope->boolType, GET_MESSAGE_ID, 0));
-//         scope.writer->closeNode();
-//
-//         scope.writer->insert(lxBoolOp, NOT_MESSAGE_ID);
-//         scope.writer->appendNode(lxIfValue, scope.moduleScope->trueReference);
-//         scope.writer->appendNode(lxElseValue, scope.moduleScope->falseReference);
-//         scope.writer->appendNode(lxType, scope.moduleScope->boolType);
-//         scope.writer->closeNode();
-//
-//         retVal.type = scope.moduleScope->boolType;
-//      }
-//   }
-//
-//   if (dblOperator)
-//      node = node.nextNode();
 
    return retVal;
 }

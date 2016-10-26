@@ -70,6 +70,7 @@ In development:
                  * test dispatching method with generic methods
                  * optimize comparision operation with char
                  * test array of char / array of enumerator ...
+                 * optimize : #var(int:3)a. #var(int) n := a@1.
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
