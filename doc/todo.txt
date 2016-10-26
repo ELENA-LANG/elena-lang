@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * alt message : ignore exception, the operation target should be saved
-
                  * typecast primitive array operation results
 
                  * switch statement with comparision
@@ -87,6 +85,7 @@ In development:
                  * debugger watch : wide literal
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                  * optimize array of constants
+                 * typecast implicit extension target if required
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
@@ -107,6 +106,22 @@ In development:
                  * bytearray.getAt&int$[1] - two jumps in row, the second one is idle, jump after the throw - idle as well
                  * optimize sort method : use typified lamda expression
                  * review ArgArray operations : should it be optimized
+                 * use bool lamda expression for seek operations
+                 * optimize BaseFunctionN retrieve operations
+                 * the following code : 
+                      #var anItem := $nil.
+                         #loop (anEnumerator next) ?
+                         [
+                             anItem := anEnumerator get.
+                             
+                             ($self eval:aParam:anItem) ?
+                                 [ ^ anItem. ].
+                         ].        
+                         
+                         ^ $nil.        
+                   should work if [ ^ ... ] is an explicit action ; return operator in the action
+                         should be similar to the one in implicit action, i.e. break the code and go to the method end
+                 * ByteNumber.get&min - could we return the constant object?
 
               xdev
                 * linux migration

@@ -117,7 +117,7 @@
     ]
         
     /// Qualifies incoming messages and redirects to the target
-    #method => system'core_routines'__signature.
+    #method(stacksafe) => system'core_routines'__signature.
 }
 
 //// --- MessageArray ---

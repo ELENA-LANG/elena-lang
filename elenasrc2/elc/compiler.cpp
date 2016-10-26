@@ -1356,13 +1356,13 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-//      if (StringHelper::compare(identifier, SUBJECT_VAR)) {
-//         return ObjectInfo(okSubject, local.offset);
-//      }
+      if (identifier.compare(SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset);
+      }
 //      else if (isTemplateRef(local.class_ref)) {
 //         return ObjectInfo(okTemplateLocal, local.offset, local.class_ref, local.subj_ref);
 //      }
-      /*else */if (local.size != 0) {
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.subj_ref);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.subj_ref);
@@ -1814,7 +1814,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
             return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));
          }
          else return scope.getClassRefId(false);
-//      case okSubject:
+      case okSubject:
       case okSignatureConstant:
          return V_SIGNATURE;
       case okSuper:
@@ -2736,6 +2736,11 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
          terminal.appendNode(lxField, object.param);
          terminal.appendNode(lxResultField, object.extraparam);
          break;
+      case okSubject:
+         terminal.injectNode(lxLocalAddress, object.param);
+         terminal.set(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference));
+         terminal.appendNode(lxTarget, scope.moduleScope->signatureReference);
+         break;
       case okLocalAddress:
          if (!test(mode, HINT_NOBOXING)) {
             terminal.injectNode(lxLocalAddress, object.param);
@@ -2769,9 +2774,6 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okSignatureConstant:
          terminal.set(lxSignatureConstant, object.param);
          break;
-//      case okSubject:
-//         scope.writer->newNode(lxLocalAddress, object.param);
-//         break;
 //      case okBlockLocal:
 //         scope.writer->newNode(lxBlockLocal, object.param);
 //         break;
@@ -3403,7 +3405,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    if (dispatchCall) {
       node.set(lxDirectCalling, encodeVerb(DISPATCH_MESSAGE_ID));
 
-      //node.appendNode(lxStacksafe);
+      node.appendNode(lxOvreriddenMessage, messageRef);
    }
    else if (callType == tpClosed || callType == tpSealed) {
       node.set(callType == tpClosed ? lxSDirctCalling : lxDirectCalling, messageRef);
@@ -3428,7 +3430,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    }
 
    // define the message target if required
-   if (target.kind == okConstantRole) {
+   if (target.kind == okConstantRole || target.kind == okSubject) {
       setTerminal(node.appendNode(lxOverridden).appendNode(lxExpression), scope, target, 0);
    }
 
@@ -3766,7 +3768,7 @@ ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
    if (roleTerminal != lxNone) {
       int flags = 0;
 
-      role = scope.mapObject(roleNode.firstChild(lxTerminalMask));
+      role = scope.mapObject(roleTerminal);
       if (role.kind == okSymbol || role.kind == okConstantSymbol) {
          ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
 
@@ -3794,7 +3796,7 @@ ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
    }
 
    // if it is a generic role
-   if (role.kind != okConstantRole) {
+   if (role.kind != okConstantRole && role.kind != okSubject) {
       roleNode.set(lxOverridden, 0);
       role = compileExpression(roleNode, scope, 0);
    }
@@ -4161,7 +4163,7 @@ void Compiler :: compileAltOperation(SNode node, CodeScope& scope)
    LexicalType targetType = targetNode.type;
    int targetArg = targetNode.argument;
 
-   targetNode.set(lxCurrent, 0);
+   targetNode.set(lxResult, 0);
 
    SNode secondExpr = firstExpr.nextNode(lxObjectMask);
    secondExpr.insertNode(lxCurrent, 0);
@@ -4503,6 +4505,9 @@ void Compiler :: compileExternalArguments(SNode node, CodeScope& scope/*, Extern
                switch (primitiveRef)
                {
                   case V_INT32:
+                  case V_SIGNATURE:
+                  case V_MESSAGE:
+                  case V_VERB:
                      current.set(_logic->isVariable(classInfo) ? lxExtArgument : lxIntExtArgument, 0);
                      break;
                   default:
@@ -7155,22 +7160,6 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 //   bool stackSafe = false;
 //   bool methodNotFound = false;
    SNode target = node.findChild(lxCallTarget);
-//   // HOT FIX : if call target not defined
-//   if (target == lxNone) {
-//      SNode callee = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//      if (callee == lxField || callee == lxLocal) {
-//         SNode attr = SyntaxTree::findChild(callee, lxType);
-//         if (attr == lxType) {
-//            ref_t classRef = scope.subjectHints.get(attr.argument);
-//            if (classRef) {
-//               node.appendNode(lxCallTarget, classRef);
-//
-//               target = SyntaxTree::findChild(node, lxCallTarget);
-//            }               
-//         }
-//      }
-//   }
-
    if (target.argument != 0) {
       bool dummy1 = false;
       ref_t dummy2 = 0;
@@ -7237,15 +7226,6 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
    else if (node.existChild(lxNotFoundAttr)) {
       warningScope.raise(scope, WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxBreakpoint));
    }
-
-//   if (methodNotFound && test(warningMask, WARNING_LEVEL_1)) {
-//      SNode row = SyntaxTree::findChild(node, lxRow);
-//      SNode col = SyntaxTree::findChild(node, lxCol);
-//      SNode terminal = SyntaxTree::findChild(node, lxTerminal);
-//      if (col != lxNone && row != lxNone) {
-//         scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, row.argument, col.argument, terminal.identifier());
-//      }
-//   }
 }
 
 //int Compiler :: mapOpArg(Compiler::ModuleScope& scope, SNode arg, ref_t& target)

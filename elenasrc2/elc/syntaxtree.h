@@ -191,6 +191,7 @@ enum LexicalType
    lxTypecastAttr    = 0x2001F,
    lxNotFoundAttr    = 0x20020,
    lxBinarySelf      = 0x20021, // debug info only
+   lxOvreriddenMessage = 0x20022, // arg - message
 
    lxFieldAttrMask   = 0x20100,
    lxStaticAttr      = 0x20102,

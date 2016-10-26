@@ -38,7 +38,7 @@
 
     #method ifnot : aTrueAction = $nil.
 
-//    #method iif:aTrueValue:aFalseValue = $nil.
+    #method iif:aTrueValue:aFalseValue = $nil.
 
     #method(bool) or : anExpr = $nil.
 

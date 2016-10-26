@@ -135,7 +135,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:anItem) ?
+            // !! temporal
+            ($self eval:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -167,7 +168,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam:anItem) ?
+            // !! temporal
+            ($self eval:aParam:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -198,7 +200,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -229,7 +232,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -260,7 +264,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -291,7 +296,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -322,7 +328,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -353,7 +360,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
+            // temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -384,7 +392,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -415,7 +424,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -446,7 +456,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         

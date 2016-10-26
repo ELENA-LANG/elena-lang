@@ -77,141 +77,141 @@
 /// A byte array
 #class(sealed,arrayof:byte,dispatchable:bytearray) ByteArray
 {
-//    /// Creates the byte array with the specified length
-//    #constructor(stacksafe) new &int:len
-//        = byte:len.
-//
-//    /// Creates the byte array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the copy of a byte subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
-//        <= (new &int:aLength)
-//    [
-//        anArray read &int:anIndex &int:aLength &bytearray:$self.
-//    ]
-//    
-//    /// Creates the byte array copy
-//    #constructor(stacksafe) new &bytearray:anArray
-//        <= new &int:0 &int:(anArray length) &bytearray:anArray.
-//
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__bytearray.
-//
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
-//    [
-//        #var(int)aTotalLength := $self length.
-//        
-//        #var(int)i := anIndex.
-//        #var(int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &byte:aValue.
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
-//        => system'core_routines'__bytearray.
-//
-//    /// Copies the byte array at the specified position
-//    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes the byte value at specified position
-//    #method(stacksafe) write &int:anIndex &byte:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a byte value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vbyte:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a short integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &short:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a short integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vshort:aChar
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a character value at the specified position
-//    #method(stacksafe) write &int:anIndex &char:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vchar:aChar
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes an integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &int:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vint:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a long integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &long:aLong
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a long integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vlong:aLong
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a real value at the specified position
-//    #method(stacksafe) write &int:anIndex &real:aLong
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a real value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vreal:aLong
-//        => system'core_routines'__bytearray.
-//
-//    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
-//        => system'core_routines'__bytearray.
-//    
-//    /// Concatinates the arrays    
-//    #method(stacksafe,bytearray) add &int:aLength2 &bytearray:anArray
-//    [
-//        #var(int)aLength1 := $self length.
-//        
-//        #var(bytearray)aRetVal := ByteArray new &int:(aLength1 + aLength2).
-//
-//        #var(byte)tmp.
-//        #var(int)anIndex := 0.
-//        #loop (anIndex < aLength1) ?
-//        [
-//            $self read &int:anIndex &vbyte:tmp.
-//            aRetVal write &int:anIndex &byte:tmp.
-//            
-//            anIndex += 1.
-//        ].
-//
-//        anIndex := 0.
-//        #loop (anIndex < aLength2) ?
-//        [
-//            anArray read &int:anIndex &vbyte:tmp.
-//            aRetVal write &int:(aLength1 + anIndex) &byte:tmp.
-//            
-//            anIndex += 1.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]    
-//
-//    /// Creates the object copy
-//    #method clone = ByteArray new &bytearray:$self.
+    /// Creates the byte array with the specified length
+    #constructor(stacksafe) new &int:len
+        = byte:len.
+
+    /// Creates the byte array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the copy of a byte subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &bytearray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &bytearray:$self.
+    ]
+    
+    /// Creates the byte array copy
+    #constructor(stacksafe) new &bytearray:anArray
+        <= new &int:0 &int:(anArray length) &bytearray:anArray.
+
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__bytearray.
+
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &byte:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &int:i &byte:aValue.
+            
+            i := i + 1.
+        ].
+    ]
+
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &bytearray:aDump
+        => system'core_routines'__bytearray.
+
+    /// Copies the byte array at the specified position
+    #method(stacksafe) write &int:anIndex &int:aLength &bytearray:aDump
+        => system'core_routines'__bytearray.
+
+    /// Writes the byte value at specified position
+    #method(stacksafe) write &int:anIndex &byte:anInt
+        => system'core_routines'__bytearray.
+
+    /// Reads a byte value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vbyte:anInt
+        => system'core_routines'__bytearray.
+
+    /// Writes a short integer value at the specified position
+    #method(stacksafe) write &int:anIndex &short:anInt
+        => system'core_routines'__bytearray.
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vshort:aChar
+        => system'core_routines'__bytearray.
+
+    /// Writes a character value at the specified position
+    #method(stacksafe) write &int:anIndex &char:anInt
+        => system'core_routines'__bytearray.
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vchar:aChar
+        => system'core_routines'__bytearray.
+
+    /// Writes an integer value at the specified position
+    #method(stacksafe) write &int:anIndex &int:anInt
+        => system'core_routines'__bytearray.
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vint:anInt
+        => system'core_routines'__bytearray.
+
+    /// Writes a long integer value at the specified position
+    #method(stacksafe) write &int:anIndex &long:aLong
+        => system'core_routines'__bytearray.
+
+    /// Reads a long integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vlong:aLong
+        => system'core_routines'__bytearray.
+
+    /// Writes a real value at the specified position
+    #method(stacksafe) write &int:anIndex &real:aLong
+        => system'core_routines'__bytearray.
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vreal:aLong
+        => system'core_routines'__bytearray.
+
+    #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
+        => system'core_routines'__bytearray.
+    
+    /// Concatinates the arrays    
+    #method(stacksafe,bytearray) add &int:aLength2 &bytearray:anArray
+    [
+        #var(int)aLength1 := $self length.
+        
+        #var(bytearray)aRetVal := ByteArray new &int:(aLength1 + aLength2).
+
+        #var(byte)tmp.
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength1) ?
+        [
+            $self read &int:anIndex &vbyte:tmp.
+            aRetVal write &int:anIndex &byte:tmp.
+            
+            anIndex += 1.
+        ].
+
+        anIndex := 0.
+        #loop (anIndex < aLength2) ?
+        [
+            anArray read &int:anIndex &vbyte:tmp.
+            aRetVal write &int:(aLength1 + anIndex) &byte:tmp.
+            
+            anIndex += 1.
+        ].
+            
+        ^ aRetVal.
+    ]    
+
+    /// Creates the object copy
+    #method clone = ByteArray new &bytearray:$self.
 }
 
 // --- ShortArray ---
@@ -219,69 +219,69 @@
 /// A short integer array
 #class(sealed,arrayof:short,dispatchable:shortarray) ShortArray
 {
-//    /// Creates the short array with the specified length
-//    #constructor(stacksafe) new &int:aLength
-//        = short:aLength.
-//    
-//    /// Creates the short array with the specified length
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//    
-//    /// Creates the copy of a short subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &shortarray:anArray
-//        <= (new &int:aLength)
-//    [
-//        anArray read &int:anIndex &int:aLength &shortarray:$self.
-//    ]
-//
-//    /// Creates the short array copy
-//    #constructor new &shortarray:anArray
-//        <= new &int:0 &int:(anArray length) &shortarray:anArray.
-//
-//    /// Reads the array length to the output parameter
-//    #method(stacksafe) readLength &vint:aLength
-//        => system'core_routines'__shortarray.
-//
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &short:aValue
-//    [
-//        #var(int)aTotalLength := $self length.
-//        
-//        #var(int)i := anIndex.
-//        #var(int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &short:aValue.
-//            
-//            i += 1.
-//        ].
-//    ]
-//    
-//    /// Copies a sub array to the provided one at the specified position
-//    #method(stacksafe) read &int:anIndex &int:aLength &shortarray:anArray
-//        => system'core_routines'__shortarray.
-//
-//    /// Copies the short array at the specified position   
-//    #method(stacksafe) write &int:anIndex &int:aLength &shortarray:anArray
-//        => system'core_routines'__shortarray.
-//
-//    /// Writes a short integer value at the specified position
-//    #method(stacksafe) write &int:anIndex &short:aValue
-//        => system'core_routines'__shortarray.
-//
-//    /// Reads a short integer value at the specified position and saves it into an output variable
-//    #method(stacksafe) read &int:anIndex &vshort:aValue
-//        => system'core_routines'__shortarray.
-//
-//    /// Creates the object copy
-//    #method clone = ShortArray new &shortarray:$self.
+    /// Creates the short array with the specified length
+    #constructor(stacksafe) new &int:aLength
+        = short:aLength.
+    
+    /// Creates the short array with the specified length
+    #constructor new : aLength
+        <= new &int:(aLength int).
+    
+    /// Creates the copy of a short subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &shortarray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &shortarray:$self.
+    ]
+
+    /// Creates the short array copy
+    #constructor new &shortarray:anArray
+        <= new &int:0 &int:(anArray length) &shortarray:anArray.
+
+    /// Reads the array length to the output parameter
+    #method(stacksafe) readLength &vint:aLength
+        => system'core_routines'__shortarray.
+
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &short:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &int:i &short:aValue.
+            
+            i += 1.
+        ].
+    ]
+    
+    /// Copies a sub array to the provided one at the specified position
+    #method(stacksafe) read &int:anIndex &int:aLength &shortarray:anArray
+        => system'core_routines'__shortarray.
+
+    /// Copies the short array at the specified position   
+    #method(stacksafe) write &int:anIndex &int:aLength &shortarray:anArray
+        => system'core_routines'__shortarray.
+
+    /// Writes a short integer value at the specified position
+    #method(stacksafe) write &int:anIndex &short:aValue
+        => system'core_routines'__shortarray.
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    #method(stacksafe) read &int:anIndex &vshort:aValue
+        => system'core_routines'__shortarray.
+
+    /// Creates the object copy
+    #method clone = ShortArray new &shortarray:$self.
 }
 
 // --- IntArray ---
@@ -312,27 +312,27 @@
     #method(stacksafe) readLength &vint:aLength
         => system'core_routines'__intarray.
 
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &int:aValue
-//    [
-//        #var(int)aTotalLength := $self length.
-//        
-//        #var(int)i := anIndex.
-//        #var(int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &int:aValue.
-//            
-//            i += 1.
-//        ].
-//    ]
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &int:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &int:i &int:aValue.
+            
+            i += 1.
+        ].
+    ]
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &intarray:anArray
@@ -350,8 +350,8 @@
     #method(stacksafe) read &int:anIndex &vint:anInt
         => system'core_routines'__intarray.
 
-//    /// Creates the object copy
-//    #method clone = IntArray new &intarray:$self.
+    /// Creates the object copy
+    #method clone = IntArray new &intarray:$self.
 }
 
 //// --- BitArray ---
@@ -708,42 +708,42 @@
     #constructor new : aLength
         <= new &int:(aLength int).
 
-//    /// Creates the copy of a subarray
-//    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
-//        <= (new &int:aLength)
-//    [
-//        anArray read &int:anIndex &int:aLength &chararray:$self.
-//    ]
-//     
-//    /// Creates the short array copy
-//    #constructor new &chararray:anArray
-//        <= new &int:0 &int:(anArray length) &chararray:anArray.
+    /// Creates the copy of a subarray
+    #constructor(stacksafe) new &int:anIndex &int:aLength &chararray:anArray
+        <= (new &int:aLength)
+    [
+        anArray read &int:anIndex &int:aLength &chararray:$self.
+    ]
+     
+    /// Creates the short array copy
+    #constructor new &chararray:anArray
+        <= new &int:0 &int:(anArray length) &chararray:anArray.
     
     /// Reads the array length to the output parameter
     #method(stacksafe) readLength &vint:aLength
         => system'core_routines'__intarray.
 
-//    /// Fills the sub array with a specified value
-//    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
-//    [
-//        #var(int)aTotalLength := $self length.
-//        
-//        #var(int)i := anIndex.
-//        #var(int)m := anIndex + aLength.
-//        
-//        (i > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//        
-//        (m > aTotalLength)
-//            ? [ #throw system'InvalidArgumentException new. ].
-//            
-//        #loop (i < m)?
-//        [
-//            $self write &int:i &char:aValue.
-//            
-//            i := i + 1.
-//        ].
-//    ]
+    /// Fills the sub array with a specified value
+    #method(stacksafe) fill &int:anIndex &int:aLength &char:aValue
+    [
+        #var(int)aTotalLength := $self length.
+        
+        #var(int)i := anIndex.
+        #var(int)m := anIndex + aLength.
+        
+        (i > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+        
+        (m > aTotalLength)
+            ? [ #throw system'InvalidArgumentException new. ].
+            
+        #loop (i < m)?
+        [
+            $self write &int:i &char:aValue.
+            
+            i := i + 1.
+        ].
+    ]
 
     /// Copies a sub array to the provided one at the specified position
     #method(stacksafe) read &int:anIndex &int:aLength &chararray:anArray
@@ -764,8 +764,8 @@
     #method(stacksafe) move &int:anIndex &int:aLength &int:anOffset
         => system'core_routines'__chararray.
 
-//    /// Creates the object copy
-//    #method clone = CharArray new &chararray:$self.
+    /// Creates the object copy
+    #method clone = CharArray new &chararray:$self.
 }
         
 // --- emptyliteralvalue ---
@@ -788,20 +788,20 @@
     #constructor(stacksafe) new &int:size
         = byte:(size + 1).
 
-//    /// Creates the literal string with specified length and copies the parameter value
-//    #constructor(stacksafe) new &int:aSize &literal:aLiteral
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__literal copy &literal:$self &literal:aLiteral.
-//    ]
-//
-//    /// Creates the literal string with specified length fills with spciefied character value        
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'core_routines'__literal.
-//
-//    /// Creates the literal string copy              
-//    #constructor new &literal:aLiteral
-//        <= new &int:(aLiteral length) &literal:aLiteral.
+    /// Creates the literal string with specified length and copies the parameter value
+    #constructor(stacksafe) new &int:aSize &literal:aLiteral
+        <= (new &int:aSize)
+    [
+        system'core_routines'__literal copy &literal:$self &literal:aLiteral.
+    ]
+
+    /// Creates the literal string with specified length fills with spciefied character value        
+    #constructor(stacksafe) new &int:aSize &char:aChar
+        => system'core_routines'__literal.
+
+    /// Creates the literal string copy              
+    #constructor new &literal:aLiteral
+        <= new &int:(aLiteral length) &literal:aLiteral.
         
     /// Creates the copy of a subarray        
     #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
@@ -824,21 +824,21 @@
     #method(bool) less &literal : aLiteral
         => system'core_routines'__literal.
 
-//    /// Compares the values
-//    #method(bool) equal &wide : aLiteral
-//        = $self wide equal &wide:aLiteral.
-//
-//    /// Compares the values
-//    #method(bool) less &wide : aLiteral
-//        = $self wide less &wide:aLiteral.
-//
-//    /// Compares the values
-//    #method(bool) equal &char : aChar
-//        <= %equal &literal:(aChar literal).
-//
-//    /// Compares the values
-//    #method(bool) less &char : aChar
-//        <= %less &literal:(aChar literal).
+    /// Compares the values
+    #method(bool) equal &wide : aLiteral
+        = $self wide equal &wide:aLiteral.
+
+    /// Compares the values
+    #method(bool) less &wide : aLiteral
+        = $self wide less &wide:aLiteral.
+
+    /// Compares the values
+    #method(bool) equal &char : aChar
+        <= %equal &literal:(aChar literal).
+
+    /// Compares the values
+    #method(bool) less &char : aChar
+        <= %less &literal:(aChar literal).
 
     /// Concatinates the values
     #method(literal) add &literal : aLiteral
@@ -859,9 +859,9 @@
         ^ CharValue new &char:aChar.
     ]
     
-//    /// Concatinates the values
-//    #method(literal) add &char:aChar
-//        = $self add &literal:(aChar literal).
+    /// Concatinates the values
+    #method(literal) add &char:aChar
+        = $self add &literal:(aChar literal).
 
     // Reads the character at the specified index and saves into an output parameter
     #method(stacksafe) read &int:anIndex &vchar:aChar
@@ -980,12 +980,12 @@
     /// Returns the string iterator
     #method iterator = LiteralIterator new &literal:$self.
     
-//    /// Clones the value
-//    #method clone = LiteralValue new &literal:$self.
-//
-//    /// Reads the object hash code into the output parameter
-//    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
-//        => system'core_routines'__literal.
+    /// Clones the value
+    #method clone = LiteralValue new &literal:$self.
+
+    /// Reads the object hash code into the output parameter
+    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
+        => system'core_routines'__literal.
 }
 
 // --- emptyWideLiteralValue ---
@@ -1008,20 +1008,20 @@
     #constructor(stacksafe) new &int:size
         = short:(size + 1).
 
-//    /// Creates the literal string with specified length and copies the parameter value
-//    #constructor(stacksafe) new &int:aSize &wide:aLiteral
-//        <= (new &int:aSize)
-//    [
-//        system'core_routines'__wide copy &wide:$self &wide:aLiteral.
-//    ]
+    /// Creates the literal string with specified length and copies the parameter value
+    #constructor(stacksafe) new &int:aSize &wide:aLiteral
+        <= (new &int:aSize)
+    [
+        system'core_routines'__wide copy &wide:$self &wide:aLiteral.
+    ]
 
-//    /// Creates the literal string with specified length fills with spciefied character value
-//    #constructor(stacksafe) new &int:aSize &char:aChar
-//        => system'core_routines'__wide.
+    /// Creates the literal string with specified length fills with spciefied character value
+    #constructor(stacksafe) new &int:aSize &char:aChar
+        => system'core_routines'__wide.
 
-//    /// Creates the literal string copy
-//    #constructor new &wide:aLiteral
-//        <= %new &int:(aLiteral length) &wide:aLiteral.
+    /// Creates the literal string copy
+    #constructor new &wide:aLiteral
+        <= %new &int:(aLiteral length) &wide:aLiteral.
         
     /// Creates the copy of a subarray
     #constructor(stacksafe) new &int:anIndex &int:aSize &chararray:anArray
@@ -1044,13 +1044,13 @@
     #method(bool) less &wide : aLiteral
         => system'core_routines'__wide.
 
-//    /// Compares the values
-//    #method(bool) equal &char : aChar
-//        <= %equal &wide:(aChar wide).
-//
-//    /// Compares the values
-//    #method(bool) less &char : aChar
-//        <= %less &wide:(aChar wide).
+    /// Compares the values
+    #method(bool) equal &char : aChar
+        <= %equal &wide:(aChar wide).
+
+    /// Compares the values
+    #method(bool) less &char : aChar
+        <= %less &wide:(aChar wide).
 
     #method add : anObject = anObject cast:%add &to:$self.
 
@@ -1071,13 +1071,13 @@
     #method(wide,stacksafe) add &wide : aLiteral
         => system'core_routines'__wide.
 
-//    /// Concatinates the values
-//    #method(wide,stacksafe) add &char:aChar
-//        = $self add &wide:(wideConvertor convert &char:aChar).
-//
-//    /// Concatinates the values
-//    #method(wide) add &literal:aLiteral
-//        = $self add &wide:(aLiteral wide).
+    /// Concatinates the values
+    #method(wide,stacksafe) add &char:aChar
+        = $self add &wide:(wideConvertor convert &char:aChar).
+
+    /// Concatinates the values
+    #method(wide) add &literal:aLiteral
+        = $self add &wide:(aLiteral wide).
 
     // Reads the character at the specified index and saves into an output parameter
     #method(stacksafe) read &int:anIndex &vchar:aChar
@@ -1192,12 +1192,12 @@
     /// Returns the object iterator
     #method iterator = WideLiteralIterator new &wide:$self.
     
-//    /// Clones the value
-//    #method clone = WideLiteralValue new &wide:$self.
-//
-//    // Reads the object hash code into the output parameter
-//    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
-//        => system'core_routines'__wide.
+    /// Clones the value
+    #method clone = WideLiteralValue new &wide:$self.
+
+    // Reads the object hash code into the output parameter
+    #method(stacksafe,outnprop:hash_code) readHashCode &vint:aCode 
+        => system'core_routines'__wide.
 }
 
 //// --- Variant ---
@@ -1342,42 +1342,42 @@
         system'core_routines'__array copy &array:$self &int:anIndex &int:aLength &array:anArray.
     ]
         
-//    #constructor new &object:singleItem
-//        <= (new &int:1)
-//    [
-//        $self setAt &int:0 &object:singleItem.
-//    ]
-//
-//    /// Concatinates the arrays    
-//    #method add : anObject
-//        = $self add &array:(anObject array).
-//
-//    /// Concatinates the arrays    
-//    #method add &array:anArray
-//    [
-//        #var(int)aLength1 := $self length.
-//        #var(int)aLength2 := anArray length.
-//        
-//        #var(array)aRetVal := Array new &int:(aLength1 + aLength2).
-//
-//        #var(int)anIndex := 0.
-//        #loop (anIndex < aLength1) ?
-//        [
-//            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
-//            
-//            anIndex += 1.
-//        ].
-//
-//        anIndex := 0.
-//        #loop (anIndex < aLength2) ?
-//        [
-//            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
-//            
-//            anIndex += 1.
-//        ].
-//            
-//        ^ aRetVal.
-//    ]
+    #constructor new &object:singleItem
+        <= (new &int:1)
+    [
+        $self setAt &int:0 &object:singleItem.
+    ]
+
+    /// Concatinates the arrays    
+    #method add : anObject
+        = $self add &array:(anObject array).
+
+    /// Concatinates the arrays    
+    #method add &array:anArray
+    [
+        #var(int)aLength1 := $self length.
+        #var(int)aLength2 := anArray length.
+        
+        #var(array)aRetVal := Array new &int:(aLength1 + aLength2).
+
+        #var(int)anIndex := 0.
+        #loop (anIndex < aLength1) ?
+        [
+            aRetVal setAt &int:anIndex &object:($self getAt &int:anIndex).
+            
+            anIndex += 1.
+        ].
+
+        anIndex := 0.
+        #loop (anIndex < aLength2) ?
+        [
+            aRetVal setAt &int:(aLength1 + anIndex) &object:(anArray getAt &int:anIndex).
+            
+            anIndex += 1.
+        ].
+            
+        ^ aRetVal.
+    ]
 
     /// Reads the array length into an output parameter
     #method(stacksafe) readLength &vint:aLength
@@ -1397,9 +1397,9 @@
     /// Returns the array iterator
     #method iterator = ArrayIterator new &array:$self.
 
-//    /// Clones the array
-//    #method(array) clone 
-//        = Array new &array:$self.
+    /// Clones the array
+    #method(array) clone 
+        = Array new &array:$self.
 }
 
 // --- ArgArray ---

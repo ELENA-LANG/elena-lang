@@ -85,6 +85,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(AND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(OR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(XOR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
    operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
    operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, 0));
@@ -103,13 +108,18 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
 
    // int64 primitive operations
-   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
-   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
-   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
-   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(ADD_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(MUL_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(DIV_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(AND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(OR_MESSAGE_ID,    V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(XOR_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(READ_MESSAGE_ID,  V_INT64, V_INT32, lxLongOp, V_INT64));
+   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT64, V_INT32, lxLongOp, V_INT64));
 
-   operators.add(OperatorInfo(APPEND_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
-   operators.add(OperatorInfo(REDUCE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
+   operators.add(OperatorInfo(APPEND_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
+   operators.add(OperatorInfo(REDUCE_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, 0));
    operators.add(OperatorInfo(INCREASE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
    operators.add(OperatorInfo(SEPARATE_MESSAGE_ID, V_INT64, V_INT64, lxLongOp, 0));
 
@@ -209,8 +219,9 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
 
 int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, bool& classFound, ref_t& outputType)
 {
-   if (classReference == V_ARGARRAY)
-      classReference = scope.paramsReference;
+   if (isPrimitiveRef(classReference)) {
+      classReference = resolvePrimitiveReference(scope, classReference);
+   }
 
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, classFound, outputType);
    int callType = methodHint & tpMask;
@@ -997,6 +1008,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.messageReference, scope.superReference);
       case V_VERB:
          return firstNonZero(scope.verbReference, scope.superReference);
+      case V_ARGARRAY:
+         return firstNonZero(scope.paramsReference, scope.superReference);
       default:
          return scope.superReference;
    }

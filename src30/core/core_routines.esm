@@ -207,6 +207,58 @@ procedure __lazyexpression.dispatch[1]
 
 end
 
+procedure __int.eval&readHashCode&vint$[2]
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure __int.get&inverted[1]
+
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __byte.get&inverted[1]
+
+  newn   class : system'ByteNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __short.get&inverted[1]
+
+  newn   class : system'ShortNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __long.get&inverted[1]
+
+  newn   class : system'LongNumber 8
+  bcopya
+  aloadsi 1    // ; load source
+  lnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
 procedure __literal.eval&readLength&vint$[2]
 
   aloadsi 1
@@ -580,6 +632,146 @@ labEmpty:
   acopyb
   quitn 4
 
+end
+
+procedure __literal.eval&readHashCode&vint$[2]
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+procedure __literal.new&int$&char$[3]
+  
+  pusha
+
+  aloadsi 4
+  nload
+  pushd
+  acopys 0
+  pushn 0
+  pushn 0
+  bcopys 0
+  
+  callextr api : chartostr
+  dcopye
+
+  ifn lab1 1 
+  ifn lab2 2
+  ifn lab3 3
+
+  popd
+  popi 2
+  popa
+
+  pushd
+  aloadsi 3
+  shiftn -2
+  inc
+  
+  acallvi 1
+  bcopya
+
+  blen
+  dec  
+  shiftn 2
+  ecopyd
+  dcopy 0
+
+labNext4:
+  eswapsi 0
+  nwrite
+  eswapsi 0
+  addn 1
+  next labNext4
+  jump labEnd  
+  
+lab1:  
+  aloadsi 6
+  nload
+  pushd
+  inc
+  aloadsi 4
+  
+  acallvi 1
+  bcopya
+
+  popd
+  ecopyd
+  dcopy 0
+
+labNext1:
+  eswapsi 0
+  bwriteb
+  eswapsi 0
+  next labNext1
+  popi 4
+  jump labEnd  
+    
+lab2:
+  popi 2
+  popd
+  popi 2
+  popa
+
+  pushd
+  shiftn -1
+  inc
+  
+  acallvi 1
+  bcopya
+
+  blen
+  dec  
+  ecopyd
+  dcopy 0
+  
+labNext2:
+  eswapsi 0
+  bwritew
+  eswapsi 0
+  addn 1
+  next labNext2
+  jump labEnd  
+
+lab3:
+  popi 2
+  popd
+  popi 2
+  popa
+
+  pushd
+  ecopyd
+  add
+  add
+  add
+  inc
+  
+  acallvi 1
+  bcopya
+
+  blen
+  dec  
+  ecopyd
+  dcopy 0
+
+labNext3:
+  eswapsi 0
+  bwrite
+  eswapsi 0
+  addn 2
+  next labNext3
+  jump labEnd  
+
+labEnd:
+  blen
+  dec
+  ecopy 0
+  bwriteb
+
+  acopyb
+  quitn 3
+  
 end
 
 procedure __wide.eval&readLength&vint$[2]
@@ -957,6 +1149,86 @@ labEmpty:
   acopyb
   quitn 4  
 
+end
+
+procedure __wide.eval&readHashCode&vint$[2]
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure __wide.new&int$&char$[3]
+  
+  bcopya
+
+  aloadsi 3
+  nload
+  pushd
+  lessn labFill 10000h
+  
+  aloadsi 3
+  nload
+  shiftn -1
+  inc
+  acopyb
+  acallvi 1
+  
+  bcopya
+  acopys 0
+  callextr api : chartowstr
+  pop
+  
+  dcopy 0
+  nread
+  pushe
+  
+  wlen
+  dec  
+  shiftn 1
+  ecopyd
+  dcopy 0
+
+labNext2:
+  eswapsi 0
+  nwrite
+  eswapsi 0
+  addn 1
+  next labNext2
+  jump labEnd  
+  
+labFill:
+  aloadsi 3
+  nload
+  inc
+  acopyb
+  acallvi 1
+
+  bcopya
+  wlen
+  dec
+  ecopyd  
+  dcopy 0
+
+labNext:
+  eswapsi 0
+  bwritew
+  eswapsi 0
+  addn 2
+  next labNext
+
+labEnd:
+  pop
+  wlen
+  dec
+  shiftn -1
+  ecopy 0
+  bwritew
+
+  acopyb
+  quitn 3
+  
 end
 
 procedure __literalconvertor.convert&int$&bytearray$&vint$[4]
@@ -2604,4 +2876,531 @@ procedure __timest.eval&empty&__time_st$calendar[1]
   nwrite
   quitn 1
 
+end
+
+procedure __bytearray.eval&readLength&vint$[2]
+
+  blen
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure __bytearray.read&int$&int$&bytearray$[4]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  acopyb
+
+  bloadsi 4
+  callextr api : subcopy
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&int$&bytearray$[4]
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  blen
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : insert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&byte$[3]
+
+  blen
+  ecopyd
+  bcopya
+  aloadsi 2
+  nload
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwriteb
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.read&int$&vbyte$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  breadb
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&short$[3]
+
+  blen
+  ecopyd
+  bcopya
+  aloadsi 2
+  nload
+  addn 3
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwritew
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.read&int$&vshort$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  breadw
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&char$[3]
+
+  blen
+  ecopyd
+  bcopya
+  aloadsi 2
+  nload
+  addn 3
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwrite
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.read&int$&vchar$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  bread
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&int$[3]
+
+  blen
+  ecopyd
+  bcopya
+  aloadsi 2
+  nload
+  addn 3
+  notless labErr
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  bwrite
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.read&int$&vint$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  bread
+  dcopye
+  bloadsi 3
+  nsave
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&long$[3]
+
+  blen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  addn 7
+  notless labErr
+
+  nload
+  aloadsi 3
+  ecopy 8
+  callextr api : insert
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.write&int$&real$[3]
+
+  blen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  addn 7
+  notless labErr
+
+  nload
+  aloadsi 3
+  ecopy 8
+  callextr api : insert
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.read&int$&vreal$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  bloadsi 3
+  ecopy 8
+  callextr api : subcopy
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.read&int$&vlong$[3]
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  acopyb
+  bloadsi 3
+  ecopy 8
+  callextr api : subcopy
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray.eval&move&int$&int$&int$[4]
+
+  pusha 
+
+  // ; insert
+  aloadsi 4
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi  0
+  aloadsi 5
+  pushai 0
+
+  callextr api : move
+
+  pop  
+  popa
+  quitn 4
+  
+end
+
+procedure __shortarray.eval&readLength&vint$[2]
+
+  wlen
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure __shortarray.read&int$&int$&shortarray$[4]
+
+  bcopya
+  wlen
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  pushe
+  ecopyd
+  nload
+  add
+  pope
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  acopyb
+  bloadsi 4
+  callextr api : wsubcopy
+  
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __shortarray.write&int$&int$&shortarray$[4]
+
+  bcopya
+  wlen
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  pushe
+  ecopyd
+  nload
+  add
+  pope
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : winsert
+  
+  acopyb
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __shortarray.write&int$&short$[3]
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  ecopyd
+  aloadsi 3
+  nload
+  eswap
+  shiftn -1
+  bwritew
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __shortarray.read&int$&vshort$[3]
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  eaddn -1
+  notless labErr
+  lessn   labErr 0
+
+  acopyb
+  shiftn -1
+  breadw
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
 end

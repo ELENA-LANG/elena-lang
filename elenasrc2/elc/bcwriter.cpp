@@ -3494,12 +3494,12 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case SUB_MESSAGE_ID:
       case MUL_MESSAGE_ID:
       case DIV_MESSAGE_ID:
-//      case AND_MESSAGE_ID:
-//      case OR_MESSAGE_ID:
-//      case READ_MESSAGE_ID:
-//      case WRITE_MESSAGE_ID:
+      case AND_MESSAGE_ID:
+      case OR_MESSAGE_ID:
+      case XOR_MESSAGE_ID:
+      case READ_MESSAGE_ID:
+      case WRITE_MESSAGE_ID:
          immOp = true;
-//      case XOR_MESSAGE_ID:
          assignMode = true;
          break;
       //case LESS_MESSAGE_ID:
@@ -3807,9 +3807,9 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    // copym message
    ref_t message = callNode.argument;
-   //SNode msg = SyntaxTree::findChild(callNode, lxMessage);
-   //if (msg != lxNone)
-   //   message = msg.argument;
+   SNode msg = callNode.findChild(lxOvreriddenMessage);
+   if (msg != lxNone)
+      message = msg.argument;
 
    tape.write(bcCopyM, message);
 
