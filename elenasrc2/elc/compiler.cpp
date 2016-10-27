@@ -3665,7 +3665,12 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    // injecting action body
    writer.newNode(lxCode);
-   SyntaxTree::copyNode(writer, node);
+
+   if (node == lxCode) {
+      SyntaxTree::copyNode(writer, node);
+   }
+   else SyntaxTree::copyNode(writer, node.findChild(lxCode));
+   
    writer.closeNode();
 
    writer.closeNode();
@@ -6513,7 +6518,7 @@ void Compiler :: declareSingletonClass(SNode node, ClassScope& scope)
    scope.save();
 }
 
-void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode, SNode expression)
+void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode)
 {
 //   if (hints != nsNone)
 //      classScope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
@@ -6524,7 +6529,7 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode, S
 
    if (objNode != nsNone) {
       ActionScope methodScope(&classScope);
-      declareActionScope(objNode, classScope, objNode.firstChild(lxTerminalMask), methodScope, 0, false);
+      declareActionScope(objNode, classScope, objNode.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), methodScope, 0, false);
       writer.newNode(lxClassMethod, methodScope.message);
 
       writer.closeNode();
@@ -6580,14 +6585,14 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
          ClassScope classScope(scope.moduleScope, scope.reference);
          classScope.info.header.flags |= elNestedClass;
 
-         declareSingletonAction(classScope, objNode, SNode());
+         declareSingletonAction(classScope, objNode);
          singleton = true;
       }
       else if (objNode == lxInlineExpression) {
          ClassScope classScope(scope.moduleScope, scope.reference);
          classScope.info.header.flags |= elNestedClass;
 
-         declareSingletonAction(classScope, objNode, expression);
+         declareSingletonAction(classScope, objNode);
          singleton = true;
       }
 //      else if (objNode == nsSubjectArg || objNode == nsMethodParameter) {
@@ -6754,7 +6759,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileAction(classNode, classScope, classNode.firstChild(lxTerminalMask), 0, true);
+         compileAction(classNode, classScope, classNode.findChild(lxIdentifier, lxPrivate, lxMethodParameter, lxMessage), 0, true);
 
          retVal = ObjectInfo(okConstantSymbol, scope.reference, scope.reference);
       }

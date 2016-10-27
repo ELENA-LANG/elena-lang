@@ -114,24 +114,24 @@
     #method run &each:aFunction
       = aFunction run &enumerator:(self enumerator).
       
-//    #method run &eachPair:aFunction
-//      = aFunction run:self &enumerator:(self enumerator).
-//
-//    #method run:aParam &eachPair:aFunction
-//      = aFunction run:aParam &enumerator:(self enumerator).
-//
-//    #method seek &each:aFunction
-//      = aFunction retrieve &enumerator:(self enumerator).
-//
-//    #method seek:param &eachPair:function
-//      = function retrieve:param &enumerator:(self enumerator).
+    #method run &eachPair:aFunction
+      = aFunction run:self &enumerator:(self enumerator).
+
+    #method run:aParam &eachPair:aFunction
+      = aFunction run:aParam &enumerator:(self enumerator).
+
+    #method seek &each:aFunction
+      = aFunction retrieve &enumerator:(self enumerator).
+
+    #method seek:param &eachPair:function
+      = function retrieve:param &enumerator:(self enumerator).
 
     #method safeSeek : aValue
         = x [ aValue safeEqual:x ] retrieve &enumerator:(self enumerator).
 
-//    #method ifExists : aValue
-//        = $nil != self::enumerableOp safeSeek:aValue.
-//        
+    #method(bool) ifExists : aValue
+        = $nil != self::enumerableOp safeSeek:aValue.
+
 //    #method equal &enumerable:list
 //    [
 //        (self length == list length)
@@ -290,7 +290,7 @@
             
             #loop (aLater available) ?
             [
-                (aCompareFunc eval:(aFormer get):(aLater get))
+                (aCompareFunc eval:(aFormer get):(aLater get) bool)
                     ! [
                         #var aTmp := aFormer get.
                         aFormer set:(aLater get).
@@ -305,9 +305,9 @@
         ^ self.
     ]
     
-//    #method ascendant
-//        = (self clone)::indexableOp sort:ifOrdered.
-//
+    #method ascendant
+        = (self clone)::indexableOp sort:ifOrdered.
+
 //    #method Subarray : aLength &at:anIndex
 //        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
 //                

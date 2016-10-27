@@ -912,7 +912,7 @@ private:
    void declareSingletonClass(SNode node, ClassScope& scope);
    void compileSingletonClass(SNode member, ClassScope& scope);
 
-   void declareSingletonAction(ClassScope& scope, SNode objNode, SNode expression);
+   void declareSingletonAction(ClassScope& scope, SNode objNode);
 
    void compileActionMethod(SNode member, MethodScope& scope);
    void compileLazyExpressionMethod(SNode member, MethodScope& scope);
