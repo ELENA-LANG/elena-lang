@@ -63,78 +63,78 @@
         3 ? [ console writeLine:"=> operator works!". ].
 ].
 
-//// --- LocalTest ---
-//
-//#symbol LocalTester =
-//{
-//    do &int:n
-//    [
-//        #var o := n.
-//    ]
-//    
-//    do:n
-//    [
-//        #var o := n.
-//    ]
-//}.
-//
-//#symbol LocalTest =
-//[
-//    #var(int)n := 3.    
-//    n := n + 1.
-//    
-//    LocalTester do &int:n.
-//    
-//    LocalTester do:(n int).
-//    
-//    #var(long)l := 12345678901234566l.
-//    l := l + 1l.
-//    
-//    #var o := n.
-//    #var o2 := l.
-//].
-//
-//// --- OuterFieldTest ---
-//
-//#symbol OuterFieldTest =
-//[
-//    #var(int) i := 0.
-//    
-//    { eval : n [ i := n. ] } eval:3.
-//    
-//    (i == 3)
-//        ? [ console writeLine:"OuterFieldTest works!!!". ]
-//        ! [ console writeLine:"OuterFieldTest fails!!!". ].
-//].
-//
-//#symbol BoxingTester =
-//{
-//    add : aValue
-//    [
-//        ^ aValue.
-//    ]
-//    
-//    #method(stacksafe) add &int:aValue
-//    [
-//        ^ aValue.
-//    ]
-//}.
-//
-//#symbol BoxingTest =
-//[
-//    #var n := 2 + 3 * 4.    // here should be all primitive operations and the result should be boxed
-//    #var n2 := 2 + 3 * n.   // here should be no primitive operations at all.
-//    
-//    BoxingTester add:n.
-//    BoxingTester add:2.
-//    BoxingTester add &int:(n + 3 * 4).
-//    BoxingTester add :(2 + 3).
-//    BoxingTester add :(2 + n).
-//    
-//    #var n3 := BoxingTester add &int:(2 + 3 * 4).
-//    BoxingTester add :(2 + 3 * 4).
-//    
-//].
+// --- LocalTest ---
+
+#symbol LocalTester =
+{
+    do &int:n
+    [
+        #var o := n.
+    ]
+    
+    do:n
+    [
+        #var o := n.
+    ]
+}.
+
+#symbol LocalTest =
+[
+    #var(int)n := 3.    
+    n := n + 1.
+    
+    LocalTester do &int:n.
+    
+    LocalTester do:(n int).
+    
+    #var(long)l := 12345678901234566l.
+    l := l + 1l.
+    
+    #var o := n.
+    #var o2 := l.
+].
+
+// --- OuterFieldTest ---
+
+#symbol OuterFieldTest =
+[
+    #var(int) i := 0.
+    
+    { eval : n [ i := n. ] } eval:3.
+    
+    (i == 3)
+        ? [ console writeLine:"OuterFieldTest works!!!". ]
+        ! [ console writeLine:"OuterFieldTest fails!!!". ].
+].
+
+#symbol BoxingTester =
+{
+    add : aValue
+    [
+        ^ aValue.
+    ]
+    
+    #method(stacksafe) add &int:aValue
+    [
+        ^ aValue.
+    ]
+}.
+
+#symbol BoxingTest =
+[
+    #var n := 2 + 3 * 4.    // here should be all primitive operations and the result should be boxed
+    #var n2 := 2 + 3 * n.   // here should be no primitive operations at all.
+    
+    BoxingTester add:n.
+    BoxingTester add:2.
+    BoxingTester add &int:(n + 3 * 4).
+    BoxingTester add :(2 + 3).
+    BoxingTester add :(2 + n).
+    
+    #var n3 := BoxingTester add &int:(2 + 3 * 4).
+    BoxingTester add :(2 + 3 * 4).
+    
+].
 
 #symbol DictionaryTest =
 [
@@ -561,7 +561,7 @@
 //
 //    a print:"Struct method works".
 //].
-//
+
 //#symbol GroupMember1 =
 //{
 //    m1 : prm = "group 1 " + prm.
@@ -579,59 +579,59 @@
 //    #var m1 := g m1:"called".
 //    #var m2 := g m2:"called":2.
 //].
-//
-//// --- ClassWithGeneric ---
-//
-//#class ClassWithGeneric
-//{
-//    #field theExtension.
-//    
-//    #constructor new : anExtension
-//    [
-//        theExtension := anExtension.
-//    ]
-//    
-//    #method x = 2.
-//    
-//    #method(generic)get
-//    [
-//        ^ nil.
-//    ]
-//    
-//    #method => theExtension.
-//}
-//
-//// --- GenericMethodTest --
-//
-//#symbol GenericMethodTest =
-//[
-//    #var o := ClassWithGeneric new:2.
-//    
-//    #var x := o x.
-//    #var y := o y.
-//    
-//    #var s := o add:3.
-//].
-//
-//#class BaseClass
-//{
-//    #field theField1.
-//                   
-//    #constructor new [ theField1 := IntNumber new &int:1. ]
-//}
-//
-//#class ChildClass :: BaseClass
-//{
-//    #field theField2.
-//    
-//    #constructor new <= ( %new ) [ theField2 := IntNumber new &int:2. ]
-//}
-//
-//#symbol ConstructorTest =
-//[
-//    #var o := ChildClass new.
-//].
-//
+
+// --- ClassWithGeneric ---
+
+#class ClassWithGeneric
+{
+    #field theExtension.
+    
+    #constructor new : anExtension
+    [
+        theExtension := anExtension.
+    ]
+    
+    #method x = 2.
+    
+    #method(generic)get
+    [
+        ^ $nil.
+    ]
+    
+    #method => theExtension.
+}
+
+// --- GenericMethodTest --
+
+#symbol GenericMethodTest =
+[
+    #var o := ClassWithGeneric new:2.
+    
+    #var x := o x.
+    #var y := o y.
+    
+    #var s := o add:3.
+].
+
+#class BaseClass
+{
+    #field theField1.
+                   
+    #constructor new [ theField1 := IntNumber new &int:1. ]
+}
+
+#class ChildClass :: BaseClass
+{
+    #field theField2.
+    
+    #constructor new <= ( %new ) [ theField2 := IntNumber new &int:2. ]
+}
+
+#symbol ConstructorTest =
+[
+    #var o := ChildClass new.
+].
+
 //#symbol DTOToStructTest =
 //[
 //    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
@@ -653,106 +653,106 @@
 //    #var y := aCopy Y.
 //    #var z := aCopy Z.
 //].
+
+#class BoxerHelper
+{
+    #constructor new []
+    
+    #method init &vint:aRetVal
+    [
+        aRetVal := 2.
+    ]
+    
+    #method exchange &ref:anObject1 &ref:anObject2
+    [
+        #var tmp := anObject1 get.
+        anObject1 set &object:(anObject2 get).
+        anObject2 set &object:tmp.
+    ]    
+}
+
+#symbol UnboxTest =
+[        
+    #var(int)n := 1.
+    
+    #var o := BoxerHelper new.
+    
+    o init &vint:n.
+            
+    (2 == n)
+        ? [ console writeLine:"Unboxing parameter works". ].
 //
-//#class BoxerHelper
+//    #var(byte:4)a.
+//
+//    a@0 := 070h.
+//    a@1 := 080h.
+//    a@2 := 0C0h.
+//    a@3 := 0FFh.
+//
+//    #var(int)r.
+//    a read &int:0 &vint:r.
+//    
+//    (0FFC08070h == r)
+//        ? [ console writeLine:"Unboxing object works". ].
+].
+
+#symbol ByRefTest =
+[
+    #var a := 2.
+    #var b := "hello".
+    
+    BoxerHelper new exchange &ref:a &ref:b.
+    
+    ((a == "hello")and:(b == 2))
+        ? [ console writeLine:"ByRef routine works". ].
+].
+
+#class Parent
+{
+    #method print
+    [
+        console writeLine:"Super works".
+    ]
+}
+
+#class Child :: Parent
+{
+    #method print
+    [
+        console writeLine:"Super does not work".
+    ]
+    
+    #method test
+    [
+        $super print.
+    ]
+}
+
+#symbol SuperTest =
+[
+    #var o := Child new.
+    
+    o test.
+].
+
+//#subject(class:TestVar)test_var.
+//#class(sealed,struct:embeddable) TestVar
 //{
-//    #constructor new []
+//    #field(type:int)theValue.
+//    #field(type:int)theValue2.
 //    
-//    #method init &vint:aRetVal
+//    #constructor(stacksafe,embeddable) new &int:aValue
 //    [
-//        aRetVal := 2.
+//        theValue := aValue.
+//        theValue2 := 0.
 //    ]
-//    
-//    #method exchange &ref:anObject1 &ref:anObject2
-//    [
-//        #var tmp := anObject1 get.
-//        anObject1 set &object:(anObject2 get).
-//        anObject2 set &object:tmp.
-//    ]    
 //}
 //
-//#symbol UnboxTest =
-//[        
-//    #var(int)n := 1.
-//    
-//    #var o := BoxerHelper new.
-//    
-//    o init &vint:n.
-//            
-//    (2 == n)
-//        ? [ console writeLine:"Unboxing parameter works". ].
-////
-////    #var(byte:4)a.
-////
-////    a@0 := 070h.
-////    a@1 := 080h.
-////    a@2 := 0C0h.
-////    a@3 := 0FFh.
-////
-////    #var(int)r.
-////    a read &int:0 &vint:r.
-////    
-////    (0FFC08070h == r)
-////        ? [ console writeLine:"Unboxing object works". ].
-//].
-//
-//#symbol ByRefTest =
+//#symbol EmbedConstTest =
 //[
-//    #var a := 2.
-//    #var b := "hello".
-//    
-//    BoxerHelper new exchange &ref:a &ref:b.
-//    
-//    ((a == "hello")and:(b == 2))
-//        ? [ console writeLine:"ByRef routine works". ].
+//    #var(type:test_var)var := TestVar new &int:2.
 //].
-//
-//#class Parent
-//{
-//    #method print
-//    [
-//        console writeLine:"Super works".
-//    ]
-//}
-//
-//#class Child :: Parent
-//{
-//    #method print
-//    [
-//        console writeLine:"Super does not work".
-//    ]
-//    
-//    #method test
-//    [
-//        $super print.
-//    ]
-//}
-//
-//#symbol SuperTest =
-//[
-//    #var o := Child new.
-//    
-//    o test.
-//].
-//
-////#subject(class:TestVar)test_var.
-////#class(sealed,struct:embeddable) TestVar
-////{
-////    #field(type:int)theValue.
-////    #field(type:int)theValue2.
-////    
-////    #constructor(stacksafe,embeddable) new &int:aValue
-////    [
-////        theValue := aValue.
-////        theValue2 := 0.
-////    ]
-////}
-////
-////#symbol EmbedConstTest =
-////[
-////    #var(type:test_var)var := TestVar new &int:2.
-////].
-//
+
 //#symbol jsonTest =
 //[
 //    #var dto := DTO{ X = 2. Y = "Value". }.

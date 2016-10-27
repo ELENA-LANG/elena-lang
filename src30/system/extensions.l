@@ -47,8 +47,8 @@
 //        = self length != 0.
         
     /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
-    #method safeEqual : anObject
-        = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self.
+    #method(bool) safeEqual : anObject
+        = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self bool.
 
 //    #method eval &with:action
 //        = action eval:self.

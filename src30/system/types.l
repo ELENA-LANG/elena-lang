@@ -27,9 +27,9 @@
 
 // === basic primitive types ===
 
-//#subject keyvalue   = system'KeyValue.
-//
-//#subject ref        = system'Variable.
+#subject keyvalue   = system'KeyValue.
+
+#subject ref        = system'Variable.
 
 #subject byte       = system'ByteNumber.
 #subject short      = system'ShortNumber.

@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -1734,51 +1734,6 @@ void Compiler :: optimizeTape(CommandTape& tape)
       optimizeTape(tape);
    }
 }
-
-//bool Compiler :: checkIfCompatible(ModuleScope& scope, ref_t typeRef, SyntaxTree::Node node)
-//{
-//   ref_t nodeType = SyntaxTree::findChild(node, lxType).argument;   
-//   ref_t nodeRef = SyntaxTree::findChild(node, lxTarget).argument;
-//
-//   if (nodeType == typeRef) {
-//      return true;
-//   }
-//   else if (isPrimitiveRef(nodeRef)) {
-//      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
-//      if (!isEmbeddable(flags))
-//         return false;
-//
-//      switch (nodeRef) {
-//         case -1:
-//            return isDWORD(flags) || isPTR(flags);
-//         case -2:
-//            return (flags & elDebugMask) == elDebugQWORD;
-//         case -4:
-//            return (flags & elDebugMask) == elDebugReal64;
-//         default:
-//            return false;
-//      }
-//   }
-//   else if (node == lxNil) {
-//      return true;
-//   }
-//   else if (node == lxConstantInt) {
-//      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
-//
-//      return isEmbeddable(flags) && (isDWORD(flags) || isPTR(flags));
-//   }
-//   else if (node == lxConstantReal) {
-//      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
-//
-//      return isEmbeddable(flags) && (flags & elDebugMask) == elDebugReal64;
-//   }
-//   else if (node == lxConstantLong) {
-//      int flags = scope.getClassFlags(scope.subjectHints.get(typeRef));
-//
-//      return isEmbeddable(flags) && (flags & elDebugMask) == elDebugQWORD;
-//   }
-//   else return scope.checkIfCompatible(typeRef, nodeRef);
-//}
 
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 {
@@ -3598,7 +3553,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
    }
    // if it setat operator
    else if (operation == lxOperator) {
-      compileOperator(node, scope, mode, SET_REFER_MESSAGE_ID);
+      return compileOperator(node, scope, mode, SET_REFER_MESSAGE_ID);
    }
    else {
       SNode targetNode = node.firstChild(lxObjectMask);
@@ -5053,6 +5008,9 @@ void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& sco
 void Compiler :: compileResendExpression(SNode node, CodeScope& scope)
 {
    node = lxNewFrame;
+   // new stack frame
+   // stack already contains current $self reference
+   scope.level++;
 
    SNode expr = node.findChild(lxExpression);
 
@@ -5060,24 +5018,7 @@ void Compiler :: compileResendExpression(SNode node, CodeScope& scope)
 
    compileMessage(expr, scope, 0);
 
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   // new stack frame
-//   // stack already contains current $self reference
-//   scope.writer->newNode(lxNewFrame);
-//   scope.level++;
-//
-//   scope.writer->newBookmark();
-//   writeTerminal(TerminalInfo(), scope, ObjectInfo(okThisParam, 1));
-//
-//   compileMessage(node, scope, ObjectInfo(okThisParam, 1));
-//   scope.freeSpace();
-//
-//   scope.writer->removeBookmark();
-//
-//   scope.writer->closeNode();
-//
-//   scope.writer->appendNode(lxParamCount, getParamCount(methodScope->message) + 1);
+   scope.freeSpace();
 }
 
 void Compiler :: compileMethod(SNode node, MethodScope& scope)
@@ -5085,8 +5026,6 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    int paramCount = getParamCount(scope.message);
 
    CodeScope codeScope(&scope);
-
-//   CommandTape* tape = scope.tape;
 
    node.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path
 
@@ -5146,9 +5085,6 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope, ref_t embeddedMethodRef)
 {
    CodeScope codeScope(&scope);
-
-   //// HOTFIX: constructor is declared in class class but should be executed if the class scope
-   //scope.tape = &classClassScope.tape;
 
    node.appendNode(lxSourcePath, scope.getSourcePathRef());  // the source path 
 
@@ -5218,17 +5154,6 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, Class
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-   //// check if the method is inhreited and update vmt size accordingly
-   //// NOTE: the method is class class member though it is compiled within class scope
-   //ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.getIt(scope.message);
-   //if (it.Eof()) {
-   //   classClassScope.info.methods.add(scope.message, true);
-   //}
-   //else (*it) = true;
-
-   //// HOTFIX: constructor is declared in class class but should be executed if the class scope
-   //scope.tape = &classClassScope.tape;
-
    if (test(classScope->info.header.flags, elStructureRole)) {
       if (!test(classScope->info.header.flags, elDynamicRole)) {
          node.appendNode(lxCreatingStruct, classScope->info.size).appendNode(lxTarget, classScope->reference);
@@ -5242,11 +5167,6 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope, Class
 void Compiler :: compileDynamicDefaultConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-
-//   // HOTFIX: constructor is declared in class class but should be executed if the class scope
-//   scope.tape = &classClassScope.tape;
-//
-//   writer.newNode(lxClassMethod, scope.message);
 
    if (test(classScope->info.header.flags, elStructureRole)) {
       node.appendNode(lxCreatingStruct, classScope->info.size).appendNode(lxTarget, classScope->reference);
@@ -7704,6 +7624,11 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
    }
    else {
       bool boxing = !test(mode, HINT_NOBOXING);
+      // HOTFIX : do not box constant classes
+      if (exprNode == lxConstantInt && target.argument == scope.intReference) {
+         boxing = false;
+      }
+
       // if no boxing hint provided
       // then boxing should be skipped
       if (!boxing) {
@@ -8654,10 +8579,15 @@ void Compiler :: injectBoxing(_CompilerScope& scope, SNode node, LexicalType box
          node.set(boxingType, argument);
          node.findChild(lxTarget).setArgument(targetClassRef);
       }
-      else {
+      else if (node == lxReturning) {
          SNode boxingNode = node.injectNode(boxingType, argument);
 
          boxingNode.appendNode(lxTarget, targetClassRef);
+      }
+      else {
+         node.injectNode(node.type, node.argument);
+         node.set(boxingType, argument);
+         node.appendNode(lxTarget, targetClassRef);
       }
    }
 }

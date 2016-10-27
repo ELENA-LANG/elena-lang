@@ -223,28 +223,28 @@
         <= new &literal:(aMessage literal).
 }
 
-//// --- InvalidOperationException ---
-//
-//#class(exceptionof:InvalidOperationError) InvalidOperationException
-//{
-//    #constructor new &literal:message
-//    [
-//        theMessage := message.
-//        theCallStack := CallStack new.
-//    ]
-//    
-//    /// Creates the exception
-//    #constructor new
-//        <= new &literal:"Invalid operation".
-//
-//    /// Creates the exception
-//    #constructor new:aMessage
-//        <= new &literal:(aMessage literal).
-//        
-//    /// obsolete
-//    #constructor new &message:aMessage
-//        <= new &literal:(aMessage literal).
-//}
+// --- InvalidOperationException ---
+
+#class(exceptionof:InvalidOperationError) InvalidOperationException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"Invalid operation".
+
+    /// Creates the exception
+    #constructor new:aMessage
+        <= new &literal:(aMessage literal).
+        
+    /// obsolete
+    #constructor new &message:aMessage
+        <= new &literal:(aMessage literal).
+}
 
 // --- MethodNotFound ---
 

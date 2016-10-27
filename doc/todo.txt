@@ -3,15 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * typecast primitive array operation results
-
-                 * switch statement with comparision
-                 * switch statement with expression
-
-                 * fix invalid call stack info
-
-                 * int constant to byte
-
                  * optimization : #var(int)n := o array length.
                  * support arrayof:int
                  * support arrayof:struct
@@ -74,6 +65,7 @@ In development:
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
+                 * typecast primitive array operation results
                  * support abstract attribute
                  * check sealed / limited class attributes
                  * compliation should be based on set of rules
@@ -87,6 +79,12 @@ In development:
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                  * optimize array of constants
                  * typecast implicit extension target if required
+                 * switch statement with comparision
+                 * switch statement with expression
+
+                 * fix invalid call stack info
+
+                 * int constant to byte
 
                  * DerivationWriter : try to get rid of big switch statement
                  * ecv : use >out for ourput redirect
@@ -123,6 +121,7 @@ In development:
                    should work if [ ^ ... ] is an explicit action ; return operator in the action
                          should be similar to the one in implicit action, i.e. break the code and go to the method end
                  * ByteNumber.get&min - could we return the constant object?
+                 * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
 
               xdev
                 * linux migration

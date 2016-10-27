@@ -1630,57 +1630,57 @@
 //    
 //    #method => theObject.
 //}
-//
-///// A generic variable. 
-/////
-///// Extends an assigned value
-//#class(sealed,nvarof:object) Variable
-//{
-//    /// Creates the empty variable
-//    #constructor new
-//    [
-//    ]        
-//        
-//    /// Creates the variable
-//    #constructor new : value
-//    [
-//        $value := value.
-//    ]
-//    
-//    #method set : value
-//    [
-//        $value := value.
-//    ]
-//    
-//    #method append : val
-//    [
-//        ($nil == $value)
-//            ? [ $value := val. ]
-//            ! [ $value := $value + val. ].
-//    ]
-//    
-//    #method reduce : val
-//    [
-//        ($nil == $value)
-//            ? [ #throw system'InvalidOperationException new. ]
-//            ! [ $value := $value - val. ].
-//    ]
-//
-//    #method multiplyBy : val
-//    [
-//        ($nil == $value)
-//            ? [ #throw system'InvalidOperationException new. ]
-//            ! [ $value := $value * val. ].
-//    ]
-//    
-//    /// Divides into the value
-//    #method divideInto : val
-//    [
-//        ($nil == $value)
-//            ? [ #throw system'InvalidOperationException new. ]
-//            ! [ $value := $value / val. ].
-//    ]    
-//}
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+#class(sealed,nvarof:object) Variable
+{
+    /// Creates the empty variable
+    #constructor new
+    [
+    ]        
+        
+    /// Creates the variable
+    #constructor new : value
+    [
+        $value := value.
+    ]
+    
+    #method set : value
+    [
+        $value := value.
+    ]
+    
+    #method append : val
+    [
+        ($nil == $value)
+            ? [ $value := val. ]
+            ! [ $value := $value + val. ].
+    ]
+    
+    #method reduce : val
+    [
+        ($nil == $value)
+            ? [ #throw system'InvalidOperationException new. ]
+            ! [ $value := $value - val. ].
+    ]
+
+    #method multiplyBy : val
+    [
+        ($nil == $value)
+            ? [ #throw system'InvalidOperationException new. ]
+            ! [ $value := $value * val. ].
+    ]
+    
+    /// Divides into the value
+    #method divideInto : val
+    [
+        ($nil == $value)
+            ? [ #throw system'InvalidOperationException new. ]
+            ! [ $value := $value / val. ].
+    ]    
+}
 
 // --- KeyValue ---
 
