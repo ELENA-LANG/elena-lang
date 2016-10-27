@@ -135,6 +135,7 @@ In development:
                  * ByteNumber.get&min - could we return the constant object?
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
+                 * implement idle typecasting message (see file_path)
 
               xdev - ide
                 * vertical scroller does not work correctly

@@ -829,7 +829,7 @@ private:
 
    void declareParameterDebugInfo(SNode node, MethodScope& scope, bool withThis, bool withSelf);
 
-   void copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode);
+   bool copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);

@@ -39,12 +39,12 @@
 //    /// Returns true if the object is numereric
 //    #method is &numeric
 //        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
-//        
-//    #method(bool,w2) is &empty
-//        = self length == 0.
-//        
-//    #method(bool) is &nonempty
-//        = self length != 0.
+        
+    #method(bool,w2) is &empty
+        = self length == 0.
+        
+    #method(bool) is &nonempty
+        = self length != 0.
         
     /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
     #method(bool) safeEqual : anObject
@@ -1378,87 +1378,87 @@
 //        ^ self.
 //    ]    
 //}
-//
-//// --- charOp ---
-//
-//#class(extension:char)charOp
-//{
-//    #method(bool,stacksafe)is &whitespace
-//    [
-//        (self == #9)
-//            ? [ ^ true. ]
-//            ! [
-//                (self == #32)
-//                    ? [ ^ true. ]
-//                    ! [
-//                        (self == #10)
-//                            ? [ ^ true.]
-//                            ! [
-//                                (self == #13)
-//                                    ? [ ^ true. ]
-//                                    ! [
-//                                        ^ self == #12.
-//                                    ]
-//                            ]
-//                    ]
-//            ].
-//            
-//        ^ false.            
-//    ]
-//    
-//    #method(stacksafe,bool)is &digit
-//    [
-//        #var(int) ch.
-//        intConvertor convert &char:self &vint:ch.
-//        
-//        ^ (ch >= 30h) and: (ch <= 39h).
-//    ]
-//    
-//    #method(bool,stacksafe)is &newLine
-//    [
-//        ^ self == #10.
-//    ]
-//    
-//    #method(bool,stacksafe)is &letter
-//    [
-//        #var(int) ch.
-//        intConvertor convert &char:self &vint:ch.
-//        
-//        ((ch >= 41h) and: (ch <= 5Ah))
-//            ? [ ^ true. ].
-//        
-//        ((ch >= 61h) and: (ch <= 7Ah))
-//            ? [ ^ true. ].
-//        
-//        ((ch >= 3ACh) and: (ch <= 3CEh))
-//            ? [ ^ true. ].
-//            
-//        ((ch >= 400h) and: (ch <= 42Fh))
-//            ? [ ^ true. ].
-//            
-//        ^ false.            
-//    ]
-//    
-//    #method(bool,stacksafe)is &ltoken
-//    [
-//        #var(int) ch.
-//        intConvertor convert &char:self &vint:ch.
-//        
-//        ((ch >= 41h) and: (ch <= 5Ah))
-//            ? [ ^ true. ].
-//        
-//        ((ch >= 61h) and: (ch <= 7Ah))
-//            ? [ ^ true. ].
-//        
-//        ((ch >= 3ACh) and: (ch <= 3CEh))
-//            ? [ ^ true. ].
-//            
-//        ((ch >= 400h) and: (ch <= 42Fh))
-//            ? [ ^ true. ].
-//            
-//        ^ ch == 39.
-//    ]
-//}
+
+// --- charOp ---
+
+#class(extension:char)charOp
+{
+    #method(bool,stacksafe)is &whitespace
+    [
+        (self == #9)
+            ? [ ^ true. ]
+            ! [
+                (self == #32)
+                    ? [ ^ true. ]
+                    ! [
+                        (self == #10)
+                            ? [ ^ true.]
+                            ! [
+                                (self == #13)
+                                    ? [ ^ true. ]
+                                    ! [
+                                        ^ self == #12.
+                                    ]
+                            ]
+                    ]
+            ].
+            
+        ^ false.            
+    ]
+    
+    #method(stacksafe,bool)is &digit
+    [
+        #var(int) ch.
+        intConvertor convert &char:self &vint:ch.
+        
+        ^ (ch >= 30h) and: (ch <= 39h).
+    ]
+    
+    #method(bool,stacksafe)is &newLine
+    [
+        ^ self == #10.
+    ]
+    
+    #method(bool,stacksafe)is &letter
+    [
+        #var(int) ch.
+        intConvertor convert &char:self &vint:ch.
+        
+        ((ch >= 41h) and: (ch <= 5Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 61h) and: (ch <= 7Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 3ACh) and: (ch <= 3CEh))
+            ? [ ^ true. ].
+            
+        ((ch >= 400h) and: (ch <= 42Fh))
+            ? [ ^ true. ].
+            
+        ^ false.            
+    ]
+    
+    #method(bool,stacksafe)is &ltoken
+    [
+        #var(int) ch.
+        intConvertor convert &char:self &vint:ch.
+        
+        ((ch >= 41h) and: (ch <= 5Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 61h) and: (ch <= 7Ah))
+            ? [ ^ true. ].
+        
+        ((ch >= 3ACh) and: (ch <= 3CEh))
+            ? [ ^ true. ].
+            
+        ((ch >= 400h) and: (ch <= 42Fh))
+            ? [ ^ true. ].
+            
+        ^ ch == 39.
+    ]
+}
 
 // --- byteArrayHelper ---
 

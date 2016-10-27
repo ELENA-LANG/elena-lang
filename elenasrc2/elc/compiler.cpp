@@ -1991,96 +1991,6 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
    compileParentDeclaration(node, scope, parentRef);
 }
 
-//bool Compiler :: declareAttribute(DNode hint, ClassScope& scope, SyntaxWriter& writer, ref_t hintRef, RoleMap* attributes)
-//{
-//   if (!scope.validateTemplate(hintRef))
-//      return false;
-//
-//   TerminalInfo terminal = hint.Terminal();
-//
-//   TemplateInfo templateInfo(hintRef, 0);
-//   templateInfo.sourceCol = terminal.col;
-//   templateInfo.sourceRow = terminal.row;
-//
-//   DNode paramNode = hint.firstChild();
-//   while (paramNode != nsNone) {
-//      if (paramNode == nsHintValue) {
-//         TerminalInfo param = paramNode.Terminal();
-//         if (param == tsIdentifier) {
-//            ref_t subject = scope.mapSubject(param, false);
-//            if (subject == 0)
-//               subject = scope.moduleScope->module->mapSubject(param, false);
-//
-//            templateInfo.parameters.add(templateInfo.parameters.Count() + 1, subject);
-//         }
-//         else scope.raiseError(errInvalidHintValue, param);
-//      }
-//      paramNode = paramNode.nextNode();
-//   }
-//
-//   return copyTemplateDeclaration(scope, templateInfo, writer, attributes);
-//}
-//
-//bool Compiler :: declareMethodAttribute(DNode hint, MethodScope& scope, SyntaxWriter& writer, ref_t hintRef)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//   RoleMap attributes;
-//
-//   if (declareAttribute(hint, *classScope, writer, hintRef, &attributes)) {
-//      scope.generic = attributes.exist(lxClassMethodAttr, tpGeneric);
-//      scope.sealed = attributes.exist(lxClassMethodAttr, tpSealed);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-
-//bool Compiler :: copyTemplateDeclaration(ClassScope& scope, TemplateInfo& info, SyntaxTree::Writer& writer, RoleMap* attributes)
-//{
-//   _Module* extModule = NULL;
-//   _Memory* section = scope.moduleScope->loadTemplateInfo(info.templateRef, extModule);
-//   if (!section)
-//      return false;
-//   
-//   SyntaxTree tree(section);
-//   copyTemplateDeclaration(scope, tree.readRoot(), writer, extModule, info, attributes);
-//   
-//   return true;
-//}
-//
-//void Compiler :: copyTemplateDeclaration(ClassScope& scope, SyntaxTree::Node node, SyntaxTree::Writer& writer, _Module* templateModule, 
-//                                          TemplateInfo& info, RoleMap* attributes)
-//{
-//   bool importMode = false;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod/* || current == lxTemplateMethod*/) {
-//         importMode = true;
-//      }
-//      else if (current == lxTemplateField) {
-//         importMode = true;
-//      }
-//      else if (current == lxTemplate) {
-//         importMode = true;
-//      }
-//      else {
-//         if (attributes != NULL && test(current.type, lxAttrMask)) {
-//            attributes->add(current.type, current.argument);
-//         }
-//         copyNode(scope, current, writer, templateModule, info);
-//      }
-//   
-//      current = current.nextNode();
-//   }
-//
-//   if (importMode) {
-//      // if the template should be injected into the class
-//      MemoryWriter writer(&scope.imported);
-//      info.save(writer);
-//   }
-//}
-
 ref_t Compiler::mapAttribute(SNode attribute, ModuleScope& scope)
 {
    Scope dummyScope(&scope);
@@ -2184,12 +2094,23 @@ void Compiler :: compileClassAttributes(SNode node, ClassScope& scope, SNode roo
             else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
          else if (attrRef != 0) {
-            copyTemplate(rootNode, scope, attrRef, current);
+            if (scope.moduleScope->attributeHints.get(attrRef) != -1) {
+               current.set(lxType, attrRef);
+            }
+            else if(!copyTemplate(rootNode, scope, attrRef, current))
+               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, current);
       }
       else if (current == lxTemplate) {
-         compileClassAttributes(current, scope, rootNode);
+         TemplateScope templateScope(&scope);
+         templateScope.loadParameters(current);
+
+         SNode sourceNode = current.findChild(lxSourcePath);
+         if (sourceNode != lxNone)
+            templateScope.sourceRef = _writer.writeString(sourceNode.identifier());
+
+         compileClassAttributes(current, /*scope*/templateScope, rootNode);
       }
 
       current = current.nextNode();
@@ -5538,6 +5459,9 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
+      else if (current == lxType) {
+         scope.compileClassAttribute(current);
+      }
 
       current = current.nextNode();
    }
@@ -6129,9 +6053,11 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 //   }
 //}
 
-void Compiler :: copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode)
+bool Compiler :: copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode)
 {
    _Memory* body = scope.moduleScope->loadAttributeInfo(attrRef);
+   if (body == NULL)
+      return false;
 
    SNode templNode = node.appendNode(lxTemplate);
 
@@ -6155,6 +6081,8 @@ void Compiler :: copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode att
 
    // load template body
    SyntaxTree::loadNode(templNode, body);
+
+   return true;
 }
 
 //void Compiler :: importTemplateInfo(SyntaxTree::Node node, ClassScope& scope, ref_t ownerRef, _Module* templateModule, TemplateInfo& source)
@@ -7505,6 +7433,9 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
       bool boxing = !test(mode, HINT_NOBOXING);
       // HOTFIX : do not box constant classes
       if (exprNode == lxConstantInt && target.argument == scope.intReference) {
+         boxing = false;
+      }
+      else if (exprNode == lxConstantSymbol && target.argument == scope.intReference) {
          boxing = false;
       }
 

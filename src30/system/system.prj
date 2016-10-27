@@ -33,7 +33,12 @@ text\win32_common.l
 text\encoder.l
 text\win32_encoder.l
 text\textbuffer.l
+io\common.l
+io\ioexceptions.l
+io\streamreader.l
+io\streamwriter.l
 io\win32_console.l
+io\win32_files.l
 dynamic\reflection.l
 dynamic\groups.l
 dynamic\interpreters.l

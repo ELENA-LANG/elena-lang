@@ -15,3 +15,6 @@ author=Alex Rakov
 control.l
 convertors.l
 console.l
+text\words.l
+text\strings.l
+routines\enumerating.l

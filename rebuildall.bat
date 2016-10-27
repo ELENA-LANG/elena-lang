@@ -20,7 +20,7 @@ bin\elc -cexamples\console\helloworld\u_helloworld.prj
 bin\elc -cexamples\console\helloworld\helloworld.prj
 bin\elc -cexamples\console\sum\intsum.prj
 bin\elc -cexamples\console\sum\realsum.prj
-rem bin\elc -cexamples\console\words\words.prj
+bin\elc -cexamples\console\words\words.prj
 rem bin\elc -cexamples\console\pi\pi.prj
 rem bin\elc -cexamples\console\bsort\bsort.prj
 rem bin\elc -cexamples\files\textfile\textfile.prj

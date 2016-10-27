@@ -1,6 +1,6 @@
 /// Attributes
 #template(-8194) static {}
-//#ftemplate(-34)  preloaded {}
+//#template(-34)  preloaded {}
 #template(-8202) generic {}
 #template(-8192) stacksafe {}
 #template(-8205) action {}
