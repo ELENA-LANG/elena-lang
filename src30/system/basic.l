@@ -2373,60 +2373,60 @@
         = anObject cast:%convert &to:$self real.
 }.
 
-//// --- realOpController ---
-//
-//#symbol realOpController =
-//{
-//    #method(stacksafe) exp &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) abs &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) ln &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) round &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) truncate &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) sin &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) cos &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) arctan &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//                
-//    #method(stacksafe) sqrt &real:aReal &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(stacksafe) pi &vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    #method(real,embeddable,w3,stacksafe) pi
-//    [
-//        #var(real)aRetVal.
-//        $self pi &vreal:aRetVal.
-//        
-//        ^ aRetVal.
-//    ]        
-//    
-//    #method(real,w3,stacksafe) e
-//    [
-//        #var(real)aRetVal.
-//        $self exp &real:1.0r &vreal:aRetVal.
-//        
-//        ^ aRetVal.
-//    ]        
-//}.
-//
-//#symbol(real)pi_value = realOpController pi.
-//
-//#symbol(real)e_value = realOpController e.
+// --- realOpController ---
+
+#symbol realOpController =
+{
+    #method(stacksafe) exp &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) abs &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) ln &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) round &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) truncate &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) sin &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) cos &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) arctan &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+                
+    #method(stacksafe) sqrt &real:aReal &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(stacksafe) pi &vreal:aRetVal
+        => system'core_routines'__real.
+        
+    #method(real,embeddable,w3,stacksafe) pi
+    [
+        #var(real)aRetVal.
+        $self pi &vreal:aRetVal.
+        
+        ^ aRetVal.
+    ]        
+    
+    #method(real,w3,stacksafe) e
+    [
+        #var(real)aRetVal.
+        $self exp &real:1.0r &vreal:aRetVal.
+        
+        ^ aRetVal.
+    ]        
+}.
+
+#symbol(real)pi_value = realOpController pi.
+
+#symbol(real)e_value = realOpController e.
 
 // --- obsolete variables ---
 

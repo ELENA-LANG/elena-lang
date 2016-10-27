@@ -57,602 +57,602 @@
 //        => system'core_routines'__array.
 }
 
-//// --- Operations ---
-//
-//// --- byteOp ---
-//
-//#class(extension:byte) byteOp
-//{
-//    #method(byte,stacksafe) absolute
-//    [
-//        #var(byte)n := self.
-//        (n < 0)
-//            ? [ n := n * -1. ].
-//                
-//        ^ ByteNumber new &byte:n.
-//    ]
-//    
-//    #method(byte,w2) mod : anOperand
-//    [
-//        #var retVal := self / anOperand * anOperand.
-//        
-//        ^ retVal cast:%convertor &to:byteConvertor.
-//    ]    
-//    
-//    #method(byte,stacksafe)power &byte:y
-//    [
-//        #var(byte)x := self.
-//        
-//        #var(byte)i := 0.
-//        #loop (i < y)?
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ ByteNumber new &byte:x.
-//    ]
-//    
-//    #method(byte,stacksafe) sqr
-//    [
-//        #var(byte)aRetVal.
-//        
-//        aRetVal := self * self.
-//        
-//        ^ ByteNumber new &byte:aRetVal.
-//    ]
-//
-//    #method power : aPower
-//        = self::byteOp power &byte:(aPower byte).
-//                
-//    #method(bool) is &odd
-//        = self::byteOp mod:2 != 0.
-//        
-//    #method(bool) is &even
-//        = self::byteOp mod:2 == 0.
-//        
-//    #method(bool,stacksafe) is &zero
-//        = self equal &int:0.
-//        
-//    #method(bool,stacksafe) is &positive
-//        = self > 0.
-//        
-//    #method(bool,stacksafe) is &negative
-//        = self < 0.
-//        
-//    #method(bool,stacksafe) is &nonnegative
-//        = self <= 0.
-//}
-//
-//// --- shortOp ---
-//
-//#class(extension:short) shortOp
-//{
-//    #method(short,stacksafe) absolute
-//    [
-//        #var(short)n := self.
-//        (n < 0)
-//            ? [ n := n * -1. ].
-//                
-//        ^ ShortNumber new &short:n.
-//    ]
-//    
-//    #method(short,w2) mod : anOperand
-//    [
-//        #var retVal := self / anOperand * anOperand.
-//        
-//        ^ retVal cast:%convertor &to:shortConvertor.
-//    ]
-//    
-//    #method(short,stacksafe)power &short:y
-//    [
-//        #var(short)x := self.
-//        
-//        #var(short)i := 0.
-//        #loop (i < y)?
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ ShortNumber new &short:x.
-//    ]
-//    
-//    #method(short,stacksafe) sqr
-//    [
-//        #var(short)n := self.
-//        #var(short)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ ShortNumber new &short:aRetVal.
-//    ]
-//
-//    #method power : aPower
-//        = self::shortOp power &short:(aPower short).
-//                
-//    #method(bool) is &odd
-//        = self::shortOp mod:2 != 0.
-//        
-//    #method(bool) is &even
-//        = self::shortOp mod:2 == 0.
-//        
-//    #method(bool,stacksafe) is &zero
-//        = self equal &int:0.
-//        
-//    #method(bool,stacksafe) is &positive
-//        = self > 0.
-//        
-//    #method(bool,stacksafe) is &negative
-//        = self < 0.
-//        
-//    #method(bool,stacksafe) is &nonnegative
-//        = self <= 0.
-//    
-//    #method(byte,stacksafe) high
-//    [
-//        #var(short)aWord := self.
-//        aWord := aWord && 0FF00h.
-//        aWord := aWord shift &int:8.
-//        
-//        ^ byteConvertor convert &short:aWord.
-//    ]
-//        
-//    #method(byte,stacksafe) low
-//    [
-//        #var(short)aWord := self.
-//        aWord := aWord && 0FFh.
-//        
-//        ^ byteConvertor convert &short:aWord.
-//    ]
-//}
-//
-//// --- intOp ---
-//
-//#class(extension:int) intOp
-//{
-//    #method(int,stacksafe) absolute
-//    [
-//        #var(int)n := self.
-//        
-//        (n < 0)
-//            ? [ n := n * -1. ].
-//        
-//        ^ IntNumber new &int:n.
-//    ]
-//    
-//    #method(int) mod : anOperand
-//    [
-//        #var(int)x := self.
-//        #var(int)y := anOperand int.
-//        
-//        #var(int)z := x / y.
-//        z := z * y.
-//        
-//        ^ IntNumber new &int:(x - z).
-//    ]
-//    
-//    #method(int,stacksafe)power &int:y
-//    [
-//        #var(int)x := self.
-//        #var(int)r := 1.
-//        
-//        #var(int)i := 0.
-//        #loop (i < y)?
-//        [
-//            r := r * x.
-//            
-//            i += 1.
-//        ].
-//        
-//        ^ IntNumber new &int:r.
-//    ]
-//    
-//    #method(int,stacksafe) sqr
-//    [
-//        #var(int)n := self.        
-//        #var(int)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//
-//    #method(int,stacksafe) sqrt
-//    [
-//        #var(int)num := self.
-//        
-//        (num == 0)
-//            ? [ ^ 0. ].
-//            
-//        #var(int)n := num / 2 + 1.
-//        #var(int)n1 := (n + (num / n)) / 2.
-//        #loop (n1 < n)?
-//        [
-//            n := n1.
-//            n1 := (n + (num / n)) / 2.
-//        ].
-//        
-//        ^ IntNumber new &int:n.
-//    ]
-//
-//    #method power : aPower
-//        = self::intOp power &int:(aPower int).
-//                
-//    #method(bool,stacksafe) is &odd
-//        = self and &int:1 != 0.
-//        
-//    #method(bool,stacksafe) is &even
-//        = self and &int:1 == 0.
-//        
-//    #method(bool,stacksafe) is &zero
-//        = self equal &int:0.
-//        
-//    #method(bool,stacksafe) is &positive
-//        = self > 0.
-//        
-//    #method(bool,stacksafe) is &negative
-//        = self < 0.
-//        
-//    #method(bool,stacksafe) is &nonnegative
-//        = self <= 0.
-//
-//    #method high
-//    [
-//        #var(int)aWord := self.
-//        aWord := aWord && 0FFFF0000h.
-//        aWord := aWord >> 16.
-//        
-//        ^ shortConvertor convert &int:aWord.
-//    ]
-//
-//    #method low
-//    [
-//        #var(int)aWord := self.
-//        aWord := aWord && 0FFFFh.
-//        
-//        ^ shortConvertor convert &int:aWord.
-//    ]
-//}
-//
-//// --- longOp ---
-//
-//#class(extension:long) longOp
-//{
-//    #method(long,stacksafe) absolute
-//    [
-//        #var(long)n := self.
-//
-//        (n < 0l)
-//            ? [ n := n * -1l. ].
-//                
-//        ^ LongNumber new &long:n.
-//    ]
-//    
-//    #method(long) mod : anOperand
-//    [
-//        #var(long)x := self.
-//        #var(long)y := anOperand long.
-//        
-//        #var(long)z := x / y.
-//        z := z * y.
-//        
-//        ^ LongNumber new &long:(x - z).
-//    ]
-//    
-//    #method(long,stacksafe)power &long:y
-//    [
-//        #var(long)x := self.
-//        
-//        #var(long)i := 0l.
-//        #loop (i < y)?
-//        [
-//            x := x * x.
-//        ].
-//        
-//        ^ LongNumber new &long:x.
-//    ]
-//    
-//    #method(long,stacksafe) sqr
-//    [
-//        #var(long)n := self.        
-//        #var(long)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ LongNumber new &long:aRetVal.
-//    ]
-//
-//    #method power : aPower
-//        = self::longOp power &long:(aPower long).
-//                
-//    #method(bool) is &odd
-//        = self::longOp mod:2l != 0.
-//        
-//    #method(bool) is &even
-//        = self::longOp mod:2l == 0.
-//        
-//    #method(bool,stacksafe) is &zero
-//        = self equal &long:0l.
-//        
-//    #method(bool,stacksafe) is &positive
-//        = self > 0l.
-//        
-//    #method(bool,stacksafe) is &negative
-//        = self < 0l.
-//        
-//    #method(bool,stacksafe) is &nonnegative
-//        = self <= 0l.
-//
-//    #method(int,stacksafe) high
-//    [
-//        #var(long)aWord := self.
-//        aWord := aWord && -4294967296l.
-//        aWord := aWord >> 32.
-//        
-//        ^ intConvertor convert &long:aWord.
-//    ]
-//
-//    #method(int,stacksafe) low
-//    [
-//        #var(long)aWord := self.
-//        aWord := aWord && 4294967295l.
-//        
-//        ^ intConvertor convert &long:aWord.
-//    ]
-//}
-//
-//// --- realOp ---
-//
-//#class(extension:real) realOp
-//{        
-//    #method(real,stacksafe) absolute
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController abs &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//        
-//    #method(real,stacksafe) exp
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController exp &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//    
-//    #method(real,stacksafe) ln
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController ln &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//    
-//    #method(real,stacksafe) sqrt
-//    [
-//        #var(real)n := self.      
-//        #var(real)aRetVal.
-//        
-//        realOpController sqrt &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method (real,stacksafe)power &real:y
-//    [
-//        #var(real)x := self.
-//        
-//        (x == 0.0r)
-//            ? [ ^ 0.0r. ].
-//                        
-//        (y == 0.0r)
-//            ? [ ^ 1.0r. ].
-//            
-//        realOpController ln &real:x &vreal:x.
-//        
-//        x := x multiply &real:y.
-//        
-//        realOpController exp &real:x &vreal:x.
-//            
-//        ^ RealNumber new &real:x.            
-//            
-//    ]
-//
-//    #method(real,stacksafe)power &int:y
-//    [
-//        #var(real)x := self.
-//
-//        (x == 0.0r)
-//            ? [ ^ 0.0r. ].
-//                        
-//        (y == 0)
-//            ? [ ^ 1.0r. ].
-//                        
-//        (x < 0.0r)
-//            ? [
-//                x := x * -1.0r.
-//                
-//                realOpController ln &real:x &vreal:x.
-//                
-//                x := x multiply &int:y.
-//                
-//                realOpController exp &real:x &vreal:x.
-//                
-//                (y::intOp is &odd)
-//                    ? [ x := x * -1.0r. ].
-//            ]
-//            ! [
-//                realOpController ln &real:x &vreal:x.
-//                
-//                x := x multiply &int:y.
-//                
-//                realOpController exp &real:x &vreal:x.
-//            ].
-//        
-//        ^ RealNumber new &real:x.
-//    ]
-//
-//    #method power : aPower
-//        = self::realOp power &int:(aPower int).
-//
-//    #method(real,stacksafe) sqr
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(real,stacksafe) rounded
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController round &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(real,stacksafe) integer
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController truncate &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(real,stacksafe) frac
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController abs &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:(n - aRetVal).
-//    ]
-//
-//    #method(real,stacksafe)sin
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController sin &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(real,stacksafe)cos
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController cos &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//
-//    #method(real,stacksafe)tan
-//    [
-//        #var(real)n := self.        
-//        #var(real)aSinVal.
-//        #var(real)aCosVal.
-//        
-//        realOpController sin &real:n &vreal:aSinVal.
-//        realOpController cos &real:n &vreal:aCosVal.
-//        
-//        ^ RealNumber new &real:(aSinVal / aCosVal).
-//    ]
-//
-//    #method(real,stacksafe)arctan
-//    [
-//        #var(real)n := self.        
-//        #var(real)aRetVal.
-//        
-//        realOpController arctan &real:n &vreal:aRetVal.
-//        
-//        ^ RealNumber new &real:aRetVal.
-//    ]
-//            
-//    #method(real,stacksafe)arcsin
-//    [
-//        #var(real)n := self.        
-//        #var(real)arg.
-//        #var(real)retVal.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt &real:retVal &vreal:arg.
-//        
-//        arg := n / arg.        
-//        realOpController arctan &real:arg &vreal:retVal.
-//        
-//        ^ RealNumber new &real:retVal.
-//    ]
-//            
-//    #method(real,stacksafe)arccos
-//    [
-//        #var(real)n := self.        
-//        #var(real)arg.
-//        #var(real)retVal.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt &real:retVal &vreal:arg.
-//        
-//        arg := arg / n.        
-//        realOpController arctan &real:arg &vreal:retVal.
-//        
-//        ^ RealNumber new &real:retVal.
-//    ]
-//            
-//    #method(real,stacksafe) radian
-//    [
-//        #var(real)aValue := self.
-//        
-//        aValue := aValue * pi_value.
-//        
-//        ^ RealNumber new &real:(aValue / 180.0r).
-//    ]
-//            
-//    #method(real,stacksafe) degree
-//    [
-//        #var(real)aValue := self.
-//        
-//        aValue := aValue * 180.0r.
-//        
-//        ^ RealNumber new &real:(aValue / pi_value).
-//    ]
-//            
-//    #method(real,stacksafe) reciprocal
-//    [
-//        #var(real)aValue := self.
-//        
-//        ^ RealNumber new &real:(1.0r / aValue).
-//    ]    
-//            
-//    #method(bool,stacksafe) is &zero
-//        = self == 0.0r.
-//        
-//    #method(bool,stacksafe) is &positive
-//        = self > 0.0r.
-//        
-//    #method(bool,stacksafe) is &negative
-//        = self < 0.0r.
-//        
-//    #method(bool,stacksafe) is &nonnegative
-//        = self <= 0.0r.
-//}
-//
+// --- Operations ---
+
+// --- byteOp ---
+
+#class(extension:byte) byteOp
+{
+    #method(byte,stacksafe) absolute
+    [
+        #var(byte)n := self.
+        (n < 0)
+            ? [ n := n * -1. ].
+                
+        ^ ByteNumber new &byte:n.
+    ]
+    
+    #method(byte,w2) mod : anOperand
+    [
+        #var retVal := self / anOperand * anOperand.
+        
+        ^ retVal cast:%convertor &to:byteConvertor.
+    ]    
+    
+    #method(byte,stacksafe)power &byte:y
+    [
+        #var(byte)x := self.
+        
+        #var(byte)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ByteNumber new &byte:x.
+    ]
+    
+    #method(byte,stacksafe) sqr
+    [
+        #var(byte)aRetVal.
+        
+        aRetVal := self * self.
+        
+        ^ ByteNumber new &byte:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::byteOp power &byte:(aPower byte).
+                
+    #method(bool) is &odd
+        = self::byteOp mod:2 != 0.
+        
+    #method(bool) is &even
+        = self::byteOp mod:2 == 0.
+        
+    #method(bool,stacksafe) is &zero
+        = self equal &int:0.
+        
+    #method(bool,stacksafe) is &positive
+        = self > 0.
+        
+    #method(bool,stacksafe) is &negative
+        = self < 0.
+        
+    #method(bool,stacksafe) is &nonnegative
+        = self <= 0.
+}
+
+// --- shortOp ---
+
+#class(extension:short) shortOp
+{
+    #method(short,stacksafe) absolute
+    [
+        #var(short)n := self.
+        (n < 0)
+            ? [ n := n * -1. ].
+                
+        ^ ShortNumber new &short:n.
+    ]
+    
+    #method(short,w2) mod : anOperand
+    [
+        #var retVal := self / anOperand * anOperand.
+        
+        ^ retVal cast:%convertor &to:shortConvertor.
+    ]
+    
+    #method(short,stacksafe)power &short:y
+    [
+        #var(short)x := self.
+        
+        #var(short)i := 0.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ ShortNumber new &short:x.
+    ]
+    
+    #method(short,stacksafe) sqr
+    [
+        #var(short)n := self.
+        #var(short)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ ShortNumber new &short:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::shortOp power &short:(aPower short).
+                
+    #method(bool) is &odd
+        = self::shortOp mod:2 != 0.
+        
+    #method(bool) is &even
+        = self::shortOp mod:2 == 0.
+        
+    #method(bool,stacksafe) is &zero
+        = self equal &int:0.
+        
+    #method(bool,stacksafe) is &positive
+        = self > 0.
+        
+    #method(bool,stacksafe) is &negative
+        = self < 0.
+        
+    #method(bool,stacksafe) is &nonnegative
+        = self <= 0.
+    
+    #method(byte,stacksafe) high
+    [
+        #var(short)aWord := self.
+        aWord := aWord && 0FF00h.
+        aWord := aWord shift &int:8.
+        
+        ^ byteConvertor convert &short:aWord.
+    ]
+        
+    #method(byte,stacksafe) low
+    [
+        #var(short)aWord := self.
+        aWord := aWord && 0FFh.
+        
+        ^ byteConvertor convert &short:aWord.
+    ]
+}
+
+// --- intOp ---
+
+#class(extension:int) intOp
+{
+    #method(int,stacksafe) absolute
+    [
+        #var(int)n := self.
+        
+        (n < 0)
+            ? [ n := n * -1. ].
+        
+        ^ IntNumber new &int:n.
+    ]
+    
+    #method(int) mod : anOperand
+    [
+        #var(int)x := self.
+        #var(int)y := anOperand int.
+        
+        #var(int)z := x / y.
+        z := z * y.
+        
+        ^ IntNumber new &int:(x - z).
+    ]
+    
+    #method(int,stacksafe)power &int:y
+    [
+        #var(int)x := self.
+        #var(int)r := 1.
+        
+        #var(int)i := 0.
+        #loop (i < y)?
+        [
+            r := r * x.
+            
+            i += 1.
+        ].
+        
+        ^ IntNumber new &int:r.
+    ]
+    
+    #method(int,stacksafe) sqr
+    [
+        #var(int)n := self.        
+        #var(int)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+
+    #method(int,stacksafe) sqrt
+    [
+        #var(int)num := self.
+        
+        (num == 0)
+            ? [ ^ 0. ].
+            
+        #var(int)n := num / 2 + 1.
+        #var(int)n1 := (n + (num / n)) / 2.
+        #loop (n1 < n)?
+        [
+            n := n1.
+            n1 := (n + (num / n)) / 2.
+        ].
+        
+        ^ IntNumber new &int:n.
+    ]
+
+    #method power : aPower
+        = self::intOp power &int:(aPower int).
+                
+    #method(bool,stacksafe) is &odd
+        = self and &int:1 != 0.
+        
+    #method(bool,stacksafe) is &even
+        = self and &int:1 == 0.
+        
+    #method(bool,stacksafe) is &zero
+        = self equal &int:0.
+        
+    #method(bool,stacksafe) is &positive
+        = self > 0.
+        
+    #method(bool,stacksafe) is &negative
+        = self < 0.
+        
+    #method(bool,stacksafe) is &nonnegative
+        = self <= 0.
+
+    #method high
+    [
+        #var(int)aWord := self.
+        aWord := aWord && 0FFFF0000h.
+        aWord := aWord >> 16.
+        
+        ^ shortConvertor convert &int:aWord.
+    ]
+
+    #method low
+    [
+        #var(int)aWord := self.
+        aWord := aWord && 0FFFFh.
+        
+        ^ shortConvertor convert &int:aWord.
+    ]
+}
+
+// --- longOp ---
+
+#class(extension:long) longOp
+{
+    #method(long,stacksafe) absolute
+    [
+        #var(long)n := self.
+
+        (n < 0l)
+            ? [ n := n * -1l. ].
+                
+        ^ LongNumber new &long:n.
+    ]
+    
+    #method(long) mod : anOperand
+    [
+        #var(long)x := self.
+        #var(long)y := anOperand long.
+        
+        #var(long)z := x / y.
+        z := z * y.
+        
+        ^ LongNumber new &long:(x - z).
+    ]
+    
+    #method(long,stacksafe)power &long:y
+    [
+        #var(long)x := self.
+        
+        #var(long)i := 0l.
+        #loop (i < y)?
+        [
+            x := x * x.
+        ].
+        
+        ^ LongNumber new &long:x.
+    ]
+    
+    #method(long,stacksafe) sqr
+    [
+        #var(long)n := self.        
+        #var(long)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ LongNumber new &long:aRetVal.
+    ]
+
+    #method power : aPower
+        = self::longOp power &long:(aPower long).
+                
+    #method(bool) is &odd
+        = self::longOp mod:2l != 0.
+        
+    #method(bool) is &even
+        = self::longOp mod:2l == 0.
+        
+    #method(bool,stacksafe) is &zero
+        = self equal &long:0l.
+        
+    #method(bool,stacksafe) is &positive
+        = self > 0l.
+        
+    #method(bool,stacksafe) is &negative
+        = self < 0l.
+        
+    #method(bool,stacksafe) is &nonnegative
+        = self <= 0l.
+
+    #method(int,stacksafe) high
+    [
+        #var(long)aWord := self.
+        aWord := aWord && -4294967296l.
+        aWord := aWord >> 32.
+        
+        ^ intConvertor convert &long:aWord.
+    ]
+
+    #method(int,stacksafe) low
+    [
+        #var(long)aWord := self.
+        aWord := aWord && 4294967295l.
+        
+        ^ intConvertor convert &long:aWord.
+    ]
+}
+
+// --- realOp ---
+
+#class(extension:real) realOp
+{        
+    #method(real,stacksafe) absolute
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController abs &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+        
+    #method(real,stacksafe) exp
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController exp &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+    
+    #method(real,stacksafe) ln
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController ln &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+    
+    #method(real,stacksafe) sqrt
+    [
+        #var(real)n := self.      
+        #var(real)aRetVal.
+        
+        realOpController sqrt &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method (real,stacksafe)power &real:y
+    [
+        #var(real)x := self.
+        
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0.0r)
+            ? [ ^ 1.0r. ].
+            
+        realOpController ln &real:x &vreal:x.
+        
+        x := x multiply &real:y.
+        
+        realOpController exp &real:x &vreal:x.
+            
+        ^ RealNumber new &real:x.            
+            
+    ]
+
+    #method(real,stacksafe)power &int:y
+    [
+        #var(real)x := self.
+
+        (x == 0.0r)
+            ? [ ^ 0.0r. ].
+                        
+        (y == 0)
+            ? [ ^ 1.0r. ].
+                        
+        (x < 0.0r)
+            ? [
+                x := x * -1.0r.
+                
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+                
+                (y::intOp is &odd)
+                    ? [ x := x * -1.0r. ].
+            ]
+            ! [
+                realOpController ln &real:x &vreal:x.
+                
+                x := x multiply &int:y.
+                
+                realOpController exp &real:x &vreal:x.
+            ].
+        
+        ^ RealNumber new &real:x.
+    ]
+
+    #method power : aPower
+        = self::realOp power &int:(aPower int).
+
+    #method(real,stacksafe) sqr
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        aRetVal := n * n.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real,stacksafe) rounded
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController round &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real,stacksafe) integer
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController truncate &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real,stacksafe) frac
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController abs &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:(n - aRetVal).
+    ]
+
+    #method(real,stacksafe)sin
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController sin &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real,stacksafe)cos
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController cos &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+
+    #method(real,stacksafe)tan
+    [
+        #var(real)n := self.        
+        #var(real)aSinVal.
+        #var(real)aCosVal.
+        
+        realOpController sin &real:n &vreal:aSinVal.
+        realOpController cos &real:n &vreal:aCosVal.
+        
+        ^ RealNumber new &real:(aSinVal / aCosVal).
+    ]
+
+    #method(real,stacksafe)arctan
+    [
+        #var(real)n := self.        
+        #var(real)aRetVal.
+        
+        realOpController arctan &real:n &vreal:aRetVal.
+        
+        ^ RealNumber new &real:aRetVal.
+    ]
+            
+    #method(real,stacksafe)arcsin
+    [
+        #var(real)n := self.        
+        #var(real)arg.
+        #var(real)retVal.
+        
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt &real:retVal &vreal:arg.
+        
+        arg := n / arg.        
+        realOpController arctan &real:arg &vreal:retVal.
+        
+        ^ RealNumber new &real:retVal.
+    ]
+            
+    #method(real,stacksafe)arccos
+    [
+        #var(real)n := self.        
+        #var(real)arg.
+        #var(real)retVal.
+        
+        retVal := n * n.        
+        retVal := 1.0r - retVal.        
+        realOpController sqrt &real:retVal &vreal:arg.
+        
+        arg := arg / n.        
+        realOpController arctan &real:arg &vreal:retVal.
+        
+        ^ RealNumber new &real:retVal.
+    ]
+            
+    #method(real,stacksafe) radian
+    [
+        #var(real)aValue := self.
+        
+        aValue := aValue * pi_value.
+        
+        ^ RealNumber new &real:(aValue / 180.0r).
+    ]
+            
+    #method(real,stacksafe) degree
+    [
+        #var(real)aValue := self.
+        
+        aValue := aValue * 180.0r.
+        
+        ^ RealNumber new &real:(aValue / pi_value).
+    ]
+            
+    #method(real,stacksafe) reciprocal
+    [
+        #var(real)aValue := self.
+        
+        ^ RealNumber new &real:(1.0r / aValue).
+    ]    
+            
+    #method(bool,stacksafe) is &zero
+        = self == 0.0r.
+        
+    #method(bool,stacksafe) is &positive
+        = self > 0.0r.
+        
+    #method(bool,stacksafe) is &negative
+        = self < 0.0r.
+        
+    #method(bool,stacksafe) is &nonnegative
+        = self <= 0.0r.
+}
+
 //// --- arrayOp ---
 //
 //#class(extension:intarray)intArrayOp

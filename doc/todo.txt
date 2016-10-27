@@ -3,8 +3,6 @@ In development:
 ------                              
 
               xrev
-                 * operation with char
-
                  * fix CharValue#class.get&min
 
                  * uncomment StructTest

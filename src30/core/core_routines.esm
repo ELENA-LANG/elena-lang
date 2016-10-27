@@ -4237,3 +4237,102 @@ procedure __dptr.set[2]
   quitn 2
 
 end
+
+procedure __real.eval&exp&real$&vreal$[3]
+
+  aloadsi 2
+  bloadsi 3
+  rexp
+
+  quitn 3
+
+end
+
+procedure __real.eval&ln&real$&vreal$[3]
+
+  aloadsi 2  
+  bloadsi 3
+  rln
+
+  quitn 3
+
+end
+
+procedure __real.eval&round&real$&vreal$[3]
+
+  aloadsi 2  
+  bloadsi 3
+  rround
+  
+  quitn 3
+
+end
+
+procedure __real.eval&truncate&real$&vreal$[3]
+
+  aloadsi 2  
+  bloadsi 3
+  rint
+  
+  quitn 3
+
+end
+
+procedure __real.eval&sin&real$&vreal$[3]
+
+  aloadsi 2
+  bloadsi 3
+  rsin
+  
+  quitn 3
+
+end
+
+procedure __real.eval&cos&real$&vreal$[3]
+
+  aloadsi 2
+  bloadsi 3
+  rcos
+  
+  quitn 3
+
+end
+
+procedure __real.eval&arctan&real$&vreal$[3]
+
+  aloadsi 2
+  bloadsi 3
+  rarctan
+  
+  quitn 3
+  
+end
+
+procedure __real.eval&pi&vreal$[2]
+
+  bloadsi 2
+  callextr api : rpi
+  
+  quitn 2
+  
+end
+
+procedure __real.eval&sqrt&real$&vreal$[3]
+
+  aloadsi 2  
+  bloadsi 3
+  callextr api : rsqrt
+
+  quitn 3
+
+end
+
+procedure __real.eval&abs&real$&vreal$[3]
+
+  aloadsi 2
+  bloadsi 3
+  rabs
+
+  quitn 3
+
+end

@@ -194,7 +194,7 @@ _Module* LibraryManager :: resolveNative(ident_t referenceName, LoadResult& resu
 
 _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
-   if (referenceName.compare(NAMESPACE_KEY)) {
+   if (NamespaceName::compare(referenceName, NAMESPACE_KEY)) {
       ReferenceName name(referenceName);
       ReferenceNs resolvedName(_namespace, name);
 

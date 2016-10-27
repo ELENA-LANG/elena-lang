@@ -26,6 +26,8 @@ win32_pointers.l
 win32_app.l
 collections\list.l
 routines\enumerables.l
+routines\patterns.l
+math\math.l
 calendar\types.l
 calendar\win32_datetime.l
 calendar\dates.l

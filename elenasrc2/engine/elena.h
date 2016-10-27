@@ -164,7 +164,7 @@ public:
    virtual ident_t getExtMessageClass() = 0;
    virtual ident_t getSignatureClass() = 0;
    virtual ident_t getVerbClass() = 0;
-//   virtual ident_t getNamespace() = 0;
+   virtual ident_t getNamespace() = 0;
 
    virtual ident_t retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
@@ -303,21 +303,21 @@ public:
       _string[pos] = 0;
    }
    
-   //   static bool compare(ident_t reference, ident_t ns)
-   //   {
-   //      size_t pos = StringHelper::findLast(reference, '\'', 0);
-   //      if (pos == 0 && getlength(ns) == 0)
-   //         return true;
-   //      else if (getlength(ns) == pos) {
-   //         return StringHelper::compare(reference, ns, pos);
-   //      }
-   //      else return false;
-   //   }
-   //
-   //   bool compare(ident_t reference)
-   //   {
-   //      return NamespaceName::compare(reference, _string);
-   //   }
+   static bool compare(ident_t reference, ident_t ns)
+   {
+      size_t pos = reference.findLast('\'', 0);
+      if (pos == 0 && getlength(ns) == 0)
+         return true;
+      else if (getlength(ns) == pos) {
+         return reference.compare(ns, pos);
+      }
+      else return false;
+   }
+   
+   bool compare(ident_t reference)
+   {
+      return NamespaceName::compare(reference, _string);
+   }
 };
 
 // --- ReferenceNs ---
