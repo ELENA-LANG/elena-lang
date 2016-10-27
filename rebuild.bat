@@ -15,7 +15,3 @@ bin\elc -csrc30\extensions\extensions.prj
 rem bin\elc -csrc30\net\net.prj
 rem bin\elc -csrc30\forms\forms.prj
 rem bin\elc -csrc30\sqlite\sqlite.prj
-
-
-rem bin\asm2binx src40\asm\core_routines.esm lib40\system
-rem bin\elc -csrc40\system\system40.prj

@@ -134,6 +134,21 @@ SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int
    return read(reader);
 }
 
+SyntaxTree::Node SyntaxTree :: insertStrNode(size_t position, LexicalType type, int strArgument)
+{
+   int length = getlength((const char*)(_strings.get(strArgument))) + 1;
+
+   // HOTFIX : resever the place for the string before writing it
+   _strings.reserve(_strings.Length() + length);
+
+   SyntaxWriter writer(*this);
+
+   writer.insertChild(writer.setBookmark(position), type, (const char*)(_strings.get(strArgument)));
+
+   MemoryReader reader(&_body, position);
+   return read(reader);
+}
+
 SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ident_t argument)
 {
    SyntaxWriter writer(*this);
@@ -185,7 +200,12 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    SNode current = source.firstChild();
    while (current != lxNone) {
       if (current.strArgument >= 0) {
-         copyNode(current, destination.appendNode(current.type, current.identifier()));
+         if (source.tree == destination.tree) {
+            // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+            // so the special routine should be used
+            copyNode(current, destination.appendStrNode(current.type, current.strArgument));
+         }
+         else copyNode(current, destination.appendNode(current.type, current.identifier()));
       }
       else copyNode(current, destination.appendNode(current.type, current.argument));
 

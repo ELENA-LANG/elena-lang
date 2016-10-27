@@ -283,18 +283,18 @@
         <= new &literal:(aMessage literal).
 }
 
-//// --- AbortException ---
-//
-///// An abort exception 
-//#class(exceptionof:Abort) AbortException
-//{
-//    #constructor new &literal:message
-//    [
-//        theMessage := message.
-//        theCallStack := CallStack new.
-//    ]
-//    
-//    /// Creates the exception
-//    #constructor new
-//        <= new &literal:"The process terminated".
-//}
+// --- AbortException ---
+
+/// An abort exception 
+#class(exceptionof:Abort) AbortException
+{
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]
+    
+    /// Creates the exception
+    #constructor new
+        <= new &literal:"The process terminated".
+}

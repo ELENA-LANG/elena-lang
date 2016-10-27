@@ -2426,32 +2426,32 @@
 //#symbol(real)pi_value = realOpController pi.
 //
 //#symbol(real)e_value = realOpController e.
-//
-//// --- obsolete variables ---
-//
-//#symbol Integer =
-//{
-//    #method(vint,w3) new
-//        = 0.
-//        
-//    #method(vint,w3) new &int:n
-//        = n.
-//        
-//    #method(vint,w3) new:n
-//        = n int.
-//}.
-//
-//#symbol Real =
-//{
-//    #method(vreal,w3) new
-//        = 0.0r.
-//        
-//    #method(vreal,w3) new : n
-//        = n real.
-//        
-//    #method(vreal,w3) new &int:n
-//        = n real.
-//        
-//    #method(vreal,w3) new &real:n
-//        = n.
-//}.
+
+// --- obsolete variables ---
+
+#symbol Integer =
+{
+    #method(vint,w3) new
+        = 0.
+        
+    #method(vint,w3) new &int:n
+        = n.
+        
+    #method(vint,w3) new:n
+        = n int.
+}.
+
+#symbol Real =
+{
+    #method(vreal,w3) new
+        = 0.0r.
+        
+    #method(vreal,w3) new : n
+        = n real.
+        
+    #method(vreal,w3) new &int:n
+        = n real.
+        
+    #method(vreal,w3) new &real:n
+        = n.
+}.

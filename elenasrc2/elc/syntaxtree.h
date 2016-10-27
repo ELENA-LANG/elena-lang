@@ -342,7 +342,7 @@ public:
          insert(bookmark, lxEnding, 0);
          insert(bookmark, type, argument);
       }
-      //      void insertChild(LexicalType type, ref_t argument)
+//      void insertChild(LexicalType type, ref_t argument)
 //      {
 //         insert(lxEnding, 0);
 //         insert(type, argument);
@@ -400,6 +400,13 @@ public:
       size_t        position;
 
       Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int strArgument);
+
+      Node appendStrNode(LexicalType type, int strOffset)
+      {
+         int end_position = tree->seekNodeEnd(position);
+
+         return tree->insertStrNode(end_position, type, strOffset);
+      }
 
    public:
       LexicalType   type;
@@ -979,6 +986,7 @@ public:
    size_t seekNodeEnd(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
+   Node insertStrNode(size_t position, LexicalType type, int strArgument);
    Node insertNode(size_t position, LexicalType type, ident_t argument);
    Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 
