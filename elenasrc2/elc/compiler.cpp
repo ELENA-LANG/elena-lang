@@ -4424,6 +4424,12 @@ void Compiler :: compileExternalArguments(SNode node, CodeScope& scope/*, Extern
                   default:
                      if (test(classInfo.header.flags, elStructureRole)) {
                         current.set(lxExtArgument, 0);
+
+                        subject = 0;
+                     }
+                     else if (test(classInfo.header.flags, elWrapper)) {
+                        //HOTFIX : allow to pass a normal object
+                        current.set(lxExtArgument, 0);
                      }
                      else scope.raiseError(errInvalidOperation, current);
                      break;
@@ -7497,34 +7503,6 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
    if (node.argument != 0)
       mode |= HINT_NOBOXING;
 
-//   bool targetNode = true;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (targetNode) {
-//            targetNode = false;
-//
-//            // HOTFIX : remove boxing node for assignee
-//            if (current == lxBoxing || current == lxCondBoxing) {
-//               SNode subNode = SyntaxTree::findMatchedChild(current, lxObjectMask);
-//
-//               if (node.argument == 0 && subNode == lxFieldAddress) {
-//                  // HOT FIX : for template target define the assignment size
-//                  defineTargetSize(scope, current);
-//                  node.setArgument(current.argument);
-//                  if (node.argument != 0)
-//                     mode |= HINT_NOBOXING;
-//               }
-//               
-//               current = subNode.type;
-//               current.setArgument(subNode.argument);
-//            }
-//         }
-//         else optimizeSyntaxNode(scope, current, warningLevel, mode);
-//      }
-//      current = current.nextNode();
-//   }
-
    optimizeSyntaxExpression(scope, node, warningScope, mode);
 
    if (node.argument != 0) {
@@ -7560,47 +7538,6 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
 //      }
 //   }
 }
-
-//bool Compiler :: defineTargetSize(ModuleScope& scope, SNode& node)
-//{
-//   bool variable = false;
-//
-//   SNode target = SyntaxTree::findChild(node, lxTarget);
-//   ref_t type = SyntaxTree::findChild(node, lxType).argument;
-//
-//   // HOTFIX : try to resolve target if it is not defined 
-//   if (target == lxNone && type != 0) {
-//      node.appendNode(lxTarget, scope.subjectHints.get(type));
-//
-//      target = SyntaxTree::findChild(node, lxTarget);
-//   }
-//
-//   // HOT FIX : box / assign primitive structures
-//   if (isPrimitiveRef(target.argument)) {      
-//      if (type == 0) {
-//         if (target.argument == -1) {
-//            target.setArgument(scope.intReference);
-//            node.setArgument(4);
-//         }
-//         else raiseWarning(scope, node, errInvalidOperation, 0, 0);
-//      }
-//      else {
-//         int size = scope.defineSubjectSizeEx(type, variable, false);
-//
-//         if (target.argument == -3) {
-//            node.setArgument(-size);
-//         }
-//         else node.setArgument(size);
-//
-//         target.setArgument(scope.subjectHints.get(type));
-//      }
-//   }
-//   else if (node.argument == 0) {
-//      node.setArgument(scope.defineStructSizeEx(target.argument, variable));
-//   }
-//
-//   return variable;
-//}
 
 void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope)
 {
@@ -7651,224 +7588,6 @@ void Compiler :: optimizeBoxing(ModuleScope& scope, SNode node, WarningScope& wa
       }
    }
 }
-
-//int Compiler :: tryTypecasting(ModuleScope& scope, ref_t targetType, SNode& node, SNode& object, bool& typecasted, int mode)
-//{
-//   int typecastMode = 0;
-//
-//   ref_t sourceType = SyntaxTree::findChild(object, lxType).argument;
-//   ref_t sourceClassRef = SyntaxTree::findChild(object, lxTarget).argument;
-//
-//   if (sourceClassRef == 0 && sourceType != 0) {
-//      sourceClassRef = scope.subjectHints.get(sourceType);
-//   }
-//
-//   // NOTE : compiler magic!
-//   // if the target is wrapper (container) around the source
-//   ref_t targetClassRef = scope.subjectHints.get(targetType);
-//   if (targetClassRef != 0) {
-//      ClassInfo targetInfo;
-//      scope.loadClassInfo(targetInfo, targetClassRef, false);
-//
-//      // HOT FIX : trying to typecast primitive object array
-//      else if (sourceClassRef == -5) {
-//         if (test(targetInfo.header.flags, elDynamicRole) && targetInfo.fieldTypes.get(-1) == sourceType) {
-//            if (object == lxNewOp) {
-//               object.setArgument(targetClassRef);
-//               object.appendNode(lxSize, targetInfo.size);
-//            }
-//
-//            typecasted = false;
-//         }
-//      }
-//      else if (test(targetInfo.header.flags, elStructureRole | elEmbeddableWrapper)) {
-//         // if target is source wrapper (i.e. target is a source container)
-//         if (checkIfImplicitBoxable(scope, sourceClassRef, targetInfo)) {
-//            // if boxing is not required (stack safe) and can be passed directly
-//            if (test(mode, HINT_NOBOXING)) {
-//               node = lxExpression;
-//            }
-//            else {
-//               // if unboxing is not required
-//               if (test(targetInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
-//                  node = lxBoxing;
-//               }
-//               else node = lxUnboxing;
-//
-//               node.setArgument(targetInfo.size);
-//
-//               node.appendNode(lxTarget, targetClassRef);
-//            }
-//
-//            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-//            typecasted = false;
-//         }
-//      }
-//      else if (test(targetInfo.header.flags, elStructureRole) && sourceClassRef != 0) {
-//         ClassInfo sourceInfo;
-//         scope.loadClassInfo(sourceInfo, sourceClassRef, false);
-//         // if source is target wrapper (i.e. source is a target container)
-//         if (test(sourceInfo.header.flags, elStructureRole | elEmbeddableWrapper) && scope.subjectHints.exist(sourceInfo.fieldTypes.get(0), targetClassRef)) {
-//            // if boxing is not required (stack safe) and can be passed directly
-//            if (test(mode, HINT_NOBOXING)) {
-//               node = lxExpression;
-//            }
-//            else {
-//               // if unboxing is not required
-//               if (test(sourceInfo.header.flags, elReadOnlyRole) || test(mode, HINT_NOUNBOXING)) {
-//                  node = lxBoxing;
-//               }
-//               else node = lxUnboxing;
-//
-//               node.setArgument(sourceInfo.size);
-//
-//               node.appendNode(lxTarget, sourceClassRef);
-//            }
-//
-//            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-//            typecasted = false;
-//         }
-//         else if (isDWORD(targetInfo.header.flags) && isPTR(sourceInfo.header.flags)) {
-//            //HOTFIX : allow passing dirty_ptr as int
-//            typecastMode |= (HINT_NOBOXING | HINT_NOUNBOXING);
-//            typecasted = false;
-//            boxPrimitive(scope, object, targetClassRef, 0, typecastMode);
-//
-//            //HOTFIX :  set the correct size
-//            SNode parent = object.parentNode();
-//            parent.setArgument(sourceInfo.size);
-//         }
-//         else if (test(targetInfo.header.flags, elSealed)) {
-//            int implicitMessage = encodeMessage(sourceType, PRIVATE_MESSAGE_ID, 1);
-//            if (targetInfo.methods.exist(implicitMessage)) {
-//               if (test(mode, HINT_ASSIGNING | HINT_NOUNBOXING) && test(targetInfo.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe)) {
-//                  // if embeddable call is possible - assigning should be replaced with direct method call
-//                  SNode parent = node.parentNode();
-//                  parent = lxDirectCalling;
-//                  parent.setArgument(implicitMessage);
-//                  parent.appendNode(lxCallTarget, targetClassRef);
-//
-//                  if (sourceInfo.size < targetInfo.size) {
-//                     // if the source is smaller than the target it should be boxed
-//                     boxPrimitive(scope, object, sourceClassRef, 0, HINT_NOBOXING);
-//                     //HOTFIX :  set the correct size
-//                     SNode objectParent = object.parentNode();
-//                     objectParent.setArgument(sourceInfo.size);
-//                  }
-//               }
-//               else {
-//                  node = lxCalling;
-//                  node.setArgument(implicitMessage);
-//                  node.insertNode(lxCreatingStruct, targetInfo.size);
-//                  SyntaxTree::findChild(node, lxCreatingStruct).appendNode(lxTarget, targetClassRef);
-//
-//                  node.appendNode(lxCallTarget, targetClassRef);
-//               }
-//
-//               typecasted = false;
-//            }
-//         }
-//      }
-//      else if (test(targetInfo.header.flags, elWrapper)) {
-//         // if the target is generic wrapper (container)
-//         if (!test(mode, HINT_EXTERNALOP)) {
-//            node.setArgument(0);
-//            node = test(mode, HINT_NOUNBOXING) ? lxBoxing : lxUnboxing;
-//            node.appendNode(lxTarget, targetClassRef);
-//         }
-//         else {
-//            // HOTFIX : allow to pass the reference to the object directly 
-//            // for an external operation
-//            node = lxExpression;
-//            typecastMode = mode;
-//         }
-//
-//         typecasted = false;
-//      }
-//   }
-//
-//   return typecastMode;
-//}
-//
-//void Compiler :: optimizeTypecast(ModuleScope& scope, SNode node, int warningMask, int mode)
-//{
-//   // HOTFIX : virtual typecast
-//   if (node.argument == 0) {
-//      SNode parent = node.parentNode();
-//      if (parent == lxAssigning) {
-//         SNode assignTarget = SyntaxTree::findMatchedChild(parent, lxObjectMask);
-//         if (assignTarget == lxExpression)
-//            assignTarget = SyntaxTree::findMatchedChild(assignTarget, lxObjectMask);
-//
-//         SNode type = SyntaxTree::findChild(assignTarget, lxType);
-//
-//         node.setArgument(encodeMessage(type.argument, GET_MESSAGE_ID, 0));
-//      }
-//   }
-//
-//   ref_t targetType = getSignature(node.argument);
-//   bool optimized = false;
-//
-//   int typecastMode = 0;
-//   bool typecasted = true;
-//   if (scope.subjectHints.get(targetType) != 0) {
-//      SNode object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//
-//      // HOTFIX : primitive / external operation should be done before
-//      if (object == lxOp) {
-//         optimizeOp(scope, object, warningMask, mode);
-//
-//         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//
-//         optimized = true;
-//      }
-//      if (object == lxCalling) {
-//         optimizeCall(scope, object, warningMask);
-//
-//         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//
-//         optimized = true;
-//      }
-//      else if (object == lxBoolOp) {
-//         optimizeBoolOp(scope, object, warningMask, mode);
-//
-//         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//
-//         optimized = true;
-//      }
-//      else if (object == lxExternalCall || object == lxStdExternalCall || object == lxCoreAPICall) {
-//         optimizeExtCall(scope, object, warningMask, mode);
-//
-//         object = SyntaxTree::findMatchedChild(node, lxObjectMask);
-//
-//         optimized = true;         
-//      }
-//
-//      if (!checkIfCompatible(scope, targetType, object)) {
-//         typecastMode = tryTypecasting(scope, targetType, node, object, typecasted, mode);
-//      }
-//      else typecasted = false;
-//   }
-//   else typecasted = false;
-//
-//   if (!typecasted && node == lxTypecasting) {
-//      typecastMode = mode;
-//
-//      node = lxExpression;
-//   }
-//
-//   if (node == lxBoxing || node == lxUnboxing || node == lxLocalUnboxing) {
-//      optimizeBoxing(scope, node, warningMask, 0);
-//   }
-//   else if (!optimized) {
-//      if (typecasted) {
-//         optimizeSyntaxExpression(scope, node, warningMask, typecastMode);
-//      }
-//      else optimizeSyntaxNode(scope, node, warningMask, typecastMode);
-//   }
-//
-//   raiseWarning(scope, node, wrnTypeMismatch, WARNING_LEVEL_2, warningMask, typecasted);
-//}
 
 int Compiler :: allocateStructure(SNode node, int& size)
 {
@@ -7979,8 +7698,6 @@ void Compiler :: optimizeSyntaxNode(ModuleScope& scope, SNode current, WarningSc
          break;
 //      case lxBoolOp:
 //         optimizeBoolOp(scope, current, warningMask, mode);
-//         break;
-//         optimizeDirectCall(scope, current, warningMask);
 //         break;
       case lxDirectCalling:
       case lxSDirctCalling:
@@ -8208,11 +7925,6 @@ void Compiler :: compileDeclarations(SNode current, ModuleScope& scope)
          case lxTemplate:
          {
             int count = SyntaxTree::countChild(current, lxMethodParameter);
-//            // HOTFIX : use numeric counter to distinguish different template types
-//            if (member == nsFieldTemplate)
-//               count += 2000;
-//            else if (member == nsMethodTemplate)
-//               count += 1000;
 
             IdentifierString templateName(name.findChild(lxTerminal).identifier());
             templateName.append('#');
@@ -8235,18 +7947,6 @@ void Compiler :: compileDeclarations(SNode current, ModuleScope& scope)
             SyntaxTree::saveNode(current, scope.module->mapSection(templateRef | mskSyntaxTreeRef, false));
 
             scope.saveAttribute(templateRef, INVALID_REF, false);
-
-//            TemplateScope classScope(&scope, templateRef);
-//            classScope.type = TemplateScope::ttClass;
-//            if (member == nsFieldTemplate) {
-//               classScope.type = TemplateScope::ttField;
-//            }
-//            else if (member == nsMethodTemplate) {
-//               classScope.type = TemplateScope::ttMethod;
-//            }
-//
-//            // compile class
-//            compileTemplateDeclaration(member, classScope, hints);
 
             break;
          }
@@ -8308,8 +8008,6 @@ void Compiler :: compileImplementations(SNode member, ModuleScope& scope)
 void Compiler :: compileIncludeSection(SNode& member, ModuleScope& scope)
 {
    while (member != lxNone) {
-      //DNode hints = skipHints(member);
-
       switch (member) {
          //case nsInclude:
          //   // NOTE: obsolete, used for backward compatibility
@@ -8319,32 +8017,10 @@ void Compiler :: compileIncludeSection(SNode& member, ModuleScope& scope)
          case lxImport:
             compileIncludeModule(member, scope/*, hints*/);
             break;
-         //default:
-         //   // due to current syntax we need to reset hints back, otherwise they will be skipped
-         //   if (hints != nsNone)
-         //      member = hints;
-
-         //   return;
       }
       member = member.nextNode();
    }
 }
-
-//void Compiler :: compileModule(DNode node, ModuleScope& scope)
-//{
-//   DNode member = node.firstChild();
-//
-//   compileIncludeSection(member, scope);
-//
-//   if (scope.superReference == 0)
-//      scope.raiseError(errNotDefinedBaseClass, member.FirstTerminal());
-//
-//   // first pass - declaration
-//   compileDeclarations(member, scope);
-//
-//   // second pass - implementation
-//   compileImplementations(member, scope);
-//}
 
 bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 {

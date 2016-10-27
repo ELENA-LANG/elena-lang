@@ -103,7 +103,7 @@
                         
                         ^ retVal.
                     ]
-                    ! [ ^ Group new &args:self:object. ].            
+                    ! [ ^ Group new &args:(self,object). ].            
             ].
     ]        
         
@@ -112,7 +112,7 @@
         ($nil == object)
             ? [ ^ self. ].
         
-        (Cast == self class)
+        (self class == Cast)
             ? [ 
                 #var(int)length := self fieldCount.
             
@@ -132,7 +132,7 @@
                 ^ retVal.
             ]
             ! [ 
-                (Cast == object class)
+                (object class == Cast)
                     ? [
                         #var(int)length := object fieldCount.
                     
@@ -151,7 +151,7 @@
                         
                         ^ retVal.
                     ]
-                    ! [ ^ Cast new &args:self:object. ].            
+                    ! [ ^ Cast new &args:(self,object). ].            
             ].
     ]        
 }

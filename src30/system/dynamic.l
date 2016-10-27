@@ -1,3 +1,5 @@
+#subject vmssg = varof:mssg.
+
 //// --- Symbol ---
 //
 ///// A dynamic symbol
@@ -120,52 +122,52 @@
     #method(stacksafe) => system'core_routines'__signature.
 }
 
-//// --- MessageArray ---
-//
-//#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray
-//{
-//    #constructor(stacksafe) new &int : aLength
-//        = mssg:aLength.
-//        
-//    #constructor new : aLength
-//        <= new &int:(aLength int).
-//
-//    #method(stacksafe) read &int:anIndex &vmssg:anInt
-//        => system'core_routines'__msgarray.
-//
-//    #method iterator = MessageArrayIterator new &mssgarray:$self.
-//}
-//
-//// --- MessageArrayIterator ---
-//
-//#class MessageArrayIterator :: Iterator
-//{
-//    #field(mssgarray) theArray.
-//    #field(vint)  theIndex.
-//
-//    #constructor(w3) new &mssgarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    #method available
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    #method get
-//        = theArray getAt &int:theIndex.
-//    
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//}
+// --- MessageArray ---
+
+#class(sealed,arrayof:mssg,dispatchable:mssgarray)MessageArray
+{
+    #constructor(stacksafe) new &int : aLength
+        = mssg:aLength.
+        
+    #constructor new : aLength
+        <= new &int:(aLength int).
+
+    #method(stacksafe) read &int:anIndex &vmssg:anInt
+        => system'core_routines'__msgarray.
+
+    #method iterator = MessageArrayIterator new &mssgarray:$self.
+}
+
+// --- MessageArrayIterator ---
+
+#class MessageArrayIterator :: Iterator
+{
+    #field(mssgarray) theArray.
+    #field(vint)  theIndex.
+
+    #constructor(w3) new &mssgarray:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    #method available
+    [
+        #var(int)aLength := theArray length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    #method get
+        = theArray getAt &int:theIndex.
+    
+    #method readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    #method writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+}

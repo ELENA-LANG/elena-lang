@@ -837,6 +837,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_NOSTRUCT:
          attrValue = elNonStructureRole;
          return true;
+      case V_GROUP:
+         attrValue = elGroup;
+         return true;
       default:
          return false;
    }

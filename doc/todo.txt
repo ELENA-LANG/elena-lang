@@ -3,9 +3,17 @@ In development:
 ------                              
 
               xrev
+                 * uncomment StructTest
+                 * uncomment GroupTest
+                 * uncomment DTOToStructTest
+                 * uncomment jsonTest
+                 
                  * optimization : #var(int)n := o array length.
                  * support arrayof:int
                  * support arrayof:struct
+
+                 * external operations : typecast the parameters
+                 * external operations : allow to pass numeric constants directly
 
                  * support private sealed methods
 
@@ -122,6 +130,7 @@ In development:
                          should be similar to the one in implicit action, i.e. break the code and go to the method end
                  * ByteNumber.get&min - could we return the constant object?
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
+                 * compiling  - (Cast == object class) ? [ ... ]
 
               xdev
                 * linux migration

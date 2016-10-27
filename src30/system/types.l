@@ -10,7 +10,7 @@
 #template(-8195) sealed  {}
 #template(-8199) dynamic {}
 #template(-8196) limited {}
-//#template(0200h) group   {}
+#template(-8206) group   {}
 #template(-8201) const   {}
 #template(-8197) struct  {}
 #template(-8204) nonstructural {}
@@ -58,7 +58,7 @@
 #subject chararray  = system'CharArray.
 #subject array      = system'Array.
 #subject args       = system'ArgArray.
-//#subject mssgarray  = system'MessageArray.
+#subject mssgarray  = system'MessageArray.
 //#subject bitarray   = system'BitArray.
 //#subject bitset     = system'BitArray32.
 

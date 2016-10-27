@@ -54,6 +54,7 @@
 #define V_EXTENSION   (size_t)-8203
 #define V_NOSTRUCT    (size_t)-8204
 #define V_ACTION      (size_t)-8205
+#define V_GROUP       (size_t)-8206
 
 namespace _ELENA_
 {

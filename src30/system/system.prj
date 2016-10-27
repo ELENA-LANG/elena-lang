@@ -32,3 +32,6 @@ calendar\dates.l
 text\win32_common.l
 text\textbuffer.l
 io\win32_console.l
+dynamic\reflection.l
+dynamic\groups.l
+dynamic\interpreters.l
