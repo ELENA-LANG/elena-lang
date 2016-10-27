@@ -141,7 +141,7 @@ class JITLinker : _JITLoaderListener
    void* resolveStaticVariable(ident_t reference, int mask);
 //   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(ident_t reference, ident_t vmt);
-//   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
+   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
 //   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
@@ -155,7 +155,7 @@ public:
 
    void generateInitTape(MemoryDump& tape);
 
-//   bool getDebugMode() const { return _withDebugInfo; }
+   bool getDebugMode() const { return _withDebugInfo; }
 
    size_t getStaticCount() const 
    { 

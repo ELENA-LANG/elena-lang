@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  2
+#define ELENAVM_REVISION  3
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
@@ -40,9 +40,9 @@ struct _Entry
    }
 };
 
-typedef Map<ident_t, ident_c*> Templates;
-typedef Map<ident_t, ident_c*> Primitives;
-typedef Map<ident_t, ident_c*> ForwardMap;
+typedef Map<ident_t, char*> Templates;
+typedef Map<ident_t, char*> Primitives;
+typedef Map<ident_t, char*> ForwardMap;
 
 // --- InstanceConfig ---
 
@@ -63,7 +63,7 @@ struct InstanceConfig
    ForwardMap moduleForwards;
 
    void loadForwardList(IniConfigFile& config);
-   void loadList(IniConfigFile& config, const char* category, path_t path, Map<ident_t, ident_c*>* list);
+   void loadList(IniConfigFile& config, const char* category, path_t path, Map<ident_t, char*>* list);
    void init(path_t configPath, IniConfigFile& config);
 
    bool load(path_t path, Templates* templates);
@@ -85,12 +85,12 @@ struct InstanceConfig
       objSize = parent.objSize;
 
       // copy paths
-      libPath.copy(parent.libPath);
+      libPath.copy(parent.libPath.c_str());
 
       // copy forwards
       ForwardMap::Iterator it = parent.forwards.start();
       while (!it.Eof()) {
-         forwards.add(it.key(), StringHelper::clone(*it));
+         forwards.add(it.key(), StrFactory::clone(*it));
 
          it++;
       }
@@ -98,7 +98,7 @@ struct InstanceConfig
       // copy module forwards
       it = parent.moduleForwards.start();
       while (!it.Eof()) {
-         moduleForwards.add(it.key(), StringHelper::clone(*it));
+         moduleForwards.add(it.key(), StrFactory::clone(*it));
 
          it++;
       }
@@ -120,7 +120,7 @@ public:
    Templates templates;
    Config    config;
 
-   path_t getRootPath() { return _rootPath; }
+   path_t getRootPath() { return _rootPath.c_str(); }
 //   void setLibPath(const TCHAR* path);    // !! temporal
 
    ELENAMachine(path_t rootPath);
@@ -232,7 +232,7 @@ protected:
    virtual void stopVM() = 0;
 
 public:
-   ident_t getStatus() { return emptystr(_status) ? NULL : (ident_t)_status; }
+   ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
 
    void setStatus(ident_t s)
    {
@@ -340,7 +340,7 @@ public:
 
    virtual ref_t getSubjectRef(ident_t subjectName)
    {
-      if (StringHelper::find(subjectName, '$') != -1) {
+      if (subjectName.find('$') != -1) {
          setStatus("Invalid subject");
 
          return 0;
@@ -371,7 +371,7 @@ public:
 
    int interprete(void* tape, ident_t interpreter);
 
-   bool loadAddressInfo(void* address, ident_c* buffer, size_t& maxLength);
+   bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
 
    //bool loadSubjectInfo(size_t subjectId, ident_c* buffer, size_t& maxLength);
    //bool loadMessageInfo(size_t messageId, ident_c* buffer, size_t& maxLength);

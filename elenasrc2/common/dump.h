@@ -94,23 +94,23 @@ class ByteArray : public _Memory
    size_t _length;
 
 public:
-//   virtual size_t Length() const { return _length; }
-//
-//   virtual void* get(size_t position) const;
-//
-//   virtual bool read(size_t position, void* s, size_t length);
-//
-//   virtual bool write(size_t position, const void* s, size_t length);
-//
-//   virtual void insert(size_t position, const void* s, size_t length);
-//
-//   virtual bool writeBytes(size_t position, char value, size_t length);
-//
-//   virtual void* getReferences() { return NULL; }
-//
-//   virtual void trim(size_t)
-//   {
-//   }
+   virtual size_t Length() const { return _length; }
+
+   virtual void* get(size_t position) const;
+
+   virtual bool read(size_t position, void* s, size_t length);
+
+   virtual bool write(size_t position, const void* s, size_t length);
+
+   virtual void insert(size_t position, const void* s, size_t length);
+
+   virtual bool writeBytes(size_t position, char value, size_t length);
+
+   virtual void* getReferences() { return NULL; }
+
+   virtual void trim(size_t)
+   {
+   }
 
    ByteArray(void* bytes, size_t length)
    {

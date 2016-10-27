@@ -63,7 +63,7 @@
 ///// An extended message constant
 //#class(sealed,embeddable) ExtensionMessage
 //{
-//    #field(extension_message)theValue.
+//    #field(-21,8)theValue.
 //    
 //    /// Loads a message
 //    #constructor(stacksafe,w3) new &ext_mssg:message

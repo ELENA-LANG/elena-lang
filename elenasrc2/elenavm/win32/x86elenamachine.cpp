@@ -73,14 +73,14 @@ ref_t x86Instance :: resolveExternal(ident_t external)
 {
    ref_t reference = _exportReferences.get(external);
    if (reference == (size_t)-1) {
-      ident_t function = external + StringHelper::findLast(external, '.') + 1;
+      ident_t function = external + external.findLast('.') + 1;
 
       Path dll;
       int len = function - (external + getlength(DLL_NAMESPACE)) - 2;
-      if (StringHelper::compare(external + getlength(DLL_NAMESPACE) + 1, RTDLL_FORWARD, len)) {
-         Path::loadPath(dll, _loader.resolvePrimitive(RTDLL_FORWARD));
+      if (ident_t(RTDLL_FORWARD).compare(external + getlength(DLL_NAMESPACE) + 1, len)) {
+         dll.copy(_loader.resolvePrimitive(RTDLL_FORWARD));
       }
-      else Path::loadPath(dll, external + getlength(DLL_NAMESPACE) + 1, len);
+      else dll.copy(external + getlength(DLL_NAMESPACE) + 1, len);
 
       // align memory
       MemoryWriter writer(&_dataProcess);
@@ -88,7 +88,7 @@ ref_t x86Instance :: resolveExternal(ident_t external)
 
       reference = _dataProcess.Length();
 
-      if(!_dataProcess.exportFunction(_rootPath, reference, dll, function))
+      if(!_dataProcess.exportFunction(_rootPath, reference, dll.c_str(), function))
          return (ref_t)LOADER_NOTLOADED;
 
       reference = (ref_t)_dataProcess.get(reference); // !! should loader do this?

@@ -17,7 +17,7 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Virtual Machine compiling....
 ECHO -----------------------------
-rem "%MSBUILDDIR%msbuild.exe" elenasrc2\elenavm\vs\elenavm11.vcxproj /p:configuration=release
+"%MSBUILDDIR%msbuild.exe" elenasrc2\elenavm\vs\elenavm11.vcxproj /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO IDE compiling....

@@ -17,9 +17,9 @@ rem bin\elc -csrc30\net\net.prj
 rem bin\elc -csrc30\forms\forms.prj
 rem bin\elc -csrc30\sqlite\sqlite.prj
 bin\elc -cexamples\console\helloworld\u_helloworld.prj
-rem bin\elc -cexamples\console\helloworld\helloworld.prj
+bin\elc -cexamples\console\helloworld\helloworld.prj
 bin\elc -cexamples\console\sum\intsum.prj
-rem bin\elc -cexamples\console\sum\realsum.prj
+bin\elc -cexamples\console\sum\realsum.prj
 rem bin\elc -cexamples\console\words\words.prj
 rem bin\elc -cexamples\console\pi\pi.prj
 rem bin\elc -cexamples\console\bsort\bsort.prj

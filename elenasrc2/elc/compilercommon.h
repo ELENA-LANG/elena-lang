@@ -24,6 +24,7 @@
 #define V_SIGNATURE   (size_t)-18
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
+#define V_EXTMESSAGE  (size_t)-21
 
 #define V_OBJECT      (size_t)-21
 

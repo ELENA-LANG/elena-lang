@@ -123,34 +123,34 @@ void MemoryDump :: load(StreamReader* reader, size_t length)
 
 // --- ByteArray ---
 
-//void* ByteArray :: get(size_t position) const
-//{
-//   return _bytes + position;
-//}
-//
-//bool ByteArray :: read(size_t position, void* s, size_t length)
-//{
-//   memcpy(s, _bytes + position, length);
-//
-//   return true;
-//}
-//
-//bool ByteArray :: write(size_t position, const void* s, size_t length)
-//{
-//   memcpy(_bytes + position, s, length);
-//
-//   return true;
-//}
-//
-//void ByteArray :: insert(size_t position, const void* s, size_t length)
-//{
-//   memmove(_bytes + position + length, _bytes + position, _length - position - length);
-//   memcpy(_bytes + position, s, length);
-//}
-//
-//bool ByteArray :: writeBytes(size_t position, char value, size_t length)
-//{
-//   memset(_bytes + position, value, length);
-//
-//   return true;
-//}
+void* ByteArray :: get(size_t position) const
+{
+   return _bytes + position;
+}
+
+bool ByteArray :: read(size_t position, void* s, size_t length)
+{
+   memcpy(s, _bytes + position, length);
+
+   return true;
+}
+
+bool ByteArray :: write(size_t position, const void* s, size_t length)
+{
+   memcpy(_bytes + position, s, length);
+
+   return true;
+}
+
+void ByteArray :: insert(size_t position, const void* s, size_t length)
+{
+   memmove(_bytes + position + length, _bytes + position, _length - position - length);
+   memcpy(_bytes + position, s, length);
+}
+
+bool ByteArray :: writeBytes(size_t position, char value, size_t length)
+{
+   memset(_bytes + position, value, length);
+
+   return true;
+}

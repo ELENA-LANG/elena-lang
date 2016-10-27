@@ -26,6 +26,9 @@ public:
    static wide_c* doubleToStr(double value, int digit, wide_c* s);
 
    static char* longlongToStr(long long n, char* s, int radix);
+
+   static char* intToStr(int n, char* s, int radix);
+   static int strToInt(const char* s);
 };
 
 class StrFactory

@@ -531,7 +531,59 @@ char* clone(const char* s)
    return emptystr(s) ? NULL : _strdup(s);
 }
 
-int strToInt(const char* s)
+char* Convertor :: intToStr(int n, char* s, int radix)
+{
+   int  rem = 0;
+   int  pos = 0;
+   int start = 0;
+   if (n < 0) {
+      start++;
+      n = -n;
+      s[pos++] = '-';
+   }
+
+   do
+   {
+      rem = (unsigned int)n % radix;
+      n /= radix;
+      switch (rem) {
+      case 10:
+         s[pos++] = 'a';
+         break;
+      case 11:
+         s[pos++] = 'b';
+         break;
+      case 12:
+         s[pos++] = 'c';
+         break;
+      case 13:
+         s[pos++] = 'd';
+         break;
+      case 14:
+         s[pos++] = 'e';
+         break;
+      case 15:
+         s[pos++] = 'f';
+         break;
+      default:
+         if (rem < 10) {
+            s[pos++] = (char)(rem + 0x30);
+         }
+      }
+   } while (n != 0);
+
+   s[pos] = 0;
+   pos--;
+   while (start < pos) {
+      char tmp = s[start];
+      s[start++] = s[pos];
+      s[pos--] = tmp;
+   }
+
+   return s;
+}
+
+int Convertor :: strToInt(const char* s)
 {
    return atoi(s);
 }
@@ -1289,12 +1341,12 @@ bool ident_t :: copyTo(wide_c* dest, size_t length, size_t& destLength)
 
 int ident_t :: toInt()
 {
-   return strToInt(_string);
+   return Convertor::strToInt(_string);
 }
 
 int ident_t :: toInt(int index)
 {
-   return strToInt(_string + index);
+   return Convertor::strToInt(_string + index);
 }
 
 long ident_t :: toLong(int radix)

@@ -37,8 +37,8 @@ void InstanceConfig :: loadForwardList(IniConfigFile& config)
 {
    ConfigCategoryIterator it = config.getCategoryIt(FORWARD_CATEGORY);
    while (!it.Eof()) {
-      const char* key = it.key();
-      const char* value = (const char*)*it;
+      ident_t key = it.key();
+      ident_t value = *it;
 
       // if it is a wildcard
       if (key[getlength(key) - 1] == '*') {
@@ -46,22 +46,22 @@ void InstanceConfig :: loadForwardList(IniConfigFile& config)
          NamespaceName module(value);
 
          moduleForwards.erase(alias);
-         moduleForwards.add(alias, StringHelper::clone(module));
+         moduleForwards.add(alias, StrFactory::clone(module));
       }
       else {
          forwards.erase(key);
-         forwards.add(key, StringHelper::clone(value));
+         forwards.add(key, StrFactory::clone(value));
       }
       it++;
    }
 }
 
-void InstanceConfig :: loadList(IniConfigFile& config, const char* category, const wchar_t* path, Map<ident_t, ident_c*>* list)
+void InstanceConfig :: loadList(IniConfigFile& config, const char* category, path_t path, Map<ident_t, char*>* list)
 {
    ConfigCategoryIterator it = config.getCategoryIt(category);
    while (!it.Eof()) {
-      const char* key = it.key();
-      const char* value = (const char*)*it;
+      ident_t key = it.key();
+      ident_t value = *it;
 
       if(emptystr(value))
          value = key;
@@ -71,13 +71,13 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, con
          Path filePath(path);
 
          if (value[0] == '~') {
-            Path::loadPath(filePath, value + 1);
+            filePath.copy(value + 1);
          }
-         else Path::combinePath(filePath, value);
+         else filePath.combine(value);
 
-         list->add(key, IdentifierString::clonePath(filePath));
+         list->add(key, IdentifierString::clonePath(filePath.c_str()));
       }
-      else list->add(key, StringHelper::clone(value));
+      else list->add(key, StrFactory::clone(value));
 
       it++;
    }
@@ -95,10 +95,9 @@ bool InstanceConfig :: load(path_t path, Templates* templates)
       IdentifierString projectTemplate(config.getSetting(PROJECT_CATEGORY, PROJECT_TEMPLATE));
 
       if (!_ELENA_::emptystr(projectTemplate)) {
-         Path templatePath;
-         Path::loadPath(templatePath, templates->get(projectTemplate));
+         Path templatePath(templates->get(projectTemplate));
 
-         load(templatePath, templates);
+         load(templatePath.c_str(), templates);
       }
    }
 
@@ -106,7 +105,7 @@ bool InstanceConfig :: load(path_t path, Templates* templates)
    configPath.copySubPath(path);
 
    // init config
-   init(configPath, config);
+   init(configPath.c_str(), config);
 
    return true;
 }
@@ -122,7 +121,7 @@ void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {
       libPath.copy(configPath);
-      Path::combinePath(libPath, path);
+      libPath.combine(path);
    }
 
    loadList(config, PRIMITIVE_CATEGORY, configPath, &primitives);
@@ -216,7 +215,7 @@ ident_t Instance :: resolveForward(ident_t forward)
          ReferenceName name(forward);
          ReferenceNs newRefeference(module, name);
 
-         _config.forwards.add(forward, StringHelper::clone(newRefeference));
+         _config.forwards.add(forward, StrFactory::clone(newRefeference));
 
          reference = _config.forwards.get(forward);
       }
@@ -312,7 +311,7 @@ SectionInfo Instance::getSectionInfo(ident_t reference, size_t mask, bool silent
 
    LoadResult result;
    ref_t      referenceID = 0;
-   if (StringHelper::compare(reference, NATIVE_MODULE, NMODULE_LEN) && reference[NMODULE_LEN]=='\'') {
+   if (reference.compare(NATIVE_MODULE, NMODULE_LEN) && reference[NMODULE_LEN]=='\'') {
       sectionInfo.module = _loader.resolveNative(reference, result, referenceID);
    }
    else sectionInfo.module = resolveModule(reference, result, referenceID);
@@ -368,18 +367,18 @@ void Instance::addForward(ident_t forward, ident_t reference)
 
       _config.moduleForwards.erase(alias);
 
-      _config.moduleForwards.add(alias, StringHelper::clone(module));
+      _config.moduleForwards.add(alias, StrFactory::clone(module));
    }
    else {
       _config.forwards.erase(forward);
 
-      _config.forwards.add(forward, StringHelper::clone(reference));
+      _config.forwards.add(forward, reference.clone());
    }
 }
 
 void Instance::addForward(ident_t line)
 {
-   size_t sep = StringHelper::find(line, '=', -1);
+   size_t sep = line.find('=', -1);
    if(sep != -1) {
       ident_t reference = line + sep + 1;
       IdentifierString forward(line, sep);
@@ -405,17 +404,16 @@ void* Instance::loadSymbol(ident_t reference, int mask)
 bool Instance :: initLoader(InstanceConfig& config)
 {
    // load paths
-   _loader.setRootPath(config.libPath);
+   _loader.setRootPath(config.libPath.c_str());
 
    // load primitives
    Primitives::Iterator it = config.primitives.start();
    while (!it.Eof()) {
-      Path path;
-      Path::loadPath(path, *it);
-      if (StringHelper::compare(it.key(), CORE_ALIAS)) {
-         _loader.addCorePath(path);
+      Path path(*it);
+      if (it.key().compare(CORE_ALIAS)) {
+         _loader.addCorePath(path.c_str());
       }
-      else _loader.addPrimitivePath(it.key(), path);
+      else _loader.addPrimitivePath(it.key(), path.c_str());
 
       it++;
    }
@@ -469,7 +467,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
       ident_t arg = NULL;
       size_t param = reader.getDWord();
       if (test(command, LITERAL_ARG_MASK)) {
-         arg = (ident_t)reader.Address();
+         arg = (const char*)reader.Address();
 
          reader.seek(reader.Position() + param);  // goes to the next record
       }
@@ -642,10 +640,9 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
 bool Instance::loadTemplate(ident_t name)
 {
-   Path path;
-   Path::loadPath(path, _machine->templates.get(name));
+   Path path(_machine->templates.get(name));
 
-   if (!_config.load(path, &_machine->templates)) {
+   if (!_config.load(path.c_str(), &_machine->templates)) {
       setStatus("Cannot load the template:", name);
 
       return false;
@@ -661,19 +658,17 @@ void Instance::setPackagePath(ident_t package, path_t path)
 
 void Instance::setPackagePath(ident_t line)
 {
-   size_t sep = StringHelper::find(line, '=', -1);
+   size_t sep = line.find('=', -1);
    if(sep != -1) {
-      Path path;
-      Path::loadPath(path, line + sep + 1);
+      Path path(line + sep + 1);
       IdentifierString package(line, sep);
 
-      setPackagePath(package, path);
+      setPackagePath(package, path.c_str());
    }
    else {
-      Path path;
-      Path::loadPath(path, line);
+      Path path(line);
 
-      setPackagePath(NULL, path);
+      setPackagePath(NULL, path.c_str());
    }
 }
 
@@ -686,7 +681,7 @@ void Instance :: configurate(MemoryReader& reader, int terminator)
       ident_t arg = NULL;
       size_t param = reader.getDWord();
       if (test(command, LITERAL_ARG_MASK)) {
-         arg = (ident_t)reader.Address();
+         arg = (const char*)reader.Address();
 
          reader.seek(reader.Position() + param);  // goes to the next record
       }
@@ -799,7 +794,7 @@ int Instance::interprete(void* tape, ident_t interpreter)
    return retVal;
 }
 
-bool Instance :: loadAddressInfo(void* address, ident_c* buffer, size_t& maxLength)
+bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 {
    RTManager manager;
    MemoryReader reader(getTargetDebugSection(), 8);
@@ -825,10 +820,10 @@ bool ELENAMachine::Config :: load(path_t path, Templates* templates)
 
    // load templates
    if (templates) {
-      loadList(config, TEMPLATE_CATEGORY, rootPath, templates);
+      loadList(config, TEMPLATE_CATEGORY, rootPath.c_str(), templates);
    }
 
-   init(rootPath, config);
+   init(rootPath.c_str(), config);
 
    return true;
 }
@@ -838,8 +833,7 @@ bool ELENAMachine::Config :: load(path_t path, Templates* templates)
 ELENAMachine :: ELENAMachine(path_t rootPath)
    : templates(NULL, freestr), _rootPath(rootPath)
 {
-   Path configPath(rootPath);
-   Path::combinePath(configPath, "elenavm.cfg");
+   Path configPath(rootPath, "elenavm.cfg");
 
-   config.load(configPath, &templates);
+   config.load(configPath.c_str(), &templates);
 }

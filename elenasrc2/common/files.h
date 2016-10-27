@@ -226,6 +226,17 @@ public:
       _path.copy(temp);
    }
 
+   void copy(const char* path, size_t path_len)
+   {
+      size_t len = LOCAL_PATH_LENGTH;
+
+      wchar_t temp[LOCAL_PATH_LENGTH];
+      Convertor::copy(temp, path, path_len, len);
+      temp[len] = 0;
+
+      _path.copy(temp);
+   }
+
    void combine(ident_t path)
    {
       size_t len = getlength(path);

@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   8
+#define REVISION_VERSION   9
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -766,8 +766,8 @@ void listFlags(int flags)
    if (test(flags, elStateless))
       printLine("@flag ", "elStateless");
 
-   //if (test(flags, elGroup))
-   //   printLine("@flag ", "elGroup");
+   if (test(flags, elGroup))
+      printLine("@flag ", "elGroup");
 
    if (test(flags, elWithGenerics))
       printLine("@flag ", "elWithGenerics");
@@ -778,20 +778,20 @@ void listFlags(int flags)
    if (test(flags, elNonStructureRole))
       printLine("@flag ", "elNonStructureRole");
 
-   //if (test(flags, elSignature))
-   //   printLine("@flag ", "elSignature");
+   if (test(flags, elSignature))
+      printLine("@flag ", "elSignature");
 
    if (test(flags, elRole))
       printLine("@flag ", "elRole");
 
-   //if (test(flags, elExtension))
-   //   printLine("@flag ", "elExtension");
+   if (test(flags, elExtension))
+      printLine("@flag ", "elExtension");
 
    if (test(flags, elMessage))
       printLine("@flag ", "elMessage");
 
-   //if (test(flags, elExtMessage))
-   //   printLine("@flag ", "elExtMessage");
+   if (test(flags, elExtMessage))
+      printLine("@flag ", "elExtMessage");
 
    //if (test(flags, elSymbol))
    //   printLine("@flag ", "elSymbol");
@@ -809,18 +809,18 @@ void listFlags(int flags)
       case elDebugIntegers:
          printLine("@flag ", "elDebugIntegers");
          break;
-      //case elDebugArray:
-      //   printLine("@flag ", "elDebugArray");
-      //   break;
-      //case elDebugQWORD:
-      //   printLine("@flag ", "elDebugQWORD");
-      //   break;
-      //case elDebugBytes:
-      //   printLine("@flag ", "elDebugBytes");
-      //   break;
-      //case elDebugShorts:
-      //   printLine("@flag ", "elDebugShorts");
-      //   break;
+      case elDebugArray:
+         printLine("@flag ", "elDebugArray");
+         break;
+      case elDebugQWORD:
+         printLine("@flag ", "elDebugQWORD");
+         break;
+      case elDebugBytes:
+         printLine("@flag ", "elDebugBytes");
+         break;
+      case elDebugShorts:
+         printLine("@flag ", "elDebugShorts");
+         break;
       //case elDebugPTR:
       //   printLine("@flag ", "elDebugPTR");
       //   break;

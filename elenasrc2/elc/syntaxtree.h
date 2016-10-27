@@ -205,6 +205,7 @@ enum LexicalType
    lxPtrAttr         = 0x20108,
    lxQWordAttr       = 0x20109,
    lxRealAttr        = 0x2010A,
+   lxExtMessageAttr  = 0x2010B,
 
 //   lxObjectMask      = 0x00100,
 //   lxExpressionMask  = 0x00200,

@@ -660,6 +660,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
          info.size = 4;
          break;
+      case V_EXTMESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
+         info.size = 8;
+         break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
@@ -902,6 +907,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_MESSAGE:
          attrValue = lxMessageAttr;
          return true;
+      case V_EXTMESSAGE:
+         attrValue = lxExtMessageAttr;
+         return true;
       case V_VERB:
          attrValue = lxVerbAttr;
          return true;
@@ -979,11 +987,12 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 4;
+         case lxExtMessageAttr:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
+            return info.size == 8;
             //            case -7:
             //               scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
-            //               break;
-            //            case -10:
-            //               scope.info.header.flags |= (elDebugMessage | elReadOnlyRole | elExtMessage);
             //               break;
          default:
             break;

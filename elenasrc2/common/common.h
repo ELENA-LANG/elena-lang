@@ -79,22 +79,22 @@ public:
    virtual ConfigCategoryIterator getCategoryIt(ident_t name) = 0;
 
    virtual ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL) = 0;
-//   virtual int getIntSetting(const char* category, const char* key, int defaultValue = 0)
-//   {
-//      ident_t value = getSetting(category, key);
-//
-//      return emptystr(value) ? defaultValue : value.toInt();
-//   }
-//
-//   virtual bool getBoolSetting(ident_t category, ident_t key, bool defaultValue = false)
-//   {
-//      ident_t value = getSetting(category, key);
-//
-//      if (!emptystr(value)) {
-//         return value.compare("-1");
-//      }
-//      else return defaultValue;
-//   }
+   virtual int getIntSetting(const char* category, const char* key, int defaultValue = 0)
+   {
+      ident_t value = getSetting(category, key);
+
+      return emptystr(value) ? defaultValue : value.toInt();
+   }
+
+   virtual bool getBoolSetting(ident_t category, ident_t key, bool defaultValue = false)
+   {
+      ident_t value = getSetting(category, key);
+
+      if (!emptystr(value)) {
+         return value.compare("-1");
+      }
+      else return defaultValue;
+   }
 
    virtual ~_ConfigFile() {}
 };

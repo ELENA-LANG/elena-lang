@@ -38,7 +38,7 @@ EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t
    return 0; // !! temporally
 }
 
-EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, ident_c* buffer, size_t maxLength)
+EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, char* buffer, size_t maxLength)
 {
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
@@ -68,7 +68,7 @@ EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, ident_c* buffer, size_t ma
    }
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, ident_c* buffer, int maxLength)
+EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLength)
 {
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
@@ -79,7 +79,7 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, ident_c* buffer, int maxLe
       size_t length = getlength(className);
       if (length > 0) {
          if (maxLength >= length) {
-            StringHelper::copy(buffer, className, length, length);
+            Convertor::copy(buffer, className, length, length);
          }
          else buffer[0] = 0;
       }
@@ -104,7 +104,7 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, ident_c* buffer, int maxLe
    }
 }
 
-EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, ident_c* buffer, int maxLength)
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLength)
 {
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
@@ -119,7 +119,7 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, ident_c* buffer, int max
       size_t length = getlength(subjectName);
       if (length > 0) {
          if (maxLength >= length) {
-            StringHelper::copy(buffer, subjectName, length, length);
+            Convertor::copy(buffer, subjectName, length, length);
          }
          else buffer[0] = 0;
       }
@@ -151,7 +151,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
       return 0;
 
    try {
-      ref_t subj_id = instance->getSubjectRef((ident_t)subjectName);
+      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
 
       return (void*)(MESSAGE_MASK | encodeMessage(subj_id, 0, 0));
    }
@@ -173,7 +173,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
    }
 }
 
-EXTERN_DLL_EXPORT int LoadMessageName(void* message, ident_c* buffer, int maxLength)
+EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength)
 {
    Instance* instance = getCurrentInstance();
    if (instance == NULL)
@@ -186,7 +186,7 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, ident_c* buffer, int maxLen
 
       ident_t verbName = instance->getVerb(verb_id);
       size_t used = getlength(verbName);
-      StringHelper::copy(buffer, verbName, used, used);
+      Convertor::copy(buffer, verbName, used, used);
 
       if (subj_id > 0) {
          buffer[used++] = '&';
@@ -195,7 +195,7 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, ident_c* buffer, int maxLen
          size_t length = getlength(subjectName) ;
          if (length > 0) {
             if (maxLength >= length + used) {
-               StringHelper::copy(buffer + used, subjectName, length, length);
+               Convertor::copy(buffer + used, subjectName, length, length);
 
                used += length;
             }
@@ -205,7 +205,7 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, ident_c* buffer, int maxLen
 
       if (param_count > 0) {
          buffer[used++] = '[';
-         StringHelper::intToStr(param_count, buffer + used, 10);
+         Convertor::intToStr(param_count, buffer + used, 10);
          used = getlength(buffer);
          buffer[used++] = ']';
       }
@@ -238,7 +238,7 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
       return 0;
 
    try {
-      return instance->getSymbolRef((ident_t)referenceName);
+      return instance->getSymbolRef((const char*)referenceName);
    }
    catch (JITUnresolvedException& e)
    {
@@ -366,7 +366,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    case DLL_PROCESS_ATTACH:
       if (!machine) {
          loadDLLPath(hModule);
-         initMachine(rootPath);
+         initMachine(rootPath.c_str());
       }
       createInstance();
       return TRUE;
