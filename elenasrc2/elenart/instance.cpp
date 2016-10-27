@@ -158,7 +158,7 @@ int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
 
          buffer[used++] = '[';
          Convertor::copy(buffer + used, temp, getlength(temp), dummy);
-         used = getlength(buffer);
+         used += dummy;
          buffer[used++] = ']';
       }
       buffer[used] = 0;

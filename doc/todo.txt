@@ -3,6 +3,10 @@ In development:
 ------                              
 
               xrev
+                 * operation with char
+
+                 * fix CharValue#class.get&min
+
                  * uncomment StructTest
                  * uncomment GroupTest
                  * uncomment DTOToStructTest
@@ -134,6 +138,7 @@ In development:
 
               xdev - ide
                 * vertical scroller does not work correctly
+                * set focus on the editor after selecting a project item
 
               xdev
                 * linux migration

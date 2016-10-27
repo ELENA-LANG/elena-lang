@@ -14,3 +14,4 @@ author=Alex Rakov
 [files]
 control.l
 convertors.l
+console.l

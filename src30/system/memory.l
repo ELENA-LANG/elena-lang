@@ -1200,113 +1200,113 @@
         => system'core_routines'__wide.
 }
 
-//// --- Variant ---
-//
-///// A basic type variant class
-//#class Variant
-//{
-//    #field theValue.
-//    
-//    #constructor new : object
-//    [
-//        theValue := object.
-//    ]
-//    
-//    /// Tries to convert the value to a byte number
-//    #method byte
-//        = byteConvertor convert:theValue.
-//
-//    /// Tries to convert the value to a short integer number
-//    #method short
-//        = shortConvertor convert:theValue.
-//
-//    /// Tries to convert the value to a character
-//    #method char
-//        = charConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the integer number
-//    #method int
-//        = intConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the long integer number
-//    #method long
-//        = longConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    #method real
-//        = realConvertor convert:theValue.
-//
-//    /// Returns a literal value
-//    #method literal 
-//        = literalConvertor convert:theValue.
-//    
-//    /// Returns a wide literal value
-//    #method wide 
-//        = wideConvertor convert:theValue.
-//
-//    /// Converts the parameter into a literal string
-//    #method set &int:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method set &short:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &byte:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &long:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    /// Converts the parameter into a literal string
-//    #method write &real:aValue
-//    [
-//        theValue := aValue.
-//    ]    
-//
-//    #method cast : aVerb &to:aTarget
-//    [
-//        #var aValue := aTarget cast:%eval &to:
-//        {
-//            eval : aVariant &int:aValue
-//                = aVariant int.
-//                
-//            eval : aVariant &byte:aValue
-//                = aVariant byte.
-//                
-//            eval : aVariant &short:aValue
-//                = aVariant short.
-//                
-//            eval : aVariant &long:aValue
-//                = aVariant long.
-//                
-//            eval : aVariant &real:aValue
-//                = aVariant real.
-//                
-//            eval : aVariant &literal:aValue
-//                = aVariant literal.
-//                
-//            eval : aVariant &wide:aValue
-//                = aVariant wide.
-//        }
-//        &with:$self.
-//        
-//        ^ aValue cast:aVerb &to:aTarget.
-//    ]
-//
-//    #method equal : anObject
-//        = anObject equal:$self bool.
-//}
+// --- Variant ---
+
+/// A basic type variant class
+#class Variant
+{
+    #field theValue.
+    
+    #constructor new : object
+    [
+        theValue := object.
+    ]
+    
+    /// Tries to convert the value to a byte number
+    #method byte
+        = byteConvertor convert:theValue.
+
+    /// Tries to convert the value to a short integer number
+    #method short
+        = shortConvertor convert:theValue.
+
+    /// Tries to convert the value to a character
+    #method char
+        = charConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the integer number
+    #method int
+        = intConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the long integer number
+    #method long
+        = longConvertor convert:theValue.
+
+    /// Tries to convert the literal value to the real number
+    #method real
+        = realConvertor convert:theValue.
+
+    /// Returns a literal value
+    #method literal 
+        = literalConvertor convert:theValue.
+    
+    /// Returns a wide literal value
+    #method wide 
+        = wideConvertor convert:theValue.
+
+    /// Converts the parameter into a literal string
+    #method set &int:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method set &short:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &byte:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &long:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    /// Converts the parameter into a literal string
+    #method write &real:aValue
+    [
+        theValue := aValue.
+    ]    
+
+    #method cast : aVerb &to:aTarget
+    [
+        #var aValue := aTarget cast:%eval &to:
+        {
+            eval : aVariant &int:aValue
+                = aVariant int.
+                
+            eval : aVariant &byte:aValue
+                = aVariant byte.
+                
+            eval : aVariant &short:aValue
+                = aVariant short.
+                
+            eval : aVariant &long:aValue
+                = aVariant long.
+                
+            eval : aVariant &real:aValue
+                = aVariant real.
+                
+            eval : aVariant &literal:aValue
+                = aVariant literal.
+                
+            eval : aVariant &wide:aValue
+                = aVariant wide.
+        }
+        &with:$self.
+        
+        ^ aValue cast:aVerb &to:aTarget.
+    ]
+
+    #method equal : anObject
+        = anObject equal:$self bool.
+}
 
 // --- Array ---
 

@@ -1758,12 +1758,12 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return V_INT64;
       case okRealConstant:
          return V_REAL64;
+      case okCharConstant:
+         return scope.moduleScope->charReference;
       case okLiteralConstant:
          return scope.moduleScope->literalReference;
       case okWideLiteralConstant:
          return scope.moduleScope->wideReference;
-      case okCharConstant:
-         return scope.moduleScope->charReference;
       case okThisParam:
          if (object.extraparam == -2) {
             return _logic->definePrimitiveArray(*scope.moduleScope, scope.moduleScope->attributeHints.get(object.type));

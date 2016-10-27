@@ -1519,7 +1519,8 @@
 /// An UTF-32 character symbol
 #class(embeddable,sealed,dispatchable:char,const) CharValue :: BaseValue
 {
-    #field(int)theValue.
+//    #field(int)theValue.
+    #field(-12,4)theValue.
 
     /// Creates the object with a default value (0)
     #constructor new

@@ -196,8 +196,8 @@
     #method toReal
         = self cast:%convert &to:realConvertor.
 
-//    #method convert &to : aTarget
-//        = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
+    #method convert &to : aTarget
+        = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
 //#class(extension:datetime) dateFormatterOp 
