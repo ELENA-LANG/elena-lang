@@ -1787,6 +1787,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
       case okField:
       case okLocal:
       case okFieldAddress:
+      case okOuter:
          if (object.extraparam != 0) {
             return object.extraparam;
          }
