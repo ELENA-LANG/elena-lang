@@ -132,6 +132,9 @@ In development:
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
 
+              xdev - ide
+                * vertical scroller does not work correctly
+
               xdev
                 * linux migration
 

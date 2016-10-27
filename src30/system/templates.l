@@ -51,15 +51,15 @@
    ]
 }
 
-//// --- outwprop ---
-//
-//#mtemplate outwprop : template_subj
-//{
-//   #method(stacksafe,short,embeddable,w3) template_subj
-//   [
-//        #var(short)val.
-//        $self target &vshort:val.
-//        
-//        ^ val.
-//   ]
-//}
+// --- outwprop ---
+
+#template outwprop : template_subj
+{
+   #method(stacksafe,short,embeddable,w3) template_subj
+   [
+        #var(short)val.
+        $self target &vshort:val.
+        
+        ^ val.
+   ]
+}

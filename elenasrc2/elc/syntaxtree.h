@@ -46,6 +46,7 @@ enum LexicalType
    lxLoop            = 0x00030,
    lxInlineExpression= 0x00032,
    lxMessageReference= 0x00033,
+   lxExtern          = 0x00039,
    lxDefaultGeneric  = 0x00046,
    lxSubject         = 0x00047,
    lxImplicitConstructor = 0x0004B,
@@ -121,6 +122,7 @@ enum LexicalType
    lxElse            = 0x0C020,   // optional arg - reference
    lxOption          = 0x0C021,
    lxFieldExpression = 0x0C022,
+   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
    lxCreatingStruct  = 0x0C026,   // arg - size
@@ -219,7 +221,6 @@ enum LexicalType
 //
 //   lxLocking         = 0x0030E,   // lock expression
 //   lxExtInteranlRef  = 0x00319,
-//   lxExternFrame     = 0x00327,
 //   lxBody            = 0x00329,
 //
 //   lxOp              = 0x0032A, // generic operation, arg - operation id 

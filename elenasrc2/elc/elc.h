@@ -14,7 +14,7 @@
 #include "jitcompiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x006E
+#define ELC_REVISION_NUMBER             0x0070
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -106,12 +106,12 @@
 #define ELC_UNKNOWN_PLATFORM        "Unsupported platform\n"
 #define ELC_HELP_INFO               "elc {-key} {<input file>}\n\nkeys: -c<path>   - specifies the project file\n      -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
 
-#define ELC_WIN32CONSOLE            "sta win32 console"
-#define ELC_WIN32CONSOLEX           "mta win32 console"
-#define ELC_WIN32VMCONSOLEX         "sta win32 vm client console"
-#define ELC_WIN32GUI                "sta win32 GUI"
-#define ELC_WIN32GUIX               "mta win32 GUI"
-#define ELC_LINUX32CONSOLE          "sta linux i386 console"
+#define ELC_WIN32CONSOLE            "STA Win32 Console"
+#define ELC_WIN32CONSOLEX           "MTA Win32 Console"
+#define ELC_WIN32VMCONSOLEX         "STA Win32 VM Console"
+#define ELC_WIN32GUI                "STA Win32 GUI"
+#define ELC_WIN32GUIX               "MTA Win32 GUI"
+#define ELC_LINUX32CONSOLE          "STA Linux i386 Console"
 #define ELC_LIBRARY                 "library"
 #define ELC_UNKNOWN                 "unknown"
 

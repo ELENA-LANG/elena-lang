@@ -80,7 +80,7 @@ enum Symbol
    nsDispatchHandler            = 0x01036,
    //nsLock                       = 0x01037,
    nsRootExpression             = 0x01038,
-   //nsExtern                     = 0x01039,
+   nsExtern                     = 0x01039,
    nsNewOperator                = 0x0103A,
    nsSwitching                  = 0x0103B,
    nsSwitchOption               = 0x0103C,

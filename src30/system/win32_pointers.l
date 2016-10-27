@@ -47,31 +47,31 @@
 //    #method(stacksafe)  free
 //        => system'core_routines'__rtptr.
 //}
-//
-//// --- UnsafePointer ---
-//
-//#class(sealed,reference,dispatchable:dirty_ptr) UnsafePointer
-//{
-//    #field(int)thePointer.
-//
+
+// --- UnsafePointer ---
+
+#class(embeddable,sealed,dispatchable:dirty_ptr) UnsafePointer
+{
+    #field(4,-12)thePointer.
+
 //    #constructor new : anObject
 //    [
 //        $self set:anObject.
 //    ]
-//    
-//    #method(stacksafe) set : anObject
-//        => system'core_routines'__dptr.
-//                
+    
+    #method(stacksafe) set : anObject
+        => system'core_routines'__dptr.
+                
 //    #method(stacksafe) set &int:aValue
 //    [
 //        thePointer := aValue.
 //    ]
-//                
-//    #method(stacksafe) offset &int:aValue
-//    [
-//        thePointer := thePointer + aValue.
-//    ]                            
-//
+                
+    #method(stacksafe) offset &int:offs
+    [
+        thePointer := thePointer + offs.
+    ]
+
 //    #method(stacksafe) set &dirty_ptr:anObject
 //        => system'core_routines'__dptr.
 //                
@@ -120,98 +120,98 @@
 //    
 //    #method(stacksafe,bool)is &empty
 //        = 0 == thePointer.
-//}
-//
-//// --- COORD ---
-//
-//#subject win_coord = system'COORD.
-//
-//#class(sealed,embeddable) COORD
-//{
-//    #field(short)theX.
-//    #field(short)theY.
-//    
-//    #constructor new
-//    [
-//        theX := 0.
-//        theY := 0.
-//    ]
-//    
-//    #method set : anObject
-//        <= write &win_coord:(anObject win_coord).
-//    
-//    #method(stacksafe) write &short:X &short:Y
-//    [
-//        theX := X.
-//        theY := Y.
-//    ]
-//    
-//    #method(stacksafe) write &win_coord:aValue
-//    [
-//        #var(short)tmp := aValue X.
-//        theX := tmp.
-//        
-//        tmp := aValue Y.
-//        theY := tmp.
-//    ]
-//    
-//    #method(stacksafe,outwprop:X) readX &vshort:aRetVal
-//    [
-//        aRetVal := theX.
-//    ]
-//    
-//    #method(stacksafe,outwprop:Y) readY &vshort:aRetVal
-//    [
-//        aRetVal := theY.
-//    ]
-//}
-//
-//// --- SMALL_RECT --
-//
-//#subject win_small_rect = system'SMALL_RECT.
-//                
-//#class(sealed,embeddable) SMALL_RECT
-//{
-//    #field(short)theLeft.
-//    #field(short)theTop.
-//    #field(short)theRight.
-//    #field(short)theBottom.
-//    
-//    #method(stacksafe,outwprop:Left) readLeft &vshort:aRetVal
-//    [
-//        aRetVal := theLeft.
-//    ]
-//    
-//    #method(stacksafe,outwprop:Top) readTop &vshort:aRetVal
-//    [
-//        aRetVal := theTop.
-//    ]
-//    
-//    #method(stacksafe,outwprop:Right) readRight &vshort:aRetVal
-//    [
-//        aRetVal := theRight.
-//    ]
-//    
-//    #method(stacksafe,outwprop:Bottom) readBottom &vshort:aRetVal
-//    [
-//        aRetVal := theBottom.
-//    ]
-//    
-//    #method set : anObject
-//        <= write &win_small_rect:(anObject win_small_rect).
-//    
-//    #method write &win_small_rect:aValue
-//    [
-//        #var(short)tmp := aValue Left.
-//        theLeft := tmp.
-//        
-//        tmp := aValue  Top.
-//        theTop := tmp.
-//        
-//        tmp := aValue Right.
-//        theRight := tmp.
-//        
-//        tmp := aValue Bottom.
-//        theBottom := tmp.
-//    ]
-//}    
+}
+
+// --- COORD ---
+
+#subject win_coord = system'COORD.
+
+#class(sealed,embeddable) COORD
+{
+    #field(short)theX.
+    #field(short)theY.
+    
+    #constructor new
+    [
+        theX := 0.
+        theY := 0.
+    ]
+    
+    #method set : anObject
+        <= write &win_coord:(anObject win_coord).
+    
+    #method(stacksafe) write &short:X &short:Y
+    [
+        theX := X.
+        theY := Y.
+    ]
+    
+    #method(stacksafe) write &win_coord:aValue
+    [
+        #var(short)tmp := aValue X.
+        theX := tmp.
+        
+        tmp := aValue Y.
+        theY := tmp.
+    ]
+    
+    #method(stacksafe,outwprop:X) readX &vshort:aRetVal
+    [
+        aRetVal := theX.
+    ]
+    
+    #method(stacksafe,outwprop:Y) readY &vshort:aRetVal
+    [
+        aRetVal := theY.
+    ]
+}
+
+// --- SMALL_RECT --
+
+#subject win_small_rect = system'SMALL_RECT.
+                
+#class(sealed,embeddable) SMALL_RECT
+{
+    #field(short)theLeft.
+    #field(short)theTop.
+    #field(short)theRight.
+    #field(short)theBottom.
+    
+    #method(stacksafe,outwprop:Left) readLeft &vshort:aRetVal
+    [
+        aRetVal := theLeft.
+    ]
+    
+    #method(stacksafe,outwprop:Top) readTop &vshort:aRetVal
+    [
+        aRetVal := theTop.
+    ]
+    
+    #method(stacksafe,outwprop:Right) readRight &vshort:aRetVal
+    [
+        aRetVal := theRight.
+    ]
+    
+    #method(stacksafe,outwprop:Bottom) readBottom &vshort:aRetVal
+    [
+        aRetVal := theBottom.
+    ]
+    
+    #method set : anObject
+        <= write &win_small_rect:(anObject win_small_rect).
+    
+    #method write &win_small_rect:aValue
+    [
+        #var(short)tmp := aValue Left.
+        theLeft := tmp.
+        
+        tmp := aValue  Top.
+        theTop := tmp.
+        
+        tmp := aValue Right.
+        theRight := tmp.
+        
+        tmp := aValue Bottom.
+        theBottom := tmp.
+    ]
+}    

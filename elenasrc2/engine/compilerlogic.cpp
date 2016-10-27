@@ -375,6 +375,8 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
    {
       case V_PTR32:
          return targetRef == V_INT32;
+      case V_INT32:
+         return targetRef == V_PTR32;
       default:
          return false;
    }

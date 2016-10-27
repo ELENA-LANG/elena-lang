@@ -2595,13 +2595,18 @@ void Compiler :: compileVariable(SNode node, CodeScope& scope)
                node.set(lxBytesVariable, size);
                break;
             default:
-               node = lxBinaryVariable;                  
-               // HOTFIX : size should be provide only for dynamic variables
-               if (bytearray)
-                  node.setArgument(size);
+               if (isPrimitiveRef(variable.extraparam)) {
+                  node.set(lxBytesVariable, size);
+               }
+               else {
+                  node = lxBinaryVariable;
+                  // HOTFIX : size should be provide only for dynamic variables
+                  if (bytearray)
+                     node.setArgument(size);
 
-               if (variable.extraparam != 0) {
-                  node.appendNode(lxClassName, scope.moduleScope->module->resolveReference(variable.extraparam));
+                  if (variable.extraparam != 0) {
+                     node.appendNode(lxClassName, scope.moduleScope->module->resolveReference(variable.extraparam));
+                  }
                }
                break;
          }
@@ -3612,62 +3617,6 @@ ObjectInfo Compiler :: compileAssigning(SNode node, CodeScope& scope, int mode)
    }   
 }
 
-//ObjectInfo Compiler :: compileOperations(SNode node, CodeScope& scope, ObjectInfo object, int mode)
-//{
-//   ObjectInfo currentObject = object;
-//
-//   SNode member = node.nextNode();
-
-
-//   while (member != lxNone) {
-//      if (member == nsMessageOperation) {
-//         currentObject = compileMessage(member, scope, currentObject);
-//      }
-//      else if (member == nsMessageParameter) {
-//         currentObject = compileMessage(member, scope, currentObject);
-//
-//         // skip all except the last message parameter
-//         while (member.nextNode() == nsMessageParameter)
-//            member = member.nextNode();
-//      }
-//      else if (member == nsExtension) {
-//         currentObject = compileExtension(member, scope, currentObject, mode);
-//      }
-//      else if (member == nsL3Operation || member == nsL4Operation || member == nsL5Operation || member == nsL6Operation
-//         || member == nsL7Operation || member == nsL0Operation)
-//      {
-//         currentObject = compileOperator(member, scope, currentObject, mode);
-//      }
-//      else if (member == nsAltMessageOperation) {
-//         scope.writer->newBookmark();
-//
-//         scope.writer->appendNode(lxCurrent);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->removeBookmark();
-//      }
-//      else if (member == nsCatchMessageOperation) {
-//         scope.writer->newBookmark();
-//
-//         scope.writer->appendNode(lxResult);
-//
-//         currentObject = compileMessage(member, scope, ObjectInfo(okObject));
-//
-//         scope.writer->removeBookmark();
-//      }
-//      else if (member == nsSwitching) {
-//         compileSwitch(member, scope, currentObject);
-//
-//         currentObject = ObjectInfo(okObject);
-//      }
-//
-//      member = member.nextNode();
-//   }
-//
-//   return currentObject;
-//}
-
 ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
 {
    ModuleScope* moduleScope = scope.moduleScope;
@@ -4335,10 +4284,6 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    bool needVirtualEnd = true;
    SNode current = node.firstChild();
 
-//   // skip subject argument
-//   while (statement == nsSubjectArg || statement == nsMethodParameter)
-//      statement= statement.nextNode();
-
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
@@ -4370,13 +4315,12 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
          }
          case lxVariable:
 //            recordDebugStep(scope, statement.FirstTerminal(), dsStep);
-            compileVariable(current, scope/*, hints*/);
+            compileVariable(current, scope);
             break;
-//         case nsExtern:
-//            scope.writer->newNode(lxExternFrame);
-//            compileCode(statement, scope);
-//            scope.writer->closeNode();
-//            break;
+         case lxExtern:
+            current = lxExternFrame;
+            compileCode(current, scope);
+            break;
          case lxEOF:
             needVirtualEnd = false;
             setDebugStep(current, dsEOP);
@@ -4391,9 +4335,6 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    if (needVirtualEnd) {
       appendDebugStep(node, dsVirtualEnd);
    }
-
-//  //scope.rootBookmark = -1;
-//  // scope.writer->removeBookmark();
 
    return retVal;
 }
