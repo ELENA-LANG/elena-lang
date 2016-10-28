@@ -20,13 +20,14 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   9
+#define REVISION_VERSION   10
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
 #define REAL_CLASS               "system'RealNumber" 
-#define STR_CLASS               "system'LiteralValue" 
+#define STR_CLASS                "system'LiteralValue" 
 #define WSTR_CLASS               "system'WideLiteralValue" 
+#define CHAR_CLASS               "system'CharValue" 
 
 using namespace _ELENA_;
 
@@ -37,6 +38,7 @@ ident_t _long = LONG_CLASS;
 ident_t _real = REAL_CLASS;
 ident_t _literal = STR_CLASS;
 ident_t _wide = WSTR_CLASS;
+ident_t _char = CHAR_CLASS;
 
 TextFileWriter* _writer;
 
@@ -316,6 +318,7 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
    bool literalConstant = false;
+   bool charConstant = false;
    ident_t referenceName = NULL;
    int mask = reference & mskAnyRef;
    if (mask == mskInt32Ref) {
@@ -338,6 +341,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _real;
       literalConstant = true;
    }
+   else if (mask == mskCharRef) {
+      referenceName = _char;
+      charConstant = true;
+   }
    else if (reference == 0) {
       referenceName = "$nil";
    }
@@ -358,6 +365,16 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
          command.append("(");
          command.append(module->resolveConstant(reference & ~mskAnyRef));
          command.append(")");
+      }
+      else if (charConstant) {
+         const char* ch = module->resolveConstant(reference & ~mskAnyRef);
+
+         IdentifierString num;
+         num.appendInt(ch[0]);
+         command.append("(");
+         command.append(num);
+         command.append(")");
+
       }
    }
 }

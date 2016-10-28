@@ -231,6 +231,10 @@
 
     /// Compares the values
     #method(bool) greater : anObject = anObject less:$self bool.
+    
+    #method(bool) notless : anObject = $self less:anObject inverted.
+    
+    #method(bool) notgreater : anObject = $self greater:anObject inverted.
 }
 
 // --- BaseNumber ---
@@ -1519,7 +1523,6 @@
 /// An UTF-32 character symbol
 #class(embeddable,sealed,dispatchable:char,const) CharValue :: BaseValue
 {
-//    #field(int)theValue.
     #field(-12,4)theValue.
 
     /// Creates the object with a default value (0)

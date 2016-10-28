@@ -372,6 +372,8 @@ namespace _ELENA_
    #define DO_MESSAGE               "do"
    #define STOP_MESSAGE             "stop"
    #define GREATER_MESSAGE          "greater"
+   #define NOTLESS_MESSAGE          "notless"
+   #define NOTGREATER_MESSAGE       "notgreater"
    #define ADD_MESSAGE              "add"
    #define SUB_MESSAGE              "subtract"
    #define MUL_MESSAGE              "multiply"

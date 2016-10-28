@@ -674,13 +674,15 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
    addVerb(verbs, EQUAL_MESSAGE,      EQUAL_MESSAGE_ID);
    addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
+   addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
+   addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
+   addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
    addVerb(verbs, LESS_MESSAGE,       LESS_MESSAGE_ID);
    addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
    addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
    addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
    addVerb(verbs, DO_MESSAGE,         DO_MESSAGE_ID);
    addVerb(verbs, STOP_MESSAGE,       STOP_MESSAGE_ID);
-   addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
    addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
    addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
    addVerb(verbs, MUL_MESSAGE,        MUL_MESSAGE_ID);

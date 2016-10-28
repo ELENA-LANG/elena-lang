@@ -1481,6 +1481,15 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
 
                return true;
             }
+            else if ((*it).outerObject.kind == okOuter) {
+               InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::slClass);
+               if (closure->markAsPresaved((*it).outerObject)) {
+                  (*it).preserved = true;
+
+                  return true;
+               }
+               else return false;
+            }
             break;
          }
 
