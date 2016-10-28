@@ -319,13 +319,13 @@ void Document :: moveLeftToken(bool selecting)
       size_t length;
       text_t line = _text->getLine(_caret, length);
 
-      if (_ELENA_::StringHelper::find(WHITESPACE, line[0])!=-1) {
+      if (text_str(WHITESPACE).find(line[0])!=-1) {
          if (_operator || newToken) {
             _caret.moveOn(1);
             break;
          }
       }
-      else if (_ELENA_::StringHelper::find(OPERATORS, line[0])!=-1) {
+      else if (text_str(OPERATORS).find(line[0])!=-1) {
          if (newToken) {
             _caret.moveOn(1);
             break;
@@ -360,14 +360,14 @@ void Document :: moveRightToken(bool selecting, bool trimWhitespace)
       if (length == 0)
          break;
 
-      if (_ELENA_::StringHelper::find(WHITESPACE, line[0])!=-1) {
+      if (text_str(WHITESPACE).find(line[0])!=-1) {
          newToken = true;
          _operator = false;
 
          if (trimWhitespace)
             break;
       }
-      else if (_ELENA_::StringHelper::find(OPERATORS, line[0])!=-1) {
+      else if (text_str(OPERATORS).find(line[0])!=-1) {
          if (!_operator && !first) {
             break;
          }
@@ -844,7 +844,7 @@ void Document :: duplicateLine()
    bm.moveTo(_caret.getLength(), caret.y);
 
    size_t length = bm.getPosition() - _caret.getPosition();
-   text_c* buffer = _ELENA_::StringHelper::allocate(length + 1, DEFAULT_TEXT);
+   text_c* buffer = _ELENA_::StrFactory::allocate(length + 1, DEFAULT_TEXT);
    _text->copyTo(_caret, buffer, length);
 
    _caret.moveTo(0, caret.y + 1);
@@ -904,7 +904,7 @@ void Document :: uncommentBlock()
          return;
 
       _text->copyTo(_caret, line, 2);
-      if (_ELENA_::StringHelper::compare(line, _T("//"), 2)) {
+      if (text_str(_T("//")).compare(line, 2)) {
          eraseChar(false);
          eraseChar(false);
       }
@@ -916,10 +916,10 @@ void Document :: toUppercase()
 {
    int selection = getSelectionLength();
    if (selection > 0) {
-      text_c* buffer = _ELENA_::StringHelper::allocate(selection + 1, DEFAULT_TEXT);
+      text_c* buffer = _ELENA_::StrFactory::allocate(selection + 1, DEFAULT_TEXT);
       copySelection(buffer);
 
-      _ELENA_::StringHelper::upper(buffer);
+      _ELENA_::StrHelper::upper(buffer);
 
       insertLine(buffer, selection);
 
@@ -929,8 +929,8 @@ void Document :: toUppercase()
       text_c buffer[2];
       copyText(buffer, 1);
 
-      if (_ELENA_::StringHelper::find(WHITESPACE, buffer[0])==-1) {
-         _ELENA_::StringHelper::upper(buffer);
+      if (text_str(WHITESPACE).find(buffer[0])==-1) {
+         _ELENA_::StrHelper::upper(buffer);
 
          eraseChar(false);
          insertChar(buffer[0], 1);
@@ -942,10 +942,10 @@ void Document :: toLowercase()
 {
    int selection = getSelectionLength();
    if (selection > 0) {
-      text_c* buffer = _ELENA_::StringHelper::allocate(selection + 1, DEFAULT_TEXT);
+      text_c* buffer = _ELENA_::StrFactory::allocate(selection + 1, DEFAULT_TEXT);
       copySelection(buffer);
 
-      _ELENA_::StringHelper::lower(buffer);
+      _ELENA_::StrHelper::lower(buffer);
 
       insertLine(buffer, selection);
 
@@ -955,8 +955,8 @@ void Document :: toLowercase()
       text_c buffer[2];
       copyText(buffer, 1);
 
-      if (_ELENA_::StringHelper::find(WHITESPACE, buffer[0])==-1) {
-         _ELENA_::StringHelper::lower(buffer);
+      if (text_str(WHITESPACE).find(buffer[0])==-1) {
+         _ELENA_::StrHelper::lower(buffer);
 
          eraseChar(false);
          insertChar(buffer[0], 1);

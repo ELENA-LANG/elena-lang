@@ -116,7 +116,7 @@ wchar_t* Output :: getOutput()
    int length = (int)SendMessage(_handle, WM_GETTEXTLENGTH, 0, 0);
 
    if (length > 0) {
-      wchar_t* buffer = StringHelper::allocate(length + 1, (const wchar_t*)NULL);
+      wchar_t* buffer = StrFactory::allocate(length + 1, (const wchar_t*)NULL);
 
       SendMessage(_handle, WM_GETTEXT, length + 1, (LPARAM)buffer);
 

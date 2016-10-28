@@ -673,6 +673,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
    addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
    addVerb(verbs, EQUAL_MESSAGE,      EQUAL_MESSAGE_ID);
+   addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
    addVerb(verbs, LESS_MESSAGE,       LESS_MESSAGE_ID);
    addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
    addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
@@ -695,6 +696,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
    addVerb(verbs, RAISE_MESSAGE,      RAISE_MESSAGE_ID);
    addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
+   addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
    addVerb(verbs, FIND_MESSAGE,       FIND_MESSAGE_ID);
    addVerb(verbs, SEEK_MESSAGE,       SEEK_MESSAGE_ID);
    addVerb(verbs, REWIND_MESSAGE,     REWIND_MESSAGE_ID);
@@ -758,7 +760,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 ByteCode ByteCodeCompiler :: code(ident_t s)
 {
    for(int i = 0 ; i < 255 ; i++) {
-      if (StringHelper::compare(s, _fnOpcodes[i])) {
+      if (s.compare(_fnOpcodes[i])) {
          return (ByteCode)i;
       }
    }
@@ -766,7 +768,7 @@ ByteCode ByteCodeCompiler :: code(ident_t s)
    return bcNone;
 }
 
-ident_t ByteCodeCompiler :: decode(ByteCode code, ident_c* s)
+ident_t ByteCodeCompiler :: decode(ByteCode code, char* s)
 {
    copystr(s, _fnOpcodes[(int)code]);
 

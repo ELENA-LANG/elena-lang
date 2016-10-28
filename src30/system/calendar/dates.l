@@ -6,9 +6,17 @@
 {
     #field(__time)theValue.
 
-    #constructor new <= new &__time:(SystemTime $new &long:0l).
+    #constructor new
+    [
+        theValue := 0l.
+    ]
 
-    #constructor min <= new &__time:(SystemTime $new &long:0l).
+//    #constructor min <= new &__time:(SystemTime $new &long:0l).
+
+    #constructor(stacksafe)&__time:aValue
+    [
+        theValue := aValue.
+    ]
 
     #constructor(stacksafe) new &__time:aValue
     [
@@ -31,7 +39,7 @@
         n *= 10000000l.
         aValue += n.
         
-        theValue := SystemTime $new &long:aValue.
+        theValue := aValue.
     ]
 
     #constructor new &days:Days &hours:Hours &minutes:Minutes &seconds:Seconds
@@ -55,7 +63,7 @@
         n *= 864000000000l.
         aValue += n.
 
-        theValue := SystemTime $new &long:aValue.
+        theValue := aValue.
     ]
 
     #method(stacksafe) read &__vtime:retVal
@@ -131,30 +139,26 @@
     
     #method add &timespan:aSpan
     [
-        #var(__time)aTime.
-        aSpan read &__vtime:aTime.
-                
-        #var(long)aValue := aTime long.
-        #var(long)aCurrentValue := theValue long.
+        #var(__time)aValue.
+        aSpan read &__vtime:aValue.
 
-        ^ TimeSpan new &__time:(SystemTime $new &long:(aValue + aCurrentValue)).
+        #var(__time)retVal := theValue + aValue.
+
+        ^ TimeSpan new &__time:retVal.
     ]
 
     #method subtract &timespan:aSpan
     [
-        #var(__time)aTime.
-        aSpan read &__vtime:aTime.
+        #var(__time)aValue.
+        aSpan read &__vtime:aValue.
 
-        #var(long)aValue := aTime long.
-        #var(long)aCurrentValue := theValue long.
-                                
-        ^ TimeSpan new &__time:(SystemTime $new &long:(aCurrentValue - aValue)).
+        #var(__time)retVal := theValue - aValue.
+        ^ TimeSpan new &__time:retVal.
     ]
 
     #method literal
     [
-        #var(__time_st)aStruct.
-        aStruct writeSpan &__time:theValue.
+        #var(__time_st)aStruct := theValue.
 
         #var aValue := aStruct toShortTime literal.
 
@@ -163,8 +167,7 @@
 
     #method wide
     [
-        #var(__time_st)aStruct.
-        aStruct writeSpan &__time:theValue.        
+        #var(__time_st)aStruct := theValue.
         
         #var aValue := aStruct toShortTime literal.
         
@@ -181,16 +184,28 @@
 {
     #field(__time)theValue.
 
-    #constructor new <= new &__time:(SystemTime $new &long:0l).
+    #constructor new
+    [
+        theValue := 0l.
+    ]
 
-    #constructor min <= new &__time:(SystemTime $new &long:0l).
+//    #constructor min <= new &__time:(SystemTime $new &long:0l).
 
     #constructor now
-        <= new &__time:(SystemTime now).
+    [
+        $systemTimeFactory readNow &__vtime:theValue.
+    ]
 
     #constructor utcNow
-        <= new &__time:(SystemTime utcNow).
+    [
+        $systemTimeFactory readUtcNow &__vtime:theValue.
+    ]
             
+    #constructor(stacksafe)&__time:aValue
+    [
+        theValue := aValue.
+    ]
+    
     #constructor(stacksafe) new &__time:aValue
     [
         theValue := aValue.
@@ -208,16 +223,16 @@
         aSystemTime millisecond := 0.
 
         #var(__time)aValue.
-        aSystemTime read &__vtime:aValue.        
+        aSystemTime read &__vtime:aValue.
         theValue := aValue.
     ]
     
     #constructor new &year:aYear &month:aMonth &day:aDay
         <= new &year:aYear &month:aMonth &day:aDay &hour:0 &minute:0 &second:0.
   
-    #method __time = SystemTime new &__time:theValue.
-
-    #method(stacksafe) __time_st = TimeStruct new &__time:theValue.
+//    #method __time = SystemTime new &__time:theValue.
+//
+//    #method(stacksafe) __time_st = TimeStruct new &__time:theValue.
 
     #method(stacksafe) read &__vtime : aRetVal
     [
@@ -266,64 +281,56 @@
 
     #method year
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime year.
     ]
     
     #method month
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime month.
     ]
 
     #method day
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime day.
     ]
 
     #method dayOfWeek
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime dayOfWeek.
     ]
 
     #method hour
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime hour.
     ]
 
     #method minute
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime minute.
     ]
 
     #method second
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime second.
     ]
 
     #method millisecond
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         ^ aSystemTime millisecond.
     ]
@@ -331,8 +338,7 @@
     #method add &years:aYears
     [
         #var(int)years.
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
 
         aSystemTime readYear &vint:years.
         years += aYears int.
@@ -346,8 +352,7 @@
 
     #method add &months:Months
     [
-        #var(__time_st)aSystemTime.
-        aSystemTime write &__time:theValue.
+        #var(__time_st)aSystemTime := theValue.
         
         #var(int) months := Months int.
         
@@ -406,8 +411,8 @@
         ^ (aDateValue + " " + aTimeValue) wide.
     ]
 
-    #method clone
-        = Date new &__time:theValue.
+//    #method clone
+//        = Date new &__time:theValue.
 }
 
 // --- now ---

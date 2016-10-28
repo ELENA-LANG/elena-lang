@@ -2,7 +2,7 @@
 #template varof : template_subj
 {
     #field(template_subj)$value.
-    
+
     #method set : val
     [
         $value := val template_subj.
@@ -22,7 +22,7 @@
     
     #method(w3) equal : anObject
         => $value.
-        
+
     #method(embeddable,w3) => $value.
 }
 
@@ -94,6 +94,118 @@
         
     #method(embeddable,w3) => $value.
 }
+
+// === Boolean values ===
+
+// --- true ---
+
+/// A true value symbol
+#symbol true = BaseBoolValue
+{
+    /// Executes the action
+    #method(-4097) if : aTrueAction = aTrueAction eval.
+
+    /// Executes then-action
+    #method if : aTrueAction : aFalseAction = aTrueAction eval.
+
+    /// Always returns nil.
+    #method(-4098) ifnot : aTrueAction = $nil.
+
+    #method iif:aTrueValue:aFalseValue = aTrueValue.
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    #method or : anExpr = $self.
+
+    /// Executes logical AND operation
+    #method and : anExpr = anExpr bool.
+
+    /// Executes logical XOR operation
+    #method xor : aBool
+    [
+        aBool ? [ ^ false. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal : anExpr = anExpr bool.
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    #method equal &bool:aBool = aBool.
+
+    /// Always returns false.
+    #method inverted = false.
+
+    /// Returns literal representation.
+    #method literal = "true".
+
+    /// Returns literal representation.
+    #method wide = "true"w.
+
+    /// Returns itself.
+    #method clone = $self.
+}.
+
+// --- false ---
+
+/// A false value symbol
+#symbol false = BaseBoolValue
+{
+    /// Always returns nil
+    #method(-4098) if : anAction = $nil.
+    
+    /// Executes else-action
+    #method if : aTrueAction : aFalseAction = aFalseAction eval.
+
+    /// Executes the action
+    #method(-4097) ifnot : aFalseAction = aFalseAction eval.
+
+    #method iif:aTrueValue:aFalseValue = aFalseValue.
+
+    /// Executes logical OR operation
+    #method or : anExpr = anExpr bool.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    #method and : anExpr = $self.
+
+    /// Executes logical XOR operation
+    #method xor : anExpr 
+    [
+        anExpr ? [ ^ true. ].
+        
+        ^ $self.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal : anExpr
+    [
+        anExpr bool ? [ ^ $self. ].
+        
+        ^ true.
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    #method equal &bool:anExpr
+    [
+        ^ anExpr not.
+    ]
+
+    /// Always returns true
+    #method inverted = true.
+
+    /// Returns literal representation
+    #method literal = "false".
+    
+    /// Returns literal representation
+    #method wide = "false"w.
+
+    /// Returns itself
+    #method clone = $self.
+}.
 
 // === Numeric Variables ===
 
@@ -179,19 +291,19 @@
 /// An unsigned 8 bit integer
 #class(embeddable,sealed,dispatchable:byte) ByteNumber :: IntBaseNumber
 {
-    #field(int8)theValue.
+    #field(1,-11)theValue.
 
     #constructor(stacksafe) &int:n
     [
-        theValue := n.
+        theValue := n && 255.
     ]
             
     /// Returns the minimal value (0)
-    #constructor min
+    #constructor(w3) min
         = 0.
 
     /// Returns the maxial value (255)
-    #constructor max
+    #constructor(w3) max
         = 255.
     
     /// Creates the object with a specified value
@@ -394,7 +506,7 @@
     
     /// Bitwise inversion
     #method(byte,stacksafe) inverted
-        => system'core_routines'__byte.  
+        => system'core_routines'__byte.
         
     /// Returns the literal presentation
     #method(w2) literal = system'literalConvertor convert &byte:$self.
@@ -415,7 +527,7 @@
         $self readHashCode &vint:aCode.
         
         ^ aCode.
-    ]        
+    ]
 }
 
 // --- ShortNumber ---
@@ -423,15 +535,21 @@
 /// A signed 16 bit integer
 #class(embeddable,sealed,dispatchable:short) ShortNumber :: IntBaseNumber
 {
-    #field(int16)theValue.    
+    #field(2,-11)theValue.    
     
     #constructor(stacksafe)&int:n
     [
-        theValue := n.
+        (n < 0)
+            ? [ 
+                theValue := n && 0FFFFh. 
+                
+                theValue := theValue || 0FFFF0000h.
+            ]
+            ! [ theValue := n && 0FFFFh. ].
     ]
     
     /// Returns the minimal value (-32768)
-    #constructor min
+    #constructor(w3) min
         = -32768.
 
     /// Returns the maxial value (32767)
@@ -675,7 +793,7 @@
 /// A signed 32 bit integer
 #class(embeddable,sealed,dispatchable:int) IntNumber :: IntBaseNumber
 {
-    #field(int32)theValue.    
+    #field(4,-11)theValue.
     
     #constructor(stacksafe)&byte:n
     [
@@ -930,9 +1048,9 @@
     #method(int,stacksafe) inverted
         => system'core_routines'__int.  
         
-    /// Negates the value
-    #method(stacksafe/*,suppress:w3*/) negative
-        = 0 - theValue.
+//    /// Negates the value
+//    #method(stacksafe/*,suppress:w3*/) negative
+//        = 0 - theValue.
 }
 
 // --- LongNumber ---
@@ -940,7 +1058,7 @@
 /// A signed 64 bit integer value
 #class(embeddable,sealed,dispatchable:long) LongNumber :: IntBaseNumber
 {
-    #field(int64)theValue.
+    #field(8,-13)theValue.
     
     /// Returns the minimal value
     #constructor min
@@ -1189,9 +1307,9 @@
     #method(long,stacksafe) inverted
         => system'core_routines'__long.  
         
-    /// Negates the value
-    #method(stacksafe/*,suppress:w3*/) negative
-        = 0l - theValue.
+//    /// Negates the value
+//    #method(stacksafe/*,suppress:w3*/) negative
+//        = 0l - theValue.
 }
 
 // --- realNumber ---
@@ -1199,7 +1317,7 @@
 /// A 64bit float numeric value
 #class(embeddable,sealed,dispatchable:real) RealNumber :: BaseNumber
 {
-    #field(float64)theValue.
+    #field(8,-14)theValue.
 
     #constructor(stacksafe)&int:n
     [
@@ -1391,18 +1509,19 @@
         ^ aCode.
     ]
         
-    /// Negates the value
-    #method(stacksafe/*,suppress:w3*/) negative
-        = 0.0r - theValue.
+//    /// Negates the value
+//    #method(stacksafe/*,suppress:w3*/) negative
+//        = 0.0r - theValue.
 }
 
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-#class(reference,sealed,dispatchable:char,const) CharValue :: BaseValue
+#class(embeddable,sealed,dispatchable:char,const) CharValue :: BaseValue
 {
-    #field(int)theValue.
-    
+//    #field(int)theValue.
+    #field(-12,4)theValue.
+
     /// Creates the object with a default value (0)
     #constructor new
         <= new &char:#0.
@@ -1494,24 +1613,24 @@
     ]
 }
 
-// === Basic Factory symbols ==
-
-#class BaseExtender
-{
-    #field theObject.
-    
-    /// Returns true if the specified object is equal to the current object; otherwise, false.
-    #method(bool) equal : anObject
-        => theObject.
-      
-    /// Dispatches the verb to the target object
-    #method cast : aVerb &to:aTarget => theObject.
-    
-    /// Dispatches the verb to the target object
-    #method cast : aVerb &to:aTarget &with:aParam => theObject.
-    
-    #method => theObject.
-}
+//// === Basic Factory symbols ==
+//
+//#class BaseExtender
+//{
+//    #field theObject.
+//    
+//    /// Returns true if the specified object is equal to the current object; otherwise, false.
+//    #method(bool) equal : anObject
+//        => theObject.
+//      
+//    /// Dispatches the verb to the target object
+//    #method cast : aVerb &to:aTarget => theObject.
+//    
+//    /// Dispatches the verb to the target object
+//    #method cast : aVerb &to:aTarget &with:aParam => theObject.
+//    
+//    #method => theObject.
+//}
 
 /// A generic variable. 
 ///
@@ -1602,11 +1721,11 @@
     #method => theObject.
 }
 
-// --- DTO ---
-
-#class(dispatchable:dto) DTO
-{
-}
+//// --- DTO ---
+//
+//#class(dispatchable:dto) DTO
+//{
+//}
 
 // === Basic Convertors ===
 
@@ -2253,7 +2372,6 @@
     #method(real) convert : anObject
         = anObject cast:%convert &to:$self real.
 }.
-
 
 // --- realOpController ---
 

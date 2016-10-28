@@ -119,53 +119,53 @@ public:
    }
 };
 
-class LineReader : public TextReader
-{
-//   TextReader* _reader;
-//
-//public:
-//   virtual bool read(wchar16_t* s, size_t length)
-//   {
-//      const wchar16_t* start = s;
-//      while (length > 0) {
-//         if(!_reader->read(s, 1))
-//            break;
-//
-//         if (s[0] == '\n') {
-//            s[1] = 0;
-//            return true;
-//         }
-//         length--;
-//         s++;
-//      }
-//      s[0] = 0;
-//
-//      return s != start;
-//   }
-//
-//   virtual bool read(char* s, size_t length)
-//   {
-//      while (length > 0) {
-//         if(!_reader->read(s, 1))
-//            return false;
-//
-//         if (s[0] == '\n') {
-//            s[1] = 0;
-//            return true;
-//         }
-//         length--;
-//         s++;
-//      }
-//      s[0] = 0;
-//
-//      return true;
-//   }
-//
-//   LineReader(TextReader* reader)
-//   {
-//      _reader = reader;
-//   }
-};
+//class LineReader : public TextReader
+//{
+////   TextReader* _reader;
+////
+////public:
+////   virtual bool read(wchar16_t* s, size_t length)
+////   {
+////      const wchar16_t* start = s;
+////      while (length > 0) {
+////         if(!_reader->read(s, 1))
+////            break;
+////
+////         if (s[0] == '\n') {
+////            s[1] = 0;
+////            return true;
+////         }
+////         length--;
+////         s++;
+////      }
+////      s[0] = 0;
+////
+////      return s != start;
+////   }
+////
+////   virtual bool read(char* s, size_t length)
+////   {
+////      while (length > 0) {
+////         if(!_reader->read(s, 1))
+////            return false;
+////
+////         if (s[0] == '\n') {
+////            s[1] = 0;
+////            return true;
+////         }
+////         length--;
+////         s++;
+////      }
+////      s[0] = 0;
+////
+////      return true;
+////   }
+////
+////   LineReader(TextReader* reader)
+////   {
+////      _reader = reader;
+////   }
+//};
 
 } // _ELENA_
 

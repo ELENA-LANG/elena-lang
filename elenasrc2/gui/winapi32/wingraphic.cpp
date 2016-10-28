@@ -19,7 +19,7 @@ Font* Font :: createFont(const wchar_t* fontName, int characterSet, int size,
    while (!it.Eof()) {
       Font* font = *it;
 
-      if (_ELENA_::StringHelper::compare(font->_fontName, fontName) && font->_size == size &&
+      if (font->_fontName.compare(fontName) && font->_size == size &&
          font->_characterSet==characterSet && font->_bold == bold && font->_italic==italic)
       {
          return font;
@@ -74,7 +74,7 @@ void Font :: create(HDC handler)
    lf.lfCharSet = (BYTE)(_characterSet);
 
    size_t length = LF_FACESIZE;
-   _ELENA_::StringHelper::copy(lf.lfFaceName, _fontName, _ELENA_::getlength(_fontName), length);
+   _ELENA_::Convertor::copy(lf.lfFaceName, _fontName, _ELENA_::getlength(_fontName), length);
    lf.lfFaceName[length] = 0;
 
    _fontID = ::CreateFontIndirect(&lf);

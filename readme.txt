@@ -67,6 +67,9 @@ Linux:
 To install just unzip all the files into a directory you want and execute 
 rebuild.script under the superuser. Alternatively install debian package
 
+ dpkg -i /path/to/deb/file
+ sudo apt-get install -f
+
 To compile the program types : elena-lc -c<path to .project file>
 
 ****************************************************************************

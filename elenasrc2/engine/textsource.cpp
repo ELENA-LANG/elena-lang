@@ -57,7 +57,7 @@ inline bool isDigit(wchar_t ch)
    return (ch >='0' && ch <= '9');
 }
 
-LineInfo TextSourceReader :: read(ident_c* token, size_t length)
+LineInfo TextSourceReader :: read(char* token, size_t length)
 {
    LineInfo info(_position, _column, _row);
    char terminalState = readLineInfo(dfaStart, info);

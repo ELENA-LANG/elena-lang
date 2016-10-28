@@ -8,7 +8,7 @@
 #define winsdiH
 
 #include "wincommon.h"
-//#include "winmenu.h"
+#include "winmenu.h"
 
 namespace _GUI_
 {

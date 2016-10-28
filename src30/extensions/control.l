@@ -55,46 +55,46 @@
     ]
 }
 
-// --- testOp ---
-
-#class(extension)testOp
-{
-    #method assert &ifTrue
-    [
-        self bool
-            ! [ console writeLine:"Assertion fails!" ].
-    ]
-    
-    #method assert &ifFalse
-    [
-        self bool
-            ? [ console writeLine:"Assertion fails!" ].
-    ]
-}
-
-// --- controlOp ---
-
-#class(extension)controlOp
-{
-    #method save &to:target
-    [
-        target write:self.
-        
-        ^   self.
-    ]
-}
+//// --- testOp ---
+//
+//#class(extension)testOp
+//{
+//    #method assert &ifTrue
+//    [
+//        self bool
+//            ! [ console writeLine:"Assertion fails!" ].
+//    ]
+//    
+//    #method assert &ifFalse
+//    [
+//        self bool
+//            ? [ console writeLine:"Assertion fails!" ].
+//    ]
+//}
+//
+//// --- controlOp ---
+//
+//#class(extension)controlOp
+//{
+//    #method save &to:target
+//    [
+//        target write:self.
+//        
+//        ^   self.
+//    ]
+//}
 
 // --- control ---
 
 #symbol control =
 {
-    try : anAction &catching:aHandler
-    [
-        ^ anAction eval | if:aHandler.
-    ]    
-    
-    eval:object &for:action
-        = action eval:object.
+//    try : anAction &catching:aHandler
+//    [
+//        ^ anAction eval | if:aHandler.
+//    ]    
+//    
+//    eval:object &for:action
+//        = action eval:object.
     
     do:anAction = anAction eval.
     

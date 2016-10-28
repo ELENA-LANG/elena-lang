@@ -173,7 +173,7 @@ int Dialog :: getIntText(int id)
 
    ::SendDlgItemMessage(_handle, id, WM_GETTEXT, 12, (LPARAM)s);
 
-   return _ELENA_::StringHelper::strToInt(s);
+   return _ELENA_::wide_t(s).toInt();
 }
 
 bool Dialog :: getCheckState(int id)
@@ -310,16 +310,16 @@ void ProjectSettingsDialog :: loadTemplateList()
    configPath.combine(_T("elc.cfg"));
 
    _ELENA_::IniConfigFile config;
-   if (!config.load(configPath, _ELENA_::feAnsi))
+   if (!config.load(configPath.c_str(), _ELENA_::feAnsi))
       return;
 
-   const char* curTemplate = _project->getTemplate();
+   _ELENA_::ident_t curTemplate = _project->getTemplate();
 
    int current = 0;
    for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt("templates") ; !it.Eof() ; it++, current++) {
       addComboBoxItem(IDC_SETTINGS_TEPMPLATE, TextString(it.key()));
 
-      if (_ELENA_::StringHelper::compare(curTemplate, it.key()))
+      if (curTemplate.compare(it.key()))
          setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, current);
    }
 }
@@ -391,7 +391,7 @@ void ProjectSettingsDialog :: onOK()
    _project->setBoolSetting("warn:unresolved", getCheckState(IDC_SETTINGS_WARN_REF));
 }
 
-//// --- ProjectForwardsDialog ---
+// --- ProjectForwardsDialog ---
 
 bool ProjectForwardsDialog :: validateItem(wchar_t* &text)
 {
@@ -401,7 +401,7 @@ bool ProjectForwardsDialog :: validateItem(wchar_t* &text)
 
    if (_ELENA_::emptystr(text))
       return false;
-   else if (_ELENA_::StringHelper::find(text, '=')==-1) {
+   else if (text_str(text).find('=')==-1) {
       MsgBox::show(_owner->getHandle(), _T("The forward should have the following structure: <forward name>=<full class name>\n(e.g. 'integer=std'basic'integer)"), MB_ICONERROR);
 	  return false;
    }
@@ -472,7 +472,7 @@ void ProjectForwardsDialog :: onCreate()
    while (!forwards.Eof()) {
       item.copy(forwards.key());
       item.append('=');
-      item.append((const char*)*forwards);
+      item.append((_ELENA_::ident_t)*forwards);
 
       addListItem(IDC_FORWARDS_LIST, TextString(item));
 
@@ -492,7 +492,7 @@ void ProjectForwardsDialog :: onOK()
 
          _ELENA_::IdentifierString line(item);
 
-         int pos = _ELENA_::StringHelper::find(line, '=');
+         int pos = line.ident().find('=');
 
          _ELENA_::IdentifierString name(line, pos);
 
@@ -666,7 +666,7 @@ void EditorSettings :: onOK()
 
    wchar_t size[12];
    getText(IDC_EDITOR_TABSIZE, (wchar_t**)(&size), 11);
-   _model->tabSize = _ELENA_::StringHelper::strToInt(size);
+   _model->tabSize = text_str(size).toInt();
    if (_model->tabSize <= 0 && _model->tabSize > 20) {
       _model->tabSize = 4;
    }

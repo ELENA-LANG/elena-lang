@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitlinkerH
@@ -139,10 +139,10 @@ class JITLinker : _JITLoaderListener
    void* resolveBytecodeVMTSection(ident_t reference, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(ident_t reference, int mask);
    void* resolveStaticVariable(ident_t reference, int mask);
-////   void* resolveDump(const wchar16_t*  reference, int size, int mask);
+//   void* resolveDump(const wchar16_t*  reference, int size, int mask);
    void* resolveMessage(ident_t reference, ident_t vmt);
    void* resolveExtensionMessage(ident_t reference, ident_t vmt);
-//////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
+//   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
    void prepareCompiler();

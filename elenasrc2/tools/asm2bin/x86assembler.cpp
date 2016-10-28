@@ -2572,7 +2572,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 	      code->writeRef(ref, 0);
       }
-      else if (StringHelper::compare(token.value, "'dlls'", 6)) {
+      else if (token.check("'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
 	      token.read(".", "dot expected (%d)\n");
@@ -2614,7 +2614,7 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
       }
       else if (token.terminal.state==dfaQuote) {
          IdentifierString funRef(token.terminal.line + 1, token.terminal.length-2);
-         if (StringHelper::find(funRef, NATIVE_MODULE) == 0) {
+         if (funRef.ident().find(NATIVE_MODULE) == 0) {
             ref = info.binary->mapReference(funRef) | mskNativeRelCodeRef;
          }
          else ref = info.binary->mapReference(funRef) | mskSymbolRelRef;

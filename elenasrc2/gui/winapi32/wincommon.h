@@ -234,7 +234,7 @@ inline void makePathRelative(_ELENA_::Path& path, const wchar_t* rootPath)
 
    ::PathRelativePathTo(tmpPath, rootPath, FILE_ATTRIBUTE_DIRECTORY, path, FILE_ATTRIBUTE_NORMAL);
    if (!_ELENA_::emptystr(tmpPath)) {
-      if (_ELENA_::StringHelper::compare(tmpPath, _T(".\\"), 2)) {
+      if (_ELENA_:: wide_t(tmpPath).compare(_T(".\\"), 2)) {
          path.copy(tmpPath + 2);
       }
       else path.copy(tmpPath);

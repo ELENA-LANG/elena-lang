@@ -41,7 +41,7 @@ void printLine(const char* msg, int param1, int param2, wchar_t ch)
 
 void printLine(const char* msg, const char* param)
 {
-   print(_ELENA_::WideString(msg), _ELENA_::WideString(param));
+   print(_ELENA_::WideString(msg), (const wchar_t*)_ELENA_::WideString(param));
 }
 
 void printLine(const char* msg, const wchar_t* param)

@@ -20,12 +20,13 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   4
+#define REVISION_VERSION   9
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
 #define REAL_CLASS               "system'RealNumber" 
-#define WSTR_CLASS               "system'LiteralValue" 
+#define STR_CLASS               "system'LiteralValue" 
+#define WSTR_CLASS               "system'WideLiteralValue" 
 
 using namespace _ELENA_;
 
@@ -34,7 +35,8 @@ MessageMap         _verbs;
 ident_t _integer = INT_CLASS;
 ident_t _long = LONG_CLASS;
 ident_t _real = REAL_CLASS;
-ident_t _literal = WSTR_CLASS;
+ident_t _literal = STR_CLASS;
+ident_t _wide = WSTR_CLASS;
 
 TextFileWriter* _writer;
 
@@ -45,7 +47,7 @@ TextFileWriter* _writer;
 inline ident_t trim(ident_t s)
 {
    while (s[0]==' ')
-      s++;
+      s+=1;
 
    return s;
 }
@@ -166,8 +168,8 @@ ref_t resolveMessage(_Module* module, ident_t method)
 {
    int paramCount = 0;
 
-   int subjIndex = StringHelper::find(method, '&', -1);
-   int paramIndex = StringHelper::find(method, '[', -1);
+   int subjIndex = method.find('&', -1);
+   int paramIndex = method.find('[', -1);
 
    IdentifierString verbName;
    IdentifierString subjectName;
@@ -186,18 +188,18 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
    if (paramIndex != -1) {
       IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
-      paramCount = StringHelper::strToInt(countStr);
+      paramCount = countStr.ident().toInt();
    }
 
    ref_t verb = _verbs.get(verbName);
    if (verb == 0) {
-      if (StringHelper::compare(verbName, "dispatch")) {
+      if (verbName.compare("dispatch")) {
          verb = DISPATCH_MESSAGE_ID;
       }
-      else if (StringHelper::compare(verbName, "#new")) {
+      else if (verbName.compare("#new")) {
          verb = NEWOBJECT_MESSAGE_ID;
       }
-      else if (StringHelper::compare(verbName, "#private")) {
+      else if (verbName.compare("#private")) {
          verb = PRIVATE_MESSAGE_ID;
       }
       else {
@@ -277,9 +279,9 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
    int count = reference[0] - '0';
 
    // skip the param counter
-   reference++;
+   reference+=1;
 
-   int index = StringHelper::find(reference, '&');
+   int index = reference.find('&');
    //HOTFIX: for generic GET message we have to ignore ampresand
    if (reference[index + 1] == 0)
       index = -1;
@@ -326,6 +328,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    }
    else if (mask == mskLiteralRef) {
       referenceName = _literal;
+      literalConstant = true;
+   }
+   else if (mask == mskWideLiteralRef) {
+      referenceName = _wide;
       literalConstant = true;
    }
    else if (mask == mskRealRef) {
@@ -396,7 +402,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    int position = codeReader.Position();
    unsigned char code = codeReader.getByte();
 
-   ident_c opcode[0x30];
+   char opcode[0x30];
    ByteCodeCompiler::decode((ByteCode)code, opcode);
 
    IdentifierString command;
@@ -576,6 +582,7 @@ void printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcCopyM:
       case bcSetVerb:
+      case bcSetSubj:
          command.append(opcode);
          command.append(' ');
          printMessage(command, module, argument);
@@ -631,7 +638,7 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
 {
    methodReference = trim(methodReference);
 
-   int separator = StringHelper::find(methodReference, '.');
+   int separator = methodReference.find('.');
    if (separator == -1) {
       printf("Invalid command");
 
@@ -786,8 +793,8 @@ void listFlags(int flags)
    if (test(flags, elExtMessage))
       printLine("@flag ", "elExtMessage");
 
-   if (test(flags, elSymbol))
-      printLine("@flag ", "elSymbol");
+   //if (test(flags, elSymbol))
+   //   printLine("@flag ", "elSymbol");
 
    switch (flags & elDebugMask) {
       case elDebugDWORD:
@@ -814,26 +821,29 @@ void listFlags(int flags)
       case elDebugShorts:
          printLine("@flag ", "elDebugShorts");
          break;
-      case elDebugPTR:
-         printLine("@flag ", "elDebugPTR");
-         break;
+      //case elDebugPTR:
+      //   printLine("@flag ", "elDebugPTR");
+      //   break;
       case elDebugWideLiteral:
          printLine("@flag ", "elDebugWideLiteral");
          break;
-      case elDebugReference:
-         printLine("@flag ", "elDebugReference");
-         break;
+      //case elDebugReference:
+      //   printLine("@flag ", "elDebugReference");
+      //   break;
       case elDebugSubject:
          printLine("@flag ", "elDebugSubject");
          break;
-      case elDebugReals:
-         printLine("@flag ", "elDebugReals");
-         break;
+      //case elDebugReals:
+      //   printLine("@flag ", "elDebugReals");
+      //   break;
       case elDebugMessage:
          printLine("@flag ", "elDebugMessage");
          break;
-      case elDebugDPTR:
-         printLine("@flag ", "elDebugDPTR");
+      //case elDebugDPTR:
+      //   printLine("@flag ", "elDebugDPTR");
+      //   break;
+      case elEnumList:
+         printLine("@flag ", "elEnumList");
          break;
    }
 }
@@ -955,7 +965,7 @@ void printAPI(_Module* module, int pageSize)
    while (!it.Eof()) {
       ident_t reference = it.key();
       NamespaceName ns(it.key());
-      if (StringHelper::compare(moduleName, ns)) {
+      if (moduleName.compare(ns)) {
          ReferenceName name(it.key());
          if (module->mapSection(*it | mskVMTRef, true)) {
             printLine("class ", name);
@@ -981,7 +991,7 @@ void listClasses(_Module* module, int pageSize)
    while (!it.Eof()) {
       ident_t reference = it.key();
       NamespaceName ns(it.key());
-      if (StringHelper::compare(moduleName, ns)) {
+      if (moduleName.compare(ns)) {
          ReferenceName name(it.key());
          if (module->mapSection(*it | mskVMTRef, true)) {
             printLine("class ", name);
@@ -1035,7 +1045,7 @@ void runSession(_Module* module)
          if (line[1]=='?') {
             printSymbol(module, line + 2, pageSize);
          }
-         else if (StringHelper::find(line + 1, '.') != -1) {
+         else if (line.ident().findSubStr(1, '.', getlength(line) - 1, -1) != -1) {
             printMethod(module, line + 1, pageSize);   
          }
          else if (line[1]==0) {
@@ -1058,9 +1068,8 @@ void runSession(_Module* module)
             //   break;
             case 'o':
             {
-               Path path;
-               Path::loadPath(path, line + 2);
-               setOutputMode(path);
+               Path path(line + 2);
+               setOutputMode(path.c_str());
                break;
             }
             default:
@@ -1109,37 +1118,34 @@ int main(int argc, char* argv[])
    }
 
    // prepare library manager
-   Path configPath;
-   Path::loadPath(configPath, "templates\\lib.cfg");
-
-   Path rootPath;
+   Path configPath("templates\\lib.cfg");
+   Path rootPath("..\\lib30");
 
    // get viewing module name
-   IdentifierString moduleName(argv[1]);
+   IdentifierString buffer(argv[1]);
+   ident_t moduleName = buffer;
 
    //// load config attributes
    //IniConfigFile config;
    //if (config.load(configPath, feUTF8)) {
    //   Path::loadPath(rootPath, config.getSetting(PROJECT_SECTION, ROOTPATH_OPTION, DEFAULT_STR));
    //}
-   Path::loadPath(rootPath, "..\\lib30");
 
-   LibraryManager loader(rootPath, NULL);
+   LibraryManager loader(rootPath.c_str(), NULL);
    LoadResult result = lrNotFound;
    _Module* module = NULL;
 
    // if direct path is provieded
    if (moduleName[0]=='-' && moduleName[1]=='p') {
-      moduleName = moduleName + 2;
+      moduleName += 2;
 
-      Path     path;
-      Path::loadSubPath(path, moduleName);
+      Path path;
+      path.copySubPath(moduleName);
+      FileName fileName(moduleName);
 
-      FileName name;
-      FileName::load(name, moduleName);
-
-      loader.setNamespace(IdentifierString(name), path);
-      module = loader.loadModule(IdentifierString(name), result, false);
+      IdentifierString name(fileName);
+      loader.setNamespace(name, path.c_str());
+      module = loader.loadModule(name, result, false);
    }
    else module = loader.loadModule(moduleName, result, false);
 

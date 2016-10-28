@@ -36,13 +36,13 @@ const char dfaDotLA          = '$';
 class TextSourceReader : public _ELENA_::_TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
 {
 protected:
-   void copyToken(_ELENA_::LineInfo& info, _ELENA_::ident_c* token, size_t length)
+   void copyToken(_ELENA_::LineInfo& info, char* token, size_t length)
    {
       info.length = _position - info.position;
       info.line = token;
 
       size_t len = info.length;
-      _ELENA_::StringHelper::copy(token, _line + info.position, len, len);
+      _ELENA_::Convertor::copy(token, _line + info.position, len, len);
       token[len] = 0;
    }
 
@@ -58,7 +58,7 @@ public:
       _dfa = dfa;
    }
 
-   _ELENA_::LineInfo read(_ELENA_::ident_c* token, size_t length);
+   _ELENA_::LineInfo read(char* token, size_t length);
 
    TextSourceReader(const char** dfa, int tabSize, _ELENA_::TextReader* source);
    TextSourceReader(int tabSize, _ELENA_::TextReader* source);

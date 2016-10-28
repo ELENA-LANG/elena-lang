@@ -1,43 +1,24 @@
-/// Field attributes
-#ftemplate(-1,1) int8 {}
-#ftemplate(-1,2) int16 {}
-#ftemplate(-1,4) int32 {}
-#ftemplate(-2,8) int64 {}
-#ftemplate(-4,8) float64 {}
-#ftemplate(-7,4) symbol {}
-#ftemplate(-8,4) signature {}
-#ftemplate(-9,4) message {}
-#ftemplate(-10,8) extension_message {}
-#ftemplate(-32)  static {}
-#ftemplate(-33)  const {}
-#ftemplate(-34)  preloaded {}
-
-/// Method attributes
-#mtemplate(40h) generic {}
-#mtemplate(10h) stacksafe {}
-#mtemplate(20h) embeddable {}
-#mtemplate(80h) action {}
-#mtemplate(01h) sealed {}
-
-#mtemplate(-2) w2 {}
-#mtemplate(-3) w3 {}
-
-/// Class attributes
-#template(0120h) sealed  {}
-#template(0004h) dynamic {}
-#template(0020h) limited {}
-#template(0200h) group   {}
-#template(0800h) const   {}
-#template(0008h) struct  {}
-#template(1000h) nonstructural {}
-
-#template(0120h,4980h)         extension {}
-#template(0120h,4980h,subject) extension : subject {}
-
-/// Class data attributes
-#template(30000h,8h,4h)  string {}
-#template(0008h,0010h)   embeddable {}
-#template(0008h,800010h) reference {}
+/// Attributes
+#template(-8194) static {}
+//#template(-34)  preloaded {}
+#template(-8202) generic {}
+#template(-8192) stacksafe {}
+#template(-8205) action {}
+#template(-4099) w1 {}
+#template(-4100) w2 {}
+#template(-4101) w3 {}
+#template(-8195) sealed  {}
+#template(-8199) dynamic {}
+#template(-8196) limited {}
+#template(-8206) group   {}
+#template(-8201) const   {}
+#template(-8197) struct  {}
+#template(-8204) nonstructural {}
+#template(-8198) enumlist {}
+#template(-8200) string {}
+#template(-8193) embeddable {}
+#template(-8203) extension {}
+#template(-8203,subject) extension : subject {}
 
 /// Provides classes that describe the basic functionality
 
@@ -57,7 +38,7 @@
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
 #subject mssg       = system'Message.
-#subject ext_mssg   = system'ExtensionMessage.
+//#subject ext_mssg   = system'ExtensionMessage.
 
 /// A verb symbol
 ///
@@ -65,21 +46,21 @@
 #subject verb       = system'Verb.
 
 #subject subject    = system'Signature.
-#subject symbol_ref = system'Symbol.
+//#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
 #subject bytearray  = system'ByteArray.
 #subject shortarray = system'ShortArray.
 #subject intarray   = system'IntArray.
-#subject intmatrix  = system'IntMatrix.
-#subject realarray  = system'RealArray.
-#subject realmatrix = system'RealMatrix.
+//#subject intmatrix  = system'IntMatrix.
+//#subject realarray  = system'RealArray.
+//#subject realmatrix = system'RealMatrix.
 #subject chararray  = system'CharArray.
 #subject array      = system'Array.
-#subject args       = system'OpenArgs.
+#subject args       = system'ArgArray.
 #subject mssgarray  = system'MessageArray.
-#subject bitarray   = system'BitArray.
-#subject bitset     = system'BitArray32.
+//#subject bitarray   = system'BitArray.
+//#subject bitset     = system'BitArray32.
 
 /// An instance of system'LiteralValue class. 
 #subject literal    = system'LiteralValue.
@@ -111,7 +92,7 @@
 
 // === system handles ===
 #subject handle     = system'Handle.
-#subject rt_ptr     = system'RTPointer.
+//#subject rt_ptr     = system'RTPointer.
 #subject dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---

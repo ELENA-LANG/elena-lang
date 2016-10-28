@@ -15,10 +15,11 @@ namespace _ELENA_
 // --- ELENA Parser Symbol constants ---
 enum Symbol
 {
-   mskAnySymbolMask             = 0x07000,               // masks
+   mskAnySymbolMask             = 0x0F000,               // masks
    mskTraceble                  = 0x01000,
    mskTerminal                  = 0x02000,
    mskError                     = 0x04000,
+   //mskScope                     = 0x08000,
 
    nsNone                       = 0x00000,               // defaults
    nsStart                      = 0x00001,
@@ -63,11 +64,11 @@ enum Symbol
    nsL7Operation                = 0x01026,
    nsRetStatement               = 0x01027,
    nsL5Operation                = 0x01028,
-   nsTry                        = 0x01029,
+   //nsTry                        = 0x01029,
    nsElseOperation              = 0x0102A,
    nsExtension                  = 0x0102B,
    nsAltMessageOperation        = 0x0102C,
-   nsInclude                    = 0x0102D,
+   //nsInclude                    = 0x0102D,
    nsForward                    = 0x0102E,
    nsCatchMessageOperation      = 0x0102F,
    nsLoop                       = 0x01030,
@@ -77,33 +78,86 @@ enum Symbol
    nsThrow                      = 0x01034,
    nsImport                     = 0x01035,
    nsDispatchHandler            = 0x01036,
-   nsLock                       = 0x01037,
+   //nsLock                       = 0x01037,
    nsRootExpression             = 0x01038,
    nsExtern                     = 0x01039,
    nsNewOperator                = 0x0103A,
    nsSwitching                  = 0x0103B,
    nsSwitchOption               = 0x0103C,
    nsLastSwitchOption           = 0x0103D,
-   nsBiggerSwitchOption         = 0x0103E,
-   nsLessSwitchOption           = 0x0103F,
+   //nsBiggerSwitchOption         = 0x0103E,
+   //nsLessSwitchOption           = 0x0103F,
    nsL6Operation                = 0x01041,
-   nsSizeValue                  = 0x01042,
+   //nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
    nsDefaultGeneric             = 0x01046,
    nsSubject                    = 0x01047,
-   nsInlineClosure              = 0x01048,
-   nsMethodTemplate             = 0x01049,
-   nsFieldTemplate              = 0x0104A,
+   //nsInlineClosure              = 0x01048,
+   //nsMethodTemplate             = 0x01049,
+   //nsFieldTemplate              = 0x0104A,
    nsImplicitConstructor        = 0x0104B,
 
-   nsDeclarationEndExpected         = 0x04000,               // error-terminals
-   nsStatementEndExpected           = 0x04001,               
-   nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected
-   nsErrNestedMemberExpected        = 0x04003,               
-   nsErrObjectExpected              = 0x04004,
-   nsErrMessageExpected             = 0x04005,
-   nsDirectiveEndExpected           = 0x04006,
-   nsInlineExpressionEndExpected    = 0x04007,
+   //nsDeclarationEndExpected         = 0x04000,               // error-terminals
+   //nsStatementEndExpected           = 0x04001,               
+   //nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected
+   //nsErrNestedMemberExpected        = 0x04003,               
+   //nsErrObjectExpected              = 0x04004,
+   //nsErrMessageExpected             = 0x04005,
+   //nsDirectiveEndExpected           = 0x04006,
+   //nsInlineExpressionEndExpected    = 0x04007,
+};
+
+// --- TerminalInfo structure ---
+struct TerminalInfo
+{
+   Symbol   symbol;
+
+   size_t   disp;          // number of symbols (tab considered as a single char)
+   size_t   row;
+   size_t   col;           // virtual column
+   size_t   length;
+   ident_t  value;
+
+   operator ident_t() const { return value; }
+
+   bool operator == (TerminalInfo& terminal) const
+   {
+      return (symbol == terminal.symbol && value.compare(terminal.value));
+   }
+
+   bool operator != (TerminalInfo& terminal) const
+   {
+      return (symbol != terminal.symbol || !value.compare(terminal.value));
+   }
+
+   bool operator == (const Symbol& symbol) const
+   {
+      return (this->symbol == symbol);
+   }
+
+   bool operator != (const Symbol& symbol) const
+   {
+      return (this->symbol != symbol);
+   }
+
+   int Row() const { return row; }
+
+   int Col() const { return col; }
+
+   TerminalInfo()
+   {
+      this->symbol = nsNone;
+      this->value = NULL;
+   }
+};
+
+// --- _DerivationWriter ---
+
+class _DerivationWriter
+{
+public:
+   virtual void writeSymbol(Symbol symbol) = 0;
+   virtual void writeTerminal(TerminalInfo& terminal) = 0;
 };
 
 //inline bool ifAny(Symbol target, Symbol value1, Symbol value2)

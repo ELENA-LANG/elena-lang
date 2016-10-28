@@ -16,175 +16,245 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxObjectMask      = 0x00100,
-   lxExpressionMask  = 0x00200,
-   lxAttrMask        = 0x00800,
-   lxPrimitiveOpMask = 0x01000,
-   lxSimpleMask      = 0x04000,   // idicates if the implementation does not affect base / other registers
-   lxMessageMask     = 0x10000,
-   lxReferenceMask   = 0x20000,
-   lxSubjectMask     = 0x40000,
-   lxConstantMask    = 0x80000,
+   lxSimpleMask      = 0x02000,
+   lxCodeScopeMask   = 0x04000,
+   lxObjectMask      = 0x08000,
+   lxExprMask        = 0x0C000,
+   lxTerminalMask    = 0x10000,
+   lxReferenceMask   = 0x40000,
+   lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
-
+   lxInvalid         = -2,
    lxNone            = 0x00000,
-   lxInvalid         = 0x00001,
-   lxRoot            = 0x00002,
-   lxIdle            = 0x00003,
 
-   lxNested = 0x00101, // arg - count
-   lxStruct = 0x00102, // arg - count
-   lxSymbol = 0x20103, // arg - reference
-   lxConstantSymbol = 0x24104, // arg - reference
-   lxField = 0x00105, // arg - offset
-   lxStaticField = 0x20106, // arg - reference
-   lxFieldAddress = 0x00107, // arg - offset
-   lxLocalAddress = 0x04108, // arg - offset
-   lxBlockLocalAddr = 0x04109, // arg - offset
-   lxLocal = 0x0410A, // arg - offset
-   lxBlockLocal = 0x0410B, // arg - offset
-   lxConstantString = 0x8410C, // arg - reference
-   lxConstantWideStr = 0x8410D, // arg - reference
-   lxConstantChar = 0x8410E, // arg - reference
-   lxConstantInt = 0x8410F, // arg - reference
-   lxConstantLong = 0x84110, // arg - reference
-   lxConstantReal = 0x84111, // arg - reference
-   lxConstantClass = 0x24112, // arg - reference
-   lxMessageConstant = 0x24113, // arg - rererence
-   lxExtMessageConstant = 0x24114, // arg -reference
-   lxSignatureConstant = 0x24115, // arg - reference
-   lxVerbConstant = 0x24116, // arg - reference
-   lxNil = 0x04117,
-   lxCurrent = 0x04118, // arg -offset
-   lxResult = 0x04119, // arg -offset
-   lxResultField = 0x0411A, // arg -offset
-   lxCurrentMessage = 0x0411B,
-   lxThisLocal = 0x0411C,
-   lxCurrentField = 0x0411D, // arg -offset
-   lxConstantList = 0x2411E, // arg - reference
+   // scopes
+   lxRoot            = 0x00001,
+   lxIdle            = 0x00002,
+   lxClass           = 0x0000E,
+   lxTemplate        = 0x0000F,
+   lxSymbol          = 0x00011,
+   lxClassField      = 0x00013,
+   lxAttributeValue  = 0x00015,
+   lxClassMethod     = 0x00016,
+   lxNestedClass     = 0x00018,
+   lxCode            = 0x0001A,
+   lxDispatchCode    = 0x00020,
+   lxStatic          = 0x00022,
+   lxConstructor     = 0x00024,
+   lxExtension       = 0x0002B,
+   lxLoop            = 0x00030,
+   lxInlineExpression= 0x00032,
+   lxMessageReference= 0x00033,
+   lxExtern          = 0x00039,
+   lxDefaultGeneric  = 0x00046,
+   lxSubject         = 0x00047,
+   lxImplicitConstructor = 0x0004B,
 
-   lxExpression      = 0x00301,
-   lxBoxing          = 0x00302,   // boxing of the argument, arg - size
-   lxCondBoxing      = 0x00303,   // conditional boxing, arg - size
-   lxUnboxing        = 0x00304,   // boxing and unboxing of the argument, arg - size
-   lxArgBoxing       = 0x00305,   // argument list boxing, arg - size
-   lxTypecasting     = 0x10306,   // typecasting, arg - message
-   lxCalling         = 0x10307,   // sending a message, arg - message
-   lxDirectCalling   = 0x10308,   // calling a method, arg - message
-   lxSDirctCalling   = 0x10309,   // calling a virtual method, arg - message
-   lxResending       = 0x1030A,   // resending a message, optional arg - message
-   lxDispatching     = 0x1030B,   // dispatching a message, optional arg - message
-   lxTrying          = 0x0030C,   // try-catch expression
-   lxAlt             = 0x0030D,   // alt-catch expression
-   lxLocking         = 0x0030E,   // lock expression
-   lxBranching       = 0x0030F,   // branch expression
-   lxSwitching       = 0x00310,
-   lxLooping         = 0x00311,
-   lxReturning       = 0x00312,
-   lxThrowing        = 0x00313,
-   lxStdExternalCall = 0x20314,  // calling an external function, arg - reference
-   lxExternalCall    = 0x20315,  // calling an external function, arg - reference
-   lxCoreAPICall     = 0x20316,  // calling an external function, arg - reference
-   lxIntExtArgument  = 0x00317,
-   lxExtArgument     = 0x00318,
-   lxExtInteranlRef  = 0x00319,
-   lxInternalCall    = 0x2031A,  // calling an internal function, arg - reference
-   lxMember          = 0x0031B,  // a collection member, arg - offset
-   lxOuterMember     = 0x0031C,  // a collection member, arg - offset
-   lxAssigning       = 0x0031D,  // an assigning expression, arg - size
-   lxArgUnboxing     = 0x0031E,
-   lxIf              = 0x2031F,  // optional arg - reference
-   lxElse            = 0x20320,  // optional arg - reference
-   lxOption          = 0x00321,
-   lxFieldExpression = 0x00322,
-   lxLocalUnboxing   = 0x00323, // arg - size
-   lxNewFrame        = 0x00324, // if argument -1 - than with presaved message
-   lxCreatingClass   = 0x00325, // arg - count
-   lxCreatingStruct  = 0x00326, // arg - size
-   lxExternFrame     = 0x00327,
-   lxNewOp           = 0x20328,
-   lxBody            = 0x00329,
+   // parameters
+   lxEOF             = 0x18003, // indicating closing code bracket
+   lxLiteral         = 0x18004,
+   lxIdentifier      = 0x18005,
+   lxPrivate         = 0x18006,
+   lxReference       = 0x18007,
+   lxInteger         = 0x18008,
+   lxHexInteger      = 0x18009,
+   lxReal            = 0x1800A,
+   lxCharacter       = 0x1800B,
+   lxLong            = 0x1800C,
+   lxWide            = 0x1800D,
 
-   lxOp              = 0x0032A, // generic operation, arg - operation id 
-   lxBoolOp          = 0x0032B, // arg - operation id
-   lxNilOp           = 0x0032C, // arg - operation id
-   lxIntOp           = 0x0132D, // arg - operation id
-   lxLongOp          = 0x0132E, // arg - operation id
-   lxRealOp          = 0x0132F, // arg - operation id
-   lxIntArrOp        = 0x01330, // arg - operation id
-   lxByteArrOp       = 0x01331, // arg - operation id
-   lxShortArrOp      = 0x01332, // arg - operation id
-   lxArrOp           = 0x01333, // arg - operation id
-   lxBinArrOp        = 0x01334, // arg - operation id
+   lxImporting       = 0x08101,
+   lxNested          = 0x08102, // arg - count
+   lxStruct          = 0x08103, // arg - count
+   lxConstantSymbol  = 0x0A104, // arg - reference
+   lxField           = 0x08105, // arg - offset
+   lxStaticField     = 0x08106, // arg - reference
+   lxSymbolReference = 0x08107,
+   lxLocalAddress    = 0x0A108, // arg - offset
+   lxFieldAddress    = 0x08109, // arg - offset
+   lxLocal           = 0x0A10A, // arg - offset
+   lxBlockLocal      = 0x0A10B, // arg - offset
+   lxConstantString  = 0x0A10C, // arg - reference
+   lxConstantWideStr = 0x0A10D, // arg - reference
+   lxConstantChar    = 0x0A10E, // arg - reference
+   lxConstantInt     = 0x1A10F, // arg - reference
+   lxConstantLong    = 0x1A110, // arg - reference
+   lxConstantReal    = 0x1A111, // arg - reference
+   lxConstantClass   = 0x0A112, // arg - reference
+   lxMessageConstant = 0x0A113, // arg - rererence
+   lxExtMessageConstant = 0x0A114, // arg -reference
+   lxSignatureConstant  = 0x0A115, // arg - reference
+   lxVerbConstant    = 0x0A116, // arg - reference
+   lxNil             = 0x0A117,
+   lxCurrent         = 0x0A118, // arg -offset
+   lxResult          = 0x0A119, // arg -offset
+   lxResultField     = 0x0A11A, // arg -offset
+   lxCurrentMessage  = 0x0A11B,
+   lxThisLocal       = 0x0A11C,
+   lxConstantList    = 0x0A11E, // arg - reference
+   lxBlockLocalAddr  = 0x0A11F, // arg - offset
 
-   lxVariable        = 0x00427, // debug info only if lxFrameAttr is included
-   lxIntVariable     = 0x00428,
-   lxLongVariable    = 0x00429,
-   lxReal64Variable  = 0x0042A,
-   lxBytesVariable   = 0x0042B,
-   lxShortsVariable  = 0x0042C,
-   lxIntsVariable    = 0x0042D,
-   lxBinaryVariable  = 0x0042E,
-   lxParamsVariable  = 0x0042F,
-   lxMessageVariable = 0x00430, // debug info only
-   lxSelfVariable    = 0x00431, // debug info only
-   lxReleasing       = 0x00432,
-   lxImporting       = 0x00433,
-   lxTemplateTarget  = 0x00434, // template target pseudo variable
-   lxBinarySelf      = 0x00435, // debug info only
+   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
+   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
+   lxLocalUnboxing   = 0x0C003,   // arg - size
+   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
+   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
+   lxArgUnboxing     = 0x0C006,
+   lxCalling         = 0x0C007,   // sending a message, arg - message
+   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
+   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
+   lxResending       = 0x0C00A,   // resending a message, optional arg - message
+   lxTrying          = 0x0C00C,   // try-catch expression
+   lxAlt             = 0x0C00D,   // alt-catch expression
+   lxBranching       = 0x0C00F,   // branch expression
+   lxSwitching       = 0x0C010,
+   lxLooping         = 0x0C011,
+   lxExpression      = 0x0C012,
+   lxThrowing        = 0x0C013,
+   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
+   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
+   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
+   lxMethodParameter = 0x0C017,
+   lxAltExpression   = 0x0C018,
+   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
+   lxIf              = 0x0C01F,   // optional arg - reference
+   lxElse            = 0x0C020,   // optional arg - reference
+   lxOption          = 0x0C021,
+   lxFieldExpression = 0x0C022,
+   lxExternFrame     = 0x04023,
+   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
+   lxCreatingClass   = 0x0C025,   // arg - count
+   lxCreatingStruct  = 0x0C026,   // arg - size
+   lxReturning       = 0x0C027,
+   lxNewOp           = 0x0C028,
+   lxArrOp           = 0x8C029, // arg - operation id
+   lxBinArrOp        = 0x8C02A, // arg - operation id
+   lxNilOp           = 0x8C02C, // arg - operation id
+   lxIntArrOp        = 0x8C030,   // arg - operation id
+   lxResendExpression= 0x0C031,
+   lxByteArrOp       = 0x8C032, // arg - operation id
+   lxShortArrOp      = 0x8C033, // arg - operation id
+   lxReleasing       = 0x0C034,
+   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
+   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
+   lxIntOp           = 0x8C038,   // arg - operation id
+   lxLongOp          = 0x8C039,   // arg - operation id
+   lxRealOp          = 0x8C03A,   // arg - operation id
+   lxOverridden      = 0x04047,
 
-   lxTarget          = 0x20441, // arg - reference
-   lxCallTarget      = 0x20442, // arg - reference
-   lxType            = 0x40443, // arg - subject
-   //lxSubject         = 0x40804, // arg - subject
-   lxStacksafe       = 0x00445,
-   lxTempLocal       = 0x00446,
-   lxOverridden      = 0x00447,
-   lxIfValue         = 0x20448, // arg - reference
-   lxElseValue       = 0x20449, // arg - reference
-   lxMessage         = 0x1044A, // arg - message
-   lxEmbeddable      = 0x0044B,
-   lxSize            = 0x0044C,
-   lxReserved        = 0x0044D,
-   lxParamCount      = 0x0044E,
-   lxSubject         = 0x4044F,
+   lxBaseParent      = 0x10023,
+   lxOperator        = 0x10025,
+   lxIntVariable     = 0x10028,
+   lxLongVariable    = 0x10029,
+   lxReal64Variable  = 0x1002A,
+   lxForward         = 0x1002E,
+   lxVariable        = 0x10037,
+   lxBinaryVariable  = 0x10038,
+   lxMember          = 0x10039,  // a collection member, arg - offset
+   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
+   lxIntsVariable    = 0x1003B,
+   lxBytesVariable   = 0x1003C,
+   lxShortsVariable  = 0x1003D,
+   lxParamsVariable  = 0x1003E,
 
-   lxStaticAttr      = 0x00820,
-   lxConstAttr       = 0x00821,
-   lxPreloadedAttr   = 0x00822,
-   lxClassMethodAttr = 0x00807,
-   //lxClassMethodOpt  = 0x04008,
-   lxWarningMask     = 0x00809,
+   // attributes
+   lxAttribute       = 0x20000,
+   lxSourcePath      = 0x20001,
+   lxTerminal        = 0x20002,
+   lxCol             = 0x20003,
+   lxRow             = 0x20004,
+   lxLength          = 0x02005,
+   lxBreakpoint      = 0x20006,
+   lxImport          = 0x20007,
+   lxReserved        = 0x20008,
+   lxParamCount      = 0x20009,
+   lxClassFlag       = 0x2000A, // class fields
+   lxTarget          = 0x2000B, // arg - reference
+   lxMessageVariable = 0x2000C, // debug info only
+   lxSelfVariable    = 0x2000D, // debug info only
+   lxMessage         = 0x2000E, // arg - message
+   lxAssign          = 0x2000F,
+   lxLevel           = 0x20010,
+   lxType            = 0x20011, // arg - subject
+   lxCallTarget      = 0x20012, // arg - reference
+   lxClassName       = 0x20013, // arg - identifier
+   lxIntValue        = 0x20014, // arg - integer value
+   lxTempLocal       = 0x20015,
+   lxIfValue         = 0x20016, // arg - reference
+   lxElseValue       = 0x20017, // arg - reference
+   lxSize            = 0x20018,
+   lxTemplateParam   = 0x20019,
+   lxEmbeddable      = 0x2001A,
+   lxIntExtArgument  = 0x2001B,
+   lxExtArgument     = 0x2001C,
+   lxConstAttr       = 0x2001D,
+   lxWarningMask     = 0x2001E,
+   lxTypecastAttr    = 0x2001F,
+   lxNotFoundAttr    = 0x20020,
+   lxBinarySelf      = 0x20021, // debug info only
+   lxOvreriddenMessage = 0x20022, // arg - message
 
-   lxBreakpoint      = 0x02001,
-   lxCol             = 0x02002,
-   lxRow             = 0x02003,
-   lxLength          = 0x02004,
-   lxTerminal        = 0x02005,
-   lxLevel           = 0x02006,
-   lxClassName       = 0x02007, // arg - reference
-   lxValue           = 0x02008,
-   lxFrameAttr       = 0x02009,
-   lxSourcePath      = 0x0200A,
+   lxFieldAttrMask   = 0x20100,
+   lxStaticAttr      = 0x20102,
+   lxClassMethodAttr = 0x20103,
+   lxDWordAttr       = 0x20104,
+   lxSignatureAttr   = 0x20105,
+   lxMessageAttr     = 0x20106,
+   lxVerbAttr        = 0x20107,
+   lxPtrAttr         = 0x20108,
+   lxQWordAttr       = 0x20109,
+   lxRealAttr        = 0x2010A,
+   lxExtMessageAttr  = 0x2010B,
 
-   lxClassFlag       = 0x04001,      // class fields
-   //lxClassArray      = 0x04003,
-   lxClassField      = 0x04005,
-   lxClassMethod     = 0x14006,
+//   lxObjectMask      = 0x00100,
+//   lxExpressionMask  = 0x00200,
+//   lxAttrMask        = 0x00800,
+//   lxMessageMask     = 0x10000,
+//   lxReferenceMask   = 0x20000,
+//   lxSubjectMask     = 0x40000,
+//   lxConstantMask    = 0x80000,
 
-   lxTemplate         = 0x4000B,
-   lxTemplateField    = 0x0000C,
-   lxTemplateFieldType= 0x0000D,
-   lxTemplateSubject  = 0x0000E,
-   lxTemplateMethod   = 0x0000F,
-   lxNestedTemplate   = 0x00010, // arg - count
-   lxNestedTemplateOwner  = 0x00011, // indicates the nested template owner
-   lxNestedTemplateParent = 0x20812,
-   lxTemplateParam    = 0x00013,
-   lxClass            = 0x00014,
-   lxTemplateType     = 0x40015,
-   lxTargetMethod     = 0x10016
+//   lxIdle            = 0x00003,
+//
+//   lxSymbol = 0x20103, // arg - reference
+//   lxCurrentField = 0x0411D, // arg -offset
+//
+//   lxLocking         = 0x0030E,   // lock expression
+//   lxExtInteranlRef  = 0x00319,
+//   lxBody            = 0x00329,
+//
+//   lxOp              = 0x0032A, // generic operation, arg - operation id 
+//   lxBoolOp          = 0x0032B, // arg - operation id
+//
+//   lxTemplateTarget  = 0x00434, // template target pseudo variable
+//
+//   //lxSubject         = 0x40804, // arg - subject
+//   lxStacksafe       = 0x00445,
+//   lxSubject         = 0x4044F,
+//
+//   lxConstAttr       = 0x00821,
+//   lxPreloadedAttr   = 0x00822,
+//   lxClassMethodAttr = 0x00807,
+//   //lxClassMethodOpt  = 0x04008,
+//
+//   lxTerminal        = 0x02005,
+//   lxSourcePath      = 0x0200A,
+//
+//   //lxClassArray      = 0x04003,
+//
+//   lxTemplate         = 0x4000B,
+//   lxTemplateField    = 0x0000C,
+//   lxTemplateFieldType= 0x0000D,
+//   lxTemplateSubject  = 0x0000E,
+//   lxTemplateMethod   = 0x0000F,
+//   lxNestedTemplate   = 0x00010, // arg - count
+//   lxNestedTemplateOwner  = 0x00011, // indicates the nested template owner
+//   lxNestedTemplateParent = 0x20812,
+//   lxTemplateParam    = 0x00013,
+//   lxClass            = 0x00014,
+//   lxTemplateType     = 0x40015,
+//   lxTargetMethod     = 0x10016
 };
 
 // --- SyntaxTree ---
@@ -199,11 +269,16 @@ public:
 
    class Writer
    {
-      MemoryWriter  _writer;
+      MemoryWriter  _bodyWriter;
       MemoryWriter  _stringWriter;
       Stack<size_t> _bookmarks;
 
    public:
+      bool hasBookmarks() const
+      {
+         return _bookmarks.Count() != 0;
+      }
+
       int setBookmark(size_t position)
       {
          _bookmarks.push(position);
@@ -212,7 +287,7 @@ public:
 
       int newBookmark()
       {
-         _bookmarks.push(_writer.Position());
+         _bookmarks.push(_bodyWriter.Position());
 
          return _bookmarks.Count();
       }
@@ -224,23 +299,27 @@ public:
 
       void clear()
       {
-         _writer.seek(0);
+         _bodyWriter.seek(0);
+         _stringWriter.seek(0);
          _bookmarks.clear();
       }
 
-      void clear(int bookmark)
-      {
-         size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+//      void clear(int bookmark)
+//      {
+//         size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+//
+//         _writer.seek(position);
+//         _bookmarks.clear();
+//      }
 
-         _writer.seek(position);
-         _bookmarks.clear();
-      }
+      void set(int bookmark, LexicalType type);
 
       void insert(int bookmark, LexicalType type, ref_t argument);
-      void insert(int bookmark, LexicalType type)
-      {
-         insert(type, 0);
-      }
+      void insert(int bookmark, LexicalType type, ident_t argument);
+//      void insert(int bookmark, LexicalType type)
+//      {
+//         insert(type, 0);
+//      }
       void insert(LexicalType type, ref_t argument)
       {
          insert(0, type, argument);
@@ -259,18 +338,19 @@ public:
          insert(bookmark, lxEnding, 0);
          insert(bookmark, type, argument);
       }
-      void insertChild(LexicalType type, ref_t argument)
+      void insertChild(int bookmark, LexicalType type, ident_t argument)
       {
-         insert(lxEnding, 0);
-         insert(type, argument);
+         insert(bookmark, lxEnding, 0);
+         insert(bookmark, type, argument);
       }
+//      void insertChild(LexicalType type, ref_t argument)
+//      {
+//         insert(lxEnding, 0);
+//         insert(type, argument);
+//      }
 
       void newNode(LexicalType type, ref_t argument);
-      void newNode(LexicalType type, ident_t argument)
-      {
-         newNode(type, _stringWriter.Position());
-         _stringWriter.writeLiteral(argument);
-      }
+      void newNode(LexicalType type, ident_t argument);
       void newNode(LexicalType type)
       {
          newNode(type, 0u);
@@ -282,8 +362,8 @@ public:
       }
       void appendNode(LexicalType type, ident_t argument)
       {
-         appendNode(type, _stringWriter.Position());
-         _stringWriter.writeLiteral(argument);
+         newNode(type, argument);
+         closeNode();
       }
       void appendNode(LexicalType type)
       {
@@ -294,20 +374,20 @@ public:
       void closeNode();
 
       Writer(SyntaxTree& tree)
-         : _writer(&tree._body), _stringWriter(&tree._strings)
+         : _bodyWriter(&tree._body), _stringWriter(&tree._strings)
       {
       }
 
       /// parameter : appendMode - when true, the ending node is removed
-      Writer(SyntaxTree& tree, bool appendMode)
-         : _writer(&tree._body), _stringWriter(&tree._strings)
-      {
-         if (appendMode && tree._body.Length() >= 8) {
-            tree._body.trim(tree._body.Length() - 8);
-            _writer.seekEOF();
-         }
-            
-      }
+      //Writer(SyntaxTree& tree/*, bool appendMode*/)
+      //   : _writer(&tree._body), _stringWriter(&tree._strings)
+      //{
+//         if (appendMode && tree._body.Length() >= 12) {
+//            tree._body.trim(tree._body.Length() - 12);
+//            _writer.seekEOF();
+//         }
+//            
+//      }
    };
 
    struct NodePattern;
@@ -320,24 +400,34 @@ public:
       SyntaxTree*   tree;
       size_t        position;
 
-      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument);
+      Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int strArgument);
+
+      Node appendStrNode(LexicalType type, int strOffset)
+      {
+         int end_position = tree->seekNodeEnd(position);
+
+         return tree->insertStrNode(end_position, type, strOffset);
+      }
 
    public:
       LexicalType   type;
       ref_t         argument;
+      int           strArgument;   // if strArgument is not -1 - it contains the position of the argument string
 
-      SyntaxTree* Tree()
-      {
-         return tree;
-      }
+//      SyntaxTree* Tree()
+//      {
+//         return tree;
+//      }
 
       ident_t identifier()
       {
-         if (type != lxNone) {
-            return (ident_t)tree->_strings.get(argument);
+         if (strArgument >= 0) {
+            return (const char*)(tree->_strings.get(strArgument));
          }
          else return NULL;
       }
+
+      operator LexicalType() const { return type; }
 
       bool operator == (LexicalType type)
       {
@@ -352,16 +442,22 @@ public:
       {
          this->type = type;
 
-         MemoryReader reader(&tree->_body, position - 8);
+         MemoryReader reader(&tree->_body, position - 12);
 
          *(int*)(reader.Address()) = (int)type;
+      }
+
+      void set(LexicalType type, ref_t argument)
+      {
+         (*this) = type;
+         setArgument(argument);
       }
 
       void setArgument(ref_t argument)
       {
          this->argument = argument;
 
-         MemoryReader reader(&tree->_body, position - 4);
+         MemoryReader reader(&tree->_body, position - 8);
          *(int*)(reader.Address()) = (int)argument;
       }
 
@@ -371,6 +467,86 @@ public:
             return tree->readFirstNode(position);
          }
          else return Node();
+      }
+
+      Node firstChild(LexicalType mask) const
+      {
+         Node node = firstChild();
+
+         while (node != lxNone && !test(node.type, mask))
+            node = node.nextNode();
+
+         return node;
+      }
+
+      Node findNext(LexicalType mask) const
+      {
+         Node current = *this;
+
+         while (current != lxNone && !test(current.type, mask))
+            current = current.nextNode();
+
+         return current;
+      }
+
+      Node findSubNodeMask(LexicalType mask)
+      {
+         Node child = firstChild(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
+
+      Node findSubNode(LexicalType type)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+            else if (child == type3)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
       }
 
       Node lastChild() const
@@ -386,7 +562,20 @@ public:
 
       Node nextNode() const
       {
-         return tree->readNextNode(position);
+         if (tree != NULL) {
+            return tree->readNextNode(position);
+         }
+         else return Node();
+      }
+
+      Node nextNode(LexicalType mask) const
+      {
+         Node current = nextNode();
+
+         while (current != lxNone && !test(current.type, mask))
+            current = current.nextNode();
+
+         return current;
       }
 
       Node prevNode() const
@@ -399,24 +588,40 @@ public:
          return tree->readParentNode(position);
       }
 
-      void insertNode(LexicalType type, int argument = 0)
+      Node insertNode(LexicalType type, int argument = 0)
       {
-         tree->insertNode(position, type, argument);
+         return tree->insertNode(position, type, argument);
       }
 
-      void appendNode(LexicalType type, int argument = 0)
+      Node insertNode(LexicalType type, ident_t argument)
+      {
+         return tree->insertNode(position, type, argument);
+      }
+
+      Node appendNode(LexicalType type, int argument = 0)
       {
          int end_position = tree->seekNodeEnd(position);
 
-         tree->insertNode(end_position, type, argument);
+         return tree->insertNode(end_position, type, argument);
+      }
+      Node appendNode(LexicalType type, ident_t argument)
+      {
+         int end_position = tree->seekNodeEnd(position);
+
+         return tree->insertNode(end_position, type, argument);
       }
 
-      void injectNode(LexicalType type, int argument = 0)
+      Node injectNode(LexicalType type, int argument = 0)
       {
          int start_position = position;
          int end_position = tree->seekNodeEnd(position);
          
-         tree->insertNode(start_position, end_position, type, argument);
+         return tree->insertNode(start_position, end_position, type, argument);
+      }
+
+      void refresh()
+      {
+         tree->refresh(*this);
       }
 
       Node findPattern(NodePattern pattern)
@@ -424,10 +629,191 @@ public:
          return tree->findPattern(*this, 1, pattern);
       }
 
+      Node findChild(LexicalType type)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type) {
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2)
+      {
+         Node current = firstChild();
+      
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+      
+            current = current.nextNode();
+         }
+      
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+            else if (current == type8)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8, LexicalType type9)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+            else if (current == type8)
+               return current;
+            else if (current == type9)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+
+      bool existChild(LexicalType type)
+      {
+         return findChild(type) == type;
+      }
+      bool existChild(LexicalType type1, LexicalType type2)
+      {
+         return findChild(type1, type2) != lxNone;
+      }
+
       Node()
       {
          type = lxNone;
          argument = 0;
+         strArgument = -1;
 
          tree = NULL;
       }
@@ -462,8 +848,15 @@ public:
 
 private:
    Node read(StreamReader& reader);
+   void refresh(Node& node);
 
 public:
+   static void copyNode(Writer& writer, Node node);
+   static void copyNode(Node source, Node destination);
+   static void copyNodeSafe(Node source, Node destination);
+   static void saveNode(Node node, _Memory* dump);
+   static void loadNode(Node node, _Memory* dump);
+
    static int countChild(Node node, LexicalType type)
    {
       int counter = 0;
@@ -479,132 +872,111 @@ public:
       return counter;
    }
 
-   static int countChild(Node node, LexicalType type1, LexicalType type2)
-   {
-      int counter = 0;
-      Node current = node.firstChild();
+   static Node findPattern(Node node, int counter, ...);
+   static bool matchPattern(Node node, int mask, int counter, ...);
 
-      while (current != lxNone) {
-         if (current == type1 || current == type2)
-            counter++;
-
-         current = current.nextNode();
-      }
-
-      return counter;
-   }
-
-   static Node findChild(Node node, LexicalType type)
-   {
-      Node current = node.firstChild();
-
-      while (current != lxNone && current != type) {
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static Node findMatchedChild(Node node, int mask)
-   {
-      Node current = node.firstChild();
-
-      while (current != lxNone && !test(current.type, mask)) {
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static Node findSecondMatchedChild(Node node, int mask)
-   {
-      Node current = node.firstChild();
-
-      bool first = true;
-      while (current != lxNone) {
-         if (test(current.type, mask)) {
-            if (first) {
-               first = false;
-            }
-            else return current;
-         }
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static Node findChild(Node node, LexicalType type1, LexicalType type2)
-   {
-      Node current = node.firstChild();
-
-      while (current != lxNone && current != type1) {
-         if (current == type2)
-            return current;
-
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3)
-   {
-      Node current = node.firstChild();
-
-      while (current != lxNone && current != type1) {
-         if (current == type2 || current == type3)
-            return current;
-
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
-   {
-      Node current = node.firstChild();
-
-      while (current != lxNone && current != type1) {
-         if (current == type2 || current == type3 || current == type4)
-            return current;
-
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
-   {
-      Node current = node.firstChild();
-
-      while (current != lxNone && current != type1) {
-         if (current == type2 || current == type3 || current == type4 || current == type5)
-            return current;
-
-         current = current.nextNode();
-      }
-
-      return current;
-   }
-
-   static bool existChild(Node node, LexicalType type)
-   {
-      Node child = findChild(node, type);
-
-      return child == type;
-   }
-
-   static bool existChild(Node node, LexicalType type1, LexicalType type2)
-   {
-      Node child = findChild(node, type1, type2);
-
-      return child != lxNone;
-   }
-
-   _Memory* Strings() { return &_strings; }
+//   static int countChild(Node node, LexicalType type1, LexicalType type2)
+//   {
+//      int counter = 0;
+//      Node current = node.firstChild();
+//
+//      while (current != lxNone) {
+//         if (current == type1 || current == type2)
+//            counter++;
+//
+//         current = current.nextNode();
+//      }
+//
+//      return counter;
+//   }
+//
+//
+//   static Node findMatchedChild(Node node, int mask)
+//   {
+//      Node current = node.firstChild();
+//
+//      while (current != lxNone && !test(current.type, mask)) {
+//         current = current.nextNode();
+//      }
+//
+//      return current;
+//   }
+//
+//   static Node findSecondMatchedChild(Node node, int mask)
+//   {
+//      Node current = node.firstChild();
+//
+//      bool first = true;
+//      while (current != lxNone) {
+//         if (test(current.type, mask)) {
+//            if (first) {
+//               first = false;
+//            }
+//            else return current;
+//         }
+//         current = current.nextNode();
+//      }
+//
+//      return current;
+//   }
+//
+//   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3)
+//   {
+//      Node current = node.firstChild();
+//
+//      while (current != lxNone && current != type1) {
+//         if (current == type2 || current == type3)
+//            return current;
+//
+//         current = current.nextNode();
+//      }
+//
+//      return current;
+//   }
+//
+//   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+//   {
+//      Node current = node.firstChild();
+//
+//      while (current != lxNone && current != type1) {
+//         if (current == type2 || current == type3 || current == type4)
+//            return current;
+//
+//         current = current.nextNode();
+//      }
+//
+//      return current;
+//   }
+//
+//   static Node findChild(Node node, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+//   {
+//      Node current = node.firstChild();
+//
+//      while (current != lxNone && current != type1) {
+//         if (current == type2 || current == type3 || current == type4 || current == type5)
+//            return current;
+//
+//         current = current.nextNode();
+//      }
+//
+//      return current;
+//   }
+//
+//   static bool existChild(Node node, LexicalType type)
+//   {
+//      Node child = findChild(node, type);
+//
+//      return child == type;
+//   }
+//
+//   static bool existChild(Node node, LexicalType type1, LexicalType type2)
+//   {
+//      Node child = findChild(node, type1, type2);
+//
+//      return child != lxNone;
+//   }
+//
+//   _Memory* Strings() { return &_strings; }
 
    Node readRoot();
    Node readFirstNode(size_t position);
@@ -615,20 +987,19 @@ public:
    size_t seekNodeEnd(size_t position);
 
    Node insertNode(size_t position, LexicalType type, int argument);
+   Node insertStrNode(size_t position, LexicalType type, int strArgument);
+   Node insertNode(size_t position, LexicalType type, ident_t argument);
    Node insertNode(size_t start_position, size_t end_position, LexicalType type, int argument);
 
-   bool matchPattern(Node node, int mask, int counter, ...);
-   Node findPattern(Node node, int counter, ...);
-
-   ref_t writeString(ident_t string)
-   {
-      MemoryWriter writer(&_strings);
-      ref_t position = writer.Position();
-
-      writer.writeLiteral(string);
-
-      return position;
-   }
+//   ref_t writeString(ident_t string)
+//   {
+//      MemoryWriter writer(&_strings);
+//      ref_t position = writer.Position();
+//
+//      writer.writeLiteral(string);
+//
+//      return position;
+//   }
 
    void save(_Memory* section)
    {
@@ -639,6 +1010,11 @@ public:
 
       writer.writeDWord(_strings.Length());
       writer.write(_strings.get(0), _strings.Length());
+   }
+
+   void clear()
+   {
+      _body.clear();
    }
 
    SyntaxTree()
@@ -653,14 +1029,14 @@ public:
    }
 };
 
-SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type);
-SyntaxTree::Node findSubNode(SyntaxTree::Node node, LexicalType type1, LexicalType type2);
-SyntaxTree::Node findSubNodeMask(SyntaxTree::Node node, int mask);
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
 typedef SyntaxTree::NodePattern  SNodePattern;
-
 
 } // _ELENA_
 

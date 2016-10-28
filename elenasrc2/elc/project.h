@@ -14,21 +14,11 @@
 namespace _ELENA_
 {
 
-// --- Project warning levels
-const int WARNING_LEVEL_1 = 1;
-const int WARNING_LEVEL_2 = 2;
-const int WARNING_LEVEL_3 = 4;
-
-const int WARNING_MASK_1 = 1;
-const int WARNING_MASK_2 = 3;
-const int WARNING_MASK_3 = 7;
-
 // --- Project list types ---
-//typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
-typedef Dictionary2D<int, ident_t>    ProjectSettings;
-typedef Map<ident_t, ident_c*>        Sources;
+////typedef String<wchar16_t, IDENTIFIER_LEN>      ProjectParam;
+typedef Dictionary2D<int, ident_t> ProjectSettings;
+typedef Map<ident_t, char*>        Sources;
 
-typedef Map<ident_t, ident_c*> :: Iterator                                                    SourceIterator;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 
 // --- ELENA Project options ---
@@ -36,7 +26,7 @@ enum ProjectSetting
 {
    opNone                  = 0x0000,
 
-   // compiler options
+//   // compiler options
    opAppPath		         = 0x0001,
    opProjectPath           = 0x0002,
    opLibPath               = 0x0003,
@@ -44,7 +34,7 @@ enum ProjectSetting
    opTarget                = 0x0006,
    opOutputPath            = 0x0008,
    opDebugMode             = 0x000A,
-   opTemplate              = 0x000C,
+//   opTemplate              = 0x000C,
    opThreadMax             = 0x0013,
    opDebugSubjectInfo      = 0x0014,
    opClassSymbolAutoLoad   = 0x0015,
@@ -61,7 +51,7 @@ enum ProjectSetting
    opPlatform              = 0x002A,      // defines the project platform type
    opGCYGSize              = 0x002B,
 
-   // compiler engine options
+//   // compiler engine options
    opWarnOnUnresolved      = 0x0041,
    opWarnOnWeakUnresolved  = 0x0042,
 //   opWarnOnSignature       = 0x0043,
@@ -84,27 +74,9 @@ enum ProjectSetting
    opManifestAuthor        = 0x0072
 };
 
-// --- ModuleInfo ---
-struct ModuleInfo
-{
-   _Module* codeModule;
-   _Module* debugModule;
-
-   ModuleInfo()
-   {
-      codeModule = debugModule = NULL;
-   }
-
-   ModuleInfo(_Module* codeModule, _Module* debugModule)
-   {
-      this->codeModule = codeModule;
-      this->debugModule = debugModule;
-   }
-};
-
 // --- Project ---
 
-class Project
+class Project : public _ProjectManager
 {
 protected:
    bool            _hasWarning;
@@ -132,20 +104,18 @@ protected:
    void loadForwardCategory(_ConfigFile& config);
 
 public:
-   virtual int getDefaultEncoding() = 0;
-
    // project
    virtual int IntSetting(ProjectSetting key, int defaultValue = 0)
    {
       return _settings.get(key, defaultValue);
    }
 
-   virtual ident_t StrSetting(ProjectSetting key)
+   virtual ident_t StrSetting(ProjectSetting key) const
    {
       return _settings.get(key, DEFAULT_STR);
    }
 
-   virtual bool BoolSetting(ProjectSetting key)
+   virtual bool BoolSetting(ProjectSetting key) const
    {
       return (_settings.get(key, 0) != 0);
    }
@@ -155,33 +125,22 @@ public:
 //      return _settings.exist(key);
 //   }
 
-   SourceIterator getSourceIt()
+   virtual SourceIterator getSourceIt()
    {
       return _sources.start();
    }
 
-   ForwardIterator getForwardIt()
-   {
-      return _settings.getIt(opForwards);
-   }
+//   ForwardIterator getForwardIt()
+//   {
+//      return _settings.getIt(opForwards);
+//   }
 
    ident_t resolvePrimitive(ident_t alias) const
    {
       return _loader.resolvePrimitive(alias);
    }
 
-   ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
-
-   virtual void printInfo(const char* msg, ident_t value) = 0;
-
-////   virtual void raiseError(const char* msg) = 0;
-   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   virtual void raiseError(ident_t msg, ident_t value) = 0;
-
-   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
-
-   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
 ////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
@@ -190,18 +149,15 @@ public:
    {
       // if library path is set we need to set the loader root as well
       if (!emptystr(StrSetting(opLibPath))) {
-         Path libPath;
-         Path::loadPath(libPath, StrSetting(opLibPath));
+         Path libPath(StrSetting(opLibPath));
 
-         _loader.setRootPath(libPath);
+         _loader.setRootPath(libPath.c_str());
       }
          
       // if package is set we need to set the loader package as well
-      Path outputPath;
-      Path::loadPath(outputPath, StrSetting(opProjectPath));
-      Path::combinePath(outputPath, StrSetting(opOutputPath));
+      Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 
-      _loader.setNamespace(StrSetting(opNamespace), outputPath);
+      _loader.setNamespace(StrSetting(opNamespace), outputPath.c_str());
 
       // add references to the additional libraries
       for (ForwardIterator it = _settings.getIt(opReferences); !it.Eof(); it++) {
@@ -222,11 +178,26 @@ public:
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
-   bool HasWarnings() const { return _hasWarning; }
+   virtual bool HasWarnings() const { return _hasWarning; }
 
    virtual int getTabSize() { return 4; }
 
-   int getWarningMask() const { return _warningMasks; }
+   virtual int getWarningMask() const { return _warningMasks; }
+
+   virtual ident_t getManinfestName()
+   {
+      return StrSetting(opManifestName);
+   }
+
+   virtual ident_t getManinfestVersion()
+   {
+      return StrSetting(opManifestVersion);
+   }
+
+   virtual ident_t getManinfestAuthor()
+   {
+      return StrSetting(opManifestAuthor);
+   }
 
    bool indicateWarning()
    {
@@ -246,6 +217,19 @@ public:
    virtual _Module* createDebugModule(ident_t name);
 
    virtual void saveModule(_Module* module, ident_t extension);
+
+   virtual ident_t Namespace() const
+   {
+      return StrSetting(opNamespace);
+   }
+   virtual bool WarnOnUnresolved() const
+   {
+      return BoolSetting(opWarnOnUnresolved);
+   }
+   virtual bool WarnOnWeakUnresolved() const
+   {
+      return BoolSetting(opWarnOnWeakUnresolved);
+   }
 
    Project();
    virtual ~Project() {}

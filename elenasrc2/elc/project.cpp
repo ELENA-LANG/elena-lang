@@ -49,7 +49,7 @@ bool Project :: loadOption(_ConfigFile& config, ProjectSetting setting)
 {
    ident_t param = getOption(config, setting);
    if (!emptystr(param)) {
-      _settings.add(setting, StringHelper::clone(param));
+      _settings.add(setting, param.clone());
 
       return true;
    }
@@ -60,7 +60,7 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting)
 {
    ident_t value = getOption(config, setting);
    if (value) {
-      _settings.add(setting, StringHelper::strToInt(value));
+      _settings.add(setting, value.toInt());
    }
 }
 
@@ -68,7 +68,7 @@ void Project :: loadHexOption(_ConfigFile& config, ProjectSetting setting)
 {
    ident_t value = getOption(config, setting);
    if (value) {
-      _settings.add(setting, (int)StringHelper::strToLong(value, 16));
+      _settings.add(setting, (int)value.toLong(16));
    }
 }
 
@@ -76,7 +76,7 @@ void Project :: loadIntOption(_ConfigFile& config, ProjectSetting setting, int m
 {
    ident_t value = getOption(config, setting);
    if (value) {
-      int intValue = StringHelper::strToInt(value);
+      int intValue = value.toInt();
       if (minValue > intValue)
          intValue = minValue;
       else if (maxValue < intValue)
@@ -90,7 +90,7 @@ void Project :: loadAlignedIntOption(_ConfigFile& config, ProjectSetting setting
 {
    ident_t value = getOption(config, setting);
    if (value) {
-      _settings.add(setting, align(StringHelper::strToInt(value), alignment));
+      _settings.add(setting, align(value.toInt(), alignment));
    }
 }
 
@@ -98,7 +98,7 @@ void Project :: loadBoolOption(_ConfigFile& config, ProjectSetting setting)
 {
    ident_t value = getOption(config, setting);
    if (value) {
-      if (StringHelper::strToInt(value) != 0)
+      if (value.toInt() != 0)
          _settings.add(setting, -1);
    }
 }
@@ -107,10 +107,9 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path
 {
    ident_t value = getOption(config, setting);
    if (value) {
-      Path path(rootPath);
-      Path::combinePath(path, value);
+      Path path(rootPath, value);
 
-      _settings.add(setting, IdentifierString::clonePath(path));
+      _settings.add(setting, IdentifierString::clonePath(path.c_str()));
       return true;
    }
    else return false;
@@ -132,12 +131,11 @@ void Project :: loadCategory(_ConfigFile& config, ProjectSetting setting, path_t
 
       // add path if provided
       if (!emptystr(path)) {
-         Path filePath(path);
-         Path::combinePath(filePath, value);
+         Path filePath(path, value);
 
-         _settings.add(setting, key, IdentifierString::clonePath(filePath));
+         _settings.add(setting, key, IdentifierString::clonePath(filePath.c_str()));
       }
-      else _settings.add(setting, key, StringHelper::clone(value));
+      else _settings.add(setting, key, value.clone());
 
       it++;
    }
@@ -147,7 +145,7 @@ void Project :: loadForwardCategory(_ConfigFile& config)
 {
    ConfigCategoryIterator it = getCategory(config, opForwards);
    while (!it.Eof()) {
-      _settings.add(opForwards, it.key(), StringHelper::clone(*it));
+      _settings.add(opForwards, it.key(), ((ident_t)*it).clone());
 
       it++;
    }
@@ -165,15 +163,15 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
       // add path if provided
       Path filePath(path);
       // if path starts with tilda - skip path
-      if (value[0] == '~') {         
-         Path::loadPath(filePath, value + 1);
+      if (value[0] == '~') {
+         filePath.copy(value + 1);
       }
-      else Path::combinePath(filePath, value);
+      else filePath.combine(value);
 
-      if (StringHelper::compare(it.key(), CORE_ALIAS)) {
-         _loader.addCorePath(filePath);
+      if (it.key().compare(CORE_ALIAS)) {
+         _loader.addCorePath(filePath.c_str());
       }
-      else _loader.addPrimitivePath(it.key(), filePath);
+      else _loader.addPrimitivePath(it.key(), filePath.c_str());
 
       it++;
    }
@@ -184,10 +182,9 @@ void Project :: loadSourceCategory(_ConfigFile& config, path_t path)
    ConfigCategoryIterator it = getCategory(config, opSources);
    while (!it.Eof()) {
       // add path if provided
-      Path filePath(path);
-      Path::combinePath(filePath, it.key());
+      Path filePath(path, it.key());
 
-      _sources.add(it.key(), IdentifierString::clonePath(filePath));
+      _sources.add(it.key(), IdentifierString::clonePath(filePath.c_str()));
 
       it++;
    }
@@ -201,11 +198,12 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadPathOption(config, opTarget, configPath);
    loadOption(config, opOutputPath);
    loadBoolOption(config, opWarnOnUnresolved);
+   loadBoolOption(config, opWarnOnWeakUnresolved);
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
    loadBoolOption(config, opDebugSubjectInfo);
    loadBoolOption(config, opClassSymbolAutoLoad);
-   loadOption(config, opTemplate);
+//   loadOption(config, opTemplate);
 
    // load compiler settings
    loadIntOption(config, opThreadMax, 0, 60);
@@ -289,13 +287,11 @@ void Project :: saveModule(_Module* module, ident_t extension)
    Path path;
    _loader.nameToPath(name, path, extension);
 
-   Path outputPath;
-   Path::loadPath(outputPath, StrSetting(opProjectPath));
-   Path::combinePath(outputPath, StrSetting(opOutputPath));
+   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 
-   Path::create(outputPath, path);
+   Path::create(outputPath.c_str(), path.c_str());
 
-   FileWriter writer(path, feRaw, false);
+   FileWriter writer(path.c_str(), feRaw, false);
    if(!module->save(writer))
       raiseError(getLoadError(lrCannotCreate), IdentifierString(path));
 }
@@ -316,7 +312,7 @@ _Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool 
 
    LoadResult result = lrNotFound;
    _Module* module = NULL;
-   if (StringHelper::compare(referenceName, NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
       module = _loader.resolveNative(referenceName, result, reference);
    }
    else module = _loader.resolveModule(referenceName, result, reference);

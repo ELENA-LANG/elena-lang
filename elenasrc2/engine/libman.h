@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA Library manager.
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef libmanH
@@ -18,7 +18,7 @@ typedef _ELENA_::List<_JITLoaderListener*> LoaderListeners;
 
 class LibraryManager : public _LibraryManager
 {
-   typedef Map<ident_t, ident_c*> PathMap;
+   typedef Map<ident_t, char*> PathMap;
 
    Path              _rootPath;
    IdentifierString  _namespace;
@@ -62,20 +62,19 @@ public:
 #ifdef _WIN32
    void addPackage(ident_t package, ident_t path)
    {
-      _packagePaths.add(package, StringHelper::clone(path));
+      _packagePaths.add(package, path.clone());
    }
 #endif
    void nameToPath(ident_t moduleName, Path& path, ident_t extension)
    {
-      Path ext;
-      Path::loadPath(ext, extension);
+      Path ext(extension);
 
       PathMap::Iterator it = _packagePaths.start();
       while (!it.Eof()) {
          // if the module belongs to the current project
          if (NamespaceName::isIncluded(it.key(), moduleName)) {
-            Path::loadPath(path, *it);
-            path.nameToPath(moduleName, ext);
+            path.copy(*it);
+            path.nameToPath(moduleName, ext.c_str());
 
             return;
          }
@@ -83,8 +82,8 @@ public:
       }
 
       // otherwise it is the global library module
-      path.copy(_rootPath);
-      path.nameToPath(moduleName, ext);
+      path.copy(_rootPath.c_str());
+      path.nameToPath(moduleName, ext.c_str());
    }
 
    void addPrimitivePath(ident_t alias, path_t path)

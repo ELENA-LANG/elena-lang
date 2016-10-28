@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      MenuHistoryList class implementation
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "historylist.h"
@@ -18,7 +18,7 @@ RecentList :: RecentList(int maxCount, int menuBaseId)
 void RecentList :: load(IniConfigFile& file, const char* section)
 {
    for(ConfigCategoryIterator it = file.getCategoryIt(section) ; !it.Eof() ; it++) {
-      _list.add(TextString(it.key()).clone());
+      _list.add(text_str(TextString(it.key())).clone());
    }
 }
 

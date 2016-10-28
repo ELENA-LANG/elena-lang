@@ -12,88 +12,221 @@
 namespace _ELENA_
 {
 
-// --- StringHelper ---
-
-class StringHelper
+class Convertor
 {
 public:
-   static char* allocate(size_t size, const char* value);
-   static wide_c* allocate(size_t size, const wide_c* value);
-   static char* reallocate(char* s, size_t size);
-   static wide_c* reallocate(wide_c* s, size_t size);
-
    static bool copy(char* dest, const char* sour, size_t sourLength, size_t& destLength);
-   static bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
-   static bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
    static bool copy(char* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
+   static bool copy(wide_c* dest, const char* sour, size_t sourLength, size_t& destLength);
+   static bool copy(wide_c* dest, const wide_c* sour, size_t sourLength, size_t& destLength);
    static bool copy(char* dest, const unic_c* sour, size_t sourLength, size_t& destLength);
    static bool copy(unic_c* dest, const char* sour, size_t sourLength, size_t& destLength);
 
-   static wide_c* clone(const wide_c* s);
-   static char* clone(const char* s);
+   static char* doubleToStr(double value, int digit, char* s);
+   static wide_c* doubleToStr(double value, int digit, wide_c* s);
 
-   static void move(char* s1, const char* s2, size_t length);
-   static void move(wide_c* s1, const wide_c* s2, size_t length);
+   static char* longlongToStr(long long n, char* s, int radix);
 
-   static void insert(ident_c* s, int pos, ident_t subs);
-
-   static void append(char* dest, const char* sour, int length);
-   static void append(wide_c* dest, const wide_c* sour, size_t length);
-//   static bool append(wchar16_t* dest, const char* sour, size_t length);
-//   static bool append(char* dest, const wchar16_t* sour, size_t length);
-
-   static wide_c lower(wide_c s);
-   static wide_c* lower(wide_c* s);
-   static char* lower(char* s);
-   static char lower(char s);
-
-   static wide_c* upper(wide_c* s);
-   static char* upper(char* s);
-
-   static void trim(char* s, char c);
-
-   static bool compare(const wide_c* s1, const wide_c* s2);
-   static bool compare(const wide_c* s1, const wide_c* s2, size_t length);
-   static bool compare(const char* s1, const char* s2);
-   static bool compare(const char* s1, const char* s2, size_t length);
-
-   static bool greater(const wide_c* s1, const wide_c* s2);
-   static bool greater(const wide_c* s1, const wide_c* s2, size_t length);
-   static bool greater(const char* s1, const char* s2);
-   static bool greater(const char* s1, const char* s2, size_t length);
-
-   static int find(const char* s, const char* subs, int defValue = -1);
-   static int find(const char* s, char c, int defValue = -1);
-   static int findSubStr(const char* s, char c, size_t length, int defValue = -1);
-   static int find(const wide_c* s, wide_c c, int defValue = -1);
-   static int findLast(const wide_c* s, wide_c c, int defValue = -1);
-   static int findLast(const char* s, char c, int defValue = -1);
-
-   static int strToInt(const wide_c* s);
-   static int strToInt(const char* s);
-
-   static wide_c* intToStr(int n, wide_c* s, int radix);
    static char* intToStr(int n, char* s, int radix);
-   static wide_c* ulongToStr(unsigned long n, wide_c* s, int radix);
-   static char* ulongToStr(unsigned long n, char* s, int radix);
+   static int strToInt(const char* s);
+};
 
-   static long strToLong(const wide_c* s, int radix);
-   static long strToLong(const char* s, int radix);
-   static long strToULong(const char* s, int radix);
+class StrFactory
+{
+public:
+   static char* allocate(size_t size, const char* value);
+   static char* reallocate(char* s, size_t size);
+   static wchar_t* allocate(size_t size, const wchar_t* value);
+   static wchar_t* reallocate(wchar_t* s, size_t size);
 
-   static long long strToLongLong(const char* s, int radix);
-   static long long strToLongLong(const wide_c* s, int radix);
+   static char* clone(const char* s);
+   static wchar_t* clone(const wchar_t* s);
+};
 
-   static double strToDouble(const char* s);
-   static double strToDouble(const wide_c* s);
+class StrHelper
+{
+public:
+   static void move(char* s1, const char* s2, size_t length);
+   static void move(wchar_t* s1, const wchar_t* s2, size_t length);
+   static void append(char* dest, const char* sour, size_t length);
+   static void append(wide_c* dest, const wide_c* sour, size_t length);
+   static void insert(char* s, int pos, const char* subs);
 
-   static ident_c* longlongToStr(long long n, ident_c* s, int radix);
-   static ident_c* doubleToStr(double value, int digit, ident_c* s);
+   static char* lower(char* s);
+   static wchar_t* lower(wide_c* s);
+   static char lower(char s);
+   static wchar_t lower(wide_c s);
+   static char* upper(char* s);
+   static wchar_t* upper(wide_c* s);
+};
+
+class ident_t
+{
+private:
+   const char* _string;
+
+public:
+   operator const char*() const { return _string; }
+
+   const char* c_str() const { return _string; }
+
+   ident_t& operator +=(int offset)
+   {
+      _string += offset;
+
+      return *this;
+   }
+
+   bool copyTo(char* dest, size_t length, size_t& destLength);
+   bool copyTo(wide_c* dest, size_t length, size_t& destLength);
+
+   bool copyTo(char* dest, size_t& destLength)
+   {
+      return copyTo(dest, getlength(_string), destLength);
+   }
+   bool copyTo(wide_c* dest, size_t& destLength)
+   {
+      return copyTo(dest, getlength(_string), destLength);
+   }
+
+   int find(const char* s, int defValue = -1);
+   int find(char c, int defValue = -1);
+   int findLast(char c, int defValue = -1);
+
+   int findSubStr(int index, char c, size_t length, int defValue);
+
+   int toInt();
+   int toInt(int index);
+
+   long toLong(int radix);
+   long toLong(int radix, int index);
+   long toULong(int radix, int index = 0);
+   long long toULongLong(int radix, int index = 0);
+
+   double toDouble(int index = 0);
+
+   char* clone();
+   char* clone(int index);
+
+   bool compare(const char* s) const;
+   bool compare(const char* s, size_t length) const;
+
+   bool greater(const char* s);
+
+   ident_t()
+   {
+      _string = NULL;
+   }
+   ident_t(const char* s)
+   {
+      _string = s;
+   }
+};
+
+class wide_t
+{
+private:
+   const wide_c* _string;
+
+public:
+   operator const wide_c*() const { return _string; }
+
+   wide_t& operator +=(int offset)
+   {
+      _string += offset;
+
+      return *this;
+   }
+
+   bool copyTo(char* dest, size_t length, size_t& destLength);
+   bool copyTo(wide_c* dest, size_t length, size_t& destLength);
+
+   int find(wide_c c, int defValue = -1);
+   int findLast(wide_c c, int defValue = -1);
+
+   int findSubStr(int index, wide_c c, size_t length, int defValue);
+
+   int toInt();
+   int toInt(int index);
+
+   long toLong(int radix);
+   long toLong(int radix, int index);
+
+   wide_c* clone();
+   wide_c* clone(int index);
+
+   bool compare(const wide_c* s) const;
+   bool compare(const wide_c* s, size_t length) const;
+
+   bool greater(const wide_c* s);
+
+   wide_t()
+   {
+      _string = NULL;
+   }
+   wide_t(const wide_c* s)
+   {
+      _string = s;
+   }
 };
 
 // --- String ---
 
-template <class T, size_t size> class String
+template <class T> class BaseString
+{
+protected:
+   static void intToStr(int n, T* s, int radix)
+   {
+      int  rem = 0;
+      int  pos = 0;
+      int start = 0;
+      if (n < 0) {
+         start++;
+         n = -n;
+         s[pos++] = '-';
+      }
+
+      do
+      {
+         rem = (unsigned int)n % radix;
+         n /= radix;
+         switch (rem) {
+         case 10:
+            s[pos++] = 'a';
+            break;
+         case 11:
+            s[pos++] = 'b';
+            break;
+         case 12:
+            s[pos++] = 'c';
+            break;
+         case 13:
+            s[pos++] = 'd';
+            break;
+         case 14:
+            s[pos++] = 'e';
+            break;
+         case 15:
+            s[pos++] = 'f';
+            break;
+         default:
+            if (rem < 10) {
+               s[pos++] = (char)(rem + 0x30);
+            }
+         }
+      } while (n != 0);
+
+      s[pos] = 0;
+      pos--;
+      while (start < pos) {
+         T tmp = s[start];
+         s[start++] = s[pos];
+         s[pos--] = tmp;
+      }
+   }
+};
+
+template <class T, size_t size> class String : BaseString<T>
 {
 protected:
    T _string[size + 1];
@@ -113,23 +246,6 @@ public:
       return *(_string + index);
    }
 
-   bool isEmpty() const { return emptystr(_string); }
-
-   int findLast(T ch)
-   {
-      return StringHelper::findLast(_string, ch, -1);
-   }
-
-   int find(T ch)
-   {
-      return StringHelper::find(_string, ch, -1);
-   }
-
-   bool compare(const T* s)
-   {
-      return StringHelper::compare(_string, s);
-   }
-
 //   void replaceAll(T oldCh, T newCh, int index)
 //   {
 //      for (size_t i = index ; i < getlength(_string) ; i++) {
@@ -140,7 +256,7 @@ public:
 
    void copy(const T* s, size_t length)
    {
-      StringHelper::copy(_string, s, length, length);
+      Convertor::copy(_string, s, length, length);
       _string[length] = 0;
    }
    void copy(const T* s)
@@ -155,14 +271,14 @@ public:
 
    void insert(const T* s, size_t index)
    {
-      StringHelper::insert(_string, index, s);
+      StrHelper::insert(_string, index, s);
    }
 
    void append(const T* s, size_t length)
    {
       size_t newLength = getlength(_string) + length;
       if (newLength < size) {
-         StringHelper::append(_string, s, length);
+         StrHelper::append(_string, s, length);
          _string[newLength] = 0;
       }
    }
@@ -181,22 +297,28 @@ public:
    {
       int pos = getlength(_string);
 
-      StringHelper::intToStr(n, _string + pos, 10);
+      intToStr(n, _string + pos, 10);
+   }
+
+   void copyInt(int n)
+   {
+      intToStr(n, _string, 10);
    }
 
    void appendHex(int n)
    {
       int pos = getlength(_string);
 
-      StringHelper::ulongToStr(n, _string + pos, 16);
-      StringHelper::upper(_string + pos);
+      intToStr(n, _string + pos, 16);
+
+      StrHelper::upper(_string + pos);
    }
 
    void appendDouble(double n)
    {
       int pos = getlength(_string);
 
-      StringHelper::doubleToStr(n, 8, _string + pos);
+      Convertor::doubleToStr(n, 8, _string + pos);
       if (_string[getlength(_string) - 1]=='.')
          append("0");
    }
@@ -205,60 +327,35 @@ public:
    {
       int pos = getlength(_string);
 
-      StringHelper::longlongToStr(n, _string + pos, 16);
-      StringHelper::upper(_string + pos);
+      Convertor::longlongToStr(n, _string + pos, 16);
+      StrHelper::upper(_string + pos);
    }
 
    void appendInt64(long long n)
    {
       int pos = getlength(_string);
 
-      StringHelper::longlongToStr(n, _string + pos, 10);
-      StringHelper::upper(_string + pos);
+      Convertor::longlongToStr(n, _string + pos, 10);
+      StrHelper::upper(_string + pos);
    }
 
    void lower()
    {
-      StringHelper::lower(_string);
+      StrHelper::lower(_string);
    }
 
    void upper()
    {
-      StringHelper::upper(_string);
+      StrHelper::upper(_string);
    }
 
    void trim(T ch)
    {
-      StringHelper::trim(_string, ch);
-   }
-
-   T* clone()
-   {
-      return StringHelper::clone(_string);
-   }
-
-   T* clone(int pos)
-   {
-      return StringHelper::clone(_string + pos);
-   }
-
-   int toInt()
-   {
-      return StringHelper::strToInt(_string);
-   }
-   int toInt(int defaultValue)
-   {
-      return emptystr(_string) ? defaultValue : toInt();
-   }
-
-   long toLong(int radix)
-   {
-      return StringHelper::strToLong(_string, radix);
-   }
-
-   long toULong(int radix)
-   {
-      return StringHelper::strToULong(_string, radix);
+      size_t length = getlength(_string);
+      while (length > 0 && _string[length - 1] == ch) {
+         _string[length - 1] = 0;
+         length = getlength(_string);
+      }
    }
 
    void clear()
@@ -311,38 +408,39 @@ public:
 
 // --- DynamicString ---
 
-template <class T, size_t pageSize = 0x20> class DynamicString
+template <class T, size_t pageSize = 0x20> class DynamicString : BaseString<T>
 {
 protected:
    T*     _string;
    size_t _size;
 
-   void assignOrCopy(const T* value, T* &ptr, size_t& size)
-   {
-      ptr = value;
-      size = 0;
-   }
+//   void assignOrCopy(const T* value, T* &ptr, size_t& size)
+//   {
+//      ptr = value;
+//      size = 0;
+//   }
 
    void create(T*, size_t size)
    {
       if (_size == 0) {
          _size = align(size, pageSize);
-         _string = StringHelper::allocate(_size, (const T*)NULL);
+         _string = StrFactory::allocate(_size, (const T*)NULL);
          _string[0] = 0;
       }
       else {
          int length = getlength(_string);
 
          _size = align(size, pageSize);
-         _string = StringHelper::reallocate(_string, _size);
+         _string = StrFactory::reallocate(_string, _size);
 
          _string[length] = 0;
       }
    }
 
-
 public:
    operator const T*() const { return _string; }
+
+   operator T*() { return _string; }
 
    T& operator[](size_t index)
    {
@@ -354,34 +452,34 @@ public:
       return *(_string + index);
    }
 
-   bool isEmpty() const { return emptystr(_string); }
-
-   int findLast(T ch)
-   {
-      return StringHelper::findLast(_string, ch, -1);
-   }
-
-   int find(T ch)
-   {
-      return StringHelper::find(_string, ch, -1);
-   }
-
-   int find(int index, T ch)
-   {
-      return StringHelper::find(_string + index, ch, -1);
-   }
-
-   bool compare(const T* s)
-   {
-      return StringHelper::compare(_string, s);
-   }
+//   bool isEmpty() const { return emptystr(_string); }
+//
+//   int findLast(T ch)
+//   {
+//      return StringHelper::findLast(_string, ch, -1);
+//   }
+//
+//   int find(T ch)
+//   {
+//      return StringHelper::find(_string, ch, -1);
+//   }
+//
+//   int find(int index, T ch)
+//   {
+//      return StringHelper::find(_string + index, ch, -1);
+//   }
+//
+//   bool compare(const T* s)
+//   {
+//      return StringHelper::compare(_string, s);
+//   }
 
    void copy(const T* s, size_t length)
    {
       if (_size <= length) {
          create(_string, length + 1);
       }
-      StringHelper::copy(_string, s, length);
+      __copy(_string, s, length, length);
       _string[length] = 0;
    }
    void copy(const T* s)
@@ -399,7 +497,8 @@ public:
       if (newLength > _size)
          create(_string, newLength);
 
-      StringHelper::append(_string, s, length);
+      StrHelper::append(_string, s, length);
+      _string[newLength] = 0;
    }
    void append(const T* s)
    {
@@ -413,41 +512,53 @@ public:
       append(&c, 1);
    }
 
-   void lower()
+   void appendInt(int n)
    {
-      StringHelper::lower(_string);
+      int pos = getlength(_string);
+
+      intToStr(n, _string + pos, 10);
    }
 
-   void trim(T ch)
+   void copyInt(int n)
    {
-      StringHelper::trim(_string, ch);
+      intToStr(n, _string, 10);
    }
 
-   T* clone()
-   {
-      return StringHelper::clone(_string);
-   }
-
-   T* clone(int pos)
-   {
-      return StringHelper::clone(_string + pos);
-   }
-
-   int toInt()
-   {
-      return StringHelper::strToInt(_string);
-   }
-
-   void clear()
-   {
-      if (_string)
-         _string[0] = 0;
-   }
-
-   size_t Length()
-   {
-      return getlength(_string);
-   }
+//   void lower()
+//   {
+//      StringHelper::lower(_string);
+//   }
+//
+//   void trim(T ch)
+//   {
+//      StringHelper::trim(_string, ch);
+//   }
+//
+//   T* clone()
+//   {
+//      return StringHelper::clone(_string);
+//   }
+//
+//   T* clone(int pos)
+//   {
+//      return StringHelper::clone(_string + pos);
+//   }
+//
+//   int toInt()
+//   {
+//      return StringHelper::strToInt(_string);
+//   }
+//
+//   void clear()
+//   {
+//      if (_string)
+//         _string[0] = 0;
+//   }
+//
+//   size_t Length()
+//   {
+//      return getlength(_string);
+//   }
 
    DynamicString()
    {
@@ -462,12 +573,12 @@ public:
    ~DynamicString() { if (_size > 0) freestr(_string); }
 };
 
-// --- conversion routines ---
+// --- HOTFIX : internal conversion routines ---
 
 inline void copystr(char* d, const char* s)
 {
    size_t len = strlen(s);
-   StringHelper::copy(d, s, len, len);
+   ((ident_t)s).copyTo(d, len, len);
    d[len] = 0;
 }
 

@@ -1,27 +1,29 @@
-// --- Symbol ---
+#subject vmssg = varof:mssg.
 
-/// A dynamic symbol
-#class(sealed,embeddable) Symbol
-{
-    #field(symbol)theValue.
-    
-    /// Loads a symbol
-    #constructor new &literal:name
-    [
-        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
-    ]
-        
-    /// Redirects incoming messages to the symbol
-    #method => system'core_routines'__symbol.
-}
+//// --- Symbol ---
+//
+///// A dynamic symbol
+//#class(sealed,embeddable) Symbol
+//{
+//    #field(symbol)theValue.
+//    
+//    /// Loads a symbol
+//    #constructor new &literal:name
+//    [
+//        system'core_routines'__symbol load &symbol_ref:$self &literal:name.
+//    ]
+//        
+//    /// Redirects incoming messages to the symbol
+//    #method => system'core_routines'__symbol.
+//}
 
 // --- Verb ---
 
 /// A dynamic verb extender
 #class(sealed,embeddable) Verb
 {
-    #field(signature)theValue.
-    
+    #field(-20,4)theValue.
+
     /// Loads a dynamic verb
     #constructor(stacksafe,w3) new &verb:aVerb
         = aVerb.
@@ -35,7 +37,7 @@
 /// A message constant
 #class(sealed,embeddable) Message
 {
-    #field(message)theValue.
+    #field(-19,4)theValue.
     
     /// Loads a message
     #constructor(stacksafe,w3) new &mssg:message
@@ -56,34 +58,33 @@
     #method => system'core_routines'__message.
 }
 
-// --- ExtensionMessage ---
-
-/// An extended message constant
-#class(sealed,embeddable) ExtensionMessage
-{
-    #field(extension_message)theValue.
-    
-    /// Loads a message
-    #constructor(stacksafe,w3) new &ext_mssg:message
-        = message.
-
-    #method(stacksafe) subject
-        => system'core_routines'__message.
-
-    #method(stacksafe) equal &ext_mssg : aSubject    
-        => system'core_routines'__extmessage.
-
-    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-    #method => system'core_routines'__extmessage.
-}
-
+//// --- ExtensionMessage ---
+//
+///// An extended message constant
+//#class(sealed,embeddable) ExtensionMessage
+//{
+//    #field(-21,8)theValue.
+//    
+//    /// Loads a message
+//    #constructor(stacksafe,w3) new &ext_mssg:message
+//        = message.
+//
+//    #method(stacksafe) subject
+//        => system'core_routines'__message.
+//
+//    #method(stacksafe) equal &ext_mssg : aSubject    
+//        => system'core_routines'__extmessage.
+//
+//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+//    #method => system'core_routines'__extmessage.
+//}
 
 // --- Signature ---
 
 /// A dynamic signature extender
 #class(sealed,embeddable) Signature
 {
-    #field(signature)theValue.
+    #field(-18,4)theValue.
     
     /// Creates a dynamic signature
     #constructor(stacksafe) new &mssg:message
@@ -118,7 +119,7 @@
     ]
         
     /// Qualifies incoming messages and redirects to the target
-    #method => system'core_routines'__signature.
+    #method(stacksafe) => system'core_routines'__signature.
 }
 
 // --- MessageArray ---

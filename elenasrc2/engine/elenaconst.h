@@ -14,7 +14,7 @@ namespace _ELENA_
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     2                 // ELENA Engine version
    #define ENGINE_MINOR_VERSION     1
-   #define ENGINE_RELEASE_VERSION   1
+   #define ENGINE_RELEASE_VERSION   2
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -93,6 +93,7 @@ namespace _ELENA_
    #define ROLLBACK_MESSAGE_ID     0x0041
    #define REPLACE_MESSAGE_ID      0x0043  
 
+   #define VALUES_MESSAGE_ID       0x007E             // virtual method returning the list of enum values
    #define PRIVATE_MESSAGE_ID      0x007F
 
    // ---- ELENAVM command masks ---
@@ -304,11 +305,11 @@ namespace _ELENA_
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
    const int elExtMessage          = 0x00208000;
-   const int elSymbol              = 0x00100000;
+//   const int elSymbol              = 0x00100000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-   const int elPointer             = 0x00800010;
+//   const int elPointer             = 0x00800010;
 
-   const int elDebugMask           = 0x000F0000;
+   const int elDebugMask           = 0x001F0000;
    const int elDebugDWORD          = 0x00010000;
    const int elDebugReal64         = 0x00020000;
    const int elDebugLiteral        = 0x00030000;
@@ -319,11 +320,12 @@ namespace _ELENA_
    const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
-   const int elDebugReference      = 0x000B0000;   // symbol reference
+//   const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
-   const int elDebugReals          = 0x000D0000;
+//   const int elDebugReals          = 0x000D0000;
    const int elDebugMessage        = 0x000E0000;
-   const int elDebugDPTR           = 0x000F0000;
+//   const int elDebugDPTR           = 0x000F0000;
+   const int elEnumList            = 0x00100000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -336,7 +338,17 @@ namespace _ELENA_
   // ELENA run-time exceptions
    #define ELENA_ERR_OUTOF_MEMORY  0x190
 
-  // --- ELENA Module structure constants ---
+  // --- Project warning levels
+   const int WARNING_LEVEL_1 = 1;
+   const int WARNING_LEVEL_2 = 2;
+   const int WARNING_LEVEL_3 = 4;
+
+   const int WARNING_MASK_0 = 0;
+   const int WARNING_MASK_1 = 1;
+   const int WARNING_MASK_2 = 3;
+   const int WARNING_MASK_3 = 7;
+
+   // --- ELENA Module structure constants ---
    #define ELENA_SIGNITURE          "ELENA.3."       // the stand alone image
    #define ELENACLIENT_SIGNITURE    "VM.ELENA.3."    // the ELENAVM client
 
@@ -352,6 +364,7 @@ namespace _ELENA_
    #define EVAL_MESSAGE             "eval"
    #define EVALUATE_MESSAGE         "evaluate"
    #define EQUAL_MESSAGE            "equal"
+   #define NOTEQUAL_MESSAGE         "notequal"
    #define LESS_MESSAGE             "less"
    #define AND_MESSAGE              "and"
    #define OR_MESSAGE               "or"
@@ -374,6 +387,7 @@ namespace _ELENA_
    #define WRITE_MESSAGE            "write"
    #define RAISE_MESSAGE            "raise"
    #define IF_MESSAGE               "if"
+   #define IFNOT_MESSAGE            "ifnot"
    #define FIND_MESSAGE             "find"
    #define SEEK_MESSAGE             "seek"
    #define REWIND_MESSAGE           "rewind"
@@ -433,7 +447,7 @@ namespace _ELENA_
    #define READ_OPERATOR            ">>"
 
   // --- ELENA explicit variables ---
-   #define METHOD_SELF_VAR         "this"             // the current method self
+//   #define METHOD_SELF_VAR         "this"             // the current method self
    #define SELF_VAR                "self"             // the main object self
    #define THIS_VAR                "$self"            // the current class instance
    #define OWNER_VAR               "$owner"           // the current method self
@@ -444,7 +458,7 @@ namespace _ELENA_
    #define TARGET_PSEUDO_VAR       "target"
 
   // --- ELENA special sections ---
-   #define TYPE_SECTION             "#types"
+   #define ATTRIBUTE_SECTION        "#attributes"
    #define EXTENSION_SECTION        "#extensions"
    #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
@@ -454,8 +468,8 @@ namespace _ELENA_
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
    #define GENERIC_PREFIX           "#generic"
-   #define EMBEDDED_PREFIX          "#embedded"
-   #define TARGET_POSTFIX           "##"
+//   #define EMBEDDED_PREFIX          "#embedded"
+//   #define TARGET_POSTFIX           "##"
    #define STATICFIELD_POSTFIX      "#static"
 
   // --- ELENA Standard module references ---
@@ -491,8 +505,8 @@ namespace _ELENA_
    #define STR_FORWARD              "'$literal"
    #define WIDESTR_FORWARD          "'$wideliteral"
    #define CHAR_FORWARD             "'$char"
-   #define TRUE_FORWARD             "'$true"
-   #define FALSE_FORWARD            "'$false"
+//   #define TRUE_FORWARD             "'$true"
+//   #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
    #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
@@ -500,8 +514,7 @@ namespace _ELENA_
    #define ARRAY_FORWARD            "'$array"
    #define PARAMS_FORWARD           "'$params"
 //   #define SUBJ_FORWARD             "'$sign"
-
-   #define BOOLTYPE_FORWARD         "'$bool"
+   #define BOOL_FORWARD             "'$bool"
 
    #define STARTUP_CLASS            "'startUp"
 

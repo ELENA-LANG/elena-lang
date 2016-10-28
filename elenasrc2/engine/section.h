@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Section
 //		classes.
-//                                              (C)2005-2012, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SectionH

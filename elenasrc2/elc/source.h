@@ -87,12 +87,12 @@ class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LIN
       }
   }
 
-   void copyToken(LineInfo& info, ident_c* token, size_t length)
+   void copyToken(LineInfo& info, char* token, size_t length)
    {
       info.length = _position - info.position;
       info.line = token;
 
-      StringHelper::copy(token, _line + info.position, info.length, length);
+      Convertor::copy(token, _line + info.position, info.length, length);
       token[info.length] = 0;
    }
 
@@ -103,7 +103,7 @@ class SourceReader : public _TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LIN
    }
 
 public:
-   LineInfo read(ident_c* token, size_t length);
+   LineInfo read(char* token, size_t length);
 
    SourceReader(int tabSize, TextReader* source);
 };

@@ -1,144 +1,3 @@
-// --- true ---
-
-#class(limited,dispatchable:bool) BaseBoolValue
-{
-    #method then : aTrueAction = $nil.
-
-    #method then : aTrueAction &else:aFalseAction = $nil.
-
-    #method else : aTrueAction = $nil.
-    
-    #method iif:aTrueValue:aFalseValue = $nil.
-
-    #method(bool) or : anExpr = $nil.
-
-    #method(bool) and : anExpr = $nil.
-
-    #method(bool) xor : aBool = $nil.
-
-    #method equal : anExpr = $nil.
-
-    #method(bool) equal &bool:aBool = $nil.
-
-    #method(bool) not = $nil.
-
-    #method literal = $nil.
-
-    #method wide = $nil.
-
-    #method clone = $nil.
-}
-
-/// A true value symbol
-#symbol true = BaseBoolValue
-{
-    /// Executes the action
-    #method then : aTrueAction = aTrueAction eval.
-
-    /// Executes then-action
-    #method then : aTrueAction &else:aFalseAction = aTrueAction eval.
-
-    /// Always returns nil.
-    #method else : aTrueAction = $nil.
-
-    #method iif:aTrueValue:aFalseValue = aTrueValue.
-    
-    /// Executes logical OR operation
-    ///
-    /// Always return true
-    #method(bool) or : anExpr = $self.
-
-    /// Executes logical AND operation
-    #method(bool) and : anExpr = anExpr bool.
-
-    /// Executes logical XOR operation
-    #method(bool,w2) xor : aBool
-    [
-        aBool ? [ ^ false. ].
-        
-        ^ $self.
-    ]
-
-    /// Determines whether the specified object is equal to the current object boolean value.
-    #method equal : anExpr = anExpr bool.
-
-    /// Determines whether the specified object is equal to the current object boolean value.
-    #method(bool) equal &bool:aBool = aBool.
-
-    /// Always returns false.
-    #method(bool) not = false.
-
-    /// Returns literal representation.
-    #method literal = "true".
-
-    /// Returns literal representation.
-    #method wide = "true"w.
-
-    /// Returns itself.
-    #method clone = $self.
-}.
-
-// --- false ---
-
-/// A false value symbol
-#symbol false = BaseBoolValue
-{
-    /// Always returns nil
-    #method then : anAction = $nil.
-    
-    /// Executes else-action
-    #method then : aTrueAction &else:aFalseAction = aFalseAction eval.
-
-    /// Executes the action
-    #method else : aFalseAction = aFalseAction eval.
-
-    #method iif:aTrueValue:aFalseValue = aFalseValue.
-
-    /// Executes logical OR operation
-    #method(bool) or : anExpr = anExpr bool.
-
-    /// Executes logical AND operation
-    ///
-    /// Always return false
-    #method(bool) and : anExpr = $self.
-
-    /// Executes logical XOR operation
-    #method(bool,w2) xor : anExpr 
-    [
-        anExpr ? [ ^ true. ].
-        
-        ^ $self.
-    ]
-
-    /// Determines whether the specified object is equal to the current object boolean value
-    #method(w2) equal : anExpr
-    [
-        anExpr ? [ ^ $self. ].
-        
-        ^ true.
-    ]
-
-    /// Determines whether the specified object is equal to the current object boolean value
-    #method(bool) equal &bool:anExpr
-    [
-        anExpr ? [ ^ $self. ].
-        
-        ^ true.
-    ]
-
-    /// Always returns true
-    #method not = true.
-
-    /// Returns literal representation
-    #method literal = "false".
-    
-    /// Returns literal representation
-    #method wide = "false"w.
-
-    /// Returns itself
-    #method clone = $self.
-}.
-
 // === Basic prototypes ===
 
 // --- Enumerator ---
@@ -276,7 +135,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:anItem) ?
+            // !! temporal
+            ($self eval:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -303,12 +163,13 @@
     /// Executes the function for parameters and every enumeration item until it returns true
     #method(sealed,w2) retrieve : aParam &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam:anItem) ?
+            // !! temporal
+            ($self eval:aParam:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -334,12 +195,13 @@
     /// Executes the function for parameters and every enumeration item until it returns true    
     #method(sealed,w2) retrieve : aParam1 : aParam2 &enumerator:anEnumerator
     [
-        #var anItem := nil.
+        #var anItem := $nil.
         #loop (anEnumerator next) ?
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -370,7 +232,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -401,7 +264,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -432,7 +296,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -463,7 +328,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -494,7 +360,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem) ?
+            // temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -525,7 +392,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -556,7 +424,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -587,7 +456,8 @@
         [
             anItem := anEnumerator get.
             
-            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem) ?
+            // !! temporal
+            ($self eval:aParam1:aParam2:aParam3:aParam4:aParam5:aParam6:aParam7:aParam8:aParam9:aParam10:anItem bool) ?
                 [ ^ anItem. ].
         ].        
         
@@ -793,50 +663,50 @@
     ]
 }
 
-// --- Boolean ---
-
-/// A boolean variable. 
-#class(varof:bool) Boolean :: BaseValue
-{
-    /// Creates a boolean variable with an initial value (false)
-    #constructor new
-    [        
-        $value := false.
-    ]
-
-    /// Creates a boolean variable with specified value
-    #constructor new : aValue
-    [        
-        $value := true equal &bool:(aValue bool).
-    ]
-    
-    /// Creates a boolean variable with specified value
-    #constructor new &bool:aValue
-    [        
-        $value := aValue.
-    ]
-
-    /// Returns the boolean value
-    #method bool = $value.
-
-    /// Executes logical OR operation
-    #method append : aValue
-    [
-        $value := $value or:aValue.
-    ]
-
-    /// Executes logical AND operation            
-    #method multiplyBy : aValue
-    [
-        $value := $value and:aValue.
-    ]
-            
-    /// Inverts the boolean value
-    #method invert
-    [
-        $value := $value not bool.
-    ]            
-
-    /// Clones the object
-    #method clone = Boolean new:$value.
-}
+//// --- Boolean ---
+//
+///// A boolean variable. 
+//#class(varof:bool) Boolean :: BaseValue
+//{
+//    /// Creates a boolean variable with an initial value (false)
+//    #constructor new
+//    [        
+//        $value := false.
+//    ]
+//
+//    /// Creates a boolean variable with specified value
+//    #constructor new : aValue
+//    [        
+//        $value := true equal &bool:(aValue bool).
+//    ]
+//    
+//    /// Creates a boolean variable with specified value
+//    #constructor new &bool:aValue
+//    [        
+//        $value := aValue.
+//    ]
+//
+//    /// Returns the boolean value
+//    #method bool = $value.
+//
+//    /// Executes logical OR operation
+//    #method append : aValue
+//    [
+//        $value := $value or:aValue.
+//    ]
+//
+//    /// Executes logical AND operation            
+//    #method multiplyBy : aValue
+//    [
+//        $value := $value and:aValue.
+//    ]
+//            
+//    /// Inverts the boolean value
+//    #method invert
+//    [
+//        $value := $value not bool.
+//    ]            
+//
+//    /// Clones the object
+//    #method clone = Boolean new:$value.
+//}

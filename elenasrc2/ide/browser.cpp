@@ -198,16 +198,17 @@ void DebuggerWatch :: write(_DebugController* controller, const wide_c* value)
 {
    _browser->clear(_root);
 
-   bool     renamed = false;
-   ident_c  caption[CAPTION_LEN + 1];
+   bool renamed = false;
+   String<char, CAPTION_LEN + 1> caption;
    _browser->getCaption(_root, caption, CAPTION_LEN);
 
    // cut the value from the caption if any
-   if (StringHelper::find(caption, " = {", -1) == -1) {
-      ident_t type = caption + StringHelper::find(caption, '{');
+   ident_t s(caption);
+   if (s.find(" = {", -1) == -1) {
+      ident_t type = s + s.find('{');
 
       size_t len = CAPTION_LEN;
-      StringHelper::copy(caption + StringHelper::find(caption, '=') + 2, type, getlength(type) + 1, len);
+      type.copyTo(caption + s.find('=') + 2, len);
       caption[len] = 0;
       renamed = true;
    }
@@ -215,14 +216,14 @@ void DebuggerWatch :: write(_DebugController* controller, const wide_c* value)
    // if line too long put the value as a subnode
    if (getlength(caption) + getlength(value) > CAPTION_LEN) {
       if (renamed)
-         _browser->setCaption(_root, caption);
+         _browser->setCaption(_root, s);
 
       _browser->newNode(_root, IdentifierString(value), 0);
    }
    // else insert the value into caption
    else {
-      StringHelper::insert(caption, StringHelper::find(caption, '{'), IdentifierString(value));
-      _browser->setCaption(_root, caption);
+      caption.insert(IdentifierString(value), s.find('{'));
+      _browser->setCaption(_root, s);
    }
 }
 
@@ -231,15 +232,16 @@ void DebuggerWatch::write(_DebugController* controller, const char* value)
    _browser->clear(_root);
 
    bool     renamed = false;
-   ident_c  caption[CAPTION_LEN + 1];
+   String<char, CAPTION_LEN + 1> caption;
    _browser->getCaption(_root, caption, CAPTION_LEN);
 
    // cut the value from the caption if any
-   if (StringHelper::find(caption, " = {", -1) == -1) {
-      ident_t type = caption + StringHelper::find(caption, '{');
+   ident_t s = caption;
+   if (s.find(" = {", -1) == -1) {
+      ident_t type = s + s.find('{');
 
       size_t len = CAPTION_LEN;
-      StringHelper::copy(caption + StringHelper::find(caption, '=') + 2, type, getlength(type) + 1, len);
+      type.copyTo(caption + s.find('=') + 2, len);
       caption[len] = 0;
       renamed = true;
    }
@@ -247,20 +249,20 @@ void DebuggerWatch::write(_DebugController* controller, const char* value)
    // if line too long put the value as a subnode
    if (getlength(caption) + getlength(value) > CAPTION_LEN) {
       if (renamed)
-         _browser->setCaption(_root, caption);
+         _browser->setCaption(_root, s);
 
       _browser->newNode(_root, value, 0);
    }
    // else insert the value into caption
    else {
-      StringHelper::insert(caption, StringHelper::find(caption, '{'), value);
-      _browser->setCaption(_root, caption);
+      caption.insert(value, s.find('{'));
+      _browser->setCaption(_root, s);
    }
 }
 
 void DebuggerWatch :: write(_ELENA_::_DebugController* controller, size_t address, _ELENA_::ident_t variableName, int value)
 {
-   String<_ELENA_::ident_c, 20> number;
+   String<char, 20> number;
    number.append('<');
    if (_browser->isHexNumberMode()) {
       number.appendHex(value);
@@ -269,22 +271,22 @@ void DebuggerWatch :: write(_ELENA_::_DebugController* controller, size_t addres
    else number.appendInt(value);
    number.append('>');
 
-   write(controller, address, variableName, number);
+   write(controller, address, variableName, (ident_t)number);
 }
 
 void DebuggerWatch :: write(_ELENA_::_DebugController* controller, size_t address, _ELENA_::ident_t variableName, double value)
 {
-   String<_ELENA_::ident_c, 20> number;
+   String<char, 20> number;
    number.append('<');
    number.appendDouble(value);
    number.append('>');
 
-   write(controller, address, variableName, number);
+   write(controller, address, variableName, (ident_t)number);
 }
 
 void DebuggerWatch :: write(_ELENA_::_DebugController* controller, size_t address, _ELENA_::ident_t variableName, long long value)
 {
-   String<_ELENA_::ident_c, 20> number;
+   String<char, 20> number;
    number.append('<');
    if (_browser->isHexNumberMode()) {
       number.appendHex64(value);
@@ -293,12 +295,12 @@ void DebuggerWatch :: write(_ELENA_::_DebugController* controller, size_t addres
    else number.appendInt64(value);
    number.append('>');
 
-   write(controller, address, variableName, number);
+   write(controller, address, variableName, (ident_t)number);
 }
 
 void DebuggerWatch :: write(_DebugController* controller, int value)
 {
-   String<_ELENA_::ident_c, 20> number;
+   String<char, 20> number;
    if (_browser->isHexNumberMode()) {
       number.appendHex(value);
       number.append('h');
@@ -310,7 +312,7 @@ void DebuggerWatch :: write(_DebugController* controller, int value)
 
 void DebuggerWatch :: write(_DebugController* controller, long long value)
 {
-   String<_ELENA_::ident_c, 20> number;
+   String<char, 20> number;
    if (_browser->isHexNumberMode()) {
       number.appendHex64(value);
       number.append('h');
@@ -322,7 +324,7 @@ void DebuggerWatch :: write(_DebugController* controller, long long value)
 
 void DebuggerWatch :: write(_DebugController* controller, double value)
 {
-   String<_ELENA_::ident_c, 20> number;
+   String<char, 20> number;
    number.appendDouble(value);
 
    write(controller, number);

@@ -46,11 +46,11 @@
 
 #symbol $ConsoleHandleFactory =
 {
-    #method(handle) new &attributes:anAttributes
+    #method(handle,w3) new &attributes:anAttributes
     [ 
         #var(handle) aHandle := system'external'KERNEL32 GetStdHandle &int:(anAttributes int).
         
-        ^ Handle new &handle:aHandle.
+        ^ aHandle.
     ]
     
     #method newWriter
@@ -271,7 +271,7 @@
             byteArrayHelper read &bytearray:aDump &int:0 &vshort:anEventType.
             (anEventType == 1)
                 ? [  
-                    aDump read &int:4 &vint:aKeyDown.
+                    byteArrayHelper read &bytearray:aDump &int:4 &vint:aKeyDown.
                     
                     found := aKeyDown == 1.
                 ]

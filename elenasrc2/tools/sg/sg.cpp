@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sg.h"
@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 1
+#define BUILD_NUMBER 3
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
@@ -39,13 +39,13 @@ int _registerSymbol(ParserTable& table, ident_t symbol, int new_id)
 
 int registerSymbol(ParserTable& table, ident_t symbol, int new_id)
 {
-   if (StringHelper::compare(symbol, "||")) {
+   if (symbol.compare("||")) {
       return _registerSymbol(table, "|", new_id);
    }
-   else if (StringHelper::compare(symbol, "&|")) {
+   else if (symbol.compare("&|")) {
       return _registerSymbol(table, "||", new_id);
    }
-   else if (StringHelper::compare(symbol, "-->")) {
+   else if (symbol.compare("-->")) {
       return _registerSymbol(table, "->", new_id);
    }
    else return _registerSymbol(table, symbol, new_id);
@@ -62,8 +62,10 @@ int main(int argc, char* argv[])
       int encoding = DEFAULT_ENCODING;
 
       if (argc==3) {
-         if (StringHelper::compare(argv[2], "-cp", 3)) {
-            encoding = StringHelper::strToInt(argv[2] + 3);
+         ident_t arg = argv[2];
+
+         if (arg.compare("-cp", 3)) {
+            encoding = arg.toInt(3);
          }
          else {
             printLine("sg <syntax_file> [-cp<codepage>]");
@@ -71,9 +73,8 @@ int main(int argc, char* argv[])
          }
       }
 
-      Path path;
-      Path::loadPath(path, argv[1], strlen(argv[1]));
-      TextFileReader   sourceFile(path, encoding, true);
+      Path path(argv[1]);
+      TextFileReader   sourceFile(path.c_str(), encoding, true);
       if (!sourceFile.isOpened()) {
          printLine("file not found %s", path);
       }
@@ -81,7 +82,7 @@ int main(int argc, char* argv[])
       TextSourceReader source(4, &sourceFile);
       ParserTable      table;
       LineInfo         info(0, 0, 0);
-      ident_c          token[IDENTIFIER_LEN + 1];
+      IdentifierString token;
       int              rule[20];
       int              rule_len = 0;
       bool             arrayCheck = false;
@@ -93,15 +94,15 @@ int main(int argc, char* argv[])
 
          if (info.state == dfaEOF) break;
 
-         if (StringHelper::compare(token, "__define")) {
+         if (token.compare("__define")) {
             source.read(token, IDENTIFIER_LEN);
 
-            ident_c number[10];
+            char number[10];
             source.read(number, 10);
 
-            registerSymbol(table, token, StringHelper::strToInt(number));
+            registerSymbol(table, token, ident_t(number).toInt());
          }
-         else if (StringHelper::compare(token, "->") && !arrayCheck) {
+         else if (token.compare("->") && !arrayCheck) {
             if (rule_len > 2) {
                table.registerRule(rule[0], rule + 1, rule_len - 2);
 
@@ -110,7 +111,7 @@ int main(int argc, char* argv[])
             }
             arrayCheck = true;
          }
-         else if (StringHelper::compare(token, "|") && rule_len != 1) {
+         else if (token.compare("|") && rule_len != 1) {
             arrayCheck = false;
             table.registerRule(rule[0], rule + 1, rule_len - 1);
 
@@ -119,7 +120,7 @@ int main(int argc, char* argv[])
          else {
             arrayCheck = false;
             rule[rule_len++] = registerSymbol(table, token, last_id + 1);
-            if (StringHelper::compare(token, "|"))
+            if (token.compare("|"))
                source.read(token, IDENTIFIER_LEN);
          }
       }
@@ -137,7 +138,7 @@ int main(int argc, char* argv[])
 
       path.changeExtension("dat");
 
-      FileWriter file(path, feRaw, false);
+      FileWriter file(path.c_str(), feRaw, false);
       table.save(&file);
    }
    catch(_ELENA_::InvalidChar& e) {

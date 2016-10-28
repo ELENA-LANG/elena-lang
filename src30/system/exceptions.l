@@ -153,6 +153,13 @@
         theMessage := "A number is not in the correct format".
         theCallStack := CallStack new.
     ]
+    
+    /// Creates the exception
+    #constructor new:aMessage
+    [
+        theMessage := aMessage literal.
+        theCallStack := CallStack new.
+    ]
 }
 
 // --- OutOfRangeException ---
@@ -174,24 +181,24 @@
         <= new &literal:(aMessage literal).
 }
 
-// --- IndexOutOfRangeException ---
-
-#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
-{
-    #constructor new &literal:message
-    [
-        theMessage := message.
-        theCallStack := CallStack new.
-    ]
-    
-    /// Creates the exception
-    #constructor new
-        <= new &literal:"An index is out of range".
-
-    /// Creates the exception
-    #constructor new:aMessage
-        <= new &literal:(aMessage literal).
-}
+//// --- IndexOutOfRangeException ---
+//
+//#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
+//{
+//    #constructor new &literal:message
+//    [
+//        theMessage := message.
+//        theCallStack := CallStack new.
+//    ]
+//    
+//    /// Creates the exception
+//    #constructor new
+//        <= new &literal:"An index is out of range".
+//
+//    /// Creates the exception
+//    #constructor new:aMessage
+//        <= new &literal:(aMessage literal).
+//}
 
 // --- InvalidArgumentException ---
 

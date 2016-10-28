@@ -7,7 +7,7 @@
 #ifndef winideH
 #define winideH
 
-//#include "winapi32\wincommon.h"
+////#include "winapi32\wincommon.h"
 #include "winapi32\winsdi.h"
 #include "winapi32\winmenu.h"
 #include "winapi32\wintoolbar.h"
@@ -17,7 +17,7 @@
 #include "..\historylist.h"
 #include "..\browser.h"
 
-//#include "debugger.h"
+////#include "debugger.h"
 
 #define TABCHANGED_NOTIFY  1
 #define VIEWCHANGED_NOTIFY 2
@@ -25,9 +25,9 @@
 namespace _GUI_
 {
 
-// --- MainWindow ---
+// --- IDEWindow ---
 
-class MainWindow : public SDIWindow
+class IDEWindow : public SDIWindow, public _View, public _DebugListener
 {
    class ContextBrowser : public _Browser
    {
@@ -47,7 +47,7 @@ class MainWindow : public SDIWindow
       virtual void clear(void* node);
       virtual void erase(void* node);
 
-      virtual void getCaption(void* node, _ELENA_::ident_c* caption, size_t length);
+      virtual void getCaption(void* node, char* caption, size_t length);
       virtual void setCaption(void* node, _ELENA_::ident_t caption);
 
       virtual void setParam(void* node, size_t param);
@@ -124,30 +124,94 @@ protected:
    bool isControlVisible(int index);
 
 public:
+   virtual void start(bool maximized)
+   {
+      show(maximized);
+   }
+
+   virtual void showStatus(int index, text_t message)
+   {
+      setStatusBarText(index, message);
+   }   
+
+   virtual void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable)
+   {
+      getMenu()->enableItemById(id, doEnable);
+      if (toolBarItemAvailable)
+         getToolBar()->enableItemById(id, doEnable);
+   }
+
+   virtual void checkMenuItemById(int id, bool doEnable)
+   {
+      getMenu()->checkItemById(id, doEnable);
+   }
+
+   virtual void exit()
+   {
+      SDIWindow::exit();
+   }
+
+   virtual void setCaption(text_t caption)
+   {
+      SDIWindow::setCaption(caption);
+   }
+
+   virtual void showFrame();
+
+   virtual void refresh(bool onlyFrame)
+   {
+      if (onlyFrame) {
+         refreshDocument();
+      }
+      else SDIWindow::refresh();
+   }
+
    Menu* getMenu();
    ToolBar* getToolBar();
 
-   void showFrame();
-   void activateFrame();
+   virtual void activateFrame();
    void hideFrame();
    void refreshDocument();
 
-   int newDocument(text_t name, Document* doc);
-   int getCurrentDocumentIndex();
-   void selectDocument(int docIndex);
-   void markDocumentTitle(int docIndex, bool changed);
-   void renameDocument(int index, text_t name);
+   virtual int newDocument(text_t name, Document* doc);
+   virtual int getCurrentDocumentIndex();
+   virtual void selectDocument(int docIndex);
+   virtual void markDocumentTitle(int docIndex, bool changed);
+   virtual void renameDocument(int index, text_t name);
    void closeDocument(int docIndex);
 
    void setStatusBarText(int index, text_t message);
 
-   void addToWindowList(const wchar_t* path);
-   void removeFromWindowList(const wchar_t* path);
+   virtual bool selectFiles(Model* model, _ELENA_::List<text_c*>& selected);
+   virtual bool selectProject(Model* model, _ELENA_::Path& path);
+   virtual bool saveProject(Model* model, _ELENA_::Path& path);
+   virtual bool saveFile(Model* model, _ELENA_::Path& newPath);
+   virtual bool confirm(text_t message);
+   virtual bool confirm(text_t message, text_t param1, text_t param2);
+   virtual _View::Answer question(text_t message);
+   virtual _View::Answer question(text_t message, text_t param);
+   virtual void error(text_t message);
+   virtual void error(text_t message, text_t param);
+   virtual bool find(Model* model, SearchOption* option, SearchHistory* searchHistory);
+   virtual bool replace(Model* model, SearchOption* option, SearchHistory* searchHistory, SearchHistory* replaceHistory);
+   virtual bool gotoLine(int& row);
+   virtual bool selectWindow(Model* model, _Controller* controller);
 
-   void addToRecentFileList(const wchar_t* path);
-   void addToRecentProjectList(const wchar_t* path);
+   virtual bool configProject(_ProjectManager* project);
+   virtual bool configEditor(Model* model);
+   virtual bool configDebugger(Model* model);
+   virtual bool configurateForwards(_ProjectManager* project);
+   virtual bool about(Model* model);
 
-   void reloadSettings();
+   virtual void addToWindowList(const wchar_t* path);
+   virtual void removeFromWindowList(const wchar_t* path);
+
+   virtual void addToRecentFileList(const wchar_t* path);
+   virtual void addToRecentProjectList(const wchar_t* path);
+
+   virtual void reloadSettings();
+
+   virtual void removeFile(_ELENA_::path_t name);
 
    void loadHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
    {
@@ -165,35 +229,65 @@ public:
       _recentProjects.save(file, recentProjectSection);
    }
 
-   bool copyToClipboard(Document* document);
-   void pasteFrameClipboard(Document* document);
+   virtual bool copyToClipboard(Document* document);
+   virtual void pasteFromClipboard(Document* document);
 
    void openTab(const wchar_t* caption, int ctrl);
    void switchToTab(int ctrl);
    void closeTab(int ctrl);
 
-   void openOutput();
-   void switchToOutput();
-   void closeOutput();
+   virtual void openOutput();
+   virtual void switchToOutput();
+   virtual void closeOutput();
 
-   void openVMConsole();
-   void switchToVMConsole();
-   void closeVMConsole();
+   virtual void openVMConsole();
+//   void switchToVMConsole();
+   virtual void closeVMConsole();
 
-   void openMessageList();
-   void clearMessageList();
-   void closeMessageList();
+   virtual void openMessageList();
+   virtual void clearMessageList();
+   virtual void closeMessageList();
 
-   void openDebugWatch();
-   void closeDebugWatch();
+   virtual void openDebugWatch();
+   virtual void closeDebugWatch();
 
-   void openCallList();
-   void closeCallList();
+   virtual void openCallList();
+   virtual void closeCallList();
 
-   void openProjectView();
-   void closeProjectView();
+   virtual void openProjectView();
+   virtual void closeProjectView();
 
    bool compileProject(_ProjectManager* manager, int postponedAction);
+
+   virtual void onNotification(const wchar_t* message, size_t address, int code)
+   {
+      _notify(IDM_DEBUGGER_EXCEPTION, message, address, code);
+   }
+   
+   virtual void onStep(_ELENA_::ident_t ns, _ELENA_::ident_t source, int row, int disp, int length)
+   {
+      _notify(IDE_DEBUGGER_STEP, TextString(ns), TextString(source), HighlightInfo(row, disp, length));
+   }
+   
+   virtual void onDebuggerHook()
+   {
+      _notify(IDE_DEBUGGER_HOOK);
+   }   
+   
+   virtual void onStart()
+   {
+      _notify(IDE_DEBUGGER_START);
+   }
+
+   virtual void onStop(bool failed)
+   {
+      _notify(failed ? IDE_DEBUGGER_BREAK : IDE_DEBUGGER_STOP);
+   }
+
+   void onCheckPoint(const wchar_t* message)
+   {
+      _notify(IDE_DEBUGGER_CHECKPOINT, message);
+   }
 
    void _notify(int code);
    void _notify(int code, const wchar_t* message, int param = 0);
@@ -201,15 +295,15 @@ public:
    void _notify(int code, const wchar_t* message, int param1, int param2);
    void _notify(int code, const wchar_t* ns, const wchar_t* source, HighlightInfo info);
 
-   void resetDebugWindows();
-   void refreshDebugWindows(_ELENA_::_DebugController* debugController);
-   void browseWatch(_ELENA_::_DebugController* debugController, void* watchNode);
-   void browseWatch(_ELENA_::_DebugController* debugController);
-   
-   void reloadProjectView(_ProjectManager* project);
+//   void resetDebugWindows();
+   virtual void refreshDebugWindows(_ELENA_::_DebugController* debugController);
+   virtual void browseWatch(_ELENA_::_DebugController* debugController, void* watchNode);
+   virtual void browseWatch(_ELENA_::_DebugController* debugController);
 
-   MainWindow(HINSTANCE instance, const wchar_t* caption, _Controller* controller, Model* model);
-   virtual ~MainWindow();
+   virtual void reloadProjectView(_ProjectManager* project);
+
+   IDEWindow(HINSTANCE instance, const wchar_t* caption, _Controller* controller, Model* model);
+   virtual ~IDEWindow();
 };
 
 } // _GUI_

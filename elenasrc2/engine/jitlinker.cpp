@@ -609,14 +609,14 @@ void* JITLinker :: resolveConstant(ident_t reference, int mask)
       _compiler->compileChar32(&writer, value);
    }
    else if (mask == mskInt32Ref) {
-      _compiler->compileInt32(&writer, StringHelper::strToULong(value, 16));
+      _compiler->compileInt32(&writer, value.toULong(16));
    }
    else if (mask == mskInt64Ref) {
       // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
-      _compiler->compileInt64(&writer, StringHelper::strToLongLong(value + 1, 10));
+      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
    }
    else if (mask == mskRealRef) {
-      _compiler->compileReal64(&writer, StringHelper::strToDouble(value));
+      _compiler->compileReal64(&writer, value.toDouble());
    }
    else if (mask == mskConstArray) {
       // resolve constant value
@@ -694,9 +694,9 @@ ref_t JITLinker :: parseMessage(ident_t reference)
    int count = reference[0] - '0';
    
    // skip the param counter
-   reference++;
+   reference+=1;
 
-   int index = StringHelper::find(reference, '&');
+   int index = reference.find('&');
    //HOTFIX: for generic GET message we have to ignore ampresand
    if (reference[index + 1] == 0)
       index = -1;
@@ -730,7 +730,7 @@ ref_t JITLinker :: parseMessage(ident_t reference)
 
 void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
 {
-   int dotPos = StringHelper::find(reference, '.');
+   int dotPos = reference.find('.');
 
    IdentifierString extensionName(reference, dotPos);
    ref_t messageID = parseMessage(reference + dotPos + 1);
@@ -973,9 +973,9 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskInt64Ref:
             vaddress = resolveConstant(reference, mask);
             break;
-         case mskConstArray:
-            vaddress = resolveConstant(reference, mask);
-            break;
+//         case mskConstArray:
+//            vaddress = resolveConstant(reference, mask);
+//            break;
          case mskStatSymbolRef:
             vaddress = resolveStaticVariable(reference, mskStatRef);
             break;

@@ -20,7 +20,6 @@ class ByteCodeWriter
 {
    struct Scope
    {
-      _Memory*      codeStrings;
       MemoryWriter* vmt;
       MemoryWriter* code;
       MemoryWriter* debug;
@@ -32,7 +31,6 @@ class ByteCodeWriter
       {
          vmt = code = NULL;
          debug = debugStrings = NULL;
-         codeStrings = NULL;
          defaultNameRef = -1;
          appendMode = false;
       }
@@ -81,6 +79,7 @@ class ByteCodeWriter
    };
 
    List<ImportScope> imports;
+   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
    {
@@ -113,10 +112,10 @@ class ByteCodeWriter
 
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
    void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef, bool appendMode);
-   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef, bool appendMode);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef);
 
-   void declareInitializer(CommandTape& tape, ref_t reference);
+//   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -148,7 +147,7 @@ class ByteCodeWriter
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
-   void declareMessageInfo(CommandTape& tape, ref_t stringRef);
+   void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
@@ -171,7 +170,7 @@ class ByteCodeWriter
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-   void loadInternalReference(CommandTape& tape, ref_t reference);
+//   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
@@ -218,7 +217,7 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-   void endInitializer(CommandTape& tape);
+//   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
    void endSwitchOption(CommandTape& tape);
    void endSwitchBlock(CommandTape& tape);
@@ -239,7 +238,7 @@ class ByteCodeWriter
    void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
-   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+//   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
    void doIntOperation(CommandTape& tape, int operator_id, int immArg);
    void doLongOperation(CommandTape& tape, int operator_id);
@@ -264,7 +263,7 @@ class ByteCodeWriter
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
+//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
@@ -278,7 +277,7 @@ class ByteCodeWriter
    ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
 
    void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
-   void generateLocking(CommandTape& tape, SyntaxTree::Node node);
+//   void generateLocking(CommandTape& tape, SyntaxTree::Node node);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node);
    void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
@@ -298,19 +297,23 @@ class ByteCodeWriter
    void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node);
+   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
    void importCode(CommandTape& tape, ImportScope& scope);
 
+   void generateTemplateMethods(CommandTape& tape, SNode root);
+
 public:
    ref_t writeSourcePath(_Module* debugModule, ident_t path);
+   int writeString(ident_t path);
 
-   void generateClass(CommandTape& tape, SyntaxTree& tree);
+   void generateClass(CommandTape& tape, SNode root);
    void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-   void generateSymbol(CommandTape& tape, SyntaxTree& tree, bool isStatic);
+//   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateSymbol(CommandTape& tape, SNode root, bool isStatic);
    void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
 
-   void save(CommandTape& tape, _Module* module, _Module* debugModule, _Memory* strings, int sourcePathRef);
+   void save(CommandTape& tape, _Module* module, _Module* debugModule, int sourcePathRef);
 
    int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
    {
@@ -318,15 +321,14 @@ public:
 
       return imports.Count();
    }
-   void clearImportInfo()
+   void clear()
    {
+      _strings.clear();
       imports.clear();
    }
 };
 
 bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
-void assignOpArguments(SNode node, SNode& larg, SNode& rarg);
-void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2);
 
 } // _ELENA_
 

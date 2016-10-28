@@ -1,4 +1,4 @@
-D:\Alex\ELENA\doc\tech\bytecode.txtELENA byte codes (or ecodes)
+ELENA byte codes (or ecodes)
 ============================
 
  ELENA virtual machine registers:

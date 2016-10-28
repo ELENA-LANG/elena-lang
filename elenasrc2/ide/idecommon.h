@@ -108,22 +108,22 @@ struct SearchOption
 
 struct MessageBookmark
 {
-   _ELENA_::ident_c* module;
+   char*             module;
    _ELENA_::path_c*  file;
    size_t            col, row;
 
-   MessageBookmark(_ELENA_::path_t file, text_t col, text_t row)
+   MessageBookmark(_ELENA_::path_t file, text_str col, text_str row)
    {
       this->module = NULL;
-      this->file = _ELENA_::StringHelper::clone(file);
-      this->col = _ELENA_::StringHelper::strToInt(col);
-      this->row = _ELENA_::StringHelper::strToInt(row);
+      this->file = file.clone();
+      this->col = col.toInt();
+      this->row = row.toInt();
    }
 
    MessageBookmark(_ELENA_::ident_t module, _ELENA_::path_t file, size_t col, size_t row)
    {
-      this->module = _ELENA_::StringHelper::clone(module);
-      this->file = _ELENA_::StringHelper::clone(file);
+      this->module = module.clone();
+      this->file = file.clone();
       this->col = col;
       this->row = row;
    }
@@ -408,9 +408,9 @@ public:
       messages = true;
       tabWithAboveScore = true;
       autoRecompile = true;
-      //debugTape = false;
+//      //debugTape = false;
       hexNumberMode = true;
-      //testMode = false;
+//      //testMode = false;
       vmConsole = false;
    }
 };
@@ -595,7 +595,7 @@ public:
    virtual void closeCallList() = 0;
 
    virtual bool compileProject(_ProjectManager* project, int postponedAction) = 0;
-   virtual void resetDebugWindows() = 0;
+//   virtual void resetDebugWindows() = 0;
    virtual void refreshDebugWindows(_ELENA_::_DebugController* debugController) = 0;
    virtual void browseWatch(_ELENA_::_DebugController* debugController, void* node) = 0;
    virtual void browseWatch(_ELENA_::_DebugController* debugController) = 0;

@@ -1,56 +1,26 @@
 #import system.
 #import system'routines.
 #import system'collections.
-#import system'dynamic.
+//#import system'dynaFmic.
 #import system'calendar.
 #import extensions.
-#import extensions'dynamic.
-
-#symbol XTester =
-{
-    test
-    [
-    ]
-}.
-        
-#symbol XTest =
-[
-    XTester test.
-].
+//#import extensions'dynamic.
 
 // --- OpenArgTest ---
 
 #symbol OpenArgTester =
 {
-//    #method testUnboxing : anArg1 : anArg2 : anArg3
-//    [
-//        #var b := anArg1.
-//    ]
-
     test : anIndex &args:aParams
         = aParams @ (anIndex int).
 
-    testParamsCopy &args: aParams
-    [        
-        #var n := aParams @ 0.
-
-        $self testBoxing:aParams.
-                        
-        #var n2 := $self test:0 &args:aParams.
-                        
-        ^ n.
-    ]
-            
-    test &args : aParams
+    testParamsCopy &args : aParams
     [
-        #var n := $self testParamsCopy &args:aParams.
-        
         #var aLength := aParams length.
         
         #var aSecond := aParams@1.
+        #var aFirst := $self test:0 &args:aParams.
         
         $self testBoxing:aParams.
-//        $self testUnboxing::aParams.
     ]
     
     testBoxing : anArray
@@ -61,11 +31,7 @@
 
 #symbol OpenArgTest =
 [
-    OpenArgTester testParamsCopy &args:1:"a":3.
-
-    #var aRetVal := OpenArgTester test:1 &args:1:"a":3.
-
-    OpenArgTester test &args:1:"a":3.
+    OpenArgTester testParamsCopy &args:(1,"a",3).
 ].
 
 // --- MultiDispatchTest ---
@@ -587,32 +553,32 @@
 //    GetPropertyAgent eval:%property[2].
 //].
 
-#symbol StructTest =
-[
-    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
+//#symbol StructTest =
+//[
+//    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
+//
+//    #var x := a x.
+//
+//    a print:"Struct method works".
+//].
 
-    #var x := a x.
-
-    a print:"Struct method works".
-].
-
-#symbol GroupMember1 =
-{
-    m1 : prm = "group 1 " + prm.
-}.
-
-#symbol GroupMember2 =
-{
-    m2 : prm : prm2 = "group 2 " + prm.
-}.
-
-#symbol GroupTest =
-[
-    #var g := Group(GroupMember1, GroupMember2).
-    
-    #var m1 := g m1:"called".
-    #var m2 := g m2:"called":2.
-].
+//#symbol GroupMember1 =
+//{
+//    m1 : prm = "group 1 " + prm.
+//}.
+//
+//#symbol GroupMember2 =
+//{
+//    m2 : prm : prm2 = "group 2 " + prm.
+//}.
+//
+//#symbol GroupTest =
+//[
+//    #var g := Group(GroupMember1, GroupMember2).
+//    
+//    #var m1 := g m1:"called".
+//    #var m2 := g m2:"called":2.
+//].
 
 // --- ClassWithGeneric ---
 
@@ -629,7 +595,7 @@
     
     #method(generic)get
     [
-        ^ nil.
+        ^ $nil.
     ]
     
     #method => theExtension.
@@ -666,27 +632,27 @@
     #var o := ChildClass new.
 ].
 
-#symbol DTOToStructTest =
-[
-    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
-    #var aProperties := MessageArray new &int:10.
-
-    #var(vint)aLength := 0.
-    aDTO readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:aProperties &vint:aLength.
-
-    #var aCopy := DynamicStruct new.
-    aProperties top:aLength run &each:(:aSubject)
-    [
-        #var prop_value := aDTO::aSubject eval.
-        #var prop := aSubject subject.
-        
-        aCopy::prop set:prop_value.
-    ].
-    
-    #var x := aCopy X.
-    #var y := aCopy Y.
-    #var z := aCopy Z.
-].
+//#symbol DTOToStructTest =
+//[
+//    #var aDTO := { X = 2. Y = 3. Z = 4. }.    
+//    #var aProperties := MessageArray new &int:10.
+//
+//    #var(vint)aLength := 0.
+//    aDTO readMatchedEntries &mssg:%"get[0]" &int:0 &mssgarray:aProperties &vint:aLength.
+//
+//    #var aCopy := DynamicStruct new.
+//    aProperties top:aLength run &each:(:aSubject)
+//    [
+//        #var prop_value := aDTO::aSubject eval.
+//        #var prop := aSubject subject.
+//        
+//        aCopy::prop set:prop_value.
+//    ].
+//    
+//    #var x := aCopy X.
+//    #var y := aCopy Y.
+//    #var z := aCopy Z.
+//].
 
 #class BoxerHelper
 {
@@ -787,11 +753,11 @@
 //    #var(type:test_var)var := TestVar new &int:2.
 //].
 
-#symbol jsonTest =
-[
-    #var dto := DTO{ X = 2. Y = "Value". }.
-    
-    #var(literal)json := dto toJson literal.
-    
-    #var ori := json fromJson.
-].
+//#symbol jsonTest =
+//[
+//    #var dto := DTO{ X = 2. Y = "Value". }.
+//    
+//    #var(literal)json := dto toJson literal.
+//    
+//    #var ori := json fromJson.
+//].

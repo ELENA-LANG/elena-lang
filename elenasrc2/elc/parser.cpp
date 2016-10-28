@@ -35,19 +35,19 @@ inline const char* getError(Symbol symbol)
 {
    switch(symbol)
    {
-   case nsDeclarationEndExpected:
-   case nsStatementEndExpected:
-   case nsDirectiveEndExpected:
-   case nsInlineExpressionEndExpected:
-      return errDotExpectedSyntax;
-   case nsErrClosingSBracketExpected:
-      return errCSBrExpectedSyntax;
-   case nsErrNestedMemberExpected:
-      return errMethodNameExpected;
-   case nsErrObjectExpected:
-      return errObjectExpected;
-   case nsErrMessageExpected:
-      return errMessageExpected;
+//   case nsDeclarationEndExpected:
+//   case nsStatementEndExpected:
+//   case nsDirectiveEndExpected:
+//   case nsInlineExpressionEndExpected:
+//      return errDotExpectedSyntax;
+//   case nsErrClosingSBracketExpected:
+//      return errCSBrExpectedSyntax;
+//   case nsErrNestedMemberExpected:
+//      return errMethodNameExpected;
+//   case nsErrObjectExpected:
+//      return errObjectExpected;
+//   case nsErrMessageExpected:
+//      return errMessageExpected;
    default:
       return errInvalidSyntax;
    }
@@ -109,17 +109,17 @@ Parser :: Parser(StreamReader* syntax)
    _table.load(syntax);
 }
 
-bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, DerivationWriter* writer, bool& traceble)
+bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, _DerivationWriter& writer, bool& traceble)
 {
    Symbol current = (Symbol)stack.pop();
    while (!test(current, mskTerminal)) {
       traceble = test(current, mskTraceble);
       if (current == nsNone)
-         writer->writeSymbol(nsNone);
+         writer.writeSymbol(nsNone);
       else {
          if (traceble) {
             stack.push(nsNone);
-            writer->writeSymbol(current);
+            writer.writeSymbol(current);
          }
          if (!_table.read(current, terminal.symbol, stack))
             return false;
@@ -132,14 +132,14 @@ bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, DerivationWrit
    return (terminal == current);
 }
 
-void Parser :: parse(TextReader* reader, DerivationWriter* writer, int tabSize)
+void Parser :: parse(TextReader* reader, _DerivationWriter& writer, int tabSize)
 {
    SourceReader source(tabSize, reader);
    ParserStack  stack(tsEof);
    TerminalInfo terminal;
 
    stack.push(nsStart);
-   writer->writeSymbol(nsStart);
+   writer.writeSymbol(nsStart);
    do {
       terminal = getTerminalInfo(_table, source.read(_buffer, IDENTIFIER_LEN));
 
@@ -148,7 +148,9 @@ void Parser :: parse(TextReader* reader, DerivationWriter* writer, int tabSize)
          throw SyntaxError(terminal.Col(), terminal.Row(), _buffer);
 
       if (traceble)
-         writer->writeTerminal(terminal);
+         writer.writeTerminal(terminal);
 
    } while (terminal != tsEof);
+
+   writer.writeSymbol(nsNone);
 }

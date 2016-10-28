@@ -50,7 +50,7 @@
                       &int:0.
                       
         (-1 == theHandle)
-            ? [ #throw IOException new:"Cannot open the file". ].
+            ? [ #throw IOException new &literal:"Cannot open the file". ].
     ]
     
     #method write &bytearray:aDump &int:aLength
@@ -320,7 +320,7 @@
             &int:0.
             
         (ret == 0)
-            ? [ #throw IOException new:"Cannot create a directory". ].
+            ? [ #throw IOException new &literal:"Cannot create a directory". ].
     ]
     
     #method delete

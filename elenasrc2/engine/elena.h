@@ -51,6 +51,52 @@ public:
    virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
+// --- _Project ---
+
+typedef Map<ident_t, char*>::Iterator SourceIterator;
+
+class _ProjectManager
+{
+public:
+   virtual ident_t Namespace() const = 0;
+
+   virtual int getDefaultEncoding() = 0;
+   virtual int getTabSize() = 0;
+   virtual SourceIterator getSourceIt() = 0;
+
+   virtual bool HasWarnings() const = 0;
+   virtual int getWarningMask() const = 0;
+   virtual bool WarnOnUnresolved() const = 0;
+   virtual bool WarnOnWeakUnresolved() const = 0;
+
+   virtual ident_t getManinfestName() = 0;
+   virtual ident_t getManinfestVersion() = 0;
+   virtual ident_t getManinfestAuthor() = 0;
+
+   virtual void printInfo(const char* msg, ident_t value) = 0;
+
+   //   virtual void raiseError(const char* msg) = 0;
+   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseError(ident_t msg, ident_t value) = 0;
+
+   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
+
+   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
+
+   virtual _Module* createModule(ident_t name) = 0;
+   virtual _Module* createDebugModule(ident_t name) = 0 ;
+
+   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
+   virtual void saveModule(_Module* module, ident_t extension) = 0;
+
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+
+   virtual ident_t resolveForward(ident_t forward) = 0;
+
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+};
+
 // --- SectionInfo ---
 
 struct SectionInfo
@@ -131,18 +177,48 @@ public:
    virtual ~_JITLoader() {}
 };
 
-class IdentifierString : public String < ident_c, IDENTIFIER_LEN >
+// --- IdentifierString ---
+
+class IdentifierString : public String <char, IDENTIFIER_LEN>
 {
 public:
-   static ident_c* clonePath(path_t value)
-   {
-      ident_c buf[IDENTIFIER_LEN];
-      size_t length = IDENTIFIER_LEN;
-      StringHelper::copy(buf, value, getlength(value), length);
-      buf[length] = 0;
+   operator ident_t() const { return _string; }
 
-      return StringHelper::clone(buf);
+   static char* clonePath(path_t value)
+   {
+      char buf[IDENTIFIER_LEN];
+      size_t length = IDENTIFIER_LEN;
+      value.copyTo(buf, length);
+      buf[length] = 0;
+   
+      return ((ident_t)buf).clone();
    }
+
+   ident_t ident() const
+   {
+      return ident_t(_string);
+   }
+
+   bool compare(ident_t value)
+   {
+      return ((ident_t)_string).compare(value);
+   }
+
+   bool compare(ident_t value, size_t length)
+   {
+      return ((ident_t)_string).compare(value, length);
+   }
+
+   char* clone()
+   {
+      return ((ident_t)_string).clone();
+   }
+
+   char* clone(size_t index)
+   {
+      return ((ident_t)_string).clone(index);
+   }
+
    IdentifierString()
    {
    }
@@ -166,49 +242,115 @@ public:
       : String(value1, value2, value3, value4)
    {
    }
-   IdentifierString(const wide_c* value, size_t sourLength)
-   {
-      size_t length = IDENTIFIER_LEN;
-      StringHelper::copy(_string, value, sourLength, length);
-      _string[length] = 0;
-   }
+   //   IdentifierString(const wide_c* value, size_t sourLength)
+   //   {
+   //      size_t length = IDENTIFIER_LEN;
+   //      StringHelper::copy(_string, value, sourLength, length);
+   //      _string[length] = 0;
+   //   }
    IdentifierString(const wide_c* value)
    {
       size_t length = IDENTIFIER_LEN;
-      StringHelper::copy(_string, value, getlength(value), length);
+      ((wide_t)value).copyTo(_string, getlength(value), length);
       _string[length] = 0;
+   }
+};
+
+// --- ReferenceName ---
+
+class ReferenceName : public IdentifierString
+{
+public:
+   ReferenceName()
+   {
+   }
+   ReferenceName(ident_t reference)
+   {
+      copy(reference + reference.findLast('\'') + 1);
+   }
+   ReferenceName(ident_t reference, ident_t package)
+   {
+      int length = getlength(package);
+
+      if (reference.compare(package, length) && reference[length] == '\'') {
+         copy(reference + length + 1);
+      }
+      else copy(reference + reference.findLast('\'') + 1);
+   }
+};
+
+// --- NamespaceName ---
+
+class NamespaceName : public IdentifierString
+{
+public:
+   static bool isIncluded(ident_t root, ident_t ns)
+   {
+      size_t length = getlength(root);
+      if (getlength(ns) <= length) {
+         return root.compare(ns);
+      }
+      else if (ns[length] == '\'') {
+         return root.compare(ns, length);
+      }
+      else return false;
+   }
+
+   NamespaceName(ident_t reference)
+   {
+      int pos = reference.findLast('\'', 0);
+      copy(reference, pos);
+      _string[pos] = 0;
+   }
+   
+   static bool compare(ident_t reference, ident_t ns)
+   {
+      size_t pos = reference.findLast('\'', 0);
+      if (pos == 0 && getlength(ns) == 0)
+         return true;
+      else if (getlength(ns) == pos) {
+         return reference.compare(ns, pos);
+      }
+      else return false;
+   }
+   
+   bool compare(ident_t reference)
+   {
+      return NamespaceName::compare(reference, _string);
    }
 };
 
 // --- ReferenceNs ---
 
-class ReferenceNs : public String<ident_c, IDENTIFIER_LEN * 2>
+class ReferenceNs : public String<char, IDENTIFIER_LEN * 2>
 {
 public:
+   operator ident_t() const { return _string; }
+
    void pathToName(path_t path)
    {
-      ident_c buf[IDENTIFIER_LEN];
+      char buf[IDENTIFIER_LEN];
       size_t bufLen;
 
       while (!emptystr(path)) {
          if (!emptystr(_string)) {
             append('\'');
          }
-         int pos = StringHelper::find(path, PATH_SEPARATOR);
+         int pos = path.find(PATH_SEPARATOR);
          if (pos != -1) {
             bufLen = IDENTIFIER_LEN;
-            StringHelper::copy(buf, path, pos, bufLen);
+            path.copyTo(buf, pos, bufLen);
 
             append(buf, bufLen);
             path += pos + 1;
          }
          else {
-            pos = StringHelper::findLast(path, '.');
+            pos = path.findLast('.');
             if (pos == -1)
                pos = getlength(path);
 
             bufLen = IDENTIFIER_LEN;
-            StringHelper::copy(buf, path, pos, bufLen);
+            path.copyTo(buf, pos, bufLen);
             append(buf, bufLen);
 
             break;
@@ -226,7 +368,7 @@ public:
    {
    }
    ReferenceNs(ident_t properName)
-      : String<ident_c, IDENTIFIER_LEN * 2>(properName)
+      : String<char, IDENTIFIER_LEN * 2>(properName)
    {
    }
    ReferenceNs(ident_t moduleName, ident_t properName)
@@ -239,70 +381,6 @@ public:
    }
 };
 
-// --- ReferenceName ---
-
-class ReferenceName : public IdentifierString
-{
-public:
-   ReferenceName()
-   {
-   }
-   ReferenceName(ident_t reference)
-   {
-      copy(reference + StringHelper::findLast(reference, '\'') + 1);
-   }
-   ReferenceName(ident_t reference, ident_t package)
-   {
-      int length = getlength(package);
-
-      if (StringHelper::compare(reference, package, length) && reference[length] == '\'') {
-         copy(reference + length + 1);
-      }
-      else copy(reference + StringHelper::findLast(reference, '\'') + 1);
-   }
-};
-
-// --- NamespaceName ---
-
-class NamespaceName : public String < ident_c, IDENTIFIER_LEN >
-{
-public:
-   static bool isIncluded(ident_t root, ident_t ns)
-   {
-      size_t length = getlength(root);
-      if (getlength(ns) <= length) {
-         return StringHelper::compare(root, ns);
-      }
-      else if (ns[length]=='\'') {
-         return StringHelper::compare(root, ns, length);
-      }
-      else return false;
-   }
-
-   NamespaceName(ident_t reference)
-   {
-      int pos = StringHelper::findLast(reference, '\'', 0);
-      copy(reference, pos);
-      _string[pos] = 0;
-   }
-
-   static bool compare(ident_t reference, ident_t ns)
-   {
-      size_t pos = StringHelper::findLast(reference, '\'', 0);
-      if (pos == 0 && getlength(ns) == 0)
-         return true;
-      else if (getlength(ns) == pos) {
-         return StringHelper::compare(reference, ns, pos);
-      }
-      else return false;
-   }
-
-   bool compare(ident_t reference)
-   {
-      return NamespaceName::compare(reference, _string);
-   }
-};
-
 // --- Quote ---
 
 template<class S> class QuoteTemplate
@@ -312,7 +390,7 @@ template<class S> class QuoteTemplate
 public:
    size_t Length() { return _string.Length(); }
 
-   operator ident_t() const { return _string; }
+   ident_t ident() { return (const char*)_string; }
 
    QuoteTemplate(ident_t string)
    {
@@ -345,12 +423,12 @@ public:
                break;
             case 2:
                if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
-                  String<ident_c, 12> number(string + index, i - index);
-                  unic_c ch = (string[i] == 'h') ? number.toLong(16) : number.toInt();
+                  String<char, 12> number(string + index, i - index);
+                  unic_c ch = (string[i] == 'h') ? ((ident_t)number).toLong(16) : ((ident_t)number).toInt();
 
-                  ident_c temp[5];
+                  String<char, 5> temp;
                   size_t temp_len = 4;
-                  StringHelper::copy(temp, &ch, 1, temp_len);
+                  Convertor::copy(temp, &ch, 1, temp_len);
                   _string.append(temp, temp_len);
 
                   if(string[i] == '"') {
@@ -403,16 +481,16 @@ enum MethodAttribute
 
 struct ClassInfo
 {
-   typedef Pair<ref_t, ref_t>                   StaticInfo;       // value1 - reference ; value2 - type
+   typedef Pair<ref_t, ref_t>                   FieldInfo;       // value1 - reference ; value2 - type
    typedef Pair<ref_t, int>                     Attribute;
    typedef MemoryMap<ref_t, bool, false>        MethodMap;
    typedef MemoryMap<ident_t, int, true>        FieldMap;
-   typedef MemoryMap<ident_t, StaticInfo, true> StaticFieldMap;   // class static fields
-   typedef MemoryMap<int, ref_t>                FieldTypeMap;
+   typedef MemoryMap<ident_t, FieldInfo, true>  StaticFieldMap;   // class static fields
+   typedef MemoryMap<int, FieldInfo>            FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>   MethodInfoMap;
 
    ClassHeader    header;
-   size_t         size;           // Object size
+   int            size;           // Object size
    MethodMap      methods;
    FieldMap       fields;
    StaticFieldMap statics;
@@ -447,7 +525,7 @@ struct ClassInfo
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0), statics(StaticInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -526,9 +604,9 @@ struct _Exception
 
 struct InternalError : _Exception
 {
-   const char* message;
+   ident_t message;
 
-   InternalError(const char* message)
+   InternalError(ident_t message)
    {
       this->message = message;
    }
@@ -560,7 +638,7 @@ inline size_t tableRule(size_t key)
 // --- mapping keys ---
 inline size_t mapReferenceKey(ident_t key)
 {
-   ident_t p = key + StringHelper::findLast(key, '\'', 0) + 1;
+   ident_t p = key + key.findLast('\'', 0) + 1;
 
    int position = *p - 'a';
    if (position > 26)
@@ -574,10 +652,11 @@ inline size_t mapReferenceKey(ident_t key)
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
-typedef List<_Module*> ModuleList;
+typedef List<_Module*>         ModuleList;
 
 // --- Reference mapping types ---
 typedef MemoryHashTable<ident_t, ref_t, mapReferenceKey, 29> ReferenceMap;
+typedef Map<ref_t, ref_t>                                    SubjectMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;

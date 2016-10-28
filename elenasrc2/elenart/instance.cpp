@@ -43,19 +43,18 @@ Instance :: Instance(path_t rootPath)
 
 bool Instance :: loadConfig(path_t configFile)
 {
-   Path configPath(_rootPath);
-   Path::combinePath(configPath, configFile);
+   Path configPath((path_t)_rootPath);
+   configPath.combine(configFile);
 
    IniConfigFile config;
-   if (!config.load(configPath, feUTF8)) {
+   if (!config.load(configPath.c_str(), feUTF8)) {
       return false;
    }
 
-   Path path(_rootPath);
-   Path::combinePath(path, config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
+   Path path(_rootPath.c_str(), config.getSetting(PROJECT_CATEGORY, LIBRARY_PATH, NULL));
 
    if (!emptystr(path)) {
-      _loader.setRootPath(path);
+      _loader.setRootPath(path.c_str());
    }
 
    return true;
@@ -81,7 +80,7 @@ int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_
    return manager.readCallStack(reader, framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-int Instance :: loadAddressInfo(size_t retPoint, ident_c* buffer, size_t maxLength)
+int Instance :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
 {
    RTManager manager;
    MemoryReader reader(&_debugSection, _debugOffset);
@@ -89,7 +88,7 @@ int Instance :: loadAddressInfo(size_t retPoint, ident_c* buffer, size_t maxLeng
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
-int Instance :: loadClassName(size_t classAddress, ident_c* buffer, size_t length)
+int Instance :: loadClassName(size_t classAddress, char* buffer, size_t length)
 {
    RTManager manager;
    MemoryReader reader(&_debugSection, _debugOffset);
@@ -110,7 +109,7 @@ bool Instance :: initSubjectSection(ImageSection& subjectSection)
    else return false;
 }
 
-int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
+int Instance::loadSubjectName(size_t subjectRef, char* buffer, size_t length)
 {
    RTManager manager;
 
@@ -129,7 +128,7 @@ int Instance::loadSubjectName(size_t subjectRef, ident_c* buffer, size_t length)
    else return 0;
 }
 
-int Instance :: loadMessageName(size_t subjectRef, ident_c* buffer, size_t length)
+int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
 {
    RTManager manager;
 
@@ -144,8 +143,8 @@ int Instance :: loadMessageName(size_t subjectRef, ident_c* buffer, size_t lengt
       decodeMessage(subjectRef, subject, verb, count);
 
       ident_t verbName = retrieveKey(_verbs.start(), verb, DEFAULT_STR);
-      size_t used = getlength(verbName);
-      StringHelper::copy(buffer, verbName, used, used);
+      size_t used = length;
+      verbName.copyTo(buffer, used);
       
       if (subject > 0) {
          buffer[used++] = '&';
@@ -153,9 +152,13 @@ int Instance :: loadMessageName(size_t subjectRef, ident_c* buffer, size_t lengt
       }      
 
       if (count > 0) {
+         size_t dummy = 10;
+         String<char, 10>temp;
+         temp.appendInt(count);
+
          buffer[used++] = '[';
-         StringHelper::intToStr(count, buffer + used, 10);
-         used = getlength(buffer);
+         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+         used += dummy;
          buffer[used++] = ']';
       }
       buffer[used] = 0;
@@ -175,7 +178,7 @@ void* Instance :: loadSymbol(ident_t name)
 
 void* Instance :: loadSubject(ident_t name)
 {
-   if (StringHelper::find(name, '$') != -1) {
+   if (name.find('$') != -1) {
       //setStatus("Invalid subject");
 
       return 0;

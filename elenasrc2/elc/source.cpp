@@ -56,7 +56,7 @@ SourceReader :: SourceReader(int tabSize, TextReader* source)
    _lastState = dfaStart;
 }
 
-LineInfo SourceReader :: read(ident_c* token, size_t length)
+LineInfo SourceReader :: read(char* token, size_t length)
 {
    LineInfo info(_position, _column, _row);
    char terminalState = readLineInfo(dfaStart, info);

@@ -3,20 +3,20 @@
 //
 //		This header contains ELENA Parser class declaration.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2016, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef parserH
 #define parserH 1
 
 #include "parsertable.h"
-#include "derivation.h"
+#include "syntax.h"
 #include "source.h"
 
 namespace _ELENA_
 {
 
-const ident_c _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i', 'l', 'e', '>', 0 };
+const char _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i', 'l', 'e', '>', 0 };
 
 // --- SyntaxError ---
 
@@ -35,14 +35,14 @@ public:
 
 class Parser
 {
-   ident_c _buffer[IDENTIFIER_LEN + 1];
+   char _buffer[IDENTIFIER_LEN + 1];
 
    ParserTable _table;
 
-   bool derive(TerminalInfo& terminal, ParserStack& stack, DerivationWriter* writer, bool& traceble);
+   bool derive(TerminalInfo& terminal, ParserStack& stack, _DerivationWriter& writer, bool& traceble);
 
 public:
-   void parse(TextReader* reader, DerivationWriter* writer, int tabSize);
+   void parse(TextReader* reader, _DerivationWriter& writer, int tabSize);
 
    Parser(StreamReader* syntax);
    ~Parser() {}

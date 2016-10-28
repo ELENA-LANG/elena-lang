@@ -104,7 +104,7 @@ public:
    {
       s.clear();
 
-      ident_c ch = 0;
+      char ch = 0;
       while (readChar(ch)) {
          if (ch != 0) {
             s.append(ch);
@@ -212,7 +212,7 @@ public:
 
    virtual void reset() = 0;
 
-   virtual bool read(ident_c* s, size_t length) = 0;
+   virtual bool read(char* s, size_t length) = 0;
 
    template<class String, class T> bool readLine(String& s, T* buffer, size_t size = BLOCK_SIZE)
    {
@@ -341,7 +341,7 @@ public:
    {
       size_t lenToWrite = _size - _offset;
 
-      if (StringHelper::copy(_text + _offset, s, length, lenToWrite)) {
+      if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
 
          return true;
@@ -353,7 +353,7 @@ public:
    {
       size_t lenToWrite = _size - _offset;
 
-      if (StringHelper::copy(_text + _offset, s, length, lenToWrite)) {
+      if (Convertor::copy(_text + _offset, s, length, lenToWrite)) {
          _offset += lenToWrite;
 
          return true;
@@ -455,7 +455,7 @@ public:
    }
 };
 
-typedef LiteralTextReader<ident_c> IdentifierTextReader;
+typedef LiteralTextReader<char> IdentifierTextReader;
 
 //// --- LiteralReader ---
 //
@@ -559,20 +559,20 @@ public:
 //      return read(s, length << 1);
 //   }
 //
-//   virtual bool read4(void* s, size_t length)
+////   virtual bool read4(void* s, size_t length)
+////   {
+////      return read(s, length << 4);
+////   }
+//
+//   virtual bool read(void* s, size_t length, size_t& wasread)
 //   {
-//      return read(s, length << 4);
+//      if (read(s, length)) {
+//         wasread = length;
+//      }
+//      else wasread = 0;
+//
+//      return (wasread > 0);
 //   }
-
-   virtual bool read(void* s, size_t length, size_t& wasread)
-   {
-      if (read(s, length)) {
-         wasread = length;
-      }
-      else wasread = 0;
-
-      return (wasread > 0);
-   }
 
 //   virtual bool read2(void* s, size_t length, size_t& wasread)
 //   {
@@ -695,6 +695,13 @@ public:
 
       if (position <= _position)
          _position += 1;
+   }
+   void insert(size_t position, void* value, size_t length)
+   {
+      _memory->insert(position, value, length);
+
+      if (position <= _position)
+         _position += length;
    }
 
    bool writeRef(ref_t reference, size_t value)

@@ -8,7 +8,7 @@
 #define appwindowH
 
 #include "ide.h"
-#include "debugging.h"
+//#include "debugging.h"
 #include "debugcontroller.h"
 
 namespace _GUI_
@@ -27,7 +27,7 @@ class IDEController : public _Controller
    public:
       virtual void retrievePath(_ELENA_::ident_t name, _ELENA_::Path & path, _ELENA_::path_t extension);
 
-      virtual _ELENA_::path_t getAppPath() { return _model->paths.appPath; }
+      virtual _ELENA_::path_t getAppPath() { return _model->paths.appPath.str(); }
 
       virtual const char* getPackage();
       virtual const char* getTemplate();
@@ -84,7 +84,7 @@ class IDEController : public _Controller
 
       ProjectManager()
       {
-         _model = NULL;
+//         _model = NULL;
       }
    };
 

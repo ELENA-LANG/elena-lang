@@ -65,7 +65,7 @@ struct Settings
    static void load(Model* model, _ELENA_::IniConfigFile& config);
    static void save(Model* model, _ELENA_::IniConfigFile& config);
 
-   static void onNewProjectTemplate(Model* model, _ProjectManager* project);
+   static void onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* project);
 
    static void addSearchHistory(Model* model, text_t line);
    static void addReplaceHistory(Model* model, text_t line);
@@ -73,13 +73,13 @@ struct Settings
    static void addPackagePath(Model* model, const char* projectTemplate, _ELENA_::path_t path)
    {
       model->packageRoots.erase(projectTemplate);
-      model->packageRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
+      model->packageRoots.add(projectTemplate, path.clone());
    }
 
    static void addLibraryPath(Model* model, const char* projectTemplate, _ELENA_::path_t path)
    {
       model->libraryRoots.erase(projectTemplate);
-      model->libraryRoots.add(projectTemplate, _ELENA_::StringHelper::clone(path));
+      model->libraryRoots.add(projectTemplate, path.clone());
    }
 };
 

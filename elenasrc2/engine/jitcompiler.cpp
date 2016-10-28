@@ -127,7 +127,7 @@ void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
 {
    size_t len = 1;
    unic_c ch = 0;
-   StringHelper::copy(&ch, value, getlength(value), len);
+   Convertor::copy(&ch, value, getlength(value), len);
 
    writer->seek(writer->Position() - 8);
 

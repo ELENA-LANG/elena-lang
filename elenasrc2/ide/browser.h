@@ -31,7 +31,7 @@ public:
 
    virtual void* findNodeStartingWith(void* node, _ELENA_::ident_t name)   = 0;
 
-   virtual void getCaption(void* node, _ELENA_::ident_c* caption, size_t length) = 0;
+   virtual void getCaption(void* node, char* caption, size_t length) = 0;
    virtual void setCaption(void* node, _ELENA_::ident_t caption) = 0;
 
    virtual void setParam(void* node, size_t param) = 0;

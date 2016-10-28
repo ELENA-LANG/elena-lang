@@ -21,12 +21,12 @@ MenuHistoryList :: MenuHistoryList(int maxCount, int menuBaseId, bool withSepara
    _withSeparator = withSeparator;
 }
 
-int MenuHistoryList :: getIndex(text_t item)
+int MenuHistoryList :: getIndex(text_str item)
 {
    int index = 0;
    List<text_c*>::Iterator it = _list.start();
    while (!it.Eof()) {
-      if (StringHelper::compare(item, *it)) {
+      if (item.compare(*it)) {
          return index;
       }
       index++;
@@ -36,11 +36,11 @@ int MenuHistoryList :: getIndex(text_t item)
    return -1;
 }
 
-bool MenuHistoryList :: erase(text_t item)
+bool MenuHistoryList :: erase(text_str item)
 {
    List<text_c*>::Iterator it = _list.start();
    while (!it.Eof()) {
-      if (StringHelper::compare(item, *it)) {
+      if (item.compare(*it)) {
          _list.cut(it);
 
          return true;
@@ -63,9 +63,9 @@ text_t MenuHistoryList :: get(int id)
    return !it.Eof() ? *it : NULL;
 }
 
-void MenuHistoryList :: add(text_t item)
+void MenuHistoryList :: add(text_str item)
 {
-   text_c* itemCopy = StringHelper::clone(item);
+   text_c* itemCopy = item.clone();
 
    erase(item);
 

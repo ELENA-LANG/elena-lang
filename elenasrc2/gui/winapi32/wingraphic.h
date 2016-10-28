@@ -53,7 +53,7 @@ struct Font
 public:
    HFONT        _fontID;
 
-   const wchar_t* _fontName;
+   text_str     _fontName;
    bool         _bold;
    bool         _italic;
    int          _size;

@@ -5,7 +5,7 @@ Ultimate goals
 - maximally reusable code        
 - dynamic code without reflection
 
-Version 2.0.0
+Version 2.1.0
 -------------
 - basic linux version (only console)
 - start the code documentation
@@ -18,7 +18,7 @@ Version 2.0.0
 - gui / console vm clients
 - gui vm / mt
 
-Version 2.1.0
+Version 2.2.0
 -------------
 - web
 - api : optimize utf8 <-> utf16, utf8 <-> utf32, utf16 <-> utf32
@@ -32,19 +32,19 @@ Version 2.1.0
 - linux version (console & windowsx)
 - vmt-less action                 
 
-Version 2.2.0
+Version 2.3.0
 -------------
 - MVC
 - start migrating all assembler code to c; either dll or import object code
 - gcx, final version
 - x86 native code: optimize with pentium pro commands
 
-Version 2.3.0
+Version 2.4.0
 -------------
 - start work on visualizer
 - x64 alpha version
 
-Version 2.4.0
+Version 2.5.0
 -------------
 - x64 beta version
 - lib30 review -> lib31

@@ -1,5 +1,3 @@
-// ==== ver 3.5.1 ===
-
 // --- Console ---
 
 /// A console
@@ -43,6 +41,14 @@
     #method write &literal:aLiteral
     [
         theWriter write &literal:aLiteral.
+        
+        theWriter refresh.
+    ]
+
+    /// Writes the specified literal value to the standard output stream.
+    #method write &wide:aLiteral
+    [
+        theWriter write &wide:aLiteral.
         
         theWriter refresh.
     ]

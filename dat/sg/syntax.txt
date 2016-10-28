@@ -57,8 +57,6 @@ __define L0_OPERATION           4163
 __define DEFAULT                4166
 __define TYPE                   4167
 __define INLINE_CLOSURE         4168
-__define METHOD_TEMPLATE        4169
-__define FIELD_TEMPLATE         4170
 __define IMPLICIT_CONSTRUCTOR   4171
 
 __define eof            	12291
@@ -98,8 +96,6 @@ INCLUDE_DECLARATION ->
 
 TEMPLATE_DECLARATION ->
 	#template HINTS TEMPLATE
-	| #ftemplate HINTS FIELD_TEMPLATE
-	| #mtemplate HINTS METHOD_TEMPLATE
 	
 CLASS_DECLARATION ->
 	#class HINTS CLASS
@@ -482,7 +478,6 @@ SUBJECT_ARG_BODY ->
 
 NEXT_SUBJECT_ARG ->
 	& SUBJECT_ARG SUBJECT_ARG_BODY
-	| : MESSAGE_PARAMETER MESSAGE_PARAMETERS
 	| eps
 	
 ELSE_BODY ->
@@ -637,13 +632,37 @@ MESSAGE_PARAMETER ->
 	OBJECT
 
 OPTION ->
-	OBJECT OPTION_BODY
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
 	
 BIGGER_OPTION ->
-	OBJECT OPTION_BODY
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
 	
 SMALLER_OPTION ->                                                                     
-	OBJECT OPTION_BODY
+	identifier OPTION_BODY
+	| literal OPTION_BODY
+	| reference OPTION_BODY
+	| integer OPTION_BODY
+	| hex OPTION_BODY
+	| real OPTION_BODY
+	| character OPTION_BODY
+	| long OPTION_BODY
+	| wide OPTION_BODY
 
 OPTION_BODY ->
 	? CODE_BLOCK

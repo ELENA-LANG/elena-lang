@@ -4,8 +4,6 @@
 
 #symbol program =
 [   
-    XTest eval.
-
     console writeLine:"Starting...".
 
     ControlTest eval.
@@ -33,14 +31,14 @@
     BoxingTest eval.
     OuterFieldTest eval.
     LocalTest eval.
-    StructTest eval.
-    GroupTest eval.
+//    StructTest eval.
+//    GroupTest eval.
     GenericMethodTest eval.
     ConstructorTest eval.
-    DTOToStructTest eval.
+//    DTOToStructTest eval.
     UnboxTest eval.
     ByRefTest eval.
     SuperTest eval.
-    //EmbedConstTest eval.
-    jsonTest eval.
+//    //EmbedConstTest eval.
+//    jsonTest eval.
 ].
