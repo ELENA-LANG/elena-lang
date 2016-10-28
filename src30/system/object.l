@@ -65,7 +65,7 @@
 //#symbol(dispatchable:void) nil =
 //{
 //    /// Returns true if the specified object is nil.
-//    #method(bool) equal : anObject = ($nil == anObject).
+//    #method(bool) equal : anObject = ($nil == anObject)||($super equal:nil).
 //    
 //    /// Returns nil
 //    ///
