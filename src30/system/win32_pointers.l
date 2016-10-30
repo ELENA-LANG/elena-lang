@@ -92,27 +92,27 @@
 //        
 //        ^ IntNumber new &int:aValue.
 //    ]
-//
-//    // unsafe code
-//    #method(stacksafe) literal
-//    [
-//        #var(int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
-//        #var(literal)aLiteral := LiteralValue new &int:aLen.
-//        system'external'KERNEL32 lstrcpyA &literal:aLiteral &int:thePointer.
-//        
-//        ^ aLiteral.
-//    ]        
-//
-//    // unsafe code
-//    #method(stacksafe) wide
-//    [
-//        #var(int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
-//        #var(wide)aLiteral := WideLiteralValue new &int:aLen.
-//        system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
-//        
-//        ^ aLiteral.
-//    ]
-//    
+
+    // unsafe code
+    #method(stacksafe) literal
+    [
+        #var(int)aLen := system'external'KERNEL32 lstrlenA &int:thePointer.
+        #var(literal)aLiteral := LiteralValue new &int:aLen.
+        system'external'KERNEL32 lstrcpyA &literal:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]        
+
+    // unsafe code
+    #method(stacksafe) wide
+    [
+        #var(int)aLen := system'external'KERNEL32 lstrlenW &int:thePointer.
+        #var(wide)aLiteral := WideLiteralValue new &int:aLen.
+        system'external'KERNEL32 lstrcpyW &wide:aLiteral &int:thePointer.
+        
+        ^ aLiteral.
+    ]
+    
 //    #method(stacksafe) saveTo &bytearray:target &int:offs
 //    [
 //        target write &int:offs &int:thePointer.

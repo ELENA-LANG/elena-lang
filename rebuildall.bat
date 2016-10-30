@@ -23,7 +23,7 @@ bin\elc -cexamples\console\sum\realsum.prj
 bin\elc -cexamples\console\words\words.prj
 bin\elc -cexamples\console\pi\pi.prj
 bin\elc -cexamples\console\bsort\bsort.prj
-rem bin\elc -cexamples\files\textfile\textfile.prj
+bin\elc -cexamples\files\textfile\textfile.prj
 rem bin\elc -cexamples\console\binary\binary.prj
 rem bin\elc -cexamples\console\replace\replace.prj
 rem bin\elc -cexamples\console\goods\goods.prj

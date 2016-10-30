@@ -1,6 +1,6 @@
-#define system.
-#define system'io.
-#define extensions'routines.
+#import system.
+#import system'io.
+#import extensions'routines.
 
 #symbol program =
 [

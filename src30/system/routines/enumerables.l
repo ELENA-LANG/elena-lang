@@ -191,26 +191,26 @@
 
 #class(extension)indexableOp
 {
-//    #method exchange : anIndex1 : anIndex2
-//        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
-//        
-//    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(iterator)anIndexer := self iterator.
-//        
-//        anIndexer writeIndex &int:anIndex1.
-//        
-//        #var anObject1 := anIndexer get.
-//        
-//        anIndexer writeIndex &int:anIndex2.
-//        #var anObject2 := anIndexer get.
-//        
-//        anIndexer set:anObject1.
-//        
-//        anIndexer writeIndex &int:anIndex1.
-//        anIndexer set:anObject2.
-//    ]
-//    
+    #method exchange : anIndex1 : anIndex2
+        = self::indexableOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
+        
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(iterator)anIndexer := self iterator.
+        
+        anIndexer writeIndex &int:anIndex1.
+        
+        #var anObject1 := anIndexer get.
+        
+        anIndexer writeIndex &int:anIndex2.
+        #var anObject2 := anIndexer get.
+        
+        anIndexer set:anObject1.
+        
+        anIndexer writeIndex &int:anIndex1.
+        anIndexer set:anObject2.
+    ]
+    
 //    #method run &every:nfunc
 //    [
 //        #var(iterator)it := self iterator.

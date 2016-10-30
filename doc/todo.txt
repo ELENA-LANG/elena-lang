@@ -132,6 +132,7 @@ In development:
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
                  * implement idle typecasting message (see file_path)
+                 * bsort : get rid of an extra bool messages (implementing exiting from nested closures)
 
               xdev - ide
                 * vertical scroller does not work correctly

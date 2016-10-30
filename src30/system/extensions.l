@@ -653,22 +653,22 @@
         = self <= 0.0r.
 }
 
-//// --- arrayOp ---
-//
-//#class(extension:intarray)intArrayOp
-//{
-//    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var(int)n1.
-//        #var(int)n2.
-//
-//        self read &int:anIndex1 &vint:n1.
-//        self read &int:anIndex2 &vint:n2.
-//        
-//        self write &int:anIndex1 &int:n2.
-//        self write &int:anIndex2 &int:n1.
-//    ]
-//
+// --- arrayOp ---
+
+#class(extension:intarray)intArrayOp
+{
+    #method(stacksafe) exchange &int:anIndex1 &int:anIndex2
+    [
+        #var(int)n1.
+        #var(int)n2.
+
+        self read &int:anIndex1 &vint:n1.
+        self read &int:anIndex2 &vint:n2.
+        
+        self write &int:anIndex1 &int:n2.
+        self write &int:anIndex2 &int:n1.
+    ]
+
 //    #method set &every:anIndexFunc
 //        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
 //        
@@ -686,23 +686,23 @@
 //        
 //        ^ self.
 //    ]
-//}
-//
-//// --- arrayOp ---
-//
-//#class(extension:array)arrayOp
-//{
-//    #method exchange : anIndex1 : anIndex2
-//        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
-//        
-//    #method exchange &int:anIndex1 &int:anIndex2
-//    [
-//        #var aTemp := self getAt &int:anIndex1.
-//        
-//        self setAt &int:anIndex1 &object:(self getAt &int:anIndex2).
-//        self setAt &int:anIndex2 &object:aTemp.
-//    ]
-//    
+}
+
+// --- arrayOp ---
+
+#class(extension:array)arrayOp
+{
+    #method exchange : anIndex1 : anIndex2
+        = self::arrayOp exchange &int:(anIndex1 int) &int:(anIndex2 int).
+        
+    #method exchange &int:anIndex1 &int:anIndex2
+    [
+        #var aTemp := self getAt &int:anIndex1.
+        
+        self setAt &int:anIndex1 &object:(self getAt &int:anIndex2).
+        self setAt &int:anIndex2 &object:aTemp.
+    ]
+    
 //    #method(stacksafe) indexOf &int:anIndex &object:anObject &vint:aRetVal
 //    [
 //        aRetVal := -1.
@@ -845,8 +845,8 @@
 //        
 //        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
 //    ]
-//}
-//
+}
+
 //// --- literalOp ---
 //
 //#class(extension:literal)literalOp

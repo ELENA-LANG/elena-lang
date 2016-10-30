@@ -15,6 +15,7 @@ author=Alex Rakov
 control.l
 convertors.l
 console.l
+win32_args.l
 text\words.l
 text\strings.l
 routines\enumerating.l

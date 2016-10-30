@@ -3286,7 +3286,10 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, ObjectInfo t
    }
    // the result of get&type message should be typed
    else if (paramCount == 0 && getVerb(messageRef) == GET_MESSAGE_ID) {
-      retVal.param = scope.moduleScope->attributeHints.get(signRef);
+      if (scope.moduleScope->attributeHints.exist(signRef)) {
+         retVal.type = signRef;
+         retVal.param = scope.moduleScope->attributeHints.get(signRef);
+      }      
    }
 
    return retVal;
