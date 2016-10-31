@@ -1326,57 +1326,57 @@
 //    
 //    #method write : aLiteral &length:aCounter
 //        = self::stringOp write : aLiteral &int:(aCounter int).
-//            
-//    #method(stacksafe) write : aLiteral &int:aCounter
-//    [
-//        #var(int)aNumber := aCounter.
-//        
-//        #loop (aNumber > 0) ?
-//        [
-//            self write:aLiteral. 
-//            
-//            aNumber -= 1.
-//        ].
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &paddingLeft:aWidth &with:aChar
-//    [
-//        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self.
-//    ]
-//
-//    #method write : aLine &paddingRight:aWidth &with:aChar
-//    [
-//        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self.
-//    ]
-//    
-//    #method write : aLine &padding:aWidth &with:aChar
-//    [
-//        #var(int)aWidthInt := aWidth int.
-//        #var(int)aLength := aLine length int.        
-//        
-//        (aLength < aWidthInt)
-//            ? [
-//                #var(int)aLen := aWidthInt - aLength.
-//                #var(int)aLeftLen := aLen / 2.
-//                
-//                self::stringOp write:aChar &int:aLeftLen.
-//                self write:aLine.
-//                self::stringOp write:aChar &int:(aLen - aLeftLen).
-//            ]
-//            ! [ self write:aLine. ].
-//            
-//        ^ self.
-//    ]    
+            
+    #method(stacksafe) write : aLiteral &int:aCounter
+    [
+        #var(int)aNumber := aCounter.
+        
+        #loop (aNumber > 0) ?
+        [
+            self write:aLiteral. 
+            
+            aNumber -= 1.
+        ].
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &paddingLeft:aWidth &with:aChar
+    [
+        #var aPaddedStr := aLine padLeft &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
+            
+        ^ self.
+    ]
+
+    #method write : aLine &paddingRight:aWidth &with:aChar
+    [
+        #var aPaddedStr := aLine padRight &char:(aChar char) &length:(aWidth int).
+
+        self write:aPaddedStr.
+            
+        ^ self.
+    ]
+    
+    #method write : aLine &padding:aWidth &with:aChar
+    [
+        #var(int)aWidthInt := aWidth int.
+        #var(int)aLength := aLine length int.        
+        
+        (aLength < aWidthInt)
+            ? [
+                #var(int)aLen := aWidthInt - aLength.
+                #var(int)aLeftLen := aLen / 2.
+                
+                self::stringOp write:aChar &int:aLeftLen.
+                self write:aLine.
+                self::stringOp write:aChar &int:(aLen - aLeftLen).
+            ]
+            ! [ self write:aLine. ].
+            
+        ^ self.
+    ]    
 }
 
 // --- charOp ---

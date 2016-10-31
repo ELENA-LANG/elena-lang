@@ -17,6 +17,7 @@ convertors.l
 console.l
 app.l
 win32_args.l
+random.l
 text\words.l
 text\strings.l
 routines\enumerating.l

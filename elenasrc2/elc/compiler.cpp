@@ -3294,6 +3294,13 @@ ObjectInfo Compiler :: typecastObject(SNode node, CodeScope& scope, ref_t subjec
    if (targetRef != 0) {
       if (!convertObject(node, scope, targetRef, object)) {
          node.appendNode(lxTypecastAttr);         
+         
+         // HOTFIX : inject expression node if required
+         node.refresh();
+         if (node != lxExpression) {
+            node.injectNode(node.type, node.argument);
+            node.set(lxExpression, 0);
+         }
 
          // if not compatible - send a typecast message
          object = compileMessage(node, scope, object, encodeMessage(subjectRef, GET_MESSAGE_ID, 0), HINT_NODEBUGINFO);
