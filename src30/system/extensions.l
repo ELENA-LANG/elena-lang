@@ -669,23 +669,23 @@
         self write &int:anIndex2 &int:n1.
     ]
 
-//    #method set &every:anIndexFunc
-//        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
-//        
-//    #method set &nfunc:anIndexFunc
-//    [
-//        #var(int)anIndex := 0.
-//        #var(int)aLength := self length.
-//        
-//        #loop (anIndex < aLength) ?
-//        [            
-//            self write &int:anIndex &int:(anIndexFunc eval &int:anIndex int).
-//            
-//            anIndex += 1.
-//        ].
-//        
-//        ^ self.
-//    ]
+    #method set &every:anIndexFunc
+        = self::intArrayOp set &nfunc:(anIndexFunc nfunc).
+        
+    #method set &nfunc:anIndexFunc
+    [
+        #var(int)anIndex := 0.
+        #var(int)aLength := self length.
+        
+        #loop (anIndex < aLength) ?
+        [            
+            self write &int:anIndex &int:(anIndexFunc eval &int:anIndex int).
+            
+            anIndex += 1.
+        ].
+        
+        ^ self.
+    ]
 }
 
 // --- arrayOp ---

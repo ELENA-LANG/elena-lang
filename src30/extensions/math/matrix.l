@@ -320,7 +320,7 @@
         #var(real) deter := 1.0r.
         #var(real) v.
 
-        (lum Even)
+        (lum Even bool)
             ! [ deter := deter * (-1.0r). ].
         
         #var(realmatrix)a := lum realmatrix.        

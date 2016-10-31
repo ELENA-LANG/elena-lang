@@ -29,9 +29,9 @@ bin\elc -cexamples\console\replace\replace.prj
 bin\elc -cexamples\console\goods\goods.prj
 bin\elc -cexamples\console\datetime\dtcalculator.prj
 bin\elc -cexamples\console\random\random.prj
-rem bin\elc -cexamples\files\textdb\textdb.prj
-rem bin\elc -cexamples\console\matrix\matrix.prj
-rem bin\elc -cexamples\console\trans\tanslit.prj
+bin\elc -cexamples\files\textdb\textdb.prj
+bin\elc -cexamples\console\matrix\matrix.prj
+bin\elc -cexamples\console\trans\tanslit.prj
 rem bin\elc -cexamples\interpreter\interpreter.prj
 rem bin\elc -cexamples\script\calculator\calc.prj
 rem bin\elc -cexamples\gui\agenda\agenda.prj
