@@ -1,7 +1,7 @@
 #import system.
 #import system'collections.
 #import system'routines.
-//#import system'calendar.
+#import system'calendar.
 #import system'text.
 
 // --- convertors ---
@@ -200,11 +200,11 @@
         = aTarget set:(aTarget cast:%eval &to:{ ! : x : y = (Variant new:x)::$subject get. } &with:self).
 }
 
-//#class(extension:datetime) dateFormatterOp 
-//{
-//    #method toShortTimeLiteral
-//        = self __time_st toShortTime literal.
-//}
-//
+#class(extension:datetime) dateFormatterOp 
+{
+    #method toShortTimeLiteral
+        = self __time_st toShortTime literal.
+}
+
 ///// obsolete
 //#symbol String = extensions'text'StringWriter.

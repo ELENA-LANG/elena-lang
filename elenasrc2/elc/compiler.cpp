@@ -2411,12 +2411,11 @@ void Compiler :: compileSwitch(SNode node, CodeScope& scope)
    if (targetNode == lxExpression) {
       immMode = false;
 
-      //      scope.writer->insert(lxVariable);
-      //      scope.writer->insert(lxSwitching);
-      //      scope.writer->closeNode();
-      //
-      //      switchValue.kind = okBlockLocal;
-      //      switchValue.param = 1;
+      compileExpression(targetNode, scope, 0);
+
+      targetNode.refresh();
+      targetNode.injectNode(targetNode.type, targetNode.argument);
+      targetNode.set(lxVariable, 0);
    }
 
    SNode option = node.findChild(lxOption, lxElse);
@@ -2444,6 +2443,8 @@ void Compiler :: compileSwitch(SNode node, CodeScope& scope)
       if (immMode) {
          SyntaxTree::copyNode(targetNode, valueNode.appendNode(targetNode.type));
       }
+      else valueNode.appendNode(lxBlockLocal, 1);
+
       valueNode.appendNode(lxOperator, operator_id);
 
       // inject code expression
@@ -2456,25 +2457,17 @@ void Compiler :: compileSwitch(SNode node, CodeScope& scope)
       option = option.nextNode();
    }
 
-//   if (option == nsLastSwitchOption) {
-//      scope.writer->newNode(lxElse);
-//
-//      CodeScope subScope(&scope);
-//      DNode thenCode = option.firstChild();
-//
-//      //_writer.declareBlock(*scope.tape);
-//
-//      DNode statement = thenCode.firstChild();
-//      if (statement.nextNode() != nsNone || statement == nsCodeEnd) {
-//         compileCode(thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(statement, scope, 0);
-//
-//      scope.writer->closeNode();
-//   }
-//
-//   scope.writer->closeNode();
+   if (option == lxElse) {
+      CodeScope subScope(&scope);
+      SNode thenCode = option.findChild(lxCode);
+      
+      SNode statement = thenCode.firstChild(lxObjectMask);
+      if (statement.nextNode() != lxNone || statement == lxEOF) {
+         compileCode(thenCode, subScope);
+      }
+      // if it is inline action
+      else compileRetExpression(statement, scope, 0);
+   }
 }
 
 void Compiler :: compileVariable(SNode node, CodeScope& scope)
@@ -2590,9 +2583,6 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okArrayConst:
          terminal.set(lxConstantList, object.param);
          break;
-//      case okTemplateLocal:
-//         scope.writer->newNode(lxLocal, object.param);
-//         break;
       case okLocal:
       case okParam:
          if (object.extraparam == -1) {
@@ -2665,9 +2655,9 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okSignatureConstant:
          terminal.set(lxSignatureConstant, object.param);
          break;
-//      case okBlockLocal:
-//         scope.writer->newNode(lxBlockLocal, object.param);
-//         break;
+      case okBlockLocal:
+         terminal.set(lxBlockLocal, object.param);
+         break;
       case okParams:
          terminal.set(lxArgBoxing, 0);
          terminal.appendNode(lxBlockLocalAddr, object.param);
@@ -2679,23 +2669,11 @@ void Compiler :: setTerminal(SNode& terminal, CodeScope& scope, ObjectInfo objec
       case okConstantRole:
          terminal.set(lxConstantSymbol, object.param);
          break;
-//      case okTemplateTarget:
-//         scope.writer->newNode(lxTemplateTarget, object.param);
-//         // HOTFIX : tempalte type is not an actual type, so it should be saved in special way and cleared after
-//         scope.writer->appendNode(lxTemplateFieldType, object.type);
-//         object.type = 0;
-//         break;
       case okExternal:
       case okInternal:
          // HOTFIX : external / internal node will be declared later
          return;
    }
-
-//   appendObjectInfo(scope, object);
-//   if (terminal != nsNone)
-//      appendTerminalInfo(scope.writer, terminal);
-//
-//   scope.writer->closeNode();
 }
 
 ObjectInfo Compiler :: compileTerminal(SNode terminal, CodeScope& scope, int mode)
@@ -3177,7 +3155,11 @@ ObjectInfo Compiler :: compileOperator(SNode node, CodeScope& scope, int mode, i
       loperand = compileExpression(loperandNode, scope, 0);
 
       SNode roperandNode = loperandNode.nextNode(lxObjectMask);
-      roperand = compileExpression(roperandNode, scope, 0);
+      if (roperandNode == lxBlockLocal) {
+         // HOTFIX : to compile switch statement
+         roperand = ObjectInfo(okBlockLocal, roperandNode.argument);
+      }
+      else roperand = compileExpression(roperandNode, scope, 0);
    }
       
    ref_t loperandRef = resolveObjectReference(scope, loperand);
@@ -4024,76 +4006,12 @@ ObjectInfo Compiler :: compileAssigningExpression(SNode assigning, CodeScope& sc
 {
    insertDebugStep(assigning, dsStep);
 
-   ObjectInfo objectInfo = compileExpression(assigning, scope/*, 0*/, 0);
-
-//   if (test(mode, HINT_VIRTUAL_FIELD)) {
-//      // HOTFIX : if it is a virtual field, provide an idle typecast
-//      scope.writer->insert(lxTypecasting);
-//      appendTerminalInfo(scope.writer, node.FirstTerminal());
-//      scope.writer->closeNode();
-//   }
-//   else if (targetType != 0) {
-//   //   ref_t ref = resolveObjectReference(scope, objectInfo);
-//
-//   //   if (isPrimitiveRef(ref)) {
-//   //      scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-//   //      appendTerminalInfo(scope.writer, node.FirstTerminal());
-//   //      scope.writer->closeNode();
-//   //      //scope.writer->insert(lxBoxing);
-//   //      //scope.writer->appendNode(lxTarget, target.extraparam);
-//   //      //appendTerminalInfo(scope.writer, node.FirstTerminal());
-//   //      //scope.writer->closeNode();
-//   //   }
-//      /*else */if (objectInfo.type != targetType) {
-//         scope.writer->insert(lxTypecasting, encodeMessage(targetType, GET_MESSAGE_ID, 0));
-//         appendTerminalInfo(scope.writer, node.FirstTerminal());
-//         scope.writer->closeNode();
-//      }      
-//   }
-//   else if (isPrimitiveRef(target.extraparam)) {
-//      ClassInfo info;
-//      scope.moduleScope->loadClassInfo(info, resolveObjectReference(scope, objectInfo), true);
-//
-//      if (target.extraparam == -1 && ((info.header.flags & elDebugMask)  == elDebugDWORD)) {
-//
-//         // allow assigning an int wrapper to the primitive int
-//      }
-//      else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
-//   }
-//   else if (target.kind != okOuterField && target.extraparam > 0) {
-//      ClassInfo info;
-//      scope.moduleScope->loadClassInfo(info, target.extraparam, false);
-//
-//      // wrapper class can be used in this case
-//      if (test(info.header.flags, elWrapper)) {
-//         target.type = info.fieldTypes.get(0);
-//
-//         scope.writer->insert(lxTypecasting, encodeMessage(target.type, GET_MESSAGE_ID, 0));
-//         scope.writer->closeNode();
-//         
-//         scope.writer->insert(lxBoxing, info.size);
-//         scope.writer->appendNode(lxTarget, target.extraparam);
-//         appendTerminalInfo(scope.writer, node.FirstTerminal());         
-//         scope.writer->closeNode();
-//      }
-//      //// HOTFIX : to allow boxing primitive array
-//      //else if (test(info.header.flags, elDynamicRole | elStructureRole) && objectInfo.kind == okLocalAddress && objectInfo.extraparam == -3 &&
-//      //   (objectInfo.type == info.fieldTypes.get(-1)))
-//      //{
-//      //   scope.writer->insert(lxBoxing, info.size);
-//      //   scope.writer->appendNode(lxTarget, target.extraparam);
-//      //   appendTerminalInfo(scope.writer, node.FirstTerminal());
-//      //   scope.writer->closeNode();
-//      //}
-//      else scope.raiseError(errInvalidOperation, assigning.FirstTerminal());
-//   }
-//
-//   scope.writer->removeBookmark();
+   ObjectInfo objectInfo = compileExpression(assigning, scope, 0);
 
    return objectInfo;
 }
 
-ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodeMode*/)
+ObjectInfo Compiler :: compileBranching(SNode thenNode, CodeScope& scope)
 {
    CodeScope subScope(&scope);
 
@@ -4132,31 +4050,6 @@ void Compiler :: compileLoop(SNode node, CodeScope& scope)
 
    // mark the inner expression as a loop
    expr.set(lxLooping, 0);
-
-//   // if it is while-do loop
-//   if (expr.nextNode() == nsL7Operation) {
-//      scope.writer->newNode(lxLooping);
-//
-//      DNode loopNode = expr.nextNode();
-//
-//      ObjectInfo cond = compileExpression(expr, scope, scope.moduleScope->boolType, 0);
-//
-//      int operator_id = _operators.get(loopNode.Terminal());
-//
-//      scope.writer->newNode(lxElse, (operator_id == IF_MESSAGE_ID) ? scope.moduleScope->falseReference : scope.moduleScope->trueReference);
-//      compileBranching(loopNode, scope/*, cond, _operators.get(loopNode.Terminal()), HINT_LOOP*/);
-//      scope.writer->closeNode();
-//
-//      scope.writer->closeNode();
-//   }
-//   // if it is repeat loop
-//   else {
-//      scope.writer->newNode(lxLooping, scope.moduleScope->trueReference);
-//
-//      ObjectInfo retVal = compileExpression(node.firstChild(), scope, scope.moduleScope->boolType, 0);
-//
-//      scope.writer->closeNode();
-//   }
 }
 
 //void Compiler :: compileTry(DNode node, CodeScope& scope)
@@ -4277,7 +4170,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    return retVal;
 }
 
-void Compiler :: compileExternalArguments(SNode node, CodeScope& scope/*, ExternalScope& externalScope*/)
+void Compiler :: compileExternalArguments(SNode node, CodeScope& scope)
 {
    ModuleScope* moduleScope = scope.moduleScope;
 

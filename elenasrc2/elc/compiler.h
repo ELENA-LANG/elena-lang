@@ -130,7 +130,7 @@ public:
       okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
       okParams,                       // param - local offset
-//      okBlockLocal,                   // param - local offset
+      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 
       okExternal,

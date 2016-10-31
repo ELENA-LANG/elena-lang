@@ -24,10 +24,10 @@ bin\elc -cexamples\console\words\words.prj
 bin\elc -cexamples\console\pi\pi.prj
 bin\elc -cexamples\console\bsort\bsort.prj
 bin\elc -cexamples\files\textfile\textfile.prj
-rem bin\elc -cexamples\console\binary\binary.prj
-rem bin\elc -cexamples\console\replace\replace.prj
-rem bin\elc -cexamples\console\goods\goods.prj
-rem bin\elc -cexamples\console\datetime\dtcalculator.prj
+bin\elc -cexamples\console\binary\binary.prj
+bin\elc -cexamples\console\replace\replace.prj
+bin\elc -cexamples\console\goods\goods.prj
+bin\elc -cexamples\console\datetime\dtcalculator.prj
 rem bin\elc -cexamples\console\random\random.prj
 rem bin\elc -cexamples\files\textdb\textdb.prj
 rem bin\elc -cexamples\console\matrix\matrix.prj
