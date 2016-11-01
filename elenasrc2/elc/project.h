@@ -34,7 +34,7 @@ enum ProjectSetting
    opTarget                = 0x0006,
    opOutputPath            = 0x0008,
    opDebugMode             = 0x000A,
-//   opTemplate              = 0x000C,
+   opTemplate              = 0x000C,
    opThreadMax             = 0x0013,
    opDebugSubjectInfo      = 0x0014,
    opClassSymbolAutoLoad   = 0x0015,
@@ -130,10 +130,10 @@ public:
       return _sources.start();
    }
 
-//   ForwardIterator getForwardIt()
-//   {
-//      return _settings.getIt(opForwards);
-//   }
+   ForwardIterator getForwardIt()
+   {
+      return _settings.getIt(opForwards);
+   }
 
    ident_t resolvePrimitive(ident_t alias) const
    {
@@ -142,7 +142,7 @@ public:
 
    virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
-////   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
+//   virtual void loadForward(const wchar16_t* forward, const wchar16_t* reference);
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
 
    virtual void initLoader()

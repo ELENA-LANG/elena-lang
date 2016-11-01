@@ -27,7 +27,6 @@ using namespace _ELENA_;
 #define PROJECT_TEMPLATE            "template"
 //#define SYSTEM_MAXTHREAD            _T("maxthread")
 #define LINKER_MGSIZE               "mgsize"
-#define LINKER_OBJSIZE              "objsize"
 #define LINKER_YGSIZE               "ygsize"
 #define LIBRARY_PATH                "path"
 
@@ -85,7 +84,7 @@ void InstanceConfig :: loadList(IniConfigFile& config, const char* category, pat
 
 bool InstanceConfig :: load(path_t path, Templates* templates)
 {
-   IniConfigFile config;
+   IniConfigFile config(true);
    if (_ELENA_::emptystr(path) || !config.load(path, feUTF8)) {
       return false;
    }
@@ -116,7 +115,6 @@ void InstanceConfig :: init(path_t configPath, IniConfigFile& config)
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
    mgSize = config.getIntSetting(LINKER_CATEGORY, LINKER_MGSIZE, mgSize);
    ygSize = config.getIntSetting(LINKER_CATEGORY, LINKER_YGSIZE, ygSize);
-   objSize = config.getIntSetting(LINKER_CATEGORY, LINKER_OBJSIZE, objSize);
 
    const char* path = config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL);
    if (!emptystr(path)) {
@@ -182,17 +180,6 @@ Instance :: Instance(ELENAMachine* machine)
    // init loader based on default machine config
    initLoader(_machine->config);
 
-   _literalClass.copy(_config.forwards.get(STR_FORWARD));
-   _wideLiteralClass.copy(_config.forwards.get(WIDESTR_FORWARD));
-   _characterClass.copy(_config.forwards.get(CHAR_FORWARD));
-   _intClass.copy(_config.forwards.get(INT_FORWARD));
-   _realClass.copy(_config.forwards.get(REAL_FORWARD));
-   _longClass.copy(_config.forwards.get(LONG_FORWARD));
-   _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
-   _extMsgClass.copy(_config.forwards.get(EXT_MESSAGE_FORWARD));
-   _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
-   _verbClass.copy(_config.forwards.get(VERB_FORWARD));
-
    ByteCodeCompiler::loadVerbs(_verbs);
 }
 
@@ -233,7 +220,7 @@ size_t Instance :: getLinkerConstant(int id)
       //case lnThreadCount:
       //   return (size_t)_config.maxThread;
       case lnObjectSize:
-         return (size_t)_config.objSize;
+         return _compiler->getObjectHeaderSize();
       case lnVMAPI_Instance:
          return (size_t)this;
       default:
@@ -427,6 +414,17 @@ bool Instance :: restart(bool debugMode)
    printInfo(L"Initializing...");
 
    clearReferences();
+
+   _literalClass.copy(_config.forwards.get(STR_FORWARD));
+   _wideLiteralClass.copy(_config.forwards.get(WIDESTR_FORWARD));
+   _characterClass.copy(_config.forwards.get(CHAR_FORWARD));
+   _intClass.copy(_config.forwards.get(INT_FORWARD));
+   _realClass.copy(_config.forwards.get(REAL_FORWARD));
+   _longClass.copy(_config.forwards.get(LONG_FORWARD));
+   _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
+   _extMsgClass.copy(_config.forwards.get(EXT_MESSAGE_FORWARD));
+   _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
+   _verbClass.copy(_config.forwards.get(VERB_FORWARD));
 
    // init debug section
    if (_linker->getDebugMode()) {

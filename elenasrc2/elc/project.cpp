@@ -203,7 +203,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadBoolOption(config, opDebugMode);
    loadBoolOption(config, opDebugSubjectInfo);
    loadBoolOption(config, opClassSymbolAutoLoad);
-//   loadOption(config, opTemplate);
+   loadOption(config, opTemplate);
 
    // load compiler settings
    loadIntOption(config, opThreadMax, 0, 60);

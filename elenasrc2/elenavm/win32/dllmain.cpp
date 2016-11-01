@@ -323,7 +323,7 @@ EXTERN_DLL_EXPORT size_t SetDebugMode()
    return (size_t)instance->loadDebugSection();
 }
 
-EXTERN_DLL_EXPORT ident_t GetVMLastError()
+EXTERN_DLL_EXPORT const char* GetVMLastError()
 {
    Instance* instance = getCurrentInstance();
 

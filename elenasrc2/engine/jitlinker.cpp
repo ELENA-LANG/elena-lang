@@ -973,9 +973,9 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
          case mskInt64Ref:
             vaddress = resolveConstant(reference, mask);
             break;
-//         case mskConstArray:
-//            vaddress = resolveConstant(reference, mask);
-//            break;
+         case mskConstArray:
+            vaddress = resolveConstant(reference, mask);
+            break;
          case mskStatSymbolRef:
             vaddress = resolveStaticVariable(reference, mskStatRef);
             break;

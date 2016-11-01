@@ -105,33 +105,33 @@ class VirtualMachineClientImage : public Image
    ReferenceMap   _exportReferences;
    Project*       _project;
 
-//   class VMClientHelper : public _BinaryHelper
-//   {
-//      VirtualMachineClientImage* _owner;
-//      ReferenceMap*              _references;
-//      MemoryWriter*              _dataWriter;
-//      _Module*                   _module;
-//
-//   public:
-//      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
-//
-//      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
-//      {
-//         _owner = owner;
-//         _references = references;
-//         _dataWriter = writer;
-//         _module = module;
-//      }
-//   };
-//
-//   friend class VMClientHelper;
-//
-//   ref_t resolveExternal(ident_t function)
-//   {
-//      return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
-//   }
-//
-//   ref_t createTape(MemoryWriter& data, Project* project);
+   class VMClientHelper : public _BinaryHelper
+   {
+      VirtualMachineClientImage* _owner;
+      ReferenceMap*              _references;
+      MemoryWriter*              _dataWriter;
+      _Module*                   _module;
+
+   public:
+      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
+
+      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
+      {
+         _owner = owner;
+         _references = references;
+         _dataWriter = writer;
+         _module = module;
+      }
+   };
+
+   friend class VMClientHelper;
+
+   ref_t resolveExternal(ident_t function)
+   {
+      return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
+   }
+
+   ref_t createTape(MemoryWriter& data, Project* project);
 
 public:
    virtual ReferenceMap::Iterator getExternalIt()

@@ -85,7 +85,7 @@ public:
 
    virtual void fixVMT(MemoryWriter& vmtWriter, void* classClassVAddress, void* packageVAddress, int count, bool virtualMode) = 0;
 
-   //virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
+   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
    virtual void* getPreloadedReference(ref_t reference) = 0;
 

@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  3
+#define ELENAVM_REVISION  4
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2016 by Alex Rakov"
@@ -52,7 +52,6 @@ struct InstanceConfig
 //   int maxThread;
    int mgSize;
    int ygSize;
-   int objSize;
 
    // paths
    Path libPath;
@@ -74,7 +73,6 @@ struct InstanceConfig
       //maxThread = 1;
       mgSize = 20000;
       ygSize = 4000;
-      objSize = 0x0C;
    }
    InstanceConfig(InstanceConfig& parent)
       : primitives(NULL, freestr), forwards(NULL, freestr), moduleForwards(NULL, freestr)
@@ -82,7 +80,6 @@ struct InstanceConfig
       //maxThread = parent.maxThread;
       mgSize = parent.mgSize;
       ygSize = parent.ygSize;
-      objSize = parent.objSize;
 
       // copy paths
       libPath.copy(parent.libPath.c_str());
