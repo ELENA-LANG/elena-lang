@@ -62,36 +62,36 @@
     #method(stacksafe) set : anObject
         => system'core_routines'__dptr.
                 
-//    #method(stacksafe) set &int:aValue
-//    [
-//        thePointer := aValue.
-//    ]
+    #method(stacksafe) set &int:aValue
+    [
+        thePointer := aValue.
+    ]
                 
     #method(stacksafe) offset &int:offs
     [
         thePointer := thePointer + offs.
     ]
 
-//    #method(stacksafe) set &dirty_ptr:anObject
-//        => system'core_routines'__dptr.
-//                
-//    #method(stacksafe) write &int:anObject
-//        => system'core_routines'__dptr.
-//                
-//    #method(stacksafe) read &vint:aPointer
-//        => system'core_routines'__dptr.
-//
-//    #method(stacksafe) read &bytearray:arr &int:len
-//        => system'core_routines'__dptr.
-//
-//    // unsafe code
-//    #method(stacksafe) int
-//    [
-//        #var(int)aValue.
-//        $self read &vint:aValue.
-//        
-//        ^ IntNumber new &int:aValue.
-//    ]
+    #method(stacksafe) set &dirty_ptr:anObject
+        => system'core_routines'__dptr.
+                
+    #method(stacksafe) write &int:anObject
+        => system'core_routines'__dptr.
+                
+    #method(stacksafe) read &vint:aPointer
+        => system'core_routines'__dptr.
+
+    #method(stacksafe) read &bytearray:arr &int:len
+        => system'core_routines'__dptr.
+
+    // unsafe code
+    #method(stacksafe) int
+    [
+        #var(int)aValue.
+        $self read &vint:aValue.
+        
+        ^ IntNumber new &int:aValue.
+    ]
 
     // unsafe code
     #method(stacksafe) literal
@@ -113,13 +113,13 @@
         ^ aLiteral.
     ]
     
-//    #method(stacksafe) saveTo &bytearray:target &int:offs
-//    [
-//        target write &int:offs &int:thePointer.
-//    ]
-//    
-//    #method(stacksafe,bool)is &empty
-//        = 0 == thePointer.
+    #method(stacksafe) saveTo &bytearray:target &int:offs
+    [
+        target write &int:offs &int:thePointer.
+    ]
+    
+    #method(stacksafe,bool)is &empty
+        = 0 == thePointer.
 }
 
 // --- COORD ---

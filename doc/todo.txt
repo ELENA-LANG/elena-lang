@@ -134,6 +134,7 @@ In development:
                  * implement idle typecasting message (see file_path)
                  * bsort : get rid of an extra bool messages (implementing exiting from nested closures)
                  * use imm mode for (n) => 1 ? [ now literal. ]
+                 * optimize nil operations
 
               xdev - ide
                 * vertical scroller does not work correctly

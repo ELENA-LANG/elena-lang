@@ -4238,6 +4238,56 @@ procedure __dptr.set[2]
 
 end
 
+procedure __dptr.set&dirty_ptr$[2]
+
+  bcopya
+  aloadsi 2
+  ncopy
+  acopyb
+  quitn 2
+
+end
+
+procedure __dptr.write&int$[2]
+
+  nload
+  pushd
+  popb
+  aloadsi 2
+  nload
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr.read&vint$[2]
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr.read&bytearray$&int$[3]
+
+  bloadsi 2
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 1
+
+  callextr api : subcopy  
+  
+  quitn 3
+
+end
+
 procedure __real.eval&exp&real$&vreal$[3]
 
   aloadsi 2

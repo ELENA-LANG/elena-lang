@@ -59,17 +59,16 @@
     #method clone = $nil.
 }
 
-//// --- nil constant ---
-//
-///// A nil value
-//#symbol(dispatchable:void) nil =
-//{
-//    /// Returns true if the specified object is nil.
-//    #method(bool) equal : anObject = ($nil == anObject)||($super equal:nil).
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    #method(generic)get = $nil.
-//}.
-//
+// --- nil constant ---
+
+/// A nil value
+#symbol(dispatchable:void) nil =
+{
+    /// Returns true if the specified object is nil.
+    #method(w2) equal : anObject = ($nil == anObject)||($super equal:nil).
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    #method(generic)get = $nil.
+}.
