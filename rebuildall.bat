@@ -14,7 +14,7 @@ bin\asm2binx asm\x32\core_win.asm bin\x32
 bin\elc -csrc30\system\system.prj
 bin\elc -csrc30\extensions\extensions.prj
 rem bin\elc -csrc30\net\net.prj
-rem bin\elc -csrc30\forms\forms.prj
+bin\elc -csrc30\forms\forms.prj
 rem bin\elc -csrc30\sqlite\sqlite.prj
 bin\elc -cexamples\console\helloworld\u_helloworld.prj
 bin\elc -cexamples\console\helloworld\helloworld.prj
@@ -34,7 +34,7 @@ bin\elc -cexamples\console\matrix\matrix.prj
 bin\elc -cexamples\console\trans\tanslit.prj
 rem bin\elc -cexamples\interpreter\interpreter.prj
 rem bin\elc -cexamples\script\calculator\calc.prj
-rem bin\elc -cexamples\gui\agenda\agenda.prj
+bin\elc -cexamples\gui\agenda\agenda.prj
 rem bin\elc -cexamples\gui\graphs\graphs.prj
 rem bin\elc -cexamples\gui\c_a_g\c_area_gui.prj
 rem bin\elc -cexamples\gui\notepad\notepad.prj

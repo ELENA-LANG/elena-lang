@@ -18,35 +18,35 @@
 //        = theHandle == anOperand.
 }
 
-//// --- RTPointer ---
-//
-//#static rt_sync = Object new.
-//
-//#class(sealed,reference,const) RTPointer
-//{
-//    #field(int)theIndex.
-//    
-//    #constructor(stacksafe) &int:n
-//    [
-//        theIndex := n.
-//    ]
-//    
-//    #constructor new : anObject
-//    [
-//        system'core_routines'__rtptr new &object:$self &object:anObject.
-//    ]
-//
-//    #method(stacksafe,outnprop:index) readIndex &vint:aRetVal
-//    [
-//        aRetVal := theIndex.
-//    ]
-//        
-//    #method(stacksafe) get
-//        => system'core_routines'__rtptr.
-//
-//    #method(stacksafe)  free
-//        => system'core_routines'__rtptr.
-//}
+// --- RTPointer ---
+
+#static rt_sync = Object new.
+
+#class(sealed,embeddable,const) RTPointer
+{
+    #field(4,-12)theIndex.
+    
+    #constructor(stacksafe) &int:n
+    [
+        theIndex := n.
+    ]
+    
+    #constructor new : anObject
+    [
+        system'core_routines'__rtptr new &object:$self &object:anObject.
+    ]
+
+    #method(stacksafe,outnprop:index) readIndex &vint:aRetVal
+    [
+        aRetVal := theIndex.
+    ]
+        
+    #method(stacksafe) get
+        => system'core_routines'__rtptr.
+
+    #method(stacksafe)  free
+        => system'core_routines'__rtptr.
+}
 
 // --- UnsafePointer ---
 

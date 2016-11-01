@@ -470,7 +470,9 @@ void CompilerLogic :: injectVirtualCode(SNode node, _CompilerScope& scope, Class
    ClassMap::Iterator c_it = scope.typifiedClasses.getIt(node.argument);
    while (!c_it.Eof()) {
       if (c_it.key() == node.argument) {
-         SNode methodNode = templateNode.appendNode(lxClassMethod, encodeMessage(*c_it, GET_MESSAGE_ID, 0));
+         int message = encodeMessage(*c_it, GET_MESSAGE_ID, 0);
+
+         SNode methodNode = templateNode.appendNode(lxClassMethod, message);
 
          compiler.injectVirtualReturningMethod(methodNode, THIS_VAR);
       }

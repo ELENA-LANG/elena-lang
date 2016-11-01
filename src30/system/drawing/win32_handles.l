@@ -70,9 +70,9 @@
 
 // --- HDC ---
 
-#class(sealed,reference,const) HDC
+#class(sealed,embeddable,const) HDC
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
 
     #constructor(stacksafe)&int:handle
     [
@@ -148,9 +148,9 @@
 
 // --- HBITMAP ---
 
-#class(sealed,reference,const) HBITMAP
+#class(sealed,embeddable,const) HBITMAP
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
 
     #constructor(stacksafe) new &hbitmap:aHandle
     [
@@ -189,9 +189,9 @@
 
 // --- HPEN ---
 
-#class(sealed,reference,const) HPEN
+#class(sealed,embeddable,const) HPEN
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
     
     #constructor(stacksafe) new &hpen:aHandle
     [
@@ -213,9 +213,9 @@
 
 // --- HBRUSH ---
 
-#class(sealed,reference,const) HBRUSH
+#class(sealed,embeddable,const) HBRUSH
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
 
     #constructor new &hbrush:aHandle
     [

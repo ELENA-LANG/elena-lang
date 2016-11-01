@@ -92,7 +92,7 @@
 
 // === system handles ===
 #subject handle     = system'Handle.
-//#subject rt_ptr     = system'RTPointer.
+#subject rt_ptr     = system'RTPointer.
 #subject dirty_ptr  = system'UnsafePointer.
 
 // --- Enumerators / Indexers ---

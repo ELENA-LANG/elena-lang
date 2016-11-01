@@ -4440,3 +4440,304 @@ labErr:
   throw  
 
 end
+
+procedure __hwnd.eval&system$fillWndClass&bytearray$&wide$&int$&hinstance$winforms&int$[6]
+
+  bloadsi 2
+  aloadsi 4
+  nload
+  nsavei 0
+  aloadsi 5
+  nload
+  nsavei 4
+  aloadsi 6
+  nload
+  nsavei 7
+  aloadsi 3
+  axsavebi 9    
+  acopyr intern : system'core_routines'win_WndProc
+  axsavebi 1
+  dcopy 0
+  nsavei 2
+  nsavei 3
+  nsavei 5
+  nsavei 6
+  nsavei 8
+  quitn 6
+
+end
+
+// ; win32 constants
+define WM_CREATE            1
+define WM_DESTROY           2
+define WM_SIZE              5
+define WM_PAINT             000Fh
+define WM_CLOSE             0010h
+define WM_SETCURSOR         0020h
+define WM_COMMAND           0111h
+define GWL_USERDATA         0FFFFFFEBh
+
+procedure win_WndProc
+
+  dloadsi 2
+  ifn labPaint WM_PAINT
+  ifn labCreate WM_CREATE
+  ifn labCursor  WM_SETCURSOR
+  ifn labSize  WM_SIZE
+  ifn labCommand WM_COMMAND
+  ifn labDestroy WM_DESTROY
+  ifn labDestroy WM_CLOSE
+
+labEnd:
+  eloadsi 4
+  pushe
+  eloadsi 4
+  pushe
+  pushd
+  eloadsi 4
+  pushe
+  callextr extern : 'dlls'USER32.DefWindowProcW
+  quitn 4
+  
+labCreate:
+  callextr api : openframe
+
+  pushn 0
+  bcopys 0
+  
+  pushb
+  aloadfi -7
+  pusha
+  acopyf -6
+  pusha
+  acopyf -5
+  pusha
+  acopyf -4
+  pusha
+
+  aloadfi -7
+  pusha
+  callextr api : resolve_index  
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&wm_create&hwnd$winforms&int$&int$&win_createstruct$winforms&vint$[5]
+
+
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labDestroy:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&hwnd$winforms&int$&vint$[3]
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labCommand:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&wm_command&hwnd$winforms&int$&int$&hwnd$winforms&vint$[5]  
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labCursor:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&hwnd$winforms&int$&hwnd$winforms&int$&vint$[5]
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labPaint:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&wm_paint&hwnd$winforms&int$&vint$[3]
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+  
+labSize:
+  callextr api : openframe
+
+  aloadsi 4
+  pushn GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn 0
+  bcopys 0  
+  pushb
+
+  bcopyf -7
+  pushb
+  bcopyf -6
+  pushb
+  bcopyf -5
+  pushb
+  bcopyf -4
+  pushb
+
+  pusha  
+  xindexrm system'winforms'WindowCallback %eval&hwnd$winforms&int$&int$&int$&vint$[5]  
+  acallvd
+  popa
+
+  callextr api : closeframe
+
+  quitn 4
+
+labEnd2:
+  callextr api : closeframe
+  jump  labEnd
+  
+end
+
+procedure __rtptr.new&object&object[2]
+
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  callextr api : alloc_index
+  bcopya
+  aloadsi 3
+  set  
+
+  popa
+  freelock
+
+  bloadsi 1
+  nsave
+  acopyb
+
+  quitn 2
+
+end
+
+procedure __rtptr.get&free[1]
+                      
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  aloadsi 2
+  nload
+  callextr api : free_index
+
+  popa
+  freelock
+
+  quitn 1
+  
+end
+
+procedure __rtptr.get[1]
+
+  pusha
+  callextr api : resolve_index
+
+  quitn 1
+
+end

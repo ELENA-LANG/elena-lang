@@ -1,7 +1,7 @@
-#define system.
-#define extensions.
-#define forms.
-#define system'io.
+#import system.
+#import extensions.
+#import forms.
+#import system'io.
 
 // --- Main window ---
 

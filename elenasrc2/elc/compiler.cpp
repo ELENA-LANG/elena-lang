@@ -253,6 +253,15 @@ inline void findUninqueName(_Module* module, ReferenceNs& name)
 //   return node;
 //}
 
+inline SNode findParent(SNode node, LexicalType type)
+{
+   while (node.type != type && node != lxNone) {
+      node = node.parentNode();
+   }
+
+   return node;
+}
+
 inline bool isImportRedirect(SNode node)
 {
    SNode terminal = node.firstChild(lxObjectMask);
@@ -2939,7 +2948,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    verb_id = _verbs.get(name.findChild(lxTerminal).identifier());
    if (verb_id == 0) {
       ref_t id = scope.mapSubject(name, signature);
-   
+
       // if followed by argument list - it is EVAL verb
       if (arg.nextNode() != lxNone) {
          // HOT FIX : strong types cannot be used as a custom verb with a parameter
@@ -2960,10 +2969,10 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
    // if message has generic argument list
    while (test(arg.type, lxObjectMask)) {
       paramCount++;
-   
+
       arg = arg.nextNode();
    }
-   
+
    // if message has named argument list
    while (arg == lxMessage) {
       SNode subject = arg.findChild(lxPrivate, lxIdentifier);
@@ -2974,7 +2983,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
 
       ref_t subjRef = scope.mapSubject(subject, signature);
       arg.setArgument(subjRef);
-   
+
       arg = arg.nextNode();
 
       // skip an argument
@@ -2982,21 +2991,17 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, size_t& paramCount/*,
          // if it is an open argument list
          if (arg.nextNode() == lxNone && scope.moduleScope->attributeHints.exist(subjRef, scope.moduleScope->paramsReference)) {
             paramCount += OPEN_ARG_COUNT;
-            if (paramCount > 0x0F)
-               scope.raiseError(errNotApplicable, subject);
 
-   //            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
-   //            // HOTFIX : set flag if the argument list has to be unboxed
-   //            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
-   //               argsUnboxing = true;
-   //            }
+            //            ObjectInfo argListParam = scope.mapObject(arg.firstChild().Terminal());
+            //            // HOTFIX : set flag if the argument list has to be unboxed
+            //            if (arg.firstChild().nextNode() == nsNone && argListParam.kind == okParams) {
+            //               argsUnboxing = true;
+            //            }
+            break;
          }
          else {
             paramCount++;
-   
-            if (paramCount >= OPEN_ARG_COUNT)
-               scope.raiseError(errTooManyParameters, node);
-   
+
             arg = arg.nextNode();
          }
       }
@@ -3320,7 +3325,7 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
    //// alternative boxing routine should be used (using a temporal variable)
    //if (argsUnboxing)
    //   paramMode |= HINT_ALTBOXING;
-   
+
    SNode arg = node.firstChild();
    // compile the message target and generic argument list
    while (arg != lxMessage && arg != lxNone) {
@@ -3358,10 +3363,10 @@ ObjectInfo Compiler :: compileMessageParameters(SNode node, CodeScope& scope)
                SNode argListNode = arg.firstChild();
                while (argListNode != lxNone) {
                   compileExpression(argListNode, scope, paramMode);
-               
+
                   argListNode = argListNode.nextNode();
                }
-               
+
                // terminator
                arg.appendNode(lxNil);
 
@@ -3407,27 +3412,32 @@ ObjectInfo Compiler :: compileMessage(SNode node, CodeScope& scope, int mode)
    //   bool externalMode = false;
    if (target.kind == okExternal) {
       return compileExternalCall(node, scope, mode);
-   //
-   //      externalMode = true;
-   //      member = member.nextNode();
-   //
-   //      if (member != nsNone)
-   //         scope.raiseError(errInvalidOperation, node.Terminal());
-   }
-   else if (target.kind == okInternal) {
-      return compileInternalCall(node, scope, messageRef, target);
+      //
+      //      externalMode = true;
+      //      member = member.nextNode();
+      //
+      //      if (member != nsNone)
+      //         scope.raiseError(errInvalidOperation, node.Terminal());
    }
    else {
-      ref_t extensionRef = mapExtension(scope, messageRef, target);
-      
-      if (extensionRef != 0) {
-         //HOTFIX: A proper method should have a precedence over an extension one
-         if (checkMethod(*scope.moduleScope, resolveObjectReference(scope, target), messageRef) == tpUnknown) {
-            target = ObjectInfo(okConstantRole, extensionRef, 0, target.type);
-         }
-      }
+      if (paramCount > 0x0F)
+         scope.raiseError(errNotApplicable, node);
 
-      return compileMessage(node, scope, target, messageRef, mode);
+      if (target.kind == okInternal) {
+         return compileInternalCall(node, scope, messageRef, target);
+      }
+      else {
+         ref_t extensionRef = mapExtension(scope, messageRef, target);
+
+         if (extensionRef != 0) {
+            //HOTFIX: A proper method should have a precedence over an extension one
+            if (checkMethod(*scope.moduleScope, resolveObjectReference(scope, target), messageRef) == tpUnknown) {
+               target = ObjectInfo(okConstantRole, extensionRef, 0, target.type);
+            }
+         }
+
+         return compileMessage(node, scope, target, messageRef, mode);
+      }
    }
 }
 
@@ -3589,9 +3599,12 @@ ObjectInfo Compiler :: compileExtension(SNode node, CodeScope& scope, int mode)
 ObjectInfo Compiler :: compileExtensionMessage(SNode node, CodeScope& scope, ObjectInfo role)
 {
    size_t paramCount = 0;
-   ref_t  messageRef = mapMessage(node, scope, paramCount/*, argsUnboxing*/);
-   /*ObjectInfo target = */compileMessageParameters(node, scope);
+   ref_t  messageRef = mapMessage(node, scope, paramCount);
+   compileMessageParameters(node, scope);
 
+   if (paramCount > 0x0F)
+      scope.raiseError(errNotApplicable, node);
+   
    return compileMessage(node, scope, role, messageRef, HINT_EXTENSION_MODE);
 }
 
@@ -4729,6 +4742,9 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
    // find where the target constructor is declared in the current class
    size_t count = 0;
    ref_t messageRef = mapMessage(expr, scope, count);
+   if (count > 0x0F)
+      scope.raiseError(errNotApplicable, node);
+
    ref_t classRef = classClassScope.reference;
    bool found = false;
 
@@ -5797,11 +5813,11 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SNode root, bool 
             bool sealedMethod = (methodHints & tpMask) == tpSealed;
             // if the class is closed, no new methods can be declared
             if (included && closed)
-               scope.raiseError(errClosedParent, current);
+               scope.raiseError(errClosedParent, findParent(current, lxClass));
             
             // if the method is sealed, it cannot be overridden
             if (!included && sealedMethod)
-               scope.raiseError(errClosedMethod, current);
+               scope.raiseError(errClosedMethod, findParent(current, lxClass));
             
             // save extensions if required ; private method should be ignored
             if (test(scope.info.header.flags, elExtension) && !root.existChild(lxPrivate)) {
@@ -7684,6 +7700,7 @@ void Compiler :: compileDeclarations(SNode current, ModuleScope& scope)
 {
    while (current != lxNone) {
       SNode name = current.findChild(lxIdentifier, lxPrivate);
+      //ident_t nameStr = name.findChild(lxTerminal).identifier();
 
       switch (current) {
          case lxSubject:

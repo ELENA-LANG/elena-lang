@@ -4,7 +4,6 @@
 #subject control     = forms'IControl.
 
 #subject frame       = forms'Frame.
-#subject static      = forms'StaticLabel.
 #subject label       = forms'Label.
 #subject edit        = forms'Edit.
 #subject memo        = forms'Memo.

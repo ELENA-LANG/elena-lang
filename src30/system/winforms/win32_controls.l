@@ -9,9 +9,9 @@
 
 // --- WindowHandle ---
 
-#class(sealed,reference,const) WindowHandle
+#class(sealed,embeddable,const) WindowHandle
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
     
     #constructor new
     [

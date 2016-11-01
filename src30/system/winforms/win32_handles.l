@@ -3,9 +3,9 @@
 
 // --- HInstance ---
 
-#class(sealed,reference,const) HInstance
+#class(sealed,embeddable,const) HInstance
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
     
     #constructor(stacksafe) new &int:aHandle
     [
@@ -70,9 +70,9 @@
 
 // --- HMENU ---
 
-#class(sealed,reference,const) HMENU
+#class(sealed,embeddable,const) HMENU
 {
-    #field(int)theHandle.
+    #field(4,-12)theHandle.
     
     #constructor new
     [
