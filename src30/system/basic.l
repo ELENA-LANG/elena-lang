@@ -1616,6 +1616,29 @@
     ]
 }
 
+// --- nil constant ---
+
+/// A nil value
+#symbol(dispatchable:void) nil =
+{
+    /// Returns true if the specified object is nil.
+    #method equal : anObject 
+    [
+        ($nil == anObject)
+            ? [ ^ true. ].
+        
+        ($super equal:anObject)
+            ? [ ^ true. ].
+        
+        ^ false.
+    ]
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    #method(generic)get = $nil.
+}.
+
 //// === Basic Factory symbols ==
 //
 //#class BaseExtender

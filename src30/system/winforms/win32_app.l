@@ -21,7 +21,7 @@
     
     #method mainWindow = theMainWindow.
     
-    #method start
+    #method eval
     [
         theMainWindow open.
 
@@ -87,7 +87,7 @@
 {
     #method start
     [
-        'program start
+        'program eval
             | on:
             {
                 Abort = e [].
@@ -102,4 +102,4 @@
     ]
 }
 
-#static startUp = $GUIStartUp new.
+#static startUp = $GUIStartUp new start.

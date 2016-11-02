@@ -1435,7 +1435,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
       else {
          outer.outerObject = parent->mapTerminal(identifier);
          // handle outer fields in a special way: save only self
-         if (outer.outerObject.kind == okField) {
+         if (outer.outerObject.kind == okField || outer.outerObject.kind == okOuterField) {
             Outer owner = mapSelf();
 
             // save the outer field type if provided
@@ -1444,12 +1444,15 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier)
             }
 
             // map as an outer field (reference to outer object and outer object field index)
-            return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
+            if (outer.outerObject.kind == okOuterField) {
+               return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.type);
+            }
+            else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.type);
          }
          // map if the object is outer one
-         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal || outer.outerObject.kind == okField
+         else if (outer.outerObject.kind == okParam || outer.outerObject.kind == okLocal
             || outer.outerObject.kind == okOuter || outer.outerObject.kind == okSuper || outer.outerObject.kind == okThisParam
-            || outer.outerObject.kind == okOuterField || outer.outerObject.kind == okLocalAddress)
+            || outer.outerObject.kind == okLocalAddress)
          {
             outer.reference = info.fields.Count();
 
