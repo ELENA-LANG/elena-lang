@@ -1,8 +1,8 @@
-#define system.
-#define system'math.
-#define system'drawing.
-#define forms.
-#define extensions.
+#import system.
+#import system'math.
+#import system'drawing.
+#import forms.
+#import extensions.
 
 #symbol ScaleX   = 15.
 #symbol ScaleY   = 15.

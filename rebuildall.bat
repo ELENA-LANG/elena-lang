@@ -35,7 +35,7 @@ bin\elc -cexamples\console\trans\tanslit.prj
 rem bin\elc -cexamples\interpreter\interpreter.prj
 rem bin\elc -cexamples\script\calculator\calc.prj
 bin\elc -cexamples\gui\agenda\agenda.prj
-rem bin\elc -cexamples\gui\graphs\graphs.prj
+bin\elc -cexamples\gui\graphs\graphs.prj
 rem bin\elc -cexamples\gui\c_a_g\c_area_gui.prj
 rem bin\elc -cexamples\gui\notepad\notepad.prj
 rem bin\elc -cexamples\db\sqlite\sqlite_test.prj

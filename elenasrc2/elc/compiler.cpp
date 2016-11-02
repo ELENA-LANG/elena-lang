@@ -4428,9 +4428,11 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool bytearray, O
    if (size <= 0)
       return false;
 
-   int offset = allocateStructure(bytearray, size, scope.reserved);
-
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   if (methodScope == NULL)
+      return false;
+
+   int offset = allocateStructure(bytearray, size, scope.reserved);
 
    // if it is not enough place to allocate
    if (methodScope->reserved < scope.reserved) {
@@ -6765,7 +6767,14 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 
          SNode assignNode = node.injectNode(lxAssigning, size);
          assignNode.insertNode(lxLocalAddress, retVal.param);
-      }      
+      }
+      else {
+         retVal.kind = okObject;
+         retVal.param = targetRef;
+
+         SNode assignNode = node.injectNode(lxAssigning, size);
+         assignNode.insertNode(lxCreatingStruct, size).appendNode(lxTarget, targetRef);
+      }
 
       if (node != lxExpression) {
          SNode boxingNode = node.injectNode(lxBoxing, size);
