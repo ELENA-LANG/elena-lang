@@ -85,8 +85,8 @@ enum Symbol
    nsSwitching                  = 0x0103B,
    nsSwitchOption               = 0x0103C,
    nsLastSwitchOption           = 0x0103D,
-   //nsBiggerSwitchOption         = 0x0103E,
-   //nsLessSwitchOption           = 0x0103F,
+   nsBiggerSwitchOption         = 0x0103E,
+   nsLessSwitchOption           = 0x0103F,
    nsL6Operation                = 0x01041,
    //nsSizeValue                  = 0x01042,
    nsL0Operation                = 0x01043,
@@ -97,14 +97,14 @@ enum Symbol
    //nsFieldTemplate              = 0x0104A,
    nsImplicitConstructor        = 0x0104B,
 
-   //nsDeclarationEndExpected         = 0x04000,               // error-terminals
-   //nsStatementEndExpected           = 0x04001,               
-   //nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected
-   //nsErrNestedMemberExpected        = 0x04003,               
-   //nsErrObjectExpected              = 0x04004,
-   //nsErrMessageExpected             = 0x04005,
-   //nsDirectiveEndExpected           = 0x04006,
-   //nsInlineExpressionEndExpected    = 0x04007,
+   nsDeclarationEndExpected         = 0x04000,               // error-terminals
+   nsStatementEndExpected           = 0x04001,               
+   nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected
+   nsErrNestedMemberExpected        = 0x04003,               
+   nsErrObjectExpected              = 0x04004,
+   nsErrMessageExpected             = 0x04005,
+   nsDirectiveEndExpected           = 0x04006,
+   nsInlineExpressionEndExpected    = 0x04007,
 };
 
 // --- TerminalInfo structure ---

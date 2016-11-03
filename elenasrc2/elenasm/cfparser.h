@@ -111,7 +111,7 @@ protected:
    void defineApplyRule(Rule& rule, int terminalType);
 
    size_t writeBodyText(ident_t text);
-   ident_t getBodyText(size_t ptr);
+   const char* getBodyText(size_t ptr);
 
    void addRule(int id, Rule& rule);
 

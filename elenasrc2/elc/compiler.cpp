@@ -1291,9 +1291,9 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
       }
       else return ObjectInfo(okThisParam, 1);
    }
-   /*else if (StringHelper::compare(identifier, METHOD_SELF_VAR)) {
+   else if (terminal.compare(METHOD_SELF_VAR)) {
       return ObjectInfo(okParam, (size_t)-1);
-   }*/
+   }
    else {
       Parameter param = parameters.get(terminal);
 
@@ -2434,13 +2434,16 @@ void Compiler :: compileSwitch(SNode node, CodeScope& scope)
    while (option == lxOption) {
       insertDebugStep(option, dsStep);
 
-      int operator_id = EQUAL_MESSAGE_ID;
-//      if (option == nsBiggerSwitchOption) {
-//         operator_id = GREATER_MESSAGE_ID;
-//      }
-//      else if (option == nsLessSwitchOption) {
-//         operator_id = LESS_MESSAGE_ID;
-//      }
+      int operator_id = option.argument;
+      //HOTFIX : invert operation because the option value is compared with a target
+      switch (operator_id) {
+         case GREATER_MESSAGE_ID:
+            operator_id = LESS_MESSAGE_ID;
+            break;
+         case LESS_MESSAGE_ID:
+            operator_id = GREATER_MESSAGE_ID;
+            break;
+      }
       
       SNode expr = option.injectNode(lxExpression);
       
@@ -6760,7 +6763,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 {
    ObjectInfo retVal(okObject, targetRef, 0, targetType);
 
-   size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, targetType);
+   int size = _logic->defineStructSize(*scope.moduleScope, targetRef, targetType);
    if (size != 0) {
       if (allocateStructure(scope, size, false, retVal)) {
          retVal.extraparam = targetRef;
@@ -6768,7 +6771,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
          SNode assignNode = node.injectNode(lxAssigning, size);
          assignNode.insertNode(lxLocalAddress, retVal.param);
       }
-      else {
+      else if (size > 0) {
          retVal.kind = okObject;
          retVal.param = targetRef;
 

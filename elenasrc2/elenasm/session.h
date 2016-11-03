@@ -16,11 +16,11 @@ namespace _ELENA_
 
 class Session
 {
-   _Parser*         _currentParser;
-   Path             _rootPath;
+   _Parser*          _currentParser;
+   Path              _rootPath;
 
-   String<ident_c, 512> _lastError;
-   MemoryDump           _tape;
+   String<char, 512> _lastError;
+   MemoryDump        _tape;
 
    void parseDirectives(MemoryDump& tape, _ScriptReader& reader);
    void parseMetaScript(MemoryDump& tape, _ScriptReader& reader);

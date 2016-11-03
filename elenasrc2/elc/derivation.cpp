@@ -255,9 +255,17 @@ void DerivationWriter :: copySwitching(SNode node)
       Symbol symbol = (Symbol)current.type;
       switch (symbol) {
          case nsSwitchOption:
+         case nsBiggerSwitchOption:
+         case nsLessSwitchOption:
             _writer.newBookmark();
             unpackChildren(current);
-            _writer.insert(lxOption);
+            if (symbol == nsBiggerSwitchOption) {
+               _writer.insert(lxOption, GREATER_MESSAGE_ID);
+            }
+            else if (symbol == nsLessSwitchOption) {
+               _writer.insert(lxOption, LESS_MESSAGE_ID);
+            }
+            else _writer.insert(lxOption, EQUAL_MESSAGE_ID);
             _writer.closeNode();
             _writer.removeBookmark();
             break;
@@ -470,112 +478,3 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
       tempWriter.closeNode();
    }
 }
-
-//// --- DerivationReader ---
-//
-//DNode DerivationReader :: readRoot()
-//{
-//   return Node(this, 0, nsNone);
-//}
-//
-//DNode DerivationReader :: readFirstChild(size_t position)
-//{
-//   _reader->seek(position);
-//
-//   Symbol current = (Symbol)_reader->getDWord();
-//   if (current != nsNone) {
-//      position = _reader->Position();
-//      current = (Symbol)_reader->getDWord();
-//	   if (test(current, mskTerminal)) {
-//         readTerminalInfo(current);
-//
-//		   position = _reader->Position();
-//		   if (_reader->readDWord((int&)current)) {
-//            return Node(this, position, current);
-//         }
-//      }
-//	   else return Node(this, position, current);
-//   }
-//   return Node();
-//}
-//
-//DNode DerivationReader :: readNextNode(size_t position)
-//{
-//   _reader->seek(position);
-//
-//   int level = 0;
-//   Symbol current = nsNone;
-//   while (_reader->readDWord((int&)current)) {
-//      if (test(current, mskTerminal)) {
-//         readTerminalInfo(current);
-//         continue;
-//      }
-//      else if (current==nsNone) {
-//         if (level > 1) {
-//            level--;
-//         }
-//		   else break;
-//	   }
-//      else level++;
-//   }
-//   position = _reader->Position();
-//   if (_reader->readDWord((int&)current)) {
-//      return Node(this, position, current);
-//   }
-//   else return Node();
-//}
-//
-//DNode DerivationReader :: seekSymbol(size_t position, Symbol symbol)
-//{
-//   _reader->seek(position);
-//
-//   Symbol current = (Symbol)_reader->getDWord();
-//   if (!test(current, mskTerminal)) {
-//      int level = 1;
-//      while (level > 0) {
-//         position = _reader->Position();
-//         current = (Symbol)_reader->getDWord();
-//         if (test(current, mskTerminal)) {
-//            readTerminalInfo(current);
-//         }
-//         else if (current==nsNone) {
-//            level--;
-//         }
-//         else {
-//			   if (level==1 && current==symbol)
-//               return Node(this, position, current);
-//            level++;
-//         }
-//      }
-//   }
-//   return Node();
-//}
-//
-//TerminalInfo DerivationReader :: readTerminalInfo(Symbol symbol)
-//{
-//   TerminalInfo terminal;
-//
-//   terminal.symbol = symbol;
-//   _reader->readDWord(terminal.disp);
-//   _reader->readDWord(terminal.row);
-//   _reader->readDWord(terminal.col);
-//   _reader->readDWord(terminal.length);
-//
-//   terminal.value = _reader->getLiteral(DEFAULT_STR);
-//
-//   return terminal;
-//}
-//
-//TerminalInfo DerivationReader :: readTerminal(size_t position)
-//{
-//   _reader->seek(position);
-//
-//   Symbol current = (Symbol)_reader->getDWord();
-//   if (current != nsNone) {
-//      current = (Symbol)_reader->getDWord();
-//      if (test(current, mskTerminal)) {
-//         return readTerminalInfo(current);
-//      }
-//   }
-//   return TerminalInfo();
-//}

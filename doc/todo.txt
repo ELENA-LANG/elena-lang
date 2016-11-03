@@ -1,12 +1,28 @@
 ------                                 
 In development:
 ------                              
+              zdev 
+                 * new tape parser
+                 * scripting library : generate simple expression
+                 * scripting library : generate simple class
+                 * scripting library : run time
+                 * scripting library : compile time
+                 * scripting library : vb interpreter
+                 * scripting library : elena script (both run-time / compile-time)
 
               xrev
+                 * test rosetta samples (aplusb)
+                 * test anonymrec
+                 * test amb
+                 * test anagram
                  * uncomment StructTest
                  * uncomment GroupTest
                  * uncomment DTOToStructTest
                  * uncomment jsonTest
+                 * test graph
+                 * test c_a_g
+                 * test rest samples
+                 * test script samples
                  
                  * optimization : #var(int)n := o array length.
                  * support arrayof:int
@@ -30,8 +46,7 @@ In development:
                  * optimize unbox : root expression / assigning
                  * templates : importing
                  * templates : compiling
-                 * get rid of ftemplate / mtemplate, ....
-                 * optimiize n:=n+1
+                 * optimize n:=n+1
                  * implement +=, ...
                  * sealed methods
                  * support private sealed methods
@@ -87,7 +102,6 @@ In development:
                  * optimize generic loop - instead of : ifr $nil Lab01 , jump Lab00 - elser $nil Lab00
                  * optimize array of constants
                  * typecast implicit extension target if required
-                 * switch statement with comparision
                  * switch statement with expression
 
                  * fix invalid call stack info
@@ -137,6 +151,9 @@ In development:
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
 
+------                                 
+Pipeline:
+------                                                                                         
               xdev - ide
                 * vertical scroller does not work correctly
                 * set focus on the editor after selecting a project item
@@ -177,9 +194,6 @@ In development:
               xdev
                 * x64 platform
 
-------                                 
-Pipeline:
-------                                                                                         
               xdev - generic development
                        * #236 : Namespace sharing
                        * #163 : try finally catch statement

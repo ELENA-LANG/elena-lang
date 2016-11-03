@@ -195,13 +195,15 @@ void* Session :: translate(path_t path, int encoding, bool autoDetect)
       }
       else scriptPath.copy(path);
 
-      TextFileReader reader(scriptPath, encoding, autoDetect);
+      TextFileReader reader(scriptPath.c_str(), encoding, autoDetect);
 
       if (!reader.isOpened()) {
-         _lastError.copy("Cannot open the script file:");
+         size_t length = _MAX_PATH;
+         String<char, _MAX_PATH> tmp;
+         path.copyTo((char*)tmp, length);
+         tmp[length] = 0;
 
-         ident_c tmp[_MAX_PATH];
-         Path::savePath(path, tmp, _MAX_PATH);
+         _lastError.copy("Cannot open the script file:");
          _lastError.append(tmp);
 
          return NULL;

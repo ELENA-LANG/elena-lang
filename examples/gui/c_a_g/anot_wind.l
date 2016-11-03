@@ -1,6 +1,6 @@
 // --- default namespaces ---
-#define system.
-#define forms.
+#import system.
+#import forms.
 
 #class InfoForm :: ChildForm
 {

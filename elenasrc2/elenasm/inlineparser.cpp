@@ -35,7 +35,7 @@ void InlineScriptParser :: writeMessage(TapeWriter& writer, ident_t message, int
    IdentifierString reference;
    int verb_id = 0;
 
-   int subjPos = StringHelper::find(message, '&');
+   int subjPos = message.find('&');
 
    if (subjPos != -1) {
       reference.copy(message, subjPos);
@@ -78,7 +78,7 @@ void InlineScriptParser :: writeSubject(TapeWriter& writer, ident_t message)
 
 void InlineScriptParser :: writeObject(TapeWriter& writer, char state, ident_t token)
 {
-   if (StringHelper::compare(token, ".")) {
+   if (token.compare(".")) {
       writer.writeCommand(POP_TAPE_MESSAGE_ID);
    }
    else {
@@ -157,7 +157,7 @@ int InlineScriptParser :: parseStack(_ScriptReader& reader, TapeWriter& writer, 
          case -7:
          {
             ident_t msg = reader.lookup(bm);
-            if (StringHelper::find(msg, '.')) {
+            if (msg.find('.')) {
                writer.writeCommand(PUSHE_TAPE_MESSAGE_ID, msg);
             }
             else writer.writeCommand(PUSHM_TAPE_MESSAGE_ID, msg);

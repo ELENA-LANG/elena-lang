@@ -36,7 +36,7 @@ rem bin\elc -cexamples\interpreter\interpreter.prj
 rem bin\elc -cexamples\script\calculator\calc.prj
 bin\elc -cexamples\gui\agenda\agenda.prj
 bin\elc -cexamples\gui\graphs\graphs.prj
-rem bin\elc -cexamples\gui\c_a_g\c_area_gui.prj
+bin\elc -cexamples\gui\c_a_g\c_area_gui.prj
 rem bin\elc -cexamples\gui\notepad\notepad.prj
 rem bin\elc -cexamples\db\sqlite\sqlite_test.prj
 rem bin\elc -cexamples\console\pi2\pi2.prj

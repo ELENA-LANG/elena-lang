@@ -18,7 +18,7 @@ void newSession(HMODULE hModule)
 
    rootPath.copySubPath(path);
 
-   session = new _ELENA_::Session(rootPath);
+   session = new _ELENA_::Session(rootPath.c_str());
 }
 
 void freeSession()
@@ -34,12 +34,11 @@ EXTERN_DLL_EXPORT void* InterpretScript(_ELENA_::ident_t script)
    return session->translate(script);
 }
 
-EXTERN_DLL_EXPORT void* InterpretFile(_ELENA_::ident_t  pathStr, int encoding, bool autoDetect)
+EXTERN_DLL_EXPORT void* InterpretFile(const char* pathStr, int encoding, bool autoDetect)
 {
-   _ELENA_::Path path;
-   _ELENA_::Path::loadPath(path, pathStr);
+   _ELENA_::Path path(pathStr);
 
-   return session->translate(path, encoding, autoDetect);
+   return session->translate(path.c_str(), encoding, autoDetect);
 }
 
 EXTERN_DLL_EXPORT void Release(void* tape)
@@ -47,7 +46,7 @@ EXTERN_DLL_EXPORT void Release(void* tape)
    session->free(tape);
 }
 
-EXTERN_DLL_EXPORT int GetStatus(_ELENA_::ident_c* buffer, int maxLength)
+EXTERN_DLL_EXPORT int GetStatus(char* buffer, int maxLength)
 {
    if (session) {
       _ELENA_::ident_t error = session->getLastError();
@@ -55,7 +54,7 @@ EXTERN_DLL_EXPORT int GetStatus(_ELENA_::ident_c* buffer, int maxLength)
       if (length > maxLength)
          length = maxLength;
 
-      _ELENA_::StringHelper::copy(buffer, error, length, length);
+      _ELENA_::Convertor::copy(buffer, error, length, length);
 
       return length;
    }

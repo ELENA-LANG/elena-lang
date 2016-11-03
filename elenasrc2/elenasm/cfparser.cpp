@@ -132,10 +132,10 @@ void saveVariable(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scri
 
    int index = mapping->get(scriptReader.lookup(bm));
 
-   ident_c s[12];
-   StringHelper::intToStr(index, s, 10);
+   String<char, 12> s;
+   s.appendInt(index);
 
-   log.write(s);
+   log.write(ident_t(s));
 }
 
 void CFParser :: readScriptBookmark(size_t ptr, ScriptBookmark& bm)
@@ -154,9 +154,9 @@ size_t CFParser :: writeBodyText(ident_t text)
    return position;
 }
 
-ident_t CFParser :: getBodyText(size_t ptr)
+const char* CFParser :: getBodyText(size_t ptr)
 {
-   return (ident_t)_body.get(ptr);
+   return (const char*)_body.get(ptr);
 }
 
 bool CFParser :: compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rule)
@@ -164,7 +164,7 @@ bool CFParser :: compareToken(_ScriptReader& reader, ScriptBookmark& bm, int rul
    ident_t terminal = reader.lookup(bm);
    ident_t ruleTerminal = getBodyText(rule);
 
-   return StringHelper::compare(terminal, ruleTerminal);
+   return terminal.compare(ruleTerminal);
 }
 
 void CFParser :: defineApplyRule(Rule& rule, int mode)
@@ -640,7 +640,7 @@ void CFParser :: parse(_ScriptReader& reader, TapeWriter& tapeWriter)
       int trace = buildDerivationTree(reader, startId, writer);
       generateOutput(trace, reader, log);
 
-      IdentifierTextReader logReader((ident_t)log.getBody());
+      IdentifierTextReader logReader((const char*)log.getBody());
       ScriptReader scriptReader(&logReader);
       
       _baseParser->parse(scriptReader, tapeWriter);

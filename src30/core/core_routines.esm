@@ -575,6 +575,7 @@ procedure __literal.indexOf&int$&char$&vint$[4]
   bcopys 0
   pushn 0
   callextr api : chartostr
+  eaddn 1
   pushe
 
   aloadsi 7                 // ; load index
@@ -1102,6 +1103,7 @@ procedure __wide.indexOf&int$&char$&vint$[4]
   bcopys 0
   pushn 0
   callextr api : chartowstr
+  eaddn 1
   pushe
 
   aloadsi 7                 // ; load index

@@ -14,7 +14,7 @@ namespace _ELENA_
 {
 
 typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
-typedef String<ident_c, 0x100> TempString;
+typedef String<char, 0x100> TempString;
 
 // --- EParseError ---
    
@@ -146,7 +146,7 @@ class ScriptReader : public _ScriptReader
 protected:
    SourceReader reader;
    MemoryDump   buffer;
-   ident_c      token[LINE_LEN];
+   char         token[LINE_LEN];
    bool         eof;
 
 public:
@@ -157,7 +157,7 @@ public:
 
    virtual bool compare(ident_t value)
    {
-      return StringHelper::compare(token, value);
+      return value.compare(token);
    }
 
    virtual ScriptBookmark read()
@@ -177,8 +177,8 @@ public:
          QuoteTemplate<TempString> quote(info.line);
       
          //!!HOTFIX: what if the literal will be longer than 0x100?
-         size_t length = getlength(quote);
-         StringHelper::copy(token, quote, length, length);
+         size_t length = quote.Length();
+         Convertor::copy(token, quote.ident(), length, length);
          token[length] = 0;
       }
 
@@ -224,7 +224,7 @@ class ScriptLog
    MemoryDump _log;
 
 public:
-   void write(ident_c ch)
+   void write(char ch)
    {
       MemoryWriter writer(&_log);
 
@@ -251,7 +251,7 @@ public:
 
    void* getBody() 
    { 
-      write((ident_c)0);
+      write((char)0);
 
       return _log.get(0); 
    } 

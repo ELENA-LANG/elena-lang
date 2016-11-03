@@ -431,7 +431,7 @@ public:
       }
 
       if (length > 0) {
-         StringHelper::copy(s, _text + _offset, length, length);
+         Convertor::copy(s, _text + _offset, length, length);
          s[length] = 0;
 
          _offset += length;
