@@ -25,6 +25,7 @@ console.l
 win32_pointers.l
 win32_app.l
 collections\list.l
+collections\queues.l
 routines\enumerables.l
 routines\patterns.l
 math\math.l

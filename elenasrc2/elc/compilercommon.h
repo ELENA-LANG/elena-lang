@@ -25,8 +25,9 @@
 #define V_MESSAGE     (size_t)-19
 #define V_VERB        (size_t)-20
 #define V_EXTMESSAGE  (size_t)-21
+#define V_SYMBOL      (size_t)-22
 
-#define V_OBJECT      (size_t)-21
+#define V_OBJECT      (size_t)-28
 
 #define V_OBJARRAY    (size_t)-30
 #define V_INT32ARRAY  (size_t)-31

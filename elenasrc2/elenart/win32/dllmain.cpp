@@ -90,6 +90,11 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* subject, char* lineInfo, int length)
    return instance->loadMessageName((size_t)subject, lineInfo, length);
 }
 
+EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
+{
+   return instance->loadMessage((const char*)messageName);
+}
+
 EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
 {
    return instance->loadSymbol((const char*)referenceName);

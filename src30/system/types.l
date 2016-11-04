@@ -46,7 +46,7 @@
 #subject verb       = system'Verb.
 
 #subject subject    = system'Signature.
-//#subject symbol_ref = system'Symbol.
+#subject symbol_ref = system'Symbol.
 
 // === basic dynamic types ===
 #subject bytearray  = system'ByteArray.

@@ -224,6 +224,50 @@ protected:
          s[pos--] = tmp;
       }
    }
+   static void uintToStr(size_t n, T* s, int radix)
+   {
+      int  rem = 0;
+      int  pos = 0;
+      int start = 0;
+
+      do
+      {
+         rem = (unsigned int)n % radix;
+         n /= radix;
+         switch (rem) {
+         case 10:
+            s[pos++] = 'a';
+            break;
+         case 11:
+            s[pos++] = 'b';
+            break;
+         case 12:
+            s[pos++] = 'c';
+            break;
+         case 13:
+            s[pos++] = 'd';
+            break;
+         case 14:
+            s[pos++] = 'e';
+            break;
+         case 15:
+            s[pos++] = 'f';
+            break;
+         default:
+            if (rem < 10) {
+               s[pos++] = (char)(rem + 0x30);
+            }
+         }
+      } while (n != 0);
+
+      s[pos] = 0;
+      pos--;
+      while (start < pos) {
+         T tmp = s[start];
+         s[start++] = s[pos];
+         s[pos--] = tmp;
+      }
+   }
 };
 
 template <class T, size_t size> class String : BaseString<T>
@@ -309,7 +353,7 @@ public:
    {
       int pos = getlength(_string);
 
-      intToStr(n, _string + pos, 16);
+      uintToStr(n, _string + pos, 16);
 
       StrHelper::upper(_string + pos);
    }

@@ -102,6 +102,7 @@ public:
 
    void* loadSymbol(ident_t name);
    void* loadSubject(ident_t name);
+   void* loadMessage(ident_t name);
 
    void init(void* debugSection, path_t configPath);
 

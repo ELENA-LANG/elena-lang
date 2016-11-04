@@ -305,7 +305,7 @@ namespace _ELENA_
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
    const int elExtMessage          = 0x00208000;
-//   const int elSymbol              = 0x00100000;
+   const int elSymbol              = 0x00100000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
 //   const int elPointer             = 0x00800010;
 
@@ -320,7 +320,7 @@ namespace _ELENA_
    const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
-//   const int elDebugReference      = 0x000B0000;   // symbol reference
+   const int elDebugReference      = 0x000B0000;   // symbol reference
    const int elDebugSubject        = 0x000C0000;
 //   const int elDebugReals          = 0x000D0000;
    const int elDebugMessage        = 0x000E0000;
@@ -507,15 +507,12 @@ namespace _ELENA_
    #define STR_FORWARD              "'$literal"
    #define WIDESTR_FORWARD          "'$wideliteral"
    #define CHAR_FORWARD             "'$char"
-//   #define TRUE_FORWARD             "'$true"
-//   #define FALSE_FORWARD            "'$false"
    #define MESSAGE_FORWARD          "'$message"
    #define EXT_MESSAGE_FORWARD      "'$ext_message"
    #define SIGNATURE_FORWARD        "'$signature"
    #define VERB_FORWARD             "'$verb"
    #define ARRAY_FORWARD            "'$array"
    #define PARAMS_FORWARD           "'$params"
-//   #define SUBJ_FORWARD             "'$sign"
    #define BOOL_FORWARD             "'$bool"
 
    #define STARTUP_CLASS            "'startUp"

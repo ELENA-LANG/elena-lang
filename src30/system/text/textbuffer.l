@@ -118,6 +118,19 @@
         theLength += 1.
     ]
 
+    #method(stacksafe) write &int:n
+    [
+        #var(byte:16)tmp.
+        #var(char:16)ch_tmp.
+        #var(int)len := 16.
+        
+        literalConvertor convert &int:n &bytearray:tmp &vint:len.
+        
+        UTF8Encoding convert &int:0 &vint:len &bytearray:tmp &chararray:ch_tmp &vint:len.
+        
+        $self write &chararray:ch_tmp &int:len.
+    ]
+
     #method(generic) write : anObject
     [
         $self write &literal:(anObject literal).

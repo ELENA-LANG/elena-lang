@@ -1,5 +1,5 @@
 ﻿[project]
-executable=vbinterpreter
+executable=vbinterpreter.exe
 namespace=vb
 template=console
 debuginfo=-1

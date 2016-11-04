@@ -26,6 +26,9 @@
         aLength := theTop.
     ]
     
+    #method(bool) is &empty
+        = 0 == theTop.
+    
     #method push : anObject
     [
         #var(int)aCapacity := theList length.

@@ -803,6 +803,72 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
    return maxLength > 0;
 }
 
+int Instance :: parseMessage(ident_t message)
+{
+   IdentifierString signature;
+   int subject = 0;
+   int param = 0;
+   int verb_id = 0;
+   int paramCount = -1;
+   for (size_t i = 0; i < getlength(message); i++) {
+      if (message[i] == '&' && subject == 0) {
+         signature.copy(message, i);
+         verb_id = _verbs.get(signature);
+         if (verb_id != 0) {
+            subject = i + 1;
+         }
+      }
+      else if (message[i] == '.') {
+         return NULL;
+      }
+      else if (message[i] == '[') {
+         if (message[i + 1] == ']') {
+            //HOT FIX : support open argument list
+            paramCount = OPEN_ARG_COUNT;
+         }
+         else if (message[getlength(message) - 1] == ']') {
+            signature.copy(message + i + 1, getlength(message) - i - 2);
+            paramCount = signature.ident().toInt();
+            if (paramCount > 12)
+               return NULL;
+         }
+         else return NULL;
+
+         param = i;
+      }
+      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+      }
+      else if (message[i] == ']' && i == (getlength(message) - 1)) {
+      }
+      else return NULL;
+   }
+
+   if (param != 0) {
+      signature.copy(message + subject, param - subject);
+   }
+   else signature.copy(message + subject);
+
+   if (subject == 0 && paramCount != -1) {
+      verb_id = _verbs.get(signature);
+      if (verb_id != 0) {
+         signature.clear();
+      }
+   }
+
+   int signatureId = 0;
+   if (getlength(signature) > 0)
+      signatureId = (int)resolveReference(signature, 0);
+
+   if (verb_id == 0 && paramCount != -1) {
+      if (paramCount == 0) {
+         verb_id = GET_MESSAGE_ID;
+      }
+      else verb_id = EVAL_MESSAGE_ID;
+   }
+
+   return encodeMessage(signatureId, verb_id, paramCount) | MESSAGE_MASK;
+}
+
 // --- ELENAMachine::Config ---
 
 bool ELENAMachine::Config :: load(path_t path, Templates* templates)

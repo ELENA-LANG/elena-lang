@@ -150,14 +150,26 @@ In development:
                  * use imm mode for (n) => 1 ? [ now literal. ]
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
+                 * boxing optimization:
+                         #var(int)i := 0.
+                         #var(int)n := list length.
+                         
+                         #loop(i < n)?
+                         [
+                             $self setField &int:i &object:(list@i). // i is boxed
+                             
+                             i += 1.
+                         ].
+
+
+              xdev - ide
+                * vertical scroller does not work correctly
+                * set focus on the editor after selecting a project item
+                * the newly created project is saved incorrectly (..prj extension)
 
 ------                                 
 Pipeline:
 ------                                                                                         
-              xdev - ide
-                * vertical scroller does not work correctly
-                * set focus on the editor after selecting a project item
-
               xdev
                 * linux migration
 

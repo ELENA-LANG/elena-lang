@@ -667,6 +667,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugMessage | elStructureRole | elEmbeddable;
          info.size = 8;
          break;
+      case V_SYMBOL:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReference | elStructureRole | elEmbeddable;
+         info.size = 8;
+         break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elEmbeddable;
@@ -704,14 +709,6 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          }
          break;
    }
-
-//      else if (isPrimitiveRef(classRef)) {
-//         else if (classRef == -3) {
-//            scope.moduleScope->loadClassInfo(localInfo, scope.moduleScope->subjectHints.get(type), true);
-//            size = size * localInfo.size;
-//            bytearray = true;
-//         }
-//      }
 
    return true;
 }
@@ -906,6 +903,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue)
       case V_SIGNATURE:
          attrValue = lxSignatureAttr;
          return true;
+      case V_SYMBOL:
+         attrValue = lxSymbolAttr;
+         return true;
       case V_MESSAGE:
          attrValue = lxMessageAttr;
          return true;
@@ -993,9 +993,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(LexicalType attr, ClassInfo& info
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 8;
-            //            case -7:
-            //               scope.info.header.flags |= (elDebugReference | elReadOnlyRole | elSymbol);
-            //               break;
+         case lxSymbolAttr:
+            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
+            return info.size == 4;
          default:
             break;
       }

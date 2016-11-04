@@ -20,7 +20,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   10
+#define REVISION_VERSION   11
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -810,8 +810,8 @@ void listFlags(int flags)
    if (test(flags, elExtMessage))
       printLine("@flag ", "elExtMessage");
 
-   //if (test(flags, elSymbol))
-   //   printLine("@flag ", "elSymbol");
+   if (test(flags, elSymbol))
+      printLine("@flag ", "elSymbol");
 
    switch (flags & elDebugMask) {
       case elDebugDWORD:
@@ -844,9 +844,9 @@ void listFlags(int flags)
       case elDebugWideLiteral:
          printLine("@flag ", "elDebugWideLiteral");
          break;
-      //case elDebugReference:
-      //   printLine("@flag ", "elDebugReference");
-      //   break;
+      case elDebugReference:
+         printLine("@flag ", "elDebugReference");
+         break;
       case elDebugSubject:
          printLine("@flag ", "elDebugSubject");
          break;

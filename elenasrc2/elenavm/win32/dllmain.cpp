@@ -78,7 +78,7 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
       ident_t className = instance->getClassName(vmtAddress);
       size_t length = getlength(className);
       if (length > 0) {
-         if (maxLength >= length) {
+         if (maxLength >= (int)length) {
             Convertor::copy(buffer, className, length, length);
          }
          else buffer[0] = 0;
@@ -98,7 +98,7 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }
@@ -118,7 +118,7 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLen
       ident_t subjectName = instance->getSubject((ref_t)subj_id);
       size_t length = getlength(subjectName);
       if (length > 0) {
-         if (maxLength >= length) {
+         if (maxLength >= (int)length) {
             Convertor::copy(buffer, subjectName, length, length);
          }
          else buffer[0] = 0;
@@ -138,7 +138,7 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLen
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }
@@ -167,7 +167,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }
@@ -194,7 +194,7 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength
          ident_t subjectName = instance->getSubject((ref_t)subj_id);
          size_t length = getlength(subjectName) ;
          if (length > 0) {
-            if (maxLength >= length + used) {
+            if (maxLength >= (int)(length + used)) {
                Convertor::copy(buffer + used, subjectName, length, length);
 
                used += length;
@@ -225,7 +225,34 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
+{
+   Instance* instance = getCurrentInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return (void*)(MESSAGE_MASK | instance->getMessageRef((const char*)messageName));
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.reference);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
    {
       return 0;
    }
@@ -252,7 +279,7 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }
@@ -279,7 +306,7 @@ EXTERN_DLL_EXPORT int InterpretTape(void* tape)
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }
@@ -306,7 +333,7 @@ EXTERN_DLL_EXPORT int EvaluateTape(void* tape)
 
       return 0;
    }
-   catch (EAbortException& e)
+   catch (EAbortException&)
    {
       return 0;
    }

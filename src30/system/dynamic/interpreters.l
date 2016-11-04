@@ -9,22 +9,39 @@
 {
     #field $item.
     
+    #constructor $new &int:n
+        = object:n.
+    
+    #constructor new &array:list
+        <= ($new &int:(list length))
+    [
+        #var(int)i := 0.
+        #var(int)n := list length.
+        
+        #loop(i < n)?
+        [
+            $self setField &int:i &object:(list getAt &int:i).
+            
+            i += 1.
+        ].
+    ]    
+    
     #method => system'core_routines'__tape.
 }
 
-// --- tapeControl ---
-
-#class(extension)tapeOp
-{
-    #method var &args:params
-    [
-        #var(int)len := params length.
-        #var(int)n := len.
-        n -= self int.
-       
-        ^ params@n.
-    ]
-}
+//// --- tapeControl ---
+//
+//#class(extension)tapeOp
+//{
+//    #method var &args:params
+//    [
+//        #var(int)len := params length.
+//        #var(int)n := len.
+//        n -= self int.
+//       
+//        ^ params@n.
+//    ]
+//}
 
 // --- Struct ---
 
