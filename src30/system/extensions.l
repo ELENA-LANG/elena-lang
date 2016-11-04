@@ -52,9 +52,9 @@
 
 //    #method eval &with:action
 //        = action eval:self.
-//        
-//    #method(stacksafe) reallocate &int:aNewLength
-//        => system'core_routines'__array.
+        
+    #method(stacksafe) reallocate &int:aNewLength
+        => system'core_routines'__array.
 }
 
 // --- Operations ---
@@ -950,45 +950,45 @@
         ^ self.            
     ]
 
-//    #method startingWith:s
-//        = self::literalOp startingWith &literal:(s literal).
-//        
-//    #method startingWith &literal:s
-//    [
-//        #var(int)n.
-//        self indexOf &int:0 &literal:s &vint:n.
-//        
-//        ^ 0 == n.
-//    ]
-//        
-//    #method endingWith &literal:s
-//    [
-//        #var(int)l1 := self length.
-//        #var(int)l2 := s length.
-//
-//        #var(int)n.
-//        self indexOf &int:(l1 - l2) &literal:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//
-//    #method endingWith:s
-//        = self::literalOp endingWith &literal:(s literal).
-//        
-//    #method containing &literal:s
-//    [
-//        #var(int)l1 := self length.
-//        #var(int)l2 := s length.
-//
-//        #var(int)n.
-//        self indexOf &int:0 &literal:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//
-//    #method containing:s
-//        = self::literalOp containing &literal:(s literal).
-//    
+    #method startingWith:s
+        = self::literalOp startingWith &literal:(s literal).
+        
+    #method startingWith &literal:s
+    [
+        #var(int)n.
+        self indexOf &int:0 &literal:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+        
+    #method endingWith &literal:s
+    [
+        #var(int)l1 := self length.
+        #var(int)l2 := s length.
+
+        #var(int)n.
+        self indexOf &int:(l1 - l2) &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method endingWith:s
+        = self::literalOp endingWith &literal:(s literal).
+        
+    #method containing &literal:s
+    [
+        #var(int)l1 := self length.
+        #var(int)l2 := s length.
+
+        #var(int)n.
+        self indexOf &int:0 &literal:s &vint:n.
+        
+        ^ n != -1.
+    ]
+
+    #method containing:s
+        = self::literalOp containing &literal:(s literal).
+    
 //    #method replaceFirst &literal:aReplacee &literal:aReplacer
 //    [
 //        #var(int)aReplaceeLen := aReplacee length.
@@ -1133,44 +1133,44 @@
         ^ self.            
     ]
 
-//    #method startingWith &wide:s
-//    [
-//        #var(int)n.
-//        self indexOf &int:0 &wide:s &vint:n.
-//        
-//        ^ 0 == n.
-//    ]
-//    
-//    #method startingWith:s
-//        = self::wideOp startingWith &wide:(s wide).
-//
-//    #method endingWith &wide:s
-//    [
-//        #var(int)l1 := self length.
-//        #var(int)l2 := s length.
-//        #var(int)n.        
-//        self indexOf &int:(l1 - l2) &wide:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//    
-//    #method endingWith:s
-//        = self::wideOp endingWith &wide:(s wide).
-//
-//    #method containing &wide:s
-//    [
-//        #var(int)l1 := self length.
-//        #var(int)l2 := s length.
-//        #var(int)n.
-//        
-//        self indexOf &int:0 &wide:s &vint:n.
-//        
-//        ^ n != -1.
-//    ]
-//    
-//    #method containing:s
-//        = self::wideOp containing &wide:(s wide).
-//
+    #method startingWith &wide:s
+    [
+        #var(int)n.
+        self indexOf &int:0 &wide:s &vint:n.
+        
+        ^ 0 == n.
+    ]
+    
+    #method startingWith:s
+        = self::wideOp startingWith &wide:(s wide).
+
+    #method endingWith &wide:s
+    [
+        #var(int)l1 := self length.
+        #var(int)l2 := s length.
+        #var(int)n.        
+        self indexOf &int:(l1 - l2) &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method endingWith:s
+        = self::wideOp endingWith &wide:(s wide).
+
+    #method containing &wide:s
+    [
+        #var(int)l1 := self length.
+        #var(int)l2 := s length.
+        #var(int)n.
+        
+        self indexOf &int:0 &wide:s &vint:n.
+        
+        ^ n != -1.
+    ]
+    
+    #method containing:s
+        = self::wideOp containing &wide:(s wide).
+
 //    #method replaceFirst &wide:aReplacee &wide:aReplacer
 //    [
 //        #var(int) aReplaceeLen := aReplacee length.
@@ -1289,27 +1289,27 @@
         ^ self::dispatcher padRight &char:aChar &int:(aLength int).
     ]
     
-//    #method startingWith : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher startingWith:s.
-//    ]
-//    
-//    #method endingWith : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher endingWith:s.
-//    ]
-//    
-//    #method containing : s
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher containing:s.
-//    ]
-//    
+    #method startingWith : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher startingWith:s.
+    ]
+    
+    #method endingWith : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher endingWith:s.
+    ]
+    
+    #method containing : s
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher containing:s.
+    ]
+    
 //    #method replaceFirst &literal:aReplacee &literal:aReplacer
 //    [
 //        #var dispatcher := self cast:%eval &to:stringOpDispatcher.

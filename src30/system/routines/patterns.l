@@ -72,7 +72,7 @@
     [
         #loop (theEnumerator next)?
         [
-            (theFilter eval:(theEnumerator get))
+            (theFilter eval:(theEnumerator get) bool) // !! temporal
                 ? [ ^ true. ].
         ].
         

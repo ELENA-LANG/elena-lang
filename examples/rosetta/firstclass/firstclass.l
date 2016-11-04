@@ -4,8 +4,8 @@
 // Implement function composition as in Functional Composition. Finally, demonstrate that the result of applying the composition 
 // of each function in A and its inverse in B to a value, is the original value
 
-#define system.
-#define system'routines.
+#import system.
+#import system'routines.
 #import system'math.
 #import extensions'routines.
  

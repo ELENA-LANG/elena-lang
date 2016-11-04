@@ -204,7 +204,7 @@
         
         theParser append &difference &expression:theExpression &level:theLevel.
     ]                                                
-    
+      
     #method new &product
     [
         theToken := nil.
@@ -311,7 +311,7 @@
         ($nil == aLastNode)
             ? [ ^ aNewNode. ].
         
-        (aNewNode level <= aLastNode level)
+        ((aNewNode level <= aLastNode level) bool) // !! temporal bool
             ? [ aNewNode set &left:aLastNode. ^ aNewNode. ].
             
         #var aParent := aLastNode.

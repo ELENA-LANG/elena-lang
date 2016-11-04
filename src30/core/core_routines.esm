@@ -1851,6 +1851,63 @@ procedure __array.eval&copy&array$&int$&int$&array$[4]
   
 end
 
+procedure __array.eval&reallocate&int$[2]
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
+  aloadsi 2
+  nload
+  class
+  create
+  bloadsi 1
+  count
+  dcopye        // ; index - old length
+  bcopya
+  count         // ; ext - new length
+  less labExpand
+
+  aloadsi 1
+
+  pusha
+  count
+  dcopy 0
+labCopy:
+  get
+  bswapsi 0
+  xset
+  bswapsi 0
+  next labCopy
+  pop
+
+  acopyb
+  quitn 2
+
+labExpand:
+  ecopyd
+  dcopy 0
+  pushb
+labNext:
+  bloadsi 2
+  get
+  bloadsi 0
+  xset
+  inc
+  less labNext
+
+  count
+  acopyr const : system'nil
+labNext2:
+  xset
+  inc
+  less labNext2
+  popa
+  quitn 2
+
+end
+
 procedure __intarray.eval&readLength&vint$[2]
 
   aloadsi 1

@@ -153,38 +153,38 @@
 //             
 //    #method sequenceEqual:list
 //        = self::enumerableOp equal &enumerable:list.
-//                                                  
-//    #method firstMember
-//    [
-//        #var(enumerator)anEnumerator := self enumerator.
-//        
-//        (anEnumerator next) 
-//            ? [ ^ anEnumerator get. ]
-//            ! [ ^ $nil. ].
-//    ]
-//
-//    #method lastMember
-//    [
-//        #var(enumerator)anEnumerator := self enumerator.
-//        #var aLastItem := $nil.
-//        
-//        #loop (anEnumerator next) ?
-//            [ aLastItem := anEnumerator get. ].
-//            
-//        ^ aLastItem.
-//    ]
-//    
-//    #method(int,w3) count
-//    [
-//        #var(enumerator)en := self enumerator.
-//        #var(int)counter := 0.
-//        #loop (en next)?
-//        [
-//            counter += 1.
-//        ].
-//        
-//        ^ counter.
-//    ]
+                                                  
+    #method firstMember
+    [
+        #var(enumerator)anEnumerator := self enumerator.
+        
+        (anEnumerator next) 
+            ? [ ^ anEnumerator get. ]
+            ! [ ^ $nil. ].
+    ]
+
+    #method lastMember
+    [
+        #var(enumerator)anEnumerator := self enumerator.
+        #var aLastItem := $nil.
+        
+        #loop (anEnumerator next) ?
+            [ aLastItem := anEnumerator get. ].
+            
+        ^ aLastItem.
+    ]
+    
+    #method(int,w3) count
+    [
+        #var(enumerator)en := self enumerator.
+        #var(int)counter := 0.
+        #loop (en next)?
+        [
+            counter += 1.
+        ].
+        
+        ^ counter.
+    ]
 }
 
 // --- indexableOp ---
@@ -308,20 +308,20 @@
     #method ascendant
         = (self clone)::indexableOp sort:ifOrdered.
 
-//    #method Subarray : aLength &at:anIndex
-//        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
-//                
-//    /// obsolete
-//    #method Subarray &index:anIndex &length:aLength
-//        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
-//                
-//    #method Subarray &int:anIndex &int:aLength
-//    [
-//        #var(iterator) it := self iterator.
-//        
-//        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
-//    ]
-//    
+    #method Subarray : aLength &at:anIndex
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    /// obsolete
+    #method Subarray &index:anIndex &length:aLength
+        = self::indexableOp Subarray &int:(anIndex int) &int:(aLength int).
+                
+    #method Subarray &int:anIndex &int:aLength
+    [
+        #var(iterator) it := self iterator.
+        
+        ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
+    ]
+    
 //    #method(w2) equal &indexable:anArray
 //    [
 //        (self length != anArray length)

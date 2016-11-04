@@ -71,18 +71,18 @@
 //            ? [ console writeLine:"Assertion fails!" ].
 //    ]
 //}
-//
-//// --- controlOp ---
-//
-//#class(extension)controlOp
-//{
-//    #method save &to:target
-//    [
-//        target write:self.
-//        
-//        ^   self.
-//    ]
-//}
+
+// --- controlOp ---
+
+#class(extension)controlOp
+{
+    #method save &to:target
+    [
+        target write:self.
+        
+        ^   self.
+    ]
+}
 
 // --- control ---
 

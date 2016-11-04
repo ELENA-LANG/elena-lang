@@ -11,10 +11,12 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev
-                 * test rosetta samples (aplusb)
+                 * test rosetta samples (firstclass)
                  * test anonymrec
                  * test amb
                  * test anagram
+                 * test calendar
+                 * test evolution
                  * uncomment StructTest
                  * uncomment GroupTest
                  * uncomment DTOToStructTest
@@ -142,6 +144,7 @@ In development:
                          ^ $nil.        
                    should work if [ ^ ... ] is an explicit action ; return operator in the action
                          should be similar to the one in implicit action, i.e. break the code and go to the method end
+                         (see for example bsort, arithmeval, arraymode (system'Filter))
                  * ByteNumber.get&min - could we return the constant object?
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
