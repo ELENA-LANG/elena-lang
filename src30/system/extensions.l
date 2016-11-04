@@ -703,54 +703,54 @@
         self setAt &int:anIndex2 &object:aTemp.
     ]
     
-//    #method(stacksafe) indexOf &int:anIndex &object:anObject &vint:aRetVal
-//    [
-//        aRetVal := -1.
-//        
-//        #var(int)aLength := self length.
-//        
-//        #var(int)i := anIndex.
-//        #loop (i < aLength)?
-//        [
-//            #var anArrayItem := self getAt &int:i.
-//            
-//            (anObject == anArrayItem)
-//                ? [ aRetVal := i. ].
-//            
-//            i += 1.
-//        ].
-//    ]        
-//        
-//    #method(stacksafe) indexOf &int:anIndex &object:anObject
-//    [
-//        #var(int)aRetVal.
-//        
-//        self::arrayOp indexOf &int:anIndex &object:anObject &vint:aRetVal.
-//        
-//        ^ IntNumber new &int:aRetVal.
-//    ]
-//    
-//    #method indexOf : anObject
-//        = self::arrayOp indexOf &int:0 &object:anObject.
-//        
-//    #method(w2) safeSeek : aValue
-//    [
-//        #var(int)aLength := self length.
-//        
-//        #var(int)i := 0.
-//        #loop (i < aLength)?
-//        [
-//            #var anArrayItem := self getAt &int:i.
-//            
-//            (aValue safeEqual:anArrayItem)
-//                ? [ ^ anArrayItem. ].
-//            
-//            i += 1.
-//        ].
-//        
-//        ^ $nil.
-//    ]
-//        
+    #method(stacksafe) indexOf &int:anIndex &object:anObject &vint:aRetVal
+    [
+        aRetVal := -1.
+        
+        #var(int)aLength := self length.
+        
+        #var(int)i := anIndex.
+        #loop (i < aLength)?
+        [
+            #var anArrayItem := self getAt &int:i.
+            
+            (anObject == anArrayItem)
+                ? [ aRetVal := i. ].
+            
+            i += 1.
+        ].
+    ]        
+        
+    #method(stacksafe) indexOf &int:anIndex &object:anObject
+    [
+        #var(int)aRetVal.
+        
+        self::arrayOp indexOf &int:anIndex &object:anObject &vint:aRetVal.
+        
+        ^ IntNumber new &int:aRetVal.
+    ]
+    
+    #method indexOf : anObject
+        = self::arrayOp indexOf &int:0 &object:anObject.
+        
+    #method(w2) safeSeek : aValue
+    [
+        #var(int)aLength := self length.
+        
+        #var(int)i := 0.
+        #loop (i < aLength)?
+        [
+            #var anArrayItem := self getAt &int:i.
+            
+            (aValue safeEqual:anArrayItem)
+                ? [ ^ anArrayItem. ].
+            
+            i += 1.
+        ].
+        
+        ^ $nil.
+    ]
+        
 //    #method deepClone
 //    [
 //        #var(int)aLength := self length.
@@ -851,14 +851,14 @@
 
 #class(extension:literal)literalOp
 {
-//    #method indexOf : anObject
-//        = self indexOf:anObject &at:0.
-//
-//    #method indexOf &literal:aLiteral
-//        = self indexOf &literal:aLiteral &at:0.
-//
-//    #method indexOf &char:aChar
-//        = self indexOf &char:aChar &at:0.
+    #method indexOf : anObject
+        = self indexOf:anObject &at:0.
+
+    #method indexOf &literal:aLiteral
+        = self indexOf &literal:aLiteral &at:0.
+
+    #method indexOf &char:aChar
+        = self indexOf &char:aChar &at:0.
         
     #method(literal) Substring &at:anIndex
         = self::literalOp Substring &int:(anIndex int).
@@ -989,63 +989,63 @@
     #method containing:s
         = self::literalOp containing &literal:(s literal).
     
-//    #method replaceFirst &literal:aReplacee &literal:aReplacer
-//    [
-//        #var(int)aReplaceeLen := aReplacee length.
-//        #var(int)anIndex.
-//        
-//        self indexOf &int:0 &literal:aReplacee &vint:anIndex.
-//        
-//        (anIndex != -1)
-//            ? [ ^ self delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
-//            ! [ ^ self. ].
-//    ]    
-//    
-//    #method replace &literal:aReplacee &literal:aReplacer
-//    [
-//        #var(literal) aTarget := emptyLiteralValue.
-//        #var(int)aStart := 0.
-//        #var(int)anEnd.
-//        #var(int)aReplaceeLen := aReplacee length.
-//        
-//        self indexOf &int:aStart &literal:aReplacee &vint:anEnd.
-//        
-//        #loop (anEnd != -1) ?
-//        [
-//            aTarget := aTarget
-//                add &literal:(self Substring &int:aStart &int:(anEnd - aStart))
-//                add &literal:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf &int:aStart &literal:aReplacee &vint:anEnd.
-//        ].
-//    
-//        ^ (aStart != 0)
-//            ? [ aTarget add &literal:(self::literalOp Substring &int:aStart) ]
-//            ! [ self ].
-//    ]
-//    
-//    #method(bool) is &empty
-//    [
-//        #var(int)aLength := self length.
-//        
-//        ^ aLength == 0.
-//    ]    
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
+    [
+        #var(int)aReplaceeLen := aReplacee length.
+        #var(int)anIndex.
+        
+        self indexOf &int:0 &literal:aReplacee &vint:anIndex.
+        
+        (anIndex != -1)
+            ? [ ^ self delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &literal:aReplacee. ]
+            ! [ ^ self. ].
+    ]    
+    
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var(literal) aTarget := emptyLiteralValue.
+        #var(int)aStart := 0.
+        #var(int)anEnd.
+        #var(int)aReplaceeLen := aReplacee length.
+        
+        self indexOf &int:aStart &literal:aReplacee &vint:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget := aTarget
+                add &literal:(self Substring &int:aStart &int:(anEnd - aStart))
+                add &literal:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf &int:aStart &literal:aReplacee &vint:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget add &literal:(self::literalOp Substring &int:aStart) ]
+            ! [ self ].
+    ]
+    
+    #method(bool) is &empty
+    [
+        #var(int)aLength := self length.
+        
+        ^ aLength == 0.
+    ]    
 }
 
 // --- wideOp ---
 
 #class(extension:wide)wideOp
 {
-//    #method indexOf : anObject
-//        = self indexOf:anObject &at:0.
-//        
-//    #method indexOf &wide:aLiteral
-//        = self indexOf &int:0 &wide:aLiteral.
-//
-//    #method indexOf &char:aChar
-//        = self indexOf &int:0 &char:aChar.
+    #method indexOf : anObject
+        = self indexOf:anObject &at:0.
+        
+    #method indexOf &wide:aLiteral
+        = self indexOf &int:0 &wide:aLiteral.
+
+    #method indexOf &char:aChar
+        = self indexOf &int:0 &char:aChar.
                 
     #method(wide) Substring &at:anIndex
         = self::wideOp Substring &int:(anIndex int).
@@ -1171,49 +1171,49 @@
     #method containing:s
         = self::wideOp containing &wide:(s wide).
 
-//    #method replaceFirst &wide:aReplacee &wide:aReplacer
-//    [
-//        #var(int) aReplaceeLen := aReplacee length.
-//        #var(int)anIndex.
-//        
-//        self indexOf &int:0 &wide:aReplacee &vint:anIndex.
-//        
-//        (anIndex != -1)
-//            ? [ ^ self delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &wide:aReplacee. ]
-//            ! [ ^ self. ].
-//    ]
-//        
-//    #method(w2) replace &wide:aReplacee &wide:aReplacer
-//    [
-//        #var(wide) aTarget := emptyWideLiteralValue.
-//        #var(int)aStart := 0.
-//        #var(int)anEnd.
-//        #var(int)aReplaceeLen := aReplacee length.
-//        
-//        self indexOf &int:aStart &wide:aReplacee &vint:anEnd.
-//        
-//        #loop (anEnd != -1) ?
-//        [
-//            aTarget := aTarget
-//                add &wide:(self Substring &int:aStart &int:(anEnd - aStart))
-//                add &wide:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf &int:aStart &wide:aReplacee &vint:anEnd.
-//        ].
-//    
-//        ^ (aStart != 0)
-//            ? [ aTarget add &wide:(self::wideOp Substring &int:aStart) ]
-//            ! [ self ].
-//    ]
-//
-//    #method(bool) is &empty
-//    [
-//        #var(int)aLength := self length.
-//        
-//        ^ aLength == 0.
-//    ]
+    #method replaceFirst &wide:aReplacee &wide:aReplacer
+    [
+        #var(int) aReplaceeLen := aReplacee length.
+        #var(int)anIndex.
+        
+        self indexOf &int:0 &wide:aReplacee &vint:anIndex.
+        
+        (anIndex != -1)
+            ? [ ^ self delete &int:anIndex &int:aReplaceeLen insert &int:anIndex &wide:aReplacee. ]
+            ! [ ^ self. ].
+    ]
+        
+    #method(w2) replace &wide:aReplacee &wide:aReplacer
+    [
+        #var(wide) aTarget := emptyWideLiteralValue.
+        #var(int)aStart := 0.
+        #var(int)anEnd.
+        #var(int)aReplaceeLen := aReplacee length.
+        
+        self indexOf &int:aStart &wide:aReplacee &vint:anEnd.
+        
+        #loop (anEnd != -1) ?
+        [
+            aTarget := aTarget
+                add &wide:(self Substring &int:aStart &int:(anEnd - aStart))
+                add &wide:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf &int:aStart &wide:aReplacee &vint:anEnd.
+        ].
+    
+        ^ (aStart != 0)
+            ? [ aTarget add &wide:(self::wideOp Substring &int:aStart) ]
+            ! [ self ].
+    ]
+
+    #method(bool) is &empty
+    [
+        #var(int)aLength := self length.
+        
+        ^ aLength == 0.
+    ]
 }
 
 // --- stringOp ---
@@ -1310,20 +1310,20 @@
         ^ self::dispatcher containing:s.
     ]
     
-//    #method replaceFirst &literal:aReplacee &literal:aReplacer
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher replaceFirst &literal:aReplacee &literal:aReplacer.
-//    ]
-//    
-//    #method replace &literal:aReplacee &literal:aReplacer
-//    [
-//        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
-//        
-//        ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
-//    ]
-//    
+    #method replaceFirst &literal:aReplacee &literal:aReplacer
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher replaceFirst &literal:aReplacee &literal:aReplacer.
+    ]
+    
+    #method replace &literal:aReplacee &literal:aReplacer
+    [
+        #var dispatcher := self cast:%eval &to:stringOpDispatcher.
+        
+        ^ self::dispatcher replace &literal:aReplacee &literal:aReplacer.
+    ]
+    
 //    #method write : aLiteral &length:aCounter
 //        = self::stringOp write : aLiteral &int:(aCounter int).
             

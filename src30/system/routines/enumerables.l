@@ -341,35 +341,35 @@
 //          
 //        ^ true.                              
 //    ]
-//            
-//    #method reverse
-//        = self::indexableOp reverse:(self length) &at:0.
-//            
-//    #method reverse:counter &at:index
-//    [
-//        #var(iterator) it := self iterator.
-//        
-//        #var(int)i := index int.
-//        #var(int)j := counter int.
-//        j := j + i.
-//        j := j - 1.
-//        
-//        #loop (i < j)?
-//        [
-//            it writeIndex &int:i.
-//            #var temp1 := it get.
-//            it writeIndex &int:j.
-//            #var temp2 := it get.
-//            it set:temp1.
-//            it writeIndex &int:i.
-//            it set:temp2.
-//            
-//            i += 1.
-//            j -= 1.
-//        ].
-//        
-//        ^ self.
-//    ]    
+            
+    #method reverse
+        = self::indexableOp reverse:(self length) &at:0.
+            
+    #method reverse:counter &at:index
+    [
+        #var(iterator) it := self iterator.
+        
+        #var(int)i := index int.
+        #var(int)j := counter int.
+        j := j + i.
+        j := j - 1.
+        
+        #loop (i < j)?
+        [
+            it writeIndex &int:i.
+            #var temp1 := it get.
+            it writeIndex &int:j.
+            #var temp2 := it get.
+            it set:temp1.
+            it writeIndex &int:i.
+            it set:temp2.
+            
+            i += 1.
+            j -= 1.
+        ].
+        
+        ^ self.
+    ]    
 }
 
 // --- stringListOp ---

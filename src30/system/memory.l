@@ -860,7 +860,7 @@
     ]
     
     /// Concatinates the values
-    #method(literal) add &char:aChar
+    #method(literal,stacksafe) add &char:aChar
         = $self add &literal:(aChar literal).
 
     // Reads the character at the specified index and saves into an output parameter

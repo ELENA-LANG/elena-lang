@@ -1556,7 +1556,7 @@
     #method clone = CharValue new &char:$self.
 
     /// Returns the literal value
-    #method(w2) literal = system'literalConvertor convert &char:$self.
+    #method(w2,stacksafe) literal = system'literalConvertor convert &char:$self.
 
     /// Returns the wide literal value
     #method(w2) wide = system'wideConvertor convert &char:$self.

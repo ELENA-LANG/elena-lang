@@ -11,7 +11,14 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev
-                 * test rosetta samples (firstclass)
+                 * test twentyfour
+                 * test twelvestat
+                 * test truncprime
+                 * test treeview
+                 * test 99
+                 * test manboy
+                 * test knutalg
+                 * test firstclass
                  * test anonymrec
                  * test amb
                  * test anagram

@@ -19,6 +19,7 @@ templates.l
 control.l
 memory.l
 dynamic.l
+win32_strings.l
 extensions.l
 exceptions.l
 console.l
@@ -36,6 +37,8 @@ text\win32_common.l
 text\encoder.l
 text\win32_encoder.l
 text\textbuffer.l
+culture\win32_locale.l
+culture\win32_stringculture.l
 drawing\common.l
 drawing\win32_handles.l
 drawing\win32_graphics.l
