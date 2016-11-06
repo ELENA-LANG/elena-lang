@@ -322,25 +322,25 @@
         ^ Array new &int:aLength set &nfunc: (&int:i) [ it writeIndex &int:(anIndex + i) get ].
     ]
     
-//    #method(w2) equal &indexable:anArray
-//    [
-//        (self length != anArray length)
-//            ? [ ^ false. ].
-//            
-//        #var(iterator) a := self iterator.
-//        #var(iterator) b := anArray iterator.
-//        
-//        #loop (a available)?
-//        [
-//            (a get == b get)
-//                ! [ ^ false. ].
-//                
-//            a append &index:1.
-//            b append &index:1.
-//        ].
-//          
-//        ^ true.                              
-//    ]
+    #method(w2) equal &indexable:anArray
+    [
+        (self length != anArray length)
+            ? [ ^ false. ].
+            
+        #var(iterator) a := self iterator.
+        #var(iterator) b := anArray iterator.
+        
+        #loop (a available)?
+        [
+            (a get == b get)
+                ! [ ^ false. ].
+                
+            a append &index:1.
+            b append &index:1.
+        ].
+          
+        ^ true.                              
+    ]
             
     #method reverse
         = self::indexableOp reverse:(self length) &at:0.

@@ -2667,7 +2667,6 @@ procedure coreapi'sequal
   mov  eax, 0
   cmp  ecx, ebx              // compare with s2.length
   jnz  short Lab1
-  sub  ecx, 1
 Lab2:
   mov  ebx, [esi]
   cmp  bl,  byte ptr [edx]

@@ -32,7 +32,7 @@
             ($nil == theTree)
                 ? [ theTree := node. ]
                 ! [
-                    (theTree level >= node level)
+                    ((theTree level >= node level) bool)
                         ? [
                             node set &left:theTree set &right:$nil.
                             
@@ -53,7 +53,7 @@
     
     #method eval : aNode
     [
-        (aNode if &leaf)
+        (aNode if &leaf bool)
             ? [ ^ aNode leaf. ]
             ! [
                 #var aLeft := $self eval:(aNode left).

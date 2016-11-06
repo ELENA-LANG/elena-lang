@@ -11,7 +11,6 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev
-                 * test twentyfour
                  * test twelvestat
                  * test truncprime
                  * test treeview
