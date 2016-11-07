@@ -2131,7 +2131,7 @@ void Compiler :: compileClassAttributes(SNode node, ClassScope& scope, SNode roo
          if (sourceNode != lxNone)
             templateScope.sourceRef = _writer.writeString(sourceNode.identifier());
 
-         compileClassAttributes(current, /*scope*/templateScope, rootNode);
+         compileClassAttributes(current, templateScope, rootNode);
       }
 
       current = current.nextNode();
@@ -2167,41 +2167,6 @@ void Compiler :: compileSymbolAttributes(SNode node, SymbolScope& scope, SNode r
       current = current.nextNode();
    }
 }
-
-//void Compiler :: compileSingletonHints(DNode hints, SyntaxWriter& writer, ClassScope& scope)
-//{
-//   while (hints == nsHint) {
-//      ref_t hintRef = mapHint(hints, *scope.moduleScope, 0);
-//
-//      TerminalInfo terminal = hints.Terminal();
-//
-//      if (hintRef != 0) {
-//         declareAttribute(hints, scope, writer, hintRef);
-//      }
-//      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, hints.Terminal());
-//
-//      hints = hints.nextNode();
-//   }
-//}
-//
-//void Compiler :: compileTemplateHints(DNode hints, SyntaxWriter& writer, TemplateScope& scope)
-//{
-//   if (scope.type == TemplateScope::ttClass) {
-//      while (hints == nsHint) {
-//         if (!compileClassHint(hints, writer, scope))
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownHint, hints.Terminal());
-//
-//         hints = hints.nextNode();
-//      }
-//   }
-//   else if (scope.type == TemplateScope::ttMethod) {
-//      MethodScope methodScope(&scope);
-//      compileMethodHints(hints, writer, methodScope);
-//   }
-//   else if (scope.type == TemplateScope::ttField) {
-//      compileFieldHints(hints, writer, scope);
-//   }
-//}
 
 void Compiler :: compileFieldAttributes(SNode node, ClassScope& scope, SNode rootNode)
 {
@@ -3035,6 +3000,10 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t messageRef, ObjectInfo ob
    else {
       if (scope.moduleScope->extensionHints.exist(messageRef)) {
          ref_t classRef = resolveObjectReference(scope, object);
+         if (_logic->isPrimitiveRef(classRef)) {
+            classRef = _logic->resolvePrimitiveReference(*scope.moduleScope, classRef);
+         }
+
          // if class reference available - select the possible type
          if (classRef != 0) {
             SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
@@ -5851,148 +5820,13 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    // generate fields
    generateClassFields(scope, node, countFields(node) == 1);
 
-//   // define the data type for the array
-//   if (test(scope.info.header.flags, elDynamicRole) && (scope.info.header.flags & elDebugMask) == 0) {
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         ref_t fieldClassRef = scope.moduleScope->subjectHints.get(scope.info.fieldTypes.get(-1));
-//
-//         int fieldFlags = scope.moduleScope->getClassFlags(fieldClassRef) & elDebugMask;
-//         if (fieldFlags == elDebugDWORD) {
-//            switch (scope.info.size)
-//            {
-//               case -4:
-//                  scope.info.header.flags |= elDebugIntegers;
-//                  break;
-//               case -2:
-//                  scope.info.header.flags |= elDebugShorts;
-//                  break;
-//               case -1:
-//                  scope.info.header.flags |= elDebugBytes;
-//                  break;
-//            }
-//         }
-//         else if ((scope.info.size == -4) && (fieldFlags == elDebugMessage || fieldFlags == elDebugSubject)) {
-//            scope.info.header.flags |= elDebugIntegers;
-//         }
-//      }
-//   }
-//
-//   //HOTFIX : recognize pointer structure
-//   if (test(scope.info.header.flags, elStructureRole | elPointer)
-//      && ((scope.info.header.flags & elDebugMask) == 0) && scope.info.fields.Count() == 1)
-//   {
-//      switch (scope.moduleScope->getTypeFlags(scope.info.fieldTypes.get(0)) & elDebugMask)
-//      {
-//         case elDebugDWORD:
-//            scope.info.header.flags |= elDebugPTR;
-//            break;
-//         case elDebugQWORD:
-//            scope.info.header.flags |= elDebugDPTR;
-//            break;
-//         default:
-//            scope.info.header.flags &= ~elPointer;
-//            break;
-//      }
-//   }
-
    _logic->injectVirtualCode(node, *scope.moduleScope, scope.info, *this);
 
    // generate methods
    generateMethodDeclarations(scope, node, false, closed);
 
    _logic->tweakClassFlags(*scope.moduleScope, scope.reference, scope.info);
-
-//   // declare virtual methods
-//   if (!closed)
-//      declareVirtualMethods(scope);
 }
-
-////bool Compiler :: validateMethodTemplate(SyntaxTree::Node node, ref_t& targetMethod)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxTemplateCalling) {
-////         if (targetMethod == 0) {
-////            targetMethod = current.argument;
-////         }
-////         else if (targetMethod != current.argument)
-////            return false;
-////      }
-////
-////      if (!validateMethodTemplate(current, targetMethod))
-////         return false;
-////
-////      current = current.nextNode();
-////   }
-////   return true;
-////}
-
-//void Compiler :: compileTemplateFieldDeclaration(DNode& member, SyntaxWriter& writer, TemplateScope& scope)
-//{
-//   while (member != nsNone) {
-//      DNode fieldHints = skipHints(member);
-//
-//      if (member == nsField) {
-//         ref_t param = 0;
-//         TerminalInfo terminal = member.Terminal();
-//
-//         scope.info.fields.add(terminal, scope.info.fields.Count());
-//
-//         writer.newNode(lxTemplateField);
-//         writer.appendNode(lxTerminal, terminal);
-//
-//         if (fieldHints != nsNone) {
-//            while (fieldHints == nsHint) {
-//               param = scope.parameters.get(fieldHints.Terminal());
-//               if (param > 0) {
-//                  if (fieldHints.firstChild() != nsNone)
-//                     scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, fieldHints.Terminal());
-//
-//                  writer.appendNode(lxTemplateFieldType, param);
-//               }
-//               else {
-//                  ref_t hintRef = mapHint(fieldHints, *scope.moduleScope, 2000);
-//                  // HOTFIX : to support template classes
-//                  if (hintRef == 0)
-//                     hintRef = mapHint(fieldHints, *scope.moduleScope, 0);
-//
-//                  if (hintRef != 0) {
-//                     if (scope.moduleScope->subjectHints.exist(hintRef)) {
-//                        writer.appendNode(lxType, hintRef);
-//                     }
-//                     else {
-//                        writer.newNode(lxTemplate, hintRef);
-//                        DNode option = fieldHints.firstChild();
-//                        while (option == nsHintValue) {
-//                           int param = scope.parameters.get(option.Terminal());
-//                           if (param != 0) {
-//                              writer.appendNode(lxTemplateParam, param);
-//                           }
-//                           else scope.raiseError(wrnInvalidHint, fieldHints.Terminal());
-//
-//                           option = option.nextNode();
-//                        }
-//                        writer.closeNode();
-//                     }                     
-//                  }
-//                  else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, fieldHints.Terminal());
-//               }
-//
-//               fieldHints = fieldHints.nextNode();
-//            }
-//         }
-//         writer.closeNode();
-//      }
-//      else {
-//         // due to current syntax we need to reset hints back, otherwise they will be skipped
-//         if (fieldHints != nsNone)
-//            member = fieldHints;
-//
-//         break;
-//      }
-//      member = member.nextNode();
-//   }
-//}
 
 bool Compiler :: copyTemplate(SNode node, Scope& scope, ref_t attrRef, SNode attributeNode)
 {
@@ -6430,7 +6264,7 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
       compileSymbolCode(scope);
 }
 
-void Compiler :: declareSingletonClass(SNode node, ClassScope& scope)
+void Compiler :: declareSingletonClass(SNode node, ClassScope& scope, SNode hints)
 {
    // inherit parent
    compileParentDeclaration(node, scope);
@@ -6438,16 +6272,21 @@ void Compiler :: declareSingletonClass(SNode node, ClassScope& scope)
    SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
    writer.newNode(lxRoot, scope.reference);
+
+   while (hints == lxAttribute) {
+      writer.newNode(lxAttribute);
+      SyntaxTree::copyNode(writer, hints);
+      writer.closeNode();
+
+      hints = hints.nextNode();
+   }
+
    SyntaxTree::copyNode(writer, node);
    writer.closeNode();
 
-   //compileSingletonHints(hints, writer, scope);
+   compileClassAttributes(syntaxTree.readRoot(), scope, node);
 
    declareVMT(syntaxTree.readRoot().firstChild(), scope);
-
-   //// declare imported methods / flags
-   //if (!importTemplateDeclarations(scope, writer))
-   //   scope.raiseError(errInvalidHint, node.FirstTerminal());   
 
    generateClassDeclaration(syntaxTree.readRoot(), scope, test(scope.info.header.flags, elClosed));
 
@@ -6478,18 +6317,24 @@ void Compiler :: declareSingletonAction(ClassScope& classScope, SNode objNode)
    classScope.save();
 }
 
-void Compiler :: compileSingletonClass(SNode node, ClassScope& scope)
+void Compiler :: compileSingletonClass(SNode node, ClassScope& scope, SNode hints)
 {
    SyntaxTree syntaxTree;
    SyntaxWriter writer(syntaxTree);
    writer.newNode(lxRoot, scope.reference);
+
+   while (hints == lxAttribute) {
+      writer.newNode(lxAttribute);
+      SyntaxTree::copyNode(writer, hints);
+      writer.closeNode();
+
+      hints = hints.nextNode();
+   }
+
    SyntaxTree::copyNode(writer, node);
    writer.closeNode();
 
-   //compileSingletonHints(hints, writer, scope);
-
-   //// import templates
-   //importTemplateImplementations(scope, writer);
+   compileClassAttributes(syntaxTree.readRoot(), scope, node);
 
    declareVMT(syntaxTree.readRoot().firstChild(), scope);
    compileVMT(syntaxTree.readRoot(), scope);
@@ -6514,7 +6359,7 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
          ClassScope classScope(scope.moduleScope, scope.reference);
          classScope.info.header.flags |= elNestedClass;
 
-         declareSingletonClass(objNode, classScope);
+         declareSingletonClass(objNode, classScope, node.findChild(lxAttribute));
          singleton = true;
       }
       else if (objNode == lxCode) {
@@ -6672,7 +6517,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
          ClassScope classScope(moduleScope, scope.reference);
          moduleScope->loadClassInfo(classScope.info, moduleScope->module->resolveReference(scope.reference), false);
 
-         compileSingletonClass(classNode, classScope);
+         compileSingletonClass(classNode, classScope, node.findChild(lxAttribute));
 
          if (test(classScope.info.header.flags, elStateless)) {
             // if it is a stateless singleton

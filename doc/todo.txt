@@ -10,28 +10,9 @@ In development:
                  * scripting library : vb interpreter
                  * scripting library : elena script (both run-time / compile-time)
 
-              xrev
-                 * test twelvestat
-                 * test truncprime
-                 * test treeview
-                 * test 99
-                 * test manboy
-                 * test knutalg
+              xrev                 
                  * test firstclass
-                 * test anonymrec
-                 * test amb
-                 * test anagram
-                 * test calendar
-                 * test evolution
-                 * uncomment StructTest
-                 * uncomment GroupTest
-                 * uncomment DTOToStructTest
-                 * uncomment jsonTest
-                 * test graph
-                 * test c_a_g
-                 * test rest samples
-                 * test script samples
-                 
+
                  * optimization : #var(int)n := o array length.
                  * support arrayof:int
                  * support arrayof:struct
@@ -150,12 +131,13 @@ In development:
                          ^ $nil.        
                    should work if [ ^ ... ] is an explicit action ; return operator in the action
                          should be similar to the one in implicit action, i.e. break the code and go to the method end
-                         (see for example bsort, arithmeval, arraymode (system'Filter))
+                         (see for example bsort, arithmeval, arraymode (system'Filter), knutalg)
                  * ByteNumber.get&min - could we return the constant object?
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
                  * implement idle typecasting message (see file_path)
                  * bsort : get rid of an extra bool messages (implementing exiting from nested closures)
+                 * truncproime : get rid of an extra bool messages
                  * use imm mode for (n) => 1 ? [ now literal. ]
                  * optimize nil operations
                  * why console writeLine:"x:":theX:",y:"theY can be compiled
@@ -170,6 +152,31 @@ In development:
                              i += 1.
                          ].
 
+                 * the following code does not work:
+                     eval : n
+                     [
+                         (this length < self)
+                             ? [ this += n. ]
+                     ]
+                   "this" points to the branch closure rather than on the top one
+
+                 * test anonymrec
+                 * test amb
+                 * test anagram
+                 * test calendar
+                 * test evolution
+                 * test twelvestat
+                 * test truncprime
+                 * test manboy
+                 * test knutalg
+                 * uncomment StructTest
+                 * uncomment GroupTest
+                 * uncomment DTOToStructTest
+                 * uncomment jsonTest
+                 * test graph
+                 * test c_a_g
+                 * test rest samples
+                 * test script samples
 
               xdev - ide
                 * vertical scroller does not work correctly

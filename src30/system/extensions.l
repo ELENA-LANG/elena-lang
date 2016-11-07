@@ -18,27 +18,27 @@
     /// Returns the parameter        
     #method back : anObject = anObject.
 
-//    #method evalSelf &func1:aFunction
-//        = aFunction eval:self.
-//
-//    #method evalSelf:aFunction
-//        = aFunction eval:self.
-//
-//    /// Returns true if the object is nil
-//    #method(bool) is &nil
-//        = nil == self.
-//        
-//    /// Returns true if the object is literal or character
-//    #method is &literal
-//        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! : anObject = false. }.
-//        
-//    /// Returns true if the object is integer numereric
-//    #method is &integer
-//        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
-//        
-//    /// Returns true if the object is numereric
-//    #method is &numeric
-//        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
+    #method evalSelf &func1:aFunction
+        = aFunction eval:self.
+
+    #method evalSelf:aFunction
+        = aFunction eval:self.
+
+    /// Returns true if the object is nil
+    #method(bool) is &nil
+        = nil == self.
+        
+    /// Returns true if the object is literal or character
+    #method is &literal
+        = self cast:%eval &to:{ literal : anObject = true. wide : anObject = true. char : anObject = true. ! : anObject = false. }.
+        
+    /// Returns true if the object is integer numereric
+    #method is &integer
+        = self cast:%eval &to:{ int : x = true. long : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
+        
+    /// Returns true if the object is numereric
+    #method is &numeric
+        = self cast:%eval &to:{ int : x = true. long : x = true. real : x = true. short : x = true. byte : x = true. ! : anObject = false. }.
         
     #method(bool,w2) is &empty
         = self length == 0.
@@ -50,8 +50,8 @@
     #method(bool) safeEqual : anObject
         = anObject cast:%eval &to:{ ! : aTarget : anObject = aTarget::$subject equal:anObject \ back:false. } &with:self bool.
 
-//    #method eval &with:action
-//        = action eval:self.
+    #method eval &with:action
+        = action eval:self.
         
     #method(stacksafe) reallocate &int:aNewLength
         => system'core_routines'__array.

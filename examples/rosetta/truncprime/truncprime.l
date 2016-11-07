@@ -10,15 +10,15 @@
     [
         #var(int)n := self int.
         
-        (n < 2) ? [ ^ false. ].        
-        (n < 4) ? [ ^ true. ].        
+        ((n < 2) bool) ? [ ^ false. ].        
+        ((n < 4) bool) ? [ ^ true. ].        
         (n mod:2 == 0) ? [ ^ false. ].        
-        (n < 9) ? [ ^ true. ].        
+        ((n < 9) bool) ? [ ^ true. ].        
         (n mod:3 == 0) ? [ ^ false. ].
         
         #var(int)r := n sqrt.        
         #var(int)f := 5.
-        #loop (f <= r)?
+        #loop ((f <= r) bool)?
         [
             ((n mod:f == 0) || (n mod:(f + 2) == 0))
                 ? [ ^ false. ].
@@ -36,7 +36,7 @@
         
         #loop (n != 0)?
         [
-            (n is &prime)
+            (n is &prime bool)
                 ! [ ^ false. ].
             
             n := n / 10.
@@ -55,7 +55,7 @@
             
         #loop (n != 0)?
         [
-            (n is &prime)
+            (n is &prime bool)
                 ! [ ^ false. ].
 
             tens := tens / 10.

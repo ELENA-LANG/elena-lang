@@ -354,144 +354,144 @@
     #method clone = IntArray new &intarray:$self.
 }
 
-//// --- BitArray ---
-//
-//#class(sealed,dispatchable:bitarray) BitArray
-//{
-//    #field(intarray) theArray.
-//    #field(int)      theLength.
-//    
-//    /// Creates the array with the specified length
-//    #constructor(stacksafe,w3) new &int:length
-//    [
-//        theLength := length.
-//        theArray := IntArray new &int:(length / 32 + 1).
-//    ]
-//    
-//    #method(stacksafe,outnprop:length)readLength &vint:retVal
-//    [
-//        retVal := theLength.
-//    ]
-//    
-//    #method getAt:index
-//        = $self getAt &int:(index int).
-//    
-//    #method(bool,stacksafe)getAt &int:index
-//    [
-//        #var(int)arr_index := index / 32.
-//        #var(int)bit_index := arr_index * 32.
-//        bit_index := index - arr_index.
-//        
-//        #var(int)bit_mask := 1.
-//        (bit_index != 0)
-//            ? [ bit_mask := bit_mask << bit_index. ].
-//        
-//        #var(int)bits.
-//        theArray read &int:arr_index &vint:bits.
-//        
-//        ^ (bits && bit_mask) != 0.
-//    ]
-//    
-//    #method setAt:index:value
-//    [
-//        $self setAt &int:(index int) &bool:(value bool).
-//    ]
-//    
-//    #method(stacksafe) setAt &int:index &bool:value
-//    [
-//        #var(int)arr_index := index / 32.
-//        #var(int)bit_index := arr_index * 32.
-//        bit_index := index - arr_index.
-//        
-//        #var(int)bit_mask := 1.
-//        (bit_index != 0)
-//            ? [ bit_mask := bit_mask << bit_index. ].
-//        
-//        #var(int)bits.
-//        theArray read &int:arr_index &vint:bits.
-//        
-//        value
-//            ? [ bits := bits || bit_mask. ]
-//            ! [  
-//                bit_mask := bit_mask inverted.
-//                
-//                bits := bits && bit_mask.
-//            ].
-//            
-//        theArray write &int:arr_index &int:bits.            
-//    ]
-//    
-//    /// Returns the array enumerator
-//    #method enumerator = BitArrayEnumerator new &bitarray:$self.
-//
-//    /// Returns the array iterator
-//    #method iterator = BitArrayIterator new &bitarray:$self.    
-//}
-//
-//// --- BitArray32 ---
-//
-//#class(sealed,embeddable,dispatchable:bitset) BitArray32
-//{
-//    #field(int)theValue.
-//    
-//    #constructor new &int:value
-//    [
-//        theValue := value.
-//    ]
-//    
-//    #constructor new:value
-//        <= new &int:(value int).
-//    
-//    #method(int) length = 32.
-//    
-//    #method write &int:value
-//    [
-//        theValue := value.
-//    ]
-//    
-//    #method write : value
-//    [
-//        value cast:%write &to:$self.
-//    ]
-//    
-//    #method getAt:index
-//        = $self getAt &int:(index int).
-//    
-//    #method(bool,stacksafe)getAt &int:index
-//    [
-//        #var(int)bit_mask := 1.
-//        (index != 0)
-//            ? [ bit_mask := bit_mask << index. ].
-//        
-//        ^ (theValue && bit_mask) != 0.
-//    ]
-//    
-//    #method setAt:index:value
-//    [
-//        $self setAt &int:(index int) &bool:(value bool).
-//    ]
-//    
-//    #method(stacksafe) setAt &int:index &bool:value
-//    [
-//        #var(int)bit_mask := 1.
-//        (index != 0)
-//            ? [ bit_mask := bit_mask << index. ].
-//        
-//        value
-//            ? [ theValue := theValue || bit_mask. ]
-//            ! [  
-//                bit_mask := bit_mask inverted.
-//                
-//                theValue := theValue && bit_mask.
-//            ].
-//    ]
-//    
-//    /// Returns the array enumerator
-//    #method enumerator = BitArray32Enumerator new &bitset:$self.
-//
-//    /// Returns the array iterator
-//    #method iterator = BitArray32Iterator new &bitset:$self.
-//}
+// --- BitArray ---
+
+#class(sealed,dispatchable:bitarray) BitArray
+{
+    #field(intarray) theArray.
+    #field(int)      theLength.
+    
+    /// Creates the array with the specified length
+    #constructor(stacksafe,w3) new &int:length
+    [
+        theLength := length.
+        theArray := IntArray new &int:(length / 32 + 1).
+    ]
+    
+    #method(stacksafe,outnprop:length)readLength &vint:retVal
+    [
+        retVal := theLength.
+    ]
+    
+    #method getAt:index
+        = $self getAt &int:(index int).
+    
+    #method(bool,stacksafe)getAt &int:index
+    [
+        #var(int)arr_index := index / 32.
+        #var(int)bit_index := arr_index * 32.
+        bit_index := index - arr_index.
+        
+        #var(int)bit_mask := 1.
+        (bit_index != 0)
+            ? [ bit_mask := bit_mask << bit_index. ].
+        
+        #var(int)bits.
+        theArray read &int:arr_index &vint:bits.
+        
+        ^ (bits && bit_mask) != 0.
+    ]
+    
+    #method setAt:index:value
+    [
+        $self setAt &int:(index int) &bool:(value bool).
+    ]
+    
+    #method(stacksafe) setAt &int:index &bool:value
+    [
+        #var(int)arr_index := index / 32.
+        #var(int)bit_index := arr_index * 32.
+        bit_index := index - arr_index.
+        
+        #var(int)bit_mask := 1.
+        (bit_index != 0)
+            ? [ bit_mask := bit_mask << bit_index. ].
+        
+        #var(int)bits.
+        theArray read &int:arr_index &vint:bits.
+        
+        value
+            ? [ bits := bits || bit_mask. ]
+            ! [  
+                bit_mask := bit_mask inverted.
+                
+                bits := bits && bit_mask.
+            ].
+            
+        theArray write &int:arr_index &int:bits.            
+    ]
+    
+    /// Returns the array enumerator
+    #method enumerator = BitArrayEnumerator new &bitarray:$self.
+
+    /// Returns the array iterator
+    #method iterator = BitArrayIterator new &bitarray:$self.    
+}
+
+// --- BitArray32 ---
+
+#class(sealed,embeddable,dispatchable:bitset) BitArray32
+{
+    #field(int)theValue.
+    
+    #constructor new &int:value
+    [
+        theValue := value.
+    ]
+    
+    #constructor new:value
+        <= new &int:(value int).
+    
+    #method(int) length = 32.
+    
+    #method write &int:value
+    [
+        theValue := value.
+    ]
+    
+    #method write : value
+    [
+        value cast:%write &to:$self.
+    ]
+    
+    #method getAt:index
+        = $self getAt &int:(index int).
+    
+    #method(bool,stacksafe)getAt &int:index
+    [
+        #var(int)bit_mask := 1.
+        (index != 0)
+            ? [ bit_mask := bit_mask << index. ].
+        
+        ^ (theValue && bit_mask) != 0.
+    ]
+    
+    #method setAt:index:value
+    [
+        $self setAt &int:(index int) &bool:(value bool).
+    ]
+    
+    #method(stacksafe) setAt &int:index &bool:value
+    [
+        #var(int)bit_mask := 1.
+        (index != 0)
+            ? [ bit_mask := bit_mask << index. ].
+        
+        value
+            ? [ theValue := theValue || bit_mask. ]
+            ! [  
+                bit_mask := bit_mask inverted.
+                
+                theValue := theValue && bit_mask.
+            ].
+    ]
+    
+    /// Returns the array enumerator
+    #method enumerator = BitArray32Enumerator new &bitset:$self.
+
+    /// Returns the array iterator
+    #method iterator = BitArray32Iterator new &bitset:$self.
+}
 
 // --- IntMatrix ---
 
@@ -2173,187 +2173,187 @@
 //        ].
 //    ]
 //}
-//
-//// --- BitArrayIterator ---
-//
-///// An array iterator
-//#class BitArrayIterator :: Iterator
-//{
-//    #field(bitarray) theArray.
-//    #field(vint)  theIndex.
-//
-//    /// Returns the parameter iterator
-//    #constructor new : anArray
-//        <= new &bitarray:(anArray bitarray).
-//    
-//    /// Returns the parameter iterator
-//    #constructor(w3) new &bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    #method(bool) get
-//        = theArray getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject
-//    [
-//        theArray setAt &int:theIndex &bool:(anObject bool).
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theArray.
-//}
-//
-//// --- BitArrayEnumerator ---
-//
-///// An array enumerator
-//#class BitArrayEnumerator :: Enumerator
-//{
-//    #field(bitarray) theArray.
-//    #field(vint)  theIndex.
-//    
-//    /// Creates an array enumerator
-//    #constructor new : anArray
-//        <= new &bitarray:(anArray bitarray).
-//    
-//    /// Creates an array enumerator
-//    #constructor(w3) new &bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        #var(int)aLength := theArray length.
-//        
-//        theIndex append &int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    #method(bool) get
-//        = theArray getAt &int:theIndex.
-//}
-//
-//// --- BitArray32Iterator ---
-//
-///// An array iterator
-//#class BitArray32Iterator :: Iterator
-//{
-//    #field(bitset) theArray.
-//    #field(vint)  theIndex.
-//
-//    /// Returns the parameter iterator
-//    #constructor new : anArray
-//        <= new &bitset:(anArray bitset).
-//    
-//    /// Returns the parameter iterator
-//    #constructor(w3) new &bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    #method available
-//    [
-//        ^ theIndex < 32.
-//    ]
-//
-//    /// Returns the current member
-//    #method(bool) get
-//        = theArray getAt &int:theIndex.
-//    
-//    /// Sets the current member
-//    #method set : anObject
-//    [
-//        theArray setAt &int:theIndex &bool:(anObject bool).
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    #method readIndex  &vint:anIndex
-//    [
-//        anIndex := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    #method writeIndex &int:anIndex 
-//    [
-//        theIndex set &int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    #method readLength &vint:anOutput
-//        => theArray.
-//}
-//
-//// --- BitArray32Enumerator ---
-//
-///// An array enumerator
-//#class BitArray32Enumerator :: Enumerator
-//{
-//    #field(bitset) theArray.
-//    #field(vint)  theIndex.
-//    
-//    /// Creates an array enumerator
-//    #constructor new : anArray
-//        <= new &bitset:(anArray bitset).
-//    
-//    /// Creates an array enumerator
-//    #constructor(w3) new &bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    #method reset
-//    [
-//        theIndex set &int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    #method next
-//    [
-//        theIndex append &int:1.
-//
-//        ^ theIndex < 32.
-//    ]
-//    
-//    /// Returns the current object
-//    #method get
-//        = theArray getAt &int:theIndex.
-//}
+
+// --- BitArrayIterator ---
+
+/// An array iterator
+#class BitArrayIterator :: Iterator
+{
+    #field(bitarray) theArray.
+    #field(vint)  theIndex.
+
+    /// Returns the parameter iterator
+    #constructor new : anArray
+        <= new &bitarray:(anArray bitarray).
+    
+    /// Returns the parameter iterator
+    #constructor(w3) new &bitarray:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    #method available
+    [
+        #var(int)aLength := theArray length.
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    #method(bool) get
+        = theArray getAt &int:theIndex.
+    
+    /// Sets the current member
+    #method set : anObject
+    [
+        theArray setAt &int:theIndex &bool:(anObject bool).
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    #method readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    #method readLength &vint:anOutput
+        => theArray.
+}
+
+// --- BitArrayEnumerator ---
+
+/// An array enumerator
+#class BitArrayEnumerator :: Enumerator
+{
+    #field(bitarray) theArray.
+    #field(vint)  theIndex.
+    
+    /// Creates an array enumerator
+    #constructor new : anArray
+        <= new &bitarray:(anArray bitarray).
+    
+    /// Creates an array enumerator
+    #constructor(w3) new &bitarray:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex set &int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        #var(int)aLength := theArray length.
+        
+        theIndex append &int:1.
+
+        ^ theIndex < aLength.
+    ]
+    
+    /// Returns the current object
+    #method(bool) get
+        = theArray getAt &int:theIndex.
+}
+
+// --- BitArray32Iterator ---
+
+/// An array iterator
+#class BitArray32Iterator :: Iterator
+{
+    #field(bitset) theArray.
+    #field(vint)  theIndex.
+
+    /// Returns the parameter iterator
+    #constructor new : anArray
+        <= new &bitset:(anArray bitset).
+    
+    /// Returns the parameter iterator
+    #constructor(w3) new &bitset:anArray
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    #method available
+    [
+        ^ theIndex < 32.
+    ]
+
+    /// Returns the current member
+    #method(bool) get
+        = theArray getAt &int:theIndex.
+    
+    /// Sets the current member
+    #method set : anObject
+    [
+        theArray setAt &int:theIndex &bool:(anObject bool).
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    #method readIndex  &vint:anIndex
+    [
+        anIndex := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    #method writeIndex &int:anIndex 
+    [
+        theIndex set &int:anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    #method readLength &vint:anOutput
+        => theArray.
+}
+
+// --- BitArray32Enumerator ---
+
+/// An array enumerator
+#class BitArray32Enumerator :: Enumerator
+{
+    #field(bitset) theArray.
+    #field(vint)  theIndex.
+    
+    /// Creates an array enumerator
+    #constructor new : anArray
+        <= new &bitset:(anArray bitset).
+    
+    /// Creates an array enumerator
+    #constructor(w3) new &bitset:anArray
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    #method reset
+    [
+        theIndex set &int:-1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    #method next
+    [
+        theIndex append &int:1.
+
+        ^ theIndex < 32.
+    ]
+    
+    /// Returns the current object
+    #method get
+        = theArray getAt &int:theIndex.
+}

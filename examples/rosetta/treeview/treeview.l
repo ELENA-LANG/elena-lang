@@ -58,10 +58,10 @@
                  (
                     Node new:"a" &children:
                     (
-                        Node new:"c" &child:(Node new:"d"),
+                        Node new:"b" &child:(Node new:"c"),
                         Node new:"d"
                     ),
-                    Node new:"b"
+                    Node new:"e"
                  ).
                  
     console writeTree:tree &subject:%children readChar.

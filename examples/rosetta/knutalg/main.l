@@ -16,10 +16,10 @@
                 [
                     counter += 1.
                     
-                    (this length < self)
+                    ((this length < self) bool)
                         ? [ this += n. ]
                         ! [ 
-                            (randomGenerator eval:counter < self)
+                            ((randomGenerator eval:counter < self) bool)
                                 ? [ this@(randomGenerator eval:self) := n. ].
                         ].
                         

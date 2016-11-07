@@ -909,8 +909,8 @@ private:
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(SNode& node, ClassScope& scope, SNode argNode, ActionScope& methodScope, int mode, bool alreadyDeclared);
 
-   void declareSingletonClass(SNode node, ClassScope& scope);
-   void compileSingletonClass(SNode member, ClassScope& scope);
+   void declareSingletonClass(SNode node, ClassScope& scope, SNode hints);
+   void compileSingletonClass(SNode member, ClassScope& scope, SNode hints);
 
    void declareSingletonAction(ClassScope& scope, SNode objNode);
 
