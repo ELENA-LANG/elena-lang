@@ -50,6 +50,7 @@ void DerivationWriter :: unpackNode(SNode& node, int mode)
          }
          break;
       case nsInlineExpression:
+      case nsInlineClosure:
          unpackChildren(node);
          _writer.insert(lxInlineExpression);         
          _writer.closeNode();

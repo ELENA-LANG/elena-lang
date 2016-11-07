@@ -63,26 +63,26 @@
     #method => system'core_routines'__message.
 }
 
-//// --- ExtensionMessage ---
-//
-///// An extended message constant
-//#class(sealed,embeddable) ExtensionMessage
-//{
-//    #field(-21,8)theValue.
-//    
-//    /// Loads a message
-//    #constructor(stacksafe,w3) new &ext_mssg:message
-//        = message.
-//
-//    #method(stacksafe) subject
-//        => system'core_routines'__message.
-//
-//    #method(stacksafe) equal &ext_mssg : aSubject    
-//        => system'core_routines'__extmessage.
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    #method => system'core_routines'__extmessage.
-//}
+// --- ExtensionMessage ---
+
+/// An extended message constant
+#class(sealed,embeddable) ExtensionMessage
+{
+    #field(-21,8)theValue.
+    
+    /// Loads a message
+    #constructor(stacksafe,w3) new &ext_mssg:message
+        = message.
+
+    #method(stacksafe) subject
+        => system'core_routines'__message.
+
+    #method(stacksafe) equal &ext_mssg : aSubject    
+        => system'core_routines'__extmessage.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    #method => system'core_routines'__extmessage.
+}
 
 // --- Signature ---
 

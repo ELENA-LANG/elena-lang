@@ -38,7 +38,7 @@
 #subject real       = system'RealNumber.
 #subject char       = system'CharValue.
 #subject mssg       = system'Message.
-//#subject ext_mssg   = system'ExtensionMessage.
+#subject ext_mssg   = system'ExtensionMessage.
 
 /// A verb symbol
 ///
