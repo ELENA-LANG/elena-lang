@@ -10,6 +10,25 @@
 
 #class(extension) classROp
 {
+    #method class
+        => system'core_routines'__object.
+
+    #method(literal) className
+    [
+        #var class := self::classROp class.
+        
+        #var(byte:256)aBuffer.
+        #var(int)aLength := system'external LoadClassName 
+            &ref:class
+            &bytearray:aBuffer
+            &int:255.
+        
+        (aLength == 0)
+            ? [ ^ "Unknown class". ].
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]    
+    
     #method(int) fieldCount
     [
         #var(int)aLength.                
@@ -31,25 +50,6 @@
         
     #method getFieldAt : anIndex
         = self::classROp getField &int:(anIndex int).
-
-    #method class
-        => system'core_routines'__object.
-
-    #method className
-    [
-        #var class := self::classROp class.
-        
-        #var(byte:256)aBuffer.
-        #var(int)aLength := system'external LoadClassName 
-            &ref:class
-            &bytearray:aBuffer
-            &int:255.
-        
-        (aLength == 0)
-            ? [ #throw NotSupportedException new:"Reflection functionality is not supported". ].
-        
-        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-    ]
 
     #method(stacksafe) respondTo &mssg:aMessage
         => system'core_routines'__object.

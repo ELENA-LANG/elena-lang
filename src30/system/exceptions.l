@@ -262,6 +262,9 @@
 
     #constructor(stacksafe) new &mssg:missingMessage
         <= new &literal:("Method " add &literal:(missingMessage literal) add &literal:" not found").
+        
+    #constructor(stacksafe) new &object:object &mssg:missingMessage
+        <= new &literal:(object objectName add &literal:" : Method " add &literal:(missingMessage literal) add &literal:" not found").
 }
 
 // --- MethodNotSupported ---

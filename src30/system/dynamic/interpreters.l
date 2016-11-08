@@ -49,8 +49,22 @@
 {
     #field $item.
     
-    #constructor new &int:len
-        = object:len.
+    #constructor new &int:n
+        = object:n.
+    
+    #constructor new &array:list
+        <= (new &int:(list length))
+    [
+        #var(int)i := 0.
+        #var(int)n := list length.
+        
+        #loop(i < n)?
+        [
+            $self setField &int:i &object:(list getAt &int:i).
+            
+            i += 1.
+        ].
+    ]    
     
     #method => system'core_routines'__struct.
 }

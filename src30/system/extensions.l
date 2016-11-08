@@ -11,6 +11,20 @@
 /// A generic extender
 #class(extension)objectOp
 {
+    #method(literal) objectName
+    [
+        #var(byte:256)aBuffer.
+        #var(int)aLength := system'external LoadClassName 
+            &ref:self
+            &bytearray:aBuffer
+            &int:255.
+        
+        (aLength == 0)
+            ? [ ^ "Unknown class". ].
+        
+        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
+    ]    
+    
     /// Returns true if the specified object instances are equal; otherwise, false.
     #method(bool) equal &reference:anObject
         => system'core_routines'__object.

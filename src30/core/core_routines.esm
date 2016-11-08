@@ -20,8 +20,9 @@ procedure __object.dispatch[1]
   esavesi 2
   bcopys  -2
   pushb
+  pusha
   pushr class : system'MethodNotFoundException
-  pushr const : %new&mssg$[1]
+  pushr const : %new&object&mssg$[2]
   throw
 
 end
