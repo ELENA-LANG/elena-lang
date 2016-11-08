@@ -11,35 +11,8 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
-                 * test firstclass
-
-                 * optimization : #var(int)n := o array length.
-                 * support arrayof:int
-                 * support arrayof:struct
-
-                 * external operations : typecast the parameters
-                 * external operations : allow to pass numeric constants directly
-
-                 * support private sealed methods
-
-                 * check if self is embeddable
-                 * support array of byte
-                 * support array of short
-                 * support array of typed objects
-                 * support array of objects
-
-                 * test operations with primitive arrays
-
-                 * #var(int)n := 0. (if n is stack allocated, use direct primitive operation)
-                 * check primitive comparision operation
-                 * optimize unbox : root expression / assigning
-                 * templates : importing
-                 * templates : compiling
-                 * optimize n:=n+1
                  * implement +=, ...
                  * sealed methods
-                 * support private sealed methods
-                 * method attributes cannot be overridden
                  * message $self does not belong to the object points to the target instead of message
                  * invalid warning in the following code : #method(bool) equal : anObject []
                  * type attribute cannot be overriden for the method
@@ -72,8 +45,20 @@ In development:
                  * test dispatching method
                  * test dispatching method with generic methods
                  * optimize comparision operation with char
+                 * check if self is embeddable
+                 * support array of int
+                 * support array of byte
+                 * support array of short
+                 * support array of typed objects
+                 * support array of objects
+                 * support arrayof:struct
+                 * test operations with primitive arrays
                  * test array of char / array of enumerator ...
                  * optimize : #var(int:3)a. #var(int) n := a@1.
+                 * check primitive comparision operation
+                 * optimize unbox : root expression / assigning
+                 * templates : importing
+                 * templates : compiling
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
@@ -177,6 +162,7 @@ In development:
                  * test c_a_g
                  * test rest samples
                  * test script samples
+                 * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
 
               xdev - ide
                 * vertical scroller does not work correctly

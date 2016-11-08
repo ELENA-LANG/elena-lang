@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -6868,68 +6868,16 @@ void Compiler :: optimizeCall(ModuleScope& scope, SNode node, WarningScope& warn
 
 void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warningScope, int mode)
 {
-//   ref_t destType = 0;
-//   SNode parent = node.parentNode();
-//   while (parent != lxNewFrame) {
-//      if (parent == lxTypecasting) {
-//         destType = getSignature(parent.argument);
-//         break;
-//      }
-//      else parent = parent.parentNode();;
-//   }
-//
-//   if (node.argument == SET_REFER_MESSAGE_ID) {
-//      SNode larg, narg, rarg;
-//      assignOpArguments(node, larg, narg, rarg);
-//
-//      ref_t lref = SyntaxTree::findChild(larg, lxTarget).argument;
-//      int nflags = mapOpArg(scope, narg);
-//
-//      if (isPrimitiveRef(lref)) {
-//         if (lref == -3 && nflags == elDebugDWORD) {
-//            destType = SyntaxTree::findChild(larg, lxType).argument;
-//            if (checkIfCompatible(scope, destType, rarg)) {
-//               int size = scope.defineSubjectSize(destType);
-//               node.appendNode(lxSize, size);
-//               node = mapArrPrimitiveOp(size);
-//            }
-//         }
-//         else if (lref == -5 && nflags == elDebugDWORD) {
-//            destType = SyntaxTree::findChild(larg, lxType).argument;
-//            if (checkIfCompatible(scope, destType, rarg)) {
-//               node = lxArrOp;
-//            }
-//         }
-//      }
-//
-//      if (node == lxOp) {
-//         node.setArgument(encodeMessage(0, node.argument, 2));
-//         node = lxCalling;
-//
-//         optimizeCall(scope, node, warningLevel);
-//
-//         return false;
-//      }
-//      else {
-//         optimizeSyntaxNode(scope, larg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//         optimizeSyntaxNode(scope, narg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//         optimizeSyntaxNode(scope, rarg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//
-//         return true;
-//      }
-//   }
-//   else {
-//      bool boxing = false;
-      SNode larg, rarg, rarg2;
-      larg = node.firstChild(lxObjectMask);
-      optimizeSyntaxNode(scope, larg, warningScope, HINT_NOBOXING);
+   SNode larg, rarg, rarg2;
+   larg = node.firstChild(lxObjectMask);
+   optimizeSyntaxNode(scope, larg, warningScope, HINT_NOBOXING);
 
-      rarg = larg.nextNode(lxObjectMask);
-      optimizeSyntaxNode(scope, rarg, warningScope, HINT_NOBOXING);
+   rarg = larg.nextNode(lxObjectMask);
+   optimizeSyntaxNode(scope, rarg, warningScope, HINT_NOBOXING);
 
-      rarg2 = rarg.nextNode(lxObjectMask);
-      if (rarg2 != lxNone)
-         optimizeSyntaxNode(scope, rarg2, warningScope, HINT_NOBOXING);
+   rarg2 = rarg.nextNode(lxObjectMask);
+   if (rarg2 != lxNone)
+      optimizeSyntaxNode(scope, rarg2, warningScope, HINT_NOBOXING);
 
 //      ref_t target = 0;
 //      int lflags = mapOpArg(scope, larg, target);
@@ -7174,31 +7122,31 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
          node.set(lxIntOp, SET_MESSAGE_ID);
       }
       else {
-         SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
-         if (callNode != lxNone && callNode.existChild(lxEmbeddable)) {
+         SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
+         if (subNode == lxAssigning) {
+            // assignment operation
+            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp);
+            if (operationNode != lxNone) {
+               SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+               SNode target = node.firstChild(lxObjectMask);
+               if (larg.type == target.type && larg.argument == target.argument) {
+                  // remove an extra assignment
+                  larg = subNode.findSubNodeMask(lxObjectMask);
+                  
+                  larg = target.type;
+                  larg.setArgument(target.argument);
+                  node = lxExpression;
+                  target = lxIdle;
+
+                  test2(node);
+               }
+            }
+         }
+         else if (subNode != lxNone && subNode.existChild(lxEmbeddable)) {
             _logic->optimizeEmbeddableGet(scope, *this, node);
          }
       }
    }
-
-//   // assignment operation
-//   SNode assignNode = node.findSubNode(lxAssigning);
-//   if (assignNode != lxNone) {
-//      SNode operationNode = assignNode.findChild(lxIntOp/*, lxRealOp*/);
-//      if (operationNode != lxNone) {
-//         SNode larg = operationNode.findSubNodeMask(lxObjectMask);
-//         SNode target = node.firstChild(lxObjectMask);
-//         if (larg.type == target.type && larg.argument == target.argument) {
-//            // remove an extra assignment
-//            larg = assignNode.findSubNodeMask(lxObjectMask);
-//
-////            larg = target.type;
-////            larg.setArgument(target.argument);
-////            node = lxExpression;
-////            target = lxIdle;
-//         }
-//      }
-//   }
 }
 
 void Compiler :: optimizeArgUnboxing(ModuleScope& scope, SNode node, WarningScope& warningScope)
