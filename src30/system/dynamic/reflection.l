@@ -10,25 +10,6 @@
 
 #class(extension) classROp
 {
-    #method class
-        => system'core_routines'__object.
-
-    #method(literal) className
-    [
-        #var class := self::classROp class.
-        
-        #var(byte:256)aBuffer.
-        #var(int)aLength := system'external LoadClassName 
-            &ref:class
-            &bytearray:aBuffer
-            &int:255.
-        
-        (aLength == 0)
-            ? [ ^ "Unknown class". ].
-        
-        ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-    ]    
-    
     #method(int) fieldCount
     [
         #var(int)aLength.                
@@ -56,7 +37,7 @@
 
     #method(stacksafe) readMatchedEntries &mssg:aMask &int:aVMTOffset &mssgarray:aResultArray &vint:aResultLength
     [
-        #var class := self::classROp class.
+        #var class := self::objectOp class.
 
         #var(int)retVal := system'external core_filtervmt
            &mssg:aMask

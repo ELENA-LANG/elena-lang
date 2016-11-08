@@ -11,11 +11,16 @@
 /// A generic extender
 #class(extension)objectOp
 {
-    #method(literal) objectName
+    #method class
+        => system'core_routines'__object.
+
+    #method(literal) className
     [
+        #var class := self::objectOp class.
+        
         #var(byte:256)aBuffer.
         #var(int)aLength := system'external LoadClassName 
-            &ref:self
+            &ref:class
             &bytearray:aBuffer
             &int:255.
         
@@ -24,6 +29,7 @@
         
         ^ LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
     ]    
+    
     
     /// Returns true if the specified object instances are equal; otherwise, false.
     #method(bool) equal &reference:anObject
