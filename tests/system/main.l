@@ -31,7 +31,7 @@
     BoxingTest eval.
     OuterFieldTest eval.
     LocalTest eval.
-//    StructTest eval.
+    StructTest eval.
 //    GroupTest eval.
     GenericMethodTest eval.
     ConstructorTest eval.

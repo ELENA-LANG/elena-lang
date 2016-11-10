@@ -30,17 +30,17 @@
         theMessage := TextBuilder new.
     ]
     
-    #method new &symbol : reference
+    #method new &symbolToken : reference
     [
         theCallstack push:(Symbol new &literal:reference).
     ]
         
-    #method new &literal : literal
+    #method new &literalToken : literal
     [
         theCallstack push:literal.
     ]
     
-    #method new &message : message
+    #method new &messageToken : message
     [
         (theMessage is &empty)
             ! [ theMessage write:"&". ].
@@ -105,7 +105,7 @@
         theSubject := TextBuilder new.
     ]
     
-    #method new &message : message
+    #method new &messageToken : message
     [
         (theSubject is &empty)
             ! [ theSubject write:"&". ].
@@ -187,39 +187,29 @@
 
 #symbol program =
 [
+    // class ( method ( message = print code ( expression ( symbol = system'console message = writeLine literal = "Hello World" ) ) ) )
+    
+    // open&class open&method new&messageToken "print" open&code open&expression new&symbolToken "system'console" new&messageToken "writeLine" new&literalToken "Hello World" close close close
+    
     #var factory := Tape(
         "Hello World", 
         "writeLine", 
         "system'console", 
         "print",
-        Library,
-        %"new[0]", 
+        2, %"tapeOp.var[]",
         %"open&class[0]", 
         %"open&method[0]", 
-        %"new&message[1]",
+        %"new&messageToken[1]",
         %"open&code[0]",
         %"open&expression[0]",
-        %"new&symbol[1]",
-        %"new&message[1]",
-        %"new&literal[1]",
+        %"new&symbolToken[1]",
+        %"new&messageToken[1]",
+        %"new&literalToken[1]",
         %"close[0]",
         %"close[0]",
-        %"close[0]",
-        %"new[0]").
+        %"close[0]").
     
-    #var obj := factory eval.
-    
-//    #var lib := Library new.
-//    #var class := lib open &class.
-//    #var method := class open &method.
-//    method new &message:"print".
-//    #var code := method open &code.
-//    #var statement1 := code open &expression.
-//    statement1 new &symbol:"system'console".
-//    statement1 new &message:"writeLine".
-//    statement1 new &literal:"Hello World".
-//    
-//    #var obj := class new.
+    #var obj := factory eval:(Library new) new.
     
     obj eval&print.
 ].

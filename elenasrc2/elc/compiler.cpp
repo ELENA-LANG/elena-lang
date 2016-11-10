@@ -2795,12 +2795,16 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
 
       int subject = 0;
       int param = 0;
+      bool firstSubj = true;
       for (int i = 0; i < getlength(message); i++) {
-         if (message[i] == '&' && subject == 0) {
-            signature.copy(message, i);
-            verb_id = _verbs.get(signature);
-            if (verb_id != 0) {
-               subject = i + 1;
+         if (message[i] == '&') {
+            if (firstSubj) {
+               signature.copy(message + subject, i - subject);
+               verb_id = _verbs.get(signature);
+               if (verb_id != 0) {
+                  subject = i + 1;
+               }
+               firstSubj = false;
             }
          }
          else if (message[i] == '.' && extensionRef == 0) {
@@ -2845,14 +2849,14 @@ ObjectInfo Compiler :: compileMessageReference(SNode node, CodeScope& scope, int
          }
       }
 
-      //if (paramCount == OPEN_ARG_COUNT) {
-      //   // HOT FIX : support open argument list
-      //   ref_t openArgType = retrieveKey(scope.moduleScope->subjectHints.start(), scope.moduleScope->paramsReference, 0);
-      //   if (!emptystr(signature))
-      //      signature.append('&');
+      if (paramCount == OPEN_ARG_COUNT) {
+         // HOT FIX : support open argument list
+         ref_t openArgType = retrieveKey(scope.moduleScope->attributeHints.start(), scope.moduleScope->paramsReference, 0);
+         if (!emptystr(signature))
+            signature.append('&');
 
-      //   signature.append(scope.moduleScope->module->resolveSubject(openArgType));
-      //}
+         signature.append(scope.moduleScope->module->resolveSubject(openArgType));
+      }
    }
 
    if (verb_id == 0 && paramCount != -1) {

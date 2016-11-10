@@ -4948,3 +4948,16 @@ procedure __extmessage.equal&ext_mssg$[2]
   quitn 2
   
 end
+
+procedure __vmtape.eval&evaluateTape&dirty_ptr$[2]
+
+  aloadsi 2
+  nload
+  pushd
+  callextr extern : EvaluateTape
+  pop
+  pushd
+  popa
+  quitn 2
+
+end

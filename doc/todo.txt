@@ -11,6 +11,7 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
+
                  * implement +=, ...
                  * sealed methods
                  * message $self does not belong to the object points to the target instead of message
@@ -116,7 +117,7 @@ In development:
                          ^ $nil.        
                    should work if [ ^ ... ] is an explicit action ; return operator in the action
                          should be similar to the one in implicit action, i.e. break the code and go to the method end
-                         (see for example bsort, arithmeval, arraymode (system'Filter), knutalg)
+                         (see for example bsort, arithmeval, arraymode (system'Filter), knutalg, calc (lexicalOp))
                  * ByteNumber.get&min - could we return the constant object?
                  * assigning param : #class BoxerHelper { #method exchange &ref:anObject1 [ anObject1 := 5. ...
                  * compiling  - (Cast == object class) ? [ ... ]
@@ -154,7 +155,6 @@ In development:
                  * test truncprime
                  * test manboy
                  * test knutalg
-                 * uncomment StructTest
                  * uncomment GroupTest
                  * uncomment DTOToStructTest
                  * uncomment jsonTest
@@ -163,11 +163,15 @@ In development:
                  * test rest samples
                  * test script samples
                  * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
+                 * tape_test : reflection
+                 * tape_test : config
+                 * test calc sample
 
               xdev - ide
                 * vertical scroller does not work correctly
                 * set focus on the editor after selecting a project item
                 * the newly created project is saved incorrectly (..prj extension)
+                * debugging vm client : f7 on start
 
 ------                                 
 Pipeline:

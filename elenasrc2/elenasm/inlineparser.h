@@ -39,6 +39,8 @@ public:
    InlineScriptParser();
 };
 
+// --- InlineTapeParser ---
+
 } // _ELENA_
 
 #endif // inlineparserH

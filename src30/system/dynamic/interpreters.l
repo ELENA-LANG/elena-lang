@@ -29,19 +29,19 @@
     #method => system'core_routines'__tape.
 }
 
-//// --- tapeControl ---
-//
-//#class(extension)tapeOp
-//{
-//    #method var &args:params
-//    [
-//        #var(int)len := params length.
-//        #var(int)n := len.
-//        n -= self int.
-//       
-//        ^ params@n.
-//    ]
-//}
+// --- tapeControl ---
+
+#class(extension)tapeOp
+{
+    #method var &args:params
+    [
+        #var(int)len := params length.
+        #var(int)n := len.
+        n -= self int.
+       
+        ^ params@n.
+    ]
+}
 
 // --- Struct ---
 

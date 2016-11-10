@@ -434,6 +434,9 @@ bool Instance :: restart(bool debugMode)
    // load predefined code
    _linker->prepareCompiler();
 
+   // HOTFIX : literal constant is refered in the object, so it should be preloaded
+   _linker->resolve(_literalClass, mskVMTRef, true);
+
    // initialize GC
    _Entry entry;
    entry.address = loadSymbol(VM_INIT, mskNativeCodeRef);

@@ -1,7 +1,7 @@
 #import system.
 #import system'routines.
 #import system'collections.
-//#import system'dynaFmic.
+#import system'dynamic.
 #import system'calendar.
 #import extensions.
 //#import extensions'dynamic.
@@ -553,14 +553,14 @@
 //    GetPropertyAgent eval:%property[2].
 //].
 
-//#symbol StructTest =
-//[
-//    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
-//
-//    #var x := a x.
-//
-//    a print:"Struct method works".
-//].
+#symbol StructTest =
+[
+    #var a := system'dynamic'Struct ( %x, 2, %print, system'dynamic'Tape ( 2, %"tapeOp.var[]", system'console, %"writeLine[1]")). 
+
+    #var x := a x.
+
+    a print:"Struct method works".
+].
 
 //#symbol GroupMember1 =
 //{

@@ -5,13 +5,19 @@
 
 // --- IOException ---
 
-#class ScriptEngineException :: Exception
+#class(exceptionof:ScriptError) ScriptEngineException
 {
     #constructor new
         <= %new:(scriptEngine $lastScriptError).
         
     #constructor new : aMessage
-        <= %new &literal:(aMessage literal) &subject: %ScriptError.
+        <= %new &literal:(aMessage literal).
+        
+    #constructor new &literal:message
+    [
+        theMessage := message.
+        theCallStack := CallStack new.
+    ]    
 }
 
 // --- scriptEngine ---

@@ -33,7 +33,7 @@ bin\elc -cexamples\files\textdb\textdb.prj
 bin\elc -cexamples\console\matrix\matrix.prj
 bin\elc -cexamples\console\trans\tanslit.prj
 rem bin\elc -cexamples\interpreter\interpreter.prj
-rem bin\elc -cexamples\script\calculator\calc.prj
+bin\elc -cexamples\script\calculator\calc.prj
 bin\elc -cexamples\gui\agenda\agenda.prj
 bin\elc -cexamples\gui\graphs\graphs.prj
 bin\elc -cexamples\gui\c_a_g\c_area_gui.prj

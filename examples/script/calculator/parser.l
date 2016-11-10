@@ -1,8 +1,8 @@
-#define system.
-#define system'routines.
-#define system'dynamic.
-#define extensions'text.
-#define extensions'dynamic.
+#import system.
+#import system'routines.
+#import system'dynamic.
+#import extensions'text.
+#import extensions'scripting.
 
 #static esonScript
     = scriptEngine load &path:"~\scripts\eson.es" eval &path:"calc.es".
@@ -11,7 +11,7 @@
 {
     #method lexicalType
     [
-        ((self >= #48)and:(self <= #57))
+        ((self >= #48)and:(self <= #57) bool)
             ? [ ^ %digit. ].
 
         (self == #43)
