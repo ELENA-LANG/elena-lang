@@ -163,8 +163,8 @@ In development:
                  * test rest samples
                  * test script samples
                  * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
-                 * tape_test : reflection
-                 * tape_test : config
+                 * test elt (system'console write:"Hello" write:" World")
+                 * tape_test
                  * test calc sample
 
               xdev - ide

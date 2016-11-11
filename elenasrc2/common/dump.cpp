@@ -98,7 +98,8 @@ void MemoryDump :: insert(size_t position, const void* s, size_t length)
       resize(_used + length);
 
       memmove(_buffer + position + length, _buffer + position, _used - position - length);
-      memcpy(_buffer + position, s, length);
+      if (s != NULL)
+         memcpy(_buffer + position, s, length);
    }
 }
 

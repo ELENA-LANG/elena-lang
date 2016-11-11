@@ -20,13 +20,13 @@ class InlineScriptParser : public _Parser
 
    int mapVerb(ident_t literal);
 
-   void writeObject(TapeWriter& writer, char state, ident_t value);
-   void writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
-   void writeSubject(TapeWriter& writer, ident_t message);
-
-   int parseStack(_ScriptReader& reader, TapeWriter& writer, Stack<ScriptBookmark>& stack);
-
-   void parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
+   //void writeSubject(TapeWriter& writer, ident_t message);
+   bool writeObject(TapeWriter& writer, char state, ident_t token);
+   bool writeMessage(TapeWriter& writer, ident_t message, int paramCounter, int command);
+   bool insertObject(TapeWriter& writer, int bookmark, char state, ident_t token);
+   void parseArray(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
+   int parseExpression(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
+   int parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
 public:
    virtual bool parseGrammarRule(_ScriptReader& reader)
@@ -38,8 +38,6 @@ public:
 
    InlineScriptParser();
 };
-
-// --- InlineTapeParser ---
 
 } // _ELENA_
 

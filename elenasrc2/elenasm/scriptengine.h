@@ -51,6 +51,11 @@ class TapeWriter
    MemoryDump* _tape;
 
 public:
+   int Bookmark()
+   {
+      return _tape->Length();
+   }
+
    void writeCallCommand(ident_t reference)
    {
       writeCommand(CALL_TAPE_MESSAGE_ID, reference);
@@ -71,6 +76,35 @@ public:
    void writeCommand(size_t command, size_t param)
    {
       MemoryWriter writer(_tape);
+
+      // save tape record
+      writer.writeDWord(command);
+      writer.writeDWord(param);
+   }
+
+   void insertCommand(int bookmark, size_t command, ident_t param)
+   {
+      if (!emptystr(param)) {
+         _tape->insert(bookmark, NULL, getlength(param) + 1);
+      }
+
+      _tape->insert(bookmark, NULL, 8);
+
+      MemoryWriter writer(_tape, bookmark);
+
+      writer.writeDWord(command);
+      if (!emptystr(param)) {
+         writer.writeDWord(getlength(param) + 1);
+         writer.writeLiteral(param, getlength(param) + 1);
+      }
+      else writer.writeDWord(0);
+   }
+
+   void insertCommand(int bookmark, size_t command, size_t param)
+   {
+      _tape->insert(bookmark, NULL, 8);
+
+      MemoryWriter writer(_tape, bookmark);
 
       // save tape record
       writer.writeDWord(command);
