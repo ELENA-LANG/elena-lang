@@ -11,7 +11,6 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
-
                  * implement +=, ...
                  * sealed methods
                  * message $self does not belong to the object points to the target instead of message
@@ -170,7 +169,6 @@ In development:
               xdev - ide
                 * vertical scroller does not work correctly
                 * set focus on the editor after selecting a project item
-                * the newly created project is saved incorrectly (..prj extension)
                 * debugging vm client : f7 on start
 
 ------                                 

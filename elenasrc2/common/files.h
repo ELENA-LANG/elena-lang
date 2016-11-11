@@ -391,7 +391,7 @@ public:
       int len = getlength(path);
       int dotpos = path.findLast('.', len);
 
-      _path.copy(path + dotpos, len - dotpos);
+      _path.copy(path + dotpos + 1);
    }
 
    bool isEmpty() const
