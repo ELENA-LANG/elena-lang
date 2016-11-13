@@ -11,28 +11,20 @@ In development:
                  * scripting library : elena script (both run-time / compile-time)
 
               xrev                 
-                 * sealed methods
+                 * array of byte : an extra assignment
+                 * support array of short
+
+                 * optimize unbox : root expression / assigning
                  * message $self does not belong to the object points to the target instead of message
-                 * invalid warning in the following code : #method(bool) equal : anObject []
-                 * type attribute cannot be overriden for the method
-                 * uncomment code in ecv
-                 * optimize : assinging of assinging
-                 * simplify vshort operations (e.g. divideInto)
+
+                 * returning from closure (to simulate normal branching)
+
                  * optimization : (a != b) ? [ ] => (a == b) ! [ ]
-                 * optimize : #var(-11,4)n := 1.#var(-11,4)m := 2.n := n + m * 2.
-                 * optimize : #var(int)n := 1. n := n + 3.
                  * optimize : branching with numeric comparison
                  * test int => vint, vint =>, ref => obj, obj => ref
                  * make sure ref may be used as obj, vint may be used as int (generating virtual dispatcher only if it was not declared)
                  * passing vint as int probably should be possible only for embeddable classes
-                 * no unboxing for assigning operation
-                 * no unboxing for returning operation
-                 * no unboxing for sub expression
-                 * no cond boxing for returning expr?
-                 * optimize : boxing of constant
-                 * test template in template (with parameters)
                  * multy parameter dispatching
-                 * returning from closure (to simulate normal branching)
                  * for wrapper classes generate virutal set method
                  * test dispatching to the field / symbol
                  * test dispatching to the expression
@@ -43,21 +35,7 @@ In development:
                  * test unboxing primitive array
                  * test dispatching method
                  * test dispatching method with generic methods
-                 * optimize comparision operation with char
                  * check if self is embeddable
-                 * support array of int
-                 * support array of byte
-                 * support array of short
-                 * support array of typed objects
-                 * support array of objects
-                 * support arrayof:struct
-                 * test operations with primitive arrays
-                 * test array of char / array of enumerator ...
-                 * optimize : #var(int:3)a. #var(int) n := a@1.
-                 * check primitive comparision operation
-                 * optimize unbox : root expression / assigning
-                 * templates : importing
-                 * templates : compiling
 
                  * signature : make possible to create a combined signature from several subjects (constructor overloading)
 
@@ -144,6 +122,11 @@ In development:
                      ]
                    "this" points to the branch closure rather than on the top one
 
+                 * support array of typed objects
+                 * support array of objects
+                 * support arrayof:struct
+                 * test array of char / array of enumerator ...
+
                  * test anonymrec
                  * test amb
                  * test anagram
@@ -163,6 +146,7 @@ In development:
                  * debugger : #var(int)n := 0. n := n + 1. Debugger skips the second statement
                  * test elt (system'console write:"Hello" write:" World")
                  * tape_test
+                 * test template in template (with parameters)
                  * test calc sample
 
               xdev - ide

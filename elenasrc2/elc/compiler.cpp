@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 #define INVALID_REF (size_t)-1
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- ModuleInfo ---
 struct ModuleInfo
@@ -6619,6 +6619,7 @@ ObjectInfo Compiler :: assignResult(CodeScope& scope, SNode& node, ref_t targetR
 
          SNode assignNode = node.injectNode(lxAssigning, size);
          assignNode.insertNode(lxLocalAddress, retVal.param);
+         assignNode.appendNode(lxTempAttr);
       }
       else if (size > 0) {
          retVal.kind = okObject;
@@ -6882,188 +6883,6 @@ void Compiler :: optimizeOp(ModuleScope& scope, SNode node, WarningScope& warnin
    rarg2 = rarg.nextNode(lxObjectMask);
    if (rarg2 != lxNone)
       optimizeSyntaxNode(scope, rarg2, warningScope, HINT_NOBOXING);
-
-//      ref_t target = 0;
-//      int lflags = mapOpArg(scope, larg, target);
-//      int rflags = mapOpArg(scope, rarg);
-//
-//      if (IsNumericOperator(node.argument)) {
-//         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-//            target = -1;
-//            node = lxIntOp;
-//            boxing = true;
-//         }
-//         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
-//            target = -2;
-//            node = lxLongOp;
-//            boxing = true;
-//         }
-//         else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
-//            target = -4;
-//            node = lxRealOp;
-//            boxing = true;
-//         }
-//      }
-//      else if (node.argument == READ_MESSAGE_ID) {
-//         if (target == -3 && rflags == elDebugDWORD) {
-//            target = scope.subjectHints.get(SyntaxTree::findChild(larg, lxType).argument);
-//            int size = scope.defineStructSize(target);
-//            node.appendNode(lxSize, size);
-//            node = mapArrPrimitiveOp(size);
-//         }
-//         else if (target == -5 && rflags == elDebugDWORD) {
-//            node = lxArrOp;
-//         }
-//         else if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-//            target = -1;
-//            node = lxIntOp;
-//            boxing = true;
-//         }
-//         else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
-//            target = -2;
-//            node = lxLongOp;
-//            boxing = true;
-//         }
-//      }
-//      else if (node.argument == WRITE_MESSAGE_ID) {
-//         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-//            target = -1;
-//            node = lxIntOp;
-//            boxing = true;
-//         }
-//         else if (lflags == elDebugQWORD && rflags == elDebugDWORD) {
-//            target = -2;
-//            node = lxLongOp;
-//            boxing = true;
-//         }
-//      }
-//      else if (IsBitwiseOperator(node.argument)) {
-//         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-//            target = -1;
-//            node = lxIntOp;
-//            boxing = true;
-//         }
-//         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
-//            target = -2;
-//            node = lxLongOp;
-//            boxing = true;
-//         }
-//      }
-//      else if (IsCompOperator(node.argument)) {
-//         if (lflags == elDebugDWORD && (rflags == elDebugDWORD || rflags == elDebugPTR)) {
-//            node = lxIntOp;
-//         }
-//         else if (lflags == elDebugPTR && rflags == elDebugPTR) {
-//            node = lxIntOp;
-//         }
-//         else if (lflags == elDebugSubject && rflags == elDebugSubject) {
-//            node = lxIntOp;
-//         }
-//         else if (lflags == elDebugQWORD && (rflags == elDebugQWORD || rflags == elDebugDPTR)) {
-//            node = lxLongOp;
-//         }
-//         else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
-//            node = lxRealOp;
-//         }
-//
-//         node.appendNode(lxType, scope.boolType);
-//      }
-//      else if (IsVarOperator(node.argument)) {
-//         if (lflags == elDebugDWORD && rflags == elDebugDWORD) {
-//            target = -1;
-//            node = lxIntOp;
-//         }
-//         else if (lflags == elDebugQWORD && rflags == elDebugQWORD) {
-//            target = -2;
-//            node = lxLongOp;
-//         }
-//         else if (lflags == elDebugReal64 && rflags == elDebugReal64) {
-//            target = -4;
-//            node = lxRealOp;
-//         }
-//      }
-//      else if (IsReferOperator(node.argument) && rflags == elDebugDWORD) {         
-//         destType = SyntaxTree::findChild(larg, lxType).argument;
-//
-//         if (target == -3 && destType != 0) {
-//            target = scope.subjectHints.get(destType);
-//            int size = scope.defineStructSize(target);
-//            node.appendNode(lxSize, size);
-//            node = mapArrPrimitiveOp(size);
-//            boxing = true;
-//         }
-//         else if (target == -5 || target == scope.paramsReference) {
-//            node = lxArrOp;
-//         }
-//      }
-//
-//      if (node == lxOp) {
-//         node.setArgument(encodeMessage(0, node.argument, 1));
-//         node = lxCalling;
-//
-//         if (target != 0)
-//            node.appendNode(lxCallTarget, target);
-//
-//         optimizeCall(scope, node, warningLevel);
-//
-//         return false;
-//      }
-//      else {
-//         optimizeSyntaxNode(scope, larg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//
-//         // HOTFIX : if larg is boxing, the second operator should be reassigned
-//         if (larg == lxBoxing) {
-//            rarg = SyntaxTree::findSecondMatchedChild(node, lxObjectMask);
-//         }
-//         optimizeSyntaxNode(scope, rarg, warningLevel, HINT_NOBOXING | HINT_NOUNBOXING);
-//
-//         if (boxing) {
-//            if (isPrimitiveRef(target)) {
-//               if (destType != 0) {
-//                  //if destination type is known try to check the compatibility
-//                  int flags = scope.getTypeFlags(destType);
-//                  if (test(flags, elWrapper)) {
-//                     ClassInfo destInfo;
-//                     scope.loadClassInfo(destInfo, scope.subjectHints.get(destType));
-//                     destType = destInfo.fieldTypes.get(0);
-//
-//                     flags = scope.getTypeFlags(destType);
-//                  }
-//
-//                  flags &= elDebugMask;
-//
-//                  if (flags == elDebugDWORD && target == -1) {
-//                     target = scope.subjectHints.get(destType);
-//                  }
-//                  else if (flags == elDebugQWORD && target == -2) {
-//                     target = scope.subjectHints.get(destType);
-//                  }
-//                  else if (flags == elDebugReal64 && target == -4) {
-//                     target = scope.subjectHints.get(destType);
-//                  }
-//               }
-//
-//               switch (target) {
-//                  case -1:
-//                     target = scope.intReference;
-//                     break;
-//                  case -2:
-//                     target = scope.longReference;
-//                     break;
-//                  case -4:
-//                     target = scope.realReference;
-//                     break;
-//                  default:
-//                     break;
-//               }
-//            }
-//
-//            boxPrimitive(scope, node, target, warningLevel, mode);
-//         }            
-//
-//         return true;
-//      }
-//   }
 }
 
 //void Compiler :: optimizeNewOp(ModuleScope& scope, SNode node, int warningLevel, int mode)
@@ -7129,10 +6948,11 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
          SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
          if (subNode == lxAssigning) {
             // assignment operation
-            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp);
+            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxIntArrOp);
             if (operationNode != lxNone) {
                SNode larg = operationNode.findSubNodeMask(lxObjectMask);
                SNode target = node.firstChild(lxObjectMask);
+               // if it is an operation with the same target
                if (larg.type == target.type && larg.argument == target.argument) {
                   // remove an extra assignment
                   larg = subNode.findSubNodeMask(lxObjectMask);
@@ -7141,8 +6961,14 @@ void Compiler :: optimizeAssigning(ModuleScope& scope, SNode node, WarningScope&
                   larg.setArgument(target.argument);
                   node = lxExpression;
                   target = lxIdle;
+               }
+               // if it is an operation with an extra temporal variable
+               else if (node.argument == subNode.argument && subNode.existChild(lxTempAttr)) {
+                  larg = subNode.findSubNodeMask(lxObjectMask);
 
-                  test2(node);
+                  // remove an extra assignment
+                  subNode = lxExpression;
+                  larg = lxIdle;
                }
             }
          }

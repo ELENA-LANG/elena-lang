@@ -207,55 +207,7 @@ enum LexicalType
    lxRealAttr        = 0x2010A,
    lxExtMessageAttr  = 0x2010B,
    lxSymbolAttr      = 0x2010C,
-
-//   lxObjectMask      = 0x00100,
-//   lxExpressionMask  = 0x00200,
-//   lxAttrMask        = 0x00800,
-//   lxMessageMask     = 0x10000,
-//   lxReferenceMask   = 0x20000,
-//   lxSubjectMask     = 0x40000,
-//   lxConstantMask    = 0x80000,
-
-//   lxIdle            = 0x00003,
-//
-//   lxSymbol = 0x20103, // arg - reference
-//   lxCurrentField = 0x0411D, // arg -offset
-//
-//   lxLocking         = 0x0030E,   // lock expression
-//   lxExtInteranlRef  = 0x00319,
-//   lxBody            = 0x00329,
-//
-//   lxOp              = 0x0032A, // generic operation, arg - operation id 
-//   lxBoolOp          = 0x0032B, // arg - operation id
-//
-//   lxTemplateTarget  = 0x00434, // template target pseudo variable
-//
-//   //lxSubject         = 0x40804, // arg - subject
-//   lxStacksafe       = 0x00445,
-//   lxSubject         = 0x4044F,
-//
-//   lxConstAttr       = 0x00821,
-//   lxPreloadedAttr   = 0x00822,
-//   lxClassMethodAttr = 0x00807,
-//   //lxClassMethodOpt  = 0x04008,
-//
-//   lxTerminal        = 0x02005,
-//   lxSourcePath      = 0x0200A,
-//
-//   //lxClassArray      = 0x04003,
-//
-//   lxTemplate         = 0x4000B,
-//   lxTemplateField    = 0x0000C,
-//   lxTemplateFieldType= 0x0000D,
-//   lxTemplateSubject  = 0x0000E,
-//   lxTemplateMethod   = 0x0000F,
-//   lxNestedTemplate   = 0x00010, // arg - count
-//   lxNestedTemplateOwner  = 0x00011, // indicates the nested template owner
-//   lxNestedTemplateParent = 0x20812,
-//   lxTemplateParam    = 0x00013,
-//   lxClass            = 0x00014,
-//   lxTemplateType     = 0x40015,
-//   lxTargetMethod     = 0x10016
+   lxTempAttr        = 0x2010D,
 };
 
 // --- SyntaxTree ---
